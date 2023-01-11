@@ -86,6 +86,14 @@ export class RecurringActivity extends Entity {
   })
   linkedGroups: string[] = [];
 
+  /** IDs of children that should be excluded from this activity despite being a group member */
+  @DatabaseField({
+    label: $localize`:Label for excluded participants of a recurring activity:Excluded Participants`,
+    dataType: "entity-array",
+    additional: Child.ENTITY_TYPE,
+  })
+  excludedParticipants: string[] = [];
+
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
     label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,

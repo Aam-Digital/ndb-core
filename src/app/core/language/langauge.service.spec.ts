@@ -1,7 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
 import { LanguageService } from "./language.service";
-import { LanguageModule } from "./language.module";
 import { LOCALE_ID } from "@angular/core";
 import { ConfigService } from "../config/config.service";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
@@ -23,7 +22,6 @@ describe("TranslationServiceService", () => {
       location: { reload: reloadSpy } as any,
     };
     TestBed.configureTestingModule({
-      imports: [LanguageModule],
       providers: [
         { provide: LOCALE_ID, useValue: "en-US" },
         { provide: ConfigService, useValue: mockConfigService },

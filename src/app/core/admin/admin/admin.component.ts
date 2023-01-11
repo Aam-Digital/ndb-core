@@ -10,6 +10,10 @@ import { readFile } from "../../../utils/utils";
 import { RouteTarget } from "../../../app.routing";
 import { Database } from "../../database/database";
 import { ExtendedAlertConfig } from "../../alerts/alert-config";
+import { MatButtonModule } from "@angular/material/button";
+import { RouterLink } from "@angular/router";
+import { DatePipe, NgForOf } from "@angular/common";
+import { DownloadService } from "../../export/download-service/download.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -20,6 +24,8 @@ import { ExtendedAlertConfig } from "../../alerts/alert-config";
   selector: "app-admin",
   templateUrl: "./admin.component.html",
   styleUrls: ["./admin.component.scss"],
+  imports: [MatButtonModule, RouterLink, NgForOf, DatePipe],
+  standalone: true,
 })
 export class AdminComponent implements OnInit {
   /** all alerts */
@@ -28,6 +34,7 @@ export class AdminComponent implements OnInit {
   constructor(
     private alertService: AlertService,
     private backupService: BackupService,
+    private downloadService: DownloadService,
     private db: Database,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
@@ -57,21 +64,25 @@ export class AdminComponent implements OnInit {
    * Download a full backup of the database as (json) file.
    */
   async saveBackup() {
-    const backup = await this.backupService.getJsonExport();
-    this.startDownload(backup, "text/json", "backup.json");
+    const backup = await this.backupService.getDatabaseExport();
+    await this.downloadService.triggerDownload(backup, "json", "backup");
   }
 
   /**
    * Download a full export of the database as csv file.
    */
   async saveCsvExport() {
-    const csv = await this.backupService.getCsvExport();
-    this.startDownload(csv, "text/csv", "export.csv");
+    const backup = await this.backupService.getDatabaseExport();
+    await this.downloadService.triggerDownload(backup, "csv", "export");
   }
 
-  downloadConfigClick() {
+  async downloadConfigClick() {
     const configString = this.configService.exportConfig();
-    this.startDownload(configString, "text/json", "config.json");
+    await this.downloadService.triggerDownload(
+      configString,
+      "json",
+      "config.json"
+    );
   }
 
   async uploadConfigFile(inputEvent: Event) {
@@ -79,28 +90,21 @@ export class AdminComponent implements OnInit {
     await this.configService.saveConfig(JSON.parse(loadedFile));
   }
 
-  private startDownload(data: string, type: string, name: string) {
-    const tempLink = document.createElement("a");
-    tempLink.href =
-      "data:" + type + ";charset=utf-8," + encodeURIComponent(data);
-    tempLink.target = "_blank";
-    tempLink.download = name;
-    tempLink.click();
-  }
-
   /**
    * Reset the database to the state from the loaded backup file.
    * @param inputEvent for the input where a file has been selected
    */
   async loadBackup(inputEvent: Event) {
-    const restorePoint = await this.backupService.getJsonExport();
-    const newData = await readFile(this.getFileFromInputEvent(inputEvent));
+    const restorePoint = await this.backupService.getDatabaseExport();
+    const dataToBeRestored = JSON.parse(
+      await readFile(this.getFileFromInputEvent(inputEvent))
+    );
 
     const confirmed = await this.confirmationDialog.getConfirmation(
       `Overwrite complete database?`,
       `Are you sure you want to restore this backup? This will
-      delete all ${JSON.parse(restorePoint).length} existing records,
-      restoring ${JSON.parse(newData).length} records from the loaded file.`
+      delete all ${restorePoint.length} existing records,
+      restoring ${dataToBeRestored.length} records from the loaded file.`
     );
 
     if (!confirmed) {
@@ -108,7 +112,7 @@ export class AdminComponent implements OnInit {
     }
 
     await this.backupService.clearDatabase();
-    await this.backupService.importJson(newData, true);
+    await this.backupService.restoreData(dataToBeRestored, true);
 
     const snackBarRef = this.snackBar.open(`Backup restored`, "Undo", {
       duration: 8000,
@@ -118,7 +122,7 @@ export class AdminComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe(async () => {
         await this.backupService.clearDatabase();
-        await this.backupService.importJson(restorePoint, true);
+        await this.backupService.restoreData(restorePoint, true);
       });
   }
 
@@ -131,7 +135,7 @@ export class AdminComponent implements OnInit {
    * Reset the database removing all entities except user accounts.
    */
   async clearDatabase() {
-    const restorePoint = await this.backupService.getJsonExport();
+    const restorePoint = await this.backupService.getDatabaseExport();
 
     const confirmed = await this.confirmationDialog.getConfirmation(
       `Empty complete database?`,
@@ -151,7 +155,7 @@ export class AdminComponent implements OnInit {
       .onAction()
       .pipe(untilDestroyed(this))
       .subscribe(async () => {
-        await this.backupService.importJson(restorePoint, true);
+        await this.backupService.restoreData(restorePoint, true);
       });
   }
 }

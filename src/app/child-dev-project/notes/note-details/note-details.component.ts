@@ -6,13 +6,29 @@ import { INTERACTION_TYPE_CONFIG_ID } from "../model/interaction-type.interface"
 import { Child } from "../../children/model/child";
 import { User } from "../../../core/user/user";
 import { School } from "../../schools/model/school";
-import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { compareEnums } from "../../../utils/utils";
 import { FormDialogWrapperComponent } from "../../../core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
+import { DatePipe, NgIf } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatMenuModule } from "@angular/material/menu";
+import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
+import { Angulartics2Module } from "angulartics2";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { MatSelectModule } from "@angular/material/select";
+import { ConfigurableEnumDirective } from "../../../core/configurable-enum/configurable-enum-directive/configurable-enum.directive";
+import { BorderHighlightDirective } from "../../../core/common-components/border-highlight/border-highlight.directive";
+import { EntitySelectComponent } from "../../../core/entity-components/entity-select/entity-select/entity-select.component";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -21,6 +37,27 @@ import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-fie
   selector: "app-note-details",
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
+  imports: [
+    FormDialogWrapperComponent,
+    DatePipe,
+    FormsModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    MatMenuModule,
+    ExportDataDirective,
+    Angulartics2Module,
+    MatFormFieldModule,
+    MatInputModule,
+    MatDatepickerModule,
+    MatSelectModule,
+    ConfigurableEnumDirective,
+    BorderHighlightDirective,
+    EntitySelectComponent,
+    MatCheckboxModule,
+    NgIf,
+    ChildMeetingNoteAttendanceComponent,
+  ],
+  standalone: true,
 })
 export class NoteDetailsComponent implements ShowsEntity<Note> {
   @Input() entity: Note;

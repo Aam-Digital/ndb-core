@@ -1,27 +1,13 @@
 import { NgModule } from "@angular/core";
-import { Database } from "../core/database/database";
 import { PouchDatabase } from "../core/database/pouch-database";
-import { LoggingService } from "../core/logging/logging.service";
-import { EntityMapperService } from "../core/entity/entity-mapper.service";
-import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { SessionService } from "../core/session/session-service/session.service";
 import { LocalSession } from "../core/session/session-service/local-session";
-import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "../core/entity/database-entity.decorator";
-import {
-  viewRegistry,
-  ViewRegistry,
-} from "../core/view/dynamic-components/dynamic-component.decorator";
-import { RouteRegistry, routesRegistry } from "../app.routing";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../core/config/config.service";
+import { ConfigService } from "../core/config/config.service";
 import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
+import { createTestingConfigService } from "../core/config/testing-config-service";
+import { AppModule } from "../app.module";
+import { ComponentRegistry } from "../dynamic-components";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -34,23 +20,16 @@ import { environment } from "../../environments/environment";
  * ```
  */
 @NgModule({
+  imports: [AppModule],
   providers: [
-    LoggingService,
-    PouchDatabase,
-    { provide: Database, useExisting: PouchDatabase },
-    EntityMapperService,
-    EntitySchemaService,
     { provide: SessionService, useClass: LocalSession },
-    DatabaseIndexingService,
-    { provide: EntityRegistry, useValue: entityRegistry },
-    { provide: ViewRegistry, useValue: viewRegistry },
-    { provide: RouteRegistry, useValue: routesRegistry },
     { provide: ConfigService, useValue: createTestingConfigService() },
   ],
 })
 export class DatabaseTestingModule {
-  constructor(pouchDatabase: PouchDatabase) {
+  constructor(pouchDatabase: PouchDatabase, components: ComponentRegistry) {
     environment.session_type = SessionType.mock;
     pouchDatabase.initInMemoryDB();
+    components.allowDuplicates();
   }
 }

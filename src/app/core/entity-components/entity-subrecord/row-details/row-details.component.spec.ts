@@ -12,27 +12,21 @@ import {
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { EntitySubrecordModule } from "../entity-subrecord.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 describe("RowDetailsComponent", () => {
-  let component: RowDetailsComponent<any>;
-  let fixture: ComponentFixture<RowDetailsComponent<any>>;
-  const detailsComponentData: DetailsComponentData<any> = {
+  let component: RowDetailsComponent;
+  let fixture: ComponentFixture<RowDetailsComponent>;
+  const detailsComponentData: DetailsComponentData = {
     entity: new Entity(),
     columns: [],
   };
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        EntitySubrecordModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [RowDetailsComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
         { provide: MatDialogRef, useValue: {} },

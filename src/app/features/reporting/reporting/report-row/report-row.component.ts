@@ -5,6 +5,9 @@ import {
   MatTreeFlatDataSource,
   MatTreeFlattener,
 } from "@angular/material/tree";
+import { MatTableModule } from "@angular/material/table";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 interface FlattenedReportRow extends ReportRow {
   level: number;
@@ -15,11 +18,18 @@ interface FlattenedReportRow extends ReportRow {
   selector: "app-report-row",
   templateUrl: "./report-row.component.html",
   styleUrls: ["./report-row.component.scss"],
+  imports: [
+    MatTableModule,
+    MatButtonModule,
+    FontAwesomeModule
+  ],
+  standalone: true
 })
 export class ReportRowComponent {
   @Input() set rows(rows: ReportRow[]) {
     this.dataSource.data = rows;
   }
+
   displayedColumns: string[] = ["name", "count"];
 
   getGroupedByString = getGroupingInformationString;

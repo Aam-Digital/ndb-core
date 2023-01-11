@@ -6,7 +6,6 @@ import {
 } from "@angular/core/testing";
 
 import { EditLocationComponent } from "./edit-location.component";
-import { LocationModule } from "../location.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { setupEditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component.spec";
 import { GeoResult, GeoService } from "../geo.service";
@@ -31,7 +30,7 @@ describe("EditLocationComponent", () => {
     mockGeoService.lookup.and.returnValue(of([]));
     mockDialog = jasmine.createSpyObj(["open"]);
     await TestBed.configureTestingModule({
-      imports: [LocationModule, MockedTestingModule.withState()],
+      imports: [EditLocationComponent, MockedTestingModule.withState()],
       providers: [
         { provide: GeoService, useValue: mockGeoService },
         { provide: MatDialog, useValue: mockDialog },
@@ -160,6 +159,19 @@ describe("EditLocationComponent", () => {
 
     expect(mockGeoService.reverseLookup).toHaveBeenCalledWith(location);
     expect(component.formControl).toHaveValue(fullLocation);
+  });
+
+  it("should not send a request if nothing changed", () => {
+    const coordinates = { lat: 1, lon: 2, display_name: "" };
+    component.formControl.setValue(coordinates);
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of({ lat: 1, lon: 1 }),
+    } as any);
+
+    component.openMap();
+
+    expect(mockGeoService.reverseLookup).not.toHaveBeenCalled();
+    expect(component.formControl).toHaveValue(coordinates);
   });
 
   async function expectLookup(

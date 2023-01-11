@@ -1,40 +1,32 @@
 import { Component } from "@angular/core";
 import { TestBed } from "@angular/core/testing";
 import { Route, Router } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
-import { AdminComponent } from "../../admin/admin/admin.component";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 
 import { RouterService } from "./router.service";
-import { EntityDetailsComponent } from "../../entity-components/entity-details/entity-details.component";
 import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
-import { RouteRegistry, routesRegistry } from "../../../app.routing";
 import { ApplicationLoadingComponent } from "./empty/application-loading.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
+import { componentRegistry } from "../../../dynamic-components";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { AuthGuard } from "../../session/auth.guard";
 
 class TestComponent extends Component {}
 
 describe("RouterService", () => {
   let service: RouterService;
 
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(() => {
-    mockConfigService = jasmine.createSpyObj(["getAllConfigs"]);
-    mockConfigService.getAllConfigs.and.returnValue([]);
     mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
-      imports: [RouterTestingModule],
-      providers: [
-        { provide: ConfigService, useValue: mockConfigService },
-        { provide: LoggingService, useValue: mockLoggingService },
-        { provide: RouteRegistry, useValue: routesRegistry },
-      ],
+      imports: [MockedTestingModule],
+      providers: [{ provide: LoggingService, useValue: mockLoggingService }],
     });
     service = TestBed.inject(RouterService);
   });
@@ -69,16 +61,22 @@ describe("RouterService", () => {
       },
     ];
     const expectedRoutes = [
-      { path: "child", component: ChildrenListComponent, data: {} },
+      {
+        path: "child",
+        loadComponent: componentRegistry.get("ChildrenList"),
+        data: {},
+        canActivate: [AuthGuard],
+      },
       {
         path: "child/:id",
-        component: EntityDetailsComponent,
+        loadComponent: componentRegistry.get("EntityDetails"),
         data: { config: testViewConfig },
+        canActivate: [AuthGuard],
       },
       {
         path: "admin",
-        component: AdminComponent,
-        canActivate: [UserRoleGuard],
+        loadComponent: componentRegistry.get("Admin"),
+        canActivate: [AuthGuard, UserRoleGuard],
         data: { permittedUserRoles: ["user_app"] },
       },
     ];
@@ -107,7 +105,7 @@ describe("RouterService", () => {
       {
         path: "other",
         component: TestComponent,
-        canActivate: [UserRoleGuard],
+        canActivate: [AuthGuard, UserRoleGuard],
         data: { permittedUserRoles: ["admin_app"] },
       },
       { path: "child", component: ChildrenListComponent },
@@ -130,11 +128,14 @@ describe("RouterService", () => {
       { _id: "view:child", component: "ChildrenList", config: { foo: 1 } },
       { _id: "view:child2", component: "ChildrenList", config: { foo: 2 } },
     ];
-
-    mockConfigService.getAllConfigs.and.returnValue(routeConfigs1);
+    const getAllConfigSpy = spyOn(
+      TestBed.inject(ConfigService),
+      "getAllConfigs"
+    );
+    getAllConfigSpy.and.returnValue(routeConfigs1);
     service.initRouting();
 
-    mockConfigService.getAllConfigs.and.returnValue(routeConfigs2);
+    getAllConfigSpy.and.returnValue(routeConfigs2);
     service.initRouting();
 
     const router = TestBed.inject<Router>(Router);
@@ -153,8 +154,8 @@ describe("RouterService", () => {
     const expectedRoutes = [
       {
         path: "admin",
-        component: AdminComponent,
-        canActivate: [UserRoleGuard],
+        loadComponent: componentRegistry.get("Admin"),
+        canActivate: [AuthGuard, UserRoleGuard],
         data: { permittedUserRoles: ["admin"] },
       },
     ];

@@ -1,23 +1,23 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ActivityCardComponent } from "./activity-card.component";
-import { MatCardModule } from "@angular/material/card";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Note } from "../../notes/model/note";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ActivityCardComponent", () => {
   let component: ActivityCardComponent;
   let fixture: ComponentFixture<ActivityCardComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [ActivityCardComponent],
-        imports: [MatCardModule, MatTooltipModule, NoopAnimationsModule],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        ActivityCardComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityCardComponent);

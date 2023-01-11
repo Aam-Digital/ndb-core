@@ -1,9 +1,11 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { Observable, Subject } from "rxjs";
-import { LocationEntity } from "../map/map.component";
+import { LocationEntity, MapComponent } from "../map/map.component";
+import { AsyncPipe, NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
 
 export interface MapPopupConfig {
   marked?: Observable<Coordinates[]>;
@@ -12,12 +14,21 @@ export interface MapPopupConfig {
   mapClick?: Subject<Coordinates>;
   entityClick?: Subject<Entity>;
   disabled?: boolean;
+  helpText?: string;
 }
 
 @Component({
   selector: "app-map-popup",
   templateUrl: "./map-popup.component.html",
   styleUrls: ["./map-popup.component.scss"],
+  imports: [
+    MatDialogModule,
+    MapComponent,
+    NgIf,
+    MatButtonModule,
+    AsyncPipe
+  ],
+  standalone: true
 })
 export class MapPopupComponent {
   constructor(

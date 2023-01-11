@@ -5,7 +5,6 @@ import { BehaviorSubject } from "rxjs";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, convertToParamMap } from "@angular/router";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ComingSoonComponent", () => {
@@ -16,28 +15,25 @@ describe("ComingSoonComponent", () => {
   let mockAnalytics;
   let mockActivatedRoute;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockAnalytics = jasmine.createSpyObj("mockAnalytics", ["eventTrack"]);
-      mockActivatedRoute = {
-        paramMap: new BehaviorSubject(
-          convertToParamMap({
-            feature: testFeatureId,
-          })
-        ),
-      };
+  beforeEach(waitForAsync(() => {
+    mockAnalytics = jasmine.createSpyObj("mockAnalytics", ["eventTrack"]);
+    mockActivatedRoute = {
+      paramMap: new BehaviorSubject(
+        convertToParamMap({
+          feature: testFeatureId,
+        })
+      ),
+    };
 
-      TestBed.configureTestingModule({
-        declarations: [ComingSoonComponent],
-        imports: [FontAwesomeModule, FontAwesomeTestingModule],
-        providers: [
-          { provide: AnalyticsService, useValue: mockAnalytics },
-          { provide: AlertService, useValue: { addInfo: () => {} } },
-          { provide: ActivatedRoute, useValue: mockActivatedRoute },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [ComingSoonComponent, FontAwesomeTestingModule],
+      providers: [
+        { provide: AnalyticsService, useValue: mockAnalytics },
+        { provide: AlertService, useValue: { addInfo: () => {} } },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ComingSoonComponent);

@@ -1,6 +1,10 @@
 import { Component, Inject } from "@angular/core";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import {
   EntityForm,
@@ -12,15 +16,25 @@ import {
   RemoveResult,
 } from "../../../entity/entity-remove.service";
 import { AlertService } from "../../../alerts/alert.service";
-import { EntityAction } from "../../../permissions/permission-types";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
+import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
+import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { NgForOf, NgIf } from "@angular/common";
+import { PillComponent } from "../../../common-components/pill/pill.component";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
+import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Angulartics2Module } from "angulartics2";
+import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Data interface that must be given when opening the dialog
  */
-export interface DetailsComponentData<E extends Entity> {
+export interface DetailsComponentData {
   /** The row to edit / view */
-  entity: E;
+  entity: Entity;
   /** The columns to edit / view */
   columns: FormFieldConfig[];
   /** Additional columns that only provide context information */
@@ -33,31 +47,41 @@ export interface DetailsComponentData<E extends Entity> {
 @Component({
   selector: "app-row-details",
   templateUrl: "./row-details.component.html",
-  styleUrls: ["./row-details.component.scss"],
+  imports: [
+    DialogCloseComponent,
+    MatDialogModule,
+    EntityFormComponent,
+    NgForOf,
+    PillComponent,
+    DynamicComponentDirective,
+    NgIf,
+    MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
+    Angulartics2Module,
+    DisableEntityOperationDirective,
+    MatTooltipModule,
+  ],
+  standalone: true,
 })
-export class RowDetailsComponent<E extends Entity> {
-  form: EntityForm<E>;
+export class RowDetailsComponent {
+  form: EntityForm<Entity>;
+  columns: FormFieldConfig[][];
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;
-  editMode: EntityAction = "update";
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData<E>,
-    private dialogRef: MatDialogRef<RowDetailsComponent<E>>,
+    @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
+    private dialogRef: MatDialogRef<RowDetailsComponent, Entity>,
     private formService: EntityFormService,
     private ability: EntityAbility,
     private entityRemoveService: EntityRemoveService,
     private alertService: AlertService
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
-    if (!this.data.entity._rev) {
-      this.editMode = "create";
-    }
-    if (
-      this.editMode === "update" &&
-      this.ability.cannot("update", data.entity)
-    ) {
+    this.columns = data.columns.map((col) => [col]);
+    if (!this.data.entity.isNew && this.ability.cannot("update", data.entity)) {
       this.form.disable();
     }
     this.tempEntity = this.data.entity;

@@ -1,7 +1,7 @@
 @use "@angular/material" as mat;
 
 $widget-header-height: 64px;
-$widget-content-height: 300px;
+$widget-content-height: 320px;
 
 $font-size-headline: 40pt;
 
@@ -42,7 +42,7 @@ $border-radius-card: 4px;
 }
 
 .widget-headline {
-  grid-area:headline;
+  grid-area: headline;
   text-align: end;
   place-self: end;
 
@@ -76,10 +76,6 @@ $border-radius-card: 4px;
   background-color: white;
 }
 
-.mat-button-wrapper {
-  display: flex;
-}
-
 .headline {
   height: 100%;
   width: 100%;
@@ -90,12 +86,12 @@ $border-radius-card: 4px;
 
 // Map containing the colors that belong to a certain theme
 $themes: (
-  general    : #555555,
-  child      : #1565C0,
+  general : #555555,
+  child : #1565C0,
   attendance : #00838F,
-  note       : #008f53,
-  class      : #2E7D32,
-  school     : #9E9D24,
+  note : #008f53,
+  class : #2E7D32,
+  school : #9E9D24,
 );
 
 @each $ident, $color in $themes {

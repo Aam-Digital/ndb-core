@@ -3,8 +3,7 @@ import { moduleMetadata } from "@storybook/angular";
 import { ReportingComponent } from "./reporting.component";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
-import { ReportingService } from "../reporting.service";
-import { ReportingModule } from "../reporting.module";
+import { DataAggregationService } from "../data-aggregation.service";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ExportService } from "../../../core/export/export-service/export.service";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -181,11 +180,11 @@ const reportingService = {
 };
 
 export default {
-  title: "Features/Reporting",
+  title: "Features/Reporting/Report",
   component: ReportingComponent,
   decorators: [
     moduleMetadata({
-      imports: [ReportingModule, StorybookBaseModule],
+      imports: [ReportingComponent, StorybookBaseModule],
       providers: [
         {
           provide: ActivatedRoute,
@@ -193,7 +192,7 @@ export default {
             data: of({ config: { reports: [{ title: "Dummy Report" }] } }),
           },
         },
-        { provide: ReportingService, useValue: reportingService },
+        { provide: DataAggregationService, useValue: reportingService },
         {
           provide: ExportService,
           useValue: { createJson: () => {}, createCsv: () => {} },

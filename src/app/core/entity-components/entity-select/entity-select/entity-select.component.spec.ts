@@ -5,15 +5,12 @@ import {
   tick,
 } from "@angular/core/testing";
 import { EntitySelectComponent } from "./entity-select.component";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Entity } from "../../../entity/model/entity";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { EntitySelectModule } from "../entity-select.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { School } from "../../../../child-dev-project/schools/model/school";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { LoginState } from "../../../session/session-states/login-state.enum";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
@@ -29,20 +26,13 @@ describe("EntitySelectComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([
-            ...testUsers,
-            ...testChildren,
-            ...otherEntities,
-          ]),
-        },
-      ],
       imports: [
-        EntitySelectModule,
-        NoopAnimationsModule,
-        FontAwesomeTestingModule,
+        EntitySelectComponent,
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
+          ...testUsers,
+          ...testChildren,
+          ...otherEntities,
+        ]),
       ],
     }).compileComponents();
   });
@@ -156,19 +146,21 @@ describe("EntitySelectComponent", () => {
     );
   });
 
-  it("adds a new entity if it matches a known entity", () => {
+  it("adds a new entity if it matches a known entity", fakeAsync(() => {
     component.allEntities = testUsers;
     component.select({ value: testUsers[0]["name"] });
     expect(component.selectedEntities).toEqual([testUsers[0]]);
-  });
+    tick();
+  }));
 
-  it("does not add anything if a new entity doesn't match", () => {
+  it("does not add anything if a new entity doesn't match", fakeAsync(() => {
     component.allEntities = testUsers;
     component.select({ value: "ZZ" });
     expect(component.selectedEntities).toBeEmpty();
-  });
+    tick();
+  }));
 
-  it("autocompletes with the default accessor", () => {
+  it("autocompletes with the default accessor", fakeAsync(() => {
     component.allEntities = testUsers;
     component.loading.next(false);
 
@@ -186,7 +178,8 @@ describe("EntitySelectComponent", () => {
 
     component.formControl.setValue("z");
     expect(component.filteredEntities.length).toEqual(0);
-  });
+    tick();
+  }));
 
   it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
     class Person extends Entity {
@@ -210,7 +203,7 @@ describe("EntitySelectComponent", () => {
     expect(component.filteredEntities).toEqual([p1]);
   }));
 
-  it("should add an unselected entity to the filtered entities array", () => {
+  it("should add an unselected entity to the filtered entities array", fakeAsync(() => {
     component.allEntities = testUsers;
     const selectedUser = testUsers[1];
 
@@ -219,7 +212,8 @@ describe("EntitySelectComponent", () => {
 
     component.unselectEntity(selectedUser);
     expect(component.filteredEntities).toContain(selectedUser);
-  });
+    tick();
+  }));
 
   it("suggests all entities of multiple different types if configured", fakeAsync(() => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];

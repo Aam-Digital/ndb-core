@@ -4,7 +4,6 @@ import { EditEntityArrayComponent } from "./edit-entity-array.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { setupEditComponent } from "../../entity-utils/dynamic-form-components/edit-component.spec";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { EntitySelectModule } from "../entity-select.module";
 
 describe("EditEntityArrayComponent", () => {
   let component: EditEntityArrayComponent;
@@ -12,7 +11,7 @@ describe("EditEntityArrayComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntitySelectModule, MockedTestingModule.withState()],
+      imports: [EditEntityArrayComponent, MockedTestingModule.withState()],
     }).compileComponents();
   });
 

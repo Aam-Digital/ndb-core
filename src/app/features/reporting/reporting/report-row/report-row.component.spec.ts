@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ReportRowComponent } from "./report-row.component";
-import { MatExpansionModule } from "@angular/material/expansion";
 
 describe("ReportRowComponent", () => {
   let component: ReportRowComponent;
@@ -9,8 +8,7 @@ describe("ReportRowComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ReportRowComponent],
-      imports: [MatExpansionModule],
+      imports: [ReportRowComponent],
     }).compileComponents();
   });
 

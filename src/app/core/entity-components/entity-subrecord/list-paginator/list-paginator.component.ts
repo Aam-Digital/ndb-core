@@ -7,7 +7,11 @@ import {
   AfterViewInit,
   OnInit,
 } from "@angular/core";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import {
+  MatPaginator,
+  MatPaginatorModule,
+  PageEvent,
+} from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { User } from "../../../user/user";
 import { SessionService } from "../../../session/session-service/session.service";
@@ -15,15 +19,19 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { filter } from "rxjs/operators";
 import { LoggingService } from "../../../logging/logging.service";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 @UntilDestroy()
 @Component({
   selector: "app-list-paginator",
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
+  imports: [MatSlideToggleModule, MatPaginatorModule],
+  standalone: true,
 })
 export class ListPaginatorComponent<E>
-  implements OnChanges, AfterViewInit, OnInit {
+  implements OnChanges, AfterViewInit, OnInit
+{
   readonly pageSizeOptions = [10, 20, 50];
   readonly defaultPageSize = 10;
 
@@ -98,9 +106,8 @@ export class ListPaginatorComponent<E>
       return;
     }
 
-    const pageSize = this.user.paginatorSettingsPageSize[
-      this.idForSavingPagination
-    ];
+    const pageSize =
+      this.user.paginatorSettingsPageSize[this.idForSavingPagination];
     if (pageSize) {
       if (pageSize === -1) {
         this.pageSize = this.dataSource.data.length;
@@ -128,12 +135,10 @@ export class ListPaginatorComponent<E>
       sizeToBeSaved !==
       this.user.paginatorSettingsPageSize[this.idForSavingPagination];
 
-    this.user.paginatorSettingsPageIndex[
-      this.idForSavingPagination
-    ] = this.currentPageIndex;
-    this.user.paginatorSettingsPageSize[
-      this.idForSavingPagination
-    ] = sizeToBeSaved;
+    this.user.paginatorSettingsPageIndex[this.idForSavingPagination] =
+      this.currentPageIndex;
+    this.user.paginatorSettingsPageSize[this.idForSavingPagination] =
+      sizeToBeSaved;
 
     if (hasChangesToBeSaved) {
       await this.entityMapperService.save<User>(this.user);

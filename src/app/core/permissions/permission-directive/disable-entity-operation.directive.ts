@@ -18,6 +18,7 @@ import { EntityAbility } from "../ability/entity-ability";
  */
 @Directive({
   selector: "[appDisabledEntityOperation]",
+  standalone: true,
 })
 export class DisableEntityOperationDirective implements OnInit, OnChanges {
   /**

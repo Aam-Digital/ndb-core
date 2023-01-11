@@ -1,17 +1,25 @@
 import { Injectable } from "@angular/core";
-import { ExportColumnConfig } from "../export-service/export-column-config";
+import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
 import { ExportDataFormat } from "../export-data-directive/export-data.directive";
-import { ExportService } from "../export-service/export.service";
 import { LoggingService } from "../../logging/logging.service";
+import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
+import { transformToReadableFormat } from "../../entity-components/entity-subrecord/entity-subrecord/value-accessor";
+import { Papa } from "ngx-papaparse";
 
 /**
  * This service allows to start a download process from the browser.
  * Depending on the browser and the setting this might open a popup or directly download the file.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class DownloadService {
+  /** CSV row separator */
+  static readonly SEPARATOR_ROW = "\n";
+  /** CSV column/field separator */
+  static readonly SEPARATOR_COL = ",";
+
   constructor(
-    private exportService: ExportService,
+    private dataTransformationService: DataTransformationService,
+    private papa: Papa,
     private loggingService: LoggingService
   ) {}
 
@@ -44,12 +52,20 @@ export class DownloadService {
     exportConfig?: ExportColumnConfig[]
   ): Promise<Blob> {
     let result = "";
+
+    if (exportConfig) {
+      data = await this.dataTransformationService.transformData(
+        data,
+        exportConfig
+      );
+    }
+
     switch (format.toLowerCase()) {
       case "json":
-        result = this.exportService.createJson(data); // TODO: support exportConfig for json format
+        result = JSON.stringify(data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = await this.exportService.createCsv(data, exportConfig);
+        result = await this.createCsv(data);
         return new Blob([result], { type: "text/csv" });
       default:
         this.loggingService.warn(`Not supported format: ${format}`);
@@ -65,5 +81,26 @@ export class DownloadService {
     link.download = filename;
     link.addEventListener("click", () => window.URL.revokeObjectURL(blobData));
     return link;
+  }
+
+  /**
+   * Creates a CSV string of the input data
+   *
+   * @param data an array of elements
+   * @returns string a valid CSV string of the input data
+   */
+  async createCsv(data: any[]): Promise<string> {
+    // Collect all properties because papa only uses the properties of the first object
+    const keys = new Set<string>();
+    data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
+
+    data = data.map(transformToReadableFormat);
+
+    return this.papa.unparse(data, {
+      quotes: true,
+      header: true,
+      newline: DownloadService.SEPARATOR_ROW,
+      columns: [...keys],
+    });
   }
 }

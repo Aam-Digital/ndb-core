@@ -10,13 +10,11 @@ import { PermissionEnforcerService } from "../permission-enforcer/permission-enf
 import { User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
-import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { UpdatedEntity } from "../../entity/model/entity-update";
-import { PermissionsModule } from "../permissions.module";
 import { AuthUser } from "../../session/session-service/auth-user";
 
 describe("AbilityService", () => {
@@ -49,11 +47,7 @@ describe("AbilityService", () => {
     mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
-      imports: [
-        PermissionsModule,
-        ConfigurableEnumModule,
-        MockedTestingModule.withState(),
-      ],
+      imports: [MockedTestingModule.withState()],
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: EntityMapperService, useValue: mockEntityMapper },

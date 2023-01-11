@@ -1,7 +1,15 @@
 import { Component } from "@angular/core";
 import { RouteTarget } from "../../../app.routing";
-import { ParsedData } from "../../../features/data-import/input-file/input-file.component";
+import {
+  InputFileComponent,
+  ParsedData,
+} from "../../../features/data-import/input-file/input-file.component";
 import { ConfigImportParserService } from "../config-import-parser.service";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { FormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { ClipboardModule } from "@angular/cdk/clipboard";
 
 /**
  * UI to upload a config definition and generate a new app `Config` from the imported file.
@@ -11,6 +19,15 @@ import { ConfigImportParserService } from "../config-import-parser.service";
   selector: "app-config-import",
   templateUrl: "./config-import.component.html",
   styleUrls: ["./config-import.component.scss"],
+  imports: [
+    MatFormFieldModule,
+    FormsModule,
+    MatInputModule,
+    MatButtonModule,
+    ClipboardModule,
+    InputFileComponent,
+  ],
+  standalone: true,
 })
 export class ConfigImportComponent {
   loadedConfigFile: any;

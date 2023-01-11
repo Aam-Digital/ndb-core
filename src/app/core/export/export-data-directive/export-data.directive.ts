@@ -1,5 +1,5 @@
 import { Directive, HostListener, Input } from "@angular/core";
-import { ExportColumnConfig } from "../export-service/export-column-config";
+import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
 import { DownloadService } from "../download-service/download.service";
 
 export type ExportDataFormat = "csv" | "json";
@@ -20,6 +20,7 @@ export type ExportDataFormat = "csv" | "json";
  */
 @Directive({
   selector: "[appExportData]",
+  standalone: true,
 })
 export class ExportDataDirective {
   /** data to be exported */

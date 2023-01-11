@@ -13,7 +13,7 @@ describe("ShowFileComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ShowFileComponent],
+      imports: [ShowFileComponent],
       providers: [{ provide: MAT_DIALOG_DATA, useValue: "test.link" }],
     }).compileComponents();
 

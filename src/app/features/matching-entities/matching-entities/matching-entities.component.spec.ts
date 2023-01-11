@@ -3,23 +3,21 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { MatchingEntitiesConfig } from "./matching-entities-config";
 import { Entity } from "../../../core/entity/model/entity";
-import { MatchingEntitiesModule } from "../matching-entities.module";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { of, ReplaySubject } from "rxjs";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
   let fixture: ComponentFixture<MatchingEntitiesComponent>;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let mockActivatedRoute;
 
   let testConfig: MatchingEntitiesConfig = {
@@ -36,18 +34,13 @@ describe("MatchingEntitiesComponent", () => {
   };
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["loadType", "save"]);
-    mockEntityMapper.loadType.and.resolveTo([]);
     mockActivatedRoute = { data: null };
 
     await TestBed.configureTestingModule({
-      imports: [MatchingEntitiesModule],
+      imports: [MatchingEntitiesComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: FormDialogService, useValue: null },
-        EntitySchemaService,
-        { provide: ConfigService, useValue: null },
       ],
     }).compileComponents();
 
@@ -62,17 +55,7 @@ describe("MatchingEntitiesComponent", () => {
       config: testConfig,
     });
 
-    expect(component).toBeTruthy();
-    expect(component.columns).toEqual(testConfig.columns);
-    expect(component.onMatch).toEqual(testConfig.onMatch);
-    expect(component.showMap).toEqual(testConfig.showMap);
-    expect(component.matchActionLabel).toEqual(testConfig.matchActionLabel);
-    expect(component.rightSide.entityType).toEqual(
-      testConfig.rightSide.entityType
-    );
-    expect(component.leftSide.entityType).toEqual(
-      testConfig.leftSide.entityType
-    );
+    expectConfigToMatch(component, testConfig);
   });
 
   it("should create and map config from active route as alternative to dynamic config", async () => {
@@ -82,16 +65,29 @@ describe("MatchingEntitiesComponent", () => {
     });
     await component.ngOnInit();
 
-    expect(component.columns).toEqual(testConfig.columns);
-    expect(component.onMatch).toEqual(testConfig.onMatch);
-    expect(component.showMap).toEqual(testConfig.showMap);
-    expect(component.matchActionLabel).toEqual(testConfig.matchActionLabel);
-    expect(component.rightSide.entityType).toEqual(
-      testConfig.rightSide.entityType
-    );
-    expect(component.leftSide.entityType).toEqual(
-      testConfig.leftSide.entityType
-    );
+    expectConfigToMatch(component, testConfig);
+  });
+
+  it("should use central default config and overwrite with dynamic config of the component", () => {
+    testConfig.columns = [["defaultA", "defaultB"]];
+    const configService = TestBed.inject(ConfigService);
+    spyOn(configService, "getConfig").and.returnValue(testConfig);
+    const currentConfig: MatchingEntitiesConfig = {
+      columns: [["newA", "newB"]],
+    };
+
+    component.onInitFromDynamicConfig({
+      entity: new Entity(),
+      config: {},
+    });
+    expectConfigToMatch(component, testConfig);
+
+    component.onInitFromDynamicConfig({
+      entity: new Entity(),
+      config: currentConfig,
+    });
+    const expectedCombinedConfig = Object.assign({}, testConfig, currentConfig);
+    expectConfigToMatch(component, expectedCombinedConfig);
   });
 
   it("should assign config entity to the selected entity of the side not having a table with select options", async () => {
@@ -114,7 +110,7 @@ describe("MatchingEntitiesComponent", () => {
     });
     await component.ngOnInit();
 
-    expect(component.leftSide.selected).toEqual(testEntity);
+    expect(component.sideDetails[0].selected).toEqual(testEntity);
 
     component.onInitFromDynamicConfig({
       entity: testEntity,
@@ -128,19 +124,20 @@ describe("MatchingEntitiesComponent", () => {
     });
     await component.ngOnInit();
 
-    expect(component.rightSide.selected).toEqual(testEntity);
+    expect(component.sideDetails[1].selected).toEqual(testEntity);
   });
 
   it("should init details for template including available entities table and its columns", async () => {
     const testEntity = new Entity();
-    component.leftSide = { selected: testEntity };
+    component.entity = testEntity;
     component.rightSide = { entityType: "Child" };
     component.columns = [
       ["_id", "name"],
       ["_rev", "phone"],
     ];
     const allChildren: Child[] = [Child.create("1"), Child.create("2")];
-    mockEntityMapper.loadType.and.resolveTo(allChildren);
+    const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadTypeSpy.and.resolveTo(allChildren);
 
     await component.ngOnInit();
 
@@ -155,7 +152,7 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(component.sideDetails[1].selected).toBeUndefined();
     expect(component.sideDetails[1].entityType).toEqual(Child);
-    expect(mockEntityMapper.loadType).toHaveBeenCalledWith(Child);
+    expect(loadTypeSpy).toHaveBeenCalledWith(Child);
     expect(component.sideDetails[1].availableEntities).toEqual(allChildren);
     expect(component.sideDetails[1].columns).toEqual(["name", "phone"]);
   });
@@ -168,14 +165,15 @@ describe("MatchingEntitiesComponent", () => {
     };
     const testEntity = new Entity();
     const matchedEntity = Child.create("matched child");
-    component.leftSide = { selected: testEntity };
-    component.rightSide = { selected: matchedEntity };
     component.columns = [["_id", "name"]];
+    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
 
     await component.ngOnInit();
+    component.sideDetails[0].selectMatch(testEntity);
+    component.sideDetails[1].selectMatch(matchedEntity);
     await component.createMatch();
 
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(
+    expect(saveSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
         schoolId: testEntity.getId(false),
         childId: matchedEntity.getId(false),
@@ -183,9 +181,7 @@ describe("MatchingEntitiesComponent", () => {
           "ChildSchoolRelation " + testEntity.toString() + " - matched child",
       } as Partial<ChildSchoolRelation>)
     );
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(
-      jasmine.any(ChildSchoolRelation)
-    );
+    expect(saveSpy).toHaveBeenCalledWith(jasmine.any(ChildSchoolRelation));
   });
 
   it("should create distance column and publish updates", async () => {
@@ -226,6 +222,43 @@ describe("MatchingEntitiesComponent", () => {
     const child = new Child();
     component.entityInMapClicked(child);
 
-    expect(component.rightSide.selected).toBe(child);
+    expect(component.sideDetails[1].selected).toBe(child);
+  });
+
+  it("should not change the provided config object directly", async () => {
+    component.onInitFromDynamicConfig({
+      entity: new Entity(),
+      config: testConfig,
+    });
+    await component.ngOnInit();
+    const selectedChild = new Child();
+    component.sideDetails[1].selectMatch(selectedChild);
+    expect(component.sideDetails[1].selected).toEqual(selectedChild);
+
+    const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
+    const newComponent = newFixture.componentInstance;
+    newComponent.onInitFromDynamicConfig({
+      entity: new Entity(),
+      config: testConfig,
+    });
+    await newComponent.ngOnInit();
+
+    expect(newComponent.sideDetails[1].selected).not.toEqual(selectedChild);
   });
 });
+
+function expectConfigToMatch(
+  component: MatchingEntitiesComponent,
+  configToLoad: MatchingEntitiesConfig
+) {
+  expect(component.columns).toEqual(configToLoad.columns);
+  expect(component.onMatch).toEqual(configToLoad.onMatch);
+  expect(component.showMap).toEqual(configToLoad.showMap);
+  expect(component.matchActionLabel).toEqual(configToLoad.matchActionLabel);
+  expect(component.rightSide.entityType).toEqual(
+    configToLoad.rightSide.entityType
+  );
+  expect(component.leftSide.entityType).toEqual(
+    configToLoad.leftSide.entityType
+  );
+}

@@ -12,9 +12,11 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 @Component({
   selector: "app-note-attendance-count-block",
   template: `{{ participantsWithStatus }}`,
+  standalone: true,
 })
 export class NoteAttendanceCountBlockComponent
-  implements OnInitDynamicComponent, OnInit {
+  implements OnInitDynamicComponent, OnInit
+{
   /**
    * The note on which the attendance should be counted.
    */

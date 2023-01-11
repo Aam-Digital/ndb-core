@@ -3,12 +3,10 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AddDayAttendanceComponent } from "./add-day-attendance.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
-import { AttendanceModule } from "../attendance.module";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { AttendanceService } from "../attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AddDayAttendanceComponent", () => {
   let component: AddDayAttendanceComponent;
@@ -16,29 +14,23 @@ describe("AddDayAttendanceComponent", () => {
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-        "getChildren",
-      ]);
-      mockChildrenService.getChildren.and.returnValue(of([]));
+  beforeEach(waitForAsync(() => {
+    mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
+      "getChildren",
+    ]);
+    mockChildrenService.getChildren.and.returnValue(of([]));
 
-      TestBed.configureTestingModule({
-        imports: [
-          AttendanceModule,
-          MockedTestingModule.withState(),
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          { provide: ChildrenService, useValue: mockChildrenService },
-          {
-            provide: AttendanceService,
-            useValue: { getEventsOnDate: () => Promise.resolve([]) },
-          },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [AddDayAttendanceComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: ChildrenService, useValue: mockChildrenService },
+        {
+          provide: AttendanceService,
+          useValue: { getEventsOnDate: () => Promise.resolve([]) },
+        },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AddDayAttendanceComponent);

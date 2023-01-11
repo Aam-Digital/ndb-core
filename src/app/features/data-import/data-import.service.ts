@@ -16,7 +16,7 @@ import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-dataty
 /**
  * This service handels the parsing of CSV files and importing of data
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class DataImportService {
   private readonly dateDataTypes = [
     dateEntitySchemaDatatype,
@@ -43,7 +43,7 @@ export class DataImportService {
     data: any[],
     importMeta: ImportMetaData
   ): Promise<void> {
-    const restorePoint = await this.backupService.getJsonExport();
+    const restorePoint = await this.backupService.getDatabaseExport();
     const confirmed = await this.getUserConfirmation(data, importMeta);
     if (!confirmed) {
       return;
@@ -64,7 +64,7 @@ export class DataImportService {
     );
     snackBarRef.onAction().subscribe(async () => {
       await this.backupService.clearDatabase();
-      await this.backupService.importJson(restorePoint, true);
+      await this.backupService.restoreData(restorePoint, true);
     });
   }
 

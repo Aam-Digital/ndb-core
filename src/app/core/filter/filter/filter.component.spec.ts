@@ -6,7 +6,6 @@ import { defaultInteractionTypes } from "../../config/default-config/default-int
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
-import { FilterModule } from "../filter.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { BooleanFilterConfig } from "../../entity-components/entity-list/EntityListConfig";
@@ -18,7 +17,7 @@ describe("FilterComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FilterModule, MockedTestingModule.withState()],
+      imports: [FilterComponent, MockedTestingModule.withState()],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FilterComponent);

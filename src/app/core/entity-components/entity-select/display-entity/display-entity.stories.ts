@@ -5,25 +5,17 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { BehaviorSubject } from "rxjs";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { User } from "../../../user/user";
-import { SchoolsModule } from "../../../../child-dev-project/schools/schools.module";
-import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { EntitySelectModule } from "../entity-select.module";
 
 export default {
   title: "Core/EntityComponents/DisplayEntity",
   component: DisplayEntityComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        EntitySelectModule,
-        StorybookBaseModule,
-        SchoolsModule,
-        ChildrenModule,
-      ],
+      imports: [StorybookBaseModule, DisplayEntityComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper([]) },
         { provide: ChildrenService, useValue: null },

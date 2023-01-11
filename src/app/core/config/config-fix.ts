@@ -53,6 +53,11 @@ export const defaultJsonConfig = {
         "link": "/note"
       },
       {
+        "name": $localize`:Menu item:Tasks`,
+        "icon": "tasks",
+        "link": "/todo"
+      },
+      {
         "name": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
@@ -175,6 +180,10 @@ export const defaultJsonConfig = {
           "config": {
             "warningLevels": ["WARNING", "URGENT"],
           }
+        },
+        {
+          "component": "TodosDashboard",
+          "config": {}
         },
         {
           "component": "NotesDashboard",
@@ -321,6 +330,10 @@ export const defaultJsonConfig = {
     "component": "ConfigImport",
     "permittedUserRoles": ["admin_app"]
   },
+  "view:admin/conflicts": {
+    "component": "ConflictResolution",
+    "permittedUserRoles": ["admin_app"]
+  },
   "view:import": {
     "component": "Import",
     "permittedUserRoles": ["admin_app"]
@@ -368,10 +381,6 @@ export const defaultJsonConfig = {
       ],
     },
     "permittedUserRoles": ["admin_app"]
-  },
-  "view:admin/conflicts": {
-    "permittedUserRoles": ["admin_app"],
-    "lazyLoaded": true
   },
   "view:help": {
     "component": "MarkdownPage",
@@ -667,26 +676,13 @@ export const defaultJsonConfig = {
               "component": "Aser"
             },
             {
-              title: $localize`:Child details section title:Find a suitable new school`,
-              component: "MatchingEntities",
-              config: {
-                columns: [
-                  ["name", "name"],
-                  ["motherTongue", "language"],
-                  ["address", "address"],
-                  [undefined, "distance"]
-                ],
-                rightSide: {
-                  entityType: School.ENTITY_TYPE,
-                  availableFilters: [{ "id": "language" }]
+              "title": $localize`:Child details section title:Find a suitable new school`,
+              "component": "MatchingEntities",
+              "config": {
+                "rightSide": {
+                  "entityType": School.ENTITY_TYPE,
+                  "availableFilters": [{ "id": "language" }]
                 },
-                showMap: ["address", "address"],
-                onMatch: {
-                  newEntityType: ChildSchoolRelation.ENTITY_TYPE,
-                  newEntityMatchPropertyLeft: "childId",
-                  newEntityMatchPropertyRight: "schoolId",
-                  columnsToReview: ["start", "schoolClass", "childId", "schoolId"]
-                }
               }
             }
           ]
@@ -701,11 +697,15 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          "title": $localize`:Panel title:Notes & Reports`,
+          "title": $localize`:Panel title:Notes & Tasks`,
           "components": [
             {
               "title": "",
               "component": "NotesRelatedToEntity"
+            },
+            {
+              "title": "Tasks",
+              "component": "TodosRelatedToEntity"
             }
           ]
         },
@@ -817,7 +817,8 @@ export const defaultJsonConfig = {
               "config": {
                 "cols": [[
                   "linkedGroups",
-                  "participants"
+                  "participants",
+                  "excludedParticipants"
                 ]]
               }
             }
@@ -898,56 +899,33 @@ export const defaultJsonConfig = {
           "mode": "exporting",
           "aggregationDefinitions": [
             {
-              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, SCHOOL_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
+              "query": `${EventNote.ENTITY_TYPE}:toArray[* date >= ? & date <= ?]`,
+              groupBy: { label: "Type", property: "category" },
               "subQueries": [
                 {
-                  "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(" + $localize`School Class` + ")"
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Name`,
-                  "query": `.participant:toEntities(Child).name`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Total`,
-                  "query": `total`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Present`,
-                  "query": `present`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Rate`,
-                  "query": `percentage`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Late`,
-                  "query": `detailedStatus.LATE`
-                }
-              ]
-            },
-            {
-              "query": `${EventNote.ENTITY_TYPE}:toArray:filterByObjectAttribute(category, id, COACHING_CLASS)[* date >= ? & date <= ?]:getAttendanceArray:getAttendanceReport`,
-              "subQueries": [
-                {
-                  "label": $localize`:Name of column of a report:Type`,
-                  "query": ":setString(" + $localize`Coaching Class` + ")"
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Name`,
-                  "query": `.participant:toEntities(Child).name`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Total`,
-                  "query": `total`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Present`,
-                  "query": `present`
-                },
-                {
-                  "label": $localize`:Name of a column of a report:Rate`,
-                  "query": `percentage`
+                  query: ":getAttendanceArray:getAttendanceReport",
+                  subQueries: [
+                    {
+                      "label": $localize`:Name of a column of a report:Name`,
+                      "query": `.participant:toEntities(Child).name`
+                    },
+                    {
+                      "label": $localize`:Name of a column of a report:Total`,
+                      "query": `total`
+                    },
+                    {
+                      "label": $localize`:Name of a column of a report:Present`,
+                      "query": `present`
+                    },
+                    {
+                      "label": $localize`:Name of a column of a report:Rate`,
+                      "query": `percentage`
+                    },
+                    {
+                      "label": $localize`:Name of a column of a report:Late`,
+                      "query": `detailedStatus.LATE`
+                    }
+                  ]
                 }
               ]
             },
@@ -1122,25 +1100,49 @@ export const defaultJsonConfig = {
   "view:matching": {
     component: "MatchingEntities",
     config: {
-      columns: [
-        ["name", "name"],
-        ["motherTongue", "language"],
-        ["address", "address"],
-        ["distance", "privateSchool"],
-      ],
       rightSide: {
         entityType: School.ENTITY_TYPE,
         prefilter: { "privateSchool": true },
         availableFilters: [{ "id": "language" }],
       },
       leftSide: { entityType: Child.ENTITY_TYPE },
-      showMap: ["address", "address"],
-      onMatch: {
-        newEntityType: ChildSchoolRelation.ENTITY_TYPE,
-        newEntityMatchPropertyLeft: "childId",
-        newEntityMatchPropertyRight: "schoolId",
-        columnsToReview: ["start", "end", "result", "childId", "schoolId"]
-      }
+    }
+  },
+  "appConfig:matching-entities": {
+    "columns": [
+      ["name", "name"],
+      ["motherTongue", "language"],
+      ["address", "address"],
+      ["distance", "privateSchool"],
+    ],
+    "showMap": ["address", "address"],
+    "onMatch": {
+      "newEntityType": ChildSchoolRelation.ENTITY_TYPE,
+      "newEntityMatchPropertyLeft": "childId",
+      "newEntityMatchPropertyRight": "schoolId",
+      "columnsToReview": ["start", "end", "result", "childId", "schoolId"]
+    }
+  },
+
+  "entity:Todo": {
+    "attributes": []
+  },
+  "view:todo": {
+    "component": "TodoList",
+    "config": {
+      "entity": "Todo",
+      "columns": ["deadline", "subject", "assignedTo", "startDate", "relatedEntities"],
+      "filters": [
+        { "id": "assignedTo" },
+
+        {
+          "id": "due-status",
+          "type": "prebuilt"
+        },
+        { "id": "deadline" },
+        { "id": "deadline" },
+        { "id": "startDate" }
+      ]
     }
   }
 };

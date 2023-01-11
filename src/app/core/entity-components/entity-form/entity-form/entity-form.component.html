@@ -1,45 +1,5 @@
-<!-- The wrapper for edit, save and cancel button.
-
-The classes 'flex-row' and 'gap-small' enable a small gap between the Save button and the Cancel button.
-Simply applying a margin right to the 'Save' button collides with the styles that the 'mat-raised-button'
-brings with it.
--->
-<div class="form-buttons-wrapper padding-bottom-small flex-row gap-small align-self-end">
-  <button
-    *ngIf="form?.enabled"
-    mat-raised-button
-    (click)="saveForm()"
-    i18n="Save button for forms"
-  >
-    Save
-  </button>
-
-  <button
-    *ngIf="form?.enabled"
-    mat-raised-button
-    (click)="cancelClicked()"
-    i18n="Cancel button for forms"
-  >
-    Cancel
-  </button>
-
-  <ng-container *ngIf="form?.disabled">
-    <button
-      mat-raised-button
-      (click)="this.form.enable()"
-      *appDisabledEntityOperation="{
-        entity: entity,
-        operation: 'update'
-      }"
-      i18n="Edit button for forms"
-    >
-      Edit
-    </button>
-  </ng-container>
-</div>
-
-<form class="entity-form-columns">
-  <div *ngFor="let col of _columns; let i=index" class="entity-form-cell">
+<form [ngClass]="{ 'grid-layout': gridLayout }">
+  <div *ngFor="let col of columns; let i=index" class="entity-form-cell">
     <h2 *ngIf="columnHeaders?.[i]">{{columnHeaders[i]}}</h2>
     <div *ngFor="let row of col">
       <div [class.field-with-tooltip-suffix]="row.tooltip">
@@ -54,15 +14,16 @@ brings with it.
           }">
         </ng-container>
       </div>
-      <fa-icon
-        (click)="tooltipElement.show()"
-        #tooltipElement="matTooltip"
+      <button
         *ngIf="row.tooltip"
-        matSuffix
-        icon="question-circle"
+        mat-icon-button
+        type="button"
+        #tooltipElement="matTooltip"
         [matTooltip]="row.tooltip"
-        class="tooltip-suffix"
-      ></fa-icon>
+        (click)="tooltipElement.show()"
+      >
+        <fa-icon icon="question-circle"></fa-icon>
+      </button>
     </div>
   </div>
 </form>

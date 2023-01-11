@@ -1,5 +1,4 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { AppModule } from "../app.module";
 import moment from "moment";
 import { Database } from "../core/database/database";
 import { DemoDataService } from "../core/demo-data/demo-data.service";
@@ -8,23 +7,21 @@ import { DatabaseTestingModule } from "./database-testing.module";
 import { environment } from "../../environments/environment";
 
 xdescribe("Performance Tests", () => {
-  beforeEach(async () => {
+  beforeEach(waitForAsync(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 
     environment.session_type = SessionType.mock; // change to SessionType.local to run performance tests with the InBrowser database
 
     await TestBed.configureTestingModule({
-      imports: [AppModule, DatabaseTestingModule],
+      imports: [DatabaseTestingModule],
     }).compileComponents();
     const demoDataService = TestBed.inject(DemoDataService);
     const setup = new Timer();
     await demoDataService.publishDemoData();
     console.log("finished publishing demo data", setup.getDuration());
-  });
-
-  afterEach(waitForAsync(() => {
-    return TestBed.inject(Database).destroy();
   }));
+
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("basic test example", async () => {
     await comparePerformance(

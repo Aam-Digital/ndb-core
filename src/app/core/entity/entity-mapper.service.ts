@@ -34,7 +34,7 @@ import { map } from "rxjs/operators";
  * - [How to Load and Save Data]{@link /additional-documentation/how-to-guides/load-and-save-data.html}
  * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class EntityMapperService {
   constructor(
     private _db: Database,

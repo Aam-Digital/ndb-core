@@ -29,4 +29,4 @@ export function toFormFieldConfig(column: ColumnConfig): FormFieldConfig {
  *
  * The filter is parsed using ucast {@link https://github.com/stalniy/ucast/tree/master/packages/mongo2js}
  */
-export type DataFilter<T extends Entity> = MongoQuery<T>;
+export type DataFilter<T> = MongoQuery<T>;

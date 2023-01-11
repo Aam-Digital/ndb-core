@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import {
   ProgressDashboardPart,
   ProgressDashboardConfig,
@@ -7,12 +7,19 @@ import {
 import {
   FormBuilder,
   FormControl,
-  FormGroup,
+  FormGroup, ReactiveFormsModule,
   ValidationErrors,
   Validators,
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { AngularForm } from "@oasisdigital/angular-typed-forms-helpers";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { NgForOf, NgIf } from "@angular/common";
+import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 export interface EditProgressDashboardComponentData {
   title: string;
@@ -23,6 +30,19 @@ export interface EditProgressDashboardComponentData {
   selector: "app-edit-progress-dashboard",
   templateUrl: "./edit-progress-dashboard.component.html",
   styleUrls: ["./edit-progress-dashboard.component.scss"],
+  imports: [
+    MatDialogModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    NgIf,
+    DialogCloseComponent,
+    NgForOf,
+    MatButtonModule,
+    FontAwesomeModule,
+    MatTooltipModule
+  ],
+  standalone: true
 })
 export class EditProgressDashboardComponent {
   /**

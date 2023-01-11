@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { HistoricalDataService } from "./historical-data.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
@@ -12,17 +12,14 @@ import { DatabaseTestingModule } from "../../utils/database-testing.module";
 describe("HistoricalDataService", () => {
   let service: HistoricalDataService;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
-      providers: [HistoricalDataService],
     });
     service = TestBed.inject(HistoricalDataService);
-  });
+  }));
 
-  afterEach(async () => {
-    await TestBed.inject(Database).destroy();
-  });
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

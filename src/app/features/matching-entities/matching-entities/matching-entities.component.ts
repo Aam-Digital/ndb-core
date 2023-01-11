@@ -20,6 +20,16 @@ import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
 import { ReplaySubject } from "rxjs";
+import { ConfigService } from "../../../core/config/config.service";
+import { MatTableModule } from "@angular/material/table";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { EntityPropertyViewComponent } from "../../../core/entity-components/entity-utils/entity-property-view/entity-property-view.component";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { MapComponent } from "../../location/map/map.component";
+import { FilterComponent } from "../../../core/filter/filter/filter.component";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -27,6 +37,7 @@ interface MatchingSide extends MatchingSideConfig {
   availableEntities?: Entity[];
   selectMatch?: (e) => void;
   entityType: EntityConstructor;
+  selected?: Entity;
 }
 
 @RouteTarget("MatchingEntities")
@@ -35,14 +46,29 @@ interface MatchingSide extends MatchingSideConfig {
   selector: "app-matching-entities",
   templateUrl: "./matching-entities.component.html",
   styleUrls: ["./matching-entities.component.scss"],
+  imports: [
+    MatTableModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    NgIf,
+    MatButtonModule,
+    NgForOf,
+    EntitySubrecordComponent,
+    EntityPropertyViewComponent,
+    MapComponent,
+    FilterComponent,
+  ],
+  standalone: true,
 })
 export class MatchingEntitiesComponent
   implements OnInit, OnInitDynamicComponent
 {
+  static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
+
   @Input() entity: Entity;
 
-  @Input() leftSide: MatchingSide | MatchingSideConfig = {};
-  @Input() rightSide: MatchingSide | MatchingSideConfig = {};
+  @Input() leftSide: MatchingSideConfig = {};
+  @Input() rightSide: MatchingSideConfig = {};
   mapEntities: { entity: Entity; property: string }[] = [];
 
   columnsToDisplay = [];
@@ -71,6 +97,7 @@ export class MatchingEntitiesComponent
     private route: ActivatedRoute,
     private formDialog: FormDialogService,
     private entityMapper: EntityMapperService,
+    private configService: ConfigService,
     private entityRegistry: EntityRegistry
   ) {}
 
@@ -82,7 +109,7 @@ export class MatchingEntitiesComponent
 
   async ngOnInit() {
     this.route?.data?.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
-      if (!data?.config?.onMatch) {
+      if (!data?.config.leftSide || !data?.config.rightSide) {
         return;
       }
       this.initConfig(data.config);
@@ -96,7 +123,16 @@ export class MatchingEntitiesComponent
     this.columnsToDisplay = ["side-0", "side-1"];
   }
 
+  /**
+   * Apply config object to the component inputs (including global default config)
+   * @private
+   */
   private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
+    const defaultConfig = this.configService.getConfig<MatchingEntitiesConfig>(
+      MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+    );
+    config = Object.assign({}, defaultConfig, config);
+
     this.columns = config.columns ?? this.columns;
     this.showMap = config.showMap ?? this.showMap;
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
@@ -108,11 +144,17 @@ export class MatchingEntitiesComponent
     this.entity = entity;
   }
 
+  /**
+   * Generate setup for a side of the matching view template based on the component input properties.
+   * @param side
+   * @param sideIndex
+   * @private
+   */
   private async initSideDetails(
     side: MatchingSideConfig,
     sideIndex: number
   ): Promise<MatchingSide> {
-    const newSide = side as MatchingSide; // we are transforming it into this type here
+    const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
 
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
@@ -172,18 +214,20 @@ export class MatchingEntitiesComponent
     const newMatchEntity = new (this.entityRegistry.get(
       this.onMatch.newEntityType
     ))();
+    const leftMatch = this.sideDetails[0].selected;
+    const rightMatch = this.sideDetails[1].selected;
 
     newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] =
-      this.leftSide.selected.getId(false);
+      leftMatch.getId(false);
     newMatchEntity[this.onMatch.newEntityMatchPropertyRight] =
-      this.rightSide.selected.getId(false);
+      rightMatch.getId(false);
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();
     newMatchEntity["start"] = new Date();
     newMatchEntity["name"] = `${
       newMatchEntity.getConstructor().label
-    } ${this.leftSide.selected.toString()} - ${this.rightSide.selected.toString()}`;
+    } ${leftMatch.toString()} - ${rightMatch.toString()}`;
 
     if (this.onMatch.columnsToReview) {
       this.formDialog

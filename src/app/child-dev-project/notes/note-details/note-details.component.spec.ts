@@ -3,14 +3,12 @@ import { Note } from "../model/note";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EMPTY } from "rxjs";
 import { ChildrenService } from "../../children/children.service";
-import { NotesModule } from "../notes.module";
 import { Child } from "../../children/model/child";
 import { MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { By } from "@angular/platform-browser";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 
 function generateTestNote(forChildren: Child[]) {
@@ -50,9 +48,8 @@ describe("NoteDetailsComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [
-        NotesModule,
+        NoteDetailsComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, children),
-        FontAwesomeTestingModule,
       ],
       providers: [
         { provide: MatDialogRef, useValue: dialogRefMock },

@@ -1,11 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditLongTextComponent } from "./edit-long-text.component";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ReactiveFormsModule } from "@angular/forms";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
 import { setupEditComponent } from "../edit-component.spec";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("EditLongTextComponent", () => {
   let component: EditLongTextComponent;
@@ -13,13 +10,7 @@ describe("EditLongTextComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        NoopAnimationsModule,
-        MatFormFieldModule,
-        MatInputModule,
-        ReactiveFormsModule,
-      ],
-      declarations: [EditLongTextComponent],
+      imports: [EditLongTextComponent, NoopAnimationsModule],
     }).compileComponents();
   });
 

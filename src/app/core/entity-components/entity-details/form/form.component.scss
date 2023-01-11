@@ -1,0 +1,13 @@
+@use "src/styles/variables/sizes";
+
+:host {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-buttons-wrapper {
+  position: sticky;
+  top: sizes.$regular;
+  z-index: 100;
+  margin-right: 3px;
+}

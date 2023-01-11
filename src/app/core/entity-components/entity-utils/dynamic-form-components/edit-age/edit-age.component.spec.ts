@@ -1,19 +1,12 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditAgeComponent } from "./edit-age.component";
-import { ReactiveFormsModule } from "@angular/forms";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatNativeDateModule } from "@angular/material/core";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { MatInputModule } from "@angular/material/input";
 import { setupEditComponent } from "../edit-component.spec";
 import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
+import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 
 describe("EditAgeComponent", () => {
   let component: EditAgeComponent;
@@ -22,17 +15,7 @@ describe("EditAgeComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [
-        NoopAnimationsModule,
-        MatFormFieldModule,
-        MatDatepickerModule,
-        FontAwesomeModule,
-        ReactiveFormsModule,
-        MatNativeDateModule,
-        FontAwesomeTestingModule,
-        MatInputModule,
-      ],
-      declarations: [EditAgeComponent],
+      imports: [EditAgeComponent, MockedTestingModule],
     }).compileComponents();
   });
 
@@ -51,9 +34,9 @@ describe("EditAgeComponent", () => {
   it("should transform Date to DateOfBirth", async () => {
     const datepicker = await loader.getHarness(MatDatepickerInputHarness);
 
-    await datepicker.setValue("2022-12-20");
+    await datepicker.setValue("6/21/2019");
 
     expect(component.formControl.value).toBeInstanceOf(DateWithAge);
-    expect(component.formControl.value).toBeDate(new Date("2022-12-20"));
+    expect(component.formControl.value).toBeDate("2019-06-21");
   });
 });

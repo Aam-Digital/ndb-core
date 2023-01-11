@@ -7,6 +7,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
+import * as _ from "lodash-es";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -18,7 +19,7 @@ export type EntityForm<T extends Entity> = TypedForm<Partial<T>>;
  * This service provides helper functions for creating tables or forms for an entity as well as saving
  * new changes correctly to the entity.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class EntityFormService {
   constructor(
     private fb: FormBuilder,
@@ -28,6 +29,12 @@ export class EntityFormService {
     private ability: EntityAbility
   ) {}
 
+  /**
+   * Uses schema information to fill missing fields in the FormFieldConfig.
+   * @param formFields
+   * @param entityType
+   * @param forTable
+   */
   public extendFormFieldConfig(
     formFields: FormFieldConfig[],
     entityType: EntityConstructor,
@@ -71,10 +78,19 @@ export class EntityFormService {
     }
   }
 
+  /**
+   * Creates a FormGroups from the formFields and the existing values from the entity.
+   * Missing fields in the formFields are filled with schema information.
+   * @param formFields
+   * @param entity
+   * @param forTable
+   */
   public createFormGroup<T extends Entity>(
     formFields: FormFieldConfig[],
-    entity: T
+    entity: T,
+    forTable = false
   ): EntityForm<T> {
+    this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
     const formConfig = {};
     const entitySchema = entity.getSchema();
     formFields
@@ -130,11 +146,19 @@ export class EntityFormService {
   }
 
   private canSave(oldEntity: Entity, newEntity: Entity): boolean {
-    // no _rev means a new entity is created
-    if (oldEntity._rev) {
-      return this.ability.can("update", oldEntity);
-    } else {
+    if (oldEntity.isNew) {
       return this.ability.can("create", newEntity);
+    } else {
+      return this.ability.can("update", oldEntity);
     }
+  }
+
+  resetForm<E extends Entity>(form: EntityForm<E>, entity: E) {
+    // Patch form with values from the entity
+    form.patchValue(entity as any);
+    // Clear values that are not yet present on the entity
+    const newKeys = Object.keys(_.omit(form.controls, Object.keys(entity)));
+    newKeys.forEach((key) => form.get(key).setValue(null));
+    form.markAsPristine();
   }
 }

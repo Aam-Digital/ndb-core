@@ -4,8 +4,6 @@ import {
   ViewDistanceComponent,
   ViewDistanceConfig,
 } from "./view-distance.component";
-import { ReadonlyFunctionComponent } from "../../../core/entity-components/entity-utils/view-components/readonly-function/readonly-function.component";
-import { EntityFunctionPipe } from "../../../core/entity-components/entity-utils/view-components/readonly-function/entity-function.pipe";
 import { ViewPropertyConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Subject } from "rxjs";
@@ -17,11 +15,7 @@ describe("ViewDistanceComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [
-        ViewDistanceComponent,
-        ReadonlyFunctionComponent,
-        EntityFunctionPipe,
-      ],
+      imports: [ViewDistanceComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ViewDistanceComponent);

@@ -1,13 +1,19 @@
-import { Component } from "@angular/core";
+import { Component, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { from, Observable } from "rxjs";
 import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Router } from "@angular/router";
-import { FormControl } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatInputModule } from "@angular/material/input";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
+import { DisplayEntityComponent } from "../../entity-components/entity-select/display-entity/display-entity.component";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -19,10 +25,24 @@ import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guar
   selector: "app-search",
   templateUrl: "./search.component.html",
   styleUrls: ["./search.component.scss"],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatFormFieldModule,
+    FontAwesomeModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    MatAutocompleteModule,
+    NgSwitch,
+    NgSwitchCase,
+    NgForOf,
+    DisplayEntityComponent,
+    AsyncPipe
+  ],
+  standalone: true
 })
 export class SearchComponent {
+  static INPUT_DEBOUNCE_TIME_MS: number = 400;
   MIN_CHARACTERS_FOR_SEARCH: number = 3;
-  INPUT_DEBOUNCE_TIME_MS: number = 400;
 
   readonly NOTHING_ENTERED = 0;
   readonly TOO_FEW_CHARACTERS = 1;
@@ -45,7 +65,7 @@ export class SearchComponent {
     private entities: EntityRegistry
   ) {
     this.results = this.formControl.valueChanges.pipe(
-      debounceTime(this.INPUT_DEBOUNCE_TIME_MS),
+      debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
       skipUntil(this.createSearchIndex()),
       tap((next) => (this.state = this.updateState(next))),
       concatMap((next: string) => this.searchResults(next))
@@ -93,6 +113,7 @@ export class SearchComponent {
     ]);
     this.formControl.setValue("");
   }
+
   /**
    * Check if the input should start an actual search.
    * Only search for words starting with a char or number -> no searching for space or no input

@@ -1,7 +1,9 @@
 <h1>Technical User Support Details</h1>
 
-<p id="table-description" class="text-secondary">The following details of your device and app can help the user
-  support troubleshoot when you are having technical issues.</p>
+<p id="table-description" class="text-secondary">
+  The following details of your device and app can help the user support
+  troubleshoot when you are having technical issues.
+</p>
 
 <table class="support-table" aria-describedby="table-description">
   <thead>
@@ -13,7 +15,7 @@
   <tbody class="support-table--body">
   <tr>
     <td>Username</td>
-    <td>{{ currentUser.name }}</td>
+    <td>{{ currentUser?.name ?? '-' }}</td>
   </tr>
   <tr>
     <td>App version</td>
@@ -55,7 +57,9 @@
   <div class="sw-logs tech-details">{{ swLog }}</div>
 </mat-expansion-panel>
 
-<button mat-raised-button (click)="sendReport()" class="first-button">Send Details</button>
-
-<button mat-raised-button color="warn" (click)="resetApplication()">Reset Application</button>
-
+<div class="flex-row gap-regular">
+  <button mat-raised-button (click)="sendReport()">Send Details</button>
+  <button mat-raised-button color="warn" (click)="resetApplication()">
+    Reset Application
+  </button>
+</div>

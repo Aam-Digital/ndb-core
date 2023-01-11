@@ -15,7 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, ViewContainerRef } from "@angular/core";
+import {
+  Component,
+  Injector,
+  ViewContainerRef,
+  ɵcreateInjector as createInjector,
+} from "@angular/core";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ConfigService } from "./core/config/config.service";
 import { RouterService } from "./core/view/dynamic-routing/router.service";
@@ -25,7 +30,6 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { environment } from "../environments/environment";
 import { Child } from "./child-dev-project/children/model/child";
 import { School } from "./child-dev-project/schools/model/school";
-import { DemoDataInitializerService } from "./core/demo-data/demo-data-initializer.service";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
@@ -48,8 +52,8 @@ export class AppComponent {
     private sessionService: SessionService,
     private activatedRoute: ActivatedRoute,
     private router: Router,
-    private demoDataInitializer: DemoDataInitializerService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
+    private injector: Injector
   ) {
     this.initBasicServices();
   }
@@ -88,7 +92,8 @@ export class AppComponent {
     }
 
     if (environment.demo_mode) {
-      await this.demoDataInitializer.run();
+      const m = await import("./core/demo-data/demo-data.module");
+      createInjector(m.DemoDataModule, this.injector);
     }
   }
 }

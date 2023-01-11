@@ -8,8 +8,13 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSort, MatSortable } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
+import {
+  MatSort,
+  MatSortModule,
+  Sort,
+  SortDirection,
+} from "@angular/material/sort";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
@@ -27,8 +32,8 @@ import {
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { tableSort } from "./table-sort";
 import {
-  ScreenWidthObserver,
   ScreenSize,
+  ScreenWidthObserver,
 } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
@@ -40,6 +45,15 @@ import {
 import { FilterService } from "../../../filter/filter.service";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Router } from "@angular/router";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
+import { Angulartics2Module } from "angulartics2";
+import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -64,6 +78,21 @@ export interface TableRow<T extends Entity> {
   selector: "app-entity-subrecord",
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    MatTableModule,
+    MatSortModule,
+    NgForOf,
+    MatTooltipModule,
+    DynamicComponentDirective,
+    MatButtonModule,
+    FontAwesomeModule,
+    DisableEntityOperationDirective,
+    Angulartics2Module,
+    ListPaginatorComponent,
+  ],
+  standalone: true,
 })
 export class EntitySubrecordComponent<T extends Entity>
   implements OnChanges, OnInit
@@ -76,6 +105,7 @@ export class EntitySubrecordComponent<T extends Entity>
   @Input() set columns(columns: ColumnConfig[]) {
     this._columns = columns.map(toFormFieldConfig);
     this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
+    this.idForSavingPagination = this._columns.map((col) => col.id).join("");
   }
 
   _columns: FormFieldConfig[] = [];
@@ -93,8 +123,6 @@ export class EntitySubrecordComponent<T extends Entity>
 
   private _records: T[] = [];
 
-  @Output() recordsChange = new EventEmitter<T[]>();
-
   /**
    * factory method to create a new instance of the displayed Entity type
    * used when the user adds a new entity to the list.
@@ -111,6 +139,9 @@ export class EntitySubrecordComponent<T extends Entity>
   /** columns displayed in the template's table */
   @Input() columnsToDisplay: string[] = [];
 
+  /** how to sort data by default during initialization */
+  @Input() defaultSort: Sort;
+
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
@@ -120,9 +151,16 @@ export class EntitySubrecordComponent<T extends Entity>
   idForSavingPagination = "startWert";
 
   @ViewChild(MatSort) set sort(matSort: MatSort) {
-    // Initialize sort once available
+    // Initialize sort once available, workaround according to https://github.com/angular/components/issues/15008#issuecomment-516386055
     this.recordsDataSource.sort = matSort;
-    setTimeout(() => this.initDefaultSort());
+
+    this.recordsDataSource.sortData = (data, sort) =>
+      tableSort(data, {
+        active: sort.active as keyof T | "",
+        direction: sort.direction,
+      });
+
+    setTimeout(() => this.sortDefault());
   }
 
   get sort(): MatSort {
@@ -238,7 +276,7 @@ export class EntitySubrecordComponent<T extends Entity>
       if (this.columnsToDisplay.length < 2) {
         this.setupTable();
       }
-      this.initDefaultSort();
+      this.sortDefault();
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
@@ -253,33 +291,38 @@ export class EntitySubrecordComponent<T extends Entity>
           this.getEntityConstructor(),
           true
         );
-        this.idForSavingPagination = this._columns
-          .map((col) => (typeof col === "object" ? col.id : col))
-          .join("");
       } catch (err) {
         this.loggingService.warn(`Error creating form definitions: ${err}`);
       }
     }
   }
 
-  private initDefaultSort() {
-    this.recordsDataSource.sortData = (data, sort) =>
-      tableSort(data, {
-        active: sort.active as keyof T | "",
-        direction: sort.direction,
-      });
+  private sortDefault() {
     if (!this.sort || this.sort.active) {
       // do not overwrite existing sort
       return;
     }
 
+    if (!this.defaultSort) {
+      this.defaultSort = this.inferDefaultSort();
+    }
+
+    this.sort.sort({
+      id: this.defaultSort.active,
+      start: this.defaultSort.direction,
+      disableClear: false,
+    });
+  }
+
+  private inferDefaultSort(): Sort {
     // initial sorting by first column, ensure that not the 'action' column is used
     const sortBy =
       this.columnsToDisplay[0] === "actions"
         ? this.columnsToDisplay[1]
         : this.columnsToDisplay[0];
     const sortByColumn = this._columns.find((c) => c.id === sortBy);
-    let sortDirection = "asc";
+
+    let sortDirection: SortDirection = "asc";
     if (
       sortByColumn?.view === "DisplayDate" ||
       sortByColumn?.edit === "EditDate"
@@ -288,10 +331,7 @@ export class EntitySubrecordComponent<T extends Entity>
       sortDirection = "desc";
     }
 
-    this.sort.sort({
-      id: sortBy,
-      start: sortDirection,
-    } as MatSortable);
+    return { active: sortBy, direction: sortDirection };
   }
 
   edit(row: TableRow<T>) {
@@ -299,7 +339,8 @@ export class EntitySubrecordComponent<T extends Entity>
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
           this._columns,
-          row.record
+          row.record,
+          true
         );
       }
       row.formGroup.enable();
@@ -361,13 +402,11 @@ export class EntitySubrecordComponent<T extends Entity>
     this.records = this._records.filter(
       (rec) => rec.getId() !== deleted.getId()
     );
-    this.recordsChange.emit(this._records);
   }
 
   private addToTable(record: T) {
     // use setter so datasource is also updated
     this.records = [record].concat(this._records);
-    this.recordsChange.emit(this._records);
   }
 
   /**

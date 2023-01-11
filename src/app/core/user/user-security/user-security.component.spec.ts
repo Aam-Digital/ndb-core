@@ -7,7 +7,6 @@ import {
 } from "@angular/core/testing";
 
 import { UserSecurityComponent } from "./user-security.component";
-import { UserModule } from "../user.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { HttpClient, HttpErrorResponse } from "@angular/common/http";
 import { AuthService } from "../../session/auth/auth.service";
@@ -18,7 +17,6 @@ import {
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { of, throwError } from "rxjs";
 import { User } from "../user";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { AppSettings } from "../../app-config/app-settings";
 import { SessionService } from "../../session/session-service/session.service";
 
@@ -59,7 +57,7 @@ describe("UserSecurityComponent", () => {
     });
 
     await TestBed.configureTestingModule({
-      imports: [UserModule, MockedTestingModule, FontAwesomeTestingModule],
+      imports: [UserSecurityComponent, MockedTestingModule],
       providers: [
         { provide: AuthService, useClass: KeycloakAuthService },
         { provide: HttpClient, useValue: mockHttp },
@@ -179,6 +177,18 @@ describe("UserSecurityComponent", () => {
 
     expect(mockHttp.post).not.toHaveBeenCalled();
     flush();
+  }));
+
+  it("Automatically trims whitespaces on the email input", fakeAsync(() => {
+    initComponent();
+
+    component.form.get("email").setValue("some_copied_email@mail.com  ");
+    tick();
+
+    expect(component.form.errors).toBeNull();
+    expect(component.form.get("email")).toHaveValue(
+      "some_copied_email@mail.com"
+    );
   }));
 
   function initComponent(keycloakResult = of(keycloakUser)) {

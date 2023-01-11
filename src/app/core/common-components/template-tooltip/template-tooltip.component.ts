@@ -14,6 +14,7 @@ import {
   transition,
   trigger,
 } from "@angular/animations";
+import { NgTemplateOutlet } from "@angular/common";
 
 /**
  * This is the component that the tooltip is shown. It serves the following purposes:
@@ -46,6 +47,8 @@ import {
       transition(":enter", [animate("100ms")]),
     ]),
   ],
+  standalone: true,
+  imports: [NgTemplateOutlet],
 })
 export class TemplateTooltipComponent {
   static readonly SELECTOR = "app-template-tooltip";

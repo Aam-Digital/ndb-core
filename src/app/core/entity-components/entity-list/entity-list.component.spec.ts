@@ -9,12 +9,9 @@ import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityListModule } from "./entity-list.module";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
-import { ExportService } from "../../export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
@@ -93,13 +90,8 @@ describe("EntityListComponent", () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [
-        EntityListModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [EntityListComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: ExportService, useValue: {} },
         { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: FormDialogService, useValue: null },
@@ -113,15 +105,18 @@ describe("EntityListComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should creates columns from config", () => {
+  it("should create columns from config", fakeAsync(() => {
     createComponent();
     initComponentInputs();
+    tick();
     expect(component.columns).toEqual(testConfig.columns);
-  });
+  }));
 
-  it("should create column groups from config and set correct one", () => {
+  it("should create column groups from config and set correct one", fakeAsync(() => {
     createComponent();
     initComponentInputs();
+    tick();
+
     expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
     const defaultGroup = testConfig.columnGroups.groups.findIndex(
       (g) => g.name === testConfig.columnGroups.default
@@ -130,12 +125,13 @@ describe("EntityListComponent", () => {
     expect(component.columnsToDisplay).toEqual(
       testConfig.columnGroups.groups[defaultGroup].columns
     );
-  });
+  }));
 
   it("should set the clicked column group", async () => {
     createComponent();
-    initComponentInputs();
+    await initComponentInputs();
     expect(component.selectedColumnGroupIndex).toBe(1);
+    console.log("component groups", component.columnGroups);
 
     const tabGroup = await loader.getHarness(MatTabGroupHarness);
     const groups = await tabGroup.getTabs();
@@ -150,9 +146,10 @@ describe("EntityListComponent", () => {
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
 
-  it("should add and initialize columns which are only mentioned in the columnGroups", () => {
+  it("should add and initialize columns which are only mentioned in the columnGroups", fakeAsync(() => {
     createComponent();
     initComponentInputs();
+    tick();
 
     class Test extends Entity {
       @DatabaseField({ label: "Test Property" }) testProperty: string;
@@ -177,13 +174,14 @@ describe("EntityListComponent", () => {
     };
 
     component.ngOnChanges({ listConfig: null });
+    tick();
 
     expect(
       component.columns.map((col) => (typeof col === "string" ? col : col.id))
     ).toEqual(
       jasmine.arrayWithExactContents(["testProperty", "anotherColumn"])
     );
-  });
+  }));
 
   it("should automatically initialize values if directly referenced from config", fakeAsync(() => {
     mockActivatedRoute.component = EntityListComponent;
@@ -206,9 +204,23 @@ describe("EntityListComponent", () => {
     expect(component.listName).toBe("Some title");
 
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
-    component.addNewClick.emit();
+    component.addNew();
     expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["new"]);
   }));
+
+  it("should not navigate on addNew if clickMode is not 'navigate'", () => {
+    createComponent();
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+
+    component.clickMode = "popup";
+    component.addNew();
+    expect(navigateSpy).not.toHaveBeenCalled();
+
+    navigateSpy.calls.reset();
+    component.clickMode = "navigate";
+    component.addNew();
+    expect(navigateSpy).toHaveBeenCalled();
+  });
 
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);
@@ -217,10 +229,13 @@ describe("EntityListComponent", () => {
     fixture.detectChanges();
   }
 
-  function initComponentInputs() {
+  async function initComponentInputs() {
     component.listConfig = testConfig;
     component.entityConstructor = Child;
-    component.ngOnChanges({ allEntities: undefined, listConfig: undefined });
+    await component.ngOnChanges({
+      allEntities: undefined,
+      listConfig: undefined,
+    });
     fixture.detectChanges();
   }
 });

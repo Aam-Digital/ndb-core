@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { LanguageSelectComponent } from "./language-select.component";
-import { LanguageModule } from "../language.module";
 import { RouterTestingModule } from "@angular/router/testing";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
@@ -20,12 +19,11 @@ describe("LanguageSelectComponent", () => {
       "initDefaultLanguage",
     ]);
     await TestBed.configureTestingModule({
-      declarations: [LanguageSelectComponent],
+      imports: [LanguageSelectComponent, RouterTestingModule],
       providers: [
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: LanguageService, useValue: mockTranslationService },
       ],
-      imports: [LanguageModule, RouterTestingModule],
     }).compileComponents();
   });
 

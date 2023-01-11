@@ -19,6 +19,13 @@ import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
+import { MatTabsModule } from "@angular/material/tabs";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatInputModule } from "@angular/material/input";
+import { PasswordFormComponent } from "../../session/auth/couchdb/password-form/password-form.component";
+import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -27,6 +34,16 @@ import { SessionType } from "../../session/session-type";
   selector: "app-user-account",
   templateUrl: "./user-account.component.html",
   styleUrls: ["./user-account.component.scss"],
+  imports: [
+    MatTabsModule,
+    TabStateModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatInputModule,
+    PasswordFormComponent,
+    AccountPageComponent
+  ],
+  standalone: true
 })
 export class UserAccountComponent implements OnInit {
   /** user to be edited */

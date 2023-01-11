@@ -23,6 +23,8 @@ import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-log
 import { Injectable } from "@angular/core";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
+import { AppSettings } from "../app-config/app-settings";
+import { HttpStatusCode } from "@angular/common/http";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -94,6 +96,34 @@ export class PouchDatabase extends Database {
     this.pouchDB = new PouchDB(dbName, options);
     this.databaseInitialized.complete();
     return this;
+  }
+
+  /**
+   * Initializes the PouchDB with the http adapter to directly access a remote CouchDB without replication
+   * See {@link https://pouchdb.com/adapters.html#pouchdb_over_http}
+   * @param dbName (relative) path to the remote database
+   * @param fetch a overwrite for the default fetch handler
+   */
+  initRemoteDB(
+    dbName = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
+    fetch = this.defaultFetch
+  ): PouchDatabase {
+    const options = {
+      adapter: "http",
+      skip_setup: true,
+      fetch,
+    };
+    this.pouchDB = new PouchDB(dbName, options);
+    this.databaseInitialized.complete();
+    return this;
+  }
+
+  private defaultFetch(url, opts: any) {
+    if (typeof url === "string") {
+      const remoteUrl =
+        AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
+      return PouchDB.fetch(remoteUrl, opts);
+    }
   }
 
   async getPouchDBOnceReady(): Promise<PouchDB.Database> {
@@ -237,15 +267,25 @@ export class PouchDatabase extends Database {
   changes(prefix: string): Observable<any> {
     if (!this.changesFeed) {
       this.changesFeed = new Subject();
-      this.getPouchDBOnceReady().then((pouchDB) =>
-        pouchDB
-          .changes({
-            live: true,
-            since: "now",
-            include_docs: true,
-          })
-          .addListener("change", (change) => this.changesFeed.next(change.doc))
-      );
+      this.getPouchDBOnceReady()
+        .then((pouchDB) =>
+          pouchDB
+            .changes({
+              live: true,
+              since: "now",
+              include_docs: true,
+            })
+            .addListener("change", (change) =>
+              this.changesFeed.next(change.doc)
+            )
+        )
+        .catch((err) => {
+          if (err.statusCode === HttpStatusCode.Unauthorized) {
+            this.loggingService.warn(err);
+          } else {
+            throw err;
+          }
+        });
     }
     return this.changesFeed.pipe(filter((doc) => doc._id.startsWith(prefix)));
   }

@@ -5,7 +5,11 @@ import {
   EditProgressDashboardComponentData,
 } from "./edit-progress-dashboard.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { FormBuilder, FormGroup, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, FormGroup } from "@angular/forms";
+import { ConfigService } from "../../../core/config/config.service";
+import { createTestingConfigService } from "../../../core/config/testing-config-service";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EditProgressDashboardComponent", () => {
   let component: EditProgressDashboardComponent;
@@ -34,13 +38,17 @@ describe("EditProgressDashboardComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [EditProgressDashboardComponent],
-      imports: [ReactiveFormsModule],
+      imports: [
+        EditProgressDashboardComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         {
           provide: MAT_DIALOG_DATA,
           useValue: mockDialogData,
         },
+        { provide: ConfigService, useValue: createTestingConfigService() },
         FormBuilder,
       ],
     }).compileComponents();

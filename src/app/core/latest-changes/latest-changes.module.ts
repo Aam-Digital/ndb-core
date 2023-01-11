@@ -16,23 +16,7 @@
  */
 
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { AppVersionComponent } from "./app-version/app-version.component";
-import { AlertsModule } from "../alerts/alerts.module";
-import { HttpClientModule } from "@angular/common/http";
-import { SessionModule } from "../session/session.module";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { ChangelogComponent } from "./changelog/changelog.component";
 import { UpdateManagerService } from "./update-manager.service";
-import { MarkdownModule } from "ngx-markdown";
-import { MatCardModule } from "@angular/material/card";
-import { LatestChangesDialogService } from "./latest-changes-dialog.service";
-import { LatestChangesService } from "./latest-changes.service";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-
-import { LOCATION_TOKEN } from "../../utils/di-tokens";
 
 /**
  * Displaying app version and changelog information to the user
@@ -43,31 +27,11 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
  * pre-releases are excluded and individual lines in the body can be hidden by starting
  * text (after markdown characters) with a ".".
  */
-@NgModule({
-  imports: [
-    CommonModule,
-    AlertsModule,
-    SessionModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    HttpClientModule,
-    MarkdownModule,
-    MatCardModule,
-    FontAwesomeModule,
-  ],
-  declarations: [AppVersionComponent, ChangelogComponent],
-  exports: [AppVersionComponent],
-  providers: [
-    LatestChangesService,
-    LatestChangesDialogService,
-    UpdateManagerService,
-    { provide: LOCATION_TOKEN, useValue: window.location },
-  ],
-})
+@NgModule({})
 export class LatestChangesModule {
   constructor(private updateManagerService: UpdateManagerService) {
     this.updateManagerService.notifyUserWhenUpdateAvailable();
     this.updateManagerService.regularlyCheckForUpdates();
+    this.updateManagerService.detectUnrecoverableState();
   }
 }

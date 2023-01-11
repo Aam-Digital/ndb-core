@@ -1,19 +1,22 @@
 import {
   Component,
-  EventEmitter,
   Input,
-  OnInit,
-  Output,
+  OnChanges,
+  SimpleChanges,
   ViewEncapsulation,
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "./FormConfig";
-import { EntityForm, EntityFormService } from "../entity-form.service";
-import { AlertService } from "../../../alerts/alert.service";
-import { InvalidFormFieldError } from "../invalid-form-field.error";
+import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
+import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -24,6 +27,7 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
  * This component can be used directly or in a popup.
  * Inside the entity details component use the FormComponent which is registered as dynamic component.
  */
+@UntilDestroy()
 @Component({
   selector: "app-entity-form",
   templateUrl: "./entity-form.component.html",
@@ -31,134 +35,112 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
   // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
+  imports: [
+    NgForOf,
+    DynamicComponentDirective,
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    NgClass,
+  ],
+  standalone: true,
 })
-export class EntityFormComponent<T extends Entity = Entity> implements OnInit {
+export class EntityFormComponent<T extends Entity = Entity>
+  implements OnChanges
+{
   /**
    * The entity which should be displayed and edited
    */
   @Input() entity: T;
 
-  /**
-   * Whether the form should be opened in editing mode or not
-   */
-  @Input() editing = false;
+  @Input() columns: FormFieldConfig[][];
 
-  /**
-   * The form field definitions. Either as a string or as a FormFieldConfig object.
-   * Missing information will be fetched from the entity schema definition.
-   * @param columns The columns which should be displayed
-   */
-  @Input() set columns(columns: (FormFieldConfig | string)[][]) {
-    this._columns = columns.map((row) =>
-      row.map((field) => {
-        if (typeof field === "string") {
-          return { id: field };
-        } else {
-          return field;
-        }
-      })
-    );
-  }
-
-  _columns: FormFieldConfig[][] = [];
   @Input() columnHeaders?: (string | null)[];
 
-  /**
-   * This will be emitted whenever changes have been successfully saved to the entity.
-   */
-  @Output() save = new EventEmitter<T>();
+  @Input() form: EntityForm<T>;
 
   /**
-   * This will be emitted whenever the cancel button is pressed.
+   * Whether the component should use a grid layout or just rows
    */
-  @Output() cancel = new EventEmitter<void>();
+  @Input() gridLayout = true;
 
-  form: EntityForm<T>;
-
-  private saveInProgress = false;
-  private initialFormValues: any;
+  initialFormValues: any;
 
   constructor(
-    private entityFormService: EntityFormService,
-    private alertService: AlertService,
     private entityMapper: EntityMapperService,
     private confirmationDialog: ConfirmationDialogService
   ) {}
 
-  ngOnInit() {
-    this.buildFormConfig();
-    if (!this.editing) {
-      this.form.disable();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.entity && this.entity) {
+      this.entityMapper
+        .receiveUpdates(this.entity.getConstructor())
+        .pipe(
+          filter(({ entity }) => entity.getId() === this.entity.getId()),
+          untilDestroyed(this)
+        )
+        .subscribe(({ entity }) => this.applyChanges(entity));
     }
-    this.entityMapper
-      .receiveUpdates(this.entity.getConstructor())
-      .pipe(filter(({ entity }) => entity.getId() === this.entity.getId()))
-      .subscribe(({ entity }) => this.applyChanges(entity));
+    if (changes.form && this.form) {
+      this.initialFormValues = this.form.getRawValue();
+    }
   }
 
-  private async applyChanges(entity) {
-    if (this.saveInProgress || this.formIsUpToDate(entity)) {
+  private async applyChanges(entity: T) {
+    if (this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
       return;
     }
     if (
-      this.form.pristine ||
+      this.changesOnlyAffectPristineFields(entity) ||
       (await this.confirmationDialog.getConfirmation(
         $localize`Load changes?`,
         $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
       ))
     ) {
-      this.resetForm(entity);
+      Object.assign(this.initialFormValues, entity);
+      this.form.patchValue(entity as any);
     }
   }
 
-  async saveForm(): Promise<void> {
-    this.saveInProgress = true;
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
-      this.form.markAsPristine();
-      this.save.emit(this.entity);
-      this.form.disable();
-    } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
-        this.alertService.addDanger(err.message);
+  private changesOnlyAffectPristineFields(updatedEntity: T) {
+    if (this.form.pristine) {
+      return true;
+    }
+
+    const dirtyFields = Object.entries(this.form.controls).filter(
+      ([_, form]) => form.dirty
+    );
+    for (const [key] of dirtyFields) {
+      if (
+        this.entityEqualsFormValue(
+          updatedEntity[key],
+          this.initialFormValues[key]
+        )
+      ) {
+        // keep our pending form field changes
+        delete updatedEntity[key];
+      } else {
+        // dirty form field has conflicting change
+        return false;
       }
     }
-    // Reset state after a short delay
-    setTimeout(() => (this.saveInProgress = false), 1000);
-  }
 
-  cancelClicked() {
-    this.cancel.emit();
-    this.resetForm();
-    this.form.disable();
-  }
-
-  private buildFormConfig() {
-    const flattenedFormFields = new Array<FormFieldConfig>().concat(
-      ...this._columns
-    );
-    this.entityFormService.extendFormFieldConfig(
-      flattenedFormFields,
-      this.entity.getConstructor()
-    );
-    this.form = this.entityFormService.createFormGroup(
-      flattenedFormFields,
-      this.entity
-    );
-    this.initialFormValues = this.form.getRawValue();
-  }
-
-  private resetForm(entity = this.entity) {
-    // Patch form with values from the entity
-    this.form.patchValue(Object.assign(this.initialFormValues, entity));
-    this.form.markAsPristine();
+    return true;
   }
 
   private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this.form.getRawValue()).every(
-      ([key, value]) =>
-        entity[key] === value || (entity[key] === undefined && value === null)
+    return Object.entries(this.form.getRawValue()).every(([key, value]) => {
+      return this.entityEqualsFormValue(entity[key], value);
+    });
+  }
+
+  private entityEqualsFormValue(entityValue, formValue) {
+    return (
+      (entityValue === undefined && formValue === null) ||
+      entityValue === formValue ||
+      JSON.stringify(entityValue) === JSON.stringify(formValue)
     );
   }
 }

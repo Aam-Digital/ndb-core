@@ -9,7 +9,7 @@ describe("DisplayConfigurableEnumComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [DisplayConfigurableEnumComponent],
+      imports: [DisplayConfigurableEnumComponent],
     }).compileComponents();
   }));
 

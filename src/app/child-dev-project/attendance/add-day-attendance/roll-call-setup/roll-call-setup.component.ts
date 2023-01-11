@@ -14,15 +14,38 @@ import { NoteDetailsComponent } from "../../../notes/note-details/note-details.c
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { AlertDisplay } from "../../../../core/alerts/alert-display";
-import { NgModel } from "@angular/forms";
+import { FormsModule, NgModel } from "@angular/forms";
 import { FilterService } from "../../../../core/filter/filter.service";
 import { DataFilter } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { Angulartics2OnModule } from "angulartics2";
+import { FilterComponent } from "../../../../core/filter/filter/filter.component";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { ActivityCardComponent } from "../../activity-card/activity-card.component";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-roll-call-setup",
   templateUrl: "./roll-call-setup.component.html",
   styleUrls: ["./roll-call-setup.component.scss"],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatDatepickerModule,
+    Angulartics2OnModule,
+    FilterComponent,
+    NgIf,
+    MatProgressBarModule,
+    ActivityCardComponent,
+    NgForOf,
+    MatButtonModule,
+  ],
+  standalone: true,
 })
 export class RollCallSetupComponent implements OnInit {
   date = new Date();

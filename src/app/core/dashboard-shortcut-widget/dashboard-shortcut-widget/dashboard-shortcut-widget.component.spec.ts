@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.component";
-import { DashboardShortcutWidgetModule } from "../dashboard-shortcut-widget.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ShortcutDashboardWidgetComponent", () => {
@@ -9,7 +8,7 @@ describe("ShortcutDashboardWidgetComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardShortcutWidgetModule, FontAwesomeTestingModule],
+      imports: [DashboardShortcutWidgetComponent, FontAwesomeTestingModule],
     }).compileComponents();
   });
 

@@ -1,15 +1,7 @@
 @use "src/styles/mixins/grid-layout";
-@use "src/styles/variables/sizes";
 
-// Usually, this is the `:host` pseudo-selector but since the
-// view encapsulation is None, this has to be the name
-app-entity-form {
-  display: flex;
-  flex-direction: column;
-}
-
-.entity-form-columns {
-  @include grid-layout.adaptive($min-block-width: 330px, $max-screen-width: 414px);
+.grid-layout {
+  @include grid-layout.adaptive($min-block-width: 250px, $max-screen-width: 414px);
 }
 
 .entity-form-cell {
@@ -31,17 +23,6 @@ app-entity-form {
 }
 
 .field-with-tooltip-suffix {
-  width: calc(100% - 24px);
+  width: calc(100% - 48px);
   display: inline-block;
-}
-
-.tooltip-suffix {
-  margin: 4px;
-}
-
-.form-buttons-wrapper {
-  position: sticky;
-  top: sizes.$regular;
-  z-index: 100;
-  margin-right: 3px;
 }

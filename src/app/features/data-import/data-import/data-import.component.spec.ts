@@ -2,11 +2,8 @@ import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
 import { FormControl } from "@angular/forms";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DownloadService } from "../../../core/export/download-service/download.service";
-import { DataImportModule } from "../data-import.module";
 import { ParseResult } from "ngx-papaparse";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ImportMetaData } from "../import-meta-data.type";
 import { Entity } from "../../../core/entity/model/entity";
 import {
@@ -16,6 +13,7 @@ import {
 } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ParsedData } from "../input-file/input-file.component";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("DataImportComponent", () => {
   let component: DataImportComponent;
@@ -37,11 +35,7 @@ describe("DataImportComponent", () => {
       "validateCsvFile",
     ]);
     TestBed.configureTestingModule({
-      imports: [
-        DataImportModule,
-        NoopAnimationsModule,
-        FontAwesomeTestingModule,
-      ],
+      imports: [DataImportComponent, MockedTestingModule],
       providers: [
         {
           provide: DataImportService,
@@ -165,6 +159,7 @@ describe("DataImportComponent", () => {
       @DatabaseField() testProperty: string;
       @DatabaseField() testOther: string;
     }
+
     const parsed = {
       fields: ["_id", "unknownColumn", "testProperty"],
       data: [

@@ -9,7 +9,6 @@ import { ChildrenListComponent } from "./children-list.component";
 import { ChildrenService } from "../children.service";
 import { of } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ChildrenModule } from "../children.module";
 import { Child } from "../model/child";
 import {
   BooleanFilterConfig,
@@ -17,9 +16,7 @@ import {
 } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { School } from "../../schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ExportService } from "../../../core/export/export-service/export.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { DownloadService } from "../../../core/export/download-service/download.service";
 
 describe("ChildrenListComponent", () => {
   let component: ChildrenListComponent;
@@ -84,19 +81,14 @@ describe("ChildrenListComponent", () => {
   beforeEach(waitForAsync(() => {
     mockChildrenService.getChildren.and.returnValue(of([]));
     TestBed.configureTestingModule({
-      imports: [
-        ChildrenModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-        TabStateModule,
-      ],
+      imports: [ChildrenListComponent, MockedTestingModule.withState()],
       providers: [
         {
           provide: ChildrenService,
           useValue: mockChildrenService,
         },
         { provide: ActivatedRoute, useValue: routeMock },
-        { provide: ExportService, useValue: {} },
+        { provide: DownloadService, useValue: {} },
       ],
     }).compileComponents();
   }));

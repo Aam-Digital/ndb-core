@@ -19,8 +19,8 @@ import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { createTestingConfigService } from "../../config/config.service";
 import { DatabaseEntity } from "../database-entity.decorator";
+import { createTestingConfigService } from "../../config/testing-config-service";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -38,6 +38,7 @@ describe("Entity", () => {
       @DatabaseField() defaultText: string = "default";
       otherText: string = "other Text";
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -83,6 +84,7 @@ describe("Entity", () => {
   it("preserves it's type when copying", () => {
     class TestEntity extends Entity {
       value: number;
+
       constructor(id: string, value: number) {
         super(id);
         this.value = value;
@@ -128,6 +130,14 @@ describe("Entity", () => {
     const testEntity3 = new Entity();
     testEntity3.isActive = false;
     expect(testEntity3.isActive).withContext("setting 'isActive'").toBeFalse();
+  });
+
+  it("should be 'isNew' if newly created before save", () => {
+    const entity = new Entity();
+    expect(entity.isNew).toBeTrue();
+
+    entity._rev = "123";
+    expect(entity.isNew).toBeFalse();
   });
 });
 

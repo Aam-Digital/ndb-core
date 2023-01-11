@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { ProgressDashboardWidgetModule } from "../progress-dashboard-widget.module";
 import { ProgressDashboardComponent } from "../progress-dashboard/progress-dashboard.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -11,7 +10,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        ProgressDashboardWidgetModule,
+        ProgressDashboardComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(),
       ],

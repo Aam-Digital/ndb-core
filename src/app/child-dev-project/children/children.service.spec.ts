@@ -3,7 +3,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { Child } from "./model/child";
 import { School } from "../schools/model/school";
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import moment from "moment";
 import { Database } from "../../core/database/database";
 import { Note } from "../notes/model/note";
@@ -18,10 +18,9 @@ describe("ChildrenService", () => {
   let service: ChildrenService;
   let entityMapper: EntityMapperService;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
-      providers: [ChildrenService],
     });
 
     entityMapper = TestBed.inject(EntityMapperService);
@@ -32,11 +31,9 @@ describe("ChildrenService", () => {
     );
 
     service = TestBed.inject<ChildrenService>(ChildrenService);
-  });
+  }));
 
-  afterEach(async () => {
-    await TestBed.inject(Database).destroy();
-  });
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

@@ -9,7 +9,6 @@ import { AccountPageComponent } from "./account-page.component";
 import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
 import { of, throwError } from "rxjs";
-import { SessionModule } from "../../../session.module";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { HttpErrorResponse } from "@angular/common/http";
 import { AlertService } from "../../../../alerts/alert.service";
@@ -29,7 +28,7 @@ describe("AccountPageComponent", () => {
     mockAuthService.getUserinfo.and.returnValue(throwError(() => new Error()));
     mockAlerts = jasmine.createSpyObj(["addInfo"]);
     await TestBed.configureTestingModule({
-      imports: [SessionModule, MockedTestingModule.withState()],
+      imports: [AccountPageComponent, MockedTestingModule.withState()],
       providers: [
         { provide: AuthService, useValue: {} },
         { provide: AlertService, useValue: mockAlerts },

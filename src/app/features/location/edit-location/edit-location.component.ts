@@ -13,11 +13,31 @@ import {
 } from "../map-popup/map-popup.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { Coordinates } from "../coordinates";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @DynamicComponent("EditLocation")
 @Component({
   selector: "app-edit-location",
   templateUrl: "./edit-location.component.html",
+  imports: [
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    NgIf,
+    MatButtonModule,
+    FontAwesomeModule,
+    AsyncPipe,
+    NgForOf,
+  ],
+  standalone: true,
+  styleUrls: ["./edit-location.component.scss"],
 })
 export class EditLocationComponent extends EditComponent<GeoResult> {
   filteredOptions = new Subject<GeoResult[]>();
@@ -90,18 +110,26 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
         marked,
         mapClick,
         disabled: this.formControl.disabled,
+        helpText: $localize`:help text in map popup:Click on the map to select a different location`,
       } as MapPopupConfig,
     });
-    ref
-      .afterClosed()
-      .pipe(concatMap(() => this.lookupCoordinates(marked.value[0])))
-      // TODO maybe remove name of building (e.g. CRCLR House)
-      .subscribe((res) => this.formControl.setValue(res));
+    if (this.formControl.enabled) {
+      ref
+        .afterClosed()
+        .pipe(concatMap(() => this.lookupCoordinates(marked.value[0])))
+        .subscribe((res) => this.formControl.setValue(res));
+    }
   }
 
   private lookupCoordinates(coords: Coordinates) {
     if (!coords) {
       return undefined;
+    }
+    if (
+      coords.lat === this.formControl.value?.lat &&
+      coords.lon === this.formControl.value?.lon
+    ) {
+      return of(this.formControl.value);
     }
     const fallback = {
       display_name: `${coords.lat} - ${coords.lon}`,

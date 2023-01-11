@@ -10,7 +10,6 @@ import {
   EntitySubrecordComponent,
   TableRow,
 } from "./entity-subrecord.component";
-import { EntitySubrecordModule } from "../entity-subrecord.module";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
@@ -26,10 +25,8 @@ import moment from "moment";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
-import { MediaModule } from "../../../../utils/media/media.module";
 import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 
@@ -39,12 +36,7 @@ describe("EntitySubrecordComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [
-        EntitySubrecordModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-        MediaModule,
-      ],
+      imports: [EntitySubrecordComponent, MockedTestingModule.withState()],
       providers: [
         { provide: WINDOW_TOKEN, useValue: window },
         {
@@ -117,6 +109,22 @@ describe("EntitySubrecordComponent", () => {
 
     expect(component.recordsDataSource.sort.direction).toBe("desc");
     expect(component.recordsDataSource.sort.active).toBe("date");
+  });
+
+  it("should use input defaultSort if defined", () => {
+    component.columns = ["date", "subject"];
+    component.columnsToDisplay = ["date", "subject"];
+    const n1 = Note.create(new Date(), "1");
+    const n2 = Note.create(new Date(), "2");
+    const n3 = Note.create(new Date(), "3");
+
+    component.records = [n3, n1, n2];
+
+    component.defaultSort = { active: "subject", direction: "asc" };
+    component.ngOnChanges({ columns: undefined, records: undefined });
+
+    expect(component.recordsDataSource.sort.direction).toBe("asc");
+    expect(component.recordsDataSource.sort.active).toBe("subject");
   });
 
   it("should sort standard objects", () => {

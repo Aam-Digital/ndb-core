@@ -1,14 +1,17 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { FilterComponentSettings } from "../../entity-components/entity-list/filter-component.settings";
-import { Entity } from "../../entity/model/entity";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterConfig } from "../../entity-components/entity-list/EntityListConfig";
+import { FilterComponent } from "../filter/filter.component";
+import { MatButtonModule } from "@angular/material/button";
 
 export interface FilterOverlayData<T extends Entity> {
-  filterSelections: FilterComponentSettings<T>[];
-  filterChangeCallback: (
-    filter: FilterComponentSettings<T>,
-    option: string
-  ) => void;
+  filterConfig: FilterConfig[];
+  entityType: EntityConstructor<T>;
+  entities: T[];
+  useUrlQueryParams: true;
+  filterObjChange: (filter: DataFilter<T>) => void;
 }
 
 /**
@@ -19,11 +22,9 @@ export interface FilterOverlayData<T extends Entity> {
   selector: "app-filter-overlay",
   templateUrl: "./filter-overlay.component.html",
   styles: [":host { display: block }"],
+  imports: [MatDialogModule, FilterComponent, MatButtonModule],
+  standalone: true,
 })
 export class FilterOverlayComponent<T extends Entity> {
   constructor(@Inject(MAT_DIALOG_DATA) public data: FilterOverlayData<T>) {}
-
-  optionDidChange(filter: FilterComponentSettings<T>, option: string) {
-    this.data.filterChangeCallback(filter, option);
-  }
 }

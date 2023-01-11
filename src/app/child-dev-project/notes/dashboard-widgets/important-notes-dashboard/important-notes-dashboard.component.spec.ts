@@ -1,12 +1,18 @@
-import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { ImportantNotesDashboardComponent } from "./important-notes-dashboard.component";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { Note } from "../../model/note";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { MatPaginatorModule } from "@angular/material/paginator";
 import { warningLevels } from "../../../warning-levels";
+import { of } from "rxjs";
+import { map } from "rxjs/operators";
 
 describe("ImportantNotesDashboardComponent", () => {
   let component: ImportantNotesDashboardComponent;
@@ -22,9 +28,8 @@ describe("ImportantNotesDashboardComponent", () => {
     await TestBed.configureTestingModule({
       imports: [
         MockedTestingModule.withState(LoginState.LOGGED_IN, mockNotes),
-        MatPaginatorModule,
+        ImportantNotesDashboardComponent,
       ],
-      declarations: [ImportantNotesDashboardComponent],
       providers: [
         {
           provide: FormDialogService,
@@ -54,6 +59,12 @@ describe("ImportantNotesDashboardComponent", () => {
     const expectedNotes = mockNotes
       .filter((note) => ["WARNING", "URGENT"].includes(note.warningLevel.id))
       .reverse();
-    expect(component.notesDataSource.data).toEqual(expectedNotes);
+
+    let actualNotes;
+    of(mockNotes)
+      .pipe(map((d) => component.dataMapper(d)))
+      .subscribe((data) => (actualNotes = data));
+    tick();
+    expect(actualNotes).toEqual(expectedNotes);
   }));
 });

@@ -25,7 +25,6 @@ import { Config } from "../../config/config";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { Event, NavigationEnd, Router } from "@angular/router";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { NavigationModule } from "../navigation.module";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -45,7 +44,7 @@ describe("NavigationComponent", () => {
     mockUserRoleGuard.checkRoutePermissions.and.returnValue(true);
 
     TestBed.configureTestingModule({
-      imports: [NavigationModule, MockedTestingModule.withState()],
+      imports: [NavigationComponent, MockedTestingModule.withState()],
       providers: [
         { provide: UserRoleGuard, useValue: mockUserRoleGuard },
         { provide: ConfigService, useValue: mockConfigService },

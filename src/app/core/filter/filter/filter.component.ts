@@ -12,9 +12,10 @@ import { FilterComponentSettings } from "../../entity-components/entity-list/fil
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
-import { FilterOverlayComponent } from "../filter-overlay/filter-overlay.component";
-import { MatDialog } from "@angular/material/dialog";
 import { getUrlWithoutParams } from "../../../utils/utils";
+import { ListFilterComponent } from "../list-filter/list-filter.component";
+import { NgForOf } from "@angular/common";
+import { Angulartics2Module } from "angulartics2";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -22,6 +23,8 @@ import { getUrlWithoutParams } from "../../../utils/utils";
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
+  imports: [ListFilterComponent, NgForOf, Angulartics2Module],
+  standalone: true,
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   /**
@@ -63,8 +66,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   constructor(
     private filterGenerator: FilterGeneratorService,
     private router: Router,
-    private route: ActivatedRoute,
-    private dialog: MatDialog
+    private route: ActivatedRoute
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -122,23 +124,6 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
       if (params.hasOwnProperty(f.filterSettings.name)) {
         f.selectedOption = params[f.filterSettings.name];
       }
-    });
-  }
-
-  /**
-   * Calling this function will display the filters in a popup
-   */
-  openFilterOverlay() {
-    this.dialog.open(FilterOverlayComponent, {
-      data: {
-        filterSelections: this.filterSelections,
-        filterChangeCallback: (
-          filter: FilterComponentSettings<T>,
-          option: string
-        ) => {
-          this.filterOptionSelected(filter, option);
-        },
-      },
     });
   }
 }
