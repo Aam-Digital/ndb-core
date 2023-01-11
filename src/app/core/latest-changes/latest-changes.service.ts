@@ -43,37 +43,30 @@ export class LatestChangesService {
     currentVersion: string,
     previousVersion?: string
   ): Observable<Changelog[]> {
-    return this.getChangelogs((releases: any[]) =>
+    return this.getChangelogs((releases) =>
       this.filterReleasesBetween(releases, currentVersion, previousVersion)
     );
   }
 
   private filterReleasesBetween(
-    releases: any[],
+    releases: Changelog[],
     currentVersion: string,
     previousVersion?: string
   ) {
-    let relevantReleases;
-
     const releasesUpToCurrentVersion = releases.filter(
-      (r) => r.tag_name <= currentVersion
+      (r) => this.compareVersion(r.tag_name, currentVersion) <= 0
     );
     if (releasesUpToCurrentVersion.length < 1) {
       return [];
     }
 
     if (previousVersion) {
-      relevantReleases = releasesUpToCurrentVersion.filter(
-        (r) => r.tag_name > previousVersion
-      );
-      relevantReleases.sort((a, b) =>
-        (b.tag_name as string).localeCompare(a.tag_name, "en")
-      );
+      return releasesUpToCurrentVersion
+        .filter((r) => this.compareVersion(r.tag_name, previousVersion) > 0)
+        .sort((a, b) => this.compareVersion(b.tag_name, a.tag_name));
     } else {
-      relevantReleases = [releasesUpToCurrentVersion[0]];
+      return [releasesUpToCurrentVersion[0]];
     }
-
-    return relevantReleases;
   }
 
   /**
@@ -85,27 +78,24 @@ export class LatestChangesService {
     version: string,
     count: number
   ): Observable<Changelog[]> {
-    return this.getChangelogs((releases: any) =>
+    return this.getChangelogs((releases: Changelog[]) =>
       this.filterReleasesBefore(releases, version, count)
     );
   }
 
   private filterReleasesBefore(
-    releases: any[],
+    releases: Changelog[],
     version: string,
     count: number
   ) {
-    const releasesUpToCurrentVersion = releases.filter(
-      (r) => r.tag_name < version
-    );
-    if (releasesUpToCurrentVersion.length < 1) {
-      return [];
-    }
+    return releases
+      .filter((r) => (version ? r.tag_name < version : true))
+      .sort((a, b) => this.compareVersion(b.tag_name, a.tag_name))
+      .slice(0, count);
+  }
 
-    releasesUpToCurrentVersion.sort((a, b) =>
-      (b.tag_name as string).localeCompare(a.tag_name, "en")
-    );
-    return releasesUpToCurrentVersion.slice(0, count);
+  private compareVersion(a: string, b: string) {
+    return a.localeCompare(b, "en", { numeric: true });
   }
 
   /**
@@ -113,10 +103,10 @@ export class LatestChangesService {
    * @param releaseFilter Filter function that is selecting relevant objects from the array of GitHub releases
    */
   private getChangelogs(
-    releaseFilter: (releases: any[]) => any[]
+    releaseFilter: (releases: Changelog[]) => Changelog[]
   ): Observable<Changelog[]> {
     return this.http
-      .get<any[]>(
+      .get<Changelog[]>(
         `${LatestChangesService.GITHUB_API}${environment.repositoryId}/releases`,
         { context: new HttpContext().set(AUTH_ENABLED, false) }
       )
@@ -134,14 +124,14 @@ export class LatestChangesService {
         })
       );
 
-    function excludePrereleases(releases: any[]): Changelog[] {
+    function excludePrereleases(releases: Changelog[]): Changelog[] {
       return releases.filter(
         (release) => !release.prerelease && !release.draft
       );
     }
   }
 
-  private parseGithubApiRelease(githubResponse: any): Changelog {
+  private parseGithubApiRelease(githubResponse: Changelog): Changelog {
     const cleanedReleaseNotes = githubResponse.body
       .replace(
         // remove heading
