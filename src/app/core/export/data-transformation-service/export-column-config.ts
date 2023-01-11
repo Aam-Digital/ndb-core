@@ -24,4 +24,10 @@ export interface ExportColumnConfig {
    * => overall result: two export rows: [{ name: "child1", phone: "123"}, {name: "child2", phone: "567"}]
    */
   subQueries?: ExportColumnConfig[];
+
+  /**
+   * Group the results of the query based on unique values at `property`.
+   * This will also add another column to the list with the title `label` and the distinct values in the rows.
+   */
+  groupBy?: { label: string; property: string };
 }

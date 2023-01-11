@@ -3,8 +3,8 @@ import { TestBed } from "@angular/core/testing";
 import { BackupService } from "./backup.service";
 import { Database } from "../../database/database";
 import { PouchDatabase } from "../../database/pouch-database";
-import { ExportService } from "../../export/export-service/export.service";
-import { QueryService } from "../../../features/reporting/query.service";
+import { DownloadService } from "../../export/download-service/download.service";
+import { DataTransformationService } from "../../export/data-transformation-service/data-transformation.service";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
@@ -15,8 +15,8 @@ describe("BackupService", () => {
     TestBed.configureTestingModule({
       providers: [
         BackupService,
-        ExportService,
-        { provide: QueryService, useValue: { queryData: () => [] } },
+        DownloadService,
+        { provide: DataTransformationService, useValue: {} },
         { provide: Database, useValue: db },
       ],
     });
@@ -44,30 +44,31 @@ describe("BackupService", () => {
     expect(resAfter).toBeEmpty();
   });
 
-  it("getJsonExport should return all records", async () => {
+  it("getDatabaseExport should return all records", async () => {
     await db.put({ _id: "Test:1", test: 1 });
     await db.put({ _id: "Test:2", test: 2 });
 
     const res = await db.getAll();
     expect(res).toHaveSize(2);
 
-    const jsonExport = await service.getJsonExport();
+    const result = await service.getDatabaseExport();
 
-    expect(jsonExport).toBe(
-      `[{"test":1,"_id":"Test:1","_rev":"${res[0]._rev}"},{"test":2,"_id":"Test:2","_rev":"${res[1]._rev}"}]`
-    );
+    expect(result).toEqual([
+      { test: 1, _id: "Test:1", _rev: res[0]._rev },
+      { test: 2, _id: "Test:2", _rev: res[1]._rev },
+    ]);
   });
 
-  it("getJsonExport | clearDatabase | importJson should restore all records", async () => {
+  it("getDatabaseExport | clearDatabase | restoreData should restore all records", async () => {
     await db.put({ _id: "Test:1", test: 1 });
     await db.put({ _id: "Test:2", test: 2 });
 
     const originalData = await db.getAll();
     expect(originalData).toHaveSize(2);
 
-    const backup = await service.getJsonExport();
+    const backup = await service.getDatabaseExport();
     await service.clearDatabase();
-    await service.importJson(backup, true);
+    await service.restoreData(backup, true);
 
     const res = await db.getAll();
     expect(res).toHaveSize(2);
@@ -78,35 +79,26 @@ describe("BackupService", () => {
       .toEqual(originalData.map(ignoreRevProperty));
   });
 
-  it("getCsvExport should contain a line for every record", async () => {
-    await db.put({ _id: "Test:1", test: 1 });
-    await db.put({ _id: "Test:2", test: 2 });
+  it("getDatabaseExport should contain an entry for every record", async () => {
+    const x1 = { _id: "Test:1", test: 1 };
+    const x2 = { _id: "Test:2", test: 2 };
+    await db.put(x1);
+    await db.put(x2);
 
     const res = await db.getAll();
     expect(res).toHaveSize(2);
 
-    const csvExport = await service.getCsvExport();
+    const result = await service.getDatabaseExport();
 
-    expect(csvExport.split(ExportService.SEPARATOR_ROW)).toHaveSize(2 + 1); // includes 1 header line
+    expect(result.map(ignoreRevProperty)).toEqual([x1, x2]);
   });
 
   it("importCsv should add records", async () => {
-    const csv =
-      "_id" +
-      ExportService.SEPARATOR_COL +
-      "test" +
-      ExportService.SEPARATOR_ROW +
-      '"Test:1"' +
-      ExportService.SEPARATOR_COL +
-      "1" +
-      ExportService.SEPARATOR_ROW +
-      '"Test:2"' +
-      ExportService.SEPARATOR_COL +
-      "2" +
-      ExportService.SEPARATOR_ROW;
-
-    await service.importCsv(csv, true);
-
+    const data = [
+      { _id: "Test:1", test: 1 },
+      { _id: "Test:2", test: 2 },
+    ];
+    await service.restoreData(data, true);
     const res = await db.getAll();
     expect(res).toHaveSize(2);
     expect(res.map(ignoreRevProperty)).toEqual([
@@ -115,20 +107,9 @@ describe("BackupService", () => {
     ]);
   });
 
-  it("importCsv should not add empty properties to records", async () => {
-    const csv =
-      "_id" +
-      ExportService.SEPARATOR_COL +
-      "other" +
-      ExportService.SEPARATOR_COL +
-      "test" +
-      ExportService.SEPARATOR_ROW +
-      '"Test:1"' +
-      ExportService.SEPARATOR_COL +
-      ExportService.SEPARATOR_COL +
-      "1";
-
-    await service.importCsv(csv);
+  it("restoreData should not add empty properties to records", async () => {
+    const data = [{ _id: "Test:1", test: 1 }];
+    await service.restoreData(data);
 
     const res = await db.getAll();
     expect(res).toHaveSize(1);
