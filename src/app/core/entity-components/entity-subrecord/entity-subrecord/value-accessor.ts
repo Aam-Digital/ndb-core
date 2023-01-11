@@ -1,18 +1,23 @@
 import { ConfigurableEnumValue } from "../../../configurable-enum/configurable-enum.interface";
 import moment from "moment/moment";
 
-export function transformToReadableFormat(row: Object) {
-  const readableRow = {};
-  Object.entries(row).forEach(([key, value]) => {
+/**
+ * Transform a whole object into a readable format.
+ * This also transforms date objects to `YYYY-MM-DD` format.
+ * @param obj
+ */
+export function transformToReadableFormat(obj: any) {
+  const readableObj = {};
+  Object.entries(obj).forEach(([key, value]) => {
     if (value instanceof Date) {
       // Export data according to local timezone offset - data is loaded through Entity Schema system and thereby has the correct date in the current device's timezone
       // TODO: make this output format configurable or use the different date schema types [GITHUB #1185]
-      readableRow[key] = moment(value).format("YYYY-MM-DD");
+      readableObj[key] = moment(value).format("YYYY-MM-DD");
     } else {
-      readableRow[key] = getReadableValue(value);
+      readableObj[key] = getReadableValue(value);
     }
   });
-  return readableRow;
+  return readableObj;
 }
 
 /**

@@ -45,21 +45,16 @@ export class DataTransformationService {
    * @param groupByProperty (optional) groups the data using the value at the given property and adds a column to the final table.
    * @returns array with the result of the queries and sub queries
    */
-  async transformData(
+  transformData(
     data: any[],
     config: ExportColumnConfig[],
     from?: Date,
     to?: Date,
     groupByProperty?: { label: string; property: string }
   ): Promise<ExportRow[]> {
-    const result = await this.generateRows(
-      data,
-      config,
-      from,
-      to,
-      groupByProperty
+    return this.generateRows(data, config, from, to, groupByProperty).then(
+      (res) => res.map(transformToReadableFormat)
     );
-    return result.map(transformToReadableFormat);
   }
 
   private async generateRows(
@@ -98,6 +93,7 @@ export class DataTransformationService {
     }
     return result;
   }
+
   /**
    * Generate one or more export row objects from the given data data and config.
    * @param data A data to be exported as one or more export row objects

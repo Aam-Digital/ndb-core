@@ -86,12 +86,10 @@ export class DownloadService {
   /**
    * Creates a CSV string of the input data
    *
-   * @param data (Optional) an array of elements. If not provided, the queries in `config` will be used to get the initial data.
-   * @param from (Optional) limits the data which is fetched from the database and is also available inside the query. If not provided, all data is fetched.
-   * @param to (Optional) same as from.If not provided, today is used.
+   * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[], from?: Date, to?: Date): Promise<string> {
+  async createCsv(data: any[]): Promise<string> {
     // Collect all properties because papa only uses the properties of the first object
     const keys = new Set<string>();
     data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
