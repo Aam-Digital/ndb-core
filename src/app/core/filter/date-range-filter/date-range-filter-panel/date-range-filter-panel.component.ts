@@ -13,6 +13,12 @@ import {
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { NgForOf } from "@angular/common";
+import {
+  DateRangeFilterConfig,
+  weekDayMap,
+} from "app/core/entity-components/entity-list/EntityListConfig";
+import moment from "moment";
+import { DateAdapterWithFormatting } from "app/core/language/date-adapter-with-formatting";
 
 const customPresets = [
   "today",
@@ -38,21 +44,24 @@ type CustomPreset = typeof customPresets[number];
   standalone: true,
   imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, NgForOf],
 })
-export class DateRangeFilterPanelComponent<D> {
+export class DateRangeFilterPanelComponent {
   // list of range presets we want to provide:
   readonly customPresets = customPresets;
+  dateRangeFilterConfig: DateRangeFilterConfig;
 
-  selectedRangeValue: DateRange<D> | undefined;
+  selectedRangeValue: DateRange<Date> | undefined;
 
   constructor(
-    private dateAdapter: DateAdapter<D>,
+    private dateAdapter: DateAdapter<Date>,
     @Inject(MAT_DIALOG_DATA) public data,
-    private dialogRef: MatDialogRef<DateRangeFilterPanelComponent<D>>
+    private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>
   ) {
     this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
   }
 
-  private calculateDateRange(rangeName: CustomPreset): [start: D, end: D] {
+  private calculateDateRange(
+    rangeName: CustomPreset
+  ): [start: Date, end: Date] {
     const today = this.today;
     const year = this.dateAdapter.getYear(today);
 
@@ -129,7 +138,28 @@ export class DateRangeFilterPanelComponent<D> {
     }
   }
 
-  private get today(): D {
+  private calculateConfigDateRange(option): [start: Date, end: Date] {
+    let start = option.startOffsets
+      ? moment().startOf(option.startOffsets[0].unit)
+      : moment().startOf("day");
+    let end = option.endOffsets
+      ? moment().endOf(option.startOffsets[0].unit)
+      : moment().startOf("day");
+
+    if (option.startOffsets) {
+      option.startOffsets.forEach((offset) =>
+        start.subtract(offset.amount, offset.unit)
+      );
+    }
+    if (option.endOffsets) {
+      option.endOffsets.forEach((offset) =>
+        end.add(offset.amount, offset.unit)
+      );
+    }
+    return [start.toDate(), end.toDate()];
+  }
+
+  private get today(): Date {
     const today = this.dateAdapter.getValidDateOrNull(new Date());
     if (today === null) {
       throw new Error("date creation failed");
@@ -141,7 +171,14 @@ export class DateRangeFilterPanelComponent<D> {
   selectRange(rangeName: CustomPreset): void {
     const [start, end] = this.calculateDateRange(rangeName);
     this.selectedRangeValue = new DateRange(start, end);
-    this.dialogRef.close(this.selectedRangeValue);
+    // this.dialogRef.close(this.selectedRangeValue);
+  }
+
+  // called when user selects a range preset:
+  selectConfigRange(rangeName: CustomPreset): void {
+    const [start, end] = this.calculateConfigDateRange(rangeName);
+    this.selectedRangeValue = new DateRange(start, end);
+    // this.dialogRef.close(this.selectedRangeValue);
   }
 
   selectedRangeChange(m: any) {

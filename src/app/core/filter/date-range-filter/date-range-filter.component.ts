@@ -51,11 +51,16 @@ export class DateRangeFilterComponent<T extends Entity> {
   }
 
   openDialog() {
+    console.log(this.dateRangeFilterConfig);
     this.dialog
       .open(DateRangeFilterPanelComponent, {
-        width: "80%",
+        width: "40%",
         maxHeight: "90vh",
-        data: { fromDate: this.fromDate, toDate: this.toDate },
+        data: {
+          fromDate: this.fromDate,
+          toDate: this.toDate,
+          dateRangeFilterConfig: this.dateRangeFilterConfig,
+        },
       })
       .afterClosed()
       .subscribe((res) => {

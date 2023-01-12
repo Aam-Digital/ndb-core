@@ -7,6 +7,15 @@
   >
     {{ item }}
   </button>
+  <br />
+  <button
+    *ngFor="let item of data.dateRangeFilterConfig.filterConfig.options"
+    mat-button
+    color="primary"
+    (click)="selectConfigRange(item)"
+  >
+    {{ item.label }}
+  </button>
   <mat-calendar
     (selectedChange)="selectedRangeChange($event)"
     [selected]="selectedRangeValue"

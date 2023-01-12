@@ -120,11 +120,13 @@ export interface DateRangeFilterConfig extends BasicFilterConfig {
     | "friday"
     | "Saturday"
     | "saturday";
-  options: {
-    startOffsets?: { amount: number; unit: unitOfTime.Base }[];
-    endOffsets?: { amount: number; unit: unitOfTime.Base }[];
-    label: string;
-  }[];
+  options: DateRangeFilterConfigOption[];
+}
+
+export interface DateRangeFilterConfigOption {
+  startOffsets?: { amount: number; unit: unitOfTime.Base }[];
+  endOffsets?: { amount: number; unit: unitOfTime.Base }[];
+  label: string;
 }
 
 export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {
