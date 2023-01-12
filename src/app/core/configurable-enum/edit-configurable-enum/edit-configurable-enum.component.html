@@ -1,24 +1,6 @@
-<mat-form-field [formGroup]="parent">
-  <mat-label>
-    {{ label }}
-  </mat-label>
-  <mat-select
-    [formControlName]="formControlName"
-    [multiple]="multi"
-    [compareWith]="compareFun"
-  >
-    <mat-option *appConfigurableEnum="let o of enumId" [value]="o">
-      {{ o.label }}
-    </mat-option>
-
-    <mat-option *ngFor="let o of invalidOptions" [value]="o">
-      {{ o.label }}
-    </mat-option>
-  </mat-select>
-  <mat-error
-    *ngIf="formControl.errors?.required"
-    i18n="Error message for any input"
-  >
-    This field is required
-  </mat-error>
-</mat-form-field>
+<app-enum-dropdown
+  [form]="formControl"
+  [label]="label"
+  [multi]="multi"
+  [enumId]="enumId"
+></app-enum-dropdown>

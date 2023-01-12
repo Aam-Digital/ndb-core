@@ -1,7 +1,6 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
-import { EntityFormComponent } from "../../../entity-form/entity-form/entity-form.component";
 import { FormFieldConfig } from "../../../entity-form/entity-form/FormConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Entity } from "../../../../entity/model/entity";
@@ -12,18 +11,26 @@ import {
   entityFormStorybookDefaulParameters,
   StorybookBaseModule,
 } from "../../../../../utils/storybook-base.module";
+import { AppModule } from "../../../../../app.module";
+import { mockEntityMapper } from "../../../../entity/mock-entity-mapper-service";
+import { FormComponent } from "../../../entity-details/form/form.component";
 
 export default {
   title: "Core/EntityComponents/Entity Property Fields/Number",
-  component: EntityFormComponent,
+  component: FormComponent,
   decorators: [
     moduleMetadata({
-      imports: [EntityFormComponent, EditNumberComponent, StorybookBaseModule],
+      imports: [
+        FormComponent,
+        EditNumberComponent,
+        AppModule,
+        StorybookBaseModule,
+      ],
       providers: [
         EntitySchemaService,
         {
           provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
+          useValue: mockEntityMapper(),
         },
       ],
     }),
@@ -31,8 +38,8 @@ export default {
   parameters: entityFormStorybookDefaulParameters,
 } as Meta;
 
-const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
-  component: EntityFormComponent,
+const Template: Story<FormComponent<any>> = (args: FormComponent<any>) => ({
+  component: FormComponent,
   props: args,
 });
 
@@ -53,6 +60,7 @@ const testEntity = new TestEntity();
 testEntity.test = 5;
 
 export const Primary = Template.bind({});
+console.log("X");
 Primary.args = {
   columns: [[fieldConfig]],
   entity: testEntity,

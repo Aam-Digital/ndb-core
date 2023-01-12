@@ -63,28 +63,6 @@ describe("EditConfigurableEnumComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should add [invalid option] option from entity if given", () => {
-    const testEntity = new EditEnumTest();
-    const invalidOption = {
-      id: "INVALID",
-      isInvalidOption: true,
-      label: "[invalid option] INVALID",
-    };
-    const invalid2 = {
-      id: "X2",
-      isInvalidOption: true,
-      label: "[invalid option] X2",
-    };
-
-    testEntity.enum = invalidOption;
-    initForEntity(testEntity, "enum");
-    expect(component.invalidOptions).toEqual([invalidOption]);
-
-    testEntity.enumMulti = [invalidOption, invalid2];
-    initForEntity(testEntity, "enumMulti");
-    expect(component.invalidOptions).toEqual([invalidOption, invalid2]);
-  });
-
   function initForEntity(entity: EditEnumTest, field: "enum" | "enumMulti") {
     const formControl = testFormGroup.controls[field];
     formControl.setValue(entity[field]);

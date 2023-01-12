@@ -1,0 +1,21 @@
+<mat-form-field>
+  <mat-label>
+    {{ label }}
+  </mat-label>
+  <mat-select
+    [formControl]="form"
+    [multiple]="multi"
+    [compareWith]="compareFun"
+  >
+    <mat-option *appConfigurableEnum="let o of enumId" [value]="o">
+      {{ o.label }}
+    </mat-option>
+
+    <mat-option *ngFor="let o of invalidOptions" [value]="o">
+      {{ o.label }}
+    </mat-option>
+  </mat-select>
+  <mat-error *ngIf="form.errors?.required" i18n="Error message for any input">
+    This field is required
+  </mat-error>
+</mat-form-field>
