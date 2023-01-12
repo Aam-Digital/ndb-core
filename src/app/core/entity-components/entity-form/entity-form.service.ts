@@ -7,6 +7,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
+import * as _ from "lodash-es";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -18,7 +19,7 @@ export type EntityForm<T extends Entity> = TypedForm<Partial<T>>;
  * This service provides helper functions for creating tables or forms for an entity as well as saving
  * new changes correctly to the entity.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class EntityFormService {
   constructor(
     private fb: FormBuilder,
@@ -150,5 +151,14 @@ export class EntityFormService {
     } else {
       return this.ability.can("update", oldEntity);
     }
+  }
+
+  resetForm<E extends Entity>(form: EntityForm<E>, entity: E) {
+    // Patch form with values from the entity
+    form.patchValue(entity as any);
+    // Clear values that are not yet present on the entity
+    const newKeys = Object.keys(_.omit(form.controls, Object.keys(entity)));
+    newKeys.forEach((key) => form.get(key).setValue(null));
+    form.markAsPristine();
   }
 }

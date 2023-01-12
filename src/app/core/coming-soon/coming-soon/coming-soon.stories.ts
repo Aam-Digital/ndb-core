@@ -1,8 +1,6 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { ComingSoonComponent } from "./coming-soon.component";
-import { ComingSoonModule } from "../coming-soon.module";
-import { AlertsModule } from "../../alerts/alerts.module";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -11,7 +9,7 @@ export default {
   component: ComingSoonComponent,
   decorators: [
     moduleMetadata({
-      imports: [ComingSoonModule, StorybookBaseModule, AlertsModule],
+      imports: [ComingSoonComponent, StorybookBaseModule],
       providers: [
         {
           provide: AnalyticsService,

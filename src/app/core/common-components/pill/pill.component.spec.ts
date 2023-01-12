@@ -8,7 +8,7 @@ describe("PillComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [PillComponent],
+      imports: [PillComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PillComponent);

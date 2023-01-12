@@ -6,13 +6,11 @@ describe("DisplayTextComponent", () => {
   let component: DisplayTextComponent;
   let fixture: ComponentFixture<DisplayTextComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [DisplayTextComponent],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [DisplayTextComponent],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayTextComponent);

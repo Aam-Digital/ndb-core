@@ -20,6 +20,9 @@ import {
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
 import { MatDialog } from "@angular/material/dialog";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
 
 export interface LocationEntity {
   entity: Entity;
@@ -30,6 +33,12 @@ export interface LocationEntity {
   selector: "app-map",
   templateUrl: "./map.component.html",
   styleUrls: ["./map.component.scss"],
+  imports: [
+    FontAwesomeModule,
+    NgIf,
+    MatButtonModule
+  ],
+  standalone: true
 })
 export class MapComponent implements AfterViewInit {
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];

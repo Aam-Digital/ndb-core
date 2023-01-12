@@ -24,9 +24,7 @@ describe("PouchDatabase tests", () => {
     database = PouchDatabase.create();
   });
 
-  afterEach(async () => {
-    await database.destroy();
-  });
+  afterEach(() => database.destroy());
 
   it("get object by _id after put into database", async () => {
     const id = "test_id";

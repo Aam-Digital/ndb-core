@@ -9,12 +9,9 @@ import { EntityListComponent } from "./entity-list.component";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityListModule } from "./entity-list.module";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
-import { ExportService } from "../../export/export-service/export.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
@@ -93,13 +90,8 @@ describe("EntityListComponent", () => {
     };
 
     TestBed.configureTestingModule({
-      imports: [
-        EntityListModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-      ],
+      imports: [EntityListComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: ExportService, useValue: {} },
         { provide: AttendanceService, useValue: mockAttendanceService },
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: FormDialogService, useValue: null },
@@ -139,6 +131,7 @@ describe("EntityListComponent", () => {
     createComponent();
     await initComponentInputs();
     expect(component.selectedColumnGroupIndex).toBe(1);
+    console.log("component groups", component.columnGroups);
 
     const tabGroup = await loader.getHarness(MatTabGroupHarness);
     const groups = await tabGroup.getTabs();

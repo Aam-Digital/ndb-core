@@ -13,6 +13,10 @@ import { DataFilter } from "../../entity-components/entity-subrecord/entity-subr
 import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { getUrlWithoutParams } from "../../../utils/utils";
+import { ListFilterComponent } from "../list-filter/list-filter.component";
+import { NgForOf, NgIf } from "@angular/common";
+import { Angulartics2Module } from "angulartics2";
+import { DateRangeFilterComponent } from "../date-range-filter/date-range-filter.component";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -20,6 +24,14 @@ import { getUrlWithoutParams } from "../../../utils/utils";
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
+  imports: [
+    ListFilterComponent,
+    NgForOf,
+    Angulartics2Module,
+    DateRangeFilterComponent,
+    NgIf,
+  ],
+  standalone: true,
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   /**

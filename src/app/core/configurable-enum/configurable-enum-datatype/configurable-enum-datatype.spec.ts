@@ -23,8 +23,8 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { ConfigService } from "../../config/config.service";
-import { ConfigurableEnumModule } from "../configurable-enum.module";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { ConfigurableEnumModule } from "../configurable-enum.module";
 
 describe("ConfigurableEnumDatatype", () => {
   const TEST_CONFIG: ConfigurableEnumConfig = [
@@ -56,10 +56,7 @@ describe("ConfigurableEnumDatatype", () => {
 
     TestBed.configureTestingModule({
       imports: [ConfigurableEnumModule],
-      providers: [
-        EntitySchemaService,
-        { provide: ConfigService, useValue: configService },
-      ],
+      providers: [{ provide: ConfigService, useValue: configService }],
     });
 
     entitySchemaService =
@@ -111,5 +108,21 @@ describe("ConfigurableEnumDatatype", () => {
 
     expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
     expect(entity).toHaveId("Test");
+  });
+
+  it("should gracefully handle invalid enum ids and show a dummy option to users", () => {
+    const data = {
+      _id: "Test",
+      option: "INVALID_OPTION",
+    };
+    const entity = new TestEntity();
+
+    entitySchemaService.loadDataIntoEntity(entity, data);
+
+    expect(entity.option).toEqual({
+      id: "INVALID_OPTION",
+      isInvalidOption: true,
+      label: "[invalid option] INVALID_OPTION",
+    });
   });
 });

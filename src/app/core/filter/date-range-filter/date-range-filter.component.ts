@@ -6,11 +6,16 @@ import { Entity } from "app/core/entity/model/entity";
 import moment from "moment";
 import { FilterSelectionOption } from "../filter-selection/filter-selection";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { FormsModule } from "@angular/forms";
 
 @Component({
   selector: "app-date-range-filter",
   templateUrl: "./date-range-filter.component.html",
   styleUrls: ["./date-range-filter.component.scss"],
+  standalone: true,
+  imports: [MatFormFieldModule, MatDatepickerModule, FormsModule],
 })
 export class DateRangeFilterComponent<T extends Entity> {
   fromDate: Date;

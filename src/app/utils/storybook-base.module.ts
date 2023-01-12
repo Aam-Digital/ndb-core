@@ -14,12 +14,7 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../core/entity/database-entity.decorator";
-import { viewRegistry } from "../core/view/dynamic-components/dynamic-component.decorator";
-import { routesRegistry } from "../app.routing";
-import {
-  ConfigService,
-  createTestingConfigService,
-} from "../core/config/config.service";
+import { ConfigService } from "../core/config/config.service";
 import { AbilityService } from "../core/permissions/ability/ability.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
@@ -27,6 +22,14 @@ import { defineAbility } from "@casl/ability";
 import { SessionService } from "../core/session/session-service/session.service";
 import { SyncState } from "../core/session/session-states/sync-state.enum";
 import { WINDOW_TOKEN } from "./di-tokens";
+import { createTestingConfigService } from "../core/config/testing-config-service";
+import { componentRegistry } from "../dynamic-components";
+
+export const entityFormStorybookDefaulParameters = {
+  controls: {
+    exclude: ["_columns"],
+  },
+};
 
 export const mockAbilityService = {
   abilityUpdated: new Subject<void>(),
@@ -67,7 +70,6 @@ export class StorybookBaseModule {
   constructor(icons: FaIconLibrary) {
     icons.addIconPacks(fas, far);
     entityRegistry.allowDuplicates();
-    viewRegistry.allowDuplicates();
-    routesRegistry.allowDuplicates();
+    componentRegistry.allowDuplicates();
   }
 }

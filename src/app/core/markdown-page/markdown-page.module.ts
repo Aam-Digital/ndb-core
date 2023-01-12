@@ -16,8 +16,6 @@
  */
 
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { MarkdownPageComponent } from "./markdown-page/markdown-page.component";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
 import { MarkdownModule, MarkedOptions } from "ngx-markdown";
 import { MarkedRendererCustom } from "./MarkedRendererCustom";
@@ -39,9 +37,7 @@ function markedOptionsFactory(): MarkedOptions {
  * Display any information contained in a markdown file.
  */
 @NgModule({
-  declarations: [MarkdownPageComponent],
   imports: [
-    CommonModule,
     HttpClientModule,
     MarkdownModule.forRoot({
       loader: HttpClient,
@@ -52,6 +48,4 @@ function markedOptionsFactory(): MarkedOptions {
     }),
   ],
 })
-export class MarkdownPageModule {
-  static dynamicComponents = [MarkdownPageComponent];
-}
+export class MarkdownPageModule {}

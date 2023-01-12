@@ -2,12 +2,10 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ChangelogComponent } from "./changelog.component";
-import { LatestChangesModule } from "../latest-changes.module";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { UpdateManagerService } from "../update-manager.service";
 import { Changelog } from "../changelog";
 import { of } from "rxjs";
-import { MarkdownPageModule } from "../../markdown-page/markdown-page.module";
 
 const changelogs: Changelog[] = [
   {
@@ -35,7 +33,7 @@ export default {
   component: ChangelogComponent,
   decorators: [
     moduleMetadata({
-      imports: [StorybookBaseModule, LatestChangesModule, MarkdownPageModule],
+      imports: [StorybookBaseModule, ChangelogComponent],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: of(changelogs) },
         {

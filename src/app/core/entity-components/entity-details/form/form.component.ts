@@ -5,7 +5,7 @@ import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../../utils/utils";
 import { Router } from "@angular/router";
-import { Location } from "@angular/common";
+import { Location, NgIf } from "@angular/common";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 import {
@@ -15,6 +15,9 @@ import {
 import { AlertService } from "../../../alerts/alert.service";
 import { toFormFieldConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
 import * as _ from "lodash-es";
+import { MatButtonModule } from "@angular/material/button";
+import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -25,6 +28,13 @@ import * as _ from "lodash-es";
   selector: "app-form",
   templateUrl: "./form.component.html",
   styleUrls: ["./form.component.scss"],
+  imports: [
+    MatButtonModule,
+    NgIf,
+    EntityFormComponent,
+    DisableEntityOperationDirective,
+  ],
+  standalone: true,
 })
 export class FormComponent<E extends Entity>
   implements OnInitDynamicComponent, OnInit
@@ -83,18 +93,7 @@ export class FormComponent<E extends Entity>
     if (this.creatingNew) {
       this.location.back();
     }
-    this.resetForm();
+    this.entityFormService.resetForm(this.form, this.entity);
     this.form.disable();
-  }
-
-  private resetForm(entity = this.entity) {
-    // Patch form with values from the entity
-    this.form.patchValue(entity as any);
-    // Clear values that are not yet present on the entity
-    const newKeys = Object.keys(
-      _.omit(this.form.controls, Object.keys(this.entity))
-    );
-    newKeys.forEach((key) => this.form.get(key).setValue(null));
-    this.form.markAsPristine();
   }
 }

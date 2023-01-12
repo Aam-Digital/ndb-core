@@ -1,0 +1,9 @@
+<div *ngIf="value" class="completed-wrapper">
+  <div>
+    <fa-icon icon="check" class="margin-right-small"></fa-icon>
+    <span i18n>completed</span>
+  </div>
+  <div class="completed-details" i18n>
+    by {{ value.completedBy }} on {{ value.completedAt | date }}
+  </div>
+</div>

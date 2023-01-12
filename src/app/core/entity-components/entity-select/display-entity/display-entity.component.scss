@@ -1,7 +1,17 @@
+@use "src/styles/variables/sizes";
+
 .clickable {
   cursor: pointer;
 }
 
 .clickable:hover {
   text-decoration: underline;
+}
+
+:host {
+  display: inline-block;
+}
+
+.block-height {
+  line-height: sizes.$icon-block;
 }

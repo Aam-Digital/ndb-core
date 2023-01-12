@@ -7,13 +7,11 @@ describe("DisplayDateComponent", () => {
   let component: DisplayDateComponent;
   let fixture: ComponentFixture<DisplayDateComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [DisplayDateComponent],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [DisplayDateComponent],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayDateComponent);

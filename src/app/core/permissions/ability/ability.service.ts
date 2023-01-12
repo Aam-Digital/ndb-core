@@ -32,17 +32,20 @@ export class AbilityService {
     private entityMapper: EntityMapperService,
     private permissionEnforcer: PermissionEnforcerService,
     private logger: LoggingService
-  ) {
+  ) {}
+
+  initializeRules() {
     // TODO this setup is very similar to `ConfigService`
-    this.initRules();
+    this.loadRules();
     this.entityMapper
       .receiveUpdates<Config<DatabaseRules>>(Config)
       .pipe(filter(({ entity }) => entity.getId() === Config.PERMISSION_KEY))
       .subscribe(({ entity }) => this.updateAbilityWithUserRules(entity.data));
   }
 
-  private initRules(): Promise<void> {
+  private loadRules(): Promise<void> {
     // Initially allow everything until permission document could be fetched
+    // TODO somehow this rules is used if no other is found even after update
     this.ability.update([{ action: "manage", subject: "all" }]);
     return this.entityMapper
       .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
@@ -54,9 +57,9 @@ export class AbilityService {
     const userRules = this.getRulesForUser(rules);
     if (userRules.length === 0 || userRules.length === rules.default?.length) {
       // No rules or only default rules defined
-      const { name, roles } = this.sessionService.getCurrentUser();
+      const user = this.sessionService.getCurrentUser();
       this.logger.warn(
-        `no rules found for user "${name}" with roles "${roles}"`
+        `no rules found for user "${user?.name}" with roles "${user?.roles}"`
       );
     }
     this.updateAbilityWithRules(userRules);
@@ -64,11 +67,14 @@ export class AbilityService {
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
+    const currentUser = this.sessionService.getCurrentUser();
+    if (!currentUser) {
+      return rules.public ?? [];
+    }
     const rawUserRules: DatabaseRule[] = [];
     if (rules.default) {
       rawUserRules.push(...rules.default);
     }
-    const currentUser = this.sessionService.getCurrentUser();
     currentUser.roles.forEach((role) => {
       const rulesForRole = rules[role] || [];
       rawUserRules.push(...rulesForRole);

@@ -2,10 +2,17 @@ import { Component, Inject } from "@angular/core";
 import { DateAdapter } from "@angular/material/core";
 import {
   DateRange,
+  MatDatepickerModule,
   MatDateSelectionModel,
   MatRangeDateSelectionModel,
 } from "@angular/material/datepicker";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { MatButtonModule } from "@angular/material/button";
+import { NgForOf } from "@angular/common";
 
 const customPresets = [
   "today",
@@ -28,6 +35,8 @@ type CustomPreset = typeof customPresets[number];
   providers: [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
   ],
+  standalone: true,
+  imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, NgForOf],
 })
 export class DateRangeFilterPanelComponent<D> {
   // list of range presets we want to provide:

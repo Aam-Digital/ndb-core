@@ -8,13 +8,18 @@ import {
 } from "@angular/core";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Entity } from "../../entity/model/entity";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { Router } from "@angular/router";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
+import { NgIf } from "@angular/common";
+import { AbilityModule } from "@casl/angular";
+import { MatButtonModule } from "@angular/material/button";
+import { Angulartics2Module } from "angulartics2";
+import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 
 /**
  * Use `<app-form-dialog-wrapper>` in your form templates to handle the saving and resetting of the edited entity.
@@ -23,19 +28,28 @@ import {
  *
  * @example
  <app-form-dialog-wrapper [entity]="myEntity">
-   <h1>
-     <!-- h1 element is used for dialog title -->
-   </h1>
-   <form #entityForm="ngForm"> <!-- marking your form with #entityForm is required -->
-     <!-- add your form fields here -->
-     <!-- save/cancel buttons are added by the wrapper automatically  -->
-   </form>
+ <h1>
+ <!-- h1 element is used for dialog title -->
+ </h1>
+ <form #entityForm="ngForm"> <!-- marking your form with #entityForm is required -->
+ <!-- add your form fields here -->
+ <!-- save/cancel buttons are added by the wrapper automatically  -->
+ </form>
  </app-form-dialog-wrapper>
  */
 @UntilDestroy()
 @Component({
   selector: "app-form-dialog-wrapper",
   templateUrl: "./form-dialog-wrapper.component.html",
+  imports: [
+    MatDialogModule,
+    NgIf,
+    AbilityModule,
+    MatButtonModule,
+    Angulartics2Module,
+    DisableEntityOperationDirective,
+  ],
+  standalone: true,
 })
 export class FormDialogWrapperComponent<E extends Entity = Entity>
   implements AfterViewInit
@@ -45,6 +59,7 @@ export class FormDialogWrapperComponent<E extends Entity = Entity>
     this.originalEntity = value.copy() as E;
     this._entity = value;
   }
+
   get entity(): E {
     return this._entity;
   }

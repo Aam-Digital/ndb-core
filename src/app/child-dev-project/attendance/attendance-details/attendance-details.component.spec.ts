@@ -7,7 +7,6 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { RecurringActivity } from "../model/recurring-activity";
-import { AttendanceModule } from "../attendance.module";
 import { MatDialogRef } from "@angular/material/dialog";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
@@ -46,7 +45,7 @@ describe("AttendanceDetailsComponent", () => {
       entity.activity = RecurringActivity.create("Test Activity");
 
       TestBed.configureTestingModule({
-        imports: [AttendanceModule, MockedTestingModule.withState()],
+        imports: [AttendanceDetailsComponent, MockedTestingModule.withState()],
         providers: [
           { provide: MatDialogRef, useValue: {} },
           { provide: AttendanceService, useValue: mockAttendanceService },

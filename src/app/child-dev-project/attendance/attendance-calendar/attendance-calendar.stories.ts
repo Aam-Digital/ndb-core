@@ -1,12 +1,10 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { AttendanceModule } from "../attendance.module";
 import { generateEventWithAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
 import { Note } from "../../notes/model/note";
 import moment from "moment";
-import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
@@ -51,8 +49,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        AttendanceModule,
-        FormDialogModule,
+        AttendanceCalendarComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(),
       ],

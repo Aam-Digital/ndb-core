@@ -49,15 +49,15 @@ export class DemoDataInitializerService {
     }
     this.registerDemoUsers();
 
-    this.initializeDefaultDatabase();
-    await this.demoDataService.publishDemoData();
-
-    dialogRef.close();
-
     await this.localSession.login(
       DemoUserGeneratorService.DEFAULT_USERNAME,
       DemoUserGeneratorService.DEFAULT_PASSWORD
     );
+
+    await this.demoDataService.publishDemoData();
+
+    dialogRef.close();
+
     this.syncDatabaseOnUserChange();
   }
 
@@ -120,15 +120,6 @@ export class DemoDataInitializerService {
     if (this.liveSyncHandle) {
       this.liveSyncHandle.cancel();
       this.liveSyncHandle = undefined;
-    }
-  }
-
-  private initializeDefaultDatabase() {
-    const dbName = `${DemoUserGeneratorService.DEFAULT_USERNAME}-${AppSettings.DB_NAME}`;
-    if (environment.session_type === SessionType.mock) {
-      this.pouchDatabase.initInMemoryDB(dbName);
-    } else {
-      this.pouchDatabase.initIndexedDB(dbName);
     }
   }
 }

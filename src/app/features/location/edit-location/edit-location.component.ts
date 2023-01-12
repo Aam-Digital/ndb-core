@@ -13,11 +13,30 @@ import {
 } from "../map-popup/map-popup.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { Coordinates } from "../coordinates";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { ReactiveFormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @DynamicComponent("EditLocation")
 @Component({
   selector: "app-edit-location",
   templateUrl: "./edit-location.component.html",
+  imports: [
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    MatAutocompleteModule,
+    NgIf,
+    MatButtonModule,
+    FontAwesomeModule,
+    AsyncPipe,
+    NgForOf,
+  ],
+  standalone: true,
   styleUrls: ["./edit-location.component.scss"],
 })
 export class EditLocationComponent extends EditComponent<GeoResult> {

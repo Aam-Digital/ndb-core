@@ -68,7 +68,7 @@ describe("PermissionEnforcerService", () => {
     entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     service = TestBed.inject(PermissionEnforcerService);
-    TestBed.inject(AbilityService);
+    TestBed.inject(AbilityService).initializeRules();
   }));
 
   afterEach(() => {

@@ -20,12 +20,10 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { UiComponent } from "./ui.component";
 import { SwUpdate } from "@angular/service-worker";
 import { EMPTY, Subject } from "rxjs";
-import { UiModule } from "../ui.module";
 import { ConfigService } from "../../config/config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 
 describe("UiComponent", () => {
   let component: UiComponent;
@@ -42,13 +40,9 @@ describe("UiComponent", () => {
     mockIndexingService.createIndex.and.resolveTo();
 
     TestBed.configureTestingModule({
-      imports: [
-        UiModule,
-        MockedTestingModule.withState(),
-        FontAwesomeTestingModule,
-        TabStateModule,
-      ],
+      imports: [UiComponent, MockedTestingModule.withState()],
       providers: [
+        UserRoleGuard,
         { provide: SwUpdate, useValue: mockSwUpdate },
         {
           provide: DatabaseIndexingService,

@@ -7,7 +7,6 @@ import {
 } from "@angular/core/testing";
 
 import { ListPaginatorComponent } from "./list-paginator.component";
-import { EntityListModule } from "../../entity-list/entity-list.module";
 import { MatTableDataSource } from "@angular/material/table";
 import { PageEvent } from "@angular/material/paginator";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -18,13 +17,11 @@ describe("ListPaginatorComponent", () => {
   let component: ListPaginatorComponent<any>;
   let fixture: ComponentFixture<ListPaginatorComponent<any>>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [EntityListModule, MockedTestingModule.withState()],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [ListPaginatorComponent, MockedTestingModule.withState()],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ListPaginatorComponent);
@@ -71,10 +68,10 @@ describe("ListPaginatorComponent", () => {
       c1: 11,
       c2: 12,
     };
-    component.user = ({
+    component.user = {
       paginatorSettingsPageSize: userPaginationSettings,
       paginatorSettingsPageIndex: {},
-    } as Partial<User>) as User;
+    } as Partial<User> as User;
 
     component.idForSavingPagination = "c1";
     component.ngOnChanges({ idForSavingPagination: undefined });

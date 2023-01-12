@@ -12,7 +12,10 @@ import {
   faCalendarAlt,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
-import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
+import {
+  FaIconLibrary,
+  FontAwesomeModule,
+} from "@fortawesome/angular-fontawesome";
 import { LoggingService } from "../../logging/logging.service";
 
 /**
@@ -34,7 +37,9 @@ const iconAliases = new Map<string, IconDefinition>([
  */
 @Component({
   selector: "app-fa-dynamic-icon",
-  template: `<fa-icon [icon]="_icon"></fa-icon>`,
+  template: ` <fa-icon [icon]="_icon"></fa-icon>`,
+  imports: [FontAwesomeModule],
+  standalone: true,
 })
 export class FaDynamicIconComponent {
   /** The fallback icon if the given icon is neither known (inside the internal map)

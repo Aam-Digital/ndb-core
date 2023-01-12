@@ -9,8 +9,7 @@ describe("TemplateTooltipComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [TemplateTooltipComponent],
-      imports: [NoopAnimationsModule],
+      imports: [TemplateTooltipComponent, NoopAnimationsModule],
     }).compileComponents();
   });
 

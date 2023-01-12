@@ -26,7 +26,7 @@ enum OS {
   Other,
 }
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class PwaInstallService {
   /**
    * Resolves once/if it is possible to directly install the app
@@ -118,7 +118,7 @@ export class PwaInstallService {
   private detectStandaloneMode(): boolean {
     return (
       ("standalone" in this.window.navigator &&
-        this.window.navigator["standalone"]) ||
+        !!this.window.navigator["standalone"]) ||
       this.window.matchMedia("(display-mode: standalone)").matches
     );
   }

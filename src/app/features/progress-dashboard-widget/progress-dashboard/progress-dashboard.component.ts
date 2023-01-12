@@ -10,11 +10,28 @@ import { SessionService } from "../../../core/session/session-service/session.se
 import { waitForChangeTo } from "../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../core/session/session-states/sync-state.enum";
 import { firstValueFrom } from "rxjs";
+import { PercentPipe } from "@angular/common";
+import { MatTableModule } from "@angular/material/table";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DashboardWidgetComponent } from "../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { WidgetContentComponent } from "../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 @Component({
   selector: "app-progress-dashboard",
   templateUrl: "./progress-dashboard.component.html",
   styleUrls: ["./progress-dashboard.component.scss"],
+  imports: [
+    PercentPipe,
+    MatTableModule,
+    MatProgressBarModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+  ],
+  standalone: true,
 })
 @DynamicComponent("ProgressDashboard")
 export class ProgressDashboardComponent

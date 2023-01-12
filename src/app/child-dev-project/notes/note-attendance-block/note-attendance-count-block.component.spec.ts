@@ -10,7 +10,7 @@ describe("NoteAttendanceBlockCountComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [NoteAttendanceCountBlockComponent],
+      imports: [NoteAttendanceCountBlockComponent],
     }).compileComponents();
   });
 

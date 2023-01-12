@@ -6,7 +6,6 @@ import {
 } from "@angular/core/testing";
 
 import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
-import { ChildrenModule } from "../../children.module";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../model/child";
 import moment from "moment";
@@ -29,7 +28,7 @@ describe("BirthdayDashboardComponent", () => {
   beforeEach(async () => {
     entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
-      imports: [ChildrenModule, FontAwesomeTestingModule],
+      imports: [BirthdayDashboardComponent, FontAwesomeTestingModule],
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
         { provide: ConfigService, useValue: {} },

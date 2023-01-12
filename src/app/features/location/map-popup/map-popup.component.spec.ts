@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { MapPopupComponent } from "./map-popup.component";
-import { LocationModule } from "../location.module";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ConfigService } from "../../../core/config/config.service";
@@ -15,7 +14,7 @@ describe("MapPopupComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [LocationModule],
+      imports: [MapPopupComponent],
       providers: [
         EntitySchemaService,
         { provide: MAT_DIALOG_DATA, useValue: { mapClick } },

@@ -6,9 +6,6 @@ import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute, convertToParamMap } from "@angular/router";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatButtonModule } from "@angular/material/button";
 
 describe("ComingSoonComponent", () => {
   let component: ComingSoonComponent;
@@ -29,8 +26,7 @@ describe("ComingSoonComponent", () => {
     };
 
     TestBed.configureTestingModule({
-      declarations: [ComingSoonComponent, DialogCloseComponent],
-      imports: [FontAwesomeTestingModule, MatDialogModule, MatButtonModule],
+      imports: [ComingSoonComponent, FontAwesomeTestingModule],
       providers: [
         { provide: AnalyticsService, useValue: mockAnalytics },
         { provide: AlertService, useValue: { addInfo: () => {} } },

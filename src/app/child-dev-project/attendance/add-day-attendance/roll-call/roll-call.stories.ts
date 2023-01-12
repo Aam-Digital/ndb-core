@@ -3,7 +3,6 @@ import { RollCallComponent } from "./roll-call.component";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
 import { moduleMetadata } from "@storybook/angular";
 import { Note } from "../../../notes/model/note";
-import { AttendanceModule } from "../../attendance.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
@@ -24,7 +23,7 @@ export default {
   component: RollCallComponent,
   decorators: [
     moduleMetadata({
-      imports: [StorybookBaseModule, AttendanceModule],
+      imports: [StorybookBaseModule, RollCallComponent],
       providers: [
         {
           provide: EntityMapperService,

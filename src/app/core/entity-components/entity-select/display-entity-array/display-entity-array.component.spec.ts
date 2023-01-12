@@ -1,29 +1,40 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { Note } from "../../../../child-dev-project/notes/model/note";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import {
+  DatabaseEntity,
   EntityRegistry,
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
+import { Entity } from "app/core/entity/model/entity";
+import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
+import { School } from "../../../../child-dev-project/schools/model/school";
+import { DatabaseField } from "../../../entity/database-field.decorator";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;
   let fixture: ComponentFixture<DisplayEntityArrayComponent>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+
+  let testEntities: Entity[];
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["load"]);
-    mockEntityMapper.load.and.resolveTo(new Child());
+    testEntities = [new Child(), new Child(), new School()];
     await TestBed.configureTestingModule({
-      declarations: [DisplayEntityArrayComponent],
+      imports: [DisplayEntityArrayComponent],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(testEntities),
+        },
         { provide: EntityRegistry, useValue: entityRegistry },
-        EntitySchemaService,
       ],
     }).compileComponents();
   });
@@ -42,4 +53,52 @@ describe("DisplayEntityArrayComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should load entities for single type", fakeAsync(() => {
+    const expectedEntities = [testEntities[0]];
+
+    @DatabaseEntity("DisplayEntityTest1")
+    class DisplayEntityTest1 extends Entity {
+      @DatabaseField({
+        dataType: "entity-array",
+        additional: Child.ENTITY_TYPE,
+      })
+      relatedEntities;
+    }
+    const testEntity = new DisplayEntityTest1();
+    testEntity.relatedEntities = expectedEntities.map((e) => e.getId(false));
+
+    component.onInitFromDynamicConfig({
+      entity: testEntity,
+      id: "relatedEntities",
+      value: testEntity.relatedEntities,
+    });
+    tick();
+
+    expect(component.entities).toEqual(expectedEntities);
+  }));
+
+  it("should load entities for mixed types", fakeAsync(() => {
+    const expectedEntities = [testEntities[0], testEntities[2]];
+
+    @DatabaseEntity("DisplayEntityTest2")
+    class DisplayEntityTest2 extends Entity {
+      @DatabaseField({
+        dataType: "entity-array",
+        additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
+      })
+      relatedEntities;
+    }
+    const testEntity = new DisplayEntityTest2();
+    testEntity.relatedEntities = expectedEntities.map((e) => e.getId(true));
+
+    component.onInitFromDynamicConfig({
+      entity: testEntity,
+      id: "relatedEntities",
+      value: testEntity.relatedEntities,
+    });
+    tick();
+
+    expect(component.entities).toEqual(expectedEntities);
+  }));
 });

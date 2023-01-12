@@ -9,7 +9,6 @@ import {
 } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityFormModule } from "./entity-form.module";
 import { Entity } from "../../entity/model/entity";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
@@ -24,7 +23,6 @@ describe("EntityFormService", () => {
     mockEntityMapper = jasmine.createSpyObj(["save"]);
     mockEntityMapper.save.and.resolveTo();
     TestBed.configureTestingModule({
-      imports: [EntityFormModule],
       providers: [
         FormBuilder,
         EntitySchemaService,

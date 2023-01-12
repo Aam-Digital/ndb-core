@@ -6,12 +6,13 @@ import {
 } from "@angular/core/testing";
 
 import { ReportingComponent } from "./reporting.component";
-import { CommonModule } from "@angular/common";
-import { ReportingModule } from "../reporting.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
-import { ReportingService } from "../reporting.service";
+import {
+  Aggregation,
+  DataAggregationService,
+} from "../data-aggregation.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { ReportRow } from "../report-row";
@@ -22,14 +23,14 @@ import {
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { ExportService } from "../../../core/export/export-service/export.service";
+import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
   const mockRouteData = new Subject<RouteData<ReportingComponentConfig>>();
-  let mockReportingService: jasmine.SpyObj<ReportingService>;
-  let mockExportService: jasmine.SpyObj<ExportService>;
+  let mockReportingService: jasmine.SpyObj<DataAggregationService>;
+  let mockDataTransformationService: jasmine.SpyObj<DataTransformationService>;
 
   const testReport: ReportConfig = {
     title: "test report",
@@ -45,13 +46,13 @@ describe("ReportingComponent", () => {
 
   beforeEach(async () => {
     mockReportingService = jasmine.createSpyObj(["calculateReport"]);
-    mockExportService = jasmine.createSpyObj(["runExportQuery"]);
+    mockDataTransformationService = jasmine.createSpyObj([
+      "queryAndTransformData",
+    ]);
     mockReportingService.calculateReport.and.resolveTo([]);
     await TestBed.configureTestingModule({
-      declarations: [ReportingComponent],
       imports: [
-        CommonModule,
-        ReportingModule,
+        ReportingComponent,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
         MatNativeDateModule,
@@ -59,8 +60,11 @@ describe("ReportingComponent", () => {
       ],
       providers: [
         { provide: ActivatedRoute, useValue: { data: mockRouteData } },
-        { provide: ReportingService, useValue: mockReportingService },
-        { provide: ExportService, useValue: mockExportService },
+        { provide: DataAggregationService, useValue: mockReportingService },
+        {
+          provide: DataTransformationService,
+          useValue: mockDataTransformationService,
+        },
       ],
     }).compileComponents();
   });
@@ -86,7 +90,7 @@ describe("ReportingComponent", () => {
     expect(component.loading).toBeFalse();
 
     expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
-      testReport.aggregationDefinitions,
+      testReport.aggregationDefinitions as Aggregation[],
       jasmine.any(Date),
       jasmine.any(Date)
     );
@@ -201,7 +205,7 @@ describe("ReportingComponent", () => {
       { First: 1, Second: 2 },
       { First: 3, Second: 4 },
     ];
-    mockExportService.runExportQuery.and.resolveTo(data);
+    mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
 
     await component.calculateResults(
       { aggregationDefinitions: [], title: "", mode: "exporting" },
@@ -209,12 +213,9 @@ describe("ReportingComponent", () => {
       new Date()
     );
 
-    expect(mockExportService.runExportQuery).toHaveBeenCalledWith(
-      undefined,
-      [],
-      jasmine.any(Date),
-      jasmine.any(Date)
-    );
+    expect(
+      mockDataTransformationService.queryAndTransformData
+    ).toHaveBeenCalledWith([], jasmine.any(Date), jasmine.any(Date));
     expect(component.data).toEqual(data);
     expect(component.mode).toBe("exporting");
   });

@@ -8,7 +8,6 @@ import { MatCardModule } from "@angular/material/card";
 import { RecurringActivity } from "../model/recurring-activity";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { CommonComponentsModule } from "../../../core/common-components/common-components.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
@@ -21,7 +20,6 @@ export default {
         MatCardModule,
         MatTooltipModule,
         BrowserAnimationsModule,
-        CommonComponentsModule,
       ],
     }),
   ],

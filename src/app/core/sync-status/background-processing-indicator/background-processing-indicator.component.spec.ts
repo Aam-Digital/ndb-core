@@ -7,13 +7,8 @@ import {
 } from "@angular/core/testing";
 
 import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator.component";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatBadgeModule } from "@angular/material/badge";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EMPTY, of } from "rxjs";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
 
@@ -24,15 +19,10 @@ describe("BackgroundProcessingIndicatorComponent", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [
-        MatMenuModule,
-        MatTooltipModule,
-        MatBadgeModule,
-        MatProgressSpinnerModule,
+        BackgroundProcessingIndicatorComponent,
         NoopAnimationsModule,
-        FontAwesomeModule,
         FontAwesomeTestingModule,
       ],
-      declarations: [BackgroundProcessingIndicatorComponent],
     }).compileComponents();
   }));
 

@@ -21,9 +21,12 @@ import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { ConfigService } from "../../config/config.service";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { SessionService } from "../../session/session-service/session.service";
-import { NavigationEnd, Router } from "@angular/router";
+import { NavigationEnd, Router, RouterLink } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
+import { MatListModule } from "@angular/material/list";
+import { NgForOf } from "@angular/common";
+import { Angulartics2Module } from "angulartics2";
+import { FaDynamicIconComponent } from "../../view/fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * Main app menu listing.
@@ -33,6 +36,14 @@ import { filter, startWith } from "rxjs/operators";
   selector: "app-navigation",
   templateUrl: "./navigation.component.html",
   styleUrls: ["./navigation.component.scss"],
+  imports: [
+    MatListModule,
+    NgForOf,
+    Angulartics2Module,
+    RouterLink,
+    FaDynamicIconComponent
+  ],
+  standalone: true
 })
 export class NavigationComponent {
   /** The menu-item link (not the actual router link) that is currently active */
@@ -45,7 +56,6 @@ export class NavigationComponent {
   constructor(
     private userRoleGuard: UserRoleGuard,
     private configService: ConfigService,
-    private session: SessionService,
     private router: Router
   ) {
     this.configService.configUpdates
@@ -113,9 +123,5 @@ export class NavigationComponent {
         );
       }
     }
-  }
-
-  logout() {
-    this.session.logout();
   }
 }

@@ -5,11 +5,22 @@ import {
   NullAttendanceStatusType,
 } from "../model/attendance-status";
 import { compareEnums } from "../../../utils/utils";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { FormsModule } from "@angular/forms";
+import { ConfigurableEnumDirective } from "../../../core/configurable-enum/configurable-enum-directive/configurable-enum.directive";
 
 @Component({
   selector: "app-attendance-status-select",
   templateUrl: "./attendance-status-select.component.html",
   styleUrls: ["./attendance-status-select.component.scss"],
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ConfigurableEnumDirective,
+  ],
+  standalone: true,
 })
 export class AttendanceStatusSelectComponent {
   @Input() value: AttendanceStatusType = NullAttendanceStatusType;

@@ -9,17 +9,31 @@ import {
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { NgIf } from "@angular/common";
+import { RouteTarget } from "../../../app.routing";
 
 /**
  * Placeholder page to announce that a feature is not available yet.
  *
  * This integrates with analytics and allows user to explicitly request the feature.
  */
+@RouteTarget("ComingSoon")
 @Component({
   selector: "app-coming-soon",
   templateUrl: "./coming-soon.component.html",
   styleUrls: ["./coming-soon.component.scss"],
+  imports: [
+    DialogCloseComponent,
+    MatDialogModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    NgIf,
+  ],
+  standalone: true,
 })
 export class ComingSoonComponent implements OnChanges {
   /**
@@ -64,9 +78,8 @@ export class ComingSoonComponent implements OnChanges {
 
   private init(newFeatureId: string) {
     this.featureId = newFeatureId;
-    this.requested = ComingSoonComponent.featuresRequested.includes(
-      newFeatureId
-    );
+    this.requested =
+      ComingSoonComponent.featuresRequested.includes(newFeatureId);
 
     this.track("visit");
   }

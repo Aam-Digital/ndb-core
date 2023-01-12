@@ -2,7 +2,6 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { UserSecurityComponent } from "./user-security.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { UserModule } from "../user.module";
 import { SessionService } from "../../session/session-service/session.service";
 
 export default {
@@ -10,7 +9,7 @@ export default {
   component: UserSecurityComponent,
   decorators: [
     moduleMetadata({
-      imports: [UserModule, StorybookBaseModule],
+      imports: [UserSecurityComponent, StorybookBaseModule],
       providers: [
         {
           provide: SessionService,

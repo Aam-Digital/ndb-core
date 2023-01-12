@@ -11,8 +11,6 @@ import { LoginState } from "../../../../core/session/session-states/login-state.
 import { Note } from "../../model/note";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { warningLevels } from "../../../warning-levels";
-import { DashboardModule } from "../../../../core/dashboard/dashboard.module";
-import { MatTableModule } from "@angular/material/table";
 import { of } from "rxjs";
 import { map } from "rxjs/operators";
 
@@ -30,10 +28,8 @@ describe("ImportantNotesDashboardComponent", () => {
     await TestBed.configureTestingModule({
       imports: [
         MockedTestingModule.withState(LoginState.LOGGED_IN, mockNotes),
-        DashboardModule,
-        MatTableModule,
+        ImportantNotesDashboardComponent,
       ],
-      declarations: [ImportantNotesDashboardComponent],
       providers: [
         {
           provide: FormDialogService,

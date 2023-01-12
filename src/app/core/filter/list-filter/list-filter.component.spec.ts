@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ListFilterComponent } from "./list-filter.component";
 import { FilterSelection } from "../filter-selection/filter-selection";
-import { EntityListModule } from "../../entity-components/entity-list/entity-list.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("ListFilterComponent", () => {
@@ -11,7 +10,7 @@ describe("ListFilterComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [EntityListModule, MockedTestingModule.withState()],
+      imports: [ListFilterComponent, MockedTestingModule.withState()],
     }).compileComponents();
   }));
 

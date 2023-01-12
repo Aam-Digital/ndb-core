@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ReadonlyFunctionComponent } from "./readonly-function.component";
 import { Child } from "../../../../../child-dev-project/children/model/child";
-import { EntityFunctionPipe } from "./entity-function.pipe";
 import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 
 describe("ReadonlyFunctionComponent", () => {
@@ -11,7 +10,7 @@ describe("ReadonlyFunctionComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ReadonlyFunctionComponent, EntityFunctionPipe],
+      imports: [ReadonlyFunctionComponent],
     }).compileComponents();
   });
 

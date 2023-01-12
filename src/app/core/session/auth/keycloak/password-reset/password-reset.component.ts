@@ -1,12 +1,26 @@
 import { Component } from "@angular/core";
 import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
-import { FormControl, Validators } from "@angular/forms";
+import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { Angulartics2Module } from "angulartics2";
 
 @Component({
   selector: "app-password-reset",
   templateUrl: "./password-reset.component.html",
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatFormFieldModule,
+    ReactiveFormsModule,
+    MatInputModule,
+    Angulartics2Module
+  ],
+  standalone: true
 })
 export class PasswordResetComponent {
   keycloakAuth: KeycloakAuthService;

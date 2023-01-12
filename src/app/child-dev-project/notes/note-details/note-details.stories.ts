@@ -1,6 +1,5 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { NotesModule } from "../notes.module";
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
@@ -18,7 +17,7 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [
-        NotesModule,
+        NoteDetailsComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(),
       ],

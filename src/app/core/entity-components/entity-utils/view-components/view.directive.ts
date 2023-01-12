@@ -6,9 +6,10 @@ import { Directive, Input } from "@angular/core";
 @Directive()
 export abstract class ViewDirective<T> implements OnInitDynamicComponent {
   @Input() entity: Entity;
-  property: string;
-  tooltip: string;
-  value: T;
+  @Input() property: string;
+  @Input() tooltip: string;
+  @Input() value: T;
+
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     this.entity = config.entity;
     this.value = config.value;

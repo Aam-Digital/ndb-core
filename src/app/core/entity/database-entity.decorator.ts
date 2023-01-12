@@ -2,6 +2,7 @@ import { Entity, EntityConstructor } from "./model/entity";
 import { Registry } from "../registry/dynamic-registry";
 
 export class EntityRegistry extends Registry<EntityConstructor> {}
+
 export const entityRegistry = new EntityRegistry((key, constructor) => {
   if (!(new constructor() instanceof Entity)) {
     throw Error(
@@ -13,6 +14,7 @@ export const entityRegistry = new EntityRegistry((key, constructor) => {
 
 /**
  * Decorator (Annotation `@DatabaseEntity()`) to set the string ENTITY_TYPE to an Entity Type.
+ * The entity should also be added to the {@link databaseEntities} array of the surrounding module.
  *
  * also see {@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  *

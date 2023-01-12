@@ -6,28 +6,31 @@ import {
 } from "@angular/core/testing";
 
 import { DashboardListWidgetComponent } from "./dashboard-list-widget.component";
-import { DashboardModule } from "../dashboard.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Component } from "@angular/core";
-import { MatTableModule } from "@angular/material/table";
 import { By } from "@angular/platform-browser";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
+import { MatTableModule } from "@angular/material/table";
 
 @Component({
-  template: `<app-dashboard-list-widget
+  template: ` <app-dashboard-list-widget
     [entries]="entries"
     [entityType]="entityType"
-    ><table mat-table>
+  >
+    <table mat-table>
       <ng-container matColumnDef="name">
         <td *matCellDef="let x">
           {{ x.name }}
         </td>
       </ng-container>
 
-      <tr mat-row *matRowDef="let row; columns: ['name']"></tr></table
-  ></app-dashboard-list-widget>`,
+      <tr mat-row *matRowDef="let row; columns: ['name']"></tr>
+    </table>
+  </app-dashboard-list-widget>`,
+  imports: [DashboardListWidgetComponent, MatTableModule],
+  standalone: true,
 })
 export class DashboardWidgetTestComponent {
   entries: any[];
@@ -50,8 +53,7 @@ describe("DashboardListWidgetComponent", () => {
     );
 
     await TestBed.configureTestingModule({
-      declarations: [DashboardWidgetTestComponent],
-      imports: [DashboardModule, MatTableModule],
+      imports: [DashboardWidgetTestComponent],
       providers: [{ provide: EntityMapperService, useValue: mockEntityMapper }],
     }).compileComponents();
 

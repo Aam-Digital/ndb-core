@@ -7,6 +7,7 @@ import { getKmDistance } from "../map-utils";
 import { Observable } from "rxjs";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { ReadonlyFunctionComponent } from "../../../core/entity-components/entity-utils/view-components/readonly-function/readonly-function.component";
 
 /**
  * Config for displaying the distance between two entities
@@ -36,6 +37,8 @@ export interface ViewDistanceConfig {
       [displayFunction]="distanceFunction"
     ></app-readonly-function>
   `,
+  imports: [ReadonlyFunctionComponent],
+  standalone: true,
 })
 export class ViewDistanceComponent extends ViewDirective<Geolocation> {
   private config: ViewDistanceConfig;

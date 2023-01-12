@@ -12,11 +12,18 @@ import { SyncedSessionService } from "../../session/session-service/synced-sessi
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "../../session/session-service/auth-user";
 import { firstValueFrom } from "rxjs";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-support",
   templateUrl: "./support.component.html",
   styleUrls: ["./support.component.scss"],
+  imports: [
+    MatExpansionModule,
+    MatButtonModule
+  ],
+  standalone: true
 })
 export class SupportComponent implements OnInit {
   currentUser: AuthUser;
