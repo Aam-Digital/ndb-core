@@ -53,7 +53,6 @@ export class ConfirmationDialogService {
           },
         })
         .afterClosed()
-        .pipe(map((choice) => !!choice))
     );
   }
 }

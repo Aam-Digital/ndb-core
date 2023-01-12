@@ -27,7 +27,7 @@ import { MatToolbarModule } from "@angular/material/toolbar";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { RouterLink, RouterOutlet } from "@angular/router";
+import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { SearchComponent } from "../search/search.component";
 import { SyncStatusComponent } from "../../sync-status/sync-status/sync-status.component";
@@ -63,9 +63,9 @@ import { PrimaryActionComponent } from "../primary-action/primary-action.compone
     AppVersionComponent,
     RouterOutlet,
     LoginComponent,
-    PrimaryActionComponent
+    PrimaryActionComponent,
   ],
-  standalone: true
+  standalone: true,
 })
 export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */
@@ -85,7 +85,8 @@ export class UiComponent {
     private _sessionService: SessionService,
     private titleService: Title,
     private configService: ConfigService,
-    private screenWidthObserver: ScreenWidthObserver
+    private screenWidthObserver: ScreenWidthObserver,
+    private router: Router
   ) {
     this.screenWidthObserver
       .platform()
@@ -117,6 +118,9 @@ export class UiComponent {
    */
   logout() {
     this._sessionService.logout();
+    this.router.navigate(["/login"], {
+      queryParams: { redirect_uri: this.router.routerState.snapshot.url },
+    });
   }
 
   closeSidenavOnMobile() {

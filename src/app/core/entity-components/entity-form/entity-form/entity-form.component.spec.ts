@@ -16,10 +16,7 @@ describe("EntityFormComponent", () => {
   beforeEach(waitForAsync(() => {
     mockConfirmation = jasmine.createSpyObj(["getConfirmation"]);
     TestBed.configureTestingModule({
-      imports: [
-        MockedTestingModule.withState(),
-        EntityFormComponent
-      ],
+      imports: [MockedTestingModule.withState(), EntityFormComponent],
       providers: [
         { provide: ConfirmationDialogService, useValue: mockConfirmation },
       ],
@@ -37,6 +34,7 @@ describe("EntityFormComponent", () => {
       component.columns[0],
       component.entity
     );
+    component.ngOnChanges({ entity: true, form: true } as any);
     fixture.detectChanges();
   });
 
@@ -88,8 +86,8 @@ describe("EntityFormComponent", () => {
   ) {
     mockConfirmation.getConfirmation.and.resolveTo(popupAction === "yes");
     for (const c in formChanges) {
-      component._form.get(c).setValue(formChanges[c]);
-      component._form.get(c).markAsDirty();
+      component.form.get(c).setValue(formChanges[c]);
+      component.form.get(c).markAsDirty();
     }
     const updatedChild = new Child(component.entity.getId());
     for (const c in remoteChanges) {
@@ -100,7 +98,7 @@ describe("EntityFormComponent", () => {
     await entityMapper.save(updatedChild);
 
     for (const v in expectedFormValues) {
-      const form = component._form.get(v);
+      const form = component.form.get(v);
       if (form) {
         expect(form).toHaveValue(expectedFormValues[v]);
       }

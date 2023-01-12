@@ -1,5 +1,5 @@
-import { Aggregation } from "../reporting.service";
-import { ExportColumnConfig } from "../../../core/export/export-service/export-column-config";
+import { Aggregation } from "../data-aggregation.service";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 
 /**
  * The config object format that can be set for this component in the config database

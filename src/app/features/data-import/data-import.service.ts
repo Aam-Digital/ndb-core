@@ -43,7 +43,7 @@ export class DataImportService {
     data: any[],
     importMeta: ImportMetaData
   ): Promise<void> {
-    const restorePoint = await this.backupService.getJsonExport();
+    const restorePoint = await this.backupService.getDatabaseExport();
     const confirmed = await this.getUserConfirmation(data, importMeta);
     if (!confirmed) {
       return;
@@ -64,7 +64,7 @@ export class DataImportService {
     );
     snackBarRef.onAction().subscribe(async () => {
       await this.backupService.clearDatabase();
-      await this.backupService.importJson(restorePoint, true);
+      await this.backupService.restoreData(restorePoint, true);
     });
   }
 

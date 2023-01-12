@@ -11,7 +11,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
 import { ConfigurableEnumDirective } from "../configurable-enum-directive/configurable-enum.directive";
-import { NgIf } from "@angular/common";
+import { NgForOf, NgIf } from "@angular/common";
 
 @DynamicComponent("EditConfigurableEnum")
 @Component({
@@ -23,6 +23,7 @@ import { NgIf } from "@angular/common";
     MatSelectModule,
     ConfigurableEnumDirective,
     NgIf,
+    NgForOf,
   ],
   standalone: true,
 })
@@ -30,6 +31,7 @@ export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnu
   enumId: string;
   multi = false;
   compareFun = compareEnums;
+  invalidOptions: ConfigurableEnumValue[] = [];
 
   onInitFromDynamicConfig(config: EditPropertyConfig<ConfigurableEnumValue>) {
     super.onInitFromDynamicConfig(config);
@@ -40,5 +42,20 @@ export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnu
       config.formFieldConfig.additional ||
       config.propertySchema.additional ||
       config.propertySchema.innerDataType;
+
+    this.invalidOptions = this.prepareInvalidOptions();
+  }
+
+  private prepareInvalidOptions(): ConfigurableEnumValue[] {
+    let additionalOptions;
+    if (!this.multi && this.formControl.value?.isInvalidOption) {
+      additionalOptions = [this.formControl.value];
+    }
+    if (this.multi) {
+      additionalOptions = this.formControl.value?.filter(
+        (o) => o.isInvalidOption
+      );
+    }
+    return additionalOptions ?? [];
   }
 }

@@ -12,6 +12,7 @@ import { ApplicationLoadingComponent } from "./empty/application-loading.compone
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { componentRegistry } from "../../../dynamic-components";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { AuthGuard } from "../../session/auth.guard";
 
 class TestComponent extends Component {}
 
@@ -64,16 +65,18 @@ describe("RouterService", () => {
         path: "child",
         loadComponent: componentRegistry.get("ChildrenList"),
         data: {},
+        canActivate: [AuthGuard],
       },
       {
         path: "child/:id",
         loadComponent: componentRegistry.get("EntityDetails"),
         data: { config: testViewConfig },
+        canActivate: [AuthGuard],
       },
       {
         path: "admin",
         loadComponent: componentRegistry.get("Admin"),
-        canActivate: [UserRoleGuard],
+        canActivate: [AuthGuard, UserRoleGuard],
         data: { permittedUserRoles: ["user_app"] },
       },
     ];
@@ -102,7 +105,7 @@ describe("RouterService", () => {
       {
         path: "other",
         component: TestComponent,
-        canActivate: [UserRoleGuard],
+        canActivate: [AuthGuard, UserRoleGuard],
         data: { permittedUserRoles: ["admin_app"] },
       },
       { path: "child", component: ChildrenListComponent },
@@ -152,7 +155,7 @@ describe("RouterService", () => {
       {
         path: "admin",
         loadComponent: componentRegistry.get("Admin"),
-        canActivate: [UserRoleGuard],
+        canActivate: [AuthGuard, UserRoleGuard],
         data: { permittedUserRoles: ["admin"] },
       },
     ];

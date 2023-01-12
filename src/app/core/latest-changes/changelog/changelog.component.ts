@@ -29,6 +29,7 @@ import { LatestChangesService } from "../latest-changes.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DatePipe, NgForOf, NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MarkdownPageModule } from "../../markdown-page/markdown-page.module";
 import { MarkdownModule } from "ngx-markdown";
 import { MatButtonModule } from "@angular/material/button";
 
@@ -48,6 +49,7 @@ import { MatButtonModule } from "@angular/material/button";
     DatePipe,
     MarkdownModule,
     NgIf,
+    MarkdownPageModule,
     MatButtonModule,
   ],
   standalone: true,
@@ -96,7 +98,7 @@ export class ChangelogComponent implements OnInit {
     }
 
     const lastDisplayedVersion =
-      this.changelogs[this.changelogs.length - 1].tag_name;
+      this.changelogs[this.changelogs.length - 1]?.tag_name;
     this.latestChangesService
       .getChangelogsBeforeVersion(lastDisplayedVersion, 1)
       .pipe(untilDestroyed(this))

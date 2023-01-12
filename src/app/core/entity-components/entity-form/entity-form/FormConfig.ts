@@ -1,10 +1,10 @@
+import { FormValidatorConfig } from "../dynamic-form-validators/form-validator-config";
+
 /**
  * The general configuration for fields in tables and forms.
  * This defines which property is displayed and how it should be displayed.
  * Most information does not need to be provided if a property with schema definitions is displayed.
  */
-import { FormValidatorConfig } from "../dynamic-form-validators/form-validator-config";
-
 export interface FormFieldConfig {
   /**
    * The id of the entity which should be accessed
@@ -76,6 +76,11 @@ export interface FormFieldConfig {
    * If true, the field will only be shown in forms and popups, but not in tables.
    */
   hideFromTable?: boolean;
+
+  /**
+   * If true, the field will only be shown in tables and excluded from forms and popups.
+   */
+  hideFromForm?: boolean;
 
   /**
    * An internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.

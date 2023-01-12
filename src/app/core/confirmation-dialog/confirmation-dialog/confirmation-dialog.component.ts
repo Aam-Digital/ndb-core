@@ -53,7 +53,7 @@ export interface ConfirmationDialogConfig {
 
 export interface ConfirmationDialogButton {
   text: string;
-  dialogResult?: boolean;
+  dialogResult?: boolean|undefined;
   click();
 }
 
@@ -84,5 +84,32 @@ export const YesNoButtons: ConfirmationDialogButton[] = [
       // To react to emissions from this button, use the `MatDialogRef.beforeClosed()` hook
     },
     dialogResult: false,
+  },
+];
+
+export const YesNoCancelButtons: ConfirmationDialogButton[] = [
+  {
+    text: $localize`:Confirmation dialog Yes:Yes`,
+    click() {
+      // Intentionally blank
+      // To react to emissions from this button, use the `MatDialogRef.beforeClosed()` hook
+    },
+    dialogResult: true,
+  },
+  {
+    text: $localize`:Confirmation dialog No:No`,
+    click() {
+      // Intentionally blank
+      // To react to emissions from this button, use the `MatDialogRef.beforeClosed()` hook
+    },
+    dialogResult: false,
+  },
+  {
+    text: $localize`:Confirmation dialog Cancel:Cancel`,
+    click() {
+      // Intentionally blank
+      // To react to emissions from this button, use the `MatDialogRef.beforeClosed()` hook
+    },
+    dialogResult: undefined,
   },
 ];

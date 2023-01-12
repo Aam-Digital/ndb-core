@@ -27,10 +27,14 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { PasswordResetComponent } from "../auth/keycloak/password-reset/password-reset.component";
+import { ActivatedRoute, Router } from "@angular/router";
+import { filter } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Form to allow users to enter their credentials and log in.
  */
+@UntilDestroy()
 @Component({
   selector: "app-login",
   templateUrl: "./login.component.html",
@@ -43,9 +47,9 @@ import { PasswordResetComponent } from "../auth/keycloak/password-reset/password
     FontAwesomeModule,
     MatTooltipModule,
     MatButtonModule,
-    PasswordResetComponent
+    PasswordResetComponent,
   ],
-  standalone: true
+  standalone: true,
 })
 export class LoginComponent implements AfterViewInit {
   /** true while a login is started but result is not received yet */
@@ -69,11 +73,25 @@ export class LoginComponent implements AfterViewInit {
 
   constructor(
     private _sessionService: SessionService,
-    private loggingService: LoggingService
-  ) {}
+    private loggingService: LoggingService,
+    private route: ActivatedRoute,
+    private router: Router
+  ) {
+    this._sessionService.loginState
+      .pipe(
+        untilDestroyed(this),
+        filter((state) => state === LoginState.LOGGED_IN)
+      )
+      .subscribe(() => this.routeAfterLogin());
+  }
 
   ngAfterViewInit(): void {
     setTimeout(() => this.usernameInput?.nativeElement.focus());
+  }
+
+  private routeAfterLogin() {
+    const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
+    this.router.navigateByUrl(decodeURIComponent(redirectUri));
   }
 
   /**

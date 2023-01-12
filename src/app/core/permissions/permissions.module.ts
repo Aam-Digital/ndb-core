@@ -15,4 +15,8 @@ import { AbilityService } from "./ability/ability.service";
     },
   ],
 })
-export class PermissionsModule {}
+export class PermissionsModule {
+  constructor(abilityService: AbilityService) {
+    abilityService.initializeRules();
+  }
+}

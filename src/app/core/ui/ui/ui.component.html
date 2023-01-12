@@ -26,7 +26,7 @@
     </span>
 
     <a
-      *ngIf="isLoggedIn() && sideNavMode !== 'over'"
+      *ngIf="title && sideNavMode !== 'over'"
       [routerLink]="['']"
       class="header-title"
       angulartics2On="click"
@@ -50,6 +50,7 @@
 <!-- MAIN NAVIGATION + CONTENT -->
 <mat-sidenav-container
   (backdropClick)="closeSidenavOnMobile()"
+  autosize
 >
   <mat-sidenav
     #sideNav
@@ -109,8 +110,7 @@
   </mat-sidenav>
 
   <mat-sidenav-content class="sidenav-content">
-    <router-outlet *ngIf="isLoggedIn()"></router-outlet>
-    <app-login class="login" *ngIf="!isLoggedIn()"></app-login>
+    <router-outlet></router-outlet>
   </mat-sidenav-content>
 </mat-sidenav-container>
 

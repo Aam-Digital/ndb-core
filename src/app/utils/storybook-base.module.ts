@@ -26,6 +26,12 @@ import { createTestingConfigService } from "../core/config/testing-config-servic
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
 
+export const entityFormStorybookDefaulParameters = {
+  controls: {
+    exclude: ["_columns"],
+  },
+};
+
 export const mockAbilityService = {
   abilityUpdated: new Subject<void>(),
 };
