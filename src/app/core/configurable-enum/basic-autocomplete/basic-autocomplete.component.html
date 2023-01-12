@@ -1,0 +1,65 @@
+<mat-form-field floatLabel="always">
+  <!--
+  This input contains the actual value, i.e. the id of the entity.
+  It is filled in automatically in code after the user has chosen a correct value.
+
+  We also set floatLabel to always because the label is attached to the wrong input
+ -->
+  <input matInput [formControl]="form" hidden />
+
+  <mat-label>{{ label }}</mat-label>
+
+  <ng-template
+    class="block-wrapper"
+    *ngIf="selectedOption && form.disabled"
+    [ngTemplateOutlet]="templateRef"
+    [ngTemplateOutletContext]="{ $implicit: selectedOption }"
+  >
+  </ng-template>
+
+  <!--
+  This input contains the display value (i.e. the value that the user chooses and sees when he clicks 'update')
+  Which is the name of the entity in many cases.
+  -->
+  <input
+    #inputElement
+    id="inputElement"
+    matInput
+    [value]="optionToString(selectedOption) ?? ''"
+    [disabled]="form.disabled"
+    [hidden]="form.disabled"
+    [matAutocomplete]="autoSuggestions"
+    #trigger="matAutocompleteTrigger"
+    (keyup)="updateAutocomplete(inputElement.value)"
+    (focusin)="updateAutocomplete('')"
+    (focusout)="select(inputElement.value)"
+  />
+
+  <fa-icon
+    icon="caret-down"
+    class="caret-suffix"
+    [ngClass]="{ disabled: form.disabled }"
+    (click)="updateAutocomplete(''); inputElement.focus()"
+    matSuffix
+  ></fa-icon>
+
+  <mat-autocomplete
+    #autoSuggestions="matAutocomplete"
+    (optionSelected)="select($event.option.value)"
+    autoActiveFirstOption
+  >
+    <mat-option
+      *ngFor="let item of autocompleteSuggestedOptions | async"
+      [value]="item"
+    >
+      <ng-template
+        [ngTemplateOutlet]="templateRef"
+        [ngTemplateOutletContext]="{ $implicit: item }"
+      ></ng-template>
+    </mat-option>
+  </mat-autocomplete>
+
+  <mat-error *ngIf="form.errors?.required" i18n="Error message for any input">
+    This field is required
+  </mat-error>
+</mat-form-field>

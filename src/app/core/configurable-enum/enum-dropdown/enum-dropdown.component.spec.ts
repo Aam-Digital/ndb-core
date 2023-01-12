@@ -5,6 +5,7 @@ import { ConfigService } from "../../config/config.service";
 import { FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SimpleChange } from "@angular/core";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EnumDropdownComponent", () => {
   let component: EnumDropdownComponent;
@@ -17,7 +18,11 @@ describe("EnumDropdownComponent", () => {
     mockConfigService.getConfig.and.returnValue([]);
 
     await TestBed.configureTestingModule({
-      imports: [EnumDropdownComponent, NoopAnimationsModule],
+      imports: [
+        EnumDropdownComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
       providers: [{ provide: ConfigService, useValue: mockConfigService }],
     }).compileComponents();
 
@@ -26,6 +31,10 @@ describe("EnumDropdownComponent", () => {
 
     component.form = new FormControl();
     component.enumId = "test-enum";
+    component.ngOnChanges({
+      form: new SimpleChange(null, component.form, true),
+      enumId: new SimpleChange(null, component.enumId, true),
+    });
 
     fixture.detectChanges();
   });

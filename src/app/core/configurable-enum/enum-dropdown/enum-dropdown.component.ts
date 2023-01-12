@@ -2,9 +2,14 @@ import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { MatSelectModule } from "@angular/material/select";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfigurableEnumDirective } from "../configurable-enum-directive/configurable-enum.directive";
-import { compareEnums } from "../../../utils/utils";
 import { NgForOf, NgIf } from "@angular/common";
-import { ConfigurableEnumValue } from "../configurable-enum.interface";
+import {
+  CONFIGURABLE_ENUM_CONFIG_PREFIX,
+  ConfigurableEnumConfig,
+  ConfigurableEnumValue,
+} from "../configurable-enum.interface";
+import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
+import { ConfigService } from "../../config/config.service";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -17,6 +22,7 @@ import { ConfigurableEnumValue } from "../configurable-enum.interface";
     ConfigurableEnumDirective,
     NgIf,
     NgForOf,
+    BasicAutocompleteComponent,
   ],
 })
 export class EnumDropdownComponent implements OnChanges {
@@ -25,13 +31,24 @@ export class EnumDropdownComponent implements OnChanges {
   @Input() enumId: string;
   @Input() multi?: boolean;
 
-  compareFun = compareEnums;
+  enumOptions: ConfigurableEnumValue[] = [];
   invalidOptions: ConfigurableEnumValue[] = [];
+  options: ConfigurableEnumValue[];
+  enumValueToString = (v: ConfigurableEnumValue) => v?.label;
+
+  constructor(private configService: ConfigService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty("enumId")) {
+      // TODO: automatic checking for prefix would be handled automatically if enumConfigs become entities
+      this.enumOptions = this.configService.getConfig<ConfigurableEnumConfig>(
+        CONFIGURABLE_ENUM_CONFIG_PREFIX + this.enumId
+      );
+    }
     if (changes.hasOwnProperty("enumId") || changes.hasOwnProperty("form")) {
       this.invalidOptions = this.prepareInvalidOptions();
     }
+    this.options = [...this.enumOptions, ...this.invalidOptions];
   }
 
   private prepareInvalidOptions(): ConfigurableEnumValue[] {

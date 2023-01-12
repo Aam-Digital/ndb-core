@@ -46,7 +46,7 @@ describe("EditSingleEntityComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should show all entities of the given type", fakeAsync(() => {
+  it("should load all entities of the given type as options", fakeAsync(() => {
     const school1 = School.create({ name: "First School" });
     const school2 = School.create({ name: "Second School " });
     loadTypeSpy.and.resolveTo([school1, school2]);
@@ -56,70 +56,7 @@ describe("EditSingleEntityComponent", () => {
 
     expect(loadTypeSpy).toHaveBeenCalled();
     expect(component.entities).toEqual([school1, school2]);
-    component.updateAutocomplete("");
-    expect(component.autocompleteEntities.value).toEqual([school1, school2]);
   }));
-
-  it("should correctly show the autocomplete values", () => {
-    const school1 = School.create({ name: "Aaa" });
-    const school2 = School.create({ name: "aab" });
-    const school3 = School.create({ name: "cde" });
-    component.entities = [school1, school2, school3];
-
-    component.updateAutocomplete("");
-    expect(component.autocompleteEntities.value).toEqual([
-      school1,
-      school2,
-      school3,
-    ]);
-    component.updateAutocomplete("Aa");
-    expect(component.autocompleteEntities.value).toEqual([school1, school2]);
-    component.updateAutocomplete("Aab");
-    expect(component.autocompleteEntities.value).toEqual([school2]);
-  });
-
-  it("should show name of the selected entity", fakeAsync(() => {
-    const child1 = Child.create("First Child");
-    const child2 = Child.create("Second Child");
-    component.formControl.setValue(child1.getId());
-    loadTypeSpy.and.resolveTo([child1, child2]);
-
-    initComponent();
-    tick();
-    fixture.detectChanges();
-
-    expect(component.selectedEntity).toBe(child1);
-    expect(component.input.nativeElement.value).toEqual("First Child");
-  }));
-
-  it("Should have the correct entity selected when it's name is entered", () => {
-    const child1 = Child.create("First Child");
-    const child2 = Child.create("Second Child");
-    component.entities = [child1, child2];
-
-    component.select("First Child");
-
-    expect(component.selectedEntity).toBe(child1);
-    expect(component.formControl).toHaveValue(child1.getId());
-  });
-
-  it("Should unselect if no entity can be matched", () => {
-    const first = Child.create("First");
-    const second = Child.create("Second");
-    component.entities = [first, second];
-
-    component.select(first);
-    expect(component.selectedEntity).toBe(first);
-    expect(component.formControl.value).toBe(first.getId());
-
-    component.select("second");
-    expect(component.selectedEntity).toBe(second);
-    expect(component.formControl.value).toBe(second.getId());
-
-    component.select("NonExistent");
-    expect(component.selectedEntity).toBe(undefined);
-    expect(component.formControl.value).toBe(undefined);
-  });
 
   function initComponent(): Promise<any> {
     return component.onInitFromDynamicConfig({

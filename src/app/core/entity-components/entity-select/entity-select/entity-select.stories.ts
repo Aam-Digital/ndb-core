@@ -1,14 +1,20 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { Database } from "../../../database/database";
 import { BackupService } from "../../../admin/services/backup.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { BehaviorSubject } from "rxjs";
 import { EntitySelectComponent } from "./entity-select.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { School } from "../../../../child-dev-project/schools/model/school";
+import {
+  componentRegistry,
+  ComponentRegistry,
+} from "../../../../dynamic-components";
+import { ChildBlockComponent } from "../../../../child-dev-project/children/child-block/child-block.component";
+import { SchoolBlockComponent } from "../../../../child-dev-project/schools/school-block/school-block.component";
+import { Database } from "../../../database/database";
+import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -53,6 +59,7 @@ export default {
               ]),
           },
         },
+        { provide: ComponentRegistry, useValue: componentRegistry },
         { provide: Database, useValue: {} },
         { provide: ChildrenService, useValue: {} },
       ],
@@ -73,6 +80,9 @@ export default {
     },
   },
 } as Meta;
+
+componentRegistry.add("ChildBlock", async () => ChildBlockComponent);
+componentRegistry.add("SchoolBlock", async () => SchoolBlockComponent);
 
 const Template: Story<EntitySelectComponent<Child>> = (
   args: EntitySelectComponent<Child>

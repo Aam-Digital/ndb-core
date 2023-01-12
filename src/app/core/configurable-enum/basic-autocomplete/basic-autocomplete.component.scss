@@ -1,0 +1,12 @@
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
+
+.caret-suffix {
+  cursor: pointer;
+  padding: 0 sizes.$small;
+}
+
+.disabled {
+  color: colors.$disabled;
+  cursor: default;
+}

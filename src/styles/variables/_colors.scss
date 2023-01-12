@@ -26,6 +26,7 @@ $warn                   : mat.get-color-from-palette($warn-palette);
 $error                  : mat.get-color-from-palette($err-palette);
 
 $muted                  : rgba(0, 0, 0, 0.54);
+$disabled               : rgba(0, 0, 0, 0.38);
 
 /*
  * Quantized warning-levels. Each level represents a color from green (all is OK)

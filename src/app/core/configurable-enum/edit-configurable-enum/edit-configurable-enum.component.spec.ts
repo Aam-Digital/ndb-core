@@ -1,13 +1,14 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum.component";
-import { FormBuilder, FormControl, ReactiveFormsModule } from "@angular/forms";
+import { FormBuilder, FormControl } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { ConfigService } from "../../config/config.service";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;
@@ -44,9 +45,9 @@ describe("EditConfigurableEnumComponent", () => {
     mockConfigService.getConfig.and.returnValue(testEnum);
     await TestBed.configureTestingModule({
       imports: [
-        NoopAnimationsModule,
-        ReactiveFormsModule,
         EditConfigurableEnumComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
       ],
       providers: [{ provide: ConfigService, useValue: mockConfigService }],
     }).compileComponents();
