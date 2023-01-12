@@ -679,9 +679,11 @@ export const defaultJsonConfig = {
               "title": $localize`:Child details section title:Find a suitable new school`,
               "component": "MatchingEntities",
               "config": {
+                leftSide: { mapProperties: "address" },
                 "rightSide": {
                   "entityType": School.ENTITY_TYPE,
-                  "availableFilters": [{ "id": "language" }]
+                  "availableFilters": [{ "id": "language" }],
+                  mapProperties: "address"
                 },
               }
             }
@@ -1104,8 +1106,9 @@ export const defaultJsonConfig = {
         entityType: School.ENTITY_TYPE,
         prefilter: { "privateSchool": true },
         availableFilters: [{ "id": "language" }],
+        mapProperties: "address"
       },
-      leftSide: { entityType: Child.ENTITY_TYPE },
+      leftSide: { entityType: Child.ENTITY_TYPE, mapProperties: "address" },
     }
   },
   "appConfig:matching-entities": {
@@ -1115,7 +1118,6 @@ export const defaultJsonConfig = {
       ["address", "address"],
       ["distance", "privateSchool"],
     ],
-    "showMap": ["address", "address"],
     "onMatch": {
       "newEntityType": ChildSchoolRelation.ENTITY_TYPE,
       "newEntityMatchPropertyLeft": "childId",
