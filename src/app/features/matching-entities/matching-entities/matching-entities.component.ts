@@ -128,6 +128,9 @@ export class MatchingEntitiesComponent
       await this.initSideDetails(this.leftSide, 0),
       await this.initSideDetails(this.rightSide, 1),
     ];
+    this.sideDetails
+      .filter((side) => !!side.selected)
+      .forEach((side) => this.updateDistanceColumn(side));
     this.columnsToDisplay = ["side-0", "side-1"];
   }
 
@@ -193,19 +196,22 @@ export class MatchingEntitiesComponent
       this.applySelectedFilters(newSide, {});
     }
 
-    newSide.mapProperties = Array.isArray(side.mapProperties)
-      ? side.mapProperties
-      : [side.mapProperties];
-    newSide.selectedMapProperties = newSide.mapProperties;
-    if (newSide.mapProperties && newSide.availableEntities) {
-      this.mapEntities = this.mapEntities.concat(
-        newSide.availableEntities.map((entity) => ({
-          entity,
-          property: newSide.selectedMapProperties,
-          side: newSide,
-        }))
-      );
+    if (newSide.mapProperties) {
+      newSide.mapProperties = Array.isArray(side.mapProperties)
+        ? side.mapProperties
+        : [side.mapProperties];
+      newSide.selectedMapProperties = newSide.mapProperties;
       this.initDistanceColumn(newSide, sideIndex);
+
+      if (newSide.availableEntities) {
+        this.mapEntities = this.mapEntities.concat(
+          newSide.availableEntities.map((entity) => ({
+            entity,
+            property: newSide.selectedMapProperties,
+            side: newSide,
+          }))
+        );
+      }
     }
 
     return newSide;
@@ -317,7 +323,9 @@ export class MatchingEntitiesComponent
       );
       side.distanceColumn.compareCoordinates.next(lastValue);
     }
-    this.updateDistanceColumn(side);
+    if (side.selected) {
+      this.updateDistanceColumn(side);
+    }
   }
 
   private updateDistanceColumn(side: MatchingSide) {
