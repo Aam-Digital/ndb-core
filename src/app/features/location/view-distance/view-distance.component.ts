@@ -16,7 +16,7 @@ export interface ViewDistanceConfig {
   /**
    * The name of the `GeoResult`/`Coordinates` property of the first entity
    */
-  coordinatesProperty: string[];
+  coordinatesProperties: string[];
   /**
    * The updates of coordinates of the second entity.
    * A `ReplaySubject` works best for this.
@@ -73,7 +73,7 @@ export class ViewDistanceComponent extends ViewDirective<Geolocation> {
 
   private getAllDistances(compareCoordinates: Coordinates[], e: Entity) {
     const results: number[] = [];
-    for (const prop of this.config.coordinatesProperty) {
+    for (const prop of this.config.coordinatesProperties) {
       for (const coord of compareCoordinates) {
         if (e[prop] && coord) {
           results.push(getKmDistance(e[prop], coord));

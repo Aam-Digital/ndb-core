@@ -28,7 +28,7 @@ describe("ViewDistanceComponent", () => {
       value: undefined,
       config: {
         compareCoordinates,
-        coordinatesProperty: ["address", "otherAddress"],
+        coordinatesProperties: ["address", "otherAddress"],
       },
     };
     fixture = TestBed.createComponent(ViewDistanceComponent);

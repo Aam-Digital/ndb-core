@@ -37,7 +37,7 @@
         <mat-label i18n="Label for selection of properties displayed in map|e.g. Map properties - Participant">
           Map properties - {{side.entityType.label}}
         </mat-label>
-        <mat-select [(value)]="side.selectedMapProperties" (valueChange)="updateMapMarkers()" multiple>
+        <mat-select [(value)]="side.selectedMapProperties" (valueChange)="updateMarkersAndDistances(side)" multiple>
           <mat-option *ngFor="let prop of side.mapProperties" [value]="prop">{{ prop }}</mat-option>
         </mat-select>
       </mat-form-field>

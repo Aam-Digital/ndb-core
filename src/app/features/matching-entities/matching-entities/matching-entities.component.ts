@@ -19,7 +19,7 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
-import { ReplaySubject } from "rxjs";
+import { firstValueFrom, ReplaySubject } from "rxjs";
 import { ConfigService } from "../../../core/config/config.service";
 import { MatTableModule } from "@angular/material/table";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -32,6 +32,7 @@ import { LocationEntity, MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
+import { Coordinates } from "../../location/coordinates";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -41,6 +42,10 @@ interface MatchingSide extends MatchingSideConfig {
   entityType: EntityConstructor;
   selected?: Entity;
   selectedMapProperties?: string[];
+  distanceColumn: {
+    coordinatesProperties: string[];
+    compareCoordinates: ReplaySubject<Coordinates[]>;
+  };
 }
 
 @RouteTarget("MatchingEntities")
@@ -177,7 +182,7 @@ export class MatchingEntitiesComponent
       this.highlightSelectedRow(e, newSide.selected);
       newSide.selected = e;
       this.matchComparisonElement.nativeElement.scrollIntoView();
-      this.updateDistanceColumn(sideIndex);
+      this.updateDistanceColumn(newSide);
     };
 
     if (!newSide.selected && newSide.entityType) {
@@ -204,13 +209,6 @@ export class MatchingEntitiesComponent
     }
 
     return newSide;
-  }
-
-  updateMapMarkers() {
-    this.mapEntities = this.mapEntities.map((mapEntity) => ({
-      ...mapEntity,
-      property: mapEntity.side.selectedMapProperties,
-    }));
   }
 
   private highlightSelectedRow(
@@ -281,12 +279,14 @@ export class MatchingEntitiesComponent
   private initDistanceColumn(side: MatchingSide, index: number) {
     const sideIndex = side.columns.findIndex((col) => col === "distance");
     if (sideIndex !== -1) {
-      side.columns[sideIndex] = this.getDistanceColumnConfig(side);
+      const columnConfig = this.getDistanceColumnConfig(side);
+      side.columns[sideIndex] = columnConfig;
+      side.distanceColumn = columnConfig.additional;
       const colIndex = this.columns.findIndex(
         (row) => row[index] === "distance"
       );
       if (colIndex !== -1) {
-        this.columns[colIndex][index] = side.columns[sideIndex];
+        this.columns[colIndex][index] = columnConfig;
       }
     }
   }
@@ -297,23 +297,37 @@ export class MatchingEntitiesComponent
       label: $localize`:Matching View column name:Distance`,
       view: "DisplayDistance",
       additional: {
-        coordinatesProperty: side.mapProperties,
-        compareCoordinates: new ReplaySubject(),
+        coordinatesProperties: side.selectedMapProperties,
+        // using ReplaySubject so all new subscriptions will be triggered on last emitted value
+        compareCoordinates: new ReplaySubject<Coordinates[]>(),
       },
     };
   }
 
-  private updateDistanceColumn(index: number) {
-    const otherIndex = (index + 1) % 2;
-    this.columns?.forEach((column) => {
-      const cell = column[otherIndex];
-      if (typeof cell !== "string" && cell?.id === "distance") {
-        const side = this.sideDetails[index];
-        const coordinates = side.selectedMapProperties.map(
-          (prop) => side.selected[prop]
-        );
-        cell.additional.compareCoordinates.next(coordinates);
-      }
-    });
+  async updateMarkersAndDistances(side: MatchingSide) {
+    this.mapEntities = this.mapEntities.map((mapEntity) => ({
+      ...mapEntity,
+      property: mapEntity.side.selectedMapProperties,
+    }));
+    if (side.distanceColumn) {
+      side.distanceColumn.coordinatesProperties = side.selectedMapProperties;
+      // Publish last value again to trigger new distance calculation with the new selected properties
+      const lastValue = await firstValueFrom(
+        side.distanceColumn.compareCoordinates
+      );
+      side.distanceColumn.compareCoordinates.next(lastValue);
+    }
+    this.updateDistanceColumn(side);
+  }
+
+  private updateDistanceColumn(side: MatchingSide) {
+    const otherIndex = this.sideDetails[0] === side ? 1 : 0;
+    const distanceColumn = this.sideDetails[otherIndex].distanceColumn;
+    if (distanceColumn) {
+      const coordinates = side.selectedMapProperties.map(
+        (prop) => side.selected[prop]
+      );
+      distanceColumn.compareCoordinates.next(coordinates);
+    }
   }
 }
