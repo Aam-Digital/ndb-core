@@ -19,7 +19,7 @@ import { RouteData } from "../../../core/view/dynamic-routing/view-config.interf
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
-import { firstValueFrom, ReplaySubject } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { ConfigService } from "../../../core/config/config.service";
 import { MatTableModule } from "@angular/material/table";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -44,7 +44,7 @@ interface MatchingSide extends MatchingSideConfig {
   selectedMapProperties?: string[];
   distanceColumn: {
     coordinatesProperties: string[];
-    compareCoordinates: ReplaySubject<Coordinates[]>;
+    compareCoordinates: BehaviorSubject<Coordinates[]>;
   };
 }
 
@@ -129,8 +129,8 @@ export class MatchingEntitiesComponent
       await this.initSideDetails(this.rightSide, 1),
     ];
     this.sideDetails
-      .filter((side) => !!side.selected)
-      .forEach((side) => this.updateDistanceColumn(side));
+      .filter((side) => !!side.mapProperties)
+      .forEach((side, index) => this.initDistanceColumn(side, index));
     this.columnsToDisplay = ["side-0", "side-1"];
   }
 
@@ -201,7 +201,6 @@ export class MatchingEntitiesComponent
         ? side.mapProperties
         : [side.mapProperties];
       newSide.selectedMapProperties = newSide.mapProperties;
-      this.initDistanceColumn(newSide, sideIndex);
 
       if (newSide.availableEntities) {
         this.mapEntities = this.mapEntities.concat(
@@ -298,6 +297,13 @@ export class MatchingEntitiesComponent
   }
 
   private getDistanceColumnConfig(side: MatchingSide) {
+    const otherSideIndex = this.sideDetails[0] === side ? 1 : 0;
+    const otherSide = this.sideDetails[otherSideIndex];
+    let coordinates: Coordinates[] = [];
+    if (otherSide.selected)
+      coordinates = otherSide.selectedMapProperties.map(
+        (prop) => otherSide.selected[prop]
+      );
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
@@ -305,12 +311,12 @@ export class MatchingEntitiesComponent
       additional: {
         coordinatesProperties: side.selectedMapProperties,
         // using ReplaySubject so all new subscriptions will be triggered on last emitted value
-        compareCoordinates: new ReplaySubject<Coordinates[]>(),
+        compareCoordinates: new BehaviorSubject<Coordinates[]>(coordinates),
       },
     };
   }
 
-  async updateMarkersAndDistances(side: MatchingSide) {
+  updateMarkersAndDistances(side: MatchingSide) {
     this.mapEntities = this.mapEntities.map((mapEntity) => ({
       ...mapEntity,
       property: mapEntity.side.selectedMapProperties,
@@ -318,9 +324,7 @@ export class MatchingEntitiesComponent
     if (side.distanceColumn) {
       side.distanceColumn.coordinatesProperties = side.selectedMapProperties;
       // Publish last value again to trigger new distance calculation with the new selected properties
-      const lastValue = await firstValueFrom(
-        side.distanceColumn.compareCoordinates
-      );
+      const lastValue = side.distanceColumn.compareCoordinates.value;
       side.distanceColumn.compareCoordinates.next(lastValue);
     }
     if (side.selected) {

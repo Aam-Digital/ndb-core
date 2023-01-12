@@ -9,7 +9,7 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ConfigService } from "../../../core/config/config.service";
-import { of, ReplaySubject } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -27,10 +27,9 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyRight: "",
       newEntityType: "",
     },
-    showMap: ["address", "address"],
     matchActionLabel: "match test",
-    rightSide: { entityType: "Child" },
-    leftSide: { entityType: "School" },
+    rightSide: { entityType: "Child", mapProperties: "address" },
+    leftSide: { entityType: "School", mapProperties: "address" },
   };
 
   beforeEach(async () => {
@@ -200,7 +199,7 @@ describe("MatchingEntitiesComponent", () => {
       view: "DisplayDistance",
       additional: {
         coordinatesProperties: ["address"],
-        compareCoordinates: jasmine.any(ReplaySubject),
+        compareCoordinates: jasmine.any(BehaviorSubject),
       },
     });
 
@@ -245,6 +244,81 @@ describe("MatchingEntitiesComponent", () => {
     await newComponent.ngOnInit();
 
     expect(newComponent.sideDetails[1].selected).not.toEqual(selectedChild);
+  });
+
+  it("should update the distance calculation when the selected map properties change", async () => {
+    const leftEntity = new Child();
+    leftEntity["address"] = { lat: 52, lon: 14 };
+    leftEntity["otherAddress"] = { lat: 53, lon: 14 };
+    const rightEntity1 = new Child();
+    rightEntity1["address"] = { lat: 52, lon: 13 };
+    const rightEntity2 = new Child();
+    rightEntity2["address"] = { lat: 53, lon: 13 };
+    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo([
+      rightEntity1,
+      rightEntity2,
+    ]);
+    component.onInitFromDynamicConfig({
+      entity: leftEntity,
+      config: {
+        leftSide: {
+          mapProperties: ["address", "otherAddress"],
+          columns: ["distance"],
+        },
+        rightSide: {
+          mapProperties: "address",
+          columns: ["distance"],
+          entityType: "Child",
+        },
+      },
+    });
+    await component.ngOnInit();
+    const leftSide = component.sideDetails[0];
+    const rightSide = component.sideDetails[1];
+    let lastLeftValue: Coordinates[];
+    let lastRightValue: Coordinates[];
+    leftSide.distanceColumn.compareCoordinates.subscribe(
+      (res) => (lastLeftValue = res)
+    );
+    rightSide.distanceColumn.compareCoordinates.subscribe(
+      (res) => (lastRightValue = res)
+    );
+
+    expect(leftSide.selectedMapProperties).toEqual(["address", "otherAddress"]);
+    expect(rightSide.selectedMapProperties).toEqual(["address"]);
+    expect(lastLeftValue).toEqual([]);
+    expect(lastRightValue).toEqual([
+      leftEntity["address"],
+      leftEntity["otherAddress"],
+    ]);
+
+    // values should be emitted again
+    lastLeftValue = undefined;
+    lastRightValue = undefined;
+    // select only one property
+    leftSide.selectedMapProperties = ["address"];
+    component.updateMarkersAndDistances(leftSide);
+
+    expect(lastLeftValue).toEqual([]);
+    expect(lastRightValue).toEqual([leftEntity["address"]]);
+
+    // select an entity for right
+    rightSide.selectMatch(rightEntity1);
+
+    expect(lastLeftValue).toEqual([rightEntity1["address"]]);
+    expect(lastRightValue).toEqual([leftEntity["address"]]);
+
+    lastLeftValue = undefined;
+    lastRightValue = undefined;
+    //select both properties
+    leftSide.selectedMapProperties = ["address", "otherAddress"];
+    component.updateMarkersAndDistances(leftSide);
+
+    expect(lastLeftValue).toEqual([rightEntity1["address"]]);
+    expect(lastRightValue).toEqual([
+      leftEntity["address"],
+      leftEntity["otherAddress"],
+    ]);
   });
 });
 
