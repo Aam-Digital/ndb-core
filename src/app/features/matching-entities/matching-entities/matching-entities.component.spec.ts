@@ -165,6 +165,7 @@ describe("MatchingEntitiesComponent", () => {
     };
     const testEntity = new Entity();
     const matchedEntity = Child.create("matched child");
+    component.entity = testEntity;
     component.columns = [["_id", "name"]];
     const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
 
@@ -186,9 +187,9 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should create distance column and publish updates", async () => {
     component.columns = [[undefined, "distance"]];
-    component.showMap = ["address", "address"];
     component.entity = new Child();
-    component.leftSide = { entityType: Child };
+    component.leftSide = { entityType: Child, mapProperties: "address" };
+    component.rightSide = { mapProperties: "address" };
 
     await component.ngOnInit();
 
@@ -198,12 +199,12 @@ describe("MatchingEntitiesComponent", () => {
       label: "Distance",
       view: "DisplayDistance",
       additional: {
-        coordinatesProperty: "address",
+        coordinatesProperties: ["address"],
         compareCoordinates: jasmine.any(ReplaySubject),
       },
     });
 
-    let newCoordinates: Coordinates;
+    let newCoordinates: Coordinates[];
     distanceColumn.additional.compareCoordinates.subscribe(
       (res) => (newCoordinates = res)
     );
@@ -211,7 +212,7 @@ describe("MatchingEntitiesComponent", () => {
     const compare = new Child();
     compare["address"] = { lat: 52, lon: 13 };
     component.sideDetails[0].selectMatch(compare);
-    expect(newCoordinates).toEqual(compare["address"]);
+    expect(newCoordinates).toEqual([compare["address"]]);
   });
 
   it("should select a entity if it has been selected in the map", async () => {
@@ -253,7 +254,6 @@ function expectConfigToMatch(
 ) {
   expect(component.columns).toEqual(configToLoad.columns);
   expect(component.onMatch).toEqual(configToLoad.onMatch);
-  expect(component.showMap).toEqual(configToLoad.showMap);
   expect(component.matchActionLabel).toEqual(configToLoad.matchActionLabel);
   expect(component.rightSide.entityType).toEqual(
     configToLoad.rightSide.entityType
