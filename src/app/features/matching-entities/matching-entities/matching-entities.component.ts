@@ -161,7 +161,6 @@ export class MatchingEntitiesComponent
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
       newSide.entityType = newSide.selected.getConstructor();
-      this.updateDistanceColumn(sideIndex, newSide.selected);
     }
 
     let entityType = newSide.entityType;
@@ -178,7 +177,7 @@ export class MatchingEntitiesComponent
       this.highlightSelectedRow(e, newSide.selected);
       newSide.selected = e;
       this.matchComparisonElement.nativeElement.scrollIntoView();
-      this.updateDistanceColumn(sideIndex, e);
+      this.updateDistanceColumn(sideIndex);
     };
 
     if (!newSide.selected && newSide.entityType) {
@@ -201,7 +200,7 @@ export class MatchingEntitiesComponent
           side: newSide,
         }))
       );
-      this.initDistanceColumn(newSide);
+      this.initDistanceColumn(newSide, sideIndex);
     }
 
     return newSide;
@@ -273,12 +272,23 @@ export class MatchingEntitiesComponent
     }
   }
 
-  private initDistanceColumn(side: MatchingSide) {
-    side.columns.forEach((row, i) => {
-      if (row === "distance") {
-        side.columns[i] = this.getDistanceColumnConfig(side);
+  /**
+   * Initialize distance column for columns of side and columns of EntitySubrecord
+   * @param side
+   * @param index of the side
+   * @private
+   */
+  private initDistanceColumn(side: MatchingSide, index: number) {
+    const sideIndex = side.columns.findIndex((col) => col === "distance");
+    if (sideIndex !== -1) {
+      side.columns[sideIndex] = this.getDistanceColumnConfig(side);
+      const colIndex = this.columns.findIndex(
+        (row) => row[index] === "distance"
+      );
+      if (colIndex !== -1) {
+        this.columns[colIndex][index] = side.columns[sideIndex];
       }
-    });
+    }
   }
 
   private getDistanceColumnConfig(side: MatchingSide) {
@@ -293,13 +303,15 @@ export class MatchingEntitiesComponent
     };
   }
 
-  private updateDistanceColumn(index: number, entity: Entity) {
+  private updateDistanceColumn(index: number) {
     const otherIndex = (index + 1) % 2;
     this.columns?.forEach((column) => {
       const cell = column[otherIndex];
       if (typeof cell !== "string" && cell?.id === "distance") {
-        const mapProps = this.sideDetails[index].selectedMapProperties;
-        const coordinates = mapProps.map((prop) => entity[prop]);
+        const side = this.sideDetails[index];
+        const coordinates = side.selectedMapProperties.map(
+          (prop) => side.selected[prop]
+        );
         cell.additional.compareCoordinates.next(coordinates);
       }
     });
