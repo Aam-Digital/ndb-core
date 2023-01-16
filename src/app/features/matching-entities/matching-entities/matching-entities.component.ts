@@ -33,6 +33,7 @@ import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { Coordinates } from "../../location/coordinates";
+import { FilterService } from "../../../core/filter/filter.service";
 
 interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -46,6 +47,7 @@ interface MatchingSide extends MatchingSideConfig {
     coordinatesProperties: string[];
     compareCoordinates: BehaviorSubject<Coordinates[]>;
   };
+  mapEntities: (LocationEntity & { side: MatchingSide })[];
 }
 
 @RouteTarget("MatchingEntities")
@@ -80,7 +82,7 @@ export class MatchingEntitiesComponent
 
   @Input() leftSide: MatchingSideConfig = {};
   @Input() rightSide: MatchingSideConfig = {};
-  mapEntities: (LocationEntity & { side: MatchingSide })[] = [];
+  filteredMapEntities: LocationEntity[] = [];
 
   columnsToDisplay = [];
 
@@ -107,7 +109,8 @@ export class MatchingEntitiesComponent
     private formDialog: FormDialogService,
     private entityMapper: EntityMapperService,
     private configService: ConfigService,
-    private entityRegistry: EntityRegistry
+    private entityRegistry: EntityRegistry,
+    private filterService: FilterService
   ) {}
 
   // TODO: fill selection on hover already?
@@ -203,12 +206,14 @@ export class MatchingEntitiesComponent
       newSide.selectedMapProperties = newSide.mapProperties;
 
       if (newSide.availableEntities) {
-        this.mapEntities = this.mapEntities.concat(
-          newSide.availableEntities.map((entity) => ({
-            entity,
-            property: newSide.selectedMapProperties,
-            side: newSide,
-          }))
+        newSide.mapEntities = newSide.availableEntities.map((entity) => ({
+          entity,
+          property: newSide.selectedMapProperties,
+          side: newSide,
+        }));
+
+        this.filteredMapEntities = this.filteredMapEntities.concat(
+          newSide.mapEntities
         );
       }
     }
@@ -263,7 +268,18 @@ export class MatchingEntitiesComponent
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
+    if (!this.sideDetails) {
+      return;
+    }
     side.filterObj = Object.assign({}, filter, side.prefilter ?? {});
+    this.filteredMapEntities = [];
+    this.sideDetails.forEach((side) => {
+      const predicate = this.filterService.getFilterPredicate(side.filterObj);
+      const filtered = side.mapEntities.filter(({ entity }) =>
+        predicate(entity)
+      );
+      this.filteredMapEntities.push(...filtered);
+    });
   }
 
   entityInMapClicked(entity: Entity) {
@@ -317,10 +333,9 @@ export class MatchingEntitiesComponent
   }
 
   updateMarkersAndDistances(side: MatchingSide) {
-    this.mapEntities = this.mapEntities.map((mapEntity) => ({
-      ...mapEntity,
-      property: mapEntity.side.selectedMapProperties,
-    }));
+    side.mapEntities.forEach(
+      (mapEntity) => (mapEntity.property = mapEntity.side.selectedMapProperties)
+    );
     if (side.distanceColumn) {
       side.distanceColumn.coordinatesProperties = side.selectedMapProperties;
       // Publish last value again to trigger new distance calculation with the new selected properties
