@@ -5,7 +5,6 @@ import { ConfigurableEnumDirective } from "../configurable-enum-directive/config
 import { NgForOf, NgIf } from "@angular/common";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "../configurable-enum.interface";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
@@ -47,7 +46,7 @@ export class EnumDropdownComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("enumId")) {
       // TODO: automatic checking for prefix would be handled automatically if enumConfigs become entities
-      this.enumOptions = this.configService.getConfig<ConfigurableEnumConfig>(
+      this.enumOptions = this.configService.getConfigurableEnumValues(
         CONFIGURABLE_ENUM_CONFIG_PREFIX + this.enumId
       );
     }

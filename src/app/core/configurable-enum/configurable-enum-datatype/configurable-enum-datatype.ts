@@ -1,7 +1,6 @@
 import { EntitySchemaDatatype } from "../../entity/schema/entity-schema-datatype";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "../configurable-enum.interface";
 import { ConfigService } from "../../config/config.service";
@@ -39,7 +38,7 @@ export class ConfigurableEnumDatatype
     }
 
     let enumOption = this.configService
-      .getConfig<ConfigurableEnumConfig>(enumId)
+      .getConfigurableEnumValues(enumId)
       ?.find((option) => option.id === value);
     if (!enumOption) {
       enumOption = this.generateOptionForInvalid(value);
@@ -50,7 +49,7 @@ export class ConfigurableEnumDatatype
 
   /**
    * Build a dummy option so that invalid values are not lost on the next save and users can manually correct issues.
-   * @param enumId
+   * @param optionValue
    * @private
    */
   private generateOptionForInvalid(optionValue: string) {

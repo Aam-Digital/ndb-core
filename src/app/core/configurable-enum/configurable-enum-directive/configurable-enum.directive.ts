@@ -1,8 +1,5 @@
 import { Directive, Input, TemplateRef, ViewContainerRef } from "@angular/core";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../configurable-enum.interface";
+import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../configurable-enum.interface";
 import { ConfigService } from "../../config/config.service";
 
 /**
@@ -26,8 +23,7 @@ export class ConfigurableEnumDirective {
       enumConfigId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumConfigId;
     }
 
-    const options =
-      this.configService.getConfig<ConfigurableEnumConfig>(enumConfigId);
+    const options = this.configService.getConfigurableEnumValues(enumConfigId);
     for (const item of options) {
       this.viewContainerRef.createEmbeddedView(this.templateRef, {
         $implicit: item,
