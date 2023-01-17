@@ -102,7 +102,7 @@ export class MatchingEntitiesComponent
 
   lockedMatching: boolean;
 
-  sideDetails: MatchingSide[];
+  sideDetails: [MatchingSide, MatchingSide];
 
   constructor(
     private route: ActivatedRoute,
@@ -134,6 +134,7 @@ export class MatchingEntitiesComponent
     this.sideDetails
       .filter((side) => !!side.mapProperties)
       .forEach((side, index) => this.initDistanceColumn(side, index));
+    this.filterMapEntities();
     this.columnsToDisplay = ["side-0", "side-1"];
   }
 
@@ -196,7 +197,7 @@ export class MatchingEntitiesComponent
         newSide.entityType
       );
       newSide.availableFilters = newSide.availableFilters ?? [];
-      this.applySelectedFilters(newSide, {});
+      newSide.filterObj = { ...(side.prefilter ?? {}) };
     }
 
     if (newSide.mapProperties) {
@@ -211,10 +212,6 @@ export class MatchingEntitiesComponent
           property: newSide.selectedMapProperties,
           side: newSide,
         }));
-
-        this.filteredMapEntities = this.filteredMapEntities.concat(
-          newSide.mapEntities
-        );
       }
     }
 
@@ -268,13 +265,14 @@ export class MatchingEntitiesComponent
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
-    if (!this.sideDetails) {
-      return;
-    }
-    side.filterObj = Object.assign({}, filter, side.prefilter ?? {});
+    side.filterObj = Object.assign({}, filter);
+    this.filterMapEntities();
+  }
+
+  private filterMapEntities() {
     this.filteredMapEntities = [];
     this.sideDetails
-      .filter((side) => side.availableEntities?.length > 0)
+      .filter((side) => side.mapEntities?.length > 0)
       .forEach((side) => {
         if (side.filterObj) {
           const predicate = this.filterService.getFilterPredicate(
@@ -341,7 +339,7 @@ export class MatchingEntitiesComponent
   }
 
   updateMarkersAndDistances(side: MatchingSide) {
-    side.mapEntities.forEach(
+    side.mapEntities?.forEach(
       (mapEntity) => (mapEntity.property = mapEntity.side.selectedMapProperties)
     );
     if (side.distanceColumn) {

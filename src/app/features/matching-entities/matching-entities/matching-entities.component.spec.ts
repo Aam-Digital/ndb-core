@@ -320,6 +320,45 @@ describe("MatchingEntitiesComponent", () => {
       leftEntity["otherAddress"],
     ]);
   });
+
+  it("should only display filtered entities in the map", async () => {
+    const c1 = new Child();
+    c1.status = "active";
+    const c2 = new Child();
+    c2.status = "inactive";
+    c2.dropoutDate = new Date();
+    const c3 = new Child();
+    c3.status = "inactive";
+    const other = new ChildSchoolRelation();
+    await TestBed.inject(EntityMapperService).saveAll([c1, c2, c3, other]);
+    component.leftSide = {
+      mapProperties: ["address"],
+      entityType: Child,
+      prefilter: { dropoutDate: { $exists: false } } as any,
+      columns: ["status"],
+    };
+    component.rightSide = {
+      mapProperties: "address",
+      entityType: ChildSchoolRelation,
+      columns: ["_id"],
+    };
+    await component.ngOnInit();
+
+    expect(component.filteredMapEntities.map(({ entity }) => entity)).toEqual([
+      c1,
+      c3,
+      other,
+    ]);
+
+    component.applySelectedFilters(component.sideDetails[0], {
+      status: "active",
+    } as any);
+
+    expect(component.filteredMapEntities.map(({ entity }) => entity)).toEqual([
+      c1,
+      other,
+    ]);
+  });
 });
 
 function expectConfigToMatch(
