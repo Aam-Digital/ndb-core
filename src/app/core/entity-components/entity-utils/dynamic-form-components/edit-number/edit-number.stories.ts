@@ -60,7 +60,6 @@ const testEntity = new TestEntity();
 testEntity.test = 5;
 
 export const Primary = Template.bind({});
-console.log("X");
 Primary.args = {
   columns: [[fieldConfig]],
   entity: testEntity,

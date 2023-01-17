@@ -29,7 +29,7 @@ export class EnumDropdownComponent implements OnChanges {
   @Input() form: FormControl; // cannot be named "formControl" - otherwise the angular directive grabs this
   @Input() label: string;
   @Input() enumId: string;
-  @Input() multi?: boolean;
+  @Input() multi = false;
 
   enumOptions: ConfigurableEnumValue[] = [];
   invalidOptions: ConfigurableEnumValue[] = [];

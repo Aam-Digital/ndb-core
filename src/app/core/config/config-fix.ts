@@ -12,6 +12,7 @@ import {
 } from "../../child-dev-project/children/aser/model/skill-levels";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/model/rating-answers";
+import { centersUnique } from "../../child-dev-project/children/demo-data-generators/fixtures/centers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -135,20 +136,7 @@ export const defaultJsonConfig = {
       "_ordinal": 6,
     }
   ],
-  "enum:center": [
-    {
-      "id": "alipore",
-      "label": $localize`:center:Alipore`
-    },
-    {
-      "id": "tollygunge",
-      "label": $localize`:center:Tollygunge`
-    },
-    {
-      "id": "barabazar",
-      "label": $localize`:center:Barabazar`
-    }
-  ],
+  "enum:center": centersUnique,
   "enum:rating-answer": ratingAnswers,
 
   "view:": {

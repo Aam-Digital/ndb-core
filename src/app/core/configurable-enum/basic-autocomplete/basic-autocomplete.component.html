@@ -1,21 +1,11 @@
-<mat-form-field floatLabel="always">
+<mat-form-field>
   <!--
   This input contains the actual value, i.e. the id of the entity.
   It is filled in automatically in code after the user has chosen a correct value.
-
-  We also set floatLabel to always because the label is attached to the wrong input
  -->
-  <input matInput [formControl]="form" hidden />
+  <input matInput [formControl]="form" hidden/>
 
   <mat-label>{{ label }}</mat-label>
-
-  <ng-template
-    class="block-wrapper"
-    *ngIf="selectedOption && form.disabled"
-    [ngTemplateOutlet]="templateRef"
-    [ngTemplateOutletContext]="{ $implicit: selectedOption }"
-  >
-  </ng-template>
 
   <!--
   This input contains the display value (i.e. the value that the user chooses and sees when he clicks 'update')
@@ -27,7 +17,6 @@
     matInput
     [value]="optionToString(selectedOption) ?? ''"
     [disabled]="form.disabled"
-    [hidden]="form.disabled"
     [matAutocomplete]="autoSuggestions"
     #trigger="matAutocompleteTrigger"
     (keyup)="updateAutocomplete(inputElement.value)"
