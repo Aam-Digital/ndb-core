@@ -273,13 +273,21 @@ export class MatchingEntitiesComponent
     }
     side.filterObj = Object.assign({}, filter, side.prefilter ?? {});
     this.filteredMapEntities = [];
-    this.sideDetails.forEach((side) => {
-      const predicate = this.filterService.getFilterPredicate(side.filterObj);
-      const filtered = side.mapEntities.filter(({ entity }) =>
-        predicate(entity)
-      );
-      this.filteredMapEntities.push(...filtered);
-    });
+    this.sideDetails
+      .filter((side) => side.availableEntities?.length > 0)
+      .forEach((side) => {
+        if (side.filterObj) {
+          const predicate = this.filterService.getFilterPredicate(
+            side.filterObj
+          );
+          const filtered = side.mapEntities.filter(({ entity }) =>
+            predicate(entity)
+          );
+          this.filteredMapEntities.push(...filtered);
+        } else {
+          this.filteredMapEntities.push(...side.mapEntities);
+        }
+      });
   }
 
   entityInMapClicked(entity: Entity) {
