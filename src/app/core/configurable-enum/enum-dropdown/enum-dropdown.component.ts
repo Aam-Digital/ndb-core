@@ -6,6 +6,8 @@ import { NgForOf, NgIf } from "@angular/common";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
 import { ConfigurableEnumService } from "../configurable-enum.service";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { ConfigurableEnum } from "../configurable-enum";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -27,28 +29,31 @@ export class EnumDropdownComponent implements OnChanges {
   @Input() enumId: string;
   @Input() multi = false;
 
-  enumOptions: ConfigurableEnumValue[] = [];
+  enumEntity: ConfigurableEnum;
   invalidOptions: ConfigurableEnumValue[] = [];
   options: ConfigurableEnumValue[];
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
   createNewOption = (name: string) => {
     const option = { id: name, label: name };
-    // TODO this has to be saved to DB
     this.options.push(option);
+    this.enumEntity.values.push(option);
+    this.entityMapper.save(this.enumEntity);
     return option;
   };
 
-  constructor(private enumService: ConfigurableEnumService) {}
+  constructor(
+    private enumService: ConfigurableEnumService,
+    private entityMapper: EntityMapperService
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("enumId")) {
-      // TODO: automatic checking for prefix would be handled automatically if enumConfigs become entities
-      this.enumOptions = this.enumService.getEnumValues(this.enumId);
+      this.enumEntity = this.enumService.getEnum(this.enumId);
     }
     if (changes.hasOwnProperty("enumId") || changes.hasOwnProperty("form")) {
       this.invalidOptions = this.prepareInvalidOptions();
     }
-    this.options = [...this.enumOptions, ...this.invalidOptions];
+    this.options = [...this.enumEntity.values, ...this.invalidOptions];
   }
 
   private prepareInvalidOptions(): ConfigurableEnumValue[] {

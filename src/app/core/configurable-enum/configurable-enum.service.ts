@@ -27,10 +27,14 @@ export class ConfigurableEnumService {
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(
     id: string
   ): T[] {
+    return this.getEnum(id).values as T[];
+  }
+
+  getEnum(id: string): ConfigurableEnum {
     const entityId = Entity.createPrefixedId(
       ConfigurableEnum.ENTITY_TYPE,
       id.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "")
     );
-    return this.enums.get(entityId).values as T[];
+    return this.enums.get(entityId);
   }
 }
