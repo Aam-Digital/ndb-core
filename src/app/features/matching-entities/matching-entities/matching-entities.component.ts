@@ -342,6 +342,7 @@ export class MatchingEntitiesComponent
     side.mapEntities?.forEach(
       (mapEntity) => (mapEntity.property = mapEntity.side.selectedMapProperties)
     );
+    this.filteredMapEntities = [...this.filteredMapEntities];
     if (side.distanceColumn) {
       side.distanceColumn.coordinatesProperties = side.selectedMapProperties;
       // Publish last value again to trigger new distance calculation with the new selected properties
