@@ -15,14 +15,11 @@ import { Entity } from "../../../core/entity/model/entity";
 import { getHueForEntity } from "../map-utils";
 import { ConfigService } from "../../../core/config/config.service";
 import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
-import {
-  MapPopupComponent,
-  MapPopupConfig,
-} from "../map-popup/map-popup.component";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
+import { MapPopupConfig } from "../map-popup/map-popup.component";
 
 export interface LocationEntity {
   entity: Entity;
@@ -184,8 +181,10 @@ export class MapComponent implements AfterViewInit {
     return m;
   }
 
-  showPopup() {
-    this.dialog.open(MapPopupComponent, {
+  async showPopup() {
+    // Breaking circular dependency by using async import
+    const mapComponent = await import("../map-popup/map-popup.component");
+    this.dialog.open(mapComponent.MapPopupComponent, {
       width: "90%",
       data: {
         marked: this._marked,
