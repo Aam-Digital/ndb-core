@@ -3,12 +3,9 @@ import { MatSelectModule } from "@angular/material/select";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfigurableEnumDirective } from "../configurable-enum-directive/configurable-enum.directive";
 import { NgForOf, NgIf } from "@angular/common";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumValue,
-} from "../configurable-enum.interface";
+import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
-import { ConfigService } from "../../config/config.service";
+import { ConfigurableEnumService } from "../configurable-enum.service";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -41,14 +38,12 @@ export class EnumDropdownComponent implements OnChanges {
     return option;
   };
 
-  constructor(private configService: ConfigService) {}
+  constructor(private enumService: ConfigurableEnumService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("enumId")) {
       // TODO: automatic checking for prefix would be handled automatically if enumConfigs become entities
-      this.enumOptions = this.configService.getConfigurableEnumValues(
-        CONFIGURABLE_ENUM_CONFIG_PREFIX + this.enumId
-      );
+      this.enumOptions = this.enumService.getEnumValues(this.enumId);
     }
     if (changes.hasOwnProperty("enumId") || changes.hasOwnProperty("form")) {
       this.invalidOptions = this.prepareInvalidOptions();

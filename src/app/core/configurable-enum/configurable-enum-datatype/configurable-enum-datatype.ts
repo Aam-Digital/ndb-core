@@ -3,8 +3,8 @@ import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumValue,
 } from "../configurable-enum.interface";
-import { ConfigService } from "../../config/config.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { ConfigurableEnumService } from "../configurable-enum.service";
 
 export class ConfigurableEnumDatatype
   implements EntitySchemaDatatype<ConfigurableEnumValue>
@@ -13,7 +13,7 @@ export class ConfigurableEnumDatatype
   public readonly viewComponent = "DisplayConfigurableEnum";
   public readonly editComponent = "EditConfigurableEnum";
 
-  constructor(private configService: ConfigService) {}
+  constructor(private enumService: ConfigurableEnumService) {}
 
   /**
    * transforms Objects of InteractionType to strings to save in DB
@@ -37,8 +37,8 @@ export class ConfigurableEnumDatatype
       enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
     }
 
-    let enumOption = this.configService
-      .getConfigurableEnumValues(enumId)
+    let enumOption = this.enumService
+      .getEnumValues(enumId)
       ?.find((option) => option.id === value);
     if (!enumOption) {
       enumOption = this.generateOptionForInvalid(value);

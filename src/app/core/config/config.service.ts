@@ -9,6 +9,7 @@ import {
 } from "../configurable-enum/configurable-enum.interface";
 import { filter } from "rxjs/operators";
 import { LoggingService } from "../logging/logging.service";
+import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -45,11 +46,24 @@ export class ConfigService {
       .catch(() => {});
   }
 
-  private updateConfigIfChanged(config: Config) {
+  private async updateConfigIfChanged(config: Config) {
     if (!this.currentConfig || config._rev !== this.currentConfig?._rev) {
+      await this.saveAllEnumsToDB(config);
       this.currentConfig = config;
       this._configUpdates.next(config);
     }
+  }
+
+  private saveAllEnumsToDB(config: Config) {
+    const enumEntities = Object.entries(config.data)
+      .filter(([key]) => key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX))
+      .map(([key, value]) => {
+        const id = key.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "");
+        const newEnum = new ConfigurableEnum(id);
+        newEnum.values = value as any;
+        return newEnum;
+      });
+    return this.entityMapper.saveAll(enumEntities);
   }
 
   public saveConfig(config: any): Promise<void> {
