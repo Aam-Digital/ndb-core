@@ -35,6 +35,12 @@ export class EnumDropdownComponent implements OnChanges {
   invalidOptions: ConfigurableEnumValue[] = [];
   options: ConfigurableEnumValue[];
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
+  createNewOption = (name: string) => {
+    const option = { id: name, label: name };
+    // TODO this has to be saved to DB
+    this.options.push(option);
+    return option;
+  };
 
   constructor(private configService: ConfigService) {}
 

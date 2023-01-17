@@ -43,15 +43,19 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
   @Input() form: FormControl; // cannot be named "formControl" - otherwise the angular directive grabs this
   @Input() label: string;
   @Input() options: O[] = [];
+  // TODO implement multi
   @Input() multi?: boolean;
 
   @Input() valueMapper: (option: O) => V = (option) => option as any;
   @Input() optionToString: (option: O) => string = (option) =>
     option?.toString();
+  @Input() createOption: (input: string) => O;
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
 
   autocompleteSuggestedOptions = new BehaviorSubject<O[]>([]);
+  showAddOption = false;
+  addOptionTimeout: any;
   selectedOption: O;
 
   ngOnChanges(changes: SimpleChanges) {
@@ -70,13 +74,25 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
   }
 
   updateAutocomplete(inputText: string) {
+    // TODO this behaves problematic when navigating with the up and down buttons
     let filteredEntities = this.options;
+    this.showAddOption = false;
+    clearTimeout(this.addOptionTimeout);
     if (inputText) {
       filteredEntities = this.options.filter((option) =>
         this.optionToString(option)
           .toLowerCase()
           .includes(inputText.toLowerCase())
       );
+      const exists = this.options.find(
+        (o) => this.optionToString(o).toLowerCase() === inputText.toLowerCase()
+      );
+      if (!exists) {
+        this.addOptionTimeout = setTimeout(
+          () => (this.showAddOption = true),
+          1000
+        );
+      }
     }
     this.autocompleteSuggestedOptions.next(filteredEntities);
   }
@@ -95,8 +111,12 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
       this.selectedOption = option;
       this.form.setValue(this.valueMapper(option));
     } else {
-      this.selectedOption = undefined;
-      this.form.setValue(undefined);
+      if (selected) {
+        this.select(this.createOption(selected as string));
+      } else {
+        this.selectedOption = undefined;
+        this.form.setValue(undefined);
+      }
     }
   }
 }

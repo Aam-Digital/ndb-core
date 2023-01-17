@@ -46,6 +46,12 @@
         [ngTemplateOutletContext]="{ $implicit: item }"
       ></ng-template>
     </mat-option>
+    <mat-option
+      *ngIf="showAddOption && inputElement.value"
+      [value]="inputElement.value"
+    >
+      <em>Add option</em> {{ inputElement.value }}
+    </mat-option>
   </mat-autocomplete>
 
   <mat-error *ngIf="form.errors?.required" i18n="Error message for any input">
