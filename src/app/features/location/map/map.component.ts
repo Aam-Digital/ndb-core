@@ -146,7 +146,7 @@ export class MapComponent implements AfterViewInit {
       const propArr = Array.isArray(property) ? property : [property];
       propArr
         .filter((prop) => !!entity?.[prop])
-        .map((prop) => {
+        .forEach((prop) => {
           const marker = L.marker([entity[prop].lat, entity[prop].lon]);
           marker.bindTooltip(entity.toString());
           marker.on("click", () => this.entityClick.emit(entity));
