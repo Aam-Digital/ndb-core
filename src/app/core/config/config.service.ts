@@ -2,11 +2,7 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { Observable, ReplaySubject } from "rxjs";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-  ConfigurableEnumValue,
-} from "../configurable-enum/configurable-enum.interface";
+import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../configurable-enum/configurable-enum.interface";
 import { filter } from "rxjs/operators";
 import { LoggingService } from "../logging/logging.service";
 import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
@@ -76,19 +72,6 @@ export class ConfigService {
 
   public getConfig<T>(id: string): T {
     return this.currentConfig.data[id];
-  }
-
-  /**
-   * Get the array of pre-defined values for the given configurable enum id.
-   * @param id
-   */
-  public getConfigurableEnumValues<T extends ConfigurableEnumValue>(
-    id: string
-  ): ConfigurableEnumConfig<T> {
-    if (!id.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
-      id = CONFIGURABLE_ENUM_CONFIG_PREFIX + id;
-    }
-    return this.getConfig<any>(id);
   }
 
   public getAllConfigs<T>(prefix: string): T[] {

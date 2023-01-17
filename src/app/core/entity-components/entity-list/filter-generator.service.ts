@@ -9,20 +9,20 @@ import {
   PrebuiltFilterConfig,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { FilterService } from "../../filter/filter.service";
+import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class FilterGeneratorService {
   constructor(
-    private configService: ConfigService,
+    private enumService: ConfigurableEnumService,
     private loggingService: LoggingService,
     private entities: EntityRegistry,
     private entityMapperService: EntityMapperService,
@@ -137,7 +137,7 @@ export class FilterGeneratorService {
       },
     ];
 
-    const enumValues = this.configService.getConfigurableEnumValues(enumId);
+    const enumValues = this.enumService.getEnumValues(enumId);
     const key = property + ".id";
 
     for (const enumValue of enumValues) {

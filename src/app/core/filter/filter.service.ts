@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { ConfigService } from "../config/config.service";
 import { DataFilter } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../entity/model/entity";
 import {
@@ -11,6 +10,7 @@ import {
   compare,
 } from "@ucast/mongo2js";
 import moment from "moment";
+import { ConfigurableEnumService } from "../configurable-enum/configurable-enum.service";
 
 /**
  * Utility service to help handling and aligning filters with entities.
@@ -25,7 +25,7 @@ export class FilterService {
     { compare: this.extendedCompare.bind(this) }
   ) as Filter;
 
-  constructor(private configService: ConfigService) {}
+  constructor(private enumService: ConfigurableEnumService) {}
 
   /**
    * Builds a predicate for a given filter object.
@@ -83,9 +83,7 @@ export class FilterService {
   }
 
   private parseConfigurableEnumValue(property: EntitySchemaField, value) {
-    const enumValues = this.configService.getConfigurableEnumValues(
-      property.innerDataType
-    );
+    const enumValues = this.enumService.getEnumValues(property.innerDataType);
     return enumValues.find(({ id }) => id === value["id"]);
   }
 

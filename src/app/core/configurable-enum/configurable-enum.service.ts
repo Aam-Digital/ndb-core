@@ -24,11 +24,13 @@ export class ConfigurableEnumService {
     allEnums.forEach((entity) => this.enums.set(entity.getId(true), entity));
   }
 
-  getEnumValues(id: string): ConfigurableEnumValue[] {
+  getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(
+    id: string
+  ): T[] {
     const entityId = Entity.createPrefixedId(
       ConfigurableEnum.ENTITY_TYPE,
       id.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "")
     );
-    return this.enums.get(entityId).values;
+    return this.enums.get(entityId).values as T[];
   }
 }
