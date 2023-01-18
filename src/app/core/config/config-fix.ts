@@ -1,18 +1,7 @@
-import { defaultAttendanceStatusTypes } from "./default-config/default-attendance-status-types";
-import { defaultInteractionTypes } from "./default-config/default-interaction-types";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import { genders } from "../../child-dev-project/children/model/genders";
-import { materials } from "../../child-dev-project/children/educational-material/model/materials";
-import {
-  mathLevels,
-  readingLevels,
-} from "../../child-dev-project/children/aser/model/skill-levels";
-import { warningLevels } from "../../child-dev-project/warning-levels";
-import { ratingAnswers } from "../../features/historical-data/model/rating-answers";
-import { centersUnique } from "../../child-dev-project/children/demo-data-generators/fixtures/centers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -90,55 +79,6 @@ export const defaultJsonConfig = {
       },
     ]
   },
-
-
-  "enum:interaction-type": defaultInteractionTypes,
-  "enum:attendance-status": defaultAttendanceStatusTypes,
-  "enum:reading-levels": readingLevels,
-  "enum:math-levels": mathLevels,
-  "enum:genders": genders,
-  "enum:materials": materials,
-  "enum:warning-levels": warningLevels,
-  "enum:document-status": [
-    {
-      "id": "",
-      "label": "",
-      "_ordinal": 0,
-    },
-    {
-      "id": "OK (copy with us)",
-      "label": $localize`:Document status:OK (copy with us)`,
-      "_ordinal": 1,
-    },
-    {
-      "id": "OK (copy needed for us)",
-      "label": $localize`:Document status:OK (copy needed for us)`,
-      "_ordinal": 2,
-    },
-    {
-      "id": "needs correction",
-      "label": $localize`:Document status:needs correction`,
-      "_ordinal": 3,
-    },
-    {
-      "id": "applied",
-      "label": $localize`:Document status:applied`,
-      "_ordinal": 4,
-    },
-    {
-      "id": "doesn't have",
-      "label": $localize`:Document status:doesn't have`,
-      "_ordinal": 5,
-    },
-    {
-      "id": "not eligible",
-      "label": $localize`:Document status:not eligible`,
-      "_ordinal": 6,
-    }
-  ],
-  "enum:center": centersUnique,
-  "enum:rating-answer": ratingAnswers,
-
   "view:": {
     "component": "Dashboard",
     "config": {
