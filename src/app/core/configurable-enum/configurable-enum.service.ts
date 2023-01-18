@@ -17,11 +17,18 @@ export class ConfigurableEnumService {
     configService: ConfigService
   ) {
     configService.configUpdates.subscribe(() => this.preLoadEnums());
+    this.entityMapper
+      .receiveUpdates(ConfigurableEnum)
+      .subscribe(({ entity }) => this.cacheEnum(entity));
   }
 
   async preLoadEnums() {
     const allEnums = await this.entityMapper.loadType(ConfigurableEnum);
-    allEnums.forEach((entity) => this.enums.set(entity.getId(true), entity));
+    allEnums.forEach((entity) => this.cacheEnum(entity));
+  }
+
+  private cacheEnum(entity: ConfigurableEnum) {
+    return this.enums.set(entity.getId(true), entity);
   }
 
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(

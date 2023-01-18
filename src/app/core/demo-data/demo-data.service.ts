@@ -38,11 +38,8 @@ export class DemoDataServiceConfig {
    *
    * This may also include providers for services a DemoDataGenerator depends on.
    */
-  dataGeneratorProviders: (
-    | ValueProvider
-    | ClassProvider
-    | FactoryProvider
-  )[] = [];
+  dataGeneratorProviders: (ValueProvider | ClassProvider | FactoryProvider)[] =
+    [];
 }
 
 /**

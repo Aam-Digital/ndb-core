@@ -40,6 +40,8 @@ import { DemoConfigurableEnumGeneratorService } from "../configurable-enum/demo-
 
 const demoDataGeneratorProviders = [
   ...DemoConfigGeneratorService.provider(),
+  ...DemoUserGeneratorService.provider(),
+  ...DemoConfigurableEnumGeneratorService.provider(),
   ...DemoChildGenerator.provider({ count: 120 }),
   ...DemoSchoolGenerator.provider({ count: 8 }),
   ...DemoChildSchoolRelationGenerator.provider(),
@@ -57,14 +59,12 @@ const demoDataGeneratorProviders = [
   }),
   ...DemoHealthCheckGeneratorService.provider(),
   ...DemoProgressDashboardWidgetGeneratorService.provider(),
-  ...DemoUserGeneratorService.provider(),
   ...DemoHistoricalDataGenerator.provider({
     minCountAttributes: 2,
     maxCountAttributes: 5,
   }),
   ...DemoPermissionGeneratorService.provider(),
   ...DemoTodoGeneratorService.provider(),
-  ...DemoConfigurableEnumGeneratorService.provider(),
 ];
 
 /**
