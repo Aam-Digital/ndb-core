@@ -2,9 +2,10 @@
 <app-dialog-close mat-dialog-close></app-dialog-close>
 <mat-dialog-content style="max-width: 400px; padding-top: 5px" cdkDropList (cdkDropListDropped)="drop($event)">
   <mat-form-field *ngFor="let v of enumEntity.values; let i = index" class="full-width" appearance="outline" cdkDrag>
+    <fa-icon icon="grip-lines" matIconPrefix class="grab-icon"></fa-icon>
     <mat-label>#{{i}}</mat-label>
     <input matInput [(ngModel)]="v.label"/>
-    <button mat-icon-button matSuffix color="warn" (click)="delete(v, i)">
+    <button mat-icon-button matIconSuffix color="warn" (click)="delete(v, i)">
       <fa-icon icon="trash"></fa-icon>
     </button>
   </mat-form-field>
