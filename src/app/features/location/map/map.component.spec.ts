@@ -96,11 +96,11 @@ describe("MapComponent", () => {
     marker.fireEvent("click");
   });
 
-  it("should open a popup with the same marker data", () => {
+  it("should open a popup with the same marker data", async () => {
     const marked = { lat: 1, lon: 1 };
     component.marked = [marked];
 
-    component.showPopup();
+    await component.showPopup();
     const dialogData: MapPopupConfig =
       mockDialog.open.calls.mostRecent().args[1].data;
 

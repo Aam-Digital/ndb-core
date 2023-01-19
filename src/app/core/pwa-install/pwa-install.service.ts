@@ -118,7 +118,7 @@ export class PwaInstallService {
   private detectStandaloneMode(): boolean {
     return (
       ("standalone" in this.window.navigator &&
-        this.window.navigator["standalone"]) ||
+        !!this.window.navigator["standalone"]) ||
       this.window.matchMedia("(display-mode: standalone)").matches
     );
   }
