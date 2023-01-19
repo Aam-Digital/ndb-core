@@ -7,7 +7,7 @@ import {
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
-import { EntityRegistry } from "./database-entity.decorator";
+import { DatabaseEntity, EntityRegistry } from "./database-entity.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
@@ -37,9 +37,26 @@ export class EntityConfigService {
       EntityConfig & { _id: string }
     >(ENTITY_CONFIG_PREFIX)) {
       const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
-      const ctor = this.entities.get(id);
+      let ctor: EntityConstructor;
+      if (this.entities.has(id)) {
+        ctor = this.entities.get(id);
+      } else {
+        ctor = this.createNewEntity(id, config.extends);
+      }
       this.addConfigAttributes(ctor, config);
     }
+  }
+
+  private createNewEntity(id: string, parent: string) {
+    const parentClass = this.entities.get(parent);
+
+    class subclass extends parentClass {
+      static schema = new Map(parentClass.schema.entries());
+      static ENTITY_TYPE = id;
+    }
+
+    this.entities.set(id, subclass);
+    return subclass;
   }
 
   /**
@@ -135,4 +152,9 @@ export interface EntityConfig {
    * base route of views for this entity type
    */
   route?: string;
+
+  /**
+   * when a new entity is created, all properties from this class will also be available
+   */
+  extends?: string;
 }
