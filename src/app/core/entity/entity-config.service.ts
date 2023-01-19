@@ -46,7 +46,9 @@ export class EntityConfigService {
   }
 
   private createNewEntity(id: string, parent: string) {
-    const parentClass = this.entities.get(parent);
+    const parentClass = this.entities.has(parent)
+      ? this.entities.get(parent)
+      : Entity;
 
     class Subclass extends parentClass {
       static schema = new Map(parentClass.schema.entries());

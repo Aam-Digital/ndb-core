@@ -61,18 +61,6 @@ describe("EntityConfigService", () => {
     expect(result).toBe(config);
   });
 
-  it("throws an error when trying to setting the entities up from config and they are not registered", () => {
-    const configWithInvalidEntities: (EntityConfig & { _id: string })[] = [
-      {
-        _id: "entity:IDoNotExist",
-        attributes: [],
-      },
-    ];
-    mockConfigService.getAllConfigs.and.returnValue(configWithInvalidEntities);
-
-    expect(() => service.setupEntitiesFromConfig()).toThrowError();
-  });
-
   it("appends custom definitions for each entity from the config", () => {
     const ATTRIBUTE_1_NAME = "test1Attribute";
     const ATTRIBUTE_2_NAME = "test2Attribute";
@@ -157,6 +145,25 @@ describe("EntityConfigService", () => {
     const dynamicInstance = new dynamicEntity("someId");
     expect(dynamicInstance instanceof Test).toBeTrue();
     expect(dynamicInstance.getId(true)).toBe("DynamicTest:someId");
+  });
+
+  it("should subclass entity if no extension is specified", () => {
+    mockConfigService.getAllConfigs.and.returnValue([
+      {
+        _id: "entity:NoExtends",
+        label: "DynamicTest",
+        attributes: [],
+      },
+    ]);
+
+    service.setupEntitiesFromConfig();
+    const dynamicEntity = entityRegistry.get("NoExtends");
+    expect([...dynamicEntity.schema.entries()]).toEqual([
+      ...Entity.schema.entries(),
+    ]);
+    const dynamicInstance = new dynamicEntity("someId");
+    expect(dynamicInstance instanceof Entity).toBeTrue();
+    expect(dynamicInstance.getId(true)).toBe("NoExtends:someId");
   });
 });
 
