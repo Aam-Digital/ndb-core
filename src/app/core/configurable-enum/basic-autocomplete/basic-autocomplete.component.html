@@ -47,7 +47,7 @@
       ></ng-template>
     </mat-option>
     <mat-option
-      *ngIf="showAddOption && inputElement.value"
+      *ngIf="createOption && showAddOption && inputElement.value"
       [value]="inputElement.value"
     >
       <em>Add option</em> {{ inputElement.value }}
