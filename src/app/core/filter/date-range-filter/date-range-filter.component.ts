@@ -51,7 +51,6 @@ export class DateRangeFilterComponent<T extends Entity> {
   }
 
   openDialog() {
-    console.log(this.dateRangeFilterConfig);
     this.dialog
       .open(DateRangeFilterPanelComponent, {
         width: "40%",
