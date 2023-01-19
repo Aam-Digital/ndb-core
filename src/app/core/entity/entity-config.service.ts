@@ -37,12 +37,10 @@ export class EntityConfigService {
       EntityConfig & { _id: string }
     >(ENTITY_CONFIG_PREFIX)) {
       const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
-      let ctor: EntityConstructor;
-      if (this.entities.has(id)) {
-        ctor = this.entities.get(id);
-      } else {
-        ctor = this.createNewEntity(id, config.extends);
+      if (!this.entities.has(id)) {
+        this.createNewEntity(id, config.extends);
       }
+      const ctor = this.entities.get(id);
       this.addConfigAttributes(ctor, config);
     }
   }
@@ -56,7 +54,6 @@ export class EntityConfigService {
     }
 
     this.entities.set(id, subclass);
-    return subclass;
   }
 
   /**
