@@ -80,6 +80,14 @@ export class EnumDropdownComponent implements OnChanges {
   }
 
   openSettings() {
-    this.dialog.open(EditEnumPopupComponent, { data: this.enumEntity });
+    const dialogRef = this.dialog.open(EditEnumPopupComponent, {
+      data: this.enumEntity,
+    });
+    dialogRef
+      .afterClosed()
+      .subscribe(
+        () =>
+          (this.options = [...this.enumEntity.values, ...this.invalidOptions])
+      );
   }
 }

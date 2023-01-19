@@ -1,12 +1,12 @@
 <h1 matDialogTitle>Edit dropdown</h1>
 <app-dialog-close mat-dialog-close></app-dialog-close>
-<mat-dialog-content style="max-width: 400px; padding-top: 5px">
-  <mat-form-field *ngFor="let control of form.controls; let i = index" class="full-width" appearance="outline">
+<mat-dialog-content style="max-width: 400px; padding-top: 5px" cdkDropList (cdkDropListDropped)="drop($event)">
+  <mat-form-field *ngFor="let v of values; let i = index" class="full-width" appearance="outline" cdkDrag>
     <mat-label>#{{i}}</mat-label>
-    <input matInput [formControl]="control"/>
+    <input matInput [(ngModel)]="v.label"/>
   </mat-form-field>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button mat-stroked-button (click)="save()" [disabled]="form.pristine">Save</button>
+  <button mat-stroked-button (click)="save()">Save</button>
   <button mat-stroked-button color="warn" mat-dialog-close>Cancel</button>
 </mat-dialog-actions>

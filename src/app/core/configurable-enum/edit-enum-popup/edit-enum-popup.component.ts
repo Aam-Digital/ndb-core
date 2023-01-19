@@ -9,10 +9,16 @@ import { MatListModule } from "@angular/material/list";
 import { NgForOf } from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { FormBuilder, ReactiveFormsModule } from "@angular/forms";
+import { FormsModule } from "@angular/forms";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDropList,
+  moveItemInArray,
+} from "@angular/cdk/drag-drop";
 
 @Component({
   selector: "app-edit-enum-popup",
@@ -24,25 +30,41 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
     NgForOf,
     MatFormFieldModule,
     MatInputModule,
-    ReactiveFormsModule,
     DialogCloseComponent,
     MatButtonModule,
+    FormsModule,
+    CdkDropList,
+    CdkDrag,
   ],
   standalone: true,
 })
 export class EditEnumPopupComponent {
-  form = this.fb.array(this.enumEntity.values.map((v) => v.label));
+  // deep copy of enum array
+  values = this.enumEntity.values.map((v) => Object.assign({}, v));
+  private drops = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
     private dialog: MatDialogRef<EditEnumPopupComponent>,
-    private fb: FormBuilder,
     private entityMapper: EntityMapperService
   ) {}
 
+  drop(event: CdkDragDrop<string[]>) {
+    moveItemInArray(this.values, event.previousIndex, event.currentIndex);
+    this.drops.push(event);
+  }
+
   async save() {
-    this.enumEntity.values.forEach(
-      (item, i) => (item.label = this.form.at(i).value)
+    this.values.forEach(
+      (v) =>
+        (this.enumEntity.values.find(({ id }) => id === v.id).label = v.label)
+    );
+    this.drops.forEach((event) =>
+      moveItemInArray(
+        this.enumEntity.values,
+        event.previousIndex,
+        event.currentIndex
+      )
     );
     await this.entityMapper.save(this.enumEntity);
     this.dialog.close();
