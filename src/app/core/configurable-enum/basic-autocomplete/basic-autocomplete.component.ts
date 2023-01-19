@@ -1,8 +1,10 @@
 import {
   Component,
   ContentChild,
+  EventEmitter,
   Input,
   OnChanges,
+  Output,
   SimpleChanges,
   TemplateRef,
 } from "@angular/core";
@@ -50,6 +52,9 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
   @Input() optionToString: (option: O) => string = (option) =>
     option?.toString();
   @Input() createOption: (input: string) => O;
+
+  @Input() showWrench = false;
+  @Output() wrenchClick = new EventEmitter();
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
 

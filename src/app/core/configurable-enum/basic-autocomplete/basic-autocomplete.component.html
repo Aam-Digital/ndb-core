@@ -23,6 +23,14 @@
     (focusin)="updateAutocomplete('')"
     (focusout)="select(inputElement.value)"
   />
+  <fa-icon
+    *ngIf="showWrench"
+    icon="wrench"
+    class="caret-suffix"
+    [ngClass]="{ disabled: form.disabled }"
+    matSuffix
+    (click)="wrenchClick.emit()"
+  ></fa-icon>
 
   <fa-icon
     icon="caret-down"

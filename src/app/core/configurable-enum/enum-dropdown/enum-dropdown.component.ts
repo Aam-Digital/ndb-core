@@ -9,6 +9,8 @@ import { ConfigurableEnumService } from "../configurable-enum.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { ConfigurableEnum } from "../configurable-enum";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { MatDialog } from "@angular/material/dialog";
+import { EditEnumPopupComponent } from "../edit-enum-popup/edit-enum-popup.component";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -40,7 +42,8 @@ export class EnumDropdownComponent implements OnChanges {
   constructor(
     private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
-    private ability: EntityAbility
+    private ability: EntityAbility,
+    private dialog: MatDialog
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -74,5 +77,9 @@ export class EnumDropdownComponent implements OnChanges {
     this.enumEntity.values.push(option);
     this.entityMapper.save(this.enumEntity);
     return option;
+  }
+
+  openSettings() {
+    this.dialog.open(EditEnumPopupComponent, { data: this.enumEntity });
   }
 }

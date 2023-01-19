@@ -5,6 +5,8 @@
   [options]="options"
   [optionToString]="enumValueToString"
   [createOption]="createNewOption"
+  [showWrench]="!!createNewOption"
+  (wrenchClick)="openSettings()"
 >
   <ng-template let-item>{{ item.label }}</ng-template>
 </app-basic-autocomplete>
