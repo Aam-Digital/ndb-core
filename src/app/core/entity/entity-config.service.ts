@@ -7,7 +7,7 @@ import {
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
-import { DatabaseEntity, EntityRegistry } from "./database-entity.decorator";
+import { EntityRegistry } from "./database-entity.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
@@ -48,12 +48,12 @@ export class EntityConfigService {
   private createNewEntity(id: string, parent: string) {
     const parentClass = this.entities.get(parent);
 
-    class subclass extends parentClass {
+    class Subclass extends parentClass {
       static schema = new Map(parentClass.schema.entries());
       static ENTITY_TYPE = id;
     }
 
-    this.entities.set(id, subclass);
+    this.entities.set(id, Subclass);
   }
 
   /**

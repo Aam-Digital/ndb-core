@@ -58,7 +58,7 @@ describe("RelatedEntitiesComponent", () => {
 
     expect(component.columns).toBe(columns);
     expect(component.data).toEqual([r1, r2, r3]);
-    expect(component.filter).toEqual({ ...filter, childId: c1.getId() } as any);
+    expect(component.filter).toEqual({ ...filter, childId: c1.getId() });
   });
 
   it("should create a new entity that references the related one", async () => {
