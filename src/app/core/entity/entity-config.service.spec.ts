@@ -134,6 +134,30 @@ describe("EntityConfigService", () => {
     expect(Test.icon).toBe("users");
     expect(Test.color).toBe("red");
   });
+
+  it("should create a new subclass with the schema of the extended", () => {
+    const schema = { dataType: "string", label: "Dynamic Property" };
+    mockConfigService.getAllConfigs.and.returnValue([
+      {
+        _id: "entity:DynamicTest",
+        label: "DynamicTest",
+        extends: "Test",
+        attributes: [{ name: "dynamicProperty", schema }],
+      },
+    ]);
+
+    service.setupEntitiesFromConfig();
+
+    const dynamicEntity = entityRegistry.get("DynamicTest");
+    expect(dynamicEntity.ENTITY_TYPE).toBe("DynamicTest");
+    expect([...dynamicEntity.schema.entries()]).toEqual(
+      jasmine.arrayContaining([...Test.schema.entries()])
+    );
+    expect(dynamicEntity.schema.get("dynamicProperty")).toBe(schema);
+    const dynamicInstance = new dynamicEntity("someId");
+    expect(dynamicInstance instanceof Test).toBeTrue();
+    expect(dynamicInstance.getId(true)).toBe("DynamicTest:someId");
+  });
 });
 
 @DatabaseEntity("Test")
