@@ -20,6 +20,7 @@ import {
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { MatButtonModule } from "@angular/material/button";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 @Component({
   selector: "app-edit-enum-popup",
@@ -43,8 +44,13 @@ export class EditEnumPopupComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
     private dialog: MatDialogRef<EditEnumPopupComponent>,
-    private entityMapper: EntityMapperService
-  ) {}
+    private entityMapper: EntityMapperService,
+    private confirmationService: ConfirmationDialogService
+  ) {
+    this.dialog
+      .afterClosed()
+      .subscribe(() => this.entityMapper.save(this.enumEntity));
+  }
 
   drop(event: CdkDragDrop<string[]>) {
     moveItemInArray(
@@ -54,10 +60,14 @@ export class EditEnumPopupComponent {
     );
   }
 
-  delete(value: ConfigurableEnumValue) {}
-
-  async save() {
-    await this.entityMapper.save(this.enumEntity);
-    this.dialog.close();
+  async delete(value: ConfigurableEnumValue, index: number) {
+    const confirmed = await this.confirmationService.getConfirmation(
+      $localize`Delete option`,
+      $localize`Are you sure that you want to delete the option ${value.label}?`
+    );
+    if (confirmed) {
+      this.enumEntity.values.splice(index, 1);
+      await this.entityMapper.save(this.enumEntity);
+    }
   }
 }

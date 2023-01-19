@@ -4,7 +4,7 @@
   <mat-form-field *ngFor="let v of enumEntity.values; let i = index" class="full-width" appearance="outline" cdkDrag>
     <mat-label>#{{i}}</mat-label>
     <input matInput [(ngModel)]="v.label"/>
-    <button mat-icon-button matSuffix color="warn" (click)="delete(v)">
+    <button mat-icon-button matSuffix color="warn" (click)="delete(v, i)">
       <fa-icon icon="trash"></fa-icon>
     </button>
   </mat-form-field>
