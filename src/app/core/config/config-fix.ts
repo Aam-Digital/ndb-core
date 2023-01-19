@@ -83,6 +83,16 @@ export const defaultJsonConfig = {
         "link": "/admin/conflicts"
       },
       {
+        "name": "Dynamic Subclass 1",
+        "icon": "question",
+        "link": "/DynamicTest"
+      },
+      {
+        "name": "Dynamic Subclass 2",
+        "icon": "question",
+        "link": "/DynamicTest2"
+      },
+      {
         "name": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
@@ -1144,5 +1154,61 @@ export const defaultJsonConfig = {
         { "id": "startDate" }
       ]
     }
+  },
+  "entity:DynamicTest": {
+    extends: "HistoricalEntityData",
+    label: "Dynamic Test",
+    attributes: [
+      { name: "testAttr", schema: { dataType: "string", label: "Test Attribute" } }
+    ]
+  },
+  "view:DynamicTest": {
+    component: "EntityList",
+    config: {
+      entity: "DynamicTest",
+      columns: ["date", "testAttr"]
+    }
+  },
+  "view:DynamicTest/:id": {
+    component: "EntityDetails",
+    config: {
+      entity: "DynamicTest",
+      panels: [
+        {
+          title: "Basic",
+          components: [
+            { component: "Form", config: { cols: [["date", "testAttr"]] } }
+          ]
+        }
+      ]
+    },
+  },
+  "entity:DynamicTest2": {
+    extends: "HistoricalEntityData",
+    label: "Dynamic Test",
+    attributes: [
+      { name: "otherAttr", schema: { dataType: "string", label: "Test Attribute" } }
+    ]
+  },
+  "view:DynamicTest2": {
+    component: "EntityList",
+    config: {
+      entity: "DynamicTest2",
+      columns: ["date", "otherAttr"]
+    }
+  },
+  "view:DynamicTest2/:id": {
+    component: "EntityDetails",
+    config: {
+      entity: "DynamicTest2",
+      panels: [
+        {
+          title: "Basic",
+          components: [
+            { component: "Form", config: { cols: [["date", "otherAttr"]] } }
+          ]
+        }
+      ]
+    },
   }
 };
