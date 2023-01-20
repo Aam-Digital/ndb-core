@@ -168,6 +168,11 @@ export const defaultJsonConfig = {
                 "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Add Child`,
                 "icon": "plus",
                 "link": "/child/new",
+              },
+              {
+                "label": $localize`:Dashboard shortcut widget|open public form:Registration Form`,
+                "icon": "file-circle-check",
+                "link": "/public-form/test",
               }
             ]
           }
