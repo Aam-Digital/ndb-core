@@ -6,14 +6,7 @@ import {
 import { Entity } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { ReactiveFormsModule } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
 import { DisplayEntityComponent } from "../display-entity/display-entity.component";
-import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatButtonModule } from "@angular/material/button";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { BasicAutocompleteComponent } from "../../../configurable-enum/basic-autocomplete/basic-autocomplete.component";
 
 @DynamicComponent("EditSingleEntity")
@@ -21,19 +14,7 @@ import { BasicAutocompleteComponent } from "../../../configurable-enum/basic-aut
   selector: "app-edit-single-entity",
   templateUrl: "./edit-single-entity.component.html",
   styleUrls: ["./edit-single-entity.component.scss"],
-  imports: [
-    MatFormFieldModule,
-    ReactiveFormsModule,
-    MatInputModule,
-    DisplayEntityComponent,
-    NgIf,
-    MatAutocompleteModule,
-    MatButtonModule,
-    FontAwesomeModule,
-    AsyncPipe,
-    NgForOf,
-    BasicAutocompleteComponent,
-  ],
+  imports: [BasicAutocompleteComponent, DisplayEntityComponent],
   standalone: true,
 })
 export class EditSingleEntityComponent extends EditComponent<string> {

@@ -20,8 +20,10 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subscription } from "rxjs";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "./basic-autocomplete.component.html",
@@ -62,20 +64,23 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
   showAddOption = false;
   addOptionTimeout: any;
   selectedOption: O;
+  private formSubscription: Subscription;
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.form || changes.options) {
-      this.selectInitialOption();
+      this.selectCurrentOption();
+    }
+    if (!this.formSubscription && changes.form) {
+      this.formSubscription = this.form.valueChanges
+        .pipe(untilDestroyed(this))
+        .subscribe(() => this.selectCurrentOption());
     }
   }
 
-  private selectInitialOption() {
-    const selectedOption = this.options.find(
+  private selectCurrentOption() {
+    this.selectedOption = this.options.find(
       (o) => this.valueMapper(o) === this.form.value
     );
-    if (selectedOption) {
-      this.selectedOption = selectedOption;
-    }
   }
 
   updateAutocomplete(inputText: string) {
@@ -113,13 +118,11 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
     }
 
     if (option) {
-      this.selectedOption = option;
       this.form.setValue(this.valueMapper(option));
     } else {
       if (selected) {
         this.select(this.createOption(selected as string));
       } else {
-        this.selectedOption = undefined;
         this.form.setValue(undefined);
       }
     }
