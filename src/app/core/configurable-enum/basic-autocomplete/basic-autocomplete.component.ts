@@ -143,6 +143,7 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
     }
 
     if (option) {
+      option.selected = true;
       this.form.setValue(option.asValue);
     } else {
       if (selected) {

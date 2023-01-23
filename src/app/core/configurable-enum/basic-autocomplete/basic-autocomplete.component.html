@@ -48,7 +48,8 @@
       *ngFor="let item of autocompleteSuggestedOptions | async"
       [value]="item"
     >
-      <mat-checkbox></mat-checkbox>
+      <mat-checkbox *ngIf="!item.selected"></mat-checkbox>
+      <mat-checkbox *ngIf="item.selected" color="primary"></mat-checkbox>
       <ng-template
         [ngTemplateOutlet]="templateRef"
         [ngTemplateOutletContext]="{ $implicit: item.initial }"
