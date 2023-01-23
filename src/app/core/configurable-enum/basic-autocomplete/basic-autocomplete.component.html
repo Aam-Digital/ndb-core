@@ -15,13 +15,12 @@
     #inputElement
     id="inputElement"
     matInput
-    [value]="optionToString(selectedOption) ?? ''"
+    [value]="selectedOption?.asString ?? ''"
     [disabled]="form.disabled"
     [matAutocomplete]="autoSuggestions"
     #trigger="matAutocompleteTrigger"
     (keyup)="updateAutocomplete(inputElement.value)"
     (focusin)="updateAutocomplete('')"
-    (focusout)="select(inputElement.value)"
   />
   <fa-icon
     *ngIf="showWrench"
@@ -49,9 +48,10 @@
       *ngFor="let item of autocompleteSuggestedOptions | async"
       [value]="item"
     >
+      <mat-checkbox></mat-checkbox>
       <ng-template
         [ngTemplateOutlet]="templateRef"
-        [ngTemplateOutletContext]="{ $implicit: item }"
+        [ngTemplateOutletContext]="{ $implicit: item.initial }"
       ></ng-template>
     </mat-option>
     <mat-option

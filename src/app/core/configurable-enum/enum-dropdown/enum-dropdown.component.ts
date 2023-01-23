@@ -73,7 +73,6 @@ export class EnumDropdownComponent implements OnChanges {
 
   private addNewOption(name: string) {
     const option = { id: name, label: name };
-    this.options.push(option);
     this.enumEntity.values.push(option);
     this.entityMapper.save(this.enumEntity);
     return option;

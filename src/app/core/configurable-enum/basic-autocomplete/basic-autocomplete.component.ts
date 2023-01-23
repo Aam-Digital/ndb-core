@@ -22,6 +22,14 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { BehaviorSubject, Subscription } from "rxjs";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+
+interface SelectableOption<O, V> {
+  initial: O;
+  asString: string;
+  asValue: V;
+  selected: boolean;
+}
 
 @UntilDestroy()
 @Component({
@@ -40,19 +48,36 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
     MatAutocompleteModule,
     AsyncPipe,
     NgClass,
+    MatCheckboxModule,
   ],
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class BasicAutocompleteComponent<V, O> implements OnChanges {
+export class BasicAutocompleteComponent<O, V> implements OnChanges {
   @Input() form: FormControl; // cannot be named "formControl" - otherwise the angular directive grabs this
   @Input() label: string;
-  @Input() options: O[] = [];
+
+  @Input() set options(options: O[]) {
+    this._options = options.map((o) => this.toSelectableOption(o));
+  }
+
+  _options: SelectableOption<O, V>[] = [];
   // TODO implement multi
   @Input() multi?: boolean;
 
-  @Input() valueMapper: (option: O) => V = (option) => option as any;
-  @Input() optionToString: (option: O) => string = (option) =>
-    option?.toString();
+  @Input() set valueMapper(value: (option: O) => V) {
+    this._valueMapper = value;
+    this._options.forEach((opt) => (opt.asValue = value(opt.initial)));
+  }
+
+  private _valueMapper = (option: O) => option as unknown as V;
+
+  @Input() set optionToString(value: (option: O) => string) {
+    this._optionToString = value;
+    this._options.forEach((opt) => (opt.asString = value(opt.initial)));
+  }
+
+  private _optionToString = (option) => option?.toString();
+
   @Input() createOption: (input: string) => O;
 
   @Input() showWrench = false;
@@ -60,10 +85,12 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
 
-  autocompleteSuggestedOptions = new BehaviorSubject<O[]>([]);
+  autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
+    []
+  );
   showAddOption = false;
   addOptionTimeout: any;
-  selectedOption: O;
+  selectedOption: SelectableOption<O, V>;
   private formSubscription: Subscription;
 
   ngOnChanges(changes: SimpleChanges) {
@@ -78,24 +105,22 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
   }
 
   private selectCurrentOption() {
-    this.selectedOption = this.options.find(
-      (o) => this.valueMapper(o) === this.form.value
+    this.selectedOption = this._options.find(
+      (o) => o.asValue === this.form.value
     );
   }
 
   updateAutocomplete(inputText: string) {
     // TODO this behaves problematic when navigating with the up and down buttons
-    let filteredEntities = this.options;
+    let filteredEntities = this._options;
     this.showAddOption = false;
     clearTimeout(this.addOptionTimeout);
     if (inputText) {
-      filteredEntities = this.options.filter((option) =>
-        this.optionToString(option)
-          .toLowerCase()
-          .includes(inputText.toLowerCase())
+      filteredEntities = this._options.filter((option) =>
+        option.asString.toLowerCase().includes(inputText.toLowerCase())
       );
-      const exists = this.options.find(
-        (o) => this.optionToString(o).toLowerCase() === inputText.toLowerCase()
+      const exists = this._options.find(
+        (o) => o.asString.toLowerCase() === inputText.toLowerCase()
       );
       if (!exists) {
         this.addOptionTimeout = setTimeout(
@@ -107,24 +132,37 @@ export class BasicAutocompleteComponent<V, O> implements OnChanges {
     this.autocompleteSuggestedOptions.next(filteredEntities);
   }
 
-  select(selected: string | O) {
-    let option: O;
+  select(selected: string | SelectableOption<O, V>) {
+    let option: SelectableOption<O, V>;
     if (typeof selected === "string") {
-      option = this.options.find(
-        (e) => this.optionToString(e).toLowerCase() === selected.toLowerCase()
+      option = this._options.find(
+        (o) => o.asString.toLowerCase() === selected.toLowerCase()
       );
     } else {
       option = selected;
     }
 
     if (option) {
-      this.form.setValue(this.valueMapper(option));
+      this.form.setValue(option.asValue);
     } else {
       if (selected) {
-        this.select(this.createOption(selected as string));
+        const newOption = this.toSelectableOption(
+          this.createOption(selected as string)
+        );
+        this._options.push(newOption);
+        this.select(newOption);
       } else {
         this.form.setValue(undefined);
       }
     }
+  }
+
+  private toSelectableOption(opt: O): SelectableOption<O, V> {
+    return {
+      initial: opt,
+      asValue: this._valueMapper(opt),
+      asString: this._optionToString(opt),
+      selected: false,
+    };
   }
 }
