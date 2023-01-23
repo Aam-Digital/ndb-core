@@ -5,11 +5,8 @@ import { Note } from "../../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { DatePipe } from "@angular/common";
 import { DemoNoteGeneratorService } from "../../../../child-dev-project/notes/demo-data/demo-note-generator.service";
-import { ConfigService } from "../../../config/config.service";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { DemoChildGenerator } from "../../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoUserGeneratorService } from "../../../user/demo-user-generator.service";
-import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { NEVER, of, Subject } from "rxjs";
@@ -18,19 +15,9 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { AbilityService } from "../../../permissions/ability/ability.service";
 import { faker } from "../../../demo-data/faker";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { Ability } from "@casl/ability";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
-import { LoggingService } from "../../../logging/logging.service";
 
-const configService = new ConfigService(
-  mockEntityMapper(),
-  new LoggingService()
-);
-const schemaService = new EntitySchemaService();
-schemaService.registerSchemaDatatype(
-  new ConfigurableEnumDatatype(configService)
-);
 const childGenerator = new DemoChildGenerator({ count: 10 });
 const userGenerator = new DemoUserGeneratorService();
 const data = new DemoNoteGeneratorService(
@@ -63,8 +50,7 @@ export default {
             receiveUpdates: () => NEVER,
           },
         },
-        { provide: EntitySchemaService, useValue: schemaService },
-        { provide: ConfigService, useValue: configService },
+
         DatePipe,
         {
           provide: ChildrenService,

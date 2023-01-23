@@ -24,6 +24,7 @@ import { SyncState } from "../core/session/session-states/sync-state.enum";
 import { WINDOW_TOKEN } from "./di-tokens";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
+import { MatDialogModule } from "@angular/material/dialog";
 
 export const entityFormStorybookDefaulParameters = {
   controls: {
@@ -47,6 +48,7 @@ export const mockAbilityService = {
     MatNativeDateModule,
     Angulartics2Module.forRoot(),
     RouterTestingModule,
+    MatDialogModule,
   ],
   providers: [
     { provide: EntityRegistry, useValue: entityRegistry },
