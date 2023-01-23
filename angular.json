@@ -23,7 +23,7 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/manifest.json",
+              "src/manifest.webmanifest",
               {
                 "glob": "**/*",
                 "input": "node_modules/leaflet/dist/images/",
@@ -104,7 +104,7 @@
             "assets": [
               "src/assets",
               "src/favicon.ico",
-              "src/manifest.json"
+              "src/manifest.webmanifest"
             ]
           }
         },
