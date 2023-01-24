@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -14,6 +14,7 @@ import { ConfigService } from "../../../core/config/config.service";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { ConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum.service";
 
 RecurringActivity.schema.set("center", {
   dataType: "configurable-enum",
@@ -63,10 +64,15 @@ export default {
         { provide: DownloadService, useValue: null },
         {
           provide: EntitySchemaService,
-          useFactory: (configService: ConfigService) => {
+          useFactory: (
+            entityMapper: EntityMapperService,
+            configService: ConfigService
+          ) => {
             const schemaService = new EntitySchemaService();
             schemaService.registerSchemaDatatype(
-              new ConfigurableEnumDatatype(configService)
+              new ConfigurableEnumDatatype(
+                new ConfigurableEnumService(entityMapper, configService)
+              )
             );
             return schemaService;
           },

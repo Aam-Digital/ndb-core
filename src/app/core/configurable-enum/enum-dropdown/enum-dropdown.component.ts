@@ -9,7 +9,7 @@ import { ConfigurableEnumService } from "../configurable-enum.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { ConfigurableEnum } from "../configurable-enum";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { EditEnumPopupComponent } from "../edit-enum-popup/edit-enum-popup.component";
 
 @Component({
@@ -19,6 +19,7 @@ import { EditEnumPopupComponent } from "../edit-enum-popup/edit-enum-popup.compo
   standalone: true,
   imports: [
     MatSelectModule,
+    MatDialogModule,
     ReactiveFormsModule,
     ConfigurableEnumDirective,
     NgIf,
