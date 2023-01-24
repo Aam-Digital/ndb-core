@@ -37,9 +37,25 @@ export class EntityConfigService {
       EntityConfig & { _id: string }
     >(ENTITY_CONFIG_PREFIX)) {
       const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
+      if (!this.entities.has(id)) {
+        this.createNewEntity(id, config.extends);
+      }
       const ctor = this.entities.get(id);
       this.addConfigAttributes(ctor, config);
     }
+  }
+
+  private createNewEntity(id: string, parent: string) {
+    const parentClass = this.entities.has(parent)
+      ? this.entities.get(parent)
+      : Entity;
+
+    class DynamicClass extends parentClass {
+      static schema = new Map(parentClass.schema.entries());
+      static ENTITY_TYPE = id;
+    }
+
+    this.entities.set(id, DynamicClass);
   }
 
   /**
@@ -135,4 +151,9 @@ export interface EntityConfig {
    * base route of views for this entity type
    */
   route?: string;
+
+  /**
+   * when a new entity is created, all properties from this class will also be available
+   */
+  extends?: string;
 }
