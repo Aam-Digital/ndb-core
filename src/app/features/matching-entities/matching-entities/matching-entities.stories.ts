@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -10,6 +10,7 @@ import { RecurringActivity } from "../../../child-dev-project/attendance/model/r
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { ConfigService } from "../../../core/config/config.service";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -63,10 +64,15 @@ export default {
         { provide: DownloadService, useValue: null },
         {
           provide: EntitySchemaService,
-          useFactory: (enumService: ConfigurableEnumService) => {
+          useFactory: (
+            entityMapper: EntityMapperService,
+            configService: ConfigService
+          ) => {
             const schemaService = new EntitySchemaService();
             schemaService.registerSchemaDatatype(
-              new ConfigurableEnumDatatype(enumService)
+              new ConfigurableEnumDatatype(
+                new ConfigurableEnumService(entityMapper, configService)
+              )
             );
             return schemaService;
           },
