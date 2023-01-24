@@ -1143,10 +1143,7 @@ export const defaultJsonConfig = {
         {
           "id": "due-status",
           "type": "prebuilt"
-        },
-        { "id": "deadline" },
-        { "id": "deadline" },
-        { "id": "startDate" }
+        }
       ]
     }
   }
