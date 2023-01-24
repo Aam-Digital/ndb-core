@@ -7,6 +7,7 @@ import { ConfigurableEnumValue } from "../configurable-enum.interface";
 /**
  * This component displays a {@link ConfigurableEnumValue} as text.
  * If the value has a `color` property, it is used as the background color.
+ * TODO should also work for multi-select
  */
 @DynamicComponent("DisplayConfigurableEnum")
 @Component({

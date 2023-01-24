@@ -20,9 +20,10 @@ import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { BehaviorSubject, Subscription } from "rxjs";
+import { BehaviorSubject } from "rxjs";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { filter } from "rxjs/operators";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -53,7 +54,27 @@ interface SelectableOption<O, V> {
   //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BasicAutocompleteComponent<O, V> implements OnChanges {
-  @Input() form: FormControl; // cannot be named "formControl" - otherwise the angular directive grabs this
+  // cannot be named "formControl" - otherwise the angular directive grabs this
+  @Input() set form(form: FormControl<V | V[]>) {
+    this._form = form;
+    this.setInputValue();
+    if (form.disabled) {
+      this.autocompleteForm.disable();
+    }
+    form.statusChanges.subscribe((status) => {
+      if (status === "DISABLED") {
+        this.autocompleteForm.disable();
+      } else {
+        this.autocompleteForm.enable();
+      }
+    });
+    form.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.setInputValue());
+  }
+
+  _form: FormControl<V | V[]>;
+
   @Input() label: string;
 
   @Input() set options(options: O[]) {
@@ -61,7 +82,6 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
   }
 
   _options: SelectableOption<O, V>[] = [];
-  // TODO implement multi
   @Input() multi?: boolean;
 
   @Input() set valueMapper(value: (option: O) => V) {
@@ -85,33 +105,49 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
 
+  autocompleteForm = new FormControl("");
+
   autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
     []
   );
   showAddOption = false;
   addOptionTimeout: any;
-  selectedOption: SelectableOption<O, V>;
-  private formSubscription: Subscription;
+  inputValue = "";
+
+  constructor() {
+    this.autocompleteForm.valueChanges
+      .pipe(filter((val) => typeof val === "string"))
+      .subscribe((val) => this.updateAutocomplete(val?.split(", ").pop()));
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.form || changes.options) {
-      this.selectCurrentOption();
-    }
-    if (!this.formSubscription && changes.form) {
-      this.formSubscription = this.form.valueChanges
-        .pipe(untilDestroyed(this))
-        .subscribe(() => this.selectCurrentOption());
+      if (this.multi) {
+        this._options
+          .filter(({ asValue }) => (this._form.value as V[])?.includes(asValue))
+          .forEach((o) => (o.selected = true));
+      }
+      this.setInputValue();
     }
   }
 
-  private selectCurrentOption() {
-    this.selectedOption = this._options.find(
-      (o) => o.asValue === this.form.value
-    );
+  private setInputValue() {
+    if (this.multi) {
+      this.autocompleteForm.setValue(
+        this._options
+          .filter((o) => o.selected)
+          .map((o) => o.asString)
+          .join(", ")
+      );
+    } else {
+      const selected = this._options.find(
+        ({ asValue }) => asValue === this._form.value
+      );
+      this.autocompleteForm.setValue(selected?.asString ?? "");
+    }
   }
 
   updateAutocomplete(inputText: string) {
-    // TODO this behaves problematic when navigating with the up and down buttons
     let filteredEntities = this._options;
     this.showAddOption = false;
     clearTimeout(this.addOptionTimeout);
@@ -143,8 +179,7 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
     }
 
     if (option) {
-      option.selected = true;
-      this.form.setValue(option.asValue);
+      this.selectOption(option);
     } else {
       if (selected) {
         const newOption = this.toSelectableOption(
@@ -153,8 +188,20 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
         this._options.push(newOption);
         this.select(newOption);
       } else {
-        this.form.setValue(undefined);
+        this._form.setValue(undefined);
       }
+    }
+  }
+
+  private selectOption(option: SelectableOption<O, V>) {
+    if (this.multi) {
+      option.selected = !option.selected;
+      const selected = this._options
+        .filter((o) => o.selected)
+        .map((o) => o.asValue);
+      this._form.setValue(selected);
+    } else {
+      this._form.setValue(option.asValue);
     }
   }
 

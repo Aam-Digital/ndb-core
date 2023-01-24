@@ -75,7 +75,7 @@ describe("BasicAutocompleteComponent", () => {
     tick();
     fixture.detectChanges();
 
-    expect(component.selectedOption).toBe(child1);
+    expect(component.inputValue).toBe(child1);
     expect(
       fixture.debugElement.query(By.css("#inputElement")).nativeElement.value
     ).toEqual("First Child");
@@ -89,7 +89,7 @@ describe("BasicAutocompleteComponent", () => {
 
     component.select("First Child");
 
-    expect(component.selectedOption).toBe(child1);
+    expect(component.inputValue).toBe(child1);
     expect(component.form.value).toBe(child1.getId());
   });
 
@@ -100,15 +100,15 @@ describe("BasicAutocompleteComponent", () => {
     component.valueMapper = entityToId;
 
     component.select(first);
-    expect(component.selectedOption).toBe(first);
+    expect(component.inputValue).toBe(first);
     expect(component.form.value).toBe(first.getId());
 
     component.select("second");
-    expect(component.selectedOption).toBe(second);
+    expect(component.inputValue).toBe(second);
     expect(component.form.value).toBe(second.getId());
 
     component.select("NonExistent");
-    expect(component.selectedOption).toBe(undefined);
+    expect(component.inputValue).toBe(undefined);
     expect(component.form.value).toBe(undefined);
   });
 });

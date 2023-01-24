@@ -1,40 +1,31 @@
 <mat-form-field>
-  <!--
-  This input contains the actual value, i.e. the id of the entity.
-  It is filled in automatically in code after the user has chosen a correct value.
- -->
-  <input matInput [formControl]="form" hidden/>
-
   <mat-label>{{ label }}</mat-label>
 
-  <!--
-  This input contains the display value (i.e. the value that the user chooses and sees when he clicks 'update')
-  Which is the name of the entity in many cases.
-  -->
+  <!--  TODO turn this into a own form field control in order to get mat-error working properly -->
+  <!--  <input [formControl]="_form" matInput hidden/>-->
+
   <input
-    #inputElement
+    [formControl]="autocompleteForm"
     id="inputElement"
     matInput
-    [value]="selectedOption?.asString ?? ''"
-    [disabled]="form.disabled"
+    style="text-overflow: ellipsis"
     [matAutocomplete]="autoSuggestions"
-    #trigger="matAutocompleteTrigger"
-    (keyup)="updateAutocomplete(inputElement.value)"
-    (focusin)="updateAutocomplete('')"
+    #inputElement
   />
+
   <fa-icon
     *ngIf="showWrench"
     icon="wrench"
     class="caret-suffix"
-    [ngClass]="{ disabled: form.disabled }"
+    [ngClass]="{ disabled: autocompleteForm.disabled }"
     matSuffix
-    (click)="wrenchClick.emit()"
+    (click)="autocompleteForm.enabled ? wrenchClick.emit() : ''"
   ></fa-icon>
 
   <fa-icon
     icon="caret-down"
     class="caret-suffix"
-    [ngClass]="{ disabled: form.disabled }"
+    [ngClass]="{ disabled: autocompleteForm.disabled }"
     (click)="updateAutocomplete(''); inputElement.focus()"
     matSuffix
   ></fa-icon>
@@ -48,8 +39,7 @@
       *ngFor="let item of autocompleteSuggestedOptions | async"
       [value]="item"
     >
-      <mat-checkbox *ngIf="!item.selected"></mat-checkbox>
-      <mat-checkbox *ngIf="item.selected" color="primary"></mat-checkbox>
+      <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
       <ng-template
         [ngTemplateOutlet]="templateRef"
         [ngTemplateOutletContext]="{ $implicit: item.initial }"
@@ -63,7 +53,7 @@
     </mat-option>
   </mat-autocomplete>
 
-  <mat-error *ngIf="form.errors?.required" i18n="Error message for any input">
+  <mat-error *ngIf="_form.errors?.required" i18n="Error message for any input">
     This field is required
   </mat-error>
 </mat-form-field>
