@@ -128,7 +128,7 @@ describe("EntityConfigService", () => {
     mockConfigService.getAllConfigs.and.returnValue([
       {
         _id: "entity:DynamicTest",
-        label: "DynamicTest",
+        label: "Dynamic Test Entity",
         extends: "Test",
         attributes: [{ name: "dynamicProperty", schema }],
       },
