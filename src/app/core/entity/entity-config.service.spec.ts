@@ -61,18 +61,6 @@ describe("EntityConfigService", () => {
     expect(result).toBe(config);
   });
 
-  it("throws an error when trying to setting the entities up from config and they are not registered", () => {
-    const configWithInvalidEntities: (EntityConfig & { _id: string })[] = [
-      {
-        _id: "entity:IDoNotExist",
-        attributes: [],
-      },
-    ];
-    mockConfigService.getAllConfigs.and.returnValue(configWithInvalidEntities);
-
-    expect(() => service.setupEntitiesFromConfig()).toThrowError();
-  });
-
   it("appends custom definitions for each entity from the config", () => {
     const ATTRIBUTE_1_NAME = "test1Attribute";
     const ATTRIBUTE_2_NAME = "test2Attribute";
@@ -133,6 +121,55 @@ describe("EntityConfigService", () => {
     expect(Test.labelPlural).toBe("tests");
     expect(Test.icon).toBe("users");
     expect(Test.color).toBe("red");
+  });
+
+  it("should create a new subclass with the schema of the extended", () => {
+    const schema = { dataType: "string", label: "Dynamic Property" };
+    mockConfigService.getAllConfigs.and.returnValue([
+      {
+        _id: "entity:DynamicTest",
+        label: "Dynamic Test Entity",
+        extends: "Test",
+        attributes: [{ name: "dynamicProperty", schema }],
+      },
+    ]);
+
+    service.setupEntitiesFromConfig();
+
+    const dynamicEntity = entityRegistry.get("DynamicTest");
+    expect(dynamicEntity.ENTITY_TYPE).toBe("DynamicTest");
+    expect([...dynamicEntity.schema.entries()]).toEqual(
+      jasmine.arrayContaining([...Test.schema.entries()])
+    );
+    expect(dynamicEntity.schema.get("dynamicProperty")).toBe(schema);
+    const dynamicInstance = new dynamicEntity("someId");
+    expect(dynamicInstance instanceof Test).toBeTrue();
+    expect(dynamicInstance.getId(true)).toBe("DynamicTest:someId");
+
+    // it should overwrite anything in the extended entity
+    expect(Test.schema.has("dynamicProperty")).toBeFalse();
+    const parentInstance = new Test("otherId");
+    expect(parentInstance.getId(true)).toBe("Test:otherId");
+  });
+
+  it("should subclass entity if no extension is specified", () => {
+    mockConfigService.getAllConfigs.and.returnValue([
+      {
+        _id: "entity:NoExtends",
+        label: "DynamicTest",
+        attributes: [],
+      },
+    ]);
+
+    service.setupEntitiesFromConfig();
+
+    const dynamicEntity = entityRegistry.get("NoExtends");
+    expect([...dynamicEntity.schema.entries()]).toEqual([
+      ...Entity.schema.entries(),
+    ]);
+    const dynamicInstance = new dynamicEntity("someId");
+    expect(dynamicInstance instanceof Entity).toBeTrue();
+    expect(dynamicInstance.getId(true)).toBe("NoExtends:someId");
   });
 });
 
