@@ -31,23 +31,6 @@
 </div>
 
 <div class="margin-bottom-large flex-column gap-small">
-  <div>
-    <ng-container *ngFor="let side of sideDetails">
-      <mat-form-field *ngIf="side.mapProperties?.length" style="width: 50%">
-        <mat-label i18n="Label for selection of properties displayed in map|e.g. Map properties - Participant">
-          Map properties - {{side.entityType.label}}
-        </mat-label>
-        <mat-select
-          [(value)]="side.selectedMapProperties"
-          (valueChange)="updateMarkersAndDistances(side)"
-          [disabled]="side.mapProperties.length < 2"
-          multiple
-        >
-          <mat-option *ngFor="let prop of side.mapProperties" [value]="prop">{{ prop }}</mat-option>
-        </mat-select>
-      </mat-form-field>
-    </ng-container>
-  </div>
   <app-map *ngIf="leftSide.mapProperties || rightSide.mapProperties" class="flex-grow"
            [expandable]="true"
            [entities]="filteredMapEntities"
@@ -56,7 +39,11 @@
               { entity: sideDetails?.[1].selected, property: sideDetails?.[1].selectedMapProperties }
             ]"
            (entityClick)="entityInMapClicked($event)"
-  ></app-map>
+  >
+    <button mat-mini-fab style="background-color: white !important;" (click)="openMapPropertiesPopup()">
+      <fa-icon icon="caret-up" style="color: black"></fa-icon>
+    </button>
+  </app-map>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
           [disabled]="!sideDetails?.[0].selected || !sideDetails?.[1].selected || lockedMatching">

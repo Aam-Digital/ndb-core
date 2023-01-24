@@ -30,12 +30,12 @@ import { EntityPropertyViewComponent } from "../../../core/entity-components/ent
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { LocationEntity, MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatSelectModule } from "@angular/material/select";
 import { Coordinates } from "../../location/coordinates";
 import { FilterService } from "../../../core/filter/filter.service";
+import { MatDialog } from "@angular/material/dialog";
+import { MapPropertiesPopupComponent } from "./map-properties-popup/map-properties-popup.component";
 
-interface MatchingSide extends MatchingSideConfig {
+export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
   filterObj?: DataFilter<Entity>;
   availableEntities?: Entity[];
@@ -67,8 +67,6 @@ interface MatchingSide extends MatchingSideConfig {
     EntityPropertyViewComponent,
     MapComponent,
     FilterComponent,
-    MatFormFieldModule,
-    MatSelectModule,
   ],
   standalone: true,
 })
@@ -110,7 +108,8 @@ export class MatchingEntitiesComponent
     private entityMapper: EntityMapperService,
     private configService: ConfigService,
     private entityRegistry: EntityRegistry,
-    private filterService: FilterService
+    private filterService: FilterService,
+    private dialog: MatDialog
   ) {}
 
   // TODO: fill selection on hover already?
@@ -336,6 +335,17 @@ export class MatchingEntitiesComponent
         compareCoordinates: new BehaviorSubject<Coordinates[]>(coordinates),
       },
     };
+  }
+
+  openMapPropertiesPopup() {
+    this.dialog
+      .open(MapPropertiesPopupComponent, { data: this.sideDetails })
+      .afterClosed()
+      .subscribe(() => {
+        this.sideDetails.forEach((side) =>
+          this.updateMarkersAndDistances(side)
+        );
+      });
   }
 
   updateMarkersAndDistances(side: MatchingSide) {
