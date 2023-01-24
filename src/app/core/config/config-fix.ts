@@ -170,7 +170,7 @@ export const defaultJsonConfig = {
                 "link": "/child/new",
               },
               {
-                "label": $localize`:Dashboard shortcut widget|open public form:Registration Form`,
+                "label": $localize`:Dashboard shortcut widget|open public form:Public Registration Form`,
                 "icon": "file-circle-check",
                 "link": "/public-form/test",
               }
