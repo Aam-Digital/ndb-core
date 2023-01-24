@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { ActivatedRoute } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
@@ -27,7 +27,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   imports: [EntityFormComponent, MatButtonModule, MatCardModule],
   standalone: true,
 })
-export class PublicFormComponent<E extends Entity> {
+export class PublicFormComponent<E extends Entity> implements OnInit {
   private entityType: EntityConstructor<E>;
   private prefilled: Partial<E> = {};
   formConfig: PublicFormConfig;
@@ -44,8 +44,12 @@ export class PublicFormComponent<E extends Entity> {
     private configService: ConfigService,
     private entitySchemaService: EntitySchemaService,
     private snackbar: MatSnackBar
-  ) {
-    this.database.initRemoteDB();
+  ) {}
+
+  ngOnInit() {
+    if (!this.database["pouchDB"]) {
+      this.database.initRemoteDB();
+    }
     // wait for config to be initialized
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
