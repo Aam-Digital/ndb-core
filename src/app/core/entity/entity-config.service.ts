@@ -50,12 +50,12 @@ export class EntityConfigService {
       ? this.entities.get(parent)
       : Entity;
 
-    class Subclass extends parentClass {
+    class DynamicClass extends parentClass {
       static schema = new Map(parentClass.schema.entries());
       static ENTITY_TYPE = id;
     }
 
-    this.entities.set(id, Subclass);
+    this.entities.set(id, DynamicClass);
   }
 
   /**
