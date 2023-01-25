@@ -100,7 +100,7 @@ describe("MapComponent", () => {
     const marked = { lat: 1, lon: 1 };
     component.marked = [marked];
 
-    await component.showPopup();
+    await component.openMapInPopup();
     const dialogData: MapPopupConfig =
       mockDialog.open.calls.mostRecent().args[1].data;
 

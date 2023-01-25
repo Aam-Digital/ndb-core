@@ -14,11 +14,17 @@ import { ConfigService } from "../../../core/config/config.service";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 
-RecurringActivity.schema.set("center", {
-  dataType: "configurable-enum",
-  innerDataType: "center",
-});
+const addressSchema: EntitySchemaField = {
+  label: "Address",
+  dataType: "location",
+};
+RecurringActivity.schema.set("center", Child.schema.get("center"));
+RecurringActivity.schema.set("address", addressSchema);
+Child.schema.set("address", addressSchema);
+Child.schema.set("otherAddress", addressSchema);
+
 const entitiesA = [
   Object.assign(RecurringActivity.create("A"), {
     type: defaultInteractionTypes[1],
@@ -36,7 +42,6 @@ const entitiesA = [
     address: { lat: 52.4730412, lon: 13.4319106 },
   }),
 ];
-RecurringActivity.schema.set("center", Child.schema.get("center"));
 const entitiesB = [
   Object.assign(Child.create("sample child"), {
     gender: genders[1],

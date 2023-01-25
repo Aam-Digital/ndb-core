@@ -208,7 +208,8 @@ export class MatchingEntitiesComponent
       if (newSide.availableEntities) {
         newSide.mapEntities = newSide.availableEntities.map((entity) => ({
           entity,
-          property: newSide.selectedMapProperties,
+          selected: newSide.selectedMapProperties,
+          property: newSide.mapProperties,
           side: newSide,
         }));
       }

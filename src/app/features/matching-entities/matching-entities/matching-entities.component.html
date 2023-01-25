@@ -35,8 +35,8 @@
            [expandable]="true"
            [entities]="filteredMapEntities"
            [highlightedEntities]="[
-              { entity: sideDetails?.[0].selected, property: sideDetails?.[0].selectedMapProperties },
-              { entity: sideDetails?.[1].selected, property: sideDetails?.[1].selectedMapProperties }
+              { entity: sideDetails?.[0].selected, property: sideDetails?.[0].mapProperties, selected: sideDetails?.[0].selectedMapProperties },
+              { entity: sideDetails?.[1].selected, property: sideDetails?.[1].mapProperties, selected: sideDetails?.[1].selectedMapProperties }
             ]"
            (entityClick)="entityInMapClicked($event)"
   >

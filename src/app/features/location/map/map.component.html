@@ -1,10 +1,12 @@
 <div class="map-frame" [style.height]="height">
   <div id="map" #map>
     <div class="action-elements">
-      <button *ngIf="expandable" mat-mini-fab (click)="showPopup()">
+      <button *ngIf="expandable" mat-mini-fab (click)="openMapInPopup()">
         <fa-icon icon="expand" style="color: black;"></fa-icon>
       </button>
-      <ng-content></ng-content>
+      <button *ngIf="expandable" mat-mini-fab (click)="openMapPropertiesPopup()">
+        <fa-icon icon="marker" style="color: black;"></fa-icon>
+      </button>
     </div>
   </div>
 </div>

@@ -6,16 +6,14 @@
   <p i18n="Subtitle of popup to select properties that are displayed in the map">
     Select the properties which should be displayed in the map
   </p>
-  <ng-container *ngFor="let side of sideDetails">
-    <mat-form-field *ngIf="side.mapProperties?.length" style="width: 100%">
-      <mat-label>{{side.entityType.label}}</mat-label>
-      <mat-select
-        [(value)]="side.selectedMapProperties"
-        [disabled]="side.mapProperties.length < 2"
-        multiple
-      >
-        <mat-option *ngFor="let prop of side.mapProperties" [value]="prop">{{ prop }}</mat-option>
-      </mat-select>
-    </mat-form-field>
-  </ng-container>
+  <mat-form-field *ngFor="let row of entityProperties" style="width: 100%">
+    <mat-label>{{row.entity.label}}</mat-label>
+    <mat-select
+      [(value)]="row.selected"
+      [disabled]="row.selected.length < 2"
+      multiple
+    >
+      <mat-option *ngFor="let prop of row.properties" [value]="prop.name">{{ prop.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
 </mat-dialog-content>

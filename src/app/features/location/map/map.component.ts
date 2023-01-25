@@ -8,7 +8,7 @@ import {
   ViewChild,
 } from "@angular/core";
 import * as L from "leaflet";
-import { Observable, ReplaySubject, timeInterval } from "rxjs";
+import { BehaviorSubject, Observable, timeInterval } from "rxjs";
 import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
@@ -20,10 +20,12 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
+import { MapPropertiesPopupComponent } from "../../matching-entities/matching-entities/map-properties-popup/map-properties-popup.component";
 
 export interface LocationEntity {
   entity: Entity;
   property: string | string[];
+  selected: string[];
 }
 
 @Component({
@@ -51,7 +53,7 @@ export class MapComponent implements AfterViewInit {
     this._marked.next(coordinates);
   }
 
-  private _marked = new ReplaySubject<Coordinates[]>();
+  private _marked = new BehaviorSubject<Coordinates[]>([]);
 
   @Input() set entities(entities: LocationEntity[]) {
     if (!entities) {
@@ -63,7 +65,7 @@ export class MapComponent implements AfterViewInit {
     this._entities.next(entities);
   }
 
-  private _entities = new ReplaySubject<LocationEntity[]>();
+  private _entities = new BehaviorSubject<LocationEntity[]>([]);
 
   @Input() set highlightedEntities(entities: LocationEntity[]) {
     if (!entities) {
@@ -75,7 +77,7 @@ export class MapComponent implements AfterViewInit {
     this._highlightedEntities.next(entities);
   }
 
-  private _highlightedEntities = new ReplaySubject<LocationEntity[]>();
+  private _highlightedEntities = new BehaviorSubject<LocationEntity[]>([]);
 
   private map: L.Map;
   private markers: L.Marker[];
@@ -142,8 +144,8 @@ export class MapComponent implements AfterViewInit {
 
   private createEntityMarkers(entities: LocationEntity[]) {
     const markers: L.Marker[] = [];
-    entities.forEach(({ entity, property }) => {
-      const propArr = Array.isArray(property) ? property : [property];
+    entities.forEach(({ entity, selected }) => {
+      const propArr = Array.isArray(selected) ? selected : [selected];
       propArr
         .filter((prop) => !!entity?.[prop])
         .forEach((prop) => {
@@ -181,7 +183,7 @@ export class MapComponent implements AfterViewInit {
     return m;
   }
 
-  async showPopup() {
+  async openMapInPopup() {
     // Breaking circular dependency by using async import
     const mapComponent = await import("../map-popup/map-popup.component");
     this.dialog.open(mapComponent.MapPopupComponent, {
@@ -194,5 +196,20 @@ export class MapComponent implements AfterViewInit {
         mapClick: this.clickStream,
       } as MapPopupConfig,
     });
+  }
+
+  openMapPropertiesPopup() {
+    const entities = this._entities.value.concat(
+      ...this._highlightedEntities.value
+    );
+    const mapProperties: { [key in string]: string[] } = {};
+    entities
+      .filter(({ entity }) => !!entity)
+      .forEach(({ entity, property }) => {
+        mapProperties[entity.getType()] = Array.isArray(property)
+          ? property
+          : [property];
+      });
+    this.dialog.open(MapPropertiesPopupComponent, { data: mapProperties });
   }
 }
