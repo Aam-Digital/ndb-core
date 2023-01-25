@@ -51,9 +51,6 @@ export interface MatchingSideConfig {
 
   /** columns of the available entities table. Usually inferred from matching columns of the component */
   columns?: ColumnConfig[];
-
-  /** properties which should be displayed in the map and used for distance calculation */
-  mapProperties?: string | string[];
 }
 
 export interface NewMatchAction {

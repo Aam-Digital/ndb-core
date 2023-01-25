@@ -82,7 +82,7 @@ export class MapComponent implements AfterViewInit {
   private map: L.Map;
   private markers: L.Marker[];
   private highlightedMarkers: L.Marker[];
-  private displayedProperties: { [key in string]: string[] };
+  private displayedProperties: { [key in string]: string[] } = {};
   private clickStream = new EventEmitter<Coordinates>();
 
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
@@ -145,17 +145,19 @@ export class MapComponent implements AfterViewInit {
 
   private createEntityMarkers(entities: Entity[]) {
     const markers: L.Marker[] = [];
-    entities.forEach((entity) => {
-      this.getMapProperties(entity)
-        .filter((prop) => !!entity?.[prop])
-        .forEach((prop) => {
-          const marker = L.marker([entity[prop].lat, entity[prop].lon]);
-          marker.bindTooltip(entity.toString());
-          marker.on("click", () => this.entityClick.emit(entity));
-          marker["entity"] = entity;
-          markers.push(marker);
-        });
-    });
+    entities
+      .filter((entity) => !!entity)
+      .forEach((entity) => {
+        this.getMapProperties(entity)
+          .filter((prop) => !!entity?.[prop])
+          .forEach((prop) => {
+            const marker = L.marker([entity[prop].lat, entity[prop].lon]);
+            marker.bindTooltip(entity.toString());
+            marker.on("click", () => this.entityClick.emit(entity));
+            marker["entity"] = entity;
+            markers.push(marker);
+          });
+      });
     return markers;
   }
 
@@ -209,8 +211,17 @@ export class MapComponent implements AfterViewInit {
   }
 
   openMapPropertiesPopup() {
-    this.dialog.open(MapPropertiesPopupComponent, {
-      data: this.displayedProperties,
-    });
+    this.dialog
+      .open(MapPropertiesPopupComponent, {
+        data: this.displayedProperties,
+      })
+      .afterClosed()
+      .subscribe((res) => {
+        if (res) {
+          this.displayedProperties = res;
+          this.entities = this._entities.value;
+          this.highlightedEntities = this._highlightedEntities.value;
+        }
+      });
   }
 }

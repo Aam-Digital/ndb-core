@@ -95,7 +95,7 @@ const columnsMapping = [
   ["name", "title"],
   ["gender", "type"],
   ["center", "center"],
-  [undefined, "distance"],
+  // [undefined, "distance"],
 ];
 
 export const TwoSidedMatching = Template.bind({});

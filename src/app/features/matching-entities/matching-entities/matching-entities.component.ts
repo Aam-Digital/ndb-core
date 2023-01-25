@@ -28,7 +28,7 @@ import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityPropertyViewComponent } from "../../../core/entity-components/entity-utils/entity-property-view/entity-property-view.component";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { LocationEntity, MapComponent } from "../../location/map/map.component";
+import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { Coordinates } from "../../location/coordinates";
 import { FilterService } from "../../../core/filter/filter.service";
@@ -42,12 +42,10 @@ export interface MatchingSide extends MatchingSideConfig {
   selectMatch?: (e) => void;
   entityType: EntityConstructor;
   selected?: Entity;
-  selectedMapProperties?: string[];
   distanceColumn: {
     coordinatesProperties: string[];
     compareCoordinates: BehaviorSubject<Coordinates[]>;
   };
-  mapEntities: (LocationEntity & { side: MatchingSide })[];
 }
 
 @RouteTarget("MatchingEntities")
@@ -80,7 +78,7 @@ export class MatchingEntitiesComponent
 
   @Input() leftSide: MatchingSideConfig = {};
   @Input() rightSide: MatchingSideConfig = {};
-  filteredMapEntities: LocationEntity[] = [];
+  filteredMapEntities: Entity[] = [];
 
   columnsToDisplay = [];
 
@@ -130,9 +128,9 @@ export class MatchingEntitiesComponent
       await this.initSideDetails(this.leftSide, 0),
       await this.initSideDetails(this.rightSide, 1),
     ];
-    this.sideDetails
-      .filter((side) => !!side.mapProperties)
-      .forEach((side, index) => this.initDistanceColumn(side, index));
+    this.sideDetails.forEach((side, index) =>
+      this.initDistanceColumn(side, index)
+    );
     this.filterMapEntities();
     this.columnsToDisplay = ["side-0", "side-1"];
   }
@@ -199,22 +197,6 @@ export class MatchingEntitiesComponent
       newSide.filterObj = { ...(side.prefilter ?? {}) };
     }
 
-    if (newSide.mapProperties) {
-      newSide.mapProperties = Array.isArray(side.mapProperties)
-        ? side.mapProperties
-        : [side.mapProperties];
-      newSide.selectedMapProperties = newSide.mapProperties;
-
-      if (newSide.availableEntities) {
-        newSide.mapEntities = newSide.availableEntities.map((entity) => ({
-          entity,
-          selected: newSide.selectedMapProperties,
-          property: newSide.mapProperties,
-          side: newSide,
-        }));
-      }
-    }
-
     return newSide;
   }
 
@@ -271,21 +253,15 @@ export class MatchingEntitiesComponent
 
   private filterMapEntities() {
     this.filteredMapEntities = [];
-    this.sideDetails
-      .filter((side) => side.mapEntities?.length > 0)
-      .forEach((side) => {
-        if (side.filterObj) {
-          const predicate = this.filterService.getFilterPredicate(
-            side.filterObj
-          );
-          const filtered = side.mapEntities.filter(({ entity }) =>
-            predicate(entity)
-          );
-          this.filteredMapEntities.push(...filtered);
-        } else {
-          this.filteredMapEntities.push(...side.mapEntities);
-        }
-      });
+    this.sideDetails.forEach((side) => {
+      if (side.filterObj) {
+        const predicate = this.filterService.getFilterPredicate(side.filterObj);
+        const filtered = side.availableEntities.filter(predicate);
+        this.filteredMapEntities.push(...filtered);
+      } else {
+        this.filteredMapEntities.push(...(side.availableEntities ?? []));
+      }
+    });
   }
 
   entityInMapClicked(entity: Entity) {
@@ -322,16 +298,13 @@ export class MatchingEntitiesComponent
     const otherSideIndex = this.sideDetails[0] === side ? 1 : 0;
     const otherSide = this.sideDetails[otherSideIndex];
     let coordinates: Coordinates[] = [];
-    if (otherSide.selected)
-      coordinates = otherSide.selectedMapProperties.map(
-        (prop) => otherSide.selected[prop]
-      );
+    if (otherSide.selected) coordinates = otherSide.selected["address"];
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
       view: "DisplayDistance",
       additional: {
-        coordinatesProperties: side.selectedMapProperties,
+        coordinatesProperties: ["address"],
         // using ReplaySubject so all new subscriptions will be triggered on last emitted value
         compareCoordinates: new BehaviorSubject<Coordinates[]>(coordinates),
       },
@@ -350,12 +323,12 @@ export class MatchingEntitiesComponent
   }
 
   updateMarkersAndDistances(side: MatchingSide) {
-    side.mapEntities?.forEach(
-      (mapEntity) => (mapEntity.property = mapEntity.side.selectedMapProperties)
-    );
+    // side.mapEntities?.forEach(
+    //   (mapEntity) => (mapEntity.property = mapEntity.side.selectedMapProperties)
+    // );
     this.filteredMapEntities = [...this.filteredMapEntities];
     if (side.distanceColumn) {
-      side.distanceColumn.coordinatesProperties = side.selectedMapProperties;
+      // side.distanceColumn.coordinatesProperties = side.selectedMapProperties;
       // Publish last value again to trigger new distance calculation with the new selected properties
       const lastValue = side.distanceColumn.compareCoordinates.value;
       side.distanceColumn.compareCoordinates.next(lastValue);
@@ -369,10 +342,10 @@ export class MatchingEntitiesComponent
     const otherIndex = this.sideDetails[0] === side ? 1 : 0;
     const distanceColumn = this.sideDetails[otherIndex].distanceColumn;
     if (distanceColumn) {
-      const coordinates = side.selectedMapProperties.map(
-        (prop) => side.selected[prop]
-      );
-      distanceColumn.compareCoordinates.next(coordinates);
+      // const coordinates = side.selectedMapProperties.map(
+      //   (prop) => side.selected[prop]
+      // );
+      // distanceColumn.compareCoordinates.next(coordinates);
     }
   }
 }

@@ -10,10 +10,13 @@
     <mat-label>{{row.entity.label}}</mat-label>
     <mat-select
       [(value)]="row.selected"
-      [disabled]="row.selected.length < 2"
+      [disabled]="row.properties.length < 2"
       multiple
     >
       <mat-option *ngFor="let prop of row.properties" [value]="prop.name">{{ prop.label }}</mat-option>
     </mat-select>
   </mat-form-field>
 </mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button (click)="closeDialog()">Apply</button>
+</mat-dialog-actions>

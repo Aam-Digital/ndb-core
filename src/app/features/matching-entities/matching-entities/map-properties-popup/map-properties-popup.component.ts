@@ -1,13 +1,17 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../../../core/common-components/dialog-close/dialog-close.component";
-import { MatchingSide } from "../matching-entities.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
 import { NgForOf, NgIf } from "@angular/common";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { getLocationProperties } from "../../../location/map-utils";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-map-properties-popup",
@@ -20,6 +24,7 @@ import { getLocationProperties } from "../../../location/map-utils";
     MatSelectModule,
     NgForOf,
     NgIf,
+    MatButtonModule,
   ],
   standalone: true,
 })
@@ -32,7 +37,8 @@ export class MapPropertiesPopupComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) mapProperties: { [key in string]: string[] },
-    entities: EntityRegistry
+    entities: EntityRegistry,
+    private dialogRef: MatDialogRef<MapPropertiesPopupComponent>
   ) {
     this.entityProperties = Object.entries(mapProperties).map(
       ([entityType, selected]) => {
@@ -45,5 +51,13 @@ export class MapPropertiesPopupComponent {
         return { entity, properties, selected };
       }
     );
+  }
+
+  closeDialog() {
+    const result = {};
+    this.entityProperties.map(
+      ({ entity, selected }) => (result[entity.ENTITY_TYPE] = selected)
+    );
+    this.dialogRef.close(result);
   }
 }
