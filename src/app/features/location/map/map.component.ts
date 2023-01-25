@@ -12,7 +12,7 @@ import { BehaviorSubject, Observable, timeInterval } from "rxjs";
 import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
-import { getHueForEntity } from "../map-utils";
+import { getHueForEntity, getLocationProperties } from "../map-utils";
 import { ConfigService } from "../../../core/config/config.service";
 import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
@@ -55,7 +55,7 @@ export class MapComponent implements AfterViewInit {
 
   private _marked = new BehaviorSubject<Coordinates[]>([]);
 
-  @Input() set entities(entities: LocationEntity[]) {
+  @Input() set entities(entities: Entity[]) {
     if (!entities) {
       return;
     }
@@ -65,9 +65,9 @@ export class MapComponent implements AfterViewInit {
     this._entities.next(entities);
   }
 
-  private _entities = new BehaviorSubject<LocationEntity[]>([]);
+  private _entities = new BehaviorSubject<Entity[]>([]);
 
-  @Input() set highlightedEntities(entities: LocationEntity[]) {
+  @Input() set highlightedEntities(entities: Entity[]) {
     if (!entities) {
       return;
     }
@@ -77,11 +77,12 @@ export class MapComponent implements AfterViewInit {
     this._highlightedEntities.next(entities);
   }
 
-  private _highlightedEntities = new BehaviorSubject<LocationEntity[]>([]);
+  private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
 
   private map: L.Map;
   private markers: L.Marker[];
   private highlightedMarkers: L.Marker[];
+  private displayedProperties: { [key in string]: string[] };
   private clickStream = new EventEmitter<Coordinates>();
 
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
@@ -142,11 +143,10 @@ export class MapComponent implements AfterViewInit {
     });
   }
 
-  private createEntityMarkers(entities: LocationEntity[]) {
+  private createEntityMarkers(entities: Entity[]) {
     const markers: L.Marker[] = [];
-    entities.forEach(({ entity, selected }) => {
-      const propArr = Array.isArray(selected) ? selected : [selected];
-      propArr
+    entities.forEach((entity) => {
+      this.getMapProperties(entity)
         .filter((prop) => !!entity?.[prop])
         .forEach((prop) => {
           const marker = L.marker([entity[prop].lat, entity[prop].lon]);
@@ -157,6 +157,16 @@ export class MapComponent implements AfterViewInit {
         });
     });
     return markers;
+  }
+
+  private getMapProperties(entity: Entity) {
+    if (this.displayedProperties[entity.getType()]) {
+      return this.displayedProperties[entity.getType()];
+    } else {
+      const locationProperties = getLocationProperties(entity.getConstructor());
+      this.displayedProperties[entity.getType()] = locationProperties;
+      return locationProperties;
+    }
   }
 
   private clearMarkers(markers: L.Marker[]) {
@@ -199,17 +209,8 @@ export class MapComponent implements AfterViewInit {
   }
 
   openMapPropertiesPopup() {
-    const entities = this._entities.value.concat(
-      ...this._highlightedEntities.value
-    );
-    const mapProperties: { [key in string]: string[] } = {};
-    entities
-      .filter(({ entity }) => !!entity)
-      .forEach(({ entity, property }) => {
-        mapProperties[entity.getType()] = Array.isArray(property)
-          ? property
-          : [property];
-      });
-    this.dialog.open(MapPropertiesPopupComponent, { data: mapProperties });
+    this.dialog.open(MapPropertiesPopupComponent, {
+      data: this.displayedProperties,
+    });
   }
 }

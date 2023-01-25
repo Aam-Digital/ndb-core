@@ -7,6 +7,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { NgForOf, NgIf } from "@angular/common";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { getLocationProperties } from "../../../location/map-utils";
 
 @Component({
   selector: "app-map-properties-popup",
@@ -36,11 +37,11 @@ export class MapPropertiesPopupComponent {
     this.entityProperties = Object.entries(mapProperties).map(
       ([entityType, selected]) => {
         const entity = entities.get(entityType);
-        const properties = selected.map((name) => ({
+        const mapProperties = getLocationProperties(entity);
+        const properties = mapProperties.map((name) => ({
           name,
           label: entity.schema.get(name).label,
         }));
-        // TODO selection is not remembered
         return { entity, properties, selected };
       }
     );
