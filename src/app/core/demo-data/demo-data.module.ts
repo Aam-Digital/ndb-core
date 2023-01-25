@@ -37,8 +37,10 @@ import { DemoHistoricalDataGenerator } from "../../features/historical-data/demo
 import { DemoPermissionGeneratorService } from "../permissions/demo-permission-generator.service";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
 import { DemoConfigurableEnumGeneratorService } from "../configurable-enum/demo-configurable-enum-generator.service";
+import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
 
 const demoDataGeneratorProviders = [
+  ...DemoPublicFormGeneratorService.provider(),
   ...DemoConfigGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
   ...DemoConfigurableEnumGeneratorService.provider(),

@@ -96,6 +96,11 @@ export const defaultJsonConfig = {
                 "label": $localize`:Dashboard shortcut widget|record attendance shortcut:Add Child`,
                 "icon": "plus",
                 "link": "/child/new",
+              },
+              {
+                "label": $localize`:Dashboard shortcut widget|open public form:Public Registration Form`,
+                "icon": "file-circle-check",
+                "link": "/public-form/test",
               }
             ]
           }
@@ -1066,10 +1071,7 @@ export const defaultJsonConfig = {
         {
           "id": "due-status",
           "type": "prebuilt"
-        },
-        { "id": "deadline" },
-        { "id": "deadline" },
-        { "id": "startDate" }
+        }
       ]
     }
   }
