@@ -12,6 +12,7 @@ import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/da
 import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
+import { isArrayDataType } from "../../core/entity-components/entity-utils/entity-utils";
 
 /**
  * This service handels the parsing of CSV files and importing of data
@@ -134,8 +135,26 @@ export class DataImportService {
       return Entity.createPrefixedId(importMeta.entityType, value);
     } else if (importMeta.dateFormat && this.dateDataTypes.includes(dataType)) {
       return this.transform2Date(value, importMeta.dateFormat);
+    } else if (isArrayDataType(dataType)) {
+      return this.parseArrayValue(value);
     } else {
       return value;
+    }
+  }
+
+  private parseArrayValue(value: any) {
+    if (!value) {
+      return undefined;
+    }
+    try {
+      const res = JSON.parse(value);
+      if (Array.isArray(res)) {
+        return res;
+      } else {
+        return [res];
+      }
+    } catch (e) {
+      return (value as string).split(",").map((res) => res.trim());
     }
   }
 
