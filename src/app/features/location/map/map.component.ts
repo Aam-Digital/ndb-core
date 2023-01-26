@@ -148,7 +148,7 @@ export class MapComponent implements AfterViewInit {
       .filter((entity) => !!entity)
       .forEach((entity) => {
         this.getMapProperties(entity)
-          .filter((prop) => !!entity?.[prop])
+          .filter((prop) => !!entity[prop])
           .forEach((prop) => {
             const marker = L.marker([entity[prop].lat, entity[prop].lon]);
             marker.bindTooltip(entity.toString());

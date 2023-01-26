@@ -117,6 +117,7 @@ describe("MapComponent", () => {
 
     component.entities = [child];
 
+    // all location properties are selected on default
     expect(component.displayedProperties).toEqual({
       [Child.ENTITY_TYPE]: ["address", "otherAddress"],
     });
@@ -131,6 +132,7 @@ describe("MapComponent", () => {
     } as any);
     component.openMapPropertiesPopup();
 
+    // only selected location property is now displayed
     expect(component.displayedProperties).toEqual(dialogResult);
     expect(emitSpy).toHaveBeenCalledWith(dialogResult);
     expect(getEntityMarkers()).toHaveSize(1);
@@ -141,7 +143,6 @@ describe("MapComponent", () => {
 
   function getEntityMarkers(): L.Marker[] {
     const markers: L.Marker[] = [];
-    // Look for marker where entity has been set
     map.eachLayer((layer) => {
       if (layer["entity"]) {
         markers.push(layer as L.Marker);

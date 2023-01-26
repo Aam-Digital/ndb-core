@@ -72,7 +72,6 @@ export class MatchingEntitiesComponent
   implements OnInit, OnInitDynamicComponent
 {
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
-  array = Array;
 
   @Input() entity: Entity;
 
@@ -256,7 +255,7 @@ export class MatchingEntitiesComponent
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
-    side.filterObj = Object.assign({}, filter);
+    side.filterObj = { ...filter };
     this.filterMapEntities();
   }
 
@@ -313,8 +312,8 @@ export class MatchingEntitiesComponent
       label: $localize`:Matching View column name:Distance`,
       view: "DisplayDistance",
       additional: {
-        coordinatesProperties: ["address"],
-        // using ReplaySubject so all new subscriptions will be triggered on last emitted value
+        coordinatesProperties:
+          this.displayedProperties[side.entityType.ENTITY_TYPE],
         compareCoordinates: new BehaviorSubject<Coordinates[]>(coordinates),
       },
     };

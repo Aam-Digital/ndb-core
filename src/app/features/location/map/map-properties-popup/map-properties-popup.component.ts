@@ -13,6 +13,9 @@ import { EntityRegistry } from "../../../../core/entity/database-entity.decorato
 import { getLocationProperties } from "../../map-utils";
 import { MatButtonModule } from "@angular/material/button";
 
+/**
+ * A map of entity types and the (selected) location properties of this type
+ */
 export type LocationProperties = { [key: string]: string[] };
 
 @Component({
@@ -57,7 +60,7 @@ export class MapPropertiesPopupComponent {
 
   closeDialog() {
     const result: LocationProperties = {};
-    this.entityProperties.map(
+    this.entityProperties.forEach(
       ({ entity, selected }) => (result[entity.ENTITY_TYPE] = selected)
     );
     this.dialogRef.close(result);
