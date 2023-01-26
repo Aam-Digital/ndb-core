@@ -31,7 +31,7 @@
 </div>
 
 <div class="margin-bottom-large flex-column gap-small">
-  <app-map *ngIf="true" class="flex-grow"
+  <app-map *ngIf="mapVisible" class="flex-grow"
            [expandable]="true"
            [entities]="filteredMapEntities"
            [highlightedEntities]="[sideDetails?.[0].selected, sideDetails?.[1].selected ]"

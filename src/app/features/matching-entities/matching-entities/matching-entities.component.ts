@@ -33,6 +33,7 @@ import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { Coordinates } from "../../location/coordinates";
 import { FilterService } from "../../../core/filter/filter.service";
 import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
+import { getLocationProperties } from "../../location/map-utils";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -95,10 +96,11 @@ export class MatchingEntitiesComponent
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
 
-  lockedMatching: boolean;
+  lockedMatching = false;
 
   sideDetails: [MatchingSide, MatchingSide];
 
+  mapVisible = false;
   displayedProperties: LocationProperties = {};
 
   constructor(
@@ -200,6 +202,9 @@ export class MatchingEntitiesComponent
       newSide.availableFilters = newSide.availableFilters ?? [];
       newSide.filterObj = { ...(side.prefilter ?? {}) };
     }
+
+    this.mapVisible =
+      this.mapVisible || getLocationProperties(newSide.entityType).length > 0;
 
     return newSide;
   }

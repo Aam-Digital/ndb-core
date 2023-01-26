@@ -367,6 +367,23 @@ describe("MatchingEntitiesComponent", () => {
       other,
     ]);
   });
+
+  it("should display map if location properties are available", async () => {
+    component.leftSide = { entityType: Child };
+    component.entity = new Child();
+
+    await component.ngOnInit();
+
+    expect(component.mapVisible).toBeFalse();
+
+    Child.schema.set("address", { dataType: "location" });
+
+    await component.ngOnInit();
+
+    expect(component.mapVisible).toBeTrue();
+
+    Child.schema.delete("address");
+  });
 });
 
 function expectConfigToMatch(
