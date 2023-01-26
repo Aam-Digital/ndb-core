@@ -88,8 +88,10 @@ export class EntityFormComponent<T extends Entity = Entity>
   }
 
   private async applyChanges(entity: T) {
+    console.log("apply", entity);
     if (this.formIsUpToDate(entity)) {
       // this is the component that currently saves the values -> no need to apply changes.
+      Object.assign(this.entity, entity as any);
       return;
     }
     if (
@@ -101,6 +103,7 @@ export class EntityFormComponent<T extends Entity = Entity>
     ) {
       Object.assign(this.initialFormValues, entity);
       this.form.patchValue(entity as any);
+      Object.assign(this.entity, entity as any);
     }
   }
 
@@ -122,6 +125,7 @@ export class EntityFormComponent<T extends Entity = Entity>
         // keep our pending form field changes
         delete updatedEntity[key];
       } else {
+        console.log(key, updatedEntity[key], this.initialFormValues[key]);
         // dirty form field has conflicting change
         return false;
       }
