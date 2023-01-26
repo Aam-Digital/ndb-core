@@ -23,9 +23,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 @Component({
-  selector: "app-edit-enum-popup",
-  templateUrl: "./edit-enum-popup.component.html",
-  styleUrls: ["./edit-enum-popup.component.scss"],
+  selector: "app-configure-enum-popup",
+  templateUrl: "./configure-enum-popup.component.html",
+  styleUrls: ["./configure-enum-popup.component.scss"],
   imports: [
     MatDialogModule,
     NgForOf,
@@ -40,10 +40,10 @@ import { ConfirmationDialogService } from "../../confirmation-dialog/confirmatio
   ],
   standalone: true,
 })
-export class EditEnumPopupComponent {
+export class ConfigureEnumPopupComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
-    private dialog: MatDialogRef<EditEnumPopupComponent>,
+    private dialog: MatDialogRef<ConfigureEnumPopupComponent>,
     private entityMapper: EntityMapperService,
     private confirmationService: ConfirmationDialogService
   ) {
