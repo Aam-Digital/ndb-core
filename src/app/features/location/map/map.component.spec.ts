@@ -14,7 +14,7 @@ import { MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { of } from "rxjs";
+import { EMPTY, of } from "rxjs";
 
 describe("MapComponent", () => {
   let component: MapComponent;
@@ -25,6 +25,7 @@ describe("MapComponent", () => {
 
   beforeEach(async () => {
     mockDialog = jasmine.createSpyObj(["open"]);
+    mockDialog.open.and.returnValue({ afterClosed: () => EMPTY } as any);
     await TestBed.configureTestingModule({
       imports: [MapComponent, FontAwesomeTestingModule],
       providers: [
@@ -118,9 +119,6 @@ describe("MapComponent", () => {
     component.entities = [child];
 
     // all location properties are selected on default
-    expect(component.displayedProperties).toEqual({
-      [Child.ENTITY_TYPE]: ["address", "otherAddress"],
-    });
     expect(emitSpy).toHaveBeenCalledWith({
       [Child.ENTITY_TYPE]: ["address", "otherAddress"],
     });
@@ -133,12 +131,25 @@ describe("MapComponent", () => {
     component.openMapPropertiesPopup();
 
     // only selected location property is now displayed
-    expect(component.displayedProperties).toEqual(dialogResult);
     expect(emitSpy).toHaveBeenCalledWith(dialogResult);
     expect(getEntityMarkers()).toHaveSize(1);
 
     Child.schema.delete("address");
     Child.schema.delete("otherAddress");
+  });
+
+  it("should only show the button to select properties if entities have been set", () => {
+    component.displayedProperties = {};
+    expect(component.showPropertySelection).toBeFalse();
+
+    component.displayedProperties = { [Child.ENTITY_TYPE]: ["address"] };
+    expect(component.showPropertySelection).toBeTrue();
+
+    component.displayedProperties = {};
+    component.showPropertySelection = false;
+    component.entities = [new Child()];
+
+    expect(component.showPropertySelection).toBeTrue();
   });
 
   function getEntityMarkers(): L.Marker[] {

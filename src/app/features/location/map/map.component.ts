@@ -76,8 +76,14 @@ export class MapComponent implements AfterViewInit {
 
   private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
 
-  @Input() displayedProperties: LocationProperties = {};
+  @Input() set displayedProperties(displayedProperties: LocationProperties) {
+    this._displayedProperties = displayedProperties;
+    this.showPropertySelection = Object.keys(displayedProperties).length > 0;
+  }
+
+  private _displayedProperties: LocationProperties = {};
   @Output() displayedPropertiesChange = new EventEmitter<LocationProperties>();
+  showPropertySelection = false;
 
   private map: L.Map;
   private markers: L.Marker[];
@@ -161,12 +167,13 @@ export class MapComponent implements AfterViewInit {
   }
 
   private getMapProperties(entity: Entity) {
-    if (this.displayedProperties[entity.getType()]) {
-      return this.displayedProperties[entity.getType()];
+    if (this._displayedProperties[entity.getType()]) {
+      return this._displayedProperties[entity.getType()];
     } else {
       const locationProperties = getLocationProperties(entity.getConstructor());
-      this.displayedProperties[entity.getType()] = locationProperties;
-      this.displayedPropertiesChange.emit(this.displayedProperties);
+      this._displayedProperties[entity.getType()] = locationProperties;
+      this.displayedPropertiesChange.emit(this._displayedProperties);
+      this.showPropertySelection = true;
       return locationProperties;
     }
   }
@@ -204,7 +211,7 @@ export class MapComponent implements AfterViewInit {
       highlightedEntities: this._highlightedEntities,
       entityClick: this.entityClick,
       mapClick: this.clickStream,
-      displayedProperties: this.displayedProperties,
+      displayedProperties: this._displayedProperties,
     };
     this.dialog
       .open(mapComponent.MapPopupComponent, { width: "90%", data })
@@ -216,8 +223,8 @@ export class MapComponent implements AfterViewInit {
   }
 
   private updatedDisplayedProperties(properties: LocationProperties) {
-    this.displayedProperties = properties;
-    this.displayedPropertiesChange.emit(this.displayedProperties);
+    this._displayedProperties = properties;
+    this.displayedPropertiesChange.emit(this._displayedProperties);
     this.entities = this._entities.value;
     this.highlightedEntities = this._highlightedEntities.value;
   }
@@ -225,7 +232,7 @@ export class MapComponent implements AfterViewInit {
   openMapPropertiesPopup() {
     this.dialog
       .open(MapPropertiesPopupComponent, {
-        data: this.displayedProperties,
+        data: this._displayedProperties,
       })
       .afterClosed()
       .subscribe((res: LocationProperties) => {
