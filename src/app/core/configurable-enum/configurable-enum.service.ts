@@ -38,10 +38,7 @@ export class ConfigurableEnumService {
   }
 
   getEnum(id: string): ConfigurableEnum {
-    const entityId = Entity.createPrefixedId(
-      ConfigurableEnum.ENTITY_TYPE,
-      id.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "")
-    );
+    const entityId = Entity.createPrefixedId(ConfigurableEnum.ENTITY_TYPE, id);
     return this.enums.get(entityId);
   }
 }
