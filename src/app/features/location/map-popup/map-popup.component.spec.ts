@@ -16,7 +16,10 @@ describe("MapPopupComponent", () => {
     await TestBed.configureTestingModule({
       imports: [MapPopupComponent, FontAwesomeTestingModule],
       providers: [
-        { provide: MAT_DIALOG_DATA, useValue: { mapClick } },
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: { mapClick, displayedProperties: {} },
+        },
         { provide: ConfigService, useValue: { getConfig: () => undefined } },
       ],
     }).compileComponents();
