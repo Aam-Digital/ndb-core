@@ -3,7 +3,7 @@ import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { Observable, Subject } from "rxjs";
-import { LocationEntity, MapComponent } from "../map/map.component";
+import { MapComponent } from "../map/map.component";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 

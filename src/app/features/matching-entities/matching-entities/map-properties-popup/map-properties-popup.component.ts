@@ -13,6 +13,8 @@ import { EntityRegistry } from "../../../../core/entity/database-entity.decorato
 import { getLocationProperties } from "../../../location/map-utils";
 import { MatButtonModule } from "@angular/material/button";
 
+export type LocationProperties = { [key: string]: string[] };
+
 @Component({
   selector: "app-map-properties-popup",
   templateUrl: "./map-properties-popup.component.html",
@@ -36,7 +38,7 @@ export class MapPropertiesPopupComponent {
   }[];
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) mapProperties: { [key in string]: string[] },
+    @Inject(MAT_DIALOG_DATA) mapProperties: LocationProperties,
     entities: EntityRegistry,
     private dialogRef: MatDialogRef<MapPropertiesPopupComponent>
   ) {
@@ -54,7 +56,7 @@ export class MapPropertiesPopupComponent {
   }
 
   closeDialog() {
-    const result = {};
+    const result: LocationProperties = {};
     this.entityProperties.map(
       ({ entity, selected }) => (result[entity.ENTITY_TYPE] = selected)
     );

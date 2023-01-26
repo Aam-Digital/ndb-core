@@ -36,11 +36,9 @@
            [entities]="filteredMapEntities"
            [highlightedEntities]="[sideDetails?.[0].selected, sideDetails?.[1].selected ]"
            (entityClick)="entityInMapClicked($event)"
-  >
-    <button mat-mini-fab style="background-color: white !important;" (click)="openMapPropertiesPopup()">
-      <fa-icon icon="caret-up" style="color: black"></fa-icon>
-    </button>
-  </app-map>
+           [(displayedProperties)]="displayedProperties"
+           (displayedPropertiesChange)="updateMarkersAndDistances()"
+  ></app-map>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"
           [disabled]="!sideDetails?.[0].selected || !sideDetails?.[1].selected || lockedMatching">

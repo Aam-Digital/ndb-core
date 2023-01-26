@@ -20,13 +20,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
-import { MapPropertiesPopupComponent } from "../../matching-entities/matching-entities/map-properties-popup/map-properties-popup.component";
-
-export interface LocationEntity {
-  entity: Entity;
-  property: string | string[];
-  selected: string[];
-}
+import {
+  LocationProperties,
+  MapPropertiesPopupComponent,
+} from "../../matching-entities/matching-entities/map-properties-popup/map-properties-popup.component";
 
 @Component({
   selector: "app-map",
@@ -79,10 +76,12 @@ export class MapComponent implements AfterViewInit {
 
   private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
 
+  @Input() displayedProperties: LocationProperties = {};
+  @Output() displayedPropertiesChange = new EventEmitter<LocationProperties>();
+
   private map: L.Map;
   private markers: L.Marker[];
   private highlightedMarkers: L.Marker[];
-  private displayedProperties: { [key in string]: string[] } = {};
   private clickStream = new EventEmitter<Coordinates>();
 
   @Output() mapClick: Observable<Coordinates> = this.clickStream.pipe(
@@ -167,6 +166,7 @@ export class MapComponent implements AfterViewInit {
     } else {
       const locationProperties = getLocationProperties(entity.getConstructor());
       this.displayedProperties[entity.getType()] = locationProperties;
+      this.displayedPropertiesChange.emit(this.displayedProperties);
       return locationProperties;
     }
   }
@@ -219,6 +219,7 @@ export class MapComponent implements AfterViewInit {
       .subscribe((res) => {
         if (res) {
           this.displayedProperties = res;
+          this.displayedPropertiesChange.emit(this.displayedProperties);
           this.entities = this._entities.value;
           this.highlightedEntities = this._highlightedEntities.value;
         }
