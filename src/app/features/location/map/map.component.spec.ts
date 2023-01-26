@@ -14,7 +14,7 @@ import { MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { EMPTY, of } from "rxjs";
+import { EMPTY, of, Subject } from "rxjs";
 
 describe("MapComponent", () => {
   let component: MapComponent;
@@ -150,6 +150,26 @@ describe("MapComponent", () => {
     component.entities = [new Child()];
 
     expect(component.showPropertySelection).toBeTrue();
+  });
+
+  it("should trigger an update for the markers, once the map popup has been closed", async () => {
+    component.displayedProperties = {
+      [Child.ENTITY_TYPE]: ["address", "otherAddress"],
+    };
+    const dialogClosed = new Subject<void>();
+    mockDialog.open.and.returnValue({ afterClosed: () => dialogClosed } as any);
+    const emitSpy = spyOn(component.displayedPropertiesChange, "emit");
+
+    await component.openMapInPopup();
+    const popupData = mockDialog.open.calls.mostRecent().args[1]
+      .data as MapPopupConfig;
+    const properties = popupData.displayedProperties;
+    properties[Child.ENTITY_TYPE] = ["otherAddress"];
+    dialogClosed.next();
+
+    expect(emitSpy).toHaveBeenCalledWith({
+      [Child.ENTITY_TYPE]: ["otherAddress"],
+    });
   });
 
   function getEntityMarkers(): L.Marker[] {
