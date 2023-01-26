@@ -216,7 +216,7 @@ export class MapComponent implements AfterViewInit {
         data: this.displayedProperties,
       })
       .afterClosed()
-      .subscribe((res) => {
+      .subscribe((res: LocationProperties) => {
         if (res) {
           this.displayedProperties = res;
           this.displayedPropertiesChange.emit(this.displayedProperties);

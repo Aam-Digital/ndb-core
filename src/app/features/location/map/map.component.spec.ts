@@ -14,6 +14,7 @@ import { MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { of } from "rxjs";
 
 describe("MapComponent", () => {
   let component: MapComponent;
@@ -79,13 +80,7 @@ describe("MapComponent", () => {
     child["address"] = { lat: 1, lon: 1 };
     component.entities = [child];
 
-    // Look for marker where entity has been set
-    let marker: L.Marker;
-    map.eachLayer((layer) => {
-      if (layer["entity"]) {
-        marker = layer as L.Marker;
-      }
-    });
+    const marker = getEntityMarkers()[0];
 
     // marker shows entity information when hovered
     expect(marker.getTooltip()["_content"]).toBe(child.toString());
@@ -111,4 +106,47 @@ describe("MapComponent", () => {
 
     expect(emitted).toEqual([marked]);
   });
+
+  it("should open a popup that allows to change the properties displayed in the map", () => {
+    const emitSpy = spyOn(component.displayedPropertiesChange, "emit");
+    Child.schema.set("address", { dataType: "location" });
+    Child.schema.set("otherAddress", { dataType: "location" });
+    const child = new Child();
+    child["address"] = { lat: 1, lon: 1 };
+    child["otherAddress"] = { lat: 1, lon: 2 };
+
+    component.entities = [child];
+
+    expect(component.displayedProperties).toEqual({
+      [Child.ENTITY_TYPE]: ["address", "otherAddress"],
+    });
+    expect(emitSpy).toHaveBeenCalledWith({
+      [Child.ENTITY_TYPE]: ["address", "otherAddress"],
+    });
+    expect(getEntityMarkers()).toHaveSize(2);
+
+    const dialogResult = { [Child.ENTITY_TYPE]: ["address"] };
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of(dialogResult),
+    } as any);
+    component.openMapPropertiesPopup();
+
+    expect(component.displayedProperties).toEqual(dialogResult);
+    expect(emitSpy).toHaveBeenCalledWith(dialogResult);
+    expect(getEntityMarkers()).toHaveSize(1);
+
+    Child.schema.delete("address");
+    Child.schema.delete("otherAddress");
+  });
+
+  function getEntityMarkers(): L.Marker[] {
+    const markers: L.Marker[] = [];
+    // Look for marker where entity has been set
+    map.eachLayer((layer) => {
+      if (layer["entity"]) {
+        markers.push(layer as L.Marker);
+      }
+    });
+    return markers;
+  }
 });
