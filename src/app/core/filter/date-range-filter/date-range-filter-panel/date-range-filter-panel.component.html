@@ -1,18 +1,9 @@
 <mat-dialog-content>
   <button
-    *ngFor="let item of customPresets"
-    mat-button
-    color="primary"
-    (click)="selectRange(item)"
-  >
-    {{ item }}
-  </button>
-  <br />
-  <button
     *ngFor="let item of data.dateRangeFilterConfig.filterConfig.options"
     mat-button
     color="primary"
-    (click)="selectConfigRange(item)"
+    (click)="selectRange(item)"
   >
     {{ item.label }}
   </button>

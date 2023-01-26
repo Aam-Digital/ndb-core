@@ -8,7 +8,6 @@ import {
   DateRangeFilterConfig,
   FilterConfig,
   PrebuiltFilterConfig,
-  weekDayMap,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ConfigService } from "../../config/config.service";
@@ -18,7 +17,6 @@ import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { FilterService } from "../../filter/filter.service";
-import moment from "moment";
 
 @Injectable({
   providedIn: "root",
@@ -117,30 +115,7 @@ export class FilterGeneratorService {
   private createDateRangeFilterOptions<T extends Entity>(
     filterConfig: DateRangeFilterConfig
   ): FilterSelectionOption<T>[] {
-    if (filterConfig.startingDayOfWeek) {
-      const configStartingDayOfWeek =
-        weekDayMap[filterConfig.startingDayOfWeek.toLowerCase()];
-      moment.updateLocale(moment.locale(), {
-        week: {
-          dow: configStartingDayOfWeek,
-        },
-      });
-    }
-    const dateFS = [];
-    for (const option of filterConfig.options) {
-      let relevantDate = moment().startOf(option.startOffsets[0].unit);
-      option.startOffsets.forEach((offset) =>
-        relevantDate.subtract(offset.amount, offset.unit)
-      );
-      dateFS.push({
-        key: "option_" + (dateFS.length + 1),
-        label: option.label,
-        filter: {
-          [filterConfig.id]: { $gte: relevantDate.format("YYYY-MM-DD") },
-        },
-      });
-    }
-    dateFS.push({ key: "", label: $localize`All`, filter: {} });
+    const dateFS = [{}, {}] as any;
     return dateFS;
   }
 
