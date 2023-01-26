@@ -10,7 +10,7 @@ import { MatSelectModule } from "@angular/material/select";
 import { NgForOf, NgIf } from "@angular/common";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
-import { getLocationProperties } from "../../../location/map-utils";
+import { getLocationProperties } from "../../map-utils";
 import { MatButtonModule } from "@angular/material/button";
 
 export type LocationProperties = { [key: string]: string[] };

@@ -32,7 +32,7 @@ import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { Coordinates } from "../../location/coordinates";
 import { FilterService } from "../../../core/filter/filter.service";
-import { LocationProperties } from "./map-properties-popup/map-properties-popup.component";
+import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -85,7 +85,7 @@ export class MatchingEntitiesComponent
    * Column mapping of property pairs of left and right entity that should be compared side by side.
    * @param value
    */
-  @Input() columns: [ColumnConfig, ColumnConfig][];
+  @Input() columns: [ColumnConfig, ColumnConfig][] = [];
 
   @Input()
   matchActionLabel: string = $localize`:Matching button label:create matching`;
@@ -117,8 +117,12 @@ export class MatchingEntitiesComponent
   }
 
   async ngOnInit() {
-    this.route?.data?.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
-      if (!data?.config?.leftSide || !data?.config?.rightSide) {
+    this.route.data.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
+      if (
+        !data?.config?.leftSide ||
+        !data?.config?.rightSide ||
+        !data?.config?.columns
+      ) {
         return;
       }
       this.initConfig(data.config);
@@ -180,7 +184,7 @@ export class MatchingEntitiesComponent
 
     newSide.columns =
       newSide.columns ??
-      this.columns?.map((p) => p[sideIndex]).filter((c) => !!c);
+      this.columns.map((p) => p[sideIndex]).filter((c) => !!c);
 
     newSide.selectMatch = (e: Entity) => {
       this.highlightSelectedRow(e, newSide.selected);
@@ -330,7 +334,7 @@ export class MatchingEntitiesComponent
     const properties = this.displayedProperties[side.selected.getType()];
     const otherIndex = this.sideDetails[0] === side ? 1 : 0;
     const distanceColumn = this.sideDetails[otherIndex].distanceColumn;
-    if (distanceColumn) {
+    if (properties && distanceColumn) {
       const coordinates = properties.map((prop) => side.selected[prop]);
       distanceColumn.compareCoordinates.next(coordinates);
     }

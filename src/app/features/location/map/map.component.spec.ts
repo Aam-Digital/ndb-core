@@ -13,6 +13,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { MapConfig } from "../map-config";
 import { MatDialog } from "@angular/material/dialog";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("MapComponent", () => {
   let component: MapComponent;
@@ -24,7 +25,7 @@ describe("MapComponent", () => {
   beforeEach(async () => {
     mockDialog = jasmine.createSpyObj(["open"]);
     await TestBed.configureTestingModule({
-      imports: [MapComponent],
+      imports: [MapComponent, FontAwesomeTestingModule],
       providers: [
         { provide: ConfigService, useValue: { getConfig: () => config } },
         { provide: MatDialog, useValue: mockDialog },
@@ -73,9 +74,10 @@ describe("MapComponent", () => {
   });
 
   it("should create markers for entities and emit entity when marker is clicked", (done) => {
+    Child.schema.set("address", { dataType: "location" });
     const child = new Child();
     child["address"] = { lat: 1, lon: 1 };
-    component.entities = [{ entity: child, property: "address" }];
+    component.entities = [child];
 
     // Look for marker where entity has been set
     let marker: L.Marker;

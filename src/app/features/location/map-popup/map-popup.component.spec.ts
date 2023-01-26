@@ -1,11 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { MapPopupComponent } from "./map-popup.component";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { ConfigService } from "../../../core/config/config.service";
 import { Subject } from "rxjs";
 import { Coordinates } from "../coordinates";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("MapPopupComponent", () => {
   let component: MapPopupComponent;
@@ -14,9 +14,8 @@ describe("MapPopupComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MapPopupComponent],
+      imports: [MapPopupComponent, FontAwesomeTestingModule],
       providers: [
-        EntitySchemaService,
         { provide: MAT_DIALOG_DATA, useValue: { mapClick } },
         { provide: ConfigService, useValue: { getConfig: () => undefined } },
       ],

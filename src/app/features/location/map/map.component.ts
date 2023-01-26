@@ -23,7 +23,7 @@ import { MapPopupConfig } from "../map-popup/map-popup.component";
 import {
   LocationProperties,
   MapPropertiesPopupComponent,
-} from "../../matching-entities/matching-entities/map-properties-popup/map-properties-popup.component";
+} from "./map-properties-popup/map-properties-popup.component";
 
 @Component({
   selector: "app-map",
