@@ -201,12 +201,18 @@ export const coreComponents: ComponentTuple[] = [
         (c) => c.MarkdownPageComponent
       ),
   ],
-
   [
     "DisplayEntity",
     () =>
       import(
         "./entity-components/entity-select/display-entity/display-entity.component"
       ).then((c) => c.DisplayEntityComponent),
+  ],
+  [
+    "RelatedEntities",
+    () =>
+      import(
+        "./entity-components/entity-details/related-entities/related-entities.component"
+      ).then((c) => c.RelatedEntitiesComponent),
   ],
 ];

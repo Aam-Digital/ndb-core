@@ -82,7 +82,7 @@ import { TodosModule } from "./features/todos/todos.module";
   declarations: [AppComponent],
   imports: [
     // Global Angular modules
-    ServiceWorkerModule.register("/ngsw-worker.js", {
+    ServiceWorkerModule.register("ngsw-worker.js", {
       enabled: environment.production,
     }),
     Angulartics2Module.forRoot({

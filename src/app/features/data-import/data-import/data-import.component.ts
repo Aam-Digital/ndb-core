@@ -63,7 +63,7 @@ export class DataImportComponent {
   });
 
   dateFormatForm = this.formBuilder.group({
-    dateFormat: [""],
+    dateFormat: ["YYYY-MM-DD"],
   });
 
   columnMappingForm = new FormRecord<FormControl<string>>({});

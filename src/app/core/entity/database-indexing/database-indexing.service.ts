@@ -22,8 +22,7 @@ import { BackgroundProcessState } from "../../sync-status/background-process-sta
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { first } from "rxjs/operators";
-import { arrayEntitySchemaDatatype } from "../schema-datatypes/datatype-array";
-import { entityArrayEntitySchemaDatatype } from "../schema-datatypes/datatype-entity-array";
+import { isArrayProperty } from "../../entity-components/entity-utils/entity-utils";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -115,10 +114,6 @@ export class DatabaseIndexingService {
         return `emit(${primaryParam});`;
       }
     };
-    const dataType = entity.schema.get(referenceProperty).dataType;
-    const isArrayProperty =
-      dataType === arrayEntitySchemaDatatype.name ||
-      dataType === entityArrayEntitySchemaDatatype.name;
 
     const simpleEmit = emitParamFormatter("doc." + referenceProperty);
     const arrayEmit = `
@@ -134,7 +129,11 @@ export class DatabaseIndexingService {
           map: `(doc) => {
             if (!doc._id.startsWith("${entity.ENTITY_TYPE}")) return;
 
-            ${isArrayProperty ? arrayEmit : simpleEmit}
+            ${
+              isArrayProperty(entity, referenceProperty)
+                ? arrayEmit
+                : simpleEmit
+            }
           }`,
         },
       },

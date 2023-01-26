@@ -11,6 +11,7 @@ import { expectEntitiesToBeInDatabase } from "../../utils/expect-entity-data.spe
 import { Child } from "../../child-dev-project/children/model/child";
 import moment from "moment";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
+import { Note } from "../../child-dev-project/notes/model/note";
 
 describe("DataImportService", () => {
   let db: Database;
@@ -192,6 +193,34 @@ describe("DataImportService", () => {
       }),
       jasmine.anything()
     );
+  });
+
+  it("should save array strings as arrays", async () => {
+    const csvData = {
+      meta: { fields: ["ID", "children"] },
+      data: [
+        { ID: "1", children: '["one", "two"]' },
+        { ID: "2", children: "two, three" },
+        { ID: "3", children: "two" },
+        { ID: "4", children: "" },
+      ],
+    };
+    const importMeta: ImportMetaData = {
+      entityType: "Note",
+      columnMap: { ID: "_id", subject: "subject", children: "children" },
+    };
+
+    await service.handleCsvImport(csvData.data, importMeta);
+
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const note1 = await entityMapper.load(Note, "1");
+    expect(note1.children).toEqual(["one", "two"]);
+    const note2 = await entityMapper.load(Note, "2");
+    expect(note2.children).toEqual(["two", "three"]);
+    const note3 = await entityMapper.load(Note, "3");
+    expect(note3.children).toEqual(["two"]);
+    const note4 = await entityMapper.load(Note, "4");
+    expect(note4.children).toEqual([]);
   });
 
   function mockSnackbar(clicked: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {
