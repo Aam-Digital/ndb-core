@@ -198,16 +198,28 @@ export class MapComponent implements AfterViewInit {
   async openMapInPopup() {
     // Breaking circular dependency by using async import
     const mapComponent = await import("../map-popup/map-popup.component");
-    this.dialog.open(mapComponent.MapPopupComponent, {
-      width: "90%",
-      data: {
-        marked: this._marked,
-        entities: this._entities,
-        highlightedEntities: this._highlightedEntities,
-        entityClick: this.entityClick,
-        mapClick: this.clickStream,
-      } as MapPopupConfig,
-    });
+    const data: MapPopupConfig = {
+      marked: this._marked,
+      entities: this._entities,
+      highlightedEntities: this._highlightedEntities,
+      entityClick: this.entityClick,
+      mapClick: this.clickStream,
+      displayedProperties: this.displayedProperties,
+    };
+    this.dialog
+      .open(mapComponent.MapPopupComponent, { width: "90%", data })
+      .afterClosed()
+      .subscribe(() =>
+        // displayed properties might have changed in map view
+        this.updatedDisplayedProperties(data.displayedProperties)
+      );
+  }
+
+  private updatedDisplayedProperties(properties: LocationProperties) {
+    this.displayedProperties = properties;
+    this.displayedPropertiesChange.emit(this.displayedProperties);
+    this.entities = this._entities.value;
+    this.highlightedEntities = this._highlightedEntities.value;
   }
 
   openMapPropertiesPopup() {
@@ -218,10 +230,7 @@ export class MapComponent implements AfterViewInit {
       .afterClosed()
       .subscribe((res: LocationProperties) => {
         if (res) {
-          this.displayedProperties = res;
-          this.displayedPropertiesChange.emit(this.displayedProperties);
-          this.entities = this._entities.value;
-          this.highlightedEntities = this._highlightedEntities.value;
+          this.updatedDisplayedProperties(res);
         }
       });
   }

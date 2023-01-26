@@ -6,6 +6,7 @@ import { Observable, Subject } from "rxjs";
 import { MapComponent } from "../map/map.component";
 import { AsyncPipe, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
+import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
 
 export interface MapPopupConfig {
   marked?: Observable<Coordinates[]>;
@@ -15,6 +16,7 @@ export interface MapPopupConfig {
   entityClick?: Subject<Entity>;
   disabled?: boolean;
   helpText?: string;
+  displayedProperties?: LocationProperties;
 }
 
 @Component({
