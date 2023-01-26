@@ -80,6 +80,7 @@ export class DateRangeFilterPanelComponent {
     private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>
   ) {
     this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
+    this.originalRangeValue = this.selectedRangeValue;
     if (!this.data.dateRangeFilterConfig.filterConfig.options) {
       this.data.dateRangeFilterConfig.filterConfig.options = defaultOptions;
     }
@@ -127,13 +128,11 @@ export class DateRangeFilterPanelComponent {
   }
 
   preselectRange(dateRangeOption): void {
-    this.originalRangeValue = this.selectedRangeValue;
     const [start, end] = this.calculateDateRange(dateRangeOption);
     this.selectedRangeValue = new DateRange(start, end);
   }
 
   unselectRange() {
-    console.log("mouse leave");
     this.selectedRangeValue = this.originalRangeValue;
   }
 
@@ -148,11 +147,13 @@ export class DateRangeFilterPanelComponent {
     } else {
       const start = this.selectedRangeValue.start;
       const end = m;
-      if (end < start) {
-        this.selectedRangeValue = new DateRange(end, start);
-      } else {
-        this.selectedRangeValue = new DateRange(start, end);
-      }
+      this.selectedRangeValue =
+        end < start ? new DateRange(end, start) : new DateRange(start, end);
+      // if (end < start) {
+      //   this.selectedRangeValue = new DateRange(end, start);
+      // } else {
+      //   this.selectedRangeValue = new DateRange(start, end);
+      // }
       this.dialogRef.close(this.selectedRangeValue);
     }
   }
