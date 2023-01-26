@@ -20,6 +20,8 @@ import {
 } from "app/core/entity-components/entity-list/EntityListConfig";
 import moment from "moment";
 
+const defaultStartingDayOfWeek = "Monday" as const;
+
 const defaultOptions = [
   {
     label: "Today",
@@ -54,8 +56,6 @@ const defaultOptions = [
   },
 ] as const;
 
-const defaultStartingDayOfWeek = "Tuesday" as const;
-
 @Component({
   selector: "app-date-range-filter-panel",
   templateUrl: "./date-range-filter-panel.component.html",
@@ -71,6 +71,7 @@ export class DateRangeFilterPanelComponent {
   dateRangeFilterConfig: DateRangeFilterConfig;
   dateRangeOptions: DateRangeFilterConfigOption;
 
+  originalRangeValue;
   selectedRangeValue: DateRange<Date> | undefined;
 
   constructor(
@@ -125,10 +126,19 @@ export class DateRangeFilterPanelComponent {
     return today;
   }
 
-  // called when user selects a range preset:
-  selectRange(dateRangeOption): void {
+  preselectRange(dateRangeOption): void {
+    this.originalRangeValue = this.selectedRangeValue;
     const [start, end] = this.calculateDateRange(dateRangeOption);
     this.selectedRangeValue = new DateRange(start, end);
+  }
+
+  unselectRange() {
+    console.log("mouse leave");
+    this.selectedRangeValue = this.originalRangeValue;
+  }
+
+  selectRangeAndClose(dateRangeOption): void {
+    this.preselectRange(dateRangeOption);
     this.dialogRef.close(this.selectedRangeValue);
   }
 

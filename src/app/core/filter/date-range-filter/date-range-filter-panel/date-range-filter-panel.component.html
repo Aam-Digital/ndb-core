@@ -1,15 +1,23 @@
 <mat-dialog-content>
-  <button
-    *ngFor="let item of data.dateRangeFilterConfig.filterConfig.options"
-    mat-button
-    color="primary"
-    (click)="selectRange(item)"
-  >
-    {{ item.label }}
-  </button>
-  <mat-calendar
-    (selectedChange)="selectedRangeChange($event)"
-    [selected]="selectedRangeValue"
-  >
-  </mat-calendar>
+  <div class="container">
+    <mat-calendar
+      class="calendar"
+      (selectedChange)="selectedRangeChange($event)"
+      [selected]="selectedRangeValue"
+    >
+    </mat-calendar>
+    <div class="panel">
+      <button
+        class="button"
+        *ngFor="let item of data.dateRangeFilterConfig.filterConfig.options"
+        mat-button
+        color="primary"
+        (mouseenter)="preselectRange(item)"
+        (mouseleave)="unselectRange()"
+        (click)="selectRangeAndClose(item)"
+      >
+        {{ item.label }}
+      </button>
+    </div>
+  </div>
 </mat-dialog-content>
