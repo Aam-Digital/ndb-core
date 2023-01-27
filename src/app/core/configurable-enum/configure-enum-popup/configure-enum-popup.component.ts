@@ -21,6 +21,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -45,7 +46,8 @@ export class ConfigureEnumPopupComponent {
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
     private dialog: MatDialogRef<ConfigureEnumPopupComponent>,
     private entityMapper: EntityMapperService,
-    private confirmationService: ConfirmationDialogService
+    private confirmationService: ConfirmationDialogService,
+    private entities: EntityRegistry
   ) {
     this.dialog.afterClosed().subscribe((closeAndSave: boolean) => {
       if (closeAndSave) {
@@ -63,13 +65,54 @@ export class ConfigureEnumPopupComponent {
   }
 
   async delete(value: ConfigurableEnumValue, index: number) {
+    const existingUsages = await this.getUsages(value);
+    let deletionText = $localize`Are you sure that you want to delete the option ${value.label}?`;
+    if (existingUsages.length > 0) {
+      deletionText += $localize` The option is still used in ${existingUsages.join(
+        ", "
+      )} records. If deleted, the records will not be lost but specially marked`;
+    }
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Delete option`,
-      $localize`Are you sure that you want to delete the option ${value.label}?`
+      deletionText
     );
     if (confirmed) {
       this.enumEntity.values.splice(index, 1);
       await this.entityMapper.save(this.enumEntity);
     }
+  }
+
+  private async getUsages(value: ConfigurableEnumValue) {
+    const enumMap: { [key in string]: string[] } = {};
+    for (const entity of this.entities.values()) {
+      const schemaFields = [...entity.schema.entries()]
+        .filter(
+          ([_, schema]) =>
+            schema.innerDataType === this.enumEntity.getId() ||
+            schema.additional === this.enumEntity.getId()
+        )
+        .map(([name]) => name);
+      if (schemaFields.length > 0) {
+        enumMap[entity.ENTITY_TYPE] = schemaFields;
+      }
+    }
+    const entityPromises = Object.entries(enumMap).map(([entityType, props]) =>
+      this.entityMapper
+        .loadType(entityType)
+        .then((res) =>
+          res.filter((entity) =>
+            props.some(
+              (prop) =>
+                entity[prop] === value || entity[prop]?.includes?.(value)
+            )
+          )
+        )
+    );
+    const possibleEntities = await Promise.all(entityPromises);
+    return possibleEntities
+      .filter((entities) => entities.length > 0)
+      .map(
+        (entities) => `${entities.length} ${entities[0].getConstructor().label}`
+      );
   }
 }
