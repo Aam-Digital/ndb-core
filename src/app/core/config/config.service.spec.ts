@@ -5,6 +5,7 @@ import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
 import { LoggingService } from "../logging/logging.service";
+import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -12,9 +13,18 @@ describe("ConfigService", () => {
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
   beforeEach(() => {
-    entityMapper = jasmine.createSpyObj(["load", "save", "receiveUpdates"]);
+    entityMapper = jasmine.createSpyObj([
+      "load",
+      "save",
+      "receiveUpdates",
+      "saveAll",
+      "loadType",
+    ]);
     entityMapper.receiveUpdates.and.returnValue(updateSubject);
     entityMapper.load.and.rejectWith();
+    entityMapper.loadType.and.resolveTo([]);
+    entityMapper.saveAll.and.resolveTo([]);
+    entityMapper.save.and.resolveTo([]);
     TestBed.configureTestingModule({
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
@@ -51,6 +61,7 @@ describe("ConfigService", () => {
     const testConfig = new Config();
     testConfig.data = { testKey: "testValue" };
     updateSubject.next({ type: "new", entity: testConfig });
+    tick();
 
     expect(service.getConfig("testKey")).toBe("testValue");
     return expectAsync(configLoaded).toBeResolvedTo(testConfig);
@@ -63,7 +74,7 @@ describe("ConfigService", () => {
       "other:1": { name: "wrong" },
       "test:2": { name: "second" },
     };
-    entityMapper.load.and.returnValue(Promise.resolve(testConfig));
+    entityMapper.load.and.resolveTo(testConfig);
     service.loadConfig();
     tick();
     const result = service.getAllConfigs<any>("test:");
@@ -76,7 +87,7 @@ describe("ConfigService", () => {
   it("should return single field", fakeAsync(() => {
     const testConfig = new Config();
     testConfig.data = { first: "correct", second: "wrong" };
-    entityMapper.load.and.returnValue(Promise.resolve(testConfig));
+    entityMapper.load.and.resolveTo(testConfig);
     service.loadConfig();
     tick();
     const result = service.getConfig<any>("first");
@@ -92,12 +103,62 @@ describe("ConfigService", () => {
     expect(lastCall.data).toEqual({ test: "data" });
   });
 
-  it("should create export config string", () => {
+  it("should create export config string", fakeAsync(() => {
     const config = new Config();
     config.data = { first: "foo", second: "bar" };
     const expected = JSON.stringify(config.data);
     updateSubject.next({ entity: config, type: "update" });
+    tick();
     const result = service.exportConfig();
     expect(result).toEqual(expected);
+  }));
+
+  it("should save enum configs to db it they dont exist yet", async () => {
+    entityMapper.saveAll.and.resolveTo();
+    const data = {
+      "enum:1": [{ id: "some_id", label: "Some Label" }],
+      "enum:two": [],
+      "some:other": {},
+    };
+    const enum1 = new ConfigurableEnum("1");
+    enum1.values = data["enum:1"];
+    const enumTwo = new ConfigurableEnum("two");
+    enumTwo.values = [];
+
+    await initConfig(data);
+
+    expect(entityMapper.saveAll).toHaveBeenCalledWith([enum1, enumTwo]);
+    const config = entityMapper.save.calls.mostRecent().args[0] as Config;
+    expect(config.data).toEqual({ "some:other": {} });
   });
+
+  it("should not fail config initialization if changed config cannot be saved", async () => {
+    entityMapper.saveAll.and.rejectWith();
+    let configUpdate: Config;
+    service.configUpdates.subscribe((config) => (configUpdate = config));
+
+    await expectAsync(initConfig({ some: "config" })).toBeResolved();
+
+    expect(service.getConfig("some")).toBe("config");
+    expect(configUpdate.data).toEqual({ some: "config" });
+  });
+
+  it("should not save enums if they already exist in db", async () => {
+    entityMapper.loadType.and.resolveTo([new ConfigurableEnum()]);
+    entityMapper.save.and.resolveTo();
+
+    await initConfig({ "enum:1": [], some: "config" });
+
+    expect(entityMapper.saveAll).not.toHaveBeenCalled();
+    expect(entityMapper.save).toHaveBeenCalledWith(jasmine.any(Config));
+    expect(service.getConfig("enum:1")).toBeUndefined();
+    expect(service.getConfig("some")).toBe("config");
+  });
+
+  function initConfig(data) {
+    const config = new Config();
+    config.data = data;
+    entityMapper.load.and.resolveTo(config);
+    return service.loadConfig();
+  }
 });
