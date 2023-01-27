@@ -1,7 +1,8 @@
-import { Entity } from "../../core/entity/model/entity";
+import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import * as L from "leaflet";
 import { Coordinates } from "./coordinates";
 import { getHue } from "../../utils/style-utils";
+import { locationEntitySchemaDataType } from "./location-data-type";
 
 const iconRetinaUrl = "assets/marker-icon-2x.png";
 const iconUrl = "assets/marker-icon.png";
@@ -61,4 +62,16 @@ export function getKmDistance(x: Coordinates, y: Coordinates) {
       Math.sin(deltaLambda / 2);
   const d = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)) * R;
   return d / 1000;
+}
+
+/**
+ * Get all properties of an entity that represent a geographic location
+ * @param entity
+ */
+export function getLocationProperties(entity: EntityConstructor) {
+  return [...entity.schema.entries()]
+    .filter(
+      ([_, schema]) => schema.dataType === locationEntitySchemaDataType.name
+    )
+    .map(([name]) => name);
 }

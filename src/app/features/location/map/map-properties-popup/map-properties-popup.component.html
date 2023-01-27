@@ -1,0 +1,19 @@
+<h1 matDialogTitle i18n="Title of popup to select locations that are displayed in the map">
+  Select displayed locations
+</h1>
+<app-dialog-close matDialogClose></app-dialog-close>
+<mat-dialog-content>
+  <mat-form-field *ngFor="let row of entityProperties" style="width: 100%">
+    <mat-label>{{row.entity.label}}</mat-label>
+    <mat-select
+      [(value)]="row.selected"
+      [disabled]="row.properties.length < 2"
+      multiple
+    >
+      <mat-option *ngFor="let prop of row.properties" [value]="prop.name">{{ prop.label }}</mat-option>
+    </mat-select>
+  </mat-form-field>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-stroked-button (click)="closeDialog()" i18n="Button for closing popup and applying changes">Apply</button>
+</mat-dialog-actions>

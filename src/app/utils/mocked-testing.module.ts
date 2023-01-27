@@ -71,10 +71,7 @@ export class MockedTestingModule {
     return {
       ngModule: MockedTestingModule,
       providers: [
-        {
-          provide: SessionService,
-          useValue: session,
-        },
+        { provide: SessionService, useValue: session },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
         { provide: Database, useValue: session.getDatabase() },
