@@ -2,10 +2,7 @@ import { Injectable } from "@angular/core";
 import { ConfigService } from "../config/config.service";
 import { ConfigurableEnum } from "./configurable-enum";
 import { EntityMapperService } from "../entity/entity-mapper.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumValue,
-} from "./configurable-enum.interface";
+import { ConfigurableEnumValue } from "./configurable-enum.interface";
 import { Entity } from "../entity/model/entity";
 
 @Injectable({ providedIn: "root" })

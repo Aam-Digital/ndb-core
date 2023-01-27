@@ -1,8 +1,5 @@
 import { EntitySchemaDatatype } from "../../entity/schema/entity-schema-datatype";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumValue,
-} from "../configurable-enum.interface";
+import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 
@@ -33,10 +30,6 @@ export class ConfigurableEnumDatatype
     schemaField: EntitySchemaField
   ): ConfigurableEnumValue {
     let enumId = schemaField.additional || schemaField.innerDataType;
-    if (!enumId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
-      enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
-    }
-
     let enumOption = this.enumService
       .getEnumValues(enumId)
       ?.find((option) => option.id === value);

@@ -14,18 +14,17 @@
   />
 
   <fa-icon
-    *ngIf="showWrench"
+    *ngIf="showWrench && autocompleteForm.enabled"
     icon="wrench"
     class="caret-suffix"
-    [ngClass]="{ disabled: autocompleteForm.disabled }"
     matSuffix
-    (click)="autocompleteForm.enabled ? wrenchClick.emit() : ''"
+    (click)="$event.stopPropagation(); wrenchClick.emit()"
   ></fa-icon>
 
   <fa-icon
+    *ngIf="autocompleteForm.enabled"
     icon="caret-down"
     class="caret-suffix"
-    [ngClass]="{ disabled: autocompleteForm.disabled }"
     (click)="updateAutocomplete(''); inputElement.focus()"
     matSuffix
   ></fa-icon>
