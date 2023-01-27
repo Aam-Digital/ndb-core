@@ -1,7 +1,7 @@
 <h1 matDialogTitle i18n="title of dropdown options popup dialog">
   Edit dropdown options
 </h1>
-<app-dialog-close [mat-dialog-close]="false"></app-dialog-close>
+<app-dialog-close mat-dialog-close></app-dialog-close>
 <mat-dialog-content
   style="max-width: 400px; padding-top: 5px"
   cdkDropList
@@ -18,7 +18,7 @@
       matIconPrefix
       class="grab-icon margin-right-small"
     ></fa-icon>
-    <input matInput [(ngModel)]="v.label" />
+    <input matInput [(ngModel)]="v.label"/>
     <button mat-icon-button matIconSuffix (click)="delete(v, i)">
       <fa-icon icon="trash"></fa-icon>
     </button>
@@ -28,16 +28,9 @@
 <mat-dialog-actions>
   <button
     mat-raised-button
-    [mat-dialog-close]="true"
-    i18n="Save button for forms"
+    mat-dialog-close
+    i18n="Close popup"
   >
-    Save
-  </button>
-  <button
-    mat-raised-button
-    [mat-dialog-close]="false"
-    i18n="Cancel button for forms"
-  >
-    Cancel
+    Close
   </button>
 </mat-dialog-actions>
