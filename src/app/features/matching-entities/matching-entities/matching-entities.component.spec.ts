@@ -9,7 +9,7 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ConfigService } from "../../../core/config/config.service";
-import { of, ReplaySubject } from "rxjs";
+import { BehaviorSubject, of } from "rxjs";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -27,14 +27,13 @@ describe("MatchingEntitiesComponent", () => {
       newEntityMatchPropertyRight: "",
       newEntityType: "",
     },
-    showMap: ["address", "address"],
     matchActionLabel: "match test",
     rightSide: { entityType: "Child" },
     leftSide: { entityType: "School" },
   };
 
   beforeEach(async () => {
-    mockActivatedRoute = { data: null };
+    mockActivatedRoute = { data: of({ columns: [] }) };
 
     await TestBed.configureTestingModule({
       imports: [MatchingEntitiesComponent, MockedTestingModule.withState()],
@@ -165,6 +164,7 @@ describe("MatchingEntitiesComponent", () => {
     };
     const testEntity = new Entity();
     const matchedEntity = Child.create("matched child");
+    component.entity = testEntity;
     component.columns = [["_id", "name"]];
     const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
 
@@ -185,12 +185,13 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should create distance column and publish updates", async () => {
+    Child.schema.set("address", { dataType: "location" });
     component.columns = [[undefined, "distance"]];
-    component.showMap = ["address", "address"];
     component.entity = new Child();
     component.leftSide = { entityType: Child };
 
     await component.ngOnInit();
+    fixture.detectChanges();
 
     const distanceColumn = component.columns[0][1] as FormFieldConfig;
     expect(distanceColumn).toEqual({
@@ -198,20 +199,24 @@ describe("MatchingEntitiesComponent", () => {
       label: "Distance",
       view: "DisplayDistance",
       additional: {
-        coordinatesProperty: "address",
-        compareCoordinates: jasmine.any(ReplaySubject),
+        coordinatesProperties: ["address"],
+        compareCoordinates: jasmine.any(BehaviorSubject),
       },
     });
 
-    let newCoordinates: Coordinates;
+    let newCoordinates: Coordinates[];
     distanceColumn.additional.compareCoordinates.subscribe(
       (res) => (newCoordinates = res)
     );
 
     const compare = new Child();
     compare["address"] = { lat: 52, lon: 13 };
+
     component.sideDetails[0].selectMatch(compare);
-    expect(newCoordinates).toEqual(compare["address"]);
+
+    expect(newCoordinates).toEqual([compare["address"]]);
+
+    Child.schema.delete("address");
   });
 
   it("should select a entity if it has been selected in the map", async () => {
@@ -245,6 +250,140 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(newComponent.sideDetails[1].selected).not.toEqual(selectedChild);
   });
+
+  it("should update the distance calculation when the selected map properties change", async () => {
+    Child.schema.set("address", { dataType: "location" });
+    Child.schema.set("otherAddress", { dataType: "location" });
+    Entity.schema.set("address", { dataType: "location" });
+    const leftEntity = new Child();
+    leftEntity["address"] = { lat: 52, lon: 14 };
+    leftEntity["otherAddress"] = { lat: 53, lon: 14 };
+    const rightEntity1 = new Entity();
+    rightEntity1["address"] = { lat: 52, lon: 13 };
+    const rightEntity2 = new Entity();
+    rightEntity2["address"] = { lat: 53, lon: 13 };
+    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo([
+      rightEntity1,
+      rightEntity2,
+    ]);
+    component.onInitFromDynamicConfig({
+      entity: leftEntity,
+      config: {
+        columns: [],
+        leftSide: {
+          columns: ["distance"],
+        },
+        rightSide: {
+          columns: ["distance"],
+          entityType: "Child",
+        },
+      },
+    });
+    await component.ngOnInit();
+    fixture.detectChanges();
+    const leftSide = component.sideDetails[0];
+    const rightSide = component.sideDetails[1];
+    let lastLeftValue: Coordinates[];
+    let lastRightValue: Coordinates[];
+    leftSide.distanceColumn.compareCoordinates.subscribe(
+      (res) => (lastLeftValue = res)
+    );
+    rightSide.distanceColumn.compareCoordinates.subscribe(
+      (res) => (lastRightValue = res)
+    );
+
+    expect(lastLeftValue).toEqual([]);
+    expect(lastRightValue).toEqual([
+      leftEntity["address"],
+      leftEntity["otherAddress"],
+    ]);
+
+    // values should be emitted again
+    lastLeftValue = undefined;
+    lastRightValue = undefined;
+    // select only one property
+    component.displayedProperties["Child"] = ["address"];
+    component.updateMarkersAndDistances();
+
+    expect(lastLeftValue).toEqual([]);
+    expect(lastRightValue).toEqual([leftEntity["address"]]);
+
+    // select an entity for right
+    rightSide.selectMatch(rightEntity1);
+
+    expect(lastLeftValue).toEqual([rightEntity1["address"]]);
+    expect(lastRightValue).toEqual([leftEntity["address"]]);
+
+    lastLeftValue = undefined;
+    lastRightValue = undefined;
+    //select both properties
+    component.displayedProperties["Child"] = ["address", "otherAddress"];
+    component.updateMarkersAndDistances();
+
+    expect(lastLeftValue).toEqual([rightEntity1["address"]]);
+    expect(lastRightValue).toEqual([
+      leftEntity["address"],
+      leftEntity["otherAddress"],
+    ]);
+
+    Child.schema.delete("otherAddress");
+    Child.schema.delete("address");
+    Entity.schema.delete("address");
+  });
+
+  it("should only display filtered entities in the map", async () => {
+    const c1 = new Child();
+    c1.status = "active";
+    const c2 = new Child();
+    c2.status = "inactive";
+    c2.dropoutDate = new Date();
+    const c3 = new Child();
+    c3.status = "inactive";
+    const other = new ChildSchoolRelation();
+    await TestBed.inject(EntityMapperService).saveAll([c1, c2, c3, other]);
+    component.leftSide = {
+      entityType: Child,
+      prefilter: { dropoutDate: { $exists: false } } as any,
+      columns: ["status"],
+    };
+    component.rightSide = {
+      entityType: ChildSchoolRelation,
+      columns: ["_id"],
+    };
+    await component.ngOnInit();
+
+    expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
+      c1,
+      c3,
+      other,
+    ]);
+
+    component.applySelectedFilters(component.sideDetails[0], {
+      status: "active",
+    } as any);
+
+    expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
+      c1,
+      other,
+    ]);
+  });
+
+  it("should display map if location properties are available", async () => {
+    component.leftSide = { entityType: Child };
+    component.entity = new Child();
+
+    await component.ngOnInit();
+
+    expect(component.mapVisible).toBeFalse();
+
+    Child.schema.set("address", { dataType: "location" });
+
+    await component.ngOnInit();
+
+    expect(component.mapVisible).toBeTrue();
+
+    Child.schema.delete("address");
+  });
 });
 
 function expectConfigToMatch(
@@ -253,7 +392,6 @@ function expectConfigToMatch(
 ) {
   expect(component.columns).toEqual(configToLoad.columns);
   expect(component.onMatch).toEqual(configToLoad.onMatch);
-  expect(component.showMap).toEqual(configToLoad.showMap);
   expect(component.matchActionLabel).toEqual(configToLoad.matchActionLabel);
   expect(component.rightSide.entityType).toEqual(
     configToLoad.rightSide.entityType

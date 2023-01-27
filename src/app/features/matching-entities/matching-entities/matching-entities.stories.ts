@@ -14,11 +14,17 @@ import { ConfigService } from "../../../core/config/config.service";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 
-RecurringActivity.schema.set("center", {
-  dataType: "configurable-enum",
-  innerDataType: "center",
-});
+const addressSchema: EntitySchemaField = {
+  label: "Address",
+  dataType: "location",
+};
+RecurringActivity.schema.set("center", Child.schema.get("center"));
+RecurringActivity.schema.set("address", addressSchema);
+Child.schema.set("address", addressSchema);
+Child.schema.set("otherAddress", addressSchema);
+
 const entitiesA = [
   Object.assign(RecurringActivity.create("A"), {
     type: defaultInteractionTypes[1],
@@ -41,6 +47,7 @@ const entitiesB = [
     gender: genders[1],
     center: centersUnique[0],
     address: { lat: 52.4720412, lon: 13.4319106 },
+    otherAddress: { lat: 52.4720412, lon: 13.4419106 },
   }),
   Object.assign(Child.create("other child"), {
     gender: genders[2],
@@ -93,10 +100,13 @@ const columnsMapping = [
 
 export const TwoSidedMatching = Template.bind({});
 TwoSidedMatching.args = {
-  leftSide: { entityType: Child.ENTITY_TYPE },
-  rightSide: { entityType: RecurringActivity.ENTITY_TYPE },
+  leftSide: {
+    entityType: Child.ENTITY_TYPE,
+  },
+  rightSide: {
+    entityType: RecurringActivity.ENTITY_TYPE,
+  },
   columns: columnsMapping,
-  showMap: ["address", "address"],
 };
 
 export const LeftMatch = Template.bind({});
@@ -107,13 +117,13 @@ LeftMatch.args = {
     filters: [{ id: "type" }],
   },
   columns: columnsMapping,
-  showMap: ["address", "address"],
 };
 
 export const RightMatch = Template.bind({});
 RightMatch.args = {
-  leftSide: { entityType: Child.ENTITY_TYPE },
+  leftSide: {
+    entityType: Child.ENTITY_TYPE,
+  },
   entity: entitiesA[0],
   columns: columnsMapping,
-  showMap: ["address", "address"],
 };
