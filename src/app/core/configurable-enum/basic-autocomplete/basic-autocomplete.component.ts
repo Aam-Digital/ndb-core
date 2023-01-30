@@ -181,7 +181,6 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
     if (option) {
       this.selectOption(option);
     } else {
-      // TODO not automatically create option but only if clicked on purpose
       if (selected) {
         const newOption = this.toSelectableOption(
           this.createOption(selected as string)
@@ -214,5 +213,15 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
       asString: this._optionToString(opt),
       selected: false,
     };
+  }
+
+  resetIfInvalidOption(input: string) {
+    // waiting for other tasks to finish and then reset input if nothing was selected
+    setTimeout(() => {
+      const activeOption = this._optionToString(this._form.value);
+      if (input !== activeOption) {
+        this.autocompleteForm.setValue(activeOption);
+      }
+    });
   }
 }

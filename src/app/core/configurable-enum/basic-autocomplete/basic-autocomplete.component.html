@@ -11,7 +11,7 @@
     matInput
     style="text-overflow: ellipsis"
     [matAutocomplete]="autoSuggestions"
-    (focusout)="select(inputElement.value)"
+    (focusout)="resetIfInvalidOption(inputElement.value)"
   />
 
   <mat-autocomplete
