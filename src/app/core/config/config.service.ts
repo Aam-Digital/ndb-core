@@ -51,22 +51,25 @@ export class ConfigService {
   }
 
   private async saveAllEnumsToDB(config: Config) {
+    const enumValues = Object.entries(config.data).filter(([key]) =>
+      key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)
+    );
+    if (enumValues.length === 0) {
+      return;
+    }
     const existingEnums = await this.entityMapper.loadType(ConfigurableEnum);
     if (existingEnums.length > 0) {
-      Object.keys(config.data)
-        .filter((key) => key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX))
-        .forEach((key) => delete config.data[key]);
+      enumValues.forEach(([key]) => delete config.data[key]);
       return this.entityMapper.save(config).catch(() => {});
     }
-    const enumEntities = Object.entries(config.data)
-      .filter(([key]) => key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX))
-      .map(([key, value]) => {
-        const id = key.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "");
-        const newEnum = new ConfigurableEnum(id);
-        newEnum.values = value as any;
-        delete config.data[key];
-        return newEnum;
-      });
+
+    const enumEntities = enumValues.map(([key, value]) => {
+      const id = key.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "");
+      const newEnum = new ConfigurableEnum(id);
+      newEnum.values = value as any;
+      delete config.data[key];
+      return newEnum;
+    });
     return this.entityMapper
       .saveAll(enumEntities)
       .then(() => this.entityMapper.save(config))
