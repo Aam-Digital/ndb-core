@@ -20,7 +20,8 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { createTestingConfigService } from "../../config/testing-config-service";
+import { createTestingConfigurableEnumService } from "../../configurable-enum/configurable-enum-testing";
+import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -162,12 +163,12 @@ export function testEntitySubclass(
     expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
   });
 
-  it("should only load and store properties defined in the schema", () => {
+  it("should only load and store properties defined in the schema", fakeAsync(() => {
     const schemaService = new EntitySchemaService();
-    // const configService = createTestingConfigService();
-    // schemaService.registerSchemaDatatype(
-    //   new ConfigurableEnumDatatype(configService)
-    // );
+    schemaService.registerSchemaDatatype(
+      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
+    );
+    tick();
     const entity = new entityClass();
 
     schemaService.loadDataIntoEntity(
@@ -179,5 +180,5 @@ export function testEntitySubclass(
       delete rawData.searchIndices;
     }
     expect(rawData).toEqual(expectedDatabaseFormat);
-  });
+  }));
 }

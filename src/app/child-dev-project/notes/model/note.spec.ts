@@ -24,7 +24,7 @@ import {
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
-import { createTestingConfigService } from "../../../core/config/testing-config-service";
+import { createTestingConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum-testing";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -78,16 +78,16 @@ describe("Note", () => {
   ]);
 
   beforeEach(waitForAsync(() => {
-    // const testConfigs = {};
-    // testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID] =
-    //   testInteractionTypes;
-    // testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID] =
-    //   testStatusTypes;
-    //
-    // entitySchemaService = new EntitySchemaService();
-    // entitySchemaService.registerSchemaDatatype(
-    //   new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
-    // );
+    const testConfigs = {};
+    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID] =
+      testInteractionTypes;
+    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID] =
+      testStatusTypes;
+
+    entitySchemaService = new EntitySchemaService();
+    entitySchemaService.registerSchemaDatatype(
+      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
+    );
   }));
 
   testEntitySubclass("Note", Note, {

@@ -16,7 +16,9 @@ describe("DisplayConfigurableEnumComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayConfigurableEnumComponent);
     component = fixture.componentInstance;
-    component.value = { id: "testCategory", label: "Test Category" };
+    component.onInitFromDynamicConfig({
+      value: { id: "testCategory", label: "Test Category" },
+    } as any);
     fixture.detectChanges();
   });
 
@@ -24,11 +26,11 @@ describe("DisplayConfigurableEnumComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("displays value's label", () => {
+  it("should display label of value", () => {
     expect(fixture.debugElement.nativeElement.innerHTML).toBe("Test Category");
   });
 
-  it("should use the background color is available", () => {
+  it("should use the background color if available", () => {
     const elem = fixture.debugElement.nativeElement;
     expect(elem.style["background-color"]).toBe("");
 
@@ -38,13 +40,21 @@ describe("DisplayConfigurableEnumComponent", () => {
       color: "black",
       _ordinal: 1,
     };
-    const entity = new Note();
-    entity.warningLevel = value;
-    component.onInitFromDynamicConfig({ id: "warningLevel", entity, value });
+    component.onInitFromDynamicConfig({ value } as any);
     fixture.detectChanges();
 
     expect(elem.style["background-color"]).toBe("black");
     expect(elem.style.padding).toBe("5px");
     expect(elem.style["border-radius"]).toBe("4px");
+  });
+
+  it("should concatenate multiple values", () => {
+    const first = { id: "1", label: "First" };
+
+    const second = { id: "2", label: "Second" };
+    component.onInitFromDynamicConfig({ value: [first, second] } as any);
+    fixture.detectChanges();
+
+    expect(fixture.debugElement.nativeElement.innerHTML).toBe("First, Second");
   });
 });

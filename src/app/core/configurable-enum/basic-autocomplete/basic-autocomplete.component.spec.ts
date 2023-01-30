@@ -14,6 +14,7 @@ import { Entity } from "../../entity/model/entity";
 import { FormControl } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 
 describe("BasicAutocompleteComponent", () => {
   let component: BasicAutocompleteComponent<any, any>;
@@ -27,6 +28,7 @@ describe("BasicAutocompleteComponent", () => {
         BasicAutocompleteComponent,
         FontAwesomeTestingModule,
         NoopAnimationsModule,
+        MatDialogModule,
       ],
     }).compileComponents();
 

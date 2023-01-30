@@ -1,29 +1,24 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EnumDropdownComponent } from "./enum-dropdown.component";
-import { ConfigService } from "../../config/config.service";
 import { FormControl } from "@angular/forms";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SimpleChange } from "@angular/core";
-import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { ConfigurableEnumService } from "../configurable-enum.service";
+import { ConfigurableEnum } from "../configurable-enum";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("EnumDropdownComponent", () => {
   let component: EnumDropdownComponent;
   let fixture: ComponentFixture<EnumDropdownComponent>;
-
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
-
   beforeEach(async () => {
-    mockConfigService = jasmine.createSpyObj(["getConfig"]);
-    mockConfigService.getConfig.and.returnValue([]);
-
     await TestBed.configureTestingModule({
-      imports: [
-        EnumDropdownComponent,
-        FontAwesomeTestingModule,
-        NoopAnimationsModule,
+      imports: [EnumDropdownComponent, MockedTestingModule.withState()],
+      providers: [
+        {
+          provide: ConfigurableEnumService,
+          useValue: { getEnum: () => new ConfigurableEnum() },
+        },
       ],
-      providers: [{ provide: ConfigService, useValue: mockConfigService }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EnumDropdownComponent);
