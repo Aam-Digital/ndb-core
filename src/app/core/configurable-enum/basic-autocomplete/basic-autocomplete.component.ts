@@ -24,6 +24,7 @@ import { BehaviorSubject } from "rxjs";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { filter } from "rxjs/operators";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -114,7 +115,7 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
   addOptionTimeout: any;
   inputValue = "";
 
-  constructor() {
+  constructor(private confirmation: ConfirmationDialogService) {
     this.autocompleteForm.valueChanges
       .pipe(filter((val) => typeof val === "string"))
       .subscribe((val) => this.updateAutocomplete(val?.split(", ").pop()));
@@ -169,26 +170,28 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
   }
 
   select(selected: string | SelectableOption<O, V>) {
-    let option: SelectableOption<O, V>;
     if (typeof selected === "string") {
-      option = this._options.find(
-        (o) => o.asString.toLowerCase() === selected.toLowerCase()
-      );
-    } else {
-      option = selected;
+      this.createNewOption(selected);
+      return;
     }
 
-    if (option) {
-      this.selectOption(option);
-    } else if (selected) {
-      const newOption = this.toSelectableOption(
-        this.createOption(selected as string)
-      );
-      this._options.push(newOption);
-      this.select(newOption);
+    if (selected) {
+      this.selectOption(selected);
     } else {
       this.autocompleteForm.setValue("");
       this._form.setValue(undefined);
+    }
+  }
+
+  async createNewOption(option: string) {
+    const userConfirmed = await this.confirmation.getConfirmation(
+      $localize`Create new option`,
+      `Do you want to create the new option ${option}`
+    );
+    if (userConfirmed) {
+      const newOption = this.toSelectableOption(this.createOption(option));
+      this._options.push(newOption);
+      this.select(newOption);
     }
   }
 
