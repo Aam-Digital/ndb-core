@@ -180,17 +180,15 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
 
     if (option) {
       this.selectOption(option);
+    } else if (selected) {
+      const newOption = this.toSelectableOption(
+        this.createOption(selected as string)
+      );
+      this._options.push(newOption);
+      this.select(newOption);
     } else {
-      if (selected) {
-        const newOption = this.toSelectableOption(
-          this.createOption(selected as string)
-        );
-        this._options.push(newOption);
-        this.select(newOption);
-      } else {
-        this.autocompleteForm.setValue("");
-        this._form.setValue(undefined);
-      }
+      this.autocompleteForm.setValue("");
+      this._form.setValue(undefined);
     }
   }
 

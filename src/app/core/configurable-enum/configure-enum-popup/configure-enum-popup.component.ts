@@ -22,6 +22,7 @@ import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { Entity } from "../../entity/model/entity";
 
 @Component({
   selector: "app-configure-enum-popup",
@@ -97,15 +98,7 @@ export class ConfigureEnumPopupComponent {
     const entityPromises = Object.entries(enumMap).map(([entityType, props]) =>
       this.entityMapper
         .loadType(entityType)
-        .then((res) =>
-          res.filter((entity) =>
-            props.some(
-              (prop) =>
-                entity[prop]?.id === value?.id ||
-                entity[prop]?.map?.((v) => v.id).includes(value.id)
-            )
-          )
-        )
+        .then((entities) => this.getEntitiesWithValue(entities, props, value))
     );
     const possibleEntities = await Promise.all(entityPromises);
     return possibleEntities
@@ -113,5 +106,19 @@ export class ConfigureEnumPopupComponent {
       .map(
         (entities) => `${entities.length} ${entities[0].getConstructor().label}`
       );
+  }
+
+  private getEntitiesWithValue(
+    res: Entity[],
+    props: string[],
+    value: ConfigurableEnumValue
+  ) {
+    return res.filter((entity) =>
+      props.some(
+        (prop) =>
+          entity[prop]?.id === value?.id ||
+          entity[prop]?.map?.((v) => v.id).includes(value.id)
+      )
+    );
   }
 }
