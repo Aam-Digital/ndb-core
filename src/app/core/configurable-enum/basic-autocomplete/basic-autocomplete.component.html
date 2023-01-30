@@ -5,29 +5,14 @@
   <!--  <input [formControl]="_form" matInput hidden/>-->
 
   <input
+    #inputElement
     [formControl]="autocompleteForm"
     id="inputElement"
     matInput
     style="text-overflow: ellipsis"
     [matAutocomplete]="autoSuggestions"
-    #inputElement
+    (focusout)="select(inputElement.value)"
   />
-
-  <fa-icon
-    *ngIf="showWrench && autocompleteForm.enabled"
-    icon="wrench"
-    class="caret-suffix"
-    matSuffix
-    (click)="$event.stopPropagation(); wrenchClick.emit()"
-  ></fa-icon>
-
-  <fa-icon
-    *ngIf="autocompleteForm.enabled"
-    icon="caret-down"
-    class="caret-suffix"
-    (click)="updateAutocomplete(''); inputElement.focus()"
-    matSuffix
-  ></fa-icon>
 
   <mat-autocomplete
     #autoSuggestions="matAutocomplete"
@@ -51,6 +36,22 @@
       <em>Add option</em> {{ inputElement.value }}
     </mat-option>
   </mat-autocomplete>
+
+  <fa-icon
+    *ngIf="showWrench && autocompleteForm.enabled"
+    icon="wrench"
+    class="caret-suffix"
+    matSuffix
+    (click)="$event.stopPropagation(); wrenchClick.emit()"
+  ></fa-icon>
+
+  <fa-icon
+    *ngIf="autocompleteForm.enabled"
+    icon="caret-down"
+    class="caret-suffix"
+    (click)="updateAutocomplete(''); inputElement.focus()"
+    matSuffix
+  ></fa-icon>
 
   <mat-error *ngIf="_form.errors?.required" i18n="Error message for any input">
     This field is required
