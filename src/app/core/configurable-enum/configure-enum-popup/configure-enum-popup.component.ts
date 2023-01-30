@@ -101,7 +101,8 @@ export class ConfigureEnumPopupComponent {
           res.filter((entity) =>
             props.some(
               (prop) =>
-                entity[prop] === value || entity[prop]?.includes?.(value)
+                entity[prop]?.id === value?.id ||
+                entity[prop]?.map?.((v) => v.id).includes(value.id)
             )
           )
         )
