@@ -164,10 +164,10 @@ export function testEntitySubclass(
 
   it("should only load and store properties defined in the schema", () => {
     const schemaService = new EntitySchemaService();
-    const configService = createTestingConfigService();
-    schemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(configService)
-    );
+    // const configService = createTestingConfigService();
+    // schemaService.registerSchemaDatatype(
+    //   new ConfigurableEnumDatatype(configService)
+    // );
     const entity = new entityClass();
 
     schemaService.loadDataIntoEntity(

@@ -78,16 +78,16 @@ describe("Note", () => {
   ]);
 
   beforeEach(waitForAsync(() => {
-    const testConfigs = {};
-    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID] =
-      testInteractionTypes;
-    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID] =
-      testStatusTypes;
-
-    entitySchemaService = new EntitySchemaService();
-    entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
-    );
+    // const testConfigs = {};
+    // testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID] =
+    //   testInteractionTypes;
+    // testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID] =
+    //   testStatusTypes;
+    //
+    // entitySchemaService = new EntitySchemaService();
+    // entitySchemaService.registerSchemaDatatype(
+    //   new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
+    // );
   }));
 
   testEntitySubclass("Note", Note, {

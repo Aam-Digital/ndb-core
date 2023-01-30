@@ -51,14 +51,16 @@ describe("BasicAutocompleteComponent", () => {
       school1,
       school2,
       school3,
-    ]);
+    ] as any);
     component.updateAutocomplete("Aa");
     expect(component.autocompleteSuggestedOptions.value).toEqual([
       school1,
       school2,
-    ]);
+    ] as any);
     component.updateAutocomplete("Aab");
-    expect(component.autocompleteSuggestedOptions.value).toEqual([school2]);
+    expect(component.autocompleteSuggestedOptions.value).toEqual([
+      school2,
+    ] as any);
   });
 
   it("should show name of the selected entity", fakeAsync(() => {
@@ -75,7 +77,7 @@ describe("BasicAutocompleteComponent", () => {
     tick();
     fixture.detectChanges();
 
-    expect(component.inputValue).toBe(child1);
+    expect(component.inputValue).toBe(child1 as any);
     expect(
       fixture.debugElement.query(By.css("#inputElement")).nativeElement.value
     ).toEqual("First Child");
@@ -89,7 +91,7 @@ describe("BasicAutocompleteComponent", () => {
 
     component.select("First Child");
 
-    expect(component.inputValue).toBe(child1);
+    expect(component.inputValue).toBe(child1 as any);
     expect(component.form.value).toBe(child1.getId());
   });
 
@@ -99,12 +101,12 @@ describe("BasicAutocompleteComponent", () => {
     component.options = [first, second];
     component.valueMapper = entityToId;
 
-    component.select(first);
-    expect(component.inputValue).toBe(first);
+    component.select(first as any);
+    expect(component.inputValue).toBe(first as any);
     expect(component.form.value).toBe(first.getId());
 
     component.select("second");
-    expect(component.inputValue).toBe(second);
+    expect(component.inputValue).toBe(second as any);
     expect(component.form.value).toBe(second.getId());
 
     component.select("NonExistent");
