@@ -16,12 +16,12 @@ export interface ViewDistanceConfig {
   /**
    * The name of the `GeoResult`/`Coordinates` property of the first entity
    */
-  coordinatesProperty: string;
+  coordinatesProperties: string[];
   /**
    * The updates of coordinates of the second entity.
    * A `ReplaySubject` works best for this.
    */
-  compareCoordinates: Observable<Coordinates>;
+  compareCoordinates: Observable<Coordinates[]>;
 }
 
 /**
@@ -57,22 +57,29 @@ export class ViewDistanceComponent extends ViewDirective<Geolocation> {
       .subscribe((coordinates) => this.setDistanceFunction(coordinates));
   }
 
-  private setDistanceFunction(compareCoordinates: Coordinates) {
-    this.distanceFunction = (e: Entity) =>
-      this.calculateDistanceTo(
-        e[this.config.coordinatesProperty],
-        compareCoordinates
-      );
+  private setDistanceFunction(compareCoordinates: Coordinates[]) {
+    this.distanceFunction = (e: Entity) => {
+      const distances = this.getAllDistances(compareCoordinates, e);
+      if (distances.length > 0) {
+        const closest = Math.min(...distances).toFixed(2);
+        return $localize`:distance with unit|e.g. 5 km:${closest} km`;
+      } else {
+        return "-";
+      }
+    };
     // somehow changes to `displayFunction` don't trigger the change detection
     this.changeDetector.detectChanges();
   }
 
-  private calculateDistanceTo(a: Coordinates, b: Coordinates) {
-    if (a && b && a !== b) {
-      const res = getKmDistance(a, b).toFixed(2);
-      return $localize`:distance with unit|e.g. 5 km:${res} km`;
-    } else {
-      return "-";
+  private getAllDistances(compareCoordinates: Coordinates[], e: Entity) {
+    const results: number[] = [];
+    for (const prop of this.config.coordinatesProperties) {
+      for (const coord of compareCoordinates) {
+        if (e[prop] && coord) {
+          results.push(getKmDistance(e[prop], coord));
+        }
+      }
     }
+    return results;
   }
 }

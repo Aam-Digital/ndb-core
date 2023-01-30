@@ -6,7 +6,8 @@ import { of } from "rxjs";
 import { DataAggregationService } from "../data-aggregation.service";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
+import { DataTransformationService } from "app/core/export/data-transformation-service/data-transformation.service";
+import { DownloadService } from "../../../core/export/download-service/download.service";
 
 const reportingService = {
   calculateReport: () => {
@@ -195,7 +196,11 @@ export default {
         { provide: DataAggregationService, useValue: reportingService },
         {
           provide: DataTransformationService,
-          useValue: { queryAndTransformData: () => [] },
+          useValue: { queryAndTransformData: () => {} },
+        },
+        {
+          provide: DownloadService,
+          useValue: { triggerDownload: () => {} },
         },
       ],
     }),

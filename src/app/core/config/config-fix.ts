@@ -614,7 +614,7 @@ export const defaultJsonConfig = {
               "config": {
                 "rightSide": {
                   "entityType": School.ENTITY_TYPE,
-                  "availableFilters": [{ "id": "language" }]
+                  "availableFilters": [{ "id": "language" }],
                 },
               }
             }
@@ -1048,7 +1048,6 @@ export const defaultJsonConfig = {
       ["address", "address"],
       ["distance", "privateSchool"],
     ],
-    "showMap": ["address", "address"],
     "onMatch": {
       "newEntityType": ChildSchoolRelation.ENTITY_TYPE,
       "newEntityMatchPropertyLeft": "childId",
