@@ -11,6 +11,7 @@ import { ConfigurableEnum } from "../configurable-enum";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { ConfigureEnumPopupComponent } from "../configure-enum-popup/configure-enum-popup.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -25,6 +26,7 @@ import { ConfigureEnumPopupComponent } from "../configure-enum-popup/configure-e
     NgIf,
     NgForOf,
     BasicAutocompleteComponent,
+    FontAwesomeModule,
   ],
 })
 export class EnumDropdownComponent implements OnChanges {

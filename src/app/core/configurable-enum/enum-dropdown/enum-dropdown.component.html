@@ -1,6 +1,7 @@
 <mat-form-field>
   <mat-label>{{label}}</mat-label>
   <app-basic-autocomplete
+    #autocomplete
     [formControl]="form"
     [multi]="multi"
     [options]="options"
@@ -17,4 +18,11 @@
         -->
     <ng-template let-item>{{ item.label }}</ng-template>
   </app-basic-autocomplete>
+  <fa-icon
+    *ngIf="form.enabled"
+    icon="caret-down"
+    class="caret-suffix"
+    (click)="autocomplete.updateAutocomplete('')"
+    matSuffix
+  ></fa-icon>
 </mat-form-field>

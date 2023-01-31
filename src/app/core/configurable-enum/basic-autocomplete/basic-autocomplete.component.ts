@@ -280,6 +280,7 @@ export class BasicAutocompleteComponent<O, V>
       }
     }
     this.autocompleteSuggestedOptions.next(filteredEntities);
+    this.inputElement?.nativeElement.focus();
   }
 
   select(selected: string | SelectableOption<O, V>) {
