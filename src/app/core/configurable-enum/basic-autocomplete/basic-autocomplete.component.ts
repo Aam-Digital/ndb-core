@@ -83,6 +83,7 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
   }
 
   _options: SelectableOption<O, V>[] = [];
+
   @Input() multi?: boolean;
 
   @Input() set valueMapper(value: (option: O) => V) {
@@ -107,13 +108,11 @@ export class BasicAutocompleteComponent<O, V> implements OnChanges {
   @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
 
   autocompleteForm = new FormControl("");
-
   autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
     []
   );
   showAddOption = false;
   addOptionTimeout: any;
-  inputValue = "";
 
   constructor(private confirmation: ConfirmationDialogService) {
     this.autocompleteForm.valueChanges
