@@ -92,6 +92,7 @@ describe("MapComponent", () => {
     });
 
     marker.fireEvent("click");
+    Child.schema.delete("address");
   });
 
   it("should open a popup with the same marker data", async () => {
