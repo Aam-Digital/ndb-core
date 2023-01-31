@@ -10,7 +10,6 @@ import { BasicAutocompleteComponent } from "./basic-autocomplete.component";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Entity } from "../../entity/model/entity";
-import { FormControl } from "@angular/forms";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -38,7 +37,6 @@ describe("BasicAutocompleteComponent", () => {
     fixture = TestBed.createComponent(BasicAutocompleteComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
-    component.form = new FormControl();
     fixture.detectChanges();
   });
 
@@ -63,7 +61,7 @@ describe("BasicAutocompleteComponent", () => {
   it("should show name of the selected entity", async () => {
     const child1 = Child.create("First Child");
     const child2 = Child.create("Second Child");
-    component._form.setValue(child1.getId());
+    component.value = child1.getId();
     component.options = [child1, child2];
     component.valueMapper = entityToId;
 
@@ -83,7 +81,7 @@ describe("BasicAutocompleteComponent", () => {
 
     component.select({ asValue: child1.getId() } as any);
 
-    expect(component._form.value).toBe(child1.getId());
+    expect(component.value).toBe(child1.getId());
   });
 
   it("should reset if nothing has been selected", fakeAsync(() => {
@@ -93,12 +91,12 @@ describe("BasicAutocompleteComponent", () => {
     component.valueMapper = entityToId;
 
     component.select({ asValue: first.getId() } as any);
-    expect(component._form.value).toBe(first.getId());
+    expect(component.value).toBe(first.getId());
 
     component.resetIfInvalidOption("Non existent");
     tick();
 
-    expect(component._form.value).toBe(first.getId());
+    expect(component.value).toBe(first.getId());
     flush();
   }));
 

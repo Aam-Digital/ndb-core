@@ -1,13 +1,23 @@
-<app-basic-autocomplete
-  [label]="label"
-  [form]="formControl"
-  [options]="entities"
-  [valueMapper]="entityToId"
->
-  <ng-template let-item>
-    <app-display-entity
-      [entityToDisplay]="item"
-      [linkDisabled]="true"
-    ></app-display-entity>
-  </ng-template>
-</app-basic-autocomplete>
+<mat-form-field>
+  <mat-label>{{label}}</mat-label>
+  <app-basic-autocomplete
+    #autocomplete
+    [formControl]="formControl"
+    [options]="entities"
+    [valueMapper]="entityToId"
+  >
+    <ng-template let-item>
+      <app-display-entity
+        [entityToDisplay]="item"
+        [linkDisabled]="true"
+      ></app-display-entity>
+    </ng-template>
+  </app-basic-autocomplete>
+  <fa-icon
+    *ngIf="formControl.enabled"
+    icon="caret-down"
+    class="caret-suffix"
+    (click)="autocomplete.showAutocomplete()"
+    matSuffix
+  ></fa-icon>
+</mat-form-field>
