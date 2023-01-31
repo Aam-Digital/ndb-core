@@ -13,13 +13,7 @@ import {
   TemplateRef,
   ViewChild,
 } from "@angular/core";
-import {
-  AsyncPipe,
-  NgClass,
-  NgForOf,
-  NgIf,
-  NgTemplateOutlet,
-} from "@angular/common";
+import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import {
   MAT_FORM_FIELD,
   MatFormField,
@@ -32,8 +26,10 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import {
+  MatAutocomplete,
+  MatAutocompleteModule,
+} from "@angular/material/autocomplete";
 import { BehaviorSubject, Subject } from "rxjs";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { MatCheckboxModule } from "@angular/material/checkbox";
@@ -55,16 +51,14 @@ interface SelectableOption<O, V> {
   styleUrls: ["./basic-autocomplete.component.scss"],
   standalone: true,
   imports: [
-    NgForOf,
-    NgTemplateOutlet,
     ReactiveFormsModule,
     MatInputModule,
-    NgIf,
-    FontAwesomeModule,
     MatAutocompleteModule,
     AsyncPipe,
-    NgClass,
+    NgForOf,
     MatCheckboxModule,
+    NgIf,
+    NgTemplateOutlet,
   ],
   providers: [
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
@@ -99,24 +93,14 @@ export class BasicAutocompleteComponent<O, V>
   @HostBinding()
   id = `basic-autocomplete-${BasicAutocompleteComponent.nextId++}`;
 
-  @Input()
-  get placeholder() {
-    return this._placeholder;
-  }
-
-  set placeholder(plh: string) {
-    this._placeholder = plh;
-    this.stateChanges.next();
-  }
-
-  private _placeholder: string;
+  @Input() placeholder: string;
 
   @ViewChild("inputElement") inputElement: ElementRef<HTMLInputElement>;
-
+  @ViewChild(MatAutocomplete) autocomplete: MatAutocomplete;
   focused = false;
   touched = false;
 
-  onFocusIn(event: FocusEvent) {
+  onFocusIn() {
     if (!this.focused) {
       this.focused = true;
       this.stateChanges.next();
@@ -125,17 +109,18 @@ export class BasicAutocompleteComponent<O, V>
 
   onFocusOut(event: FocusEvent) {
     if (
+      !this.autocomplete.isOpen &&
       !this._elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
       this.touched = true;
       this.focused = false;
-      // this.resetIfInvalidOption(this.inputElement.nativeElement.value);
+      this.resetIfInvalidOption(this.inputElement.nativeElement.value);
       this.stateChanges.next();
     }
   }
 
   get empty() {
-    return !this.selected;
+    return !this.value;
   }
 
   @HostBinding("class.floating")
@@ -167,9 +152,7 @@ export class BasicAutocompleteComponent<O, V>
 
   private _disabled = false;
 
-  get errorState(): boolean {
-    return false;
-  }
+  errorState = false;
 
   controlType = "basic-autocomplete";
 
@@ -221,12 +204,7 @@ export class BasicAutocompleteComponent<O, V>
       this.ngControl.valueAccessor = this;
     }
     this.autocompleteForm.valueChanges
-      .pipe(
-        filter((val) => {
-          console.log("value", val);
-          return typeof val === "string";
-        })
-      )
+      .pipe(filter((val) => typeof val === "string"))
       .subscribe((val) => this.updateAutocomplete(val?.split(", ").pop()));
   }
 
@@ -261,6 +239,11 @@ export class BasicAutocompleteComponent<O, V>
     }
   }
 
+  showAutocomplete(inputText?: string) {
+    this.updateAutocomplete(inputText);
+    this.inputElement?.nativeElement.focus();
+  }
+
   updateAutocomplete(inputText: string) {
     let filteredEntities = this._options;
     this.showAddOption = false;
@@ -280,7 +263,6 @@ export class BasicAutocompleteComponent<O, V>
       }
     }
     this.autocompleteSuggestedOptions.next(filteredEntities);
-    this.inputElement?.nativeElement.focus();
   }
 
   select(selected: string | SelectableOption<O, V>) {
