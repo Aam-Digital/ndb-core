@@ -26,115 +26,95 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
-import {
-  MatAutocomplete,
-  MatAutocompleteModule,
-} from "@angular/material/autocomplete";
+import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { BehaviorSubject, Subject } from "rxjs";
-import { UntilDestroy } from "@ngneat/until-destroy";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { coerceBooleanProperty } from "@angular/cdk/coercion";
+import { BooleanInput, coerceBooleanProperty } from "@angular/cdk/coercion";
 
-interface SelectableOption<O, V> {
+export interface SelectableOption<O, V> {
   initial: O;
   asString: string;
   asValue: V;
   selected: boolean;
 }
 
-@UntilDestroy()
+/** Custom `MatFormFieldControl` for telephone number input. */
 @Component({
   selector: "app-basic-autocomplete",
-  templateUrl: "./basic-autocomplete.component.html",
-  styleUrls: ["./basic-autocomplete.component.scss"],
+  templateUrl: "basic-autocomplete.component.html",
+  styleUrls: ["basic-autocomplete.component.scss"],
+  providers: [
+    { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
+  ],
   standalone: true,
   imports: [
     ReactiveFormsModule,
     MatInputModule,
     MatAutocompleteModule,
-    AsyncPipe,
     NgForOf,
     MatCheckboxModule,
     NgIf,
+    AsyncPipe,
     NgTemplateOutlet,
   ],
-  providers: [
-    { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
-  ],
-  //changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class BasicAutocompleteComponent<O, V>
   implements
+    ControlValueAccessor,
     MatFormFieldControl<V | V[]>,
     OnDestroy,
-    OnChanges,
-    ControlValueAccessor
+    OnChanges
 {
-  stateChanges = new Subject<void>();
-
-  onChange = (_: any) => {};
-  onTouched = () => {};
-
-  @Input() get value(): V | V[] {
-    return this.selected;
-  }
-
-  set value(value: V | V[]) {
-    this.selected = value;
-    this.setInputValue();
-    this.stateChanges.next();
-  }
-
-  selected: V | V[];
-
   static nextId = 0;
   @HostBinding()
   id = `basic-autocomplete-${BasicAutocompleteComponent.nextId++}`;
-
-  @Input() placeholder: string;
-
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  @Input("aria-describedby") userAriaDescribedBy: string;
+  @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
   @ViewChild("inputElement") inputElement: ElementRef<HTMLInputElement>;
-  @ViewChild(MatAutocomplete) autocomplete: MatAutocomplete;
+
+  stateChanges = new Subject<void>();
   focused = false;
   touched = false;
-
-  onFocusIn() {
-    if (!this.focused) {
-      this.focused = true;
-      this.stateChanges.next();
-    }
-  }
-
-  onFocusOut(event: FocusEvent) {
-    if (
-      !this.autocomplete.isOpen &&
-      !this._elementRef.nativeElement.contains(event.relatedTarget as Element)
-    ) {
-      this.touched = true;
-      this.focused = false;
-      this.resetIfInvalidOption(this.inputElement.nativeElement.value);
-      this.stateChanges.next();
-    }
-  }
+  controlType = "basic-autocomplete";
+  autocompleteForm = new FormControl("");
+  autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
+    []
+  );
+  showAddOption = false;
+  addOptionTimeout: any;
+  onChange = (_: any) => {};
+  onTouched = () => {};
 
   get empty() {
     return !this.value;
   }
 
-  @HostBinding("class.floating")
   get shouldLabelFloat() {
     return this.focused || !this.empty;
   }
 
   @Input()
-  get required() {
+  get placeholder(): string {
+    return this._placeholder;
+  }
+
+  set placeholder(value: string) {
+    this._placeholder = value;
+    this.stateChanges.next();
+  }
+
+  private _placeholder: string;
+
+  @Input()
+  get required(): boolean {
     return this._required;
   }
 
-  set required(req) {
-    this._required = coerceBooleanProperty(req);
+  set required(value: BooleanInput) {
+    this._required = coerceBooleanProperty(value);
     this.stateChanges.next();
   }
 
@@ -145,27 +125,39 @@ export class BasicAutocompleteComponent<O, V>
     return this._disabled;
   }
 
-  set disabled(value: boolean) {
+  set disabled(value: BooleanInput) {
     this._disabled = coerceBooleanProperty(value);
+    if (this._disabled) {
+      this.autocompleteForm.disable();
+    } else {
+      this.autocompleteForm.enable();
+    }
     this.stateChanges.next();
   }
 
   private _disabled = false;
 
-  errorState = false;
+  @Input() get value(): V | V[] {
+    return this._value;
+  }
 
-  controlType = "basic-autocomplete";
+  set value(value: V | V[]) {
+    this._value = value;
+    this.setInputValue();
+    this.stateChanges.next();
+  }
 
-  // eslint-disable-next-line @angular-eslint/no-input-rename
-  @Input("aria-describedby") userAriaDescribedBy: string;
+  private _value: V | V[];
+
+  get errorState(): boolean {
+    return false;
+  }
 
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
   }
 
   _options: SelectableOption<O, V>[] = [];
-
-  @Input() multi?: boolean;
 
   @Input() set valueMapper(value: (option: O) => V) {
     this._valueMapper = value;
@@ -183,25 +175,15 @@ export class BasicAutocompleteComponent<O, V>
 
   @Input() createOption: (input: string) => O;
 
-  @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
-
-  autocompleteForm = new FormControl("");
-  autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
-    []
-  );
-  showAddOption = false;
-  addOptionTimeout: any;
+  @Input() multi?: boolean;
 
   constructor(
+    private elementRef: ElementRef<HTMLElement>,
     private confirmation: ConfirmationDialogService,
-    private _elementRef: ElementRef<HTMLElement>,
     @Optional() @Inject(MAT_FORM_FIELD) public _formField: MatFormField,
     @Optional() @Self() public ngControl: NgControl
   ) {
-    // Replace the provider from above with this.
     if (this.ngControl != null) {
-      // Setting the value accessor directly (instead of using
-      // the providers) to avoid running into a circular import.
       this.ngControl.valueAccessor = this;
     }
     this.autocompleteForm.valueChanges
@@ -224,28 +206,12 @@ export class BasicAutocompleteComponent<O, V>
     }
   }
 
-  private setInputValue() {
-    if (this.multi) {
-      this.autocompleteForm.setValue(
-        this._options
-          .filter((o) => o.selected)
-          .map((o) => o.asString)
-          .join(", ")
-      );
-    } else {
-      const selected = this._options.find(
-        ({ asValue }) => asValue === this.value
-      );
-      this.autocompleteForm.setValue(selected?.asString ?? "");
-    }
-  }
-
   showAutocomplete(inputText?: string) {
     this.updateAutocomplete(inputText);
     this.inputElement?.nativeElement.focus();
   }
 
-  updateAutocomplete(inputText: string) {
+  private updateAutocomplete(inputText: string) {
     let filteredEntities = this._options;
     this.showAddOption = false;
     clearTimeout(this.addOptionTimeout);
@@ -264,6 +230,22 @@ export class BasicAutocompleteComponent<O, V>
       }
     }
     this.autocompleteSuggestedOptions.next(filteredEntities);
+  }
+
+  private setInputValue() {
+    if (this.multi) {
+      this.autocompleteForm.setValue(
+        this._options
+          .filter((o) => o.selected)
+          .map((o) => o.asString)
+          .join(", ")
+      );
+    } else {
+      const selected = this._options.find(
+        ({ asValue }) => asValue === this.value
+      );
+      this.autocompleteForm.setValue(selected?.asString ?? "");
+    }
   }
 
   select(selected: string | SelectableOption<O, V>) {
@@ -312,18 +294,26 @@ export class BasicAutocompleteComponent<O, V>
     };
   }
 
-  resetIfInvalidOption(input: string) {
-    // waiting for other tasks to finish and then reset input if nothing was selected
-    setTimeout(() => {
-      const activeOption = this._optionToString(this.value);
-      if (input !== activeOption) {
-        this.autocompleteForm.setValue(activeOption);
-      }
-    });
+  onFocusIn() {
+    if (!this.focused) {
+      this.focused = true;
+      this.stateChanges.next();
+    }
+  }
+
+  onFocusOut(event: FocusEvent) {
+    if (
+      !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
+    ) {
+      this.touched = true;
+      this.focused = false;
+      this.onTouched();
+      this.stateChanges.next();
+    }
   }
 
   setDescribedByIds(ids: string[]) {
-    const controlElement = this._elementRef.nativeElement.querySelector(
+    const controlElement = this.elementRef.nativeElement.querySelector(
       ".autocomplete-input"
     )!;
     controlElement.setAttribute("aria-describedby", ids.join(" "));
@@ -331,8 +321,12 @@ export class BasicAutocompleteComponent<O, V>
 
   onContainerClick(event: MouseEvent) {
     if ((event.target as Element).tagName.toLowerCase() != "input") {
-      this._elementRef.nativeElement.focus();
+      this.elementRef.nativeElement.focus();
     }
+  }
+
+  writeValue(val: V | V[]): void {
+    this.value = val;
   }
 
   registerOnChange(fn: any): void {
@@ -345,9 +339,5 @@ export class BasicAutocompleteComponent<O, V>
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
-  }
-
-  writeValue(obj: V | V[]): void {
-    this.value = obj;
   }
 }
