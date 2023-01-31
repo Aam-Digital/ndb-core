@@ -1,12 +1,20 @@
-<app-basic-autocomplete
-  [label]="label"
-  [multi]="multi"
-  [form]="form"
-  [options]="options"
-  [optionToString]="enumValueToString"
-  [createOption]="createNewOption"
-  [showWrench]="!!createNewOption"
-  (wrenchClick)="openSettings()"
->
-  <ng-template let-item>{{ item.label }}</ng-template>
-</app-basic-autocomplete>
+<mat-form-field>
+  <mat-label>{{label}}</mat-label>
+  <app-basic-autocomplete
+    [formControl]="form"
+    [multi]="multi"
+    [options]="options"
+    [optionToString]="enumValueToString"
+    [createOption]="createNewOption"
+
+  >
+    <!--        [form]="form"
+        [options]="options"
+        [optionToString]="enumValueToString"
+        [createOption]="createNewOption"
+        [showWrench]="!!createNewOption"
+        (wrenchClick)="openSettings()"
+        -->
+    <ng-template let-item>{{ item.label }}</ng-template>
+  </app-basic-autocomplete>
+</mat-form-field>

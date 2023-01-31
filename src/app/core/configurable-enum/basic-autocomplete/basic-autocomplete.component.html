@@ -1,59 +1,65 @@
-<mat-form-field>
-  <mat-label>{{ label }}</mat-label>
+<input
+  #inputElement
+  [formControl]="autocompleteForm"
+  id="inputElement"
+  class="autocomplete-input"
+  matInput
+  style="text-overflow: ellipsis"
+  [matAutocomplete]="autoSuggestions"
+  (focusin)="onFocusIn($event)"
+  (focusout)="onFocusOut($event)"
+/>
 
-  <!--  TODO turn this into a own form field control in order to get mat-error working properly -->
-  <!--  <input [formControl]="_form" matInput hidden/>-->
-
-  <input
-    #inputElement
-    [formControl]="autocompleteForm"
-    id="inputElement"
-    matInput
-    style="text-overflow: ellipsis"
-    [matAutocomplete]="autoSuggestions"
-    (focusout)="resetIfInvalidOption(inputElement.value)"
-  />
-
-  <mat-autocomplete
-    #autoSuggestions="matAutocomplete"
-    (optionSelected)="select($event.option.value)"
-    autoActiveFirstOption
+<mat-autocomplete
+  #autoSuggestions="matAutocomplete"
+  (optionSelected)="select($event.option.value)"
+  autoActiveFirstOption
+>
+  <mat-option
+    *ngFor="let item of autocompleteSuggestedOptions | async"
+    [value]="item"
   >
-    <mat-option
-      *ngFor="let item of autocompleteSuggestedOptions | async"
-      [value]="item"
-    >
-      <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-      <ng-template
-        [ngTemplateOutlet]="templateRef"
-        [ngTemplateOutletContext]="{ $implicit: item.initial }"
-      ></ng-template>
-    </mat-option>
-    <mat-option
-      *ngIf="createOption && showAddOption && inputElement.value"
-      [value]="inputElement.value"
-    >
-      <em>Add option</em> {{ inputElement.value }}
-    </mat-option>
-  </mat-autocomplete>
+    <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+    <ng-template
+      [ngTemplateOutlet]="templateRef"
+      [ngTemplateOutletContext]="{ $implicit: item.initial }"
+    ></ng-template>
+  </mat-option>
+  <mat-option
+    *ngIf="createOption && showAddOption && inputElement.value"
+    [value]="inputElement.value"
+  >
+    <em>Add option</em> {{ inputElement.value }}
+  </mat-option>
+</mat-autocomplete>
+<mat-autocomplete
+  #autoSuggestions="matAutocomplete"
+  (optionSelected)="select($event.option.value)"
+  autoActiveFirstOption
+>
+  <mat-option
+    *ngFor="let item of autocompleteSuggestedOptions | async"
+    [value]="item"
+  >
+    <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+    <ng-template
+      [ngTemplateOutlet]="templateRef"
+      [ngTemplateOutletContext]="{ $implicit: item.initial }"
+    ></ng-template>
+  </mat-option>
+  <mat-option
+    *ngIf="createOption && showAddOption && inputElement.value"
+    [value]="inputElement.value"
+  >
+    <em>Add option</em> {{ inputElement.value }}
+  </mat-option>
+</mat-autocomplete>
 
-  <fa-icon
-    *ngIf="showWrench && autocompleteForm.enabled"
-    icon="wrench"
-    class="caret-suffix"
-    matSuffix
-    (click)="$event.stopPropagation(); wrenchClick.emit()"
-  ></fa-icon>
+<!--<fa-icon-->
+<!--  *ngIf="autocompleteForm.enabled"-->
+<!--  icon="caret-down"-->
+<!--  class="caret-suffix"-->
+<!--  (click)="updateAutocomplete(''); inputElement.focus()"-->
+<!--  matSuffix-->
+<!--&gt;</fa-icon>-->
 
-  <fa-icon
-    *ngIf="autocompleteForm.enabled"
-    icon="caret-down"
-    class="caret-suffix"
-    (click)="updateAutocomplete(''); inputElement.focus()"
-    matSuffix
-  ></fa-icon>
-
-  <mat-error *ngIf="_form.errors?.required" i18n="Error message for any input">
-    This field is required
-  </mat-error>
-</mat-form-field>
