@@ -156,6 +156,7 @@ export class BasicAutocompleteComponent<O, V>
 
   controlType = "basic-autocomplete";
 
+  // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("aria-describedby") userAriaDescribedBy: string;
 
   @Input() set options(options: O[]) {
