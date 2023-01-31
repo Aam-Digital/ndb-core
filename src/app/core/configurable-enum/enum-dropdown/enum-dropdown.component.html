@@ -9,15 +9,15 @@
     [createOption]="createNewOption"
 
   >
-    <!--        [form]="form"
-        [options]="options"
-        [optionToString]="enumValueToString"
-        [createOption]="createNewOption"
-        [showWrench]="!!createNewOption"
-        (wrenchClick)="openSettings()"
-        -->
     <ng-template let-item>{{ item.label }}</ng-template>
   </app-basic-autocomplete>
+  <fa-icon
+    *ngIf="form.enabled && !!createNewOption"
+    icon="wrench"
+    class="caret-suffix"
+    matSuffix
+    (click)="openSettings()"
+  ></fa-icon>
   <fa-icon
     *ngIf="form.enabled"
     icon="caret-down"
