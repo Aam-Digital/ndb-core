@@ -2,7 +2,6 @@ import {
   Component,
   ContentChild,
   ElementRef,
-  forwardRef,
   HostBinding,
   Inject,
   Input,
@@ -25,12 +24,10 @@ import {
   MAT_FORM_FIELD,
   MatFormField,
   MatFormFieldControl,
-  MatFormFieldModule,
 } from "@angular/material/form-field";
 import {
   ControlValueAccessor,
   FormControl,
-  NG_VALUE_ACCESSOR,
   NgControl,
   ReactiveFormsModule,
 } from "@angular/forms";
@@ -83,15 +80,8 @@ export class BasicAutocompleteComponent<O, V>
 {
   stateChanges = new Subject<void>();
 
-  writeValue(obj: V | V[]): void {
-    this.value = obj;
-  }
-
-  registerOnChange(fn: any): void {}
-
-  registerOnTouched(fn: any): void {}
-
-  setDisabledState(isDisabled: boolean): void {}
+  onChange = (_: any) => {};
+  onTouched = () => {};
 
   @Input() get value(): V | V[] {
     return this.selected;
@@ -99,6 +89,7 @@ export class BasicAutocompleteComponent<O, V>
 
   set value(value: V | V[]) {
     this.selected = value;
+    this.setInputValue();
     this.stateChanges.next();
   }
 
@@ -138,7 +129,7 @@ export class BasicAutocompleteComponent<O, V>
     ) {
       this.touched = true;
       this.focused = false;
-      this.resetIfInvalidOption(this.inputElement.nativeElement.value);
+      // this.resetIfInvalidOption(this.inputElement.nativeElement.value);
       this.stateChanges.next();
     }
   }
@@ -177,25 +168,12 @@ export class BasicAutocompleteComponent<O, V>
   private _disabled = false;
 
   get errorState(): boolean {
-    return this.touched;
+    return false;
   }
 
   controlType = "basic-autocomplete";
 
   @Input("aria-describedby") userAriaDescribedBy: string;
-
-  setDescribedByIds(ids: string[]) {
-    const controlElement = this._elementRef.nativeElement.querySelector(
-      ".autocomplete-input"
-    )!;
-    controlElement.setAttribute("aria-describedby", ids.join(" "));
-  }
-
-  onContainerClick(event: MouseEvent) {
-    if ((event.target as Element).tagName.toLowerCase() != "input") {
-      this._elementRef.nativeElement.focus();
-    }
-  }
 
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
@@ -243,7 +221,12 @@ export class BasicAutocompleteComponent<O, V>
       this.ngControl.valueAccessor = this;
     }
     this.autocompleteForm.valueChanges
-      .pipe(filter((val) => typeof val === "string"))
+      .pipe(
+        filter((val) => {
+          console.log("value", val);
+          return typeof val === "string";
+        })
+      )
       .subscribe((val) => this.updateAutocomplete(val?.split(", ").pop()));
   }
 
@@ -353,5 +336,34 @@ export class BasicAutocompleteComponent<O, V>
         this.autocompleteForm.setValue(activeOption);
       }
     });
+  }
+
+  setDescribedByIds(ids: string[]) {
+    const controlElement = this._elementRef.nativeElement.querySelector(
+      ".autocomplete-input"
+    )!;
+    controlElement.setAttribute("aria-describedby", ids.join(" "));
+  }
+
+  onContainerClick(event: MouseEvent) {
+    if ((event.target as Element).tagName.toLowerCase() != "input") {
+      this._elementRef.nativeElement.focus();
+    }
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  writeValue(obj: V | V[]): void {
+    this.value = obj;
   }
 }
