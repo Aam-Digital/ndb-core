@@ -155,6 +155,13 @@ describe("ConfigService", () => {
     expect(service.getConfig("some")).toBe("config");
   });
 
+  it("should not save config if nothing has been changed", async () => {
+    await initConfig({ some: "config", other: "config" });
+
+    expect(entityMapper.save).not.toHaveBeenCalled();
+    expect(entityMapper.saveAll).not.toHaveBeenCalled();
+  });
+
   function initConfig(data) {
     const config = new Config();
     config.data = data;
