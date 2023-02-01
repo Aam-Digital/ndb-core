@@ -82,6 +82,7 @@ export class BasicAutocompleteComponent<O, V>
   stateChanges = new Subject<void>();
   focused = false;
   touched = false;
+  errorState = false;
   controlType = "basic-autocomplete";
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
@@ -152,10 +153,6 @@ export class BasicAutocompleteComponent<O, V>
   }
 
   private _value: V | V[];
-
-  get errorState(): boolean {
-    return false;
-  }
 
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
