@@ -57,7 +57,7 @@ Disabled.args = {
 
 export const Multi = Template.bind({});
 Multi.args = {
-  form: new FormControl([]),
+  form: new FormControl([centersUnique[0], centersUnique[2]]),
   label: "test field",
   enumId: "center",
   multi: true,

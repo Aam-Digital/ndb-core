@@ -26,8 +26,11 @@ import {
   ReactiveFormsModule,
 } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { BehaviorSubject, Subject } from "rxjs";
+import {
+  MatAutocompleteModule,
+  MatAutocompleteTrigger,
+} from "@angular/material/autocomplete";
+import { BehaviorSubject, Subject, Subscription } from "rxjs";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
@@ -74,6 +77,7 @@ export class BasicAutocompleteComponent<O, V>
   @Input("aria-describedby") userAriaDescribedBy: string;
   @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
   @ViewChild("inputElement") inputElement: ElementRef<HTMLInputElement>;
+  @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   stateChanges = new Subject<void>();
   focused = false;
@@ -83,6 +87,7 @@ export class BasicAutocompleteComponent<O, V>
   autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
     []
   );
+  closeSubscription: Subscription;
   showAddOption = false;
   addOptionTimeout: any;
   onChange = (_: any) => {};
@@ -143,7 +148,6 @@ export class BasicAutocompleteComponent<O, V>
 
   set value(value: V | V[]) {
     this._value = value;
-    this.setInputValue();
     this.stateChanges.next();
   }
 
@@ -188,7 +192,7 @@ export class BasicAutocompleteComponent<O, V>
     }
     this.autocompleteForm.valueChanges
       .pipe(filter((val) => typeof val === "string"))
-      .subscribe((val) => this.updateAutocomplete(val?.split(", ").pop()));
+      .subscribe((val) => this.updateAutocomplete(val));
   }
 
   ngOnDestroy() {
@@ -234,18 +238,22 @@ export class BasicAutocompleteComponent<O, V>
 
   private setInputValue() {
     if (this.multi) {
-      this.autocompleteForm.setValue(
-        this._options
-          .filter((o) => o.selected)
-          .map((o) => o.asString)
-          .join(", ")
-      );
+      this.displaySelectedOptions();
     } else {
       const selected = this._options.find(
         ({ asValue }) => asValue === this.value
       );
       this.autocompleteForm.setValue(selected?.asString ?? "");
     }
+  }
+
+  private displaySelectedOptions() {
+    this.autocompleteForm.setValue(
+      this._options
+        .filter((o) => o.selected)
+        .map((o) => o.asString)
+        .join(", ")
+    );
   }
 
   select(selected: string | SelectableOption<O, V>) {
@@ -281,7 +289,11 @@ export class BasicAutocompleteComponent<O, V>
       this.value = this._options
         .filter((o) => o.selected)
         .map((o) => o.asValue);
+      // re-open autocomplete to select next option
+      this.autocompleteForm.setValue("");
+      setTimeout(() => this.autocomplete.openPanel(), 100);
     } else {
+      this.autocompleteForm.setValue(option.asString);
       this.value = option.asValue;
     }
   }
@@ -297,6 +309,10 @@ export class BasicAutocompleteComponent<O, V>
 
   onFocusIn() {
     if (!this.focused) {
+      this.closeSubscription?.unsubscribe();
+      if (this.multi) {
+        this.autocompleteForm.setValue("");
+      }
       this.focused = true;
       this.stateChanges.next();
     }
@@ -306,11 +322,25 @@ export class BasicAutocompleteComponent<O, V>
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
-      this.touched = true;
-      this.focused = false;
-      this.onTouched();
-      this.stateChanges.next();
+      if (!this.autocomplete.panelOpen) {
+        this.notifyFocusOut();
+      } else {
+        // trigger focus out once panel is closed
+        this.closeSubscription = this.autocomplete.panelClosingActions
+          .pipe(filter((res) => res === null))
+          .subscribe(() => this.notifyFocusOut());
+      }
     }
+  }
+
+  private notifyFocusOut() {
+    if (this.multi) {
+      this.displaySelectedOptions();
+    }
+    this.touched = true;
+    this.focused = false;
+    this.onTouched();
+    this.stateChanges.next();
   }
 
   setDescribedByIds(ids: string[]) {
