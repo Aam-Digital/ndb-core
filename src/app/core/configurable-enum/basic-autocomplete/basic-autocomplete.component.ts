@@ -30,7 +30,7 @@ import {
   MatAutocompleteModule,
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
-import { BehaviorSubject, Subject, Subscription } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
@@ -87,9 +87,9 @@ export class BasicAutocompleteComponent<O, V>
   autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
     []
   );
-  closeSubscription: Subscription;
+  private delayedBlur: any;
   showAddOption = false;
-  addOptionTimeout: any;
+  private addOptionTimeout: any;
   onChange = (_: any) => {};
   onTouched = () => {};
 
@@ -161,7 +161,7 @@ export class BasicAutocompleteComponent<O, V>
     this._options = options.map((o) => this.toSelectableOption(o));
   }
 
-  _options: SelectableOption<O, V>[] = [];
+  private _options: SelectableOption<O, V>[] = [];
 
   @Input() set valueMapper(value: (option: O) => V) {
     this._valueMapper = value;
@@ -308,8 +308,8 @@ export class BasicAutocompleteComponent<O, V>
   }
 
   onFocusIn() {
+    clearTimeout(this.delayedBlur);
     if (!this.focused) {
-      this.closeSubscription?.unsubscribe();
       if (this.multi) {
         this.autocompleteForm.setValue("");
       }
@@ -326,9 +326,7 @@ export class BasicAutocompleteComponent<O, V>
         this.notifyFocusOut();
       } else {
         // trigger focus out once panel is closed
-        this.closeSubscription = this.autocomplete.panelClosingActions
-          .pipe(filter((res) => res === null))
-          .subscribe(() => this.notifyFocusOut());
+        this.delayedBlur = setTimeout(() => this.notifyFocusOut(), 100);
       }
     }
   }
@@ -352,7 +350,7 @@ export class BasicAutocompleteComponent<O, V>
 
   onContainerClick(event: MouseEvent) {
     if ((event.target as Element).tagName.toLowerCase() != "input") {
-      this.elementRef.nativeElement.focus();
+      this.inputElement.nativeElement.focus();
     }
   }
 
