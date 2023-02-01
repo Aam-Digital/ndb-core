@@ -260,6 +260,7 @@ export class BasicAutocompleteComponent<O, V>
       this.autocompleteForm.setValue("");
       this.value = undefined;
     }
+    this.onChange(this.value);
   }
 
   async createNewOption(option: string) {
