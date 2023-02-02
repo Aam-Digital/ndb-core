@@ -16,15 +16,25 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MatInputHarness } from "@angular/material/input/testing";
+import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
+import {
+  FormControl,
+  FormGroup,
+  NgControl,
+  NgForm,
+  Validators,
+} from "@angular/forms";
 
 describe("BasicAutocompleteComponent", () => {
   let component: BasicAutocompleteComponent<any, any>;
   let fixture: ComponentFixture<BasicAutocompleteComponent<any, any>>;
   let loader: HarnessLoader;
-
+  let testControl: FormControl;
   const entityToId = (e: Entity) => e?.getId();
 
   beforeEach(async () => {
+    testControl = new FormControl("");
+    const formGroup = new FormGroup({ testControl });
     await TestBed.configureTestingModule({
       imports: [
         BasicAutocompleteComponent,
@@ -32,7 +42,17 @@ describe("BasicAutocompleteComponent", () => {
         NoopAnimationsModule,
         MatDialogModule,
       ],
-    }).compileComponents();
+      providers: [{ provide: NgForm, useValue: formGroup }],
+    })
+      .overrideComponent(BasicAutocompleteComponent, {
+        // overwrite @Self dependency
+        add: {
+          providers: [
+            { provide: NgControl, useValue: { control: testControl } },
+          ],
+        },
+      })
+      .compileComponents();
 
     fixture = TestBed.createComponent(BasicAutocompleteComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
@@ -44,18 +64,22 @@ describe("BasicAutocompleteComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should correctly show the autocomplete values", () => {
+  it("should correctly show the autocomplete values", async () => {
     const school1 = School.create({ name: "Aaa" });
     const school2 = School.create({ name: "aab" });
     const school3 = School.create({ name: "cde" });
     component.options = [school1, school2, school3];
+    let currentAutocompleteSuggestions: School[];
+    component.autocompleteSuggestedOptions.subscribe(
+      (value) => (currentAutocompleteSuggestions = value.map((o) => o.asValue))
+    );
 
     component.autocompleteForm.setValue("");
-    expect(getAutocompleteOptions()).toEqual([school1, school2, school3]);
+    expect(currentAutocompleteSuggestions).toEqual([school1, school2, school3]);
     component.autocompleteForm.setValue("Aa");
-    expect(getAutocompleteOptions()).toEqual([school1, school2]);
+    expect(currentAutocompleteSuggestions).toEqual([school1, school2]);
     component.autocompleteForm.setValue("Aab");
-    expect(getAutocompleteOptions()).toEqual([school2]);
+    expect(currentAutocompleteSuggestions).toEqual([school2]);
   });
 
   it("should show name of the selected entity", async () => {
@@ -73,7 +97,7 @@ describe("BasicAutocompleteComponent", () => {
     await expectAsync(inputElement.getValue()).toBeResolvedTo("First Child");
   });
 
-  it("Should have the correct entity selected when it's name is entered", () => {
+  it("should have the correct entity selected when it's name is entered", () => {
     const child1 = Child.create("First Child");
     const child2 = Child.create("Second Child");
     component.options = [child1, child2];
@@ -101,7 +125,55 @@ describe("BasicAutocompleteComponent", () => {
     flush();
   }));
 
-  function getAutocompleteOptions() {
-    return component.autocompleteSuggestedOptions.value.map((o) => o.asValue);
-  }
+  it("should disable the form if the control is disabled", () => {
+    component.disabled = false;
+    expect(component.autocompleteForm.disabled).toBeFalse();
+    component.disabled = true;
+    expect(component.autocompleteForm.disabled).toBeTrue();
+  });
+
+  it("should initialize the options in multi select mode", async () => {
+    const autocomplete = await loader.getHarness(MatAutocompleteHarness);
+    component.options = [1, 2, 3];
+    component.multi = true;
+    component.value = [1, 2];
+    component.ngOnChanges({ options: true, value: true } as any);
+
+    component.showAutocomplete();
+    await autocomplete.focus();
+    const options = await autocomplete.getOptions();
+    expect(options).toHaveSize(3);
+
+    await options[2].click();
+    await options[1].click();
+
+    expect(component.value).toEqual([1, 3]);
+  });
+
+  it("should clear the input when focusing in multi select mode", () => {
+    component.multi = true;
+    component.options = ["some", "values", "and", "other", "options"];
+    component.value = ["some", "values"];
+    component.ngOnChanges({ value: true, options: true } as any);
+    expect(component.autocompleteForm).toHaveValue("some, values");
+
+    component.onFocusIn();
+    expect(component.autocompleteForm).toHaveValue("");
+
+    component.onFocusOut({} as any);
+    expect(component.autocompleteForm).toHaveValue("some, values");
+  });
+
+  it("should update the error state if the form is invalid", () => {
+    testControl.setValidators([Validators.required]);
+    testControl.setValue(null);
+    component.ngDoCheck();
+
+    expect(component.errorState).toBeFalse();
+
+    testControl.markAsTouched();
+    component.ngDoCheck();
+
+    expect(component.errorState).toBeTrue();
+  });
 });

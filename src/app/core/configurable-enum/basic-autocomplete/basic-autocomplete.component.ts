@@ -34,9 +34,9 @@ import {
   MatAutocompleteModule,
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
-import { BehaviorSubject, Subject } from "rxjs";
+import { concat, of, skip, Subject } from "rxjs";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { filter } from "rxjs/operators";
+import { filter, map, startWith } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { BooleanInput, coerceBooleanProperty } from "@angular/cdk/coercion";
 import { ErrorStateMatcher } from "@angular/material/core";
@@ -68,7 +68,7 @@ interface SelectableOption<O, V> {
     NgTemplateOutlet,
   ],
 })
-export class BasicAutocompleteComponent<O, V>
+export class BasicAutocompleteComponent<O, V = O>
   implements
     ControlValueAccessor,
     MatFormFieldControl<V | V[]>,
@@ -85,14 +85,18 @@ export class BasicAutocompleteComponent<O, V>
   @ViewChild("inputElement") inputElement: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
+  @Input() placeholder: string;
+  @Input() required = false;
   stateChanges = new Subject<void>();
   focused = false;
   touched = false;
   errorState = false;
   controlType = "basic-autocomplete";
   autocompleteForm = new FormControl("");
-  autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
-    []
+  autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
+    filter((val) => typeof val === "string"),
+    map((val) => this.updateAutocomplete(val)),
+    startWith([])
   );
   showAddOption = false;
   private addOptionTimeout: any;
@@ -107,30 +111,6 @@ export class BasicAutocompleteComponent<O, V>
   get shouldLabelFloat() {
     return this.focused || !this.empty;
   }
-
-  @Input()
-  get placeholder(): string {
-    return this._placeholder;
-  }
-
-  set placeholder(value: string) {
-    this._placeholder = value;
-    this.stateChanges.next();
-  }
-
-  private _placeholder: string;
-
-  @Input()
-  get required(): boolean {
-    return this._required;
-  }
-
-  set required(value: BooleanInput) {
-    this._required = coerceBooleanProperty(value);
-    this.stateChanges.next();
-  }
-
-  private _required = false;
 
   @Input()
   get disabled(): boolean {
@@ -196,9 +176,6 @@ export class BasicAutocompleteComponent<O, V>
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
     }
-    this.autocompleteForm.valueChanges
-      .pipe(filter((val) => typeof val === "string"))
-      .subscribe((val) => this.updateAutocomplete(val));
   }
 
   ngOnDestroy() {
@@ -216,31 +193,33 @@ export class BasicAutocompleteComponent<O, V>
     }
   }
 
-  showAutocomplete(inputText?: string) {
-    this.updateAutocomplete(inputText);
-    this.inputElement?.nativeElement.focus();
+  showAutocomplete() {
+    this.autocompleteSuggestedOptions = concat(
+      of(this._options),
+      this.autocompleteSuggestedOptions.pipe(skip(1))
+    );
   }
 
-  private updateAutocomplete(inputText: string) {
-    let filteredEntities = this._options;
+  private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
+    let filteredOptions = this._options;
     this.showAddOption = false;
     clearTimeout(this.addOptionTimeout);
     if (inputText) {
-      filteredEntities = this._options.filter((option) =>
+      filteredOptions = this._options.filter((option) =>
         option.asString.toLowerCase().includes(inputText.toLowerCase())
       );
       const exists = this._options.find(
         (o) => o.asString.toLowerCase() === inputText.toLowerCase()
       );
       if (!exists) {
-        // show 'add option' after short timeout if user doesn't enter anythign
+        // show 'add option' after short timeout if user doesn't enter anything
         this.addOptionTimeout = setTimeout(
           () => (this.showAddOption = true),
           1000
         );
       }
     }
-    this.autocompleteSuggestedOptions.next(filteredEntities);
+    return filteredOptions;
   }
 
   private setInputValue() {
