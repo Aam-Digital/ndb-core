@@ -39,7 +39,7 @@
     "@fortawesome/fontawesome-svg-core": "^6.2.1",
     "@fortawesome/free-regular-svg-icons": "^6.2.1",
     "@fortawesome/free-solid-svg-icons": "^6.2.1",
-    "@ngneat/until-destroy": "^9.2.2",
+    "@ngneat/until-destroy": "^9.2.3",
     "@sentry/browser": "^7.30.0",
     "angulartics2": "^12.2.0",
     "assert": "^2.0.0",
