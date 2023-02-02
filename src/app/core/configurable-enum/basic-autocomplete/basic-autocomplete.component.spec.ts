@@ -140,7 +140,7 @@ describe("BasicAutocompleteComponent", () => {
     component.ngOnChanges({ options: true, value: true } as any);
 
     component.showAutocomplete();
-    await autocomplete.focus();
+    component.autocomplete.openPanel();
     const options = await autocomplete.getOptions();
     expect(options).toHaveSize(3);
 
