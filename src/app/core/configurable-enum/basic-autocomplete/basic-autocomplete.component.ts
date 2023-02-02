@@ -320,13 +320,18 @@ export class BasicAutocompleteComponent<O, V = O>
     if (this.multi) {
       // show all selected option
       this.displaySelectedOptions();
-    } else if (
-      this._optionToString(this.value) !== this.autocompleteForm.value
-    ) {
-      // clear input if it doesn't match the last selected value
-      this.autocompleteForm.setValue("");
-      this.value = undefined;
-      this.onChange(this.value);
+    } else {
+      const inputValue = this.autocompleteForm.value;
+      const selectedOption = this._options.find(
+        ({ asValue }) => asValue === this._value
+      );
+      if (selectedOption?.asString !== inputValue) {
+        // try to select the option that matches the input string
+        const matchingOption = this._options.find(
+          ({ asString }) => asString.toLowerCase() === inputValue.toLowerCase()
+        );
+        this.select(matchingOption);
+      }
     }
     this.touched = true;
     this.focused = false;
