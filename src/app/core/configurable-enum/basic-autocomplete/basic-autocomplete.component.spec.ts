@@ -50,11 +50,11 @@ describe("BasicAutocompleteComponent", () => {
     const school3 = School.create({ name: "cde" });
     component.options = [school1, school2, school3];
 
-    component.updateAutocomplete("");
+    component.autocompleteForm.setValue("");
     expect(getAutocompleteOptions()).toEqual([school1, school2, school3]);
-    component.updateAutocomplete("Aa");
+    component.autocompleteForm.setValue("Aa");
     expect(getAutocompleteOptions()).toEqual([school1, school2]);
-    component.updateAutocomplete("Aab");
+    component.autocompleteForm.setValue("Aab");
     expect(getAutocompleteOptions()).toEqual([school2]);
   });
 
@@ -93,10 +93,11 @@ describe("BasicAutocompleteComponent", () => {
     component.select({ asValue: first.getId() } as any);
     expect(component.value).toBe(first.getId());
 
-    component.resetIfInvalidOption("Non existent");
+    component.autocompleteForm.setValue("Non existent");
+    component.onFocusOut({} as any);
     tick();
 
-    expect(component.value).toBe(first.getId());
+    expect(component.value).toBe(undefined);
     flush();
   }));
 
