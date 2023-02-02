@@ -1,3 +1,4 @@
+<div mat-dialog-title i18n="Title of dialog">Select a date range</div>
 <mat-dialog-content>
   <div class="container">
     <mat-calendar
@@ -7,17 +8,21 @@
     >
     </mat-calendar>
     <div class="panel">
-      <button
-        class="button"
+      <div
+        class="button-div"
         *ngFor="let item of data.dateRangeFilterConfig.filterConfig.options"
-        mat-button
-        color="primary"
-        (mouseenter)="preselectRange(item)"
-        (mouseleave)="unselectRange()"
-        (click)="selectRangeAndClose(item)"
       >
-        {{ item.label }}
-      </button>
+        <button
+          class="button"
+          mat-button
+          color="primary"
+          (mouseenter)="preselectRange(item)"
+          (mouseleave)="unselectRange()"
+          (click)="selectRangeAndClose(item)"
+        >
+          {{ item.label }}
+        </button>
+      </div>
     </div>
   </div>
 </mat-dialog-content>

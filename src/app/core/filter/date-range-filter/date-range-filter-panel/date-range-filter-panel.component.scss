@@ -8,8 +8,16 @@
 
 .panel {
   width: 40%;
+  margin: auto;
+}
+
+.button-div {
+  display: block;
+  text-align: left;
+  line-height: 100%;
 }
 
 .button {
   display: block;
+  text-align: left;
 }

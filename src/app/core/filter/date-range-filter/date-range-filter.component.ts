@@ -9,6 +9,7 @@ import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-ra
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
+import { D } from "@angular/cdk/keycodes";
 
 @Component({
   selector: "app-date-range-filter",
@@ -50,11 +51,12 @@ export class DateRangeFilterComponent<T extends Entity> {
     };
   }
 
-  openDialog() {
+  openDialog(e: Event) {
+    e.stopPropagation();
     this.dialog
       .open(DateRangeFilterPanelComponent, {
-        width: "40%",
-        maxHeight: "90vh",
+        width: "600px",
+        minWidth: "400px",
         data: {
           fromDate: this.fromDate,
           toDate: this.toDate,
