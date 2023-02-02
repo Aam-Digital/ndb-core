@@ -15,7 +15,7 @@
     icon="wrench"
     class="caret-suffix"
     matSuffix
-    (click)="openSettings()"
+    (click)="openSettings($event)"
   ></fa-icon>
   <fa-icon
     *ngIf="form.enabled"
@@ -24,4 +24,7 @@
     (click)="autocomplete.showAutocomplete()"
     matSuffix
   ></fa-icon>
+  <mat-error *ngIf="form.errors">
+    <app-error-hint [form]="form"></app-error-hint>
+  </mat-error>
 </mat-form-field>

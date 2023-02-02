@@ -1,6 +1,7 @@
 import {
   Component,
   ContentChild,
+  DoCheck,
   ElementRef,
   HostBinding,
   Inject,
@@ -20,9 +21,12 @@ import {
   MatFormFieldControl,
 } from "@angular/material/form-field";
 import {
+  AbstractControl,
   ControlValueAccessor,
   FormControl,
+  FormGroupDirective,
   NgControl,
+  NgForm,
   ReactiveFormsModule,
 } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
@@ -35,8 +39,9 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { BooleanInput, coerceBooleanProperty } from "@angular/cdk/coercion";
+import { ErrorStateMatcher } from "@angular/material/core";
 
-export interface SelectableOption<O, V> {
+interface SelectableOption<O, V> {
   initial: O;
   asString: string;
   asValue: V;
@@ -68,7 +73,8 @@ export class BasicAutocompleteComponent<O, V>
     ControlValueAccessor,
     MatFormFieldControl<V | V[]>,
     OnDestroy,
-    OnChanges
+    OnChanges,
+    DoCheck
 {
   static nextId = 0;
   @HostBinding()
@@ -88,9 +94,9 @@ export class BasicAutocompleteComponent<O, V>
   autocompleteSuggestedOptions = new BehaviorSubject<SelectableOption<O, V>[]>(
     []
   );
-  private delayedBlur: any;
   showAddOption = false;
   private addOptionTimeout: any;
+  private delayedBlur: any;
   onChange = (_: any) => {};
   onTouched = () => {};
 
@@ -181,8 +187,11 @@ export class BasicAutocompleteComponent<O, V>
   constructor(
     private elementRef: ElementRef<HTMLElement>,
     private confirmation: ConfirmationDialogService,
-    @Optional() @Inject(MAT_FORM_FIELD) public _formField: MatFormField,
-    @Optional() @Self() public ngControl: NgControl
+    private errorStateMatcher: ErrorStateMatcher,
+    @Optional() @Inject(MAT_FORM_FIELD) private formField: MatFormField,
+    @Optional() @Self() public ngControl: NgControl,
+    @Optional() private parentForm: NgForm,
+    @Optional() private parentFormGroup: FormGroupDirective
   ) {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
@@ -224,6 +233,7 @@ export class BasicAutocompleteComponent<O, V>
         (o) => o.asString.toLowerCase() === inputText.toLowerCase()
       );
       if (!exists) {
+        // show 'add option' after short timeout if user doesn't enter anythign
         this.addOptionTimeout = setTimeout(
           () => (this.showAddOption = true),
           1000
@@ -330,7 +340,15 @@ export class BasicAutocompleteComponent<O, V>
 
   private notifyFocusOut() {
     if (this.multi) {
+      // show all selected option
       this.displaySelectedOptions();
+    } else if (
+      this._optionToString(this.value) !== this.autocompleteForm.value
+    ) {
+      // clear input if it doesn't match the last selected value
+      this.autocompleteForm.setValue("");
+      this.value = undefined;
+      this.onChange(this.value);
     }
     this.touched = true;
     this.focused = false;
@@ -365,5 +383,28 @@ export class BasicAutocompleteComponent<O, V>
 
   setDisabledState(isDisabled: boolean): void {
     this.disabled = isDisabled;
+  }
+
+  ngDoCheck() {
+    this.updateErrorState();
+  }
+
+  /**
+   * Updates the error state based on the form control
+   * Taken from {@link https://github.com/angular/components/blob/a1d5614f18066c0c2dc2580c7b5099e8f68a8e74/src/material/core/common-behaviors/error-state.ts#L59}
+   * @private
+   */
+  private updateErrorState() {
+    const oldState = this.errorState;
+    const parent = this.parentFormGroup || this.parentForm;
+    const control = this.ngControl
+      ? (this.ngControl.control as AbstractControl)
+      : null;
+    const newState = this.errorStateMatcher.isErrorState(control, parent);
+
+    if (newState !== oldState) {
+      this.errorState = newState;
+      this.stateChanges.next();
+    }
   }
 }

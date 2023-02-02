@@ -12,6 +12,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { MatDialog, MatDialogModule } from "@angular/material/dialog";
 import { ConfigureEnumPopupComponent } from "../configure-enum-popup/configure-enum-popup.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ErrorHintComponent } from "../../entity-components/entity-utils/error-hint/error-hint.component";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -27,6 +28,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     NgForOf,
     BasicAutocompleteComponent,
     FontAwesomeModule,
+    ErrorHintComponent,
   ],
 })
 export class EnumDropdownComponent implements OnChanges {
@@ -81,11 +83,10 @@ export class EnumDropdownComponent implements OnChanges {
     return option;
   }
 
-  openSettings() {
-    const dialogRef = this.dialog.open(ConfigureEnumPopupComponent, {
-      data: this.enumEntity,
-    });
-    dialogRef
+  openSettings(event: Event) {
+    event.stopPropagation();
+    this.dialog
+      .open(ConfigureEnumPopupComponent, { data: this.enumEntity })
       .afterClosed()
       .subscribe(
         () =>
