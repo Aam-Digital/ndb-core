@@ -6,11 +6,16 @@ import { SimpleChange } from "@angular/core";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { ConfigurableEnum } from "../configurable-enum";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { MatDialog } from "@angular/material/dialog";
+import { of } from "rxjs";
 
 describe("EnumDropdownComponent", () => {
   let component: EnumDropdownComponent;
   let fixture: ComponentFixture<EnumDropdownComponent>;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
   beforeEach(async () => {
+    mockDialog = jasmine.createSpyObj(["open"]);
     await TestBed.configureTestingModule({
       imports: [EnumDropdownComponent, MockedTestingModule.withState()],
       providers: [
@@ -18,6 +23,7 @@ describe("EnumDropdownComponent", () => {
           provide: ConfigurableEnumService,
           useValue: { getEnum: () => new ConfigurableEnum() },
         },
+        { provide: MatDialog, useValue: mockDialog },
       ],
     }).compileComponents();
 
@@ -62,5 +68,50 @@ describe("EnumDropdownComponent", () => {
       form: new SimpleChange(null, component.form, false),
     });
     expect(component.invalidOptions).toEqual([invalidOption, invalid2]);
+  });
+
+  it("should extend the existing enum with the new option", () => {
+    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
+    const enumEntity = new ConfigurableEnum();
+    enumEntity.values = [{ id: "1", label: "first" }];
+    component.enumEntity = enumEntity;
+
+    const res = component.createNewOption("second");
+
+    expect(res).toEqual({ id: "second", label: "second" });
+    expect(enumEntity.values).toEqual([
+      { id: "1", label: "first" },
+      { id: "second", label: "second" },
+    ]);
+    expect(saveSpy).toHaveBeenCalledWith(enumEntity);
+  });
+
+  it("should open the configure enum dialog and re-initialize the available options afterwards", () => {
+    component.enumEntity = new ConfigurableEnum();
+    component.enumEntity.values = [{ id: "1", label: "1" }];
+    component.form = new FormControl({
+      id: "a",
+      label: "a",
+      isInvalidOption: true,
+    });
+
+    component.ngOnChanges({ form: true } as any);
+
+    expect(component.options).toEqual([
+      { id: "1", label: "1" },
+      { id: "a", label: "a", isInvalidOption: true },
+    ]);
+
+    mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
+    component.enumEntity.values.push({ id: "2", label: "2" });
+
+    component.openSettings({ stopPropagation: () => {} } as any);
+
+    expect(mockDialog.open).toHaveBeenCalled();
+    expect(component.options).toEqual([
+      { id: "1", label: "1" },
+      { id: "2", label: "2" },
+      { id: "a", label: "a", isInvalidOption: true },
+    ]);
   });
 });
