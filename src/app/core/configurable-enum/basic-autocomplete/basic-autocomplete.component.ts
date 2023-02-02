@@ -52,7 +52,6 @@ interface SelectableOption<O, V> {
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",
-  styleUrls: ["basic-autocomplete.component.scss"],
   providers: [
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
   ],

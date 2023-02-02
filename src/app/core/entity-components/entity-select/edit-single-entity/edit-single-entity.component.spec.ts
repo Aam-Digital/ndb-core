@@ -10,7 +10,6 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { ChildSchoolRelation } from "../../../../child-dev-project/children/model/childSchoolRelation";
 import { School } from "../../../../child-dev-project/schools/model/school";
-import { Child } from "../../../../child-dev-project/children/model/child";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { FormControl } from "@angular/forms";
 
