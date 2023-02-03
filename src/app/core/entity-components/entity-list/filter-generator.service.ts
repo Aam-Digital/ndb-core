@@ -111,15 +111,19 @@ export class FilterGeneratorService {
     filter: BooleanFilterConfig
   ): FilterSelectionOption<T>[] {
     return [
-      { key: "all", label: filter.all, filter: {} },
+      {
+        key: "all",
+        label: filter.all ?? $localize`:Filter label:All`,
+        filter: {},
+      },
       {
         key: "true",
-        label: filter.true,
+        label: filter.true ?? $localize`:Filter label default boolean true:Yes`,
         filter: { [filter.id]: true },
       },
       {
         key: "false",
-        label: filter.false,
+        label: filter.false ?? $localize`:Filter label default boolean true:No`,
         filter: { [filter.id]: false },
       },
     ];
