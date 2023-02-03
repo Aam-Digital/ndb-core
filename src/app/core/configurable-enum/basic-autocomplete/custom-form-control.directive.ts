@@ -5,10 +5,7 @@ import {
   NgControl,
   NgForm,
 } from "@angular/forms";
-import {
-  MatFormField,
-  MatFormFieldControl,
-} from "@angular/material/form-field";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   Directive,
   DoCheck,
@@ -30,6 +27,8 @@ export abstract class CustomFormControlDirective<T>
   id = `custom-form-control-${CustomFormControlDirective.nextId++}`;
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("aria-describedby") userAriaDescribedBy: string;
+  @Input() placeholder: string;
+  @Input() required = false;
 
   stateChanges = new Subject<void>();
   focused = false;
@@ -70,32 +69,9 @@ export abstract class CustomFormControlDirective<T>
 
   _value: T;
 
-  @Input() get placeholder(): string {
-    return this._placeholder;
-  }
-
-  set placeholder(value: string) {
-    this._placeholder = value;
-    this.stateChanges.next();
-  }
-
-  _placeholder: string;
-
-  @Input() get required(): boolean {
-    return this._required;
-  }
-
-  set required(value: boolean) {
-    this._required = value;
-    this.stateChanges.next();
-  }
-
-  _required = false;
-
   constructor(
     public elementRef: ElementRef<HTMLElement>,
     public errorStateMatcher: ErrorStateMatcher,
-    public formField: MatFormField,
     public ngControl: NgControl,
     public parentForm: NgForm,
     public parentFormGroup: FormGroupDirective
@@ -128,11 +104,7 @@ export abstract class CustomFormControlDirective<T>
     controlElement.setAttribute("aria-describedby", ids.join(" "));
   }
 
-  onContainerClick(event: MouseEvent) {
-    if ((event.target as Element).tagName.toLowerCase() != "input") {
-      this.elementRef.nativeElement.focus();
-    }
-  }
+  abstract onContainerClick(event: MouseEvent);
 
   writeValue(val: T): void {
     this.value = val;
@@ -150,16 +122,11 @@ export abstract class CustomFormControlDirective<T>
     this.disabled = isDisabled;
   }
 
-  ngDoCheck() {
-    this.updateErrorState();
-  }
-
   /**
    * Updates the error state based on the form control
    * Taken from {@link https://github.com/angular/components/blob/a1d5614f18066c0c2dc2580c7b5099e8f68a8e74/src/material/core/common-behaviors/error-state.ts#L59}
-   * @private
    */
-  private updateErrorState() {
+  ngDoCheck() {
     const oldState = this.errorState;
     const parent = this.parentFormGroup || this.parentForm;
     const control = this.ngControl

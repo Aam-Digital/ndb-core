@@ -2,21 +2,15 @@ import {
   Component,
   ContentChild,
   ElementRef,
-  Inject,
   Input,
   OnChanges,
   Optional,
   Self,
-  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from "@angular/core";
 import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
-import {
-  MAT_FORM_FIELD,
-  MatFormField,
-  MatFormFieldControl,
-} from "@angular/material/form-field";
+import { MatFormFieldControl } from "@angular/material/form-field";
 import {
   FormControl,
   FormGroupDirective,
@@ -71,6 +65,11 @@ export class BasicAutocompleteComponent<O, V = O>
   @ViewChild("inputElement") inputElement: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
+  @Input() valueMapper = (option: O) => option as unknown as V;
+  @Input() optionToString = (option) => option?.toString();
+  @Input() createOption: (input: string) => O;
+  @Input() multi?: boolean;
+
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
@@ -99,29 +98,10 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private _options: SelectableOption<O, V>[] = [];
 
-  @Input() set valueMapper(value: (option: O) => V) {
-    this._valueMapper = value;
-    this._options.forEach((opt) => (opt.asValue = value(opt.initial)));
-  }
-
-  private _valueMapper = (option: O) => option as unknown as V;
-
-  @Input() set optionToString(value: (option: O) => string) {
-    this._optionToString = value;
-    this._options.forEach((opt) => (opt.asString = value(opt.initial)));
-  }
-
-  private _optionToString = (option) => option?.toString();
-
-  @Input() createOption: (input: string) => O;
-
-  @Input() multi?: boolean;
-
   constructor(
     elementRef: ElementRef<HTMLElement>,
     private confirmation: ConfirmationDialogService,
     errorStateMatcher: ErrorStateMatcher,
-    @Optional() @Inject(MAT_FORM_FIELD) formField: MatFormField,
     @Optional() @Self() ngControl: NgControl,
     @Optional() parentForm: NgForm,
     @Optional() parentFormGroup: FormGroupDirective
@@ -129,24 +109,25 @@ export class BasicAutocompleteComponent<O, V = O>
     super(
       elementRef,
       errorStateMatcher,
-      formField,
       ngControl,
       parentForm,
       parentFormGroup
     );
-    if (this.ngControl != null) {
-      this.ngControl.valueAccessor = this;
-    }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges(changes: { [key in keyof this]: any }) {
+    if (changes.valueMapper) {
+      this._options.forEach(
+        (opt) => (opt.asValue = this.valueMapper(opt.initial))
+      );
+    }
+    if (changes.optionToString) {
+      this._options.forEach(
+        (opt) => (opt.asString = this.optionToString(opt.initial))
+      );
+    }
     if (changes.value || changes.options) {
-      if (this.multi) {
-        this._options
-          .filter(({ asValue }) => (this.value as V[])?.includes(asValue))
-          .forEach((o) => (o.selected = true));
-      }
-      this.setInputValue();
+      this.setInitialInputValue();
     }
   }
 
@@ -179,8 +160,11 @@ export class BasicAutocompleteComponent<O, V = O>
     return filteredOptions;
   }
 
-  private setInputValue() {
+  private setInitialInputValue() {
     if (this.multi) {
+      this._options
+        .filter(({ asValue }) => (this.value as V[])?.includes(asValue))
+        .forEach((o) => (o.selected = true));
       this.displaySelectedOptions();
     } else {
       const selected = this._options.find(
@@ -222,7 +206,7 @@ export class BasicAutocompleteComponent<O, V = O>
     if (userConfirmed) {
       const newOption = this.toSelectableOption(this.createOption(option));
       this._options.push(newOption);
-      this.select(newOption);
+      this.selectOption(newOption);
     }
   }
 
@@ -244,8 +228,8 @@ export class BasicAutocompleteComponent<O, V = O>
   private toSelectableOption(opt: O): SelectableOption<O, V> {
     return {
       initial: opt,
-      asValue: this._valueMapper(opt),
-      asString: this._optionToString(opt),
+      asValue: this.valueMapper(opt),
+      asString: this.optionToString(opt),
       selected: false,
     };
   }
@@ -275,7 +259,6 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private notifyFocusOut() {
     if (this.multi) {
-      // show all selected option
       this.displaySelectedOptions();
     } else {
       const inputValue = this.autocompleteForm.value;
