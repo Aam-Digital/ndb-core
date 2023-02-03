@@ -21,6 +21,8 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Angulartics2Module } from "angulartics2";
+import { MatMenuModule } from "@angular/material/menu";
+import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -43,6 +45,8 @@ export interface NotesManagerConfig {
     NgIf,
     FormsModule,
     Angulartics2Module,
+    MatMenuModule,
+    FaDynamicIconComponent,
   ],
   standalone: true,
 })
@@ -138,6 +142,7 @@ export class NotesManagerComponent implements OnInit {
   }
 
   async updateIncludeEvents() {
+    this.includeEventNotes = !this.includeEventNotes;
     this.isLoading = true;
     this.notes = await this.loadEntities();
   }

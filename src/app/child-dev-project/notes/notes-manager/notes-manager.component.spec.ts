@@ -163,6 +163,7 @@ describe("NotesManagerComponent", () => {
   });
 
   it("displays Notes and Event notes only when toggle is set to true", async () => {
+    component.includeEventNotes = false;
     const note = Note.create(new Date("2020-01-01"), "test note");
     note.category = testInteractionTypes[0];
     const eventNote = EventNote.create(new Date("2020-01-01"), "test event");
@@ -170,12 +171,10 @@ describe("NotesManagerComponent", () => {
     await entityMapper.save(note);
     await entityMapper.save(eventNote);
 
-    component.includeEventNotes = true;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note, eventNote]);
 
-    component.includeEventNotes = false;
     await component.updateIncludeEvents();
 
     expect(component.notes).toEqual([note]);
