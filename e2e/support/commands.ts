@@ -15,7 +15,9 @@ declare namespace Cypress {
 }
 
 function create(menuItem: string, name: string): void {
-  cy.get(`[ng-reflect-angulartics-label="${menuItem}"]`).click();
+  cy.get(`[ng-reflect-angulartics-label="${menuItem}"]`, {
+    timeout: 10000,
+  }).click();
   cy.contains("button", "Add New").click();
   cy.contains("mat-label", "Name").type(name);
   cy.contains("button", "Save").click();
