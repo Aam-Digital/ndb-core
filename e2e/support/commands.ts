@@ -15,9 +15,7 @@ declare namespace Cypress {
 }
 
 function create(menuItem: string, name: string): void {
-  cy.get(`[ng-reflect-angulartics-label="${menuItem}"]`, {
-    timeout: 10000,
-  }).click();
+  cy.get(`[ng-reflect-angulartics-label="${menuItem}"]`).click();
   cy.contains("button", "Add New").click();
   cy.contains("mat-label", "Name").type(name);
   cy.contains("button", "Save").click();
@@ -32,6 +30,9 @@ Cypress.Commands.overwrite("visit", (originalFun, url, options) => {
   cy.get("app-search", { timeout: 10000 }).should("be.visible");
   // wait for demo data generation
   cy.wait(4000);
+  cy.contains("div", "Generating sample data", {
+    timeout: 20000,
+  }).should("not.exist");
   // wait for indexing
   cy.contains("button", "Continue in background", { timeout: 10000 }).should(
     "not.exist"
