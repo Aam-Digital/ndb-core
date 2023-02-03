@@ -115,7 +115,7 @@ export class BasicAutocompleteComponent<O, V = O>
     );
   }
 
-  ngOnChanges(changes: { [key in keyof this]: any }) {
+  ngOnChanges(changes: { [key in keyof this]?: any }) {
     if (changes.valueMapper) {
       this._options.forEach(
         (opt) => (opt.asValue = this.valueMapper(opt.initial))

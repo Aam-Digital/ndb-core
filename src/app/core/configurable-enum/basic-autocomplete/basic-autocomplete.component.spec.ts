@@ -89,7 +89,7 @@ describe("BasicAutocompleteComponent", () => {
     component.options = [child1, child2];
     component.valueMapper = entityToId;
 
-    component.ngOnChanges({ form: true, options: true } as any);
+    component.ngOnChanges({ value: true, options: true, valueMapper: true });
     fixture.detectChanges();
 
     expect(component.autocompleteForm).toHaveValue("First Child");
@@ -137,7 +137,7 @@ describe("BasicAutocompleteComponent", () => {
     component.options = [1, 2, 3];
     component.multi = true;
     component.value = [1, 2];
-    component.ngOnChanges({ options: true, value: true } as any);
+    component.ngOnChanges({ options: true, value: true });
 
     component.showAutocomplete();
     component.autocomplete.openPanel();
@@ -154,7 +154,7 @@ describe("BasicAutocompleteComponent", () => {
     component.multi = true;
     component.options = ["some", "values", "and", "other", "options"];
     component.value = ["some", "values"];
-    component.ngOnChanges({ value: true, options: true } as any);
+    component.ngOnChanges({ value: true, options: true });
     expect(component.autocompleteForm).toHaveValue("some, values");
 
     component.onFocusIn();
