@@ -369,6 +369,12 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should display map if location properties are available", async () => {
+    // Clean-up child schema before running test
+    Child.schema.forEach((schema, name) => {
+      if (schema.dataType === "location") {
+        Child.schema.delete(name);
+      }
+    });
     component.leftSide = { entityType: Child };
     component.entity = new Child();
 
