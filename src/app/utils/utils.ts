@@ -5,6 +5,7 @@
 import { Router } from "@angular/router";
 import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
 import { FactoryProvider, Injector } from "@angular/core";
+import { isConfigurableEnum } from "../core/entity-components/entity-subrecord/entity-subrecord/value-accessor";
 
 export function isValidDate(date: any): boolean {
   return (
@@ -38,7 +39,9 @@ export function groupBy<T, P extends keyof T>(
 ): [T[P], T[]][] {
   return array.reduce((allGroups, currentElement) => {
     const currentValue = currentElement[propertyToGroupBy];
-    let existingGroup = allGroups.find(([group]) => group === currentValue);
+    let existingGroup = allGroups.find(([group]) =>
+      equals(group, currentValue)
+    );
     if (!existingGroup) {
       existingGroup = [currentValue, []];
       allGroups.push(existingGroup);
@@ -46,6 +49,19 @@ export function groupBy<T, P extends keyof T>(
     existingGroup[1].push(currentElement);
     return allGroups;
   }, new Array<[T[P], T[]]>());
+}
+
+/**
+ * Comparing two values for equality that might be different than just object equality
+ * @param a
+ * @param b
+ */
+function equals(a, b): boolean {
+  if (isConfigurableEnum(a) && isConfigurableEnum(b)) {
+    return a.id === b.id;
+  } else {
+    return a === b;
+  }
 }
 
 export function calculateAge(dateOfBirth: Date): number {

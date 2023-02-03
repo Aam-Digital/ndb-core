@@ -41,6 +41,6 @@ export function getReadableValue(value: any): any {
   }
 }
 
-function isConfigurableEnum(value: any): value is ConfigurableEnumValue {
+export function isConfigurableEnum(value: any): value is ConfigurableEnumValue {
   return typeof value === "object" && value && "label" in value;
 }
