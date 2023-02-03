@@ -1,0 +1,175 @@
+import {
+  AbstractControl,
+  ControlValueAccessor,
+  FormGroupDirective,
+  NgControl,
+  NgForm,
+} from "@angular/forms";
+import {
+  MatFormField,
+  MatFormFieldControl,
+} from "@angular/material/form-field";
+import {
+  Directive,
+  DoCheck,
+  ElementRef,
+  HostBinding,
+  Input,
+  OnDestroy,
+} from "@angular/core";
+import { Subject } from "rxjs";
+import { coerceBooleanProperty } from "@angular/cdk/coercion";
+import { ErrorStateMatcher } from "@angular/material/core";
+
+@Directive()
+export abstract class CustomFormControlDirective<T>
+  implements ControlValueAccessor, MatFormFieldControl<T>, OnDestroy, DoCheck
+{
+  static nextId = 0;
+  @HostBinding()
+  id = `custom-form-control-${CustomFormControlDirective.nextId++}`;
+  // eslint-disable-next-line @angular-eslint/no-input-rename
+  @Input("aria-describedby") userAriaDescribedBy: string;
+
+  stateChanges = new Subject<void>();
+  focused = false;
+  touched = false;
+  errorState = false;
+  controlType = "custom-control";
+  onChange = (_: any) => {};
+  onTouched = () => {};
+
+  get empty() {
+    return !this.value;
+  }
+
+  get shouldLabelFloat() {
+    return this.focused || !this.empty;
+  }
+
+  @Input()
+  get disabled(): boolean {
+    return this._disabled;
+  }
+
+  set disabled(value: boolean) {
+    this._disabled = coerceBooleanProperty(value);
+    this.stateChanges.next();
+  }
+
+  _disabled = false;
+
+  @Input() get value(): T {
+    return this._value;
+  }
+
+  set value(value: T) {
+    this._value = value;
+    this.stateChanges.next();
+  }
+
+  _value: T;
+
+  @Input() get placeholder(): string {
+    return this._placeholder;
+  }
+
+  set placeholder(value: string) {
+    this._placeholder = value;
+    this.stateChanges.next();
+  }
+
+  _placeholder: string;
+
+  @Input() get required(): boolean {
+    return this._required;
+  }
+
+  set required(value: boolean) {
+    this._required = value;
+    this.stateChanges.next();
+  }
+
+  _required = false;
+
+  constructor(
+    public elementRef: ElementRef<HTMLElement>,
+    public errorStateMatcher: ErrorStateMatcher,
+    public formField: MatFormField,
+    public ngControl: NgControl,
+    public parentForm: NgForm,
+    public parentFormGroup: FormGroupDirective
+  ) {
+    if (this.ngControl != null) {
+      this.ngControl.valueAccessor = this;
+    }
+  }
+
+  ngOnDestroy() {
+    this.stateChanges.complete();
+  }
+
+  focus() {
+    this.focused = true;
+    this.stateChanges.next();
+  }
+
+  blur() {
+    this.touched = true;
+    this.focused = false;
+    this.onTouched();
+    this.stateChanges.next();
+  }
+
+  setDescribedByIds(ids: string[]) {
+    const controlElement = this.elementRef.nativeElement.querySelector(
+      ".autocomplete-input"
+    )!;
+    controlElement.setAttribute("aria-describedby", ids.join(" "));
+  }
+
+  onContainerClick(event: MouseEvent) {
+    if ((event.target as Element).tagName.toLowerCase() != "input") {
+      this.elementRef.nativeElement.focus();
+    }
+  }
+
+  writeValue(val: T): void {
+    this.value = val;
+  }
+
+  registerOnChange(fn: any): void {
+    this.onChange = fn;
+  }
+
+  registerOnTouched(fn: any): void {
+    this.onTouched = fn;
+  }
+
+  setDisabledState(isDisabled: boolean): void {
+    this.disabled = isDisabled;
+  }
+
+  ngDoCheck() {
+    this.updateErrorState();
+  }
+
+  /**
+   * Updates the error state based on the form control
+   * Taken from {@link https://github.com/angular/components/blob/a1d5614f18066c0c2dc2580c7b5099e8f68a8e74/src/material/core/common-behaviors/error-state.ts#L59}
+   * @private
+   */
+  private updateErrorState() {
+    const oldState = this.errorState;
+    const parent = this.parentFormGroup || this.parentForm;
+    const control = this.ngControl
+      ? (this.ngControl.control as AbstractControl)
+      : null;
+    const newState = this.errorStateMatcher.isErrorState(control, parent);
+
+    if (newState !== oldState) {
+      this.errorState = newState;
+      this.stateChanges.next();
+    }
+  }
+}
