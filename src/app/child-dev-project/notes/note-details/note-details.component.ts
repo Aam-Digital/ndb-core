@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from "@angular/core";
+import { Component, Input, ViewChild, OnDestroy, HostListener } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { EntityConstructor } from "../../../core/entity/model/entity";
@@ -30,6 +30,9 @@ import { EntitySelectComponent } from "../../../core/entity-components/entity-se
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+
 /**
  * Component responsible for displaying the Note creation/view window
  */
@@ -59,7 +62,8 @@ import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/
   ],
   standalone: true,
 })
-export class NoteDetailsComponent implements ShowsEntity<Note> {
+export class NoteDetailsComponent implements ShowsEntity<Note>, OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true })
   formDialogWrapper: FormDialogWrapperComponent<Note>;
@@ -99,7 +103,7 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
     this.screenWidthObserver
-      .platform()
+      .platform().pipe(takeUntil(this.destroy$))
       .subscribe((isDesktop) => (this.mobile = !isDesktop));
   }
 
@@ -115,5 +119,11 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
 
   private getPlaceholder(label: string): string {
     return $localize`:Placeholder for input to add entities|context Add User(s):Add ${label}`;
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

@@ -1,11 +1,13 @@
-import { Injectable } from "@angular/core";
-import { Observable } from "rxjs";
+import { Injectable, OnDestroy, HostListener } from "@angular/core";
+import { Observable, Subject } from "rxjs";
 import { Coordinates } from "./coordinates";
 import { HttpClient } from "@angular/common/http";
 import { ConfigService } from "../../core/config/config.service";
 import { AnalyticsService } from "../../core/analytics/analytics.service";
 import { environment } from "../../../environments/environment";
 import { MAP_CONFIG_KEY, MapConfig } from "./map-config";
+
+import { takeUntil } from "rxjs/operators";
 
 export interface GeoResult extends Coordinates {
   display_name: string;
@@ -17,7 +19,8 @@ export interface GeoResult extends Coordinates {
 @Injectable({
   providedIn: "root",
 })
-export class GeoService {
+export class GeoService implements OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   private readonly remoteUrl = "/nominatim";
   private countrycodes = "de";
   private defaultOptions = {
@@ -31,7 +34,7 @@ export class GeoService {
     private analytics: AnalyticsService,
     configService: ConfigService
   ) {
-    configService.configUpdates.subscribe(() => {
+    configService.configUpdates.pipe(takeUntil(this.destroy$)).subscribe(() => {
       const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
       if (config?.countrycodes) {
         this.countrycodes = config.countrycodes;
@@ -72,5 +75,11 @@ export class GeoService {
         lon: coordinates.lon,
       },
     });
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

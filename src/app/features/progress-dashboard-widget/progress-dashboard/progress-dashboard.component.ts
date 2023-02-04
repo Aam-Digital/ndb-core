@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, OnDestroy, HostListener } from "@angular/core";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
@@ -9,7 +9,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { waitForChangeTo } from "../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../core/session/session-states/sync-state.enum";
-import { firstValueFrom } from "rxjs";
+import { firstValueFrom, Subject } from "rxjs";
 import { PercentPipe } from "@angular/common";
 import { MatTableModule } from "@angular/material/table";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -17,6 +17,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DashboardWidgetComponent } from "../../../core/dashboard/dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
+
+import { takeUntil } from "rxjs/operators";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -34,9 +36,8 @@ import { WidgetContentComponent } from "../../../core/dashboard/dashboard-widget
   standalone: true,
 })
 @DynamicComponent("ProgressDashboard")
-export class ProgressDashboardComponent
-  implements OnInitDynamicComponent, OnInit
-{
+export class ProgressDashboardComponent implements OnInitDynamicComponent, OnInit, OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
 
@@ -85,12 +86,18 @@ export class ProgressDashboardComponent
       .open(EditProgressDashboardComponent, {
         data: this.data,
       })
-      .afterClosed()
+      .afterClosed().pipe(takeUntil(this.destroy$))
       .subscribe(async (next) => {
         if (next) {
           Object.assign(this.data, next);
           await this.save();
         }
       });
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

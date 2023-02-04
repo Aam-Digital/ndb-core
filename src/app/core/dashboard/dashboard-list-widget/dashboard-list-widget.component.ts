@@ -7,6 +7,8 @@ import {
   OnInit,
   SimpleChanges,
   ViewChild,
+  OnDestroy,
+  HostListener,
 } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import {
@@ -15,9 +17,9 @@ import {
 } from "../dashboard-widget/dashboard-widget.component";
 import { MatTable, MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { filter, map } from "rxjs/operators";
+import { filter, map, takeUntil } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
 import { NgIf } from "@angular/common";
@@ -51,9 +53,8 @@ import { WidgetContentComponent } from "../dashboard-widget/widget-content/widge
   ],
   standalone: true,
 })
-export class DashboardListWidgetComponent<E>
-  implements OnInit, OnChanges, AfterViewInit
-{
+export class DashboardListWidgetComponent<E> implements OnInit, OnChanges, AfterViewInit, OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   @Input() subtitle: string;
   @Input() icon: IconName = "exclamation-triangle";
   @Input() theme: DashboardTheme;
@@ -96,9 +97,10 @@ export class DashboardListWidgetComponent<E>
   ngOnInit() {
     this.data
       .pipe(
-        filter((d) => !!d),
-        map((d) => (this.dataMapper ? this.dataMapper(d) : d))
-      )
+      filter((d) => !!d),
+      map((d) => (this.dataMapper ? this.dataMapper(d) : d)),
+      takeUntil(this.destroy$)
+    )
       .subscribe((newData) => {
         this.dataSource.data = newData;
         this.isLoading = !newData;
@@ -112,7 +114,7 @@ export class DashboardListWidgetComponent<E>
 
     // subscribe to relevant updates of data
     this.entityMapperService
-      .receiveUpdates(this.entityType)
+      .receiveUpdates(this.entityType).pipe(takeUntil(this.destroy$))
       .subscribe((update) =>
         this.data.next(applyUpdate(this.data.value as Entity[], update) as E[])
       );
@@ -130,5 +132,11 @@ export class DashboardListWidgetComponent<E>
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
     this.matTable.dataSource = this.dataSource;
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

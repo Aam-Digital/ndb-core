@@ -15,6 +15,9 @@ import {
 import { ComponentPortal } from "@angular/cdk/portal";
 import { TemplateTooltipComponent } from "./template-tooltip.component";
 
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+
 /**
  * A directive that can be used to render a custom tooltip that may contain HTML code.
  * When a tooltip is only a string, the {@code MatTooltip} should be used instead.
@@ -36,6 +39,7 @@ import { TemplateTooltipComponent } from "./template-tooltip.component";
   standalone: true,
 })
 export class TemplateTooltipDirective implements OnInit, OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   /**
    * Whether to disable the tooltip, so it won't ever be shown
    */
@@ -106,6 +110,8 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.destroy$.next(true);
+    this.destroy$.complete();
     this.hide();
   }
 
@@ -148,8 +154,8 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
           new ComponentPortal(TemplateTooltipComponent)
         );
         tooltipRef.instance.contentTemplate = this.contentTemplate;
-        tooltipRef.instance.hide.subscribe(() => this.hide());
-        tooltipRef.instance.show.subscribe(() => this.show());
+        tooltipRef.instance.hide.pipe(takeUntil(this.destroy$)).subscribe(() => this.hide());
+        tooltipRef.instance.show.pipe(takeUntil(this.destroy$)).subscribe(() => this.show());
       }
     }, this.delayShow);
   }

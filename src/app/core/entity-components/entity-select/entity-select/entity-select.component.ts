@@ -7,12 +7,14 @@ import {
   Output,
   SimpleChanges,
   ViewChild,
+  OnDestroy,
+  HostListener,
 } from "@angular/core";
 import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { Entity } from "../../../entity/model/entity";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, Subject } from "rxjs";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { filter, map } from "rxjs/operators";
+import { filter, map, takeUntil } from "rxjs/operators";
 import { MatChipInputEvent, MatChipsModule } from "@angular/material/chips";
 import {
   MatAutocompleteModule,
@@ -44,7 +46,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   standalone: true,
 })
 @UntilDestroy()
-export class EntitySelectComponent<E extends Entity> implements OnChanges {
+export class EntitySelectComponent<E extends Entity> implements OnChanges, OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
@@ -83,9 +86,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
     this.loading
       .pipe(
-        untilDestroyed(this),
-        filter((isLoading) => !isLoading)
-      )
+      untilDestroyed(this),
+      filter((isLoading) => !isLoading),
+      takeUntil(this.destroy$)
+    )
       .subscribe((_) => {
         this.selectedEntities = this.allEntities.filter((e) =>
           sel.find((s) => s === e.getId(true) || s === e.getId())
@@ -162,15 +166,12 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   constructor(private entityMapperService: EntityMapperService) {
     this.formControl.valueChanges
-      .pipe(
-        untilDestroyed(this),
-        filter((value) => value === null || typeof value === "string"), // sometimes produces entities
-        map((searchText?: string) => this.filter(searchText))
-      )
+      .pipe(untilDestroyed(this), // sometimes produces entities
+    filter((value) => value === null || typeof value === "string"), map((searchText?: string) => this.filter(searchText)), takeUntil(this.destroy$))
       .subscribe((value) => {
         this.filteredEntities = value;
       });
-    this.loading.pipe(untilDestroyed(this)).subscribe((isLoading) => {
+    this.loading.pipe(untilDestroyed(this), takeUntil(this.destroy$)).subscribe((isLoading) => {
       this.inputPlaceholder = isLoading
         ? this.loadingPlaceholder
         : this.placeholder;
@@ -285,5 +286,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     return this.selectedEntities.some(
       (e) => e.getId(true) === entity.getId(true)
     );
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }
