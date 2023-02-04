@@ -4,6 +4,8 @@ import {
   OnInit,
   Output,
   ViewChild,
+  OnDestroy,
+  HostListener,
 } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { Note } from "../../../notes/model/note";
@@ -28,6 +30,9 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatButtonModule } from "@angular/material/button";
 
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+
 @Component({
   selector: "app-roll-call-setup",
   templateUrl: "./roll-call-setup.component.html",
@@ -47,7 +52,8 @@ import { MatButtonModule } from "@angular/material/button";
   ],
   standalone: true,
 })
-export class RollCallSetupComponent implements OnInit {
+export class RollCallSetupComponent implements OnInit, OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   date = new Date();
 
   existingEvents: NoteForActivitySetup[] = [];
@@ -188,7 +194,7 @@ export class RollCallSetupComponent implements OnInit {
 
     this.formDialog
       .openDialog(NoteDetailsComponent, newNote)
-      .afterClosed()
+      .afterClosed().pipe(takeUntil(this.destroy$))
       .subscribe((createdNote: Note) => {
         if (createdNote) {
           this.existingEvents.push(createdNote);
@@ -210,6 +216,12 @@ export class RollCallSetupComponent implements OnInit {
         AlertDisplay.TEMPORARY
       );
     }
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }
 

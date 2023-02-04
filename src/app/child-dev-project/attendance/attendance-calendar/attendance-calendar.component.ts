@@ -5,6 +5,8 @@ import {
   SimpleChanges,
   ViewChild,
   ViewEncapsulation,
+  OnDestroy,
+  HostListener,
 } from "@angular/core";
 import { Note } from "../../notes/model/note";
 import {
@@ -36,6 +38,9 @@ import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
 
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+
 @Component({
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
@@ -57,7 +62,8 @@ import { Angulartics2Module } from "angulartics2";
   standalone: true,
 })
 @UntilDestroy()
-export class AttendanceCalendarComponent implements OnChanges {
+export class AttendanceCalendarComponent implements OnChanges, OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   @Input() records: Note[] = [];
   @Input() highlightForChild: string;
   @Input() activity: RecurringActivity;
@@ -80,7 +86,7 @@ export class AttendanceCalendarComponent implements OnChanges {
   ) {
     this.entityMapper
       .receiveUpdates(EventNote)
-      .pipe(untilDestroyed(this))
+      .pipe(untilDestroyed(this), takeUntil(this.destroy$))
       .subscribe((newNotes) => {
         this.records = applyUpdate(this.records, newNotes);
         this.selectDay(this.selectedDate?.toDate());
@@ -218,5 +224,11 @@ export class AttendanceCalendarComponent implements OnChanges {
 
   showEventDetails(selectedEvent: Note) {
     this.formDialog.openDialog(NoteDetailsComponent, selectedEvent);
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy, HostListener } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
@@ -15,6 +15,9 @@ import { PouchDatabase } from "../database/pouch-database";
 import { environment } from "../../../environments/environment";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+
 /**
  * This service handles everything related to the demo-mode
  *  - Register users (demo and demo-admin)
@@ -23,7 +26,8 @@ import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.serv
  *  - Synchronizes (local) databases of different users in the same browser
  */
 @Injectable()
-export class DemoDataInitializerService {
+export class DemoDataInitializerService implements OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
   private pouchDatabase: PouchDatabase;
 
@@ -62,7 +66,7 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
-    this.localSession.loginState.subscribe((state) => {
+    this.localSession.loginState.pipe(takeUntil(this.destroy$)).subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
         this.localSession.getCurrentUser().name !==
@@ -121,5 +125,11 @@ export class DemoDataInitializerService {
       this.liveSyncHandle.cancel();
       this.liveSyncHandle = undefined;
     }
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

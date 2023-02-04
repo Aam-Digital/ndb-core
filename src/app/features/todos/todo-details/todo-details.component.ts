@@ -5,6 +5,8 @@ import {
   Input,
   OnInit,
   Output,
+  OnDestroy,
+  HostListener,
 } from "@angular/core";
 import { Todo } from "../model/todo";
 import {
@@ -36,6 +38,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+
 @Component({
   selector: "app-todo-details",
   templateUrl: "./todo-details.component.html",
@@ -54,7 +59,8 @@ import { Angulartics2Module } from "angulartics2";
     Angulartics2Module,
   ],
 })
-export class TodoDetailsComponent implements OnInit {
+export class TodoDetailsComponent implements OnInit, OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   @Input() entity: Todo;
 
   @Output() close = new EventEmitter<Todo>();
@@ -130,10 +136,16 @@ export class TodoDetailsComponent implements OnInit {
 
   delete() {
     //TODO: refactor this into a reusable form-actions component (duplicated from RowDetailsComponent)
-    this.entityRemoveService.remove(this.entity).subscribe((res) => {
+    this.entityRemoveService.remove(this.entity).pipe(takeUntil(this.destroy$)).subscribe((res) => {
       if (res === RemoveResult.REMOVED) {
         this.dialogRef.close();
       }
     });
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

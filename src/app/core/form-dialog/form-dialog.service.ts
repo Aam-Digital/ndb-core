@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy, HostListener } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
@@ -14,6 +14,9 @@ import {
 } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
+import { takeUntil } from "rxjs/operators";
+import { Subject } from "rxjs";
+
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal
  * (hovering over the rest of the UI).
@@ -27,7 +30,8 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
  formDialog.getConfirmation(NoteDetailsComponent, noteEntity);
  */
 @Injectable({ providedIn: "root" })
-export class FormDialogService {
+export class FormDialogService implements OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   static dialogSettings = {
     width: "80%",
     maxHeight: "90vh",
@@ -61,9 +65,9 @@ export class FormDialogService {
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
     dialogWrapper.readonly = this.ability.cannot("update", entity);
 
-    dialogWrapper.close.subscribe((res) => dialogRef.close(res));
+    dialogWrapper.close.pipe(takeUntil(this.destroy$)).subscribe((res) => dialogRef.close(res));
 
-    dialogRef.beforeClosed().subscribe((activelyClosed) => {
+    dialogRef.beforeClosed().pipe(takeUntil(this.destroy$)).subscribe((activelyClosed) => {
       if (!activelyClosed && dialogWrapper.isFormDirty) {
         this.confirmationDialog
           .getConfirmation(
@@ -159,5 +163,11 @@ export class FormDialogService {
     }
 
     return formFields.map((k: string) => ({ id: k }));
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

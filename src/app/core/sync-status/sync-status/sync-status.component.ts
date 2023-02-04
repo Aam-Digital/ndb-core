@@ -15,13 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, OnDestroy, HostListener } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BackgroundProcessState } from "../background-process-state.interface";
-import { BehaviorSubject } from "rxjs";
-import { debounceTime } from "rxjs/operators";
+import { BehaviorSubject, Subject } from "rxjs";
+import { debounceTime, takeUntil } from "rxjs/operators";
 import {
   BackgroundProcessingIndicatorComponent
 } from "../background-processing-indicator/background-processing-indicator.component";
@@ -41,7 +41,8 @@ import {
   ],
   standalone: true
 })
-export class SyncStatusComponent {
+export class SyncStatusComponent implements OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   private indexingProcesses: BackgroundProcessState[];
 
   private _backgroundProcesses = new BehaviorSubject<BackgroundProcessState[]>(
@@ -56,12 +57,12 @@ export class SyncStatusComponent {
     private sessionService: SessionService,
     private dbIndexingService: DatabaseIndexingService
   ) {
-    this.dbIndexingService.indicesRegistered.subscribe((indicesStatus) => {
+    this.dbIndexingService.indicesRegistered.pipe(takeUntil(this.destroy$)).subscribe((indicesStatus) => {
       this.indexingProcesses = indicesStatus;
       this.updateBackgroundProcessesList();
     });
 
-    this.sessionService.syncState.subscribe(() =>
+    this.sessionService.syncState.pipe(takeUntil(this.destroy$)).subscribe(() =>
       this.updateBackgroundProcessesList()
     );
   }
@@ -85,5 +86,11 @@ export class SyncStatusComponent {
     }
     currentProcesses = currentProcesses.concat(this.indexingProcesses);
     this._backgroundProcesses.next(currentProcesses);
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }

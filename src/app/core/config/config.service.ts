@@ -1,13 +1,13 @@
-import { Injectable } from "@angular/core";
+import { Injectable, OnDestroy, HostListener } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
-import { Observable, ReplaySubject } from "rxjs";
+import { Observable, ReplaySubject, Subject } from "rxjs";
 import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumConfig,
   ConfigurableEnumValue,
 } from "../configurable-enum/configurable-enum.interface";
-import { filter } from "rxjs/operators";
+import { filter, takeUntil } from "rxjs/operators";
 import { LoggingService } from "../logging/logging.service";
 
 /**
@@ -15,7 +15,8 @@ import { LoggingService } from "../logging/logging.service";
  * that defines how the interface and data models should look.
  */
 @Injectable({ providedIn: "root" })
-export class ConfigService {
+export class ConfigService implements OnDestroy {
+  private destroy$: Subject<any> = new Subject<any>();
   /**
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
@@ -33,7 +34,10 @@ export class ConfigService {
     this.loadConfig();
     this.entityMapper
       .receiveUpdates(Config)
-      .pipe(filter(({ entity }) => entity.getId() === Config.CONFIG_KEY))
+      .pipe(
+      filter(({ entity }) => entity.getId() === Config.CONFIG_KEY),
+      takeUntil(this.destroy$)
+    )
       .subscribe(({ entity }) => this.updateConfigIfChanged(entity));
   }
 
@@ -107,5 +111,11 @@ export class ConfigService {
     }
 
     return config;
+  }
+
+  @HostListener('unloaded')
+  public ngOnDestroy(): void {
+    this.destroy$.next(true);
+    this.destroy$.complete();
   }
 }
