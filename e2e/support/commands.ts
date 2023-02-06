@@ -30,6 +30,9 @@ Cypress.Commands.overwrite("visit", (originalFun, url, options) => {
   cy.get("app-search", { timeout: 10000 }).should("be.visible");
   // wait for demo data generation
   cy.wait(4000);
+  cy.contains("div", "Generating sample data", {
+    timeout: 20000,
+  }).should("not.exist");
   // wait for indexing
   cy.contains("button", "Continue in background", { timeout: 10000 }).should(
     "not.exist"
