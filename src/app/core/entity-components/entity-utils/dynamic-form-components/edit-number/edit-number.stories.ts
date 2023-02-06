@@ -8,7 +8,7 @@ import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
 import { EditNumberComponent } from "./edit-number.component";
 import {
-  entityFormStorybookDefaulParameters,
+  entityFormStorybookDefaultParameters,
   StorybookBaseModule,
 } from "../../../../../utils/storybook-base.module";
 import { AppModule } from "../../../../../app.module";
@@ -35,7 +35,7 @@ export default {
       ],
     }),
   ],
-  parameters: entityFormStorybookDefaulParameters,
+  parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
 const Template: Story<FormComponent<any>> = (args: FormComponent<any>) => ({

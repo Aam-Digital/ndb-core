@@ -24,7 +24,7 @@ import { AppModule } from "../app.module";
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
 
-export const entityFormStorybookDefaulParameters = {
+export const entityFormStorybookDefaultParameters = {
   controls: {
     exclude: ["_columns"],
   },
