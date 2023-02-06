@@ -143,13 +143,15 @@ describe("ConfigService", () => {
     expect(configUpdate.data).toEqual({ some: "config" });
   });
 
-  it("should not save enums if they already exist in db", async () => {
-    entityMapper.loadType.and.resolveTo([new ConfigurableEnum()]);
+  it("should not save enums that already exist in db", async () => {
+    entityMapper.loadType.and.resolveTo([new ConfigurableEnum("1")]);
     entityMapper.save.and.resolveTo();
 
-    await initConfig({ "enum:1": [], some: "config" });
+    await initConfig({ "enum:1": [], "enum:2": [], some: "config" });
 
-    expect(entityMapper.saveAll).not.toHaveBeenCalled();
+    expect(entityMapper.saveAll).toHaveBeenCalledWith([
+      new ConfigurableEnum("2"),
+    ]);
     expect(entityMapper.save).toHaveBeenCalledWith(jasmine.any(Config));
     expect(service.getConfig("enum:1")).toBeUndefined();
     expect(service.getConfig("some")).toBe("config");

@@ -44,36 +44,9 @@ export class ConfigService {
 
   private async updateConfigIfChanged(config: Config) {
     if (!this.currentConfig || config._rev !== this.currentConfig?._rev) {
-      await this.saveAllEnumsToDB(config);
       this.currentConfig = config;
       this._configUpdates.next(config);
     }
-  }
-
-  private async saveAllEnumsToDB(config: Config) {
-    const enumValues = Object.entries(config.data).filter(([key]) =>
-      key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)
-    );
-    if (enumValues.length === 0) {
-      return;
-    }
-    const existingEnums = await this.entityMapper.loadType(ConfigurableEnum);
-    if (existingEnums.length > 0) {
-      enumValues.forEach(([key]) => delete config.data[key]);
-      return this.entityMapper.save(config).catch(() => {});
-    }
-
-    const enumEntities = enumValues.map(([key, value]) => {
-      const id = key.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "");
-      const newEnum = new ConfigurableEnum(id);
-      newEnum.values = value as any;
-      delete config.data[key];
-      return newEnum;
-    });
-    return this.entityMapper
-      .saveAll(enumEntities)
-      .then(() => this.entityMapper.save(config))
-      .catch(() => {});
   }
 
   public saveConfig(config: any): Promise<void> {
@@ -99,7 +72,7 @@ export class ConfigService {
     return matchingConfigs;
   }
 
-  private detectLegacyConfig(config: Config): Config {
+  private async detectLegacyConfig(config: Config): Promise<Config> {
     // ugly but easy ... could use https://www.npmjs.com/package/jsonpath-plus in future
     const configString = JSON.stringify(config);
     if (
@@ -117,6 +90,35 @@ export class ConfigService {
       );
     }
 
+    await this.migrateEnumsToEntities(config);
+
     return config;
+  }
+
+  private async migrateEnumsToEntities(config: Config) {
+    const enumValues = Object.entries(config.data).filter(([key]) =>
+      key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)
+    );
+    if (enumValues.length === 0) {
+      return;
+    }
+    const existingEnums = await this.entityMapper
+      .loadType(ConfigurableEnum)
+      .then((res) => res.map((e) => e.getId()));
+
+    const newEnums: ConfigurableEnum[] = [];
+    enumValues.forEach(([key, value]) => {
+      const id = key.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "");
+      if (!existingEnums.includes(id)) {
+        const newEnum = new ConfigurableEnum(id);
+        newEnum.values = value as any;
+        newEnums.push(newEnum);
+      }
+      delete config.data[key];
+    });
+    return this.entityMapper
+      .saveAll(newEnums)
+      .then(() => this.entityMapper.save(config))
+      .catch(() => {});
   }
 }
