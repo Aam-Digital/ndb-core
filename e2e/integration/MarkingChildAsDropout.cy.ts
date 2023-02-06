@@ -32,7 +32,7 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
 
   it("AND I should see the child when I activate the 'inactive' filter", function () {
     // click on the button with the content "Inactive"
-    cy.get('[ng-reflect-placeholder="isActive"]').click();
+    cy.get('[ng-reflect-placeholder="isActive"]', { timeout: 10000 }).click();
     cy.contains("span", "Inactive").should("be.visible").click();
     // find at this table the name of child and it should exist
     cy.get("table").contains(this.childName.trim()).should("exist");

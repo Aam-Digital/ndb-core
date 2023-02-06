@@ -94,7 +94,7 @@
   <mat-form-field class="full-width filter-field">
     <mat-label
       i18n="Filter placeholder|Allows the user to filter through entities"
-      >Filter
+    >Filter
     </mat-label>
     <input
       class="full-width"
@@ -172,14 +172,14 @@
     format="csv"
     [exportConfig]="listConfig?.exportConfig"
     [filename]="listName.replace(' ', '')"
+    angulartics2On="click"
+    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    angularticsAction="list_csv_export"
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
       aria-label="download csv"
       icon="download"
-      angulartics2On="click"
-      [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-      angularticsAction="list_csv_export"
     ></fa-icon>
     <span i18n="Download list contents as CSV"> Download CSV </span>
   </button>
