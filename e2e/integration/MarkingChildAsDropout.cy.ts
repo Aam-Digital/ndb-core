@@ -9,7 +9,6 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
   it("WHEN I select a dropout date for this child", () => {
     // click on "Dropout" menu
     cy.contains("div", "Dropout").click();
-    cy.get("#mat-tab-label-0-7").click();
     // click on button with the content "Edit" in Dropout menu.
     cy.get(".form-buttons-wrapper:visible").contains("button", "Edit").click();
     // select today as the dropout date (which is initially marked as active)
