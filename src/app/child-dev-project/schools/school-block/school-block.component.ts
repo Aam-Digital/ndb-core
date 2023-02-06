@@ -9,7 +9,6 @@ import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dy
 @Component({
   selector: "app-school-block",
   templateUrl: "./school-block.component.html",
-  styleUrls: ["./school-block.component.scss"],
   standalone: true,
   imports: [FaDynamicIconComponent],
 })
