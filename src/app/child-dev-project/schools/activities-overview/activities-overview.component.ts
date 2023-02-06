@@ -7,7 +7,9 @@ import { DynamicComponent } from "app/core/view/dynamic-components/dynamic-compo
 import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
 import { delay } from "rxjs";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @DynamicComponent("ActivitiesOverview")
 @Component({
   selector: "app-activities-overview",
@@ -51,7 +53,7 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     this.entityMapper
       .receiveUpdates(RecurringActivity)
       // using short delay to make sure the EntitySubrecord's `receiveUpdates` code is executed before this
-      .pipe(delay(0))
+      .pipe(delay(0), untilDestroyed(this))
       .subscribe((updateEntity) => {
         if (updateEntity.type === "update") {
           this.initLinkedActivities();
