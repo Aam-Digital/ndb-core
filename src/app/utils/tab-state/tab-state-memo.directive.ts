@@ -1,9 +1,7 @@
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabGroup } from "@angular/material/tabs";
-import { Directive, OnInit, OnDestroy, HostListener } from "@angular/core";
-
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
+import { Directive, OnInit } from "@angular/core";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Memorizes the current state of a `TabGroup` (i.e. which tab currently is selected)
@@ -17,11 +15,11 @@ import { Subject } from "rxjs";
  * </mat-tab-group>
  * ```
  */
+@UntilDestroy()
 @Directive({
   selector: "[appTabStateMemo]",
 })
-export class TabStateMemoDirective implements OnInit, OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class TabStateMemoDirective implements OnInit {
   private readonly tabIndexKey = "tabIndex";
 
   constructor(
@@ -41,9 +39,9 @@ export class TabStateMemoDirective implements OnInit, OnDestroy {
     if (!Number.isNaN(potentialNextTabIndex)) {
       this.tab.selectedIndex = potentialNextTabIndex;
     }
-    this.tab.selectedIndexChange.pipe(takeUntil(this.destroy$)).subscribe(async (next) => {
-      await this.updateURLQueryParams(next);
-    });
+    this.tab.selectedIndexChange
+      .pipe(untilDestroyed(this))
+      .subscribe((next) => this.updateURLQueryParams(next));
   }
 
   // Update the URL
@@ -54,11 +52,5 @@ export class TabStateMemoDirective implements OnInit, OnDestroy {
       replaceUrl: true,
       queryParamsHandling: "merge",
     });
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

@@ -15,16 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnDestroy, HostListener } from "@angular/core";
+import { Component } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BackgroundProcessState } from "../background-process-state.interface";
-import { BehaviorSubject, Subject } from "rxjs";
-import { debounceTime, takeUntil } from "rxjs/operators";
-import {
-  BackgroundProcessingIndicatorComponent
-} from "../background-processing-indicator/background-processing-indicator.component";
+import { BehaviorSubject } from "rxjs";
+import { debounceTime } from "rxjs/operators";
+import { BackgroundProcessingIndicatorComponent } from "../background-processing-indicator/background-processing-indicator.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -33,16 +32,14 @@ import {
  * This component also triggers a blocking dialog box when an initial sync is detected that prevents
  * user login (because user accounts need to be synced first).
  */
+@UntilDestroy()
 @Component({
   selector: "app-sync-status",
   templateUrl: "./sync-status.component.html",
-  imports: [
-    BackgroundProcessingIndicatorComponent
-  ],
-  standalone: true
+  imports: [BackgroundProcessingIndicatorComponent],
+  standalone: true,
 })
-export class SyncStatusComponent implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class SyncStatusComponent {
   private indexingProcesses: BackgroundProcessState[];
 
   private _backgroundProcesses = new BehaviorSubject<BackgroundProcessState[]>(
@@ -57,14 +54,16 @@ export class SyncStatusComponent implements OnDestroy {
     private sessionService: SessionService,
     private dbIndexingService: DatabaseIndexingService
   ) {
-    this.dbIndexingService.indicesRegistered.pipe(takeUntil(this.destroy$)).subscribe((indicesStatus) => {
-      this.indexingProcesses = indicesStatus;
-      this.updateBackgroundProcessesList();
-    });
+    this.dbIndexingService.indicesRegistered
+      .pipe(untilDestroyed(this))
+      .subscribe((indicesStatus) => {
+        this.indexingProcesses = indicesStatus;
+        this.updateBackgroundProcessesList();
+      });
 
-    this.sessionService.syncState.pipe(takeUntil(this.destroy$)).subscribe(() =>
-      this.updateBackgroundProcessesList()
-    );
+    this.sessionService.syncState
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.updateBackgroundProcessesList());
   }
 
   /**
@@ -86,11 +85,5 @@ export class SyncStatusComponent implements OnDestroy {
     }
     currentProcesses = currentProcesses.concat(this.indexingProcesses);
     this._backgroundProcesses.next(currentProcesses);
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

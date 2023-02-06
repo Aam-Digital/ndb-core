@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild, OnDestroy, HostListener } from "@angular/core";
+import { Component, Input, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { EntityConstructor } from "../../../core/entity/model/entity";
@@ -29,13 +29,12 @@ import { BorderHighlightDirective } from "../../../core/common-components/border
 import { EntitySelectComponent } from "../../../core/entity-components/entity-select/entity-select/entity-select.component";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
-
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Component responsible for displaying the Note creation/view window
  */
+@UntilDestroy()
 @Component({
   selector: "app-note-details",
   templateUrl: "./note-details.component.html",
@@ -62,8 +61,7 @@ import { Subject } from "rxjs";
   ],
   standalone: true,
 })
-export class NoteDetailsComponent implements ShowsEntity<Note>, OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class NoteDetailsComponent implements ShowsEntity<Note> {
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true })
   formDialogWrapper: FormDialogWrapperComponent<Note>;
@@ -103,7 +101,8 @@ export class NoteDetailsComponent implements ShowsEntity<Note>, OnDestroy {
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
     this.screenWidthObserver
-      .platform().pipe(takeUntil(this.destroy$))
+      .platform()
+      .pipe(untilDestroyed(this))
       .subscribe((isDesktop) => (this.mobile = !isDesktop));
   }
 
@@ -119,11 +118,5 @@ export class NoteDetailsComponent implements ShowsEntity<Note>, OnDestroy {
 
   private getPlaceholder(label: string): string {
     return $localize`:Placeholder for input to add entities|context Add User(s):Add ${label}`;
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

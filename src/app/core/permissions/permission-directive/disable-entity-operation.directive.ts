@@ -6,27 +6,23 @@ import {
   OnInit,
   TemplateRef,
   ViewContainerRef,
-  OnDestroy,
-  HostListener,
 } from "@angular/core";
 import { DisabledWrapperComponent } from "./disabled-wrapper.component";
 import { EntityAction, EntitySubject } from "../permission-types";
 import { AbilityService } from "../ability/ability.service";
 import { EntityAbility } from "../ability/entity-ability";
-
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * This directive can be used to disable a element (e.g. button) based on the current users permissions.
  * Additionally, a little popup will be shown when the user hovers the disabled element.
  */
+@UntilDestroy()
 @Directive({
   selector: "[appDisabledEntityOperation]",
   standalone: true,
 })
-export class DisableEntityOperationDirective implements OnInit, OnChanges, OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class DisableEntityOperationDirective implements OnInit, OnChanges {
   /**
    * These arguments are required to check whether the user has permissions to perform the operation.
    * The operation property defines to what kind of operation a element belongs, e.g. OperationType.CREATE
@@ -46,7 +42,9 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges, OnDes
     private ability: EntityAbility,
     private abilityService: AbilityService
   ) {
-    this.abilityService.abilityUpdated.pipe(takeUntil(this.destroy$)).subscribe(() => this.applyPermissions());
+    this.abilityService.abilityUpdated
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.applyPermissions());
   }
 
   ngOnInit() {
@@ -75,11 +73,5 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges, OnDes
       );
       this.wrapperComponent.instance.ngAfterViewInit();
     }
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

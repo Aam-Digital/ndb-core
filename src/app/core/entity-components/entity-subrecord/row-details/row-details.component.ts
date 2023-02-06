@@ -1,4 +1,4 @@
-import { Component, Inject, OnDestroy, HostListener } from "@angular/core";
+import { Component, Inject } from "@angular/core";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import {
   MAT_DIALOG_DATA,
@@ -28,9 +28,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
-
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -47,6 +45,7 @@ export interface DetailsComponentData {
 /**
  * Displays a single row of a table as a dialog component
  */
+@UntilDestroy()
 @Component({
   selector: "app-row-details",
   templateUrl: "./row-details.component.html",
@@ -67,8 +66,7 @@ export interface DetailsComponentData {
   ],
   standalone: true,
 })
-export class RowDetailsComponent implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class RowDetailsComponent {
   form: EntityForm<Entity>;
   columns: FormFieldConfig[][];
 
@@ -89,7 +87,7 @@ export class RowDetailsComponent implements OnDestroy {
       this.form.disable();
     }
     this.tempEntity = this.data.entity;
-    this.form.valueChanges.pipe(takeUntil(this.destroy$)).subscribe((value) => {
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const dynamicConstructor: any = data.entity.getConstructor();
       this.tempEntity = Object.assign(new dynamicConstructor(), value);
     });
@@ -108,16 +106,10 @@ export class RowDetailsComponent implements OnDestroy {
   }
 
   delete() {
-    this.entityRemoveService.remove(this.data.entity).pipe(takeUntil(this.destroy$)).subscribe((res) => {
+    this.entityRemoveService.remove(this.data.entity).subscribe((res) => {
       if (res === RemoveResult.REMOVED) {
         this.dialogRef.close();
       }
     });
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

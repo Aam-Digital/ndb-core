@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, HostListener } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
@@ -13,9 +13,7 @@ import {
   toFormFieldConfig,
 } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
+import { untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal
@@ -24,14 +22,11 @@ import { Subject } from "rxjs";
  * This takes care of generic logic like a user prompt asking whether changes should be saved before leaving the dialog.
  * Components used with this have to use {@link FormDialogWrapperComponent} and implement {@link ShowsEntity}.
  *
- * Import the {@link FormDialogModule} in your root module to provide this service.
- *
  * @example
  formDialog.getConfirmation(NoteDetailsComponent, noteEntity);
  */
 @Injectable({ providedIn: "root" })
-export class FormDialogService implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class FormDialogService {
   static dialogSettings = {
     width: "80%",
     maxHeight: "90vh",
@@ -65,9 +60,11 @@ export class FormDialogService implements OnDestroy {
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
     dialogWrapper.readonly = this.ability.cannot("update", entity);
 
-    dialogWrapper.close.pipe(takeUntil(this.destroy$)).subscribe((res) => dialogRef.close(res));
+    dialogWrapper.close
+      .pipe(untilDestroyed(dialogWrapper))
+      .subscribe((res) => dialogRef.close(res));
 
-    dialogRef.beforeClosed().pipe(takeUntil(this.destroy$)).subscribe((activelyClosed) => {
+    dialogRef.beforeClosed().subscribe((activelyClosed) => {
       if (!activelyClosed && dialogWrapper.isFormDirty) {
         this.confirmationDialog
           .getConfirmation(
@@ -163,11 +160,5 @@ export class FormDialogService implements OnDestroy {
     }
 
     return formFields.map((k: string) => ({ id: k }));
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }
