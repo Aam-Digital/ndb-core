@@ -134,9 +134,9 @@ describe("BasicAutocompleteComponent", () => {
 
   it("should initialize the options in multi select mode", async () => {
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
-    component.options = [1, 2, 3];
+    component.options = [0, 1, 2];
     component.multi = true;
-    component.value = [1, 2];
+    component.value = [0, 1];
     component.ngOnChanges({ options: true, value: true });
 
     component.showAutocomplete();
@@ -147,7 +147,7 @@ describe("BasicAutocompleteComponent", () => {
     await options[2].click();
     await options[1].click();
 
-    expect(component.value).toEqual([1, 3]);
+    expect(component.value).toEqual([0, 2]);
   });
 
   it("should clear the input when focusing in multi select mode", () => {
