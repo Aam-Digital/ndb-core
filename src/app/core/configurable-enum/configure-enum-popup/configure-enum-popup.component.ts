@@ -65,7 +65,7 @@ export class ConfigureEnumPopupComponent {
 
   async delete(value: ConfigurableEnumValue, index: number) {
     const existingUsages = await this.getUsages(value);
-    let deletionText = $localize`Are you sure that you want to delete the option ${value.label}?`;
+    let deletionText = $localize`Are you sure that you want to delete the option "${value.label}"?`;
     if (existingUsages.length > 0) {
       deletionText += $localize` The option is still used in ${existingUsages.join(
         ", "
