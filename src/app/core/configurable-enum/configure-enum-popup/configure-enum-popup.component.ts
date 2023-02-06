@@ -69,7 +69,7 @@ export class ConfigureEnumPopupComponent {
     if (existingUsages.length > 0) {
       deletionText += $localize` The option is still used in ${existingUsages.join(
         ", "
-      )} records. If deleted, the records will not be lost but specially marked`;
+      )} records. If deleted, the records will not be lost but specially marked.`;
     }
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Delete option`,
