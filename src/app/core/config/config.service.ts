@@ -6,6 +6,7 @@ import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../configurable-enum/configurab
 import { filter } from "rxjs/operators";
 import { LoggingService } from "../logging/logging.service";
 import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
+import { EntityAbility } from "../permissions/ability/entity-ability";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -25,7 +26,8 @@ export class ConfigService {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private logger: LoggingService
+    private logger: LoggingService,
+    private ability: EntityAbility
   ) {
     this.loadConfig();
     this.entityMapper
@@ -37,13 +39,13 @@ export class ConfigService {
   async loadConfig(): Promise<void> {
     return this.entityMapper
       .load(Config, Config.CONFIG_KEY)
-      .then((config) => this.detectLegacyConfig(config))
       .then((config) => this.updateConfigIfChanged(config))
       .catch(() => {});
   }
 
   private async updateConfigIfChanged(config: Config) {
     if (!this.currentConfig || config._rev !== this.currentConfig?._rev) {
+      await this.detectLegacyConfig(config);
       this.currentConfig = config;
       this._configUpdates.next(config);
     }
@@ -90,7 +92,9 @@ export class ConfigService {
       );
     }
 
-    await this.migrateEnumsToEntities(config);
+    await this.migrateEnumsToEntities(config).catch((err) =>
+      this.logger.error(`ConfigurableEnum migration error: ${err}`)
+    );
 
     return config;
   }
@@ -116,9 +120,12 @@ export class ConfigService {
       }
       delete config.data[key];
     });
-    return this.entityMapper
-      .saveAll(newEnums)
-      .then(() => this.entityMapper.save(config))
-      .catch(() => {});
+
+    if (this.ability.can("create", ConfigurableEnum)) {
+      await this.entityMapper.saveAll(newEnums);
+    }
+    if (this.ability.can("update", config)) {
+      await this.entityMapper.save(config);
+    }
   }
 }

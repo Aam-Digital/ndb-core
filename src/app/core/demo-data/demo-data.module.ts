@@ -40,6 +40,7 @@ import { DemoConfigurableEnumGeneratorService } from "../configurable-enum/demo-
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
 
 const demoDataGeneratorProviders = [
+  ...DemoPermissionGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoConfigGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
@@ -65,7 +66,6 @@ const demoDataGeneratorProviders = [
     minCountAttributes: 2,
     maxCountAttributes: 5,
   }),
-  ...DemoPermissionGeneratorService.provider(),
   ...DemoTodoGeneratorService.provider(),
 ];
 

@@ -222,21 +222,21 @@ export const defaultJsonConfig = {
         }
       ],
       "exportConfig": [
-        {"label": "event_id", "query": "_id"},
-        {"label": "date", "query": "date"},
-        {"label": "event title", "query": "subject"},
-        {"label": "event type", "query": "category"},
-        {"label": "event description", "query": "text"},
+        { "label": "event_id", "query": "_id" },
+        { "label": "date", "query": "date" },
+        { "label": "event title", "query": "subject" },
+        { "label": "event type", "query": "category" },
+        { "label": "event description", "query": "text" },
         {
           "query": ":getAttendanceArray(true)",
           "subQueries": [
             {
               "query": ".participant:toEntities(Child)",
               "subQueries": [
-                {"label": "participant_id", "query": "_id"},
-                {"label": "participant", "query": "name"},
-                {"label": "gender", "query": "gender"},
-                {"label": "religion", "query": "religion"},
+                { "label": "participant_id", "query": "_id" },
+                { "label": "participant", "query": "name" },
+                { "label": "gender", "query": "gender" },
+                { "label": "religion", "query": "religion" },
               ]
             },
             {
@@ -246,8 +246,8 @@ export const defaultJsonConfig = {
             {
               "query": ".school:toEntities(School)",
               "subQueries": [
-                {"label": "school_name", "query": "name"},
-                {"label": "school_id", "query": "entityId"}
+                { "label": "school_name", "query": "name" },
+                { "label": "school_id", "query": "entityId" }
               ]
             }
           ],
@@ -460,11 +460,7 @@ export const defaultJsonConfig = {
               "projectNumber",
               "name",
               "age",
-              "gender",
-              "schoolClass",
-              "schoolId",
-              "center",
-              "status"
+              "test"
             ]
           },
           {
@@ -554,6 +550,7 @@ export const defaultJsonConfig = {
                     "name",
                     "projectNumber",
                     "admissionDate",
+                    "test"
                   ],
                   [
                     "dateOfBirth",
@@ -611,7 +608,7 @@ export const defaultJsonConfig = {
               "config": {
                 "rightSide": {
                   "entityType": School.ENTITY_TYPE,
-                  "availableFilters": [{"id": "language"}],
+                  "availableFilters": [{ "id": "language" }],
                 },
               }
             }
@@ -675,11 +672,11 @@ export const defaultJsonConfig = {
               component: "HistoricalDataComponent",
               config: [
                 "date",
-                {id: "isMotivatedDuringClass", visibleFrom: "lg"},
-                {id: "isParticipatingInClass", visibleFrom: "lg"},
-                {id: "isInteractingWithOthers", visibleFrom: "lg"},
-                {id: "doesHomework", visibleFrom: "lg"},
-                {id: "asksQuestions", visibleFrom: "lg"},
+                { id: "isMotivatedDuringClass", visibleFrom: "lg" },
+                { id: "isParticipatingInClass", visibleFrom: "lg" },
+                { id: "isInteractingWithOthers", visibleFrom: "lg" },
+                { id: "doesHomework", visibleFrom: "lg" },
+                { id: "asksQuestions", visibleFrom: "lg" },
               ]
             }
           ]
@@ -713,9 +710,9 @@ export const defaultJsonConfig = {
         "assignedTo"
       ],
       "exportConfig": [
-        {label: "Title", query: "title"},
-        {label: "Type", query: "type"},
-        {label: "Assigned users", query: "assignedTo"}
+        { label: "Title", query: "title" },
+        { label: "Type", query: "type" },
+        { label: "Assigned users", query: "assignedTo" }
       ]
     }
   },
@@ -830,7 +827,7 @@ export const defaultJsonConfig = {
           "aggregationDefinitions": [
             {
               "query": `${EventNote.ENTITY_TYPE}:toArray[* date >= ? & date <= ?]`,
-              groupBy: {label: "Type", property: "category"},
+              groupBy: { label: "Type", property: "category" },
               "subQueries": [
                 {
                   query: ":getAttendanceArray:getAttendanceReport",
@@ -869,6 +866,15 @@ export const defaultJsonConfig = {
     "label": $localize`:Label for child:Child`,
     "labelPlural": $localize`:Plural label for child:Children`,
     "attributes": [
+      {
+        "name": "test",
+        "schema": {
+          dataType: "array",
+          innerDataType: "configurable-enum",
+          additional: "interaction-type",
+          label: "Test"
+        }
+      },
       {
         "name": "address",
         "schema": {
@@ -1032,10 +1038,10 @@ export const defaultJsonConfig = {
     config: {
       rightSide: {
         entityType: School.ENTITY_TYPE,
-        prefilter: {"privateSchool": true},
-        availableFilters: [{"id": "language"}],
+        prefilter: { "privateSchool": true },
+        availableFilters: [{ "id": "language" }],
       },
-      leftSide: {entityType: Child.ENTITY_TYPE},
+      leftSide: { entityType: Child.ENTITY_TYPE },
     }
   },
   "appConfig:matching-entities": {
@@ -1062,7 +1068,7 @@ export const defaultJsonConfig = {
       "entity": "Todo",
       "columns": ["deadline", "subject", "assignedTo", "startDate", "relatedEntities"],
       "filters": [
-        {"id": "assignedTo"},
+        { "id": "assignedTo" },
 
         {
           "id": "due-status",

@@ -6,6 +6,7 @@ import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
 import { LoggingService } from "../logging/logging.service";
 import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
+import { EntityAbility } from "../permissions/ability/entity-ability";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -30,9 +31,13 @@ describe("ConfigService", () => {
         { provide: EntityMapperService, useValue: entityMapper },
         ConfigService,
         LoggingService,
+        EntityAbility,
       ],
     });
     service = TestBed.inject(ConfigService);
+    TestBed.inject(EntityAbility).update([
+      { subject: "all", action: "manage" },
+    ]);
   });
 
   it("should be created", () => {
@@ -162,6 +167,17 @@ describe("ConfigService", () => {
 
     expect(entityMapper.save).not.toHaveBeenCalled();
     expect(entityMapper.saveAll).not.toHaveBeenCalled();
+  });
+
+  it("should not save config if permissions prevent it", async () => {
+    // user can only read config
+    TestBed.inject(EntityAbility).update([
+      { subject: "Config", action: "read" },
+    ]);
+
+    await initConfig({ "enum:1": [], other: "config" });
+
+    expect(entityMapper.save).not.toHaveBeenCalled();
   });
 
   function initConfig(data) {

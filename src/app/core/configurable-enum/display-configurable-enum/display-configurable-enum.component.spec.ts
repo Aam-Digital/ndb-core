@@ -1,6 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { DisplayConfigurableEnumComponent } from "./display-configurable-enum.component";
-import { Ordering } from "../configurable-enum-ordering";
 
 describe("DisplayConfigurableEnumComponent", () => {
   let component: DisplayConfigurableEnumComponent;
