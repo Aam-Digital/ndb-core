@@ -78,7 +78,7 @@ describe("ConfigureEnumPopupComponent", () => {
 
     expect(confirmationSpy).toHaveBeenCalledWith(
       "Delete option",
-      `Are you sure that you want to delete the option ${male.label}?`
+      `Are you sure that you want to delete the option "${male.label}"?`
     );
   });
 });
