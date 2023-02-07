@@ -170,6 +170,12 @@ export class Entity {
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField() _rev: string;
 
+  @DatabaseField({
+    label: $localize`:Label of checkbox:Inactive`,
+    description: $localize`:Description of checkbox:Ticking this box will archive the record. No data will be lost but the record will be hidden.`,
+  })
+  inactive: boolean;
+
   /** whether this entity object is newly created and not yet saved to database */
   get isNew(): boolean {
     return !this._rev;
@@ -215,29 +221,16 @@ export class Entity {
 
   /**
    * Check, if this entity is considered active.
-   * This is either taken from the (not configured) property "active".
+   * This is either taken from the property "inactive" (configured) or "active" (not configured).
    * If the property doesn't exist, the default is `true`.
    * Subclasses may overwrite this functionality.
-   *
-   * To have a simple boolean indicating if an entity is active or not, add the following schema:
-   * ```json
-   *  {
-   *    "name": "active",
-   *    "schema": {
-   *      "dataType": "boolean",
-   *      "label": "Active",
-   *      "defaultValue": true
-   *    }
-   *  }
-   * ```
-   * alternatively you can store the inverted, as name "inactive"
    */
   get isActive(): boolean {
     if (this["active"] !== undefined) {
       return this["active"];
     }
-    if (this["inactive"] !== undefined) {
-      return !this["inactive"];
+    if (this.inactive !== undefined) {
+      return !this.inactive;
     }
     return true;
   }
@@ -248,7 +241,7 @@ export class Entity {
    */
   set isActive(isActive: boolean) {
     this["active"] = isActive;
-    this["inactive"] = !isActive;
+    this.inactive = !isActive;
   }
 
   /**

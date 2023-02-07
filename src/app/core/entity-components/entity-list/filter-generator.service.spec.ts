@@ -65,16 +65,33 @@ describe("FilterGeneratorService", () => {
     interactionTypes.push({ key: "all", label: "All" });
     const schema = Note.schema.get("category");
 
-    const filter = (await service.generate([{ id: "category" }], Note, []))[0];
+    let filter = (await service.generate([{ id: "category" }], Note, []))[0];
 
     expect(filter.filterSettings.label).toEqual(schema.label);
     expect(filter.filterSettings.name).toEqual("category");
-    const comparableOptions = filter.filterSettings.options.map((option) => {
+    let comparableOptions = filter.filterSettings.options.map((option) => {
       return { key: option.key, label: option.label };
     });
     expect(comparableOptions).toEqual(
       jasmine.arrayWithExactContents(interactionTypes)
     );
+
+    // enum name in additional field
+    const schemaAdditional = {
+      dataType: schema.dataType,
+      additional: schema.innerDataType,
+    };
+    Note.schema.set("otherEnum", schemaAdditional);
+
+    filter = (await service.generate([{ id: "otherEnum" }], Note, []))[0];
+
+    comparableOptions = filter.filterSettings.options.map((option) => {
+      return { key: option.key, label: option.label };
+    });
+    expect(comparableOptions).toEqual(
+      jasmine.arrayWithExactContents(interactionTypes)
+    );
+    Note.schema.delete("otherEnum");
   });
 
   it("should create a entity filter", async () => {

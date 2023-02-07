@@ -40,7 +40,7 @@ export class FilterGeneratorService {
     filtersConfig: FilterConfig[],
     entityConstructor: EntityConstructor<T>,
     data: T[],
-    onlyShowUsedOptions: boolean = false
+    onlyShowUsedOptions = false
   ): Promise<FilterComponentSettings<T>[]> {
     const filterSettings: FilterComponentSettings<T>[] = [];
     for (const filter of filtersConfig) {
@@ -91,7 +91,7 @@ export class FilterGeneratorService {
     } else if (schema.dataType === "configurable-enum") {
       return this.createConfigurableEnumFilterOptions(
         config.id,
-        schema.innerDataType
+        schema.additional ?? schema.innerDataType
       );
     } else if (
       this.entities.has(config.type) ||
