@@ -18,11 +18,28 @@ import { EntityRegistry } from "../entity/database-entity.decorator";
 })
 export class QueryService {
   private entities: { [type: string]: { [id: string]: Entity } } = {};
+
+  /**
+   * A list of special functions to load entities.
+   * If not specified, `EntityMapper.loadType` is used.
+   * @private
+   */
   private dataFunctions: { [type: string]: (form, to) => Promise<Entity[]> } = {
     Note: (from, to) => this.childrenService.getNotesInTimespan(from, to),
     EventNote: (from, to) => this.attendanceService.getEventsOnDate(from, to),
   };
+  /**
+   * A overview over which data has already been loaded.
+   * If `EntityMapper.loadType` was used, `true` is set, otherwise the provided `from` and `to` date are set.
+   * @private
+   */
   private dataLoaded: { [type: string]: { from: Date; to: Date } | true } = {};
+
+  /**
+   * A list of further aliases for which a certain entity needs to be loaded.
+   * This can be necessary if a function requires a certain entity to be present.
+   * @private
+   */
   private queryStringMap: [string, EntityConstructor][] = [
     ["getAttendanceArray\\(true\\)", ChildSchoolRelation],
   ];
@@ -53,30 +70,11 @@ export class QueryService {
     to?: Date,
     data?: any
   ): Promise<any> {
-    if (!from) {
-      from = new Date(0);
-    }
-    if (!to) {
-      to = new Date();
-    }
+    from = from ?? new Date(0);
+    to = to ?? new Date();
 
-    const usedEntities = this.queryStringMap
-      .filter(([matcher]) =>
-        query.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`))
-      )
-      .map(([_, entity]) => entity)
-      .filter((entity) => {
-        const loadingInfo = this.dataLoaded[entity.ENTITY_TYPE];
-        return (
-          loadingInfo === undefined ||
-          !(
-            loadingInfo === true ||
-            (loadingInfo.from <= from && loadingInfo.to >= to)
-          )
-        );
-      });
-
-    await this.loadData(usedEntities, from, to);
+    const uncachedEntities = this.getUncachedEntities(query, from, to);
+    await this.loadData(uncachedEntities, from, to);
 
     if (!data) {
       data = this.entities;
@@ -100,6 +98,32 @@ export class QueryService {
         setString: this.setString,
       },
     }).value;
+  }
+
+  /**
+   * Get entities that are referenced in the query string and are not sufficiently cached.
+   * @param query
+   * @param from
+   * @param to
+   * @private
+   */
+  private getUncachedEntities(query: string, from: Date, to: Date) {
+    return this.queryStringMap
+      .filter(([matcher]) =>
+        // matches query string without any alphanumeric characters before or after (e.g. so Child does not match ChildSchoolRelation)
+        query.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`))
+      )
+      .map(([_, entity]) => entity)
+      .filter((entity) => {
+        const loadingInfo = this.dataLoaded[entity.ENTITY_TYPE];
+        return (
+          loadingInfo === undefined ||
+          !(
+            loadingInfo === true ||
+            (loadingInfo.from <= from && loadingInfo.to >= to)
+          )
+        );
+      });
   }
 
   private async loadData(entities: EntityConstructor[], from: Date, to: Date) {
