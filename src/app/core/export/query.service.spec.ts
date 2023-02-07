@@ -297,6 +297,13 @@ describe("QueryService", () => {
     );
   });
 
+  it("should not throw an error if dates are in the future", () => {
+    const query = `${EventNote.ENTITY_TYPE}:toArray[* date >= ? & date < ?]`;
+    const from = moment().add(1, "day").toDate();
+    const to = moment().add(1, "week").toDate();
+    return expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+  });
+
   it("should load more events if a later date is provided", async () => {
     await createNote(moment().subtract(2, "week").toDate());
     const threeDaysAgo = await createNote(
