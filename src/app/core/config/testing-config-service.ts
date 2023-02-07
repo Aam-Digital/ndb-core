@@ -9,7 +9,8 @@ export function createTestingConfigService(
 ): ConfigService {
   const configService = new ConfigService(
     mockEntityMapper(),
-    new LoggingService()
+    new LoggingService(),
+    { can: () => true } as any
   );
   configService["currentConfig"] = new Config(Config.CONFIG_KEY, configsObject);
   return configService;

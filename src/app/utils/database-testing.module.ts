@@ -8,6 +8,8 @@ import { environment } from "../../environments/environment";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
+import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -24,6 +26,10 @@ import { ComponentRegistry } from "../dynamic-components";
   providers: [
     { provide: SessionService, useClass: LocalSession },
     { provide: ConfigService, useValue: createTestingConfigService() },
+    {
+      provide: ConfigurableEnumService,
+      useValue: createTestingConfigurableEnumService(),
+    },
   ],
 })
 export class DatabaseTestingModule {

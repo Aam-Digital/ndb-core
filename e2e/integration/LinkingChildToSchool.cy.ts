@@ -24,9 +24,9 @@ describe("Scenario: Linking a child to a school - E2E test", function () {
       .click();
 
     // choose the school to add
-    cy.get('[ng-reflect-placeholder="Select School"]')
-      .type("E2E School", { force: true })
-      .click();
+    cy.contains("mat-form-field", "School")
+      .find("[matInput]")
+      .type("E2E School{enter}");
 
     // save school in child profile
     cy.contains("button", "Save").click({ force: true });

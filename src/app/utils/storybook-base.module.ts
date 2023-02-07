@@ -21,7 +21,10 @@ import { createTestingConfigService } from "../core/config/testing-config-servic
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
 
-export const entityFormStorybookDefaulParameters = {
+componentRegistry.allowDuplicates();
+entityRegistry.allowDuplicates();
+
+export const entityFormStorybookDefaultParameters = {
   controls: {
     exclude: ["_columns"],
   },
@@ -65,7 +68,5 @@ export const mockAbilityService = {
 export class StorybookBaseModule {
   constructor(icons: FaIconLibrary) {
     icons.addIconPacks(fas, far);
-    entityRegistry.allowDuplicates();
-    componentRegistry.allowDuplicates();
   }
 }

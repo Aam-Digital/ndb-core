@@ -55,9 +55,8 @@ export class ChildrenBmiDashboardComponent
   async loadBMIData() {
     // Maybe replace this by a smart index function
     const healthChecks = await this.entityMapper.loadType(HealthCheck);
-    const healthCheckMap = groupBy(healthChecks, "child");
     const BMIs: BmiRow[] = [];
-    healthCheckMap.forEach((checks, childId) => {
+    groupBy(healthChecks, "child").forEach(([childId, checks]) => {
       const latest = checks.reduce((prev, cur) =>
         cur.date > prev.date ? cur : prev
       );

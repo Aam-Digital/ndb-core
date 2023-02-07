@@ -1,17 +1,7 @@
-import { defaultAttendanceStatusTypes } from "./default-config/default-attendance-status-types";
-import { defaultInteractionTypes } from "./default-config/default-interaction-types";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import { genders } from "../../child-dev-project/children/model/genders";
-import { materials } from "../../child-dev-project/children/educational-material/model/materials";
-import {
-  mathLevels,
-  readingLevels,
-} from "../../child-dev-project/children/aser/model/skill-levels";
-import { warningLevels } from "../../child-dev-project/warning-levels";
-import { ratingAnswers } from "../../features/historical-data/model/rating-answers";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -89,68 +79,6 @@ export const defaultJsonConfig = {
       },
     ]
   },
-
-
-  "enum:interaction-type": defaultInteractionTypes,
-  "enum:attendance-status": defaultAttendanceStatusTypes,
-  "enum:reading-levels": readingLevels,
-  "enum:math-levels": mathLevels,
-  "enum:genders": genders,
-  "enum:materials": materials,
-  "enum:warning-levels": warningLevels,
-  "enum:document-status": [
-    {
-      "id": "",
-      "label": "",
-      "_ordinal": 0,
-    },
-    {
-      "id": "OK (copy with us)",
-      "label": $localize`:Document status:OK (copy with us)`,
-      "_ordinal": 1,
-    },
-    {
-      "id": "OK (copy needed for us)",
-      "label": $localize`:Document status:OK (copy needed for us)`,
-      "_ordinal": 2,
-    },
-    {
-      "id": "needs correction",
-      "label": $localize`:Document status:needs correction`,
-      "_ordinal": 3,
-    },
-    {
-      "id": "applied",
-      "label": $localize`:Document status:applied`,
-      "_ordinal": 4,
-    },
-    {
-      "id": "doesn't have",
-      "label": $localize`:Document status:doesn't have`,
-      "_ordinal": 5,
-    },
-    {
-      "id": "not eligible",
-      "label": $localize`:Document status:not eligible`,
-      "_ordinal": 6,
-    }
-  ],
-  "enum:center": [
-    {
-      "id": "alipore",
-      "label": $localize`:center:Alipore`
-    },
-    {
-      "id": "tollygunge",
-      "label": $localize`:center:Tollygunge`
-    },
-    {
-      "id": "barabazar",
-      "label": $localize`:center:Barabazar`
-    }
-  ],
-  "enum:rating-answer": ratingAnswers,
-
   "view:": {
     "component": "Dashboard",
     "config": {
@@ -294,21 +222,21 @@ export const defaultJsonConfig = {
         }
       ],
       "exportConfig": [
-        {"label": "event_id", "query": "_id"},
-        {"label": "date", "query": "date"},
-        {"label": "event title", "query": "subject"},
-        {"label": "event type", "query": "category"},
-        {"label": "event description", "query": "text"},
+        { "label": "event_id", "query": "_id" },
+        { "label": "date", "query": "date" },
+        { "label": "event title", "query": "subject" },
+        { "label": "event type", "query": "category" },
+        { "label": "event description", "query": "text" },
         {
           "query": ":getAttendanceArray(true)",
           "subQueries": [
             {
               "query": ".participant:toEntities(Child)",
               "subQueries": [
-                {"label": "participant_id", "query": "_id"},
-                {"label": "participant", "query": "name"},
-                {"label": "gender", "query": "gender"},
-                {"label": "religion", "query": "religion"},
+                { "label": "participant_id", "query": "_id" },
+                { "label": "participant", "query": "name" },
+                { "label": "gender", "query": "gender" },
+                { "label": "religion", "query": "religion" },
               ]
             },
             {
@@ -318,8 +246,8 @@ export const defaultJsonConfig = {
             {
               "query": ".school:toEntities(School)",
               "subQueries": [
-                {"label": "school_name", "query": "name"},
-                {"label": "school_id", "query": "entityId"}
+                { "label": "school_name", "query": "name" },
+                { "label": "school_id", "query": "entityId" }
               ]
             }
           ],
@@ -683,7 +611,7 @@ export const defaultJsonConfig = {
               "config": {
                 "rightSide": {
                   "entityType": School.ENTITY_TYPE,
-                  "availableFilters": [{"id": "language"}],
+                  "availableFilters": [{ "id": "language" }],
                 },
               }
             }
@@ -747,11 +675,11 @@ export const defaultJsonConfig = {
               component: "HistoricalDataComponent",
               config: [
                 "date",
-                {id: "isMotivatedDuringClass", visibleFrom: "lg"},
-                {id: "isParticipatingInClass", visibleFrom: "lg"},
-                {id: "isInteractingWithOthers", visibleFrom: "lg"},
-                {id: "doesHomework", visibleFrom: "lg"},
-                {id: "asksQuestions", visibleFrom: "lg"},
+                { id: "isMotivatedDuringClass", visibleFrom: "lg" },
+                { id: "isParticipatingInClass", visibleFrom: "lg" },
+                { id: "isInteractingWithOthers", visibleFrom: "lg" },
+                { id: "doesHomework", visibleFrom: "lg" },
+                { id: "asksQuestions", visibleFrom: "lg" },
               ]
             }
           ]
@@ -796,9 +724,9 @@ export const defaultJsonConfig = {
         },
       ],
       "exportConfig": [
-        {label: "Title", query: "title"},
-        {label: "Type", query: "type"},
-        {label: "Assigned users", query: "assignedTo"}
+        { label: "Title", query: "title" },
+        { label: "Type", query: "type" },
+        { label: "Assigned users", query: "assignedTo" }
       ]
     }
   },
@@ -913,7 +841,7 @@ export const defaultJsonConfig = {
           "aggregationDefinitions": [
             {
               "query": `${EventNote.ENTITY_TYPE}:toArray[* date >= ? & date <= ?]`,
-              groupBy: {label: "Type", property: "category"},
+              groupBy: { label: "Type", property: "category" },
               "subQueries": [
                 {
                   query: ":getAttendanceArray:getAttendanceReport",
@@ -1115,10 +1043,10 @@ export const defaultJsonConfig = {
     config: {
       rightSide: {
         entityType: School.ENTITY_TYPE,
-        prefilter: {"privateSchool": true},
-        availableFilters: [{"id": "language"}],
+        prefilter: { "privateSchool": true },
+        availableFilters: [{ "id": "language" }],
       },
-      leftSide: {entityType: Child.ENTITY_TYPE},
+      leftSide: { entityType: Child.ENTITY_TYPE },
     }
   },
   "appConfig:matching-entities": {
@@ -1145,7 +1073,7 @@ export const defaultJsonConfig = {
       "entity": "Todo",
       "columns": ["deadline", "subject", "assignedTo", "startDate", "relatedEntities"],
       "filters": [
-        {"id": "assignedTo"},
+        { "id": "assignedTo" },
 
         {
           "id": "due-status",

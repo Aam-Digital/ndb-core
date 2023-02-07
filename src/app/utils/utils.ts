@@ -5,6 +5,7 @@
 import { Router } from "@angular/router";
 import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
 import { FactoryProvider, Injector } from "@angular/core";
+import { isConfigurableEnum } from "../core/entity-components/entity-subrecord/entity-subrecord/value-accessor";
 
 export function isValidDate(date: any): boolean {
   return (
@@ -26,23 +27,41 @@ export function getParentUrl(router: Router): string {
 }
 
 /**
- * Group an array by the given property into a map of parts of the array.
+ * Group an array by the given property.
  *
  * @param array A simple array to be grouped.
  * @param propertyToGroupBy The key of the property in the elements by whose value the result is grouped.
+ * @returns an array where the first entry is the value of this group and the second all entries that have this value.
  */
-export function groupBy<T>(
+export function groupBy<T, P extends keyof T>(
   array: T[],
-  propertyToGroupBy: keyof T
-): Map<string, T[]> {
-  return array.reduce(
-    (entryMap, element) =>
-      entryMap.set(element[propertyToGroupBy], [
-        ...(entryMap.get(element[propertyToGroupBy]) || []),
-        element,
-      ]),
-    new Map()
-  );
+  propertyToGroupBy: P
+): [T[P], T[]][] {
+  return array.reduce((allGroups, currentElement) => {
+    const currentValue = currentElement[propertyToGroupBy];
+    let existingGroup = allGroups.find(([group]) =>
+      equals(group, currentValue)
+    );
+    if (!existingGroup) {
+      existingGroup = [currentValue, []];
+      allGroups.push(existingGroup);
+    }
+    existingGroup[1].push(currentElement);
+    return allGroups;
+  }, new Array<[T[P], T[]]>());
+}
+
+/**
+ * Comparing two values for equality that might be different than just object equality
+ * @param a
+ * @param b
+ */
+function equals(a, b): boolean {
+  if (isConfigurableEnum(a) && isConfigurableEnum(b)) {
+    return a.id === b.id;
+  } else {
+    return a === b;
+  }
 }
 
 export function calculateAge(dateOfBirth: Date): number {

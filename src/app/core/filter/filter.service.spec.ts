@@ -4,16 +4,19 @@ import { FilterService } from "./filter.service";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { DataFilter } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Note } from "../../child-dev-project/notes/model/note";
-import { ConfigService } from "../config/config.service";
-import { createTestingConfigService } from "../config/testing-config-service";
+import { ConfigurableEnumService } from "../configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../configurable-enum/configurable-enum-testing";
 
 describe("FilterService", () => {
   let service: FilterService;
 
-  beforeEach(() => {
-    TestBed.configureTestingModule({
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       providers: [
-        { provide: ConfigService, useValue: createTestingConfigService() },
+        {
+          provide: ConfigurableEnumService,
+          useValue: createTestingConfigurableEnumService(),
+        },
       ],
     });
     service = TestBed.inject(FilterService);

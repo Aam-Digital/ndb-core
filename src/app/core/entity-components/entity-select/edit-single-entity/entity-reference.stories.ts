@@ -5,7 +5,7 @@ import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.c
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import {
-  entityFormStorybookDefaulParameters,
+  entityFormStorybookDefaultParameters,
   StorybookBaseModule,
 } from "../../../../utils/storybook-base.module";
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
@@ -27,10 +27,7 @@ export default {
   component: EntityFormComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        EntityFormComponent,
-        StorybookBaseModule,
-      ],
+      imports: [EntityFormComponent, StorybookBaseModule],
       providers: [
         EntitySchemaService,
         {
@@ -40,7 +37,7 @@ export default {
       ],
     }),
   ],
-  parameters: entityFormStorybookDefaulParameters,
+  parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({

@@ -1,8 +1,9 @@
-import { Component, HostBinding } from "@angular/core";
+import { Component } from "@angular/core";
 import { ViewPropertyConfig } from "app/core/entity-components/entity-list/EntityListConfig";
 import { ViewDirective } from "../../entity-components/entity-utils/view-components/view.directive";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
 
 /**
  * This component displays a {@link ConfigurableEnumValue} as text.
@@ -11,20 +12,22 @@ import { ConfigurableEnumValue } from "../configurable-enum.interface";
 @DynamicComponent("DisplayConfigurableEnum")
 @Component({
   selector: "app-display-configurable-enum",
-  template: `{{ value?.label }}`,
+  templateUrl: "./display-configurable-enum.component.html",
+  styleUrls: ["./display-configurable-enum.component.scss"],
   standalone: true,
+  imports: [NgForOf, NgIf, NgClass],
 })
-export class DisplayConfigurableEnumComponent extends ViewDirective<ConfigurableEnumValue> {
-  @HostBinding("style.background-color") private style;
-  @HostBinding("style.padding") private padding;
-  @HostBinding("style.border-radius") private radius;
+export class DisplayConfigurableEnumComponent extends ViewDirective<
+  ConfigurableEnumValue | ConfigurableEnumValue[]
+> {
+  iterableValue: ConfigurableEnumValue[] = [];
 
   onInitFromDynamicConfig(config: ViewPropertyConfig) {
     super.onInitFromDynamicConfig(config);
-    if (this.value?.color) {
-      this.style = this.value.color;
-      this.padding = "5px";
-      this.radius = "4px";
+    if (Array.isArray(this.value)) {
+      this.iterableValue = this.value;
+    } else if (this.value) {
+      this.iterableValue = [this.value];
     }
   }
 }
