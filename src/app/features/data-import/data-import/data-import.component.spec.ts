@@ -74,11 +74,11 @@ describe("DataImportComponent", () => {
     component.entityForm.patchValue({ entity: "Child" });
     component.entitySelectionChanged();
 
-    component.processChange("na");
+    component.processChange("nam");
     expect(component.filteredProperties.value).toEqual(["name"]);
 
     component.columnMappingForm.addControl("Name", new FormControl("name"));
-    component.processChange("na");
+    component.processChange("nam");
     expect(component.filteredProperties.value).toEqual([]);
   }));
 
