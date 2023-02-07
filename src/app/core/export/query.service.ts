@@ -73,8 +73,7 @@ export class QueryService {
     from = from ?? new Date(0);
     to = to ?? new Date();
 
-    const uncachedEntities = this.getUncachedEntities(query, from, to);
-    await this.loadData(uncachedEntities, from, to);
+    await this.cacheRequiredData(query, from, to);
 
     if (!data) {
       data = this.entities;
@@ -98,6 +97,27 @@ export class QueryService {
         setString: this.setString,
       },
     }).value;
+  }
+
+  private cacheRequiredData(query: string, from: Date, to: Date) {
+    const uncachedEntities = this.getUncachedEntities(query, from, to);
+    const dataPromises = uncachedEntities.map((entity) => {
+      if (this.dataFunctions[entity.ENTITY_TYPE]) {
+        return this.dataFunctions[entity.ENTITY_TYPE](from, to).then(
+          (loadedEntities) => {
+            this.setEntities(entity, loadedEntities);
+            this.dataLoaded[entity.ENTITY_TYPE] = { from, to };
+          }
+        );
+      } else {
+        return this.entityMapper.loadType(entity).then((loadedEntities) => {
+          this.setEntities(entity, loadedEntities);
+          this.dataLoaded[entity.ENTITY_TYPE] = true;
+        });
+      }
+    });
+
+    return Promise.all(dataPromises);
   }
 
   /**
@@ -124,26 +144,6 @@ export class QueryService {
           )
         );
       });
-  }
-
-  private async loadData(entities: EntityConstructor[], from: Date, to: Date) {
-    const dataPromises = entities.map((entity) => {
-      if (this.dataFunctions[entity.ENTITY_TYPE]) {
-        return this.dataFunctions[entity.ENTITY_TYPE](from, to).then(
-          (loadedEntities) => {
-            this.setEntities(entity, loadedEntities);
-            this.dataLoaded[entity.ENTITY_TYPE] = { from, to };
-          }
-        );
-      } else {
-        return this.entityMapper.loadType(entity).then((loadedEntities) => {
-          this.setEntities(entity, loadedEntities);
-          this.dataLoaded[entity.ENTITY_TYPE] = true;
-        });
-      }
-    });
-
-    await Promise.all(dataPromises);
   }
 
   private setEntities<T extends Entity>(
