@@ -784,6 +784,17 @@ export const defaultJsonConfig = {
         "type",
         "assignedTo"
       ],
+      "filters": [
+        {
+          "id": "isActive",
+          "type": "boolean",
+          "default": "true",
+          "label": $localize`Status`,
+          "true": $localize`:Active records filter label - true case:Active`,
+          "false": $localize`:Active records filter label - false case:Inactive`,
+          "all": $localize`:Active records unselect option:All`
+        },
+      ],
       "exportConfig": [
         {label: "Title", query: "title"},
         {label: "Type", query: "type"},
@@ -804,7 +815,7 @@ export const defaultJsonConfig = {
               "config": {
                 "cols": [
                   ["title"],
-                  ["type"],
+                  ["type", "inactive"],
                   ["assignedTo"]
                 ]
               }
