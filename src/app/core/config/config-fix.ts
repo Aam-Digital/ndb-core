@@ -460,7 +460,11 @@ export const defaultJsonConfig = {
               "projectNumber",
               "name",
               "age",
-              "test"
+              "gender",
+              "schoolClass",
+              "schoolId",
+              "center",
+              "status"
             ]
           },
           {
@@ -550,7 +554,6 @@ export const defaultJsonConfig = {
                     "name",
                     "projectNumber",
                     "admissionDate",
-                    "test"
                   ],
                   [
                     "dateOfBirth",
@@ -866,15 +869,6 @@ export const defaultJsonConfig = {
     "label": $localize`:Label for child:Child`,
     "labelPlural": $localize`:Plural label for child:Children`,
     "attributes": [
-      {
-        "name": "test",
-        "schema": {
-          dataType: "array",
-          innerDataType: "configurable-enum",
-          additional: "interaction-type",
-          label: "Test"
-        }
-      },
       {
         "name": "address",
         "schema": {
