@@ -1,8 +1,5 @@
 import { Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
-import { Child } from "../../child-dev-project/children/model/child";
-import { School } from "../../child-dev-project/schools/model/school";
-import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { EntityMapperService } from "../entity/entity-mapper.service";
@@ -11,6 +8,7 @@ import { ChildrenService } from "../../child-dev-project/children/children.servi
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import jsonQuery from "json-query";
+import { EntityRegistry } from "../entity/database-entity.decorator";
 
 /**
  * A query service which uses the json-query library (https://github.com/auditassistant/json-query).
@@ -19,15 +17,26 @@ import jsonQuery from "json-query";
   providedIn: "root",
 })
 export class QueryService {
-  private entities: { [type: string]: { [id: string]: Entity } };
-  private dataAvailableFrom: Date;
-  private dataAvailableTo: Date;
+  private entities: { [type: string]: { [id: string]: Entity } } = {};
+  private dataFunctions: { [type: string]: (form, to) => Promise<Entity[]> } = {
+    Note: (from, to) => this.childrenService.getNotesInTimespan(from, to),
+    EventNote: (from, to) => this.attendanceService.getEventsOnDate(from, to),
+  };
+  private dataLoaded: { [type: string]: { from: Date; to: Date } | true } = {};
+  private queryStringMap: [string, EntityConstructor][] = [
+    ["getAttendanceArray\\(true\\)", ChildSchoolRelation],
+  ];
 
   constructor(
     private entityMapper: EntityMapperService,
     private childrenService: ChildrenService,
-    private attendanceService: AttendanceService
-  ) {}
+    private attendanceService: AttendanceService,
+    entityRegistry: EntityRegistry
+  ) {
+    entityRegistry.forEach((entity, name) =>
+      this.queryStringMap.push([name, entity])
+    );
+  }
 
   /**
    * Runs the query on the passed data object
@@ -50,13 +59,24 @@ export class QueryService {
     if (!to) {
       to = new Date();
     }
-    if (
-      !this.dataAvailableFrom ||
-      from < this.dataAvailableFrom ||
-      to > this.dataAvailableTo
-    ) {
-      await this.loadData(from, to);
-    }
+
+    const usedEntities = this.queryStringMap
+      .filter(([matcher]) =>
+        query.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`))
+      )
+      .map(([_, entity]) => entity)
+      .filter((entity) => {
+        const loadingInfo = this.dataLoaded[entity.ENTITY_TYPE];
+        return (
+          loadingInfo === undefined ||
+          !(
+            loadingInfo === true ||
+            (loadingInfo.from <= from && loadingInfo.to >= to)
+          )
+        );
+      });
+
+    await this.loadData(usedEntities, from, to);
 
     if (!data) {
       data = this.entities;
@@ -82,33 +102,24 @@ export class QueryService {
     }).value;
   }
 
-  private async loadData(from: Date, to: Date): Promise<void> {
-    const entityClasses: [EntityConstructor<any>, () => Promise<Entity[]>][] = [
-      [Child, () => this.entityMapper.loadType(Child)],
-      [School, () => this.entityMapper.loadType(School)],
-      [RecurringActivity, () => this.entityMapper.loadType(RecurringActivity)],
-      [
-        ChildSchoolRelation,
-        () => this.entityMapper.loadType(ChildSchoolRelation),
-      ],
-      [Note, () => this.childrenService.getNotesInTimespan(from, to)],
-      [EventNote, () => this.attendanceService.getEventsOnDate(from, to)],
-    ];
-
-    this.entities = {};
-
-    const dataPromises = [];
-    for (const entityLoader of entityClasses) {
-      const promise = entityLoader[1]().then((loadedEntities) =>
-        this.setEntities(entityLoader[0], loadedEntities)
-      );
-      dataPromises.push(promise);
-    }
+  private async loadData(entities: EntityConstructor[], from: Date, to: Date) {
+    const dataPromises = entities.map((entity) => {
+      if (this.dataFunctions[entity.ENTITY_TYPE]) {
+        return this.dataFunctions[entity.ENTITY_TYPE](from, to).then(
+          (loadedEntities) => {
+            this.setEntities(entity, loadedEntities);
+            this.dataLoaded[entity.ENTITY_TYPE] = { from, to };
+          }
+        );
+      } else {
+        return this.entityMapper.loadType(entity).then((loadedEntities) => {
+          this.setEntities(entity, loadedEntities);
+          this.dataLoaded[entity.ENTITY_TYPE] = true;
+        });
+      }
+    });
 
     await Promise.all(dataPromises);
-
-    this.dataAvailableFrom = from;
-    this.dataAvailableTo = to;
   }
 
   private setEntities<T extends Entity>(

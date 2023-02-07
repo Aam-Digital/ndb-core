@@ -23,6 +23,8 @@ import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
+import { ChildrenService } from "../../child-dev-project/children/children.service";
+import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -274,6 +276,88 @@ describe("QueryService", () => {
       coachingActivity,
       coachingActivity2,
     ]);
+  });
+
+  it("should only load data for entities that are mentioned in query", async () => {
+    const loadSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadSpy.and.resolveTo([]);
+
+    await expectAsync(service.queryData("School:toArray")).toBeResolvedTo([]);
+    expect(loadSpy).toHaveBeenCalledWith(School);
+    expect(loadSpy).not.toHaveBeenCalledWith(Child);
+
+    await expectAsync(service.queryData("Child:toArray")).toBeResolvedTo([]);
+    expect(loadSpy).toHaveBeenCalledWith(Child);
+  });
+
+  it("should not load data for the same entity multiple times", async () => {
+    const loadSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadSpy.and.resolveTo([]);
+
+    await expectAsync(service.queryData("School:toArray")).toBeResolvedTo([]);
+    expect(loadSpy).toHaveBeenCalledWith(School);
+    loadSpy.calls.reset();
+
+    await expectAsync(service.queryData("School:toArray")).toBeResolvedTo([]);
+    expect(loadSpy).not.toHaveBeenCalled();
+  });
+
+  it("should load new data if the time-spans are non overlapping", async () => {
+    const loadSpy = spyOn(
+      TestBed.inject(ChildrenService),
+      "getNotesInTimespan"
+    );
+    loadSpy.and.resolveTo([]);
+
+    let from = moment().subtract(1, "week").toDate();
+    let to = moment().toDate();
+    let query = "Note:toArray[* date >= ? & date < ?]";
+    await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    expect(loadSpy).toHaveBeenCalledWith(from, to);
+    loadSpy.calls.reset();
+
+    to = moment().subtract(3, "days").toDate();
+    query = "Note:toArray[* date >= ? & date < ?]";
+    await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    expect(loadSpy).not.toHaveBeenCalled();
+
+    from = moment().subtract(2, "weeks").toDate();
+    query = "Note:toArray[* date >= ? & date < ?]";
+    await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    expect(loadSpy).toHaveBeenCalledWith(from, to);
+  });
+
+  it("should load entities mentioned in functions", async () => {
+    const loadSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadSpy.and.resolveTo([]);
+
+    let query = "School:toArray:getRelated(ChildSchoolRelation, schoolId)";
+    await expectAsync(service.queryData(query)).toBeResolvedTo([]);
+    expect(loadSpy).toHaveBeenCalledWith(School);
+    expect(loadSpy).toHaveBeenCalledWith(ChildSchoolRelation);
+    loadSpy.calls.reset();
+
+    query = "Child:toArray:getRelated(ChildSchoolRelation, childId)";
+    await expectAsync(service.queryData(query)).toBeResolvedTo([]);
+    expect(loadSpy).not.toHaveBeenCalledWith(School);
+    expect(loadSpy).not.toHaveBeenCalledWith(ChildSchoolRelation);
+    expect(loadSpy).toHaveBeenCalledWith(Child);
+  });
+
+  it("should load entities required in functions", async () => {
+    const loadSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
+    loadSpy.and.resolveTo([]);
+    const loadEventNotesSpy = spyOn(
+      TestBed.inject(AttendanceService),
+      "getEventsOnDate"
+    ).and.resolveTo([]);
+
+    const from = moment().subtract(1, "week").toDate();
+    const to = new Date();
+    const query = "EventNote:toArray:getAttendanceArray(true)";
+    await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    expect(loadEventNotesSpy).toHaveBeenCalledWith(from, to);
+    expect(loadSpy).toHaveBeenCalledWith(ChildSchoolRelation);
   });
 
   it("should not load all data if a from date is provided", async () => {
