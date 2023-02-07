@@ -206,7 +206,7 @@ export class BasicAutocompleteComponent<O, V = O>
     if (userConfirmed) {
       const newOption = this.toSelectableOption(this.createOption(option));
       this._options.push(newOption);
-      this.selectOption(newOption);
+      this.select(newOption);
     }
   }
 
