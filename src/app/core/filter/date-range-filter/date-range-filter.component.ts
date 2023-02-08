@@ -37,7 +37,6 @@ export class DateRangeFilterComponent<T extends Entity> {
       option = { key: "custom", label: "custom", filter: {} };
       this.dateRangeFilterConfig.filterSettings.options.push(option);
     }
-
     option.filter = this.buildFilter();
     this.selectedOptionChange.emit(option.key);
   }
