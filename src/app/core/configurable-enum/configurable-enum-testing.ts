@@ -36,7 +36,7 @@ export function createTestingConfigurableEnumService() {
       receiveUpdates: () => NEVER,
       loadType: () => Promise.resolve(demoEnums),
     } as any,
-    { configUpdates: of(undefined) } as any
+    { can: () => true } as any
   );
   return service;
 }

@@ -1,13 +1,12 @@
 import { TestBed } from "@angular/core/testing";
 import { ConfigurableEnumService } from "./configurable-enum.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
-import { ConfigService } from "../config/config.service";
-import { NEVER, of } from "rxjs";
+import { NEVER } from "rxjs";
+import { EntityAbility } from "../permissions/ability/entity-ability";
 
 describe("ConfigurableEnumService", () => {
   let service: ConfigurableEnumService;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
   beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj([
       "save",
@@ -16,14 +15,14 @@ describe("ConfigurableEnumService", () => {
     ]);
     mockEntityMapper.receiveUpdates.and.returnValue(NEVER);
     mockEntityMapper.loadType.and.resolveTo([]);
-    mockConfigService = jasmine.createSpyObj([], { configUpdates: of({}) });
     await TestBed.configureTestingModule({
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        { provide: ConfigService, useValue: mockConfigService },
+        { provide: EntityAbility, useValue: { can: () => true } },
       ],
     }).compileComponents();
     service = TestBed.inject(ConfigurableEnumService);
+    await service.preLoadEnums();
   });
 
   it("should create", () => {
@@ -38,5 +37,11 @@ describe("ConfigurableEnumService", () => {
     expect(mockEntityMapper.save).toHaveBeenCalledWith(newEnum);
     // returns same enum in consecutive calls
     expect(service.getEnum("new-id")).toBe(newEnum);
+  });
+
+  it("should not creat a new enum if the user is missing permissions", () => {
+    spyOn(TestBed.inject(EntityAbility), "can").and.returnValue(false);
+    expect(service.getEnum("new-id")).toBeUndefined();
+    expect(mockEntityMapper.save).not.toHaveBeenCalled();
   });
 });
