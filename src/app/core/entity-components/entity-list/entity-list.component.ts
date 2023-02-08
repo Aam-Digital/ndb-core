@@ -179,8 +179,8 @@ export class EntityListComponent<T extends Entity>
     }
 
     this.listName =
-      this.listConfig.title ??
-      this.listName ??
+      this.listConfig.title ||
+      this.listName ||
       this.entityConstructor?.labelPlural;
 
     this.addColumnsFromColumnGroups();

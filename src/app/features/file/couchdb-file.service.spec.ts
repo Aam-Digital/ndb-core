@@ -63,6 +63,10 @@ describe("CouchdbFileService", () => {
     service = TestBed.inject(CouchdbFileService);
   });
 
+  afterEach(() => {
+    Entity.schema.delete("testProp");
+  });
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });

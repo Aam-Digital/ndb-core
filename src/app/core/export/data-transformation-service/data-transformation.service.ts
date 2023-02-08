@@ -67,7 +67,7 @@ export class DataTransformationService {
     const result: ExportRow[] = [];
     if (groupByProperty) {
       const groups = groupBy(data, groupByProperty.property);
-      for (const [group, values] of groups.entries()) {
+      for (const [group, values] of groups) {
         const groupColumn: ExportColumnConfig = {
           label: groupByProperty.label,
           query: `:setString(${getReadableValue(group)})`,

@@ -13,7 +13,6 @@ import {
 } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
-import { ConfigService } from "../../../../core/config/config.service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
@@ -32,6 +31,7 @@ import {
   HammerModule,
 } from "@angular/platform-browser";
 import Hammer from "hammerjs";
+import { ConfigurableEnumService } from "../../../../core/configurable-enum/configurable-enum.service";
 
 // Only allow horizontal swiping
 class HorizontalHammerConfig extends HammerGestureConfig {
@@ -114,7 +114,7 @@ export class RollCallComponent implements OnChanges {
   children: Child[] = [];
 
   constructor(
-    private configService: ConfigService,
+    private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
     private loggingService: LoggingService
@@ -156,10 +156,9 @@ export class RollCallComponent implements OnChanges {
   }
 
   private loadAttendanceStatusTypes() {
-    this.availableStatus =
-      this.configService.getConfigurableEnumValues<AttendanceStatusType>(
-        ATTENDANCE_STATUS_CONFIG_ID
-      );
+    this.availableStatus = this.enumService.getEnumValues<AttendanceStatusType>(
+      ATTENDANCE_STATUS_CONFIG_ID
+    );
   }
 
   private async loadParticipants() {

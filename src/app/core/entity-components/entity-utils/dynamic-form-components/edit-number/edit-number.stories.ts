@@ -1,7 +1,6 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
-import { EntityFormComponent } from "../../../entity-form/entity-form/entity-form.component";
 import { FormFieldConfig } from "../../../entity-form/entity-form/FormConfig";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { Entity } from "../../../../entity/model/entity";
@@ -9,30 +8,38 @@ import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
 import { EditNumberComponent } from "./edit-number.component";
 import {
-  entityFormStorybookDefaulParameters,
+  entityFormStorybookDefaultParameters,
   StorybookBaseModule,
 } from "../../../../../utils/storybook-base.module";
+import { AppModule } from "../../../../../app.module";
+import { mockEntityMapper } from "../../../../entity/mock-entity-mapper-service";
+import { FormComponent } from "../../../entity-details/form/form.component";
 
 export default {
   title: "Core/EntityComponents/Entity Property Fields/Number",
-  component: EntityFormComponent,
+  component: FormComponent,
   decorators: [
     moduleMetadata({
-      imports: [EntityFormComponent, EditNumberComponent, StorybookBaseModule],
+      imports: [
+        FormComponent,
+        EditNumberComponent,
+        AppModule,
+        StorybookBaseModule,
+      ],
       providers: [
         EntitySchemaService,
         {
           provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
+          useValue: mockEntityMapper(),
         },
       ],
     }),
   ],
-  parameters: entityFormStorybookDefaulParameters,
+  parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
-const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
-  component: EntityFormComponent,
+const Template: Story<FormComponent<any>> = (args: FormComponent<any>) => ({
+  component: FormComponent,
   props: args,
 });
 

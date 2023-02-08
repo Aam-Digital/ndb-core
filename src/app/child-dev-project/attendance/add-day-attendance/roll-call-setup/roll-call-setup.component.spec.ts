@@ -67,4 +67,18 @@ describe("RollCallSetupComponent", () => {
     expect(component.existingEvents[0].authors).toEqual([TEST_USER]);
     expect(component.existingEvents[1].authors).toEqual([TEST_USER]);
   }));
+
+  it("should only show active activities", fakeAsync(() => {
+    const active = new RecurringActivity();
+    const inactive = new RecurringActivity();
+    inactive["active"] = false;
+    mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "loadType").and.resolveTo([active, inactive]);
+
+    component.ngOnInit();
+    flush();
+
+    expect(component.existingEvents).toHaveSize(1);
+  }));
 });

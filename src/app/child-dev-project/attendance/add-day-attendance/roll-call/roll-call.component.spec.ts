@@ -9,7 +9,6 @@ import {
 import { RollCallComponent } from "./roll-call.component";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
-import { ConfigService } from "../../../../core/config/config.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -18,6 +17,7 @@ import { LoginState } from "../../../../core/session/session-states/login-state.
 import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "../../../children/children.service";
+import { ConfigurableEnumService } from "../../../../core/configurable-enum/configurable-enum.service";
 
 const PRESENT = {
   id: "PRESENT",
@@ -82,8 +82,8 @@ describe("RollCallComponent", () => {
 
   it("should display all available attendance status to select", async () => {
     const options = [PRESENT, ABSENT];
-    const configService = TestBed.inject(ConfigService);
-    spyOn(configService, "getConfigurableEnumValues").and.returnValue(options);
+    const enumService = TestBed.inject(ConfigurableEnumService);
+    spyOn(enumService, "getEnumValues").and.returnValue(options);
     component.eventEntity.addChild(participant1);
     await component.ngOnChanges(dummyChanges);
     fixture.detectChanges();

@@ -8,23 +8,22 @@ import {
   ViewChild,
 } from "@angular/core";
 import * as L from "leaflet";
-import { Observable, ReplaySubject, timeInterval } from "rxjs";
+import { BehaviorSubject, Observable, timeInterval } from "rxjs";
 import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
-import { getHueForEntity } from "../map-utils";
+import { getHueForEntity, getLocationProperties } from "../map-utils";
 import { ConfigService } from "../../../core/config/config.service";
 import { MAP_CONFIG_KEY, MapConfig } from "../map-config";
-import { MapPopupConfig } from "../map-popup/map-popup.component";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-
-export interface LocationEntity {
-  entity: Entity;
-  property: string;
-}
+import { MapPopupConfig } from "../map-popup/map-popup.component";
+import {
+  LocationProperties,
+  MapPropertiesPopupComponent,
+} from "./map-properties-popup/map-properties-popup.component";
 
 @Component({
   selector: "app-map",
@@ -51,9 +50,9 @@ export class MapComponent implements AfterViewInit {
     this._marked.next(coordinates);
   }
 
-  private _marked = new ReplaySubject<Coordinates[]>();
+  private _marked = new BehaviorSubject<Coordinates[]>([]);
 
-  @Input() set entities(entities: LocationEntity[]) {
+  @Input() set entities(entities: Entity[]) {
     if (!entities) {
       return;
     }
@@ -63,9 +62,9 @@ export class MapComponent implements AfterViewInit {
     this._entities.next(entities);
   }
 
-  private _entities = new ReplaySubject<LocationEntity[]>();
+  private _entities = new BehaviorSubject<Entity[]>([]);
 
-  @Input() set highlightedEntities(entities: LocationEntity[]) {
+  @Input() set highlightedEntities(entities: Entity[]) {
     if (!entities) {
       return;
     }
@@ -75,7 +74,16 @@ export class MapComponent implements AfterViewInit {
     this._highlightedEntities.next(entities);
   }
 
-  private _highlightedEntities = new ReplaySubject<LocationEntity[]>();
+  private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
+
+  @Input() set displayedProperties(displayedProperties: LocationProperties) {
+    this._displayedProperties = displayedProperties;
+    this.showPropertySelection = Object.keys(displayedProperties).length > 0;
+  }
+
+  private _displayedProperties: LocationProperties = {};
+  @Output() displayedPropertiesChange = new EventEmitter<LocationProperties>();
+  showPropertySelection = false;
 
   private map: L.Map;
   private markers: L.Marker[];
@@ -140,16 +148,34 @@ export class MapComponent implements AfterViewInit {
     });
   }
 
-  private createEntityMarkers(entities: LocationEntity[]) {
-    return entities
-      .filter(({ entity, property }) => !!entity?.[property])
-      .map(({ entity, property }) => {
-        const marker = L.marker([entity[property].lat, entity[property].lon]);
-        marker.bindTooltip(entity.toString());
-        marker.on("click", () => this.entityClick.emit(entity));
-        marker["entity"] = entity;
-        return marker;
+  private createEntityMarkers(entities: Entity[]) {
+    const markers: L.Marker[] = [];
+    entities
+      .filter((entity) => !!entity)
+      .forEach((entity) => {
+        this.getMapProperties(entity)
+          .filter((prop) => !!entity[prop])
+          .forEach((prop) => {
+            const marker = L.marker([entity[prop].lat, entity[prop].lon]);
+            marker.bindTooltip(entity.toString());
+            marker.on("click", () => this.entityClick.emit(entity));
+            marker["entity"] = entity;
+            markers.push(marker);
+          });
       });
+    return markers;
+  }
+
+  private getMapProperties(entity: Entity) {
+    if (this._displayedProperties[entity.getType()]) {
+      return this._displayedProperties[entity.getType()];
+    } else {
+      const locationProperties = getLocationProperties(entity.getConstructor());
+      this._displayedProperties[entity.getType()] = locationProperties;
+      this.displayedPropertiesChange.emit(this._displayedProperties);
+      this.showPropertySelection = true;
+      return locationProperties;
+    }
   }
 
   private clearMarkers(markers: L.Marker[]) {
@@ -176,18 +202,43 @@ export class MapComponent implements AfterViewInit {
     return m;
   }
 
-  async showPopup() {
+  async openMapInPopup() {
     // Breaking circular dependency by using async import
     const mapComponent = await import("../map-popup/map-popup.component");
-    this.dialog.open(mapComponent.MapPopupComponent, {
-      width: "90%",
-      data: {
-        marked: this._marked,
-        entities: this._entities,
-        highlightedEntities: this._highlightedEntities,
-        entityClick: this.entityClick,
-        mapClick: this.clickStream,
-      } as MapPopupConfig,
-    });
+    const data: MapPopupConfig = {
+      marked: this._marked,
+      entities: this._entities,
+      highlightedEntities: this._highlightedEntities,
+      entityClick: this.entityClick,
+      mapClick: this.clickStream,
+      displayedProperties: this._displayedProperties,
+    };
+    this.dialog
+      .open(mapComponent.MapPopupComponent, { width: "90%", data })
+      .afterClosed()
+      .subscribe(() =>
+        // displayed properties might have changed in map view
+        this.updatedDisplayedProperties(data.displayedProperties)
+      );
+  }
+
+  private updatedDisplayedProperties(properties: LocationProperties) {
+    this._displayedProperties = properties;
+    this.displayedPropertiesChange.emit(this._displayedProperties);
+    this.entities = this._entities.value;
+    this.highlightedEntities = this._highlightedEntities.value;
+  }
+
+  openMapPropertiesPopup() {
+    this.dialog
+      .open(MapPropertiesPopupComponent, {
+        data: this._displayedProperties,
+      })
+      .afterClosed()
+      .subscribe((res: LocationProperties) => {
+        if (res) {
+          this.updatedDisplayedProperties(res);
+        }
+      });
   }
 }

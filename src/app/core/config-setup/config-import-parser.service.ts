@@ -25,6 +25,7 @@ export class ConfigImportParserService {
     "appConfig:usage-analytics",
     "navigationMenu",
     "view:",
+    // TODO what do we do with these?
     "enum:interaction-type",
     "enum:warning-levels",
     "view:note",

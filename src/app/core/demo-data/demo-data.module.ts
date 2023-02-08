@@ -36,11 +36,15 @@ import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../features/historical-data/demo-historical-data-generator";
 import { DemoPermissionGeneratorService } from "../permissions/demo-permission-generator.service";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
+import { DemoConfigurableEnumGeneratorService } from "../configurable-enum/demo-configurable-enum-generator.service";
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
 
 const demoDataGeneratorProviders = [
+  ...DemoPermissionGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoConfigGeneratorService.provider(),
+  ...DemoUserGeneratorService.provider(),
+  ...DemoConfigurableEnumGeneratorService.provider(),
   ...DemoChildGenerator.provider({ count: 120 }),
   ...DemoSchoolGenerator.provider({ count: 8 }),
   ...DemoChildSchoolRelationGenerator.provider(),
@@ -58,12 +62,10 @@ const demoDataGeneratorProviders = [
   }),
   ...DemoHealthCheckGeneratorService.provider(),
   ...DemoProgressDashboardWidgetGeneratorService.provider(),
-  ...DemoUserGeneratorService.provider(),
   ...DemoHistoricalDataGenerator.provider({
     minCountAttributes: 2,
     maxCountAttributes: 5,
   }),
-  ...DemoPermissionGeneratorService.provider(),
   ...DemoTodoGeneratorService.provider(),
 ];
 

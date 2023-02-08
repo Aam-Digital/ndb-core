@@ -31,14 +31,13 @@
 </div>
 
 <div class="margin-bottom-large flex-column gap-small">
-  <app-map *ngIf="showMap" class="flex-grow"
+  <app-map *ngIf="mapVisible" class="flex-grow"
            [expandable]="true"
-           [entities]="mapEntities"
-           [highlightedEntities]="[
-              { entity: sideDetails?.[0].selected, property: showMap[0] },
-              { entity: sideDetails?.[1].selected, property: showMap[1]}
-            ]"
+           [entities]="filteredMapEntities"
+           [highlightedEntities]="[sideDetails?.[0].selected, sideDetails?.[1].selected ]"
            (entityClick)="entityInMapClicked($event)"
+           [(displayedProperties)]="displayedProperties"
+           (displayedPropertiesChange)="updateMarkersAndDistances()"
   ></app-map>
   <button mat-stroked-button color="accent" style="width: 100%"
           (click)="createMatch()"

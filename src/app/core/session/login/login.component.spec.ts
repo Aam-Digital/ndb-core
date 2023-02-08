@@ -31,12 +31,16 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AuthService } from "../auth/auth.service";
 import { Subject } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { HarnessLoader } from "@angular/cdk/testing";
+import { MatInputHarness } from "@angular/material/input/testing";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let mockSessionService: jasmine.SpyObj<SessionService>;
   let loginState = new Subject();
+  let loader: HarnessLoader;
 
   beforeEach(waitForAsync(() => {
     mockSessionService = jasmine.createSpyObj(["login"], { loginState });
@@ -51,6 +55,7 @@ describe("LoginComponent", () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -85,13 +90,13 @@ describe("LoginComponent", () => {
     expect(component.errorMessage).toBeTruthy();
   }));
 
-  it("should focus the first input element on initialization", fakeAsync(() => {
+  it("should focus the first input element on initialization", fakeAsync(async () => {
     component.ngAfterViewInit();
     tick();
     fixture.detectChanges();
 
-    const firstInputElement = document.getElementsByTagName("input")[0];
-    expect(document.activeElement).toBe(firstInputElement);
+    const firstInputElement = await loader.getHarness(MatInputHarness);
+    await expectAsync(firstInputElement.isFocused()).toBeResolvedTo(true);
   }));
 
   it("should route to redirect uri once state changes to 'logged-in'", () => {

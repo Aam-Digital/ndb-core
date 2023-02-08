@@ -131,7 +131,6 @@ describe("EntityListComponent", () => {
     createComponent();
     await initComponentInputs();
     expect(component.selectedColumnGroupIndex).toBe(1);
-    console.log("component groups", component.columnGroups);
 
     const tabGroup = await loader.getHarness(MatTabGroupHarness);
     const groups = await tabGroup.getTabs();

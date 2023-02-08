@@ -2,6 +2,7 @@
   <app-map
     height="70vh"
     [marked]="data.marked | async"
+    [(displayedProperties)]="data.displayedProperties"
     [entities]="data.entities | async"
     [highlightedEntities]="data.highlightedEntities | async"
     (mapClick)="mapClicked($event)"

@@ -9,7 +9,6 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
   it("WHEN I select a dropout date for this child", () => {
     // click on "Dropout" menu
     cy.contains("div", "Dropout").click();
-    cy.get("#mat-tab-label-0-7").click();
     // click on button with the content "Edit" in Dropout menu.
     cy.get(".form-buttons-wrapper:visible").contains("button", "Edit").click();
     // select today as the dropout date (which is initially marked as active)
@@ -32,7 +31,7 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
 
   it("AND I should see the child when I activate the 'inactive' filter", function () {
     // click on the button with the content "Inactive"
-    cy.get('[ng-reflect-placeholder="isActive"]').click();
+    cy.get('[ng-reflect-placeholder="isActive"]', { timeout: 10000 }).click();
     cy.contains("span", "Inactive").should("be.visible").click();
     // find at this table the name of child and it should exist
     cy.get("table").contains(this.childName.trim()).should("exist");

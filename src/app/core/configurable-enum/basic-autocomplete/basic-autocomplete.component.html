@@ -1,0 +1,32 @@
+<input
+  #inputElement
+  [formControl]="autocompleteForm"
+  class="autocomplete-input"
+  matInput
+  style="text-overflow: ellipsis"
+  [matAutocomplete]="autoSuggestions"
+  (focusin)="onFocusIn()"
+  (focusout)="onFocusOut($event)"
+/>
+<mat-autocomplete
+  #autoSuggestions="matAutocomplete"
+  (optionSelected)="select($event.option.value)"
+  autoActiveFirstOption
+>
+  <mat-option
+    *ngFor="let item of autocompleteSuggestedOptions | async"
+    [value]="item"
+  >
+    <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+    <ng-template
+      [ngTemplateOutlet]="templateRef"
+      [ngTemplateOutletContext]="{ $implicit: item.initial }"
+    ></ng-template>
+  </mat-option>
+  <mat-option
+    *ngIf="createOption && showAddOption && inputElement.value"
+    [value]="inputElement.value"
+  >
+    <em>Add option</em> {{ inputElement.value }}
+  </mat-option>
+</mat-autocomplete>

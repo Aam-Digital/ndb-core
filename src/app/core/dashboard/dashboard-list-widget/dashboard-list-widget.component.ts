@@ -22,6 +22,7 @@ import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
 import { NgIf } from "@angular/common";
 import { WidgetContentComponent } from "../dashboard-widget/widget-content/widget-content.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Base dashboard widget to build widgets that display a number of entries as a table.
@@ -39,6 +40,7 @@ import { WidgetContentComponent } from "../dashboard-widget/widget-content/widge
  * To highlight a row with a colored bar at the front, apply `class="row-indicator"` to your first <td>
  *   and set the css variable to the desired color, e.g. `[ngStyle]="{'--row-indicator-color': row.getColor?.()}"`
  */
+@UntilDestroy()
 @Component({
   selector: "app-dashboard-list-widget",
   templateUrl: "./dashboard-list-widget.component.html",
@@ -97,7 +99,8 @@ export class DashboardListWidgetComponent<E>
     this.data
       .pipe(
         filter((d) => !!d),
-        map((d) => (this.dataMapper ? this.dataMapper(d) : d))
+        map((d) => (this.dataMapper ? this.dataMapper(d) : d)),
+        untilDestroyed(this)
       )
       .subscribe((newData) => {
         this.dataSource.data = newData;
@@ -113,6 +116,7 @@ export class DashboardListWidgetComponent<E>
     // subscribe to relevant updates of data
     this.entityMapperService
       .receiveUpdates(this.entityType)
+      .pipe(untilDestroyed(this))
       .subscribe((update) =>
         this.data.next(applyUpdate(this.data.value as Entity[], update) as E[])
       );

@@ -1,11 +1,7 @@
 import { EntitySchemaDatatype } from "../../entity/schema/entity-schema-datatype";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-  ConfigurableEnumValue,
-} from "../configurable-enum.interface";
-import { ConfigService } from "../../config/config.service";
+import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { ConfigurableEnumService } from "../configurable-enum.service";
 
 export class ConfigurableEnumDatatype
   implements EntitySchemaDatatype<ConfigurableEnumValue>
@@ -14,7 +10,7 @@ export class ConfigurableEnumDatatype
   public readonly viewComponent = "DisplayConfigurableEnum";
   public readonly editComponent = "EditConfigurableEnum";
 
-  constructor(private configService: ConfigService) {}
+  constructor(private enumService: ConfigurableEnumService) {}
 
   /**
    * transforms Objects of InteractionType to strings to save in DB
@@ -34,12 +30,8 @@ export class ConfigurableEnumDatatype
     schemaField: EntitySchemaField
   ): ConfigurableEnumValue {
     let enumId = schemaField.additional || schemaField.innerDataType;
-    if (!enumId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
-      enumId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumId;
-    }
-
-    let enumOption = this.configService
-      .getConfig<ConfigurableEnumConfig>(enumId)
+    let enumOption = this.enumService
+      .getEnumValues(enumId)
       ?.find((option) => option.id === value);
     if (!enumOption) {
       enumOption = this.generateOptionForInvalid(value);
@@ -50,7 +42,7 @@ export class ConfigurableEnumDatatype
 
   /**
    * Build a dummy option so that invalid values are not lost on the next save and users can manually correct issues.
-   * @param enumId
+   * @param optionValue
    * @private
    */
   private generateOptionForInvalid(optionValue: string) {

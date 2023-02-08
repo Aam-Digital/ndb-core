@@ -14,6 +14,7 @@ import {
 } from "@angular/cdk/overlay";
 import { ComponentPortal } from "@angular/cdk/portal";
 import { TemplateTooltipComponent } from "./template-tooltip.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * A directive that can be used to render a custom tooltip that may contain HTML code.
@@ -31,6 +32,7 @@ import { TemplateTooltipComponent } from "./template-tooltip.component";
  *
  * @see contentTemplate
  */
+@UntilDestroy()
 @Directive({
   selector: "[appTemplateTooltip]",
   standalone: true,
@@ -148,8 +150,12 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
           new ComponentPortal(TemplateTooltipComponent)
         );
         tooltipRef.instance.contentTemplate = this.contentTemplate;
-        tooltipRef.instance.hide.subscribe(() => this.hide());
-        tooltipRef.instance.show.subscribe(() => this.show());
+        tooltipRef.instance.hide
+          .pipe(untilDestroyed(this))
+          .subscribe(() => this.hide());
+        tooltipRef.instance.show
+          .pipe(untilDestroyed(this))
+          .subscribe(() => this.show());
       }
     }, this.delayShow);
   }

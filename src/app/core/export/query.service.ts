@@ -21,6 +21,7 @@ import jsonQuery from "json-query";
 export class QueryService {
   private entities: { [type: string]: { [id: string]: Entity } };
   private dataAvailableFrom: Date;
+  private dataAvailableTo: Date;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -39,15 +40,22 @@ export class QueryService {
    */
   public async queryData(
     query: string,
-    from: Date = null,
-    to: Date = null,
+    from?: Date,
+    to?: Date,
     data?: any
   ): Promise<any> {
-    if (from === null) {
+    if (!from) {
       from = new Date(0);
     }
-    if (from < this.dataAvailableFrom || !this.dataAvailableFrom) {
-      await this.loadData(from);
+    if (!to) {
+      to = new Date();
+    }
+    if (
+      !this.dataAvailableFrom ||
+      from < this.dataAvailableFrom ||
+      to > this.dataAvailableTo
+    ) {
+      await this.loadData(from, to);
     }
 
     if (!data) {
@@ -74,7 +82,7 @@ export class QueryService {
     }).value;
   }
 
-  private async loadData(from: Date): Promise<void> {
+  private async loadData(from: Date, to: Date): Promise<void> {
     const entityClasses: [EntityConstructor<any>, () => Promise<Entity[]>][] = [
       [Child, () => this.entityMapper.loadType(Child)],
       [School, () => this.entityMapper.loadType(School)],
@@ -83,11 +91,8 @@ export class QueryService {
         ChildSchoolRelation,
         () => this.entityMapper.loadType(ChildSchoolRelation),
       ],
-      [Note, () => this.childrenService.getNotesInTimespan(from)],
-      [
-        EventNote,
-        () => this.attendanceService.getEventsOnDate(from, new Date()),
-      ],
+      [Note, () => this.childrenService.getNotesInTimespan(from, to)],
+      [EventNote, () => this.attendanceService.getEventsOnDate(from, to)],
     ];
 
     this.entities = {};
@@ -103,6 +108,7 @@ export class QueryService {
     await Promise.all(dataPromises);
 
     this.dataAvailableFrom = from;
+    this.dataAvailableTo = to;
   }
 
   private setEntities<T extends Entity>(
