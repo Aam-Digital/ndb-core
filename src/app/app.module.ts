@@ -88,9 +88,7 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
   declarations: [AppComponent],
   imports: [
     // Global Angular modules
-    ServiceWorkerModule.register("ngsw-worker.js", {
-      enabled: environment.production,
-    }),
+    ServiceWorkerModule.register("ngsw-worker.js"),
     Angulartics2Module.forRoot({
       developerMode: !environment.production,
     }),
@@ -150,6 +148,7 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
     {
       provide: SwRegistrationOptions,
       useFactory: (session: SessionService) => ({
+        enabled: environment.production,
         registrationStrategy: () =>
           session.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
       }),
