@@ -20,8 +20,6 @@ import {
   Injector,
   ViewContainerRef,
   ɵcreateInjector as createInjector,
-  OnDestroy,
-  HostListener,
 } from "@angular/core";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ConfigService } from "./core/config/config.service";
@@ -36,9 +34,6 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { EntityRegistry } from "./core/entity/database-entity.decorator";
 
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
-
 /**
  * Component as the main entry point for the app.
  * Actual logic and UI structure is defined in other modules.
@@ -47,8 +42,7 @@ import { Subject } from "rxjs";
   selector: "app-root",
   template: "<app-ui></app-ui>",
 })
-export class AppComponent implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class AppComponent {
   constructor(
     private viewContainerRef: ViewContainerRef, // need this small hack in order to catch application root view container ref
     private analyticsService: AnalyticsService,
@@ -72,7 +66,7 @@ export class AppComponent implements OnDestroy {
     // first register to events
 
     // Re-trigger services that depend on the config when something changes
-    this.configService.configUpdates.pipe(takeUntil(this.destroy$)).subscribe(() => {
+    this.configService.configUpdates.subscribe(() => {
       this.routerService.initRouting();
       this.entityConfigService.setupEntitiesFromConfig();
       this.router.navigate([], {
@@ -82,7 +76,7 @@ export class AppComponent implements OnDestroy {
     });
 
     // update the user context for remote error logging and tracking and load config initially
-    this.sessionService.loginState.pipe(takeUntil(this.destroy$)).subscribe((newState) => {
+    this.sessionService.loginState.subscribe((newState) => {
       if (newState === LoginState.LOGGED_IN) {
         const username = this.sessionService.getCurrentUser().name;
         LoggingService.setLoggingContextUser(username);
@@ -101,11 +95,5 @@ export class AppComponent implements OnDestroy {
       const m = await import("./core/demo-data/demo-data.module");
       createInjector(m.DemoDataModule, this.injector);
     }
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

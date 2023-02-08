@@ -6,12 +6,10 @@ import {
   Input,
   Output,
   ViewChild,
-  OnDestroy,
-  HostListener,
 } from "@angular/core";
 import * as L from "leaflet";
-import { BehaviorSubject, Observable, timeInterval, Subject } from "rxjs";
-import { debounceTime, filter, map, takeUntil } from "rxjs/operators";
+import { BehaviorSubject, Observable, timeInterval } from "rxjs";
+import { debounceTime, filter, map } from "rxjs/operators";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { getHueForEntity, getLocationProperties } from "../map-utils";
@@ -34,8 +32,7 @@ import {
   imports: [FontAwesomeModule, NgIf, MatButtonModule],
   standalone: true,
 })
-export class MapComponent implements AfterViewInit, OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class MapComponent implements AfterViewInit {
   private readonly start_location: L.LatLngTuple = [52.4790412, 13.4319106];
 
   @ViewChild("map") private mapElement: ElementRef<HTMLDivElement>;
@@ -218,7 +215,7 @@ export class MapComponent implements AfterViewInit, OnDestroy {
     };
     this.dialog
       .open(mapComponent.MapPopupComponent, { width: "90%", data })
-      .afterClosed().pipe(takeUntil(this.destroy$))
+      .afterClosed()
       .subscribe(() =>
         // displayed properties might have changed in map view
         this.updatedDisplayedProperties(data.displayedProperties)
@@ -237,17 +234,11 @@ export class MapComponent implements AfterViewInit, OnDestroy {
       .open(MapPropertiesPopupComponent, {
         data: this._displayedProperties,
       })
-      .afterClosed().pipe(takeUntil(this.destroy$))
+      .afterClosed()
       .subscribe((res: LocationProperties) => {
         if (res) {
           this.updatedDisplayedProperties(res);
         }
       });
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

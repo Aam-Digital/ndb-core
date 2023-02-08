@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, HostListener } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Database } from "../../core/database/database";
 import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
@@ -14,15 +14,11 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
 import { isArrayDataType } from "../../core/entity-components/entity-utils/entity-utils";
 
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
-
 /**
  * This service handels the parsing of CSV files and importing of data
  */
 @Injectable({ providedIn: "root" })
-export class DataImportService implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class DataImportService {
   private readonly dateDataTypes = [
     dateEntitySchemaDatatype,
     dateOnlyEntitySchemaDatatype,
@@ -67,7 +63,7 @@ export class DataImportService implements OnDestroy {
         duration: 8000,
       }
     );
-    snackBarRef.onAction().pipe(takeUntil(this.destroy$)).subscribe(async () => {
+    snackBarRef.onAction().subscribe(async () => {
       await this.backupService.clearDatabase();
       await this.backupService.restoreData(restorePoint, true);
     });
@@ -174,11 +170,5 @@ export class DataImportService implements OnDestroy {
   private createSearchIndices(importMeta: ImportMetaData, entity) {
     const ctor = this.entities.get(importMeta.entityType);
     entity["searchIndices"] = Object.assign(new ctor(), entity).searchIndices;
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ApplicationRef, Inject, Injectable, OnDestroy, HostListener } from "@angular/core";
+import { ApplicationRef, Inject, Injectable } from "@angular/core";
 import { SwUpdate } from "@angular/service-worker";
-import { filter, first, takeUntil } from "rxjs/operators";
-import { concat, interval, Subject } from "rxjs";
+import { filter, first } from "rxjs/operators";
+import { concat, interval } from "rxjs";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoggingService } from "../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
@@ -32,8 +32,7 @@ import { LOCATION_TOKEN } from "../../utils/di-tokens";
  * and can click that to reload the app with the new version.
  */
 @Injectable({ providedIn: "root" })
-export class UpdateManagerService implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class UpdateManagerService {
   private readonly UPDATE_PREFIX = "update-";
 
   constructor(
@@ -66,7 +65,7 @@ export class UpdateManagerService implements OnDestroy {
       return;
     }
     this.updates.versionUpdates
-      .pipe(filter((e) => e.type === "VERSION_READY"), takeUntil(this.destroy$))
+      .pipe(filter((e) => e.type === "VERSION_READY"))
       .subscribe(() => this.showUpdateNotification());
   }
 
@@ -85,7 +84,7 @@ export class UpdateManagerService implements OnDestroy {
     const everyHours$ = interval(60 * 60 * 1000);
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
-    everyHoursOnceAppIsStable$.pipe(takeUntil(this.destroy$)).subscribe(() =>
+    everyHoursOnceAppIsStable$.subscribe(() =>
       this.updates.checkForUpdate().catch((err) => this.logger.error(err))
     );
   }
@@ -108,7 +107,7 @@ export class UpdateManagerService implements OnDestroy {
         $localize`A new version of the app is available!`,
         $localize`:Action that a user can update the app with:Update`
       )
-      .onAction().pipe(takeUntil(this.destroy$))
+      .onAction()
       .subscribe(() => {
         window.localStorage.setItem(
           LatestChangesDialogService.VERSION_KEY,
@@ -127,21 +126,15 @@ export class UpdateManagerService implements OnDestroy {
       return;
     }
 
-    this.updates.unrecoverable.pipe(takeUntil(this.destroy$)).subscribe(({ reason }) => {
+    this.updates.unrecoverable.subscribe(({ reason }) => {
       this.logger.warn(`SW in unrecoverable state: ${reason}`);
       this.snackBar
         .open(
           $localize`The app is in a unrecoverable state, please reload.`,
           $localize`:Action that a user can reload the app with:Reload`
         )
-        .onAction().pipe(takeUntil(this.destroy$))
+        .onAction()
         .subscribe(() => this.location.reload());
     });
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

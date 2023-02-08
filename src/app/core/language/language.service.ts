@@ -1,11 +1,8 @@
-import { Inject, Injectable, LOCALE_ID, OnDestroy, HostListener } from "@angular/core";
+import { Inject, Injectable, LOCALE_ID } from "@angular/core";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
 import { UiConfig } from "../ui/ui-config";
 import { ConfigService } from "../config/config.service";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
-
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
 
 /**
  * Service that contains
@@ -15,8 +12,7 @@ import { Subject } from "rxjs";
 @Injectable({
   providedIn: "root",
 })
-export class LanguageService implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class LanguageService {
   /**
    * A readonly array of all locales available
    * TODO: Hardcoded
@@ -40,7 +36,7 @@ export class LanguageService implements OnDestroy {
     );
 
     if (!languageSelected) {
-      this.configService.configUpdates.pipe(takeUntil(this.destroy$)).subscribe(() => {
+      this.configService.configUpdates.subscribe(() => {
         const { default_language } =
           this.configService.getConfig<UiConfig>("appConfig") ?? {};
         if (default_language && default_language !== this.baseLocale) {
@@ -67,11 +63,5 @@ export class LanguageService implements OnDestroy {
     } else {
       return components[0].toLowerCase();
     }
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

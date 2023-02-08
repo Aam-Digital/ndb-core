@@ -5,8 +5,6 @@ import {
   Input,
   OnInit,
   Output,
-  OnDestroy,
-  HostListener,
 } from "@angular/core";
 import { Todo } from "../model/todo";
 import {
@@ -16,7 +14,6 @@ import {
 } from "@angular/material/dialog";
 import { DetailsComponentData } from "../../../core/entity-components/entity-subrecord/row-details/row-details.component";
 import { TodoService } from "../todo.service";
-import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import {
   EntityForm,
@@ -38,9 +35,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
-
 @Component({
   selector: "app-todo-details",
   templateUrl: "./todo-details.component.html",
@@ -59,8 +53,7 @@ import { Subject } from "rxjs";
     Angulartics2Module,
   ],
 })
-export class TodoDetailsComponent implements OnInit, OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class TodoDetailsComponent implements OnInit {
   @Input() entity: Todo;
 
   @Output() close = new EventEmitter<Todo>();
@@ -74,8 +67,7 @@ export class TodoDetailsComponent implements OnInit, OnDestroy {
     private todoService: TodoService,
     private entityFormService: EntityFormService,
     private entityRemoveService: EntityRemoveService,
-    private alertService: AlertService,
-    private confirmationDialog: ConfirmationDialogService
+    private alertService: AlertService
   ) {
     this.entity = data.entity as Todo;
     this.formColumns = [data.columns];
@@ -107,24 +99,6 @@ export class TodoDetailsComponent implements OnInit, OnDestroy {
     if (this.form.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
       await this.entityFormService.saveChanges(this.form, this.entity);
-      /*
-      const confirmationResult = await this.confirmationDialog.getConfirmation(
-        $localize`Save changes?`,
-        $localize`Do you want to save your changes to the ${Todo.label} before marking it as completed? Otherwise, changes will be discarded.`,
-        YesNoCancelButtons
-      );
-
-      if (confirmationResult === undefined) {
-        // cancel
-        return;
-      }
-      if (confirmationResult === true) {
-        await this.entityFormService.saveChanges(this.form, this.entity);
-      }
-      if (confirmationResult === false) {
-        this.entityFormService.resetForm(this.form, this.entity);
-      }
-      */
     }
     await this.todoService.completeTodo(this.entity);
     this.dialogRef.close();
@@ -136,16 +110,10 @@ export class TodoDetailsComponent implements OnInit, OnDestroy {
 
   delete() {
     //TODO: refactor this into a reusable form-actions component (duplicated from RowDetailsComponent)
-    this.entityRemoveService.remove(this.entity).pipe(takeUntil(this.destroy$)).subscribe((res) => {
+    this.entityRemoveService.remove(this.entity).subscribe((res) => {
       if (res === RemoveResult.REMOVED) {
         this.dialogRef.close();
       }
     });
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

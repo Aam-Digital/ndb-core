@@ -1,10 +1,10 @@
-import { Injectable, OnDestroy, HostListener } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { EntityMapperService } from "./entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Entity } from "./model/entity";
 import { Observable, race, Subject } from "rxjs";
-import { map, takeUntil } from "rxjs/operators";
+import { map } from "rxjs/operators";
 
 /**
  * All possible results when removing an entity
@@ -48,8 +48,7 @@ export interface RemoveEntityTextOptions {
 @Injectable({
   providedIn: "root",
 })
-export class EntityRemoveService implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class EntityRemoveService {
   constructor(
     private confirmationDialog: ConfirmationDialogService,
     private entityMapper: EntityMapperService,
@@ -132,18 +131,12 @@ export class EntityRemoveService implements OnDestroy {
     race(
       snackBarRef.onAction().pipe(map(() => true)),
       snackBarRef.afterDismissed().pipe(map(() => false))
-    ).pipe(takeUntil(this.destroy$)).subscribe(async (next) => {
+    ).subscribe(async (next) => {
       if (next) {
         await this.entityMapper.save(entity, true);
         resultSender.next(RemoveResult.UNDONE);
       }
       resultSender.complete();
     });
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

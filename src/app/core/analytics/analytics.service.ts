@@ -1,4 +1,4 @@
-import { Injectable, OnDestroy, HostListener } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { environment } from "../../../environments/environment";
 import { ConfigService } from "../config/config.service";
 import {
@@ -9,9 +9,6 @@ import { Angulartics2, Angulartics2Matomo } from "angulartics2";
 import md5 from "md5";
 import { UiConfig } from "../ui/ui-config";
 
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
-
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
  *
@@ -20,8 +17,7 @@ import { Subject } from "rxjs";
 @Injectable({
   providedIn: "root",
 })
-export class AnalyticsService implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class AnalyticsService {
   private isInitialized = false;
 
   constructor(
@@ -53,7 +49,7 @@ export class AnalyticsService implements OnDestroy {
     window["_paq"].push(["enableLinkTracking"]);
     this.setVersion();
     this.setUser(undefined);
-    this.configService.configUpdates.pipe(takeUntil(this.destroy$)).subscribe(() => this.setConfigValues());
+    this.configService.configUpdates.subscribe(() => this.setConfigValues());
   }
 
   private setVersion(): void {
@@ -128,11 +124,5 @@ export class AnalyticsService implements OnDestroy {
       action: action,
       properties: properties,
     });
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

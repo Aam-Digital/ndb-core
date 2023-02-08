@@ -1,4 +1,4 @@
-import { Component, OnDestroy, HostListener } from "@angular/core";
+import { Component } from "@angular/core";
 import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
@@ -9,9 +9,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { Angulartics2Module } from "angulartics2";
 
-import { takeUntil } from "rxjs/operators";
-import { Subject } from "rxjs";
-
 @Component({
   selector: "app-password-reset",
   templateUrl: "./password-reset.component.html",
@@ -21,12 +18,11 @@ import { Subject } from "rxjs";
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
-    Angulartics2Module
+    Angulartics2Module,
   ],
-  standalone: true
+  standalone: true,
 })
-export class PasswordResetComponent implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class PasswordResetComponent {
   keycloakAuth: KeycloakAuthService;
   passwordResetActive = false;
   email = new FormControl("", [Validators.required, Validators.email]);
@@ -46,7 +42,7 @@ export class PasswordResetComponent implements OnDestroy {
       return;
     }
 
-    this.keycloakAuth.forgotPassword(this.email.value).pipe(takeUntil(this.destroy$)).subscribe({
+    this.keycloakAuth.forgotPassword(this.email.value).subscribe({
       next: () => {
         this.snackbar.open(
           `Password reset email sent to ${this.email.value}`,
@@ -57,11 +53,5 @@ export class PasswordResetComponent implements OnDestroy {
       },
       error: (err) => this.email.setErrors({ notFound: err.error.message }),
     });
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }

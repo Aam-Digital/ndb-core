@@ -1,6 +1,6 @@
-import { Injectable, OnDestroy, HostListener } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { filter, takeUntil } from "rxjs/operators";
+import { filter } from "rxjs/operators";
 import { Observable, Subject } from "rxjs";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -15,8 +15,7 @@ import { AuthUser } from "../../session/session-service/auth-user";
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
  */
 @Injectable()
-export class AbilityService implements OnDestroy {
-  private destroy$: Subject<any> = new Subject<any>();
+export class AbilityService {
   private _abilityUpdated = new Subject<void>();
 
   /**
@@ -40,10 +39,7 @@ export class AbilityService implements OnDestroy {
     this.loadRules();
     this.entityMapper
       .receiveUpdates<Config<DatabaseRules>>(Config)
-      .pipe(
-      filter(({ entity }) => entity.getId() === Config.PERMISSION_KEY),
-      takeUntil(this.destroy$)
-    )
+      .pipe(filter(({ entity }) => entity.getId() === Config.PERMISSION_KEY))
       .subscribe(({ entity }) => this.updateAbilityWithUserRules(entity.data));
   }
 
@@ -109,11 +105,5 @@ export class AbilityService implements OnDestroy {
   private updateAbilityWithRules(rules: DatabaseRule[]) {
     this.ability.update(rules);
     this._abilityUpdated.next();
-  }
-
-  @HostListener('unloaded')
-  public ngOnDestroy(): void {
-    this.destroy$.next(true);
-    this.destroy$.complete();
   }
 }
