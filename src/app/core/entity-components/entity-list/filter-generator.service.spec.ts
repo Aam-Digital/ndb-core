@@ -208,7 +208,6 @@ describe("FilterGeneratorService", () => {
     const dateFilter: DateRangeFilterConfig = {
       id: "date",
       label: "Date",
-      startingDayOfWeek: "Monday",
       options: [
         {
           startOffsets: [{ amount: 0, unit: "days" }],

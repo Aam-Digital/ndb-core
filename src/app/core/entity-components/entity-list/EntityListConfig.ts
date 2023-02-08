@@ -94,32 +94,7 @@ export interface BooleanFilterConfig extends BasicFilterConfig {
 export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {
   options: FilterSelectionOption<T>[];
 }
-
-export const weekDayMap = {
-  sunday: 0,
-  monday: 1,
-  tuesday: 2,
-  wednesday: 3,
-  thursday: 4,
-  friday: 5,
-  saturday: 6,
-};
 export interface DateRangeFilterConfig extends BasicFilterConfig {
-  startingDayOfWeek?: // manually setting with what day a calendar week should start
-  | "Sunday"
-    | "sunday"
-    | "Monday"
-    | "monday"
-    | "Tuesday"
-    | "tuesday"
-    | "Wednesday"
-    | "wednesday"
-    | "Thursday"
-    | "thursday"
-    | "Friday"
-    | "friday"
-    | "Saturday"
-    | "saturday";
   options: DateRangeFilterConfigOption[];
 }
 

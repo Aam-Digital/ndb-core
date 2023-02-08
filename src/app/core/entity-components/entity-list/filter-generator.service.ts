@@ -90,7 +90,7 @@ export class FilterGeneratorService {
     if (config.type === "prebuilt") {
       return (config as PrebuiltFilterConfig<T>).options;
     } else if (schema.dataType === "date") {
-      return this.createDateRangeFilterOptions(config as DateRangeFilterConfig);
+      return [{}, {}] as any;
     } else if (schema.dataType === "boolean" || config.type === "boolean") {
       return this.createBooleanFilterOptions(config as BooleanFilterConfig);
     } else if (schema.dataType === "configurable-enum") {
@@ -110,13 +110,6 @@ export class FilterGeneratorService {
       const options = [...new Set(data.map((c) => c[config.id]))];
       return FilterSelection.generateOptions(options, config.id);
     }
-  }
-
-  private createDateRangeFilterOptions<T extends Entity>(
-    filterConfig: DateRangeFilterConfig
-  ): FilterSelectionOption<T>[] {
-    const dateFS = [{}, {}] as any;
-    return dateFS;
   }
 
   private createBooleanFilterOptions<T extends Entity>(
