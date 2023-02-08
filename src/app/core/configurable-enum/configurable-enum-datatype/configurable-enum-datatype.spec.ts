@@ -51,7 +51,7 @@ describe("ConfigurableEnumDatatype", () => {
   let enumService: jasmine.SpyObj<ConfigurableEnumService>;
 
   beforeEach(waitForAsync(() => {
-    enumService = jasmine.createSpyObj(["getEnumValues"]);
+    enumService = jasmine.createSpyObj(["getEnumValues", "preLoadEnums"]);
     enumService.getEnumValues.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({

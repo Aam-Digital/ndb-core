@@ -19,8 +19,8 @@ export class ConfigurableEnumService {
   }
 
   async preLoadEnums() {
-    this.enums = new Map();
     const allEnums = await this.entityMapper.loadType(ConfigurableEnum);
+    this.enums = new Map();
     allEnums.forEach((entity) => this.cacheEnum(entity));
   }
 
