@@ -1,42 +1,27 @@
 import { TestBed } from "@angular/core/testing";
-import { MatDialogModule } from "@angular/material/dialog";
 import { FormDialogService } from "./form-dialog.service";
-import { Component, EventEmitter, Input } from "@angular/core";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Component, Input, ViewChild } from "@angular/core";
 import { Entity } from "../entity/model/entity";
 import { ShowsEntity } from "./shows-entity.interface";
 import { FormDialogWrapperComponent } from "./form-dialog-wrapper/form-dialog-wrapper.component";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
-import { Angulartics2Module } from "angulartics2";
-import { RouterTestingModule } from "@angular/router/testing";
 import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
-import { EntityAbility } from "../permissions/ability/entity-ability";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
+import { MockedTestingModule } from "../../utils/mocked-testing.module";
+import { FormsModule } from "@angular/forms";
 
 describe("FormDialogService", () => {
   let service: FormDialogService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [
-        MatDialogModule,
-        NoopAnimationsModule,
-        Angulartics2Module.forRoot(),
-        RouterTestingModule,
-      ],
-      declarations: [TestComponent],
+      imports: [MockedTestingModule.withState(), TestComponent],
       providers: [
         {
           provide: ConfirmationDialogService,
           useValue: jasmine.createSpyObj(["getConfirmation"]),
         },
-        {
-          provide: EntityAbility,
-          useValue: jasmine.createSpyObj(["cannot"]),
-        },
-        EntitySchemaService,
       ],
     });
 
@@ -48,7 +33,7 @@ describe("FormDialogService", () => {
   });
 
   it("should open dialog with given entity", () => {
-    const testEntity: any = { name: "test" };
+    const testEntity = new Entity();
     const dialogRef = service.openDialog(TestComponent, testEntity);
 
     expect(dialogRef).toBeDefined();
@@ -56,8 +41,7 @@ describe("FormDialogService", () => {
   });
 
   it("should close dialog on form close", () => {
-    const testEntity: any = { name: "test" };
-    const dialogRef = service.openDialog(TestComponent, testEntity);
+    const dialogRef = service.openDialog(TestComponent, new Entity());
 
     spyOn(dialogRef, "close");
     dialogRef.componentInstance.formDialogWrapper.close.emit();
@@ -68,7 +52,11 @@ describe("FormDialogService", () => {
   it("should call onInitFromDynamicConfig on open if it exists", () => {
     @Component({
       selector: "app-test-component",
-      template: "<div></div>",
+      template: ` <app-form-dialog-wrapper [entity]="entity">
+        <form #entityForm="ngForm"></form>
+      </app-form-dialog-wrapper>`,
+      imports: [FormDialogWrapperComponent, FormsModule],
+      standalone: true,
     })
     class TestDynamicComponent
       implements ShowsEntity<Entity>, OnInitDynamicComponent
@@ -76,19 +64,15 @@ describe("FormDialogService", () => {
       @Input() entity: Entity;
       public hasCalledInitFromDynamicConfig = false;
 
-      // @ts-ignore
-      formDialogWrapper: FormDialogWrapperComponent = {
-        close: new EventEmitter<Entity>(),
-        isFormDirty: false,
-      };
+      @ViewChild(FormDialogWrapperComponent, { static: true })
+      formDialogWrapper;
 
       onInitFromDynamicConfig(config: any) {
         this.hasCalledInitFromDynamicConfig = true;
       }
     }
 
-    const testEntity: any = { name: "test" };
-    const dialogRef = service.openDialog(TestDynamicComponent, testEntity);
+    const dialogRef = service.openDialog(TestDynamicComponent, new Entity());
 
     expect(dialogRef).toBeDefined();
     expect(
@@ -128,14 +112,14 @@ describe("FormDialogService", () => {
 
 @Component({
   selector: "app-test-component",
-  template: "<div></div>",
+  template: ` <app-form-dialog-wrapper [entity]="entity">
+    <form #entityForm="ngForm"></form>
+  </app-form-dialog-wrapper>`,
+  standalone: true,
+  imports: [FormDialogWrapperComponent, FormsModule],
 })
 class TestComponent implements ShowsEntity<Entity> {
   @Input() entity: Entity;
 
-  // @ts-ignore
-  formDialogWrapper: FormDialogWrapperComponent = {
-    close: new EventEmitter<Entity>(),
-    isFormDirty: false,
-  };
+  @ViewChild(FormDialogWrapperComponent, { static: true }) formDialogWrapper;
 }

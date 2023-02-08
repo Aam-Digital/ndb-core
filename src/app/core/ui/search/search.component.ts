@@ -14,6 +14,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
 import { DisplayEntityComponent } from "../../entity-components/entity-select/display-entity/display-entity.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -21,6 +22,7 @@ import { DisplayEntityComponent } from "../../entity-components/entity-select/di
  *
  * This is usually displayed in the app header to be available to the user anywhere, allowing to navigate quickly.
  */
+@UntilDestroy()
 @Component({
   selector: "app-search",
   templateUrl: "./search.component.html",
@@ -36,9 +38,9 @@ import { DisplayEntityComponent } from "../../entity-components/entity-select/di
     NgSwitchCase,
     NgForOf,
     DisplayEntityComponent,
-    AsyncPipe
+    AsyncPipe,
   ],
-  standalone: true
+  standalone: true,
 })
 export class SearchComponent {
   static INPUT_DEBOUNCE_TIME_MS: number = 400;
@@ -68,7 +70,8 @@ export class SearchComponent {
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
       skipUntil(this.createSearchIndex()),
       tap((next) => (this.state = this.updateState(next))),
-      concatMap((next: string) => this.searchResults(next))
+      concatMap((next: string) => this.searchResults(next)),
+      untilDestroyed(this)
     );
   }
 

@@ -25,7 +25,9 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @DynamicComponent("UserSecurity")
 @Component({
   selector: "app-user-security",
@@ -70,7 +72,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
       this.userIsPermitted = true;
     }
     // automatically skip trailing and leading whitespaces when the form changes
-    this.form.valueChanges.subscribe((next) => {
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((next) => {
       if (next.email.startsWith(" ") || next.email.endsWith(" ")) {
         this.form.get("email").setValue(next.email.trim());
       }
