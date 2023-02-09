@@ -413,33 +413,30 @@ describe("QueryService", () => {
 
   it("should used updated entities if a new version has been saved", async () => {
     const child = await createChild("M");
-    const genderQuery = "Child:toArray.gender.id";
+    const query = "Child:toArray.gender.id";
 
-    let res = await service.queryData(genderQuery);
-    expect(res).toEqual(["M"]);
+    await expectAsync(service.queryData(query)).toBeResolvedTo(["M"]);
 
     child.gender = genders.find(({ id }) => id === "F");
     await entityMapper.save(child);
-    console.log("saved");
 
-    res = await service.queryData(genderQuery);
-    expect(res).toEqual(["F"]);
+    await expectAsync(service.queryData(query)).toBeResolvedTo(["F"]);
   });
 
   it("should not count a deleted entity anymore", async () => {
     const child = await createChild("M");
     await createChild("F");
-    const genderQuery = "Child:toArray.gender.id";
+    const query = "Child:toArray.gender.id";
 
-    let res = await service.queryData(genderQuery);
-    expect(res).toEqual(jasmine.arrayWithExactContents(["M", "F"]));
+    await expectAsync(service.queryData(query)).toBeResolvedTo(
+      jasmine.arrayWithExactContents(["M", "F"])
+    );
 
     await entityMapper.remove(child);
     // waiting for delete-update to be processed
     await new Promise((res) => setTimeout(res));
 
-    res = await service.queryData(genderQuery);
-    expect(res).toEqual(["F"]);
+    await expectAsync(service.queryData(query)).toBeResolvedTo(["F"]);
   });
 
   it("should add notes to an array of event notes", async () => {
