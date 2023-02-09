@@ -11,11 +11,13 @@ import { DisabledWrapperComponent } from "./disabled-wrapper.component";
 import { EntityAction, EntitySubject } from "../permission-types";
 import { AbilityService } from "../ability/ability.service";
 import { EntityAbility } from "../ability/entity-ability";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * This directive can be used to disable a element (e.g. button) based on the current users permissions.
  * Additionally, a little popup will be shown when the user hovers the disabled element.
  */
+@UntilDestroy()
 @Directive({
   selector: "[appDisabledEntityOperation]",
   standalone: true,
@@ -40,7 +42,9 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
     private ability: EntityAbility,
     private abilityService: AbilityService
   ) {
-    this.abilityService.abilityUpdated.subscribe(() => this.applyPermissions());
+    this.abilityService.abilityUpdated
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.applyPermissions());
   }
 
   ngOnInit() {

@@ -18,9 +18,9 @@ import { Angulartics2Module } from "angulartics2";
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
-    Angulartics2Module
+    Angulartics2Module,
   ],
-  standalone: true
+  standalone: true,
 })
 export class PasswordResetComponent {
   keycloakAuth: KeycloakAuthService;

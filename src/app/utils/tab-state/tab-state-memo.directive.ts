@@ -1,6 +1,7 @@
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabGroup } from "@angular/material/tabs";
 import { Directive, OnInit } from "@angular/core";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Memorizes the current state of a `TabGroup` (i.e. which tab currently is selected)
@@ -14,6 +15,7 @@ import { Directive, OnInit } from "@angular/core";
  * </mat-tab-group>
  * ```
  */
+@UntilDestroy()
 @Directive({
   selector: "[appTabStateMemo]",
 })
@@ -37,9 +39,9 @@ export class TabStateMemoDirective implements OnInit {
     if (!Number.isNaN(potentialNextTabIndex)) {
       this.tab.selectedIndex = potentialNextTabIndex;
     }
-    this.tab.selectedIndexChange.subscribe(async (next) => {
-      await this.updateURLQueryParams(next);
-    });
+    this.tab.selectedIndexChange
+      .pipe(untilDestroyed(this))
+      .subscribe((next) => this.updateURLQueryParams(next));
   }
 
   // Update the URL
