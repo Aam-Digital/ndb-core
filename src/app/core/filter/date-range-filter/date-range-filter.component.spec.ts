@@ -4,7 +4,6 @@ import { DateRangeFilterComponent } from "./date-range-filter.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MatNativeDateModule } from "@angular/material/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { FilterModule } from "../filter.module";
 
 describe("DateRangeFilterComponent", () => {
   let component: DateRangeFilterComponent<any>;
@@ -12,7 +11,7 @@ describe("DateRangeFilterComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [FilterModule, MatNativeDateModule, NoopAnimationsModule],
+      imports: [MatNativeDateModule, NoopAnimationsModule],
       providers: [{ provide: MatDialog, useValue: null }],
     }).compileComponents();
 

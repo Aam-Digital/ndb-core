@@ -17,8 +17,9 @@ import {
   DateRangeFilterConfigOption,
 } from "app/core/entity-components/entity-list/EntityListConfig";
 import moment from "moment";
+import { FormsModule } from "@angular/forms";
 
-const defaultOptions = [
+const defaultOptions: DateRangeFilterConfigOption[] = [
   {
     label: $localize`:Filter label:Today`,
   },
@@ -42,7 +43,7 @@ const defaultOptions = [
     endOffsets: [{ amount: -1, unit: "months" }],
     label: $localize`:Filter label:Last month`,
   },
-] as const;
+];
 
 @Component({
   selector: "app-date-range-filter-panel",
@@ -52,23 +53,34 @@ const defaultOptions = [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
   ],
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule, MatDatepickerModule, NgForOf],
+  imports: [
+    MatDialogModule,
+    MatButtonModule,
+    MatDatepickerModule,
+    NgForOf,
+    FormsModule,
+  ],
 })
 export class DateRangeFilterPanelComponent {
   dateRangeFilterConfig: DateRangeFilterConfig;
   dateRangeOptions: DateRangeFilterConfigOption;
 
   originalRangeValue;
-  selectedRangeValue: DateRange<Date> | undefined;
+  selectedRangeValue: DateRange<Date>;
 
   constructor(
-    @Inject(MAT_DIALOG_DATA) public data,
+    @Inject(MAT_DIALOG_DATA)
+    public data: {
+      fromDate: Date;
+      toDate: Date;
+      dateRangeFilterConfig: DateRangeFilterConfig;
+    },
     private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>
   ) {
     this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
     this.originalRangeValue = this.selectedRangeValue;
-    if (!this.data.dateRangeFilterConfig.filterConfig.options) {
-      this.data.dateRangeFilterConfig.filterConfig.options = defaultOptions;
+    if (!this.data.dateRangeFilterConfig.options) {
+      this.data.dateRangeFilterConfig.options = defaultOptions;
     }
   }
 
@@ -108,15 +120,16 @@ export class DateRangeFilterPanelComponent {
     this.dialogRef.close(this.selectedRangeValue);
   }
 
-  selectedRangeChange(m: any) {
+  selectedRangeChange(selectedDate: Date) {
     if (!this.selectedRangeValue?.start || this.selectedRangeValue?.end) {
-      this.selectedRangeValue = new DateRange(m, null);
+      this.selectedRangeValue = new DateRange(selectedDate, null);
     } else {
       const start = this.selectedRangeValue.start;
-      const end = m;
+      const end = selectedDate;
       this.selectedRangeValue =
         end < start ? new DateRange(end, start) : new DateRange(start, end);
       this.dialogRef.close(this.selectedRangeValue);
     }
+    console.log(this.selectedRangeValue);
   }
 }

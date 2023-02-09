@@ -5,7 +5,6 @@ import {
 } from "../../filter/filter-selection/filter-selection";
 import {
   BooleanFilterConfig,
-  DateRangeFilterConfig,
   FilterConfig,
   PrebuiltFilterConfig,
 } from "./EntityListConfig";

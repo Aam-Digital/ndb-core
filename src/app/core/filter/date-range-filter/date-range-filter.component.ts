@@ -59,7 +59,7 @@ export class DateRangeFilterComponent<T extends Entity> {
         data: {
           fromDate: this.fromDate,
           toDate: this.toDate,
-          dateRangeFilterConfig: this.dateRangeFilterConfig,
+          dateRangeFilterConfig: this.dateRangeFilterConfig.filterConfig,
         },
       })
       .afterClosed()
