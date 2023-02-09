@@ -20,20 +20,36 @@ export class QueryService {
   private entities: { [type: string]: { [id: string]: Entity } } = {};
 
   /**
-   * A list of special functions to load entities.
-   * If not specified, `EntityMapper.loadType` is used.
+   * A map of information about the loading state of the different entity types
    * @private
    */
-  private dataFunctions: { [type: string]: (form, to) => Promise<Entity[]> } = {
-    Note: (from, to) => this.childrenService.getNotesInTimespan(from, to),
-    EventNote: (from, to) => this.attendanceService.getEventsOnDate(from, to),
+  private entityInfo: {
+    [type: string]: {
+      /**
+       * A optional function which can be used to load this entity that might use a start and end date
+       * @param form
+       * @param to
+       */
+      dataFunction?: (form, to) => Promise<Entity[]>;
+      /**
+       * Whether already all entities of this type have been loaded
+       */
+      allLoaded?: boolean;
+      /**
+       * A certain range in which entities of this type have been loaded
+       */
+      rangeLoaded?: { from: Date; to: Date };
+    };
+  } = {
+    Note: {
+      dataFunction: (from, to) =>
+        this.childrenService.getNotesInTimespan(from, to),
+    },
+    EventNote: {
+      dataFunction: (from, to) =>
+        this.attendanceService.getEventsOnDate(from, to),
+    },
   };
-  /**
-   * A overview over which data has already been loaded.
-   * If `EntityMapper.loadType` was used, `true` is set, otherwise the provided `from` and `to` date are set.
-   * @private
-   */
-  private dataLoaded: { [type: string]: { from: Date; to: Date } | true } = {};
 
   /**
    * A list of further aliases for which a certain entity needs to be loaded.
@@ -102,17 +118,16 @@ export class QueryService {
   private cacheRequiredData(query: string, from: Date, to: Date) {
     const uncachedEntities = this.getUncachedEntities(query, from, to);
     const dataPromises = uncachedEntities.map((entity) => {
-      if (this.dataFunctions[entity.ENTITY_TYPE]) {
-        return this.dataFunctions[entity.ENTITY_TYPE](from, to).then(
-          (loadedEntities) => {
-            this.setEntities(entity, loadedEntities);
-            this.dataLoaded[entity.ENTITY_TYPE] = { from, to };
-          }
-        );
+      const info = this.entityInfo[entity.ENTITY_TYPE];
+      if (info.dataFunction) {
+        return info.dataFunction(from, to).then((loadedEntities) => {
+          this.setEntities(entity, loadedEntities);
+          info.rangeLoaded = { from, to };
+        });
       } else {
         return this.entityMapper.loadType(entity).then((loadedEntities) => {
           this.setEntities(entity, loadedEntities);
-          this.dataLoaded[entity.ENTITY_TYPE] = true;
+          info.allLoaded = true;
         });
       }
     });
@@ -135,12 +150,12 @@ export class QueryService {
       )
       .map(([_, entity]) => entity)
       .filter((entity) => {
-        const loadingInfo = this.dataLoaded[entity.ENTITY_TYPE];
+        const info = this.entityInfo[entity.ENTITY_TYPE];
         return (
-          loadingInfo === undefined ||
+          info === undefined ||
           !(
-            loadingInfo === true ||
-            (loadingInfo.from <= from && loadingInfo.to >= to)
+            info.allLoaded ||
+            (info.rangeLoaded.from <= from && info.rangeLoaded.to >= to)
           )
         );
       });
