@@ -8,7 +8,7 @@ import { Entity } from "../../../../entity/model/entity";
 import { DatabaseField } from "../../../../entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../entity/database-entity.decorator";
 import {
-  entityFormStorybookDefaulParameters,
+  entityFormStorybookDefaultParameters,
   StorybookBaseModule,
 } from "../../../../../utils/storybook-base.module";
 
@@ -27,7 +27,7 @@ export default {
       ],
     }),
   ],
-  parameters: entityFormStorybookDefaulParameters,
+  parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
 const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({

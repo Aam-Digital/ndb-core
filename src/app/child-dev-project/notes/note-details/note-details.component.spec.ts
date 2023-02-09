@@ -35,7 +35,7 @@ describe("NoteDetailsComponent", () => {
   let children: Child[];
   let testNote: Note;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     children = [new Child("1"), new Child("2"), new Child("3")];
     testNote = generateTestNote(children);
 
@@ -46,7 +46,7 @@ describe("NoteDetailsComponent", () => {
 
     const dialogRefMock = { beforeClosed: () => EMPTY, close: () => {} };
 
-    TestBed.configureTestingModule({
+    await TestBed.configureTestingModule({
       imports: [
         NoteDetailsComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, children),

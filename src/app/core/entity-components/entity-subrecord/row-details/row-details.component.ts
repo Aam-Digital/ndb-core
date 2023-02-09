@@ -28,6 +28,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -44,6 +45,7 @@ export interface DetailsComponentData {
 /**
  * Displays a single row of a table as a dialog component
  */
+@UntilDestroy()
 @Component({
   selector: "app-row-details",
   templateUrl: "./row-details.component.html",
@@ -85,7 +87,7 @@ export class RowDetailsComponent {
       this.form.disable();
     }
     this.tempEntity = this.data.entity;
-    this.form.valueChanges.subscribe((value) => {
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       const dynamicConstructor: any = data.entity.getConstructor();
       this.tempEntity = Object.assign(new dynamicConstructor(), value);
     });

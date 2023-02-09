@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
-import { ConfigService } from "../config/config.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configurable-enum-datatype";
+import { ConfigurableEnumService } from "./configurable-enum.service";
 
 /**
  * Provides a generic functionality to define enums (collections of selectable options) in the config database
@@ -47,11 +47,11 @@ import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configura
 @NgModule({})
 export class ConfigurableEnumModule {
   constructor(
-    private configService: ConfigService,
+    private enumService: ConfigurableEnumService,
     private entitySchemaService: EntitySchemaService
   ) {
     this.entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(configService)
+      new ConfigurableEnumDatatype(enumService)
     );
   }
 }

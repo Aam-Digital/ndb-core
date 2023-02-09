@@ -160,6 +160,7 @@ export class AttendanceService {
     sinceDate?: Date
   ): Promise<ActivityAttendance[]> {
     const periods = new Map<number, ActivityAttendance>();
+
     function getOrCreateAttendancePeriod(event) {
       const month = new Date(event.date.getFullYear(), event.date.getMonth());
       let attMonth = periods.get(month.getTime());
@@ -192,11 +193,7 @@ export class AttendanceService {
     until: Date
   ): Promise<ActivityAttendance[]> {
     const matchingEvents = await this.getEventsOnDate(from, until);
-
-    const groupedEvents: Map<string, EventNote[]> = groupBy(
-      matchingEvents,
-      "relatesTo"
-    );
+    const groupedEvents = groupBy(matchingEvents, "relatesTo");
 
     const records = [];
     for (const [activityId, activityEvents] of groupedEvents) {

@@ -1,6 +1,7 @@
 import { Injectable } from "@angular/core";
 import { QueryService } from "../../core/export/query.service";
 import { GroupByDescription, ReportRow } from "./report-row";
+import { groupBy } from "../../utils/utils";
 
 export interface Aggregation {
   query: string;
@@ -90,24 +91,24 @@ export class DataAggregationService {
     for (let i = properties.length; i > 0; i--) {
       const currentProperty = properties[i - 1];
       const remainingProperties = properties.slice(i);
-      const groupingResults = this.groupBy(data, currentProperty);
-      for (const grouping of groupingResults) {
+      const groupingResults = groupBy(data, currentProperty);
+      for (const [group, entries] of groupingResults) {
         const groupingValues = additionalValues.concat({
           property: currentProperty,
-          value: grouping.value,
+          value: group,
         });
         const newRow: ReportRow = {
           header: {
             label: label,
             groupedBy: groupingValues,
-            result: grouping.data.length,
+            result: entries.length,
           },
           subRows: [],
         };
         newRow.subRows.push(
           ...(await this.calculateAggregations(
             aggregations,
-            grouping.data,
+            entries,
             groupingValues
           ))
         );
@@ -116,7 +117,7 @@ export class DataAggregationService {
             remainingProperties,
             aggregations,
             label,
-            grouping.data,
+            entries,
             groupingValues
           ))
         );
@@ -124,23 +125,5 @@ export class DataAggregationService {
       }
     }
     return resultRows;
-  }
-
-  private groupBy<ENTITY, PROPERTY extends keyof ENTITY>(
-    data: ENTITY[],
-    groupByProperty: PROPERTY
-  ): { value: ENTITY[PROPERTY]; data: ENTITY[] }[] {
-    return data.reduce((allGroups, currentElement) => {
-      const currentValue = currentElement[groupByProperty];
-      let existingGroup = allGroups.find(
-        (group) => group.value === currentValue
-      );
-      if (!existingGroup) {
-        existingGroup = { value: currentValue, data: [] };
-        allGroups.push(existingGroup);
-      }
-      existingGroup.data.push(currentElement);
-      return allGroups;
-    }, new Array<{ value: ENTITY[PROPERTY]; data: ENTITY[] }>());
   }
 }

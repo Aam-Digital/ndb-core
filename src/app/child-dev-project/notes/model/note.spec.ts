@@ -24,7 +24,7 @@ import {
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
-import { createTestingConfigService } from "../../../core/config/testing-config-service";
+import { createTestingConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum-testing";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -86,7 +86,7 @@ describe("Note", () => {
 
     entitySchemaService = new EntitySchemaService();
     entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
+      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
     );
   }));
 
