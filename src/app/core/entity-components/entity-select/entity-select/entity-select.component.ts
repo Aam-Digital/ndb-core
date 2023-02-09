@@ -25,6 +25,7 @@ import { NgForOf, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../display-entity/display-entity.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatInputModule } from "@angular/material/input";
 
 @Component({
   selector: "app-entity-select",
@@ -40,6 +41,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     DisplayEntityComponent,
     FontAwesomeModule,
     MatTooltipModule,
+    MatInputModule,
   ],
   standalone: true,
 })

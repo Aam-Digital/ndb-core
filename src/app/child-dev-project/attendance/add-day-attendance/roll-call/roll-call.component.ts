@@ -1,6 +1,7 @@
 import {
   Component,
   EventEmitter,
+  Injectable,
   Input,
   OnChanges,
   Output,
@@ -34,6 +35,7 @@ import Hammer from "hammerjs";
 import { ConfigurableEnumService } from "../../../../core/configurable-enum/configurable-enum.service";
 
 // Only allow horizontal swiping
+@Injectable()
 class HorizontalHammerConfig extends HammerGestureConfig {
   overrides = {
     swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
