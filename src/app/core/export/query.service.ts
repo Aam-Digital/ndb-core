@@ -39,6 +39,10 @@ export class QueryService {
        * A certain range in which entities of this type have been loaded
        */
       rangeLoaded?: { from: Date; to: Date };
+      /**
+       * Whether updates of this entity are listened to
+       */
+      updating?: boolean;
     };
   } = {
     Note: {
@@ -115,11 +119,11 @@ export class QueryService {
     }).value;
   }
 
-  private cacheRequiredData(query: string, from: Date, to: Date) {
+  private async cacheRequiredData(query: string, from: Date, to: Date) {
     const uncachedEntities = this.getUncachedEntities(query, from, to);
     const dataPromises = uncachedEntities.map((entity) => {
       const info = this.entityInfo[entity.ENTITY_TYPE];
-      if (info.dataFunction) {
+      if (info?.dataFunction) {
         return info.dataFunction(from, to).then((loadedEntities) => {
           this.setEntities(entity, loadedEntities);
           info.rangeLoaded = { from, to };
@@ -127,12 +131,29 @@ export class QueryService {
       } else {
         return this.entityMapper.loadType(entity).then((loadedEntities) => {
           this.setEntities(entity, loadedEntities);
-          info.allLoaded = true;
+          this.entityInfo[entity.ENTITY_TYPE] = { allLoaded: true };
         });
       }
     });
+    await Promise.all(dataPromises);
+    this.applyEntityUpdates(uncachedEntities);
+  }
 
-    return Promise.all(dataPromises);
+  private applyEntityUpdates(uncachedEntities: EntityConstructor[]) {
+    uncachedEntities
+      .filter(({ ENTITY_TYPE }) => !this.entityInfo[ENTITY_TYPE].updating)
+      .forEach(({ ENTITY_TYPE }) => {
+        this.entityInfo[ENTITY_TYPE].updating = true;
+        this.entityMapper
+          .receiveUpdates(ENTITY_TYPE)
+          .subscribe(({ entity, type }) => {
+            if (type === "remove") {
+              delete this.entities[ENTITY_TYPE][entity.getId(true)];
+            } else {
+              this.entities[ENTITY_TYPE][entity.getId(true)] = entity;
+            }
+          });
+      });
   }
 
   /**
@@ -155,7 +176,7 @@ export class QueryService {
           info === undefined ||
           !(
             info.allLoaded ||
-            (info.rangeLoaded.from <= from && info.rangeLoaded.to >= to)
+            (info.rangeLoaded?.from <= from && info.rangeLoaded?.to >= to)
           )
         );
       });
