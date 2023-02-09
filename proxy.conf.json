@@ -1,6 +1,6 @@
 {
   "/db": {
-    "target": "https://dev.aam-digital.net/db",
+    "target": "https://qm.aam-digital.com/db",
     "secure": true,
     "logLevel": "debug",
     "changeOrigin": true,
