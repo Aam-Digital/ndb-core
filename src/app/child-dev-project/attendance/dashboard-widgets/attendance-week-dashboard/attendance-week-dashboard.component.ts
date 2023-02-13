@@ -144,10 +144,10 @@ export class AttendanceWeekDashboardComponent
         .forEach((r) => lowAttendanceCases.add(r.childId));
     }
 
-    const groupedRecords = groupBy(records, "childId");
-    this.tableDataSource.data = Array.from(lowAttendanceCases.values()).map(
-      (childId) => groupedRecords.get(childId)
-    );
+    const groups = groupBy(records, "childId");
+    this.tableDataSource.data = groups
+      .filter(([childId]) => lowAttendanceCases.has(childId))
+      .map(([_, attendance]) => attendance);
     this.loadingDone = true;
   }
 

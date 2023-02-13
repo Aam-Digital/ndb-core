@@ -13,6 +13,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
 import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
+import { groupBy } from "../../../../utils/utils";
 
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
@@ -63,7 +64,7 @@ export class EntityCountDashboardComponent
 
   async ngOnInit() {
     const entities = await this.entityMapper.loadType(this.entity);
-    this.updateCounts(entities);
+    this.updateCounts(entities.filter((e) => e.isActive));
   }
 
   goToChildrenList(filterId: string) {
@@ -74,31 +75,16 @@ export class EntityCountDashboardComponent
   }
 
   private updateCounts(entities: Entity[]) {
-    this.totalEntities = 0;
-
-    const countMap = new Map<any, number>();
-    entities.forEach((entity) => {
-      if (entity.isActive) {
-        let count = countMap.get(entity[this.groupBy]);
-        if (count === undefined) {
-          count = 0;
-        }
-
-        count++;
-        this.totalEntities++;
-        countMap.set(entity[this.groupBy], count);
-      }
+    this.totalEntities = entities.length;
+    const groups = groupBy(entities, this.groupBy as keyof Entity);
+    this.entityGroupCounts = groups.map(([group, entities]) => {
+      const label = extractHumanReadableLabel(group);
+      return {
+        label: label,
+        value: entities.length,
+        id: group?.["id"] || label,
+      };
     });
-
-    this.entityGroupCounts = Array.from(countMap.entries()) // direct use of Map creates change detection problems
-      .map((entry) => {
-        const label = extractHumanReadableLabel(entry[0]);
-        return {
-          label: label,
-          value: entry[1],
-          id: entry[0]?.id || label,
-        };
-      });
     this.loading = false;
   }
 }

@@ -143,7 +143,7 @@ export class ChildSchoolOverviewComponent
         newRelation.start =
           this.allRecords.length && this.allRecords[0].end
             ? moment(this.allRecords[0].end).add(1, "day").toDate()
-            : new Date();
+            : moment().startOf("day").toDate();
       } else if (mode === "school") {
         newRelation.schoolId = entityId;
       }

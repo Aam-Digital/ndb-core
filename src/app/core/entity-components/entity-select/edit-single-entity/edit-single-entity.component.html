@@ -1,64 +1,23 @@
-<mat-form-field [formGroup]="parent" floatLabel="always">
-  <!--
-  This input contains the actual value, i.e. the id of the entity.
-  It is filled in automatically in code after the user has chosen a correct value.
-
-  We also set floatLabel to always because the label is attached to the wrong input
- -->
-  <input matInput [formControl]="formControl" hidden/>
-  <mat-label>{{ label }}</mat-label>
-
-  <app-display-entity
-    class="block-wrapper"
-    [entityToDisplay]="selectedEntity"
-    *ngIf="selectedEntity && formControl.disabled"
-  ></app-display-entity>
-  <!--
-  This input contains the display value (i.e. the value that the user chooses and sees when he clicks 'update')
-  Which is the name of the entity in many cases.
-  -->
-  <input
-    #inputElement
-    matInput
-    [placeholder]="placeholder"
-    [disabled]="formControl.disabled"
-    [hidden]="formControl.disabled"
-    [matAutocomplete]="autoSuggestions"
-    #trigger=matAutocompleteTrigger
-    [value]="selectedEntity?.toString()"
-    (keyup)="updateAutocomplete(inputElement.value)"
-    (focusin)="updateAutocomplete('')"
-    (focusout)="select(inputElement.value)"
-  />
-  <button
-    mat-icon-button matIconSuffix type="button"
-    (click)="updateAutocomplete(''); trigger.openPanel()"
+<mat-form-field>
+  <mat-label>{{label}}</mat-label>
+  <app-basic-autocomplete
+    #autocomplete
+    [formControl]="formControl"
+    [options]="entities"
+    [valueMapper]="entityToId"
   >
-    <fa-icon icon="caret-down"></fa-icon>
-  </button>
-
-  <mat-autocomplete
-    #autoSuggestions="matAutocomplete"
-    (optionSelected)="select($event.option.value)"
-    autoActiveFirstOption
-  >
-    <!-- Optional header -->
-    <ng-content select="mat-option"></ng-content>
-    <mat-option
-      *ngFor="let entity of autocompleteEntities | async"
-      [value]="entity"
-    >
+    <ng-template let-item>
       <app-display-entity
-        [entityToDisplay]="entity"
+        [entityToDisplay]="item"
         [linkDisabled]="true"
       ></app-display-entity>
-    </mat-option>
-  </mat-autocomplete>
-
-  <mat-error
-    *ngIf="formControl.hasError('required')"
-    i18n="Error message for any input"
-  >
-    This field is required
-  </mat-error>
+    </ng-template>
+  </app-basic-autocomplete>
+  <fa-icon
+    *ngIf="formControl.enabled"
+    icon="caret-down"
+    class="caret-suffix"
+    (click)="autocomplete.showAutocomplete()"
+    matSuffix
+  ></fa-icon>
 </mat-form-field>

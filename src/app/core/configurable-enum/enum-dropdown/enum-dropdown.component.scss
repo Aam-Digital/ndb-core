@@ -1,0 +1,6 @@
+@use "src/styles/variables/sizes";
+
+.caret-suffix {
+  cursor: pointer;
+  padding: 0 sizes.$small;
+}

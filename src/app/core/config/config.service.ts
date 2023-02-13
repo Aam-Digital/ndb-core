@@ -2,13 +2,11 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { Observable, ReplaySubject } from "rxjs";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-  ConfigurableEnumValue,
-} from "../configurable-enum/configurable-enum.interface";
+import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../configurable-enum/configurable-enum.interface";
 import { filter } from "rxjs/operators";
 import { LoggingService } from "../logging/logging.service";
+import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
+import { EntityAbility } from "../permissions/ability/entity-ability";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -28,7 +26,8 @@ export class ConfigService {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private logger: LoggingService
+    private logger: LoggingService,
+    private ability: EntityAbility
   ) {
     this.loadConfig();
     this.entityMapper
@@ -38,15 +37,15 @@ export class ConfigService {
   }
 
   async loadConfig(): Promise<void> {
-    this.entityMapper
+    return this.entityMapper
       .load(Config, Config.CONFIG_KEY)
-      .then((config) => this.detectLegacyConfig(config))
       .then((config) => this.updateConfigIfChanged(config))
       .catch(() => {});
   }
 
-  private updateConfigIfChanged(config: Config) {
+  private async updateConfigIfChanged(config: Config) {
     if (!this.currentConfig || config._rev !== this.currentConfig?._rev) {
+      await this.detectLegacyConfig(config);
       this.currentConfig = config;
       this._configUpdates.next(config);
     }
@@ -64,19 +63,6 @@ export class ConfigService {
     return this.currentConfig.data[id];
   }
 
-  /**
-   * Get the array of pre-defined values for the given configurable enum id.
-   * @param id
-   */
-  public getConfigurableEnumValues<T extends ConfigurableEnumValue>(
-    id: string
-  ): ConfigurableEnumConfig<T> {
-    if (!id.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
-      id = CONFIGURABLE_ENUM_CONFIG_PREFIX + id;
-    }
-    return this.getConfig<any>(id);
-  }
-
   public getAllConfigs<T>(prefix: string): T[] {
     const matchingConfigs = [];
     for (const id of Object.keys(this.currentConfig.data)) {
@@ -88,7 +74,7 @@ export class ConfigService {
     return matchingConfigs;
   }
 
-  private detectLegacyConfig(config: Config): Config {
+  private async detectLegacyConfig(config: Config): Promise<Config> {
     // ugly but easy ... could use https://www.npmjs.com/package/jsonpath-plus in future
     const configString = JSON.stringify(config);
     if (
@@ -106,6 +92,40 @@ export class ConfigService {
       );
     }
 
+    await this.migrateEnumsToEntities(config).catch((err) =>
+      this.logger.error(`ConfigurableEnum migration error: ${err}`)
+    );
+
     return config;
+  }
+
+  private async migrateEnumsToEntities(config: Config) {
+    const enumValues = Object.entries(config.data).filter(([key]) =>
+      key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)
+    );
+    if (enumValues.length === 0) {
+      return;
+    }
+    const existingEnums = await this.entityMapper
+      .loadType(ConfigurableEnum)
+      .then((res) => res.map((e) => e.getId()));
+
+    const newEnums: ConfigurableEnum[] = [];
+    enumValues.forEach(([key, value]) => {
+      const id = key.replace(CONFIGURABLE_ENUM_CONFIG_PREFIX, "");
+      if (!existingEnums.includes(id)) {
+        const newEnum = new ConfigurableEnum(id);
+        newEnum.values = value as any;
+        newEnums.push(newEnum);
+      }
+      delete config.data[key];
+    });
+
+    if (this.ability.can("create", ConfigurableEnum)) {
+      await this.entityMapper.saveAll(newEnums);
+    }
+    if (this.ability.can("update", config)) {
+      await this.entityMapper.save(config);
+    }
   }
 }

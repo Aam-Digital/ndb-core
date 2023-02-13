@@ -20,6 +20,8 @@ import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
+import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -71,12 +73,13 @@ export class MockedTestingModule {
     return {
       ngModule: MockedTestingModule,
       providers: [
-        {
-          provide: SessionService,
-          useValue: session,
-        },
+        { provide: SessionService, useValue: session },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
+        {
+          provide: ConfigurableEnumService,
+          useValue: createTestingConfigurableEnumService(),
+        },
         { provide: Database, useValue: session.getDatabase() },
       ],
     };

@@ -13,6 +13,7 @@ import {
   toFormFieldConfig,
 } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal
@@ -20,8 +21,6 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
  *
  * This takes care of generic logic like a user prompt asking whether changes should be saved before leaving the dialog.
  * Components used with this have to use {@link FormDialogWrapperComponent} and implement {@link ShowsEntity}.
- *
- * Import the {@link FormDialogModule} in your root module to provide this service.
  *
  * @example
  formDialog.getConfirmation(NoteDetailsComponent, noteEntity);
@@ -61,7 +60,9 @@ export class FormDialogService {
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
     dialogWrapper.readonly = this.ability.cannot("update", entity);
 
-    dialogWrapper.close.subscribe((res) => dialogRef.close(res));
+    dialogWrapper.close
+      .pipe(untilDestroyed(dialogWrapper))
+      .subscribe((res) => dialogRef.close(res));
 
     dialogRef.beforeClosed().subscribe((activelyClosed) => {
       if (!activelyClosed && dialogWrapper.isFormDirty) {

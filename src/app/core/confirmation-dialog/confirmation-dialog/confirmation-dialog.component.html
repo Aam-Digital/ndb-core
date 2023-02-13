@@ -1,5 +1,10 @@
-<app-dialog-close *ngIf="data.closeButton" mat-dialog-close></app-dialog-close>
-<h1 mat-dialog-title>{{ data.title }}</h1>
+<h1 mat-dialog-title>
+  {{ data.title }}
+  <app-dialog-close
+    *ngIf="data.closeButton"
+    mat-dialog-close
+  ></app-dialog-close>
+</h1>
 <div mat-dialog-content>
   <p>{{ data.text }}</p>
 </div>
@@ -11,6 +16,6 @@
     (click)="button.click()"
     [mat-dialog-close]="button.dialogResult"
   >
-    {{button.text}}
+    {{ button.text }}
   </button>
 </div>
