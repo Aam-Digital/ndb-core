@@ -171,7 +171,7 @@ describe("SyncedSessionService", () => {
     // Initially the user is logged in
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
     // After remote session fails the user is logged out again
-    expect(sessionService.loginState.value).toBe(LoginState.LOGIN_FAILED);
+    expect(sessionService.loginState.value).toBe(LoginState.LOGGED_OUT);
     flush();
   }));
 
