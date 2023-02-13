@@ -239,6 +239,8 @@ export class BasicAutocompleteComponent<O, V = O>
     if (!this.focused) {
       if (this.multi) {
         this.autocompleteForm.setValue("");
+      } else {
+        this.showAutocomplete();
       }
       this.focus();
     }
