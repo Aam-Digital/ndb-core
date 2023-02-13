@@ -69,12 +69,12 @@ describe("RollCallComponent", () => {
     }).compileComponents();
   }));
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(RollCallComponent);
     component = fixture.componentInstance;
     component.eventEntity = Note.create(new Date());
     fixture.detectChanges();
-  });
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();
