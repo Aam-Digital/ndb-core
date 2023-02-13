@@ -201,7 +201,7 @@ export class BasicAutocompleteComponent<O, V = O>
   async createNewOption(option: string) {
     const userConfirmed = await this.confirmation.getConfirmation(
       $localize`Create new option`,
-      `Do you want to create the new option "${option}"?`
+      $localize`Do you want to create the new option "${option}"?`
     );
     if (userConfirmed) {
       const newOption = this.toSelectableOption(this.createOption(option));
