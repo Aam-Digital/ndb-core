@@ -116,7 +116,9 @@ describe("AttendanceService", () => {
     testNoteWithSchool.category = meetingInteractionCategory;
     await entityMapper.save(testNoteWithSchool);
 
-    const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
+    const actualEvents = await service.getEventsWithUpdatedParticipants(
+      new Date("2021-01-01")
+    );
     expect(actualEvents).toHaveSize(1);
     expect(actualEvents[0].children).toEqual(
       jasmine.arrayWithExactContents(["1", "2", "3"])

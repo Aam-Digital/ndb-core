@@ -106,16 +106,18 @@ export class AttendanceService {
       .then((notes) => notes.filter((n) => n.category.isMeeting));
 
     const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
-    const existingEvents = allResults[0].concat(allResults[1]);
+    return allResults[0].concat(allResults[1]);
+  }
 
-    for (const event of existingEvents) {
+  async getEventsWithUpdatedParticipants(date: Date) {
+    const events = await this.getEventsOnDate(date, date);
+    for (const event of events) {
       const participants = await this.loadParticipantsOfGroups(event.schools);
       for (const newParticipant of participants) {
         event.addChild(newParticipant);
       }
     }
-
-    return existingEvents;
+    return events;
   }
 
   /**
