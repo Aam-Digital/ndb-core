@@ -15,7 +15,9 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
     cy.get('[aria-label="Open calendar"]').filter(":visible").click();
     cy.get(".mat-calendar-body-active:visible").click();
     // click on button with the content "Save"
-    cy.get(".form-buttons-wrapper:visible").contains("button", "Save").click();
+    cy.get(".form-buttons-wrapper:visible", { timeout: 10000 })
+      .contains("button", "Save")
+      .click();
   });
 
   it("THEN I should not see this child in the list of all children at first", function () {
@@ -31,7 +33,7 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
 
   it("AND I should see the child when I activate the 'inactive' filter", function () {
     // click on the button with the content "Inactive"
-    cy.get('[ng-reflect-placeholder="isActive"]', { timeout: 10000 }).click();
+    cy.get('[ng-reflect-placeholder="isActive"]').click();
     cy.contains("span", "Inactive").should("be.visible").click();
     // find at this table the name of child and it should exist
     cy.get("table").contains(this.childName.trim()).should("exist");
