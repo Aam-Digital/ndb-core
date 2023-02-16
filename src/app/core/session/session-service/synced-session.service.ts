@@ -16,7 +16,6 @@
  */
 
 import { Inject, Injectable } from "@angular/core";
-import { AlertService } from "../../alerts/alert.service";
 
 import { SessionService } from "./session.service";
 import { LocalSession } from "./local-session";
@@ -25,7 +24,6 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoggingService } from "../../logging/logging.service";
-import { HttpClient } from "@angular/common/http";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { zip } from "rxjs";
 import { filter } from "rxjs/operators";
@@ -51,9 +49,7 @@ export class SyncedSessionService extends SessionService {
   private _offlineRetryLoginScheduleHandle: any;
 
   constructor(
-    private alertService: AlertService,
     private loggingService: LoggingService,
-    private httpClient: HttpClient,
     private localSession: LocalSession,
     private remoteSession: RemoteSession,
     private authService: AuthService,
@@ -121,7 +117,8 @@ export class SyncedSessionService extends SessionService {
       this.loginState.next(LoginState.LOGGED_IN);
       remoteLogin.then((loginState) => {
         if (loginState === LoginState.LOGIN_FAILED) {
-          this.handleRemotePasswordChange(username);
+          this.localSession.removeUser(username);
+          this.logout();
         }
         if (loginState === LoginState.UNAVAILABLE) {
           this.retryLoginWhileOffline(username, password);
@@ -155,15 +152,6 @@ export class SyncedSessionService extends SessionService {
       this.localSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
       this.remoteSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN))
     ).subscribe(() => this.startSync());
-  }
-
-  private handleRemotePasswordChange(username: string) {
-    this.localSession.logout();
-    this.localSession.removeUser(username);
-    this.loginState.next(LoginState.LOGIN_FAILED);
-    this.alertService.addDanger(
-      $localize`Your password was changed recently. Please retry with your new password!`
-    );
   }
 
   private retryLoginWhileOffline(username: string, password: string) {

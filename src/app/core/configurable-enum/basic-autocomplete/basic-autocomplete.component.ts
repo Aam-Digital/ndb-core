@@ -204,7 +204,7 @@ export class BasicAutocompleteComponent<O, V = O>
   async createNewOption(option: string) {
     const userConfirmed = await this.confirmation.getConfirmation(
       $localize`Create new option`,
-      `Do you want to create the new option "${option}"?`
+      $localize`Do you want to create the new option "${option}"?`
     );
     if (userConfirmed) {
       const newOption = this.toSelectableOption(this.createOption(option));
@@ -242,6 +242,8 @@ export class BasicAutocompleteComponent<O, V = O>
     if (!this.focused) {
       if (this.multi) {
         this.autocompleteForm.setValue("");
+      } else {
+        this.showAutocomplete();
       }
       this.focus();
     }
@@ -283,5 +285,10 @@ export class BasicAutocompleteComponent<O, V = O>
     if ((event.target as Element).tagName.toLowerCase() != "input") {
       this.inputElement.focus();
     }
+  }
+
+  writeValue(val: V[] | V) {
+    super.writeValue(val);
+    this.setInitialInputValue();
   }
 }
