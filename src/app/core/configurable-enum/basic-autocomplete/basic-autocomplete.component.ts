@@ -283,4 +283,9 @@ export class BasicAutocompleteComponent<O, V = O>
       this.inputElement.nativeElement.focus();
     }
   }
+
+  writeValue(val: V[] | V) {
+    super.writeValue(val);
+    this.setInitialInputValue();
+  }
 }
