@@ -214,6 +214,22 @@ describe("ChildrenService", () => {
     expect(result).toEqual(activeRelations);
   });
 
+  it("should return active relations for a given date", async () => {
+    let relations = await service.queryActiveRelationsOf(
+      "school",
+      "1",
+      new Date("2010-01-01")
+    );
+    expect(relations).toHaveSize(1);
+
+    relations = await service.queryActiveRelationsOf(
+      "school",
+      "1",
+      new Date("2016-10-01")
+    );
+    expect(relations).toHaveSize(2);
+  });
+
   it("should return related notes", async () => {
     const c1 = new Child("c1");
     const c2 = new Child("c2");
