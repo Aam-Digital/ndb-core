@@ -1,20 +1,21 @@
 import { Component, OnInit } from "@angular/core";
 import { Child } from "../model/child";
 import { ActivatedRoute, Router } from "@angular/router";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ChildrenService } from "../children.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { Observable } from "rxjs";
+import { AsyncPipe } from "@angular/common";
+import { startWith, tap } from "rxjs/operators";
 
-@UntilDestroy()
 @RouteTarget("ChildrenList")
 @Component({
   selector: "app-children-list",
   template: `
     <app-entity-list
-      [allEntities]="childrenList"
+      [allEntities]="childrenList | async"
       [listConfig]="listConfig"
       [isLoading]="isLoading"
       [entityConstructor]="childConstructor"
@@ -23,10 +24,10 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
     ></app-entity-list>
   `,
   standalone: true,
-  imports: [EntityListComponent],
+  imports: [EntityListComponent, AsyncPipe],
 })
 export class ChildrenListComponent implements OnInit {
-  childrenList: Child[] = [];
+  childrenList: Observable<Child[]>;
   listConfig: EntityListConfig;
   childConstructor = Child;
   isLoading = true;
@@ -41,13 +42,10 @@ export class ChildrenListComponent implements OnInit {
     this.route.data.subscribe(
       (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
     );
-    this.childrenService
-      .getChildren()
-      .pipe(untilDestroyed(this))
-      .subscribe((children) => {
-        this.childrenList = children;
-        this.isLoading = false;
-      });
+    this.childrenList = this.childrenService.getChildren().pipe(
+      startWith([]),
+      tap((res) => (this.isLoading = res.length === 0))
+    );
   }
 
   routeTo(route: string) {
