@@ -53,7 +53,6 @@ const defaultOptions: DateRangeFilterConfigOption[] = [
   providers: [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
     MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
-    MAT_CALENDAR_RANGE_STRATEGY_PROVIDER,
   ],
   standalone: true,
   imports: [
