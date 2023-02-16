@@ -1,5 +1,9 @@
 import { Injectable } from "@angular/core";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
+import {
+  MatDialog,
+  MatDialogConfig,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { ShowsEntity } from "./shows-entity.interface";
@@ -27,8 +31,9 @@ import { untilDestroyed } from "@ngneat/until-destroy";
  */
 @Injectable({ providedIn: "root" })
 export class FormDialogService {
-  static dialogSettings = {
-    width: "80%",
+  static dialogSettings: MatDialogConfig = {
+    width: "99%",
+    maxWidth: "980px",
     maxHeight: "90vh",
   };
 
