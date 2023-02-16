@@ -97,4 +97,24 @@ describe("AuthInterceptor", () => {
       },
     });
   });
+
+  it("should throw initial error auth attempt fails", (done) => {
+    const initialError = new HttpErrorResponse({
+      status: HttpStatusCode.Unauthorized,
+    });
+    const authError = new HttpErrorResponse({ status: 400 });
+    const handle = jasmine
+      .createSpy()
+      .and.returnValues(throwError(() => initialError));
+    mockAuthService.autoLogin.and.rejectWith(authError);
+
+    interceptor.intercept(mockRequest, { handle }).subscribe({
+      error: (res) => {
+        expect(res).toEqual(initialError);
+        expect(mockAuthService.autoLogin).toHaveBeenCalled();
+        expect(handle).toHaveBeenCalledTimes(1);
+        done();
+      },
+    });
+  });
 });

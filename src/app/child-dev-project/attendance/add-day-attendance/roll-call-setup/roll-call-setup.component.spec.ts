@@ -27,10 +27,10 @@ describe("RollCallSetupComponent", () => {
     mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
     mockChildrenService.queryActiveRelationsOf.and.resolveTo([]);
     mockAttendanceService = jasmine.createSpyObj([
-      "getEventsOnDate",
+      "getEventsWithUpdatedParticipants",
       "createEventForActivity",
     ]);
-    mockAttendanceService.getEventsOnDate.and.resolveTo([]);
+    mockAttendanceService.getEventsWithUpdatedParticipants.and.resolveTo([]);
 
     TestBed.configureTestingModule({
       imports: [RollCallSetupComponent, MockedTestingModule.withState()],

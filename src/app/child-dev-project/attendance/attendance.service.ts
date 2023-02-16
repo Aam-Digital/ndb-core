@@ -106,16 +106,21 @@ export class AttendanceService {
       .then((notes) => notes.filter((n) => n.category.isMeeting));
 
     const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
-    const existingEvents = allResults[0].concat(allResults[1]);
+    return allResults[0].concat(allResults[1]);
+  }
 
-    for (const event of existingEvents) {
-      const participants = await this.loadParticipantsOfGroups(event.schools);
+  async getEventsWithUpdatedParticipants(date: Date) {
+    const events = await this.getEventsOnDate(date, date);
+    for (const event of events) {
+      const participants = await this.loadParticipantsOfGroups(
+        event.schools,
+        date
+      );
       for (const newParticipant of participants) {
         event.addChild(newParticipant);
       }
     }
-
-    return existingEvents;
+    return events;
   }
 
   /**
@@ -247,18 +252,23 @@ export class AttendanceService {
     const instance = new EventNote();
     instance.date = date;
     instance.subject = activity.title;
-    instance.children = await this.getActiveParticipantsOfActivity(activity);
+    instance.children = await this.getActiveParticipantsOfActivity(
+      activity,
+      date
+    );
     instance.schools = activity.linkedGroups;
     instance.relatesTo = activity.getId(true);
     instance.category = activity.type;
     return instance;
   }
 
-  async getActiveParticipantsOfActivity(
-    activity: RecurringActivity
+  private async getActiveParticipantsOfActivity(
+    activity: RecurringActivity,
+    date: Date
   ): Promise<string[]> {
     const schoolParticipants = await this.loadParticipantsOfGroups(
-      activity.linkedGroups
+      activity.linkedGroups,
+      date
     );
 
     return [
@@ -269,19 +279,21 @@ export class AttendanceService {
   /**
    * Load all participants' ids for the given list of groups
    * @param linkedGroups
+   * @param date on which the participants should be part of the group
    */
   private async loadParticipantsOfGroups(
-    linkedGroups: string[]
+    linkedGroups: string[],
+    date: Date
   ): Promise<string[]> {
     const childIdPromises = linkedGroups.map((groupId) =>
       this.childrenService
-        .queryActiveRelationsOf("school", groupId)
+        .queryActiveRelationsOf("school", groupId, date)
         .then((relations) =>
           relations.map((r) => r.childId).filter((id) => !!id)
         )
     );
     const allParticipants = await Promise.all(childIdPromises);
     // flatten and remove duplicates
-    return Array.from(new Set([].concat.apply([], allParticipants)));
+    return Array.from(new Set([].concat(...allParticipants)));
   }
 }

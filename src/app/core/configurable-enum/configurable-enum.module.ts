@@ -53,5 +53,6 @@ export class ConfigurableEnumModule {
     this.entitySchemaService.registerSchemaDatatype(
       new ConfigurableEnumDatatype(enumService)
     );
+    enumService.preLoadEnums();
   }
 }
