@@ -298,7 +298,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private sortDefault() {
-    if (!this.sort || this.sort.active) {
+    if (!this.sort || this._columns.length === 0 || this.sort.active) {
       // do not overwrite existing sort
       return;
     }
