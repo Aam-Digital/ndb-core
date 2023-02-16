@@ -4,6 +4,7 @@ import {
   MatDatepickerModule,
   MatDateSelectionModel,
   MatRangeDateSelectionModel,
+  MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
 } from "@angular/material/datepicker";
 import {
   MAT_DIALOG_DATA,
@@ -51,6 +52,8 @@ const defaultOptions: DateRangeFilterConfigOption[] = [
   styleUrls: ["./date-range-filter-panel.component.scss"],
   providers: [
     { provide: MatDateSelectionModel, useClass: MatRangeDateSelectionModel },
+    MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
+    MAT_CALENDAR_RANGE_STRATEGY_PROVIDER,
   ],
   standalone: true,
   imports: [
@@ -65,8 +68,9 @@ export class DateRangeFilterPanelComponent {
   dateRangeFilterConfig: DateRangeFilterConfig;
   dateRangeOptions: DateRangeFilterConfigOption;
 
-  originalRangeValue;
+  // originalRangeValueoriginal;
   selectedRangeValue: DateRange<Date>;
+  comparisonRange: DateRange<Date> = new DateRange(null, null);
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -78,13 +82,13 @@ export class DateRangeFilterPanelComponent {
     private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>
   ) {
     this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
-    this.originalRangeValue = this.selectedRangeValue;
+    // this.originalRangeValue = this.selectedRangeValue;
     if (!this.data.dateRangeFilterConfig.options) {
       this.data.dateRangeFilterConfig.options = defaultOptions;
     }
   }
 
-  private calculateDateRange(dateRangeOption): [start: Date, end: Date] {
+  private calculateDateRange(dateRangeOption): DateRange<Date> {
     const startOffsets = dateRangeOption.startOffsets ?? [
       { amount: 0, unit: "days" },
     ];
@@ -103,24 +107,24 @@ export class DateRangeFilterPanelComponent {
     start.startOf(startOffsets[0].unit);
     end.endOf(endOffsets[0].unit);
 
-    return [start.toDate(), end.toDate()];
+    return new DateRange(start.toDate(), end.toDate());
   }
 
   preselectRange(dateRangeOption): void {
-    const [start, end] = this.calculateDateRange(dateRangeOption);
-    this.selectedRangeValue = new DateRange(start, end);
+    this.comparisonRange = this.calculateDateRange(dateRangeOption);
   }
 
   unselectRange() {
-    this.selectedRangeValue = this.originalRangeValue;
+    this.comparisonRange = new DateRange(null, null);
   }
 
-  selectRangeAndClose(dateRangeOption): void {
-    this.preselectRange(dateRangeOption);
+  selectRangeAndClose(): void {
+    this.selectedRangeValue = this.comparisonRange;
     this.dialogRef.close(this.selectedRangeValue);
   }
 
   selectedRangeChange(selectedDate: Date) {
+    console.log("called selectedRangeChange");
     if (!this.selectedRangeValue?.start || this.selectedRangeValue?.end) {
       this.selectedRangeValue = new DateRange(selectedDate, null);
     } else {
@@ -130,6 +134,5 @@ export class DateRangeFilterPanelComponent {
         end < start ? new DateRange(end, start) : new DateRange(start, end);
       this.dialogRef.close(this.selectedRangeValue);
     }
-    console.log(this.selectedRangeValue);
   }
 }
