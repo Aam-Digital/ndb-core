@@ -311,18 +311,16 @@ describe("QueryService", () => {
 
     let from = moment().subtract(1, "week").toDate();
     let to = moment().toDate();
-    let query = "Note:toArray[* date >= ? & date < ?]";
+    const query = "Note:toArray[* date >= ? & date < ?]";
     await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
     expect(loadSpy).toHaveBeenCalledWith(from, to);
     loadSpy.calls.reset();
 
     to = moment().subtract(3, "days").toDate();
-    query = "Note:toArray[* date >= ? & date < ?]";
     await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
     expect(loadSpy).not.toHaveBeenCalled();
 
     from = moment().subtract(2, "weeks").toDate();
-    query = "Note:toArray[* date >= ? & date < ?]";
     await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
     expect(loadSpy).toHaveBeenCalledWith(from, to);
   });
