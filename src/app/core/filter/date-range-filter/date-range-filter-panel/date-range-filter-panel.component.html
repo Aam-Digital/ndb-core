@@ -5,6 +5,8 @@
       class="calendar"
       (selectedChange)="selectedRangeChange($event)"
       [selected]="selectedRangeValue"
+      [comparisonStart]="comparisonRange.start"
+      [comparisonEnd]="comparisonRange.end"
     >
     </mat-calendar>
     <div class="panel">
@@ -18,7 +20,7 @@
           color="primary"
           (mouseenter)="preselectRange(item)"
           (mouseleave)="unselectRange()"
-          (click)="selectRangeAndClose(item)"
+          (click)="selectRangeAndClose()"
         >
           {{ item.label }}
         </button>

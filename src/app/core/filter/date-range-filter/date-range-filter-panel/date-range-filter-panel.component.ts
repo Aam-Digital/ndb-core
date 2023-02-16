@@ -67,7 +67,6 @@ export class DateRangeFilterPanelComponent {
   dateRangeFilterConfig: DateRangeFilterConfig;
   dateRangeOptions: DateRangeFilterConfigOption;
 
-  // originalRangeValueoriginal;
   selectedRangeValue: DateRange<Date>;
   comparisonRange: DateRange<Date> = new DateRange(null, null);
 
@@ -81,7 +80,6 @@ export class DateRangeFilterPanelComponent {
     private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>
   ) {
     this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
-    // this.originalRangeValue = this.selectedRangeValue;
     if (!this.data.dateRangeFilterConfig.options) {
       this.data.dateRangeFilterConfig.options = defaultOptions;
     }
@@ -123,7 +121,6 @@ export class DateRangeFilterPanelComponent {
   }
 
   selectedRangeChange(selectedDate: Date) {
-    console.log("called selectedRangeChange");
     if (!this.selectedRangeValue?.start || this.selectedRangeValue?.end) {
       this.selectedRangeValue = new DateRange(selectedDate, null);
     } else {

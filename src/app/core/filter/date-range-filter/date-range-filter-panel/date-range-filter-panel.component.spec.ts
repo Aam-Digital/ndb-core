@@ -9,7 +9,7 @@ import { DateRange } from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
 
-fdescribe("DateRangeFilterPanelComponent", () => {
+describe("DateRangeFilterPanelComponent", () => {
   let component: DateRangeFilterPanelComponent;
   let fixture: ComponentFixture<DateRangeFilterPanelComponent>;
   let loader: HarnessLoader;
@@ -52,7 +52,7 @@ fdescribe("DateRangeFilterPanelComponent", () => {
     fixture.detectChanges();
     const calendar = await loader.getHarness(MatCalendarHarness);
     const cells = await calendar.getCells();
-    for (let i = 1; i < cells.length; i++) {
+    for (let i = 0; i < cells.length; i++) {
       if (i <= 13) {
         await expectAsync(cells[i].isInRange()).toBeResolvedTo(true);
       } else {
@@ -66,7 +66,6 @@ fdescribe("DateRangeFilterPanelComponent", () => {
     const cells = await calendar.getCells();
     await cells[7].select();
     await cells[12].select();
-    console.log(component.selectedRangeValue);
     const fromDate = new Date();
     const toDate = new Date();
     fromDate.setDate(8);
@@ -74,5 +73,34 @@ fdescribe("DateRangeFilterPanelComponent", () => {
     toDate.setDate(13);
     toDate.setHours(0, 0, 0, 0);
     expect(closeSpy).toHaveBeenCalledWith(new DateRange(fromDate, toDate));
+  });
+
+  it("should return the dates selected via the preset labels", async () => {
+    component.preselectRange({
+      startOffsets: [{ amount: 1, unit: "months" }],
+      endOffsets: [{ amount: 0, unit: "months" }],
+      label: "Last and this month",
+    });
+    component.selectRangeAndClose();
+    const fromDate = moment().startOf("month").subtract(1, "months").toDate();
+    const toDate = moment().endOf("month").toDate();
+    expect(closeSpy).toHaveBeenCalledWith(new DateRange(fromDate, toDate));
+  });
+
+  it("should highlight the daterange when hovering over a preset label", async () => {
+    const calendar = await loader.getHarness(MatCalendarHarness);
+    const cells = await calendar.getCells();
+    component.preselectRange({
+      endOffsets: [{ amount: 1, unit: "months" }],
+      label: "This and the coming month",
+    });
+    const currentDayOfMonth = new Date().getDate();
+    for (let i = 0; i < cells.length; i++) {
+      if (i < currentDayOfMonth - 1) {
+        await expectAsync(cells[i].isInComparisonRange()).toBeResolvedTo(false);
+      } else {
+        await expectAsync(cells[i].isInComparisonRange()).toBeResolvedTo(true);
+      }
+    }
   });
 });
