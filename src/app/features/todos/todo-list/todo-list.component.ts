@@ -136,6 +136,11 @@ const filterCurrentlyActive: FilterSelectionOption<Todo> = {
         $or: [
           {
             startDate: {
+              $exists: false,
+            },
+          },
+          {
+            startDate: {
               $lte: moment().format("YYYY-MM-DD"),
               $gt: "",
             },
