@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component } from "@angular/core";
 import {
-  FormBuilder,
+  AbstractControl,
   FormControl,
   FormGroup,
   FormRecord,
@@ -53,18 +53,14 @@ export class DataImportComponent {
   importData: ParsedData;
   readyForImport: boolean;
 
-  entityForm = this.formBuilder.group({ entity: ["", Validators.required] });
+  entityForm = new FormControl("", [Validators.required]);
 
-  transactionIDForm = this.formBuilder.group({
-    transactionId: [
-      "",
-      [Validators.required, Validators.pattern("^$|^[A-Fa-f0-9]{8}$")],
-    ],
-  });
+  transactionIDForm = new FormControl("", [
+    Validators.required,
+    Validators.pattern("^$|^[A-Fa-f0-9]{8}$"),
+  ]);
 
-  dateFormatForm = this.formBuilder.group({
-    dateFormat: ["YYYY-MM-DD"],
-  });
+  dateFormatForm = new FormControl("YYYY-MM-DD");
 
   columnMappingForm = new FormRecord<FormControl<string>>({});
   private properties: string[] = [];
@@ -72,7 +68,6 @@ export class DataImportComponent {
 
   constructor(
     private dataImportService: DataImportService,
-    private formBuilder: FormBuilder,
     private alertService: AlertService,
     private changeDetectorRef: ChangeDetectorRef,
     private downloadService: DownloadService,
@@ -104,10 +99,10 @@ export class DataImportComponent {
       const record = this.importData.data[0] as { _id: string };
       if (record._id.toString().includes(":")) {
         const type = Entity.extractTypeFromId(record["_id"]);
-        this.entityForm.patchValue({ entity: type });
+        this.entityForm.patchValue(type);
         this.entityForm.disable();
       }
-      this.transactionIDForm.patchValue({ transactionId: "" });
+      this.transactionIDForm.patchValue("");
       this.transactionIDForm.disable();
     }
   }
@@ -120,7 +115,7 @@ export class DataImportComponent {
   }
 
   entitySelectionChanged(): void {
-    const entityName = this.entityForm.get("entity").value;
+    const entityName = this.entityForm.value;
     if (!entityName) {
       return;
     }
@@ -152,7 +147,7 @@ export class DataImportComponent {
 
   setRandomTransactionID() {
     const transactionID = uuid().substring(0, 8);
-    this.transactionIDForm.setValue({ transactionId: transactionID });
+    this.transactionIDForm.setValue(transactionID);
   }
 
   processChange(value: string) {
@@ -177,23 +172,19 @@ export class DataImportComponent {
 
   private createImportMetaData(): ImportMetaData {
     return {
-      transactionId: this.transactionIDForm.get("transactionId").value,
-      entityType: this.entityForm.get("entity").value,
+      transactionId: this.transactionIDForm.value,
+      entityType: this.entityForm.value,
       columnMap: this.columnMappingForm.getRawValue(),
-      dateFormat: this.dateFormatForm.get("dateFormat").value,
+      dateFormat: this.dateFormatForm.value,
     };
   }
 
   async loadConfig(loadedConfig: ParsedData<ImportMetaData>) {
     const importMeta = loadedConfig.data;
-    this.patchIfPossible(this.entityForm, { entity: importMeta.entityType });
+    this.patchIfPossible(this.entityForm, importMeta.entityType);
     this.entitySelectionChanged();
-    this.patchIfPossible(this.transactionIDForm, {
-      transactionId: importMeta.transactionId,
-    });
-    this.patchIfPossible(this.dateFormatForm, {
-      dateFormat: importMeta.dateFormat,
-    });
+    this.patchIfPossible(this.transactionIDForm, importMeta.transactionId);
+    this.patchIfPossible(this.dateFormatForm, importMeta.dateFormat);
 
     this.loadColumnMapping(importMeta.columnMap);
   }
@@ -206,7 +197,7 @@ export class DataImportComponent {
     this.patchIfPossible(this.columnMappingForm, combinedMap);
   }
 
-  private patchIfPossible(form: FormGroup, patch: { [key in string]: any }) {
+  private patchIfPossible<T>(form: AbstractControl<T>, patch: T) {
     if (form.enabled) {
       form.patchValue(patch);
     }

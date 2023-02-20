@@ -65,13 +65,13 @@ describe("DataImportComponent", () => {
 
     const columns = Object.keys(component.columnMappingForm.getRawValue());
     expect(columns).toEqual(["_id", "name"]);
-    expect(component.entityForm.get("entity")).toHaveValue("Child");
+    expect(component.entityForm).toHaveValue("Child");
     expect(component.transactionIDForm).not.toBeEnabled();
   });
 
   it("should only show properties that have not been used yet", fakeAsync(() => {
     mockCsvFileLoaded();
-    component.entityForm.patchValue({ entity: "Child" });
+    component.entityForm.patchValue("Child");
     component.entitySelectionChanged();
 
     component.processChange("nam");
@@ -89,15 +89,9 @@ describe("DataImportComponent", () => {
 
     await component.loadConfig({ data: importMeta } as ParseResult);
 
-    expect(component.entityForm.get("entity")).toHaveValue(
-      importMeta.entityType
-    );
-    expect(component.transactionIDForm.get("transactionId")).toHaveValue(
-      importMeta.transactionId
-    );
-    expect(component.dateFormatForm.get("dateFormat")).toHaveValue(
-      importMeta.dateFormat
-    );
+    expect(component.entityForm).toHaveValue(importMeta.entityType);
+    expect(component.transactionIDForm).toHaveValue(importMeta.transactionId);
+    expect(component.dateFormatForm).toHaveValue(importMeta.dateFormat);
     expect(component.columnMappingForm.getRawValue()).toEqual(
       importMeta.columnMap
     );
@@ -143,7 +137,7 @@ describe("DataImportComponent", () => {
       data: { entityType: "Testing" },
     } as ParseResult);
 
-    expect(component.entityForm.get("entity")).toHaveValue("Testing");
+    expect(component.entityForm).toHaveValue("Testing");
 
     component.processChange("");
     expect(component.filteredProperties.value).toContain("databaseString");
