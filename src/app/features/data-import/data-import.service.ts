@@ -80,16 +80,7 @@ export class DataImportService {
       await this.deleteExistingRecords(importMeta);
     }
 
-    const entities = await this.importCsvContentToDB(data, importMeta);
-
-    if (importMeta.linkEntity?.entity) {
-      await this.linkEntities(
-        entities,
-        importMeta.entityType,
-        importMeta.linkEntity.type,
-        importMeta.linkEntity.entity
-      );
-    }
+    await this.importCsvContentToDB(data, importMeta);
 
     const snackBarRef = this.snackBar.open(
       $localize`Import completed`,
@@ -127,7 +118,7 @@ export class DataImportService {
   private async importCsvContentToDB(
     data: any[],
     importMeta: ImportMetaData
-  ): Promise<any[]> {
+  ): Promise<void> {
     const entities = data.map((row) => {
       const entity = this.createEntityWithRowData(row, importMeta);
       this.createSearchIndices(importMeta, entity);
@@ -139,7 +130,10 @@ export class DataImportService {
       return entity;
     });
     await this.db.putAll(entities);
-    return entities;
+
+    if (importMeta.linkEntity?.entity) {
+      await this.linkEntities(entities, importMeta);
+    }
   }
 
   private createEntityWithRowData(row: any, importMeta: ImportMetaData): any {
@@ -209,15 +203,10 @@ export class DataImportService {
     entity["searchIndices"] = Object.assign(new ctor(), entity).searchIndices;
   }
 
-  private linkEntities(
-    entities: any[],
-    sourceType: string,
-    linkType: string,
-    linkEntity: string
-  ) {
-    return this.linkableEntities[sourceType].find(
-      ([type]) => type.ENTITY_TYPE === linkType
-    )[1](entities, linkEntity);
+  private linkEntities(entities: any[], importMeta: ImportMetaData) {
+    return this.linkableEntities[importMeta.entityType].find(
+      ([type]) => type.ENTITY_TYPE === importMeta.linkEntity.type
+    )[1](entities, importMeta.linkEntity.entity);
   }
 
   private linkToSchool(entities: any[], link: string) {
