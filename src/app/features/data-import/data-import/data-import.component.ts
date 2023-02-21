@@ -2,6 +2,7 @@ import { ChangeDetectorRef, Component } from "@angular/core";
 import {
   AbstractControl,
   FormControl,
+  FormGroup,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
@@ -13,7 +14,7 @@ import { BehaviorSubject } from "rxjs";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { RouteTarget } from "../../../app.routing";
-import { Entity } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import {
   InputFileComponent,
   ParsedData,
@@ -26,6 +27,9 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import * as _ from "lodash";
+import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
+import { DisplayEntityComponent } from "../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 @RouteTarget("Import")
 @Component({
@@ -45,6 +49,8 @@ import * as _ from "lodash";
     MatAutocompleteModule,
     AsyncPipe,
     InputFileComponent,
+    BasicAutocompleteComponent,
+    DisplayEntityComponent,
   ],
   standalone: true,
 })
@@ -61,6 +67,14 @@ export class DataImportComponent {
 
   dateFormatForm = new FormControl("YYYY-MM-DD");
 
+  linkEntityForm = new FormGroup({
+    type: new FormControl({ value: "", disabled: true }),
+    entity: new FormControl({ value: "", disabled: true }),
+  });
+  linkableEntityTypes: EntityConstructor[] = [];
+  displayEntityType = (e: EntityConstructor) => e.label;
+  linkableEntities: Entity[] = [];
+
   columnMap: { [key: string]: { key: string; label: string } } = {};
   private properties: { label: string; key: string }[] = [];
   filteredProperties = new BehaviorSubject<{ label: string; key: string }[]>(
@@ -72,8 +86,19 @@ export class DataImportComponent {
     private alertService: AlertService,
     private changeDetectorRef: ChangeDetectorRef,
     private downloadService: DownloadService,
-    public entities: EntityRegistry
-  ) {}
+    public entities: EntityRegistry,
+    private entityMapper: EntityMapperService
+  ) {
+    this.linkEntityForm.get("type").valueChanges.subscribe(async (val) => {
+      if (val) {
+        this.linkableEntities = await this.entityMapper.loadType(val);
+        this.linkEntityForm.get("entity").enable();
+      } else {
+        this.linkableEntities = [];
+        this.linkEntityForm.get("entity").disable();
+      }
+    });
+  }
 
   async loadData(parsedData: ParsedData): Promise<void> {
     this.importData = parsedData;
@@ -118,6 +143,7 @@ export class DataImportComponent {
   entitySelectionChanged(): void {
     const entityName = this.entityForm.value;
     if (!entityName) {
+      this.linkEntityForm.disable();
       return;
     }
 
@@ -130,6 +156,9 @@ export class DataImportComponent {
     this.inferColumnPropertyMapping();
 
     this.readyForImport = !!entityName && !!this.importData;
+    this.linkableEntityTypes =
+      this.dataImportService.getLinkableEntityTypes(entityName);
+    this.linkEntityForm.get("type").enable();
   }
 
   /**
