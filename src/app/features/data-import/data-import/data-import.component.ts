@@ -2,8 +2,6 @@ import { ChangeDetectorRef, Component } from "@angular/core";
 import {
   AbstractControl,
   FormControl,
-  FormGroup,
-  FormRecord,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
@@ -27,6 +25,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
+import * as _ from "lodash";
 
 @RouteTarget("Import")
 @Component({
@@ -62,9 +61,11 @@ export class DataImportComponent {
 
   dateFormatForm = new FormControl("YYYY-MM-DD");
 
-  columnMappingForm = new FormRecord<FormControl<string>>({});
-  private properties: string[] = [];
-  filteredProperties = new BehaviorSubject<string[]>([]);
+  columnMap: { [key: string]: { key: string; label: string } } = {};
+  private properties: { label: string; key: string }[] = [];
+  filteredProperties = new BehaviorSubject<{ label: string; key: string }[]>(
+    []
+  );
 
   constructor(
     private dataImportService: DataImportService,
@@ -108,9 +109,9 @@ export class DataImportComponent {
   }
 
   private updateColumnMappingFromData() {
-    this.columnMappingForm = new FormGroup({});
-    this.importData.fields.forEach((field) =>
-      this.columnMappingForm.addControl(field, new FormControl())
+    this.columnMap = this.importData.fields.reduce(
+      (obj, col) => Object.assign(obj, { [col]: undefined }),
+      {}
     );
   }
 
@@ -120,8 +121,11 @@ export class DataImportComponent {
       return;
     }
 
-    const propertyKeys = this.entities.get(entityName).schema.keys();
-    this.properties = [...propertyKeys];
+    const propertyKeys = this.entities.get(entityName).schema.entries();
+    this.properties = [...propertyKeys].map(([key, { label }]) => ({
+      key,
+      label: label ?? key,
+    }));
 
     this.inferColumnPropertyMapping();
 
@@ -137,8 +141,11 @@ export class DataImportComponent {
     const columnMap: ImportColumnMap = {};
 
     for (const p of this.properties) {
-      if (this.importData?.fields.includes(p)) {
-        columnMap[p] = p;
+      const match = this.importData?.fields.find(
+        (f) => f === p.label || f === p.key
+      );
+      if (match) {
+        columnMap[match] = p;
       }
     }
 
@@ -150,15 +157,27 @@ export class DataImportComponent {
     this.transactionIDForm.setValue(transactionID);
   }
 
-  processChange(value: string) {
-    const usedProperties = Object.values(this.columnMappingForm.getRawValue());
+  processChange(selected: string, value: string) {
+    const usedProperties = Object.values(this.columnMap)
+      .filter((col) => !!col)
+      .map(({ key }) => key);
     this.filteredProperties.next(
       this.properties.filter(
-        (property) =>
-          property.toLowerCase().includes(value.toLowerCase()) &&
-          !usedProperties.includes(property)
+        ({ key, label }) =>
+          (label ?? key).toLowerCase().includes(value.toLowerCase()) &&
+          (key === selected || !usedProperties.includes(key))
       )
     );
+  }
+
+  selectOption(input: string, col: string) {
+    if (!this.properties.some(({ label }) => input === label)) {
+      if (this.filteredProperties.value.length === 1) {
+        this.columnMap[col] = this.filteredProperties.value[0];
+      } else {
+        this.columnMap[col] = undefined;
+      }
+    }
   }
 
   importSelectedFile(): Promise<void> {
@@ -174,7 +193,7 @@ export class DataImportComponent {
     return {
       transactionId: this.transactionIDForm.value,
       entityType: this.entityForm.value,
-      columnMap: this.columnMappingForm.getRawValue(),
+      columnMap: this.columnMap,
       dateFormat: this.dateFormatForm.value,
     };
   }
@@ -190,11 +209,10 @@ export class DataImportComponent {
   }
 
   private loadColumnMapping(columnMap: ImportColumnMap) {
-    const combinedMap = Object.assign(
-      this.columnMappingForm.getRawValue(),
-      columnMap
+    Object.assign(
+      this.columnMap,
+      _.pick(columnMap, Object.keys(this.columnMap))
     );
-    this.patchIfPossible(this.columnMappingForm, combinedMap);
   }
 
   private patchIfPossible<T>(form: AbstractControl<T>, patch: T) {

@@ -80,8 +80,8 @@ describe("DataImportService", () => {
     const importMeta: ImportMetaData = {
       entityType: "Child",
       columnMap: {
-        _id: "_id",
-        name: "name",
+        _id: { label: "_id", key: "_id" },
+        name: { label: "Name", key: "name" },
       },
     };
 
@@ -95,10 +95,10 @@ describe("DataImportService", () => {
   it("should use the passed component map to create the entity", async () => {
     const csvData = mockParseResult;
     const columnMap = {
-      ID: "_id",
-      Name: "name",
-      Birthday: "dateOfBirth",
-      notExistingProperty: "",
+      ID: { key: "_id", label: "_id" },
+      Name: { key: "name", label: "Name" },
+      Birthday: { key: "dateOfBirth", label: "Date of birth" },
+      notExistingProperty: undefined,
     };
     const importMeta: ImportMetaData = {
       entityType: "Child",
@@ -130,7 +130,7 @@ describe("DataImportService", () => {
     const transactionID = "12345678";
     const importMeta: ImportMetaData = {
       entityType: "Child",
-      columnMap: { Name: "name" },
+      columnMap: { Name: { key: "name", label: "Name" } },
       transactionId: transactionID,
     };
     await db.put({ _id: `Child:${transactionID}-123` });
@@ -161,7 +161,10 @@ describe("DataImportService", () => {
     } as ParseResult;
     const importMeta: ImportMetaData = {
       entityType: "Child",
-      columnMap: { ID: "_id", Birthday: "dateOfBirth" },
+      columnMap: {
+        ID: { key: "_id", label: "_id" },
+        Birthday: { key: "dateOfBirth", label: "Date of birth" },
+      },
       dateFormat: "D/M/YYYY",
     };
 
@@ -182,7 +185,10 @@ describe("DataImportService", () => {
     } as ParseResult;
     const importMeta: ImportMetaData = {
       entityType: "Child",
-      columnMap: { name: "name", projectNumber: "projectNumber" },
+      columnMap: {
+        name: { key: "name", label: "Name" },
+        projectNumber: { key: "projectNumber", label: "Project number" },
+      },
     };
 
     await service.handleCsvImport(csvData.data, importMeta);
@@ -207,7 +213,11 @@ describe("DataImportService", () => {
     };
     const importMeta: ImportMetaData = {
       entityType: "Note",
-      columnMap: { ID: "_id", subject: "subject", children: "children" },
+      columnMap: {
+        ID: { key: "_id", label: "_id" },
+        subject: { key: "subject", label: "Subject" },
+        children: { key: "children", label: "Children" },
+      },
     };
 
     await service.handleCsvImport(csvData.data, importMeta);

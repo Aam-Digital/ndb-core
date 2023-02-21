@@ -33,5 +33,5 @@ export interface ImportMetaData {
  * If a column should not be imported, the value should be `undefined`
  */
 export type ImportColumnMap = {
-  [key in string]: string;
+  [key in string]: { key: string; label: string };
 };

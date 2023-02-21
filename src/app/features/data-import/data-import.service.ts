@@ -113,13 +113,13 @@ export class DataImportService {
       .forEach((col) => {
         const property = importMeta.columnMap[col];
         const propertyValue = this.getPropertyValue(
-          property,
+          property.key,
           row[col],
           importMeta,
-          schema.get(property).dataType
+          schema.get(property.key).dataType
         );
         if (propertyValue !== undefined) {
-          rawEntity[property] = propertyValue;
+          rawEntity[property.key] = propertyValue;
         }
       });
     return rawEntity;

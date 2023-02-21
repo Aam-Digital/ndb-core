@@ -5,7 +5,7 @@
     <form>
       <mat-form-field>
         <mat-label>Entity Type</mat-label>
-        <mat-select [formControl]="entityForm" required (selectionChange)="entitySelectionChanged()">
+        <mat-select [formControl]="entityForm" (selectionChange)="entitySelectionChanged()">
           <mat-option *ngFor="let entity of entities | keyvalue" [value]="entity.key">
             {{entity.key}}
           </mat-option>
@@ -32,8 +32,12 @@
           placeholder="Enter TransactionID"
         />
       </mat-form-field>
-      <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()"
-              i18n="Button to generate a random ID">Generate ID
+      <button
+        *ngIf="transactionIDForm.enabled"
+        mat-button (click)="setRandomTransactionID()"
+        type="button"
+        i18n="Button to generate a random ID"
+      >Generate ID
       </button>
     </form>
 
@@ -57,8 +61,8 @@
 <mat-expansion-panel [expanded]="readyForImport" [disabled]="!readyForImport">
   <mat-expansion-panel-header>Field Mapping</mat-expansion-panel-header>
   <div>
-    <form [formGroup]="columnMappingForm">
-      <div *ngFor="let control of columnMappingForm.controls | keyvalue">
+    <form>
+      <div *ngFor="let control of columnMap | keyvalue">
         <mat-form-field>
           <mat-label>{{ control.key }}</mat-label>
           <input
@@ -67,17 +71,22 @@
             placeholder="Select property"
             aria-label="Select property"
             matInput
-            (input)="processChange($event.target['value'])"
-            (focusin)="processChange('')"
+            (input)="processChange(control.value?.key, $event.target['value'])"
+            (focusin)="processChange(control.value?.key,'')"
+            (focusout)="selectOption(inputElement.value, control.key)"
             [matAutocomplete]="auto"
-            [formControlName]="control.key"
+            [value]="control.value?.label"
+            #inputElement
           >
-          <mat-autocomplete #auto="matAutocomplete">
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            (optionSelected)="inputElement.value = $event.option.value.label"
+          >
             <mat-option
               *ngFor="let property of filteredProperties | async"
               [value]="property"
             >
-              {{ property }}
+              {{ property.label }}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
