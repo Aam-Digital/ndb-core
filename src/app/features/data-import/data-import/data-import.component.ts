@@ -14,7 +14,7 @@ import { BehaviorSubject } from "rxjs";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { RouteTarget } from "../../../app.routing";
-import { Entity, EntityConstructor } from "app/core/entity/model/entity";
+import { Entity } from "app/core/entity/model/entity";
 import {
   InputFileComponent,
   ParsedData,
@@ -71,9 +71,9 @@ export class DataImportComponent {
     type: new FormControl({ value: "", disabled: true }),
     entity: new FormControl({ value: "", disabled: true }),
   });
-  linkableEntityTypes: EntityConstructor[] = [];
-  displayEntityType = (e: EntityConstructor) => e.label;
+  linkableEntityTypes: string[] = [];
   linkableEntities: Entity[] = [];
+  entityToId = (e: Entity) => e.getId();
 
   columnMap: { [key: string]: { key: string; label: string } } = {};
   private properties: { label: string; key: string }[] = [];
@@ -224,6 +224,7 @@ export class DataImportComponent {
       entityType: this.entityForm.value,
       columnMap: this.columnMap,
       dateFormat: this.dateFormatForm.value,
+      linkEntity: this.linkEntityForm.getRawValue(),
     };
   }
 
@@ -233,6 +234,7 @@ export class DataImportComponent {
     this.entitySelectionChanged();
     this.patchIfPossible(this.transactionIDForm, importMeta.transactionId);
     this.patchIfPossible(this.dateFormatForm, importMeta.dateFormat);
+    this.patchIfPossible(this.linkEntityForm, importMeta.linkEntity);
 
     this.loadColumnMapping(importMeta.columnMap);
   }

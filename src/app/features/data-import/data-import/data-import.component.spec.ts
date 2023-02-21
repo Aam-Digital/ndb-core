@@ -32,7 +32,9 @@ describe("DataImportComponent", () => {
     mockDataImportService = jasmine.createSpyObj("DataImportService", [
       "handleCsvImport",
       "validateCsvFile",
+      "getLinkableEntityTypes",
     ]);
+    mockDataImportService.getLinkableEntityTypes.and.returnValue([]);
     TestBed.configureTestingModule({
       imports: [DataImportComponent, MockedTestingModule],
       providers: [

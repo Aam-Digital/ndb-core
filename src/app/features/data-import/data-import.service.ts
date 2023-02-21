@@ -16,6 +16,8 @@ import { isArrayDataType } from "../../core/entity-components/entity-utils/entit
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { Child } from "app/child-dev-project/children/model/child";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 /**
  * This service handels the parsing of CSV files and importing of data
@@ -29,8 +31,16 @@ export class DataImportService {
     dateWithAgeEntitySchemaDatatype,
   ].map((dataType) => dataType.name);
 
-  private linkableEntities = {
-    [Child.ENTITY_TYPE]: [[RecurringActivity], [School]],
+  private linkableEntities: {
+    [key: string]: [
+      EntityConstructor,
+      (e: any[], link: string) => Promise<any>
+    ][];
+  } = {
+    [Child.ENTITY_TYPE]: [
+      [RecurringActivity, this.linkToActivity.bind(this)],
+      [School, this.linkToSchool.bind(this)],
+    ],
   };
 
   constructor(
@@ -38,11 +48,16 @@ export class DataImportService {
     private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
+    private entityMapper: EntityMapperService
   ) {}
 
-  getLinkableEntityTypes(linkEntity: string): EntityConstructor[] {
-    return this.linkableEntities[linkEntity]?.map(([entity]) => entity) ?? [];
+  getLinkableEntityTypes(linkEntity: string): string[] {
+    return (
+      this.linkableEntities[linkEntity]?.map(
+        ([entity]) => entity.ENTITY_TYPE
+      ) ?? []
+    );
   }
 
   /**
@@ -65,7 +80,16 @@ export class DataImportService {
       await this.deleteExistingRecords(importMeta);
     }
 
-    await this.importCsvContentToDB(data, importMeta);
+    const entities = await this.importCsvContentToDB(data, importMeta);
+
+    if (importMeta.linkEntity?.entity) {
+      await this.linkEntities(
+        entities,
+        importMeta.entityType,
+        importMeta.linkEntity.type,
+        importMeta.linkEntity.entity
+      );
+    }
 
     const snackBarRef = this.snackBar.open(
       $localize`Import completed`,
@@ -103,8 +127,8 @@ export class DataImportService {
   private async importCsvContentToDB(
     data: any[],
     importMeta: ImportMetaData
-  ): Promise<void> {
-    for (const row of data) {
+  ): Promise<any[]> {
+    const entities = data.map((row) => {
       const entity = this.createEntityWithRowData(row, importMeta);
       this.createSearchIndices(importMeta, entity);
       if (!entity["_id"]) {
@@ -112,8 +136,10 @@ export class DataImportService {
           importMeta.transactionId
         }-${uuid().substring(9)}`;
       }
-      await this.db.put(entity, true);
-    }
+      return entity;
+    });
+    await this.db.putAll(entities);
+    return entities;
   }
 
   private createEntityWithRowData(row: any, importMeta: ImportMetaData): any {
@@ -181,5 +207,36 @@ export class DataImportService {
   private createSearchIndices(importMeta: ImportMetaData, entity) {
     const ctor = this.entities.get(importMeta.entityType);
     entity["searchIndices"] = Object.assign(new ctor(), entity).searchIndices;
+  }
+
+  private linkEntities(
+    entities: any[],
+    sourceType: string,
+    linkType: string,
+    linkEntity: string
+  ) {
+    return this.linkableEntities[sourceType].find(
+      ([type]) => type.ENTITY_TYPE === linkType
+    )[1](entities, linkEntity);
+  }
+
+  private linkToSchool(entities: any[], link: string) {
+    const relations = entities.map((entity) => {
+      const relation = new ChildSchoolRelation();
+      relation.childId = Entity.extractEntityIdFromId(entity._id);
+      relation.schoolId = link;
+      relation.start = new Date();
+      return relation;
+    });
+    return this.entityMapper.saveAll(relations);
+  }
+
+  private async linkToActivity(entities: any[], link: string) {
+    const activity = await this.entityMapper.load(RecurringActivity, link);
+    const ids = entities.map((entity) =>
+      Entity.extractEntityIdFromId(entity._id)
+    );
+    activity.participants.push(...ids);
+    return this.entityMapper.save(activity);
   }
 }

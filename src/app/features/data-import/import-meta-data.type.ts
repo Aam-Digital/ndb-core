@@ -26,6 +26,11 @@ export interface ImportMetaData {
    * For more information see {@link https://momentjs.com/docs/#/parsing/string-format/}
    */
   dateFormat?: string;
+
+  /**
+   * The entity type and id to which all imported entries should be linked.
+   */
+  linkEntity?: { type: string; entity: string };
 }
 
 /**
