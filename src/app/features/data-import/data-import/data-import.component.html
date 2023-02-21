@@ -55,7 +55,7 @@
 
     <form [formGroup]="linkEntityForm">
       <mat-form-field>
-        <mat-label i18n="Label for linked entity type input">Entity type</mat-label>
+        <mat-label i18n="Label for linked entity type input">Linked record type</mat-label>
         <app-basic-autocomplete
           formControlName="type"
           [options]="linkableEntityTypes"
@@ -64,7 +64,7 @@
         </app-basic-autocomplete>
       </mat-form-field>
       <mat-form-field style="margin-left: 5px;">
-        <mat-label i18n="Label for linked entity input">Entity</mat-label>
+        <mat-label i18n="Label for linked entity input">Linked record</mat-label>
         <app-basic-autocomplete
           formControlName="entity"
           [options]="linkableEntities"
