@@ -7,9 +7,7 @@
     [options]="options"
     [optionToString]="enumValueToString"
     [createOption]="createNewOption"
-  >
-    <ng-template let-item>{{ item.label }}</ng-template>
-  </app-basic-autocomplete>
+  ></app-basic-autocomplete>
   <fa-icon
     *ngIf="form.enabled && !!createNewOption"
     icon="wrench"
