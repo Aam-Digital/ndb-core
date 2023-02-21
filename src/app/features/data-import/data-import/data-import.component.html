@@ -53,7 +53,12 @@
       </mat-form-field>
     </form>
 
-    <form [formGroup]="linkEntityForm">
+    <form
+      [formGroup]="linkEntityForm"
+      i18n-matTooltip="Tooltip for form to selected linked entities"
+      matTooltip="Select a entity type first"
+      [matTooltipDisabled]="linkEntityForm.enabled"
+    >
       <mat-form-field>
         <mat-label i18n="Label for linked entity type input">Linked record type</mat-label>
         <app-basic-autocomplete
