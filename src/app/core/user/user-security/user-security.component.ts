@@ -73,7 +73,7 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     }
     // automatically skip trailing and leading whitespaces when the form changes
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((next) => {
-      if (next.email.startsWith(" ") || next.email.endsWith(" ")) {
+      if (next.email?.startsWith(" ") || next.email?.endsWith(" ")) {
         this.form.get("email").setValue(next.email.trim());
       }
     });
