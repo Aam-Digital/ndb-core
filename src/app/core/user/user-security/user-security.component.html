@@ -69,6 +69,8 @@
   </div>
 
   <form [formGroup]="form">
+    <em *ngIf="user && !user.enabled" i18n="Hint in user account page"
+    >User is disabled and will not be able to login to the app</em>
     <div>
       <mat-form-field>
         <mat-label i18n="label of username input">Username</mat-label>
