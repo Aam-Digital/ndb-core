@@ -21,9 +21,9 @@ describe("SearchService", () => {
   it("should allow to search for toStringAttributes that are not the entityId", async () => {
     ChildSchoolRelation.toStringAttributes = ["entityId"];
     Child.toStringAttributes = ["name"];
-    spyOn(TestBed.inject(EntityRegistry), "values").and.returnValue([
-      ChildSchoolRelation,
-      Child,
+    spyOn(TestBed.inject(EntityRegistry), "entries").and.returnValue([
+      [ChildSchoolRelation.ENTITY_TYPE, ChildSchoolRelation],
+      [Child.ENTITY_TYPE, Child],
     ] as any);
     const c1 = new Child();
     c1.name = "first";
@@ -38,5 +38,25 @@ describe("SearchService", () => {
     expect(res).toEqual([c1]);
     res = await service.getSearchResults("relation");
     expect(res).toEqual([]);
+  });
+
+  it("should only index on database properties", async () => {
+    Child.toStringAttributes = ["schoolId", "name"];
+    const child = new Child();
+    child.name = "test";
+    child.schoolId = "someSchool";
+    spyOn(TestBed.inject(EntityRegistry), "entries").and.returnValue([
+      [Child.ENTITY_TYPE, Child],
+    ] as any);
+    await TestBed.inject(EntityMapperService).save(child);
+
+    service = TestBed.inject(SearchService);
+
+    let res = await service.getSearchResults("someSchool");
+    expect(res).toEqual([]);
+    res = await service.getSearchResults("test");
+    // reset default value
+    child.schoolId = "";
+    expect(res).toEqual([child]);
   });
 });

@@ -20,19 +20,28 @@ export class SearchService {
   }
 
   private createSearchIndex() {
-    const searchableEntities = [...this.entities.values()].filter(
-      (e) => e.toStringAttributes[0] !== "entityId"
-    );
+    const searchableEntities = [...this.entities.entries()]
+      .map(
+        ([name, ctr]) =>
+          [
+            name,
+            ctr.toStringAttributes.filter((attr) => ctr.schema.has(attr)),
+          ] as [string, string[]]
+      )
+      .filter(([_, props]) => props.length > 0);
+
     let searchIndex = `(doc) => {\n`;
-    searchableEntities.forEach((e) => {
-      searchIndex += `if (doc._id.startsWith("${e.ENTITY_TYPE}:")) {\n`;
-      e.toStringAttributes.forEach(
+    searchableEntities.forEach(([type, attributes]) => {
+      searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
+      attributes.forEach(
         (attr) =>
           (searchIndex += `emit(doc["${attr}"].toString().toLowerCase())\n`)
       );
+      searchIndex += `return\n`;
       searchIndex += `}\n`;
     });
     searchIndex += `}`;
+    console.log("index", searchIndex);
 
     const designDoc = {
       _id: "_design/search_index",
