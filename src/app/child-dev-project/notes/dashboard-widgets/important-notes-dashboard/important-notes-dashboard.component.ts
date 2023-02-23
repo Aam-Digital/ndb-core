@@ -30,6 +30,6 @@ export class ImportantNotesDashboardComponent {
   }
 
   openNote(note: Note) {
-    this.formDialog.openDialog(NoteDetailsComponent, note);
+    this.formDialog.openSimpleForm(note, [], NoteDetailsComponent);
   }
 }

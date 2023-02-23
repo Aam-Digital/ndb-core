@@ -1,12 +1,11 @@
 import {
   Component,
+  Inject,
   Input,
   OnInit,
-  ViewChild,
   ViewEncapsulation,
 } from "@angular/core";
 import { Note } from "../model/note";
-import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { Child } from "../../children/model/child";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
@@ -29,6 +28,13 @@ import {
 import { toFormFieldConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { DynamicComponentDirective } from "../../../core/view/dynamic-components/dynamic-component.directive";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
+import { InvalidFormFieldError } from "../../../core/entity-components/entity-form/invalid-form-field.error";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -51,16 +57,15 @@ import { DynamicComponentDirective } from "../../../core/view/dynamic-components
     FontAwesomeModule,
     ExportDataDirective,
     Angulartics2Module,
+    MatDialogModule,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
-export class NoteDetailsComponent implements ShowsEntity<Note>, OnInit {
+export class NoteDetailsComponent implements OnInit {
   @Input() entity: Note;
-  @ViewChild("dialogForm", { static: true })
-  formDialogWrapper: FormDialogWrapperComponent<Note>;
 
-  includeInactiveChildren: boolean = false;
+  includeInactiveChildren = false;
 
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
@@ -73,17 +78,19 @@ export class NoteDetailsComponent implements ShowsEntity<Note>, OnInit {
   middleForm = ["subject", "text"].map(toFormFieldConfig);
   // TODO related entities is not necessarily set
   // TODO make this configurable
-  bottomForm = ["children", "schools", "relatedEntities"].map(
-    toFormFieldConfig
-  );
+  bottomForm = ["children", "schools"].map(toFormFieldConfig);
   form: EntityForm<Note>;
   tmpEntity: Note;
 
   constructor(
     private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver,
-    private entityFormService: EntityFormService
+    private entityFormService: EntityFormService,
+    @Inject(MAT_DIALOG_DATA) data: { entity: Note },
+    private dialog: MatDialogRef<any>,
+    private alertService: AlertService
   ) {
+    this.entity = data.entity;
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
@@ -94,8 +101,11 @@ export class NoteDetailsComponent implements ShowsEntity<Note>, OnInit {
   }
 
   ngOnInit() {
+    // TODO no deep copy of attendance is made
     this.form = this.entityFormService.createFormGroup(
-      this.middleForm.concat(...this.topForm, this.bottomForm),
+      this.middleForm.concat(...this.topForm, this.bottomForm, {
+        id: "childrenAttendance",
+      }),
       this.entity
     );
     this.tmpEntity = this.entity;
@@ -115,15 +125,22 @@ export class NoteDetailsComponent implements ShowsEntity<Note>, OnInit {
 
   filterInactiveChildren: (Child) => boolean = (c: Child) => c.isActive;
 
-  private getPlaceholder(label: string): string {
-    return $localize`:Placeholder for input to add entities|context Add User(s):Add ${label}`;
-  }
-
   removeChild(id: string) {
     // TODO type is broken
     const children = this.form.get("children").value as any as string[];
     const index = children.indexOf(id);
     children.splice(index, 1);
     this.form.get("children").setValue([...children] as any);
+  }
+
+  async save() {
+    try {
+      await this.entityFormService.saveChanges(this.form, this.entity);
+      this.dialog.close();
+    } catch (err) {
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
+    }
   }
 }

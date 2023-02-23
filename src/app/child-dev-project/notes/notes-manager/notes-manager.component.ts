@@ -189,6 +189,6 @@ export class NotesManagerComponent implements OnInit {
   }
 
   showDetails(entity: Note) {
-    this.formDialog.openDialog(NoteDetailsComponent, entity);
+    this.formDialog.openSimpleForm(entity, [], NoteDetailsComponent);
   }
 }

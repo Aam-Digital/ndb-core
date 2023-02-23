@@ -5,9 +5,7 @@ import { NoteDetailsComponent } from "../../../child-dev-project/notes/note-deta
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
-import {
-  DisableEntityOperationDirective
-} from "../../permissions/permission-directive/disable-entity-operation.directive";
+import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
@@ -24,9 +22,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     MatButtonModule,
     Angulartics2Module,
     DisableEntityOperationDirective,
-    FontAwesomeModule
+    FontAwesomeModule,
   ],
-  standalone: true
+  standalone: true,
 })
 export class PrimaryActionComponent {
   noteConstructor = Note;
@@ -40,7 +38,11 @@ export class PrimaryActionComponent {
    * The primary action to be triggered when the user clicks the hovering button.
    */
   primaryAction() {
-    this.formDialog.openDialog(NoteDetailsComponent, this.createNewNote());
+    this.formDialog.openSimpleForm(
+      this.createNewNote(),
+      [],
+      NoteDetailsComponent
+    );
   }
 
   private createNewNote() {

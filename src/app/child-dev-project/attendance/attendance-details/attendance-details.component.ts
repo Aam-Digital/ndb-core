@@ -66,6 +66,6 @@ export class AttendanceDetailsComponent
   constructor(private formDialog: FormDialogService) {}
 
   showEventDetails(event: EventNote) {
-    this.formDialog.openDialog(NoteDetailsComponent, event);
+    this.formDialog.openSimpleForm(event, [], NoteDetailsComponent);
   }
 }
