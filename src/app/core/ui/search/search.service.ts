@@ -75,9 +75,15 @@ export class SearchService {
         include_docs: true,
       }
     );
-    return res.rows
-      .filter((doc) => this.containsSecondarySearchTerms(doc.doc, searchTerms))
+    return this.getUniqueDocs(res.rows)
+      .filter((doc) => this.containsSecondarySearchTerms(doc, searchTerms))
       .map((doc) => this.transformDocToEntity(doc));
+  }
+
+  private getUniqueDocs(rows: any[]): any[] {
+    const uniques = new Map<string, any>();
+    rows.forEach((row) => uniques.set(row.doc._id, row.doc));
+    return [...uniques.values()];
   }
 
   private containsSecondarySearchTerms(doc, searchTerms: string[]): boolean {
@@ -90,14 +96,10 @@ export class SearchService {
     return searchTerms.every((s) => values.includes(s));
   }
 
-  private transformDocToEntity(doc: {
-    key: string;
-    id: string;
-    doc: object;
-  }): Entity {
-    const ctor = this.entities.get(Entity.extractTypeFromId(doc.id));
-    const entity = new ctor(doc.id);
-    this.schemaService.loadDataIntoEntity(entity, doc.doc);
+  private transformDocToEntity(doc): Entity {
+    const ctor = this.entities.get(Entity.extractTypeFromId(doc._id));
+    const entity = new ctor(doc._id);
+    this.schemaService.loadDataIntoEntity(entity, doc);
     return entity;
   }
 }

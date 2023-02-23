@@ -109,4 +109,16 @@ describe("SearchService", () => {
     let res = await service.getSearchResults("nam");
     expect(res).toEqual([child]);
   });
+
+  it("should not return the same entity multiple times", async () => {
+    Child.toStringAttributes = ["name"];
+    const child = new Child();
+    child.name = "Peter Petersilie";
+    await TestBed.inject(EntityMapperService).save(child);
+
+    service = TestBed.inject(SearchService);
+
+    let res = await service.getSearchResults("peter");
+    expect(res).toEqual([child]);
+  });
 });

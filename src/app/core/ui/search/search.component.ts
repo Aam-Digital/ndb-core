@@ -92,9 +92,8 @@ export class SearchComponent {
     }
     const entities = await this.searchService.getSearchResults(next);
     const filtered = this.prepareResults(entities);
-    const uniques = this.uniquify(filtered);
-    this.state = uniques.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
-    return uniques;
+    this.state = filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
+    return filtered;
   }
 
   async clickOption(optionElement) {
@@ -118,13 +117,5 @@ export class SearchComponent {
     return entities.filter((entity) =>
       this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route)
     );
-  }
-
-  private uniquify(entities: Entity[]): Entity[] {
-    const uniques = new Map<string, Entity>();
-    entities.forEach((e) => {
-      uniques.set(e.getId(), e);
-    });
-    return [...uniques.values()];
   }
 }

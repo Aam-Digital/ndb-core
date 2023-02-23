@@ -118,12 +118,24 @@ describe("SearchComponent", () => {
     school1.name = "Anglo Primary";
     const mockQueryResults = {
       rows: [
-        { id: child1.getId(true), doc: { name: child1.name }, key: "adam" },
-        { id: child1.getId(true), doc: { name: child1.name }, key: "x" },
-        { id: school1.getId(true), doc: { name: school1.name }, key: "anglo" },
+        {
+          id: child1.getId(true),
+          doc: { _id: child1.getId(true), name: child1.name },
+          key: "adam",
+        },
+        {
+          id: child1.getId(true),
+          doc: { _id: child1.getId(true), name: child1.name },
+          key: "x",
+        },
         {
           id: school1.getId(true),
-          doc: { name: school1.name },
+          doc: { _id: school1.getId(true), name: school1.name },
+          key: "anglo",
+        },
+        {
+          id: school1.getId(true),
+          doc: { _id: school1.getId(true), name: school1.name },
           key: "primary",
         },
       ],
