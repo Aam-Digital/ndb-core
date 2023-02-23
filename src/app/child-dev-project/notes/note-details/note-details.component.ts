@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import { Note } from "../model/note";
 import { ShowsEntity } from "../../../core/form-dialog/shows-entity.interface";
 import { EntityConstructor } from "../../../core/entity/model/entity";
@@ -30,7 +30,11 @@ import { EntitySelectComponent } from "../../../core/entity-components/entity-se
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { MatDialogModule } from "@angular/material/dialog";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../../core/entity-components/entity-form/entity-form.service";
+import { toFormFieldConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -63,7 +67,7 @@ import { MatDialogModule } from "@angular/material/dialog";
   ],
   standalone: true,
 })
-export class NoteDetailsComponent implements ShowsEntity<Note> {
+export class NoteDetailsComponent implements ShowsEntity<Note>, OnInit {
   @Input() entity: Note;
   @ViewChild("dialogForm", { static: true })
   formDialogWrapper: FormDialogWrapperComponent<Note>;
@@ -94,10 +98,12 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
 
   /** Is it mobile view or not */
   mobile = false;
+  form: EntityForm<Note>;
 
   constructor(
     private configService: ConfigService,
-    private screenWidthObserver: ScreenWidthObserver
+    private screenWidthObserver: ScreenWidthObserver,
+    private entityFormService: EntityFormService
   ) {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
@@ -106,6 +112,23 @@ export class NoteDetailsComponent implements ShowsEntity<Note> {
       .platform()
       .pipe(untilDestroyed(this))
       .subscribe((isDesktop) => (this.mobile = !isDesktop));
+  }
+
+  ngOnInit() {
+    this.form = this.entityFormService.createFormGroup(
+      [
+        "date",
+        "warning-level",
+        "category",
+        "authors",
+        "subject",
+        "text",
+        "children",
+        "schools",
+        "additional",
+      ].map(toFormFieldConfig),
+      this.entity
+    );
   }
 
   toggleIncludeInactiveChildren() {
