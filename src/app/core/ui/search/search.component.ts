@@ -1,12 +1,9 @@
 import { Component, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { from, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
-import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Router } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -15,6 +12,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
 import { DisplayEntityComponent } from "../../entity-components/entity-select/display-entity/display-entity.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { SearchService } from "./search.service";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -60,15 +58,13 @@ export class SearchComponent {
   results: Observable<Entity[]>;
 
   constructor(
-    private indexingService: DatabaseIndexingService,
     private router: Router,
     private userRoleGuard: UserRoleGuard,
-    private entitySchemaService: EntitySchemaService,
-    private entities: EntityRegistry
+    private searchService: SearchService
   ) {
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
-      skipUntil(this.createSearchIndex()),
+      skipUntil(this.searchService.searchReady),
       tap((next) => (this.state = this.updateState(next))),
       concatMap((next: string) => this.searchResults(next)),
       untilDestroyed(this)
@@ -95,15 +91,8 @@ export class SearchComponent {
       return [];
     }
     const searchTerms = next.toLowerCase().split(" ");
-    const entities = await this.indexingService.queryIndexRaw(
-      "search_index/by_name",
-      {
-        startkey: searchTerms[0],
-        endkey: searchTerms[0] + "\ufff0",
-        include_docs: true,
-      }
-    );
-    const filtered = this.prepareResults(entities.rows, searchTerms);
+    const entities = await this.searchService.getSearchResults(searchTerms[0]);
+    const filtered = this.prepareResults(entities, searchTerms);
     const uniques = this.uniquify(filtered);
     this.state = uniques.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
     return uniques;
@@ -126,34 +115,8 @@ export class SearchComponent {
     return /^[a-zA-Z]+|\d+$/.test(searchText);
   }
 
-  private createSearchIndex(): Observable<void> {
-    // `emit(x)` to add x as a key to the index that can be searched
-    const searchMapFunction = `
-      (doc) => {
-        if (doc.hasOwnProperty("searchIndices")) {
-           doc.searchIndices.forEach(word => emit(word.toString().toLowerCase()));
-        }
-      }`;
-
-    const designDoc = {
-      _id: "_design/search_index",
-      views: {
-        by_name: {
-          map: searchMapFunction,
-        },
-      },
-    };
-
-    // TODO move this to a service so it is not executed whenever a user logs in
-    return from(this.indexingService.createIndex(designDoc));
-  }
-
-  private prepareResults(
-    rows: [{ key: string; id: string; doc: object }],
-    searchTerms: string[]
-  ): Entity[] {
-    return rows
-      .map((doc) => this.transformDocToEntity(doc))
+  private prepareResults(entities: Entity[], searchTerms: string[]): Entity[] {
+    return entities
       .filter((entity) =>
         this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route)
       )
@@ -176,18 +139,5 @@ export class SearchComponent {
       uniques.set(e.getId(), e);
     });
     return [...uniques.values()];
-  }
-
-  private transformDocToEntity(doc: {
-    key: string;
-    id: string;
-    doc: object;
-  }): Entity {
-    const ctor = this.entities.get(Entity.extractTypeFromId(doc.id));
-    const entity = doc.id ? new ctor(doc.id) : new ctor();
-    if (doc.doc) {
-      this.entitySchemaService.loadDataIntoEntity(entity, doc.doc);
-    }
-    return entity;
   }
 }
