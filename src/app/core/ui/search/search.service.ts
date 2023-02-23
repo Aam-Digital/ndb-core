@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
-import { from, Observable } from "rxjs";
 import { Entity } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
+/**
+ * This service handles to logic for global searches across all entities
+ */
 @Injectable({
   providedIn: "root",
 })
 export class SearchService {
-  searchReady: Observable<any>;
-
   private searchableEntities: [string, string[]][];
 
   constructor(
@@ -21,6 +21,10 @@ export class SearchService {
     this.createSearchIndex();
   }
 
+  /**
+   * Creates the search index based on the `toStringAttributes` and the `searchable` schema property
+   * @private
+   */
   private createSearchIndex() {
     this.initializeSearchableEntities();
 
@@ -28,12 +32,12 @@ export class SearchService {
       _id: "_design/search_index",
       views: {
         by_name: {
-          map: this.buildSearchIndex(),
+          map: this.getSearchIndexDesignDoc(),
         },
       },
     };
 
-    this.searchReady = from(this.indexingService.createIndex(designDoc));
+    this.indexingService.createIndex(designDoc);
   }
 
   private initializeSearchableEntities() {
@@ -53,7 +57,7 @@ export class SearchService {
       .filter(([_, props]) => props.length > 0);
   }
 
-  private buildSearchIndex() {
+  private getSearchIndexDesignDoc() {
     let searchIndex = `(doc) => {\n`;
     this.searchableEntities.forEach(([type, attributes]) => {
       searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
@@ -69,9 +73,13 @@ export class SearchService {
     return searchIndex;
   }
 
+  /**
+   * Returns the results matching the provided search term.
+   * Multiple search terms should be separated by a space
+   * @param searchTerm for which entities should be returned
+   */
   async getSearchResults(searchTerm: string): Promise<Entity[]> {
     const searchTerms = searchTerm.toLowerCase().split(" ");
-
     const res = await this.indexingService.queryIndexRaw(
       "search_index/by_name",
       {

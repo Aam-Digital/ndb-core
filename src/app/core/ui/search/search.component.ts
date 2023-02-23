@@ -1,7 +1,7 @@
 import { Component, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { Observable } from "rxjs";
-import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
+import { concatMap, debounceTime, tap } from "rxjs/operators";
 import { Router } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
@@ -64,7 +64,6 @@ export class SearchComponent {
   ) {
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
-      skipUntil(this.searchService.searchReady),
       tap((next) => (this.state = this.updateState(next))),
       concatMap((next: string) => this.searchResults(next)),
       untilDestroyed(this)
