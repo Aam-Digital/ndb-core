@@ -22,22 +22,38 @@ export class SearchService {
   }
 
   private createSearchIndex() {
-    this.searchableEntities = [...this.entities.entries()]
-      .map(
-        ([name, ctr]) =>
-          [
-            name,
-            ctr.toStringAttributes
-              .filter((attr) => ctr.schema.has(attr))
-              .concat(
-                [...ctr.schema.entries()]
-                  .filter(([_, schema]) => schema.searchable)
-                  .map(([name]) => name)
-              ),
-          ] as [string, string[]]
-      )
-      .filter(([_, props]) => props.length > 0);
+    this.initializeSearchableEntities();
 
+    const designDoc = {
+      _id: "_design/search_index",
+      views: {
+        by_name: {
+          map: this.buildSearchIndex(),
+        },
+      },
+    };
+
+    this.searchReady = from(this.indexingService.createIndex(designDoc));
+  }
+
+  private initializeSearchableEntities() {
+    this.searchableEntities = [...this.entities.entries()]
+      .map(([name, ctr]) => {
+        const stringAttributes = ctr.toStringAttributes.filter((attr) =>
+          ctr.schema.has(attr)
+        );
+        const searchableAttributes = [...ctr.schema.entries()]
+          .filter(([_, schema]) => schema.searchable)
+          .map(([name]) => name);
+        return [name, [...stringAttributes, ...searchableAttributes]] as [
+          string,
+          string[]
+        ];
+      })
+      .filter(([_, props]) => props.length > 0);
+  }
+
+  private buildSearchIndex() {
     let searchIndex = `(doc) => {\n`;
     this.searchableEntities.forEach(([type, attributes]) => {
       searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
@@ -50,18 +66,7 @@ export class SearchService {
       searchIndex += `}\n`;
     });
     searchIndex += `}`;
-    console.log("index", searchIndex);
-
-    const designDoc = {
-      _id: "_design/search_index",
-      views: {
-        by_name: {
-          map: searchIndex,
-        },
-      },
-    };
-
-    this.searchReady = from(this.indexingService.createIndex(designDoc));
+    return searchIndex;
   }
 
   async getSearchResults(searchTerm: string): Promise<Entity[]> {
