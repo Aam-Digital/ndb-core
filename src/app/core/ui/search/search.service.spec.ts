@@ -84,4 +84,29 @@ describe("SearchService", () => {
 
     delete Child.schema.get("projectNumber").searchable;
   });
+
+  it("should support search terms with multiple words", async () => {
+    Child.toStringAttributes = ["name", "projectNumber"];
+    const child = new Child();
+    child.name = "test";
+    child.projectNumber = "number";
+    await TestBed.inject(EntityMapperService).save(child);
+
+    service = TestBed.inject(SearchService);
+
+    let res = await service.getSearchResults("tes num");
+    expect(res).toEqual([child]);
+  });
+
+  it("should allows searches for properties with multiple words", async () => {
+    Child.toStringAttributes = ["name"];
+    const child = new Child();
+    child.name = "test name";
+    await TestBed.inject(EntityMapperService).save(child);
+
+    service = TestBed.inject(SearchService);
+
+    let res = await service.getSearchResults("nam");
+    expect(res).toEqual([child]);
+  });
 });

@@ -90,9 +90,8 @@ export class SearchComponent {
     if (this.state !== this.SEARCH_IN_PROGRESS) {
       return [];
     }
-    const searchTerms = next.toLowerCase().split(" ");
-    const entities = await this.searchService.getSearchResults(searchTerms[0]);
-    const filtered = this.prepareResults(entities, searchTerms);
+    const entities = await this.searchService.getSearchResults(next);
+    const filtered = this.prepareResults(entities);
     const uniques = this.uniquify(filtered);
     this.state = uniques.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
     return uniques;
@@ -115,22 +114,10 @@ export class SearchComponent {
     return /^[a-zA-Z]+|\d+$/.test(searchText);
   }
 
-  private prepareResults(entities: Entity[], searchTerms: string[]): Entity[] {
-    return entities
-      .filter((entity) =>
-        this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route)
-      )
-      .filter((entity) =>
-        this.containsSecondarySearchTerms(entity, searchTerms)
-      );
-  }
-
-  private containsSecondarySearchTerms(
-    entity: Entity,
-    searchTerms: string[]
-  ): boolean {
-    const searchIndices = entity.searchIndices.join(" ").toLowerCase();
-    return searchTerms.every((s) => searchIndices.includes(s));
+  private prepareResults(entities: Entity[]): Entity[] {
+    return entities.filter((entity) =>
+      this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route)
+    );
   }
 
   private uniquify(entities: Entity[]): Entity[] {

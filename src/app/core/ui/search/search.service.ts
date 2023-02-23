@@ -11,6 +11,8 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 export class SearchService {
   searchReady: Observable<any>;
 
+  private searchableEntities: [string, string[]][];
+
   constructor(
     private indexingService: DatabaseIndexingService,
     private schemaService: EntitySchemaService,
@@ -20,7 +22,7 @@ export class SearchService {
   }
 
   private createSearchIndex() {
-    const searchableEntities = [...this.entities.entries()]
+    this.searchableEntities = [...this.entities.entries()]
       .map(
         ([name, ctr]) =>
           [
@@ -37,11 +39,11 @@ export class SearchService {
       .filter(([_, props]) => props.length > 0);
 
     let searchIndex = `(doc) => {\n`;
-    searchableEntities.forEach(([type, attributes]) => {
+    this.searchableEntities.forEach(([type, attributes]) => {
       searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
       attributes.forEach((attr) => {
         searchIndex += `if (doc["${attr}"]) {\n`;
-        searchIndex += `emit(doc["${attr}"].toString().toLowerCase())\n`;
+        searchIndex += `doc["${attr}"].toString().toLowerCase().split(" ").forEach((val) => emit(val))\n`;
         searchIndex += `}\n`;
       });
       searchIndex += `return\n`;
@@ -62,15 +64,30 @@ export class SearchService {
     this.searchReady = from(this.indexingService.createIndex(designDoc));
   }
 
-  getSearchResults(searchTerm: string): Promise<Entity[]> {
-    searchTerm = searchTerm.toLowerCase();
-    return this.indexingService
-      .queryIndexRaw("search_index/by_name", {
-        startkey: searchTerm,
-        endkey: searchTerm + "\ufff0",
+  async getSearchResults(searchTerm: string): Promise<Entity[]> {
+    const searchTerms = searchTerm.toLowerCase().split(" ");
+
+    const res = await this.indexingService.queryIndexRaw(
+      "search_index/by_name",
+      {
+        startkey: searchTerms[0],
+        endkey: searchTerms[0] + "\ufff0",
         include_docs: true,
-      })
-      .then((res) => res.rows.map((doc) => this.transformDocToEntity(doc)));
+      }
+    );
+    return res.rows
+      .filter((doc) => this.containsSecondarySearchTerms(doc.doc, searchTerms))
+      .map((doc) => this.transformDocToEntity(doc));
+  }
+
+  private containsSecondarySearchTerms(doc, searchTerms: string[]): boolean {
+    const entityType = Entity.extractTypeFromId(doc._id);
+    const values = this.searchableEntities
+      .find(([type]) => type === entityType)[1]
+      .map((attr) => doc[attr])
+      .join(" ")
+      .toLowerCase();
+    return searchTerms.every((s) => values.includes(s));
   }
 
   private transformDocToEntity(doc: {
@@ -79,10 +96,8 @@ export class SearchService {
     doc: object;
   }): Entity {
     const ctor = this.entities.get(Entity.extractTypeFromId(doc.id));
-    const entity = doc.id ? new ctor(doc.id) : new ctor();
-    if (doc.doc) {
-      this.schemaService.loadDataIntoEntity(entity, doc.doc);
-    }
+    const entity = new ctor(doc.id);
+    this.schemaService.loadDataIntoEntity(entity, doc.doc);
     return entity;
   }
 }
