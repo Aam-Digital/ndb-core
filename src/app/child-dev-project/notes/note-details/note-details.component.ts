@@ -26,14 +26,7 @@ import { DynamicComponentDirective } from "../../../core/view/dynamic-components
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
-  MatDialogRef,
 } from "@angular/material/dialog";
-import { InvalidFormFieldError } from "../../../core/entity-components/entity-form/invalid-form-field.error";
-import { AlertService } from "../../../core/alerts/alert.service";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../../core/entity/entity-remove.service";
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 
 /**
@@ -78,9 +71,7 @@ export class NoteDetailsComponent implements OnInit {
     private configService: ConfigService,
     private entityFormService: EntityFormService,
     @Inject(MAT_DIALOG_DATA) data: { entity: Note },
-    private dialog: MatDialogRef<any>,
-    private alertService: AlertService,
-    private entityRemoveService: EntityRemoveService
+    private entityFormService: EntityFormService
   ) {
     this.entity = data.entity;
     this.exportConfig = this.configService.getConfig<{
@@ -102,26 +93,6 @@ export class NoteDetailsComponent implements OnInit {
     this.tmpEntity = this.entity.copy();
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.tmpEntity = Object.assign(this.tmpEntity, value);
-    });
-  }
-
-  async save() {
-    // Maybe move to abstract class (similar to TodoDetails and RowDetails)
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
-      this.dialog.close();
-    } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
-        this.alertService.addDanger(err.message);
-      }
-    }
-  }
-
-  delete() {
-    this.entityRemoveService.remove(this.entity).subscribe((result) => {
-      if (result === RemoveResult.REMOVED) {
-        this.dialog.close();
-      }
     });
   }
 }
