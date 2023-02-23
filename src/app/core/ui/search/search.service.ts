@@ -33,10 +33,11 @@ export class SearchService {
     let searchIndex = `(doc) => {\n`;
     searchableEntities.forEach(([type, attributes]) => {
       searchIndex += `if (doc._id.startsWith("${type}:")) {\n`;
-      attributes.forEach(
-        (attr) =>
-          (searchIndex += `emit(doc["${attr}"].toString().toLowerCase())\n`)
-      );
+      attributes.forEach((attr) => {
+        searchIndex += `if (doc["${attr}"]) {\n`;
+        searchIndex += `emit(doc["${attr}"].toString().toLowerCase())\n`;
+        searchIndex += `}\n`;
+      });
       searchIndex += `return\n`;
       searchIndex += `}\n`;
     });
