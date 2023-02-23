@@ -63,7 +63,25 @@ describe("SearchService", () => {
 
     service = TestBed.inject(SearchService);
 
-    let res = await service.getSearchResults("test");
+    const res = await service.getSearchResults("test");
     expect(res).toEqual([child]);
+  });
+
+  it("should include properties that are marked searchable", async () => {
+    Child.toStringAttributes = ["name"];
+    Child.schema.get("projectNumber").searchable = true;
+    const child = new Child();
+    child.name = "test";
+    child.projectNumber = "number";
+    await TestBed.inject(EntityMapperService).save(child);
+
+    service = TestBed.inject(SearchService);
+
+    let res = await service.getSearchResults("tes");
+    expect(res).toEqual([child]);
+    res = await service.getSearchResults("numb");
+    expect(res).toEqual([child]);
+
+    delete Child.schema.get("projectNumber").searchable;
   });
 });

@@ -25,7 +25,13 @@ export class SearchService {
         ([name, ctr]) =>
           [
             name,
-            ctr.toStringAttributes.filter((attr) => ctr.schema.has(attr)),
+            ctr.toStringAttributes
+              .filter((attr) => ctr.schema.has(attr))
+              .concat(
+                [...ctr.schema.entries()]
+                  .filter(([_, schema]) => schema.searchable)
+                  .map(([name]) => name)
+              ),
           ] as [string, string[]]
       )
       .filter(([_, props]) => props.length > 0);
