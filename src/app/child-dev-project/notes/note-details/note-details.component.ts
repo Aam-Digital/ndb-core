@@ -71,7 +71,6 @@ export class NoteDetailsComponent implements OnInit {
     private configService: ConfigService,
     private entityFormService: EntityFormService,
     @Inject(MAT_DIALOG_DATA) data: { entity: Note },
-    private entityFormService: EntityFormService
   ) {
     this.entity = data.entity;
     this.exportConfig = this.configService.getConfig<{
