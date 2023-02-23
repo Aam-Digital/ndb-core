@@ -24,8 +24,6 @@ describe("User", () => {
 
     name: "tester",
     paginatorSettingsPageSize: {},
-
-    searchIndices: ["tester"],
   });
 
   it("should not allow to change the name after initialization and set it as the ID", () => {

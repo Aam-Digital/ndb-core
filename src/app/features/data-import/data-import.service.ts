@@ -95,7 +95,6 @@ export class DataImportService {
   ): Promise<void> {
     for (const row of data) {
       const entity = this.createEntityWithRowData(row, importMeta);
-      this.createSearchIndices(importMeta, entity);
       if (!entity["_id"]) {
         entity["_id"] = `${importMeta.entityType}:${
           importMeta.transactionId
@@ -165,10 +164,5 @@ export class DataImportService {
     } else {
       return undefined;
     }
-  }
-
-  private createSearchIndices(importMeta: ImportMetaData, entity) {
-    const ctor = this.entities.get(importMeta.entityType);
-    entity["searchIndices"] = Object.assign(new ctor(), entity).searchIndices;
   }
 }

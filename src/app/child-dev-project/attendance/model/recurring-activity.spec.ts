@@ -29,7 +29,5 @@ describe("RecurringActivity", () => {
     participants: ["1", "2"],
     linkedGroups: ["3"],
     excludedParticipants: ["5"],
-
-    searchIndices: ["test", "activity"],
   });
 });

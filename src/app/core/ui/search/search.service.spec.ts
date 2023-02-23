@@ -16,10 +16,6 @@ describe("SearchService", () => {
 
   afterEach(() => TestBed.inject(Database).destroy());
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
   it("should allow to search for toStringAttributes that are not the entityId", async () => {
     ChildSchoolRelation.toStringAttributes = ["entityId"];
     Child.toStringAttributes = ["name"];

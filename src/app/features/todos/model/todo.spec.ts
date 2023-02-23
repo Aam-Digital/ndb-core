@@ -11,8 +11,6 @@ describe("Todo", () => {
     description: "details of the task",
     assignedTo: ["demo"],
     relatedEntities: [],
-
-    searchIndices: ["new", "task"],
   });
 
   it("should infer isOverdue", () => {
