@@ -19,10 +19,8 @@ describe("SearchService", () => {
   it("should allow to search for toStringAttributes that are not the entityId", async () => {
     ChildSchoolRelation.toStringAttributes = ["entityId"];
     Child.toStringAttributes = ["name"];
-    const c1 = new Child();
-    c1.name = "first";
-    const c2 = new Child();
-    c2.name = "second";
+    const c1 = Child.create("first");
+    const c2 = Child.create("second");
     const r = new ChildSchoolRelation("relation");
     await TestBed.inject(EntityMapperService).saveAll([c1, c2, r]);
 
@@ -36,8 +34,7 @@ describe("SearchService", () => {
 
   it("should only index on database properties", async () => {
     Child.toStringAttributes = ["schoolId", "name"];
-    const child = new Child();
-    child.name = "test";
+    const child = Child.create("test");
     child.schoolId = "someSchool";
     await TestBed.inject(EntityMapperService).save(child);
 
@@ -53,8 +50,7 @@ describe("SearchService", () => {
 
   it("should not fail if toStringAttribute is not set", async () => {
     Child.toStringAttributes = ["projectNumber", "name"];
-    const child = new Child();
-    child.name = "test";
+    const child = Child.create("test");
     await TestBed.inject(EntityMapperService).save(child);
 
     service = TestBed.inject(SearchService);
@@ -66,8 +62,7 @@ describe("SearchService", () => {
   it("should include properties that are marked searchable", async () => {
     Child.toStringAttributes = ["name"];
     Child.schema.get("projectNumber").searchable = true;
-    const child = new Child();
-    child.name = "test";
+    const child = Child.create("test");
     child.projectNumber = "number";
     await TestBed.inject(EntityMapperService).save(child);
 
@@ -83,8 +78,7 @@ describe("SearchService", () => {
 
   it("should support search terms with multiple words", async () => {
     Child.toStringAttributes = ["name", "projectNumber"];
-    const child = new Child();
-    child.name = "test";
+    const child = Child.create("test");
     child.projectNumber = "number";
     await TestBed.inject(EntityMapperService).save(child);
 
@@ -96,8 +90,7 @@ describe("SearchService", () => {
 
   it("should allows searches for properties with multiple words", async () => {
     Child.toStringAttributes = ["name"];
-    const child = new Child();
-    child.name = "test name";
+    const child = Child.create("test name");
     await TestBed.inject(EntityMapperService).save(child);
 
     service = TestBed.inject(SearchService);
@@ -108,8 +101,7 @@ describe("SearchService", () => {
 
   it("should not return the same entity multiple times", async () => {
     Child.toStringAttributes = ["name"];
-    const child = new Child();
-    child.name = "Peter Petersilie";
+    const child = Child.create("Peter Petersilie");
     await TestBed.inject(EntityMapperService).save(child);
 
     service = TestBed.inject(SearchService);
