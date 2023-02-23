@@ -37,7 +37,6 @@ describe("SearchService", () => {
     let res = await service.getSearchResults("firs");
     expect(res).toEqual([c1]);
     res = await service.getSearchResults("relation");
-    console.log("res", res);
     expect(res).toEqual([]);
   });
 });

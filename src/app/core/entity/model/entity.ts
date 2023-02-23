@@ -202,16 +202,7 @@ export class Entity {
    * <b>Overwrite this method in subtypes if you want an entity type to be searchable by other properties.</b>
    */
   @DatabaseField() get searchIndices(): string[] {
-    if (
-      this.getConstructor().toStringAttributes === Entity.toStringAttributes &&
-      this.toString() === this.entityId
-    ) {
-      // no indices for the default if an entity does not have a human-readable name
-      return [];
-    }
-
-    // default indices generated from toString
-    return this.toString().split(" ");
+    return [];
   }
 
   set searchIndices(value) {

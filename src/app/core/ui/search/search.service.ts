@@ -20,19 +20,25 @@ export class SearchService {
   }
 
   private createSearchIndex() {
-    // `emit(x)` to add x as a key to the index that can be searched
-    const searchMapFunction = `
-      (doc) => {
-        if (doc.hasOwnProperty("searchIndices")) {
-           doc.searchIndices.forEach(word => emit(word.toString().toLowerCase()));
-        }
-      }`;
+    const searchableEntities = [...this.entities.values()].filter(
+      (e) => e.toStringAttributes[0] !== "entityId"
+    );
+    let searchIndex = `(doc) => {\n`;
+    searchableEntities.forEach((e) => {
+      searchIndex += `if (doc._id.startsWith("${e.ENTITY_TYPE}:")) {\n`;
+      e.toStringAttributes.forEach(
+        (attr) =>
+          (searchIndex += `emit(doc["${attr}"].toString().toLowerCase())\n`)
+      );
+      searchIndex += `}\n`;
+    });
+    searchIndex += `}`;
 
     const designDoc = {
       _id: "_design/search_index",
       views: {
         by_name: {
-          map: searchMapFunction,
+          map: searchIndex,
         },
       },
     };
@@ -41,6 +47,7 @@ export class SearchService {
   }
 
   getSearchResults(searchTerm: string): Promise<Entity[]> {
+    searchTerm = searchTerm.toLowerCase();
     return this.indexingService
       .queryIndexRaw("search_index/by_name", {
         startkey: searchTerm,
