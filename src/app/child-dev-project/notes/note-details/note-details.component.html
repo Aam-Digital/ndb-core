@@ -93,45 +93,12 @@
   ></app-entity-form>
 </mat-dialog-content>
 
-<mat-dialog-actions>
-  <button
-    mat-raised-button
-    color="accent"
-    [disabled]="form.dirty"
-    (click)="save()"
-    angulartics2On="click"
-    [angularticsCategory]="entity?.getType()"
-    angularticsAction="note_details_save"
-    i18n="Form save button"
-  >
+<mat-dialog-actions class="gap-regular">
+  <button mat-raised-button (click)="save()" i18n="Save button for forms">
     Save
   </button>
-  <button
-    mat-stroked-button
-    mat-dialog-close
-    angulartics2On="click"
-    [angularticsCategory]="entity?.getType()"
-    angularticsAction="note_details_cancel"
-    i18n="Form cancel button"
-  >
+
+  <button mat-raised-button i18n="Cancel button for forms" mat-dialog-close>
     Cancel
   </button>
-  <ng-container *ngIf="!entity.isNew">
-    <button
-      style="margin-left: 8px"
-      mat-stroked-button
-      color="warn"
-      (click)="delete()"
-      angulartics2On="click"
-      [angularticsCategory]="entity?.getType()"
-      angularticsAction="note_details_delete"
-      i18n="Form delete button"
-      *appDisabledEntityOperation="{
-      entity: entity,
-      operation: 'delete'
-    }"
-    >
-      Delete
-    </button>
-  </ng-container>
 </mat-dialog-actions>
