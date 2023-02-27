@@ -145,10 +145,15 @@ export class MatchingEntitiesComponent
    * @private
    */
   private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
-    const defaultConfig = this.configService.getConfig<MatchingEntitiesConfig>(
-      MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+    const defaultConfig =
+      this.configService.getConfig<MatchingEntitiesConfig>(
+        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+      ) ?? {};
+    config = Object.assign(
+      {},
+      JSON.parse(JSON.stringify(defaultConfig)),
+      JSON.parse(JSON.stringify(config))
     );
-    config = Object.assign({}, defaultConfig, config);
 
     this.columns = config.columns ?? this.columns;
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;

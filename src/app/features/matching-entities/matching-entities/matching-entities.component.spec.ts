@@ -13,6 +13,7 @@ import { BehaviorSubject, of } from "rxjs";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { School } from "../../../child-dev-project/schools/model/school";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -389,6 +390,29 @@ describe("MatchingEntitiesComponent", () => {
     expect(component.mapVisible).toBeTrue();
 
     Child.schema.delete("address");
+  });
+
+  it("should not alter the config object", async () => {
+    const config: MatchingEntitiesConfig = {
+      columns: [
+        ["name", "name"],
+        ["projectNumber", "distance"],
+      ],
+      rightSide: { entityType: "School", columns: ["name", "distance"] },
+      leftSide: { entityType: "Child", columns: ["name", "distance"] },
+    };
+    Child.schema.set("address", { dataType: "location" });
+    School.schema.set("address", { dataType: "location" });
+
+    const configCopy = JSON.parse(JSON.stringify(config));
+    mockActivatedRoute.data = of({ config: configCopy });
+
+    await component.ngOnInit();
+
+    expect(configCopy).toEqual(config);
+
+    Child.schema.delete("address");
+    School.schema.delete("address");
   });
 });
 
