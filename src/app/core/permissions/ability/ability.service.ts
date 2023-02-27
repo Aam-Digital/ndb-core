@@ -55,7 +55,7 @@ export class AbilityService {
 
   private updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
     const userRules = this.getRulesForUser(rules);
-    if (userRules.length === 0 || userRules.length === rules.default?.length) {
+    if (userRules.length === 0) {
       // No rules or only default rules defined
       const user = this.sessionService.getCurrentUser();
       this.logger.warn(
