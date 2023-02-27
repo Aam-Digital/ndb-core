@@ -167,7 +167,7 @@ export class QueryService {
     return this.queryStringMap
       .filter(([matcher]) =>
         // matches query string without any alphanumeric characters before or after (e.g. so Child does not match ChildSchoolRelation)
-        query.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`))
+        query?.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`))
       )
       .map(([_, entity]) => entity)
       .filter((entity) => {
