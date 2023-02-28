@@ -30,7 +30,7 @@ export interface ImportMetaData {
   /**
    * The entity type and id to which all imported entries should be linked.
    */
-  linkEntity?: { type: string; entity: string };
+  linkEntity?: { type: string; id: string };
 }
 
 /**

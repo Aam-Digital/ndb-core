@@ -217,7 +217,7 @@ describe("DataImportService", () => {
       columnMap: {
         ID: { key: "_id", label: "_id" },
       },
-      linkEntity: { type: "School", entity: "schoolId" },
+      linkEntity: { type: "School", id: "schoolId" },
     };
 
     await service.handleCsvImport(data, importMeta);
@@ -232,7 +232,7 @@ describe("DataImportService", () => {
     await entityMapper.save(activity);
     importMeta.linkEntity = {
       type: "RecurringActivity",
-      entity: activity.getId(),
+      id: activity.getId(),
     };
 
     await service.handleCsvImport(data, importMeta);

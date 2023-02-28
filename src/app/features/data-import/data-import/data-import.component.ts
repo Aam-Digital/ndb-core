@@ -71,7 +71,7 @@ export class DataImportComponent {
 
   linkEntityForm = new FormGroup({
     type: new FormControl({ value: "", disabled: true }),
-    entity: new FormControl({ value: "", disabled: true }),
+    id: new FormControl({ value: "", disabled: true }),
   });
   linkableEntityTypes: string[] = [];
   linkableEntities: Entity[] = [];
@@ -94,10 +94,10 @@ export class DataImportComponent {
     this.linkEntityForm.get("type").valueChanges.subscribe(async (val) => {
       if (val) {
         this.linkableEntities = await this.entityMapper.loadType(val);
-        this.linkEntityForm.get("entity").enable();
+        this.linkEntityForm.get("id").enable();
       } else {
         this.linkableEntities = [];
-        this.linkEntityForm.get("entity").disable();
+        this.linkEntityForm.get("id").disable();
       }
     });
   }

@@ -131,7 +131,7 @@ export class DataImportService {
     });
     await this.db.putAll(entities);
 
-    if (importMeta.linkEntity?.entity) {
+    if (importMeta.linkEntity?.id) {
       await this.linkEntities(entities, importMeta);
     }
   }
@@ -206,7 +206,7 @@ export class DataImportService {
   private linkEntities(entities: any[], importMeta: ImportMetaData) {
     return this.linkableEntities[importMeta.entityType].find(
       ([type]) => type.ENTITY_TYPE === importMeta.linkEntity.type
-    )[1](entities, importMeta.linkEntity.entity);
+    )[1](entities, importMeta.linkEntity.id);
   }
 
   private linkToSchool(entities: any[], link: string) {
@@ -214,7 +214,6 @@ export class DataImportService {
       const relation = new ChildSchoolRelation();
       relation.childId = Entity.extractEntityIdFromId(entity._id);
       relation.schoolId = link;
-      relation.start = new Date();
       return relation;
     });
     return this.entityMapper.saveAll(relations);
