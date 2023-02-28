@@ -57,6 +57,7 @@ export class Child extends Entity {
   @DatabaseField({
     label: $localize`:Label for the project number of a child:Project Number`,
     labelShort: $localize`:Short label for the project number:PN`,
+    searchable: true,
   })
   projectNumber: string;
 

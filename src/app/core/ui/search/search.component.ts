@@ -41,8 +41,8 @@ import { SearchService } from "./search.service";
   standalone: true,
 })
 export class SearchComponent {
-  static INPUT_DEBOUNCE_TIME_MS: number = 400;
-  MIN_CHARACTERS_FOR_SEARCH: number = 3;
+  static INPUT_DEBOUNCE_TIME_MS = 400;
+  MIN_CHARACTERS_FOR_SEARCH = 2;
 
   readonly NOTHING_ENTERED = 0;
   readonly TOO_FEW_CHARACTERS = 1;
