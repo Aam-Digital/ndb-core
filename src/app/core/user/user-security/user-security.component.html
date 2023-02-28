@@ -22,7 +22,7 @@
   <div class="padding-bottom-small flex-row gap-small align-self-end flex-wrap" *ngIf="user">
     <button
       *ngIf="editing && user?.enabled"
-      mat-raised-button
+      mat-stroked-button
       color="warn"
       (click)="toggleAccount(false)"
       matTooltip="User will not be able to login again, no information will be lost"
@@ -33,6 +33,7 @@
     <button
       *ngIf="editing && !user?.enabled"
       mat-raised-button
+      color="accent"
       (click)="toggleAccount(true)"
       matTooltip="User can login again with the previously used credentials"
       i18n="button to enable a user"
@@ -42,6 +43,7 @@
     <button
       *ngIf="editing && user?.enabled"
       mat-raised-button
+      color="accent"
       class="action-button"
       (click)="updateAccount()"
       i18n="Save button for forms"
@@ -50,7 +52,7 @@
     </button>
     <button
       *ngIf="editing"
-      mat-raised-button
+      mat-stroked-button
       class="action-button"
       (click)="disableForm()"
       i18n="Cancel button for forms"

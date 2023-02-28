@@ -36,7 +36,7 @@
       </mat-error>
     </mat-form-field>
 
-    <button mat-button color="accent" (click)="removePart(index)">
+    <button mat-icon-button color="accent" (click)="removePart(index)">
       <fa-icon
         class="button-icon"
         aria-label="remove element"
@@ -110,7 +110,8 @@
 </mat-dialog-content>
 <mat-dialog-actions>
   <button
-    mat-stroked-button
+    mat-raised-button
+    color="accent"
     [mat-dialog-close]="outputData.value"
     [disabled]="outputData.invalid"
   >
@@ -119,7 +120,7 @@
       [matTooltipDisabled]="outputData.valid"
       i18n-matTooltip="Shown when there are errors that prevent saving"
       i18n
-      >Save</span
+    >Save</span
     >
   </button>
   <button mat-stroked-button mat-dialog-close i18n>Cancel</button>

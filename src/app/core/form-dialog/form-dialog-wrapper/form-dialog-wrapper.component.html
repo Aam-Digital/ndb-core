@@ -8,7 +8,8 @@
 
 <mat-dialog-actions *ngIf="!readonly && ('update' | able: entity)">
   <button
-    mat-stroked-button
+    mat-raised-button
+    color="accent"
     [disabled]="!contentForm.form.dirty"
     (click)="save()"
     angulartics2On="click"
