@@ -164,9 +164,9 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private setInitialInputValue() {
     if (this.multi) {
-      this._options
-        .filter(({ asValue }) => (this.value as V[])?.includes(asValue))
-        .forEach((o) => (o.selected = true));
+      this._options.forEach(
+        (o) => (o.selected = (this.value as V[])?.includes(o.asValue))
+      );
       this.displaySelectedOptions();
     } else {
       const selected = this._options.find(
