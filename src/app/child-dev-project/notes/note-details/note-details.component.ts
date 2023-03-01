@@ -130,6 +130,7 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   async save() {
+    // Maybe move to abstract class (similar to TodoDetails and RowDetails)
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
       this.dialog.close();
