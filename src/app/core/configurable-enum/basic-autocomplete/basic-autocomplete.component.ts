@@ -74,7 +74,7 @@ export class BasicAutocompleteComponent<O, V = O>
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
     map((val) => this.updateAutocomplete(val)),
-    startWith([])
+    startWith([] as SelectableOption<O, V>[])
   );
   showAddOption = false;
   private addOptionTimeout: any;

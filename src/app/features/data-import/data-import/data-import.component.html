@@ -2,10 +2,10 @@
   <div class="flex-column">
     <app-input-file (fileLoad)="loadData($event)" fileType="csv"></app-input-file>
 
-    <form [formGroup]="entityForm">
+    <form>
       <mat-form-field>
         <mat-label>Entity Type</mat-label>
-        <mat-select formControlName="entity" required (selectionChange)="entitySelectionChanged()">
+        <mat-select [formControl]="entityForm" (selectionChange)="entitySelectionChanged()">
           <mat-option *ngFor="let entity of entities | keyvalue" [value]="entity.key">
             {{entity.key}}
           </mat-option>
@@ -17,45 +17,82 @@
   <mat-expansion-panel [expanded]="false" class="full-height flex-grow-1-3">
     <mat-expansion-panel-header>Additional Import Configuration (optional)</mat-expansion-panel-header>
 
-      <label i18n="Data import wizard label">Load config from file: </label>
-      <app-input-file (fileLoad)="loadConfig($event)" fileType="json"></app-input-file>
+    <label i18n="Data import wizard label">Load config from file: </label>
+    <app-input-file (fileLoad)="loadConfig($event)" fileType="json"></app-input-file>
 
-      <form [formGroup]="transactionIDForm">
-        <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are specified in CSV file</p>
-        <mat-form-field>
-          <mat-label i18n="Unique ID for this import">Transaction ID:</mat-label>
-          <input
-            matInput
-            formControlName="transactionId"
-            i18n-placeholder="Placeholder for input for transactionId as part of the import process"
-            placeholder="Enter TransactionID"
-          />
-        </mat-form-field>
-        <button *ngIf="transactionIDForm.enabled" mat-button (click)="setRandomTransactionID()" i18n="Button to generate a random ID">Generate ID</button>
-      </form>
+    <form>
+      <p *ngIf="transactionIDForm.disabled" i18n="Hint in import wizard when transaction ID is not necessary">IDs are
+        specified in CSV file</p>
+      <mat-form-field>
+        <mat-label i18n="Unique ID for this import">Transaction ID:</mat-label>
+        <input
+          matInput
+          [formControl]="transactionIDForm"
+          i18n-placeholder="Placeholder for input for transactionId as part of the import process"
+          placeholder="Enter TransactionID"
+        />
+      </mat-form-field>
+      <button
+        *ngIf="transactionIDForm.enabled"
+        mat-button (click)="setRandomTransactionID()"
+        type="button"
+        i18n="Button to generate a random ID"
+      >Generate ID
+      </button>
+    </form>
 
-      <form [formGroup]="dateFormatForm">
-        <mat-form-field>
-          <mat-label i18n="Label for date-format input  ">Date format</mat-label>
-          <input
-            matInput
-            formControlName="dateFormat"
-            i18n-placeholder="Placeholdr for input where date format as part of the import process"
-            placeholder="Enter a date format"
-          />
-        </mat-form-field>
-      </form>
+    <form>
+      <mat-form-field>
+        <mat-label i18n="Label for date-format input">Date format</mat-label>
+        <input
+          matInput
+          [formControl]="dateFormatForm"
+          i18n-placeholder="Placeholdr for input where date format as part of the import process"
+          placeholder="Enter a date format"
+        />
+      </mat-form-field>
+    </form>
+
+    <form
+      [formGroup]="linkEntityForm"
+      i18n-matTooltip="Tooltip for form to selected linked entities"
+      matTooltip="Select a entity type first"
+      [matTooltipDisabled]="linkEntityForm.enabled"
+    >
+      <mat-form-field>
+        <mat-label i18n="Label for linked entity type input">Linked record type</mat-label>
+        <app-basic-autocomplete
+          formControlName="type"
+          [options]="linkableEntityTypes"
+        ></app-basic-autocomplete>
+      </mat-form-field>
+      <mat-form-field style="margin-left: 5px;">
+        <mat-label i18n="Label for linked entity input">Linked record</mat-label>
+        <app-basic-autocomplete
+          formControlName="id"
+          [options]="linkableEntities"
+          [valueMapper]="entityToId"
+        >
+          <ng-template let-item>
+            <app-display-entity
+              [entityToDisplay]="item"
+              [linkDisabled]="true"
+            ></app-display-entity>
+          </ng-template>
+        </app-basic-autocomplete>
+      </mat-form-field>
+    </form>
 
   </mat-expansion-panel>
 </div>
 
 <br>
 
-<mat-expansion-panel  [expanded]="readyForImport" [disabled]="!readyForImport">
+<mat-expansion-panel [expanded]="readyForImport" [disabled]="!readyForImport">
   <mat-expansion-panel-header>Field Mapping</mat-expansion-panel-header>
   <div>
-    <form [formGroup]="columnMappingForm">
-      <div *ngFor="let control of columnMappingForm.controls | keyvalue">
+    <form>
+      <div *ngFor="let control of columnMap | keyvalue">
         <mat-form-field>
           <mat-label>{{ control.key }}</mat-label>
           <input
@@ -64,17 +101,22 @@
             placeholder="Select property"
             aria-label="Select property"
             matInput
-            (input)="processChange($event.target['value'])"
-            (focusin)="processChange('')"
+            (input)="processChange(control.value?.key, $event.target['value'])"
+            (focusin)="processChange(control.value?.key,'')"
+            (focusout)="selectOption(inputElement.value, control.key)"
             [matAutocomplete]="auto"
-            [formControlName]="control.key"
+            [value]="control.value?.label"
+            #inputElement
           >
-          <mat-autocomplete #auto="matAutocomplete">
+          <mat-autocomplete
+            #auto="matAutocomplete"
+            (optionSelected)="inputElement.value = $event.option.value.label"
+          >
             <mat-option
               *ngFor="let property of filteredProperties | async"
               [value]="property"
             >
-              {{ property }}
+              {{ property.label }}
             </mat-option>
           </mat-autocomplete>
         </mat-form-field>
@@ -87,9 +129,9 @@
 <mat-expansion-panel [expanded]="readyForImport">
   <mat-expansion-panel-header>View Summary & Start Import</mat-expansion-panel-header>
 
-  <p i18n="Data import Final overview">Entity Type:    <em>{{ entityForm.get('entity').value }}</em></p>
-  <p i18n="Data import Final overview">Data:       <em>{{ importData?.data?.length }}</em></p>
-  <p i18n="Data import Final overview">TransactionID:  <em>{{ transactionIDForm.get('transactionId').value }}</em></p>
+  <p i18n="Data import Final overview">Entity Type: <em>{{ entityForm.value }}</em></p>
+  <p i18n="Data import Final overview">Data: <em>{{ importData?.data?.length }}</em></p>
+  <p i18n="Data import Final overview">TransactionID: <em>{{ transactionIDForm.value }}</em></p>
 
   <div class="flex-row gap-small">
     <button (click)="importSelectedFile()" mat-stroked-button i18n="Button to start import">
