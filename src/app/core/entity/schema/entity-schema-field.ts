@@ -48,6 +48,11 @@ export interface EntitySchemaField {
   generateIndex?: boolean; // TODO: implement index support in EntitySchema
 
   /**
+   * If set to `true`, the entity can be found in the global search by entering this value
+   */
+  searchable?: boolean;
+
+  /**
    * Whether the field should be initialized with a default value if undefined
    * (which is then run through dataType transformation);
    */

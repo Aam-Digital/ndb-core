@@ -22,6 +22,5 @@ describe("School Entity", () => {
   testEntitySubclass("School", School, {
     _id: "School:some-id",
     name: "Max",
-    searchIndices: ["Max"],
   });
 });

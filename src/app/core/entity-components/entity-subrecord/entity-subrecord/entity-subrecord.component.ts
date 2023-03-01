@@ -3,7 +3,6 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
@@ -94,9 +93,7 @@ export interface TableRow<T extends Entity> {
   ],
   standalone: true,
 })
-export class EntitySubrecordComponent<T extends Entity>
-  implements OnChanges, OnInit
-{
+export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
@@ -145,6 +142,7 @@ export class EntitySubrecordComponent<T extends Entity>
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
+  private updateSubscription: Subscription;
   private mediaSubscription: Subscription = Subscription.EMPTY;
   private screenWidth: ScreenSize | undefined = undefined;
 
@@ -218,31 +216,6 @@ export class EntitySubrecordComponent<T extends Entity>
       .map((record) => ({ record }));
   }
 
-  ngOnInit() {
-    if (this.entityConstructorIsAvailable()) {
-      this.entityMapper
-        .receiveUpdates(this.getEntityConstructor())
-        .pipe(untilDestroyed(this))
-        .subscribe(({ entity, type }) => {
-          if (type === "new") {
-            this.addToTable(entity);
-          } else if (type === "remove") {
-            this.removeFromDataTable(entity);
-          } else if (
-            type === "update" &&
-            !this._records.find((rec) => rec.getId() === entity.getId())
-          ) {
-            this.addToTable(entity);
-          }
-
-          if (!this.predicate(entity)) {
-            // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
-            setTimeout(() => this.initDataSource(), 5000);
-          }
-        });
-    }
-  }
-
   private entityConstructorIsAvailable(): boolean {
     return this._records.length > 0 || !!this.newRecordFactory;
   }
@@ -281,6 +254,7 @@ export class EntitySubrecordComponent<T extends Entity>
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
     }
+    this.listenToEntityUpdates();
   }
 
   private initFormGroups() {
@@ -298,7 +272,7 @@ export class EntitySubrecordComponent<T extends Entity>
   }
 
   private sortDefault() {
-    if (!this.sort || this.sort.active) {
+    if (!this.sort || this._columns.length === 0 || this.sort.active) {
       // do not overwrite existing sort
       return;
     }
@@ -332,6 +306,31 @@ export class EntitySubrecordComponent<T extends Entity>
     }
 
     return { active: sortBy, direction: sortDirection };
+  }
+
+  private listenToEntityUpdates() {
+    if (!this.updateSubscription && this.entityConstructorIsAvailable()) {
+      this.updateSubscription = this.entityMapper
+        .receiveUpdates(this.getEntityConstructor())
+        .pipe(untilDestroyed(this))
+        .subscribe(({ entity, type }) => {
+          if (type === "new") {
+            this.addToTable(entity);
+          } else if (type === "remove") {
+            this.removeFromDataTable(entity);
+          } else if (
+            type === "update" &&
+            !this._records.find((rec) => rec.getId() === entity.getId())
+          ) {
+            this.addToTable(entity);
+          }
+
+          if (!this.predicate(entity)) {
+            // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
+            setTimeout(() => this.initDataSource(), 5000);
+          }
+        });
+    }
   }
 
   edit(row: TableRow<T>) {
