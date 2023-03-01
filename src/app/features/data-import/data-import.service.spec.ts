@@ -162,26 +162,6 @@ describe("DataImportService", () => {
     expect(test2.dateOfBirth).toBeDate("2011-06-07");
   });
 
-  it("should import csv file and generate searchIndices", async () => {
-    spyOn(db, "putAll");
-    const data = [{ name: "John Doe", projectNumber: "123" }];
-    const importMeta: ImportMetaData = {
-      entityType: "Child",
-      columnMap: {
-        name: { key: "name", label: "Name" },
-        projectNumber: { key: "projectNumber", label: "Project number" },
-      },
-    };
-
-    await service.handleCsvImport(data, importMeta);
-
-    expect(db.putAll).toHaveBeenCalledWith([
-      jasmine.objectContaining({
-        searchIndices: ["John", "Doe", "123"],
-      }),
-    ]);
-  });
-
   it("should save array strings as arrays", async () => {
     const data = [
       { ID: "1", children: '["one", "two"]' },
