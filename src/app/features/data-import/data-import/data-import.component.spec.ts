@@ -1,4 +1,4 @@
-import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
 import { DownloadService } from "../../../core/export/download-service/download.service";
@@ -70,7 +70,7 @@ describe("DataImportComponent", () => {
     expect(component.transactionIDForm).not.toBeEnabled();
   });
 
-  it("should only show properties that have not been used yet", fakeAsync(() => {
+  it("should only show properties that have not been used yet", () => {
     mockCsvFileLoaded();
     component.entityForm.patchValue("Child");
     component.entitySelectionChanged();
@@ -83,7 +83,7 @@ describe("DataImportComponent", () => {
     component.selectOption("Project", "PN");
     component.processChange("", "Project");
     expect(component.filteredProperties.value).toEqual([]);
-  }));
+  });
 
   it("should initialize forms when loading a config", async () => {
     mockCsvFileLoaded();
