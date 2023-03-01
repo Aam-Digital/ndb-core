@@ -5,7 +5,7 @@ import { ConfirmationDialogService } from "../../core/confirmation-dialog/confir
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
-import { Entity } from "../../core/entity/model/entity";
+import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { dateEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date";
 import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-only";
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
@@ -13,6 +13,11 @@ import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
 import { isArrayDataType } from "../../core/entity-components/entity-utils/entity-utils";
+import { School } from "../../child-dev-project/schools/model/school";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { Child } from "app/child-dev-project/children/model/child";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 /**
  * This service handels the parsing of CSV files and importing of data
@@ -26,13 +31,34 @@ export class DataImportService {
     dateWithAgeEntitySchemaDatatype,
   ].map((dataType) => dataType.name);
 
+  private linkableEntities: {
+    [key: string]: [
+      EntityConstructor,
+      (e: any[], link: string) => Promise<any>
+    ][];
+  } = {
+    [Child.ENTITY_TYPE]: [
+      [RecurringActivity, this.linkToActivity.bind(this)],
+      [School, this.linkToSchool.bind(this)],
+    ],
+  };
+
   constructor(
     private db: Database,
     private backupService: BackupService,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
+    private entityMapper: EntityMapperService
   ) {}
+
+  getLinkableEntityTypes(linkEntity: string): string[] {
+    return (
+      this.linkableEntities[linkEntity]?.map(
+        ([entity]) => entity.ENTITY_TYPE
+      ) ?? []
+    );
+  }
 
   /**
    * Add the data from the loaded file to the database, inserting and updating records.
@@ -93,14 +119,19 @@ export class DataImportService {
     data: any[],
     importMeta: ImportMetaData
   ): Promise<void> {
-    for (const row of data) {
+    const entities = data.map((row) => {
       const entity = this.createEntityWithRowData(row, importMeta);
       if (!entity["_id"]) {
         entity["_id"] = `${importMeta.entityType}:${
           importMeta.transactionId
         }-${uuid().substring(9)}`;
       }
-      await this.db.put(entity, true);
+      return entity;
+    });
+    await this.db.putAll(entities);
+
+    if (importMeta.linkEntity?.id) {
+      await this.linkEntities(entities, importMeta);
     }
   }
 
@@ -112,13 +143,13 @@ export class DataImportService {
       .forEach((col) => {
         const property = importMeta.columnMap[col];
         const propertyValue = this.getPropertyValue(
-          property,
+          property.key,
           row[col],
           importMeta,
-          schema.get(property).dataType
+          schema.get(property.key).dataType
         );
         if (propertyValue !== undefined) {
-          rawEntity[property] = propertyValue;
+          rawEntity[property.key] = propertyValue;
         }
       });
     return rawEntity;
@@ -164,5 +195,30 @@ export class DataImportService {
     } else {
       return undefined;
     }
+  }
+
+  private linkEntities(entities: any[], importMeta: ImportMetaData) {
+    return this.linkableEntities[importMeta.entityType].find(
+      ([type]) => type.ENTITY_TYPE === importMeta.linkEntity.type
+    )[1](entities, importMeta.linkEntity.id);
+  }
+
+  private linkToSchool(entities: any[], link: string) {
+    const relations = entities.map((entity) => {
+      const relation = new ChildSchoolRelation();
+      relation.childId = Entity.extractEntityIdFromId(entity._id);
+      relation.schoolId = link;
+      return relation;
+    });
+    return this.entityMapper.saveAll(relations);
+  }
+
+  private async linkToActivity(entities: any[], link: string) {
+    const activity = await this.entityMapper.load(RecurringActivity, link);
+    const ids = entities.map((entity) =>
+      Entity.extractEntityIdFromId(entity._id)
+    );
+    activity.participants.push(...ids);
+    return this.entityMapper.save(activity);
   }
 }
