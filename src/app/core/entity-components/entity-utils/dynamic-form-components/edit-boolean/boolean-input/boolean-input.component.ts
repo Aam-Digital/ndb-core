@@ -4,6 +4,7 @@ import {
   Optional,
   Self,
   ViewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 import { CustomFormControlDirective } from "../../../../../configurable-enum/basic-autocomplete/custom-form-control.directive";
 import { MatCheckbox, MatCheckboxModule } from "@angular/material/checkbox";
@@ -24,6 +25,8 @@ import { ErrorStateMatcher } from "@angular/material/core";
     { provide: MatFormFieldControl, useExisting: BooleanInputComponent },
   ],
   templateUrl: "./boolean-input.component.html",
+  styleUrls: ["./boolean-input.component.scss"],
+  encapsulation: ViewEncapsulation.None,
 })
 export class BooleanInputComponent extends CustomFormControlDirective<boolean> {
   @ViewChild(MatCheckbox, { static: true }) inputElement: MatCheckbox;
