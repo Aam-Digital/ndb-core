@@ -64,11 +64,6 @@ describe("SearchComponent", () => {
 
     component.formControl.setValue("AB");
     tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
-    expect(component.state).toBe(component.TOO_FEW_CHARACTERS);
-    expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
-
-    component.formControl.setValue("ABC");
-    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
     expect(component.state).toBe(component.NO_RESULTS);
     expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
 
