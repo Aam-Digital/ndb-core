@@ -25,7 +25,7 @@ import {
 } from "@angular/material/autocomplete";
 import { concat, of, skip } from "rxjs";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { filter, map, startWith } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
@@ -73,6 +73,7 @@ export class BasicAutocompleteComponent<O, V = O>
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
+    distinctUntilChanged(),
     map((val) => this.updateAutocomplete(val)),
     startWith([] as SelectableOption<O, V>[])
   );
@@ -142,6 +143,7 @@ export class BasicAutocompleteComponent<O, V = O>
     let filteredOptions = this._options;
     this.showAddOption = false;
     clearTimeout(this.addOptionTimeout);
+    setTimeout(() => (this.showAddOption = false), 100);
     if (inputText) {
       filteredOptions = this._options.filter((option) =>
         option.asString.toLowerCase().includes(inputText.toLowerCase())
