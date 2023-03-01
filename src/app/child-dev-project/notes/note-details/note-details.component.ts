@@ -101,17 +101,15 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    // TODO no deep copy of attendance is made
     this.form = this.entityFormService.createFormGroup(
       this.middleForm.concat(...this.topForm, this.bottomForm, {
         id: "childrenAttendance",
       }),
       this.entity
     );
-    this.tmpEntity = this.entity;
+    this.tmpEntity = this.entity.copy();
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      const dynamicConstructor: any = this.entity.getConstructor();
-      this.tmpEntity = Object.assign(new dynamicConstructor(), value);
+      this.tmpEntity = Object.assign(this.tmpEntity, value);
     });
   }
 

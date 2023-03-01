@@ -93,6 +93,7 @@
   ></app-entity-form>
 
   <div *ngIf="form.get('category').value?.isMeeting">
+    <!--    TODO this should use form control -->
     <app-child-meeting-note-attendance
       [mobile]="mobile"
       [entity]="tmpEntity"

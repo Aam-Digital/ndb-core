@@ -7,7 +7,6 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
-import { Note } from "../../../child-dev-project/notes/model/note";
 import { omit } from "lodash-es";
 
 /**
@@ -95,17 +94,10 @@ export class EntityFormService {
     this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
     const formConfig = {};
     const entitySchema = entity.getSchema();
-    const copy = entity.copy() as any as Note;
-    console.log(
-      "note",
-      entity,
-      copy,
-      copy["childrenAttendance"] === entity["childrenAttendance"]
-    );
     formFields
       .filter((formField) => entitySchema.get(formField.id))
       .forEach((formField) => {
-        formConfig[formField.id] = [copy[formField.id]];
+        formConfig[formField.id] = [entity[formField.id]];
         if (formField.validators) {
           const validators = this.dynamicValidator.buildValidators(
             formField.validators
