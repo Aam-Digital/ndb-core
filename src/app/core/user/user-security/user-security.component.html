@@ -1,6 +1,7 @@
 <em *ngIf="!userIsPermitted" i18n="Placeholder text when permissions are missing">
   You account does not have the required permissions to see this page.
 </em>
+
 <div *ngIf="userIsPermitted" class="flex-column">
   <div *ngIf="!user" class="buttons-wrapper align-self-start">
     <p i18n="notice about user without account" class="field-hint field-warning">
@@ -68,6 +69,13 @@
     </button>
   </div>
 
+  <p
+    *ngIf="user && !user.enabled"
+    i18n="Hint in user account page"
+    class="field-hint field-warning"
+  >
+    User is currently disabled and will not be able to login to the app
+  </p>
   <form [formGroup]="form">
     <div>
       <mat-form-field>
