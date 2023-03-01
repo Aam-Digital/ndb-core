@@ -10,7 +10,6 @@ import { Child } from "../../children/model/child";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { FormDialogWrapperComponent } from "../../../core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { DatePipe, NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -45,7 +44,6 @@ import { AlertService } from "../../../core/alerts/alert.service";
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
   imports: [
-    FormDialogWrapperComponent,
     ChildMeetingNoteAttendanceComponent,
     EntityFormComponent,
     DynamicComponentDirective,

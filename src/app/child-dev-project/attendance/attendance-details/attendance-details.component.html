@@ -15,113 +15,110 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<app-form-dialog-wrapper #dialogForm [entity]="entity" [readonly]="true">
-  <h1 mat-dialog-title>
-    <app-dialog-close mat-dialog-close></app-dialog-close>
-    {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
-    {{ entity.periodTo | date: "shortDate" }}
-  </h1>
-
-  <form #entityForm="ngForm">
-    <div
-      class="summary w-{{ entity.getWarningLevel() }}"
-      i18n="
+<h1 mat-dialog-title>
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+  {{ entity?.activity?.title }}: {{ entity.periodFrom | date: "shortDate" }} -
+  {{ entity.periodTo | date: "shortDate" }}
+</h1>
+<div mat-dialog-content>
+  <div
+    class="summary w-{{ entity.getWarningLevel() }}"
+    i18n="
         Attendance|Attendance of a child (in percent) or the average of the
         event (in percent)
       "
-    >
-      Attendance:
-      {{
-      (forChild
-          ? entity?.getAttendancePercentage(forChild)
-          : entity?.getAttendancePercentageAverage()
-      ) | percent: "1.0-0"
-      }}
-    </div>
+  >
+    entity:
+    {{
+    (forChild
+        ? entity?.getAttendancePercentage(forChild)
+        : entity?.getAttendancePercentageAverage()
+    ) | percent: "1.0-0"
+    }}
+  </div>
 
-    <div class="flex-row flex-wrap gap-regular" *ngIf="forChild">
-      <mat-form-field>
-        <input
-          matInput
-          type="number"
-          i18n-placeholder="days present|How many days a child was present"
-          placeholder="days present"
-          [value]="entity.countEventsPresent(forChild)"
-          readonly
-        />
-      </mat-form-field>
+  <div class="flex-row flex-wrap gap-regular" *ngIf="forChild">
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        i18n-placeholder="days present|How many days a child was present"
+        placeholder="days present"
+        [value]="entity.countEventsPresent(forChild)"
+        readonly
+      />
+    </mat-form-field>
 
-      <mat-form-field>
-        <input
-          matInput
-          type="number"
-          i18n-placeholder="days absent|How many days a child was absent"
-          placeholder="days absent"
-          [value]="entity.countEventsAbsent(forChild)"
-          readonly
-        />
-      </mat-form-field>
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        i18n-placeholder="days absent|How many days a child was absent"
+        placeholder="days absent"
+        [value]="entity.countEventsAbsent(forChild)"
+        readonly
+      />
+    </mat-form-field>
 
-      <mat-form-field>
-        <input
-          matInput
-          type="number"
-          i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
-          placeholder="unknown status"
-          [value]="entity.countEventsWithUnknownStatus(forChild)"
-          readonly
-        />
-      </mat-form-field>
-    </div>
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
+        placeholder="unknown status"
+        [value]="entity.countEventsWithUnknownStatus(forChild)"
+        readonly
+      />
+    </mat-form-field>
+  </div>
 
-    <div class="flex-row flex-wrap gap-regular" *ngIf="!forChild">
-      <mat-form-field>
-        <input
-          matInput
-          type="number"
-          i18n-placeholder="Total present|How many children were present"
-          placeholder="Total present"
-          [value]="entity.countTotalPresent()"
-          readonly
-        />
-      </mat-form-field>
+  <div class="flex-row flex-wrap gap-regular" *ngIf="!forChild">
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        i18n-placeholder="Total present|How many children were present"
+        placeholder="Total present"
+        [value]="entity.countTotalPresent()"
+        readonly
+      />
+    </mat-form-field>
 
-      <mat-form-field>
-        <input
-          matInput
-          type="number"
-          i18n-placeholder="Total absent|How many children were absent"
-          placeholder="Total absent"
-          [value]="entity.countTotalAbsent()"
-          readonly
-        />
-      </mat-form-field>
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        i18n-placeholder="Total absent|How many children were absent"
+        placeholder="Total absent"
+        [value]="entity.countTotalAbsent()"
+        readonly
+      />
+    </mat-form-field>
 
-      <mat-form-field>
-        <input
-          matInput
-          type="number"
-          i18n-placeholder="Total unknown|How many children have an unknown presence or absence status"
-          placeholder="Total unknown"
-          [value]="entity.countEventsWithUnknownStatus()"
-          readonly
-        />
-      </mat-form-field>
-    </div>
+    <mat-form-field>
+      <input
+        matInput
+        type="number"
+        i18n-placeholder="Total unknown|How many children have an unknown presence or absence status"
+        placeholder="Total unknown"
+        [value]="entity.countEventsWithUnknownStatus()"
+        readonly
+      />
+    </mat-form-field>
+  </div>
 
-    <app-entity-subrecord
-      [records]="entity.events"
-      [columns]="eventsColumns"
-      clickMode="none"
-      (rowClick)="showEventDetails($event)"
-      [editable]="false"
-    >
-    </app-entity-subrecord>
+  <app-entity-subrecord
+    [records]="entity.events"
+    [columns]="eventsColumns"
+    clickMode="none"
+    (rowClick)="showEventDetails($event)"
+    [editable]="false"
+  >
+  </app-entity-subrecord>
 
-    <app-attendance-calendar
-      [records]="entity.events"
-      [highlightForChild]="forChild"
-      [activity]="entity.activity"
-    ></app-attendance-calendar>
-  </form>
-</app-form-dialog-wrapper>
+  <app-attendance-calendar
+    [records]="entity.events"
+    [highlightForChild]="forChild"
+    [activity]="entity.activity"
+  ></app-attendance-calendar>
+</div>

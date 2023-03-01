@@ -13,7 +13,6 @@ import { formatPercent, NgIf } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import moment from "moment";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -22,6 +21,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @DynamicComponent("ActivityAttendanceSection")
 @Component({
@@ -88,7 +88,7 @@ export class ActivityAttendanceSectionComponent implements OnChanges {
   constructor(
     private attendanceService: AttendanceService,
     @Inject(LOCALE_ID) private locale: string,
-    private formDialog: FormDialogService
+    private dialog: MatDialog
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -161,8 +161,11 @@ export class ActivityAttendanceSectionComponent implements OnChanges {
   }
 
   showDetails(activity: ActivityAttendance) {
-    this.formDialog.openDialog(AttendanceDetailsComponent, activity, {
-      forChild: this.forChild,
+    this.dialog.open(AttendanceDetailsComponent, {
+      data: {
+        forChild: this.forChild,
+        attendance: activity,
+      },
     });
   }
 
