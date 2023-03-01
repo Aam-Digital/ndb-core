@@ -37,9 +37,19 @@
   >
     Save
   </button>
+  <button
+    *ngIf="detailsRoute"
+    mat-raised-button
+    [routerLink]="detailsRoute"
+    mat-dialog-close
+    [disabled]="form.disabled"
+    i18n="Button to navigate to details page of entity"
+  >
+    Go to details
+  </button>
 
   <button
-    *ngIf="data.entity.isNew"
+    *ngIf="!data.entity.isNew"
     mat-icon-button
     [matMenuTriggerFor]="additional"
   >
