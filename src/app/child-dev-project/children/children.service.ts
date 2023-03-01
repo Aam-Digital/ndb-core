@@ -48,7 +48,7 @@ export class ChildrenService {
         loadedChild.schoolClass = childCurrentSchoolInfo?.schoolClass;
         loadedChild.schoolId = childCurrentSchoolInfo?.schoolId;
       }
-      results.next(loadedChildren);
+      results.next([...loadedChildren]);
       results.complete();
     });
 

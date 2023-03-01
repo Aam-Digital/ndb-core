@@ -195,31 +195,6 @@ export class Entity {
   }
 
   /**
-   * Returns an array of strings by which the entity can be searched.
-   *
-   * By default the parts of the string representation (toString) split at spaces is used if it is present.
-   *
-   * <b>Overwrite this method in subtypes if you want an entity type to be searchable by other properties.</b>
-   */
-  @DatabaseField() get searchIndices(): string[] {
-    if (
-      this.getConstructor().toStringAttributes === Entity.toStringAttributes &&
-      this.toString() === this.entityId
-    ) {
-      // no indices for the default if an entity does not have a human-readable name
-      return [];
-    }
-
-    // default indices generated from toString
-    return this.toString().split(" ");
-  }
-
-  set searchIndices(value) {
-    // do nothing, always generated on the fly
-    // searchIndices is only saved to database so it can be used internally for database indexing
-  }
-
-  /**
    * Check, if this entity is considered active.
    * This is either taken from the property "inactive" (configured) or "active" (not configured).
    * If the property doesn't exist, the default is `true`.
