@@ -11,9 +11,8 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { MatTableModule } from "@angular/material/table";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
-import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
-import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 import { groupBy } from "../../../../utils/utils";
+import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
@@ -25,8 +24,7 @@ import { groupBy } from "../../../../utils/utils";
     MatTableModule,
     FontAwesomeModule,
     Angulartics2Module,
-    DashboardWidgetComponent,
-    WidgetContentComponent,
+    DashboardListWidgetComponent,
   ],
   standalone: true,
 })
@@ -43,7 +41,6 @@ export class EntityCountDashboardComponent
 
   totalEntities: number;
   entityGroupCounts: { label: string; value: number; id: string }[] = [];
-  loading = true;
   label = Child.labelPlural;
   entityIcon: IconName = Child.icon;
 
@@ -85,7 +82,6 @@ export class EntityCountDashboardComponent
         id: group?.["id"] || label,
       };
     });
-    this.loading = false;
   }
 }
 

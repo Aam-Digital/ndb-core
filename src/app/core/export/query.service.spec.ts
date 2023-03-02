@@ -618,6 +618,12 @@ describe("QueryService", () => {
     expect(result).toEqual([maleChild.gender]);
   });
 
+  it("does not throw an error if no query is provided", () => {
+    return expectAsync(
+      service.queryData(undefined, new Date(), new Date())
+    ).toBeResolvedTo({});
+  });
+
   async function createChild(
     gender: "M" | "F" = "F",
     religion?: "muslim" | "christian"
