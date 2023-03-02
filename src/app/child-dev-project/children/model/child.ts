@@ -57,6 +57,7 @@ export class Child extends Entity {
   @DatabaseField({
     label: $localize`:Label for the project number of a child:Project Number`,
     labelShort: $localize`:Short label for the project number:PN`,
+    searchable: true,
   })
   projectNumber: string;
 
@@ -135,19 +136,4 @@ export class Child extends Entity {
       super.isActive
     );
   }
-
-  /**
-   * @override see {@link Entity}
-   */
-  @DatabaseField() get searchIndices(): string[] {
-    let indices = [];
-
-    indices = indices.concat(this.toString().split(" "));
-    if (this.projectNumber !== undefined && this.projectNumber !== null) {
-      indices.push(this.projectNumber);
-    }
-    return indices;
-  }
-
-  set searchIndices(value) {}
 }

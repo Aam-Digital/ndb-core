@@ -2,6 +2,7 @@
   <button
     *ngIf="form?.enabled"
     mat-raised-button
+    color="accent"
     (click)="saveClicked()"
     i18n="Save button for forms"
   >
@@ -10,7 +11,7 @@
 
   <button
     *ngIf="form?.enabled"
-    mat-raised-button
+    mat-stroked-button
     (click)="cancelClicked()"
     i18n="Cancel button for forms"
   >
