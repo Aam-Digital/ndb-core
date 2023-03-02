@@ -1,7 +1,8 @@
 describe("Scenario: Marking a child as dropout - E2E test", function () {
   before("GIVEN I am on the details page of a specific child", function () {
-    // go to the url with the Child
-    cy.visit("child/1");
+    // go to a child
+    cy.visit("child");
+    cy.get("tr").eq(2).click();
     // save the name of this Child to the variable
     cy.get(".mat-title > .remove-margin-bottom").invoke("text").as("childName");
   });
@@ -31,7 +32,7 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
 
   it("AND I should see the child when I activate the 'inactive' filter", function () {
     // click on the button with the content "Inactive"
-    cy.get('[ng-reflect-placeholder="isActive"]', { timeout: 10000 }).click();
+    cy.get('[ng-reflect-placeholder="isActive"]').click();
     cy.contains("span", "Inactive").should("be.visible").click();
     // find at this table the name of child and it should exist
     cy.get("table").contains(this.childName.trim()).should("exist");

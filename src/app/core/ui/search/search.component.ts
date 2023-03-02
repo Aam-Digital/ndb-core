@@ -1,12 +1,9 @@
 import { Component, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { from, Observable } from "rxjs";
-import { concatMap, debounceTime, skipUntil, tap } from "rxjs/operators";
-import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
+import { Observable } from "rxjs";
+import { concatMap, debounceTime, tap } from "rxjs/operators";
 import { Router } from "@angular/router";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -15,6 +12,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
 import { DisplayEntityComponent } from "../../entity-components/entity-select/display-entity/display-entity.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { SearchService } from "./search.service";
 
 /**
  * General search box that provides results out of any kind of entities from the system
@@ -43,8 +41,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   standalone: true,
 })
 export class SearchComponent {
-  static INPUT_DEBOUNCE_TIME_MS: number = 400;
-  MIN_CHARACTERS_FOR_SEARCH: number = 3;
+  static INPUT_DEBOUNCE_TIME_MS = 400;
+  MIN_CHARACTERS_FOR_SEARCH = 2;
 
   readonly NOTHING_ENTERED = 0;
   readonly TOO_FEW_CHARACTERS = 1;
@@ -60,15 +58,12 @@ export class SearchComponent {
   results: Observable<Entity[]>;
 
   constructor(
-    private indexingService: DatabaseIndexingService,
     private router: Router,
     private userRoleGuard: UserRoleGuard,
-    private entitySchemaService: EntitySchemaService,
-    private entities: EntityRegistry
+    private searchService: SearchService
   ) {
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
-      skipUntil(this.createSearchIndex()),
       tap((next) => (this.state = this.updateState(next))),
       concatMap((next: string) => this.searchResults(next)),
       untilDestroyed(this)
@@ -94,19 +89,10 @@ export class SearchComponent {
     if (this.state !== this.SEARCH_IN_PROGRESS) {
       return [];
     }
-    const searchTerms = next.toLowerCase().split(" ");
-    const entities = await this.indexingService.queryIndexRaw(
-      "search_index/by_name",
-      {
-        startkey: searchTerms[0],
-        endkey: searchTerms[0] + "\ufff0",
-        include_docs: true,
-      }
-    );
-    const filtered = this.prepareResults(entities.rows, searchTerms);
-    const uniques = this.uniquify(filtered);
-    this.state = uniques.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
-    return uniques;
+    const entities = await this.searchService.getSearchResults(next);
+    const filtered = this.prepareResults(entities);
+    this.state = filtered.length === 0 ? this.NO_RESULTS : this.SHOW_RESULTS;
+    return filtered;
   }
 
   async clickOption(optionElement) {
@@ -126,68 +112,9 @@ export class SearchComponent {
     return /^[a-zA-Z]+|\d+$/.test(searchText);
   }
 
-  private createSearchIndex(): Observable<void> {
-    // `emit(x)` to add x as a key to the index that can be searched
-    const searchMapFunction = `
-      (doc) => {
-        if (doc.hasOwnProperty("searchIndices")) {
-           doc.searchIndices.forEach(word => emit(word.toString().toLowerCase()));
-        }
-      }`;
-
-    const designDoc = {
-      _id: "_design/search_index",
-      views: {
-        by_name: {
-          map: searchMapFunction,
-        },
-      },
-    };
-
-    // TODO move this to a service so it is not executed whenever a user logs in
-    return from(this.indexingService.createIndex(designDoc));
-  }
-
-  private prepareResults(
-    rows: [{ key: string; id: string; doc: object }],
-    searchTerms: string[]
-  ): Entity[] {
-    return rows
-      .map((doc) => this.transformDocToEntity(doc))
-      .filter((entity) =>
-        this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route)
-      )
-      .filter((entity) =>
-        this.containsSecondarySearchTerms(entity, searchTerms)
-      );
-  }
-
-  private containsSecondarySearchTerms(
-    entity: Entity,
-    searchTerms: string[]
-  ): boolean {
-    const searchIndices = entity.searchIndices.join(" ").toLowerCase();
-    return searchTerms.every((s) => searchIndices.includes(s));
-  }
-
-  private uniquify(entities: Entity[]): Entity[] {
-    const uniques = new Map<string, Entity>();
-    entities.forEach((e) => {
-      uniques.set(e.getId(), e);
-    });
-    return [...uniques.values()];
-  }
-
-  private transformDocToEntity(doc: {
-    key: string;
-    id: string;
-    doc: object;
-  }): Entity {
-    const ctor = this.entities.get(Entity.extractTypeFromId(doc.id));
-    const entity = doc.id ? new ctor(doc.id) : new ctor();
-    if (doc.doc) {
-      this.entitySchemaService.loadDataIntoEntity(entity, doc.doc);
-    }
-    return entity;
+  private prepareResults(entities: Entity[]): Entity[] {
+    return entities.filter((entity) =>
+      this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route)
+    );
   }
 }
