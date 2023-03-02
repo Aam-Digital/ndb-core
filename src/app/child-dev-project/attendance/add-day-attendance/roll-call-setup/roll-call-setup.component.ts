@@ -112,6 +112,10 @@ export class RollCallSetupComponent implements OnInit {
           (a) => a.assignedTo.length === 0
         );
       }
+      if (this.visibleActivities.length === 0) {
+        this.visibleActivities = this.allActivities;
+        this.showingAll = true;
+      }
     }
 
     const newEvents = await Promise.all(

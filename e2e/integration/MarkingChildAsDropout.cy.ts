@@ -14,6 +14,8 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
     cy.get(".form-buttons-wrapper:visible").contains("button", "Edit").click();
     // select today as the dropout date (which is initially marked as active)
     cy.get('[aria-label="Open calendar"]').filter(":visible").click();
+    // without wait, sometimes the panel is still open after clicking
+    cy.wait(100);
     cy.get(".mat-calendar-body-active:visible").click();
     // click on button with the content "Save"
     cy.get(".form-buttons-wrapper:visible").contains("button", "Save").click();
