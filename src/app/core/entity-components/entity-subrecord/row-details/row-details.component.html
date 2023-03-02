@@ -31,11 +31,20 @@
 <mat-dialog-actions>
   <button
     mat-raised-button
+    color="accent"
     (click)="save()"
     [disabled]="form.disabled"
     i18n="Save button for forms"
   >
     Save
+  </button>
+
+  <button
+    mat-stroked-button
+    mat-dialog-close
+    i18n="Generic cancel button"
+  >
+    Cancel
   </button>
 
   <button
