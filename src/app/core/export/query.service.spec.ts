@@ -621,7 +621,7 @@ describe("QueryService", () => {
   it("does not throw an error if no query is provided", () => {
     return expectAsync(
       service.queryData(undefined, new Date(), new Date())
-    ).toBeResolved();
+    ).toBeResolvedTo({});
   });
 
   async function createChild(
