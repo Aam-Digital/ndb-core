@@ -10,12 +10,12 @@ import { RecurringActivity } from "../../../child-dev-project/attendance/model/r
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { ConfigService } from "../../../core/config/config.service";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { ConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum.service";
+import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
 
 const addressSchema: EntitySchemaField = {
   label: "Address",
@@ -73,12 +73,12 @@ export default {
           provide: EntitySchemaService,
           useFactory: (
             entityMapper: EntityMapperService,
-            configService: ConfigService
+            ability: EntityAbility
           ) => {
             const schemaService = new EntitySchemaService();
             schemaService.registerSchemaDatatype(
               new ConfigurableEnumDatatype(
-                new ConfigurableEnumService(entityMapper, configService)
+                new ConfigurableEnumService(entityMapper, ability)
               )
             );
             return schemaService;

@@ -37,8 +37,6 @@ describe("Child", () => {
     dropoutDate: new Date("2022-03-31"),
     dropoutType: "unknown",
     dropoutRemarks: "no idea what happened",
-
-    searchIndices: ["Max", "projectNumber01"],
   });
 
   it("should determine isActive based on inferred state", () => {

@@ -1,15 +1,12 @@
-<app-dashboard-widget
+<app-dashboard-list-widget
   icon="external-link-alt"
   theme="general"
   subtitle="Quick actions"
   i18n-subtitle="Title of dashboard widget that shows a list of certain actions a user can click on"
+  [entries]="shortcuts"
 >
-  <app-widget-content class="table-wrapper">
-    <table
-      mat-table
-      [dataSource]="tableDataSource"
-      aria-label="Quick actions"
-    >
+  <div class="table-container">
+    <table mat-table aria-label="Quick actions">
       <!-- Table header only for assistive technologies like screen readers -->
       <tr hidden>
         <th scope="col">Icon</th>
@@ -32,5 +29,5 @@
         [routerLink]="row.link"
       ></tr>
     </table>
-  </app-widget-content>
-</app-dashboard-widget>
+  </div>
+</app-dashboard-list-widget>
