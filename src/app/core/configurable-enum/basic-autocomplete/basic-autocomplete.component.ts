@@ -18,7 +18,7 @@ import {
   NgForm,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
+import { MatInput, MatInputModule } from "@angular/material/input";
 import {
   MatAutocompleteModule,
   MatAutocompleteTrigger,
@@ -62,7 +62,10 @@ export class BasicAutocompleteComponent<O, V = O>
   implements OnChanges
 {
   @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
-  @ViewChild("inputElement") inputElement: ElementRef<HTMLInputElement>;
+  // `_elementRef` is protected in `MapInput`
+  @ViewChild(MatInput, { static: true }) inputElement: MatInput & {
+    _elementRef: ElementRef<HTMLElement>;
+  };
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   @Input() valueMapper = (option: O) => option as unknown as V;
@@ -74,7 +77,7 @@ export class BasicAutocompleteComponent<O, V = O>
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
     map((val) => this.updateAutocomplete(val)),
-    startWith([])
+    startWith([] as SelectableOption<O, V>[])
   );
   showAddOption = false;
   private addOptionTimeout: any;
@@ -280,7 +283,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
   onContainerClick(event: MouseEvent) {
     if ((event.target as Element).tagName.toLowerCase() != "input") {
-      this.inputElement.nativeElement.focus();
+      this.inputElement.focus();
     }
   }
 

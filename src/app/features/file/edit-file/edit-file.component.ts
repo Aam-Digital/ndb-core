@@ -110,7 +110,7 @@ export class EditFileComponent extends EditComponent<string> {
   }
 
   fileClicked() {
-    if (this.formControl.value) {
+    if (this.initialValue && this.formControl.value === this.initialValue) {
       this.fileService.showFile(this.entity, this.formControlName);
     }
   }

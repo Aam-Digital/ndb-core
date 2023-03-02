@@ -30,6 +30,7 @@ export abstract class CustomFormControlDirective<T>
   @Input() placeholder: string;
   @Input() required = false;
 
+  abstract inputElement: { _elementRef: ElementRef<HTMLElement> };
   stateChanges = new Subject<void>();
   focused = false;
   touched = false;
@@ -98,10 +99,10 @@ export abstract class CustomFormControlDirective<T>
   }
 
   setDescribedByIds(ids: string[]) {
-    const controlElement = this.elementRef.nativeElement.querySelector(
-      ".autocomplete-input"
-    )!;
-    controlElement.setAttribute("aria-describedby", ids.join(" "));
+    this.inputElement._elementRef.nativeElement.setAttribute(
+      "aria-describedby",
+      ids.join(" ")
+    );
   }
 
   abstract onContainerClick(event: MouseEvent);
