@@ -9,7 +9,7 @@
 >
   <app-widget-content>
     <ng-container *ngIf="dataSource.data.length > 0">
-      <ng-content> </ng-content>
+      <ng-content></ng-content>
     </ng-container>
 
     <div *ngIf="dataSource.data.length === 0" class="headline">
@@ -22,7 +22,7 @@
 
     <mat-paginator
       #paginator
-      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
+      [style.display]="dataSource.data.length <= 5 ? 'none' : ''"
       [pageSizeOptions]="[5]"
       [hidePageSize]="true"
     >

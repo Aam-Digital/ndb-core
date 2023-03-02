@@ -31,6 +31,7 @@ describe("RollCallSetupComponent", () => {
       "createEventForActivity",
     ]);
     mockAttendanceService.getEventsWithUpdatedParticipants.and.resolveTo([]);
+    mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
 
     TestBed.configureTestingModule({
       imports: [RollCallSetupComponent, MockedTestingModule.withState()],
@@ -80,5 +81,18 @@ describe("RollCallSetupComponent", () => {
     flush();
 
     expect(component.existingEvents).toHaveSize(1);
+  }));
+
+  it("should show all activities if none are assigned to the current user or unassigned", fakeAsync(() => {
+    const activity = new RecurringActivity();
+    activity.assignedTo = ["otherUser"];
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "loadType").and.resolveTo([activity]);
+
+    component.ngOnInit();
+    flush();
+
+    expect(component.filteredExistingEvents).toHaveSize(1);
+    expect(component.showingAll).toBeTrue();
   }));
 });

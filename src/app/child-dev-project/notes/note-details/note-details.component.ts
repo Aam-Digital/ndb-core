@@ -30,6 +30,7 @@ import { EntitySelectComponent } from "../../../core/entity-components/entity-se
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { MatDialogModule } from "@angular/material/dialog";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -58,6 +59,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
     MatCheckboxModule,
     NgIf,
     ChildMeetingNoteAttendanceComponent,
+    MatDialogModule,
   ],
   standalone: true,
 })
