@@ -51,29 +51,6 @@ describe("Entity", () => {
     expect(data.otherText).toBeUndefined();
   });
 
-  it("rawData() includes searchIndices containing toString parts", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-    entity.toString = () => entity["name"];
-    entity["name"] = "John Doe";
-
-    const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(data.searchIndices).toBeDefined();
-    expect(data.searchIndices).toContain("John");
-    expect(data.searchIndices).toContain("Doe");
-  });
-
-  it("should not generate searchIndices for entities without a custom toString method", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-    entity["name"] = "John Doe";
-
-    const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(data.searchIndices).toEqual([]);
-  });
-
   it("can perform a shallow copy of itself", () => {
     const id = "t1";
     const entity: Entity = new Entity(id);
@@ -176,9 +153,6 @@ export function testEntitySubclass(
       JSON.parse(JSON.stringify(expectedDatabaseFormat))
     );
     const rawData = schemaService.transformEntityToDatabaseFormat(entity);
-    if (rawData.searchIndices.length === 0) {
-      delete rawData.searchIndices;
-    }
     expect(rawData).toEqual(expectedDatabaseFormat);
   }));
 }

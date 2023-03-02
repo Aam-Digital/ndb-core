@@ -1,7 +1,7 @@
 @use "@angular/material" as mat;
 
 /* display disabled form values in black for better readability as we disable forms by default */
-.mat-mdc-select-disabled .mat-mdc-select-value, .mat-mdc-input-element:disabled {
+.mat-mdc-input-element:disabled, .mat-mdc-select-disabled .mat-mdc-select-value, .mat-mdc-checkbox-disabled label {
   color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text) !important;
   -webkit-text-fill-color: black;
   opacity: 1;
