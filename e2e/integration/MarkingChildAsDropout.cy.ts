@@ -1,7 +1,8 @@
 describe("Scenario: Marking a child as dropout - E2E test", function () {
   before("GIVEN I am on the details page of a specific child", function () {
-    // go to the url with the Child
-    cy.visit("child/1");
+    // go to a child
+    cy.visit("child");
+    cy.get("tr").eq(2).click();
     // save the name of this Child to the variable
     cy.get(".mat-title > .remove-margin-bottom").invoke("text").as("childName");
   });
@@ -15,9 +16,7 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
     cy.get('[aria-label="Open calendar"]').filter(":visible").click();
     cy.get(".mat-calendar-body-active:visible").click();
     // click on button with the content "Save"
-    cy.get(".form-buttons-wrapper:visible", { timeout: 10000 })
-      .contains("button", "Save")
-      .click();
+    cy.get(".form-buttons-wrapper:visible").contains("button", "Save").click();
   });
 
   it("THEN I should not see this child in the list of all children at first", function () {
