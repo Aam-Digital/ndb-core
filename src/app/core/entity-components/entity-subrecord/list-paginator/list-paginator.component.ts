@@ -148,7 +148,9 @@ export class ListPaginatorComponent<E>
   private async ensureUserIsLoaded(): Promise<boolean> {
     if (!this.user) {
       const currentUser = this.sessionService.getCurrentUser();
-      this.user = await this.entityMapperService.load(User, currentUser.name);
+      this.user = await this.entityMapperService
+        .load(User, currentUser.name)
+        .catch(() => undefined);
     }
     return !!this.user;
   }
