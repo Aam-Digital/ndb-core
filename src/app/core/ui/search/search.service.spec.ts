@@ -9,12 +9,18 @@ import { Database } from "../../database/database";
 
 describe("SearchService", () => {
   let service: SearchService;
+  const childToStringBefore = Child.toStringAttributes;
+  const csrToStringBefore = ChildSchoolRelation.toStringAttributes;
 
   beforeEach(() => {
     TestBed.configureTestingModule({ imports: [DatabaseTestingModule] });
   });
 
-  afterEach(() => TestBed.inject(Database).destroy());
+  afterEach(() => {
+    Child.toStringAttributes = childToStringBefore;
+    ChildSchoolRelation.toStringAttributes = csrToStringBefore;
+    return TestBed.inject(Database).destroy();
+  });
 
   it("should allow to search for toStringAttributes that are not the entityId", async () => {
     ChildSchoolRelation.toStringAttributes = ["entityId"];
