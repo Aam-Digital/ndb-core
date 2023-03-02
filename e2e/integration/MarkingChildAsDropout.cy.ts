@@ -13,8 +13,11 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
     // click on button with the content "Edit" in Dropout menu.
     cy.get(".form-buttons-wrapper:visible").contains("button", "Edit").click();
     // select today as the dropout date (which is initially marked as active)
-    cy.get('[aria-label="Open calendar"]').filter(":visible").click();
-    cy.get(".mat-calendar-body-active:visible").click();
+    cy.get('[aria-label="Open calendar"]')
+      .filter(":visible")
+      .click()
+      .get(".mat-calendar-body-active:visible")
+      .click();
     // click on button with the content "Save"
     cy.get(".form-buttons-wrapper:visible").contains("button", "Save").click();
   });
