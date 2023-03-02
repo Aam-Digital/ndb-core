@@ -5,8 +5,6 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { Entity } from "../../entity/model/entity";
-import { ConfigurableEnumService } from "../configurable-enum.service";
-import { ConfigurableEnum } from "../configurable-enum";
 
 describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;
@@ -15,12 +13,6 @@ describe("EditConfigurableEnumComponent", () => {
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [EditConfigurableEnumComponent, MockedTestingModule.withState()],
-      providers: [
-        {
-          provide: ConfigurableEnumService,
-          useValue: { getEnum: () => new ConfigurableEnum() },
-        },
-      ],
     }).compileComponents();
   });
 

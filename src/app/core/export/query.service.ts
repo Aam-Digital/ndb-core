@@ -1,8 +1,5 @@
 import { Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
-import { Child } from "../../child-dev-project/children/model/child";
-import { School } from "../../child-dev-project/schools/model/school";
-import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { EntityMapperService } from "../entity/entity-mapper.service";
@@ -11,6 +8,7 @@ import { ChildrenService } from "../../child-dev-project/children/children.servi
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import jsonQuery from "json-query";
+import { EntityRegistry } from "../entity/database-entity.decorator";
 
 /**
  * A query service which uses the json-query library (https://github.com/auditassistant/json-query).
@@ -19,15 +17,63 @@ import jsonQuery from "json-query";
   providedIn: "root",
 })
 export class QueryService {
-  private entities: { [type: string]: { [id: string]: Entity } };
-  private dataAvailableFrom: Date;
-  private dataAvailableTo: Date;
+  private entities: { [type: string]: { [id: string]: Entity } } = {};
+
+  /**
+   * A map of information about the loading state of the different entity types
+   * @private
+   */
+  private entityInfo: {
+    [type: string]: {
+      /**
+       * A optional function which can be used to load this entity that might use a start and end date
+       * @param form
+       * @param to
+       */
+      dataFunction?: (form, to) => Promise<Entity[]>;
+      /**
+       * Whether already all entities of this type have been loaded
+       */
+      allLoaded?: boolean;
+      /**
+       * A certain range in which entities of this type have been loaded
+       */
+      rangeLoaded?: { from: Date; to: Date };
+      /**
+       * Whether updates of this entity are listened to
+       */
+      updating?: boolean;
+    };
+  } = {
+    Note: {
+      dataFunction: (from, to) =>
+        this.childrenService.getNotesInTimespan(from, to),
+    },
+    EventNote: {
+      dataFunction: (from, to) =>
+        this.attendanceService.getEventsOnDate(from, to),
+    },
+  };
+
+  /**
+   * A list of further aliases for which a certain entity needs to be loaded.
+   * This can be necessary if a function requires a certain entity to be present.
+   * @private
+   */
+  private queryStringMap: [string, EntityConstructor][] = [
+    ["getAttendanceArray\\(true\\)", ChildSchoolRelation],
+  ];
 
   constructor(
     private entityMapper: EntityMapperService,
     private childrenService: ChildrenService,
-    private attendanceService: AttendanceService
-  ) {}
+    private attendanceService: AttendanceService,
+    entityRegistry: EntityRegistry
+  ) {
+    entityRegistry.forEach((entity, name) =>
+      this.queryStringMap.push([name, entity])
+    );
+  }
 
   /**
    * Runs the query on the passed data object
@@ -44,19 +90,10 @@ export class QueryService {
     to?: Date,
     data?: any
   ): Promise<any> {
-    if (!from) {
-      from = new Date(0);
-    }
-    if (!to) {
-      to = new Date();
-    }
-    if (
-      !this.dataAvailableFrom ||
-      from < this.dataAvailableFrom ||
-      to > this.dataAvailableTo
-    ) {
-      await this.loadData(from, to);
-    }
+    from = from ?? new Date(0);
+    to = to ?? new Date();
+
+    await this.cacheRequiredData(query, from, to);
 
     if (!data) {
       data = this.entities;
@@ -82,33 +119,67 @@ export class QueryService {
     }).value;
   }
 
-  private async loadData(from: Date, to: Date): Promise<void> {
-    const entityClasses: [EntityConstructor<any>, () => Promise<Entity[]>][] = [
-      [Child, () => this.entityMapper.loadType(Child)],
-      [School, () => this.entityMapper.loadType(School)],
-      [RecurringActivity, () => this.entityMapper.loadType(RecurringActivity)],
-      [
-        ChildSchoolRelation,
-        () => this.entityMapper.loadType(ChildSchoolRelation),
-      ],
-      [Note, () => this.childrenService.getNotesInTimespan(from, to)],
-      [EventNote, () => this.attendanceService.getEventsOnDate(from, to)],
-    ];
-
-    this.entities = {};
-
-    const dataPromises = [];
-    for (const entityLoader of entityClasses) {
-      const promise = entityLoader[1]().then((loadedEntities) =>
-        this.setEntities(entityLoader[0], loadedEntities)
-      );
-      dataPromises.push(promise);
-    }
-
+  private async cacheRequiredData(query: string, from: Date, to: Date) {
+    const uncachedEntities = this.getUncachedEntities(query, from, to);
+    const dataPromises = uncachedEntities.map((entity) => {
+      const info = this.entityInfo[entity.ENTITY_TYPE];
+      if (info?.dataFunction) {
+        return info.dataFunction(from, to).then((loadedEntities) => {
+          this.setEntities(entity, loadedEntities);
+          info.rangeLoaded = { from, to };
+        });
+      } else {
+        return this.entityMapper.loadType(entity).then((loadedEntities) => {
+          this.setEntities(entity, loadedEntities);
+          this.entityInfo[entity.ENTITY_TYPE] = { allLoaded: true };
+        });
+      }
+    });
     await Promise.all(dataPromises);
+    this.applyEntityUpdates(uncachedEntities);
+  }
 
-    this.dataAvailableFrom = from;
-    this.dataAvailableTo = to;
+  private applyEntityUpdates(uncachedEntities: EntityConstructor[]) {
+    uncachedEntities
+      .filter(({ ENTITY_TYPE }) => !this.entityInfo[ENTITY_TYPE].updating)
+      .forEach(({ ENTITY_TYPE }) => {
+        this.entityInfo[ENTITY_TYPE].updating = true;
+        this.entityMapper
+          .receiveUpdates(ENTITY_TYPE)
+          .subscribe(({ entity, type }) => {
+            if (type === "remove") {
+              delete this.entities[ENTITY_TYPE][entity.getId(true)];
+            } else {
+              this.entities[ENTITY_TYPE][entity.getId(true)] = entity;
+            }
+          });
+      });
+  }
+
+  /**
+   * Get entities that are referenced in the query string and are not sufficiently cached.
+   * @param query
+   * @param from
+   * @param to
+   * @private
+   */
+  private getUncachedEntities(query: string, from: Date, to: Date) {
+    return this.queryStringMap
+      .filter(([matcher]) =>
+        // matches query string without any alphanumeric characters before or after (e.g. so Child does not match ChildSchoolRelation)
+        query?.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`))
+      )
+      .map(([_, entity]) => entity)
+      .filter((entity) => {
+        const info = this.entityInfo[entity.ENTITY_TYPE];
+        return (
+          info === undefined ||
+          !(
+            info.allLoaded ||
+            (info.rangeLoaded?.from <= from && info.rangeLoaded?.to >= to)
+          )
+        );
+      });
   }
 
   private setEntities<T extends Entity>(

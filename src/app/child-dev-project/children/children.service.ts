@@ -48,7 +48,7 @@ export class ChildrenService {
         loadedChild.schoolClass = childCurrentSchoolInfo?.schoolClass;
         loadedChild.schoolId = childCurrentSchoolInfo?.schoolId;
       }
-      results.next(loadedChildren);
+      results.next([...loadedChildren]);
       results.complete();
     });
 
@@ -100,10 +100,11 @@ export class ChildrenService {
 
   queryActiveRelationsOf(
     queryType: "child" | "school",
-    id: string
+    id: string,
+    date = new Date()
   ): Promise<ChildSchoolRelation[]> {
     return this.queryRelationsOf(queryType, id).then((relations) =>
-      relations.filter((rel) => rel.isActive)
+      relations.filter((rel) => rel.isActiveAt(date))
     );
   }
 

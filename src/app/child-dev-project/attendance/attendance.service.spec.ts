@@ -109,21 +109,22 @@ describe("AttendanceService", () => {
   it("gets events and loads additional participants from linked schools", async () => {
     const linkedSchoolId = "test_school";
     await createChildrenInSchool(linkedSchoolId, ["2", "3"]);
+    const date = new Date();
 
-    const testNoteWithSchool = Note.create(new Date("2021-01-01"));
+    const testNoteWithSchool = Note.create(date);
     testNoteWithSchool.children = ["1", "2"];
     testNoteWithSchool.schools = [linkedSchoolId];
     testNoteWithSchool.category = meetingInteractionCategory;
     await entityMapper.save(testNoteWithSchool);
 
-    const actualEvents = await service.getEventsOnDate(new Date("2021-01-01"));
+    const actualEvents = await service.getEventsWithUpdatedParticipants(date);
     expect(actualEvents).toHaveSize(1);
     expect(actualEvents[0].children).toEqual(
       jasmine.arrayWithExactContents(["1", "2", "3"])
     );
   });
 
-  it("gets active participants and removes those explicitly excluded", async () => {
+  it("should create an event without the excluded participants", async () => {
     const linkedSchoolId = "test_school";
     await createChildrenInSchool(linkedSchoolId, ["excluded", "member"]);
 
@@ -132,10 +133,8 @@ describe("AttendanceService", () => {
     activity.excludedParticipants = ["excluded"];
     activity.participants = ["direct", "excluded"];
 
-    const actualParticipants = await service.getActiveParticipantsOfActivity(
-      activity
-    );
-    expect(actualParticipants).toEqual(
+    const event = await service.createEventForActivity(activity, new Date());
+    expect(event.children).toEqual(
       jasmine.arrayWithExactContents(["member", "direct"])
     );
   });
@@ -286,12 +285,14 @@ describe("AttendanceService", () => {
 
     const directlyAddedChild = new Child();
     activity.participants.push(directlyAddedChild.getId());
+    const date = new Date();
 
-    const event = await service.createEventForActivity(activity, new Date());
+    const event = await service.createEventForActivity(activity, date);
 
     expect(mockQueryRelationsOf).toHaveBeenCalledWith(
       "school",
-      linkedSchool.getId()
+      linkedSchool.getId(),
+      date
     );
     expect(event.children).toHaveSize(2);
     expect(event.children).toContain(directlyAddedChild.getId());

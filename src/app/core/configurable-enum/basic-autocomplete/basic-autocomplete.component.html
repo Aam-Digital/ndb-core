@@ -1,7 +1,6 @@
 <input
   #inputElement
   [formControl]="autocompleteForm"
-  class="autocomplete-input"
   matInput
   style="text-overflow: ellipsis"
   [matAutocomplete]="autoSuggestions"
@@ -18,7 +17,9 @@
     [value]="item"
   >
     <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+    <ng-container *ngIf="!templateRef; else useTemplate">{{ item.asString }}</ng-container>
     <ng-template
+      #useTemplate
       [ngTemplateOutlet]="templateRef"
       [ngTemplateOutletContext]="{ $implicit: item.initial }"
     ></ng-template>
@@ -27,6 +28,7 @@
     *ngIf="createOption && showAddOption && inputElement.value"
     [value]="inputElement.value"
   >
-    <em>Add option</em> {{ inputElement.value }}
+    <em i18n="Label for adding an option in a dropdown|e.g. Add option My new Option">Add
+      option</em> {{ inputElement.value }}
   </mat-option>
 </mat-autocomplete>

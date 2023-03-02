@@ -6,7 +6,7 @@ import {
 } from "../../child-dev-project/children/aser/model/skill-levels";
 import { ConfigurableEnum } from "./configurable-enum";
 import { ConfigurableEnumService } from "./configurable-enum.service";
-import { NEVER, of } from "rxjs";
+import { NEVER } from "rxjs";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
 import { warningLevels } from "../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../features/historical-data/model/rating-answers";
@@ -35,8 +35,10 @@ export function createTestingConfigurableEnumService() {
     {
       receiveUpdates: () => NEVER,
       loadType: () => Promise.resolve(demoEnums),
+      save: () => Promise.resolve(),
     } as any,
-    { configUpdates: of(undefined) } as any
+    { can: () => true } as any
   );
+  service.preLoadEnums();
   return service;
 }
