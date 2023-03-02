@@ -16,7 +16,7 @@
   -->
 
 <app-form-dialog-wrapper #dialogForm [entity]="entity">
-  <h1>{{ entity.date | date }}: {{ entity.subject }}</h1>
+  <h1 mat-dialog-title>{{ entity.date | date }}: {{ entity.subject }}</h1>
 
   <form #entityForm="ngForm" class="flex-column gap-regular">
     <div class="additional-actions-menu">

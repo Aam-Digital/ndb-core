@@ -196,7 +196,7 @@
         <note priority="1" from="description">Alert when selected date is invalid</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call-setup/roll-call-setup.component.ts</context>
-          <context context-type="linenumber">211</context>
+          <context context-type="linenumber">210</context>
         </context-group>
       </trans-unit>
       <trans-unit id="21b16e7ad80f33b5297b549244c29b67f186841b" datatype="html">
@@ -2291,7 +2291,7 @@
         <note priority="1" from="meaning">Placeholder for input to add entities</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/note-details/note-details.component.ts</context>
-          <context context-type="linenumber">120</context>
+          <context context-type="linenumber">122</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-components/entity-select/edit-entity-array/edit-entity-array.component.ts</context>
@@ -3801,7 +3801,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-details/todo-details.component.html</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="eaec1667417cba00cf2c1ba39f1a8238b05735bb" datatype="html">
@@ -4019,11 +4019,11 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">17</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-details/todo-details.component.html</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">22</context>
         </context-group>
       </trans-unit>
       <trans-unit id="34296e9800ffbe3502a716a00baf10266960fd49" datatype="html">
@@ -4222,7 +4222,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
-          <context context-type="linenumber">29</context>
+          <context context-type="linenumber">27</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/recurring-interval/custom-interval/custom-interval.component.html</context>
@@ -4230,17 +4230,17 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-details/todo-details.component.html</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
       <trans-unit id="b861ed5da3dd3eb5d9c310853179eafc152d7b68" datatype="html">
         <source> Delete </source>
         <target state="translated"> Elimina </target>
+        <note priority="1" from="description">Generic delete button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog-wrapper/form-dialog-wrapper.component.html</context>
-          <context context-type="linenumber">45,48</context>
+          <context context-type="linenumber">43</context>
         </context-group>
-        <note priority="1" from="description">Generic delete button</note>
       </trans-unit>
       <trans-unit id="7922101943521622219" datatype="html">
         <source>Save Changes?</source>
@@ -4248,7 +4248,7 @@
         <note priority="1" from="description">Save changes header</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog.service.ts</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5088616963453207820" datatype="html">
@@ -4257,7 +4257,7 @@
         <note priority="1" from="description">Save changes message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/form-dialog/form-dialog.service.ts</context>
-          <context context-type="linenumber">72</context>
+          <context context-type="linenumber">77</context>
         </context-group>
       </trans-unit>
       <trans-unit id="paginator.zeroRange" datatype="html">
@@ -4745,14 +4745,6 @@ Please try again. If the problem persists contact Aam Digital support.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
           <context context-type="linenumber">127</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5186434425571914423" datatype="html">
-        <source>Your password was changed recently. Please retry with your new password!</source>
-        <target state="translated">La tua password è stata modificata di recente. Riprova con la tua nuova password!</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/session-service/synced-session.service.ts</context>
-          <context context-type="linenumber">165,164</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1883557110661036774" datatype="html">
@@ -6251,12 +6243,12 @@ Please try again. If the problem persists contact Aam Digital support.</target>
         </context-group>
         <note priority="1" from="description">todo uncomplete button tooltip</note>
       </trans-unit>
-      <trans-unit id="d089a0d87dda4f936dd6b0df8a374708dd54612a" datatype="html">
-        <source> Creating new item </source>
-        <target state="new"> Creating new item </target>
+      <trans-unit id="b228244581934eb6475c3728996f0c5e629532fc" datatype="html">
+        <source>Creating new item</source>
+        <target state="translated"> Creating new item </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-details/todo-details.component.html</context>
-          <context context-type="linenumber">10,11</context>
+          <context context-type="linenumber">2</context>
         </context-group>
         <note priority="1" from="description">Todo details heading for new record</note>
       </trans-unit>
