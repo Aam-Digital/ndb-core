@@ -110,11 +110,4 @@ describe("ChildrenListComponent", () => {
     expect(component.childrenList).toEqual([child1, child2]);
     expect(component.isLoading).toBeFalse();
   });
-
-  it("should route to the given id", () => {
-    const router = fixture.debugElement.injector.get(Router);
-    spyOn(router, "navigate");
-    component.routeTo("childId");
-    expect(router.navigate).toHaveBeenCalledWith(["/child", "childId"]);
-  });
 });

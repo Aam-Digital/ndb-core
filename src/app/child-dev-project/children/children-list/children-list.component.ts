@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { Child } from "../model/child";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute } from "@angular/router";
 import { ChildrenService } from "../children.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
@@ -16,8 +16,6 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
       [listConfig]="listConfig"
       [isLoading]="isLoading"
       [entityConstructor]="childConstructor"
-      (elementClick)="routeTo($event.getId())"
-      (addNewClick)="routeTo('new')"
     ></app-entity-list>
   `,
   standalone: true,
@@ -31,8 +29,7 @@ export class ChildrenListComponent implements OnInit {
 
   constructor(
     private childrenService: ChildrenService,
-    private route: ActivatedRoute,
-    private router: Router
+    private route: ActivatedRoute
   ) {}
 
   async ngOnInit() {
@@ -41,9 +38,5 @@ export class ChildrenListComponent implements OnInit {
     );
     this.childrenList = await this.childrenService.getChildren();
     this.isLoading = false;
-  }
-
-  routeTo(route: string) {
-    this.router.navigate([Child.route, route]);
   }
 }
