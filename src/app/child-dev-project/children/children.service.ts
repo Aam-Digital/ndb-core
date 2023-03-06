@@ -36,20 +36,15 @@ export class ChildrenService {
    * returns an observable which retrieves children from the database and loads their pictures
    */
   getChildren(): Promise<Child[]> {
-    return this.dbIndexing
-      .queryIndexRaw("childSchoolRelations_index/by_child", {
-        startkey: [`Child:\uffff`],
-        endkey: [`Child:`],
-        include_docs: true,
-        descending: true,
-      })
-      .then((res: PouchDB.Query.Response<any>) => {
+    return this.queryRelations(`${Child.ENTITY_TYPE}:`).then(
+      (res: PouchDB.Query.Response<any>) => {
         // transform key to only have childId
         res.rows.forEach((row) => (row.key = row.key[0]));
         return groupBy(res.rows, "key")
           .map(([_, rows]) => this.extractChildAndSchoolInfo(rows))
           .filter((c) => !!c);
-      });
+      }
+    );
   }
 
   /**
@@ -57,16 +52,7 @@ export class ChildrenService {
    * @param id id of child
    */
   async getChild(id: string): Promise<Child> {
-    const res: PouchDB.Query.Response<any> =
-      await this.dbIndexing.queryIndexRaw(
-        "childSchoolRelations_index/by_child",
-        {
-          startkey: [`Child:${id}\uffff`],
-          endkey: [`Child:${id}`],
-          include_docs: true,
-          descending: true,
-        }
-      );
+    const res = await this.queryRelations(`${Child.ENTITY_TYPE}:${id}`);
     const child = this.extractChildAndSchoolInfo(res.rows);
     if (child) {
       return child;
@@ -75,8 +61,23 @@ export class ChildrenService {
     }
   }
 
+  private async queryRelations(prefix: string) {
+    return await this.dbIndexing.queryIndexRaw(
+      "childSchoolRelations_index/by_child_school",
+      {
+        startkey: [`${prefix}\uffff`],
+        endkey: [`${prefix}`],
+        include_docs: true,
+        descending: true,
+      }
+    );
+  }
+
   private extractChildAndSchoolInfo(rows: any[]) {
-    if (rows.length > 0 && rows[rows.length - 1].id.startsWith("Child:")) {
+    if (
+      rows.length > 0 &&
+      rows[rows.length - 1].id.startsWith(`${Child.ENTITY_TYPE}:`)
+    ) {
       const child = new Child();
       this.entitySchemaService.loadDataIntoEntity(child, rows.pop().doc);
       const relations = this.transformRelations(rows);
@@ -104,12 +105,12 @@ export class ChildrenService {
     const designDoc = {
       _id: "_design/childSchoolRelations_index",
       views: {
-        by_child: {
+        by_child_school: {
           map: `(doc) => {
             if (doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}:")) {
               const start = new Date(doc.start || '3000-01-01').getTime();
-              emit(["Child:" + doc.childId, start]);
-              emit(["School:" + doc.schoolId, start]);
+              emit(["${Child.ENTITY_TYPE}:" + doc.childId, start]);
+              emit(["${School.ENTITY_TYPE}:" + doc.schoolId, start]);
             };
             if (doc._id.startsWith("${Child.ENTITY_TYPE}:") || doc._id.startsWith("${School.ENTITY_TYPE}:")) {
               emit([doc._id]);
@@ -136,20 +137,9 @@ export class ChildrenService {
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
-    const prefixed = Entity.createPrefixedId(
-      queryType === "child" ? "Child" : "School",
-      id
-    );
-    const res: PouchDB.Query.Response<any> =
-      await this.dbIndexing.queryIndexRaw(
-        "childSchoolRelations_index/by_child",
-        {
-          startkey: [`${prefixed}\uffff`],
-          endkey: [`${prefixed}`],
-          include_docs: true,
-          descending: true,
-        }
-      );
+    const type = queryType === "child" ? Child.ENTITY_TYPE : School.ENTITY_TYPE;
+    const prefixed = Entity.createPrefixedId(type, id);
+    const res = await this.queryRelations(prefixed);
     const rawRelations = res.rows.filter((row) =>
       row.id.startsWith("ChildSchoolRelation:")
     );
