@@ -6,7 +6,6 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { HealthCheck } from "../../health-checkup/model/health-check";
-import { of } from "rxjs";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 
@@ -52,9 +51,11 @@ describe("BmiBlockComponent", () => {
       height: 1.15,
       weight: 50,
     });
-    mockChildrenService.getHealthChecksOfChild.and.returnValue(
-      of([healthCheck1, healthCheck2, healthCheck3])
-    );
+    mockChildrenService.getHealthChecksOfChild.and.resolveTo([
+      healthCheck1,
+      healthCheck2,
+      healthCheck3,
+    ]);
     component.onInitFromDynamicConfig({
       entity: testChild,
       id: "",

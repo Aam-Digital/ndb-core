@@ -11,7 +11,6 @@ import { genders } from "./model/genders";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
-import { lastValueFrom } from "rxjs";
 import { DateWithAge } from "./model/dateWithAge";
 
 describe("ChildrenService", () => {
@@ -40,10 +39,10 @@ describe("ChildrenService", () => {
   });
 
   it("should list newly saved children", async () => {
-    const childrenBefore = await lastValueFrom(service.getChildren());
+    const childrenBefore = await service.getChildren();
     const child = new Child("10");
     await entityMapper.save<Child>(child);
-    const childrenAfter = await lastValueFrom(service.getChildren());
+    const childrenAfter = await service.getChildren();
 
     let find = childrenBefore.find((c) => c.getId() === child.getId());
     expect(find).toBeUndefined();
@@ -164,7 +163,7 @@ describe("ChildrenService", () => {
   });
 
   it("should load all children with school info", async () => {
-    const children = await lastValueFrom(service.getChildren());
+    const children = await service.getChildren();
     const child1 = children.find((child) => child.getId() === "1");
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toBe("1");

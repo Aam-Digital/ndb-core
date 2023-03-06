@@ -1,5 +1,4 @@
 import { Injectable, Optional } from "@angular/core";
-import { from, NotFoundError, Observable, Subject } from "rxjs";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Note } from "../notes/model/note";
@@ -36,9 +35,8 @@ export class ChildrenService {
   /**
    * returns an observable which retrieves children from the database and loads their pictures
    */
-  getChildren(): Observable<Child[]> {
-    const results = new Subject<Child[]>();
-    this.dbIndexing
+  getChildren(): Promise<Child[]> {
+    return this.dbIndexing
       .queryIndexRaw("childSchoolRelations_index/by_child", {
         startkey: [`Child:\uffff`],
         endkey: [`Child:`],
@@ -48,13 +46,10 @@ export class ChildrenService {
       .then((res: PouchDB.Query.Response<any>) => {
         // transform key to only have childId
         res.rows.forEach((row) => (row.key = row.key[0]));
-        const children = groupBy(res.rows, "key")
+        return groupBy(res.rows, "key")
           .map(([_, rows]) => this.extractChildAndSchoolInfo(rows))
           .filter((c) => !!c);
-        results.next(children);
-        results.complete();
       });
-    return results;
   }
 
   /**
@@ -76,7 +71,7 @@ export class ChildrenService {
     if (child) {
       return child;
     } else {
-      throw new NotFoundError(`Child ${child.getId()} not found`);
+      throw new Error(`Child ${child.getId()} not found`);
     }
   }
 
@@ -320,21 +315,15 @@ export class ChildrenService {
    * @param childId should be set in the specific components and is passed by the URL as a parameter
    * This function should be considered refactored and should use a index, once they're made generic
    */
-  getHealthChecksOfChild(childId: string): Observable<HealthCheck[]> {
-    return from(
-      this.entityMapper
-        .loadType<HealthCheck>(HealthCheck)
-        .then((loadedEntities) => {
-          return loadedEntities.filter((h) => h.child === childId);
-        })
-    );
+  getHealthChecksOfChild(childId: string): Promise<HealthCheck[]> {
+    return this.entityMapper
+      .loadType<HealthCheck>(HealthCheck)
+      .then((res) => res.filter((h) => h.child === childId));
   }
 
-  getAserResultsOfChild(childId: string): Observable<Aser[]> {
-    return from(
-      this.entityMapper.loadType<Aser>(Aser).then((loadedEntities) => {
-        return loadedEntities.filter((o) => o.child === childId);
-      })
-    );
+  getAserResultsOfChild(childId: string): Promise<Aser[]> {
+    return this.entityMapper
+      .loadType<Aser>(Aser)
+      .then((res) => res.filter((o) => o.child === childId));
   }
 }

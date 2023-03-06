@@ -6,16 +6,13 @@ import { EntityListConfig } from "../../../core/entity-components/entity-list/En
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { Observable } from "rxjs";
-import { AsyncPipe } from "@angular/common";
-import { startWith, tap } from "rxjs/operators";
 
 @RouteTarget("ChildrenList")
 @Component({
   selector: "app-children-list",
   template: `
     <app-entity-list
-      [allEntities]="childrenList | async"
+      [allEntities]="childrenList"
       [listConfig]="listConfig"
       [isLoading]="isLoading"
       [entityConstructor]="childConstructor"
@@ -24,10 +21,10 @@ import { startWith, tap } from "rxjs/operators";
     ></app-entity-list>
   `,
   standalone: true,
-  imports: [EntityListComponent, AsyncPipe],
+  imports: [EntityListComponent],
 })
 export class ChildrenListComponent implements OnInit {
-  childrenList: Observable<Child[]>;
+  childrenList: Child[] = [];
   listConfig: EntityListConfig;
   childConstructor = Child;
   isLoading = true;
@@ -38,14 +35,12 @@ export class ChildrenListComponent implements OnInit {
     private router: Router
   ) {}
 
-  ngOnInit() {
+  async ngOnInit() {
     this.route.data.subscribe(
       (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
     );
-    this.childrenList = this.childrenService.getChildren().pipe(
-      startWith([]),
-      tap((res) => (this.isLoading = res.length === 0))
-    );
+    this.childrenList = await this.childrenService.getChildren();
+    this.isLoading = false;
   }
 
   routeTo(route: string) {

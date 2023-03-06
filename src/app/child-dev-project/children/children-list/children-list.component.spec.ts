@@ -73,7 +73,7 @@ describe("ChildrenListComponent", () => {
     jasmine.createSpyObj(["getChildren"]);
 
   beforeEach(waitForAsync(() => {
-    mockChildrenService.getChildren.and.returnValue(of([]));
+    mockChildrenService.getChildren.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [ChildrenListComponent, MockedTestingModule.withState()],
       providers: [
@@ -99,17 +99,15 @@ describe("ChildrenListComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load children on init", () => {
+  it("should load children on init", async () => {
     component.isLoading = true;
     const child1 = new Child("c1");
     const child2 = new Child("c2");
-    mockChildrenService.getChildren.and.returnValue(of([child1, child2]));
-    component.ngOnInit();
+    mockChildrenService.getChildren.and.resolveTo([child1, child2]);
+    await component.ngOnInit();
 
-    let children = [];
-    component.childrenList.subscribe((val) => (children = val));
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
-    expect(children).toEqual([child1, child2]);
+    expect(component.childrenList).toEqual([child1, child2]);
     expect(component.isLoading).toBeFalse();
   });
 
