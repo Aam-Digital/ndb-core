@@ -124,6 +124,13 @@ export class Child extends Entity {
   };
 
   @DatabaseField({
+    dataType: "file",
+    label: $localize`:Label for the filename of a photo of a child:Photo Filename`,
+    editComponent: "NewPhoto",
+  })
+  photo2: string;
+
+  @DatabaseField({
     label: $localize`:Label for the phone number of a child:Phone Number`,
   })
   phone: string;

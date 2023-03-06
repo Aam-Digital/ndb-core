@@ -26,6 +26,7 @@ import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 
 /**
  * Stores the files in the CouchDB.
@@ -34,11 +35,13 @@ import { ObservableQueue } from "./observable-queue/observable-queue";
  */
 @Injectable()
 export class CouchdbFileService extends FileService {
+  cache: { [key: string]: SafeUrl } = {};
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
 
   constructor(
+    private sanitizer: DomSanitizer,
     private http: HttpClient,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
@@ -50,6 +53,7 @@ export class CouchdbFileService extends FileService {
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
+    // TODO update cache if file is cached
     const obs = this.requestQueue.add(
       this.runFileUpload(file, entity, property)
     );
@@ -143,6 +147,26 @@ export class CouchdbFileService extends FileService {
           this.dialog.open(ShowFileComponent, { data: fileURL });
         }
       });
+  }
+
+  loadFile(entity: Entity, property: string) {
+    const path = `${entity.getId(true)}/${property}`;
+    if (this.cache[path]) {
+      return of(this.cache[path]);
+    }
+    return this.http
+      .get(`${this.attachmentsUrl}/${path}`, {
+        responseType: "blob",
+        headers: { "ngsw-bypass": "" },
+      })
+      .pipe(
+        map((blob) => {
+          const url = URL.createObjectURL(blob);
+          const safe = this.sanitizer.bypassSecurityTrustUrl(url);
+          this.cache[path] = safe;
+          return safe;
+        })
+      );
   }
 
   private reportProgress(message: string, obs: Observable<HttpEvent<any>>) {

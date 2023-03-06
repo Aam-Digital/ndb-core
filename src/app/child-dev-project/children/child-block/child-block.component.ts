@@ -13,6 +13,8 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 import { NgIf } from "@angular/common";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-tooltip.component";
+import { CouchdbFileService } from "../../../features/file/couchdb-file.service";
+import { SafeUrl } from "@angular/platform-browser";
 
 @DynamicComponent("ChildBlock")
 @Component({
@@ -32,7 +34,12 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
   /** prevent additional details to be displayed in a tooltip on mouse over */
   @Input() tooltipDisabled: boolean;
 
-  constructor(@Optional() private childrenService: ChildrenService) {}
+  imgPath: SafeUrl;
+
+  constructor(
+    private fileService: CouchdbFileService,
+    @Optional() private childrenService: ChildrenService
+  ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
     if (changes.hasOwnProperty("entityId")) {
@@ -50,5 +57,10 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
     }
     this.linkDisabled = config.linkDisabled;
     this.tooltipDisabled = config.tooltipDisabled;
+    if (this.entity.photo2) {
+      this.fileService
+        .loadFile(this.entity, "photo2")
+        .subscribe((res) => (this.imgPath = res));
+    }
   }
 }
