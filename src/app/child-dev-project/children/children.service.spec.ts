@@ -138,7 +138,7 @@ describe("ChildrenService", () => {
     // one active relation
     let child1 = await service.getChild("1");
     expect(child1.schoolClass).toBe("2");
-    expect(child1.schoolId).toBe("1");
+    expect(child1.schoolId).toEqual(["1"]);
 
     // multiple active relations
     const newRelation = new ChildSchoolRelation();
@@ -149,7 +149,7 @@ describe("ChildrenService", () => {
     await entityMapper.save(newRelation);
     child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("3");
-    expect(child1.schoolId).toBe("2");
+    expect(child1.schoolId).toEqual(["2", "1"]);
 
     // multiple active, no start date on one
     const noStartDate = new ChildSchoolRelation();
@@ -159,20 +159,20 @@ describe("ChildrenService", () => {
     await entityMapper.save(noStartDate);
     child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("4");
-    expect(child1.schoolId).toBe("2");
+    expect(child1.schoolId).toEqual(["2", "2", "1"]);
   });
 
   it("should load all children with school info", async () => {
     const children = await service.getChildren();
     const child1 = children.find((child) => child.getId() === "1");
     expect(child1.schoolClass).toBe("2");
-    expect(child1.schoolId).toBe("1");
+    expect(child1.schoolId).toEqual(["1"]);
     const child2 = children.find((child) => child.getId() === "2");
     expect(child2.schoolClass).toBeUndefined();
     expect(child2.schoolId).toBeUndefined();
     const child3 = children.find((child) => child.getId() === "3");
     expect(child3.schoolClass).toBe("2");
-    expect(child3.schoolId).toBe("1");
+    expect(child3.schoolId).toEqual(["1"]);
   });
 
   it("should get the relations for a child in sorted order", async () => {

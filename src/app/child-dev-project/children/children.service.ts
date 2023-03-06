@@ -36,7 +36,8 @@ export class ChildrenService {
    * returns an observable which retrieves children from the database and loads their pictures
    */
   getChildren(): Promise<Child[]> {
-    return this.queryRelations(`${Child.ENTITY_TYPE}:`).then(
+    const prefix = `${Child.ENTITY_TYPE}:`;
+    return this.queryRelations(`${prefix}\uffff`, prefix).then(
       (res: PouchDB.Query.Response<any>) => {
         // transform key to only have childId
         res.rows.forEach((row) => (row.key = row.key[0]));
@@ -61,12 +62,19 @@ export class ChildrenService {
     }
   }
 
-  private async queryRelations(prefix: string) {
+  /**
+   * Get all relations for children or schools with ids between start and end.
+   * If start is not a full ID (e.g. `Child:`) then an end key needs to be provided (smaller than start)
+   * @param start
+   * @param end
+   * @private
+   */
+  private async queryRelations(start: string, end = start) {
     return await this.dbIndexing.queryIndexRaw(
       "childSchoolRelations_index/by_child_school",
       {
-        startkey: [`${prefix}\uffff`],
-        endkey: [`${prefix}`],
+        startkey: [start, new Date("3000-01-01").getTime()],
+        endkey: [end],
         include_docs: true,
         descending: true,
       }
@@ -80,12 +88,13 @@ export class ChildrenService {
     ) {
       const child = new Child();
       this.entitySchemaService.loadDataIntoEntity(child, rows.pop().doc);
-      const relations = this.transformRelations(rows);
-      const active = relations.find((r) => r.isActive);
-      if (active) {
-        child.schoolId = active.schoolId;
-        child.schoolClass = active.schoolClass;
+      const active = this.transformRelations(rows).filter((r) => r.isActive);
+      child.schoolId = active.map((r) => r.schoolId);
+      if (active.length > 0) {
+        // TODO what do we expect here? Also a list or just the latest value?
+        child.schoolClass = active[0].schoolClass;
       } else {
+        // TODO remove this and align tests and default values
         child.schoolId = undefined;
         child.schoolClass = undefined;
       }

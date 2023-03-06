@@ -2,13 +2,16 @@
 <div>
   <!-- Font-weight is applied as style to override the default -->
   <h3 style="font-weight: bold">{{ entity?.name }}</h3>
-  <a><fa-icon icon="phone"></fa-icon> {{ entity?.phone }}</a>
+  <a>
+    <fa-icon icon="phone"></fa-icon>
+    {{ entity?.phone }}</a>
   <p *ngIf="entity?.schoolId || entity?.schoolClass">
     <app-school-block
-      [entityId]="entity?.schoolId"
+      [entityId]="entity?.schoolId?.[0]"
       [linkDisabled]="true"
     ></app-school-block
-    >,
+    >
+    ,
     <ng-container i18n="The class a child is attending|e.g. 'class 8'" *ngIf="entity.schoolClass">
       class {{ entity?.schoolClass }}
     </ng-container>
