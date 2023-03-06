@@ -270,6 +270,12 @@ describe("ChildrenService", () => {
     res = await service.getNotesRelatedTo(s1.getId(true));
     expect(res).toEqual([n1]);
   });
+
+  it("should load children and relations at the same time", async () => {
+    const res = await service.getChild("3");
+    console.log("res", res);
+    fail();
+  });
 });
 
 function generateChildEntities(): Child[] {

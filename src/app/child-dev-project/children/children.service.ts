@@ -59,14 +59,31 @@ export class ChildrenService {
    * returns an observable which retrieves a single child and loads its photo
    * @param id id of child
    */
-  getChild(id: string): Promise<Child> {
-    return this.entityMapper.load<Child>(Child, id).then((loadedChild) => {
-      return this.queryLatestRelation(id).then((currentSchoolInfo) => {
-        loadedChild.schoolClass = currentSchoolInfo?.schoolClass;
-        loadedChild.schoolId = currentSchoolInfo?.schoolId;
-        return loadedChild;
+  async getChild(id: string): Promise<Child> {
+    const res: PouchDB.Query.Response<any> =
+      await this.dbIndexing.queryIndexRaw(
+        "childSchoolRelations_index/by_child",
+        {
+          startkey: `Child:${id}`,
+          endkey: `Child:${id}\uffff`,
+          include_docs: true,
+        }
+      );
+    if (res.rows.length > 0 && res.rows[0].id.startsWith("Child:")) {
+      const child = new Child();
+      this.entitySchemaService.loadDataIntoEntity(child, res.rows.shift());
+      const relations = res.rows.map((row) => {
+        const relation = new ChildSchoolRelation();
+        this.entitySchemaService.loadDataIntoEntity(relation, row.doc);
+        return relation;
       });
-    });
+      const active = relations.find((r) => r.isActive);
+      if (active) {
+        child.schoolId = active.schoolId;
+        child.schoolClass = active.schoolClass;
+      }
+      return child;
+    }
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
@@ -75,15 +92,14 @@ export class ChildrenService {
       views: {
         by_child: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            emit([doc.childId, new Date(doc.start || '3000-01-01').getTime()]);
+            if (doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) {
+              emit("Child:" + doc.childId);
+              emit("School:" + doc.schoolId);
+            };
+            if (doc._id.startsWith("${Child.ENTITY_TYPE}") || doc._id.startsWith("${School.ENTITY_TYPE}")) {
+              emit(doc._id);
+            };
           }`,
-        },
-        by_school: {
-          map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            emit([doc.schoolId]);
-            }`,
         },
       },
     };
