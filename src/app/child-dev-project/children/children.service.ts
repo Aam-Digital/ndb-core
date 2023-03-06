@@ -1,5 +1,5 @@
 import { Injectable, Optional } from "@angular/core";
-import { from, Observable, Subject } from "rxjs";
+import { from, NotFoundError, Observable, Subject } from "rxjs";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Note } from "../notes/model/note";
@@ -14,6 +14,7 @@ import { DatabaseIndexingService } from "../../core/entity/database-indexing/dat
 import { Entity } from "../../core/entity/model/entity";
 import { School } from "../schools/model/school";
 import { User } from "../../core/user/user";
+import { groupBy } from "../../utils/utils";
 
 @Injectable({ providedIn: "root" })
 export class ChildrenService {
@@ -37,21 +38,22 @@ export class ChildrenService {
    */
   getChildren(): Observable<Child[]> {
     const results = new Subject<Child[]>();
-
-    this.entityMapper.loadType<Child>(Child).then(async (loadedChildren) => {
-      results.next(loadedChildren);
-
-      for (const loadedChild of loadedChildren) {
-        const childCurrentSchoolInfo = await this.queryLatestRelation(
-          loadedChild.getId()
-        );
-        loadedChild.schoolClass = childCurrentSchoolInfo?.schoolClass;
-        loadedChild.schoolId = childCurrentSchoolInfo?.schoolId;
-      }
-      results.next([...loadedChildren]);
-      results.complete();
-    });
-
+    this.dbIndexing
+      .queryIndexRaw("childSchoolRelations_index/by_child", {
+        startkey: [`Child:\uffff`],
+        endkey: [`Child:`],
+        include_docs: true,
+        descending: true,
+      })
+      .then((res: PouchDB.Query.Response<any>) => {
+        // transform key to only have childId
+        res.rows.forEach((row) => (row.key = row.key[0]));
+        const children = groupBy(res.rows, "key")
+          .map(([_, rows]) => this.extractChildAndSchoolInfo(rows))
+          .filter((c) => !!c);
+        results.next(children);
+        results.complete();
+      });
     return results;
   }
 
@@ -64,26 +66,43 @@ export class ChildrenService {
       await this.dbIndexing.queryIndexRaw(
         "childSchoolRelations_index/by_child",
         {
-          startkey: `Child:${id}`,
-          endkey: `Child:${id}\uffff`,
+          startkey: [`Child:${id}\uffff`],
+          endkey: [`Child:${id}`],
           include_docs: true,
+          descending: true,
         }
       );
-    if (res.rows.length > 0 && res.rows[0].id.startsWith("Child:")) {
+    const child = this.extractChildAndSchoolInfo(res.rows);
+    if (child) {
+      return child;
+    } else {
+      throw new NotFoundError(`Child ${child.getId()} not found`);
+    }
+  }
+
+  private extractChildAndSchoolInfo(rows: any[]) {
+    if (rows.length > 0 && rows[rows.length - 1].id.startsWith("Child:")) {
       const child = new Child();
-      this.entitySchemaService.loadDataIntoEntity(child, res.rows.shift());
-      const relations = res.rows.map((row) => {
-        const relation = new ChildSchoolRelation();
-        this.entitySchemaService.loadDataIntoEntity(relation, row.doc);
-        return relation;
-      });
+      this.entitySchemaService.loadDataIntoEntity(child, rows.pop().doc);
+      const relations = this.transformRelations(rows);
       const active = relations.find((r) => r.isActive);
       if (active) {
         child.schoolId = active.schoolId;
         child.schoolClass = active.schoolClass;
+      } else {
+        child.schoolId = undefined;
+        child.schoolClass = undefined;
       }
       return child;
     }
+  }
+
+  private transformRelations(rows: any[]) {
+    return rows.map((row) => {
+      const relation = new ChildSchoolRelation();
+      this.entitySchemaService.loadDataIntoEntity(relation, row.doc);
+      return relation;
+    });
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
@@ -92,26 +111,20 @@ export class ChildrenService {
       views: {
         by_child: {
           map: `(doc) => {
-            if (doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) {
-              emit("Child:" + doc.childId);
-              emit("School:" + doc.schoolId);
+            if (doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}:")) {
+              const start = new Date(doc.start || '3000-01-01').getTime();
+              emit(["Child:" + doc.childId, start]);
+              emit(["School:" + doc.schoolId, start]);
             };
-            if (doc._id.startsWith("${Child.ENTITY_TYPE}") || doc._id.startsWith("${School.ENTITY_TYPE}")) {
-              emit(doc._id);
+            if (doc._id.startsWith("${Child.ENTITY_TYPE}:") || doc._id.startsWith("${School.ENTITY_TYPE}:")) {
+              emit([doc._id]);
             };
+            return;
           }`,
         },
       },
     };
     return this.dbIndexing.createIndex(designDoc);
-  }
-
-  queryLatestRelation(
-    childId: string
-  ): Promise<ChildSchoolRelation | undefined> {
-    return this.queryActiveRelationsOf("child", childId).then((relations) =>
-      relations.length > 0 ? relations[0] : undefined
-    );
   }
 
   queryActiveRelationsOf(
@@ -124,19 +137,28 @@ export class ChildrenService {
     );
   }
 
-  queryRelationsOf(
+  async queryRelationsOf(
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
-    return this.dbIndexing.queryIndexDocs(
-      ChildSchoolRelation,
-      "childSchoolRelations_index/by_" + queryType,
-      {
-        startkey: [id, "\uffff"],
-        endkey: [id],
-        descending: true,
-      }
+    const prefixed = Entity.createPrefixedId(
+      queryType === "child" ? "Child" : "School",
+      id
     );
+    const res: PouchDB.Query.Response<any> =
+      await this.dbIndexing.queryIndexRaw(
+        "childSchoolRelations_index/by_child",
+        {
+          startkey: [`${prefixed}\uffff`],
+          endkey: [`${prefixed}`],
+          include_docs: true,
+          descending: true,
+        }
+      );
+    const rawRelations = res.rows.filter((row) =>
+      row.id.startsWith("ChildSchoolRelation:")
+    );
+    return this.transformRelations(rawRelations);
   }
 
   /**
