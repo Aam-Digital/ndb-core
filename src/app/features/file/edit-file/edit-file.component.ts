@@ -1,8 +1,5 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
-import {
-  EditComponent,
-  EditPropertyConfig,
-} from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { LoggingService } from "../../../core/logging/logging.service";
@@ -38,7 +35,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   ],
   standalone: true,
 })
-export class EditFileComponent extends EditComponent<string> {
+export class EditFileComponent extends EditComponent<string> implements OnInit {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
   private selectedFile: File;
   private removeClicked = false;
@@ -53,8 +50,7 @@ export class EditFileComponent extends EditComponent<string> {
     super();
   }
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
     this.initialValue = this.formControl.value;
     this.formControl.statusChanges
       .pipe(

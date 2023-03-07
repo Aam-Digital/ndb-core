@@ -14,6 +14,7 @@ import {
   filter,
   map,
   shareReplay,
+  tap,
 } from "rxjs/operators";
 import { Observable, of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
@@ -63,15 +64,24 @@ export class CouchdbFileService extends FileService {
 
   private runFileUpload(file: File, entity: Entity, property: string) {
     const blob = new Blob([file]);
-    const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
-    return this.getAttachmentsDocument(attachmentPath).pipe(
+    const path = `${entity.getId(true)}/${property}`;
+    return this.getAttachmentsDocument(
+      `${this.attachmentsUrl}/${entity.getId(true)}`
+    ).pipe(
       concatMap(({ _rev }) =>
-        this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, blob, {
+        this.http.put(`${this.attachmentsUrl}/${path}?rev=${_rev}`, blob, {
           headers: { "Content-Type": file.type, "ngsw-bypass": "" },
           reportProgress: true,
           observe: "events",
         })
       ),
+      tap(() => {
+        if (this.cache[`${path}`]) {
+          this.cache[`${path}`] = of(
+            this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob))
+          );
+        }
+      }),
       // prevent http request to be executed multiple times (whenever .subscribe is called)
       shareReplay()
     );
@@ -97,19 +107,22 @@ export class CouchdbFileService extends FileService {
   }
 
   private runFileRemoval(entity: Entity, property: string) {
-    const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
-    return this.http.get<{ _rev: string }>(attachmentPath).pipe(
-      concatMap(({ _rev }) =>
-        this.http.delete(`${attachmentPath}/${property}?rev=${_rev}`)
-      ),
-      catchError((err) => {
-        if (err.status === HttpStatusCode.NotFound) {
-          return of({ ok: true });
-        } else {
-          throw err;
-        }
-      })
-    );
+    const path = `${entity.getId(true)}/${property}`;
+    return this.http
+      .get<{ _rev: string }>(`${this.attachmentsUrl}/${entity.getId(true)}`)
+      .pipe(
+        concatMap(({ _rev }) =>
+          this.http.delete(`${this.attachmentsUrl}/${path}?rev=${_rev}`)
+        ),
+        tap(() => delete this.cache[path]),
+        catchError((err) => {
+          if (err.status === HttpStatusCode.NotFound) {
+            return of({ ok: true });
+          } else {
+            throw err;
+          }
+        })
+      );
   }
 
   removeAllFiles(entity: Entity): Observable<any> {
@@ -155,12 +168,12 @@ export class CouchdbFileService extends FileService {
       this.cache[path] = this.http
         .get(`${this.attachmentsUrl}/${path}`, {
           responseType: "blob",
-          headers: { "ngsw-bypass": "" },
         })
         .pipe(
           map((blob) =>
             this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob))
-          )
+          ),
+          shareReplay()
         );
     }
     return this.cache[path];

@@ -3,6 +3,7 @@ import { AbstractControl, FormControl, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { Entity } from "../../../entity/model/entity";
+import { Directive, Input } from "@angular/core";
 
 /**
  * The interface for the configuration which is created by the form- or the entity-subrecord-component.
@@ -33,6 +34,7 @@ export interface EditPropertyConfig<T> {
  * A simple helper class which sets up all the required information for edit-components.
  * <T> refers to the type of the value which is processed in the component.
  */
+@Directive()
 export abstract class EditComponent<T> implements OnInitDynamicComponent {
   /**
    * The tooltip to be displayed.
@@ -42,7 +44,7 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   /**
    * The name of the form control.
    */
-  formControlName: string;
+  @Input() formControlName: string;
 
   /**
    * A label for this component.
@@ -52,7 +54,7 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   /**
    * The typed form control.
    */
-  formControl: FormControl<T>;
+  @Input() formControl: FormControl<T>;
 
   /**
    * The parent form of the `formControl` this is always needed to correctly setup the `mat-form-field`
@@ -62,7 +64,7 @@ export abstract class EditComponent<T> implements OnInitDynamicComponent {
   /**
    * The entity which is being edited.
    */
-  entity: Entity;
+  @Input() entity: Entity;
 
   /**
    * Additional config details for the specific component implementation.

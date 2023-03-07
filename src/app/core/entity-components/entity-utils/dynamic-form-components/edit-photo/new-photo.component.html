@@ -1,2 +1,7 @@
 <img [src]="imgPath" alt="profile photo" class="child-pic">
-<app-edit-file></app-edit-file>
+<app-edit-file
+  *ngIf="formControl.enabled"
+  [entity]="entity"
+  [formControl]="formControl"
+  [formControlName]="formControlName"
+></app-edit-file>
