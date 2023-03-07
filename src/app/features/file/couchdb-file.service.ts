@@ -35,10 +35,10 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
  */
 @Injectable()
 export class CouchdbFileService extends FileService {
-  cache: { [key: string]: SafeUrl } = {};
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
+  private cache: { [key: string]: Observable<SafeUrl> } = {};
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -151,22 +151,19 @@ export class CouchdbFileService extends FileService {
 
   loadFile(entity: Entity, property: string) {
     const path = `${entity.getId(true)}/${property}`;
-    if (this.cache[path]) {
-      return of(this.cache[path]);
-    }
-    return this.http
-      .get(`${this.attachmentsUrl}/${path}`, {
-        responseType: "blob",
-        headers: { "ngsw-bypass": "" },
-      })
-      .pipe(
-        map((blob) => {
-          const url = URL.createObjectURL(blob);
-          const safe = this.sanitizer.bypassSecurityTrustUrl(url);
-          this.cache[path] = safe;
-          return safe;
+    if (!this.cache[path]) {
+      this.cache[path] = this.http
+        .get(`${this.attachmentsUrl}/${path}`, {
+          responseType: "blob",
+          headers: { "ngsw-bypass": "" },
         })
-      );
+        .pipe(
+          map((blob) =>
+            this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob))
+          )
+        );
+    }
+    return this.cache[path];
   }
 
   private reportProgress(message: string, obs: Observable<HttpEvent<any>>) {
