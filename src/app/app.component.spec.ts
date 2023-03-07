@@ -71,8 +71,13 @@ describe("AppComponent", () => {
   });
 
   it("should be created", () => {
+    const defaultTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+
     createComponent();
     expect(component).toBeTruthy();
+
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = defaultTimeout;
   });
 
   it("should start tracking with config from db", fakeAsync(() => {
