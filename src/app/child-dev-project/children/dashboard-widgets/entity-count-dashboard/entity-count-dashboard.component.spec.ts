@@ -120,11 +120,14 @@ describe("EntityCountDashboardComponent", () => {
     ra2.type = type1;
     const ra3 = new RecurringActivity();
     ra3.type = type2;
-    const entity = RecurringActivity.ENTITY_TYPE;
+    const entity = RecurringActivity;
     entityMapper.addAll([ra1, ra2, ra3]);
     const groupBy = "type";
 
-    component.onInitFromDynamicConfig({ entity, groupBy });
+    component.onInitFromDynamicConfig({
+      entity: RecurringActivity.ENTITY_TYPE,
+      groupBy,
+    });
     component.ngOnInit();
 
     expect(entityMapper.loadType).toHaveBeenCalledWith(entity);
