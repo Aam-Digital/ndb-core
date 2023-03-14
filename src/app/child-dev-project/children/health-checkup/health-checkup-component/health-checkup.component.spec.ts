@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { HealthCheckupComponent } from "./health-checkup.component";
-import { of } from "rxjs";
 import { Child } from "../../model/child";
 import { ChildrenService } from "../../children.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
