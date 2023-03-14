@@ -38,12 +38,22 @@ import { DemoDataService } from "./core/demo-data/demo-data.service";
 import { SessionType } from "./core/session/session-type";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { Angulartics2Matomo } from "angulartics2";
+import { componentRegistry } from "./dynamic-components";
 
 describe("AppComponent", () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let entityUpdates: Subject<UpdatedEntity<Config>>;
   const defaultTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
+
+  beforeAll(() => {
+    componentRegistry.allowDuplicates();
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
+  });
+
+  afterAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = defaultTimeout;
+  });
 
   beforeEach(waitForAsync(() => {
     environment.session_type = SessionType.mock;
@@ -68,14 +78,6 @@ describe("AppComponent", () => {
   afterEach(() => {
     fixture.debugElement.nativeElement.style.visibility = "hidden";
     return TestBed.inject(Database).destroy();
-  });
-
-  beforeAll(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
-  });
-
-  afterAll(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = defaultTimeout;
   });
 
   it("should be created", () => {
