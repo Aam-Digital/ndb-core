@@ -1,14 +1,11 @@
-import { Injectable, Optional } from "@angular/core";
+import { Injectable } from "@angular/core";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Note } from "../notes/model/note";
 import { Aser } from "./aser/model/aser";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { HealthCheck } from "./health-checkup/model/health-check";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { ChildPhotoService } from "./child-photo-service/child-photo.service";
 import moment, { Moment } from "moment";
-import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { Entity } from "../../core/entity/model/entity";
 import { School } from "../schools/model/school";
@@ -19,15 +16,12 @@ import { groupBy } from "../../utils/utils";
 export class ChildrenService {
   constructor(
     private entityMapper: EntityMapperService,
-    private entitySchemaService: EntitySchemaService,
-    private dbIndexing: DatabaseIndexingService,
-    @Optional() childPhotoService: ChildPhotoService,
-    @Optional() private logger: LoggingService
+    private dbIndexing: DatabaseIndexingService
   ) {
     this.createDatabaseIndices();
   }
 
-  public createDatabaseIndices() {
+  private createDatabaseIndices() {
     this.createNotesIndex();
     this.createChildSchoolRelationIndex();
   }
@@ -35,15 +29,14 @@ export class ChildrenService {
   /**
    * returns an observable which retrieves children from the database and loads their pictures
    */
-  getChildren(): Promise<Child[]> {
-    const prefix = `${Child.ENTITY_TYPE}:`;
-    return this.queryRelations(`${prefix}\uffff`, prefix).then((res) => {
-      // transform key to only have childId
-      res.rows.forEach((row) => (row.key = row.key[0]));
-      return groupBy(res.rows, "key")
-        .map(([_, rows]) => this.extractChildAndSchoolInfo(rows))
-        .filter((c) => !!c);
+  async getChildren(): Promise<Child[]> {
+    const children = await this.entityMapper.loadType(Child);
+    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}`);
+    groupBy(relations, "childId").forEach(([id, rels]) => {
+      const child = children.find((c) => c.getId() === id);
+      this.extendChildWithSchoolInfo(child, rels);
     });
+    return children;
   }
 
   /**
@@ -51,64 +44,26 @@ export class ChildrenService {
    * @param id id of child
    */
   async getChild(id: string): Promise<Child> {
-    const res = await this.queryRelations(`${Child.ENTITY_TYPE}:${id}`);
-    const child = this.extractChildAndSchoolInfo(res.rows);
-    if (child) {
-      return child;
+    const child = await this.entityMapper.load(Child, id);
+    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}:${id}`);
+    this.extendChildWithSchoolInfo(child, relations);
+    return child;
+  }
+
+  private extendChildWithSchoolInfo(
+    child: Child,
+    relations: ChildSchoolRelation[]
+  ) {
+    const active = relations.filter((r) => r.isActive);
+    child.schoolId = active.map((r) => r.schoolId);
+    if (active.length > 0) {
+      // TODO what do we expect here? Also a list or just the latest value?
+      child.schoolClass = active[0].schoolClass;
     } else {
-      throw new Error(`Child ${child.getId()} not found`);
+      // TODO remove this and align tests and default values
+      child.schoolId = undefined;
+      child.schoolClass = undefined;
     }
-  }
-
-  /**
-   * Get all relations for children or schools with ids between start and end.
-   * If start is not a full ID (e.g. `Child:`) then an end key needs to be provided (smaller than start)
-   * @param start
-   * @param end
-   * @private
-   */
-  private async queryRelations(
-    start: string,
-    end = start
-  ): Promise<PouchDB.Query.Response<any>> {
-    return await this.dbIndexing.queryIndexRaw(
-      "childSchoolRelations_index/by_child_school",
-      {
-        startkey: [start, new Date("3000-01-01").getTime()],
-        endkey: [end],
-        include_docs: true,
-        descending: true,
-      }
-    );
-  }
-
-  private extractChildAndSchoolInfo(rows: any[]) {
-    if (
-      rows.length > 0 &&
-      rows[rows.length - 1].id.startsWith(`${Child.ENTITY_TYPE}:`)
-    ) {
-      const child = new Child();
-      this.entitySchemaService.loadDataIntoEntity(child, rows.pop().doc);
-      const active = this.transformRelations(rows).filter((r) => r.isActive);
-      child.schoolId = active.map((r) => r.schoolId);
-      if (active.length > 0) {
-        // TODO what do we expect here? Also a list or just the latest value?
-        child.schoolClass = active[0].schoolClass;
-      } else {
-        // TODO remove this and align tests and default values
-        child.schoolId = undefined;
-        child.schoolClass = undefined;
-      }
-      return child;
-    }
-  }
-
-  private transformRelations(rows: any[]) {
-    return rows.map((row) => {
-      const relation = new ChildSchoolRelation();
-      this.entitySchemaService.loadDataIntoEntity(relation, row.doc);
-      return relation;
-    });
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
@@ -117,20 +72,29 @@ export class ChildrenService {
       views: {
         by_child_school: {
           map: `(doc) => {
-            if (doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}:")) {
-              const start = new Date(doc.start || '3000-01-01').getTime();
-              emit(["${Child.ENTITY_TYPE}:" + doc.childId, start]);
-              emit(["${School.ENTITY_TYPE}:" + doc.schoolId, start]);
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}:")) {
+              return;
             };
-            if (doc._id.startsWith("${Child.ENTITY_TYPE}:") || doc._id.startsWith("${School.ENTITY_TYPE}:")) {
-              emit([doc._id]);
-            };
-            return;
+            const start = new Date(doc.start || '3000-01-01').getTime();
+            emit(["${Child.ENTITY_TYPE}:" + doc.childId, start]);
+            emit(["${School.ENTITY_TYPE}:" + doc.schoolId, start]);
           }`,
         },
       },
     };
     return this.dbIndexing.createIndex(designDoc);
+  }
+
+  private queryRelations(prefix: string) {
+    return this.dbIndexing.queryIndexDocs(
+      ChildSchoolRelation,
+      "childSchoolRelations_index/by_child_school",
+      {
+        startkey: [`${prefix}\uffff`],
+        endkey: [`${prefix}`],
+        descending: true,
+      }
+    );
   }
 
   queryActiveRelationsOf(
@@ -149,11 +113,7 @@ export class ChildrenService {
   ): Promise<ChildSchoolRelation[]> {
     const type = queryType === "child" ? Child.ENTITY_TYPE : School.ENTITY_TYPE;
     const prefixed = Entity.createPrefixedId(type, id);
-    const res = await this.queryRelations(prefixed);
-    const rawRelations = res.rows.filter((row) =>
-      row.id.startsWith(`${ChildSchoolRelation.ENTITY_TYPE}:`)
-    );
-    return this.transformRelations(rawRelations);
+    return this.queryRelations(prefixed);
   }
 
   /**
