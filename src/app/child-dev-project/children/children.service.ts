@@ -57,7 +57,6 @@ export class ChildrenService {
     const active = relations.filter((r) => r.isActive);
     child.schoolId = active.map((r) => r.schoolId);
     if (active.length > 0) {
-      // TODO what do we expect here? Also a list or just the latest value?
       child.schoolClass = active[0].schoolClass;
     }
   }
