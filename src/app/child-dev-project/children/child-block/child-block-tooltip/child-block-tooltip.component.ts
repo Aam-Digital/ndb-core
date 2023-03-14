@@ -1,7 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { Child } from "../../model/child";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { NgIf } from "@angular/common";
+import { NgForOf, NgIf } from "@angular/common";
 import { SchoolBlockComponent } from "../../../schools/school-block/school-block.component";
 
 /**
@@ -11,7 +11,7 @@ import { SchoolBlockComponent } from "../../../schools/school-block/school-block
   selector: "app-child-block-tooltip",
   templateUrl: "./child-block-tooltip.component.html",
   styleUrls: ["./child-block-tooltip.component.scss"],
-  imports: [FontAwesomeModule, NgIf, SchoolBlockComponent],
+  imports: [FontAwesomeModule, NgIf, SchoolBlockComponent, NgForOf],
   standalone: true,
 })
 export class ChildBlockTooltipComponent {
