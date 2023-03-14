@@ -228,13 +228,18 @@ export class SyncedSessionService extends SessionService {
       })
       .on("error", (err) => {
         // totally unhandled error (shouldn't happen)
-        this.loggingService.error("sync failed " + err);
+        this.loggingService.error("Live sync error " + err);
         this.syncState.next(SyncState.FAILED);
+        this.liveSync();
       })
       .on("complete", (info) => {
         // replication was canceled!
-        this.loggingService.warn("sync completed " + info);
-        this._liveSyncHandle = null;
+        if (this.isLoggedIn()) {
+          this.loggingService.warn(
+            "Live sync completed " + JSON.stringify(info)
+          );
+          this.liveSync();
+        }
       });
   }
 
@@ -284,9 +289,9 @@ export class SyncedSessionService extends SessionService {
    */
   public async logout() {
     this.cancelLoginOfflineRetry();
-    this.cancelLiveSync();
     this.localSession.logout();
     await this.remoteSession.logout();
+    this.cancelLiveSync();
     this.location.reload();
     this.loginState.next(LoginState.LOGGED_OUT);
   }
