@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Aser } from "../model/aser";
 import { ChildrenService } from "../../children.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../model/child";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
@@ -9,7 +8,6 @@ import { FormFieldConfig } from "../../../../core/entity-components/entity-form/
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { EntitySubrecordComponent } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
-@UntilDestroy()
 @DynamicComponent("Aser")
 @Component({
   selector: "app-aser",
@@ -51,16 +49,12 @@ export class AserComponent implements OnChanges, OnInitDynamicComponent {
     this.loadData(this.child.getId());
   }
 
-  loadData(id: string) {
-    this.childrenService
-      .getAserResultsOfChild(id)
-      .pipe(untilDestroyed(this))
-      .subscribe((results) => {
-        this.records = results.sort(
-          (a, b) =>
-            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
-        );
-      });
+  async loadData(id: string) {
+    this.records = await this.childrenService.getAserResultsOfChild(id);
+    this.records.sort(
+      (a, b) =>
+        (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
+    );
   }
 
   generateNewRecordFactory() {

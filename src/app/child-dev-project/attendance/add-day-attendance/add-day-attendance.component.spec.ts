@@ -4,7 +4,6 @@ import { AddDayAttendanceComponent } from "./add-day-attendance.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { Note } from "../../notes/model/note";
 import { ChildrenService } from "../../children/children.service";
-import { of } from "rxjs";
 import { AttendanceService } from "../attendance.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
@@ -18,7 +17,7 @@ describe("AddDayAttendanceComponent", () => {
     mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
       "getChildren",
     ]);
-    mockChildrenService.getChildren.and.returnValue(of([]));
+    mockChildrenService.getChildren.and.resolveTo([]);
 
     TestBed.configureTestingModule({
       imports: [AddDayAttendanceComponent, MockedTestingModule.withState()],
