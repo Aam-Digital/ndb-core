@@ -65,15 +65,20 @@ describe("AppComponent", () => {
     fixture.detectChanges();
   }
 
-  afterEach(async () => {
-    // hide angular component so that test results are visible in test browser window
+  afterEach(() => {
     fixture.debugElement.nativeElement.style.visibility = "hidden";
-    await TestBed.inject(Database).destroy();
+    return TestBed.inject(Database).destroy();
+  });
+
+  beforeAll(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
+  });
+
+  afterAll(() => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = defaultTimeout;
   });
 
   it("should be created", () => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
     createComponent();
     expect(component).toBeTruthy();
   });
