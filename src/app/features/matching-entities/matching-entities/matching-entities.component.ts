@@ -120,8 +120,8 @@ export class MatchingEntitiesComponent
   async ngOnInit() {
     this.route.data.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
       if (
-        !data?.config?.leftSide ||
-        !data?.config?.rightSide ||
+        !data?.config?.leftSide &&
+        !data?.config?.rightSide &&
         !data?.config?.columns
       ) {
         return;
@@ -260,7 +260,7 @@ export class MatchingEntitiesComponent
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
-    side.filterObj = { ...filter };
+    side.filterObj = { ...side.prefilter, ...filter };
     this.filterMapEntities();
   }
 
