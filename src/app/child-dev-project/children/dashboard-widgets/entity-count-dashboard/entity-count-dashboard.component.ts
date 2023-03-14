@@ -5,7 +5,10 @@ import { ConfigurableEnumValue } from "../../../../core/configurable-enum/config
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { Entity } from "../../../../core/entity/model/entity";
+import {
+  Entity,
+  EntityConstructor,
+} from "../../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { MatTableModule } from "@angular/material/table";
@@ -31,7 +34,7 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
 export class EntityCountDashboardComponent
   implements OnInitDynamicComponent, OnInit
 {
-  private entity = Child.ENTITY_TYPE;
+  private entity: EntityConstructor = Child;
   /**
    * The property of the Child entities to group counts by.
    *
@@ -53,9 +56,9 @@ export class EntityCountDashboardComponent
   onInitFromDynamicConfig(config: any) {
     this.groupBy = config?.groupBy ?? this.groupBy;
     if (config?.entity) {
-      this.entity = config?.entity ?? this.entity;
-      this.label = this.entities.get(this.entity).labelPlural;
-      this.entityIcon = this.entities.get(this.entity).icon;
+      this.entity = this.entities.get(config.entity);
+      this.label = this.entity.labelPlural;
+      this.entityIcon = this.entity.icon;
     }
   }
 
@@ -68,7 +71,7 @@ export class EntityCountDashboardComponent
     const params = {};
     params[this.groupBy] = filterId;
 
-    this.router.navigate([Child.route], { queryParams: params });
+    this.router.navigate([this.entity.route], { queryParams: params });
   }
 
   private updateCounts(entities: Entity[]) {
