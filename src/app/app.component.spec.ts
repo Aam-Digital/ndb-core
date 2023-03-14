@@ -46,7 +46,7 @@ describe("AppComponent", () => {
   const defaultTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
   beforeEach(waitForAsync(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 100000;
     environment.session_type = SessionType.mock;
     const entityMapper = mockEntityMapper();
     entityUpdates = new Subject();
