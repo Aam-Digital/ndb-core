@@ -59,10 +59,6 @@ export class ChildrenService {
     if (active.length > 0) {
       // TODO what do we expect here? Also a list or just the latest value?
       child.schoolClass = active[0].schoolClass;
-    } else {
-      // TODO remove this and align tests and default values
-      child.schoolId = undefined;
-      child.schoolClass = undefined;
     }
   }
 

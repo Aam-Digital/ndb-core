@@ -109,7 +109,7 @@ export class Child extends Entity {
   /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
   schoolId: string[] = [];
   /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
-  schoolClass: string = "";
+  schoolClass: string;
 
   @DatabaseField({
     dataType: "photo",
