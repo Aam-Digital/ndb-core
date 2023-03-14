@@ -228,11 +228,12 @@ export class SyncedSessionService extends SessionService {
       })
       .on("error", (err) => {
         // totally unhandled error (shouldn't happen)
-        this.loggingService.error("sync failed" + err);
+        this.loggingService.error("sync failed " + err);
         this.syncState.next(SyncState.FAILED);
       })
       .on("complete", (info) => {
         // replication was canceled!
+        this.loggingService.warn("sync completed " + info);
         this._liveSyncHandle = null;
       });
   }
