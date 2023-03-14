@@ -7,7 +7,7 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 /**
  * Simple relationship object to represent an individual child's status at an event including context information.
- * TODO overwork this concept to either be a sublass of Entity or not (at the moment it uses a lot of casting)
+ * TODO overwork this concept to either be a sublass of Entity or not (at the moment it uses a lot of casting, e.g. to be used in the entity subrecord)
  */
 export class EventAttendance {
   private _status: AttendanceStatusType;
