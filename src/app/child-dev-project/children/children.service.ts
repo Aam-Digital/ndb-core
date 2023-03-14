@@ -27,11 +27,11 @@ export class ChildrenService {
   }
 
   /**
-   * returns an observable which retrieves children from the database and loads their pictures
+   * returns a list of children with additional school info
    */
   async getChildren(): Promise<Child[]> {
     const children = await this.entityMapper.loadType(Child);
-    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}`);
+    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}:`);
     groupBy(relations, "childId").forEach(([id, rels]) => {
       const child = children.find((c) => c.getId() === id);
       this.extendChildWithSchoolInfo(child, rels);
@@ -40,7 +40,7 @@ export class ChildrenService {
   }
 
   /**
-   * returns an observable which retrieves a single child and loads its photo
+   * returns a child with additional school info
    * @param id id of child
    */
   async getChild(id: string): Promise<Child> {
@@ -73,6 +73,7 @@ export class ChildrenService {
             const start = new Date(doc.start || '3000-01-01').getTime();
             emit(["${Child.ENTITY_TYPE}:" + doc.childId, start]);
             emit(["${School.ENTITY_TYPE}:" + doc.schoolId, start]);
+            return;
           }`,
         },
       },
@@ -81,12 +82,13 @@ export class ChildrenService {
   }
 
   private queryRelations(prefix: string) {
+    const startkey = prefix.endsWith(":") ? [prefix + "\uffff"] : [prefix, {}];
     return this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
       "childSchoolRelations_index/by_child_school",
       {
-        startkey: [`${prefix}\uffff`],
-        endkey: [`${prefix}`],
+        startkey,
+        endkey: [prefix],
         descending: true,
       }
     );
@@ -102,7 +104,7 @@ export class ChildrenService {
     );
   }
 
-  async queryRelationsOf(
+  queryRelationsOf(
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
