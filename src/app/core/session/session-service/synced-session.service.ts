@@ -226,21 +226,20 @@ export class SyncedSessionService extends SessionService {
         // replication was resumed: either because new things to sync or because connection is available again. info contains the direction
         this.syncState.next(SyncState.STARTED);
       })
-      .on("error", (err) => {
-        // totally unhandled error (shouldn't happen)
-        this.loggingService.error("Live sync error " + err);
+      .on("error", this.handleStoppedSync("error"))
+      .on("complete", this.handleStoppedSync("complete"));
+  }
+
+  private handleStoppedSync(reason: string) {
+    return (info) => {
+      if (this.isLoggedIn()) {
         this.syncState.next(SyncState.FAILED);
+        this.loggingService.warn(
+          `Live sync stopped "${reason}": ${JSON.stringify(info)}`
+        );
         this.liveSync();
-      })
-      .on("complete", (info) => {
-        // replication was canceled!
-        if (this.isLoggedIn()) {
-          this.loggingService.warn(
-            "Live sync completed " + JSON.stringify(info)
-          );
-          this.liveSync();
-        }
-      });
+      }
+    };
   }
 
   /**
