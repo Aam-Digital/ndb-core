@@ -70,7 +70,6 @@ describe("AppComponent", () => {
     // hide angular component so that test results are visible in test browser window
     fixture.debugElement.nativeElement.style.visibility = "hidden";
     await TestBed.inject(Database).destroy();
-    await new Promise((resolve) => setTimeout(resolve, 10000));
     jasmine.DEFAULT_TIMEOUT_INTERVAL = defaultTimeout;
   });
 
