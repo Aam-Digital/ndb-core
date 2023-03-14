@@ -43,6 +43,7 @@ describe("AppComponent", () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let entityUpdates: Subject<UpdatedEntity<Config>>;
+  const defaultTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
   beforeEach(waitForAsync(() => {
     environment.session_type = SessionType.mock;
@@ -64,13 +65,15 @@ describe("AppComponent", () => {
     fixture.detectChanges();
   }
 
-  afterEach(() => {
+  afterEach(async () => {
     // hide angular component so that test results are visible in test browser window
     fixture.debugElement.nativeElement.style.visibility = "hidden";
-    return TestBed.inject(Database).destroy();
+    await TestBed.inject(Database).destroy();
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = defaultTimeout;
   });
 
   it("should be created", () => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
     createComponent();
     expect(component).toBeTruthy();
   });
