@@ -274,7 +274,6 @@ describe("EntitySubrecordComponent", () => {
   it("should create a new entity and open a dialog on default when clicking create", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
-    component.ngOnInit();
     const dialog = TestBed.inject(FormDialogService);
 
     component.create();
@@ -298,7 +297,7 @@ describe("EntitySubrecordComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     component.newRecordFactory = () => new Entity();
     component.records = [];
-    component.ngOnInit();
+    component.ngOnChanges({});
 
     const entity = new Entity();
     entityUpdates.next({ entity: entity, type: "new" });
@@ -312,7 +311,7 @@ describe("EntitySubrecordComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     const entity = new Entity();
     component.records = [entity];
-    component.ngOnInit();
+    component.ngOnChanges({});
 
     expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
 
@@ -388,7 +387,7 @@ describe("EntitySubrecordComponent", () => {
     tick();
     component.records = [child];
     component.filter = { "gender.id": genders[1].id } as any;
-    component.ngOnInit();
+    component.ngOnChanges({});
 
     expect(component.recordsDataSource.data).toEqual([{ record: child }]);
 

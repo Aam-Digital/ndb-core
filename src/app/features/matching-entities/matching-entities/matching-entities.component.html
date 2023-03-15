@@ -31,7 +31,7 @@
 </div>
 
 <div class="margin-bottom-large flex-column gap-small">
-  <button mat-stroked-button color="accent" style="width: 100%"
+  <button mat-raised-button color="accent" style="width: 100%"
           (click)="createMatch()"
           [disabled]="!sideDetails?.[0].selected || !sideDetails?.[1].selected || lockedMatching">
     {{ matchActionLabel }}

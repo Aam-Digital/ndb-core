@@ -28,7 +28,8 @@ export class DisplayEntityArrayComponent extends ViewDirective<string[]> {
     super.onInitFromDynamicConfig(config);
     const entityIds: string[] = this.value || [];
     if (entityIds.length < this.aggregationThreshold) {
-      const entityType = this.entity.getSchema().get(this.property).additional;
+      const entityType =
+        config.config || this.entity.getSchema().get(this.property).additional;
       const entityPromises = entityIds.map((entityId) => {
         const type =
           typeof entityType === "string"

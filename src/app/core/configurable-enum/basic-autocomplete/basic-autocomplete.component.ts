@@ -18,14 +18,14 @@ import {
   NgForm,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { MatInputModule } from "@angular/material/input";
+import { MatInput, MatInputModule } from "@angular/material/input";
 import {
   MatAutocompleteModule,
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
 import { concat, of, skip } from "rxjs";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { filter, map, startWith } from "rxjs/operators";
+import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
@@ -42,6 +42,7 @@ interface SelectableOption<O, V> {
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",
+  styleUrls: ["./basic-autocomplete.component.scss"],
   providers: [
     { provide: MatFormFieldControl, useExisting: BasicAutocompleteComponent },
   ],
@@ -62,7 +63,10 @@ export class BasicAutocompleteComponent<O, V = O>
   implements OnChanges
 {
   @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
-  @ViewChild("inputElement") inputElement: ElementRef<HTMLInputElement>;
+  // `_elementRef` is protected in `MapInput`
+  @ViewChild(MatInput, { static: true }) inputElement: MatInput & {
+    _elementRef: ElementRef<HTMLElement>;
+  };
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   @Input() valueMapper = (option: O) => option as unknown as V;
@@ -73,11 +77,11 @@ export class BasicAutocompleteComponent<O, V = O>
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
+    distinctUntilChanged(),
     map((val) => this.updateAutocomplete(val)),
-    startWith([])
+    startWith([] as SelectableOption<O, V>[])
   );
   showAddOption = false;
-  private addOptionTimeout: any;
   private delayedBlur: any;
 
   get disabled(): boolean {
@@ -140,31 +144,22 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
     let filteredOptions = this._options;
-    this.showAddOption = false;
-    clearTimeout(this.addOptionTimeout);
     if (inputText) {
       filteredOptions = this._options.filter((option) =>
         option.asString.toLowerCase().includes(inputText.toLowerCase())
       );
-      const exists = this._options.find(
+      this.showAddOption = !this._options.some(
         (o) => o.asString.toLowerCase() === inputText.toLowerCase()
       );
-      if (!exists) {
-        // show 'add option' after short timeout if user doesn't enter anything
-        this.addOptionTimeout = setTimeout(
-          () => (this.showAddOption = true),
-          1000
-        );
-      }
     }
     return filteredOptions;
   }
 
   private setInitialInputValue() {
     if (this.multi) {
-      this._options
-        .filter(({ asValue }) => (this.value as V[])?.includes(asValue))
-        .forEach((o) => (o.selected = true));
+      this._options.forEach(
+        (o) => (o.selected = (this.value as V[])?.includes(o.asValue))
+      );
       this.displaySelectedOptions();
     } else {
       const selected = this._options.find(
@@ -280,7 +275,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
   onContainerClick(event: MouseEvent) {
     if ((event.target as Element).tagName.toLowerCase() != "input") {
-      this.inputElement.nativeElement.focus();
+      this.inputElement.focus();
     }
   }
 
