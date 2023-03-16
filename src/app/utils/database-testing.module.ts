@@ -10,7 +10,6 @@ import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
 import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
-import { SwRegistrationOptions } from "@angular/service-worker";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -31,7 +30,6 @@ import { SwRegistrationOptions } from "@angular/service-worker";
       provide: ConfigurableEnumService,
       useValue: createTestingConfigurableEnumService(),
     },
-    { provide: SwRegistrationOptions, useValue: { enabled: false } },
   ],
 })
 export class DatabaseTestingModule {
