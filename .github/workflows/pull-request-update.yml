@@ -50,6 +50,11 @@ jobs:
           tags: aamdigital/ndb-server:pr-${{ github.event.number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+          build-args: |
+            APP_VERSION=test
+            SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }}
+            SENTRY_ORG=${{ secrets.SENTRY_ORG }}
+            SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
       - name: Deploy updated image
         uses: appleboy/ssh-action@master
         with:
