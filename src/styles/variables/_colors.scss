@@ -14,7 +14,6 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-@use "../themes/ndb-theme" as theme;
 @use "@angular/material" as mat;
 
 $err-palette            : mat.define-palette(mat.$red-palette);
