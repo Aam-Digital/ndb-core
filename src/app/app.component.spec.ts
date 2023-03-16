@@ -34,7 +34,6 @@ import { Database } from "./core/database/database";
 import { UpdatedEntity } from "./core/entity/model/entity-update";
 import { EntityMapperService } from "./core/entity/entity-mapper.service";
 import { mockEntityMapper } from "./core/entity/mock-entity-mapper-service";
-import { DemoDataService } from "./core/demo-data/demo-data.service";
 import { SessionType } from "./core/session/session-type";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { Angulartics2Matomo } from "angulartics2";
@@ -44,17 +43,10 @@ describe("AppComponent", () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
   let entityUpdates: Subject<UpdatedEntity<Config>>;
-  const defaultTimeout = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
   beforeAll(() => {
     componentRegistry.allowDuplicates();
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = 60000;
   });
-
-  afterAll(() => {
-    jasmine.DEFAULT_TIMEOUT_INTERVAL = defaultTimeout;
-  });
-
   beforeEach(waitForAsync(() => {
     environment.session_type = SessionType.mock;
     const entityMapper = mockEntityMapper();
@@ -75,10 +67,7 @@ describe("AppComponent", () => {
     fixture.detectChanges();
   }
 
-  afterEach(() => {
-    fixture.debugElement.nativeElement.style.visibility = "hidden";
-    return TestBed.inject(Database).destroy();
-  });
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("should be created", () => {
     createComponent();
@@ -109,17 +98,5 @@ describe("AppComponent", () => {
     ]);
 
     discardPeriodicTasks();
-  }));
-
-  xit("published the demo data", fakeAsync(() => {
-    // TODO the lazy loading throws an error in this test
-    environment.demo_mode = true;
-
-    createComponent();
-    flush();
-    discardPeriodicTasks();
-    const demoDataService = TestBed.inject(DemoDataService);
-    expect(demoDataService).toBeTruthy();
-    environment.demo_mode = false;
   }));
 });
