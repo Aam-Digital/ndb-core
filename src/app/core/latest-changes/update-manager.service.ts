@@ -55,12 +55,14 @@ export class UpdateManagerService {
     } else {
       this.latestChangesDialogService.showLatestChangesIfUpdated();
     }
+    this.updates.versionUpdates.subscribe((res) => console.log("res", res));
   }
 
   /**
    * Display a notification to the user in case a new app version is detected by the ServiceWorker.
    */
   public notifyUserWhenUpdateAvailable() {
+    console.log("updates enabled", this.updates.isEnabled);
     if (!this.updates.isEnabled) {
       return;
     }
