@@ -26,10 +26,7 @@ import { SessionModule } from "./core/session/session.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
 
 import { ChildrenModule } from "./child-dev-project/children/children.module";
-import {
-  ServiceWorkerModule,
-  SwRegistrationOptions,
-} from "@angular/service-worker";
+import { ServiceWorkerModule } from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { AnalyticsService } from "./core/analytics/analytics.service";
@@ -75,9 +72,6 @@ import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-wid
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
-import { SessionService } from "./core/session/session-service/session.service";
-import { waitForChangeTo } from "./core/session/session-states/session-utils";
-import { LoginState } from "./core/session/session-states/login-state.enum";
 
 /**
  * Main entry point of the application.
@@ -88,7 +82,9 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
   declarations: [AppComponent],
   imports: [
     // Global Angular modules
-    ServiceWorkerModule.register("ngsw-worker.js"),
+    ServiceWorkerModule.register("ngsw-worker.js", {
+      enabled: environment.production,
+    }),
     Angulartics2Module.forRoot({
       developerMode: !environment.production,
     }),
@@ -144,15 +140,6 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
     {
       provide: MAT_DATE_FORMATS,
       useValue: DATE_FORMATS,
-    },
-    {
-      provide: SwRegistrationOptions,
-      useFactory: (session: SessionService) => ({
-        enabled: environment.production,
-        registrationStrategy: () =>
-          session.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
-      }),
-      deps: [SessionService],
     },
   ],
   bootstrap: [AppComponent],
