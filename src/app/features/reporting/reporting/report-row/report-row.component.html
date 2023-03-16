@@ -1,7 +1,7 @@
 <table mat-table [dataSource]="dataSource" class="full-width">
   <ng-container matColumnDef="name">
     <th mat-header-cell *matHeaderCellDef>
-      <span style="padding-left: 40px"> Name </span>
+      <span style="padding-left: 40px" i18n="Table report header"> Name </span>
     </th>
     <td mat-cell *matCellDef="let node" class="flex-row align-center" style="height: 52px">
       <button
@@ -24,7 +24,7 @@
   </ng-container>
 
   <ng-container matColumnDef="count">
-    <th mat-header-cell *matHeaderCellDef> Count</th>
+    <th mat-header-cell *matHeaderCellDef i18n="Table report header"> Count</th>
     <td mat-cell *matCellDef="let node"> {{node.header.result}} </td>
   </ng-container>
 

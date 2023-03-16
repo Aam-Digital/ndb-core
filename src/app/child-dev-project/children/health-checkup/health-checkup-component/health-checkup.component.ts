@@ -1,7 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
 import { ChildrenService } from "../../children.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Child } from "../../model/child";
 import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
@@ -10,7 +9,6 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
 import { EntitySubrecordComponent } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 @DynamicComponent("HealthCheckup")
-@UntilDestroy()
 @Component({
   selector: "app-health-checkup",
   templateUrl: "./health-checkup.component.html",
@@ -84,15 +82,11 @@ export class HealthCheckupComponent
   /**
    * implements the health check loading from the children service and is called in the onInit()
    */
-  loadData(id: string) {
-    this.childrenService
-      .getHealthChecksOfChild(id)
-      .pipe(untilDestroyed(this))
-      .subscribe((results) => {
-        this.records = results.sort(
-          (a, b) =>
-            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
-        );
-      });
+  async loadData(id: string) {
+    this.records = await this.childrenService.getHealthChecksOfChild(id);
+    this.records.sort(
+      (a, b) =>
+        (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
+    );
   }
 }

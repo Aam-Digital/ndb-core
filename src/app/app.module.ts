@@ -26,7 +26,10 @@ import { SessionModule } from "./core/session/session.module";
 import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
 
 import { ChildrenModule } from "./child-dev-project/children/children.module";
-import { ServiceWorkerModule } from "@angular/service-worker";
+import {
+  ServiceWorkerModule,
+  SwRegistrationOptions,
+} from "@angular/service-worker";
 import { environment } from "../environments/environment";
 import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { AnalyticsService } from "./core/analytics/analytics.service";
@@ -74,6 +77,9 @@ import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
 import moment from "moment";
 import { getLocaleFirstDayOfWeek } from "@angular/common";
+import { SessionService } from "./core/session/session-service/session.service";
+import { waitForChangeTo } from "./core/session/session-states/session-utils";
+import { LoginState } from "./core/session/session-states/login-state.enum";
 
 /**
  * Main entry point of the application.
@@ -84,9 +90,7 @@ import { getLocaleFirstDayOfWeek } from "@angular/common";
   declarations: [AppComponent],
   imports: [
     // Global Angular modules
-    ServiceWorkerModule.register("ngsw-worker.js", {
-      enabled: environment.production,
-    }),
+    ServiceWorkerModule.register("ngsw-worker.js"),
     Angulartics2Module.forRoot({
       developerMode: !environment.production,
     }),
@@ -142,6 +146,15 @@ import { getLocaleFirstDayOfWeek } from "@angular/common";
     {
       provide: MAT_DATE_FORMATS,
       useValue: DATE_FORMATS,
+    },
+    {
+      provide: SwRegistrationOptions,
+      useFactory: (session: SessionService) => ({
+        enabled: environment.production,
+        registrationStrategy: () =>
+          session.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
+      }),
+      deps: [SessionService],
     },
   ],
   bootstrap: [AppComponent],

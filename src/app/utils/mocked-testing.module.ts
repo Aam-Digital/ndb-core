@@ -22,6 +22,7 @@ import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
 import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
+import { SwRegistrationOptions } from "@angular/service-worker";
 
 export const TEST_USER = "test";
 export const TEST_PASSWORD = "pass";
@@ -48,6 +49,7 @@ export const TEST_PASSWORD = "pass";
     ReactiveFormsModule,
   ],
   providers: [
+    { provide: SwRegistrationOptions, useValue: { enabled: false } },
     {
       provide: AnalyticsService,
       useValue: { eventTrack: () => undefined },

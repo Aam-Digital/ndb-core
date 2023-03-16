@@ -1,7 +1,6 @@
-import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
-import { FormControl } from "@angular/forms";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { ParseResult } from "ngx-papaparse";
 import { ImportMetaData } from "../import-meta-data.type";
@@ -24,8 +23,8 @@ describe("DataImportComponent", () => {
     entityType: "Child",
     dateFormat: "MM-DD-YYYY",
     columnMap: {
-      Name: "name",
-      PN: "projectNumber",
+      Name: { label: "Name", key: "name" },
+      PN: { key: "projectNumber", label: "Project Number" },
     },
   };
 
@@ -33,7 +32,9 @@ describe("DataImportComponent", () => {
     mockDataImportService = jasmine.createSpyObj("DataImportService", [
       "handleCsvImport",
       "validateCsvFile",
+      "getLinkableEntityTypes",
     ]);
+    mockDataImportService.getLinkableEntityTypes.and.returnValue([]);
     TestBed.configureTestingModule({
       imports: [DataImportComponent, MockedTestingModule],
       providers: [
@@ -63,69 +64,69 @@ describe("DataImportComponent", () => {
     } as ParsedData;
     await component.loadData(parsed);
 
-    const columns = Object.keys(component.columnMappingForm.getRawValue());
+    const columns = Object.keys(component.columnMap);
     expect(columns).toEqual(["_id", "name"]);
-    expect(component.entityForm.get("entity")).toHaveValue("Child");
+    expect(component.entityForm).toHaveValue("Child");
     expect(component.transactionIDForm).not.toBeEnabled();
   });
 
-  it("should only show properties that have not been used yet", fakeAsync(() => {
+  it("should only show properties that have not been used yet", () => {
     mockCsvFileLoaded();
-    component.entityForm.patchValue({ entity: "Child" });
+    component.entityForm.patchValue("Child");
     component.entitySelectionChanged();
 
-    component.processChange("nam");
-    expect(component.filteredProperties.value).toEqual(["name"]);
+    component.processChange("", "Project");
+    expect(component.filteredProperties.value).toEqual([
+      { key: "projectNumber", label: "Project Number" },
+    ]);
 
-    component.columnMappingForm.addControl("Name", new FormControl("name"));
-    component.processChange("nam");
+    component.selectOption("Project", "PN");
+    component.processChange("", "Project");
     expect(component.filteredProperties.value).toEqual([]);
-  }));
+  });
 
   it("should initialize forms when loading a config", async () => {
     mockCsvFileLoaded();
-    component.columnMappingForm.addControl("Name", new FormControl());
-    component.columnMappingForm.addControl("PN", new FormControl());
+    component.columnMap["Name"] = undefined;
+    component.columnMap["PN"] = undefined;
 
     await component.loadConfig({ data: importMeta } as ParseResult);
 
-    expect(component.entityForm.get("entity")).toHaveValue(
-      importMeta.entityType
-    );
-    expect(component.transactionIDForm.get("transactionId")).toHaveValue(
-      importMeta.transactionId
-    );
-    expect(component.dateFormatForm.get("dateFormat")).toHaveValue(
-      importMeta.dateFormat
-    );
-    expect(component.columnMappingForm.getRawValue()).toEqual(
-      importMeta.columnMap
-    );
+    expect(component.entityForm).toHaveValue(importMeta.entityType);
+    expect(component.transactionIDForm).toHaveValue(importMeta.transactionId);
+    expect(component.dateFormatForm).toHaveValue(importMeta.dateFormat);
+    expect(component.columnMap).toEqual(importMeta.columnMap);
   });
 
   it("should have correct columns in the column map if a config for different/less columns has been imported", async () => {
     const configFileContents = {
       columnMap: {
-        existingColumn: "existing column value",
-        missingColumn: "missing column value",
-        existingEmptyColumn: null,
+        existingColumn: {
+          key: "existing_column_value",
+          label: "Existing column value",
+        },
+        missingColumn: {
+          key: "missing_column_value",
+          label: "Missing column value",
+        },
+        existingEmptyColumn: undefined,
       },
       entityType: "Child",
     };
     mockCsvFileLoaded();
-    component.columnMappingForm.addControl("existingColumn", new FormControl());
-    component.columnMappingForm.addControl(
-      "existingEmptyColumn",
-      new FormControl()
-    );
-    component.columnMappingForm.addControl("newColumn", new FormControl());
+    component.columnMap["existingColumn"] = undefined;
+    component.columnMap["existingEmptyColumn"] = undefined;
+    component.columnMap["newColumn"] = undefined;
 
     await component.loadConfig({ data: configFileContents } as ParseResult);
 
-    expect(component.columnMappingForm.getRawValue()).toEqual({
-      existingColumn: "existing column value",
-      existingEmptyColumn: null,
-      newColumn: null,
+    expect(component.columnMap).toEqual({
+      existingColumn: {
+        key: "existing_column_value",
+        label: "Existing column value",
+      },
+      existingEmptyColumn: undefined,
+      newColumn: undefined,
     });
   });
 
@@ -134,8 +135,8 @@ describe("DataImportComponent", () => {
 
     @DatabaseEntity("Testing")
     class Testing extends Entity {
-      @DatabaseField() databaseString: string;
-      @DatabaseField() databaseDate: Date;
+      @DatabaseField({ label: "String" }) databaseString: string;
+      @DatabaseField({ label: "Date" }) databaseDate: Date;
       nonDatabaseString: string;
     }
 
@@ -143,20 +144,26 @@ describe("DataImportComponent", () => {
       data: { entityType: "Testing" },
     } as ParseResult);
 
-    expect(component.entityForm.get("entity")).toHaveValue("Testing");
+    expect(component.entityForm).toHaveValue("Testing");
 
-    component.processChange("");
-    expect(component.filteredProperties.value).toContain("databaseString");
-    expect(component.filteredProperties.value).toContain("databaseDate");
+    component.processChange("", "");
+    expect(component.filteredProperties.value).toContain({
+      key: "databaseString",
+      label: "String",
+    });
+    expect(component.filteredProperties.value).toContain({
+      key: "databaseDate",
+      label: "Date",
+    });
     expect(component.filteredProperties.value).not.toContain(
-      "nonDatabaseString"
+      jasmine.objectContaining({ key: "nonDatabaseString" })
     );
   });
 
   it("automatically selects column mappings if column and property name is identical", async () => {
     @DatabaseEntity("TestInferredMapping")
     class Testing extends Entity {
-      @DatabaseField() testProperty: string;
+      @DatabaseField({ label: "Test Property" }) testProperty: string;
       @DatabaseField() testOther: string;
     }
 
@@ -173,9 +180,12 @@ describe("DataImportComponent", () => {
 
     await component.loadData(parsed);
 
-    const actualColumnMap = component.columnMappingForm.getRawValue();
-    expect(actualColumnMap.testProperty).toBe("testProperty");
-    expect(actualColumnMap.unknownColumn).toBe(null);
+    const actualColumnMap = component.columnMap;
+    expect(actualColumnMap.testProperty).toEqual({
+      key: "testProperty",
+      label: "Test Property",
+    });
+    expect(actualColumnMap.unknownColumn).toBe(undefined);
     expect(actualColumnMap["testOther"]).toBe(undefined);
   });
 

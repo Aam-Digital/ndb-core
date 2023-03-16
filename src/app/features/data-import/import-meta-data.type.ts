@@ -26,6 +26,11 @@ export interface ImportMetaData {
    * For more information see {@link https://momentjs.com/docs/#/parsing/string-format/}
    */
   dateFormat?: string;
+
+  /**
+   * The entity type and id to which all imported entries should be linked.
+   */
+  linkEntity?: { type: string; id: string };
 }
 
 /**
@@ -33,5 +38,5 @@ export interface ImportMetaData {
  * If a column should not be imported, the value should be `undefined`
  */
 export type ImportColumnMap = {
-  [key in string]: string;
+  [key in string]: { key: string; label: string };
 };

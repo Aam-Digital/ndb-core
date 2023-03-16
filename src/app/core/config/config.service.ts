@@ -77,14 +77,6 @@ export class ConfigService {
   private async detectLegacyConfig(config: Config): Promise<Config> {
     // ugly but easy ... could use https://www.npmjs.com/package/jsonpath-plus in future
     const configString = JSON.stringify(config);
-    if (
-      configString.includes("EditEntityArray") ||
-      configString.includes("EditSingleEntity")
-    ) {
-      this.logger.warn(
-        "Legacy Config: EditEntityArray/EditSingleEntity found - you should use dataType instead"
-      );
-    }
 
     if (configString.includes("ImportantNotesComponent")) {
       this.logger.warn(

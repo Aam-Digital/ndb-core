@@ -29,6 +29,7 @@ import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Router, RouterLink } from "@angular/router";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -63,6 +64,7 @@ export interface DetailsComponentData {
     Angulartics2Module,
     DisableEntityOperationDirective,
     MatTooltipModule,
+    RouterLink,
   ],
   standalone: true,
 })
@@ -72,6 +74,7 @@ export class RowDetailsComponent {
 
   viewOnlyColumns: FormFieldConfig[];
   tempEntity: Entity;
+  detailsRoute: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
@@ -79,7 +82,8 @@ export class RowDetailsComponent {
     private formService: EntityFormService,
     private ability: EntityAbility,
     private entityRemoveService: EntityRemoveService,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private router: Router
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
     this.columns = data.columns.map((col) => [col]);
@@ -92,6 +96,19 @@ export class RowDetailsComponent {
       this.tempEntity = Object.assign(new dynamicConstructor(), value);
     });
     this.viewOnlyColumns = data.viewOnlyColumns;
+    if (!this.data.entity.isNew) {
+      this.initializeDetailsRouteIfAvailable();
+    }
+  }
+
+  private initializeDetailsRouteIfAvailable() {
+    let route = this.data.entity.getConstructor().route;
+    if (
+      route &&
+      this.router.config.some((r) => "/" + r.path === route + "/:id")
+    ) {
+      this.detailsRoute = route + "/" + this.data.entity.getId();
+    }
   }
 
   save() {

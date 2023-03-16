@@ -88,9 +88,8 @@ export class RollCallSetupComponent implements OnInit {
 
   private async initAvailableEvents() {
     this.isLoading = true;
-    this.existingEvents = await this.attendanceService.getEventsOnDate(
-      this.date
-    );
+    this.existingEvents =
+      await this.attendanceService.getEventsWithUpdatedParticipants(this.date);
     await this.loadActivities();
     this.sortEvents();
     this.filteredExistingEvents = this.existingEvents;
@@ -112,6 +111,10 @@ export class RollCallSetupComponent implements OnInit {
         this.visibleActivities = this.allActivities.filter(
           (a) => a.assignedTo.length === 0
         );
+      }
+      if (this.visibleActivities.length === 0) {
+        this.visibleActivities = this.allActivities;
+        this.showingAll = true;
       }
     }
 

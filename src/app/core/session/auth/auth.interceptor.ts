@@ -43,6 +43,10 @@ export class AuthInterceptor implements HttpInterceptor {
       catchError((err: HttpErrorResponse) => {
         if (err.status === HttpStatusCode.Unauthorized && authEnabled) {
           return from(this.authService.autoLogin()).pipe(
+            catchError(() => {
+              // re-throw initial error
+              throw err;
+            }),
             concatMap(() => next.handle(this.getRequestWithAuth(request)))
           );
         } else {

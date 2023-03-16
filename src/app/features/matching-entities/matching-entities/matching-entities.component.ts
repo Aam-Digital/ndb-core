@@ -120,8 +120,8 @@ export class MatchingEntitiesComponent
   async ngOnInit() {
     this.route.data.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
       if (
-        !data?.config?.leftSide ||
-        !data?.config?.rightSide ||
+        !data?.config?.leftSide &&
+        !data?.config?.rightSide &&
         !data?.config?.columns
       ) {
         return;
@@ -145,10 +145,15 @@ export class MatchingEntitiesComponent
    * @private
    */
   private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
-    const defaultConfig = this.configService.getConfig<MatchingEntitiesConfig>(
-      MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+    const defaultConfig =
+      this.configService.getConfig<MatchingEntitiesConfig>(
+        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+      ) ?? {};
+    config = Object.assign(
+      {},
+      JSON.parse(JSON.stringify(defaultConfig)),
+      JSON.parse(JSON.stringify(config))
     );
-    config = Object.assign({}, defaultConfig, config);
 
     this.columns = config.columns ?? this.columns;
     this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
@@ -255,7 +260,7 @@ export class MatchingEntitiesComponent
   }
 
   applySelectedFilters(side: MatchingSide, filter: DataFilter<Entity>) {
-    side.filterObj = { ...filter };
+    side.filterObj = { ...side.prefilter, ...filter };
     this.filterMapEntities();
   }
 

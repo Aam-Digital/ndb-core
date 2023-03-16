@@ -3,7 +3,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EnumDropdownComponent } from "./enum-dropdown.component";
 import { FormControl } from "@angular/forms";
 import { SimpleChange } from "@angular/core";
-import { ConfigurableEnumService } from "../configurable-enum.service";
 import { ConfigurableEnum } from "../configurable-enum";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -18,13 +17,7 @@ describe("EnumDropdownComponent", () => {
     mockDialog = jasmine.createSpyObj(["open"]);
     await TestBed.configureTestingModule({
       imports: [EnumDropdownComponent, MockedTestingModule.withState()],
-      providers: [
-        {
-          provide: ConfigurableEnumService,
-          useValue: { getEnum: () => new ConfigurableEnum() },
-        },
-        { provide: MatDialog, useValue: mockDialog },
-      ],
+      providers: [{ provide: MatDialog, useValue: mockDialog }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EnumDropdownComponent);
