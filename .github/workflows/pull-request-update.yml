@@ -47,7 +47,7 @@ jobs:
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: aamdigital/ndb-server:pr-${{ github.event.number }}
+          tags: aamdigitaltravis/ndb-server:pr-${{ github.event.number }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
       - name: Deploy updated image

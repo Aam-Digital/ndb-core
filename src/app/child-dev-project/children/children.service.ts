@@ -34,7 +34,9 @@ export class ChildrenService {
     const relations = await this.queryRelations(`${Child.ENTITY_TYPE}:`);
     groupBy(relations, "childId").forEach(([id, rels]) => {
       const child = children.find((c) => c.getId() === id);
-      this.extendChildWithSchoolInfo(child, rels);
+      if (child) {
+        this.extendChildWithSchoolInfo(child, rels);
+      }
     });
     return children;
   }
