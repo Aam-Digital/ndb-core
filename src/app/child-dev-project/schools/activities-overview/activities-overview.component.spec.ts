@@ -56,7 +56,8 @@ describe("ActivitiesOverviewComponent", () => {
     activity3.linkedGroups = ["school3"];
     entityMapper.addAll([activity1, activity2, activity3]);
 
-    await component.onInitFromDynamicConfig({ entity: school1 });
+    component.entity = school1;
+    await component.ngOnInit();
     expect(component.records).toEqual([activity1, activity2]);
   });
 
@@ -75,7 +76,8 @@ describe("ActivitiesOverviewComponent", () => {
     entityMapper.addAll([activity1, activity2]);
     const subject = new Subject<UpdatedEntity<RecurringActivity>>();
     spyOn(entityMapper, "receiveUpdates").and.returnValue(subject);
-    component.onInitFromDynamicConfig({ entity: school1 });
+    component.entity = school1;
+    component.ngOnInit();
     tick();
 
     expect(component.records).toEqual([activity1, activity2]);

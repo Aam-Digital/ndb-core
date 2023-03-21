@@ -56,11 +56,9 @@ describe("BmiBlockComponent", () => {
       healthCheck2,
       healthCheck3,
     ]);
-    component.onInitFromDynamicConfig({
-      entity: testChild,
-      id: "",
-      value: undefined,
-    });
+    component.entity = testChild;
+    component.ngOnChanges();
+
     expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
       testChild.getId()
     );

@@ -98,7 +98,7 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
     return this.loadAttendanceOfAbsentees();
   }
 
-  async loadAttendanceOfAbsentees() {
+  private async loadAttendanceOfAbsentees() {
     const today = new Date();
     const previousMonday = new Date(
       today.getFullYear(),

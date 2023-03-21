@@ -36,11 +36,9 @@ describe("FormComponent", () => {
   it("should change the creating state", () => {
     expect(component.creatingNew).toBeFalse();
 
-    component.onInitFromDynamicConfig({
-      entity: new Child(),
-      config: { cols: [] },
-      creatingNew: true,
-    });
+    component.entity = new Child();
+    component.config = { cols: [] };
+    component.creatingNew = true;
 
     expect(component.creatingNew).toBeTrue();
   });

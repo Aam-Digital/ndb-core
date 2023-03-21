@@ -50,10 +50,9 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should create and map dynamic config to inputs", () => {
-    component.onInitFromDynamicConfig({
-      entity: new Entity(),
-      config: testConfig,
-    });
+    component.entity = new Entity();
+    component.config = testConfig;
+    component.ngOnInit();
 
     expectConfigToMatch(component, testConfig);
   });
@@ -75,17 +74,16 @@ describe("MatchingEntitiesComponent", () => {
     const currentConfig: MatchingEntitiesConfig = {
       columns: [["newA", "newB"]],
     };
+    component.entity = new Entity();
+    component.config = {};
+    component.ngOnInit();
 
-    component.onInitFromDynamicConfig({
-      entity: new Entity(),
-      config: {},
-    });
     expectConfigToMatch(component, testConfig);
 
-    component.onInitFromDynamicConfig({
-      entity: new Entity(),
-      config: currentConfig,
-    });
+    component.entity = new Entity();
+    component.config = currentConfig;
+    component.ngOnInit();
+
     const expectedCombinedConfig = Object.assign({}, testConfig, currentConfig);
     expectConfigToMatch(component, expectedCombinedConfig);
   });
@@ -99,29 +97,24 @@ describe("MatchingEntitiesComponent", () => {
         newEntityType: "",
       },
     };
-    const testEntity = new Entity();
+    const testEntity = new Entity("1");
+    component.entity = testEntity;
 
-    component.onInitFromDynamicConfig({
-      entity: testEntity,
-      config: Object.assign(
-        { rightSide: { entityType: "Child" } } as MatchingEntitiesConfig,
-        testConfig
-      ),
-    });
+    component.config = Object.assign(
+      { rightSide: { entityType: "Child" } } as MatchingEntitiesConfig,
+      testConfig
+    );
     await component.ngOnInit();
 
     expect(component.sideDetails[0].selected).toEqual(testEntity);
 
-    component.onInitFromDynamicConfig({
-      entity: testEntity,
-      config: Object.assign(
-        {
-          leftSide: { entityType: "Child" },
-          rightSide: {},
-        } as MatchingEntitiesConfig,
-        testConfig
-      ),
-    });
+    component.config = Object.assign(
+      {
+        leftSide: { entityType: "Child" },
+        rightSide: {},
+      } as MatchingEntitiesConfig,
+      testConfig
+    );
     await component.ngOnInit();
 
     expect(component.sideDetails[1].selected).toEqual(testEntity);
@@ -130,11 +123,13 @@ describe("MatchingEntitiesComponent", () => {
   it("should init details for template including available entities table and its columns", async () => {
     const testEntity = new Entity();
     component.entity = testEntity;
-    component.rightSide = { entityType: "Child" };
-    component.columns = [
-      ["_id", "name"],
-      ["_rev", "phone"],
-    ];
+    component.config = {
+      rightSide: { entityType: "Child" },
+      columns: [
+        ["_id", "name"],
+        ["_rev", "phone"],
+      ],
+    };
     const allChildren: Child[] = [Child.create("1"), Child.create("2")];
     const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
     loadTypeSpy.and.resolveTo(allChildren);
@@ -158,15 +153,17 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should save a new entity to represent a confirmed matching", async () => {
-    component.onMatch = {
-      newEntityType: ChildSchoolRelation.ENTITY_TYPE,
-      newEntityMatchPropertyRight: "childId",
-      newEntityMatchPropertyLeft: "schoolId",
-    };
     const testEntity = new Entity();
     const matchedEntity = Child.create("matched child");
     component.entity = testEntity;
-    component.columns = [["_id", "name"]];
+    component.config = {
+      onMatch: {
+        newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+        newEntityMatchPropertyRight: "childId",
+        newEntityMatchPropertyLeft: "schoolId",
+      },
+      columns: [["_id", "name"]],
+    };
     const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
 
     await component.ngOnInit();
@@ -187,9 +184,11 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should create distance column and publish updates", async () => {
     Child.schema.set("address", { dataType: "location" });
-    component.columns = [[undefined, "distance"]];
     component.entity = new Child();
-    component.leftSide = { entityType: Child };
+    component.config = {
+      columns: [[undefined, "distance"]],
+      leftSide: { entityType: Child },
+    };
 
     await component.ngOnInit();
     fixture.detectChanges();
@@ -232,10 +231,8 @@ describe("MatchingEntitiesComponent", () => {
   });
 
   it("should not change the provided config object directly", async () => {
-    component.onInitFromDynamicConfig({
-      entity: new Entity(),
-      config: testConfig,
-    });
+    component.entity = new Entity();
+    component.config = testConfig;
     await component.ngOnInit();
     const selectedChild = new Child();
     component.sideDetails[1].selectMatch(selectedChild);
@@ -243,10 +240,8 @@ describe("MatchingEntitiesComponent", () => {
 
     const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
     const newComponent = newFixture.componentInstance;
-    newComponent.onInitFromDynamicConfig({
-      entity: new Entity(),
-      config: testConfig,
-    });
+    component.entity = new Entity();
+    component.config = testConfig;
     await newComponent.ngOnInit();
 
     expect(newComponent.sideDetails[1].selected).not.toEqual(selectedChild);
@@ -267,19 +262,17 @@ describe("MatchingEntitiesComponent", () => {
       rightEntity1,
       rightEntity2,
     ]);
-    component.onInitFromDynamicConfig({
-      entity: leftEntity,
-      config: {
-        columns: [],
-        leftSide: {
-          columns: ["distance"],
-        },
-        rightSide: {
-          columns: ["distance"],
-          entityType: "Child",
-        },
+    component.entity = new Entity();
+    component.config = {
+      columns: [],
+      leftSide: {
+        columns: ["distance"],
       },
-    });
+      rightSide: {
+        columns: ["distance"],
+        entityType: "Child",
+      },
+    };
     await component.ngOnInit();
     fixture.detectChanges();
     const leftSide = component.sideDetails[0];

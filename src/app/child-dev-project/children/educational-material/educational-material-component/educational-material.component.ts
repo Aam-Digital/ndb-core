@@ -59,7 +59,7 @@ export class EducationalMaterialComponent implements OnInit {
    * Loads the data for a given child and updates the summary
    * @param id The id of the child to load the data for
    */
-  async loadData() {
+  private async loadData() {
     const allMaterials = await this.entityMapper.loadType(EducationalMaterial);
     this.records = allMaterials.filter(
       (mat) => mat.child === this.entity.getId()

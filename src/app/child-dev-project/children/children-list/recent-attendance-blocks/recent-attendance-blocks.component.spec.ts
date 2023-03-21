@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  flush,
-  TestBed,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
 import { Child } from "../../model/child";
@@ -45,7 +39,7 @@ describe("RecentAttendanceBlocksComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should display blocks for all activities of the filtered activity type", fakeAsync(() => {
+  it("should display blocks for all activities of the filtered activity type", async () => {
     const testChild = new Child("testID");
     const testActivity1 = RecurringActivity.create("test 1");
     testActivity1.type = defaultInteractionTypes[1];
@@ -72,16 +66,12 @@ describe("RecentAttendanceBlocksComponent", () => {
       }
     );
 
-    component.onInitFromDynamicConfig({
-      entity: testChild,
-      id: "",
-      value: undefined,
-      config: {
-        filterByActivityType: defaultInteractionTypes[1].id,
-      },
-    });
-    flush();
+    component.entity = testChild;
+    component.config = {
+      filterByActivityType: defaultInteractionTypes[1].id,
+    };
+    await component.ngOnChanges();
 
     expect(component.attendanceList).toHaveSize(2);
-  }));
+  });
 });

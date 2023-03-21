@@ -123,8 +123,11 @@ export class MatchingEntitiesComponent implements OnInit {
       this.initConfig();
     });
 
+    console.log("on init", this.leftSide, this.rightSide);
     this.sideDetails = [
-      await this.initSideDetails(this.leftSide, 0),
+      await this.initSideDetails(this.leftSide, 0).catch(
+        (err) => console.log("err", err) as any
+      ),
       await this.initSideDetails(this.rightSide, 1),
     ];
     this.sideDetails.forEach((side, index) =>
@@ -170,6 +173,7 @@ export class MatchingEntitiesComponent implements OnInit {
   ): Promise<MatchingSide> {
     const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
 
+    console.log("config", sideIndex, newSide);
     if (!newSide.entityType) {
       newSide.selected = newSide.selected ?? this.entity;
       newSide.entityType = newSide.selected.getConstructor();

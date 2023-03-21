@@ -180,12 +180,9 @@ describe("EditTextWithAutocompleteComponent", () => {
       res.additional.relevantProperty = relevantProperty;
       res.additional.relevantValue = relevantValue;
     }
-
-    return component.onInitFromDynamicConfig({
-      formFieldConfig: res,
-      formControl: component.formControl,
-      propertySchema: RecurringActivity.schema.get("title"),
-      entity: new RecurringActivity(),
-    });
+    component.formFieldConfig = res;
+    component.propertySchema = RecurringActivity.schema.get("title");
+    component.entity = new RecurringActivity();
+    return component.ngOnInit();
   }
 });

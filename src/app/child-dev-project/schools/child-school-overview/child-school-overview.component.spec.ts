@@ -1,13 +1,6 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildSchoolOverviewComponent } from "./child-school-overview.component";
-import { SimpleChange } from "@angular/core";
 import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -52,24 +45,19 @@ describe("ChildSchoolOverviewComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("it calls children service with id from passed child", fakeAsync(() => {
-    component.ngOnChanges({
-      entity: new SimpleChange(undefined, testChild, false),
-    });
-    tick();
+  it("it calls children service with id from passed child", async () => {
+    await component.ngOnInit();
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "child",
       testChild.getId()
     );
-  }));
+  });
 
   it("it detects mode and uses correct index to load data ", async () => {
     const testSchool = new School();
 
     component.entity = testSchool;
-    await component.ngOnChanges({
-      entity: new SimpleChange(undefined, testSchool, false),
-    });
+    await component.ngOnInit();
 
     expect(component.mode).toBe("school");
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
@@ -78,20 +66,17 @@ describe("ChildSchoolOverviewComponent", () => {
     );
   });
 
-  it("should allow to change the columns to be displayed by the config", fakeAsync(() => {
-    const config: PanelConfig = {
-      entity: new Child(),
-      config: {
-        single: true,
-        columns: [
-          { id: "schoolId", label: "Team", view: "school" },
-          { id: "start", label: "From", view: "date" },
-          { id: "end", label: "To", view: "date" },
-        ],
-      },
+  it("should allow to change the columns to be displayed by the config", async () => {
+    component.entity = new Child();
+    component.config = {
+      single: true,
+      columns: [
+        { id: "schoolId", label: "Team", view: "school" },
+        { id: "start", label: "From", view: "date" },
+        { id: "end", label: "To", view: "date" },
+      ],
     };
-    component.onInitFromDynamicConfig(config);
-    tick();
+    await component.ngOnInit();
 
     let columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
@@ -100,27 +85,18 @@ describe("ChildSchoolOverviewComponent", () => {
     expect(columnNames).not.toContain("Class");
     expect(columnNames).not.toContain("Result");
 
-    config.config.columns.push(
-      {
-        id: "schoolClass",
-        label: "Class",
-        input: "text",
-      },
-      {
-        id: "result",
-        label: "Result",
-        input: "percentageResult",
-      }
+    component.columns.push(
+      { id: "schoolClass", label: "Class", view: "text" },
+      { id: "result", label: "Result", view: "percentageResult" }
     );
 
-    component.onInitFromDynamicConfig(config);
-    tick();
+    await component.ngOnInit();
 
     columnNames = component.columns.map((column) => column.label);
     expect(columnNames).toEqual(
       jasmine.arrayContaining(["Team", "From", "To", "Class", "Result"])
     );
-  }));
+  });
 
   it("should create a relation with the child ID", async () => {
     const existingRelation = new ChildSchoolRelation();
@@ -130,9 +106,7 @@ describe("ChildSchoolOverviewComponent", () => {
 
     const child = new Child();
     component.entity = child;
-    await component.ngOnChanges({
-      entity: new SimpleChange(undefined, component.entity, false),
-    });
+    await component.ngOnInit();
 
     const newRelation = component.generateNewRecordFactory()();
 
@@ -146,9 +120,7 @@ describe("ChildSchoolOverviewComponent", () => {
 
   it("should create a relation with the school ID", () => {
     component.entity = new School("testID");
-    component.ngOnChanges({
-      entity: new SimpleChange(undefined, component.entity, false),
-    });
+    component.ngOnInit();
 
     const newRelation = component.generateNewRecordFactory()();
 
@@ -163,7 +135,8 @@ describe("ChildSchoolOverviewComponent", () => {
       inactive,
     ]);
 
-    await component.onInitFromDynamicConfig({ entity: school });
+    component.entity = school;
+    await component.ngOnInit();
 
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "school",
@@ -179,10 +152,9 @@ describe("ChildSchoolOverviewComponent", () => {
       inactive,
     ]);
 
-    await component.onInitFromDynamicConfig({
-      entity: new School(),
-      config: { showInactive: true },
-    });
+    component.entity = new School();
+    component.config = { showInactive: true };
+    await component.ngOnInit();
 
     expect(component.displayedRecords).toEqual([active1, active2, inactive]);
     expect(component.backgroundColorFn(active1)).not.toEqual("");

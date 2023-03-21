@@ -17,14 +17,12 @@ describe("RelatedEntitiesComponent", () => {
 
     fixture = TestBed.createComponent(RelatedEntitiesComponent);
     component = fixture.componentInstance;
-    await component.onInitFromDynamicConfig({
-      entity: new Child(),
-      config: {
-        entity: ChildSchoolRelation.ENTITY_TYPE,
-        property: "childId",
-        columns: [],
-      },
-    });
+    component.entity = new Child();
+    component.config = {
+      entity: ChildSchoolRelation.ENTITY_TYPE,
+      property: "childId",
+      columns: [],
+    };
     fixture.detectChanges();
   });
 
@@ -46,31 +44,29 @@ describe("RelatedEntitiesComponent", () => {
     const columns = ["start", "end", "schoolId"];
     const filter = { start: { $exists: true } } as any;
 
-    await component.onInitFromDynamicConfig({
-      entity: c1,
-      config: {
-        entity: ChildSchoolRelation.ENTITY_TYPE,
-        property: "childId",
-        columns,
-        filter,
-      },
-    });
+    component.entity = c1;
+    component.config = {
+      entity: ChildSchoolRelation.ENTITY_TYPE,
+      property: "childId",
+      columns,
+      filter,
+    };
+    await component.ngOnInit();
 
-    expect(component.columns).toBe(columns);
+    expect(component.config.columns).toBe(columns);
     expect(component.data).toEqual([r1, r2, r3]);
     expect(component.filter).toEqual({ ...filter, childId: c1.getId() });
   });
 
   it("should create a new entity that references the related one", async () => {
     const related = new Child();
-    await component.onInitFromDynamicConfig({
-      entity: related,
-      config: {
-        entity: ChildSchoolRelation.ENTITY_TYPE,
-        property: "childId",
-        columns: [],
-      },
-    });
+    component.entity = related;
+    component.config = {
+      entity: ChildSchoolRelation.ENTITY_TYPE,
+      property: "childId",
+      columns: [],
+    };
+    await component.ngOnInit();
 
     const newEntity = component.createNewRecordFactory()();
 

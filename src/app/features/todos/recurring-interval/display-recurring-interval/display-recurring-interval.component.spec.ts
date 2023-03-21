@@ -19,7 +19,8 @@ describe("DisplayRecurringIntervalComponent", () => {
 
   it("should load dynamic config and generate human-readable label", () => {
     const testInterval: TimeInterval = { amount: 2, unit: "weeks" };
-    component.onInitFromDynamicConfig({ value: testInterval } as any);
+    component.value = testInterval;
+    component.ngOnInit();
 
     expect(component.label).toBe(generateLabelFromInterval(testInterval));
   });

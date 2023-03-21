@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -42,11 +37,9 @@ describe("DisplayEntityArrayComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayEntityArrayComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({
-      entity: new Note(),
-      id: "children",
-      value: [],
-    });
+    component.entity = new Note();
+    component.id = "children";
+    component.value = [];
     fixture.detectChanges();
   });
 
@@ -54,7 +47,7 @@ describe("DisplayEntityArrayComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load entities for single type", fakeAsync(() => {
+  it("should load entities for single type", async () => {
     const expectedEntities = [testEntities[0]];
 
     @DatabaseEntity("DisplayEntityTest1")
@@ -65,20 +58,19 @@ describe("DisplayEntityArrayComponent", () => {
       })
       relatedEntities;
     }
+
     const testEntity = new DisplayEntityTest1();
     testEntity.relatedEntities = expectedEntities.map((e) => e.getId(false));
 
-    component.onInitFromDynamicConfig({
-      entity: testEntity,
-      id: "relatedEntities",
-      value: testEntity.relatedEntities,
-    });
-    tick();
+    component.entity = testEntity;
+    component.id = "relatedEntities";
+    component.value = testEntity.relatedEntities;
+    await component.ngOnInit();
 
     expect(component.entities).toEqual(expectedEntities);
-  }));
+  });
 
-  it("should load entities for mixed types", fakeAsync(() => {
+  it("should load entities for mixed types", async () => {
     const expectedEntities = [testEntities[0], testEntities[2]];
 
     @DatabaseEntity("DisplayEntityTest2")
@@ -89,16 +81,15 @@ describe("DisplayEntityArrayComponent", () => {
       })
       relatedEntities;
     }
+
     const testEntity = new DisplayEntityTest2();
     testEntity.relatedEntities = expectedEntities.map((e) => e.getId(true));
 
-    component.onInitFromDynamicConfig({
-      entity: testEntity,
-      id: "relatedEntities",
-      value: testEntity.relatedEntities,
-    });
-    tick();
+    component.entity = testEntity;
+    component.id = "relatedEntities";
+    component.value = testEntity.relatedEntities;
+    await component.ngOnInit();
 
     expect(component.entities).toEqual(expectedEntities);
-  }));
+  });
 });

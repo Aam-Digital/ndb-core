@@ -56,15 +56,15 @@ export abstract class EditComponent<T> implements OnInit {
   additional?: any;
 
   ngOnInit() {
-    if (!this.formFieldConfig.forTable) {
-      this.label = this.formFieldConfig.label || this.propertySchema?.label;
+    if (!this.formFieldConfig?.forTable) {
+      this.label = this.formFieldConfig?.label || this.propertySchema?.label;
     }
-    if (this.formFieldConfig.forTable) {
+    if (this.formFieldConfig?.forTable) {
       this.tooltip = undefined;
     }
     this.additional =
       this.formFieldConfig?.additional ?? this.propertySchema?.additional;
-    this.formControlName = this.formFieldConfig.id;
+    this.formControlName = this.formFieldConfig?.id;
     // This type casts are needed as the normal types throw errors in the templates
     this.parent = this.formControl.parent as FormGroup;
   }
