@@ -1,6 +1,5 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -31,21 +30,23 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
   ],
   standalone: true,
 })
-export class EntityCountDashboardComponent
-  implements OnInitDynamicComponent, OnInit
-{
-  private entity: EntityConstructor = Child;
+export class EntityCountDashboardComponent implements OnInit {
+  @Input() set entity(value: string) {
+    this._entity = this.entities.get(value);
+  }
+
+  private _entity: EntityConstructor = Child;
   /**
    * The property of the Child entities to group counts by.
    *
    * Default is "center".
    */
-  private groupBy = "center";
+  @Input() groupBy = "center";
 
   totalEntities: number;
   entityGroupCounts: { label: string; value: number; id: string }[] = [];
-  label = Child.labelPlural;
-  entityIcon: IconName = Child.icon;
+  label: string;
+  entityIcon: IconName;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -53,25 +54,20 @@ export class EntityCountDashboardComponent
     private entities: EntityRegistry
   ) {}
 
-  onInitFromDynamicConfig(config: any) {
-    this.groupBy = config?.groupBy ?? this.groupBy;
-    if (config?.entity) {
-      this.entity = this.entities.get(config.entity);
-      this.label = this.entity.labelPlural;
-      this.entityIcon = this.entity.icon;
-    }
-  }
-
   async ngOnInit() {
-    const entities = await this.entityMapper.loadType(this.entity);
+    const entities = await this.entityMapper.loadType(this._entity);
     this.updateCounts(entities.filter((e) => e.isActive));
+    if (this._entity) {
+      this.label = this._entity.labelPlural;
+      this.entityIcon = this._entity.icon;
+    }
   }
 
   goToChildrenList(filterId: string) {
     const params = {};
     params[this.groupBy] = filterId;
 
-    this.router.navigate([this.entity.route], { queryParams: params });
+    this.router.navigate([this._entity.route], { queryParams: params });
   }
 
   private updateCounts(entities: Entity[]) {

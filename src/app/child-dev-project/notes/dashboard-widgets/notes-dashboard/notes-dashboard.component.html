@@ -15,14 +15,14 @@
       >
         <!-- Table header only for assistive technologies like screen readers -->
         <tr hidden="true">
-          <th scope="col">{{ entity.label }}</th>
+          <th scope="col">{{ _entity.label }}</th>
           <th scope="col">Days since last note</th>
         </tr>
         <ng-container matColumnDef="entity">
           <td *matCellDef="let entityNoteInfo">
             <app-display-entity
               [entityId]="entityNoteInfo.entityId"
-              [entityType]="entity"
+              [entityType]="_entity"
             ></app-display-entity>
           </td>
         </ng-container>
