@@ -23,6 +23,5 @@ import { ComponentType } from "@angular/cdk/overlay";
  * ```
  * @param _name with which the component can be accessed
  */
-export const DynamicComponent =
-  (_name: string) => (_: ComponentType<OnInitDynamicComponent>) =>
-    undefined;
+export const DynamicComponent = (_name: string) => (_: ComponentType<any>) =>
+  undefined;

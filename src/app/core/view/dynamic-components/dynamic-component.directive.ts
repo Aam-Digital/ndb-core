@@ -7,6 +7,7 @@ import {
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { ComponentRegistry } from "../../../dynamic-components";
+import { pick } from "lodash-es";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
@@ -46,11 +47,9 @@ export class DynamicComponentDirective implements OnChanges {
 
     const componentRef = this.viewContainerRef.createComponent(component);
 
-    if (componentRef.instance.onInitFromDynamicConfig) {
-      componentRef.instance.onInitFromDynamicConfig(
-        this.appDynamicComponent.config
-      );
-    }
+    const inputs = Object.keys(component.prototype.constructor["ɵcmp"].inputs);
+    const inputValues = pick(this.appDynamicComponent.config, inputs);
+    Object.assign(componentRef.instance, inputValues);
     // it seems like the asynchronicity of this function requires this
     this.changeDetector.detectChanges();
   }
