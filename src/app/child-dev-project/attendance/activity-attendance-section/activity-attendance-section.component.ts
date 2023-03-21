@@ -6,7 +6,6 @@ import {
   OnChanges,
   SimpleChanges,
 } from "@angular/core";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";
@@ -40,10 +39,8 @@ import { AttendanceSummaryComponent } from "../attendance-summary/attendance-sum
   ],
   standalone: true,
 })
-export class ActivityAttendanceSectionComponent
-  implements OnChanges, OnInitDynamicComponent
-{
-  @Input() activity: RecurringActivity;
+export class ActivityAttendanceSectionComponent implements OnChanges {
+  @Input() entity: RecurringActivity;
   @Input() forChild?: string;
 
   loading: boolean = true;
@@ -96,27 +93,22 @@ export class ActivityAttendanceSectionComponent
 
   async ngOnChanges(changes: SimpleChanges) {
     if (
-      changes.hasOwnProperty("activity") ||
+      changes.hasOwnProperty("entity") ||
       changes.hasOwnProperty("forChild")
     ) {
       await this.init();
     }
   }
 
-  async onInitFromDynamicConfig(config: any) {
-    this.activity = config.entity as RecurringActivity;
-    await this.init();
-  }
-
   async init(loadAll: boolean = false) {
     this.loading = true;
     if (loadAll) {
       this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.activity
+        this.entity
       );
     } else {
       this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.activity,
+        this.entity,
         moment().startOf("month").subtract(6, "months").toDate()
       );
     }
@@ -127,7 +119,7 @@ export class ActivityAttendanceSectionComponent
 
   private createCombinedAttendance() {
     this.combinedAttendance = new ActivityAttendance();
-    this.combinedAttendance.activity = this.activity;
+    this.combinedAttendance.activity = this.entity;
     this.allRecords.forEach((record) => {
       this.combinedAttendance.events.push(...record.events);
       if (

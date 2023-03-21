@@ -3,6 +3,8 @@ import {
   Directive,
   Input,
   OnChanges,
+  SimpleChange,
+  SimpleChanges,
   ViewContainerRef,
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
@@ -14,8 +16,7 @@ import { pick } from "lodash-es";
  *
  * Pass the DynamicComponentConfig into the directive to define the component to be injected.
  *
- * A component that is dynamically injected must implement the {@link OnInitDynamicComponent} interface
- * to allow initialization of input properties from a dynamic config object.
+ * Configurations that match properties with an `@Input()` annotations are automatically assigned
  */
 @Directive({
   selector: "[appDynamicComponent]",
@@ -47,9 +48,30 @@ export class DynamicComponentDirective implements OnChanges {
 
     const componentRef = this.viewContainerRef.createComponent(component);
 
-    const inputs = Object.keys(component.prototype.constructor["ɵcmp"].inputs);
+    const inputs = Object.keys(
+      component.prototype.constructor["ɵcmp"].inputs
+    ).filter((input) => this.appDynamicComponent.config[input]);
     const inputValues = pick(this.appDynamicComponent.config, inputs);
+    const initialValues = pick(componentRef.instance, inputs);
     Object.assign(componentRef.instance, inputValues);
+
+    if (
+      typeof componentRef.instance["ngOnChanges"] === "function" &&
+      Object.keys(inputValues).length > 0
+    ) {
+      const changes: SimpleChanges = inputs.reduce(
+        (c, prop) =>
+          Object.assign(c, {
+            [prop]: new SimpleChange(
+              initialValues[prop],
+              inputValues[prop],
+              true
+            ),
+          }),
+        {}
+      );
+      componentRef.instance["ngOnChanges"](changes);
+    }
     // it seems like the asynchronicity of this function requires this
     this.changeDetector.detectChanges();
   }

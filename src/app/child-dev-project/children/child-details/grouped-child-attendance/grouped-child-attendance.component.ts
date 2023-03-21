@@ -1,7 +1,5 @@
 import { Component, Input, OnChanges, ViewEncapsulation } from "@angular/core";
 import { Child } from "../../model/child";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -27,10 +25,8 @@ import { ActivityAttendanceSectionComponent } from "../../../attendance/activity
   ],
   standalone: true,
 })
-export class GroupedChildAttendanceComponent
-  implements OnChanges, OnInitDynamicComponent
-{
-  @Input() child: Child = new Child("");
+export class GroupedChildAttendanceComponent implements OnChanges {
+  @Input() entity: Child = new Child("");
 
   loading: boolean = true;
   activities: RecurringActivity[] = [];
@@ -41,16 +37,11 @@ export class GroupedChildAttendanceComponent
     await this.loadActivities();
   }
 
-  async onInitFromDynamicConfig(config: PanelConfig) {
-    this.child = config.entity as Child;
-    await this.loadActivities();
-  }
-
   private async loadActivities() {
     this.loading = true;
     this.activities = (
-      await this.attendanceService.getActivitiesForChild(this.child.getId())
-    ).filter((a) => !a.excludedParticipants.includes(this.child.getId()));
+      await this.attendanceService.getActivitiesForChild(this.entity.getId())
+    ).filter((a) => !a.excludedParticipants.includes(this.entity.getId()));
     this.loading = false;
   }
 }

@@ -1,9 +1,8 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnChanges } from "@angular/core";
 import { HealthCheck } from "../../health-checkup/model/health-check";
-import { ViewPropertyConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { ChildrenService } from "../../children.service";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { Child } from "../../model/child";
 
 @DynamicComponent("BmiBlock")
 @Component({
@@ -18,14 +17,15 @@ import { DynamicComponent } from "../../../../core/view/dynamic-components/dynam
   styleUrls: ["./bmi-block.component.scss"],
   standalone: true,
 })
-export class BmiBlockComponent implements OnInitDynamicComponent {
-  public currentHealthCheck: HealthCheck;
+export class BmiBlockComponent implements OnChanges {
+  @Input() entity: Child;
+  currentHealthCheck: HealthCheck;
 
   constructor(private childrenService: ChildrenService) {}
 
-  onInitFromDynamicConfig(config: ViewPropertyConfig) {
+  ngOnChanges() {
     this.childrenService
-      .getHealthChecksOfChild(config.entity.getId())
+      .getHealthChecksOfChild(this.entity.getId())
       .then((results) => {
         if (results.length > 0) {
           this.currentHealthCheck = results.reduce((prev, cur) =>

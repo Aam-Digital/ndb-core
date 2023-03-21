@@ -77,8 +77,10 @@ export class MapComponent implements AfterViewInit {
   private _highlightedEntities = new BehaviorSubject<Entity[]>([]);
 
   @Input() set displayedProperties(displayedProperties: LocationProperties) {
-    this._displayedProperties = displayedProperties;
-    this.showPropertySelection = Object.keys(displayedProperties).length > 0;
+    if (displayedProperties) {
+      this._displayedProperties = displayedProperties;
+      this.showPropertySelection = Object.keys(displayedProperties).length > 0;
+    }
   }
 
   private _displayedProperties: LocationProperties = {};

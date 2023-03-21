@@ -1,6 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import moment from "moment";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -35,13 +33,20 @@ import { PillComponent } from "../../../core/common-components/pill/pill.compone
   ],
   standalone: true,
 })
-export class ChildSchoolOverviewComponent
-  implements OnChanges, OnInitDynamicComponent
-{
+export class ChildSchoolOverviewComponent implements OnInit {
   @Input() entity: Entity;
-  mode: "child" | "school";
+  mode: "child" | "school" = "child";
 
-  @Input() columns: FormFieldConfig[] = [
+  @Input() set config(config) {
+    this.single = config?.single ?? this.single;
+    this.clickMode = config?.clickMode ?? this.clickMode;
+    this.showInactive = config?.showInactive ?? this.mode;
+    if (config?.columns) {
+      this.columns = [...config.columns, isActiveIndicator];
+    }
+  }
+
+  columns: FormFieldConfig[] = [
     { id: "childId" }, // schoolId/childId replaced dynamically during init
     { id: "start", visibleFrom: "md" },
     { id: "end", visibleFrom: "md" },
@@ -50,9 +55,9 @@ export class ChildSchoolOverviewComponent
     isActiveIndicator,
   ];
 
-  @Input() single = true;
-  @Input() showInactive = false;
-  @Input() clickMode: "popup" | "navigate" = "popup";
+  single = true;
+  showInactive = false;
+  clickMode: "popup" | "navigate" = "popup";
 
   isLoading = false;
   private allRecords: ChildSchoolRelation[] = [];
@@ -62,26 +67,9 @@ export class ChildSchoolOverviewComponent
 
   constructor(private childrenService: ChildrenService) {}
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("entity")) {
-      this.mode = this.inferMode(this.entity);
-      await this.loadData();
-    }
-  }
-
-  async onInitFromDynamicConfig(panelConfig: PanelConfig) {
-    this.entity = panelConfig.entity;
+  ngOnInit() {
     this.mode = this.inferMode(this.entity);
-
-    this.single = panelConfig.config?.single ?? this.single;
-    this.clickMode = panelConfig.config?.clickMode ?? this.clickMode;
-    this.showInactive =
-      panelConfig.config?.showInactive ?? this.mode === "child";
-    if (panelConfig.config?.columns) {
-      this.columns = [...panelConfig.config.columns, isActiveIndicator];
-    }
-
-    await this.loadData();
+    return this.loadData();
   }
 
   private inferMode(entity: Entity): "child" | "school" {

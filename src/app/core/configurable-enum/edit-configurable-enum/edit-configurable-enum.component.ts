@@ -1,8 +1,5 @@
 import { Component } from "@angular/core";
-import {
-  EditComponent,
-  EditPropertyConfig,
-} from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { arrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-array";
@@ -31,14 +28,14 @@ export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnu
   enumId: string;
   multi = false;
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<ConfigurableEnumValue>) {
-    super.onInitFromDynamicConfig(config);
-    if (config.propertySchema.dataType === arrayEntitySchemaDatatype.name) {
+  ngOnInit() {
+    super.ngOnInit();
+    if (this.propertySchema.dataType === arrayEntitySchemaDatatype.name) {
       this.multi = true;
     }
     this.enumId =
-      config.formFieldConfig.additional ||
-      config.propertySchema.additional ||
-      config.propertySchema.innerDataType;
+      this.formFieldConfig.additional ||
+      this.propertySchema.additional ||
+      this.propertySchema.innerDataType;
   }
 }

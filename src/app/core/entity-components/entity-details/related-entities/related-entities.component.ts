@@ -1,7 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
-import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { PanelConfig } from "../EntityDetailsConfig";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
@@ -19,50 +17,44 @@ import { EntitySubrecordComponent } from "../../entity-subrecord/entity-subrecor
   standalone: true,
   imports: [EntitySubrecordComponent],
 })
-export class RelatedEntitiesComponent implements OnInitDynamicComponent {
+export class RelatedEntitiesComponent implements OnInit {
   data: Entity[] = [];
-  columns: ColumnConfig[] = [];
   filter: DataFilter<Entity>;
-  relatedEntity: Entity;
-  private entityType: EntityConstructor;
-  private property;
+  @Input() entity: Entity;
+  @Input() config: {
+    entity: string;
+    property: string;
+    columns: ColumnConfig[];
+    filter?: DataFilter<Entity>;
+  };
   private isArray = false;
+  private entityType: EntityConstructor;
 
   constructor(
     private entityMapper: EntityMapperService,
     private entities: EntityRegistry
   ) {}
 
-  async onInitFromDynamicConfig(
-    config: PanelConfig<{
-      entity: string;
-      property: string;
-      columns: ColumnConfig[];
-      filter?: DataFilter<Entity>;
-    }>
-  ) {
-    this.relatedEntity = config.entity;
-    this.entityType = this.entities.get(config.config.entity);
-    this.property = config.config.property;
-    this.isArray = isArrayProperty(this.entityType, this.property);
+  async ngOnInit() {
+    this.entityType = this.entities.get(this.config.entity);
+    this.isArray = isArrayProperty(this.entityType, this.config.property);
 
     this.data = await this.entityMapper.loadType(this.entityType);
     this.filter = {
-      ...config.config.filter,
-      [this.property]: this.isArray
-        ? { $elemMatch: { $eq: this.relatedEntity.getId() } }
-        : this.relatedEntity.getId(),
+      ...this.config.filter,
+      [this.config.property]: this.isArray
+        ? { $elemMatch: { $eq: this.entity.getId() } }
+        : this.entity.getId(),
     };
-    this.columns = config.config.columns;
   }
 
   createNewRecordFactory() {
     // TODO has a similar purpose like FilterService.alignEntityWithFilter
     return () => {
       const rec = new this.entityType();
-      rec[this.property] = this.isArray
-        ? [this.relatedEntity.getId()]
-        : this.relatedEntity.getId();
+      rec[this.config.property] = this.isArray
+        ? [this.entity.getId()]
+        : this.entity.getId();
       return rec;
     };
   }

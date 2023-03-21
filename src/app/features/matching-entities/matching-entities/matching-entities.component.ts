@@ -1,10 +1,8 @@
 import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import {
   MatchingEntitiesConfig,
   MatchingSideConfig,
@@ -68,15 +66,14 @@ export interface MatchingSide extends MatchingSideConfig {
   ],
   standalone: true,
 })
-export class MatchingEntitiesComponent
-  implements OnInit, OnInitDynamicComponent
-{
+export class MatchingEntitiesComponent implements OnInit {
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
 
   @Input() entity: Entity;
+  @Input() config: MatchingEntitiesConfig = {};
 
-  @Input() leftSide: MatchingSideConfig = {};
-  @Input() rightSide: MatchingSideConfig = {};
+  leftSide: MatchingSideConfig = {};
+  rightSide: MatchingSideConfig = {};
   filteredMapEntities: Entity[] = [];
 
   columnsToDisplay = [];
@@ -85,12 +82,11 @@ export class MatchingEntitiesComponent
    * Column mapping of property pairs of left and right entity that should be compared side by side.
    * @param value
    */
-  @Input() columns: [ColumnConfig, ColumnConfig][] = [];
+  columns: [ColumnConfig, ColumnConfig][] = [];
 
-  @Input()
   matchActionLabel: string = $localize`:Matching button label:create matching`;
 
-  @Input() onMatch: NewMatchAction;
+  onMatch: NewMatchAction;
 
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
@@ -113,11 +109,8 @@ export class MatchingEntitiesComponent
 
   // TODO: fill selection on hover already?
 
-  onInitFromDynamicConfig(config: PanelConfig<MatchingEntitiesConfig>) {
-    this.initConfig(config.config, config.entity);
-  }
-
   async ngOnInit() {
+    this.initConfig();
     this.route.data.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
       if (
         !data?.config?.leftSide &&
@@ -126,7 +119,8 @@ export class MatchingEntitiesComponent
       ) {
         return;
       }
-      this.initConfig(data.config);
+      this.config = data.config;
+      this.initConfig();
     });
 
     this.sideDetails = [
@@ -144,25 +138,24 @@ export class MatchingEntitiesComponent
    * Apply config object to the component inputs (including global default config)
    * @private
    */
-  private initConfig(config: MatchingEntitiesConfig, entity?: Entity) {
+  private initConfig() {
     const defaultConfig =
       this.configService.getConfig<MatchingEntitiesConfig>(
         MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
       ) ?? {};
-    config = Object.assign(
+    this.config = Object.assign(
       {},
       JSON.parse(JSON.stringify(defaultConfig)),
-      JSON.parse(JSON.stringify(config))
+      JSON.parse(JSON.stringify(this.config))
     );
 
-    this.columns = config.columns ?? this.columns;
-    this.matchActionLabel = config.matchActionLabel ?? this.matchActionLabel;
-    this.onMatch = config.onMatch ?? this.onMatch;
+    this.columns = this.config.columns ?? this.columns;
+    this.matchActionLabel =
+      this.config.matchActionLabel ?? this.matchActionLabel;
+    this.onMatch = this.config.onMatch ?? this.onMatch;
 
-    this.leftSide = config.leftSide ?? this.leftSide;
-    this.rightSide = config.rightSide ?? this.rightSide;
-
-    this.entity = entity;
+    this.leftSide = this.config.leftSide ?? this.leftSide;
+    this.rightSide = this.config.rightSide ?? this.rightSide;
   }
 
   /**

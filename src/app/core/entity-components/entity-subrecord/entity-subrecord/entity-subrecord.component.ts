@@ -100,9 +100,11 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
-    this._columns = columns.map(toFormFieldConfig);
-    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
-    this.idForSavingPagination = this._columns.map((col) => col.id).join("");
+    if (columns) {
+      this._columns = columns.map(toFormFieldConfig);
+      this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
+      this.idForSavingPagination = this._columns.map((col) => col.id).join("");
+    }
   }
 
   _columns: FormFieldConfig[] = [];
@@ -111,10 +113,12 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   /** data to be displayed, can also be used as two-way-binding */
   @Input()
   set records(value: T[]) {
-    this._records = value;
-    this.initDataSource();
-    if (!this.newRecordFactory && this._records.length > 0) {
-      this.newRecordFactory = () => new (this._records[0].getConstructor())();
+    if (value) {
+      this._records = value;
+      this.initDataSource();
+      if (!this.newRecordFactory && this._records.length > 0) {
+        this.newRecordFactory = () => new (this._records[0].getConstructor())();
+      }
     }
   }
 

@@ -2,7 +2,6 @@ import { Component } from "@angular/core";
 import { DynamicComponent } from "app/core/view/dynamic-components/dynamic-component.decorator";
 import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import moment from "moment";
@@ -25,7 +24,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     DatePipe,
   ],
 })
-export class TodosDashboardComponent implements OnInitDynamicComponent {
+export class TodosDashboardComponent {
   dataMapper: (data: Todo[]) => Todo[] = (data) =>
     data.filter(this.filterEntries).sort(this.sortEntries);
 
@@ -35,8 +34,6 @@ export class TodosDashboardComponent implements OnInitDynamicComponent {
     private formDialog: FormDialogService,
     private sessionService: SessionService
   ) {}
-
-  onInitFromDynamicConfig(config: any) {}
 
   filterEntries = (todo: Todo) => {
     return (
