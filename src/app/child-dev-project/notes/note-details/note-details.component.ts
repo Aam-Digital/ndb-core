@@ -6,13 +6,10 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { Note } from "../model/note";
-import { Child } from "../../children/model/child";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
-import { DatePipe, NgIf } from "@angular/common";
-import { FormsModule } from "@angular/forms";
+import { DatePipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
@@ -43,17 +40,15 @@ import { AlertService } from "../../../core/alerts/alert.service";
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
   imports: [
-    EntityFormComponent,
-    DynamicComponentDirective,
-    NgIf,
+    MatDialogModule,
     DatePipe,
-    FormsModule,
-    MatMenuModule,
     MatButtonModule,
+    MatMenuModule,
     FontAwesomeModule,
     ExportDataDirective,
     Angulartics2Module,
-    MatDialogModule,
+    EntityFormComponent,
+    DynamicComponentDirective,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
@@ -61,13 +56,9 @@ import { AlertService } from "../../../core/alerts/alert.service";
 export class NoteDetailsComponent implements OnInit {
   @Input() entity: Note;
 
-  includeInactiveChildren = false;
-
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  /** Is it mobile view or not */
-  mobile = false;
   topForm = ["date", "warningLevel", "category", "authors"].map((field) => [
     toFormFieldConfig(field),
   ]);
@@ -80,7 +71,6 @@ export class NoteDetailsComponent implements OnInit {
 
   constructor(
     private configService: ConfigService,
-    private screenWidthObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
     @Inject(MAT_DIALOG_DATA) data: { entity: Note },
     private dialog: MatDialogRef<any>,
@@ -90,10 +80,6 @@ export class NoteDetailsComponent implements OnInit {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
-    this.screenWidthObserver
-      .platform()
-      .pipe(untilDestroyed(this))
-      .subscribe((isDesktop) => (this.mobile = !isDesktop));
   }
 
   ngOnInit() {
@@ -105,24 +91,6 @@ export class NoteDetailsComponent implements OnInit {
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.tmpEntity = Object.assign(this.tmpEntity, value);
     });
-  }
-
-  toggleIncludeInactiveChildren() {
-    this.includeInactiveChildren = !this.includeInactiveChildren;
-    // This needs to be set so that the filtering will start immediately
-    this.filterInactiveChildren = this.includeInactiveChildren
-      ? (_) => true
-      : (c) => c.isActive;
-  }
-
-  filterInactiveChildren: (Child) => boolean = (c: Child) => c.isActive;
-
-  removeChild(id: string) {
-    // TODO type is broken
-    const children = this.form.get("children").value as any as string[];
-    const index = children.indexOf(id);
-    children.splice(index, 1);
-    this.form.get("children").setValue([...children] as any);
   }
 
   async save() {

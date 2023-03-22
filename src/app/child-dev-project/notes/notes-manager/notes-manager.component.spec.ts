@@ -131,7 +131,7 @@ describe("NotesManagerComponent", () => {
     component.showDetails(note);
     expect(dialogMock.openSimpleForm).toHaveBeenCalledWith(
       note,
-      undefined,
+      [],
       NoteDetailsComponent
     );
   });

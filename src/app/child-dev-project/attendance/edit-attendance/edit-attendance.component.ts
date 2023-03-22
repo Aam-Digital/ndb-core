@@ -16,7 +16,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { Note } from "../../notes/model/note";
 import { EventAttendance } from "../model/event-attendance";
-import { AttendanceStatusType } from "../model/attendance-status";
 
 @UntilDestroy()
 @DynamicComponent("EditAttendance")
@@ -56,18 +55,20 @@ export class EditAttendanceComponent extends EditComponent<string[]> {
     const category = this.parent.get(
       "category"
     ) as FormControl<InteractionType>;
-    category.valueChanges.pipe(startWith(category.value)).subscribe((val) => {
-      this.showAttendance = !!val.isMeeting;
-      if (this.showAttendance) {
-        this.attendanceForm = new FormControl(
-          this.entity.copy()["childrenAttendance"]
-        );
-        this.parent.addControl("childrenAttendance", this.attendanceForm);
-      } else {
-        this.parent.removeControl("childrenAttendance");
-        this.attendanceForm = undefined;
-      }
-    });
+    if (category) {
+      category.valueChanges.pipe(startWith(category.value)).subscribe((val) => {
+        this.showAttendance = !!val.isMeeting;
+        if (this.showAttendance) {
+          this.attendanceForm = new FormControl(
+            this.entity.copy()["childrenAttendance"]
+          );
+          this.parent.addControl("childrenAttendance", this.attendanceForm);
+        } else {
+          this.parent.removeControl("childrenAttendance");
+          this.attendanceForm = undefined;
+        }
+      });
+    }
   }
 
   getAttendance(childId: string) {
