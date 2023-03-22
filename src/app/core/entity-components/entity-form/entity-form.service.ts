@@ -123,7 +123,6 @@ export class EntityFormService {
   ): Promise<T> {
     this.checkFormValidity(form);
     const updatedEntity = entity.copy() as T;
-    console.log("form", form.getRawValue());
     Object.assign(updatedEntity, form.getRawValue());
     updatedEntity.assertValid();
     if (!this.canSave(entity, updatedEntity)) {
