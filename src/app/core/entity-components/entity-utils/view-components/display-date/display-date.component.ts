@@ -5,6 +5,9 @@ import { DatePipe } from "@angular/common";
 
 /**
  * This component displays a date attribute using the shortDate format.
+ *
+ * Format of the date can be adjusted through config.
+ * E.g. `"config": "yyyy-MM-dd
  */
 @DynamicComponent("DisplayDate")
 @Component({
@@ -13,9 +16,4 @@ import { DatePipe } from "@angular/common";
   standalone: true,
   imports: [DatePipe],
 })
-export class DisplayDateComponent extends ViewDirective<Date> {
-  /**
-   * Format of the date can be adjusted through config
-   */
-  @Input() config = "yyyy-MM-dd";
-}
+export class DisplayDateComponent extends ViewDirective<Date, string> {}
