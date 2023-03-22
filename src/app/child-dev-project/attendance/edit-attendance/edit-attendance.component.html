@@ -1,6 +1,96 @@
 <app-edit-entity-array
   [formControl]="formControl"
-  [formControlName]="formControlName"
+  [formFieldConfig]="formFieldConfig"
+  [propertySchema]="propertySchema"
   [entity]="entity"
-  [entityName]="entityName"
+  [showEntities]="!showAttendance"
 />
+
+<ng-container *ngIf="showAttendance">
+  <!-- If feasible, this whole setup should be replaced with a more simple setup that
+  automatically adapts to the screen size without having to rely on two different layout techniques for
+  small and big screens.
+ -->
+  <div *ngIf="!mobile">
+    <!-- Desktop view: display the information as table -->
+    <table class="table">
+      <tr *ngFor="let childId of formControl.value">
+        <td>
+          <button
+            mat-icon-button
+            *ngIf="!formControl.disabled"
+            (click)="removeChild(childId)"
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+        </td>
+        <td>
+          <app-display-entity
+            [entityId]="childId"
+            entityType="Child"
+          ></app-display-entity>
+        </td>
+        <td>
+          <app-attendance-status-select
+            [(value)]="getAttendance(childId).status"
+            [disabled]="formControl.disabled"
+          >
+          </app-attendance-status-select>
+        </td>
+        <td class="full-width">
+          <mat-form-field class="adjust-top">
+            <input
+              #inputElement
+              matInput
+              i18n-placeholder
+              placeholder="Remarks"
+              name="remarks"
+              type="text"
+              [value]="getAttendance(childId).remarks"
+              (change)="getAttendance(childId).remarks = inputElement.value"
+              [disabled]="formControl.disabled"
+            />
+          </mat-form-field>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <div *ngIf="mobile" class="attendance-blocks">
+    <!-- Mobile view / smaller screen: display the information using a flex-layout -->
+    <div *ngFor="let childId of entity.children" class="attendance-item">
+      <div class="attendance-item--header">
+        <app-display-entity
+          [entityId]="childId"
+          entityType="Child"
+        ></app-display-entity>
+
+        <button mat-icon-button *ngIf="!formControl.disabled" (click)="removeChild(childId)">
+          <fa-icon icon="trash"></fa-icon>
+        </button>
+      </div>
+
+      <div class="attendance-item--content">
+        <app-attendance-status-select
+          [(value)]="getAttendance(childId).status"
+          [disabled]="formControl.disabled"
+        >
+        </app-attendance-status-select>
+
+        <mat-form-field>
+          <input
+            #inputElement
+            matInput
+            i18n-placeholder
+            placeholder="Remarks"
+            name="remarks"
+            type="text"
+            [value]="getAttendance(childId).remarks"
+            (change)="getAttendance(childId).remarks = inputElement.value"
+            [disabled]="formControl.disabled"
+          />
+        </mat-form-field>
+      </div>
+    </div>
+  </div>
+</ng-container>

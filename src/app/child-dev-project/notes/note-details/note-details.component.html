@@ -89,18 +89,8 @@
     [columns]="[bottomForm]"
     [entity]="entity"
     [form]="form"
+    style="margin-top: 10px"
   ></app-entity-form>
-
-  <div *ngIf="form.get('category').value?.isMeeting">
-    <!--    TODO this should use form control -->
-    <app-child-meeting-note-attendance
-      [mobile]="mobile"
-      [entity]="tmpEntity"
-      [disabled]="form.disabled"
-      (change)="form.markAsDirty()"
-      (remove)="removeChild($event); form.markAsDirty()"
-    ></app-child-meeting-note-attendance>
-  </div>
 </mat-dialog-content>
 
 <mat-dialog-actions class="gap-regular">

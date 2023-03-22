@@ -18,7 +18,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
 import { Angulartics2Module } from "angulartics2";
-import { ChildMeetingNoteAttendanceComponent } from "./child-meeting-attendance/child-meeting-note-attendance.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
   EntityForm,
@@ -44,7 +43,6 @@ import { AlertService } from "../../../core/alerts/alert.service";
   templateUrl: "./note-details.component.html",
   styleUrls: ["./note-details.component.scss"],
   imports: [
-    ChildMeetingNoteAttendanceComponent,
     EntityFormComponent,
     DynamicComponentDirective,
     NgIf,
@@ -100,9 +98,7 @@ export class NoteDetailsComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.entityFormService.createFormGroup(
-      this.middleForm.concat(...this.topForm, this.bottomForm, {
-        id: "childrenAttendance",
-      }),
+      this.middleForm.concat(...this.topForm, this.bottomForm),
       this.entity
     );
     this.tmpEntity = this.entity.copy();

@@ -11,6 +11,7 @@ import { EntitySelectComponent } from "../entity-select/entity-select.component"
   standalone: true,
 })
 export class EditEntityArrayComponent extends EditComponent<string[]> {
+  @Input() showEntities = true;
   placeholder: string;
 
   @Input() entityName: string;
