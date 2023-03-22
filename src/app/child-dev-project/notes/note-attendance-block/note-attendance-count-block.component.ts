@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
