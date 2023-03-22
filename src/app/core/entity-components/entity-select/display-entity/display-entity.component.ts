@@ -41,18 +41,15 @@ export class DisplayEntityComponent
 
   async ngOnInit() {
     if (!this.entityToDisplay) {
-      if (this.entityId && this.entityType) {
-        this.entityToDisplay = await this.entityMapper.load(
-          this.entityType,
-          this.entityId
-        );
-      } else if (this.config || (this.entity && this.id)) {
-        const type =
-          this.config || this.entity.getSchema().get(this.id).additional;
-        this.entityToDisplay = await this.entityMapper
-          .load(type, this.value)
-          .catch(() => undefined);
-      }
+      this.entityType =
+        this.entityType ??
+        this.config ??
+        this.entity.getSchema().get(this.id).additional;
+      this.entityId = this.entityId ?? this.value;
+      this.entityToDisplay = await this.entityMapper.load(
+        this.entityType,
+        this.entityId
+      );
     }
     if (this.entityToDisplay) {
       this.entityBlockComponent = this.entityToDisplay

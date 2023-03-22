@@ -42,7 +42,7 @@ describe("NoteAttendanceBlockCountComponent", () => {
 
     component.entity = note;
     component.config = { status: AttendanceLogicalStatus.PRESENT };
-    component.ngOnChanges();
+    component.ngOnInit();
     expect(component.participantsWithStatus).toBe(2);
   });
 });

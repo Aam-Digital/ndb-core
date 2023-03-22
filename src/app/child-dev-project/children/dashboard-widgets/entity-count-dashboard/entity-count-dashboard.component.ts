@@ -57,10 +57,8 @@ export class EntityCountDashboardComponent implements OnInit {
   async ngOnInit() {
     const entities = await this.entityMapper.loadType(this._entity);
     this.updateCounts(entities.filter((e) => e.isActive));
-    if (this._entity) {
-      this.label = this._entity.labelPlural;
-      this.entityIcon = this._entity.icon;
-    }
+    this.label = this._entity.labelPlural;
+    this.entityIcon = this._entity.icon;
   }
 
   goToChildrenList(filterId: string) {

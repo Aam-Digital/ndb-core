@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, Input, OnChanges, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -12,7 +12,7 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
   template: `{{ participantsWithStatus }}`,
   standalone: true,
 })
-export class NoteAttendanceCountBlockComponent implements OnChanges {
+export class NoteAttendanceCountBlockComponent implements OnInit {
   /**
    * The note on which the attendance should be counted.
    */
@@ -25,11 +25,9 @@ export class NoteAttendanceCountBlockComponent implements OnChanges {
 
   participantsWithStatus: number;
 
-  ngOnChanges() {
-    if (this.entity) {
-      this.participantsWithStatus = this.entity.countWithStatus(
-        this.config.status
-      );
-    }
+  ngOnInit() {
+    this.participantsWithStatus = this.entity.countWithStatus(
+      this.config.status
+    );
   }
 }

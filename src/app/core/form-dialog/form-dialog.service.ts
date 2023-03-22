@@ -56,6 +56,7 @@ export class FormDialogService {
 
     dialogRef.componentInstance.entity = entity;
 
+    // TODO this duplicate code will be removed once `NoteDetails` has been refactored (#1752)
     if (componentConfig) {
       const inputs = Object.keys(
         entityDetailsComponent.prototype.constructor["ɵcmp"].inputs

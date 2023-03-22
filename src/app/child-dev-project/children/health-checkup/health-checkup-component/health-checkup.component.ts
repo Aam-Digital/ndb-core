@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";

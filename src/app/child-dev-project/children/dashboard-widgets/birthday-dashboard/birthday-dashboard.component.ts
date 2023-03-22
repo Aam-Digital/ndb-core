@@ -3,7 +3,6 @@ import {
   AfterViewInit,
   ViewChild,
   Input,
-  OnChanges,
   OnInit,
 } from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
@@ -33,9 +32,7 @@ import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-wid
   ],
   standalone: true,
 })
-export class BirthdayDashboardComponent
-  implements OnInit, OnChanges, AfterViewInit
-{
+export class BirthdayDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private readonly today: Date;
 
@@ -82,10 +79,6 @@ export class BirthdayDashboardComponent
     );
     this.dataSource.data = data;
     this.isLoading = false;
-  }
-
-  ngOnChanges() {
-    return this.ngOnInit();
   }
 
   ngAfterViewInit() {

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -11,16 +11,16 @@ import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dy
   standalone: true,
   imports: [FaDynamicIconComponent],
 })
-export class SchoolBlockComponent implements OnChanges {
+export class SchoolBlockComponent implements OnInit {
   icon = School.icon;
-  @Input() entity: School = new School("");
+  @Input() entity = new School("");
   @Input() entityId: string;
-  @Input() linkDisabled: boolean;
+  @Input() linkDisabled = false;
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("entityId")) {
+  async ngOnInit() {
+    if (this.entityId) {
       this.entity = await this.entityMapper.load(School, this.entityId);
     }
   }

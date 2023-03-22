@@ -375,6 +375,7 @@ describe("MatchingEntitiesComponent", () => {
         Child.schema.delete(name);
       }
     });
+    component.mapVisible = false;
     component.entity = new Child();
     component.config = { leftSide: { entityType: Child } };
 

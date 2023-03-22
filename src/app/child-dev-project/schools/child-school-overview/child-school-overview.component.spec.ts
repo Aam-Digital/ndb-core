@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ChildSchoolOverviewComponent } from "./child-school-overview.component";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { School } from "../model/school";

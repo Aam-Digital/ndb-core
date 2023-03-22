@@ -70,7 +70,6 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
-    console.log("on changes called", changes);
     if (changes.filterConfig || changes.entityType || changes.entities) {
       this.filterSelections = await this.filterGenerator.generate(
         this.filterConfig,

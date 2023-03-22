@@ -48,15 +48,23 @@ export class DynamicComponentDirective implements OnChanges {
 
     const componentRef = this.viewContainerRef.createComponent(component);
 
-    const inputs = Object.keys(
-      component.prototype.constructor["ɵcmp"].inputs
-    ).filter((input) => this.appDynamicComponent.config[input]);
+    if (this.appDynamicComponent.config) {
+      this.setInputProperties(component.prototype, componentRef.instance);
+    }
+    // it seems like the asynchronicity of this function requires this
+    this.changeDetector.detectChanges();
+  }
+
+  private setInputProperties(proto, component) {
+    const inputs = Object.keys(proto.constructor["ɵcmp"].inputs).filter(
+      (input) => this.appDynamicComponent.config?.[input]
+    );
     const inputValues = pick(this.appDynamicComponent.config, inputs);
-    const initialValues = pick(componentRef.instance, inputs);
-    Object.assign(componentRef.instance, inputValues);
+    const initialValues = pick(component, inputs);
+    Object.assign(component, inputValues);
 
     if (
-      typeof componentRef.instance["ngOnChanges"] === "function" &&
+      typeof component["ngOnChanges"] === "function" &&
       Object.keys(inputValues).length > 0
     ) {
       const changes: SimpleChanges = inputs.reduce(
@@ -70,9 +78,7 @@ export class DynamicComponentDirective implements OnChanges {
           }),
         {}
       );
-      componentRef.instance["ngOnChanges"](changes);
+      component["ngOnChanges"](changes);
     }
-    // it seems like the asynchronicity of this function requires this
-    this.changeDetector.detectChanges();
   }
 }

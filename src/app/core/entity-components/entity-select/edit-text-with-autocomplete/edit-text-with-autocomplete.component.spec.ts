@@ -1,10 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { FormControl } from "@angular/forms";
 import { RecurringActivity } from "app/child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "app/core/config/default-config/default-interaction-types";
