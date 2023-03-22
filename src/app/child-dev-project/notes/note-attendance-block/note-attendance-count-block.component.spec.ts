@@ -18,6 +18,8 @@ describe("NoteAttendanceBlockCountComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(NoteAttendanceCountBlockComponent);
     component = fixture.componentInstance;
+    component.entity = new Note();
+    component.config = { status: AttendanceLogicalStatus.ABSENT };
     fixture.detectChanges();
   });
 
