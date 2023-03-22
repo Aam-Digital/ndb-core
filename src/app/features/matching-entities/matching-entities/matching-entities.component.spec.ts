@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { MatchingEntitiesConfig } from "./matching-entities-config";
@@ -33,25 +33,27 @@ describe("MatchingEntitiesComponent", () => {
     leftSide: { entityType: "School" },
   };
 
-  beforeEach(async () => {
+  beforeEach(() => {
     mockActivatedRoute = { data: of({ columns: [] }) };
 
-    await TestBed.configureTestingModule({
+    return TestBed.configureTestingModule({
       imports: [MatchingEntitiesComponent, MockedTestingModule.withState()],
       providers: [
         { provide: ActivatedRoute, useValue: mockActivatedRoute },
         { provide: FormDialogService, useValue: null },
       ],
     }).compileComponents();
+  });
 
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(MatchingEntitiesComponent);
     component = fixture.componentInstance;
+    component.config = testConfig;
     fixture.detectChanges();
-  });
+  }));
 
   it("should create and map dynamic config to inputs", () => {
     component.entity = new Entity();
-    component.config = testConfig;
     component.ngOnInit();
 
     expectConfigToMatch(component, testConfig);
@@ -62,6 +64,7 @@ describe("MatchingEntitiesComponent", () => {
       entity: new Entity(),
       config: testConfig,
     });
+    component.config = {};
     await component.ngOnInit();
 
     expectConfigToMatch(component, testConfig);
@@ -221,7 +224,7 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should select a entity if it has been selected in the map", async () => {
     component.entity = new Entity();
-    component.rightSide = { entityType: Child };
+    component.config = { rightSide: { entityType: "Child" } };
     await component.ngOnInit();
 
     const child = new Child();
@@ -240,8 +243,8 @@ describe("MatchingEntitiesComponent", () => {
 
     const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
     const newComponent = newFixture.componentInstance;
-    component.entity = new Entity();
-    component.config = testConfig;
+    newComponent.entity = new Entity();
+    newComponent.config = testConfig;
     await newComponent.ngOnInit();
 
     expect(newComponent.sideDetails[1].selected).not.toEqual(selectedChild);
@@ -250,19 +253,19 @@ describe("MatchingEntitiesComponent", () => {
   it("should update the distance calculation when the selected map properties change", async () => {
     Child.schema.set("address", { dataType: "location" });
     Child.schema.set("otherAddress", { dataType: "location" });
-    Entity.schema.set("address", { dataType: "location" });
+    School.schema.set("address", { dataType: "location" });
     const leftEntity = new Child();
     leftEntity["address"] = { lat: 52, lon: 14 };
     leftEntity["otherAddress"] = { lat: 53, lon: 14 };
-    const rightEntity1 = new Entity();
+    const rightEntity1 = new School();
     rightEntity1["address"] = { lat: 52, lon: 13 };
-    const rightEntity2 = new Entity();
+    const rightEntity2 = new School();
     rightEntity2["address"] = { lat: 53, lon: 13 };
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo([
       rightEntity1,
       rightEntity2,
     ]);
-    component.entity = new Entity();
+    component.entity = leftEntity;
     component.config = {
       columns: [],
       leftSide: {
@@ -270,7 +273,7 @@ describe("MatchingEntitiesComponent", () => {
       },
       rightSide: {
         columns: ["distance"],
-        entityType: "Child",
+        entityType: "School",
       },
     };
     await component.ngOnInit();
@@ -322,7 +325,7 @@ describe("MatchingEntitiesComponent", () => {
 
     Child.schema.delete("otherAddress");
     Child.schema.delete("address");
-    Entity.schema.delete("address");
+    School.schema.delete("address");
   });
 
   it("should only display filtered entities in the map", async () => {
@@ -333,18 +336,21 @@ describe("MatchingEntitiesComponent", () => {
     c2.dropoutDate = new Date();
     const c3 = new Child();
     c3.status = "inactive";
-    const other = new ChildSchoolRelation();
+    const other = new School();
     await TestBed.inject(EntityMapperService).saveAll([c1, c2, c3, other]);
-    component.leftSide = {
-      entityType: Child,
-      prefilter: { dropoutDate: { $exists: false } } as any,
-      columns: ["status"],
-    };
-    component.rightSide = {
-      entityType: ChildSchoolRelation,
-      columns: ["_id"],
+    component.config = {
+      leftSide: {
+        entityType: "Child",
+        prefilter: { dropoutDate: { $exists: false } } as any,
+        columns: ["status"],
+      },
+      rightSide: {
+        entityType: "School",
+        columns: ["_id"],
+      },
     };
     await component.ngOnInit();
+    fixture.detectChanges();
 
     expect(component.filteredMapEntities.map((entity) => entity)).toEqual([
       c1,
@@ -369,8 +375,8 @@ describe("MatchingEntitiesComponent", () => {
         Child.schema.delete(name);
       }
     });
-    component.leftSide = { entityType: Child };
     component.entity = new Child();
+    component.config = { leftSide: { entityType: Child } };
 
     await component.ngOnInit();
 
