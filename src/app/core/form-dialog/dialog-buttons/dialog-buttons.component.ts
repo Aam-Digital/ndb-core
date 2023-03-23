@@ -68,15 +68,14 @@ export class DialogButtonsComponent implements OnInit {
   }
 
   async save() {
-    // Maybe move to abstract class (similar to TodoDetails and RowDetails)
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
-      this.dialog.close();
-    } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
-        this.alertService.addDanger(err.message);
-      }
-    }
+    this.entityFormService
+      .saveChanges(this.form, this.entity)
+      .then((res) => this.dialog.close(res))
+      .catch((err) => {
+        if (!(err instanceof InvalidFormFieldError)) {
+          this.alertService.addDanger(err.message);
+        }
+      });
   }
 
   delete() {

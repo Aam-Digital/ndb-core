@@ -1,10 +1,6 @@
 import { Component, Inject } from "@angular/core";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialogRef,
-} from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import {
   EntityForm,
@@ -60,7 +56,6 @@ export class RowDetailsComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
-    private dialogRef: MatDialogRef<RowDetailsComponent, Entity>,
     private formService: EntityFormService
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
