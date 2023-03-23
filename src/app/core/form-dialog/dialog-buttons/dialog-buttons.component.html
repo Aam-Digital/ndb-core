@@ -1,0 +1,64 @@
+<button
+  mat-raised-button
+  color="accent"
+  [disabled]="!form.dirty"
+  (click)="save()"
+  angulartics2On="click"
+  [angularticsCategory]="entity?.getType()"
+  angularticsAction="form_popup_save"
+  i18n="Form save button"
+>
+  Save
+</button>
+
+<button
+  mat-stroked-button
+  mat-dialog-close
+  angulartics2On="click"
+  [angularticsCategory]="entity?.getType()"
+  angularticsAction="form_popup_cancel"
+  i18n="Form cancel button"
+>
+  Cancel
+</button>
+
+<button
+  *ngIf="detailsRoute"
+  mat-raised-button
+  [routerLink]="detailsRoute"
+  mat-dialog-close
+  [disabled]="form.disabled"
+  i18n="Form button to navigate to details page of entity"
+>
+  Go to details
+</button>
+
+<button
+  *ngIf="!entity.isNew"
+  mat-icon-button
+  [matMenuTriggerFor]="additional"
+  style="margin-top: -8px; margin-bottom: -8px"
+>
+  <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+</button>
+<mat-menu #additional>
+  <button
+    mat-menu-item
+    (click)="delete()"
+    *appDisabledEntityOperation="{
+      operation: 'delete',
+      entity: entity
+    }"
+    angulartics2On="click"
+    [angularticsCategory]="entity?.getType()"
+    angularticsAction="form_popup_delete"
+  >
+    <fa-icon
+      class="standard-icon-with-text color-accent"
+      aria-label="remove element"
+      icon="trash"
+    ></fa-icon>
+    <span i18n="Generic delete button"> Delete </span>
+  </button>
+  <ng-content></ng-content>
+</mat-menu>

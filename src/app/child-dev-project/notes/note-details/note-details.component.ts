@@ -9,8 +9,7 @@ import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { DatePipe, NgIf } from "@angular/common";
-import { MatButtonModule } from "@angular/material/button";
+import { DatePipe } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
 import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
@@ -27,7 +26,8 @@ import {
   MAT_DIALOG_DATA,
   MatDialogModule,
 } from "@angular/material/dialog";
-import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
+import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
+import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -40,15 +40,14 @@ import { DisableEntityOperationDirective } from "../../../core/permissions/permi
   imports: [
     MatDialogModule,
     DatePipe,
-    MatButtonModule,
-    MatMenuModule,
     FontAwesomeModule,
     ExportDataDirective,
     Angulartics2Module,
     EntityFormComponent,
     DynamicComponentDirective,
-    DisableEntityOperationDirective,
-    NgIf,
+    DialogButtonsComponent,
+    MatMenuModule,
+    DialogCloseComponent,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
@@ -70,7 +69,7 @@ export class NoteDetailsComponent implements OnInit {
   constructor(
     private configService: ConfigService,
     private entityFormService: EntityFormService,
-    @Inject(MAT_DIALOG_DATA) data: { entity: Note },
+    @Inject(MAT_DIALOG_DATA) data: { entity: Note }
   ) {
     this.entity = data.entity;
     this.exportConfig = this.configService.getConfig<{
