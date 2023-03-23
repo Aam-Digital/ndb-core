@@ -13,6 +13,7 @@ import { Entity } from "app/core/entity/model/entity";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { DatabaseField } from "../../../entity/database-field.decorator";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;
@@ -23,7 +24,7 @@ describe("DisplayEntityArrayComponent", () => {
   beforeEach(async () => {
     testEntities = [new Child(), new Child(), new School()];
     await TestBed.configureTestingModule({
-      imports: [DisplayEntityArrayComponent],
+      imports: [DisplayEntityArrayComponent, HttpClientTestingModule],
       providers: [
         {
           provide: EntityMapperService,
@@ -65,6 +66,7 @@ describe("DisplayEntityArrayComponent", () => {
     component.entity = testEntity;
     component.id = "relatedEntities";
     component.value = testEntity.relatedEntities;
+    component.config = Child.ENTITY_TYPE;
     await component.ngOnInit();
 
     expect(component.entities).toEqual(expectedEntities);

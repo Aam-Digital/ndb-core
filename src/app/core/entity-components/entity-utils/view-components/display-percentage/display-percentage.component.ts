@@ -12,6 +12,8 @@ export class DisplayPercentageComponent
   extends ViewDirective<number>
   implements OnInit
 {
+  @HostBinding("style") style = {};
+
   /**
    * returns a css-compatible color value from green to red using the given
    * input value
@@ -37,7 +39,4 @@ export class DisplayPercentageComponent
       width: "min-content",
     };
   }
-
-  @HostBinding("style")
-  public style = {};
 }

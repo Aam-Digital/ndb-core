@@ -41,10 +41,7 @@ export class DisplayEntityComponent
 
   async ngOnInit() {
     if (!this.entityToDisplay) {
-      this.entityType =
-        this.entityType ??
-        this.config ??
-        this.entity.getSchema().get(this.id).additional;
+      this.entityType = this.entityType ?? this.config;
       this.entityId = this.entityId ?? this.value;
       this.entityToDisplay = await this.entityMapper.load(
         this.entityType,

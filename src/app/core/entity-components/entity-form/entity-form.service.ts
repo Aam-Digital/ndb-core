@@ -64,6 +64,7 @@ export class EntityFormService {
       formField.view ||
       this.entitySchemaService.getComponent(propertySchema, "view");
     formField.tooltip = formField.tooltip || propertySchema?.description;
+    formField.additional = formField.additional || propertySchema?.additional;
     if (forTable) {
       formField.forTable = true;
       formField.label =

@@ -92,7 +92,10 @@ describe("FormComponent", () => {
 
   it("should add column definitions from property schema", () => {
     class Test extends Child {
-      @DatabaseField({ description: "Property description" })
+      @DatabaseField({
+        description: "Property description",
+        additional: "someAdditional",
+      })
       propertyField: string;
     }
 
@@ -108,6 +111,7 @@ describe("FormComponent", () => {
           view: "DisplayComponent",
           label: "Field with definition",
           tooltip: "Custom tooltip",
+          additional: "additional",
         },
         { id: "propertyField", label: "Property" },
       ],
@@ -124,6 +128,7 @@ describe("FormComponent", () => {
           label: "Field with definition",
           forTable: false,
           tooltip: "Custom tooltip",
+          additional: "additional",
         },
         {
           id: "propertyField",
@@ -132,6 +137,7 @@ describe("FormComponent", () => {
           label: "Property",
           forTable: false,
           tooltip: "Property description",
+          additional: "someAdditional",
         },
       ],
     ]);

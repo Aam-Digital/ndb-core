@@ -29,12 +29,10 @@ export class DisplayEntityArrayComponent
   async ngOnInit() {
     const entityIds: string[] = this.value || [];
     if (entityIds.length < this.aggregationThreshold) {
-      const entityType =
-        this.config || this.entity.getSchema().get(this.id).additional;
       const entityPromises = entityIds.map((entityId) => {
         const type =
-          typeof entityType === "string"
-            ? entityType
+          typeof this.config === "string"
+            ? this.config
             : Entity.extractTypeFromId(entityId);
         return this.entityMapper.load(type, entityId);
       });
