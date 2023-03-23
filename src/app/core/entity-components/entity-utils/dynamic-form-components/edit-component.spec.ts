@@ -6,10 +6,12 @@ import { Entity } from "../../../entity/model/entity";
  * A simple helper class that sets up a EditComponent with the required FormGroup
  * @param component that extends EditComponent
  * @param propertyName (optional) the name of the property for which the edit component is created
+ * @param propertySchema (optional) the property scheme that is passed to the edit component
  */
 export function setupEditComponent<T>(
   component: EditComponent<T>,
-  propertyName = "testProperty"
+  propertyName = "testProperty",
+  propertySchema: object = {}
 ): UntypedFormGroup {
   const formControl = new UntypedFormControl();
   const fromGroupConfig = {};
@@ -17,7 +19,7 @@ export function setupEditComponent<T>(
   const formGroup = new UntypedFormGroup(fromGroupConfig);
   component.onInitFromDynamicConfig({
     formControl: formControl,
-    propertySchema: {},
+    propertySchema: propertySchema,
     formFieldConfig: { id: propertyName },
     entity: new Entity(),
   });
