@@ -1,4 +1,4 @@
-import { FilterSelection } from "../../filter/filter-selection/filter-selection";
+import { Filter } from "../../filter/filter-selection/filter-selection";
 import { Entity } from "../../entity/model/entity";
 import { FilterConfig } from "./EntityListConfig";
 
@@ -9,7 +9,7 @@ export interface FilterComponentSettings<T extends Entity> {
   /**
    * The filter selection which handles the logic for filtering the data.
    */
-  filterSettings: FilterSelection<T>;
+  filterSettings: Filter<T>;
 
   /**
    * The selected option of this filter.

@@ -93,6 +93,11 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     filter: FilterComponentSettings<T>,
     selectedOption: string
   ) {
+    console.log(
+      "Peter filterOptionSelected aufgerufen mit",
+      filter,
+      selectedOption
+    );
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
@@ -113,6 +118,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   }
 
   private updateUrl(key: string, value: string) {
+    console.log("Peter updateURL");
     const params = {};
     params[key] = value;
     this.router.navigate([], {

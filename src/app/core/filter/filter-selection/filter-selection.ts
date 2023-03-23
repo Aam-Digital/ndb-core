@@ -15,8 +15,25 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { BooleanFilterConfig } from "app/core/entity-components/entity-list/EntityListConfig";
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../../entity/model/entity";
+
+export abstract class Filter<T extends Entity> {
+  constructor(public name: string, public label: string = name) {}
+  abstract getFilter(key?: string): DataFilter<T>;
+}
+
+export class DateFilter<T extends Entity> extends Filter<T> {
+  filter: DataFilter<T>;
+  constructor(public name: string, public label: string = name) {
+    super(name, label);
+  }
+
+  public getFilter(key: string): DataFilter<T> {
+    return this.filter;
+  }
+}
 
 /**
  * Generic configuration for a filter with different selectable {@link FilterSelectionOption} options.
@@ -26,7 +43,7 @@ import { Entity } from "../../entity/model/entity";
  * As the filter function is provided as part of each {@link FilterSelectionOption}
  * an instance of this FilterSelection class can manage all filter selection logic.
  */
-export class FilterSelection<T extends Entity> {
+export class SelectableFilter<T extends Entity> extends Filter<T> {
   /**
    * Generate filter options dynamically from the given value to be matched.
    *
@@ -76,7 +93,9 @@ export class FilterSelection<T extends Entity> {
     public name: string,
     public options: FilterSelectionOption<T>[],
     public label: string = name
-  ) {}
+  ) {
+    super(name, label);
+  }
 
   /** default filter will keep all items in the result */
   defaultFilter = {};
@@ -104,9 +123,41 @@ export class FilterSelection<T extends Entity> {
   }
 }
 
+export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
+  constructor(
+    name: string,
+    label: string,
+    public config?: BooleanFilterConfig
+  ) {
+    super(
+      name,
+      [
+        {
+          key: "all",
+          label: config.all ?? $localize`:Filter label:All`,
+          filter: {},
+        },
+        {
+          key: "true",
+          label:
+            config.true ?? $localize`:Filter label default boolean true:Yes`,
+          filter: { [config.id]: true },
+        },
+        {
+          key: "false",
+          label:
+            config.false ?? $localize`:Filter label default boolean true:No`,
+          filter: { [config.id]: false },
+        },
+      ],
+      label
+    );
+  }
+}
+
 /**
  * Represents one specific option to filter data in a certain way.
- * used by {@link FilterSelection}
+ * used by {@link SelectableFilter}
  */
 export interface FilterSelectionOption<T> {
   /** identifier for this option in the parent FilterSelection instance */

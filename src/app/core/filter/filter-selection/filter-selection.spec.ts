@@ -1,18 +1,18 @@
-import { FilterSelection } from "./filter-selection";
+import { SelectableFilter } from "./filter-selection";
 import { FilterService } from "../filter.service";
 
 describe("FilterSelection", () => {
   const filterService = new FilterService(undefined);
   it("create an instance", () => {
-    const fs = new FilterSelection("", []);
+    const fs = new SelectableFilter("", []);
     expect(fs).toBeTruthy();
   });
 
   it("init new options", () => {
-    const fs = new FilterSelection("", []);
+    const fs = new SelectableFilter("", []);
 
     const keys = ["x", "y"];
-    fs.options = FilterSelection.generateOptions(keys, "category");
+    fs.options = SelectableFilter.generateOptions(keys, "category");
 
     expect(fs.options).toHaveSize(keys.length + 1);
 

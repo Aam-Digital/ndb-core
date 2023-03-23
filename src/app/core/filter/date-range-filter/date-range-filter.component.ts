@@ -4,12 +4,17 @@ import { FilterComponentSettings } from "app/core/entity-components/entity-list/
 import { DataFilter } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "app/core/entity/model/entity";
 import moment from "moment";
-import { FilterSelectionOption } from "../filter-selection/filter-selection";
+import {
+  DateFilter,
+  FilterSelectionOption,
+} from "../filter-selection/filter-selection";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { D } from "@angular/cdk/keycodes";
+import { Note } from "app/child-dev-project/notes/model/note";
+import { Child } from "app/child-dev-project/children/model/child";
 
 @Component({
   selector: "app-date-range-filter",
@@ -29,25 +34,27 @@ export class DateRangeFilterComponent<T extends Entity> {
   constructor(private dialog: MatDialog) {}
 
   apply() {
-    let option: FilterSelectionOption<T> =
-      this.dateRangeFilterConfig.filterSettings.options.find(
-        (option) => option.label === "custom"
-      );
-    if (!option) {
-      option = { key: "custom", label: "custom", filter: {} };
-      this.dateRangeFilterConfig.filterSettings.options.push(option);
-    }
+    console.log("Peter apply aufgerufen");
+    let option: FilterSelectionOption<T> = {
+      key: "custom",
+      label: "custom",
+      filter: {},
+    };
+    const filterSettings = this.dateRangeFilterConfig
+      .filterSettings as DateFilter<T>;
+    filterSettings.filter = this.buildFilter();
+    console.log("Peter option", option);
     option.filter = this.buildFilter();
-    this.selectedOptionChange.emit(option.key);
+    this.selectedOptionChange.emit("custom");
   }
 
-  buildFilter(): DataFilter<Entity> {
+  buildFilter(): DataFilter<T> {
     return {
       [this.dateRangeFilterConfig.filterConfig.id]: {
         $gte: moment(this.fromDate).format("YYYY-MM-DD"),
         $lte: moment(this.toDate).format("YYYY-MM-DD"),
       },
-    };
+    } as DataFilter<T>;
   }
 
   openDialog(e: Event) {

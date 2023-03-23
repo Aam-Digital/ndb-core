@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { FilterSelection } from "../filter-selection/filter-selection";
+import { Filter, SelectableFilter } from "../filter-selection/filter-selection";
 import { Entity } from "../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -18,7 +18,11 @@ import { NgForOf } from "@angular/common";
   standalone: true,
 })
 export class ListFilterComponent<E extends Entity> {
-  @Input() filterConfig: FilterSelection<E>;
+  @Input()
+  public set filterConfig(value: Filter<E>) {
+    this._filterConfig = value as SelectableFilter<E>;
+  }
+  _filterConfig: SelectableFilter<E>;
   @Input() selectedOption: string;
   @Output() selectedOptionChange = new EventEmitter<string>();
 

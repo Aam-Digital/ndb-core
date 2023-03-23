@@ -1,7 +1,9 @@
 import { Injectable } from "@angular/core";
 import {
-  FilterSelection,
+  DateFilter,
+  SelectableFilter,
   FilterSelectionOption,
+  BooleanFilter,
 } from "../../filter/filter-selection/filter-selection";
 import {
   BooleanFilterConfig,
@@ -42,43 +44,66 @@ export class FilterGeneratorService {
     data: T[],
     onlyShowUsedOptions = false
   ): Promise<FilterComponentSettings<T>[]> {
-    const filterSettings: FilterComponentSettings<T>[] = [];
+    const filterComponentSettings: FilterComponentSettings<T>[] = [];
     for (const filter of filtersConfig) {
       const schema = entityConstructor.schema.get(filter.id) || {};
-      const fs: FilterComponentSettings<T> = {
-        filterSettings: new FilterSelection(
+
+      if (filter.id === "date") {
+        let fcs: FilterComponentSettings<T> = {
+          filterSettings: new DateFilter(
+            filter.id,
+            filter.label || schema.label
+          ),
+          filterConfig: filter,
+        };
+        filterComponentSettings.push(fcs);
+      } else if (schema.dataType === "boolean" || filter.type === "boolean") {
+        let fcs: FilterComponentSettings<T> = {
+          filterSettings: new BooleanFilter(
+            filter.id,
+            filter.label || schema.label,
+            filter as BooleanFilterConfig
+          ),
+          filterConfig: filter,
+        };
+
+        filterComponentSettings.push(fcs);
+      } else {
+        const filterSettings = new SelectableFilter<T>(
           filter.id,
           [],
           filter.label || schema.label
-        ),
-        filterConfig: filter,
-      };
-
-      try {
-        fs.filterSettings.options = await this.getFilterOptions(
-          filter,
-          schema,
-          data
         );
-      } catch (e) {
-        this.loggingService.warn(`Could not init filter: ${filter.id}: ${e}`);
-      }
+        let fcs: FilterComponentSettings<T> = {
+          filterSettings,
+          filterConfig: filter,
+        };
+        try {
+          filterSettings.options = await this.getFilterOptions(
+            filter,
+            schema,
+            data
+          );
+        } catch (e) {
+          this.loggingService.warn(`Could not init filter: ${filter.id}: ${e}`);
+        }
 
-      if (onlyShowUsedOptions) {
-        fs.filterSettings.options = fs.filterSettings.options.filter((option) =>
-          data.some(this.filterService.getFilterPredicate(option.filter))
-        );
-      }
+        if (onlyShowUsedOptions) {
+          filterSettings.options = filterSettings.options.filter((option) =>
+            data.some(this.filterService.getFilterPredicate(option.filter))
+          );
+        }
 
-      // Filters should only be added, if they have more than one (the default) option
-      if (fs.filterSettings.options?.length > 1) {
-        fs.selectedOption = filter.hasOwnProperty("default")
-          ? filter.default
-          : fs.filterSettings.options[0].key;
-        filterSettings.push(fs);
+        // Filters should only be added, if they have more than one (the default) option
+        if (filterSettings.options?.length > 1) {
+          fcs.selectedOption = filter.hasOwnProperty("default")
+            ? filter.default
+            : filterSettings.options[0].key;
+          filterComponentSettings.push(fcs);
+        }
       }
     }
-    return filterSettings;
+    return filterComponentSettings;
   }
 
   private async getFilterOptions<T extends Entity>(
@@ -88,8 +113,6 @@ export class FilterGeneratorService {
   ): Promise<FilterSelectionOption<T>[]> {
     if (config.type === "prebuilt") {
       return (config as PrebuiltFilterConfig<T>).options;
-    } else if (schema.dataType === "date") {
-      return [{}, {}] as any;
     } else if (schema.dataType === "boolean" || config.type === "boolean") {
       return this.createBooleanFilterOptions(config as BooleanFilterConfig);
     } else if (schema.dataType === "configurable-enum") {
@@ -107,7 +130,7 @@ export class FilterGeneratorService {
       );
     } else {
       const options = [...new Set(data.map((c) => c[config.id]))];
-      return FilterSelection.generateOptions(options, config.id);
+      return SelectableFilter.generateOptions(options, config.id);
     }
   }
 
