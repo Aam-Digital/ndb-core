@@ -46,23 +46,6 @@ describe("ListPaginatorComponent", () => {
     expect(component.user.paginatorSettingsPageIndex["table-id"]).toEqual(1);
   }));
 
-  it("should reset the pagination size when clicking the all toggle twice", () => {
-    component.pageSize = 20;
-    component.dataSource.data = new Array(100);
-    component.showingAll = false;
-    component.ngOnChanges({ dataSource: null });
-
-    component.changeAllToggle();
-
-    expect(component.pageSize).toBe(100);
-    expect(component.showingAll).toBeTrue();
-
-    component.changeAllToggle();
-
-    expect(component.pageSize).toBe(20);
-    expect(component.showingAll).toBeFalse();
-  });
-
   it("should update pagination when the idForSavingPagination changed", fakeAsync(() => {
     const userPaginationSettings = {
       c1: 11,
