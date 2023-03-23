@@ -43,7 +43,6 @@ describe("ListPaginatorComponent", () => {
 
     expect(saveEntitySpy).toHaveBeenCalledWith(component.user);
     expect(component.user.paginatorSettingsPageSize["table-id"]).toEqual(20);
-    expect(component.user.paginatorSettingsPageIndex["table-id"]).toEqual(1);
   }));
 
   it("should update pagination when the idForSavingPagination changed", fakeAsync(() => {
@@ -53,18 +52,21 @@ describe("ListPaginatorComponent", () => {
     };
     component.user = {
       paginatorSettingsPageSize: userPaginationSettings,
-      paginatorSettingsPageIndex: {},
     } as Partial<User> as User;
 
     component.idForSavingPagination = "c1";
     component.ngOnChanges({ idForSavingPagination: undefined });
     tick();
+    fixture.detectChanges();
+
     expect(component.pageSize).toBe(userPaginationSettings.c1);
     expect(component.paginator.pageSize).toBe(userPaginationSettings.c1);
 
     component.idForSavingPagination = "c2";
     component.ngOnChanges({ idForSavingPagination: undefined });
     tick();
+    fixture.detectChanges();
+
     expect(component.pageSize).toBe(userPaginationSettings.c2);
     expect(component.paginator.pageSize).toBe(userPaginationSettings.c2);
   }));
