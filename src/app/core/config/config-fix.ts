@@ -255,6 +255,7 @@ export const defaultJsonConfig = {
       ]
     }
   },
+  "app-config:note-details": {},
   "view:admin": {
     "component": "Admin",
     "permittedUserRoles": ["admin_app"]

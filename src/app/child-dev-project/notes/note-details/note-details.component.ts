@@ -80,6 +80,12 @@ export class NoteDetailsComponent implements OnInit {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
+    const formConfig = this.configService.getConfig<any>(
+      "app-config:note-details"
+    );
+    ["topForm", "middleForm", "bottomForm"].forEach((form) => {
+      this[form] = formConfig?.[form]?.map(toFormFieldConfig) ?? this[form];
+    });
   }
 
   ngOnInit() {
