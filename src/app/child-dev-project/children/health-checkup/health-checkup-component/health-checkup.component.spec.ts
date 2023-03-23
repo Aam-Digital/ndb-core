@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { HealthCheckupComponent } from "./health-checkup.component";
-import { of } from "rxjs";
 import { Child } from "../../model/child";
 import { ChildrenService } from "../../children.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
@@ -18,7 +17,7 @@ describe("HealthCheckupComponent", () => {
       "getHealthChecksOfChild",
     ]);
     mockChildrenService.getChild.and.resolveTo(child);
-    mockChildrenService.getHealthChecksOfChild.and.returnValue(of([]));
+    mockChildrenService.getHealthChecksOfChild.and.resolveTo([]);
 
     TestBed.configureTestingModule({
       imports: [HealthCheckupComponent, MockedTestingModule.withState()],

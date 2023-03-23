@@ -41,7 +41,7 @@ describe("SearchService", () => {
   it("should only index on database properties", async () => {
     Child.toStringAttributes = ["schoolId", "name"];
     const child = Child.create("test");
-    child.schoolId = "someSchool";
+    child.schoolId = ["someSchool"];
     await TestBed.inject(EntityMapperService).save(child);
 
     service = TestBed.inject(SearchService);
@@ -50,7 +50,7 @@ describe("SearchService", () => {
     expect(res).toEqual([]);
     res = await service.getSearchResults("test");
     // reset default value
-    child.schoolId = "";
+    child.schoolId = [];
     expect(res).toEqual([child]);
   });
 

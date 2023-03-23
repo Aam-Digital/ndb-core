@@ -107,9 +107,9 @@ export class Child extends Entity {
   dropoutRemarks: string;
 
   /** current school (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
-  schoolId: string = "";
+  schoolId: string[] = [];
   /** current class (as determined through the ChildSchoolRelation docs) set during loading through ChildrenService */
-  schoolClass: string = "";
+  schoolClass: string;
 
   @DatabaseField({
     dataType: "photo",

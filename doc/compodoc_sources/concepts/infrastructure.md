@@ -25,11 +25,11 @@ Once this is done, a version of Aam Digital with the new changes included can be
 
 ## Master Updates
 After approving a PR and merging it into the master, semantic release automatically creates a new tag for this change.
-For each new tag a tagged Docker image is uploaded to [DockerHub](https://hub.docker.com/r/aamdigital/ndb-server).
+For each new tag a tagged Docker image is uploaded to [DockerHub](https://hub.docker.com/r/aamdigitaltravis/ndb-server).
 
 ## Deploying Aam Digital
 The Docker image from DockerHub can then be downloaded and run via Docker using the following command:
-> docker pull aamdigital/ndb-server && docker run -p=80:80 aamdigital/ndb-server
+> docker pull aamdigitaltravis/ndb-server && docker run -p=80:80 aamdigital/ndb-server
 
 However, this will only run Aam Digital in demo-mode.
 To run Aam Digital with a real database, a new `config.json` file has to be mounted into the image.

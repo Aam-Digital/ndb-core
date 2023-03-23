@@ -48,7 +48,7 @@ describe("SyncedSessionService", () => {
   >;
   let dbUser: AuthUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;
-  let liveSyncSpy: jasmine.Spy<() => void>;
+  let liveSyncSpy: jasmine.Spy<() => any>;
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockLocation: jasmine.SpyObj<Location>;
 
@@ -266,6 +266,56 @@ describe("SyncedSessionService", () => {
     expect(sessionService.checkPassword("TestUser", TEST_PASSWORD)).toBeTrue();
     expect(sessionService.checkPassword("TestUser", "wrongPW")).toBeFalse();
   });
+
+  it("should restart the sync if it is canceled at one point", fakeAsync(() => {
+    let errorCallback, completeCallback, pauseCallback;
+    const syncHandle = {
+      on: (action, callback) => {
+        if (action === "error") {
+          errorCallback = callback;
+        }
+        if (action === "complete") {
+          completeCallback = callback;
+        }
+        if (action === "paused") {
+          pauseCallback = callback;
+        }
+        return syncHandle;
+      },
+      cancel: () => undefined,
+    };
+    syncSpy = jasmine.createSpy().and.returnValue(syncHandle);
+    liveSyncSpy.and.callThrough();
+    spyOn(localSession, "getDatabase").and.returnValue({
+      getPouchDB: () => ({ sync: syncSpy }),
+    } as any);
+
+    passRemoteLogin();
+    sessionService.login(TEST_USER, TEST_PASSWORD);
+    flush();
+
+    // error -> sync should restart
+    syncSpy.calls.reset();
+    errorCallback();
+    expect(syncSpy).toHaveBeenCalled();
+
+    // complete -> sync should restart
+    syncSpy.calls.reset();
+    completeCallback();
+    expect(syncSpy).toHaveBeenCalled();
+
+    // pause -> no restart required
+    syncSpy.calls.reset();
+    pauseCallback();
+    expect(syncSpy).not.toHaveBeenCalled();
+
+    // logout + complete -> no restart
+    syncSpy.calls.reset();
+    sessionService.logout();
+    tick();
+    completeCallback();
+    expect(syncSpy).not.toHaveBeenCalled();
+  }));
 
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 
