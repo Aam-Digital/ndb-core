@@ -9,7 +9,7 @@ import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { DatePipe } from "@angular/common";
+import { DatePipe, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
@@ -30,6 +30,11 @@ import {
 } from "@angular/material/dialog";
 import { InvalidFormFieldError } from "../../../core/entity-components/entity-form/invalid-form-field.error";
 import { AlertService } from "../../../core/alerts/alert.service";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../../core/entity/entity-remove.service";
+import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -49,6 +54,8 @@ import { AlertService } from "../../../core/alerts/alert.service";
     Angulartics2Module,
     EntityFormComponent,
     DynamicComponentDirective,
+    DisableEntityOperationDirective,
+    NgIf,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
@@ -63,8 +70,6 @@ export class NoteDetailsComponent implements OnInit {
     toFormFieldConfig(field),
   ]);
   middleForm = ["subject", "text"].map(toFormFieldConfig);
-  // TODO related entities is not necessarily set
-  // TODO make this configurable
   bottomForm = ["children", "schools"].map(toFormFieldConfig);
   form: EntityForm<Note>;
   tmpEntity: Note;
@@ -74,7 +79,8 @@ export class NoteDetailsComponent implements OnInit {
     private entityFormService: EntityFormService,
     @Inject(MAT_DIALOG_DATA) data: { entity: Note },
     private dialog: MatDialogRef<any>,
-    private alertService: AlertService
+    private alertService: AlertService,
+    private entityRemoveService: EntityRemoveService
   ) {
     this.entity = data.entity;
     this.exportConfig = this.configService.getConfig<{
@@ -109,5 +115,13 @@ export class NoteDetailsComponent implements OnInit {
         this.alertService.addDanger(err.message);
       }
     }
+  }
+
+  delete() {
+    this.entityRemoveService.remove(this.entity).subscribe((result) => {
+      if (result === RemoveResult.REMOVED) {
+        this.dialog.close();
+      }
+    });
   }
 }
