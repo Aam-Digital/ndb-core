@@ -549,7 +549,7 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  ["photo", "photo2"],
+                  ["photo2"],
                   [
                     "name",
                     "projectNumber",

@@ -13,8 +13,8 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 import { NgIf } from "@angular/common";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-tooltip.component";
-import { CouchdbFileService } from "../../../features/file/couchdb-file.service";
 import { SafeUrl } from "@angular/platform-browser";
+import { FileService } from "../../../features/file/file.service";
 
 @DynamicComponent("ChildBlock")
 @Component({
@@ -37,7 +37,7 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
   imgPath: SafeUrl;
 
   constructor(
-    private fileService: CouchdbFileService,
+    private fileService: FileService,
     @Optional() private childrenService: ChildrenService
   ) {}
 

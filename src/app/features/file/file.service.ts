@@ -5,6 +5,7 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { fileDataType } from "./file-data-type";
 import { filter } from "rxjs/operators";
 import { LoggingService } from "../../core/logging/logging.service";
+import { SafeUrl } from "@angular/platform-browser";
 
 /**
  * This service allow handles the logic for files/attachments.
@@ -78,6 +79,8 @@ export abstract class FileService {
    */
   abstract showFile(entity: Entity, property: string): void;
 
+  abstract loadFile(entity: Entity, property: string): Observable<SafeUrl>;
+
   /**
    * Uploads the file
    * @param file to be uploaded
@@ -88,5 +91,12 @@ export abstract class FileService {
     file: File,
     entity: Entity,
     property: string
+  ): Observable<any>;
+
+  abstract uploadImage(
+    file: File,
+    entity: Entity,
+    property: string,
+    maxSize?: number
   ): Observable<any>;
 }

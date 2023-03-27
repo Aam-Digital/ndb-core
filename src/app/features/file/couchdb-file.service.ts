@@ -62,6 +62,15 @@ export class CouchdbFileService extends FileService {
     return obs;
   }
 
+  uploadImage(
+    file: File,
+    entity: Entity,
+    property: string,
+    maxSize: 360
+  ): Observable<any> {
+    return of({});
+  }
+
   private runFileUpload(file: File, entity: Entity, property: string) {
     const blob = new Blob([file]);
     const path = `${entity.getId(true)}/${property}`;

@@ -1,4 +1,4 @@
-import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
 import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
@@ -37,6 +37,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 })
 export class EditFileComponent extends EditComponent<string> implements OnInit {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
+  @Input() compressImage = false;
   private selectedFile: File;
   private removeClicked = false;
   private initialValue: string;
@@ -79,15 +80,16 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
 
   private uploadFile(file: File) {
     // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
-    this.fileService
-      .uploadFile(file, this.entity, this.formControlName)
-      .subscribe({
-        error: (err) => this.handleError(err),
-        complete: () => {
-          this.initialValue = this.formControl.value;
-          this.selectedFile = undefined;
-        },
-      });
+    const obs = this.compressImage
+      ? this.fileService.uploadImage(file, this.entity, this.formControlName)
+      : this.fileService.uploadFile(file, this.entity, this.formControlName);
+    obs.subscribe({
+      error: (err) => this.handleError(err),
+      complete: () => {
+        this.initialValue = this.formControl.value;
+        this.selectedFile = undefined;
+      },
+    });
   }
 
   private handleError(err) {
