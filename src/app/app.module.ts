@@ -78,6 +78,10 @@ import { TodosModule } from "./features/todos/todos.module";
 import { SessionService } from "./core/session/session-service/session.service";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
+import { CouchdbFileService } from "./features/file/couchdb-file.service";
+import { EntityMapperService } from "./core/entity/entity-mapper.service";
+import { Child } from "./child-dev-project/children/model/child";
+import { lastValueFrom } from "rxjs";
 
 /**
  * Main entry point of the application.
@@ -158,7 +162,30 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(icons: FaIconLibrary) {
+  constructor(
+    icons: FaIconLibrary,
+    private fileService: CouchdbFileService,
+    private entityMapper: EntityMapperService
+  ) {
     icons.addIconPacks(fas, far);
+    // setTimeout(() => this.uploadFotos(), 10000);
+  }
+
+  async uploadFotos() {
+    const files = await fetch("assets/files.txt")
+      .then((res) => res.text())
+      .then((res) => res.split("\n"));
+    for (let i = 1; i < 121; i++) {
+      const child = await this.entityMapper.load(Child, `${i}`);
+      child.photo2 = files[i];
+      const blob = await fetch(`assets/data/${files[i]}`).then((res) =>
+        res.blob()
+      );
+      const file = new File([blob], files[i]);
+      await lastValueFrom(
+        this.fileService.uploadFile(file, child, "photo2", 480)
+      );
+      await this.entityMapper.save(child);
+    }
   }
 }
