@@ -1,4 +1,12 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  ElementRef,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
@@ -37,7 +45,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 })
 export class EditFileComponent extends EditComponent<string> implements OnInit {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
-  @Input() compressImage = false;
+  @Input() compressImage?: number;
+  @Output() fileUpload = new EventEmitter<File>();
   private selectedFile: File;
   private removeClicked = false;
   private initialValue: string;
@@ -79,17 +88,19 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   private uploadFile(file: File) {
+    this.fileUpload.emit(file);
     // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
-    const obs = this.compressImage
-      ? this.fileService.uploadImage(file, this.entity, this.formControlName)
-      : this.fileService.uploadFile(file, this.entity, this.formControlName);
-    obs.subscribe({
-      error: (err) => this.handleError(err),
-      complete: () => {
-        this.initialValue = this.formControl.value;
-        this.selectedFile = undefined;
-      },
-    });
+    this.fileService
+      .uploadFile(file, this.entity, this.formControlName, this.compressImage)
+      .subscribe({
+        error: (err) => this.handleError(err),
+        complete: () => {
+          // TODO somehow this doesn't trigger @Output binding in template
+          this.fileUpload.emit(file);
+          this.initialValue = this.formControl.value;
+          this.selectedFile = undefined;
+        },
+      });
   }
 
   private handleError(err) {

@@ -4,5 +4,6 @@
   [entity]="entity"
   [formControl]="formControl"
   [formControlName]="formControlName"
-  [compressImage]="true"
+  [compressImage]="360"
+  (fileUpload)="updateFile($event)"
 ></app-edit-file>

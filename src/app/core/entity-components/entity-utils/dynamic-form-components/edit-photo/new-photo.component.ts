@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { EditComponent, EditPropertyConfig } from "../edit-component";
-import { SafeUrl } from "@angular/platform-browser";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { EditFileComponent } from "../../../../../features/file/edit-file/edit-file.component";
 import { NgIf } from "@angular/common";
 import { FileService } from "../../../../../features/file/file.service";
@@ -15,14 +15,25 @@ import { FileService } from "../../../../../features/file/file.service";
 export class NewPhotoComponent extends EditComponent<string> {
   imgPath: SafeUrl;
 
-  constructor(private fileService: FileService) {
+  constructor(
+    private fileService: FileService,
+    private sanitizer: DomSanitizer
+  ) {
     super();
   }
 
   onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
     super.onInitFromDynamicConfig(config);
-    this.fileService
-      .loadFile(this.entity, this.formControlName)
-      .subscribe((res) => (this.imgPath = res));
+    if (this.entity[this.formControlName]) {
+      this.fileService
+        .loadFile(this.entity, this.formControlName)
+        .subscribe((res) => (this.imgPath = res));
+    }
+  }
+
+  updateFile(file: File) {
+    this.imgPath = this.sanitizer.bypassSecurityTrustUrl(
+      URL.createObjectURL(file)
+    );
   }
 }

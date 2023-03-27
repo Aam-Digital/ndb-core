@@ -1,8 +1,11 @@
-export function resizeImage(file: File, maxSize = 360): Promise<string> {
+export function resizeImage(
+  file: File,
+  maxSize = 360
+): Promise<HTMLCanvasElement> {
   const image = new Image();
   image.src = URL.createObjectURL(file);
 
-  return new Promise((resolve) => {
+  return new Promise<HTMLCanvasElement>((resolve) => {
     image.onload = () => {
       let imageWidth = image.width,
         imageHeight = image.height;
@@ -26,7 +29,7 @@ export function resizeImage(file: File, maxSize = 360): Promise<string> {
       const ctx = canvas.getContext("2d");
       ctx.drawImage(image, 0, 0, imageWidth, imageHeight);
 
-      resolve(canvas.toDataURL(file.type));
+      resolve(canvas);
     };
   });
 }

@@ -10,6 +10,7 @@ import {
 import { AppSettings } from "../../core/app-config/app-settings";
 import {
   catchError,
+  combineLatestWith,
   concatMap,
   filter,
   map,
@@ -28,6 +29,8 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { fromPromise } from "rxjs/internal/observable/innerFrom";
+import { resizeImage } from "./file-utils";
 
 /**
  * Stores the files in the CouchDB.
@@ -53,44 +56,61 @@ export class CouchdbFileService extends FileService {
     super(entityMapper, entities, logger);
   }
 
-  uploadFile(file: File, entity: Entity, property: string): Observable<any> {
-    // TODO update cache if file is cached
+  uploadFile(
+    file: File,
+    entity: Entity,
+    property: string,
+    compression
+  ): Observable<any> {
     const obs = this.requestQueue.add(
-      this.runFileUpload(file, entity, property)
+      this.runFileUpload(file, entity, property, compression)
     );
     this.reportProgress($localize`Uploading "${file.name}"`, obs);
     return obs;
   }
 
-  uploadImage(
+  private runFileUpload(
     file: File,
     entity: Entity,
     property: string,
-    maxSize: 360
-  ): Observable<any> {
-    return of({});
-  }
-
-  private runFileUpload(file: File, entity: Entity, property: string) {
-    const blob = new Blob([file]);
+    compression: number
+  ) {
+    let blobObs: Observable<Blob>;
+    if (compression) {
+      blobObs = fromPromise(
+        new Promise((res) =>
+          resizeImage(file, compression).then((cvs) => cvs.toBlob(res))
+        )
+      );
+    } else {
+      blobObs = of(new Blob([file]));
+    }
     const path = `${entity.getId(true)}/${property}`;
     return this.getAttachmentsDocument(
       `${this.attachmentsUrl}/${entity.getId(true)}`
     ).pipe(
-      concatMap(({ _rev }) =>
-        this.http.put(`${this.attachmentsUrl}/${path}?rev=${_rev}`, blob, {
-          headers: { "Content-Type": file.type, "ngsw-bypass": "" },
-          reportProgress: true,
-          observe: "events",
-        })
+      combineLatestWith(blobObs),
+      concatMap(([{ _rev }, blob]) =>
+        this.http
+          .put(`${this.attachmentsUrl}/${path}?rev=${_rev}`, blob, {
+            headers: { "Content-Type": file.type, "ngsw-bypass": "" },
+            reportProgress: true,
+            observe: "events",
+          })
+          .pipe(
+            tap({
+              complete: () => {
+                if (this.cache[`${path}`]) {
+                  this.cache[`${path}`] = of(
+                    this.sanitizer.bypassSecurityTrustUrl(
+                      URL.createObjectURL(blob)
+                    )
+                  );
+                }
+              },
+            })
+          )
       ),
-      tap(() => {
-        if (this.cache[`${path}`]) {
-          this.cache[`${path}`] = of(
-            this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob))
-          );
-        }
-      }),
       // prevent http request to be executed multiple times (whenever .subscribe is called)
       shareReplay()
     );
