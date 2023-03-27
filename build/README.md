@@ -4,7 +4,7 @@ The Angular app is build within a custom docker container to ensure it is reprod
 
 Builds are triggered through GitHub Actions CI (see /.github/workflows).
 
-The deployable server (nginx) image is published to [Docker Hub](https://hub.docker.com/r/aamdigitaltravis/ndb-server)
+The deployable server (nginx) image is published to [Docker Hub](https://hub.docker.com/r/aamdigital/ndb-server)
 for every official (tagged) build.
 
 ## How to build & publish a new image

@@ -26,7 +26,7 @@ jobs:
           file: ./build/Dockerfile
           builder: ${{ steps.buildx.outputs.name }}
           push: true
-          tags: aamdigitaltravis/ndb-server:${{ env.TAG }}
+          tags: aamdigital/ndb-server:${{ env.TAG }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
           build-args: |
