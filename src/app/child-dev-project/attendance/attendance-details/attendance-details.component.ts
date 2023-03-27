@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, Input } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { Note } from "../../notes/model/note";
@@ -36,7 +36,6 @@ import { EntitySubrecordComponent } from "../../../core/entity-components/entity
 export class AttendanceDetailsComponent {
   @Input() entity: ActivityAttendance = new ActivityAttendance();
   @Input() forChild: string;
-  @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
   eventsColumns: FormFieldConfig[] = [
     { id: "date" },
@@ -58,7 +57,14 @@ export class AttendanceDetailsComponent {
     },
   ];
 
-  constructor(private formDialog: FormDialogService) {}
+  constructor(
+    private formDialog: FormDialogService,
+    @Inject(MAT_DIALOG_DATA)
+    data: { forChild: string; attendance: ActivityAttendance }
+  ) {
+    this.entity = data.attendance;
+    this.forChild = data.forChild;
+  }
 
   showEventDetails(event: EventNote) {
     this.formDialog.openSimpleForm(event, [], NoteDetailsComponent);
