@@ -2,6 +2,7 @@ import {
   Component,
   Input,
   OnChanges,
+  OnInit,
   Optional,
   SimpleChange,
   SimpleChanges,
@@ -30,7 +31,9 @@ import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dy
   ],
   standalone: true,
 })
-export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
+export class ChildBlockComponent
+  implements OnInitDynamicComponent, OnChanges, OnInit
+{
   @Input() entity: Child;
   @Input() entityId: string;
 
@@ -54,6 +57,14 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
     }
   }
 
+  ngOnInit() {
+    if (this.entity.photo2) {
+      this.fileService
+        .loadFile(this.entity, "photo2")
+        .subscribe((res) => (this.imgPath = res));
+    }
+  }
+
   onInitFromDynamicConfig(config: any) {
     this.entity = config.entity;
     if (config.hasOwnProperty("entityId")) {
@@ -64,10 +75,5 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
     }
     this.linkDisabled = config.linkDisabled;
     this.tooltipDisabled = config.tooltipDisabled;
-    if (this.entity.photo2) {
-      this.fileService
-        .loadFile(this.entity, "photo2")
-        .subscribe((res) => (this.imgPath = res));
-    }
   }
 }
