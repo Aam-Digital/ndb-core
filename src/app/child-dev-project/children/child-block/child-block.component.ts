@@ -15,13 +15,19 @@ import { TemplateTooltipDirective } from "../../../core/common-components/templa
 import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-tooltip.component";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../../../features/file/file.service";
+import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("ChildBlock")
 @Component({
   selector: "app-child-block",
   templateUrl: "./child-block.component.html",
   styleUrls: ["./child-block.component.scss"],
-  imports: [NgIf, TemplateTooltipDirective, ChildBlockTooltipComponent],
+  imports: [
+    NgIf,
+    TemplateTooltipDirective,
+    ChildBlockTooltipComponent,
+    FaDynamicIconComponent,
+  ],
   standalone: true,
 })
 export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
@@ -35,6 +41,7 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
   @Input() tooltipDisabled: boolean;
 
   imgPath: SafeUrl;
+  icon = Child.icon;
 
   constructor(
     private fileService: FileService,

@@ -13,7 +13,7 @@ import { FileService } from "../../../../../features/file/file.service";
   styleUrls: ["./new-photo.component.scss"],
 })
 export class NewPhotoComponent extends EditComponent<string> {
-  imgPath: SafeUrl;
+  imgPath: SafeUrl = "assets/child.png";
 
   constructor(
     private fileService: FileService,
