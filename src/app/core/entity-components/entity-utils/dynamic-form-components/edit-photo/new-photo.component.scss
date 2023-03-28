@@ -4,3 +4,9 @@
   border-radius: 50%;
   object-fit: cover;
 }
+
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}

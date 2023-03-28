@@ -46,13 +46,12 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 export class EditFileComponent extends EditComponent<string> implements OnInit {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
   @Input() compressImage?: number;
-  @Output() fileUpload = new EventEmitter<File>();
   private selectedFile: File;
   private removeClicked = false;
   private initialValue: string;
 
   constructor(
-    private fileService: FileService,
+    protected fileService: FileService,
     private alertService: AlertService,
     private logger: LoggingService,
     private entityMapper: EntityMapperService
@@ -72,9 +71,11 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
           this.selectedFile &&
           this.selectedFile.name === this.formControl.value
         ) {
-          this.uploadFile(this.selectedFile);
+          this.saveNewFile(this.selectedFile);
         } else if (this.removeClicked && !this.formControl.value) {
-          this.removeFile();
+          this.deleteExistingFile();
+        } else {
+          this.resetFile();
         }
       });
   }
@@ -87,16 +88,13 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     this.formControl.setValue(file.name);
   }
 
-  private uploadFile(file: File) {
-    this.fileUpload.emit(file);
+  protected saveNewFile(file: File) {
     // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
     this.fileService
       .uploadFile(file, this.entity, this.formControlName, this.compressImage)
       .subscribe({
         error: (err) => this.handleError(err),
         complete: () => {
-          // TODO somehow this doesn't trigger @Output binding in template
-          this.fileUpload.emit(file);
           this.initialValue = this.formControl.value;
           this.selectedFile = undefined;
         },
@@ -131,7 +129,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     this.removeClicked = !!this.initialValue;
   }
 
-  private removeFile() {
+  protected deleteExistingFile() {
     this.fileService
       .removeFile(this.entity, this.formControlName)
       .subscribe(() => {
@@ -141,5 +139,9 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
         this.initialValue = undefined;
         this.removeClicked = false;
       });
+  }
+
+  protected resetFile() {
+    this.selectedFile = undefined;
   }
 }

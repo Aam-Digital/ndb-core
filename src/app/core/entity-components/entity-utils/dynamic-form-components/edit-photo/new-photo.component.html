@@ -1,9 +1,13 @@
+<input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
 <img [src]="imgPath" alt="profile photo" class="child-pic">
-<app-edit-file
-  *ngIf="formControl.enabled"
-  [entity]="entity"
-  [formControl]="formControl"
-  [formControlName]="formControlName"
-  [compressImage]="360"
-  (fileUpload)="updateFile($event)"
-></app-edit-file>
+<div>
+  <button *ngIf="formControl.value && formControl.enabled" type="button" mat-icon-button
+          (click)="delete()"
+          i18n-mattooltip="Tooltip remove file" matTooltip="Remove file">
+    <fa-icon icon="xmark"></fa-icon>
+  </button>
+  <button *ngIf="formControl.enabled" type="button" mat-icon-button (click)="fileUpload.click()"
+          i18n-matTooltip="Tooltip upload file button" matTooltip="Upload file">
+    <fa-icon icon="upload"></fa-icon>
+  </button>
+</div>

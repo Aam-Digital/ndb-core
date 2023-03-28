@@ -13,6 +13,7 @@ import {
   combineLatestWith,
   concatMap,
   filter,
+  last,
   map,
   shareReplay,
   tap,
@@ -42,7 +43,7 @@ export class CouchdbFileService extends FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
-  private cache: { [key: string]: Observable<SafeUrl> } = {};
+  private cache: { [key: string]: Observable<string> } = {};
 
   constructor(
     private sanitizer: DomSanitizer,
@@ -66,6 +67,11 @@ export class CouchdbFileService extends FileService {
       this.runFileUpload(file, entity, property, compression)
     );
     this.reportProgress($localize`Uploading "${file.name}"`, obs);
+    this.cache[`${entity.getId(true)}/${property}`] = obs.pipe(
+      last(),
+      map((blob: Blob) => URL.createObjectURL(blob)),
+      shareReplay()
+    );
     return obs;
   }
 
@@ -97,19 +103,8 @@ export class CouchdbFileService extends FileService {
             reportProgress: true,
             observe: "events",
           })
-          .pipe(
-            tap({
-              complete: () => {
-                if (this.cache[`${path}`]) {
-                  this.cache[`${path}`] = of(
-                    this.sanitizer.bypassSecurityTrustUrl(
-                      URL.createObjectURL(blob)
-                    )
-                  );
-                }
-              },
-            })
-          )
+          // using blob as last emitted value
+          .pipe(map((e) => (e.type === HttpEventType.Response ? blob : e)))
       ),
       // prevent http request to be executed multiple times (whenever .subscribe is called)
       shareReplay()
@@ -191,7 +186,7 @@ export class CouchdbFileService extends FileService {
       });
   }
 
-  loadFile(entity: Entity, property: string) {
+  loadFile(entity: Entity, property: string): Observable<SafeUrl> {
     const path = `${entity.getId(true)}/${property}`;
     if (!this.cache[path]) {
       this.cache[path] = this.http
@@ -199,16 +194,19 @@ export class CouchdbFileService extends FileService {
           responseType: "blob",
         })
         .pipe(
-          map((blob) =>
-            this.sanitizer.bypassSecurityTrustUrl(URL.createObjectURL(blob))
-          ),
+          map((blob) => URL.createObjectURL(blob)),
           shareReplay()
         );
     }
-    return this.cache[path];
+    return this.cache[path].pipe(
+      map((url) => this.sanitizer.bypassSecurityTrustUrl(url))
+    );
   }
 
-  private reportProgress(message: string, obs: Observable<HttpEvent<any>>) {
+  private reportProgress(
+    message: string,
+    obs: Observable<HttpEvent<any> | any>
+  ) {
     const progress = obs.pipe(
       filter(
         (e) =>
