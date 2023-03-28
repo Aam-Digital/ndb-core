@@ -19,16 +19,13 @@ import { EntitySubrecordComponent } from "../../entity-subrecord/entity-subrecor
 })
 export class RelatedEntitiesComponent implements OnInit {
   data: Entity[] = [];
-  filter: DataFilter<Entity>;
   @Input() entity: Entity;
-  @Input() config: {
-    entity: string;
-    property: string;
-    columns: ColumnConfig[];
-    filter?: DataFilter<Entity>;
-  };
+  @Input() entityType: string;
+  @Input() property: string;
+  @Input() columns: ColumnConfig[];
+  @Input() filter?: DataFilter<Entity>;
   private isArray = false;
-  private entityType: EntityConstructor;
+  private entityCtr: EntityConstructor;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -36,13 +33,13 @@ export class RelatedEntitiesComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.entityType = this.entities.get(this.config.entity);
-    this.isArray = isArrayProperty(this.entityType, this.config.property);
+    this.entityCtr = this.entities.get(this.entityType);
+    this.isArray = isArrayProperty(this.entityCtr, this.property);
 
     this.data = await this.entityMapper.loadType(this.entityType);
     this.filter = {
-      ...this.config.filter,
-      [this.config.property]: this.isArray
+      ...this.filter,
+      [this.property]: this.isArray
         ? { $elemMatch: { $eq: this.entity.getId() } }
         : this.entity.getId(),
     };
@@ -51,8 +48,8 @@ export class RelatedEntitiesComponent implements OnInit {
   createNewRecordFactory() {
     // TODO has a similar purpose like FilterService.alignEntityWithFilter
     return () => {
-      const rec = new this.entityType();
-      rec[this.config.property] = this.isArray
+      const rec = new this.entityCtr();
+      rec[this.property] = this.isArray
         ? [this.entity.getId()]
         : this.entity.getId();
       return rec;

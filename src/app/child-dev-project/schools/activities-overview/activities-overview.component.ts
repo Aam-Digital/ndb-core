@@ -27,15 +27,13 @@ export class ActivitiesOverviewComponent implements OnInit {
       relevantValue: "",
     },
   };
-  @Input() config: { columns: FormFieldConfig[] } = {
-    columns: [
-      this.titleColumn,
-      { id: "type" },
-      { id: "assignedTo" },
-      { id: "linkedGroups" },
-      { id: "excludedParticipants" },
-    ],
-  };
+  @Input() columns: FormFieldConfig[] = [
+    this.titleColumn,
+    { id: "type" },
+    { id: "assignedTo" },
+    { id: "linkedGroups" },
+    { id: "excludedParticipants" },
+  ];
 
   @Input() entity: Entity;
   records: RecurringActivity[] = [];

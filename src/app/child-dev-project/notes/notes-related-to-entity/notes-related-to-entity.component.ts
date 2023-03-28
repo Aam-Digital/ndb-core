@@ -32,22 +32,14 @@ export class NotesRelatedToEntityComponent implements OnInit {
   @Input() entity: Entity;
   records: Array<Note> = [];
 
-  @Input() config(config: {
-    columns: ColumnConfig[];
-    filter: DataFilter<Note>;
-  }) {
-    this.columns = config.columns ?? this.columns;
-    this.filter = config.filter ?? this.filter;
-  }
-
-  columns: ColumnConfig[] = [
+  @Input() columns: ColumnConfig[] = [
     { id: "date", visibleFrom: "xs" },
     { id: "subject", visibleFrom: "xs" },
     { id: "text", visibleFrom: "md" },
     { id: "authors", visibleFrom: "md" },
     { id: "warningLevel", visibleFrom: "md" },
   ];
-  filter: DataFilter<Note> = {};
+  @Input() filter: DataFilter<Note> = {};
 
   /**
    * returns the color for a note; passed to the entity subrecord component

@@ -35,18 +35,15 @@ import { PillComponent } from "../../../core/common-components/pill/pill.compone
 })
 export class ChildSchoolOverviewComponent implements OnInit {
   @Input() entity: Entity;
-  mode: "child" | "school" = "child";
+  @Input() single = true;
+  @Input() showInactive = false;
+  @Input() clickMode: "popup" | "navigate" = "popup";
 
-  @Input() set config(config) {
-    this.single = config?.single ?? this.single;
-    this.clickMode = config?.clickMode ?? this.clickMode;
-    this.showInactive = config?.showInactive ?? this.mode;
-    if (config?.columns) {
-      this.columns = [...config.columns, isActiveIndicator];
-    }
+  @Input() set columns(value: FormFieldConfig[]) {
+    this._columns = [...value, isActiveIndicator];
   }
 
-  columns: FormFieldConfig[] = [
+  _columns: FormFieldConfig[] = [
     { id: "childId" }, // schoolId/childId replaced dynamically during init
     { id: "start", visibleFrom: "md" },
     { id: "end", visibleFrom: "md" },
@@ -55,10 +52,7 @@ export class ChildSchoolOverviewComponent implements OnInit {
     isActiveIndicator,
   ];
 
-  single = true;
-  showInactive = false;
-  clickMode: "popup" | "navigate" = "popup";
-
+  mode: "child" | "school" = "child";
   isLoading = false;
   private allRecords: ChildSchoolRelation[] = [];
   displayedRecords: ChildSchoolRelation[] = [];
@@ -98,7 +92,7 @@ export class ChildSchoolOverviewComponent implements OnInit {
 
   prepareDisplayedData() {
     // display the related entity that is *not* the current main entity
-    const idColumn = this.columns.find(
+    const idColumn = this._columns.find(
       (c) => c.id === "childId" || c.id === "schoolId"
     );
     if (idColumn) {

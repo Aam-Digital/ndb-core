@@ -70,32 +70,26 @@ export class MatchingEntitiesComponent implements OnInit {
   static DEFAULT_CONFIG_KEY = "appConfig:matching-entities";
 
   @Input() entity: Entity;
-  @Input() config: MatchingEntitiesConfig = {};
-
-  leftSide: MatchingSideConfig = {};
-  rightSide: MatchingSideConfig = {};
-  filteredMapEntities: Entity[] = [];
-
-  columnsToDisplay = [];
-
+  @Input() leftSide: MatchingSideConfig = {};
+  @Input() rightSide: MatchingSideConfig = {};
   /**
    * Column mapping of property pairs of left and right entity that should be compared side by side.
    * @param value
    */
-  columns: [ColumnConfig, ColumnConfig][] = [];
-
+  @Input() columns: [ColumnConfig, ColumnConfig][] = [];
+  @Input()
   matchActionLabel: string = $localize`:Matching button label:create matching`;
-
-  onMatch: NewMatchAction;
+  @Input() onMatch: NewMatchAction;
 
   @ViewChild("matchComparison", { static: true })
   matchComparisonElement: ElementRef;
 
+  columnsToDisplay = [];
   lockedMatching = false;
-
   sideDetails: [MatchingSide, MatchingSide];
 
   mapVisible = false;
+  filteredMapEntities: Entity[] = [];
   displayedProperties: LocationProperties = {};
 
   constructor(
@@ -105,12 +99,13 @@ export class MatchingEntitiesComponent implements OnInit {
     private configService: ConfigService,
     private entityRegistry: EntityRegistry,
     private filterService: FilterService
-  ) {}
+  ) {
+    const config: MatchingEntitiesConfig =
+      this.configService.getConfig<MatchingEntitiesConfig>(
+        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+      ) ?? {};
+    Object.assign(this, JSON.parse(JSON.stringify(config)));
 
-  // TODO: fill selection on hover already?
-
-  async ngOnInit() {
-    this.initConfig();
     this.route.data.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
       if (
         !data?.config?.leftSide &&
@@ -119,10 +114,13 @@ export class MatchingEntitiesComponent implements OnInit {
       ) {
         return;
       }
-      this.config = data.config;
-      this.initConfig();
+      Object.assign(this, JSON.parse(JSON.stringify(data.config)));
     });
+  }
 
+  // TODO: fill selection on hover already?
+
+  async ngOnInit() {
     this.sideDetails = [
       await this.initSideDetails(this.leftSide, 0),
       await this.initSideDetails(this.rightSide, 1),
@@ -132,30 +130,6 @@ export class MatchingEntitiesComponent implements OnInit {
     );
     this.filterMapEntities();
     this.columnsToDisplay = ["side-0", "side-1"];
-  }
-
-  /**
-   * Apply config object to the component inputs (including global default config)
-   * @private
-   */
-  private initConfig() {
-    const defaultConfig =
-      this.configService.getConfig<MatchingEntitiesConfig>(
-        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
-      ) ?? {};
-    this.config = Object.assign(
-      {},
-      JSON.parse(JSON.stringify(defaultConfig)),
-      JSON.parse(JSON.stringify(this.config))
-    );
-
-    this.columns = this.config.columns ?? [];
-    this.matchActionLabel =
-      this.config.matchActionLabel ?? this.matchActionLabel;
-    this.onMatch = this.config.onMatch;
-
-    this.leftSide = this.config.leftSide ?? {};
-    this.rightSide = this.config.rightSide ?? {};
   }
 
   /**
