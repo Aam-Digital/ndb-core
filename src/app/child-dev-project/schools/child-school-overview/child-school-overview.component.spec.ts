@@ -67,31 +67,29 @@ describe("ChildSchoolOverviewComponent", () => {
 
   it("should allow to change the columns to be displayed by the config", async () => {
     component.entity = new Child();
-    component.config = {
-      single: true,
-      columns: [
-        { id: "schoolId", label: "Team", view: "school" },
-        { id: "start", label: "From", view: "date" },
-        { id: "end", label: "To", view: "date" },
-      ],
-    };
+    component.single = true;
+    component.columns = [
+      { id: "schoolId", label: "Team", view: "school" },
+      { id: "start", label: "From", view: "date" },
+      { id: "end", label: "To", view: "date" },
+    ];
     await component.ngOnInit();
 
-    let columnNames = component.columns.map((column) => column.label);
+    let columnNames = component._columns.map((column) => column.label);
     expect(columnNames).toContain("Team");
     expect(columnNames).toContain("From");
     expect(columnNames).toContain("To");
     expect(columnNames).not.toContain("Class");
     expect(columnNames).not.toContain("Result");
 
-    component.columns.push(
+    component._columns.push(
       { id: "schoolClass", label: "Class", view: "text" },
       { id: "result", label: "Result", view: "percentageResult" }
     );
 
     await component.ngOnInit();
 
-    columnNames = component.columns.map((column) => column.label);
+    columnNames = component._columns.map((column) => column.label);
     expect(columnNames).toEqual(
       jasmine.arrayContaining(["Team", "From", "To", "Class", "Result"])
     );
@@ -152,7 +150,7 @@ describe("ChildSchoolOverviewComponent", () => {
     ]);
 
     component.entity = new School();
-    component.config = { showInactive: true };
+    component.showInactive = true;
     await component.ngOnInit();
 
     expect(component.displayedRecords).toEqual([active1, active2, inactive]);

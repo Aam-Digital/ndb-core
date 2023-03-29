@@ -25,7 +25,7 @@ describe("FormComponent", () => {
     fixture = TestBed.createComponent(FormComponent<Child>);
     component = fixture.componentInstance;
     component.entity = new Child();
-    component.columns = [[{ id: "name" }]];
+    component.cols = [[{ id: "name" }]];
     fixture.detectChanges();
   });
 
@@ -37,7 +37,7 @@ describe("FormComponent", () => {
     expect(component.creatingNew).toBeFalse();
 
     component.entity = new Child();
-    component.config = { cols: [] };
+    component.cols = [];
     component.creatingNew = true;
 
     expect(component.creatingNew).toBeTrue();
@@ -103,7 +103,7 @@ describe("FormComponent", () => {
       "PredefinedComponent"
     );
     component.entity = new Test();
-    component.columns = [
+    component.cols = [
       [
         {
           id: "fieldWithDefinition",
@@ -119,7 +119,7 @@ describe("FormComponent", () => {
 
     component.ngOnInit();
 
-    expect(component.columns).toEqual([
+    expect(component._cols).toEqual([
       [
         {
           id: "fieldWithDefinition",

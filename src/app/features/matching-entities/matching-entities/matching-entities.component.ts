@@ -1,4 +1,11 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
+import {
+  ChangeDetectorRef,
+  Component,
+  ElementRef,
+  Input,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
@@ -98,7 +105,8 @@ export class MatchingEntitiesComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private configService: ConfigService,
     private entityRegistry: EntityRegistry,
-    private filterService: FilterService
+    private filterService: FilterService,
+    private changeDetector: ChangeDetectorRef
   ) {
     const config: MatchingEntitiesConfig =
       this.configService.getConfig<MatchingEntitiesConfig>(
@@ -130,6 +138,8 @@ export class MatchingEntitiesComponent implements OnInit {
     );
     this.filterMapEntities();
     this.columnsToDisplay = ["side-0", "side-1"];
+    // needed due to async
+    this.changeDetector.detectChanges();
   }
 
   /**
@@ -275,10 +285,6 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   private getDistanceColumnConfig(side: MatchingSide) {
-    const otherSideIndex = this.sideDetails[0] === side ? 1 : 0;
-    const otherSide = this.sideDetails[otherSideIndex];
-    let coordinates: Coordinates[] = [];
-    if (otherSide.selected) coordinates = otherSide.selected["address"];
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
@@ -286,7 +292,7 @@ export class MatchingEntitiesComponent implements OnInit {
       additional: {
         coordinatesProperties:
           this.displayedProperties[side.entityType.ENTITY_TYPE],
-        compareCoordinates: new BehaviorSubject<Coordinates[]>(coordinates),
+        compareCoordinates: new BehaviorSubject<Coordinates[]>([]),
       },
     };
   }
