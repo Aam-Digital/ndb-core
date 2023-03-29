@@ -45,7 +45,7 @@ export class EntityFormService {
         this.addFormFields(formField, entityType, forTable);
       } catch (err) {
         throw new Error(
-          `Could not create form config for ${formField.id}\: ${err}`
+          `Could not create form config for ${formField.id}: ${err}`
         );
       }
     });
