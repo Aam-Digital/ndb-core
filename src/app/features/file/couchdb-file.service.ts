@@ -61,7 +61,7 @@ export class CouchdbFileService extends FileService {
     file: File,
     entity: Entity,
     property: string,
-    compression
+    compression?: number
   ): Observable<any> {
     const obs = this.requestQueue.add(
       this.runFileUpload(file, entity, property, compression)

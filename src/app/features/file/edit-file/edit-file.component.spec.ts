@@ -30,7 +30,11 @@ describe("EditFileComponent", () => {
     mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
     mockEntityMapper = jasmine.createSpyObj(["save"]);
     await TestBed.configureTestingModule({
-      imports: [EditFileComponent, FontAwesomeTestingModule, NoopAnimationsModule],
+      imports: [
+        EditFileComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
       providers: [
         EntitySchemaService,
         { provide: AlertService, useValue: mockAlertService },
@@ -107,7 +111,8 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       file,
       component.entity,
-      component.formControlName
+      component.formControlName,
+      undefined
     );
   });
 
@@ -147,7 +152,8 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName
+      component.formControlName,
+      undefined
     );
   });
 
@@ -213,7 +219,8 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName
+      component.formControlName,
+      undefined
     );
   });
 
