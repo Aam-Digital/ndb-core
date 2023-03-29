@@ -65,7 +65,7 @@
     "util": "^0.12.5",
     "uuid": "^9.0.0",
     "webpack": "5.76.2",
-    "zone.js": "~0.11.8"
+    "zone.js": "~0.13.0"
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "^15.2.4",
