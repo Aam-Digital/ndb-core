@@ -59,20 +59,14 @@ export class NewPhotoComponent extends EditFileComponent {
     }
   }
 
-  updateFile(file: File) {
-    this.imgPath = this.sanitizer.bypassSecurityTrustUrl(
-      URL.createObjectURL(file)
-    );
+  delete() {
+    this.resetPreview(this.defaultImage);
+    super.delete();
   }
 
   protected resetFile() {
     this.resetPreview(this.initialImg);
     super.resetFile();
-  }
-
-  delete() {
-    this.resetPreview(this.defaultImage);
-    super.delete();
   }
 
   private resetPreview(resetImage: SafeUrl) {
