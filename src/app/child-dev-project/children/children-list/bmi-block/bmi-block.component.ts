@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { HealthCheck } from "../../health-checkup/model/health-check";
 import { ChildrenService } from "../../children.service";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -17,13 +17,13 @@ import { Child } from "../../model/child";
   styleUrls: ["./bmi-block.component.scss"],
   standalone: true,
 })
-export class BmiBlockComponent implements OnChanges {
+export class BmiBlockComponent implements OnInit {
   @Input() entity: Child;
   currentHealthCheck: HealthCheck;
 
   constructor(private childrenService: ChildrenService) {}
 
-  ngOnChanges() {
+  ngOnInit() {
     this.childrenService
       .getHealthChecksOfChild(this.entity.getId())
       .then((results) => {

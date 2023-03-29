@@ -27,7 +27,6 @@ describe("BmiBlockComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BmiBlockComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it("should create", () => {
@@ -57,7 +56,7 @@ describe("BmiBlockComponent", () => {
       healthCheck3,
     ]);
     component.entity = testChild;
-    component.ngOnChanges();
+    fixture.detectChanges();
 
     expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
       testChild.getId()

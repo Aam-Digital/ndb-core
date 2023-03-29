@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Child } from "../../model/child";
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
 import { AttendanceService } from "../../../attendance/attendance.service";
@@ -31,7 +31,7 @@ import { AttendanceBlockComponent } from "../../../attendance/attendance-block/a
   imports: [NgForOf, SlicePipe, AttendanceBlockComponent],
   standalone: true,
 })
-export class RecentAttendanceBlocksComponent implements OnChanges {
+export class RecentAttendanceBlocksComponent implements OnInit {
   attendanceList: ActivityAttendance[] = [];
   maxAttendanceBlocks: number = 3;
 
@@ -69,7 +69,7 @@ export class RecentAttendanceBlocksComponent implements OnChanges {
       });
   }
 
-  async ngOnChanges() {
+  async ngOnInit() {
     let activities = await this.attendanceService.getActivitiesForChild(
       this.entity.getId()
     );
