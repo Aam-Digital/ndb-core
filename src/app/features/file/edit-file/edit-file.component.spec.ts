@@ -30,7 +30,11 @@ describe("EditFileComponent", () => {
     mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
     mockEntityMapper = jasmine.createSpyObj(["save"]);
     await TestBed.configureTestingModule({
-      imports: [EditFileComponent, FontAwesomeTestingModule, NoopAnimationsModule],
+      imports: [
+        EditFileComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
       providers: [
         EntitySchemaService,
         { provide: AlertService, useValue: mockAlertService },
@@ -261,12 +265,9 @@ describe("EditFileComponent", () => {
 
   function setupComponent(value = null) {
     initialValue = value;
-    component.onInitFromDynamicConfig({
-      formControl: new FormControl(initialValue),
-      entity: Object.assign(new Entity(), { testProp: initialValue }),
-      formFieldConfig: { id: "testProp" },
-      propertySchema: undefined,
-    });
+    component.formControl = new FormControl(initialValue);
+    component.entity = Object.assign(new Entity(), { testProp: initialValue });
+    component.formFieldConfig = { id: "testProp" };
     component.formControl.disable();
     fixture.detectChanges();
   }

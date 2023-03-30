@@ -1,7 +1,5 @@
-import { Component } from "@angular/core";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { Component, Input, OnInit } from "@angular/core";
 import { HistoricalEntityData } from "../model/historical-entity-data";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalDataService } from "../historical-data.service";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
@@ -18,22 +16,20 @@ import { EntitySubrecordComponent } from "../../../core/entity-components/entity
   selector: "app-historical-data",
   template: ` <app-entity-subrecord
     [records]="entries"
-    [columns]="columns"
+    [columns]="config"
     [newRecordFactory]="getNewEntryFunction()"
   ></app-entity-subrecord>`,
   imports: [EntitySubrecordComponent],
   standalone: true,
 })
-export class HistoricalDataComponent implements OnInitDynamicComponent {
+export class HistoricalDataComponent implements OnInit {
+  @Input() entity: Entity;
+  @Input() config: FormFieldConfig[] = [];
   entries: HistoricalEntityData[] = [];
-  columns: FormFieldConfig[] = [];
-  private entity: Entity;
 
   constructor(private historicalDataService: HistoricalDataService) {}
 
-  async onInitFromDynamicConfig(config: PanelConfig) {
-    this.entity = config.entity;
-    this.columns = config.config;
+  async ngOnInit() {
     this.entries = await this.historicalDataService.getHistoricalDataFor(
       this.entity.getId()
     );

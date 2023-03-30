@@ -20,12 +20,8 @@ describe("ReadonlyFunctionComponent", () => {
     const formGroup = new UntypedFormGroup({});
     const formControl = new UntypedFormControl();
     formGroup.registerControl("name", formControl);
-    component.onInitFromDynamicConfig({
-      entity: Child.create("nameBefore"),
-      id: "",
-      value: undefined,
-      config: (entity) => entity.name,
-    });
+    component.entity = Child.create("nameBefore");
+    component.config = (entity) => entity.toString();
     fixture.detectChanges();
   });
 

@@ -1,7 +1,6 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
 
@@ -12,33 +11,17 @@ import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dy
   standalone: true,
   imports: [FaDynamicIconComponent],
 })
-export class SchoolBlockComponent implements OnInitDynamicComponent, OnChanges {
-  icon: string = School.icon;
-  @Input() entity: School = new School("");
+export class SchoolBlockComponent implements OnInit {
+  icon = School.icon;
+  @Input() entity = new School("");
   @Input() entityId: string;
-  @Input() linkDisabled: boolean;
+  @Input() linkDisabled = false;
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("entityId")) {
-      this.initFromEntityId();
+  async ngOnInit() {
+    if (this.entityId) {
+      this.entity = await this.entityMapper.load(School, this.entityId);
     }
-  }
-
-  onInitFromDynamicConfig(config: any) {
-    this.entity = config.entity;
-    if (config.hasOwnProperty("entityId")) {
-      this.entityId = config.entityId;
-      this.initFromEntityId();
-    }
-    this.linkDisabled = config.linkDisabled;
-  }
-
-  private async initFromEntityId() {
-    if (!this.entityId) {
-      return;
-    }
-    this.entity = await this.entityMapper.load(School, this.entityId);
   }
 }

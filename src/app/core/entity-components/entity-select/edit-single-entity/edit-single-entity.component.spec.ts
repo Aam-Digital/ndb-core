@@ -1,9 +1,4 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -38,6 +33,9 @@ describe("EditSingleEntityComponent", () => {
       "schoolId"
     ) as FormControl<string>;
     component.formControlName = "schoolId";
+    component.formFieldConfig = { id: "childId" };
+    component.propertySchema = ChildSchoolRelation.schema.get("childId");
+    component.entity = new ChildSchoolRelation();
     fixture.detectChanges();
   });
 
@@ -45,24 +43,14 @@ describe("EditSingleEntityComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load all entities of the given type as options", fakeAsync(() => {
+  it("should load all entities of the given type as options", async () => {
     const school1 = School.create({ name: "First School" });
     const school2 = School.create({ name: "Second School " });
     loadTypeSpy.and.resolveTo([school1, school2]);
 
-    initComponent();
-    tick();
+    await component.ngOnInit();
 
     expect(loadTypeSpy).toHaveBeenCalled();
     expect(component.entities).toEqual([school1, school2]);
-  }));
-
-  function initComponent(): Promise<any> {
-    return component.onInitFromDynamicConfig({
-      formFieldConfig: { id: "childId" },
-      formControl: component.formControl,
-      propertySchema: ChildSchoolRelation.schema.get("childId"),
-      entity: new ChildSchoolRelation(),
-    });
-  }
+  });
 });

@@ -1,7 +1,6 @@
-import { AfterViewInit, Component, ViewChild } from "@angular/core";
+import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
-import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { WarningLevel } from "../../../../core/entity/model/warning-level";
@@ -34,9 +33,7 @@ interface BmiRow {
   ],
   standalone: true,
 })
-export class ChildrenBmiDashboardComponent
-  implements OnInitDynamicComponent, AfterViewInit
-{
+export class ChildrenBmiDashboardComponent implements OnInit, AfterViewInit {
   bmiDataSource = new MatTableDataSource<BmiRow>();
   isLoading = true;
   entityLabelPlural: string = Child.labelPlural;
@@ -44,7 +41,7 @@ export class ChildrenBmiDashboardComponent
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  onInitFromDynamicConfig() {
+  ngOnInit() {
     return this.loadBMIData();
   }
 

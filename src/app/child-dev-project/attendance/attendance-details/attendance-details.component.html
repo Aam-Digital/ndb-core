@@ -32,21 +32,21 @@
     >
       Attendance:
       {{
-      (focusedChild
-          ? entity?.getAttendancePercentage(focusedChild)
+      (forChild
+          ? entity?.getAttendancePercentage(forChild)
           : entity?.getAttendancePercentageAverage()
       ) | percent: "1.0-0"
       }}
     </div>
 
-    <div class="flex-row flex-wrap gap-regular" *ngIf="focusedChild">
+    <div class="flex-row flex-wrap gap-regular" *ngIf="forChild">
       <mat-form-field>
         <input
           matInput
           type="number"
           i18n-placeholder="days present|How many days a child was present"
           placeholder="days present"
-          [value]="entity.countEventsPresent(focusedChild)"
+          [value]="entity.countEventsPresent(forChild)"
           readonly
         />
       </mat-form-field>
@@ -57,7 +57,7 @@
           type="number"
           i18n-placeholder="days absent|How many days a child was absent"
           placeholder="days absent"
-          [value]="entity.countEventsAbsent(focusedChild)"
+          [value]="entity.countEventsAbsent(forChild)"
           readonly
         />
       </mat-form-field>
@@ -68,13 +68,13 @@
           type="number"
           i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
           placeholder="unknown status"
-          [value]="entity.countEventsWithUnknownStatus(focusedChild)"
+          [value]="entity.countEventsWithUnknownStatus(forChild)"
           readonly
         />
       </mat-form-field>
     </div>
 
-    <div class="flex-row flex-wrap gap-regular" *ngIf="!focusedChild">
+    <div class="flex-row flex-wrap gap-regular" *ngIf="!forChild">
       <mat-form-field>
         <input
           matInput
@@ -120,7 +120,7 @@
 
     <app-attendance-calendar
       [records]="entity.events"
-      [highlightForChild]="focusedChild"
+      [highlightForChild]="forChild"
       [activity]="entity.activity"
     ></app-attendance-calendar>
   </form>

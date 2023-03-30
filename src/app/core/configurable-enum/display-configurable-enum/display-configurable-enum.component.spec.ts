@@ -14,9 +14,7 @@ describe("DisplayConfigurableEnumComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayConfigurableEnumComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({
-      value: { id: "testCategory", label: "Test Category" },
-    } as any);
+    component.value = { id: "testCategory", label: "Test Category" };
     fixture.detectChanges();
   });
 

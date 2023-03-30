@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { EditComponent } from "../edit-component";
 import { Photo } from "../../../../../child-dev-project/children/child-photo-service/photo";
 import { BehaviorSubject } from "rxjs";
@@ -25,7 +25,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   ],
   standalone: true,
 })
-export class EditPhotoComponent extends EditComponent<Photo> implements OnInit {
+export class EditPhotoComponent extends EditComponent<Photo> {
   editPhotoAllowed = false;
 
   constructor(private sessionService: SessionService) {
@@ -33,6 +33,7 @@ export class EditPhotoComponent extends EditComponent<Photo> implements OnInit {
   }
 
   ngOnInit() {
+    super.ngOnInit();
     if (this.sessionService.getCurrentUser()?.roles?.includes("admin_app")) {
       this.editPhotoAllowed = true;
     }

@@ -7,7 +7,6 @@ import {
 import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { ShowsEntity } from "./shows-entity.interface";
-import { OnInitDynamicComponent } from "../view/dynamic-components/on-init-dynamic-component.interface";
 import { Entity } from "../entity/model/entity";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { RowDetailsComponent } from "../entity-components/entity-subrecord/row-details/row-details.component";
@@ -18,6 +17,7 @@ import {
 } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { untilDestroyed } from "@ngneat/until-destroy";
+import { pick } from "lodash-es";
 
 /**
  * Inject this service instead of MatDialog to display a form or details view as a modal
@@ -44,10 +44,7 @@ export class FormDialogService {
     private ability: EntityAbility
   ) {}
 
-  openDialog<
-    E extends Entity,
-    T extends ShowsEntity<E> | (ShowsEntity<E> & OnInitDynamicComponent)
-  >(
+  openDialog<E extends Entity, T extends ShowsEntity<E>>(
     entityDetailsComponent: ComponentType<T>,
     entity: E,
     componentConfig?: any
@@ -58,8 +55,14 @@ export class FormDialogService {
     );
 
     dialogRef.componentInstance.entity = entity;
-    if (this.isDynamicComponent(dialogRef.componentInstance)) {
-      dialogRef.componentInstance.onInitFromDynamicConfig(componentConfig);
+
+    // TODO this duplicate code will be removed once `NoteDetails` has been refactored (#1752)
+    if (componentConfig) {
+      const inputs = Object.keys(
+        entityDetailsComponent.prototype.constructor["ɵcmp"].inputs
+      ).filter((input) => componentConfig[input]);
+      const inputValues = pick(componentConfig, inputs);
+      Object.assign(dialogRef.componentInstance, inputValues);
     }
 
     const dialogWrapper = dialogRef.componentInstance.formDialogWrapper;
@@ -137,10 +140,6 @@ export class FormDialogService {
     }
 
     return columns;
-  }
-
-  private isDynamicComponent(component): component is OnInitDynamicComponent {
-    return typeof component.onInitFromDynamicConfig === "function";
   }
 
   static getSchemaFieldsForDetailsView(entity: Entity): FormFieldConfig[] {
