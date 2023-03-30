@@ -1,24 +1,13 @@
-<img
-  *ngIf="formControl.value?.photo"
-  [src]="formControl.value?.photo?.value"
-  class="child-pic"
-  alt=""
-/>
-<p *ngIf="!formControl.value?.photo" i18n="Placeholer if no photo is available">No photo set</p>
-<mat-form-field
-  *ngIf="formControl.enabled && editPhotoAllowed"
-  class="child-pic-photofile"
->
-  <mat-label>{{label}}</mat-label>
-  <input
-    #photoFileInput
-    i18n-matTooltip="Tooltip for edit photo component"
-    matTooltip="filename for child photo uploaded by server administrator"
-    matInput
-    (change)="changeFilename(photoFileInput.value)"
-    [value]="formControl.value?.path"
-    [title]="label"
-    type="text"
-  />
-  <fa-icon matIconSuffix (click)="changeFilename('')" icon="times"></fa-icon>
-</mat-form-field>
+<input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
+<img [src]="imgPath" alt="profile photo" class="child-pic">
+<div>
+  <button *ngIf="formControl.value && formControl.enabled" type="button" mat-icon-button
+          (click)="delete()"
+          i18n-mattooltip="Tooltip remove file" matTooltip="Remove file">
+    <fa-icon icon="xmark"></fa-icon>
+  </button>
+  <button *ngIf="formControl.enabled" type="button" mat-icon-button (click)="fileUpload.click()"
+          i18n-matTooltip="Tooltip upload file button" matTooltip="Upload file">
+    <fa-icon icon="upload"></fa-icon>
+  </button>
+</div>

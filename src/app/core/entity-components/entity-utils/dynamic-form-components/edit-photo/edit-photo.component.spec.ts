@@ -2,26 +2,60 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditPhotoComponent } from "./edit-photo.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { SessionService } from "../../../../session/session-service/session.service";
-import { setupEditComponent } from "../edit-component.spec";
+import { FileService } from "../../../../../features/file/file.service";
+import { AlertService } from "../../../../alerts/alert.service";
+import { EntityMapperService } from "../../../../entity/entity-mapper.service";
+import { EditPropertyConfig } from "../edit-component";
+import { of } from "rxjs";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
+import { FormControl } from "@angular/forms";
+import { Entity } from "../../../../entity/model/entity";
+import { DomSanitizer } from "@angular/platform-browser";
 
 describe("EditPhotoComponent", () => {
   let component: EditPhotoComponent;
   let fixture: ComponentFixture<EditPhotoComponent>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockFileService: jasmine.SpyObj<FileService>;
+  let mockAlertService: jasmine.SpyObj<AlertService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let config: EditPropertyConfig<string>;
+
+  const file = { name: "test.file" } as File;
+  const fileEvent = { target: { files: [file] } };
 
   beforeEach(async () => {
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockFileService = jasmine.createSpyObj([
+      "uploadFile",
+      "loadFile",
+      "removeFile",
+    ]);
+    mockFileService.removeFile.and.returnValue(of(undefined));
+    mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
+    mockEntityMapper = jasmine.createSpyObj(["save"]);
     await TestBed.configureTestingModule({
-      imports: [EditPhotoComponent, NoopAnimationsModule],
-      providers: [{ provide: SessionService, useValue: mockSessionService }],
+      imports: [
+        EditPhotoComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        EntitySchemaService,
+        { provide: AlertService, useValue: mockAlertService },
+        { provide: FileService, useValue: mockFileService },
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+      ],
     }).compileComponents();
-  });
 
-  beforeEach(() => {
     fixture = TestBed.createComponent(EditPhotoComponent);
     component = fixture.componentInstance;
-    setupEditComponent(component);
+    config = {
+      formControl: new FormControl(),
+      entity: new Entity(),
+      formFieldConfig: { id: "testProp" },
+      propertySchema: undefined,
+    };
+    component.onInitFromDynamicConfig(config);
     fixture.detectChanges();
   });
 
@@ -29,21 +63,56 @@ describe("EditPhotoComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should correctly update the photo path", () => {
-    component.changeFilename("new_file.name");
+  it("should show the image once it is selected", () => {
+    spyOn(
+      TestBed.inject(DomSanitizer),
+      "bypassSecurityTrustUrl"
+    ).and.returnValue("image.path");
+    spyOn(URL, "createObjectURL");
 
-    expect(component.formControl.value.path).toBe("new_file.name");
+    component.onFileSelected(fileEvent);
+
+    expect(component.imgPath).toBe("image.path");
   });
 
-  it("should allow editing photos when the user is admin", () => {
-    mockSessionService.getCurrentUser.and.returnValue({
-      name: "User",
-      roles: ["admin_app"],
-    });
-    expect(component.editPhotoAllowed).toBeFalse();
+  it("should load the picture on initialisation", () => {
+    mockFileService.loadFile.and.returnValue(of("some.path"));
+    config.entity[config.formFieldConfig.id] = "file.name";
 
+    component.onInitFromDynamicConfig(config);
+
+    expect(component.imgPath).toBe("some.path");
+  });
+
+  it("should display the default image when clicking delete", () => {
+    component.imgPath = "some.path";
+
+    component.delete();
+
+    expect(component.imgPath).toBe("assets/child.png");
+  });
+
+  it("should reset the shown image when pressing cancel", () => {
+    mockFileService.loadFile.and.returnValue(of("initial.path"));
+    config.entity[config.formFieldConfig.id] = "initial.image";
+    component.onInitFromDynamicConfig(config);
+
+    component.imgPath = "new.path";
+    component.formControl.disable();
+
+    expect(component.imgPath).toBe("initial.path");
+  });
+
+  it("should revoke initial image if file is deleted", () => {
+    mockFileService.loadFile.and.returnValue(of("initial.path"));
+    config.entity[config.formFieldConfig.id] = "initial.image";
+    config.formControl.setValue("initial.image");
+    component.onInitFromDynamicConfig(config);
     component.ngOnInit();
 
-    expect(component.editPhotoAllowed).toBeTrue();
+    component.delete();
+    component.formControl.disable();
+
+    expect(component.imgPath).toBe("assets/child.png");
   });
 });

@@ -100,13 +100,6 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.EditPhotoComponent),
   ],
   [
-    "NewPhoto",
-    () =>
-      import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-photo/new-photo.component"
-      ).then((c) => c.NewPhotoComponent),
-  ],
-  [
     "EditNumber",
     () =>
       import(

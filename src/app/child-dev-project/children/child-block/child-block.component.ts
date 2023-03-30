@@ -58,9 +58,9 @@ export class ChildBlockComponent
   }
 
   ngOnInit() {
-    if (this.entity.photo2) {
+    if (this.entity.photo) {
       this.fileService
-        .loadFile(this.entity, "photo2")
+        .loadFile(this.entity, "photo")
         .subscribe((res) => (this.imgPath = res));
     }
   }

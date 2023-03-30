@@ -1,8 +1,3 @@
-.child-pic-container {
-  position: relative;
-  margin-right: 10px;
-}
-
 .child-pic {
   width: 150px;
   height: 150px;
@@ -10,10 +5,8 @@
   object-fit: cover;
 }
 
-.child-pic-photofile {
-  position: absolute;
-  left: 1px;
-  top: 115px;
-  width: 120px;
-  background: white;
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
 }
