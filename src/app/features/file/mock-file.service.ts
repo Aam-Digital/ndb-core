@@ -6,9 +6,6 @@ import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { fromPromise } from "rxjs/internal/observable/innerFrom";
-import { resizeImage } from "./file-utils";
-import { map, tap } from "rxjs/operators";
 
 /**
  * A mock implementation of the file service which only stores the file temporarily in the browser.
@@ -47,23 +44,9 @@ export class MockFileService extends FileService {
     );
   }
 
-  uploadFile(
-    file: File,
-    entity: Entity,
-    property: string,
-    compression?: number
-  ): Observable<any> {
-    let dataUrl: Observable<string>;
-    if (compression) {
-      dataUrl = fromPromise(resizeImage(file, compression)).pipe(
-        map((cvs) => cvs.toDataURL())
-      );
-    } else {
-      dataUrl = of(URL.createObjectURL(file));
-    }
-    return dataUrl.pipe(
-      tap((url) => this.fileMap.set(entity + property, url)),
-      map(() => ({ ok: true }))
-    );
+  uploadFile(file: File, entity: Entity, property: string): Observable<any> {
+    const fileURL = URL.createObjectURL(file);
+    this.fileMap.set(entity + property, fileURL);
+    return of({ ok: true });
   }
 }

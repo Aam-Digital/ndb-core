@@ -279,4 +279,35 @@ describe("CouchdbFileService", () => {
       jasmine.anything()
     );
   });
+
+  it("should only request a file once per session", async () => {
+    mockHttp.get.and.returnValue(of(new Blob([])));
+    const entity = new Entity();
+    entity["file"] = "file.name";
+
+    const first = await firstValueFrom(service.loadFile(entity, "file"));
+
+    expect(mockHttp.get).toHaveBeenCalled();
+
+    mockHttp.get.calls.reset();
+    const second = await firstValueFrom(service.loadFile(entity, "file"));
+
+    expect(first).toEqual(second);
+    expect(mockHttp.get).not.toHaveBeenCalled();
+
+    URL.revokeObjectURL(second as string);
+  });
+
+  it("should cache uploaded files", () => {
+    const file = { type: "image/png", name: "file.name" } as File;
+    const entity = new Entity("testId");
+    mockHttp.get.and.returnValue(of({ _rev: "1-rev" }));
+    mockHttp.put.and.returnValue(of({ type: HttpEventType.Response }));
+    service.uploadFile(file, entity, "testProp").subscribe();
+    mockHttp.get.calls.reset();
+
+    service.loadFile(entity, "testProp").subscribe();
+
+    expect(mockHttp.get).not.toHaveBeenCalled();
+  });
 });
