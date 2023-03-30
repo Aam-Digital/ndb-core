@@ -78,6 +78,10 @@ import { TodosModule } from "./features/todos/todos.module";
 import { SessionService } from "./core/session/session-service/session.service";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
+import { EntityMapperService } from "./core/entity/entity-mapper.service";
+import { FileService } from "./features/file/file.service";
+import { Child } from "./child-dev-project/children/model/child";
+import { firstValueFrom } from "rxjs";
 
 /**
  * Main entry point of the application.
@@ -158,7 +162,33 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(icons: FaIconLibrary) {
+  constructor(
+    icons: FaIconLibrary,
+    private entityMapper: EntityMapperService,
+    private fileService: FileService
+  ) {
     icons.addIconPacks(fas, far);
+    // this.migratePicture();
+  }
+
+  async migratePicture() {
+    const children = await this.entityMapper.loadType(Child);
+    const withPictures = children.filter((c) => c.photo);
+
+    for (const child of withPictures) {
+      try {
+        const blob = await fetch("assets/child-photos/" + child.photo).then(
+          (res) => res.blob()
+        );
+        const file = new File([blob], child.photo);
+
+        await firstValueFrom(
+          this.fileService.uploadFile(file, child, "photo", 480)
+        );
+      } catch (err) {
+        console.log("err", err);
+      }
+    }
+    console.log("migrate complete");
   }
 }
