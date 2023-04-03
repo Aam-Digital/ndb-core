@@ -1,8 +1,5 @@
 import { Component } from "@angular/core";
-import {
-  EditComponent,
-  EditPropertyConfig,
-} from "../../entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../entity-utils/dynamic-form-components/edit-component";
 import { Entity } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -36,10 +33,10 @@ export class EditSingleEntityComponent extends EditComponent<string> {
     super();
   }
 
-  async onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
-    super.onInitFromDynamicConfig(config);
+  async ngOnInit() {
+    super.ngOnInit();
     const entityType: string =
-      config.formFieldConfig.additional || config.propertySchema.additional;
+      this.formFieldConfig.additional || this.propertySchema.additional;
     this.entities = await this.entityMapperService.loadType(entityType);
     this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
   }

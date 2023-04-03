@@ -41,14 +41,12 @@ describe("ImportantNotesDashboardComponent", () => {
     }).compileComponents();
   });
 
-  beforeEach(async () => {
+  beforeEach(() => {
     fixture = TestBed.createComponent(ImportantNotesDashboardComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({
-      warningLevels: ["WARNING", "URGENT"],
-    });
+    component.warningLevels = ["WARNING", "URGENT"];
     fixture.detectChanges();
-    await fixture.whenStable();
+    return fixture.whenStable();
   });
 
   it("should create", () => {

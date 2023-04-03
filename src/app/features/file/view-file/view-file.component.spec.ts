@@ -25,7 +25,7 @@ describe("ViewFileComponent", () => {
     loader = TestbedHarnessEnvironment.loader(fixture);
     component.value = "test.file";
     component.entity = new Entity();
-    component.property = "fileProp";
+    component.id = "fileProp";
     fixture.detectChanges();
   });
 
@@ -42,7 +42,7 @@ describe("ViewFileComponent", () => {
 
     expect(mockFileService.showFile).toHaveBeenCalledWith(
       component.entity,
-      component.property
+      component.id
     );
   });
 

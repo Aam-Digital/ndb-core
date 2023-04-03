@@ -1,8 +1,6 @@
-import { Component, Input } from "@angular/core";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { Component, Input, OnInit } from "@angular/core";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { Entity } from "../../../core/entity/model/entity";
-import { PanelConfig } from "../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -22,9 +20,10 @@ import { FormsModule } from "@angular/forms";
   standalone: true,
   imports: [EntitySubrecordComponent, MatSlideToggleModule, FormsModule],
 })
-export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
+export class TodosRelatedToEntityComponent implements OnInit {
   entries: Todo[] = [];
 
+  @Input() entity: Entity;
   @Input() columns: FormFieldConfig[] = [
     { id: "deadline" },
     { id: "subject" },
@@ -35,8 +34,6 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
     { id: "relatedEntities", hideFromTable: true },
     { id: "completed", hideFromForm: true },
   ];
-
-  @Input() entity: Entity;
 
   /** the property name of the Todo that contains the ids referencing related entities */
   private referenceProperty: keyof Todo & string = "relatedEntities";
@@ -68,10 +65,7 @@ export class TodosRelatedToEntityComponent implements OnInitDynamicComponent {
     );
   }
 
-  async onInitFromDynamicConfig(config: PanelConfig) {
-    this.entity = config.entity;
-    this.columns = config.config?.columns ?? this.columns;
-
+  async ngOnInit() {
     this.entries = await this.loadDataFor(this.entity.getId(true));
     this.toggleInactive();
   }

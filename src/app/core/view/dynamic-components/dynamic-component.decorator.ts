@@ -1,4 +1,3 @@
-import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
 import { ComponentType } from "@angular/cdk/overlay";
 
 /**
@@ -12,7 +11,7 @@ import { ComponentType } from "@angular/cdk/overlay";
  * ```javascript
  * @DynamicComponent("DoSomething")
  * @Component(...)
- * class DoSomethingComponent implements OnInitDynamicComponent {
+ * class DoSomethingComponent {
  *   // Component definition
  * }
  *
@@ -23,6 +22,5 @@ import { ComponentType } from "@angular/cdk/overlay";
  * ```
  * @param _name with which the component can be accessed
  */
-export const DynamicComponent =
-  (_name: string) => (_: ComponentType<OnInitDynamicComponent>) =>
-    undefined;
+export const DynamicComponent = (_name: string) => (_: ComponentType<any>) =>
+  undefined;

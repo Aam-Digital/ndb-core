@@ -1,5 +1,4 @@
-import { Component } from "@angular/core";
-import { ViewPropertyConfig } from "app/core/entity-components/entity-list/EntityListConfig";
+import { Component, OnInit } from "@angular/core";
 import { ViewDirective } from "../../entity-components/entity-utils/view-components/view.directive";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
@@ -17,13 +16,13 @@ import { NgClass, NgForOf, NgIf } from "@angular/common";
   standalone: true,
   imports: [NgForOf, NgIf, NgClass],
 })
-export class DisplayConfigurableEnumComponent extends ViewDirective<
-  ConfigurableEnumValue | ConfigurableEnumValue[]
-> {
+export class DisplayConfigurableEnumComponent
+  extends ViewDirective<ConfigurableEnumValue | ConfigurableEnumValue[]>
+  implements OnInit
+{
   iterableValue: ConfigurableEnumValue[] = [];
 
-  onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
     if (Array.isArray(this.value)) {
       this.iterableValue = this.value;
     } else if (this.value) {

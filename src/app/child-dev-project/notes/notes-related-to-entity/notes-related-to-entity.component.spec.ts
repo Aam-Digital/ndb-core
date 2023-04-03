@@ -36,7 +36,7 @@ describe("NotesRelatedToEntityComponent", () => {
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({ entity: new Child("1") });
+    component.entity = new Child("1");
     fixture.detectChanges();
   });
 
@@ -48,7 +48,8 @@ describe("NotesRelatedToEntityComponent", () => {
     const note = new Note();
     spyOn(note, "getColorForId");
     const entity = new Child();
-    component.onInitFromDynamicConfig({ entity });
+    component.entity = entity;
+    component.ngOnInit();
 
     component.getColor(note);
 
@@ -57,19 +58,22 @@ describe("NotesRelatedToEntityComponent", () => {
 
   it("should create a new note and fill it with the appropriate initial value", () => {
     let entity: Entity = new Child();
-    component.onInitFromDynamicConfig({ entity });
+    component.entity = entity;
+    component.ngOnInit();
     let note = component.generateNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
     expect(note.authors).toEqual([TEST_USER]);
 
     entity = new School();
-    component.onInitFromDynamicConfig({ entity });
+    component.entity = entity;
+    component.ngOnInit();
     note = component.generateNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
     expect(note.authors).toEqual([TEST_USER]);
 
     entity = new User();
-    component.onInitFromDynamicConfig({ entity });
+    component.entity = entity;
+    component.ngOnInit();
     note = component.generateNewRecordFactory()();
     // adding a note for a User does not make that User an author of the note!
     expect(note.authors).toEqual([TEST_USER]);
@@ -77,7 +81,8 @@ describe("NotesRelatedToEntityComponent", () => {
     entity = new ChildSchoolRelation();
     entity["childId"] = "someChild";
     entity["schoolId"] = "someSchool";
-    component.onInitFromDynamicConfig({ entity });
+    component.entity = entity;
+    component.ngOnInit();
     note = component.generateNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId(true)]);
     expect(note.children).toEqual(["someChild"]);
@@ -93,7 +98,8 @@ describe("NotesRelatedToEntityComponent", () => {
     n3.date = moment().subtract(2, "days").toDate();
     mockChildrenService.getNotesRelatedTo.and.resolveTo([n3, n2, n1]);
 
-    component.onInitFromDynamicConfig({ entity: new Child() });
+    component.entity = new Child();
+    component.ngOnInit();
     tick();
 
     expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
