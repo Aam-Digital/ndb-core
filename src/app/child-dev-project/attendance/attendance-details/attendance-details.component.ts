@@ -4,7 +4,6 @@ import { ActivityAttendance } from "../model/activity-attendance";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EventNote } from "../model/event-note";
@@ -38,10 +37,10 @@ import { EntitySubrecordComponent } from "../../../core/entity-components/entity
   standalone: true,
 })
 export class AttendanceDetailsComponent
-  implements ShowsEntity<ActivityAttendance>, OnInitDynamicComponent
+  implements ShowsEntity<ActivityAttendance>
 {
   @Input() entity: ActivityAttendance = new ActivityAttendance();
-  @Input() focusedChild: string;
+  @Input() forChild: string;
   @ViewChild("dialogForm", { static: true }) formDialogWrapper;
 
   eventsColumns: FormFieldConfig[] = [
@@ -52,8 +51,8 @@ export class AttendanceDetailsComponent
       label: $localize`:How a child attended, e.g. too late, in time, excused, e.t.c:Attended`,
       view: "ReadonlyFunction",
       additional: (note: Note) => {
-        if (this.focusedChild) {
-          return note.getAttendance(this.focusedChild)?.status?.label || "-";
+        if (this.forChild) {
+          return note.getAttendance(this.forChild)?.status?.label || "-";
         } else {
           return (
             (calculateAverageAttendance(note).average * 100).toFixed(0) + "%" ||
@@ -65,12 +64,6 @@ export class AttendanceDetailsComponent
   ];
 
   constructor(private formDialog: FormDialogService) {}
-
-  onInitFromDynamicConfig(config?: { forChild?: string }) {
-    if (config?.forChild) {
-      this.focusedChild = config.forChild;
-    }
-  }
 
   showEventDetails(event: EventNote) {
     this.formDialog.openDialog(NoteDetailsComponent, event);

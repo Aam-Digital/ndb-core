@@ -1,12 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  Optional,
-  SimpleChange,
-  SimpleChanges,
-} from "@angular/core";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { Component, Input, OnInit, Optional } from "@angular/core";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -22,7 +14,7 @@ import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-to
   imports: [NgIf, TemplateTooltipDirective, ChildBlockTooltipComponent],
   standalone: true,
 })
-export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
+export class ChildBlockComponent implements OnInit {
   @Input() entity: Child;
   @Input() entityId: string;
 
@@ -34,21 +26,9 @@ export class ChildBlockComponent implements OnInitDynamicComponent, OnChanges {
 
   constructor(@Optional() private childrenService: ChildrenService) {}
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("entityId")) {
+  async ngOnInit() {
+    if (this.entityId) {
       this.entity = await this.childrenService.getChild(this.entityId);
     }
-  }
-
-  onInitFromDynamicConfig(config: any) {
-    this.entity = config.entity;
-    if (config.hasOwnProperty("entityId")) {
-      this.entityId = config.entityId;
-      this.ngOnChanges({
-        entityId: new SimpleChange(undefined, config.entityId, true),
-      });
-    }
-    this.linkDisabled = config.linkDisabled;
-    this.tooltipDisabled = config.tooltipDisabled;
   }
 }

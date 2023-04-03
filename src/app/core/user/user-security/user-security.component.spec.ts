@@ -67,7 +67,9 @@ describe("UserSecurityComponent", () => {
 
     fixture = TestBed.createComponent(UserSecurityComponent);
     component = fixture.componentInstance;
+    component.entity = user;
     fixture.detectChanges();
+    component.user = undefined;
   });
 
   it("should create", () => {
@@ -193,7 +195,7 @@ describe("UserSecurityComponent", () => {
 
   function initComponent(keycloakResult = of(keycloakUser)) {
     mockHttp.get.and.returnValue(keycloakResult);
-    component.onInitFromDynamicConfig({ entity: user });
+    component.ngOnInit();
     tick();
   }
 });

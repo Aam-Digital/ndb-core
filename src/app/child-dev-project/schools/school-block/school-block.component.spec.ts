@@ -34,7 +34,6 @@ describe("SchoolBlockComponent", () => {
     fixture = TestBed.createComponent(SchoolBlockComponent);
     component = fixture.componentInstance;
     component.entity = new School("");
-    component.icon = "university";
     fixture.detectChanges();
   });
 

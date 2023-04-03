@@ -1,6 +1,4 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ViewPropertyConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { Note } from "../model/note";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -14,32 +12,22 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
   template: `{{ participantsWithStatus }}`,
   standalone: true,
 })
-export class NoteAttendanceCountBlockComponent
-  implements OnInitDynamicComponent, OnInit
-{
+export class NoteAttendanceCountBlockComponent implements OnInit {
   /**
    * The note on which the attendance should be counted.
    */
-  @Input() note: Note;
+  @Input() entity: Note;
 
   /**
    * The logical attendance status for which the attendance should be counted.
    */
-  @Input() attendanceStatus: AttendanceLogicalStatus;
+  @Input() config: { status: AttendanceLogicalStatus };
 
   participantsWithStatus: number;
 
   ngOnInit() {
-    if (this.note) {
-      this.participantsWithStatus = this.note.countWithStatus(
-        this.attendanceStatus
-      );
-    }
-  }
-
-  onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    this.note = config.entity as Note;
-    this.attendanceStatus = config.config.status as AttendanceLogicalStatus;
-    this.ngOnInit();
+    this.participantsWithStatus = this.entity.countWithStatus(
+      this.config.status
+    );
   }
 }

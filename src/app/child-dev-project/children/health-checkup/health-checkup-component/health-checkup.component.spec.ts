@@ -28,7 +28,7 @@ describe("HealthCheckupComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(HealthCheckupComponent);
     component = fixture.componentInstance;
-    component.child = child;
+    component.entity = child;
     fixture.detectChanges();
   });
 

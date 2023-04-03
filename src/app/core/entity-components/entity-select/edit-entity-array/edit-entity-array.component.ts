@@ -1,8 +1,5 @@
 import { Component } from "@angular/core";
-import {
-  EditComponent,
-  EditPropertyConfig,
-} from "../../entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntitySelectComponent } from "../entity-select/entity-select.component";
 
@@ -18,11 +15,11 @@ export class EditEntityArrayComponent extends EditComponent<string[]> {
 
   entityName: string;
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<string[]>) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
+    super.ngOnInit();
 
     this.entityName =
-      config.formFieldConfig.additional || config.propertySchema.additional;
+      this.formFieldConfig.additional || this.propertySchema.additional;
 
     this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
   }

@@ -42,7 +42,6 @@ describe("TodosDashboardComponent", () => {
   beforeEach(async () => {
     fixture = TestBed.createComponent(TodosDashboardComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({});
     fixture.detectChanges();
     await fixture.whenStable();
   });

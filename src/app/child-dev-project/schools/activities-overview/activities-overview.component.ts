@@ -1,10 +1,9 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { RecurringActivity } from "app/child-dev-project/attendance/model/recurring-activity";
 import { FormFieldConfig } from "app/core/entity-components/entity-form/entity-form/FormConfig";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
 import { Entity } from "app/core/entity/model/entity";
 import { DynamicComponent } from "app/core/view/dynamic-components/dynamic-component.decorator";
-import { OnInitDynamicComponent } from "app/core/view/dynamic-components/on-init-dynamic-component.interface";
 import { delay } from "rxjs";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -18,7 +17,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   imports: [EntitySubrecordComponent],
   standalone: true,
 })
-export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
+export class ActivitiesOverviewComponent implements OnInit {
   titleColumn = {
     id: "title",
     edit: "EditTextWithAutocomplete",
@@ -28,7 +27,7 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
       relevantValue: "",
     },
   };
-  columns: FormFieldConfig[] = [
+  @Input() columns: FormFieldConfig[] = [
     this.titleColumn,
     { id: "type" },
     { id: "assignedTo" },
@@ -36,17 +35,12 @@ export class ActivitiesOverviewComponent implements OnInitDynamicComponent {
     { id: "excludedParticipants" },
   ];
 
-  entity: Entity;
+  @Input() entity: Entity;
   records: RecurringActivity[] = [];
 
   constructor(private entityMapper: EntityMapperService) {}
 
-  async onInitFromDynamicConfig(config: any) {
-    if (config?.config?.columns) {
-      this.columns = config.config.columns;
-    }
-
-    this.entity = config.entity;
+  async ngOnInit() {
     this.titleColumn.additional.relevantValue = this.entity.getId();
     await this.initLinkedActivities();
 
