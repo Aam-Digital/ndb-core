@@ -1,13 +1,12 @@
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EMPTY } from "rxjs";
-import { ChildrenService } from "../../children/children.service";
 import { Child } from "../../children/model/child";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
+import { EntityConfigService } from "../../../core/entity/entity-config.service";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -30,19 +29,11 @@ describe("NoteDetailsComponent", () => {
   let component: NoteDetailsComponent;
   let fixture: ComponentFixture<NoteDetailsComponent>;
 
-  let children: Child[];
   let testNote: Note;
 
   beforeEach(async () => {
-    children = [new Child("1"), new Child("2"), new Child("3")];
+    const children = [new Child("1"), new Child("2"), new Child("3")];
     testNote = generateTestNote(children);
-
-    const mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "getChild",
-    ]);
-    mockChildrenService.getChild.and.resolveTo(new Child(""));
-
-    const dialogRefMock = { beforeClosed: () => EMPTY, close: () => {} };
 
     await TestBed.configureTestingModule({
       imports: [
@@ -50,11 +41,12 @@ describe("NoteDetailsComponent", () => {
         MockedTestingModule.withState(LoginState.LOGGED_IN, children),
       ],
       providers: [
-        { provide: MatDialogRef, useValue: dialogRefMock },
-        { provide: ChildrenService, useValue: mockChildrenService },
         { provide: MAT_DIALOG_DATA, useValue: { entity: testNote } },
+        { provide: MatDialogRef, useValue: {} },
       ],
     }).compileComponents();
+
+    TestBed.inject(EntityConfigService).setupEntitiesFromConfig();
     fixture = TestBed.createComponent(NoteDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
