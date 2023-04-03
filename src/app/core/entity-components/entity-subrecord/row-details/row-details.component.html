@@ -25,66 +25,8 @@
       }"
       ></ng-template>
     </app-pill>
-    <!-- avoid scroll bar + move delete into [...] menu -->
   </div>
 </mat-dialog-content>
 <mat-dialog-actions>
-  <button
-    mat-raised-button
-    color="accent"
-    (click)="save()"
-    [disabled]="form.disabled"
-    i18n="Save button for forms"
-  >
-    Save
-  </button>
-
-  <button
-    mat-stroked-button
-    mat-dialog-close
-    i18n="Generic cancel button"
-  >
-    Cancel
-  </button>
-
-  <button
-    *ngIf="detailsRoute"
-    mat-raised-button
-    [routerLink]="detailsRoute"
-    mat-dialog-close
-    [disabled]="form.disabled"
-    i18n="Button to navigate to details page of entity"
-  >
-    Go to details
-  </button>
-
-  <button
-    *ngIf="!data.entity.isNew"
-    mat-icon-button
-    [matMenuTriggerFor]="additional"
-  >
-    <fa-icon icon="ellipsis-v"></fa-icon>
-  </button>
-  <mat-menu
-    #additional
-  >
-    <button
-      mat-menu-item
-      (click)="delete()"
-      *appDisabledEntityOperation="{
-        operation: 'delete',
-        entity: data.entity
-      }"
-      angulartics2On="click"
-      [angularticsCategory]="data.entity.getType()"
-      angularticsAction="entity_delete"
-    >
-      <fa-icon
-        class="standard-icon-with-text color-accent"
-        aria-label="remove element"
-        icon="trash"
-      ></fa-icon>
-      <span i18n="Generic delete button"> Delete </span>
-    </button>
-  </mat-menu>
+  <app-dialog-buttons [form]="form" [entity]="data.entity"/>
 </mat-dialog-actions>

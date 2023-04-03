@@ -16,38 +16,9 @@
   -->
 
 <h1 mat-dialog-title>{{ tmpEntity.date | date }}: {{ tmpEntity.subject }}</h1>
+<app-dialog-close mat-dialog-close=""></app-dialog-close>
 
 <mat-dialog-content class="flex-column gap-regular">
-  <div class="additional-actions-menu">
-    <button mat-icon-button [matMenuTriggerFor]="additional" color="primary">
-      <fa-icon icon="ellipsis-v"></fa-icon>
-    </button>
-    <mat-menu #additional>
-      <button
-        mat-menu-item
-        [appExportData]="[entity]"
-        format="csv"
-        [exportConfig]="exportConfig"
-        [filename]="
-            'event_' +
-            entity.subject.replace(' ', '-') +
-            '_' +
-            (entity.date | date : 'YYYY-MM-dd')
-          "
-      >
-        <fa-icon
-          class="color-accent standard-icon-with-text"
-          aria-label="download csv"
-          icon="download"
-          angulartics2On="click"
-          angularticsCategory="Note"
-          angularticsAction="single_note_csv_export"
-        ></fa-icon>
-        <span i18n="Download note details as CSV"> Download details </span>
-      </button>
-    </mat-menu>
-  </div>
-
   <app-entity-form
     [columns]="topForm"
     [entity]="entity"
@@ -94,44 +65,28 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button
-    mat-raised-button
-    color="accent"
-    [disabled]="form.dirty"
-    (click)="save()"
-    angulartics2On="click"
-    [angularticsCategory]="entity?.getType()"
-    angularticsAction="note_details_save"
-    i18n="Form save button"
-  >
-    Save
-  </button>
-  <button
-    mat-stroked-button
-    mat-dialog-close
-    angulartics2On="click"
-    [angularticsCategory]="entity?.getType()"
-    angularticsAction="note_details_cancel"
-    i18n="Form cancel button"
-  >
-    Cancel
-  </button>
-  <ng-container *ngIf="!entity.isNew">
+  <app-dialog-buttons [form]="form" [entity]="entity">
     <button
-      style="margin-left: 8px"
-      mat-stroked-button
-      color="warn"
-      (click)="delete()"
-      angulartics2On="click"
-      [angularticsCategory]="entity?.getType()"
-      angularticsAction="note_details_delete"
-      i18n="Form delete button"
-      *appDisabledEntityOperation="{
-      entity: entity,
-      operation: 'delete'
-    }"
+      mat-menu-item
+      [appExportData]="[entity]"
+      format="csv"
+      [exportConfig]="exportConfig"
+      [filename]="
+        'event_' +
+        entity.subject.replace(' ', '-') +
+        '_' +
+        (entity.date | date : 'YYYY-MM-dd')
+      "
     >
-      Delete
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        aria-label="download csv"
+        icon="download"
+        angulartics2On="click"
+        angularticsCategory="Note"
+        angularticsAction="single_note_csv_export"
+      ></fa-icon>
+      <span i18n="Download note details as CSV"> Download details </span>
     </button>
-  </ng-container>
+  </app-dialog-buttons>
 </mat-dialog-actions>
