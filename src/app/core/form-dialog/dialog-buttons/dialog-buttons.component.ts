@@ -70,7 +70,11 @@ export class DialogButtonsComponent implements OnInit {
   async save() {
     this.entityFormService
       .saveChanges(this.form, this.entity)
-      .then((res) => this.dialog.close(res))
+      .then((res) => {
+        // Attachments are only saved once form is disabled
+        this.form.disable();
+        this.dialog.close(res);
+      })
       .catch((err) => {
         if (!(err instanceof InvalidFormFieldError)) {
           this.alertService.addDanger(err.message);

@@ -22,10 +22,7 @@ import {
 import { toFormFieldConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { DynamicComponentDirective } from "../../../core/view/dynamic-components/dynamic-component.directive";
-import {
-  MAT_DIALOG_DATA,
-  MatDialogModule,
-} from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 
@@ -75,11 +72,11 @@ export class NoteDetailsComponent implements OnInit {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
-    const formConfig = this.configService.getConfig<any>(
-      "app-config:note-details"
-    );
+    const formConfig = this.configService.getConfig("appConfig:note-details");
     ["topForm", "middleForm", "bottomForm"].forEach((form) => {
-      this[form] = formConfig?.[form]?.map(toFormFieldConfig) ?? this[form];
+      this[form] =
+        formConfig?.[form]?.map((field) => [toFormFieldConfig(field)]) ??
+        this[form];
     });
   }
 
