@@ -1,11 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  Optional,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Inject, Input, OnInit, Optional } from "@angular/core";
 import { AlertService } from "../../alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
 import { AnalyticsService } from "../../analytics/analytics.service";
@@ -35,7 +28,7 @@ import { RouteTarget } from "../../../app.routing";
   ],
   standalone: true,
 })
-export class ComingSoonComponent implements OnChanges {
+export class ComingSoonComponent implements OnInit {
   /**
    * An array of featureIds that the user has already requested during the current session.
    *
@@ -70,9 +63,9 @@ export class ComingSoonComponent implements OnChanges {
     });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("featureId")) {
-      this.init(changes.featureId.currentValue);
+  ngOnInit(): void {
+    if (this.featureId) {
+      this.init(this.featureId);
     }
   }
 

@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewEncapsulation } from "@angular/core";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { Child } from "../../model/child";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
@@ -25,7 +25,7 @@ import { ActivityAttendanceSectionComponent } from "../../../attendance/activity
   ],
   standalone: true,
 })
-export class GroupedChildAttendanceComponent implements OnChanges {
+export class GroupedChildAttendanceComponent implements OnInit {
   @Input() entity: Child = new Child("");
 
   loading: boolean = true;
@@ -33,8 +33,8 @@ export class GroupedChildAttendanceComponent implements OnChanges {
 
   constructor(private attendanceService: AttendanceService) {}
 
-  async ngOnChanges() {
-    await this.loadActivities();
+  ngOnInit() {
+    return this.loadActivities();
   }
 
   private async loadActivities() {

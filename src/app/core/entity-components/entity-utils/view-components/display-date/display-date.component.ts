@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component } from "@angular/core";
 import { ViewDirective } from "../view.directive";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { DatePipe } from "@angular/common";

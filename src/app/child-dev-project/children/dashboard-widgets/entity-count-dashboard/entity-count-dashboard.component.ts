@@ -31,6 +31,10 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
   standalone: true,
 })
 export class EntityCountDashboardComponent implements OnInit {
+  /**
+   * Entity name which should be grouped
+   * @param value
+   */
   @Input() set entity(value: string) {
     this._entity = this.entities.get(value);
   }

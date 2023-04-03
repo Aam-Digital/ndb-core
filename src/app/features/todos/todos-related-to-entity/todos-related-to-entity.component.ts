@@ -24,18 +24,16 @@ export class TodosRelatedToEntityComponent implements OnInit {
   entries: Todo[] = [];
 
   @Input() entity: Entity;
-  @Input() config: { columns: FormFieldConfig[] } = {
-    columns: [
-      { id: "deadline" },
-      { id: "subject" },
-      { id: "startDate" },
-      { id: "assignedTo" },
-      { id: "description", visibleFrom: "xl" },
-      { id: "repetitionInterval", visibleFrom: "xl" },
-      { id: "relatedEntities", hideFromTable: true },
-      { id: "completed", hideFromForm: true },
-    ],
-  };
+  @Input() columns: FormFieldConfig[] = [
+    { id: "deadline" },
+    { id: "subject" },
+    { id: "startDate" },
+    { id: "assignedTo" },
+    { id: "description", visibleFrom: "xl" },
+    { id: "repetitionInterval", visibleFrom: "xl" },
+    { id: "relatedEntities", hideFromTable: true },
+    { id: "completed", hideFromForm: true },
+  ];
 
   /** the property name of the Todo that contains the ids referencing related entities */
   private referenceProperty: keyof Todo & string = "relatedEntities";
@@ -94,11 +92,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openFormPopup(
-      entity,
-      this.config.columns,
-      TodoDetailsComponent
-    );
+    this.formDialog.openFormPopup(entity, this.columns, TodoDetailsComponent);
   }
 
   toggleInactive() {

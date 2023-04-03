@@ -18,11 +18,9 @@ describe("RelatedEntitiesComponent", () => {
     fixture = TestBed.createComponent(RelatedEntitiesComponent);
     component = fixture.componentInstance;
     component.entity = new Child();
-    component.config = {
-      entity: ChildSchoolRelation.ENTITY_TYPE,
-      property: "childId",
-      columns: [],
-    };
+    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    component.property = "childId";
+    component.columns = [];
     fixture.detectChanges();
   });
 
@@ -45,15 +43,13 @@ describe("RelatedEntitiesComponent", () => {
     const filter = { start: { $exists: true } } as any;
 
     component.entity = c1;
-    component.config = {
-      entity: ChildSchoolRelation.ENTITY_TYPE,
-      property: "childId",
-      columns,
-      filter,
-    };
+    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    component.property = "childId";
+    component.columns = columns;
+    component.filter = filter;
     await component.ngOnInit();
 
-    expect(component.config.columns).toBe(columns);
+    expect(component.columns).toBe(columns);
     expect(component.data).toEqual([r1, r2, r3]);
     expect(component.filter).toEqual({ ...filter, childId: c1.getId() });
   });
@@ -61,11 +57,9 @@ describe("RelatedEntitiesComponent", () => {
   it("should create a new entity that references the related one", async () => {
     const related = new Child();
     component.entity = related;
-    component.config = {
-      entity: ChildSchoolRelation.ENTITY_TYPE,
-      property: "childId",
-      columns: [],
-    };
+    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    component.property = "childId";
+    component.columns = [];
     await component.ngOnInit();
 
     const newEntity = component.createNewRecordFactory()();

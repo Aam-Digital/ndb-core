@@ -70,7 +70,7 @@ describe("RecentAttendanceBlocksComponent", () => {
     component.config = {
       filterByActivityType: defaultInteractionTypes[1].id,
     };
-    await component.ngOnChanges();
+    await component.ngOnInit();
 
     expect(component.attendanceList).toHaveSize(2);
   });

@@ -36,18 +36,13 @@ import { DisableEntityOperationDirective } from "../../../permissions/permission
 export class FormComponent<E extends Entity> implements OnInit {
   @Input() entity: E;
   @Input() creatingNew = false;
+  @Input() headers: string[] = [];
 
-  @Input() set config(config) {
-    if (config.cols) {
-      this.columns = config?.cols.map((row) => row.map(toFormFieldConfig));
-    }
-    if (config.headers) {
-      this.headers = config?.headers;
-    }
+  @Input() set cols(value: FormFieldConfig[][]) {
+    this._cols = value.map((row) => row.map(toFormFieldConfig));
   }
 
-  columns: FormFieldConfig[][] = [];
-  headers?: string[] = [];
+  _cols: FormFieldConfig[][] = [];
   form: EntityForm<E>;
 
   constructor(
@@ -59,7 +54,7 @@ export class FormComponent<E extends Entity> implements OnInit {
 
   ngOnInit() {
     this.form = this.entityFormService.createFormGroup(
-      [].concat(...this.columns),
+      [].concat(...this._cols),
       this.entity
     );
     if (!this.creatingNew) {

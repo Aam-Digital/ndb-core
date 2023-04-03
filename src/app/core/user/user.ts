@@ -59,13 +59,7 @@ export class User extends Entity {
   private _name: string;
 
   /**
-   * settings for the mat-paginator for tables.
-   * map of ids (uniquely identifying a table) to pageSize or pageIndex.
-   *
-   * pageSizeOptions is set in the corresponding html of the component,
-   * pageSize is stored persistently in the database and
-   * pageIndex is saved only temporarily for the session
+   * This map holds information for the page size settings for different tables in the app
    */
   @DatabaseField() paginatorSettingsPageSize: { [id: string]: number } = {};
-  public paginatorSettingsPageIndex: { [id: string]: number } = {};
 }

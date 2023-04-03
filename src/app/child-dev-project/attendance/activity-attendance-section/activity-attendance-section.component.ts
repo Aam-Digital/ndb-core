@@ -1,11 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  LOCALE_ID,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Inject, Input, LOCALE_ID, OnInit } from "@angular/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";
@@ -39,7 +32,7 @@ import { MatDialog } from "@angular/material/dialog";
   ],
   standalone: true,
 })
-export class ActivityAttendanceSectionComponent implements OnChanges {
+export class ActivityAttendanceSectionComponent implements OnInit {
   @Input() entity: RecurringActivity;
   @Input() forChild?: string;
 
@@ -91,13 +84,8 @@ export class ActivityAttendanceSectionComponent implements OnChanges {
     private dialog: MatDialog
   ) {}
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes.hasOwnProperty("entity") ||
-      changes.hasOwnProperty("forChild")
-    ) {
-      await this.init();
-    }
+  ngOnInit() {
+    return this.init();
   }
 
   async init(loadAll: boolean = false) {
