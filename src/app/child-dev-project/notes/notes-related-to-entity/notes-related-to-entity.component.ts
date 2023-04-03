@@ -118,6 +118,6 @@ export class NotesRelatedToEntityComponent implements OnInit {
   }
 
   showNoteDetails(note: Note) {
-    this.formDialog.openSimpleForm(note, [], NoteDetailsComponent);
+    this.formDialog.openFormPopup(note, [], NoteDetailsComponent);
   }
 }

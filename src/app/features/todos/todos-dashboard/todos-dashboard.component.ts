@@ -60,6 +60,6 @@ export class TodosDashboardComponent {
   };
 
   openEntity(entity: Todo) {
-    this.formDialog.openSimpleForm(entity, undefined, TodoDetailsComponent);
+    this.formDialog.openFormPopup(entity, undefined, TodoDetailsComponent);
   }
 }

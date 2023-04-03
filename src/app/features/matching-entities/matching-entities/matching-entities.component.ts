@@ -239,7 +239,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
     if (this.onMatch.columnsToReview) {
       this.formDialog
-        .openSimpleForm(newMatchEntity, this.onMatch.columnsToReview)
+        .openFormPopup(newMatchEntity, this.onMatch.columnsToReview)
         .afterClosed()
         .subscribe((result) => {
           if (result instanceof newMatchEntity.getConstructor()) {

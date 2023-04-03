@@ -38,7 +38,7 @@ export class PrimaryActionComponent {
    * The primary action to be triggered when the user clicks the hovering button.
    */
   primaryAction() {
-    this.formDialog.openSimpleForm(
+    this.formDialog.openFormPopup(
       this.createNewNote(),
       [],
       NoteDetailsComponent

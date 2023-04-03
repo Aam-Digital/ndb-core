@@ -33,13 +33,11 @@ export class FormDialogService {
    * @param columnsOverall
    * @param component
    */
-  openSimpleForm<E extends Entity>(
+  openFormPopup<E extends Entity, T = RowDetailsComponent>(
     entity: E,
     columnsOverall: ColumnConfig[],
-    component?: ComponentType<any>
-  ): MatDialogRef<RowDetailsComponent> {
-    // TODO: merge this with openDialog method above for removing further duplication (see #921)
-
+    component: ComponentType<T> = RowDetailsComponent as ComponentType<T>
+  ): MatDialogRef<T> {
     if (!columnsOverall) {
       columnsOverall = FormDialogService.getSchemaFieldsForDetailsView(entity);
     }
@@ -53,7 +51,7 @@ export class FormDialogService {
       .filter((col) => col.edit)
       .map((col) => Object.assign({}, col, { forTable: false }));
 
-    return this.dialog.open(component ?? RowDetailsComponent, {
+    return this.dialog.open(component, {
       ...FormDialogService.dialogSettings,
       data: {
         entity: entity,

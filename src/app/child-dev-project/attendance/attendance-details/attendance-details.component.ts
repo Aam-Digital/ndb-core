@@ -67,6 +67,6 @@ export class AttendanceDetailsComponent {
   }
 
   showEventDetails(event: EventNote) {
-    this.formDialog.openSimpleForm(event, [], NoteDetailsComponent);
+    this.formDialog.openFormPopup(event, [], NoteDetailsComponent);
   }
 }
