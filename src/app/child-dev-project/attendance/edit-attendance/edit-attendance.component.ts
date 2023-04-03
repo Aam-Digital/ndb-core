@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { EditEntityArrayComponent } from "../../../core/entity-components/entity-select/edit-entity-array/edit-entity-array.component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -39,7 +39,7 @@ import { EventAttendance } from "../model/event-attendance";
 export class EditAttendanceComponent extends EditComponent<string[]> {
   showAttendance = false;
   mobile = false;
-  entity: Note;
+  @Input() entity: Note;
   attendanceForm: FormControl<Map<string, EventAttendance>>;
 
   constructor(screenWithObserver: ScreenWidthObserver) {
