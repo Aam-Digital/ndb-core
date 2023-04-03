@@ -119,7 +119,7 @@ describe("BasicAutocompleteComponent", () => {
 
     component.autocompleteForm.setValue("Non existent");
     component.onFocusOut({} as any);
-    tick();
+    tick(200);
 
     expect(component.value).toBe(undefined);
     flush();
@@ -150,7 +150,7 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toEqual([0, 2]);
   });
 
-  it("should clear the input when focusing in multi select mode", () => {
+  it("should clear the input when focusing in multi select mode", fakeAsync(() => {
     component.multi = true;
     component.options = ["some", "values", "and", "other", "options"];
     component.value = ["some", "values"];
@@ -161,8 +161,10 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.autocompleteForm).toHaveValue("");
 
     component.onFocusOut({} as any);
+    tick(200);
+
     expect(component.autocompleteForm).toHaveValue("some, values");
-  });
+  }));
 
   it("should update the error state if the form is invalid", () => {
     testControl.setValidators([Validators.required]);
