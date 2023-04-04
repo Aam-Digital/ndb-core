@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, ViewChild, Input } from "@angular/core";
 import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
@@ -35,7 +35,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   ],
   standalone: true,
 })
-export class EditFileComponent extends EditComponent<string> implements OnInit {
+export class EditFileComponent extends EditComponent<string> {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
   @Input() compressImage?: number;
   private selectedFile: File;
@@ -52,6 +52,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.initialValue = this.formControl.value;
     this.formControl.statusChanges
       .pipe(

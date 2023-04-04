@@ -26,11 +26,11 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import * as _ from "lodash";
 import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
 import { DisplayEntityComponent } from "../../../core/entity-components/entity-select/display-entity/display-entity.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { pick } from "lodash-es";
 
 @RouteTarget("Import")
 @Component({
@@ -242,10 +242,7 @@ export class DataImportComponent {
   }
 
   private loadColumnMapping(columnMap: ImportColumnMap) {
-    Object.assign(
-      this.columnMap,
-      _.pick(columnMap, Object.keys(this.columnMap))
-    );
+    Object.assign(this.columnMap, pick(columnMap, Object.keys(this.columnMap)));
   }
 
   private patchIfPossible<T>(form: AbstractControl<T>, patch: T) {

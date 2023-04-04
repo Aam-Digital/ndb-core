@@ -268,12 +268,9 @@ describe("EditFileComponent", () => {
 
   function setupComponent(value = null) {
     initialValue = value;
-    component.onInitFromDynamicConfig({
-      formControl: new FormControl(initialValue),
-      entity: Object.assign(new Entity(), { testProp: initialValue }),
-      formFieldConfig: { id: "testProp" },
-      propertySchema: undefined,
-    });
+    component.formControl = new FormControl(initialValue);
+    component.entity = Object.assign(new Entity(), { testProp: initialValue });
+    component.formFieldConfig = { id: "testProp" };
     component.formControl.disable();
     fixture.detectChanges();
   }

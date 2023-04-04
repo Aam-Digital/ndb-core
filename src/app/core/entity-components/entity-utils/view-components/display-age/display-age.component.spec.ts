@@ -16,6 +16,7 @@ describe("DisplayAgeComponent", () => {
 
     fixture = TestBed.createComponent(DisplayAgeComponent);
     component = fixture.componentInstance;
+    component.entity = new Child();
     fixture.detectChanges();
   });
 
@@ -27,12 +28,10 @@ describe("DisplayAgeComponent", () => {
     const child = new Child();
     child.dateOfBirth = new DateWithAge(moment().subtract(5, "years").toDate());
 
-    component.onInitFromDynamicConfig({
-      entity: child,
-      config: "dateOfBirth",
-      id: "age",
-      value: undefined,
-    });
+    component.entity = child;
+    component.config = "dateOfBirth";
+    component.id = "age";
+    component.ngOnInit();
 
     expect(component.date).toBe(child.dateOfBirth);
     expect(component.date.age).toBe(5);

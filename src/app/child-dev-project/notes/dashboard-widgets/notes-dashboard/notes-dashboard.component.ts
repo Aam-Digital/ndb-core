@@ -1,9 +1,14 @@
-import { AfterViewInit, Component, OnInit, ViewChild } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Child } from "../../../children/model/child";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
@@ -35,23 +40,24 @@ import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-wid
   ],
   standalone: true,
 })
-export class NotesDashboardComponent
-  implements OnInitDynamicComponent, OnInit, AfterViewInit
-{
+export class NotesDashboardComponent implements OnInit, AfterViewInit {
   /**
    * Entity for which the recent notes should be counted.
    */
-  entity: EntityConstructor = Child;
+  @Input() set entity(value: string) {
+    this._entity = this.entities.get(value);
+  }
 
+  _entity: EntityConstructor = Child;
   /**
    * number of days since last note that entities should be considered having a "recent" note.
    */
-  sinceDays = 0;
+  @Input() sinceDays = 0;
 
   /** Whether an additional offset should be automatically added to include notes from the beginning of the week */
-  fromBeginningOfWeek = true;
+  @Input() fromBeginningOfWeek = true;
 
-  mode: "with-recent-notes" | "without-recent-notes";
+  @Input() mode: "with-recent-notes" | "without-recent-notes";
 
   /**
    * Entities displayed in the template with additional "daysSinceLastNote" field
@@ -69,16 +75,6 @@ export class NotesDashboardComponent
     private entities: EntityRegistry
   ) {}
 
-  onInitFromDynamicConfig(config: NotesDashboardConfig) {
-    this.sinceDays = config.sinceDays ?? this.sinceDays;
-    this.fromBeginningOfWeek =
-      config.fromBeginningOfWeek ?? this.fromBeginningOfWeek;
-    this.mode = config.mode;
-    if (config.entity) {
-      this.entity = this.entities.get(config.entity);
-    }
-  }
-
   ngOnInit() {
     let dayRangeBoundary = this.sinceDays;
     if (this.fromBeginningOfWeek) {
@@ -90,14 +86,14 @@ export class NotesDashboardComponent
           (stat) => stat[1] <= dayRangeBoundary,
           dayRangeBoundary
         );
-        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities with recent reports:${this.entity.labelPlural} with recent report`;
+        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities with recent reports:${this._entity.labelPlural} with recent report`;
         break;
       case "without-recent-notes":
         this.loadConcernedEntities(
           (stat) => stat[1] >= dayRangeBoundary,
           dayRangeBoundary
         );
-        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities without recent reports:${this.entity.labelPlural} having no recent reports`;
+        this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities without recent reports:${this._entity.labelPlural} having no recent reports`;
         break;
     }
   }
@@ -116,7 +112,7 @@ export class NotesDashboardComponent
     const order = this.mode === "with-recent-notes" ? -1 : 1;
     const recentNotesMap =
       await this.childrenService.getDaysSinceLastNoteOfEachEntity(
-        this.entity.ENTITY_TYPE,
+        this._entity.ENTITY_TYPE,
         queryRange
       );
     this.dataSource.data = Array.from(recentNotesMap)

@@ -192,7 +192,7 @@ export class RollCallSetupComponent implements OnInit {
     newNote.authors = [this.sessionService.getCurrentUser().name];
 
     this.formDialog
-      .openDialog(NoteDetailsComponent, newNote)
+      .openFormPopup(newNote, [], NoteDetailsComponent)
       .afterClosed()
       .subscribe((createdNote: Note) => {
         if (createdNote) {

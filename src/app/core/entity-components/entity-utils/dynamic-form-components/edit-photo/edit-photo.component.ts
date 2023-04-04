@@ -1,10 +1,7 @@
 import { Component } from "@angular/core";
-import { EditPropertyConfig } from "../edit-component";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatInputModule } from "@angular/material/input";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EditFileComponent } from "../../../../../features/file/edit-file/edit-file.component";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
@@ -45,8 +42,8 @@ export class EditPhotoComponent extends EditFileComponent {
     return super.onFileSelected(event);
   }
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
+    super.ngOnInit();
     if (this.entity[this.formControlName]) {
       this.fileService
         .loadFile(this.entity, this.formControlName)

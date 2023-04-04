@@ -1,6 +1,5 @@
-import { ChangeDetectorRef, Component } from "@angular/core";
+import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
 import { ViewDirective } from "../../../core/entity-components/entity-utils/view-components/view.directive";
-import { ViewPropertyConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { Entity } from "../../../core/entity/model/entity";
 import { Coordinates } from "../coordinates";
 import { getKmDistance } from "../map-utils";
@@ -34,24 +33,23 @@ export interface ViewDistanceConfig {
   template: `
     <app-readonly-function
       [entity]="entity"
-      [displayFunction]="distanceFunction"
+      [config]="distanceFunction"
     ></app-readonly-function>
   `,
   imports: [ReadonlyFunctionComponent],
   standalone: true,
 })
-export class ViewDistanceComponent extends ViewDirective<Geolocation> {
-  private config: ViewDistanceConfig;
-
+export class ViewDistanceComponent
+  extends ViewDirective<Geolocation, ViewDistanceConfig>
+  implements OnInit
+{
   constructor(private changeDetector: ChangeDetectorRef) {
     super();
   }
 
   distanceFunction = (_entity: Entity) => "-";
 
-  onInitFromDynamicConfig(config: ViewPropertyConfig<ViewDistanceConfig>) {
-    super.onInitFromDynamicConfig(config);
-    this.config = config.config;
+  ngOnInit() {
     this.config.compareCoordinates
       .pipe(untilDestroyed(this))
       .subscribe((coordinates) => this.setDistanceFunction(coordinates));

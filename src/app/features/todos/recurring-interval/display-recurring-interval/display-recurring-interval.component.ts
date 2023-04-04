@@ -1,7 +1,6 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { ViewDirective } from "../../../../core/entity-components/entity-utils/view-components/view.directive";
-import { ViewPropertyConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 
 @DynamicComponent("DisplayRecurringInterval")
@@ -10,11 +9,13 @@ import { generateLabelFromInterval, TimeInterval } from "../time-interval";
   template: "{{ label }}",
   standalone: true,
 })
-export class DisplayRecurringIntervalComponent extends ViewDirective<TimeInterval> {
+export class DisplayRecurringIntervalComponent
+  extends ViewDirective<TimeInterval>
+  implements OnInit
+{
   label: string;
 
-  onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
     if (this.value) {
       this.label = generateLabelFromInterval(this.value);
     }
