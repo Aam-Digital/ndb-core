@@ -44,7 +44,7 @@
     {
       "name": "attachments",
       "urls": [
-        "**/app-attachments/**"
+        "**/app-attachments/*/*"
       ],
       "cacheConfig": {
         "maxSize": 500,
