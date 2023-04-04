@@ -58,39 +58,49 @@
 
   <div *ngIf="mobile" class="attendance-blocks">
     <!-- Mobile view / smaller screen: display the information using a flex-layout -->
-    <div *ngFor="let childId of entity.children" class="attendance-item">
-      <div class="attendance-item--header">
-        <app-display-entity
-          [entityId]="childId"
-          entityType="Child"
-        ></app-display-entity>
+    <mat-card
+      *ngFor="let childId of formControl.value"
+      class="attendance-item mat-elevation-z1 margin-bottom-small"
+    >
+      <mat-card-content>
+        <div class="attendance-item--header margin-bottom-regular">
+          <app-display-entity
+            [entityId]="childId"
+            entityType="Child"
+          ></app-display-entity>
 
-        <button mat-icon-button *ngIf="!formControl.disabled" (click)="removeChild(childId)">
-          <fa-icon icon="trash"></fa-icon>
-        </button>
-      </div>
+          <button
+            mat-icon-button
+            *ngIf="!formControl.disabled"
+            (click)="removeChild(childId)"
+            class="mobile-remove-item"
+          >
+            <fa-icon icon="trash"></fa-icon>
+          </button>
+        </div>
 
-      <div class="attendance-item--content">
-        <app-attendance-status-select
-          [(value)]="getAttendance(childId).status"
-          [disabled]="formControl.disabled"
-        >
-        </app-attendance-status-select>
-
-        <mat-form-field>
-          <input
-            #inputElement
-            matInput
-            i18n-placeholder
-            placeholder="Remarks"
-            name="remarks"
-            type="text"
-            [value]="getAttendance(childId).remarks"
-            (change)="getAttendance(childId).remarks = inputElement.value"
+        <div class="attendance-item--content">
+          <app-attendance-status-select
+            [(value)]="getAttendance(childId).status"
             [disabled]="formControl.disabled"
-          />
-        </mat-form-field>
-      </div>
-    </div>
+          >
+          </app-attendance-status-select>
+
+          <mat-form-field>
+            <input
+              #inputElement
+              matInput
+              i18n-placeholder
+              placeholder="Remarks"
+              name="remarks"
+              type="text"
+              [value]="getAttendance(childId).remarks"
+              (change)="getAttendance(childId).remarks = inputElement.value"
+              [disabled]="formControl.disabled"
+            />
+          </mat-form-field>
+        </div>
+      </mat-card-content>
+    </mat-card>
   </div>
 </ng-container>

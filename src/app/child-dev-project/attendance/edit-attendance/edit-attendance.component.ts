@@ -16,6 +16,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { Note } from "../../notes/model/note";
 import { EventAttendance } from "../model/event-attendance";
+import { MatCardModule } from "@angular/material/card";
 
 @UntilDestroy()
 @DynamicComponent("EditAttendance")
@@ -32,6 +33,7 @@ import { EventAttendance } from "../model/event-attendance";
     AttendanceStatusSelectComponent,
     MatFormFieldModule,
     MatInputModule,
+    MatCardModule,
   ],
   templateUrl: "./edit-attendance.component.html",
   styleUrls: ["./edit-attendance.component.scss"],

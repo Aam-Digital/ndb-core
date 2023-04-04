@@ -1,5 +1,4 @@
-@use "src/styles/variables/sizes";
-
+/* make layout of attendee items more dense and align its fields by hiding unused subscript space */
 :host ::ng-deep .table .mat-mdc-form-field-subscript-wrapper {
   display: none;
 }
@@ -7,4 +6,10 @@
 .table {
   /* add gap of same size as the hidden subscript wrappers */
   margin-bottom: 22px;
+}
+
+.mobile-remove-item {
+  position: absolute;
+  top: 0;
+  right: 0;
 }
