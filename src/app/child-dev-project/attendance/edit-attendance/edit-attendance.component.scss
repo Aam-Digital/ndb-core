@@ -1,0 +1,10 @@
+@use "src/styles/variables/sizes";
+
+:host ::ng-deep .table .mat-mdc-form-field-subscript-wrapper {
+  display: none;
+}
+
+.table {
+  /* add gap of same size as the hidden subscript wrappers */
+  margin-bottom: 22px;
+}
