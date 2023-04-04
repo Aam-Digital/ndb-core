@@ -86,12 +86,10 @@ export abstract class FileService {
    * @param file to be uploaded
    * @param entity
    * @param property where the information about the file should be stored
-   * @param compression
    */
   abstract uploadFile(
     file: File,
     entity: Entity,
-    property: string,
-    compression?: number
+    property: string
   ): Observable<any>;
 }

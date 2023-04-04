@@ -35,16 +35,13 @@ export class MockFileService extends FileService {
   }
 
   showFile(entity: Entity, property: string): void {
-    window.open(
-      this.fileMap.get(`${entity.getId(true)}:${property}`),
-      "_blank"
-    );
+    const url = this.fileMap.get(`${entity.getId(true)}:${property}`);
+    window.open(url, "_blank");
   }
 
   loadFile(entity: Entity, property: string): Observable<SafeUrl> {
-    return of(
-      this.sanitizer.bypassSecurityTrustUrl(this.fileMap.get(entity + property))
-    );
+    const url = this.fileMap.get(`${entity.getId(true)}:${property}`);
+    return of(this.sanitizer.bypassSecurityTrustUrl(url));
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
