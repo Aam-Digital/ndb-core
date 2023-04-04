@@ -42,9 +42,9 @@
       }
     },
     {
-      "name": "childPhotos",
+      "name": "attachments",
       "urls": [
-        "**/child-photos/**"
+        "**/app-attachments/**"
       ],
       "cacheConfig": {
         "maxSize": 500,

@@ -74,7 +74,7 @@ describe("CouchdbFileService", () => {
   it("should add a attachment to a existing document", () => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.put.and.returnValue(of({ ok: true }));
-    const file = { type: "image/png", name: "file.name" } as File;
+    const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
 
     service.uploadFile(file, entity, "testProp").subscribe();
@@ -96,7 +96,7 @@ describe("CouchdbFileService", () => {
       throwError(() => new HttpErrorResponse({ status: 404 }))
     );
     mockHttp.put.and.returnValue(of({ rev: "newRev" }));
-    const file = { type: "image/png", name: "file.name" } as File;
+    const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
 
     service.uploadFile(file, entity, "testProp").subscribe(() => {
@@ -214,9 +214,9 @@ describe("CouchdbFileService", () => {
     const firstPut = new BehaviorSubject({ ok: true });
     const secondPut = new BehaviorSubject({ ok: true });
     const thirdPut = new BehaviorSubject({ ok: true });
-    const file1 = { type: "image/png", name: "file1.name" } as File;
-    const file2 = { type: "image/png", name: "file2.name" } as File;
-    const file3 = { type: "image/png", name: "file3.name" } as File;
+    const file1 = new File([], "file1.name", { type: "image/png" });
+    const file2 = new File([], "file2.name", { type: "image/png" });
+    const file3 = new File([], "file3.name", { type: "image/png" });
     const entity = new Entity("testId");
     mockHttp.get.and.returnValues(
       of({ _rev: "1-rev" }),
@@ -299,7 +299,7 @@ describe("CouchdbFileService", () => {
   });
 
   it("should cache uploaded files", () => {
-    const file = { type: "image/png", name: "file.name" } as File;
+    const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
     mockHttp.get.and.returnValue(of({ _rev: "1-rev" }));
     mockHttp.put.and.returnValue(of({ type: HttpEventType.Response }));

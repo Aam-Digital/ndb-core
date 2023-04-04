@@ -48,7 +48,7 @@ export class EditPhotoComponent extends EditFileComponent {
 
   ngOnInit() {
     super.ngOnInit();
-    if (this.entity[this.formControlName]) {
+    if (this.formControl.value) {
       this.fileService
         .loadFile(this.entity, this.formControlName)
         .subscribe((res) => {

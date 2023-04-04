@@ -18,8 +18,7 @@ describe("EditFileComponent", () => {
   let mockAlertService: jasmine.SpyObj<AlertService>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
-  const file = { name: "test.file" } as File;
-  const fileEvent = { target: { files: [file] } };
+  const file = new File([], "test.file");
 
   beforeEach(async () => {
     mockFileService = jasmine.createSpyObj([
@@ -55,7 +54,7 @@ describe("EditFileComponent", () => {
     setupComponent();
     component.formControl.enable();
 
-    component.onFileSelected(fileEvent);
+    component.onFileSelected(file);
     expect(component.formControl).toHaveValue(file.name);
     cancelForm();
 
@@ -67,7 +66,7 @@ describe("EditFileComponent", () => {
     setupComponent();
     component.formControl.enable();
 
-    component.onFileSelected(fileEvent);
+    component.onFileSelected(file);
     expect(component.formControl).toHaveValue(file.name);
 
     component.delete();
@@ -83,11 +82,11 @@ describe("EditFileComponent", () => {
     setupComponent();
     component.formControl.enable();
 
-    component.onFileSelected(fileEvent);
+    component.onFileSelected(file);
     expect(component.formControl).toHaveValue(file.name);
 
-    const otherFileEvent = { target: { files: [{ name: "other.file" }] } };
-    component.onFileSelected(otherFileEvent);
+    const otherFile = new File([], "other.file");
+    component.onFileSelected(otherFile);
     expect(component.formControl).toHaveValue("other.file");
 
     cancelForm();
@@ -102,7 +101,7 @@ describe("EditFileComponent", () => {
     mockFileService.uploadFile.and.returnValue(of({ ok: true }));
     component.formControl.enable();
 
-    component.onFileSelected(fileEvent);
+    component.onFileSelected(file);
     expect(component.formControl).toHaveValue(file.name);
 
     component.formControl.disable();
@@ -111,8 +110,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       file,
       component.entity,
-      component.formControlName,
-      undefined
+      component.formControlName
     );
   });
 
@@ -120,7 +118,7 @@ describe("EditFileComponent", () => {
     setupComponent();
     component.formControl.enable();
 
-    component.onFileSelected(fileEvent);
+    component.onFileSelected(file);
     expect(component.formControl).toHaveValue(file.name);
 
     component.delete();
@@ -137,12 +135,11 @@ describe("EditFileComponent", () => {
     mockFileService.uploadFile.and.returnValue(of({ ok: true }));
     component.formControl.enable();
 
-    component.onFileSelected(fileEvent);
+    component.onFileSelected(file);
     expect(component.formControl).toHaveValue(file.name);
 
-    const otherFile = { name: "other.file" } as File;
-    const otherFileEvent = { target: { files: [otherFile] } };
-    component.onFileSelected(otherFileEvent);
+    const otherFile = new File([], "other.file");
+    component.onFileSelected(otherFile);
     expect(component.formControl).toHaveValue(otherFile.name);
 
     component.formControl.disable();
@@ -152,8 +149,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName,
-      undefined
+      component.formControlName
     );
   });
 
@@ -174,8 +170,8 @@ describe("EditFileComponent", () => {
     setupComponent(file.name);
     component.formControl.enable();
 
-    const otherFileEvent = { target: { files: [{ name: "other.file" }] } };
-    component.onFileSelected(otherFileEvent);
+    const otherFile = new File([], "other.file");
+    component.onFileSelected(otherFile);
     expect(component.formControl).toHaveValue("other.file");
 
     cancelForm();
@@ -208,9 +204,8 @@ describe("EditFileComponent", () => {
     setupComponent(file.name);
     component.formControl.enable();
 
-    const otherFile = { name: "other.file" } as File;
-    const otherFileEvent = { target: { files: [otherFile] } };
-    component.onFileSelected(otherFileEvent);
+    const otherFile = new File([], "other.file");
+    component.onFileSelected(otherFile);
 
     component.formControl.disable();
 
@@ -219,8 +214,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName,
-      undefined
+      component.formControlName
     );
   });
 
@@ -230,7 +224,7 @@ describe("EditFileComponent", () => {
     mockFileService.uploadFile.and.returnValue(subject);
     component.formControl.enable();
 
-    component.onFileSelected(fileEvent);
+    component.onFileSelected(file);
 
     component.entity[component.formControlName] = file.name;
     component.formControl.disable();

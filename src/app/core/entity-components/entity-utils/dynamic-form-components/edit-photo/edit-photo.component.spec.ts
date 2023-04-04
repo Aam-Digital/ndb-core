@@ -5,13 +5,11 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FileService } from "../../../../../features/file/file.service";
 import { AlertService } from "../../../../alerts/alert.service";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
-import { EditPropertyConfig } from "../edit-component";
 import { of } from "rxjs";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { FormControl } from "@angular/forms";
 import { Entity } from "../../../../entity/model/entity";
-import { DomSanitizer } from "@angular/platform-browser";
 
 describe("EditPhotoComponent", () => {
   let component: EditPhotoComponent;
@@ -19,10 +17,6 @@ describe("EditPhotoComponent", () => {
   let mockFileService: jasmine.SpyObj<FileService>;
   let mockAlertService: jasmine.SpyObj<AlertService>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-  let config: EditPropertyConfig<string>;
-
-  const file = { name: "test.file" } as File;
-  const fileEvent = { target: { files: [file] } };
 
   beforeEach(async () => {
     mockFileService = jasmine.createSpyObj([
@@ -49,13 +43,10 @@ describe("EditPhotoComponent", () => {
 
     fixture = TestBed.createComponent(EditPhotoComponent);
     component = fixture.componentInstance;
-    config = {
-      formControl: new FormControl(),
-      entity: new Entity(),
-      formFieldConfig: { id: "testProp" },
-      propertySchema: undefined,
-    };
-    component.onInitFromDynamicConfig(config);
+    component.formControl = new FormControl();
+    component.entity = new Entity();
+    component.formFieldConfig = { id: "testProp" };
+    component.ngOnInit();
     fixture.detectChanges();
   });
 
@@ -63,23 +54,22 @@ describe("EditPhotoComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should show the image once it is selected", () => {
-    spyOn(
-      TestBed.inject(DomSanitizer),
-      "bypassSecurityTrustUrl"
-    ).and.returnValue("image.path");
-    spyOn(URL, "createObjectURL");
+  it("should show the image once it is selected", async () => {
+    const blob = await fetch("assets/child.png").then((res) => res.blob());
+    const realFile = new File([blob], "image");
 
-    component.onFileSelected(fileEvent);
+    await component.onFileSelected(realFile);
 
-    expect(component.imgPath).toBe("image.path");
+    expect(component.imgPath).toEqual(
+      jasmine.stringContaining("data:image/png;base64,")
+    );
   });
 
   it("should load the picture on initialisation", () => {
     mockFileService.loadFile.and.returnValue(of("some.path"));
-    config.entity[config.formFieldConfig.id] = "file.name";
+    component.formControl.setValue("file.name");
 
-    component.onInitFromDynamicConfig(config);
+    component.ngOnInit();
 
     expect(component.imgPath).toBe("some.path");
   });
@@ -94,8 +84,8 @@ describe("EditPhotoComponent", () => {
 
   it("should reset the shown image when pressing cancel", () => {
     mockFileService.loadFile.and.returnValue(of("initial.path"));
-    config.entity[config.formFieldConfig.id] = "initial.image";
-    component.onInitFromDynamicConfig(config);
+    component.formControl.setValue("initial.image");
+    component.ngOnInit();
 
     component.imgPath = "new.path";
     component.formControl.disable();
@@ -105,9 +95,7 @@ describe("EditPhotoComponent", () => {
 
   it("should revoke initial image if file is deleted", () => {
     mockFileService.loadFile.and.returnValue(of("initial.path"));
-    config.entity[config.formFieldConfig.id] = "initial.image";
-    config.formControl.setValue("initial.image");
-    component.onInitFromDynamicConfig(config);
+    component.formControl.setValue("initial.image");
     component.ngOnInit();
 
     component.delete();
