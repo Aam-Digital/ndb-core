@@ -37,7 +37,7 @@ export abstract class EditComponent<T> implements OnInit {
   /**
    * The name of the form control.
    */
-  formControlName: string;
+  @Input() formControlName: string;
 
   /**
    * A label for this component.

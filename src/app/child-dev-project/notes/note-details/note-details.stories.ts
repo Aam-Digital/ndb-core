@@ -1,9 +1,9 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -22,6 +22,10 @@ export default {
         MockedTestingModule.withState(),
       ],
       providers: [
+        {
+          provide: MAT_DIALOG_DATA,
+          useValue: { data: { entity: Note.create(new Date()) } },
+        },
         { provide: MatDialogRef, useValue: {} },
         {
           provide: ChildrenService,

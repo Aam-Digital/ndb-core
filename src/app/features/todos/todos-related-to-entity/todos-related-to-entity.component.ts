@@ -92,7 +92,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openSimpleForm(entity, this.columns, TodoDetailsComponent);
+    this.formDialog.openFormPopup(entity, this.columns, TodoDetailsComponent);
   }
 
   toggleInactive() {
