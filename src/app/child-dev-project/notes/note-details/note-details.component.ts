@@ -85,6 +85,7 @@ export class NoteDetailsComponent implements OnInit {
       this.middleForm.concat(...this.topForm, this.bottomForm),
       this.entity
     );
+    // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
     this.tmpEntity = this.entity.copy();
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
       this.tmpEntity = Object.assign(this.tmpEntity, value);
