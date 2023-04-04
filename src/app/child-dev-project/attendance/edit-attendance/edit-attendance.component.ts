@@ -84,6 +84,7 @@ export class EditAttendanceComponent extends EditComponent<string[]> {
     const children = this.formControl.value;
     const index = children.indexOf(id);
     children.splice(index, 1);
+    this.attendanceForm.value.delete(id);
     this.formControl.setValue([...children]);
     this.formControl.markAsDirty();
   }

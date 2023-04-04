@@ -14,15 +14,22 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Router } from "@angular/router";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FormGroup } from "@angular/forms";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../entity/entity-remove.service";
+import { of } from "rxjs";
 
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent;
   let fixture: ComponentFixture<DialogButtonsComponent>;
+  let dialogRef: jasmine.SpyObj<MatDialogRef<any>>;
 
   beforeEach(async () => {
+    dialogRef = jasmine.createSpyObj(["close"]);
     await TestBed.configureTestingModule({
       imports: [DialogButtonsComponent, MockedTestingModule.withState()],
-      providers: [{ provide: MatDialogRef, useValue: { close: () => {} } }],
+      providers: [{ provide: MatDialogRef, useValue: dialogRef }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(DialogButtonsComponent);
@@ -80,5 +87,14 @@ describe("DialogButtonsComponent", () => {
     component.ngOnInit();
 
     expect(component.detailsRoute).toBe(`${Child.route}/${child.getId()}`);
+  });
+
+  it("should close the dialog if a entity is deleted", () => {
+    const removeSpy = spyOn(TestBed.inject(EntityRemoveService), "remove");
+    removeSpy.and.returnValue(of(RemoveResult.REMOVED));
+
+    component.delete();
+
+    expect(dialogRef.close).toHaveBeenCalled();
   });
 });

@@ -13,6 +13,7 @@ describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
   let fixture: ComponentFixture<EditAttendanceComponent>;
   let categoryForm: FormControl<InteractionType>;
+  let childrenForm: FormControl<string[]>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -22,11 +23,12 @@ describe("EditAttendanceComponent", () => {
     fixture = TestBed.createComponent(EditAttendanceComponent);
     component = fixture.componentInstance;
     categoryForm = new FormControl<InteractionType>(defaultInteractionTypes[0]);
-    const form = new FormGroup({
-      children: new FormControl(["child1", "child2"]),
+    childrenForm = new FormControl(["child1", "child2"]);
+    component.parent = new FormGroup({
+      children: childrenForm,
       category: categoryForm,
     });
-    component.formControl = form.get("children") as FormControl;
+    component.formControl = childrenForm;
     component.formFieldConfig = { id: "children" };
     component.propertySchema = Note.schema.get("children");
     component.entity = new Note();
@@ -57,5 +59,23 @@ describe("EditAttendanceComponent", () => {
     );
 
     expect(element).toBeFalsy();
+  });
+
+  it("should remove a child from the children array if the attendance is removed", () => {
+    categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
+    fixture.detectChanges();
+    const attendanceForm = component.parent.get("childrenAttendance");
+    const a1 = component.getAttendance("child1");
+    const a2 = component.getAttendance("child2");
+    a1.remarks = "absent";
+    a2.remarks = "excused";
+
+    expect([...attendanceForm.value.values()]).toHaveSize(2);
+
+    component.removeChild("child2");
+
+    expect(childrenForm.value).toEqual(["child1"]);
+    expect([...attendanceForm.value.values()]).toHaveSize(1);
+    expect(attendanceForm.value.get("child1")).toBe(a1);
   });
 });
