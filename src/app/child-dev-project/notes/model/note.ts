@@ -77,6 +77,7 @@ export class Note extends Entity {
     label: $localize`:Label for the children of a note:Children`,
     dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
+    editComponent: "EditAttendance",
   })
   children: string[] = [];
 

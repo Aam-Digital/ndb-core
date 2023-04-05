@@ -132,7 +132,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * and {@link selection} as well as {@link selectionChange} will
    * still work as expected
    */
-  @Input() showEntities: boolean = true;
+  @Input() showEntities = true;
 
   /**
    * Setting the disabled state of the input element

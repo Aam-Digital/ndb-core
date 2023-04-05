@@ -440,7 +440,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private showEntity(entity: T) {
     switch (this.clickMode) {
       case "popup":
-        this.formDialog.openSimpleForm(entity, this._columns);
+        this.formDialog.openFormPopup(entity, this._columns);
         break;
       case "navigate":
         this.router.navigate([

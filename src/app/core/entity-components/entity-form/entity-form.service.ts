@@ -94,10 +94,11 @@ export class EntityFormService {
     this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
     const formConfig = {};
     const entitySchema = entity.getSchema();
+    const copy = entity.copy();
     formFields
       .filter((formField) => entitySchema.get(formField.id))
       .forEach((formField) => {
-        formConfig[formField.id] = [entity[formField.id]];
+        formConfig[formField.id] = [copy[formField.id]];
         if (formField.validators) {
           const validators = this.dynamicValidator.buildValidators(
             formField.validators

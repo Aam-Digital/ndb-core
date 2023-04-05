@@ -252,6 +252,6 @@ export class RollCallComponent implements OnChanges {
   }
 
   showDetails() {
-    this.formDialog.openDialog(NoteDetailsComponent, this.eventEntity);
+    this.formDialog.openFormPopup(this.eventEntity, [], NoteDetailsComponent);
   }
 }
