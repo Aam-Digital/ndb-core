@@ -245,12 +245,8 @@ export class BasicAutocompleteComponent<O, V = O>
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
-      if (!this.autocomplete.panelOpen) {
-        this.notifyFocusOut();
-      } else {
-        // trigger focus out once panel is closed
-        this.delayedBlur = setTimeout(() => this.notifyFocusOut(), 100);
-      }
+      // use short timeout in order for creating an option to work
+      this.delayedBlur = setTimeout(() => this.notifyFocusOut(), 200);
     }
   }
 
