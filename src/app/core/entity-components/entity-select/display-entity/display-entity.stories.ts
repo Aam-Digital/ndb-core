@@ -2,7 +2,6 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { DisplayEntityComponent } from "./display-entity.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { BehaviorSubject } from "rxjs";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { User } from "../../../user/user";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
@@ -34,10 +33,6 @@ const Template: Story<DisplayEntityComponent> = (
 const testChild = new Child();
 testChild.name = "Test Name";
 testChild.projectNumber = "10";
-testChild.photo = {
-  path: "",
-  photo: new BehaviorSubject("assets/child.png"),
-};
 export const ChildComponent = Template.bind({});
 ChildComponent.args = {
   entityToDisplay: testChild,
