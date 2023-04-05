@@ -10,6 +10,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { EntitySchemaService } from "../../../../entity/schema/entity-schema.service";
 import { FormControl } from "@angular/forms";
 import { Entity } from "../../../../entity/model/entity";
+import { MatDialog } from "@angular/material/dialog";
 
 describe("EditPhotoComponent", () => {
   let component: EditPhotoComponent;
@@ -17,6 +18,7 @@ describe("EditPhotoComponent", () => {
   let mockFileService: jasmine.SpyObj<FileService>;
   let mockAlertService: jasmine.SpyObj<AlertService>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
 
   beforeEach(async () => {
     mockFileService = jasmine.createSpyObj([
@@ -27,6 +29,7 @@ describe("EditPhotoComponent", () => {
     mockFileService.removeFile.and.returnValue(of(undefined));
     mockAlertService = jasmine.createSpyObj(["addDanger", "addInfo"]);
     mockEntityMapper = jasmine.createSpyObj(["save"]);
+    mockDialog = jasmine.createSpyObj(["open"]);
     await TestBed.configureTestingModule({
       imports: [
         EditPhotoComponent,
@@ -38,6 +41,7 @@ describe("EditPhotoComponent", () => {
         { provide: AlertService, useValue: mockAlertService },
         { provide: FileService, useValue: mockFileService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: MatDialog, useValue: mockDialog },
       ],
     }).compileComponents();
 
@@ -102,5 +106,15 @@ describe("EditPhotoComponent", () => {
     component.formControl.disable();
 
     expect(component.imgPath).toBe("assets/child.png");
+  });
+
+  it("should open a popup with the image when click on it", () => {
+    component.imgPath = "some.image";
+
+    component.openPopup();
+
+    expect(mockDialog.open).toHaveBeenCalledWith(jasmine.anything(), {
+      data: { url: "some.image" },
+    });
   });
 });

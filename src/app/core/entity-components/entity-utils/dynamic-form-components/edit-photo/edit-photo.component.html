@@ -5,7 +5,7 @@
   accept="image/*"
   #fileUpload
 >
-<img [src]="imgPath" alt="profile photo" class="child-pic">
+<img [src]="imgPath" alt="profile photo" class="child-pic" (click)="openPopup()">
 <div>
   <button *ngIf="formControl.value && formControl.enabled" type="button" mat-icon-button
           (click)="delete()"

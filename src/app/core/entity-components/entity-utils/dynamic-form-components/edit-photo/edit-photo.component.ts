@@ -11,6 +11,8 @@ import { LoggingService } from "../../../../logging/logging.service";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { MatButtonModule } from "@angular/material/button";
 import { resizeImage } from "../../../../../features/file/file-utils";
+import { MatDialog } from "@angular/material/dialog";
+import { ImagePopupComponent } from "./image-popup/image-popup.component";
 
 @DynamicComponent("EditPhoto")
 @Component({
@@ -30,7 +32,8 @@ export class EditPhotoComponent extends EditFileComponent {
     fileService: FileService,
     alertService: AlertService,
     logger: LoggingService,
-    entityMapper: EntityMapperService
+    entityMapper: EntityMapperService,
+    private dialog: MatDialog
   ) {
     super(fileService, alertService, logger, entityMapper);
   }
@@ -79,5 +82,9 @@ export class EditPhotoComponent extends EditFileComponent {
     URL.revokeObjectURL(this.initialImg as string);
     this.initialImg = this.defaultImage;
     super.deleteExistingFile();
+  }
+
+  openPopup() {
+    this.dialog.open(ImagePopupComponent, { data: { url: this.imgPath } });
   }
 }
