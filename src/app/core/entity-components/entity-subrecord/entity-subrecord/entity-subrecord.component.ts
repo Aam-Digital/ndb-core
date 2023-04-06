@@ -236,6 +236,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     let reinitFormGroups = false;
 
     if (changes.hasOwnProperty("records")) {
+      if (!this.records) {
+        this.records = [];
+      }
       reinitDataSource = true;
 
       if (this.records.length > 0) {
