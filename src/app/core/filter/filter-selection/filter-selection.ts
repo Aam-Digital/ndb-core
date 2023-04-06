@@ -15,7 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { BooleanFilterConfig } from "app/core/entity-components/entity-list/EntityListConfig";
+import { ConfigurableEnumValue } from "app/core/configurable-enum/configurable-enum.interface";
+import {
+  BooleanFilterConfig,
+  ConfigurableEnumFilterConfig,
+} from "app/core/entity-components/entity-list/EntityListConfig";
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../../entity/model/entity";
 
@@ -124,11 +128,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
 }
 
 export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
-  constructor(
-    name: string,
-    label: string,
-    public config?: BooleanFilterConfig
-  ) {
+  constructor(name: string, label: string, config?: BooleanFilterConfig) {
     super(
       name,
       [
@@ -152,6 +152,60 @@ export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
       ],
       label
     );
+  }
+}
+export class ConfigurableEnumFilter<
+  T extends Entity
+> extends SelectableFilter<T> {
+  constructor(
+    name: string,
+    label: string,
+    enumValues: ConfigurableEnumValue[]
+  ) {
+    let options: { key: string; label: string; color?: string; filter: {} }[] =
+      [
+        {
+          key: "all",
+          label: $localize`:Filter label:All`,
+          filter: {},
+        },
+      ];
+    for (const enumValue of enumValues) {
+      options.push({
+        key: enumValue.id,
+        label: enumValue.label,
+        color: enumValue.color,
+        filter: { [name + ".id"]: enumValue.id },
+      });
+    }
+    super(name, options, label);
+  }
+}
+
+export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
+  constructor(name: string, label: string, filterEntities) {
+    filterEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
+    let options: { key: string; label: string; color?: string; filter: {} }[] =
+      [
+        {
+          key: "all",
+          label: $localize`:Filter label:All`,
+          filter: {},
+        },
+      ];
+    options.push(
+      ...filterEntities.map((filterEntity) => ({
+        key: filterEntity.getId(),
+        label: filterEntity.toString(),
+        filter: {
+          $or: [
+            { [name]: filterEntity.getId() },
+            { [name]: { $elemMatch: { $eq: filterEntity.getId() } } },
+          ],
+        },
+      }))
+    );
+    super(name, options, label);
   }
 }
 
