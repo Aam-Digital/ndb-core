@@ -1,6 +1,5 @@
 import { moduleMetadata } from "@storybook/angular";
 import { Meta, Story } from "@storybook/angular/types-6-0";
-import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { EntityFormComponent } from "./entity-form.component";
 import { School } from "../../../../child-dev-project/schools/model/school";
@@ -24,9 +23,6 @@ export default {
         EntityFormComponent,
         StorybookBaseModule,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [s1, s2, s3]),
-      ],
-      providers: [
-        { provide: ChildPhotoService, useValue: { canSetImage: () => true } },
       ],
     }),
   ],

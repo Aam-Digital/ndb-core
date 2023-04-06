@@ -4,6 +4,7 @@ import { ChildBlockComponent } from "./child-block.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
+import { FileService } from "app/features/file/file.service";
 
 describe("ChildBlockComponent", () => {
   let component: ChildBlockComponent;
@@ -18,7 +19,10 @@ describe("ChildBlockComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [ChildBlockComponent, RouterTestingModule],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
+      providers: [
+        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: FileService, useValue: {} },
+      ],
     }).compileComponents();
   }));
 
