@@ -10,12 +10,13 @@ import {
 import {
   BooleanFilterConfig,
   ConfigurableEnumFilterConfig,
+  DateRangeFilterConfig,
+  DateRangeFilterConfigOption,
   FilterConfig,
   PrebuiltFilterConfig,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { LoggingService } from "../../logging/logging.service";
-import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { FilterService } from "../../filter/filter.service";
@@ -35,107 +36,103 @@ export class FilterGeneratorService {
 
   /**
    *
-   * @param filtersConfig
+   * @param filterConfigs
    * @param entityConstructor
    * @param data
    * @param onlyShowUsedOptions (Optional) whether to remove those filter options for selection that are not present in the data
    */
   async generate<T extends Entity>(
-    filtersConfig: FilterConfig[],
+    filterConfigs: FilterConfig[],
     entityConstructor: EntityConstructor<T>,
     data: T[],
     onlyShowUsedOptions = false
-  ): Promise<FilterComponentSettings<T>[]> {
-    const filterComponentSettings: FilterComponentSettings<T>[] = [];
-    for (const filter of filtersConfig) {
-      const schema = entityConstructor.schema.get(filter.id) || {};
+  ): Promise<Filter<T>[]> {
+    const filters: Filter<T>[] = [];
+    for (const filterConfig of filterConfigs) {
+      const schema = entityConstructor.schema.get(filterConfig.id) || {};
 
-      function addFilterComponentSettings(filterSettings: Filter<T>) {
-        const fcs: FilterComponentSettings<T> = {
-          filterSettings: filterSettings,
-          filterConfig: filter,
-        };
-        filterComponentSettings.push(fcs);
+      function addFilter(filter: Filter<T>) {
+        if (filter.hasOwnProperty("default"))
+          filter.selectedOption = filterConfig.default;
+        filters.push(filter);
       }
 
-      function addSelectableFilterComponentSettings(
-        filterSettings: SelectableFilter<T>
-      ) {
-        const fcs: FilterComponentSettings<T> = {
-          filterSettings,
-          filterConfig: filter,
-        };
+      function addSelectableFilter(filter: SelectableFilter<T>) {
         if (onlyShowUsedOptions) {
-          filterSettings.options = filterSettings.options.filter((option) =>
+          filter.options = filter.options.filter((option) =>
             data.some(this.filterService.getFilterPredicate(option.filter))
           );
         }
         // Filters should only be added, if they have more than one (the default) option
-        if (filterSettings.options?.length > 1) {
-          fcs.selectedOption = filterSettings.hasOwnProperty("default")
-            ? filter.default
-            : filterSettings.options[0].key;
-          filterComponentSettings.push(fcs);
+        if (filter.options?.length > 1) {
+          addFilter(filter);
         }
       }
 
-      switch (schema.dataType || filter.type) {
+      switch (schema.dataType || filterConfig.type) {
         case "configurable-enum":
-          addSelectableFilterComponentSettings(
+          addSelectableFilter(
             new ConfigurableEnumFilter(
-              filter.id,
-              filter.label || schema.label,
-              this.enumService.getEnumValues(filter.id)
+              filterConfig.id,
+              filterConfig.label || schema.label,
+              this.enumService.getEnumValues(filterConfig.id)
             )
           );
           break;
         case "boolean":
-          addSelectableFilterComponentSettings(
+          addSelectableFilter(
             new BooleanFilter(
-              filter.id,
-              filter.label || schema.label,
-              filter as BooleanFilterConfig
+              filterConfig.id,
+              filterConfig.label || schema.label,
+              filterConfig as BooleanFilterConfig
             )
           );
           break;
         case "prebuilt":
-          addSelectableFilterComponentSettings(
+          addSelectableFilter(
             new SelectableFilter(
-              filter.id,
-              (filter as PrebuiltFilterConfig<T>).options,
-              filter.label
+              filterConfig.id,
+              (filterConfig as PrebuiltFilterConfig<T>).options,
+              filterConfig.label
             )
           );
           break;
         default:
-          if (filter.id === "date") {
-            addFilterComponentSettings(
-              new DateFilter(filter.id, filter.label || schema.label)
+          if (filterConfig.id === "date") {
+            addFilter(
+              new DateFilter(
+                filterConfig.id,
+                filterConfig.label || schema.label,
+                (filterConfig as DateRangeFilterConfig).options
+              )
             );
           } else if (
-            this.entities.has(filter.type) ||
+            this.entities.has(filterConfig.type) ||
             this.entities.has(schema.additional)
           ) {
-            const entityType = filter.type || schema.additional;
+            const entityType = filterConfig.type || schema.additional;
             const filterEntities = await this.entityMapperService.loadType(
               entityType
             );
-            addSelectableFilterComponentSettings(
-              new EntityFilter(filter.id, entityType, filterEntities)
+            addSelectableFilter(
+              new EntityFilter(filterConfig.id, entityType, filterEntities)
             );
           } else {
-            const options = [...new Set(data.map((c) => c[filter.id]))];
-            const fSO = SelectableFilter.generateOptions(options, filter.id);
-            addSelectableFilterComponentSettings(
+            const options = [...new Set(data.map((c) => c[filterConfig.id]))];
+            const fSO = SelectableFilter.generateOptions(
+              options,
+              filterConfig.id
+            );
+            addSelectableFilter(
               new SelectableFilter<T>(
-                filter.id,
+                filterConfig.id,
                 fSO,
-                filter.label || schema.label
+                filterConfig.label || schema.label
               )
             );
           }
       }
     }
-    return filterComponentSettings;
+    return filters;
   }
 }

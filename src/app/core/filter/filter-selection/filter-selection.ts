@@ -18,19 +18,24 @@
 import { ConfigurableEnumValue } from "app/core/configurable-enum/configurable-enum.interface";
 import {
   BooleanFilterConfig,
-  ConfigurableEnumFilterConfig,
+  DateRangeFilterConfigOption,
 } from "app/core/entity-components/entity-list/EntityListConfig";
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../../entity/model/entity";
 
 export abstract class Filter<T extends Entity> {
+  public selectedOption: string;
   constructor(public name: string, public label: string = name) {}
   abstract getFilter(key?: string): DataFilter<T>;
 }
 
 export class DateFilter<T extends Entity> extends Filter<T> {
   filter: DataFilter<T>;
-  constructor(public name: string, public label: string = name) {
+  constructor(
+    public name: string,
+    public label: string = name,
+    public standardDateRanges: DateRangeFilterConfigOption[]
+  ) {
     super(name, label);
   }
 
@@ -99,6 +104,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     public label: string = name
   ) {
     super(name, label);
+    this.selectedOption = this.options[0].key;
   }
 
   /** default filter will keep all items in the result */

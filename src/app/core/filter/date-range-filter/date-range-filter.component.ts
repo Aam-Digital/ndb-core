@@ -1,20 +1,17 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
-import { FilterComponentSettings } from "app/core/entity-components/entity-list/filter-component.settings";
 import { DataFilter } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "app/core/entity/model/entity";
 import moment from "moment";
 import {
   DateFilter,
+  Filter,
   FilterSelectionOption,
 } from "../filter-selection/filter-selection";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
-import { D } from "@angular/cdk/keycodes";
-import { Note } from "app/child-dev-project/notes/model/note";
-import { Child } from "app/child-dev-project/children/model/child";
 
 @Component({
   selector: "app-date-range-filter",
@@ -26,10 +23,14 @@ import { Child } from "app/child-dev-project/children/model/child";
 export class DateRangeFilterComponent<T extends Entity> {
   fromDate: Date;
   toDate: Date;
+  _dateFilter: DateFilter<T>;
 
   @Output() selectedOptionChange = new EventEmitter<string>();
 
-  @Input() dateRangeFilterConfig: FilterComponentSettings<T>;
+  @Input()
+  public set dateRangeFilterConfig(value: Filter<T>) {
+    this._dateFilter = value as DateFilter<T>;
+  }
 
   constructor(private dialog: MatDialog) {}
 
@@ -40,17 +41,14 @@ export class DateRangeFilterComponent<T extends Entity> {
       label: "custom",
       filter: {},
     };
-    const filterSettings = this.dateRangeFilterConfig
-      .filterSettings as DateFilter<T>;
-    filterSettings.filter = this.buildFilter();
-    console.log("Peter option", option);
+    this._dateFilter.filter = this.buildFilter();
     option.filter = this.buildFilter();
     this.selectedOptionChange.emit("custom");
   }
 
   buildFilter(): DataFilter<T> {
     return {
-      [this.dateRangeFilterConfig.filterConfig.id]: {
+      [this._dateFilter.name]: {
         $gte: moment(this.fromDate).format("YYYY-MM-DD"),
         $lte: moment(this.toDate).format("YYYY-MM-DD"),
       },
@@ -66,7 +64,7 @@ export class DateRangeFilterComponent<T extends Entity> {
         data: {
           fromDate: this.fromDate,
           toDate: this.toDate,
-          dateRangeFilterConfig: this.dateRangeFilterConfig.filterConfig,
+          standardDateRanges: this._dateFilter.standardDateRanges,
         },
       })
       .afterClosed()

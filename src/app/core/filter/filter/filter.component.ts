@@ -8,7 +8,6 @@ import {
 } from "@angular/core";
 import { FilterConfig } from "../../entity-components/entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { FilterComponentSettings } from "../../entity-components/entity-list/filter-component.settings";
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
@@ -17,6 +16,7 @@ import { ListFilterComponent } from "../list-filter/list-filter.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { DateRangeFilterComponent } from "../date-range-filter/date-range-filter.component";
+import { Filter } from "../filter-selection/filter-selection";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -67,7 +67,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    */
   @Output() filterObjChange = new EventEmitter<DataFilter<T>>();
 
-  filterSelections: FilterComponentSettings<T>[] = [];
+  filterSelections: Filter<T>[] = [];
   urlPath = getUrlWithoutParams(this.router);
 
   constructor(
@@ -89,10 +89,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     }
   }
 
-  filterOptionSelected(
-    filter: FilterComponentSettings<T>,
-    selectedOption: string
-  ) {
+  filterOptionSelected(filter: Filter<T>, selectedOption: string) {
     console.log(
       "Peter filterOptionSelected aufgerufen mit",
       filter,
@@ -101,24 +98,20 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
-      this.updateUrl(filter.filterSettings.name, selectedOption);
+      this.updateUrl(filter.name, selectedOption);
     }
   }
 
   private applyFilterSelections() {
     this.filterObj = this.filterSelections.reduce(
       (obj, filter) =>
-        Object.assign(
-          obj,
-          filter.filterSettings.getFilter(filter.selectedOption)
-        ),
+        Object.assign(obj, filter.getFilter(filter.selectedOption)),
       {} as DataFilter<T>
     );
     this.filterObjChange.emit(this.filterObj);
   }
 
   private updateUrl(key: string, value: string) {
-    console.log("Peter updateURL");
     const params = {};
     params[key] = value;
     this.router.navigate([], {
@@ -134,8 +127,8 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     }
     const params = parameters || this.route.snapshot.queryParams;
     this.filterSelections.forEach((f) => {
-      if (params.hasOwnProperty(f.filterSettings.name)) {
-        f.selectedOption = params[f.filterSettings.name];
+      if (params.hasOwnProperty(f.name)) {
+        f.selectedOption = params[f.name];
       }
     });
   }
