@@ -111,18 +111,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   filteredColumns: FormFieldConfig[] = [];
 
   /** data to be displayed, can also be used as two-way-binding */
-  @Input()
-  set records(value: T[]) {
-    if (value) {
-      this._records = value;
-      this.initDataSource();
-      if (!this.newRecordFactory && this._records.length > 0) {
-        this.newRecordFactory = () => new (this._records[0].getConstructor())();
-      }
-    }
-  }
-
-  private _records: T[] = [];
+  @Input() records: T[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -152,7 +141,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   idForSavingPagination = "startWert";
 
-  @ViewChild(MatSort) set sort(matSort: MatSort) {
+  @ViewChild(MatSort)
+  set sort(matSort: MatSort) {
+    if (this.recordsDataSource.sort === matSort) {
+      // do not re-trigger setup if the sort had been set before already
+      return;
+    }
+
     // Initialize sort once available, workaround according to https://github.com/angular/components/issues/15008#issuecomment-516386055
     this.recordsDataSource.sort = matSort;
 
@@ -181,13 +176,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * Only data, that passes the filter will be shown in the table.
    * @param filter a valid MongoDB Query
    */
-  @Input() set filter(filter: DataFilter<T>) {
-    if (filter) {
-      this.predicate = this.filterService.getFilterPredicate(filter);
-      this.initDataSource();
-    }
-  }
-
+  @Input() filter: DataFilter<T>;
   private predicate: (entity: T) => boolean = () => true;
 
   constructor(
@@ -215,13 +204,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   private initDataSource() {
-    this.recordsDataSource.data = this._records
+    this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
   }
 
   private entityConstructorIsAvailable(): boolean {
-    return this._records.length > 0 || !!this.newRecordFactory;
+    return this.records.length > 0 || !!this.newRecordFactory;
   }
 
   getEntityConstructor(): EntityConstructor<T> {
@@ -231,7 +220,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
     if (!this.entityConstructor) {
       const record =
-        this._records.length > 0 ? this._records[0] : this.newRecordFactory();
+        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
       this.entityConstructor = record.getConstructor();
     }
     return this.entityConstructor;
@@ -242,22 +231,49 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("columns")) {
-      this.initFormGroups();
-      if (this.columnsToDisplay.length < 2) {
-        this.setupTable();
+    let reinitDataSource = false;
+    let resetupTable = false;
+    let reinitFormGroups = false;
+
+    if (changes.hasOwnProperty("records")) {
+      reinitDataSource = true;
+
+      if (this.records.length > 0) {
+        if (!this.newRecordFactory) {
+          this.newRecordFactory = () =>
+            new (this.records[0].getConstructor())();
+        }
+        reinitFormGroups = true;
+        if (this.columnsToDisplay.length < 2) {
+          resetupTable = true;
+        }
+        this.sortDefault();
       }
     }
-    if (changes.hasOwnProperty("records") && this._records.length > 0) {
-      this.initFormGroups();
+    if (changes.hasOwnProperty("filter")) {
+      this.predicate = this.filterService.getFilterPredicate(this.filter);
+      reinitDataSource = true;
+    }
+    if (changes.hasOwnProperty("columns")) {
+      reinitFormGroups = true;
       if (this.columnsToDisplay.length < 2) {
-        this.setupTable();
+        resetupTable = true;
       }
-      this.sortDefault();
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
     }
+
+    if (reinitDataSource) {
+      this.initDataSource();
+    }
+    if (reinitFormGroups) {
+      this.initFormGroups();
+    }
+    if (resetupTable) {
+      this.setupTable();
+    }
+
     this.listenToEntityUpdates();
   }
 
@@ -324,7 +340,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
             this.removeFromDataTable(entity);
           } else if (
             type === "update" &&
-            !this._records.find((rec) => rec.getId() === entity.getId())
+            !this.records.find((rec) => rec.getId() === entity.getId())
           ) {
             this.addToTable(entity);
           }
@@ -394,7 +410,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
             this.removeFromDataTable(row.record);
             break;
           case RemoveResult.UNDONE:
-            this._records.unshift(row.record);
+            this.records.unshift(row.record);
             this.initFormGroups();
         }
       });
@@ -402,14 +418,14 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   private removeFromDataTable(deleted: T) {
     // use setter so datasource is also updated
-    this.records = this._records.filter(
+    this.records = this.records.filter(
       (rec) => rec.getId() !== deleted.getId()
     );
   }
 
   private addToTable(record: T) {
     // use setter so datasource is also updated
-    this.records = [record].concat(this._records);
+    this.records = [record].concat(this.records);
   }
 
   /**
