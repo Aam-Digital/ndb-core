@@ -1,4 +1,5 @@
-<img [src]="entity?.photo?.photo?.value" class="child-pic" alt=""/>
+<app-fa-dynamic-icon *ngIf="!imgPath" [icon]="icon"/>
+<img *ngIf="imgPath" [src]="imgPath" class="child-pic" alt=""/>
 <div>
   <!-- Font-weight is applied as style to override the default -->
   <h3 style="font-weight: bold">{{ entity?.name }}</h3>

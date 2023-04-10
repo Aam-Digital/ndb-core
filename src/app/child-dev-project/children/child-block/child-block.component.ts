@@ -5,13 +5,21 @@ import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-
 import { NgIf } from "@angular/common";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-tooltip.component";
+import { SafeUrl } from "@angular/platform-browser";
+import { FileService } from "../../../features/file/file.service";
+import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("ChildBlock")
 @Component({
   selector: "app-child-block",
   templateUrl: "./child-block.component.html",
   styleUrls: ["./child-block.component.scss"],
-  imports: [NgIf, TemplateTooltipDirective, ChildBlockTooltipComponent],
+  imports: [
+    NgIf,
+    TemplateTooltipDirective,
+    ChildBlockTooltipComponent,
+    FaDynamicIconComponent,
+  ],
   standalone: true,
 })
 export class ChildBlockComponent implements OnInit {
@@ -24,11 +32,22 @@ export class ChildBlockComponent implements OnInit {
   /** prevent additional details to be displayed in a tooltip on mouse over */
   @Input() tooltipDisabled: boolean;
 
-  constructor(@Optional() private childrenService: ChildrenService) {}
+  imgPath: SafeUrl;
+  icon = Child.icon;
+
+  constructor(
+    private fileService: FileService,
+    @Optional() private childrenService: ChildrenService
+  ) {}
 
   async ngOnInit() {
     if (this.entityId) {
       this.entity = await this.childrenService.getChild(this.entityId);
+    }
+    if (this.entity.photo) {
+      this.fileService
+        .loadFile(this.entity, "photo")
+        .subscribe((res) => (this.imgPath = res));
     }
   }
 }

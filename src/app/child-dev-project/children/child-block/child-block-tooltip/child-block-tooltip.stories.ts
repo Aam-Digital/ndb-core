@@ -2,7 +2,6 @@ import { Story, Meta } from "@storybook/angular/types-6-0";
 import { Child } from "../../model/child";
 import { moduleMetadata } from "@storybook/angular";
 import { CommonModule } from "@angular/common";
-import { addDefaultChildPhoto } from "../../../../../../.storybook/utils/addDefaultChildPhoto";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -19,7 +18,6 @@ export default {
 
 const demoChild = new Child("1");
 demoChild.name = "John Doe";
-addDefaultChildPhoto(demoChild);
 demoChild.projectNumber = "99";
 demoChild.phone = "+49 199 1234567";
 demoChild.schoolClass = "5";
