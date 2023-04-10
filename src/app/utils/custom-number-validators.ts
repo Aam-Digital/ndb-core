@@ -10,7 +10,7 @@ export const CustomNumberValidators: { isNumber: ValidatorFn } = {
   isNumber: (control: AbstractControl) => {
     const val = Number(control.value);
 
-    if (Number.isNaN(Number(val))) {
+    if (val && Number.isNaN(Number(val))) {
       return { isNumber: "invalid" };
     } else {
       return null;
