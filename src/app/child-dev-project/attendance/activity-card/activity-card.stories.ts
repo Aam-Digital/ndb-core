@@ -3,7 +3,6 @@ import { moduleMetadata } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "../../notes/model/note";
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
-import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { MatCardModule } from "@angular/material/card";
 import { RecurringActivity } from "../model/recurring-activity";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -37,7 +36,6 @@ const demoChildren = [
   DemoChildGenerator.generateEntity("2"),
   DemoChildGenerator.generateEntity("3"),
 ];
-demoChildren.forEach((c) => addDefaultChildPhoto(c));
 
 const simpleEvent = Note.create(new Date(), "some meeting");
 demoChildren.forEach((c) => simpleEvent.addChild(c.getId()));

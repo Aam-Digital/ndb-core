@@ -12,8 +12,10 @@ import {
   catchError,
   concatMap,
   filter,
+  last,
   map,
   shareReplay,
+  tap,
 } from "rxjs/operators";
 import { Observable, of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
@@ -26,6 +28,7 @@ import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 
 /**
  * Stores the files in the CouchDB.
@@ -37,8 +40,10 @@ export class CouchdbFileService extends FileService {
   private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
+  private cache: { [key: string]: Observable<string> } = {};
 
   constructor(
+    private sanitizer: DomSanitizer,
     private http: HttpClient,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
@@ -54,6 +59,11 @@ export class CouchdbFileService extends FileService {
       this.runFileUpload(file, entity, property)
     );
     this.reportProgress($localize`Uploading "${file.name}"`, obs);
+    this.cache[`${entity.getId(true)}/${property}`] = obs.pipe(
+      last(),
+      map(() => URL.createObjectURL(file)),
+      shareReplay()
+    );
     return obs;
   }
 
@@ -93,19 +103,22 @@ export class CouchdbFileService extends FileService {
   }
 
   private runFileRemoval(entity: Entity, property: string) {
-    const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
-    return this.http.get<{ _rev: string }>(attachmentPath).pipe(
-      concatMap(({ _rev }) =>
-        this.http.delete(`${attachmentPath}/${property}?rev=${_rev}`)
-      ),
-      catchError((err) => {
-        if (err.status === HttpStatusCode.NotFound) {
-          return of({ ok: true });
-        } else {
-          throw err;
-        }
-      })
-    );
+    const path = `${entity.getId(true)}/${property}`;
+    return this.http
+      .get<{ _rev: string }>(`${this.attachmentsUrl}/${entity.getId(true)}`)
+      .pipe(
+        concatMap(({ _rev }) =>
+          this.http.delete(`${this.attachmentsUrl}/${path}?rev=${_rev}`)
+        ),
+        tap(() => delete this.cache[path]),
+        catchError((err) => {
+          if (err.status === HttpStatusCode.NotFound) {
+            return of({ ok: true });
+          } else {
+            throw err;
+          }
+        })
+      );
   }
 
   removeAllFiles(entity: Entity): Observable<any> {
@@ -145,7 +158,27 @@ export class CouchdbFileService extends FileService {
       });
   }
 
-  private reportProgress(message: string, obs: Observable<HttpEvent<any>>) {
+  loadFile(entity: Entity, property: string): Observable<SafeUrl> {
+    const path = `${entity.getId(true)}/${property}`;
+    if (!this.cache[path]) {
+      this.cache[path] = this.http
+        .get(`${this.attachmentsUrl}/${path}`, {
+          responseType: "blob",
+        })
+        .pipe(
+          map((blob) => URL.createObjectURL(blob)),
+          shareReplay()
+        );
+    }
+    return this.cache[path].pipe(
+      map((url) => this.sanitizer.bypassSecurityTrustUrl(url))
+    );
+  }
+
+  private reportProgress(
+    message: string,
+    obs: Observable<HttpEvent<any> | any>
+  ) {
     const progress = obs.pipe(
       filter(
         (e) =>
