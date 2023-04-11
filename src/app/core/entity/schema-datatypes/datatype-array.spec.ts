@@ -40,7 +40,7 @@ describe("Schema data type: array", () => {
     expect(db).toEqual(value);
   });
 
-  it("should automatically transform values that are not entities", () => {
+  it("should automatically wrap value into array (and transform to inner type) if not an array yet", () => {
     const value = defaultInteractionTypes[1].id;
 
     const obj = arrayEntitySchemaDatatype.transformToObjectFormat(
