@@ -141,7 +141,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   idForSavingPagination = "startWert";
 
-  @ViewChild(MatSort, { static: true }) private sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
 
   /**
    * Event triggered when the user clicks on a row (i.e. entity).
@@ -229,7 +229,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         if (this.columnsToDisplay.length < 2) {
           resetupTable = true;
         }
-        this.sortDefault();
       }
     }
     if (changes.hasOwnProperty("filter") && this.filter) {
@@ -255,6 +254,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (resetupTable) {
       this.setupTable();
     }
+    if (changes.hasOwnProperty("records")) {
+      this.sortDefault();
+    }
 
     this.listenToEntityUpdates();
   }
@@ -274,6 +276,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private sortDefault() {
+    if (!(this.records?.length > 0)) {
+      return;
+    }
     if (this._columns.length === 0 || this.sort.active) {
       // do not overwrite existing sort
       return;

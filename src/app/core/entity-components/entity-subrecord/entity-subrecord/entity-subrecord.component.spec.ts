@@ -51,6 +51,7 @@ describe("EntitySubrecordComponent", () => {
     fixture = TestBed.createComponent(EntitySubrecordComponent);
     component = fixture.componentInstance;
     component.editable = false;
+    component.columns = ["x", "name", "label"];
     fixture.detectChanges();
   });
 
@@ -167,9 +168,11 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should sort strings ignoring case", () => {
-    const names = ["C", "b", "A"];
+    const names = ["C", "A", "b"];
     component.records = names.map((name) => Child.create(name));
     component.ngOnChanges({ records: undefined });
+    component.sort.sort({ id: "resetSort", start: "asc", disableClear: false });
+
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
 
     const sortedNames = component.recordsDataSource
