@@ -3,7 +3,6 @@ import { ChildBlockComponent } from "./child-block.component";
 import { Child } from "../model/child";
 import { moduleMetadata } from "@storybook/angular";
 import { CommonModule } from "@angular/common";
-import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
@@ -18,7 +17,6 @@ export default {
 
 const demoChild = new Child("1");
 demoChild.name = "John Doe";
-addDefaultChildPhoto(demoChild);
 demoChild.projectNumber = "99";
 demoChild.phone = "+49 199 1234567";
 demoChild.schoolClass = "5";
