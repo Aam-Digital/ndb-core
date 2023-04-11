@@ -141,28 +141,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   idForSavingPagination = "startWert";
 
-  @ViewChild(MatSort)
-  set sort(matSort: MatSort) {
-    if (this.recordsDataSource.sort === matSort) {
-      // do not re-trigger setup if the sort had been set before already
-      return;
-    }
-
-    // Initialize sort once available, workaround according to https://github.com/angular/components/issues/15008#issuecomment-516386055
-    this.recordsDataSource.sort = matSort;
-
-    this.recordsDataSource.sortData = (data, sort) =>
-      tableSort(data, {
-        active: sort.active as keyof T | "",
-        direction: sort.direction,
-      });
-
-    setTimeout(() => this.sortDefault());
-  }
-
-  get sort(): MatSort {
-    return this.recordsDataSource.sort;
-  }
+  @ViewChild(MatSort, { static: true }) private sort: MatSort;
 
   /**
    * Event triggered when the user clicks on a row (i.e. entity).
@@ -253,7 +232,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         this.sortDefault();
       }
     }
-    if (changes.hasOwnProperty("filter")) {
+    if (changes.hasOwnProperty("filter") && this.filter) {
       this.predicate = this.filterService.getFilterPredicate(this.filter);
       reinitDataSource = true;
     }
@@ -295,14 +274,20 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private sortDefault() {
-    if (!this.sort || this._columns.length === 0 || this.sort.active) {
+    if (this._columns.length === 0 || this.sort.active) {
       // do not overwrite existing sort
       return;
     }
 
-    if (!this.defaultSort) {
-      this.defaultSort = this.inferDefaultSort();
-    }
+    this.recordsDataSource.sort = this.sort;
+
+    this.recordsDataSource.sortData = (data, sort) =>
+      tableSort(data, {
+        active: sort.active as keyof T | "",
+        direction: sort.direction,
+      });
+
+    this.defaultSort = this.defaultSort ?? this.inferDefaultSort();
 
     this.sort.sort({
       id: this.defaultSort.active,

@@ -6,7 +6,7 @@
   [dataSource]="recordsDataSource"
   matSort
   class="full-width"
-  *ngIf="!isLoading"
+  [hidden]="isLoading"
 >
   <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
     <th
