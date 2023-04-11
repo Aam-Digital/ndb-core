@@ -19,21 +19,11 @@ import {
   EntityForm,
   EntityFormService,
 } from "../../../core/entity-components/entity-form/entity-form.service";
-import { InvalidFormFieldError } from "../../../core/entity-components/entity-form/invalid-form-field.error";
-import { AlertService } from "../../../core/alerts/alert.service";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../../core/entity/entity-remove.service";
 import { NgIf } from "@angular/common";
 import { TodoCompletionComponent } from "../todo-completion/todo-completion/todo-completion.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
-import { MatButtonModule } from "@angular/material/button";
-import { MatMenuModule } from "@angular/material/menu";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
-import { Angulartics2Module } from "angulartics2";
+import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 
 @Component({
   selector: "app-todo-details",
@@ -41,16 +31,12 @@ import { Angulartics2Module } from "angulartics2";
   styleUrls: ["./todo-details.component.scss"],
   standalone: true,
   imports: [
-    MatDialogModule,
     NgIf,
-    TodoCompletionComponent,
+    MatDialogModule,
     DialogCloseComponent,
     EntityFormComponent,
-    MatButtonModule,
-    MatMenuModule,
-    FontAwesomeModule,
-    DisableEntityOperationDirective,
-    Angulartics2Module,
+    TodoCompletionComponent,
+    DialogButtonsComponent,
   ],
 })
 export class TodoDetailsComponent implements OnInit {
@@ -65,9 +51,7 @@ export class TodoDetailsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) data: DetailsComponentData,
     private dialogRef: MatDialogRef<any>,
     private todoService: TodoService,
-    private entityFormService: EntityFormService,
-    private entityRemoveService: EntityRemoveService,
-    private alertService: AlertService
+    private entityFormService: EntityFormService
   ) {
     this.entity = data.entity as Todo;
     this.formColumns = [data.columns];
@@ -80,21 +64,6 @@ export class TodoDetailsComponent implements OnInit {
     );
   }
 
-  cancel() {
-    this.dialogRef.close();
-  }
-
-  async save() {
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
-      this.dialogRef.close();
-    } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
-        this.alertService.addDanger(err.message);
-      }
-    }
-  }
-
   async completeTodo() {
     if (this.form.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
@@ -104,16 +73,7 @@ export class TodoDetailsComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  async uncompleteTodo() {
-    await this.todoService.uncompleteTodo(this.entity);
-  }
-
-  delete() {
-    //TODO: refactor this into a reusable form-actions component (duplicated from RowDetailsComponent)
-    this.entityRemoveService.remove(this.entity).subscribe((res) => {
-      if (res === RemoveResult.REMOVED) {
-        this.dialogRef.close();
-      }
-    });
+  uncompleteTodo() {
+    return this.todoService.uncompleteTodo(this.entity);
   }
 }

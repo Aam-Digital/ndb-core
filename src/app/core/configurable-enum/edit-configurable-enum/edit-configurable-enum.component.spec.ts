@@ -45,11 +45,10 @@ describe("EditConfigurableEnumComponent", () => {
 
   function initWithSchema(schema: EntitySchemaField) {
     const fromGroup = new FormGroup({ test: new FormControl() });
-    component.onInitFromDynamicConfig({
-      formControl: fromGroup.get("test"),
-      formFieldConfig: { id: "test" },
-      propertySchema: schema,
-      entity: new Entity(),
-    });
+    component.formControl = fromGroup.get("test") as FormControl;
+    component.formFieldConfig = { id: "test" };
+    component.propertySchema = schema;
+    component.entity = new Entity();
+    component.ngOnInit();
   }
 });

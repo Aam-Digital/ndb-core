@@ -1,7 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
@@ -34,9 +33,7 @@ import { WidgetContentComponent } from "../../../core/dashboard/dashboard-widget
   standalone: true,
 })
 @DynamicComponent("ProgressDashboard")
-export class ProgressDashboardComponent
-  implements OnInitDynamicComponent, OnInit
-{
+export class ProgressDashboardComponent implements OnInit {
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
 
@@ -46,10 +43,6 @@ export class ProgressDashboardComponent
     private dialog: MatDialog,
     private sessionService: SessionService
   ) {}
-
-  onInitFromDynamicConfig(config: any) {
-    this.dashboardConfigId = config.dashboardConfigId;
-  }
 
   async ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);

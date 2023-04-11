@@ -1,6 +1,5 @@
 import { Component, Input } from "@angular/core";
 import { MenuItem } from "../../navigation/menu-item";
-import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { FaDynamicIconComponent } from "../../view/fa-dynamic-icon/fa-dynamic-icon.component";
@@ -23,13 +22,7 @@ import { DashboardListWidgetComponent } from "../../dashboard/dashboard-list-wid
   ],
   standalone: true,
 })
-export class DashboardShortcutWidgetComponent
-  implements OnInitDynamicComponent
-{
+export class DashboardShortcutWidgetComponent {
   /** displayed entries, each representing one line displayed as a shortcut */
   @Input() shortcuts: MenuItem[] = [];
-
-  onInitFromDynamicConfig(config: any) {
-    this.shortcuts = config.shortcuts;
-  }
 }

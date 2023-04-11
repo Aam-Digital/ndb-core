@@ -60,7 +60,7 @@ describe("ProgressDashboardComponent", () => {
 
   it("should load dashboard config on startup", fakeAsync(() => {
     const configID = "config-id";
-    component.onInitFromDynamicConfig({ dashboardConfigId: configID });
+    component.dashboardConfigId = configID;
     component.ngOnInit();
     tick();
 
@@ -72,7 +72,7 @@ describe("ProgressDashboardComponent", () => {
 
   it("should retry loading the config after sync has finished", fakeAsync(() => {
     mockEntityMapper.load.and.rejectWith();
-    component.onInitFromDynamicConfig({ dashboardConfigId: "someId" });
+    component.dashboardConfigId = "someId";
     component.ngOnInit();
     tick();
 
@@ -86,9 +86,8 @@ describe("ProgressDashboardComponent", () => {
   it("should create a new progress dashboard config if no configuration could be found after initial sync", fakeAsync(() => {
     mockEntityMapper.load.and.rejectWith();
     mockSync.next(SyncState.COMPLETED);
-    const configID = "config-id";
 
-    component.onInitFromDynamicConfig({ dashboardConfigId: configID });
+    component.dashboardConfigId = "config-id";
     component.ngOnInit();
     tick();
 

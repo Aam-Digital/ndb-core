@@ -6,7 +6,6 @@ import {
   ViewChild,
 } from "@angular/core";
 import { Router } from "@angular/router";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Child } from "../../../children/model/child";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceService } from "../../attendance.service";
@@ -47,9 +46,7 @@ interface AttendanceWeekRow {
   ],
   standalone: true,
 })
-export class AttendanceWeekDashboardComponent
-  implements OnInitDynamicComponent, OnInit, AfterViewInit
-{
+export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
   /**
    * The offset from the default time period, which is the last complete week.
    *
@@ -65,6 +62,8 @@ export class AttendanceWeekDashboardComponent
    * e.g. "Absences this week"
    */
   @Input() label: string;
+
+  @Input() periodLabel: string;
 
   /**
    * Only participants who were absent more than this threshold are counted and shown in the dashboard.
@@ -92,26 +91,14 @@ export class AttendanceWeekDashboardComponent
     private router: Router
   ) {}
 
-  onInitFromDynamicConfig(config: any) {
-    if (config?.daysOffset) {
-      this.daysOffset = config.daysOffset;
+  ngOnInit() {
+    if (this.periodLabel && !this.label) {
+      this.label = $localize`:Dashboard attendance component subtitle:Absences ${this.periodLabel}`;
     }
-    if (config?.periodLabel) {
-      this.label = $localize`:Dashboard attendance component subtitle:Absences ${config.periodLabel}`;
-    }
-    if (config?.label) {
-      this.label = config.label;
-    }
-    if (config?.attendanceStatusType) {
-      this.attendanceStatusType = config.attendanceStatusType;
-    }
+    return this.loadAttendanceOfAbsentees();
   }
 
-  async ngOnInit() {
-    await this.loadAttendanceOfAbsentees();
-  }
-
-  async loadAttendanceOfAbsentees() {
+  private async loadAttendanceOfAbsentees() {
     const today = new Date();
     const previousMonday = new Date(
       today.getFullYear(),

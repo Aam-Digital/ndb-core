@@ -116,12 +116,10 @@ describe("BirthdayDashboardComponent", () => {
     );
     entityMapper.saveAll([e1, e2, e3]);
 
-    component.onInitFromDynamicConfig({
-      entities: {
-        BirthdayEntity: "birthday",
-        Child: "dateOfBirth",
-      },
-    });
+    component.entities = {
+      BirthdayEntity: "birthday",
+      Child: "dateOfBirth",
+    };
     component.ngOnInit();
     tick();
 

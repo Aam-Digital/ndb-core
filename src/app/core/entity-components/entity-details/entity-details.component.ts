@@ -30,6 +30,7 @@ import { NgForOf, NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../entity-utils/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../view/dynamic-components/dynamic-component.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -75,7 +76,8 @@ export class EntityDetailsComponent {
     private analyticsService: AnalyticsService,
     private entityRemoveService: EntityRemoveService,
     private ability: EntityAbility,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
+    private logger: LoggingService
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
@@ -99,7 +101,7 @@ export class EntityDetailsComponent {
     } else {
       this.creatingNew = false;
       this.entityMapperService
-        .load<Entity>(this.entityConstructor, id)
+        .load(this.entityConstructor, id)
         .then((entity) => {
           this.entity = entity;
           this.setFullPanelsConfig();
@@ -127,11 +129,23 @@ export class EntityDetailsComponent {
   }
 
   private getPanelConfig(c: PanelComponent): PanelConfig {
-    return {
+    let panelConfig: PanelConfig = {
       entity: this.entity,
-      config: c.config,
       creatingNew: this.creatingNew,
     };
+    if (typeof c.config === "object" && !Array.isArray(c.config)) {
+      if (c.config?.entity) {
+        this.logger.warn(
+          `DEPRECATION panel config uses 'entity' keyword: ${JSON.stringify(c)}`
+        );
+        c.config["entityType"] = c.config.entity;
+        delete c.config.entity;
+      }
+      panelConfig = { ...c.config, ...panelConfig };
+    } else {
+      panelConfig.config = c.config;
+    }
+    return panelConfig;
   }
 
   removeEntity() {

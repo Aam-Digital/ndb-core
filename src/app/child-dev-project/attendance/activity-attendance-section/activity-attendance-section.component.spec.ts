@@ -19,31 +19,32 @@ describe("ActivityAttendanceSectionComponent", () => {
   let testActivity: RecurringActivity;
   let testRecords: ActivityAttendance[];
 
-  beforeEach(
-    waitForAsync(() => {
-      testActivity = RecurringActivity.create("test act");
-      testRecords = [ActivityAttendance.create(new Date(), [])];
+  beforeEach(waitForAsync(() => {
+    testActivity = RecurringActivity.create("test act");
+    testRecords = [ActivityAttendance.create(new Date(), [])];
 
-      mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
-        "getActivityAttendances",
-      ]);
-      mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
-      TestBed.configureTestingModule({
-        imports: [ActivityAttendanceSectionComponent, MockedTestingModule.withState()],
-        providers: [
-          { provide: AttendanceService, useValue: mockAttendanceService },
-          DatePipe,
-          PercentPipe,
-        ],
-      }).compileComponents();
-    })
-  );
+    mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
+      "getActivityAttendances",
+    ]);
+    mockAttendanceService.getActivityAttendances.and.resolveTo(testRecords);
+    TestBed.configureTestingModule({
+      imports: [
+        ActivityAttendanceSectionComponent,
+        MockedTestingModule.withState(),
+      ],
+      providers: [
+        { provide: AttendanceService, useValue: mockAttendanceService },
+        DatePipe,
+        PercentPipe,
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivityAttendanceSectionComponent);
     component = fixture.componentInstance;
 
-    component.activity = testActivity;
+    component.entity = testActivity;
 
     fixture.detectChanges();
   });
@@ -77,11 +78,10 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     const eventParticipatingIn = EventNote.create(new Date(), "participating");
     eventParticipatingIn.addChild(testChildId);
-    eventParticipatingIn.getAttendance(
-      testChildId
-    ).status = defaultAttendanceStatusTypes.find(
-      (s) => s.countAs === AttendanceLogicalStatus.PRESENT
-    );
+    eventParticipatingIn.getAttendance(testChildId).status =
+      defaultAttendanceStatusTypes.find(
+        (s) => s.countAs === AttendanceLogicalStatus.PRESENT
+      );
 
     component.allRecords = [
       ActivityAttendance.create(new Date(), []),

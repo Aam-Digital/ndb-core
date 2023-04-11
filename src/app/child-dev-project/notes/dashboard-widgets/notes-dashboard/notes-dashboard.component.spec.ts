@@ -123,7 +123,8 @@ describe("NotesDashboardComponent", () => {
       );
       const entity = RecurringActivity.ENTITY_TYPE;
 
-      component.onInitFromDynamicConfig({ entity, mode: "with-recent-notes" });
+      component.entity = entity;
+      component.mode = "with-recent-notes";
       component.ngOnInit();
 
       expect(

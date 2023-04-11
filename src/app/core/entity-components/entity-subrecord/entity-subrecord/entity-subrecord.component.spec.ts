@@ -41,7 +41,7 @@ describe("EntitySubrecordComponent", () => {
         { provide: WINDOW_TOKEN, useValue: window },
         {
           provide: FormDialogService,
-          useValue: jasmine.createSpyObj(["openSimpleForm"]),
+          useValue: jasmine.createSpyObj(["openFormPopup"]),
         },
       ],
     }).compileComponents();
@@ -268,7 +268,7 @@ describe("EntitySubrecordComponent", () => {
     component.create();
     tick();
 
-    expect(TestBed.inject(FormDialogService).openSimpleForm).toHaveBeenCalled();
+    expect(TestBed.inject(FormDialogService).openFormPopup).toHaveBeenCalled();
   }));
 
   it("should create a new entity and open a dialog on default when clicking create", () => {
@@ -278,7 +278,7 @@ describe("EntitySubrecordComponent", () => {
 
     component.create();
 
-    expect(dialog.openSimpleForm).toHaveBeenCalledWith(child, []);
+    expect(dialog.openFormPopup).toHaveBeenCalledWith(child, []);
   });
 
   it("should notify when an entity is clicked", (done) => {

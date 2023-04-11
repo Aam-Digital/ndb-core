@@ -1,7 +1,6 @@
-import { Component, HostBinding } from "@angular/core";
+import { Component, HostBinding, OnInit } from "@angular/core";
 import { ViewDirective } from "../view.directive";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
-import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 
 @DynamicComponent("DisplayPercentage")
 @Component({
@@ -9,7 +8,12 @@ import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
   template: "{{ value ? value + '%' : '-' }}",
   standalone: true,
 })
-export class DisplayPercentageComponent extends ViewDirective<number> {
+export class DisplayPercentageComponent
+  extends ViewDirective<number>
+  implements OnInit
+{
+  @HostBinding("style") style = {};
+
   /**
    * returns a css-compatible color value from green to red using the given
    * input value
@@ -27,8 +31,7 @@ export class DisplayPercentageComponent extends ViewDirective<number> {
     return "hsl(" + color + ", 100%, 85%)";
   }
 
-  onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
     this.style = {
       "background-color": DisplayPercentageComponent.fromPercent(this.value),
       "border-radius": "5%",
@@ -36,7 +39,4 @@ export class DisplayPercentageComponent extends ViewDirective<number> {
       width: "min-content",
     };
   }
-
-  @HostBinding("style")
-  public style = {};
 }

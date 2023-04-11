@@ -51,7 +51,7 @@ describe("ChildrenBmiDashboardComponent", () => {
     const loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
     loadTypeSpy.and.resolveTo([healthCheck1, healthCheck2, healthCheck3]);
 
-    component.onInitFromDynamicConfig();
+    component.ngOnInit();
 
     expect(loadTypeSpy).toHaveBeenCalledWith(HealthCheck);
     tick();
