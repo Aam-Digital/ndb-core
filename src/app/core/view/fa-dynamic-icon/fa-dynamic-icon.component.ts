@@ -17,6 +17,7 @@ import {
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
 import { LoggingService } from "../../logging/logging.service";
+import { NgIf } from "@angular/common";
 
 /**
  * A map to prevent old configs to be broken
@@ -37,8 +38,8 @@ const iconAliases = new Map<string, IconDefinition>([
  */
 @Component({
   selector: "app-fa-dynamic-icon",
-  template: ` <fa-icon [icon]="_icon"></fa-icon>`,
-  imports: [FontAwesomeModule],
+  template: ` <fa-icon *ngIf="_icon" [icon]="_icon"></fa-icon>`,
+  imports: [FontAwesomeModule, NgIf],
   standalone: true,
 })
 export class FaDynamicIconComponent {
@@ -66,6 +67,10 @@ export class FaDynamicIconComponent {
    * @param icon the icon name
    */
   @Input() set icon(icon: string) {
+    if (!icon) {
+      this._icon = undefined;
+      return;
+    }
     let definition = iconAliases.get(icon);
     if (!definition && icon) {
       const iconAndDef = icon.split(" ");

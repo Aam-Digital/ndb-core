@@ -1,9 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import {
-  ViewDistanceComponent,
-  ViewDistanceConfig,
-} from "./view-distance.component";
-import { ViewPropertyConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { ViewDistanceComponent } from "./view-distance.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Subject } from "rxjs";
 import { Coordinates } from "../coordinates";
@@ -18,23 +14,21 @@ describe("ViewDistanceComponent", () => {
     await TestBed.configureTestingModule({
       imports: [ViewDistanceComponent],
     }).compileComponents();
+    fixture = TestBed.createComponent(ViewDistanceComponent);
 
     entity = new Child();
     entity["address"] = { lat: 52, lon: 13 };
     compareCoordinates = new Subject();
-    const config: ViewPropertyConfig<ViewDistanceConfig> = {
-      id: "distance",
-      entity,
-      value: undefined,
-      config: {
-        compareCoordinates,
-        coordinatesProperties: ["address", "otherAddress"],
-      },
-    };
-    fixture = TestBed.createComponent(ViewDistanceComponent);
     component = fixture.componentInstance;
+    component.id = "distance";
+    component.entity = entity;
+    component.value = undefined;
+    component.config = {
+      compareCoordinates,
+      coordinatesProperties: ["address", "otherAddress"],
+    };
+
     fixture.detectChanges();
-    component.onInitFromDynamicConfig(config);
   });
 
   it("should create", () => {

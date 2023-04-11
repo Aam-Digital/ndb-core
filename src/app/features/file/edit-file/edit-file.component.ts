@@ -1,4 +1,4 @@
-import { Component, ElementRef, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, ElementRef, ViewChild } from "@angular/core";
 import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
@@ -35,9 +35,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   ],
   standalone: true,
 })
-export class EditFileComponent extends EditComponent<string> implements OnInit {
+export class EditFileComponent extends EditComponent<string> {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
-  @Input() compressImage?: number;
   private selectedFile: File;
   private removeClicked = false;
   private initialValue: string;
@@ -52,6 +51,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   ngOnInit() {
+    super.ngOnInit();
     this.initialValue = this.formControl.value;
     this.formControl.statusChanges
       .pipe(
@@ -72,8 +72,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
       });
   }
 
-  async onFileSelected(event) {
-    const file: File = event.target.files[0];
+  async onFileSelected(file: File) {
     // directly reset input so subsequent selections with the same name also trigger the change event
     this.fileInput.nativeElement.value = "";
     this.selectedFile = file;
@@ -83,7 +82,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   protected saveNewFile(file: File) {
     // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
     this.fileService
-      .uploadFile(file, this.entity, this.formControlName, this.compressImage)
+      .uploadFile(file, this.entity, this.formControlName)
       .subscribe({
         error: (err) => this.handleError(err),
         complete: () => {

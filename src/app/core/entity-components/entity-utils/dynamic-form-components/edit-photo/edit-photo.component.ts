@@ -1,18 +1,18 @@
 import { Component } from "@angular/core";
-import { EditPropertyConfig } from "../edit-component";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatInputModule } from "@angular/material/input";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EditFileComponent } from "../../../../../features/file/edit-file/edit-file.component";
-import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../../../../../features/file/file.service";
 import { AlertService } from "../../../../alerts/alert.service";
 import { LoggingService } from "../../../../logging/logging.service";
 import { EntityMapperService } from "../../../../entity/entity-mapper.service";
 import { MatButtonModule } from "@angular/material/button";
+import { resizeImage } from "../../../../../features/file/file-utils";
+import { MatDialog } from "@angular/material/dialog";
+import { ImagePopupComponent } from "./image-popup/image-popup.component";
 
 @DynamicComponent("EditPhoto")
 @Component({
@@ -24,30 +24,34 @@ import { MatButtonModule } from "@angular/material/button";
 })
 export class EditPhotoComponent extends EditFileComponent {
   private readonly defaultImage = "assets/child.png";
+  private readonly compression = 480;
   private initialImg: SafeUrl = this.defaultImage;
   imgPath: SafeUrl = this.initialImg;
-  compressImage = 480;
 
   constructor(
     fileService: FileService,
     alertService: AlertService,
     logger: LoggingService,
     entityMapper: EntityMapperService,
-    private sanitizer: DomSanitizer
+    private dialog: MatDialog
   ) {
     super(fileService, alertService, logger, entityMapper);
   }
 
-  async onFileSelected(event): Promise<void> {
-    this.imgPath = this.sanitizer.bypassSecurityTrustUrl(
-      URL.createObjectURL(event.target.files[0])
-    );
-    return super.onFileSelected(event);
+  async onFileSelected(file: File): Promise<void> {
+    const cvs = await resizeImage(file, this.compression);
+    this.imgPath = cvs.toDataURL();
+    const blob = await new Promise<Blob>((res) => cvs.toBlob(res));
+    const reducedFile = new File([blob], file.name, {
+      type: file.type,
+      lastModified: file.lastModified,
+    });
+    return super.onFileSelected(reducedFile);
   }
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
-    super.onInitFromDynamicConfig(config);
-    if (this.entity[this.formControlName]) {
+  ngOnInit() {
+    super.ngOnInit();
+    if (this.formControl.value) {
       this.fileService
         .loadFile(this.entity, this.formControlName)
         .subscribe((res) => {
@@ -78,5 +82,9 @@ export class EditPhotoComponent extends EditFileComponent {
     URL.revokeObjectURL(this.initialImg as string);
     this.initialImg = this.defaultImage;
     super.deleteExistingFile();
+  }
+
+  openPopup() {
+    this.dialog.open(ImagePopupComponent, { data: { url: this.imgPath } });
   }
 }

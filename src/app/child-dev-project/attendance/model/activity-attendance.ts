@@ -46,6 +46,7 @@ export class ActivityAttendance extends Entity {
     this._events = value;
     this.recalculateStats();
   }
+
   get events(): EventNote[] {
     return this._events;
   }

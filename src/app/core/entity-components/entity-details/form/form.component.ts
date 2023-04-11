@@ -1,6 +1,4 @@
-import { Component, OnInit } from "@angular/core";
-import { OnInitDynamicComponent } from "../../../view/dynamic-components/on-init-dynamic-component.interface";
-import { PanelConfig } from "../EntityDetailsConfig";
+import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../../utils/utils";
@@ -14,7 +12,6 @@ import {
 } from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { toFormFieldConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
-import * as _ from "lodash-es";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
@@ -36,13 +33,16 @@ import { DisableEntityOperationDirective } from "../../../permissions/permission
   ],
   standalone: true,
 })
-export class FormComponent<E extends Entity>
-  implements OnInitDynamicComponent, OnInit
-{
-  entity: E;
-  columns: FormFieldConfig[][] = [];
-  headers?: string[] = [];
-  creatingNew = false;
+export class FormComponent<E extends Entity> implements OnInit {
+  @Input() entity: E;
+  @Input() creatingNew = false;
+  @Input() headers: string[] = [];
+
+  @Input() set cols(value: FormFieldConfig[][]) {
+    this._cols = value.map((row) => row.map(toFormFieldConfig));
+  }
+
+  _cols: FormFieldConfig[][] = [];
   form: EntityForm<E>;
 
   constructor(
@@ -52,18 +52,9 @@ export class FormComponent<E extends Entity>
     private alertService: AlertService
   ) {}
 
-  onInitFromDynamicConfig(config: PanelConfig) {
-    this.entity = config.entity as E;
-    this.columns = config.config?.cols.map((row) => row.map(toFormFieldConfig));
-    this.headers = config.config?.headers;
-    if (config.creatingNew) {
-      this.creatingNew = true;
-    }
-  }
-
   ngOnInit() {
     this.form = this.entityFormService.createFormGroup(
-      [].concat(...this.columns),
+      [].concat(...this._cols),
       this.entity
     );
     if (!this.creatingNew) {

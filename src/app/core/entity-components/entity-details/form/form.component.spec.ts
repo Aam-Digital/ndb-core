@@ -25,7 +25,7 @@ describe("FormComponent", () => {
     fixture = TestBed.createComponent(FormComponent<Child>);
     component = fixture.componentInstance;
     component.entity = new Child();
-    component.columns = [[{ id: "name" }]];
+    component.cols = [[{ id: "name" }]];
     fixture.detectChanges();
   });
 
@@ -36,11 +36,9 @@ describe("FormComponent", () => {
   it("should change the creating state", () => {
     expect(component.creatingNew).toBeFalse();
 
-    component.onInitFromDynamicConfig({
-      entity: new Child(),
-      config: { cols: [] },
-      creatingNew: true,
-    });
+    component.entity = new Child();
+    component.cols = [];
+    component.creatingNew = true;
 
     expect(component.creatingNew).toBeTrue();
   });
@@ -94,7 +92,10 @@ describe("FormComponent", () => {
 
   it("should add column definitions from property schema", () => {
     class Test extends Child {
-      @DatabaseField({ description: "Property description" })
+      @DatabaseField({
+        description: "Property description",
+        additional: "someAdditional",
+      })
       propertyField: string;
     }
 
@@ -102,7 +103,7 @@ describe("FormComponent", () => {
       "PredefinedComponent"
     );
     component.entity = new Test();
-    component.columns = [
+    component.cols = [
       [
         {
           id: "fieldWithDefinition",
@@ -110,6 +111,7 @@ describe("FormComponent", () => {
           view: "DisplayComponent",
           label: "Field with definition",
           tooltip: "Custom tooltip",
+          additional: "additional",
         },
         { id: "propertyField", label: "Property" },
       ],
@@ -117,7 +119,7 @@ describe("FormComponent", () => {
 
     component.ngOnInit();
 
-    expect(component.columns).toEqual([
+    expect(component._cols).toEqual([
       [
         {
           id: "fieldWithDefinition",
@@ -126,6 +128,7 @@ describe("FormComponent", () => {
           label: "Field with definition",
           forTable: false,
           tooltip: "Custom tooltip",
+          additional: "additional",
         },
         {
           id: "propertyField",
@@ -134,6 +137,7 @@ describe("FormComponent", () => {
           label: "Property",
           forTable: false,
           tooltip: "Property description",
+          additional: "someAdditional",
         },
       ],
     ]);

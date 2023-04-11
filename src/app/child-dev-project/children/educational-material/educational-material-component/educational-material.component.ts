@@ -1,8 +1,6 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { EducationalMaterial } from "../model/educational-material";
 import { Child } from "../../model/child";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { PanelConfig } from "../../../../core/entity-components/entity-details/EntityDetailsConfig";
 import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
@@ -23,19 +21,19 @@ import { EntitySubrecordComponent } from "../../../../core/entity-components/ent
   imports: [EntitySubrecordComponent],
   standalone: true,
 })
-export class EducationalMaterialComponent
-  implements OnChanges, OnInitDynamicComponent
-{
-  @Input() child: Child;
+export class EducationalMaterialComponent implements OnInit {
+  @Input() entity: Child;
   records: EducationalMaterial[] = [];
   summary = "";
 
-  columns: FormFieldConfig[] = [
-    { id: "date", visibleFrom: "xs" },
-    { id: "materialType", visibleFrom: "xs" },
-    { id: "materialAmount", visibleFrom: "md" },
-    { id: "description", visibleFrom: "md" },
-  ];
+  @Input() config: { columns: FormFieldConfig[] } = {
+    columns: [
+      { id: "date", visibleFrom: "xs" },
+      { id: "materialType", visibleFrom: "xs" },
+      { id: "materialAmount", visibleFrom: "md" },
+      { id: "description", visibleFrom: "md" },
+    ],
+  };
 
   constructor(private entityMapper: EntityMapperService) {
     this.entityMapper
@@ -44,7 +42,7 @@ export class EducationalMaterialComponent
         untilDestroyed(this),
         filter(
           ({ entity, type }) =>
-            type === "remove" || entity.child === this.child.getId()
+            type === "remove" || entity.child === this.entity.getId()
         )
       )
       .subscribe((update) => {
@@ -53,28 +51,19 @@ export class EducationalMaterialComponent
       });
   }
 
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (changes.hasOwnProperty("child")) {
-      await this.loadData(this.child.getId());
-    }
-  }
-
-  async onInitFromDynamicConfig(config: PanelConfig) {
-    if (config?.config?.columns) {
-      this.columns = config.config.columns;
-    }
-
-    this.child = config.entity as Child;
-    await this.loadData(this.child.getId());
+  ngOnInit() {
+    return this.loadData();
   }
 
   /**
    * Loads the data for a given child and updates the summary
    * @param id The id of the child to load the data for
    */
-  async loadData(id: string) {
+  private async loadData() {
     const allMaterials = await this.entityMapper.loadType(EducationalMaterial);
-    this.records = allMaterials.filter((mat) => mat.child === id);
+    this.records = allMaterials.filter(
+      (mat) => mat.child === this.entity.getId()
+    );
     this.updateSummary();
   }
 
@@ -83,7 +72,7 @@ export class EducationalMaterialComponent
 
     // use last entered date as default, otherwise today's date
     newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
-    newAtt.child = this.child.getId();
+    newAtt.child = this.entity.getId();
     newAtt.materialAmount = 1;
 
     return newAtt;

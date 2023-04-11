@@ -1,8 +1,13 @@
-import { Component, AfterViewInit, OnInit, ViewChild } from "@angular/core";
+import {
+  Component,
+  AfterViewInit,
+  ViewChild,
+  Input,
+  OnInit,
+} from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { Entity } from "../../../../core/entity/model/entity";
@@ -27,24 +32,31 @@ import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-wid
   ],
   standalone: true,
 })
-export class BirthdayDashboardComponent
-  implements OnInitDynamicComponent, OnInit, AfterViewInit
-{
+export class BirthdayDashboardComponent implements OnInit, AfterViewInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private readonly today: Date;
-  private entities: EntityPropertyMap = { [Child.ENTITY_TYPE]: "dateOfBirth" };
-  birthdayThreshold = 32;
+
+  /**
+   * An object holding the names of entities and properties where they have a `DateOfBirth` attribute.
+   * E.g. (which is also the default)
+   * ```json
+   * "entities": { "Child": "dateOfBirth" }
+   * ```
+   */
+  @Input() entities: EntityPropertyMap = { [Child.ENTITY_TYPE]: "dateOfBirth" };
+
+  /**
+   * Birthdays that are less than "threshold" days away are shown.
+   * Default 32
+   */
+  @Input() threshold = 32;
+
   dataSource = new MatTableDataSource<EntityWithBirthday>();
   isLoading = true;
 
   constructor(private entityMapper: EntityMapperService) {
     this.today = new Date();
     this.today.setHours(0, 0, 0, 0);
-  }
-
-  onInitFromDynamicConfig(config: BirthdayDashboardConfig) {
-    this.entities = config?.entities ?? this.entities;
-    this.birthdayThreshold = config?.threshold ?? this.birthdayThreshold;
   }
 
   async ngOnInit() {
@@ -59,7 +71,7 @@ export class BirthdayDashboardComponent
             birthday: this.getNextBirthday(entity[property]),
             newAge: entity[property]?.age + 1,
           }))
-          .filter((a) => this.daysUntil(a.birthday) < this.birthdayThreshold)
+          .filter((a) => this.daysUntil(a.birthday) < this.threshold)
       );
     }
     data.sort(
@@ -90,25 +102,6 @@ export class BirthdayDashboardComponent
     const diff = date.getTime() - this.today.getTime();
     return Math.floor(diff / (1000 * 60 * 60 * 24));
   }
-}
-
-/**
- * Configuration object for the BirthdayDashboard
- */
-interface BirthdayDashboardConfig {
-  /**
-   * An object holding the names of entities and properties where they have a `DateOfBirth` attribute.
-   * E.g. (which is also the default)
-   * ```json
-   * "entities": { "Child": "dateOfBirth" }
-   * ```
-   */
-  entities?: EntityPropertyMap;
-  /**
-   * Birthdays that are less than "threshold" days away are shown.
-   * Default 32
-   */
-  threshold?: number;
 }
 
 interface EntityPropertyMap {

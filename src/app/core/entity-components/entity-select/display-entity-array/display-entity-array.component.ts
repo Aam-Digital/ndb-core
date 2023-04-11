@@ -1,8 +1,7 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ViewDirective } from "../../entity-utils/view-components/view.directive";
-import { ViewPropertyConfig } from "../../entity-list/EntityListConfig";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { DisplayEntityComponent } from "../display-entity/display-entity.component";
 import { NgForOf, NgIf } from "@angular/common";
@@ -15,7 +14,10 @@ import { NgForOf, NgIf } from "@angular/common";
   imports: [DisplayEntityComponent, NgIf, NgForOf],
   standalone: true,
 })
-export class DisplayEntityArrayComponent extends ViewDirective<string[]> {
+export class DisplayEntityArrayComponent
+  extends ViewDirective<string[], string>
+  implements OnInit
+{
   readonly aggregationThreshold = 5;
 
   entities: Entity[];
@@ -24,16 +26,13 @@ export class DisplayEntityArrayComponent extends ViewDirective<string[]> {
     super();
   }
 
-  async onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    super.onInitFromDynamicConfig(config);
+  async ngOnInit() {
     const entityIds: string[] = this.value || [];
     if (entityIds.length < this.aggregationThreshold) {
-      const entityType =
-        config.config || this.entity.getSchema().get(this.property).additional;
       const entityPromises = entityIds.map((entityId) => {
         const type =
-          typeof entityType === "string"
-            ? entityType
+          typeof this.config === "string"
+            ? this.config
             : Entity.extractTypeFromId(entityId);
         return this.entityMapper.load(type, entityId);
       });

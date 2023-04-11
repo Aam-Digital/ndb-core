@@ -1,8 +1,5 @@
 import { Component } from "@angular/core";
-import {
-  EditComponent,
-  EditPropertyConfig,
-} from "../../entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../entity-utils/dynamic-form-components/edit-component";
 import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
@@ -117,11 +114,10 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     }
   }
 
-  async onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
-    super.onInitFromDynamicConfig(config);
+  async ngOnInit() {
+    super.ngOnInit();
     if (!this.formControl.value) {
       // adding new entry - enable autocomplete
-      this.additional = config.formFieldConfig.additional;
       const entityType = this.additional.entityType;
       this.entities = await this.entityMapperService.loadType(entityType);
       this.entities.sort((e1, e2) =>

@@ -144,7 +144,9 @@
   ></tr>
 </table>
 <app-list-paginator
-  *ngIf="!isLoading || recordsDataSource.data.length"
+  [style.display]="
+    isLoading || recordsDataSource.data.length === 0 ? 'none' : ''
+  "
   [dataSource]="recordsDataSource"
   [idForSavingPagination]="idForSavingPagination"
 ></app-list-paginator>

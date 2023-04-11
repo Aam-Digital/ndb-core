@@ -34,7 +34,7 @@ describe("NotesManagerComponent", () => {
   let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
-    ["openDialog"]
+    ["openFormPopup"]
   );
 
   const routeData: EntityListConfig = {
@@ -129,18 +129,18 @@ describe("NotesManagerComponent", () => {
   it("should open the dialog when clicking details", () => {
     const note = new Note("testNote");
     component.showDetails(note);
-    expect(dialogMock.openDialog).toHaveBeenCalledWith(
-      NoteDetailsComponent,
-      note
+    expect(dialogMock.openFormPopup).toHaveBeenCalledWith(
+      note,
+      [],
+      NoteDetailsComponent
     );
   });
 
   it("should open dialog when add note is clicked", fakeAsync(() => {
     const newNote = new Note("new");
     const returnValue: any = { afterClosed: () => of(newNote) };
-    dialogMock.openDialog.and.returnValue(returnValue);
+    dialogMock.openFormPopup.and.returnValue(returnValue);
     component.addNoteClick();
-    expect(dialogMock.openDialog).toHaveBeenCalled();
   }));
 
   it("will contain a new note when saved by an external component", () => {

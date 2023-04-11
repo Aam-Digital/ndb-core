@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { EditComponent } from "../../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
@@ -31,10 +31,7 @@ import { NgForOf, NgIf } from "@angular/common";
     NgForOf,
   ],
 })
-export class EditRecurringIntervalComponent
-  extends EditComponent<any>
-  implements OnInit
-{
+export class EditRecurringIntervalComponent extends EditComponent<any> {
   predefinedIntervals: { label: string; interval: TimeInterval }[] = [
     {
       label: $localize`:default interval select option:weekly`,
@@ -54,6 +51,7 @@ export class EditRecurringIntervalComponent
   }
 
   ngOnInit(): void {
+    super.ngOnInit();
     this.predefinedIntervals = this.additional ?? this.predefinedIntervals;
 
     // re-create active custom interval if necessary
