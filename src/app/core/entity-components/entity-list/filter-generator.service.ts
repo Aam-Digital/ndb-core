@@ -88,7 +88,10 @@ export class FilterGeneratorService {
       return (config as PrebuiltFilterConfig<T>).options;
     } else if (schema.dataType === "boolean" || config.type === "boolean") {
       return this.createBooleanFilterOptions(config as BooleanFilterConfig);
-    } else if (schema.dataType === "configurable-enum") {
+    } else if (
+      schema.dataType === "configurable-enum" ||
+      schema.innerDataType === "configurable-enum"
+    ) {
       return this.createConfigurableEnumFilterOptions(
         config.id,
         schema.additional ?? schema.innerDataType
