@@ -84,7 +84,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit
 {
-  @Input() allEntities: T[] = undefined;
+  @Input() allEntities: T[];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
   @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
@@ -175,6 +175,7 @@ export class EntityListComponent<T extends Entity>
     }
 
     if (!this.allEntities) {
+      // if no entities are passed as input, by default load all entities of the type
       await this.loadEntities();
     }
 
