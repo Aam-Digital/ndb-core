@@ -8,9 +8,7 @@ export const CustomNumberValidators: { isNumber: ValidatorFn } = {
    * Angular Validator to verify value is a valid number.
    */
   isNumber: (control: AbstractControl) => {
-    const val = Number(control.value);
-
-    if (val && Number.isNaN(Number(val))) {
+    if (control.value && Number.isNaN(Number(control.value))) {
       return { isNumber: "invalid" };
     } else {
       return null;
