@@ -4,7 +4,7 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
-  AfterViewInit,
+  OnInit,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -23,13 +23,13 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
   imports: [MatPaginatorModule],
   standalone: true,
 })
-export class ListPaginatorComponent<E> implements OnChanges, AfterViewInit {
+export class ListPaginatorComponent<E> implements OnChanges, OnInit {
   readonly pageSizeOptions = [10, 20, 50, 100];
 
   @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   user: User;
   pageSize = 10;
@@ -45,7 +45,7 @@ export class ListPaginatorComponent<E> implements OnChanges, AfterViewInit {
     }
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.dataSource.paginator = this.paginator;
   }
 
