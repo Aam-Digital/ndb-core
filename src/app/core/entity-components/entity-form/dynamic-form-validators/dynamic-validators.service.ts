@@ -124,6 +124,8 @@ export class DynamicValidatorsService {
         return $localize`Please enter a valid email`;
       case "matDatepickerParse":
         return $localize`Please enter a valid date`;
+      case "isNumber":
+        return $localize`Please enter a valid number`;
       default:
         this.loggingService.error(
           `No description defined for validator "${validator}": ${JSON.stringify(
