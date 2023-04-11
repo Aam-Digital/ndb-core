@@ -31,7 +31,7 @@ export class ChildrenService {
    */
   async getChildren(): Promise<Child[]> {
     const children = await this.entityMapper.loadType(Child);
-    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}:`);
+    const relations = await this.entityMapper.loadType(ChildSchoolRelation);
     groupBy(relations, "childId").forEach(([id, rels]) => {
       const child = children.find((c) => c.getId() === id);
       if (child) {
