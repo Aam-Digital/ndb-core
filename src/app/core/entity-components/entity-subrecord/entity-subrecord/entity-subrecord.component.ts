@@ -414,11 +414,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     this.records = this.records.filter(
       (rec) => rec.getId() !== deleted.getId()
     );
+    this.initDataSource();
   }
 
   private addToTable(record: T) {
     // use setter so datasource is also updated
     this.records = [record].concat(this.records);
+    this.initDataSource();
   }
 
   /**
