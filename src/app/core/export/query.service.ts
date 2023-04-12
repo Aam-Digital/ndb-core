@@ -84,16 +84,9 @@ export class QueryService {
    * @param data the data on which the query should run, default is all entities
    * @returns the results of the query on the data
    */
-  public async queryData(
-    query: string,
-    from?: Date,
-    to?: Date,
-    data?: any
-  ): Promise<any> {
+  public queryData(query: string, from?: Date, to?: Date, data?: any): any {
     from = from ?? new Date(0);
     to = to ?? new Date();
-
-    await this.cacheRequiredData(query, from, to);
 
     if (!data) {
       data = this.entities;
@@ -119,7 +112,7 @@ export class QueryService {
     }).value;
   }
 
-  private async cacheRequiredData(query: string, from: Date, to: Date) {
+  async cacheRequiredData(query: string, from: Date, to: Date) {
     const uncachedEntities = this.getUncachedEntities(query, from, to);
     const dataPromises = uncachedEntities.map((entity) => {
       const info = this.entityInfo[entity.ENTITY_TYPE];
