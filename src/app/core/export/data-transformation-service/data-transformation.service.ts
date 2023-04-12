@@ -37,7 +37,7 @@ export class DataTransformationService {
     return combinedResults;
   }
 
-  concatQueries(config: ExportColumnConfig) {
+  private concatQueries(config: ExportColumnConfig) {
     return (config.subQueries ?? []).reduce(
       (query, c) => query + this.concatQueries(c),
       config.query
