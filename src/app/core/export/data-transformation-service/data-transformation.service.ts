@@ -6,7 +6,6 @@ import {
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../query.service";
 import { groupBy } from "../../../utils/utils";
-import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 
 /**
  * Prepare data for export or analysis
@@ -17,7 +16,6 @@ import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-
 export class DataTransformationService {
   constructor(private queryService: QueryService) {}
 
-  @PerformanceAnalysisLogging
   async queryAndTransformData(
     config: ExportColumnConfig[],
     from?: Date,
