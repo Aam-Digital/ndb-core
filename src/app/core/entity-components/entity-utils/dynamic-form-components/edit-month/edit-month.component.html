@@ -1,8 +1,8 @@
-<mat-form-field [formGroup]="parent">
+<mat-form-field>
   <mat-label>{{label}}</mat-label>
   <input
     matInput
-    [formControlName]="formControlName"
+    [formControl]="formControl"
     [matDatepicker]="datepickerComp"
   />
   <mat-datepicker-toggle
