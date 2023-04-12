@@ -86,6 +86,13 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.EditDateComponent),
   ],
   [
+    "EditMonth",
+    () =>
+      import(
+        "./entity-components/entity-utils/dynamic-form-components/edit-month/edit-month.component"
+      ).then((c) => c.EditMonthComponent),
+  ],
+  [
     "EditLongText",
     () =>
       import(
