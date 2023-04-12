@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { QueryService } from "../../core/export/query.service";
 import { GroupByDescription, ReportRow } from "./report-row";
 import { groupBy } from "../../utils/utils";
-import { ExportColumnConfig } from "../../core/export/data-transformation-service/export-column-config";
 
 export interface Aggregation {
   query: string;
@@ -20,30 +19,37 @@ export class DataAggregationService {
 
   constructor(private queryService: QueryService) {}
 
-  public calculateReport(
+  public async calculateReport(
     aggregations: Aggregation[],
     from?: Date,
     to?: Date
   ): Promise<ReportRow[]> {
     this.fromDate = from;
     this.toDate = to;
+    const fullQuery = aggregations.map((a) => this.concatQueries(a)).join("");
+    await this.queryService.cacheRequiredData(
+      fullQuery,
+      this.fromDate,
+      this.toDate
+    );
     return this.calculateAggregations(aggregations);
   }
 
-  private async calculateAggregations(
+  private concatQueries(config: Aggregation) {
+    return (config.aggregations ?? []).reduce(
+      (query, c) => query + this.concatQueries(c),
+      config.query
+    );
+  }
+
+  private calculateAggregations(
     aggregations: Aggregation[] = [],
     data?: any[],
     additionalValues: GroupByDescription[] = []
-  ): Promise<ReportRow[]> {
+  ): ReportRow[] {
     const resultRows: ReportRow[] = [];
     let currentSubRows = resultRows;
     for (const aggregation of aggregations) {
-      const fullQuery = this.concatQueries(aggregation);
-      await this.queryService.cacheRequiredData(
-        fullQuery,
-        this.fromDate,
-        this.toDate
-      );
       const queryResult = this.queryService.queryData(
         aggregation.query,
         this.fromDate,
@@ -65,42 +71,35 @@ export class DataAggregationService {
       }
       if (aggregation.aggregations) {
         currentSubRows.push(
-          ...(await this.calculateAggregations(
+          ...this.calculateAggregations(
             aggregation.aggregations,
             queryResult,
             additionalValues
-          ))
+          )
         );
       }
       if (aggregation.groupBy) {
         currentSubRows.push(
-          ...(await this.calculateGroupBy(
+          ...this.calculateGroupBy(
             aggregation.groupBy,
             aggregation.aggregations,
             aggregation.label,
             queryResult,
             additionalValues
-          ))
+          )
         );
       }
     }
     return resultRows;
   }
 
-  concatQueries(config: Aggregation) {
-    return (config.aggregations ?? []).reduce(
-      (query, c) => query + this.concatQueries(c),
-      config.query
-    );
-  }
-
-  private async calculateGroupBy(
+  private calculateGroupBy(
     properties: string[],
     aggregations: any[],
     label: string,
     data: any[],
     additionalValues: GroupByDescription[]
-  ): Promise<ReportRow[]> {
+  ): ReportRow[] {
     const resultRows: ReportRow[] = [];
     for (let i = properties.length; i > 0; i--) {
       const currentProperty = properties[i - 1];
@@ -120,20 +119,16 @@ export class DataAggregationService {
           subRows: [],
         };
         newRow.subRows.push(
-          ...(await this.calculateAggregations(
-            aggregations,
-            entries,
-            groupingValues
-          ))
+          ...this.calculateAggregations(aggregations, entries, groupingValues)
         );
         newRow.subRows.push(
-          ...(await this.calculateGroupBy(
+          ...this.calculateGroupBy(
             remainingProperties,
             aggregations,
             label,
             entries,
             groupingValues
-          ))
+          )
         );
         resultRows.push(newRow);
       }
