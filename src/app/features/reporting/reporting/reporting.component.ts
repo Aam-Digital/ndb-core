@@ -22,7 +22,6 @@ import { SelectReportComponent } from "./select-report/select-report.component";
 import { ReportRowComponent } from "./report-row/report-row.component";
 import { ObjectTableComponent } from "./object-table/object-table.component";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
-import { PerformanceAnalysisLogging } from "../../../utils/performance-analysis-logging";
 
 @RouteTarget("Reporting")
 @Component({
@@ -67,28 +66,30 @@ export class ReportingComponent implements OnInit {
   ) {
     this.loading = true;
     this.data = [];
-    // Trigger view change
+
+    // Wait for change detection
     await new Promise((res) => setTimeout(res));
 
     // Add one day because to date is exclusive
     const dayAfterToDate = moment(toDate).add(1, "day").toDate();
 
     if (selectedReport.mode === "exporting") {
-      this.createExport(
+      await this.createExport(
         selectedReport.aggregationDefinitions as ExportColumnConfig[],
         fromDate,
         dayAfterToDate
       );
     } else {
-      this.createReport(
+      await this.createReport(
         selectedReport.aggregationDefinitions as Aggregation[],
         fromDate,
         dayAfterToDate
       );
     }
+
+    this.loading = false;
   }
 
-  @PerformanceAnalysisLogging
   private async createExport(
     exportConfig: ExportColumnConfig[],
     fromDate: Date,
@@ -101,7 +102,6 @@ export class ReportingComponent implements OnInit {
     );
     this.exportableData = this.data;
     this.mode = "exporting";
-    this.loading = false;
   }
 
   private async createReport(
@@ -116,7 +116,6 @@ export class ReportingComponent implements OnInit {
     );
     this.exportableData = this.flattenReportRows();
     this.mode = "reporting";
-    this.loading = false;
   }
 
   private flattenReportRows(
