@@ -2,6 +2,7 @@ import { Injectable } from "@angular/core";
 import { QueryService } from "../../core/export/query.service";
 import { GroupByDescription, ReportRow } from "./report-row";
 import { groupBy } from "../../utils/utils";
+import { ExportColumnConfig } from "../../core/export/data-transformation-service/export-column-config";
 
 export interface Aggregation {
   query: string;
@@ -37,7 +38,13 @@ export class DataAggregationService {
     const resultRows: ReportRow[] = [];
     let currentSubRows = resultRows;
     for (const aggregation of aggregations) {
-      const queryResult = await this.queryService.queryData(
+      const fullQuery = this.concatQueries(aggregation);
+      await this.queryService.cacheRequiredData(
+        fullQuery,
+        this.fromDate,
+        this.toDate
+      );
+      const queryResult = this.queryService.queryData(
         aggregation.query,
         this.fromDate,
         this.toDate,
@@ -78,6 +85,13 @@ export class DataAggregationService {
       }
     }
     return resultRows;
+  }
+
+  concatQueries(config: Aggregation) {
+    return (config.aggregations ?? []).reduce(
+      (query, c) => query + this.concatQueries(c),
+      config.query
+    );
   }
 
   private async calculateGroupBy(
