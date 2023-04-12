@@ -28,7 +28,7 @@ describe("ObjectTableComponent", () => {
       { first: 2, second: 1 },
     ];
 
-    component.ngOnChanges({ objects: undefined });
+    component.ngOnInit();
 
     expect(component.columns).toEqual(["first", "second"]);
   });

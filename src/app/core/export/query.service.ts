@@ -113,6 +113,8 @@ export class QueryService {
   }
 
   async cacheRequiredData(query: string, from: Date, to: Date) {
+    from = from ?? new Date(0);
+    to = to ?? new Date();
     const uncachedEntities = this.getUncachedEntities(query, from, to);
     const dataPromises = uncachedEntities.map((entity) => {
       const info = this.entityInfo[entity.ENTITY_TYPE];

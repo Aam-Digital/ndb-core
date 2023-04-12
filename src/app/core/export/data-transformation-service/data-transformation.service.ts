@@ -25,10 +25,9 @@ export class DataTransformationService {
   ): Promise<ExportRow[]> {
     const combinedResults: ExportRow[] = [];
     for (const c of config) {
-      const fullQuery = this.concatQueries(c);
-      await this.queryService.cacheRequiredData(fullQuery, from, to);
+      await this.queryService.cacheRequiredData(c.query, from, to);
       const baseData = this.queryService.queryData(c.query, from, to);
-      const result = this.transformData(
+      const result = await this.transformData(
         baseData,
         c.subQueries,
         from,
@@ -56,13 +55,15 @@ export class DataTransformationService {
    * @param groupByProperty (optional) groups the data using the value at the given property and adds a column to the final table.
    * @returns array with the result of the queries and sub queries
    */
-  transformData(
+  async transformData(
     data: any[],
     config: ExportColumnConfig[],
     from?: Date,
     to?: Date,
     groupByProperty?: { label: string; property: string }
-  ): ExportRow[] {
+  ): Promise<ExportRow[]> {
+    const fullQuery = config.map((c) => this.concatQueries(c)).join("");
+    await this.queryService.cacheRequiredData(fullQuery, from, to);
     return this.generateRows(data, config, from, to, groupByProperty).map(
       transformToReadableFormat
     );
