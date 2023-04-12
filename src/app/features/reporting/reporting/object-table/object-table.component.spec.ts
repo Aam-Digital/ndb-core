@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ObjectTableComponent } from "./object-table.component";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("ObjectTableComponent", () => {
   let component: ObjectTableComponent;
@@ -8,14 +9,13 @@ describe("ObjectTableComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ObjectTableComponent],
+      imports: [ObjectTableComponent, NoopAnimationsModule],
     }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ObjectTableComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it("should create", () => {
@@ -28,7 +28,7 @@ describe("ObjectTableComponent", () => {
       { first: 2, second: 1 },
     ];
 
-    component.ngOnInit();
+    fixture.detectChanges();
 
     expect(component.columns).toEqual(["first", "second"]);
   });

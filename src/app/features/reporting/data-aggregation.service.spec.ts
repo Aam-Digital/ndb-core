@@ -17,7 +17,7 @@ describe("DataAggregationService", () => {
   let service: DataAggregationService;
   let mockQueryService: jasmine.SpyObj<QueryService>;
   beforeEach(() => {
-    mockQueryService = jasmine.createSpyObj(["queryData"]);
+    mockQueryService = jasmine.createSpyObj(["queryData", "cacheRequiredData"]);
     TestBed.configureTestingModule({
       providers: [{ provide: QueryService, useValue: mockQueryService }],
     });
@@ -41,9 +41,9 @@ describe("DataAggregationService", () => {
     };
     const baseData = [new School()];
     mockQueryService.queryData.and.returnValues(
-      Promise.resolve(baseData),
-      Promise.resolve([new School()]),
-      Promise.resolve([new School(), new School()])
+      baseData,
+      [new School()],
+      [new School(), new School()]
     );
 
     const report = await service.calculateReport([childDisaggregation]);
@@ -110,11 +110,11 @@ describe("DataAggregationService", () => {
     mockQueryService.queryData.and.callFake((query) => {
       switch (query) {
         case baseQuery:
-          return Promise.resolve(baseData);
+          return baseData;
         case nestedBaseQuery:
-          return Promise.resolve(nestedData);
+          return nestedData;
         default:
-          return Promise.resolve([new School()]);
+          return [new School()];
       }
     });
     const result = await service.calculateReport([aggregation]);
@@ -163,7 +163,7 @@ describe("DataAggregationService", () => {
     maleChild.gender = genders[1];
     const femaleChild = new Child();
     femaleChild.gender = genders[2];
-    mockQueryService.queryData.and.resolveTo([
+    mockQueryService.queryData.and.returnValue([
       femaleChild,
       maleChild,
       maleChild,
@@ -206,7 +206,7 @@ describe("DataAggregationService", () => {
     maleChild.gender = genders[1];
     const femaleChild = new Child();
     femaleChild.gender = genders[2];
-    mockQueryService.queryData.and.resolveTo([
+    mockQueryService.queryData.and.returnValue([
       maleChild,
       femaleChild,
       maleChild,
@@ -292,7 +292,7 @@ describe("DataAggregationService", () => {
     femaleChristianAlipore.gender = genders[2];
     femaleChristianAlipore["religion"] = "christian";
     femaleChristianAlipore.center = alipore;
-    mockQueryService.queryData.and.resolveTo([
+    mockQueryService.queryData.and.returnValue([
       femaleChristianAlipore,
       maleChristianAlipore,
       femaleChristianBarabazar,
@@ -526,7 +526,7 @@ describe("DataAggregationService", () => {
     const maleMuslim = new Child();
     maleMuslim.gender = genders[1];
     maleMuslim["religion"] = "muslim";
-    mockQueryService.queryData.and.resolveTo([
+    mockQueryService.queryData.and.returnValue([
       femaleChristian,
       femaleMuslim,
       maleMuslim,
