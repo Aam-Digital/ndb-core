@@ -7,7 +7,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
-import * as _ from "lodash-es";
+import { omit } from "lodash-es";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -45,7 +45,7 @@ export class EntityFormService {
         this.addFormFields(formField, entityType, forTable);
       } catch (err) {
         throw new Error(
-          `Could not create form config for ${formField.id}\: ${err}`
+          `Could not create form config for ${formField.id}: ${err}`
         );
       }
     });
@@ -64,6 +64,7 @@ export class EntityFormService {
       formField.view ||
       this.entitySchemaService.getComponent(propertySchema, "view");
     formField.tooltip = formField.tooltip || propertySchema?.description;
+    formField.additional = formField.additional || propertySchema?.additional;
     if (forTable) {
       formField.forTable = true;
       formField.label =
@@ -93,10 +94,11 @@ export class EntityFormService {
     this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
     const formConfig = {};
     const entitySchema = entity.getSchema();
+    const copy = entity.copy();
     formFields
       .filter((formField) => entitySchema.get(formField.id))
       .forEach((formField) => {
-        formConfig[formField.id] = [entity[formField.id]];
+        formConfig[formField.id] = [copy[formField.id]];
         if (formField.validators) {
           const validators = this.dynamicValidator.buildValidators(
             formField.validators
@@ -157,7 +159,7 @@ export class EntityFormService {
     // Patch form with values from the entity
     form.patchValue(entity as any);
     // Clear values that are not yet present on the entity
-    const newKeys = Object.keys(_.omit(form.controls, Object.keys(entity)));
+    const newKeys = Object.keys(omit(form.controls, Object.keys(entity)));
     newKeys.forEach((key) => form.get(key).setValue(null));
     form.markAsPristine();
   }

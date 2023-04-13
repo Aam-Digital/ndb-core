@@ -29,4 +29,11 @@ export const attendanceComponents: ComponentTuple[] = [
         "./dashboard-widgets/attendance-week-dashboard/attendance-week-dashboard.component"
       ).then((c) => c.AttendanceWeekDashboardComponent),
   ],
+  [
+    "EditAttendance",
+    () =>
+      import("./edit-attendance/edit-attendance.component").then(
+        (c) => c.EditAttendanceComponent
+      ),
+  ],
 ];

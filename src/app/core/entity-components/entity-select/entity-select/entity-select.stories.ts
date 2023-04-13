@@ -3,7 +3,6 @@ import { moduleMetadata } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { BackupService } from "../../../admin/services/backup.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { BehaviorSubject } from "rxjs";
 import { EntitySelectComponent } from "./entity-select.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { School } from "../../../../child-dev-project/schools/model/school";
@@ -19,24 +18,12 @@ import { ChildrenService } from "../../../../child-dev-project/children/children
 const child1 = new Child();
 child1.name = "First Child";
 child1.projectNumber = "1";
-child1.photo = {
-  path: "",
-  photo: new BehaviorSubject("assets/child.png"),
-};
 const child2 = new Child();
 child2.name = "Second Child";
 child2.projectNumber = "2";
-child2.photo = {
-  path: "",
-  photo: new BehaviorSubject("assets/child.png"),
-};
 const child3 = new Child();
 child3.name = "Third Child";
 child3.projectNumber = "3";
-child3.photo = {
-  path: "",
-  photo: new BehaviorSubject("assets/child.png"),
-};
 
 export default {
   title: "Core/EntityComponents/EntitySelect",

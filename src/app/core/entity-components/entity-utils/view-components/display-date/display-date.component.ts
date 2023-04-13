@@ -1,26 +1,19 @@
 import { Component } from "@angular/core";
-import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
 import { ViewDirective } from "../view.directive";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { DatePipe } from "@angular/common";
 
 /**
  * This component displays a date attribute using the shortDate format.
+ *
+ * Format of the date can be adjusted through config.
+ * E.g. `"config": "yyyy-MM-dd
  */
 @DynamicComponent("DisplayDate")
 @Component({
   selector: "app-display-date",
-  template: `{{ value | date : format }}`,
+  template: `{{ value | date : config }}`,
   standalone: true,
   imports: [DatePipe],
 })
-export class DisplayDateComponent extends ViewDirective<Date> {
-  format = "yyyy-MM-dd";
-
-  onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    super.onInitFromDynamicConfig(config);
-    if (config.config && typeof config.config === "string") {
-      this.format = config.config;
-    }
-  }
-}
+export class DisplayDateComponent extends ViewDirective<Date, string> {}

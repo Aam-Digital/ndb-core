@@ -27,7 +27,6 @@ describe("BmiBlockComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(BmiBlockComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it("should create", () => {
@@ -56,11 +55,9 @@ describe("BmiBlockComponent", () => {
       healthCheck2,
       healthCheck3,
     ]);
-    component.onInitFromDynamicConfig({
-      entity: testChild,
-      id: "",
-      value: undefined,
-    });
+    component.entity = testChild;
+    fixture.detectChanges();
+
     expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
       testChild.getId()
     );

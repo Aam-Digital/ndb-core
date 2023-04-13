@@ -85,7 +85,7 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy enum values and display label", async () => {
     const testGroupBy = "test";
-    component.onInitFromDynamicConfig({ groupBy: testGroupBy });
+    component.groupBy = testGroupBy;
 
     const children = [new Child(), new Child(), new Child(), new Child()];
     const c1: ConfigurableEnumValue = { label: "foo", id: "01" };
@@ -122,12 +122,9 @@ describe("EntityCountDashboardComponent", () => {
     ra3.type = type2;
     const entity = RecurringActivity;
     entityMapper.addAll([ra1, ra2, ra3]);
-    const groupBy = "type";
 
-    component.onInitFromDynamicConfig({
-      entity: RecurringActivity.ENTITY_TYPE,
-      groupBy,
-    });
+    component.entity = RecurringActivity.ENTITY_TYPE;
+    component.groupBy = "type";
     component.ngOnInit();
 
     expect(entityMapper.loadType).toHaveBeenCalledWith(entity);

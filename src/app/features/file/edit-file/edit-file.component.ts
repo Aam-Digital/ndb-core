@@ -1,8 +1,5 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
-import {
-  EditComponent,
-  EditPropertyConfig,
-} from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { LoggingService } from "../../../core/logging/logging.service";
@@ -45,7 +42,7 @@ export class EditFileComponent extends EditComponent<string> {
   private initialValue: string;
 
   constructor(
-    private fileService: FileService,
+    protected fileService: FileService,
     private alertService: AlertService,
     private logger: LoggingService,
     private entityMapper: EntityMapperService
@@ -53,8 +50,8 @@ export class EditFileComponent extends EditComponent<string> {
     super();
   }
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<string>) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
+    super.ngOnInit();
     this.initialValue = this.formControl.value;
     this.formControl.statusChanges
       .pipe(
@@ -66,22 +63,23 @@ export class EditFileComponent extends EditComponent<string> {
           this.selectedFile &&
           this.selectedFile.name === this.formControl.value
         ) {
-          this.uploadFile(this.selectedFile);
+          this.saveNewFile(this.selectedFile);
         } else if (this.removeClicked && !this.formControl.value) {
-          this.removeFile();
+          this.deleteExistingFile();
+        } else {
+          this.resetFile();
         }
       });
   }
 
-  async onFileSelected(event) {
-    const file: File = event.target.files[0];
+  async onFileSelected(file: File) {
     // directly reset input so subsequent selections with the same name also trigger the change event
     this.fileInput.nativeElement.value = "";
     this.selectedFile = file;
     this.formControl.setValue(file.name);
   }
 
-  private uploadFile(file: File) {
+  protected saveNewFile(file: File) {
     // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
     this.fileService
       .uploadFile(file, this.entity, this.formControlName)
@@ -122,7 +120,7 @@ export class EditFileComponent extends EditComponent<string> {
     this.removeClicked = !!this.initialValue;
   }
 
-  private removeFile() {
+  protected deleteExistingFile() {
     this.fileService
       .removeFile(this.entity, this.formControlName)
       .subscribe(() => {
@@ -132,5 +130,9 @@ export class EditFileComponent extends EditComponent<string> {
         this.initialValue = undefined;
         this.removeClicked = false;
       });
+  }
+
+  protected resetFile() {
+    this.selectedFile = undefined;
   }
 }

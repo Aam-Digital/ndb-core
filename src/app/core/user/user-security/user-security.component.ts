@@ -1,6 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
-import { OnInitDynamicComponent } from "../../view/dynamic-components/on-init-dynamic-component.interface";
 import {
   FormBuilder,
   FormControl,
@@ -14,7 +13,6 @@ import {
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { AuthService } from "../../session/auth/auth.service";
 import { User } from "../user";
-import { PanelConfig } from "../../entity-components/entity-details/EntityDetailsConfig";
 import { AlertService } from "../../alerts/alert.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { HttpClient } from "@angular/common/http";
@@ -45,7 +43,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   ],
   standalone: true,
 })
-export class UserSecurityComponent implements OnInitDynamicComponent {
+export class UserSecurityComponent implements OnInit {
+  @Input() entity: User;
   form = this.fb.group({
     username: [{ value: "", disabled: true }],
     email: ["", [Validators.required, Validators.email]],
@@ -98,11 +97,10 @@ export class UserSecurityComponent implements OnInitDynamicComponent {
     }
   }
 
-  onInitFromDynamicConfig(config: PanelConfig) {
-    const user = config.entity as User;
-    this.form.get("username").setValue(user.name);
+  ngOnInit() {
+    this.form.get("username").setValue(this.entity.name);
     if (this.keycloak) {
-      this.keycloak.getUser(user.name).subscribe({
+      this.keycloak.getUser(this.entity.name).subscribe({
         next: (res) => this.assignUser(res),
         error: () => undefined,
       });

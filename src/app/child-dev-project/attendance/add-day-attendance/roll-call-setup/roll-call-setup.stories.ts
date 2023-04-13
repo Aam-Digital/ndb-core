@@ -1,6 +1,5 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import { addDefaultChildPhoto } from "../../../../../../.storybook/utils/addDefaultChildPhoto";
 import { moduleMetadata } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
@@ -32,7 +31,6 @@ const demoChildren = [
   DemoChildGenerator.generateEntity("2"),
   DemoChildGenerator.generateEntity("3"),
 ];
-demoChildren.forEach((c) => addDefaultChildPhoto(c));
 demoChildren.forEach((c) => demoEvent.addChild(c.getId()));
 
 const demoActivities = [

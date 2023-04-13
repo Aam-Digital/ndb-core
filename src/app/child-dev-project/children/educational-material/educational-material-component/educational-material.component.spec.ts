@@ -34,7 +34,7 @@ describe("EducationalMaterialComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);
     component = fixture.componentInstance;
-    component.child = child;
+    component.entity = child;
     fixture.detectChanges();
   });
 
@@ -85,7 +85,8 @@ describe("EducationalMaterialComponent", () => {
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
       educationalData
     );
-    await component.loadData("22");
+    component.entity = new Child("22");
+    await component.ngOnInit();
     expect(component.summary).toEqual(`${PENCIL.label}: 1, ${RULER.label}: 2`);
     expect(component.records).toEqual(educationalData);
   });

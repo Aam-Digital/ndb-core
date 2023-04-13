@@ -1,4 +1,4 @@
-<input type="file" style="display: none" (change)="onFileSelected($event)" #fileUpload>
+<input type="file" style="display: none" (change)="onFileSelected($event.target['files'][0])" #fileUpload>
 
 <mat-form-field [ngClass]="{ clickable: formControl.value}" (click)="formClicked()">
   <mat-label>{{ label }}</mat-label>

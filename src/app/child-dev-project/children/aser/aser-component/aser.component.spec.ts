@@ -28,7 +28,7 @@ describe("AserComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(AserComponent);
     component = fixture.componentInstance;
-    component.child = new Child("22");
+    component.entity = new Child("22");
     fixture.detectChanges();
   });
 
