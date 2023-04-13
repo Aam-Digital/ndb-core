@@ -26,7 +26,7 @@ export class EditDateComponent extends EditComponent<Date> implements OnInit {
     super.ngOnInit();
     if (this.entity._rev === undefined && // the entity is new (i.e. the revision is undefined)
       this.formControl.value === null && // we should start with the current date
-      this.propertySchema.defaultValue === "now"
+      this.propertySchema.defaultValue === "$now"
     ) {
       this.formControl.setValue(new Date())
     }

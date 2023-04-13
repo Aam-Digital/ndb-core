@@ -27,7 +27,7 @@ describe("EditDateComponent", () => {
 
   it("Should have the date set to the current date when the relevant property is set in the property scheme", () => {
     setupEditComponent(component, "testProperty", {
-      defaultValue: "now",
+      defaultValue: "$now",
     });
     fixture.detectChanges();
     expect(

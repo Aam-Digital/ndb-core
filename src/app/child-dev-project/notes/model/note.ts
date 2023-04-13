@@ -89,7 +89,7 @@ export class Note extends Entity {
   @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField({ label: $localize`:Label for the date of a note:Date`, defaultValue: "now" })
+  @DatabaseField({ label: $localize`:Label for the date of a note:Date`, defaultValue: "$now" })
   date: Date;
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
   subject: string = "";
@@ -103,7 +103,7 @@ export class Note extends Entity {
     label: $localize`:Label for the social worker(s) who created the note:SW`,
     dataType: "entity-array",
     additional: User.ENTITY_TYPE,
-    defaultValue: "current_user"
+    defaultValue: "$current_user"
   })
   authors: string[] = [];
 

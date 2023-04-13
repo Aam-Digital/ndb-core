@@ -68,7 +68,7 @@ export class Todo extends Entity {
     dataType: "entity-array",
     additional: User.ENTITY_TYPE,
     showInDetailsView: true,
-    defaultValue: "current_user"
+    defaultValue: "$current_user"
   })
   assignedTo: string[] = [];
 

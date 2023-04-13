@@ -272,7 +272,7 @@ export class PouchDatabase extends Database {
           pouchDB
             .changes({
               live: true,
-              since: "now",
+              since: "$now",
               include_docs: true,
             })
             .addListener("change", (change) =>

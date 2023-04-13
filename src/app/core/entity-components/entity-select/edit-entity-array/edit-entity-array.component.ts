@@ -34,7 +34,7 @@ export class EditEntityArrayComponent extends EditComponent<string[]> {
       this.entityName === User.ENTITY_TYPE &&
       this.entity._rev === undefined &&
       this.formControl.value.length === 0 &&
-      this.propertySchema.defaultValue === "current_user"
+      this.propertySchema.defaultValue === "$current_user"
     ) {
       const user = this.sessionService.getCurrentUser();
       this.formControl.setValue([user.name]);
