@@ -19,8 +19,6 @@ describe("EditDateComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditDateComponent);
     component = fixture.componentInstance;
-    setupEditComponent(component);
-    fixture.detectChanges();
   });
 
   it("should create", () => {
@@ -29,9 +27,7 @@ describe("EditDateComponent", () => {
 
   it("Should have the date set to the current date when the relevant property is set in the property scheme", () => {
     setupEditComponent(component, "testProperty", {
-      additional: {
-        startWithNow: true,
-      },
+      defaultValue: "now",
     });
     fixture.detectChanges();
     expect(
@@ -41,6 +37,8 @@ describe("EditDateComponent", () => {
 
   it("Should not start of with a default date by default", () => {
     // No setup required; this is the default case
+    setupEditComponent(component);
+    fixture.detectChanges();
     expect(component.formControl.value).toBeFalsy();
   });
 });
