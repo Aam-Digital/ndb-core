@@ -1,15 +1,23 @@
-import { SelectableFilter } from "./filter-selection";
+import { SelectableFilter } from "./filters";
 import { FilterService } from "../filter.service";
 
-describe("FilterSelection", () => {
+describe("Filters", () => {
   const filterService = new FilterService(undefined);
   it("create an instance", () => {
-    const fs = new SelectableFilter("", []);
+    const fs = new SelectableFilter(
+      "",
+      [{ key: "", label: "", filter: "" }],
+      ""
+    );
     expect(fs).toBeTruthy();
   });
 
   it("init new options", () => {
-    const fs = new SelectableFilter("", []);
+    const fs = new SelectableFilter(
+      "",
+      [{ key: "", label: "", filter: "" }],
+      ""
+    );
 
     const keys = ["x", "y"];
     fs.options = SelectableFilter.generateOptions(keys, "category");

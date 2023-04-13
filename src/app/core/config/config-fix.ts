@@ -215,6 +215,31 @@ export const defaultJsonConfig = {
         },
         {
           "id": "date",
+          "default": 3,
+          "options": [
+            {
+              label: $localize`:Filter label:Today`,
+            },
+            {
+              startOffsets: [{ amount: 0, unit: "weeks" }],
+              endOffsets: [{ amount: 0, unit: "weeks" }],
+              label: $localize`:Filter label:This week`,
+            },
+            {
+              startOffsets: [{ amount: 1, unit: "weeks" }],
+              label: $localize`:Filter label:Since last week`,
+            },
+            {
+              startOffsets: [{ amount: 0, unit: "months" }],
+              endOffsets: [{ amount: 0, unit: "months" }],
+              label: $localize`:Filter label:This month`,
+            },
+            {
+              startOffsets: [{ amount: 1, unit: "months" }],
+              endOffsets: [{ amount: -1, unit: "months" }],
+              label: $localize`:Filter label:Last month`,
+            },
+          ]
         },
         {
           "id": "category"

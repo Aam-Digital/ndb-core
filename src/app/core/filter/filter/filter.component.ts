@@ -16,7 +16,7 @@ import { ListFilterComponent } from "../list-filter/list-filter.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { DateRangeFilterComponent } from "../date-range-filter/date-range-filter.component";
-import { Filter } from "../filter-selection/filter-selection";
+import { Filter } from "../filters/filters";
 
 /**
  * This component can be used to display filters, for example above tables.

@@ -36,7 +36,6 @@ const defaultOptions: DateRangeFilterConfigOption[] = [
   {
     startOffsets: [{ amount: 0, unit: "months" }],
     endOffsets: [{ amount: 0, unit: "months" }],
-
     label: $localize`:Filter label:This month`,
   },
   {

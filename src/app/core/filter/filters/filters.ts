@@ -160,6 +160,7 @@ export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
     );
   }
 }
+
 export class ConfigurableEnumFilter<
   T extends Entity
 > extends SelectableFilter<T> {

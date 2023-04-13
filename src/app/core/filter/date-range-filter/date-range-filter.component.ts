@@ -3,11 +3,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { DataFilter } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "app/core/entity/model/entity";
 import moment from "moment";
-import {
-  DateFilter,
-  Filter,
-  FilterSelectionOption,
-} from "../filter-selection/filter-selection";
+import { DateFilter, Filter, FilterSelectionOption } from "../filters/filters";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -35,7 +31,6 @@ export class DateRangeFilterComponent<T extends Entity> {
   constructor(private dialog: MatDialog) {}
 
   apply() {
-    console.log("Peter apply aufgerufen");
     let option: FilterSelectionOption<T> = {
       key: "custom",
       label: "custom",
