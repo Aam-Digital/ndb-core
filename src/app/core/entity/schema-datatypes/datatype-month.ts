@@ -28,8 +28,7 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  */
 export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "month",
-  // Property schemas should have `additional: "YYYY-MM"` to properly display the month
-  viewComponent: "DisplayDate",
+  viewComponent: "DisplayMonth",
   editComponent: "EditMonth",
 
   transformToDatabaseFormat: (value) => {

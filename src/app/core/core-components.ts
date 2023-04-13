@@ -135,6 +135,13 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.DisplayDateComponent),
   ],
   [
+    "DisplayMonth",
+    () =>
+      import(
+        "./entity-components/entity-utils/view-components/display-month/display-month.component"
+      ).then((c) => c.DisplayMonthComponent),
+  ],
+  [
     "ReadonlyFunction",
     () =>
       import(
