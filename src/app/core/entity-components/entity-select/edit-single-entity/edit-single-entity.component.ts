@@ -9,6 +9,8 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
+import { User } from "../../../user/user";
+import { SessionService } from "../../../session/session-service/session.service";
 
 @DynamicComponent("EditSingleEntity")
 @Component({
@@ -29,7 +31,7 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   entities: Entity[] = [];
   entityToId = (e: Entity) => e?.getId();
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(private entityMapperService: EntityMapperService, private sessionService: SessionService) {
     super();
   }
 
@@ -39,5 +41,14 @@ export class EditSingleEntityComponent extends EditComponent<string> {
       this.formFieldConfig.additional || this.propertySchema.additional;
     this.entities = await this.entityMapperService.loadType(entityType);
     this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
+    if (
+      entityType === User.ENTITY_TYPE &&
+      this.entity._rev === undefined &&
+      this.formControl.value === null &&
+      this.propertySchema.defaultValue === "current_user"
+    ) {
+      const user = this.sessionService.getCurrentUser();
+      this.formControl.setValue(user.name);
+    }
   }
 }
