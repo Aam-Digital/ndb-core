@@ -85,7 +85,7 @@ export class Child extends Entity {
   @DatabaseField({
     label: $localize`:Label for the status of a child:Status`,
   })
-  status: string = "";
+  status: string;
 
   @DatabaseField({
     label: $localize`:Label for the dropout date of a child:Dropout Date`,
