@@ -34,6 +34,8 @@ describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
   let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
 
+  const defaultTestColumns = ["x", "name", "label"];
+
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [EntitySubrecordComponent, MockedTestingModule.withState()],
@@ -51,6 +53,7 @@ describe("EntitySubrecordComponent", () => {
     fixture = TestBed.createComponent(EntitySubrecordComponent);
     component = fixture.componentInstance;
     component.editable = false;
+    component.columns = defaultTestColumns;
     fixture.detectChanges();
   });
 
@@ -167,9 +170,11 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should sort strings ignoring case", () => {
-    const names = ["C", "b", "A"];
+    const names = ["C", "A", "b"];
     component.records = names.map((name) => Child.create(name));
     component.ngOnChanges({ records: undefined });
+    component.sort.sort({ id: "resetSort", start: "asc", disableClear: false });
+
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
 
     const sortedNames = component.recordsDataSource
@@ -278,7 +283,10 @@ describe("EntitySubrecordComponent", () => {
 
     component.create();
 
-    expect(dialog.openFormPopup).toHaveBeenCalledWith(child, []);
+    expect(dialog.openFormPopup).toHaveBeenCalledWith(
+      child,
+      defaultTestColumns.map((x) => ({ id: x }))
+    );
   });
 
   it("should notify when an entity is clicked", (done) => {
@@ -297,7 +305,7 @@ describe("EntitySubrecordComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     component.newRecordFactory = () => new Entity();
     component.records = [];
-    component.ngOnChanges({});
+    component.ngOnChanges({ records: undefined, newRecordFactory: undefined });
 
     const entity = new Entity();
     entityUpdates.next({ entity: entity, type: "new" });
@@ -311,7 +319,7 @@ describe("EntitySubrecordComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     const entity = new Entity();
     component.records = [entity];
-    component.ngOnChanges({});
+    component.ngOnChanges({ records: undefined });
 
     expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
 
@@ -323,6 +331,8 @@ describe("EntitySubrecordComponent", () => {
   it("does not change the size of it's records when not saving a new record", async () => {
     const entity = new Entity();
     component.records = [entity];
+    component.ngOnChanges({ records: undefined });
+
     await component.save({ record: entity });
     expect(component.recordsDataSource.data).toHaveSize(1);
   });
@@ -354,6 +364,7 @@ describe("EntitySubrecordComponent", () => {
     childComponent.records = [c1, c2, c3];
 
     childComponent.filter = { name: "Matching" };
+    childComponent.ngOnChanges({ records: undefined, filter: undefined });
 
     expect(childComponent.recordsDataSource.data).toEqual([
       { record: c1 },
@@ -364,6 +375,7 @@ describe("EntitySubrecordComponent", () => {
       name: "Matching",
       "dateOfBirth.age": { $gte: 2 },
     } as any;
+    childComponent.ngOnChanges({ filter: undefined });
 
     expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
 
@@ -372,6 +384,7 @@ describe("EntitySubrecordComponent", () => {
     const c5 = Child.create("Not Matching");
 
     childComponent.records = [c1, c2, c3, c4, c5];
+    childComponent.ngOnChanges({ records: undefined });
 
     expect(childComponent.recordsDataSource.data).toEqual([
       { record: c3 },
@@ -387,7 +400,7 @@ describe("EntitySubrecordComponent", () => {
     tick();
     component.records = [child];
     component.filter = { "gender.id": genders[1].id } as any;
-    component.ngOnChanges({});
+    component.ngOnChanges({ records: undefined, filter: undefined });
 
     expect(component.recordsDataSource.data).toEqual([{ record: child }]);
 
