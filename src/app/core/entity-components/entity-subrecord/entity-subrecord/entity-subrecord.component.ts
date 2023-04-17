@@ -276,10 +276,11 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private sortDefault() {
-    if (!(this.records?.length > 0)) {
-      return;
-    }
-    if (this._columns.length === 0 || this.sort.active) {
+    if (
+      this.records.length === 0 ||
+      this._columns.length === 0 ||
+      this.sort.active
+    ) {
       // do not overwrite existing sort
       return;
     }
