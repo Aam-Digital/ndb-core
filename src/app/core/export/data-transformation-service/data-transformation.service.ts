@@ -23,7 +23,8 @@ export class DataTransformationService {
   ): Promise<ExportRow[]> {
     const combinedResults: ExportRow[] = [];
     for (const c of config) {
-      const baseData = await this.queryService.queryData(c.query, from, to);
+      await this.queryService.cacheRequiredData(c.query, from, to);
+      const baseData = this.queryService.queryData(c.query, from, to);
       const result = await this.transformData(
         baseData,
         c.subQueries,
@@ -36,6 +37,13 @@ export class DataTransformationService {
     return combinedResults;
   }
 
+  private concatQueries(config: ExportColumnConfig) {
+    return (config.subQueries ?? []).reduce(
+      (query, c) => query + this.concatQueries(c),
+      config.query
+    );
+  }
+
   /**
    * Creates a dataset with the provided values that can be used for a simple table or export.
    * @param data an array of elements. If not provided, the first query in `config` will be used to get the data.
@@ -45,19 +53,21 @@ export class DataTransformationService {
    * @param groupByProperty (optional) groups the data using the value at the given property and adds a column to the final table.
    * @returns array with the result of the queries and sub queries
    */
-  transformData(
+  async transformData(
     data: any[],
     config: ExportColumnConfig[],
     from?: Date,
     to?: Date,
     groupByProperty?: { label: string; property: string }
   ): Promise<ExportRow[]> {
-    return this.generateRows(data, config, from, to, groupByProperty).then(
-      (res) => res.map(transformToReadableFormat)
+    const fullQuery = config.map((c) => this.concatQueries(c)).join("");
+    await this.queryService.cacheRequiredData(fullQuery, from, to);
+    return this.generateRows(data, config, from, to, groupByProperty).map(
+      transformToReadableFormat
     );
   }
 
-  private async generateRows(
+  private generateRows(
     data: any[],
     config: ExportColumnConfig[],
     from: Date,
@@ -72,7 +82,7 @@ export class DataTransformationService {
           label: groupByProperty.label,
           query: `:setString(${getReadableValue(group)})`,
         };
-        const rows = await this.generateColumnsForRow(
+        const rows = this.generateColumnsForRow(
           values,
           [groupColumn].concat(...config),
           from,
@@ -82,12 +92,7 @@ export class DataTransformationService {
       }
     } else {
       for (const dataRow of data) {
-        const rows = await this.generateColumnsForRow(
-          dataRow,
-          config,
-          from,
-          to
-        );
+        const rows = this.generateColumnsForRow(dataRow, config, from, to);
         result.push(...rows);
       }
     }
@@ -103,16 +108,20 @@ export class DataTransformationService {
    * @returns array of one or more export row objects (as simple {key: value})
    * @private
    */
-  private async generateColumnsForRow(
+  private generateColumnsForRow(
     data: any | any[],
     config: ExportColumnConfig[],
     from: Date,
     to: Date
-  ): Promise<ExportRow[]> {
+  ): ExportRow[] {
     let exportRows: ExportRow[] = [{}];
     for (const exportColumnConfig of config) {
-      const partialExportObjects: ExportRow[] =
-        await this.buildValueRecursively(data, exportColumnConfig, from, to);
+      const partialExportObjects = this.buildValueRecursively(
+        data,
+        exportColumnConfig,
+        from,
+        to
+      );
 
       exportRows = this.mergePartialExportRows(
         exportRows,
@@ -130,20 +139,15 @@ export class DataTransformationService {
    * @param to
    * @private
    */
-  private async buildValueRecursively(
+  private buildValueRecursively(
     data: any | any[],
     exportColumnConfig: ExportColumnConfig,
     from: Date,
     to: Date
-  ): Promise<ExportRow[]> {
+  ): ExportRow[] {
     const label =
       exportColumnConfig.label ?? exportColumnConfig.query.replace(".", "");
-    const value = await this.getValueForQuery(
-      exportColumnConfig,
-      data,
-      from,
-      to
-    );
+    const value = this.getValueForQuery(exportColumnConfig, data, from, to);
 
     if (!exportColumnConfig.subQueries) {
       return [{ [label]: value }];
@@ -165,13 +169,13 @@ export class DataTransformationService {
     }
   }
 
-  private async getValueForQuery(
+  private getValueForQuery(
     exportColumnConfig: ExportColumnConfig,
     data: any | any[],
     from: Date,
     to: Date
-  ): Promise<any> {
-    const value = await this.queryService.queryData(
+  ): any {
+    const value = this.queryService.queryData(
       exportColumnConfig.query,
       from,
       to,
