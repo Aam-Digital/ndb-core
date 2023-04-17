@@ -885,77 +885,7 @@ export const defaultJsonConfig = {
               ]
             },
           ],
-        }, {
-          "title": "Participant Details Report (pseudonymized)",
-          "mode": "exporting",
-          "aggregationDefinitions": [
-            {
-              "query": "EventNote:toArray[* date >= ? & date <= ?]",
-              "subQueries": [
-                {
-                  "label": "event_id",
-                  "query": "_id"
-                },
-                {
-                  "label": "date",
-                  "query": "date"
-                },
-                {
-                  "label": "event title",
-                  "query": "subject"
-                },
-                {
-                  "label": "event type",
-                  "query": "category"
-                },
-                {
-                  "label": "event description",
-                  "query": "text"
-                },
-                {
-                  "query": ":getAttendanceArray(true)",
-                  "subQueries": [
-                    {
-                      "query": ".participant:toEntities(Child)",
-                      "subQueries": [
-                        {
-                          "label": "participant_id",
-                          "query": "_id"
-                        },
-                        {
-                          "label": "gender",
-                          "query": "gender"
-                        },
-                        {
-                          "label": "age",
-                          "query": "dateOfBirth.age"
-                        }
-                      ]
-                    },
-                    {
-                      "query": ".school:toEntities(School)",
-                      "subQueries": [
-                        {
-                          "label": "team_name",
-                          "query": "name"
-                        },
-                        {
-                          "label": "team_id",
-                          "query": "entityId"
-                        },
-                      ]
-                    },
-                    {
-                      "label": "status",
-                      "query": ".status._status.id"
-                    }
-                  ]
-                }
-              ]
-            }
-          ]
         },
-
       ]
     }
   },
