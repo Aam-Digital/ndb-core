@@ -116,7 +116,7 @@ export class DataTransformationService {
   ): ExportRow[] {
     let exportRows: ExportRow[] = [{}];
     for (const exportColumnConfig of config) {
-      const partialExportObjects: ExportRow[] = this.buildValueRecursively(
+      const partialExportObjects = this.buildValueRecursively(
         data,
         exportColumnConfig,
         from,
