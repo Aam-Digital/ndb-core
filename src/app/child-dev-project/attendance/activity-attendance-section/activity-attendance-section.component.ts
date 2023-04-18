@@ -45,8 +45,7 @@ export class ActivityAttendanceSectionComponent implements OnInit {
     {
       id: "periodFrom",
       label: $localize`:The month something took place:Month`,
-      view: "DisplayDate",
-      additional: "YYYY-MM",
+      view: "DisplayMonth",
     },
     {
       id: "presentEvents",
