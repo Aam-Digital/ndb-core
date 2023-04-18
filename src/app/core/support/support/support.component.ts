@@ -44,7 +44,7 @@ export class SupportComponent implements OnInit {
     @Inject(LOCATION_TOKEN) private location: Location
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.currentUser = this.sessionService.getCurrentUser();
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
@@ -52,7 +52,7 @@ export class SupportComponent implements OnInit {
     this.initLastRemoteLogin();
     this.initStorageInfo();
     this.initSwStatus();
-    this.initDbInfo();
+    return this.initDbInfo();
   }
 
   private initCurrentSyncState() {
@@ -103,7 +103,7 @@ export class SupportComponent implements OnInit {
   }
 
   private initDbInfo() {
-    this.database
+    return this.database
       .getPouchDB()
       .info()
       .then(
