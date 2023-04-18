@@ -66,6 +66,7 @@ const demoDataGeneratorProviders = [
     maxCountAttributes: 5,
   }),
   ...DemoTodoGeneratorService.provider(),
+  // keep Demo service last to ensure all entities are already initialized
   ...DemoConfigGeneratorService.provider(),
 ];
 
