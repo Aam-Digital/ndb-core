@@ -65,6 +65,10 @@ export class ReportingComponent implements OnInit {
     toDate: Date
   ) {
     this.loading = true;
+    this.data = [];
+
+    // Wait for change detection
+    await new Promise((res) => setTimeout(res));
 
     // Add one day because to date is exclusive
     const dayAfterToDate = moment(toDate).add(1, "day").toDate();
@@ -75,14 +79,12 @@ export class ReportingComponent implements OnInit {
         fromDate,
         dayAfterToDate
       );
-      this.mode = "exporting";
     } else {
       await this.createReport(
         selectedReport.aggregationDefinitions as Aggregation[],
         fromDate,
         dayAfterToDate
       );
-      this.mode = "reporting";
     }
 
     this.loading = false;
@@ -99,6 +101,7 @@ export class ReportingComponent implements OnInit {
       toDate
     );
     this.exportableData = this.data;
+    this.mode = "exporting";
   }
 
   private async createReport(
@@ -112,6 +115,7 @@ export class ReportingComponent implements OnInit {
       toDate
     );
     this.exportableData = this.flattenReportRows();
+    this.mode = "reporting";
   }
 
   private flattenReportRows(

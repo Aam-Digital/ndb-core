@@ -44,6 +44,7 @@
   <div class="flex-row gap-regular flex-wrap">
     <div *ngTemplateOutlet="filterDialog"></div>
     <app-filter
+      *ngIf="!isLoading"
       class="flex-row gap-regular flex-wrap"
       [filterConfig]="filtersConfig"
       [entityType]="entityConstructor"
