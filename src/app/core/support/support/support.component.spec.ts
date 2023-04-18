@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { SupportComponent } from "./support.component";
@@ -10,7 +11,6 @@ import { SessionService } from "../../session/session-service/session.service";
 import { BehaviorSubject, of } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
-import { Database } from "../../database/database";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { TEST_USER } from "../../../utils/mocked-testing.module";
 import { RemoteSession } from "../../session/session-service/remote-session";
@@ -20,6 +20,7 @@ import { SyncedSessionService } from "../../session/session-service/synced-sessi
 import { MatDialogModule } from "@angular/material/dialog";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { PouchDatabase } from "../../database/pouch-database";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -27,7 +28,7 @@ describe("SupportComponent", () => {
   const testUser = { name: TEST_USER, roles: [] };
   let mockSessionService: jasmine.SpyObj<SessionService>;
   const mockSW = { isEnabled: false };
-  let mockDB: jasmine.SpyObj<Database>;
+  let mockDB: jasmine.SpyObj<PouchDatabase>;
   const mockWindow = {
     navigator: {
       userAgent: "mock user agent",
@@ -42,7 +43,10 @@ describe("SupportComponent", () => {
       syncState: new BehaviorSubject(SyncState.UNSYNCED),
     });
     mockSessionService.getCurrentUser.and.returnValue(testUser);
-    mockDB = jasmine.createSpyObj(["destroy"]);
+    mockDB = jasmine.createSpyObj(["destroy", "getPouchDB"]);
+    mockDB.getPouchDB.and.returnValue({
+      info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
+    } as any);
     mockLocation = jasmine.createSpyObj(["reload"]);
     await TestBed.configureTestingModule({
       imports: [
@@ -54,18 +58,18 @@ describe("SupportComponent", () => {
       providers: [
         { provide: SessionService, useValue: mockSessionService },
         { provide: SwUpdate, useValue: mockSW },
-        { provide: Database, useValue: mockDB },
+        { provide: PouchDatabase, useValue: mockDB },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     }).compileComponents();
   });
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(SupportComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  });
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();
@@ -78,15 +82,16 @@ describe("SupportComponent", () => {
     expect(component.lastRemoteLogin).toBe("never");
     expect(component.swStatus).toBe("not enabled");
     expect(component.userAgent).toBe("mock user agent");
+    expect(component.dbInfo).toBe("1 (update sequence 2)");
   });
 
-  it("should correctly read sync and remote login status from local storage", () => {
+  it("should correctly read sync and remote login status from local storage", async () => {
     const lastSync = new Date("2022-01-01").toISOString();
     localStorage.setItem(SyncedSessionService.LAST_SYNC_KEY, lastSync);
     const lastRemoteLogin = new Date("2022-01-02").toISOString();
     localStorage.setItem(RemoteSession.LAST_LOGIN_KEY, lastRemoteLogin);
 
-    component.ngOnInit();
+    await component.ngOnInit();
 
     expect(component.lastSync).toBe(lastSync);
     expect(component.lastRemoteLogin).toBe(lastRemoteLogin);
