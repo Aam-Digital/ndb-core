@@ -70,14 +70,14 @@ describe("QueryService", () => {
     const femaleMuslim = await createChild("F", "muslim");
 
     const maleChristianQuery = `${Child.ENTITY_TYPE}:toArray:filterByObjectAttribute(gender, id, M)[*religion=christian]`;
-    const maleChristians = await service.queryData(maleChristianQuery);
+    const maleChristians = await queryData(maleChristianQuery);
     expectEntitiesToMatch(maleChristians, [maleChristian]);
 
     const femaleQuery = `${Child.ENTITY_TYPE}:toArray:filterByObjectAttribute(gender, id, F)`;
-    const females = await service.queryData(femaleQuery);
+    const females = await queryData(femaleQuery);
     expectEntitiesToMatch(females, [femaleChristian, femaleMuslim]);
 
-    const allChildren = await service.queryData(`${Child.ENTITY_TYPE}:toArray`);
+    const allChildren = await queryData(`${Child.ENTITY_TYPE}:toArray`);
     expectEntitiesToMatch(allChildren, [
       maleChristian,
       male,
@@ -100,7 +100,7 @@ describe("QueryService", () => {
       [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities:filterByObjectAttribute(gender, id, M)`;
 
-    const maleChildrenOnPrivateSchools = await service.queryData(
+    const maleChildrenOnPrivateSchools = await queryData(
       maleChildrenOnPrivateSchoolsQuery
     );
     expectEntitiesToMatch(maleChildrenOnPrivateSchools, [maleChildPrivate]);
@@ -109,7 +109,7 @@ describe("QueryService", () => {
       ${School.ENTITY_TYPE}:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
-    const childrenVisitingAnySchool = await service.queryData(
+    const childrenVisitingAnySchool = await queryData(
       childrenVisitingAnySchoolQuery
     );
     expectEntitiesToMatch(childrenVisitingAnySchool, [
@@ -125,7 +125,7 @@ describe("QueryService", () => {
     const femaleChristian = await createChild("F", "christian");
     const femaleMuslim = await createChild("F", "muslim");
 
-    const allChildren = await service.queryData(`${Child.ENTITY_TYPE}:toArray`);
+    const allChildren = await queryData(`${Child.ENTITY_TYPE}:toArray`);
     expectEntitiesToMatch(allChildren, [
       maleChristian,
       male,
@@ -134,7 +134,7 @@ describe("QueryService", () => {
     ]);
 
     const maleChildrenCountQuery = `:filterByObjectAttribute(gender, id, M):count`;
-    const maleChildrenCount = await service.queryData(
+    const maleChildrenCount = await queryData(
       maleChildrenCountQuery,
       null,
       null,
@@ -143,7 +143,7 @@ describe("QueryService", () => {
     expect(maleChildrenCount).toBe(2);
 
     const christianCountQuery = `[*religion=christian]:count`;
-    const christianCount = await service.queryData(
+    const christianCount = await queryData(
       christianCountQuery,
       null,
       null,
@@ -152,7 +152,7 @@ describe("QueryService", () => {
     expect(christianCount).toBe(2);
 
     const maleChristiansCountQuery = `:filterByObjectAttribute(gender, id, M)[*religion=christian]:count`;
-    const maleChristiansCount = await service.queryData(
+    const maleChristiansCount = await queryData(
       maleChristiansCountQuery,
       null,
       null,
@@ -184,7 +184,7 @@ describe("QueryService", () => {
       ${EventNote.ENTITY_TYPE}:toArray[*date > ?]
       :getParticipantsWithAttendance(PRESENT)
       :addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
-    const childrenThatAttendedSomething = await service.queryData(
+    const childrenThatAttendedSomething = await queryData(
       childrenThatAttendedSomethingQuery,
       moment().subtract(1, "week").toDate()
     );
@@ -227,7 +227,7 @@ describe("QueryService", () => {
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities:filterByObjectAttribute(gender, id, F)`;
-    const femaleParticipantsInPrivateSchools = await service.queryData(
+    const femaleParticipantsInPrivateSchools = await queryData(
       femaleParticipantsPrivateSchoolQuery
     );
     expectEntitiesToMatch(femaleParticipantsInPrivateSchools, [
@@ -240,7 +240,7 @@ describe("QueryService", () => {
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
       :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities`;
-    const participantsNotPrivateSchool = await service.queryData(
+    const participantsNotPrivateSchool = await queryData(
       participantsNotPrivateSchoolQuery
     );
     expectEntitiesToMatch(participantsNotPrivateSchool, [femaleNormalPresent]);
@@ -249,9 +249,7 @@ describe("QueryService", () => {
       ${EventNote.ENTITY_TYPE}:toArray
       :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
       :toEntities`;
-    const attendedParticipants = await service.queryData(
-      attendedParticipantsQuery
-    );
+    const attendedParticipants = await queryData(attendedParticipantsQuery);
     expectEntitiesToMatch(attendedParticipants, [
       femalePrivatePresent,
       femaleNormalPresent,
@@ -265,13 +263,11 @@ describe("QueryService", () => {
     const coachingActivity2 = await createActivity([], coachingClass);
 
     const schoolClassActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:filterByObjectAttribute(type, id, SCHOOL_CLASS)`;
-    const schoolClassActivities = await service.queryData(
-      schoolClassActivitiesQuery
-    );
+    const schoolClassActivities = await queryData(schoolClassActivitiesQuery);
     expectEntitiesToMatch(schoolClassActivities, [schoolActivity]);
 
     const otherActivitiesQuery = `${RecurringActivity.ENTITY_TYPE}:toArray:filterByObjectAttribute(type, id, COACHING_CLASS)`;
-    const otherActivities = await service.queryData(otherActivitiesQuery);
+    const otherActivities = await queryData(otherActivitiesQuery);
     expectEntitiesToMatch(otherActivities, [
       coachingActivity,
       coachingActivity2,
@@ -282,11 +278,11 @@ describe("QueryService", () => {
     const loadSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
     loadSpy.and.resolveTo([]);
 
-    await expectAsync(service.queryData("School:toArray")).toBeResolvedTo([]);
+    await expectAsync(queryData("School:toArray")).toBeResolvedTo([]);
     expect(loadSpy).toHaveBeenCalledWith(School);
     expect(loadSpy).not.toHaveBeenCalledWith(Child);
 
-    await expectAsync(service.queryData("Child:toArray")).toBeResolvedTo([]);
+    await expectAsync(queryData("Child:toArray")).toBeResolvedTo([]);
     expect(loadSpy).toHaveBeenCalledWith(Child);
   });
 
@@ -294,11 +290,11 @@ describe("QueryService", () => {
     const loadSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
     loadSpy.and.resolveTo([]);
 
-    await expectAsync(service.queryData("School:toArray")).toBeResolvedTo([]);
+    await expectAsync(queryData("School:toArray")).toBeResolvedTo([]);
     expect(loadSpy).toHaveBeenCalledWith(School);
     loadSpy.calls.reset();
 
-    await expectAsync(service.queryData("School:toArray")).toBeResolvedTo([]);
+    await expectAsync(queryData("School:toArray")).toBeResolvedTo([]);
     expect(loadSpy).not.toHaveBeenCalled();
   });
 
@@ -312,16 +308,16 @@ describe("QueryService", () => {
     let from = moment().subtract(1, "week").toDate();
     let to = moment().toDate();
     const query = "Note:toArray[* date >= ? & date < ?]";
-    await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    await expectAsync(queryData(query, from, to)).toBeResolvedTo([]);
     expect(loadSpy).toHaveBeenCalledWith(from, to);
     loadSpy.calls.reset();
 
     to = moment().subtract(3, "days").toDate();
-    await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    await expectAsync(queryData(query, from, to)).toBeResolvedTo([]);
     expect(loadSpy).not.toHaveBeenCalled();
 
     from = moment().subtract(2, "weeks").toDate();
-    await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    await expectAsync(queryData(query, from, to)).toBeResolvedTo([]);
     expect(loadSpy).toHaveBeenCalledWith(from, to);
   });
 
@@ -330,13 +326,13 @@ describe("QueryService", () => {
     loadSpy.and.resolveTo([]);
 
     let query = "School:toArray:getRelated(ChildSchoolRelation, schoolId)";
-    await expectAsync(service.queryData(query)).toBeResolvedTo([]);
+    await expectAsync(queryData(query)).toBeResolvedTo([]);
     expect(loadSpy).toHaveBeenCalledWith(School);
     expect(loadSpy).toHaveBeenCalledWith(ChildSchoolRelation);
     loadSpy.calls.reset();
 
     query = "Child:toArray:getRelated(ChildSchoolRelation, childId)";
-    await expectAsync(service.queryData(query)).toBeResolvedTo([]);
+    await expectAsync(queryData(query)).toBeResolvedTo([]);
     expect(loadSpy).not.toHaveBeenCalledWith(School);
     expect(loadSpy).not.toHaveBeenCalledWith(ChildSchoolRelation);
     expect(loadSpy).toHaveBeenCalledWith(Child);
@@ -353,7 +349,7 @@ describe("QueryService", () => {
     const from = moment().subtract(1, "week").toDate();
     const to = new Date();
     const query = "EventNote:toArray:getAttendanceArray(true)";
-    await expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    await expectAsync(queryData(query, from, to)).toBeResolvedTo([]);
     expect(loadEventNotesSpy).toHaveBeenCalledWith(from, to);
     expect(loadSpy).toHaveBeenCalledWith(ChildSchoolRelation);
   });
@@ -366,7 +362,7 @@ describe("QueryService", () => {
     const today = await createNote(new Date());
     await createNote(moment().subtract(2, "week").toDate());
 
-    const allEventsLastWeek: string[] = await service.queryData(
+    const allEventsLastWeek: string[] = await queryData(
       `${EventNote.ENTITY_TYPE}:toArray.entityId`,
       moment().subtract(1, "week").toDate()
     );
@@ -383,7 +379,7 @@ describe("QueryService", () => {
     const query = `${EventNote.ENTITY_TYPE}:toArray[* date >= ? & date < ?]`;
     const from = moment().add(1, "day").toDate();
     const to = moment().add(1, "week").toDate();
-    return expectAsync(service.queryData(query, from, to)).toBeResolvedTo([]);
+    return expectAsync(queryData(query, from, to)).toBeResolvedTo([]);
   });
 
   it("should load more events if a later date is provided", async () => {
@@ -394,14 +390,14 @@ describe("QueryService", () => {
     const today = await createNote(new Date());
     const allNotesQuery = `${EventNote.ENTITY_TYPE}:toArray`;
 
-    const allNotesLastTwoDays = await service.queryData(
+    const allNotesLastTwoDays = await queryData(
       allNotesQuery,
       moment().subtract(1, "days").toDate()
     );
 
     expectEntitiesToMatch(allNotesLastTwoDays, [today]);
 
-    const allNotesLastWeek = await service.queryData(
+    const allNotesLastWeek = await queryData(
       allNotesQuery,
       moment().subtract(1, "week").toDate()
     );
@@ -413,12 +409,12 @@ describe("QueryService", () => {
     const child = await createChild("M");
     const query = "Child:toArray.gender.id";
 
-    await expectAsync(service.queryData(query)).toBeResolvedTo(["M"]);
+    await expectAsync(queryData(query)).toBeResolvedTo(["M"]);
 
     child.gender = genders.find(({ id }) => id === "F");
     await entityMapper.save(child);
 
-    await expectAsync(service.queryData(query)).toBeResolvedTo(["F"]);
+    await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
   });
 
   it("should not count a deleted entity anymore", async () => {
@@ -426,7 +422,7 @@ describe("QueryService", () => {
     await createChild("F");
     const query = "Child:toArray.gender.id";
 
-    await expectAsync(service.queryData(query)).toBeResolvedTo(
+    await expectAsync(queryData(query)).toBeResolvedTo(
       jasmine.arrayWithExactContents(["M", "F"])
     );
 
@@ -434,7 +430,7 @@ describe("QueryService", () => {
     // waiting for delete-update to be processed
     await new Promise((res) => setTimeout(res));
 
-    await expectAsync(service.queryData(query)).toBeResolvedTo(["F"]);
+    await expectAsync(queryData(query)).toBeResolvedTo(["F"]);
   });
 
   it("should add notes to an array of event notes", async () => {
@@ -446,12 +442,10 @@ describe("QueryService", () => {
     await entityMapper.save(note2);
     const eventNote = await createNote(new Date(), []);
 
-    const onlyEvents = await service.queryData(
-      `${EventNote.ENTITY_TYPE}:toArray`
-    );
+    const onlyEvents = await queryData(`${EventNote.ENTITY_TYPE}:toArray`);
     expectEntitiesToMatch(onlyEvents, [eventNote]);
 
-    const eventsWithNotes = await service.queryData(
+    const eventsWithNotes = await queryData(
       `${EventNote.ENTITY_TYPE}:toArray:addEntities(${Note.ENTITY_TYPE})`
     );
 
@@ -473,10 +467,8 @@ describe("QueryService", () => {
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
       .childId:toEntities(${Child.ENTITY_TYPE}).gender`;
 
-    const resultWithAddPrefix = await service.queryData(queryWithAddPrefix);
-    const resultWithoutAddPrefix = await service.queryData(
-      queryWithoutAddPrefix
-    );
+    const resultWithAddPrefix = await queryData(queryWithAddPrefix);
+    const resultWithoutAddPrefix = await queryData(queryWithoutAddPrefix);
 
     expect(resultWithoutAddPrefix).toHaveSize(3);
     expect(resultWithoutAddPrefix).toEqual(resultWithAddPrefix);
@@ -512,7 +504,7 @@ describe("QueryService", () => {
 
     const attendanceArrayQuery = `${EventNote.ENTITY_TYPE}:toArray:getAttendanceArray(true)`;
 
-    const attendanceResult: AttendanceInfo = await service.queryData(
+    const attendanceResult: AttendanceInfo = await queryData(
       attendanceArrayQuery
     );
 
@@ -566,7 +558,7 @@ describe("QueryService", () => {
 
     const reportQuery = `${EventNote.ENTITY_TYPE}:toArray:getAttendanceArray:getAttendanceReport`;
 
-    const report: AttendanceReport[] = await service.queryData(reportQuery);
+    const report: AttendanceReport[] = await queryData(reportQuery);
 
     expect(report).toContain({
       participant: presentTwice.getId(),
@@ -595,7 +587,7 @@ describe("QueryService", () => {
     await createChild();
     await createChild();
 
-    const result = await service.queryData(
+    const result = await queryData(
       `${Child.ENTITY_TYPE}:toArray:setString(custom-string)`
     );
 
@@ -611,7 +603,7 @@ describe("QueryService", () => {
     ]);
     await entityMapper.remove(femaleChild);
 
-    const result = await service.queryData(
+    const result = await queryData(
       `${EventNote.ENTITY_TYPE}:toArray:getIds(children):toEntities(${Child.ENTITY_TYPE}).gender`
     );
 
@@ -620,9 +612,15 @@ describe("QueryService", () => {
 
   it("does not throw an error if no query is provided", () => {
     return expectAsync(
-      service.queryData(undefined, new Date(), new Date())
+      queryData(undefined, new Date(), new Date())
     ).toBeResolvedTo({});
   });
+
+  function queryData(query: string, from?: Date, to?: Date, data?: any) {
+    return service
+      .cacheRequiredData(query, from, to)
+      .then(() => service.queryData(query, from, to, data));
+  }
 
   async function createChild(
     gender: "M" | "F" = "F",
