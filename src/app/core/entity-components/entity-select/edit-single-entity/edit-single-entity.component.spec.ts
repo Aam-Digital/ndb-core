@@ -5,8 +5,14 @@ import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { ChildSchoolRelation } from "../../../../child-dev-project/children/model/childSchoolRelation";
 import { School } from "../../../../child-dev-project/schools/model/school";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import {
+  MockedTestingModule,
+  TEST_USER,
+} from "../../../../utils/mocked-testing.module";
 import { FormControl } from "@angular/forms";
+import { setupEditComponent } from "../../entity-utils/dynamic-form-components/edit-component.spec";
+import { User } from "../../../user/user";
+import { entityEntitySchemaDatatype } from "../../../entity/schema-datatypes/datatype-entity";
 
 describe("EditSingleEntityComponent", () => {
   let component: EditSingleEntityComponent;
@@ -52,5 +58,14 @@ describe("EditSingleEntityComponent", () => {
 
     expect(loadTypeSpy).toHaveBeenCalled();
     expect(component.entities).toEqual([school1, school2]);
+  });
+
+  it("should set $current_user default value", () => {
+    setupEditComponent(component, "testProperty", {
+      additional: User.ENTITY_TYPE,
+      defaultValue: entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER,
+    });
+    component.ngOnInit();
+    expect(component.formControl.value).toEqual(TEST_USER);
   });
 });

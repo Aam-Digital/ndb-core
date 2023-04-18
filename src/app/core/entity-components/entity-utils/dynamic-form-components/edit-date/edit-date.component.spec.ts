@@ -41,4 +41,14 @@ describe("EditDateComponent", () => {
     fixture.detectChanges();
     expect(component.formControl.value).toBeFalsy();
   });
+
+  it("should accept fixed date as defaultValue", () => {
+    setupEditComponent(component, "testProperty", {
+      defaultValue: "2022-01-01",
+    });
+    fixture.detectChanges();
+    expect(
+      moment(component.formControl.value).isSame(moment("2022-01-01"), "days")
+    ).toBeTrue();
+  });
 });

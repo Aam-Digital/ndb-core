@@ -32,6 +32,8 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   entities: Entity[] = [];
   entityToId = (e: Entity) => e?.getId();
 
+  private entityType: string;
+
   constructor(
     private entityMapperService: EntityMapperService,
     private sessionService: SessionService
@@ -40,20 +42,26 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   }
 
   async ngOnInit() {
-    super.ngOnInit();
-    const entityType: string =
+    this.entityType =
       this.formFieldConfig.additional || this.propertySchema.additional;
-    this.entities = await this.entityMapperService.loadType(entityType);
+
+    // call later to have entityType available in initDefaultValue
+    super.ngOnInit();
+
+    this.entities = await this.entityMapperService.loadType(this.entityType);
     this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
+  }
+
+  protected initDefaultValue() {
     if (
-      entityType === User.ENTITY_TYPE &&
-      this.entity._rev === undefined &&
-      this.formControl.value === null &&
+      this.entityType === User.ENTITY_TYPE && // TODO: support multiple types in the EditSingleEntity
       this.propertySchema.defaultValue ===
         entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER
     ) {
       const user = this.sessionService.getCurrentUser();
       this.formControl.setValue(user.name);
+    } else {
+      super.initDefaultValue();
     }
   }
 }

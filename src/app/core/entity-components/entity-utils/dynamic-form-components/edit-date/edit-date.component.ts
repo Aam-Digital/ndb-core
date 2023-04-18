@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { EditComponent } from "../edit-component";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -21,16 +21,15 @@ import { dateEntitySchemaDatatype } from "../../../../entity/schema-datatypes/da
   ],
   standalone: true,
 })
-export class EditDateComponent extends EditComponent<Date> implements OnInit {
-  ngOnInit() {
-    super.ngOnInit();
+export class EditDateComponent extends EditComponent<Date> {
+  protected initDefaultValue() {
     if (
-      this.entity._rev === undefined && // the entity is new (i.e. the revision is undefined)
-      this.formControl.value === null && // we should start with the current date
       this.propertySchema.defaultValue ===
-        dateEntitySchemaDatatype.PLACEHOLDERS.NOW
+      dateEntitySchemaDatatype.PLACEHOLDERS.NOW
     ) {
       this.formControl.setValue(new Date());
+    } else {
+      super.initDefaultValue();
     }
   }
 }

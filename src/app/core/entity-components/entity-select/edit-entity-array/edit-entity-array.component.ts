@@ -21,25 +21,29 @@ export class EditEntityArrayComponent extends EditComponent<string[]> {
   @Input() showEntities = true;
   placeholder: string;
 
-  @Input() entityName: string;
+  @Input() entityName: string | string[];
 
   ngOnInit() {
-    super.ngOnInit();
-
     this.entityName =
       this.formFieldConfig.additional || this.propertySchema.additional;
 
-    this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
+    // call later to have entityName available in initDefaultValue
+    super.ngOnInit();
 
+    this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
+  }
+
+  protected initDefaultValue() {
     if (
-      this.entityName === User.ENTITY_TYPE &&
-      this.entity._rev === undefined &&
-      this.formControl.value.length === 0 &&
+      (this.entityName === User.ENTITY_TYPE ||
+        this.entityName?.includes(User.ENTITY_TYPE)) &&
       this.propertySchema.defaultValue ===
         entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER
     ) {
       const user = this.sessionService.getCurrentUser();
       this.formControl.setValue([user.name]);
+    } else {
+      super.initDefaultValue();
     }
   }
 }
