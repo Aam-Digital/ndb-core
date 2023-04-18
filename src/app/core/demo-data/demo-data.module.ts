@@ -42,7 +42,6 @@ import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-
 const demoDataGeneratorProviders = [
   ...DemoPermissionGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
-  ...DemoConfigGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
   ...DemoConfigurableEnumGeneratorService.provider(),
   ...DemoChildGenerator.provider({ count: 120 }),
@@ -67,6 +66,8 @@ const demoDataGeneratorProviders = [
     maxCountAttributes: 5,
   }),
   ...DemoTodoGeneratorService.provider(),
+  // keep Demo service last to ensure all entities are already initialized
+  ...DemoConfigGeneratorService.provider(),
 ];
 
 /**
