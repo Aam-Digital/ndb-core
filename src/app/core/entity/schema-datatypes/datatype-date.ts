@@ -32,6 +32,10 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   viewComponent: "DisplayDate",
   editComponent: "EditDate",
 
+  PLACEHOLDERS: {
+    NOW: "$now",
+  },
+
   transformToDatabaseFormat: (value: Date) => {
     // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
     // return isValidDate(value) ? value.toISOString().slice(0, 10) : '';

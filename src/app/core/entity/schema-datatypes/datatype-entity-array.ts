@@ -18,6 +18,7 @@
 import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import { entityEntitySchemaDatatype } from "./datatype-entity";
 
 /**
  * Datatype for the EntitySchemaService to handle multiple references to other entities
@@ -32,6 +33,8 @@ export const entityArrayEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "entity-array",
   editComponent: "EditEntityArray",
   viewComponent: "DisplayEntityArray",
+
+  PLACEHOLDERS: entityEntitySchemaDatatype.PLACEHOLDERS,
 
   transformToDatabaseFormat: (value) => {
     if (!Array.isArray(value)) {

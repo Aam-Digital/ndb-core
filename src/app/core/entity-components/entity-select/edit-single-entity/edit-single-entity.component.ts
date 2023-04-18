@@ -11,6 +11,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { User } from "../../../user/user";
 import { SessionService } from "../../../session/session-service/session.service";
+import { entityEntitySchemaDatatype } from "../../../entity/schema-datatypes/datatype-entity";
 
 @DynamicComponent("EditSingleEntity")
 @Component({
@@ -31,7 +32,10 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   entities: Entity[] = [];
   entityToId = (e: Entity) => e?.getId();
 
-  constructor(private entityMapperService: EntityMapperService, private sessionService: SessionService) {
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private sessionService: SessionService
+  ) {
     super();
   }
 
@@ -45,7 +49,8 @@ export class EditSingleEntityComponent extends EditComponent<string> {
       entityType === User.ENTITY_TYPE &&
       this.entity._rev === undefined &&
       this.formControl.value === null &&
-      this.propertySchema.defaultValue === "$current_user"
+      this.propertySchema.defaultValue ===
+        entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER
     ) {
       const user = this.sessionService.getCurrentUser();
       this.formControl.setValue(user.name);

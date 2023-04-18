@@ -25,6 +25,7 @@ import { RecurringActivity } from "../../../child-dev-project/attendance/model/r
 import { TimeInterval } from "../recurring-interval/time-interval";
 import { TodoCompletion } from "./todo-completion";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
+import { entityEntitySchemaDatatype } from "../../../core/entity/schema-datatypes/datatype-entity";
 
 @DatabaseEntity("Todo")
 export class Todo extends Entity {
@@ -68,7 +69,7 @@ export class Todo extends Entity {
     dataType: "entity-array",
     additional: User.ENTITY_TYPE,
     showInDetailsView: true,
-    defaultValue: "$current_user"
+    defaultValue: entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER,
   })
   assignedTo: string[] = [];
 

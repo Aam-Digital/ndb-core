@@ -35,6 +35,8 @@ import {
 } from "../../../core/entity/model/warning-level";
 import { School } from "../../schools/model/school";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { entityEntitySchemaDatatype } from "../../../core/entity/schema-datatypes/datatype-entity";
+import { dateEntitySchemaDatatype } from "../../../core/entity/schema-datatypes/datatype-date";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -89,7 +91,10 @@ export class Note extends Entity {
   @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField({ label: $localize`:Label for the date of a note:Date`, defaultValue: "$now" })
+  @DatabaseField({
+    label: $localize`:Label for the date of a note:Date`,
+    defaultValue: dateEntitySchemaDatatype.PLACEHOLDERS.NOW,
+  })
   date: Date;
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
   subject: string = "";
@@ -103,7 +108,7 @@ export class Note extends Entity {
     label: $localize`:Label for the social worker(s) who created the note:SW`,
     dataType: "entity-array",
     additional: User.ENTITY_TYPE,
-    defaultValue: "$current_user"
+    defaultValue: entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER,
   })
   authors: string[] = [];
 

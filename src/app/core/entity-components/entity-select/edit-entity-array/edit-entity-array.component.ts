@@ -4,6 +4,7 @@ import { DynamicComponent } from "../../../view/dynamic-components/dynamic-compo
 import { EntitySelectComponent } from "../entity-select/entity-select.component";
 import { User } from "../../../user/user";
 import { SessionService } from "../../../session/session-service/session.service";
+import { entityEntitySchemaDatatype } from "../../../entity/schema-datatypes/datatype-entity";
 
 @DynamicComponent("EditEntityArray")
 @Component({
@@ -13,10 +14,10 @@ import { SessionService } from "../../../session/session-service/session.service
   standalone: true,
 })
 export class EditEntityArrayComponent extends EditComponent<string[]> {
-
   constructor(private sessionService: SessionService) {
     super();
   }
+
   @Input() showEntities = true;
   placeholder: string;
 
@@ -34,7 +35,8 @@ export class EditEntityArrayComponent extends EditComponent<string[]> {
       this.entityName === User.ENTITY_TYPE &&
       this.entity._rev === undefined &&
       this.formControl.value.length === 0 &&
-      this.propertySchema.defaultValue === "$current_user"
+      this.propertySchema.defaultValue ===
+        entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER
     ) {
       const user = this.sessionService.getCurrentUser();
       this.formControl.setValue([user.name]);
