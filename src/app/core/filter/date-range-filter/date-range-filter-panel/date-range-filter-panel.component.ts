@@ -83,30 +83,8 @@ export class DateRangeFilterPanelComponent {
     this.dateRanges = this.data.standardDateRanges ?? this.dateRanges;
   }
 
-  private calculateDateRange(dateRangeOption): DateRange<Date> {
-    const startOffsets = dateRangeOption.startOffsets ?? [
-      { amount: 0, unit: "days" },
-    ];
-    const endOffsets = dateRangeOption.endOffsets ?? [
-      { amount: 0, unit: "days" },
-    ];
-
-    const start = moment();
-    const end = moment();
-
-    startOffsets.forEach((offset) =>
-      start.subtract(offset.amount, offset.unit)
-    );
-    endOffsets.forEach((offset) => end.add(offset.amount, offset.unit));
-
-    start.startOf(startOffsets[0].unit);
-    end.endOf(endOffsets[0].unit);
-
-    return new DateRange(start.toDate(), end.toDate());
-  }
-
   preselectRange(dateRangeOption): void {
-    this.comparisonRange = this.calculateDateRange(dateRangeOption);
+    this.comparisonRange = calculateDateRange(dateRangeOption);
   }
 
   unselectRange() {
@@ -129,4 +107,24 @@ export class DateRangeFilterPanelComponent {
       this.dialogRef.close(this.selectedRangeValue);
     }
   }
+}
+
+export function calculateDateRange(dateRangeOption): DateRange<Date> {
+  const startOffsets = dateRangeOption.startOffsets ?? [
+    { amount: 0, unit: "days" },
+  ];
+  const endOffsets = dateRangeOption.endOffsets ?? [
+    { amount: 0, unit: "days" },
+  ];
+
+  const start = moment();
+  const end = moment();
+
+  startOffsets.forEach((offset) => start.subtract(offset.amount, offset.unit));
+  endOffsets.forEach((offset) => end.add(offset.amount, offset.unit));
+
+  start.startOf(startOffsets[0].unit);
+  end.endOf(endOffsets[0].unit);
+
+  return new DateRange(start.toDate(), end.toDate());
 }

@@ -107,6 +107,12 @@ export class FilterGeneratorService {
 
       if (filterConfig.hasOwnProperty("default")) {
         filter.selectedOption = filterConfig.default;
+        console.log(
+          "selectedOption set for filter",
+          filterConfig.id,
+          " to ",
+          filterConfig.default
+        );
       }
 
       if (filter instanceof SelectableFilter) {
