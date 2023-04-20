@@ -194,8 +194,8 @@ export class EntityMapperService {
       this.sessionService.getCurrentUser()?.name
     );
     if (entity.isNew) {
-      entity.entityCreated = newMetadata;
+      entity.created = newMetadata;
     }
-    entity.entityUpdated = newMetadata;
+    entity.updated = newMetadata;
   }
 }

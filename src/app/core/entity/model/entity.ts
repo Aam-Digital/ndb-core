@@ -174,13 +174,13 @@ export class Entity {
     dataType: "schema-embed",
     additional: UpdateMetadata,
   })
-  entityCreated: UpdateMetadata;
+  created: UpdateMetadata;
 
   @DatabaseField({
     dataType: "schema-embed",
     additional: UpdateMetadata,
   })
-  entityUpdated: UpdateMetadata;
+  updated: UpdateMetadata;
 
   @DatabaseField({
     label: $localize`:Label of checkbox:Inactive`,

@@ -292,18 +292,18 @@ describe("EntityMapperService", () => {
     await entityMapper.save<Entity>(entity);
     const createdEntity = await entityMapper.load<Entity>(Entity, id);
 
-    expect(createdEntity.entityCreated?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.entityCreated?.by).toEqual(TEST_USER);
-    expect(createdEntity.entityUpdated?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.entityUpdated?.by).toEqual(TEST_USER);
+    expect(createdEntity.created?.at.getTime()).toEqual(mockTime1);
+    expect(createdEntity.created?.by).toEqual(TEST_USER);
+    expect(createdEntity.updated?.at.getTime()).toEqual(mockTime1);
+    expect(createdEntity.updated?.by).toEqual(TEST_USER);
 
     const mockTime2 = mockTime1 + 1;
     jasmine.clock().mockDate(new Date(mockTime2));
     await entityMapper.save<Entity>(createdEntity);
     const updatedEntity = await entityMapper.load<Entity>(Entity, id);
 
-    expect(updatedEntity.entityCreated?.at.getTime()).toEqual(mockTime1);
-    expect(updatedEntity.entityUpdated?.at.getTime()).toEqual(mockTime2);
+    expect(updatedEntity.created?.at.getTime()).toEqual(mockTime1);
+    expect(updatedEntity.updated?.at.getTime()).toEqual(mockTime2);
 
     jasmine.clock().uninstall();
   });
