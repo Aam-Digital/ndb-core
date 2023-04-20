@@ -162,7 +162,7 @@ export class Note extends Entity {
   public getColor() {
     const actualLevel = this.getWarningLevel();
     if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
-      return this.category.color;
+      return this.category?.color;
     } else {
       return super.getColor();
     }
@@ -170,7 +170,7 @@ export class Note extends Entity {
 
   public getColorForId(childId: string): string {
     if (
-      this.category.isMeeting &&
+      this.category?.isMeeting &&
       this.childrenAttendance.get(childId)?.status.countAs ===
         AttendanceLogicalStatus.ABSENT
     ) {
