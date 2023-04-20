@@ -90,11 +90,6 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   }
 
   filterOptionSelected(filter: Filter<T>, selectedOption: string) {
-    console.log(
-      "Peter filterOptionSelected aufgerufen mit",
-      filter,
-      selectedOption
-    );
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
