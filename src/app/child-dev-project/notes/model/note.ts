@@ -38,6 +38,7 @@ import { Ordering } from "../../../core/configurable-enum/configurable-enum-orde
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
+  static toStringAttributes = ["subject"];
   static label = $localize`:label for entity:Note`;
   static labelPlural = $localize`:label (plural) for entity:Notes`;
 
@@ -92,12 +93,12 @@ export class Note extends Entity {
   @DatabaseField({ label: $localize`:Label for the date of a note:Date` })
   date: Date;
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
-  subject: string = "";
+  subject: string;
   @DatabaseField({
     label: $localize`:Label for the actual notes of a note:Notes`,
     editComponent: "EditLongText",
   })
-  text: string = "";
+  text: string;
   /** IDs of users that authored this note */
   @DatabaseField({
     label: $localize`:Label for the social worker(s) who created the note:SW`,
