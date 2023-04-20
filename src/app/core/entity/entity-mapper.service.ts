@@ -23,6 +23,8 @@ import { Observable } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
 import { EntityRegistry } from "./database-entity.decorator";
 import { map } from "rxjs/operators";
+import { UpdateMetadata } from "./model/update-metadata";
+import { SessionService } from "../session/session-service/session.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -39,6 +41,7 @@ export class EntityMapperService {
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
+    private sessionService: SessionService,
     private registry: EntityRegistry
   ) {}
 
@@ -136,6 +139,7 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean = false
   ): Promise<any> {
+    this.setEntityMetadata(entity);
     const rawData =
       this.entitySchemaService.transformEntityToDatabaseFormat(entity);
     const result = await this._db.put(rawData, forceUpdate);
@@ -153,6 +157,7 @@ export class EntityMapperService {
    * @param entities The entities to save
    */
   public async saveAll(entities: Entity[]): Promise<any> {
+    entities.forEach((e) => this.setEntityMetadata(e));
     const rawData = entities.map((e) =>
       this.entitySchemaService.transformEntityToDatabaseFormat(e)
     );
@@ -182,5 +187,15 @@ export class EntityMapperService {
     } else {
       return constructible;
     }
+  }
+
+  private setEntityMetadata(entity: Entity) {
+    const newMetadata = new UpdateMetadata(
+      this.sessionService.getCurrentUser()?.name
+    );
+    if (entity.isNew) {
+      entity.entityCreated = newMetadata;
+    }
+    entity.entityUpdated = newMetadata;
   }
 }

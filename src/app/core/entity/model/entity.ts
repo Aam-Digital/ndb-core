@@ -20,6 +20,7 @@ import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
 import { getWarningLevelColor, WarningLevel } from "./warning-level";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { UpdateMetadata } from "./update-metadata";
 
 /**
  * This represents a static class of type <T>.
@@ -168,6 +169,18 @@ export class Entity {
 
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField() _rev: string;
+
+  @DatabaseField({
+    dataType: "schema-embed",
+    additional: UpdateMetadata,
+  })
+  entityCreated: UpdateMetadata;
+
+  @DatabaseField({
+    dataType: "schema-embed",
+    additional: UpdateMetadata,
+  })
+  entityUpdated: UpdateMetadata;
 
   @DatabaseField({
     label: $localize`:Label of checkbox:Inactive`,
