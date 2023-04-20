@@ -52,7 +52,9 @@ export class FilterGeneratorService {
           filter = new ConfigurableEnumFilter(
             filterConfig.id,
             filterConfig.label || schema.label,
-            this.enumService.getEnumValues(schema.innerDataType) // before: filterConfig.id
+            this.enumService.getEnumValues(
+              schema.additional ?? schema.innerDataType
+            )
           );
           break;
         case "boolean":

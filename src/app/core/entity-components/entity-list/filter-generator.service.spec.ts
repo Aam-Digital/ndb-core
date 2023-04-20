@@ -95,17 +95,17 @@ fdescribe("FilterGeneratorService", () => {
     };
     Note.schema.set("otherEnum", schemaAdditional);
 
-    // filter = (
-    //   await service.generate([{ id: "otherEnum" }], Note, [])
-    // )[0] as ConfigurableEnumFilter<Note>;
+    filter = (
+      await service.generate([{ id: "otherEnum" }], Note, [])
+    )[0] as ConfigurableEnumFilter<Note>;
 
-    // comparableOptions = filter.options.map((option) => {
-    //   return { key: option.key, label: option.label };
-    // });
-    // expect(comparableOptions).toEqual(
-    //   jasmine.arrayWithExactContents(interactionTypes)
-    // );
-    // Note.schema.delete("otherEnum");
+    comparableOptions = filter.options.map((option) => {
+      return { key: option.key, label: option.label };
+    });
+    expect(comparableOptions).toEqual(
+      jasmine.arrayWithExactContents(interactionTypes)
+    );
+    Note.schema.delete("otherEnum");
   });
 
   it("should create an entity filter", async () => {
@@ -185,7 +185,7 @@ fdescribe("FilterGeneratorService", () => {
       label: "Date",
       default: "today",
       options: [
-        { key: "firstKey", label: "All", filter: {} },
+        { key: "", label: "All", filter: {} },
         {
           key: "today",
           label: "Today",
@@ -213,7 +213,7 @@ fdescribe("FilterGeneratorService", () => {
     const yesterdayNote = new Note();
     const notes = [todayNote, yesterdayNote];
     yesterdayNote.date = moment().subtract(1, "day").toDate();
-    const allFilter = filterOptions.options.find((f) => f.key === "firstKey");
+    const allFilter = filterOptions.options.find((f) => f.key === "");
     expect(filter(notes, allFilter)).toEqual(notes);
     const todayFilter = filterOptions.options.find((f) => f.key === "today");
     expect(filter(notes, todayFilter)).toEqual([todayNote]);
@@ -221,12 +221,10 @@ fdescribe("FilterGeneratorService", () => {
     expect(filter(notes, beforeFilter)).toEqual([yesterdayNote]);
   });
 
-  // it("should return empty array for date range", async () => {
-  //   let generatedFilter = (
-  //     await service.generate([{ id: "date" }], Note, [])
-  //   )[0] as DateFilter<Note>;
-  //   expect(generatedFilter.options).toEqual([{}, {}] as any);
-  // });
+  it("should create a date range filter", async () => {
+    let generatedFilter = await service.generate([{ id: "date" }], Note, []);
+    expect(generatedFilter[0]).toBeInstanceOf(DateFilter);
+  });
 
   function filter<T extends Entity>(
     data: T[],

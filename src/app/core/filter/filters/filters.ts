@@ -37,6 +37,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     public standardDateRanges: DateRangeFilterConfigOption[]
   ) {
     super(name, label);
+    // this.selectedOption = this.standardDateRanges[0].label;
   }
 
   public getFilter(key: string): DataFilter<T> {
