@@ -10,6 +10,10 @@ import {
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
 import { Router } from "@angular/router";
+import {
+  componentRegistry,
+  ComponentRegistry,
+} from "../../../../dynamic-components";
 
 describe("DisplayEntityComponent", () => {
   let component: DisplayEntityComponent;
@@ -25,10 +29,8 @@ describe("DisplayEntityComponent", () => {
       imports: [DisplayEntityComponent],
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
-        {
-          provide: EntityRegistry,
-          useValue: entityRegistry,
-        },
+        { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: ComponentRegistry, useValue: componentRegistry },
         { provide: Router, useValue: mockRouter },
       ],
     }).compileComponents();
