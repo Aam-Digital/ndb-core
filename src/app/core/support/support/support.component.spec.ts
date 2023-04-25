@@ -21,6 +21,8 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouch-database";
+import { BackupService } from "../../admin/services/backup.service";
+import { DownloadService } from "../../export/download-service/download.service";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -61,6 +63,8 @@ describe("SupportComponent", () => {
         { provide: PouchDatabase, useValue: mockDB },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
+        { provide: BackupService, useValue: null },
+        { provide: DownloadService, useValue: null },
       ],
     }).compileComponents();
   });
