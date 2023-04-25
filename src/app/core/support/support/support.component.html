@@ -7,48 +7,48 @@
 
 <table class="support-table" aria-describedby="table-description">
   <thead>
-  <tr>
-    <th>Detail</th>
-    <th>Value</th>
-  </tr>
+    <tr>
+      <th>Detail</th>
+      <th>Value</th>
+    </tr>
   </thead>
   <tbody class="support-table--body">
-  <tr>
-    <td>Username</td>
-    <td>{{ currentUser?.name ?? '-' }}</td>
-  </tr>
-  <tr>
-    <td>App version</td>
-    <td>{{ appVersion }}</td>
-  </tr>
-  <tr>
-    <td>Device info</td>
-    <td>{{ userAgent }}</td>
-  </tr>
-  <tr>
-    <td>Current sync state</td>
-    <td>{{ currentSyncState }}</td>
-  </tr>
-  <tr>
-    <td>Last sync</td>
-    <td>{{ lastSync }}</td>
-  </tr>
-  <tr>
-    <td>Last remote login</td>
-    <td>{{ lastRemoteLogin }}</td>
-  </tr>
-  <tr>
-    <td>Storage usage</td>
-    <td>{{ storageInfo || 'No information' }}</td>
-  </tr>
-  <tr>
-    <td>Database documents</td>
-    <td>{{ dbInfo }}</td>
-  </tr>
-  <tr>
-    <td>Service Worker</td>
-    <td>{{ swStatus }}</td>
-  </tr>
+    <tr>
+      <td>Username</td>
+      <td>{{ currentUser?.name ?? "-" }}</td>
+    </tr>
+    <tr>
+      <td>App version</td>
+      <td>{{ appVersion }}</td>
+    </tr>
+    <tr>
+      <td>Device info</td>
+      <td>{{ userAgent }}</td>
+    </tr>
+    <tr>
+      <td>Current sync state</td>
+      <td>{{ currentSyncState }}</td>
+    </tr>
+    <tr>
+      <td>Last sync</td>
+      <td>{{ lastSync }}</td>
+    </tr>
+    <tr>
+      <td>Last remote login</td>
+      <td>{{ lastRemoteLogin }}</td>
+    </tr>
+    <tr>
+      <td>Storage usage</td>
+      <td>{{ storageInfo || "No information" }}</td>
+    </tr>
+    <tr>
+      <td>Database documents</td>
+      <td>{{ dbInfo }}</td>
+    </tr>
+    <tr>
+      <td>Service Worker</td>
+      <td>{{ swStatus }}</td>
+    </tr>
   </tbody>
 </table>
 
@@ -63,6 +63,14 @@
 
 <div class="flex-row gap-regular">
   <button mat-raised-button (click)="sendReport()">Send Details</button>
+  <button
+    mat-raised-button
+    matTooltip="Download a complete backup of the data in your local database for the app here in your browser."
+    i18n-matTooltip="Support Panel - dDownload local db tooltip"
+    (click)="downloadLocalDatabase()"
+  >
+    Download Local Database
+  </button>
   <button mat-raised-button color="warn" (click)="resetApplication()">
     Reset Application
   </button>
