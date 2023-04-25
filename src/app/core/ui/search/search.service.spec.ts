@@ -6,6 +6,8 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { Child } from "../../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { Database } from "../../database/database";
+import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
+import { Entity } from "../../entity/model/entity";
 
 describe("SearchService", () => {
   let service: SearchService;
@@ -22,47 +24,52 @@ describe("SearchService", () => {
     return TestBed.inject(Database).destroy();
   });
 
+  /**
+   * Do a unit test run with the given input parameters.
+   * @param searchTerm
+   * @param expectedResults
+   * @param entitiesInDb (Optional) entities to be saved into database before running the search
+   */
+  async function runSearchTest(
+    searchTerm: string,
+    expectedResults: Entity[],
+    entitiesInDb?: Entity[]
+  ) {
+    if (entitiesInDb) {
+      await TestBed.inject(EntityMapperService).saveAll(entitiesInDb);
+    }
+
+    service = TestBed.inject(SearchService);
+    let res = await service.getSearchResults(searchTerm);
+
+    expectEntitiesToMatch(res, expectedResults);
+  }
+
   it("should allow to search for toStringAttributes that are not the entityId", async () => {
     ChildSchoolRelation.toStringAttributes = ["entityId"];
     Child.toStringAttributes = ["name"];
     const c1 = Child.create("first");
     const c2 = Child.create("second");
     const r = new ChildSchoolRelation("relation");
-    await TestBed.inject(EntityMapperService).saveAll([c1, c2, r]);
 
-    service = TestBed.inject(SearchService);
-
-    let res = await service.getSearchResults("firs");
-    expect(res).toEqual([c1]);
-    res = await service.getSearchResults("relation");
-    expect(res).toEqual([]);
+    await runSearchTest("firs", [c1], [c1, c2, r]);
+    await runSearchTest("relation", []);
   });
 
   it("should only index on database properties", async () => {
     Child.toStringAttributes = ["schoolId", "name"];
     const child = Child.create("test");
     child.schoolId = ["someSchool"];
-    await TestBed.inject(EntityMapperService).save(child);
 
-    service = TestBed.inject(SearchService);
-
-    let res = await service.getSearchResults("someSchool");
-    expect(res).toEqual([]);
-    res = await service.getSearchResults("test");
-    // reset default value
-    child.schoolId = [];
-    expect(res).toEqual([child]);
+    await runSearchTest("someSchool", [], [child]);
+    await runSearchTest("test", [child]);
   });
 
   it("should not fail if toStringAttribute is not set", async () => {
     Child.toStringAttributes = ["projectNumber", "name"];
     const child = Child.create("test");
-    await TestBed.inject(EntityMapperService).save(child);
 
-    service = TestBed.inject(SearchService);
-
-    const res = await service.getSearchResults("test");
-    expect(res).toEqual([child]);
+    await runSearchTest("test", [child], [child]);
   });
 
   it("should include properties that are marked searchable", async () => {
@@ -70,14 +77,9 @@ describe("SearchService", () => {
     Child.schema.get("projectNumber").searchable = true;
     const child = Child.create("test");
     child.projectNumber = "number";
-    await TestBed.inject(EntityMapperService).save(child);
 
-    service = TestBed.inject(SearchService);
-
-    let res = await service.getSearchResults("tes");
-    expect(res).toEqual([child]);
-    res = await service.getSearchResults("numb");
-    expect(res).toEqual([child]);
+    await runSearchTest("tes", [child], [child]);
+    await runSearchTest("numb", [child]);
 
     delete Child.schema.get("projectNumber").searchable;
   });
@@ -86,33 +88,21 @@ describe("SearchService", () => {
     Child.toStringAttributes = ["name", "projectNumber"];
     const child = Child.create("test");
     child.projectNumber = "number";
-    await TestBed.inject(EntityMapperService).save(child);
 
-    service = TestBed.inject(SearchService);
-
-    let res = await service.getSearchResults("tes num");
-    expect(res).toEqual([child]);
+    await runSearchTest("tes num", [child], [child]);
   });
 
   it("should allows searches for properties with multiple words", async () => {
     Child.toStringAttributes = ["name"];
     const child = Child.create("test name");
-    await TestBed.inject(EntityMapperService).save(child);
 
-    service = TestBed.inject(SearchService);
-
-    let res = await service.getSearchResults("nam");
-    expect(res).toEqual([child]);
+    await runSearchTest("nam", [child], [child]);
   });
 
   it("should not return the same entity multiple times", async () => {
     Child.toStringAttributes = ["name"];
     const child = Child.create("Peter Petersilie");
-    await TestBed.inject(EntityMapperService).save(child);
 
-    service = TestBed.inject(SearchService);
-
-    let res = await service.getSearchResults("peter");
-    expect(res).toEqual([child]);
+    await runSearchTest("peter", [child], [child]);
   });
 });
