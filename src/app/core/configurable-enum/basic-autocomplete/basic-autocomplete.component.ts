@@ -231,26 +231,27 @@ export class BasicAutocompleteComponent<O, V = O>
 
   onFocusIn() {
     clearTimeout(this.delayedBlur);
-    if (!this.focused) {
-      if (this.multi) {
-        this.autocompleteForm.setValue("");
-      } else {
-        this.showAutocomplete();
-      }
-      this.focus();
+    if (this.multi) {
+      this.autocompleteForm.setValue("");
+    } else {
+      this.showAutocomplete();
     }
+    this.focus();
   }
 
   onFocusOut(event: FocusEvent) {
+    console.log("event", event);
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
+      console.log("blured", this.focused);
       // use short timeout in order for creating an option to work
       this.delayedBlur = setTimeout(() => this.notifyFocusOut(), 200);
     }
   }
 
   private notifyFocusOut() {
+    console.log("blurring");
     if (this.multi) {
       this.displaySelectedOptions();
     } else {
