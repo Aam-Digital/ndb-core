@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../../utils/utils";
-import { Router } from "@angular/router";
+import { NavigationStart, Router } from "@angular/router";
 import { Location, NgIf } from "@angular/common";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
@@ -15,11 +15,15 @@ import { toFormFieldConfig } from "../../entity-subrecord/entity-subrecord/entit
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
+import { filter } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
  * e.g. as a panel for the EntityDetailsComponent.
  */
+@UntilDestroy()
 @DynamicComponent("Form")
 @Component({
   selector: "app-form",
@@ -49,8 +53,27 @@ export class FormComponent<E extends Entity> implements OnInit {
     private router: Router,
     private location: Location,
     private entityFormService: EntityFormService,
-    private alertService: AlertService
-  ) {}
+    private alertService: AlertService,
+    private confirmation: ConfirmationDialogService
+  ) {
+    this.router.events
+      .pipe(
+        untilDestroyed(this),
+        filter((ev) => ev instanceof NavigationStart)
+      )
+      .subscribe((ev) => {
+        if (this.form.dirty) {
+          this.confirmation
+            .getConfirmation(
+              $localize`:Save changes header:Save Changes?`,
+              $localize`:Save changes message:Do you want to save the changes you made?`
+            )
+            .then((confirmed) =>
+              confirmed ? this.saveClicked() : this.cancelClicked()
+            );
+        }
+      });
+  }
 
   ngOnInit() {
     this.form = this.entityFormService.createFormGroup(
