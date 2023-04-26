@@ -17,7 +17,10 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router, RouterLink } from "@angular/router";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
+@UntilDestroy()
 @Component({
   selector: "app-dialog-buttons",
   standalone: true,
@@ -45,8 +48,20 @@ export class DialogButtonsComponent implements OnInit {
     private alertService: AlertService,
     private entityRemoveService: EntityRemoveService,
     private router: Router,
-    private ability: EntityAbility
-  ) {}
+    private ability: EntityAbility,
+    private confirmation: ConfirmationDialogService
+  ) {
+    this.dialog.beforeClosed().subscribe(() => {
+      if (this.form.dirty) {
+        this.confirmation
+          .getConfirmation(
+            $localize`:Save changes header:Save Changes?`,
+            $localize`:Save changes message:Do you want to save the changes you made?`
+          )
+          .then((confirmed) => (confirmed ? this.save() : undefined));
+      }
+    });
+  }
 
   ngOnInit() {
     if (!this.entity.isNew) {
@@ -55,6 +70,9 @@ export class DialogButtonsComponent implements OnInit {
       }
       this.initializeDetailsRouteIfAvailable();
     }
+    this.form.statusChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => (this.dialog.disableClose = this.form.dirty));
   }
 
   private initializeDetailsRouteIfAvailable() {
