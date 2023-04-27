@@ -50,9 +50,12 @@ export class ConfigureEnumPopupComponent {
     private confirmationService: ConfirmationDialogService,
     private entities: EntityRegistry
   ) {
-    this.dialog
-      .afterClosed()
-      .subscribe(() => this.entityMapper.save(this.enumEntity));
+    const initialValues = JSON.stringify(enumEntity.values);
+    this.dialog.afterClosed().subscribe(() => {
+      if (JSON.stringify(this.enumEntity.values) !== initialValues) {
+        this.entityMapper.save(this.enumEntity);
+      }
+    });
   }
 
   drop(event: CdkDragDrop<string[]>) {
