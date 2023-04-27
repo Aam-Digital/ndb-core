@@ -145,12 +145,15 @@ describe("BasicAutocompleteComponent", () => {
     expect(options).toHaveSize(3);
 
     await options[2].click();
+    // When browser is not in foreground, this doesn't happen automatically
+    component.autocomplete.openPanel();
+    fixture.detectChanges();
     await options[1].click();
 
     expect(component.value).toEqual([0, 2]);
   });
 
-  it("should clear the input when focusing in multi select mode", fakeAsync(() => {
+  it("should switch the input when focusing in multi select mode", fakeAsync(() => {
     component.multi = true;
     component.options = ["some", "values", "and", "other", "options"];
     component.value = ["some", "values"];
@@ -159,11 +162,13 @@ describe("BasicAutocompleteComponent", () => {
 
     component.onFocusIn();
     expect(component.autocompleteForm).toHaveValue("");
+    expect(component.focused).toBeTrue();
 
     component.onFocusOut({} as any);
     tick(200);
 
-    expect(component.autocompleteForm).toHaveValue("some, values");
+    expect(component.displayText).toBe("some, values");
+    expect(component.focused).toBeFalse();
   }));
 
   it("should update the error state if the form is invalid", () => {
