@@ -46,7 +46,7 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
         value,
         parent
       );
-      value = [value];
+      return value;
     }
 
     const arrayElementDatatype: EntitySchemaDatatype =

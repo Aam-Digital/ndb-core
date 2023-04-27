@@ -71,9 +71,8 @@ export class Child extends Entity {
   gender: ConfigurableEnumValue;
 
   @DatabaseField({
-    dataType: "array",
-    innerDataType: "configurable-enum",
-    additional: "center",
+    dataType: "configurable-enum",
+    innerDataType: "center",
     label: $localize`:Label for the center of a child:Center`,
   })
   center: Center;
