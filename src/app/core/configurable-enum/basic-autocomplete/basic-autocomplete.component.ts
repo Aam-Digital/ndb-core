@@ -82,7 +82,17 @@ export class BasicAutocompleteComponent<O, V = O>
     startWith([] as SelectableOption<O, V>[])
   );
   showAddOption = false;
-  private delayedBlur: any;
+
+  get displayText() {
+    if (this.multi) {
+      return this._options
+        .filter((o) => o.selected)
+        .map((o) => o.asString)
+        .join(", ");
+    } else {
+      return this.autocompleteForm.value;
+    }
+  }
 
   get disabled(): boolean {
     return this._disabled;
@@ -212,8 +222,7 @@ export class BasicAutocompleteComponent<O, V = O>
         .filter((o) => o.selected)
         .map((o) => o.asValue);
       // re-open autocomplete to select next option
-      this.autocompleteForm.setValue("");
-      setTimeout(() => this.autocomplete.openPanel(), 100);
+      this.onFocusIn();
     } else {
       this.autocompleteForm.setValue(option.asString);
       this.value = option.asValue;
@@ -230,49 +239,46 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   onFocusIn() {
-    clearTimeout(this.delayedBlur);
     if (this.multi) {
       this.autocompleteForm.setValue("");
     } else {
       this.showAutocomplete();
     }
+    setTimeout(() => this.inputElement.focus());
     this.focus();
   }
 
   onFocusOut(event: FocusEvent) {
-    console.log("event", event);
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
-      console.log("blured", this.focused);
-      // use short timeout in order for creating an option to work
-      this.delayedBlur = setTimeout(() => this.notifyFocusOut(), 200);
+      if (!this.multi) {
+        this.checkForExactMatch();
+      }
+      this.blur();
     }
   }
 
-  private notifyFocusOut() {
-    console.log("blurring");
-    if (this.multi) {
-      this.displaySelectedOptions();
-    } else {
-      const inputValue = this.autocompleteForm.value;
-      const selectedOption = this._options.find(
-        ({ asValue }) => asValue === this._value
+  private checkForExactMatch() {
+    const inputValue = this.autocompleteForm.value;
+    const selectedOption = this._options.find(
+      ({ asValue }) => asValue === this._value
+    );
+    if (selectedOption?.asString !== inputValue) {
+      // try to select the option that matches the input string
+      const matchingOption = this._options.find(
+        ({ asString }) => asString.toLowerCase() === inputValue.toLowerCase()
       );
-      if (selectedOption?.asString !== inputValue) {
-        // try to select the option that matches the input string
-        const matchingOption = this._options.find(
-          ({ asString }) => asString.toLowerCase() === inputValue.toLowerCase()
-        );
-        this.select(matchingOption);
-      }
+      this.select(matchingOption);
     }
-    this.blur();
   }
 
   onContainerClick(event: MouseEvent) {
-    if ((event.target as Element).tagName.toLowerCase() != "input") {
-      this.inputElement.focus();
+    if (
+      !this._disabled &&
+      (event.target as Element).tagName.toLowerCase() != "input"
+    ) {
+      this.onFocusIn();
     }
   }
 
