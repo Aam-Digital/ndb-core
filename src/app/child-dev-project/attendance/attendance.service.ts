@@ -103,7 +103,7 @@ export class AttendanceService {
 
     const relevantNormalNotes = this.childrenService
       .getNotesInTimespan(start, end)
-      .then((notes) => notes.filter((n) => n.category.isMeeting));
+      .then((notes) => notes.filter((n) => n.category?.isMeeting));
 
     const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
     return allResults[0].concat(allResults[1]);

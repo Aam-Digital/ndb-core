@@ -14,12 +14,15 @@ import { firstValueFrom } from "rxjs";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
 import { PouchDatabase } from "../../database/pouch-database";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { BackupService } from "../../admin/services/backup.service";
+import { DownloadService } from "../../export/download-service/download.service";
 
 @Component({
   selector: "app-support",
   templateUrl: "./support.component.html",
   styleUrls: ["./support.component.scss"],
-  imports: [MatExpansionModule, MatButtonModule],
+  imports: [MatExpansionModule, MatButtonModule, MatTooltipModule],
   standalone: true,
 })
 export class SupportComponent implements OnInit {
@@ -40,6 +43,8 @@ export class SupportComponent implements OnInit {
     private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,
     private http: HttpClient,
+    private backupService: BackupService,
+    private downloadService: DownloadService,
     @Inject(WINDOW_TOKEN) private window: Window,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {}
@@ -155,5 +160,14 @@ export class SupportComponent implements OnInit {
     await Promise.all(unregisterPromises);
     localStorage.clear();
     this.location.reload();
+  }
+
+  async downloadLocalDatabase() {
+    const backup = await this.backupService.getDatabaseExport();
+    await this.downloadService.triggerDownload(
+      backup,
+      "json",
+      "aamdigital_data_" + new Date().toISOString()
+    );
   }
 }
