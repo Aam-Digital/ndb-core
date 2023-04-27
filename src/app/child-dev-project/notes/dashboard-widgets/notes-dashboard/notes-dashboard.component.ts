@@ -184,14 +184,3 @@ function statsToEntityWithRecentNoteInfo(
     };
   }
 }
-
-/**
- * Config for the Notes Dashboard
- * For more information see the property comments in this class
- */
-interface NotesDashboardConfig {
-  sinceDays?: number;
-  fromBeginningOfWeek?: boolean;
-  mode?: "with-recent-notes" | "without-recent-notes";
-  entity?: string;
-}
