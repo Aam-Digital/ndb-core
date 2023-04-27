@@ -44,6 +44,9 @@ export class DisplayEntityComponent
     if (!this.entityToDisplay) {
       this.entityType = this.entityType ?? this.config;
       this.entityId = this.entityId ?? this.value;
+      if (!this.entityType || !this.entityId) {
+        return;
+      }
       this.entityToDisplay = await this.entityMapper.load(
         this.entityType,
         this.entityId
