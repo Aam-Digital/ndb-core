@@ -72,10 +72,15 @@ export class NoteDetailsComponent implements OnInit {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
-    const formConfig = this.configService.getConfig("appConfig:note-details");
-    ["topForm", "middleForm", "bottomForm"].forEach((form) => {
+    const formConfig = this.configService.getConfig<any>(
+      "appConfig:note-details"
+    );
+    this.topForm =
+      formConfig?.topForm?.map((field) => [toFormFieldConfig(field)]) ??
+      this.topForm;
+    ["middleForm", "bottomForm"].forEach((form) => {
       this[form] =
-        formConfig?.[form]?.map((field) => [toFormFieldConfig(field)]) ??
+        formConfig?.[form]?.map((field) => toFormFieldConfig(field)) ??
         this[form];
     });
   }

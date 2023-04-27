@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { ViewDirective } from "../../entity-utils/view-components/view.directive";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
@@ -34,7 +34,8 @@ export class DisplayEntityComponent
 
   constructor(
     private entityMapper: EntityMapperService,
-    private router: Router
+    private router: Router,
+    private changeDetector: ChangeDetectorRef
   ) {
     super();
   }
@@ -50,6 +51,7 @@ export class DisplayEntityComponent
         this.entityType,
         this.entityId
       );
+      this.changeDetector.detectChanges();
     }
     if (this.entityToDisplay) {
       this.entityBlockComponent = this.entityToDisplay
