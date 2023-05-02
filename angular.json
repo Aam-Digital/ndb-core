@@ -36,6 +36,11 @@
               "node_modules/flag-icons/css/flag-icons.min.css",
               "node_modules/leaflet/dist/leaflet.css"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/"
+              ]
+            },
             "vendorChunk": true,
             "extractLicenses": false,
             "buildOptimizer": false,
@@ -102,6 +107,11 @@
               "src/styles/styles.scss",
               "src/styles/themes/ndb-theme.scss"
             ],
+            "stylePreprocessorOptions": {
+              "includePaths": [
+                "node_modules/"
+              ]
+            },
             "assets": [
               "src/assets",
               "src/favicon.ico",
