@@ -23,6 +23,7 @@
   #autoSuggestions="matAutocomplete"
   (optionSelected)="select($event.option.value)"
   autoActiveFirstOption
+  [hideSingleSelectionIndicator]="multi"
 >
   <mat-option
     *ngFor="let item of autocompleteSuggestedOptions | async"
