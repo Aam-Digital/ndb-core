@@ -23,13 +23,19 @@ import {
   MatAutocompleteModule,
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
-import { concat, of, skip } from "rxjs";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  skip,
+  startWith,
+} from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
+import { concat, of } from "rxjs";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -84,14 +90,11 @@ export class BasicAutocompleteComponent<O, V = O>
   showAddOption = false;
 
   get displayText() {
-    if (this.multi) {
-      return this._options
-        .filter((o) => o.selected)
-        .map((o) => o.asString)
-        .join(", ");
-    } else {
-      return this.autocompleteForm.value;
-    }
+    const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
+
+    return values
+      .map((v) => this._options.find((o) => o.asValue === v)?.asString)
+      .join(", ");
   }
 
   get disabled(): boolean {
@@ -146,10 +149,25 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   showAutocomplete() {
-    this.autocompleteSuggestedOptions = concat(
-      of(this._options),
-      this.autocompleteSuggestedOptions.pipe(skip(1))
-    );
+    if (this.multi) {
+      this.autocompleteForm.setValue("");
+    } else {
+      // cannot setValue to "" here because the current selection would be lost
+      this.autocompleteForm.setValue(this.displayText);
+      this.autocompleteSuggestedOptions = concat(
+        of(this._options),
+        this.autocompleteSuggestedOptions.pipe(skip(1))
+      );
+    }
+    setTimeout(() => {
+      this.inputElement.focus();
+
+      // select all text for easy overwriting when typing to search for options
+      (
+        this.inputElement._elementRef.nativeElement as HTMLInputElement
+      ).select();
+    });
+    this.focus();
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
@@ -170,22 +188,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this._options.forEach(
         (o) => (o.selected = (this.value as V[])?.includes(o.asValue))
       );
-      this.displaySelectedOptions();
-    } else {
-      const selected = this._options.find(
-        ({ asValue }) => asValue === this.value
-      );
-      this.autocompleteForm.setValue(selected?.asString ?? "");
     }
-  }
-
-  private displaySelectedOptions() {
-    this.autocompleteForm.setValue(
-      this._options
-        .filter((o) => o.selected)
-        .map((o) => o.asString)
-        .join(", ")
-    );
   }
 
   select(selected: string | SelectableOption<O, V>) {
@@ -212,6 +215,10 @@ export class BasicAutocompleteComponent<O, V = O>
       const newOption = this.toSelectableOption(this.createOption(option));
       this._options.push(newOption);
       this.select(newOption);
+    } else {
+      // continue editing
+      this.showAutocomplete();
+      this.autocompleteForm.setValue(option);
     }
   }
 
@@ -222,9 +229,8 @@ export class BasicAutocompleteComponent<O, V = O>
         .filter((o) => o.selected)
         .map((o) => o.asValue);
       // re-open autocomplete to select next option
-      this.activateAutocompleteMode();
+      this.showAutocomplete();
     } else {
-      this.autocompleteForm.setValue(option.asString);
       this.value = option.asValue;
     }
   }
@@ -238,38 +244,14 @@ export class BasicAutocompleteComponent<O, V = O>
     };
   }
 
-  activateAutocompleteMode() {
-    if (this.multi) {
-      this.autocompleteForm.setValue("");
-    } else {
-      this.showAutocomplete();
-    }
-    setTimeout(() => this.inputElement.focus());
-    this.focus();
-  }
-
   onFocusOut(event: FocusEvent) {
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
-      if (!this.multi) {
-        this.checkForExactMatch();
+      if (!this.multi && this.autocompleteForm.value === "") {
+        this.select(undefined);
       }
       this.blur();
-    }
-  }
-
-  private checkForExactMatch() {
-    const inputValue = this.autocompleteForm.value;
-    const selectedOption = this._options.find(
-      ({ asValue }) => asValue === this._value
-    );
-    if (selectedOption?.asString !== inputValue) {
-      // try to select the option that matches the input string
-      const matchingOption = this._options.find(
-        ({ asString }) => asString.toLowerCase() === inputValue.toLowerCase()
-      );
-      this.select(matchingOption);
     }
   }
 
@@ -278,7 +260,7 @@ export class BasicAutocompleteComponent<O, V = O>
       !this._disabled &&
       (event.target as Element).tagName.toLowerCase() != "input"
     ) {
-      this.activateAutocompleteMode();
+      this.showAutocomplete();
     }
   }
 
