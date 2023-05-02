@@ -160,7 +160,7 @@ describe("BasicAutocompleteComponent", () => {
     component.ngOnChanges({ value: true, options: true });
     expect(component.autocompleteForm).toHaveValue("some, values");
 
-    component.onFocusIn();
+    component.activateAutocompleteMode();
     expect(component.autocompleteForm).toHaveValue("");
     expect(component.focused).toBeTrue();
 

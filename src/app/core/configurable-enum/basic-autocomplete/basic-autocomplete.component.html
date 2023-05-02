@@ -14,8 +14,8 @@
   [disabled]="_disabled"
   matInput
   style="text-overflow: ellipsis"
-  (focusin)="onFocusIn()"
-  (focusout)="onFocusIn()"
+  (focusin)="activateAutocompleteMode()"
+  (focusout)="activateAutocompleteMode()"
   [value]="displayText"
 />
 <mat-autocomplete

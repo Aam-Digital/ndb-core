@@ -222,7 +222,7 @@ export class BasicAutocompleteComponent<O, V = O>
         .filter((o) => o.selected)
         .map((o) => o.asValue);
       // re-open autocomplete to select next option
-      this.onFocusIn();
+      this.activateAutocompleteMode();
     } else {
       this.autocompleteForm.setValue(option.asString);
       this.value = option.asValue;
@@ -238,7 +238,7 @@ export class BasicAutocompleteComponent<O, V = O>
     };
   }
 
-  onFocusIn() {
+  activateAutocompleteMode() {
     if (this.multi) {
       this.autocompleteForm.setValue("");
     } else {
@@ -278,7 +278,7 @@ export class BasicAutocompleteComponent<O, V = O>
       !this._disabled &&
       (event.target as Element).tagName.toLowerCase() != "input"
     ) {
-      this.onFocusIn();
+      this.activateAutocompleteMode();
     }
   }
 
