@@ -15,7 +15,6 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDialogModule } from "@angular/material/dialog";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
-import { MatInputHarness } from "@angular/material/input/testing";
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
 import {
   FormControl,
@@ -92,9 +91,7 @@ describe("BasicAutocompleteComponent", () => {
     component.ngOnChanges({ value: true, options: true, valueMapper: true });
     fixture.detectChanges();
 
-    expect(component.autocompleteForm).toHaveValue("First Child");
-    const inputElement = await loader.getHarness(MatInputHarness);
-    await expectAsync(inputElement.getValue()).toBeResolvedTo("First Child");
+    expect(component.displayText).toBe("First Child");
   });
 
   it("should have the correct entity selected when it's name is entered", () => {
@@ -108,7 +105,7 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toBe(child1.getId());
   });
 
-  it("should reset if nothing has been selected", fakeAsync(() => {
+  it("should reset if leaving empty autocomplete", fakeAsync(() => {
     const first = Child.create("First");
     const second = Child.create("Second");
     component.options = [first, second];
@@ -117,7 +114,7 @@ describe("BasicAutocompleteComponent", () => {
     component.select({ asValue: first.getId() } as any);
     expect(component.value).toBe(first.getId());
 
-    component.autocompleteForm.setValue("Non existent");
+    component.autocompleteForm.setValue("");
     component.onFocusOut({} as any);
     tick(200);
 
@@ -158,9 +155,9 @@ describe("BasicAutocompleteComponent", () => {
     component.options = ["some", "values", "and", "other", "options"];
     component.value = ["some", "values"];
     component.ngOnChanges({ value: true, options: true });
-    expect(component.autocompleteForm).toHaveValue("some, values");
+    expect(component.displayText).toBe("some, values");
 
-    component.activateAutocompleteMode();
+    component.showAutocomplete();
     expect(component.autocompleteForm).toHaveValue("");
     expect(component.focused).toBeTrue();
 
