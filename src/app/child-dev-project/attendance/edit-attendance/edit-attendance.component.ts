@@ -59,7 +59,7 @@ export class EditAttendanceComponent extends EditComponent<string[]> {
     ) as FormControl<InteractionType>;
     if (category) {
       category.valueChanges.pipe(startWith(category.value)).subscribe((val) => {
-        this.showAttendance = !!val.isMeeting;
+        this.showAttendance = !!val?.isMeeting;
         if (this.showAttendance) {
           this.attendanceForm = new FormControl(
             this.entity.copy()["childrenAttendance"]

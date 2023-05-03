@@ -2,6 +2,7 @@ import { EntitySchemaDatatype } from "../../entity/schema/entity-schema-datatype
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ConfigurableEnumService } from "../configurable-enum.service";
+import { LoggingService } from "../../logging/logging.service";
 
 export class ConfigurableEnumDatatype
   implements EntitySchemaDatatype<ConfigurableEnumValue>
@@ -10,7 +11,10 @@ export class ConfigurableEnumDatatype
   public readonly viewComponent = "DisplayConfigurableEnum";
   public readonly editComponent = "EditConfigurableEnum";
 
-  constructor(private enumService: ConfigurableEnumService) {}
+  constructor(
+    private enumService: ConfigurableEnumService,
+    private logger: LoggingService = new LoggingService()
+  ) {}
 
   /**
    * transforms Objects of InteractionType to strings to save in DB
@@ -33,7 +37,13 @@ export class ConfigurableEnumDatatype
     let enumOption = this.enumService
       .getEnumValues(enumId)
       ?.find((option) => option.id === value);
-    if (!enumOption) {
+    if (!enumOption && value) {
+      const loadedEnums = this.enumService["enums"]
+        ? [...this.enumService["enums"].keys()].toString()
+        : "NONE LOADED";
+      this.logger.warn(
+        `invalid enum option: ${value} for enum: ${enumId}; existing enums: ${loadedEnums}`
+      );
       enumOption = this.generateOptionForInvalid(value);
     }
 
