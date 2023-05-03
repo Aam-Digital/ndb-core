@@ -36,7 +36,7 @@ describe("Schema data type:Date", () => {
     expect(date.getDate()).toBe(1);
   });
 
-  fit("should migrate ISO date strings (created with timezone offsets) to a date-only", () => {
+  it("should migrate ISO date strings (created with timezone offsets) to a date-only", () => {
     const testCases = [
       { input: "2022-01-01", expected: "2022-01-01" },
       // clean midnight dates are transformed to the inferred day
@@ -44,10 +44,9 @@ describe("Schema data type:Date", () => {
       { input: "2022-12-31T22:00:00.000Z", expected: "2023-01-01" },
       { input: "2022-12-31T19:30:00.000Z", expected: "2023-01-01" },
       { input: "2023-01-01T05:00:00.000Z", expected: "2023-01-01" },
-      // exact dates do not allow to safely guess offset
-      // TODO: we could store these as "createdAt" of the entity (once that is implemented ...)
-      { input: "2023-01-06T10:03:35.726Z", expected: "2023-01-06" },
-      { input: "2023-01-06T23:59:39.726Z", expected: "2023-01-06" }, // TODO: what to do here? these are actually not deterministic ...
+      // exact dates do not allow to safely guess offset, so cut off time details to get a value independent of device location
+      { input: "2023-01-06T00:03:35.726Z", expected: "2023-01-06" },
+      { input: "2023-01-06T23:59:39.726Z", expected: "2023-01-06" },
     ];
 
     for (const test of testCases) {

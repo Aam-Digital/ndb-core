@@ -72,19 +72,23 @@ function migrateIsoDatesToInferredDateOnly(value: string): string {
     // not ISO Date format (2023-01-06T10:03:35.726Z)
     return value;
   }
+
   const date = new Date(value);
   if (
-    date.getMinutes() % 15 !== 0 ||
-    date.getSeconds() !== 0 ||
-    date.getMilliseconds() !== 0
+    date.getMinutes() % 15 === 0 &&
+    date.getSeconds() === 0 &&
+    date.getMilliseconds() === 0
   ) {
-    // not a clean offset but a custom date => cannot reliably infer timezone here
-    return value;
+    // this date was originally created without time information
+    // -> infer the time zone and adjust its offset
+    if (date.getHours() > 12) {
+      // adjust because these are showing the previous day due to timezone offset
+      date.setDate(date.getDate() + 1);
+    }
+    return dateToString(date);
   }
 
-  if (date.getHours() > 12) {
-    // adjust because these are showing the previous day due to timezone offset
-    date.setDate(date.getDate() + 1);
-  }
-  return dateToString(date);
+  // not a clean offset but a custom date => cannot reliably infer timezone here
+  // cut off the time details and use the UTC date
+  return value.substring(0, 10);
 }
