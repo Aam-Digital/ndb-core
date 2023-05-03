@@ -22,10 +22,13 @@ import { waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../database/pouch-database";
 import { DatabaseEntity, entityRegistry } from "./database-entity.decorator";
 import { Child } from "../../child-dev-project/children/model/child";
+import { TEST_USER } from "../../utils/mocked-testing.module";
+import { SessionService } from "../session/session-service/session.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
   let testDatabase: PouchDatabase;
+  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const existingEntity = {
     _id: "Entity:existing-entity",
@@ -41,9 +44,11 @@ describe("EntityMapperService", () => {
 
   beforeEach(waitForAsync(() => {
     testDatabase = PouchDatabase.create();
+    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     entityMapper = new EntityMapperService(
       testDatabase,
       new EntitySchemaService(),
+      mockSessionService,
       entityRegistry
     );
 
@@ -271,6 +276,36 @@ describe("EntityMapperService", () => {
         expect(err.message).toContain("Child:test");
         done();
       });
+  });
+
+  it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
+    jasmine.clock().install();
+    mockSessionService.getCurrentUser.and.returnValue({
+      name: TEST_USER,
+      roles: [],
+    });
+    const id = "test_created";
+    const entity = new Entity(id);
+
+    const mockTime1 = 1;
+    jasmine.clock().mockDate(new Date(mockTime1));
+    await entityMapper.save<Entity>(entity);
+    const createdEntity = await entityMapper.load<Entity>(Entity, id);
+
+    expect(createdEntity.created?.at.getTime()).toEqual(mockTime1);
+    expect(createdEntity.created?.by).toEqual(TEST_USER);
+    expect(createdEntity.updated?.at.getTime()).toEqual(mockTime1);
+    expect(createdEntity.updated?.by).toEqual(TEST_USER);
+
+    const mockTime2 = mockTime1 + 1;
+    jasmine.clock().mockDate(new Date(mockTime2));
+    await entityMapper.save<Entity>(createdEntity);
+    const updatedEntity = await entityMapper.load<Entity>(Entity, id);
+
+    expect(updatedEntity.created?.at.getTime()).toEqual(mockTime1);
+    expect(updatedEntity.updated?.at.getTime()).toEqual(mockTime2);
+
+    jasmine.clock().uninstall();
   });
 
   function receiveUpdatesAndTestTypeAndId(type?: string, entityId?: string) {

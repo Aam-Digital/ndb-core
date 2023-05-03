@@ -22,7 +22,7 @@ export class MockEntityMapperService extends EntityMapperService {
   private observables: Map<string, Subject<UpdatedEntity<any>>> = new Map();
 
   constructor() {
-    super(null, null, entityRegistry);
+    super(null, null, null, entityRegistry);
   }
 
   private publishUpdates(type: string, update: UpdatedEntity<any>) {
@@ -45,9 +45,7 @@ export class MockEntityMapperService extends EntityMapperService {
     this.data.get(type).set(entity.getId(), entity);
     this.publishUpdates(
       entity.getType(),
-      alreadyExists
-        ? { type: "update", entity }
-        : { type: "new", entity }
+      alreadyExists ? { type: "update", entity } : { type: "new", entity }
     );
   }
 

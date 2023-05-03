@@ -23,13 +23,19 @@ import {
   MatAutocompleteModule,
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
-import { concat, of, skip } from "rxjs";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
+import {
+  distinctUntilChanged,
+  filter,
+  map,
+  skip,
+  startWith,
+} from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
+import { concat, of } from "rxjs";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -82,7 +88,14 @@ export class BasicAutocompleteComponent<O, V = O>
     startWith([] as SelectableOption<O, V>[])
   );
   showAddOption = false;
-  private delayedBlur: any;
+
+  get displayText() {
+    const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
+
+    return values
+      .map((v) => this._options.find((o) => o.asValue === v)?.asString)
+      .join(", ");
+  }
 
   get disabled(): boolean {
     return this._disabled;
@@ -136,10 +149,25 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   showAutocomplete() {
-    this.autocompleteSuggestedOptions = concat(
-      of(this._options),
-      this.autocompleteSuggestedOptions.pipe(skip(1))
-    );
+    if (this.multi) {
+      this.autocompleteForm.setValue("");
+    } else {
+      // cannot setValue to "" here because the current selection would be lost
+      this.autocompleteForm.setValue(this.displayText);
+      this.autocompleteSuggestedOptions = concat(
+        of(this._options),
+        this.autocompleteSuggestedOptions.pipe(skip(1))
+      );
+    }
+    setTimeout(() => {
+      this.inputElement.focus();
+
+      // select all text for easy overwriting when typing to search for options
+      (
+        this.inputElement._elementRef.nativeElement as HTMLInputElement
+      ).select();
+    });
+    this.focus();
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
@@ -160,22 +188,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this._options.forEach(
         (o) => (o.selected = (this.value as V[])?.includes(o.asValue))
       );
-      this.displaySelectedOptions();
-    } else {
-      const selected = this._options.find(
-        ({ asValue }) => asValue === this.value
-      );
-      this.autocompleteForm.setValue(selected?.asString ?? "");
     }
-  }
-
-  private displaySelectedOptions() {
-    this.autocompleteForm.setValue(
-      this._options
-        .filter((o) => o.selected)
-        .map((o) => o.asString)
-        .join(", ")
-    );
   }
 
   select(selected: string | SelectableOption<O, V>) {
@@ -202,6 +215,10 @@ export class BasicAutocompleteComponent<O, V = O>
       const newOption = this.toSelectableOption(this.createOption(option));
       this._options.push(newOption);
       this.select(newOption);
+    } else {
+      // continue editing
+      this.showAutocomplete();
+      this.autocompleteForm.setValue(option);
     }
   }
 
@@ -212,10 +229,8 @@ export class BasicAutocompleteComponent<O, V = O>
         .filter((o) => o.selected)
         .map((o) => o.asValue);
       // re-open autocomplete to select next option
-      this.autocompleteForm.setValue("");
-      setTimeout(() => this.autocomplete.openPanel(), 100);
+      this.showAutocomplete();
     } else {
-      this.autocompleteForm.setValue(option.asString);
       this.value = option.asValue;
     }
   }
@@ -229,49 +244,23 @@ export class BasicAutocompleteComponent<O, V = O>
     };
   }
 
-  onFocusIn() {
-    clearTimeout(this.delayedBlur);
-    if (!this.focused) {
-      if (this.multi) {
-        this.autocompleteForm.setValue("");
-      } else {
-        this.showAutocomplete();
-      }
-      this.focus();
-    }
-  }
-
   onFocusOut(event: FocusEvent) {
     if (
       !this.elementRef.nativeElement.contains(event.relatedTarget as Element)
     ) {
-      // use short timeout in order for creating an option to work
-      this.delayedBlur = setTimeout(() => this.notifyFocusOut(), 200);
-    }
-  }
-
-  private notifyFocusOut() {
-    if (this.multi) {
-      this.displaySelectedOptions();
-    } else {
-      const inputValue = this.autocompleteForm.value;
-      const selectedOption = this._options.find(
-        ({ asValue }) => asValue === this._value
-      );
-      if (selectedOption?.asString !== inputValue) {
-        // try to select the option that matches the input string
-        const matchingOption = this._options.find(
-          ({ asString }) => asString.toLowerCase() === inputValue.toLowerCase()
-        );
-        this.select(matchingOption);
+      if (!this.multi && this.autocompleteForm.value === "") {
+        this.select(undefined);
       }
+      this.blur();
     }
-    this.blur();
   }
 
   onContainerClick(event: MouseEvent) {
-    if ((event.target as Element).tagName.toLowerCase() != "input") {
-      this.inputElement.focus();
+    if (
+      !this._disabled &&
+      (event.target as Element).tagName.toLowerCase() != "input"
+    ) {
+      this.showAutocomplete();
     }
   }
 
