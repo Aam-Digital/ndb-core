@@ -40,7 +40,7 @@ const demoActivities = [
 demoActivities[0].assignedTo = ["demo"];
 
 export default {
-  title: "Attendance/Views/RollCallSetup",
+  title: "Features/Attendance/Views/RollCallSetup",
   component: RollCallSetupComponent,
   decorators: [
     moduleMetadata({

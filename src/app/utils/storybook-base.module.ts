@@ -20,6 +20,7 @@ import { SyncState } from "../core/session/session-states/sync-state.enum";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
+import { LoginState } from "../core/session/session-states/login-state.enum";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
@@ -61,6 +62,7 @@ export const mockAbilityService = {
         getCurrentUser: () => ({ name: "demo-user" }),
         syncState: new BehaviorSubject(SyncState.COMPLETED),
         isLoggedIn: () => true,
+        loginState: new BehaviorSubject(LoginState.LOGGED_IN),
       },
     },
   ],

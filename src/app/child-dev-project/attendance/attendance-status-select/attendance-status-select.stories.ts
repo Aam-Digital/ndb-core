@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -6,7 +6,7 @@ import { AttendanceStatusSelectComponent } from "./attendance-status-select.comp
 import { ConfigService } from "../../../core/config/config.service";
 
 export default {
-  title: "Attendance/Components/AttendanceStatusSelect",
+  title: "Features/Attendance/Components/AttendanceStatusSelect",
   component: AttendanceStatusSelectComponent,
   decorators: [
     moduleMetadata({

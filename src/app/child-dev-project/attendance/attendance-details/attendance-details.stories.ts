@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import {
@@ -49,7 +49,7 @@ activityAttendance.periodTo = new Date("2020-01-31");
 activityAttendance.activity = demoActivity;
 
 export default {
-  title: "Attendance/Views/AttendanceDetails",
+  title: "Features/Attendance/Views/AttendanceDetails",
   component: AttendanceDetailsComponent,
   decorators: [
     moduleMetadata({

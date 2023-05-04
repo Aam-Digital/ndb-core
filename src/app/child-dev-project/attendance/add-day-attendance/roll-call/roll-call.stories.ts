@@ -19,7 +19,7 @@ const demoChildren = [
 demoChildren.forEach((c) => demoEvent.addChild(c));
 
 export default {
-  title: "Attendance/Views/RollCall",
+  title: "Features/Attendance/Views/RollCall",
   component: RollCallComponent,
   decorators: [
     moduleMetadata({
@@ -36,9 +36,9 @@ export default {
               if (id === ATTENDANCE_STATUS_CONFIG_ID) {
                 return defaultAttendanceStatusTypes;
               }
-            }
+            },
           },
-        }
+        },
       ],
     }),
   ],
