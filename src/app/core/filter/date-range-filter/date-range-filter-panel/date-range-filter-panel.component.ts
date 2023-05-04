@@ -20,7 +20,7 @@ import {
 import moment from "moment";
 import { FormsModule } from "@angular/forms";
 
-const defaultOptions: DateRangeFilterConfigOption[] = [
+const standardOptions: DateRangeFilterConfigOption[] = [
   {
     label: $localize`:Filter label:Today`,
   },
@@ -65,7 +65,7 @@ const defaultOptions: DateRangeFilterConfigOption[] = [
 export class DateRangeFilterPanelComponent {
   dateRangeFilterConfig: DateRangeFilterConfig;
   dateRangeOptions: DateRangeFilterConfigOption;
-  dateRanges: DateRangeFilterConfigOption[] = defaultOptions;
+  dateRanges: DateRangeFilterConfigOption[] = standardOptions;
 
   selectedRangeValue: DateRange<Date>;
   comparisonRange: DateRange<Date> = new DateRange(null, null);
@@ -91,9 +91,12 @@ export class DateRangeFilterPanelComponent {
     this.comparisonRange = new DateRange(null, null);
   }
 
-  selectRangeAndClose(): void {
+  selectRangeAndClose(selectedIndexOfDateRanges: number): void {
     this.selectedRangeValue = this.comparisonRange;
-    this.dialogRef.close(this.selectedRangeValue);
+    this.dialogRef.close({
+      selectedRangeValue: this.selectedRangeValue,
+      selectedIndexOfDateRanges,
+    });
   }
 
   selectedRangeChange(selectedDate: Date) {
@@ -104,7 +107,7 @@ export class DateRangeFilterPanelComponent {
       const end = selectedDate;
       this.selectedRangeValue =
         end < start ? new DateRange(end, start) : new DateRange(start, end);
-      this.dialogRef.close(this.selectedRangeValue);
+      this.dialogRef.close({ selectedRangeValue: this.selectedRangeValue });
     }
   }
 }
@@ -127,4 +130,9 @@ export function calculateDateRange(dateRangeOption): DateRange<Date> {
   end.endOf(endOffsets[0].unit);
 
   return new DateRange(start.toDate(), end.toDate());
+}
+
+export interface DateRangePanelResult {
+  selectedRangeValue: DateRange<Date>;
+  selectedIndexOfDateRanges?: string;
 }

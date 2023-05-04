@@ -10,14 +10,17 @@
     >
     </mat-calendar>
     <div class="panel">
-      <div class="button-div" *ngFor="let item of dateRanges">
+      <div
+        class="button-div"
+        *ngFor="let item of dateRanges; let selectedIndexOfDateRanges = index"
+      >
         <button
           class="button"
           mat-button
           color="primary"
           (mouseenter)="preselectRange(item)"
           (mouseleave)="unselectRange()"
-          (click)="selectRangeAndClose()"
+          (click)="selectRangeAndClose(selectedIndexOfDateRanges)"
         >
           {{ item.label }}
         </button>

@@ -3,15 +3,15 @@ import { MatDialog } from "@angular/material/dialog";
 import { DataFilter } from "app/core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "app/core/entity/model/entity";
 import moment from "moment";
-import { DateFilter, Filter, FilterSelectionOption } from "../filters/filters";
+import { DateFilter, Filter } from "../filters/filters";
 import {
   DateRangeFilterPanelComponent,
+  DateRangePanelResult,
   calculateDateRange,
 } from "./date-range-filter-panel/date-range-filter-panel.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
-import { DateRange } from "@angular/material/datepicker";
 
 @Component({
   selector: "app-date-range-filter",
@@ -31,35 +31,35 @@ export class DateRangeFilterComponent<T extends Entity> {
   public set dateRangeFilterConfig(value: Filter<T>) {
     this._dateFilter = value as DateFilter<T>;
     if (this._dateFilter.selectedOption) {
-      console.log("this._dateFilter", this._dateFilter);
-      console.log("selectedOption", this._dateFilter.selectedOption);
-      console.log("index:", parseInt(this._dateFilter.selectedOption));
-      console.log("standardDateRanges", this._dateFilter.standardDateRanges);
-      let res = calculateDateRange(
-        this._dateFilter.standardDateRanges[
-          parseInt(this._dateFilter.selectedOption)
-        ]
-      );
-      console.log("res: ", res);
-      this.apply(res);
+      let dateRangeIndex = parseInt(this._dateFilter.selectedOption);
+      if (
+        dateRangeIndex >= 0 &&
+        dateRangeIndex < this._dateFilter.standardDateRanges.length
+      ) {
+        let selectedDateRange = calculateDateRange(
+          this._dateFilter.standardDateRanges[dateRangeIndex]
+        );
+        this.apply({
+          selectedRangeValue: selectedDateRange,
+          selectedIndexOfDateRanges: this._dateFilter.selectedOption,
+        });
+      }
     }
   }
 
   constructor(private dialog: MatDialog) {}
 
-  apply(res?: DateRange<Date>) {
-    console.log("apply called");
+  apply(res?: DateRangePanelResult) {
     if (res) {
-      this.fromDate = res.start;
-      this.toDate = res.end;
+      this.fromDate = res.selectedRangeValue.start;
+      this.toDate = res.selectedRangeValue.end;
     }
-    let option: FilterSelectionOption<T> = {
-      key: "custom1",
-      label: "custom2",
-      filter: {},
-    };
     this._dateFilter.filter = this.buildFilter();
-    option.filter = this.buildFilter();
+    console.log(
+      "apply this._dateFilter.selectedOption",
+      this._dateFilter.selectedOption
+    );
+    this._dateFilter.selectedOption = res.selectedIndexOfDateRanges;
     this.selectedOptionChange.emit(this._dateFilter.selectedOption);
   }
 
@@ -85,7 +85,7 @@ export class DateRangeFilterComponent<T extends Entity> {
         },
       })
       .afterClosed()
-      .subscribe((res) => {
+      .subscribe((res: DateRangePanelResult) => {
         if (res) {
           this.apply(res);
         }
