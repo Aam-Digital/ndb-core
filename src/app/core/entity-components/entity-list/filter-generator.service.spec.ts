@@ -22,7 +22,7 @@ import {
 } from "../../filter/filters/filters";
 import { Entity } from "../../entity/model/entity";
 
-fdescribe("FilterGeneratorService", () => {
+describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
   let filterService: FilterService;
 

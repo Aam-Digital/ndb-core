@@ -106,7 +106,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     public label: string = name
   ) {
     super(name, label);
-    this.selectedOption = this.options[0].key;
+    this.selectedOption = this.options[0]?.key;
   }
 
   /** default filter will keep all items in the result */

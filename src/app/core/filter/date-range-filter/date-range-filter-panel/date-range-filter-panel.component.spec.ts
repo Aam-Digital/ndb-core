@@ -72,7 +72,8 @@ describe("DateRangeFilterPanelComponent", () => {
     fromDate.setHours(0, 0, 0, 0);
     toDate.setDate(13);
     toDate.setHours(0, 0, 0, 0);
-    expect(closeSpy).toHaveBeenCalledWith(new DateRange(fromDate, toDate));
+    let dateRange = new DateRange(fromDate, toDate);
+    expect(closeSpy).toHaveBeenCalledWith({ selectedRangeValue: dateRange });
   });
 
   it("should return the dates selected via the preset labels", async () => {
@@ -81,10 +82,14 @@ describe("DateRangeFilterPanelComponent", () => {
       endOffsets: [{ amount: 0, unit: "months" }],
       label: "Last and this month",
     });
-    component.selectRangeAndClose();
+    component.selectRangeAndClose(0);
     const fromDate = moment().startOf("month").subtract(1, "months").toDate();
     const toDate = moment().endOf("month").toDate();
-    expect(closeSpy).toHaveBeenCalledWith(new DateRange(fromDate, toDate));
+    let dateRange = new DateRange(fromDate, toDate);
+    expect(closeSpy).toHaveBeenCalledWith({
+      selectedRangeValue: dateRange,
+      selectedIndexOfDateRanges: "0",
+    });
   });
 
   it("should highlight the daterange when hovering over a preset label", async () => {

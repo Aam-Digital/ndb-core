@@ -55,10 +55,6 @@ export class DateRangeFilterComponent<T extends Entity> {
       this.toDate = res.selectedRangeValue.end;
     }
     this._dateFilter.filter = this.buildFilter();
-    console.log(
-      "apply this._dateFilter.selectedOption",
-      this._dateFilter.selectedOption
-    );
     this._dateFilter.selectedOption = res.selectedIndexOfDateRanges;
     this.selectedOptionChange.emit(this._dateFilter.selectedOption);
   }

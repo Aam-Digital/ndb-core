@@ -95,7 +95,7 @@ export class DateRangeFilterPanelComponent {
     this.selectedRangeValue = this.comparisonRange;
     this.dialogRef.close({
       selectedRangeValue: this.selectedRangeValue,
-      selectedIndexOfDateRanges,
+      selectedIndexOfDateRanges: selectedIndexOfDateRanges.toString(),
     });
   }
 
