@@ -92,6 +92,7 @@ export class FormComponent<E extends Entity> implements OnInit {
     }
     this.entityFormService.resetForm(this.form, this.entity);
     this.form.disable();
+    // TODO this might overwrite active changes from another panel with a form
     this.unsavedChanges.pending = false;
   }
 }
