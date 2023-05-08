@@ -90,7 +90,10 @@ export class Note extends Entity {
   @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField({ label: $localize`:Label for the date of a note:Date` })
+  @DatabaseField({
+    label: $localize`:Label for the date of a note:Date`,
+    dataType: "date-only",
+  })
   date: Date;
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
   subject: string;
