@@ -50,6 +50,7 @@ export class ChildBlockComponent implements OnChanges {
     if (changes.hasOwnProperty("entityId")) {
       this.entity = await this.childrenService.getChild(this.entityId);
     }
+    this.imgPath = undefined;
     if (this.entity?.photo) {
       this.fileService
         .loadFile(this.entity, "photo")
