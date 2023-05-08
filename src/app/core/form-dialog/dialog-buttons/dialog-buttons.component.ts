@@ -51,7 +51,7 @@ export class DialogButtonsComponent implements OnInit {
     private ability: EntityAbility,
     private confirmation: ConfirmationDialogService
   ) {
-    this.dialog.beforeClosed().subscribe(() => {
+    this.dialog.backdropClick().subscribe(() => {
       if (this.form.dirty) {
         this.confirmation
           .getConfirmation(
@@ -91,6 +91,7 @@ export class DialogButtonsComponent implements OnInit {
       .then((res) => {
         // Attachments are only saved once form is disabled
         this.form.disable();
+        this.form.markAsPristine();
         this.dialog.close(res);
       })
       .catch((err) => {
