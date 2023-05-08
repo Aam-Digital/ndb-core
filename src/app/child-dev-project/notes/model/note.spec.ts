@@ -97,7 +97,7 @@ describe("Note", () => {
     childrenAttendance: [],
     schools: [],
     relatedEntities: [],
-    date: new Date(),
+    date: "2023-05-01",
     subject: "Note Subject",
     text: "Note text",
     authors: ["1"],
