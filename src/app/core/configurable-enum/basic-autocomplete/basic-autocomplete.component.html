@@ -1,23 +1,40 @@
+<!--Search-->
 <input
+  [hidden]="!focused"
   #inputElement
   [formControl]="autocompleteForm"
   matInput
   style="text-overflow: ellipsis"
   [matAutocomplete]="autoSuggestions"
-  (focusin)="onFocusIn()"
   (focusout)="onFocusOut($event)"
 />
+
+<!--Display-->
+<input
+  [hidden]="focused"
+  [disabled]="_disabled"
+  matInput
+  style="text-overflow: ellipsis"
+  (focusin)="showAutocomplete()"
+  (focusout)="showAutocomplete()"
+  [value]="displayText"
+/>
+
 <mat-autocomplete
+  [disableRipple]="true"
   #autoSuggestions="matAutocomplete"
   (optionSelected)="select($event.option.value)"
   autoActiveFirstOption
+  [hideSingleSelectionIndicator]="multi"
 >
   <mat-option
     *ngFor="let item of autocompleteSuggestedOptions | async"
     [value]="item"
   >
     <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-    <ng-container *ngIf="!templateRef; else useTemplate">{{ item.asString }}</ng-container>
+    <ng-container *ngIf="!templateRef; else useTemplate">{{
+      item.asString
+    }}</ng-container>
     <ng-template
       #useTemplate
       [ngTemplateOutlet]="templateRef"
@@ -28,7 +45,12 @@
     *ngIf="createOption && showAddOption && inputElement.value"
     [value]="inputElement.value"
   >
-    <em i18n="Label for adding an option in a dropdown|e.g. Add option My new Option">Add
-      option</em> {{ inputElement.value }}
+    <em
+      i18n="
+        Label for adding an option in a dropdown|e.g. Add option My new Option
+      "
+      >Add option</em
+    >
+    {{ inputElement.value }}
   </mat-option>
 </mat-autocomplete>
