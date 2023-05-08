@@ -79,7 +79,7 @@ jobs:
       - uses: actions/setup-node@v3
         with:
           node-version: '14'
-      - run: npm install --save-dev @percy/cli
+      - run: npm install
       - run: npx percy storybook:start
         env:
           PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
