@@ -4,14 +4,14 @@
   <mat-date-range-input>
     <input
       matStartDate
-      (dateChange)="apply()"
+      (dateChange)="dateChangedManually()"
       [(ngModel)]="fromDate"
       i18n-placeholder="Date selection"
       placeholder="Start date"
     />
     <input
       matEndDate
-      (dateChange)="apply()"
+      (dateChange)="dateChangedManually()"
       [(ngModel)]="toDate"
       i18n-placeholder="Date selection"
       placeholder="End date"
