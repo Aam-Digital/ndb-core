@@ -77,13 +77,13 @@ describe("FilterGeneratorService", () => {
     );
     const schema = Note.schema.get("category");
 
-    let filter = (
+    let filterOptions = (
       await service.generate([{ id: "category" }], Note, [])
     )[0] as ConfigurableEnumFilter<Note>;
 
-    expect(filter.label).toEqual(schema.label);
-    expect(filter.name).toEqual("category");
-    let comparableOptions = filter.options.map((option) => {
+    expect(filterOptions.label).toEqual(schema.label);
+    expect(filterOptions.name).toEqual("category");
+    let comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
     expect(comparableOptions).toEqual(
@@ -97,11 +97,11 @@ describe("FilterGeneratorService", () => {
     };
     Note.schema.set("otherEnum", schemaAdditional);
 
-    filter = (
+    filterOptions = (
       await service.generate([{ id: "otherEnum" }], Note, [])
     )[0] as ConfigurableEnumFilter<Note>;
 
-    comparableOptions = filter.options.map((option) => {
+    comparableOptions = filterOptions.options.map((option) => {
       return { key: option.key, label: option.label };
     });
     expect(comparableOptions).toEqual(
@@ -116,11 +116,13 @@ describe("FilterGeneratorService", () => {
     };
     Note.schema.set("otherEnum", schemaArray);
 
-    filterSettings = (
+    filterOptions = (
       await service.generate([{ id: "otherEnum" }], Note, [])
-    )[0].filterSettings;
-
-    expect(filterSettings.options).toEqual(
+    )[0] as ConfigurableEnumFilter<Note>;
+    comparableOptions = filterOptions.options.map((option) => {
+      return { key: option.key, label: option.label };
+    });
+    expect(comparableOptions).toEqual(
       jasmine.arrayWithExactContents(interactionTypes)
     );
 
@@ -131,9 +133,9 @@ describe("FilterGeneratorService", () => {
     ];
 
     // indices are increased by one as first option is "all"
-    expect(filter([note], filterSettings.options[2])).toEqual([note]);
-    expect(filter([note], filterSettings.options[3])).toEqual([note]);
-    expect(filter([note], filterSettings.options[4])).toEqual([]);
+    expect(filter([note], filterOptions.options[2])).toEqual([note]);
+    expect(filter([note], filterOptions.options[3])).toEqual([note]);
+    expect(filter([note], filterOptions.options[4])).toEqual([]);
 
     Note.schema.delete("otherEnum");
   });
