@@ -47,62 +47,56 @@ export class FilterGeneratorService {
     for (const filterConfig of filterConfigs) {
       const schema = entityConstructor.schema.get(filterConfig.id) || {};
       let filter: Filter<T>;
-      switch (schema.dataType || filterConfig.type) {
-        case "configurable-enum":
-          filter = new ConfigurableEnumFilter(
-            filterConfig.id,
-            filterConfig.label || schema.label,
-            this.enumService.getEnumValues(
-              schema.additional ?? schema.innerDataType
-            )
-          );
-          break;
-        case "boolean":
-          filter = new BooleanFilter(
-            filterConfig.id,
-            filterConfig.label || schema.label,
-            filterConfig as BooleanFilterConfig
-          );
-          break;
-        case "prebuilt":
-          filter = new SelectableFilter(
-            filterConfig.id,
-            (filterConfig as PrebuiltFilterConfig<T>).options,
-            filterConfig.label
-          );
-          break;
-        default:
-          if (filterConfig.id === "date") {
-            filter = new DateFilter(
-              filterConfig.id,
-              filterConfig.label || schema.label,
-              (filterConfig as DateRangeFilterConfig).options
-            );
-          } else if (
-            this.entities.has(filterConfig.type) ||
-            this.entities.has(schema.additional)
-          ) {
-            const entityType = filterConfig.type || schema.additional;
-            const filterEntities = await this.entityMapperService.loadType(
-              entityType
-            );
-            filter = new EntityFilter(
-              filterConfig.id,
-              entityType,
-              filterEntities
-            );
-          } else {
-            const options = [...new Set(data.map((c) => c[filterConfig.id]))];
-            const fSO = SelectableFilter.generateOptions(
-              options,
-              filterConfig.id
-            );
-            filter = new SelectableFilter<T>(
-              filterConfig.id,
-              fSO,
-              filterConfig.label || schema.label
-            );
-          }
+      if (
+        filterConfig.type == "configurable-enum" ||
+        schema.innerDataType == "configurable-enum" ||
+        schema.dataType == "configurable-enum"
+      ) {
+        filter = new ConfigurableEnumFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          this.enumService.getEnumValues(
+            schema.additional ?? schema.innerDataType
+          )
+        );
+      } else if (
+        filterConfig.type == "boolean" ||
+        schema.dataType == "boolean"
+      ) {
+        filter = new BooleanFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          filterConfig as BooleanFilterConfig
+        );
+      } else if (filterConfig.type == "prebuilt") {
+        filter = new SelectableFilter(
+          filterConfig.id,
+          (filterConfig as PrebuiltFilterConfig<T>).options,
+          filterConfig.label
+        );
+      } else if (filterConfig.id === "date") {
+        filter = new DateFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          (filterConfig as DateRangeFilterConfig).options
+        );
+      } else if (
+        this.entities.has(filterConfig.type) ||
+        this.entities.has(schema.additional)
+      ) {
+        const entityType = filterConfig.type || schema.additional;
+        const filterEntities = await this.entityMapperService.loadType(
+          entityType
+        );
+        filter = new EntityFilter(filterConfig.id, entityType, filterEntities);
+      } else {
+        const options = [...new Set(data.map((c) => c[filterConfig.id]))];
+        const fSO = SelectableFilter.generateOptions(options, filterConfig.id);
+        filter = new SelectableFilter<T>(
+          filterConfig.id,
+          fSO,
+          filterConfig.label || schema.label
+        );
       }
 
       if (filterConfig.hasOwnProperty("default")) {

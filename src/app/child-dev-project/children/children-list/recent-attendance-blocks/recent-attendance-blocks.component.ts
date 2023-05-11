@@ -1,7 +1,5 @@
-import { Component } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Child } from "../../model/child";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ViewPropertyConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import moment from "moment";
@@ -27,18 +25,18 @@ import { AttendanceBlockComponent } from "../../../attendance/attendance-block/a
     <app-attendance-block
       *ngFor="let att of attendanceList | slice : 0 : maxAttendanceBlocks"
       [attendanceData]="att"
-      [forChild]="child.getId()"
+      [forChild]="entity.getId()"
     ></app-attendance-block>
   `,
   imports: [NgForOf, SlicePipe, AttendanceBlockComponent],
   standalone: true,
 })
-export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
+export class RecentAttendanceBlocksComponent implements OnInit {
   attendanceList: ActivityAttendance[] = [];
   maxAttendanceBlocks: number = 3;
 
-  filterByActivityType: string;
-  child: Child;
+  @Input() entity: Child;
+  @Input() config: { filterByActivityType: string };
 
   constructor(
     private attendanceService: AttendanceService,
@@ -71,32 +69,26 @@ export class RecentAttendanceBlocksComponent implements OnInitDynamicComponent {
       });
   }
 
-  async onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    this.filterByActivityType = config.config.filterByActivityType;
-
-    if (config.hasOwnProperty("entity")) {
-      this.child = config.entity as Child;
-
-      let activities = await this.attendanceService.getActivitiesForChild(
-        this.child.getId()
+  async ngOnInit() {
+    let activities = await this.attendanceService.getActivitiesForChild(
+      this.entity.getId()
+    );
+    if (this.config.filterByActivityType) {
+      activities = activities.filter(
+        (a) => a.type.id === this.config.filterByActivityType
       );
-      if (this.filterByActivityType) {
-        activities = activities.filter(
-          (a) => a.type.id === this.filterByActivityType
-        );
-      }
+    }
 
-      this.attendanceList = [];
-      const activityRecords =
-        await this.attendanceService.getAllActivityAttendancesForPeriod(
-          moment().startOf("month").toDate(),
-          moment().endOf("month").toDate()
-        );
+    this.attendanceList = [];
+    const activityRecords =
+      await this.attendanceService.getAllActivityAttendancesForPeriod(
+        moment().startOf("month").toDate(),
+        moment().endOf("month").toDate()
+      );
 
-      for (const record of activityRecords) {
-        if (activities.find((a) => a.getId() === record.activity?.getId())) {
-          this.attendanceList.push(record);
-        }
+    for (const record of activityRecords) {
+      if (activities.find((a) => a.getId() === record.activity?.getId())) {
+        this.attendanceList.push(record);
       }
     }
   }

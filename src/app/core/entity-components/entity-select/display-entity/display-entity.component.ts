@@ -1,6 +1,5 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
-import { ViewPropertyConfig } from "../../entity-list/EntityListConfig";
 import { ViewDirective } from "../../entity-utils/view-components/view.directive";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -29,39 +28,35 @@ export class DisplayEntityComponent
    */
   @Input() entityId: string;
   @Input() entityType: string | EntityConstructor;
+  @Input() config: string;
 
   entityBlockComponent: string;
 
   constructor(
     private entityMapper: EntityMapperService,
-    private router: Router
+    private router: Router,
+    private changeDetector: ChangeDetectorRef
   ) {
     super();
   }
 
   async ngOnInit() {
-    if (!this.entityToDisplay && this.entityId && this.entityType) {
+    if (!this.entityToDisplay) {
+      this.entityType = this.entityType ?? this.config;
+      this.entityId = this.entityId ?? this.value;
+      if (!this.entityType || !this.entityId) {
+        return;
+      }
       this.entityToDisplay = await this.entityMapper.load(
         this.entityType,
         this.entityId
       );
+      this.changeDetector.detectChanges();
     }
     if (this.entityToDisplay) {
       this.entityBlockComponent = this.entityToDisplay
         .getConstructor()
         .getBlockComponent();
-    }
-  }
-
-  async onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    super.onInitFromDynamicConfig(config);
-    if (this.value) {
-      const type =
-        config.config || this.entity.getSchema().get(this.property).additional;
-      this.entityToDisplay = await this.entityMapper
-        .load(type, this.value)
-        .catch(() => undefined);
-      this.ngOnInit();
     }
   }
 

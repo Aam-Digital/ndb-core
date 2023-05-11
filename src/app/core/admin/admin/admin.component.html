@@ -7,18 +7,6 @@
 
 <br/>
 <hr/>
-<h2>Utility Functions</h2>
-<p>
-  <button
-    (click)="updatePhotoFilenames()"
-    mat-stroked-button
-  >
-    Auto-Update children's photo filenames
-  </button>
-</p>
-
-<br/>
-<hr/>
 <h2>Backup</h2>
 <p>
   <button
@@ -107,15 +95,15 @@
 <h2 id="alert-log-heading">Alert Log</h2>
 <table aria-describedby="alert-log-heading" class="admin-table">
   <thead>
-    <th class="shrink-width">Timestamp</th>
-    <th class="shrink-width">Type</th>
-    <th>Message</th>
+  <th class="shrink-width">Timestamp</th>
+  <th class="shrink-width">Type</th>
+  <th>Message</th>
   </thead>
   <tbody>
-    <tr *ngFor="let alert of alerts.reverse()">
-      <td>{{alert.timestamp | date: "medium"}}</td>
-      <td>{{ alert.type }}</td>
-      <td>{{ alert.message }}</td>
-    </tr>
+  <tr *ngFor="let alert of alerts.reverse()">
+    <td>{{alert.timestamp | date: "medium"}}</td>
+    <td>{{ alert.type }}</td>
+    <td>{{ alert.message }}</td>
+  </tr>
   </tbody>
 </table>

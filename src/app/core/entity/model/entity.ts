@@ -20,7 +20,7 @@ import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
 import { getWarningLevelColor, WarningLevel } from "./warning-level";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
-import { cloneDeep } from "lodash-es";
+import { UpdateMetadata } from "./update-metadata";
 
 /**
  * This represents a static class of type <T>.
@@ -171,6 +171,18 @@ export class Entity {
   @DatabaseField() _rev: string;
 
   @DatabaseField({
+    dataType: "schema-embed",
+    additional: UpdateMetadata,
+  })
+  created: UpdateMetadata;
+
+  @DatabaseField({
+    dataType: "schema-embed",
+    additional: UpdateMetadata,
+  })
+  updated: UpdateMetadata;
+
+  @DatabaseField({
     label: $localize`:Label of checkbox:Inactive`,
     description: $localize`:Description of checkbox:Ticking this box will archive the record. No data will be lost but the record will be hidden.`,
   })
@@ -302,7 +314,7 @@ export class Entity {
    */
   public copy(generateNewId: boolean = false): this {
     const other = new (this.getConstructor())(this._id);
-    Object.assign(other, cloneDeep(this));
+    Object.assign(other, this);
 
     if (generateNewId) {
       delete other._rev;

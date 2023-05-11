@@ -1,150 +1,137 @@
 <div *ngIf="isLoading" class="process-spinner">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
-<table
-  mat-table
-  [dataSource]="recordsDataSource"
-  matSort
-  class="full-width"
-  *ngIf="!isLoading"
->
-  <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
-    <th
-      mat-header-cell
-      mat-sort-header
-      *matHeaderCellDef
-      [matTooltip]="col.tooltip"
-      [matTooltipDisabled]="!col.tooltip"
-      [disabled]="col.noSorting"
-    >
-      {{ col.label }}
-    </th>
-    <td
-      mat-cell
-      *matCellDef="let row"
-      (click)="onRowClick(row)"
-      style="cursor: pointer"
-    >
-      <ng-template
-        *ngIf="!row.formGroup || row.formGroup.disabled || !col.edit"
-        [appDynamicComponent]="{
-          component: col.view,
-          config: {
-            value: row.record[col.id],
-            id: col.id,
-            entity: row.record,
-            config: col.additional
-          }
-        }"
-      ></ng-template>
-      <ng-template
-        *ngIf="row.formGroup?.enabled && col.edit"
-        [appDynamicComponent]="{
-          component: col.edit,
-          config: {
-            formFieldConfig: col,
-            propertySchema: row.record.getSchema().get(col.id),
-            formControl: row.formGroup.get(col.id)
-          }
-        }"
+<div [hidden]="isLoading">
+  <table mat-table [dataSource]="recordsDataSource" matSort class="full-width">
+    <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
+      <th
+        mat-header-cell
+        mat-sort-header
+        *matHeaderCellDef
+        [matTooltip]="col.tooltip"
+        [matTooltipDisabled]="!col.tooltip"
+        [disabled]="col.noSorting"
       >
-      </ng-template>
-    </td>
-  </ng-container>
-
-  <ng-container matColumnDef="actions">
-    <th mat-header-cell *matHeaderCellDef [class.remove-padding-left]="editable">
-      <ng-container *ngIf="editable">
-        <button
-          mat-icon-button
-          *appDisabledEntityOperation="{
-            entity: getEntityConstructor(),
-            operation: 'create'
+        {{ col.label }}
+      </th>
+      <td
+        mat-cell
+        *matCellDef="let row"
+        (click)="onRowClick(row)"
+        style="cursor: pointer"
+      >
+        <ng-template
+          *ngIf="!row.formGroup || row.formGroup.disabled || !col.edit"
+          [appDynamicComponent]="{
+            component: col.view,
+            config: {
+              value: row.record[col.id],
+              id: col.id,
+              entity: row.record,
+              config: col.additional
+            }
           }"
-          class="table-action-button"
-          (click)="create()"
+        ></ng-template>
+        <ng-template
+          *ngIf="row.formGroup?.enabled && col.edit"
+          [appDynamicComponent]="{
+            component: col.edit,
+            config: {
+              formFieldConfig: col,
+              propertySchema: row.record.getSchema().get(col.id),
+              formControl: row.formGroup.get(col.id)
+            }
+          }"
         >
-          <fa-icon
-            style="vertical-align: initial"
-            aria-label="add"
-            icon="plus-circle"
-          ></fa-icon>
-        </button>
-      </ng-container>
-    </th>
-    <td mat-cell *matCellDef="let rec" [class.remove-padding-left]="editable">
-      <div *ngIf="editable">
-        <ng-container *ngIf="!rec.formGroup || rec.formGroup.disabled">
-          <button
-            mat-icon-button
-            *appDisabledEntityOperation="{
-              entity: rec.record,
-              operation: 'update'
-            }"
-            (click)="edit(rec)"
-          >
-            <fa-icon
-              aria-label="edit"
-              icon="pen"
-            ></fa-icon>
-          </button>
-        </ng-container>
-        <ng-container *ngIf="rec.formGroup?.enabled">
-          <button
-            mat-icon-button
-            (click)="save(rec)"
-            angulartics2On="click"
-            [angularticsCategory]="rec?.record?.getType()"
-            angularticsAction="subrecord_inlineedit_save"
-          >
-            <fa-icon
-              aria-label="save"
-              icon="check-circle"
-            ></fa-icon>
-          </button>
-          <button
-            mat-icon-button
-            (click)="resetChanges(rec)"
-            angulartics2On="click"
-            [angularticsCategory]="rec?.record?.getType()"
-            angularticsAction="subrecord_inlineedit_cancel"
-          >
-            <fa-icon
-              aria-label="cancel"
-              icon="times-circle"
-            ></fa-icon>
-          </button>
-          <button
-            mat-icon-button
-            *appDisabledEntityOperation="{
-              entity: rec.record,
-              operation: 'delete'
-            }"
-            (click)="delete(rec)"
-            angulartics2On="click"
-            [angularticsCategory]="rec?.record?.getType()"
-            angularticsAction="subrecord_inlineedit_delete"
-          >
-            <fa-icon
-              aria-label="delete"
-              icon="trash"
-            ></fa-icon>
-          </button>
-        </ng-container>
-      </div>
-    </td>
-  </ng-container>
+        </ng-template>
+      </td>
+    </ng-container>
 
-  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-  <tr
-    mat-row
-    *matRowDef="let row; columns: columnsToDisplay"
-    [style.background-color]="getBackgroundColor?.(row.record)"
-    class="table-row"
-  ></tr>
-</table>
-<app-list-paginator
-  *ngIf="!isLoading || recordsDataSource.data.length"
-  [dataSource]="recordsDataSource"
-  [idForSavingPagination]="idForSavingPagination"
-></app-list-paginator>
+    <ng-container matColumnDef="actions">
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        [class.remove-padding-left]="editable"
+      >
+        <ng-container *ngIf="editable">
+          <button
+            mat-icon-button
+            *appDisabledEntityOperation="{
+              entity: getEntityConstructor(),
+              operation: 'create'
+            }"
+            class="table-action-button"
+            (click)="create()"
+          >
+            <fa-icon
+              style="vertical-align: initial"
+              aria-label="add"
+              icon="plus-circle"
+            ></fa-icon>
+          </button>
+        </ng-container>
+      </th>
+      <td mat-cell *matCellDef="let rec" [class.remove-padding-left]="editable">
+        <div *ngIf="editable">
+          <ng-container *ngIf="!rec.formGroup || rec.formGroup.disabled">
+            <button
+              mat-icon-button
+              *appDisabledEntityOperation="{
+                entity: rec.record,
+                operation: 'update'
+              }"
+              (click)="edit(rec)"
+            >
+              <fa-icon aria-label="edit" icon="pen"></fa-icon>
+            </button>
+          </ng-container>
+          <ng-container *ngIf="rec.formGroup?.enabled">
+            <button
+              mat-icon-button
+              (click)="save(rec)"
+              angulartics2On="click"
+              [angularticsCategory]="rec?.record?.getType()"
+              angularticsAction="subrecord_inlineedit_save"
+            >
+              <fa-icon aria-label="save" icon="check-circle"></fa-icon>
+            </button>
+            <button
+              mat-icon-button
+              (click)="resetChanges(rec)"
+              angulartics2On="click"
+              [angularticsCategory]="rec?.record?.getType()"
+              angularticsAction="subrecord_inlineedit_cancel"
+            >
+              <fa-icon aria-label="cancel" icon="times-circle"></fa-icon>
+            </button>
+            <button
+              mat-icon-button
+              *appDisabledEntityOperation="{
+                entity: rec.record,
+                operation: 'delete'
+              }"
+              (click)="delete(rec)"
+              angulartics2On="click"
+              [angularticsCategory]="rec?.record?.getType()"
+              angularticsAction="subrecord_inlineedit_delete"
+            >
+              <fa-icon aria-label="delete" icon="trash"></fa-icon>
+            </button>
+          </ng-container>
+        </div>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr
+      mat-row
+      *matRowDef="let row; columns: columnsToDisplay"
+      [style.background-color]="getBackgroundColor?.(row.record)"
+      class="table-row"
+    ></tr>
+  </table>
+  <app-list-paginator
+    [dataSource]="recordsDataSource"
+    [idForSavingPagination]="idForSavingPagination"
+  ></app-list-paginator>
+</div>

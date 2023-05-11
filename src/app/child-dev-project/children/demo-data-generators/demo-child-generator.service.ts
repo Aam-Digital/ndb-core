@@ -6,7 +6,6 @@ import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
-import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { genders } from "../model/genders";
 import { calculateAge } from "../../../utils/utils";
 import { DateWithAge } from "../model/dateWithAge";
@@ -53,10 +52,6 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     if (faker.datatype.number(100) > 90) {
       DemoChildGenerator.makeChildDropout(child);
     }
-
-    // add default photo for easier use in storybook stories
-    addDefaultChildPhoto(child);
-
     return child;
   }
 

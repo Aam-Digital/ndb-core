@@ -16,12 +16,10 @@ describe("DisplayDateComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayDateComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({
-      entity: new ChildSchoolRelation(),
-      id: "date",
-      value: new Date(),
-      config: "dd-MM-yyyy",
-    });
+    component.entity = new ChildSchoolRelation();
+    component.id = "date";
+    component.value = new Date();
+    component.config = "dd-MM-yyyy";
     fixture.detectChanges();
   });
 

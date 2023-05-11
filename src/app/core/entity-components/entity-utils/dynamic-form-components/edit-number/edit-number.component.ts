@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { EditComponent, EditPropertyConfig } from "../edit-component";
+import { EditComponent } from "../edit-component";
 import { CustomNumberValidators } from "../../../../../utils/custom-number-validators";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -20,8 +20,8 @@ import { ErrorHintComponent } from "../../error-hint/error-hint.component";
   standalone: true,
 })
 export class EditNumberComponent extends EditComponent<number> {
-  onInitFromDynamicConfig(config: EditPropertyConfig<number>) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
+    super.ngOnInit();
     const newValidators = [CustomNumberValidators.isNumber];
     if (this.formControl.validator) {
       newValidators.push(this.formControl.validator);

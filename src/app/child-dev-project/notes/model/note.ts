@@ -38,6 +38,7 @@ import { Ordering } from "../../../core/configurable-enum/configurable-enum-orde
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
+  static toStringAttributes = ["subject"];
   static label = $localize`:label for entity:Note`;
   static labelPlural = $localize`:label (plural) for entity:Notes`;
 
@@ -77,6 +78,7 @@ export class Note extends Entity {
     label: $localize`:Label for the children of a note:Children`,
     dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
+    editComponent: "EditAttendance",
   })
   children: string[] = [];
 
@@ -88,15 +90,18 @@ export class Note extends Entity {
   @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField({ label: $localize`:Label for the date of a note:Date` })
+  @DatabaseField({
+    label: $localize`:Label for the date of a note:Date`,
+    dataType: "date-only",
+  })
   date: Date;
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
-  subject: string = "";
+  subject: string;
   @DatabaseField({
     label: $localize`:Label for the actual notes of a note:Notes`,
     editComponent: "EditLongText",
   })
-  text: string = "";
+  text: string;
   /** IDs of users that authored this note */
   @DatabaseField({
     label: $localize`:Label for the social worker(s) who created the note:SW`,
@@ -110,7 +115,7 @@ export class Note extends Entity {
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
-  category: InteractionType = { id: "", label: "" };
+  category: InteractionType;
 
   /**
    * id referencing a different entity (e.g. a recurring activity) this note is related to
@@ -160,7 +165,7 @@ export class Note extends Entity {
   public getColor() {
     const actualLevel = this.getWarningLevel();
     if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
-      return this.category.color;
+      return this.category?.color;
     } else {
       return super.getColor();
     }
@@ -168,7 +173,7 @@ export class Note extends Entity {
 
   public getColorForId(childId: string): string {
     if (
-      this.category.isMeeting &&
+      this.category?.isMeeting &&
       this.childrenAttendance.get(childId)?.status.countAs ===
         AttendanceLogicalStatus.ABSENT
     ) {

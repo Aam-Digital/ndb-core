@@ -79,21 +79,13 @@ export class QueryService {
    * Runs the query on the passed data object
    * @param query a string or array according to the json-query language (https://github.com/auditassistant/json-query)
    * @param from a date which can be accessed in the query using a ?.
-   *             This will also affect the amount of data being loaded.
    * @param to a date which can be accessed in the query using another ?
    * @param data the data on which the query should run, default is all entities
    * @returns the results of the query on the data
    */
-  public async queryData(
-    query: string,
-    from?: Date,
-    to?: Date,
-    data?: any
-  ): Promise<any> {
+  public queryData(query: string, from?: Date, to?: Date, data?: any): any {
     from = from ?? new Date(0);
     to = to ?? new Date();
-
-    await this.cacheRequiredData(query, from, to);
 
     if (!data) {
       data = this.entities;
@@ -119,7 +111,15 @@ export class QueryService {
     }).value;
   }
 
-  private async cacheRequiredData(query: string, from: Date, to: Date) {
+  /**
+   * Call this function to prefetch required data
+   * @param query single query or concatenation of all query strings that will be executed soon
+   * @param from date from which data should be available
+   * @param to date to which data should be available
+   */
+  async cacheRequiredData(query: string, from: Date, to: Date) {
+    from = from ?? new Date(0);
+    to = to ?? new Date();
     const uncachedEntities = this.getUncachedEntities(query, from, to);
     const dataPromises = uncachedEntities.map((entity) => {
       const info = this.entityInfo[entity.ENTITY_TYPE];

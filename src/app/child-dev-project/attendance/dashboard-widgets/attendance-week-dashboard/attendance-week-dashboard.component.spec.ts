@@ -96,7 +96,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     const saturdayLastWeek = mondayLastWeek.clone().add("5", "days");
     mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
 
-    component.loadAttendanceOfAbsentees();
+    component.ngOnInit();
 
     expect(
       mockAttendanceService.getAllActivityAttendancesForPeriod
@@ -107,8 +107,8 @@ describe("AttendanceWeekDashboardComponent", () => {
     const saturdayThisWeek = mondayThisWeek.clone().add(5, "days");
     mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
 
-    component.onInitFromDynamicConfig({ daysOffset: 7 });
-    component.loadAttendanceOfAbsentees();
+    component.daysOffset = 7;
+    component.ngOnInit();
 
     expect(
       mockAttendanceService.getAllActivityAttendancesForPeriod

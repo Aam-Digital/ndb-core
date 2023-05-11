@@ -1,9 +1,10 @@
 <mat-form-field [formGroup]="parent">
-  <mat-label>{{label}}</mat-label>
+  <mat-label>{{ label }}</mat-label>
   <textarea
     matInput
     [formControlName]="formControlName"
     [title]="label"
+    rows="4"
   ></textarea>
   <mat-error>
     <app-error-hint [form]="formControl"></app-error-hint>

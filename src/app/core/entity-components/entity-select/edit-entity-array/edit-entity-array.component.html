@@ -1,9 +1,10 @@
 <app-entity-select
   [entityType]="entityName"
   [selection]="formControl.value"
-  (selectionChange)="formControl.setValue($event)"
+  (selectionChange)="formControl.setValue($event); formControl.markAsDirty()"
   [disabled]="formControl.disabled"
   [label]="label"
   [placeholder]="placeholder"
+  [showEntities]="showEntities"
 >
 </app-entity-select>

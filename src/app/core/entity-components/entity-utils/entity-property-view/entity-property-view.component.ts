@@ -44,8 +44,9 @@ export class EntityPropertyViewComponent<E extends Entity = Entity>
       if (!this.component) {
         this.component = this.schemaService.getComponent(schema);
       }
-      this.label = schema.label ?? this.property;
+      this.label = schema?.label ?? this.property;
       this.propertyName = this.property;
+      this.additional = schema?.additional;
     } else {
       this.component = this.property.view;
       this.additional = this.property.additional;

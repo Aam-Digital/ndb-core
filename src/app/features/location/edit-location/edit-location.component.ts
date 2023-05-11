@@ -1,9 +1,6 @@
 import { Component, ElementRef, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import {
-  EditComponent,
-  EditPropertyConfig,
-} from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { BehaviorSubject, concatMap, of, Subject } from "rxjs";
 import { catchError, debounceTime, filter, map, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
@@ -52,8 +49,8 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
     super();
   }
 
-  onInitFromDynamicConfig(config: EditPropertyConfig<GeoResult>) {
-    super.onInitFromDynamicConfig(config);
+  ngOnInit() {
+    super.ngOnInit();
     this.inputStream
       .pipe(
         debounceTime(200),

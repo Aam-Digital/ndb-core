@@ -10,48 +10,13 @@
   ></app-entity-form>
 </mat-dialog-content>
 
-<mat-dialog-actions class="gap-regular">
+<mat-dialog-actions>
   <app-todo-completion
     [entity]="entity"
     (complete)="completeTodo()"
     (uncomplete)="uncompleteTodo()"
     *ngIf="!entity.isNew"
+    style="margin-right: 8px;"
   ></app-todo-completion>
-  <!-- TODO: move these form actions into a reusable component (taking the entity + form as input)? -->
-  <button mat-raised-button color="accent" (click)="save()" i18n="Save button for forms">
-    Save
-  </button>
-
-  <button mat-stroked-button i18n="Cancel button for forms" mat-dialog-close="">
-    Cancel
-  </button>
-
-  <button
-    *ngIf="!entity.isNew"
-    mat-icon-button
-    [matMenuTriggerFor]="additional"
-    style="margin-top: -8px; margin-bottom: -8px"
-  >
-    <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
-  </button>
-  <mat-menu #additional>
-    <button
-      mat-menu-item
-      (click)="delete()"
-      *appDisabledEntityOperation="{
-            operation: 'delete',
-            entity: entity
-          }"
-      angulartics2On="click"
-      [angularticsCategory]="entity.getType()"
-      angularticsAction="entity_delete"
-    >
-      <fa-icon
-        class="standard-icon-with-text color-accent"
-        aria-label="remove element"
-        icon="trash"
-      ></fa-icon>
-      <span i18n="Generic delete button"> Delete </span>
-    </button>
-  </mat-menu>
+  <app-dialog-buttons [form]="form" [entity]="entity"/>
 </mat-dialog-actions>

@@ -1,12 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  LOCALE_ID,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
+import { Component, Inject, Input, LOCALE_ID, OnInit } from "@angular/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { AttendanceDetailsComponent } from "../attendance-details/attendance-details.component";
 import { AttendanceService } from "../attendance.service";
@@ -14,7 +6,6 @@ import { formatPercent, NgIf } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import moment from "moment";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -23,6 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
+import { MatDialog } from "@angular/material/dialog";
 
 @DynamicComponent("ActivityAttendanceSection")
 @Component({
@@ -40,10 +32,8 @@ import { AttendanceSummaryComponent } from "../attendance-summary/attendance-sum
   ],
   standalone: true,
 })
-export class ActivityAttendanceSectionComponent
-  implements OnChanges, OnInitDynamicComponent
-{
-  @Input() activity: RecurringActivity;
+export class ActivityAttendanceSectionComponent implements OnInit {
+  @Input() entity: RecurringActivity;
   @Input() forChild?: string;
 
   loading: boolean = true;
@@ -55,8 +45,7 @@ export class ActivityAttendanceSectionComponent
     {
       id: "periodFrom",
       label: $localize`:The month something took place:Month`,
-      view: "DisplayDate",
-      additional: "YYYY-MM",
+      view: "DisplayMonth",
     },
     {
       id: "presentEvents",
@@ -91,32 +80,22 @@ export class ActivityAttendanceSectionComponent
   constructor(
     private attendanceService: AttendanceService,
     @Inject(LOCALE_ID) private locale: string,
-    private formDialog: FormDialogService
+    private dialog: MatDialog
   ) {}
 
-  async ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes.hasOwnProperty("activity") ||
-      changes.hasOwnProperty("forChild")
-    ) {
-      await this.init();
-    }
-  }
-
-  async onInitFromDynamicConfig(config: any) {
-    this.activity = config.entity as RecurringActivity;
-    await this.init();
+  ngOnInit() {
+    return this.init();
   }
 
   async init(loadAll: boolean = false) {
     this.loading = true;
     if (loadAll) {
       this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.activity
+        this.entity
       );
     } else {
       this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.activity,
+        this.entity,
         moment().startOf("month").subtract(6, "months").toDate()
       );
     }
@@ -127,7 +106,7 @@ export class ActivityAttendanceSectionComponent
 
   private createCombinedAttendance() {
     this.combinedAttendance = new ActivityAttendance();
-    this.combinedAttendance.activity = this.activity;
+    this.combinedAttendance.activity = this.entity;
     this.allRecords.forEach((record) => {
       this.combinedAttendance.events.push(...record.events);
       if (
@@ -169,8 +148,11 @@ export class ActivityAttendanceSectionComponent
   }
 
   showDetails(activity: ActivityAttendance) {
-    this.formDialog.openDialog(AttendanceDetailsComponent, activity, {
-      forChild: this.forChild,
+    this.dialog.open(AttendanceDetailsComponent, {
+      data: {
+        forChild: this.forChild,
+        attendance: activity,
+      },
     });
   }
 

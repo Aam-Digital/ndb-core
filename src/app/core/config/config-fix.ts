@@ -279,6 +279,20 @@ export const defaultJsonConfig = {
       ]
     }
   },
+  "appConfig:note-details": {
+    topForm: ["date", "warningLevel", "category", "authors", "attachment"]
+  },
+  "entity:Note": {
+    attributes: [
+      {
+        name: "attachment",
+        schema: {
+          label: $localize`Attachment`,
+          dataType: "file"
+        }
+      }
+    ]
+  },
   "view:admin": {
     "component": "Admin",
     "permittedUserRoles": ["admin_app"]

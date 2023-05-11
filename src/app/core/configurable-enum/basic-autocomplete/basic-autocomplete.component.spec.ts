@@ -15,7 +15,6 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatDialogModule } from "@angular/material/dialog";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
-import { MatInputHarness } from "@angular/material/input/testing";
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
 import {
   FormControl,
@@ -24,6 +23,8 @@ import {
   NgForm,
   Validators,
 } from "@angular/forms";
+import { genders } from "../../../child-dev-project/children/model/genders";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 
 describe("BasicAutocompleteComponent", () => {
   let component: BasicAutocompleteComponent<any, any>;
@@ -92,9 +93,7 @@ describe("BasicAutocompleteComponent", () => {
     component.ngOnChanges({ value: true, options: true, valueMapper: true });
     fixture.detectChanges();
 
-    expect(component.autocompleteForm).toHaveValue("First Child");
-    const inputElement = await loader.getHarness(MatInputHarness);
-    await expectAsync(inputElement.getValue()).toBeResolvedTo("First Child");
+    expect(component.displayText).toBe("First Child");
   });
 
   it("should have the correct entity selected when it's name is entered", () => {
@@ -108,7 +107,7 @@ describe("BasicAutocompleteComponent", () => {
     expect(component.value).toBe(child1.getId());
   });
 
-  it("should reset if nothing has been selected", fakeAsync(() => {
+  it("should reset if leaving empty autocomplete", fakeAsync(() => {
     const first = Child.create("First");
     const second = Child.create("Second");
     component.options = [first, second];
@@ -117,9 +116,9 @@ describe("BasicAutocompleteComponent", () => {
     component.select({ asValue: first.getId() } as any);
     expect(component.value).toBe(first.getId());
 
-    component.autocompleteForm.setValue("Non existent");
+    component.autocompleteForm.setValue("");
     component.onFocusOut({} as any);
-    tick();
+    tick(200);
 
     expect(component.value).toBe(undefined);
     flush();
@@ -145,24 +144,31 @@ describe("BasicAutocompleteComponent", () => {
     expect(options).toHaveSize(3);
 
     await options[2].click();
+    // When browser is not in foreground, this doesn't happen automatically
+    component.autocomplete.openPanel();
+    fixture.detectChanges();
     await options[1].click();
 
     expect(component.value).toEqual([0, 2]);
   });
 
-  it("should clear the input when focusing in multi select mode", () => {
+  it("should switch the input when focusing in multi select mode", fakeAsync(() => {
     component.multi = true;
     component.options = ["some", "values", "and", "other", "options"];
     component.value = ["some", "values"];
     component.ngOnChanges({ value: true, options: true });
-    expect(component.autocompleteForm).toHaveValue("some, values");
+    expect(component.displayText).toBe("some, values");
 
-    component.onFocusIn();
+    component.showAutocomplete();
     expect(component.autocompleteForm).toHaveValue("");
+    expect(component.focused).toBeTrue();
 
     component.onFocusOut({} as any);
-    expect(component.autocompleteForm).toHaveValue("some, values");
-  });
+    tick(200);
+
+    expect(component.displayText).toBe("some, values");
+    expect(component.focused).toBeFalse();
+  }));
 
   it("should update the error state if the form is invalid", () => {
     testControl.setValidators([Validators.required]);
@@ -176,4 +182,45 @@ describe("BasicAutocompleteComponent", () => {
 
     expect(component.errorState).toBeTrue();
   });
+
+  it("should create new option", fakeAsync(() => {
+    const newOption = "new option";
+    const confirmationSpy = spyOn(
+      TestBed.inject<ConfirmationDialogService>(ConfirmationDialogService),
+      "getConfirmation"
+    );
+    component.createOption = (id) => ({ id: id, label: id });
+    const createOptionEventSpy = spyOn(
+      component,
+      "createOption"
+    ).and.callThrough();
+    component.options = genders;
+    const initialValue = genders[0].id;
+    component.value = initialValue;
+    component.valueMapper = (o) => o.id;
+
+    component.ngOnChanges({ value: true, options: true, valueMapper: true });
+
+    component.showAutocomplete();
+    component.autocompleteForm.setValue(newOption);
+
+    // decline confirmation for new option
+    confirmationSpy.and.resolveTo(false);
+    component.select(newOption);
+
+    tick();
+    expect(confirmationSpy).toHaveBeenCalled();
+    expect(createOptionEventSpy).not.toHaveBeenCalled();
+    expect(component.value).toEqual(initialValue);
+
+    // confirm new option
+    confirmationSpy.calls.reset();
+    confirmationSpy.and.resolveTo(true);
+    component.select(newOption);
+
+    tick();
+    expect(confirmationSpy).toHaveBeenCalled();
+    expect(createOptionEventSpy).toHaveBeenCalledWith(newOption);
+    expect(component.value).toEqual(newOption);
+  }));
 });

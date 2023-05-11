@@ -3,7 +3,6 @@ import { AlertService } from "../../alerts/alert.service";
 import { BackupService } from "../services/backup.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
@@ -38,19 +37,11 @@ export class AdminComponent implements OnInit {
     private db: Database,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private childPhotoUpdateService: ChildPhotoUpdateService,
     private configService: ConfigService
   ) {}
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;
-  }
-
-  /**
-   * Trigger an automatic detection & update of Child entities' photo filenames.
-   */
-  updatePhotoFilenames() {
-    this.childPhotoUpdateService.updateChildrenPhotoFilenames();
   }
 
   /**

@@ -5,6 +5,7 @@ import { FileService } from "./file.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 
 /**
  * A mock implementation of the file service which only stores the file temporarily in the browser.
@@ -18,13 +19,14 @@ export class MockFileService extends FileService {
   constructor(
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    logger: LoggingService
+    logger: LoggingService,
+    private sanitizer: DomSanitizer
   ) {
     super(entityMapper, entities, logger);
   }
 
   removeFile(entity: Entity, property: string): Observable<any> {
-    this.fileMap.delete(entity + property);
+    this.fileMap.delete(`${entity.getId(true)}:${property}`);
     return of({ ok: true });
   }
 
@@ -33,12 +35,18 @@ export class MockFileService extends FileService {
   }
 
   showFile(entity: Entity, property: string): void {
-    window.open(this.fileMap.get(entity + property), "_blank");
+    const url = this.fileMap.get(`${entity.getId(true)}:${property}`);
+    window.open(url, "_blank");
+  }
+
+  loadFile(entity: Entity, property: string): Observable<SafeUrl> {
+    const url = this.fileMap.get(`${entity.getId(true)}:${property}`);
+    return of(this.sanitizer.bypassSecurityTrustUrl(url));
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
     const fileURL = URL.createObjectURL(file);
-    this.fileMap.set(entity + property, fileURL);
+    this.fileMap.set(`${entity.getId(true)}:${property}`, fileURL);
     return of({ ok: true });
   }
 }

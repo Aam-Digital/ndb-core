@@ -8,12 +8,13 @@
   border-radius: 50%;
 
   margin-right: sizes.$small;
+  margin-left: sizes.$small;
 
   // when the indicator is used as prefix in a form field
   // it should be center-aligned with the content, but is baseline-aligned
   // without this small margin
   &__prefix {
-    margin-bottom: -0.15em;
+    margin-bottom: 0.15em;
   }
 
   // when the indicator is used inside the option-field it has `display: inline`
@@ -21,5 +22,6 @@
   &__option {
     display: inline-block;
     vertical-align: middle;
+    margin-bottom: 0.225em;
   }
 }

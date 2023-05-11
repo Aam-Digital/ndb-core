@@ -19,10 +19,6 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
-import { Photo } from "../child-photo-service/photo";
-import { BehaviorSubject } from "rxjs";
-import { SafeUrl } from "@angular/platform-browser";
-import { ChildPhotoService } from "../child-photo-service/child-photo.service";
 import { DateWithAge } from "./dateWithAge";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 
@@ -89,7 +85,7 @@ export class Child extends Entity {
   @DatabaseField({
     label: $localize`:Label for the status of a child:Status`,
   })
-  status: string = "";
+  status: string;
 
   @DatabaseField({
     label: $localize`:Label for the dropout date of a child:Dropout Date`,
@@ -112,16 +108,11 @@ export class Child extends Entity {
   schoolClass: string;
 
   @DatabaseField({
-    dataType: "photo",
-    defaultValue: "",
+    dataType: "file",
     label: $localize`:Label for the filename of a photo of a child:Photo Filename`,
+    editComponent: "EditPhoto",
   })
-  photo: Photo = {
-    path: "",
-    photo: new BehaviorSubject<SafeUrl>(
-      ChildPhotoService.getImageFromAssets(undefined)
-    ),
-  };
+  photo: string;
 
   @DatabaseField({
     label: $localize`:Label for the phone number of a child:Phone Number`,

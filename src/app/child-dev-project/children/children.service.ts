@@ -31,7 +31,7 @@ export class ChildrenService {
    */
   async getChildren(): Promise<Child[]> {
     const children = await this.entityMapper.loadType(Child);
-    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}:`);
+    const relations = await this.entityMapper.loadType(ChildSchoolRelation);
     groupBy(relations, "childId").forEach(([id, rels]) => {
       const child = children.find((c) => c.getId() === id);
       if (child) {
@@ -184,10 +184,11 @@ export class ChildrenService {
       // TODO: filter notes to only include them if the given child is marked "present"
 
       for (const entityId of note[noteProperty]) {
+        const trimmedId = Entity.extractEntityIdFromId(entityId);
         const daysSinceNote = moment().diff(note.date, "days");
-        const previousValue = results.get(entityId);
+        const previousValue = results.get(trimmedId);
         if (previousValue > daysSinceNote) {
-          results.set(entityId, daysSinceNote);
+          results.set(trimmedId, daysSinceNote);
         }
       }
     }

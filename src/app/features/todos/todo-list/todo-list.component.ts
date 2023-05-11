@@ -122,7 +122,7 @@ export class TodoListComponent implements OnInit {
   }
 
   showDetails(entity: Todo) {
-    this.formDialog.openSimpleForm(entity, undefined, TodoDetailsComponent);
+    this.formDialog.openFormPopup(entity, undefined, TodoDetailsComponent);
   }
 }
 

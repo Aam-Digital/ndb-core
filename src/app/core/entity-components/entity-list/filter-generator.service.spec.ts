@@ -69,10 +69,12 @@ describe("FilterGeneratorService", () => {
   });
 
   it("should create a configurable enum filter", async () => {
-    const interactionTypes = defaultInteractionTypes.map((it) => {
-      return { key: it.id, label: it.label };
-    });
-    interactionTypes.push({ key: "all", label: "All" });
+    const interactionTypes = defaultInteractionTypes.map((it) =>
+      jasmine.objectContaining({ key: it.id, label: it.label })
+    );
+    interactionTypes.push(
+      jasmine.objectContaining({ key: "all", label: "All" })
+    );
     const schema = Note.schema.get("category");
 
     let filter = (
@@ -105,6 +107,34 @@ describe("FilterGeneratorService", () => {
     expect(comparableOptions).toEqual(
       jasmine.arrayWithExactContents(interactionTypes)
     );
+
+    // enum as array
+    const schemaArray = {
+      dataType: "array",
+      innerDataType: schema.dataType,
+      additional: schema.innerDataType,
+    };
+    Note.schema.set("otherEnum", schemaArray);
+
+    filterSettings = (
+      await service.generate([{ id: "otherEnum" }], Note, [])
+    )[0].filterSettings;
+
+    expect(filterSettings.options).toEqual(
+      jasmine.arrayWithExactContents(interactionTypes)
+    );
+
+    const note = new Note();
+    note["otherEnum"] = [
+      defaultInteractionTypes[1],
+      defaultInteractionTypes[2],
+    ];
+
+    // indices are increased by one as first option is "all"
+    expect(filter([note], filterSettings.options[2])).toEqual([note]);
+    expect(filter([note], filterSettings.options[3])).toEqual([note]);
+    expect(filter([note], filterSettings.options[4])).toEqual([]);
+
     Note.schema.delete("otherEnum");
   });
 
