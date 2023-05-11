@@ -21,13 +21,14 @@ import { createTestingConfigService } from "../core/config/testing-config-servic
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
 import { LoginState } from "../core/session/session-states/login-state.enum";
+import { AuthUser } from "../core/session/session-service/auth-user";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
 
 export const entityFormStorybookDefaultParameters = {
   controls: {
-    exclude: ["_columns"],
+    exclude: ["_columns", "_cols", "enumValueToString"],
   },
 };
 
@@ -35,6 +36,18 @@ export const mockAbilityService = {
   abilityUpdated: new Subject<void>(),
   initializeRules: () => {},
 };
+
+export function mockSessionService(currentUser?: AuthUser): SessionService {
+  if (!currentUser) {
+    currentUser = { name: "demo-user", roles: [] };
+  }
+  return {
+    getCurrentUser: () => currentUser,
+    syncState: new BehaviorSubject(SyncState.COMPLETED),
+    isLoggedIn: () => true,
+    loginState: new BehaviorSubject(LoginState.LOGGED_IN),
+  } as SessionService;
+}
 
 /**
  * Utility module to be imported in Storybook stories to ensure central setup like fontawesome icons are available.
@@ -58,12 +71,7 @@ export const mockAbilityService = {
     },
     {
       provide: SessionService,
-      useValue: {
-        getCurrentUser: () => ({ name: "demo-user" }),
-        syncState: new BehaviorSubject(SyncState.COMPLETED),
-        isLoggedIn: () => true,
-        loginState: new BehaviorSubject(LoginState.LOGGED_IN),
-      },
+      useValue: mockSessionService(),
     },
   ],
 })

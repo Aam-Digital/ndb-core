@@ -14,6 +14,7 @@ import { ChildBlockComponent } from "../../../../child-dev-project/children/chil
 import { SchoolBlockComponent } from "../../../../child-dev-project/schools/school-block/school-block.component";
 import { Database } from "../../../database/database";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
+import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -36,15 +37,12 @@ export default {
         { provide: BackupService, useValue: {} },
         {
           provide: EntityMapperService,
-          useValue: {
-            loadType: () =>
-              Promise.resolve([
-                child1,
-                child2,
-                child3,
-                School.create({ name: "School ABC" }),
-              ]),
-          },
+          useValue: mockEntityMapper([
+            child1,
+            child2,
+            child3,
+            School.create({ name: "School ABC" }),
+          ]),
         },
         { provide: ComponentRegistry, useValue: componentRegistry },
         { provide: Database, useValue: {} },
@@ -78,8 +76,8 @@ const Template: Story<EntitySelectComponent<Child>> = (
   props: args,
 });
 
-export const primary = Template.bind({});
-primary.args = {
+export const Active = Template.bind({});
+Active.args = {
   entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",

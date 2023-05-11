@@ -77,6 +77,11 @@ export default {
       ],
     }),
   ],
+  parameters: {
+    controls: {
+      exclude: ["tableDataSource"],
+    },
+  },
 } as Meta;
 
 const Template: Story<AttendanceWeekDashboardComponent> = (

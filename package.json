@@ -11,6 +11,7 @@
     "lint": "ng lint ndb-core",
     "e2e": "ng e2e",
     "e2e-open": "ng run ndb-core:cypress-open",
+    "percy-storybook": "npm run build-storybook && percy storybook:start ./storybook-static",
     "compodoc": "npx compodoc -c doc/compodoc_sources/.compodocrc.json",
     "postinstall": "ngcc",
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
