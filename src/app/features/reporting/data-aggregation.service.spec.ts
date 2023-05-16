@@ -12,6 +12,8 @@ import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { centersUnique } from "../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../child-dev-project/children/model/genders";
+import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
+import { entityRegistry } from "../../core/entity/database-entity.decorator";
 
 describe("DataAggregationService", () => {
   let service: DataAggregationService;
@@ -659,6 +661,39 @@ describe("DataAggregationService", () => {
           },
         ],
       },
+    ]);
+  });
+
+  fit("should handle subfields of filtered query anywhere in the reporting structure", async () => {
+    const c1 = new Child();
+    c1.status = "1";
+
+    const entityMapper = mockEntityMapper([c1]);
+    const queryService = new QueryService(
+      entityMapper,
+      null,
+      null,
+      entityRegistry
+    );
+    service = new DataAggregationService(queryService);
+
+    const complexQuery: Aggregation = {
+      label: "!!",
+      query: "Child:toArray.status",
+    };
+    const otherQuery: Aggregation = {
+      label: "other",
+      query: "School:toArray",
+    };
+
+    const result = await service.calculateReport([complexQuery, otherQuery]);
+
+    expect(result).toEqual([
+      {
+        header: { label: "!!", groupedBy: [], result: 2 },
+        subRows: [],
+      },
+      { header: { label: "other", groupedBy: [], result: 0 }, subRows: [] },
     ]);
   });
 });
