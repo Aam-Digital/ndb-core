@@ -19,7 +19,6 @@ import {
 } from "app/core/entity-components/entity-list/EntityListConfig";
 import moment from "moment";
 import { FormsModule } from "@angular/forms";
-import { dateToString } from "app/utils/utils";
 
 const standardOptions: DateRangeFilterConfigOption[] = [
   {

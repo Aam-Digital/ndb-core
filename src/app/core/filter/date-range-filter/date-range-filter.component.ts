@@ -73,7 +73,7 @@ export class DateRangeFilterComponent<T extends Entity> {
     this.apply();
   }
 
-  assigndateRangePanelResult(dRPR: DateRangePanelResult) {
+  assignDateRangePanelResult(dRPR: DateRangePanelResult) {
     this.fromDate = dRPR.selectedRangeValue.start;
     this.toDate = dRPR.selectedRangeValue.end;
     this._dateFilter.selectedOption =
@@ -108,7 +108,7 @@ export class DateRangeFilterComponent<T extends Entity> {
       .afterClosed()
       .subscribe((res: DateRangePanelResult) => {
         if (res) {
-          this.assigndateRangePanelResult(res);
+          this.assignDateRangePanelResult(res);
         }
       });
   }
