@@ -664,7 +664,7 @@ describe("DataAggregationService", () => {
     ]);
   });
 
-  fit("should handle subfields of filtered query anywhere in the reporting structure", async () => {
+  it("should handle subfields of filtered query anywhere in the reporting structure", async () => {
     const c1 = new Child();
     c1.status = "1";
 
@@ -690,7 +690,7 @@ describe("DataAggregationService", () => {
 
     expect(result).toEqual([
       {
-        header: { label: "!!", groupedBy: [], result: 2 },
+        header: { label: "!!", groupedBy: [], result: 1 },
         subRows: [],
       },
       { header: { label: "other", groupedBy: [], result: 0 }, subRows: [] },
