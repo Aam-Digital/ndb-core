@@ -19,10 +19,7 @@ export class UnsavedChangesService {
 
   async checkUnsavedChanges() {
     if (this.pending) {
-      const confirmed = await this.confirmation.getConfirmation(
-        "Discard changes?",
-        "All unsaved changes will be lost"
-      );
+      const confirmed = await this.confirmation.getSaveConfirmation();
       if (confirmed) {
         this.pending = false;
         return true;

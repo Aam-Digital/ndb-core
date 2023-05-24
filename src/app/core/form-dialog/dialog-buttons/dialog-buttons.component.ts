@@ -54,10 +54,7 @@ export class DialogButtonsComponent implements OnInit {
     this.dialog.backdropClick().subscribe(() => {
       if (this.form.dirty) {
         this.confirmation
-          .getConfirmation(
-            $localize`:Save changes header:Save Changes?`,
-            $localize`:Save changes message:Do you want to save the changes you made?`
-          )
+          .getSaveConfirmation()
           .then((confirmed) => (confirmed ? this.save() : undefined));
       }
     });
