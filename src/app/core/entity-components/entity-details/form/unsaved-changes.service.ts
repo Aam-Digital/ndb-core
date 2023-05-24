@@ -9,7 +9,12 @@ export class UnsavedChangesService {
 
   constructor(private confirmation: ConfirmationDialogService) {
     // prevent navigation if changes are pending
-    window.onbeforeunload = () => (this.pending ? "" : undefined);
+    window.onbeforeunload = (e) => {
+      if (this.pending) {
+        e.preventDefault();
+        e.returnValue = "onbeforeunload";
+      }
+    };
   }
 
   async checkUnsavedChanges() {
