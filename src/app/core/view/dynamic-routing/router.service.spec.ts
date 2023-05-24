@@ -65,18 +65,21 @@ describe("RouterService", () => {
         path: "child",
         loadComponent: componentRegistry.get("ChildrenList"),
         data: {},
+        canDeactivate: [jasmine.any(Function)],
         canActivate: [AuthGuard],
       },
       {
         path: "child/:id",
         loadComponent: componentRegistry.get("EntityDetails"),
         data: { config: testViewConfig },
+        canDeactivate: [jasmine.any(Function)],
         canActivate: [AuthGuard],
       },
       {
         path: "admin",
         loadComponent: componentRegistry.get("Admin"),
         canActivate: [AuthGuard, UserRoleGuard],
+        canDeactivate: [jasmine.any(Function)],
         data: { permittedUserRoles: ["user_app"] },
       },
     ];
@@ -106,6 +109,7 @@ describe("RouterService", () => {
         path: "other",
         component: TestComponent,
         canActivate: [AuthGuard, UserRoleGuard],
+        canDeactivate: [jasmine.any(Function)],
         data: { permittedUserRoles: ["admin_app"] },
       },
       { path: "child", component: ChildrenListComponent },
@@ -156,6 +160,7 @@ describe("RouterService", () => {
         path: "admin",
         loadComponent: componentRegistry.get("Admin"),
         canActivate: [AuthGuard, UserRoleGuard],
+        canDeactivate: [jasmine.any(Function)],
         data: { permittedUserRoles: ["admin"] },
       },
     ];
