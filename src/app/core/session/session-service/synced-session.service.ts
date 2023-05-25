@@ -226,16 +226,19 @@ export class SyncedSessionService extends SessionService {
         // replication was resumed: either because new things to sync or because connection is available again. info contains the direction
         this.syncState.next(SyncState.STARTED);
       })
-      .on("error", this.handleStoppedSync("error"))
-      .on("complete", this.handleStoppedSync("complete"));
+      .on("error", this.handleStoppedSync())
+      .on("complete", (info) =>
+        this.loggingService.info(`Life sync completed: ${JSON.stringify(info)}`)
+      );
   }
 
-  private handleStoppedSync(reason: string) {
+  private handleStoppedSync() {
     return (info) => {
       if (this.isLoggedIn()) {
         this.syncState.next(SyncState.FAILED);
+        const lastAuth = localStorage.getItem(AuthService.LAST_AUTH_KEY);
         this.loggingService.warn(
-          `Live sync stopped "${reason}": ${JSON.stringify(info)}`
+          `Live sync failed (last auth ${lastAuth}): ${JSON.stringify(info)}`
         );
         this.liveSync();
       }
