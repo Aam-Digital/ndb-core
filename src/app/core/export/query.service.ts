@@ -307,7 +307,7 @@ export class QueryService {
     key: string,
     value: string
   ): any[] {
-    const values = value.replace(new RegExp(" ", "g"), "").split("|");
+    const values = value.trim().split(/\s*\|\s*/);
     return objs.filter((obj) => {
       if (obj?.hasOwnProperty(attr)) {
         return values.includes(obj[attr][key]?.toString());
