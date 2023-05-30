@@ -106,7 +106,11 @@ const demoDataGeneratorProviders = [
   exports: [DemoDataGeneratingProgressDialogComponent],
 })
 export class DemoDataModule {
-  constructor(demoDataInitializer: DemoDataInitializerService) {
-    demoDataInitializer.run();
+  constructor(private demoDataInitializer: DemoDataInitializerService) {}
+
+  publishDemoData() {
+    return this.demoDataInitializer
+      .run()
+      .then(() => console.log("demo data initialised"));
   }
 }

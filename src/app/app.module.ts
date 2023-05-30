@@ -17,7 +17,14 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
+import {
+  APP_INITIALIZER,
+  ErrorHandler,
+  Injector,
+  LOCALE_ID,
+  NgModule,
+  ɵcreateInjector as createInjector,
+} from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
@@ -73,11 +80,15 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
-import { RouterModule } from "@angular/router";
+import { ActivatedRoute, Router, RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
 import { SessionService } from "./core/session/session-service/session.service";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
+import { EntityConfigService } from "./core/entity/entity-config.service";
+import { ConfigService } from "./core/config/config.service";
+import { LoggingService } from "./core/logging/logging.service";
+import { RouterService } from "./core/view/dynamic-routing/router.service";
 
 /**
  * Main entry point of the application.
@@ -153,6 +164,64 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
           session.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
       }),
       deps: [SessionService],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory:
+        (
+          injector: Injector,
+          configService: ConfigService,
+          routerService: RouterService,
+          entityConfigService: EntityConfigService,
+          router: Router,
+          sessionService: SessionService,
+          analyticsService: AnalyticsService,
+          activatedRoute: ActivatedRoute
+        ) =>
+        async () => {
+          // Re-trigger services that depend on the config when something changes
+          configService.configUpdates.subscribe(() => {
+            routerService.initRouting();
+            entityConfigService.setupEntitiesFromConfig();
+            router.navigate([], {
+              relativeTo: activatedRoute,
+              queryParamsHandling: "preserve",
+            });
+          });
+
+          // update the user context for remote error logging and tracking and load config initially
+          sessionService.loginState.subscribe((newState) => {
+            if (newState === LoginState.LOGGED_IN) {
+              const username = sessionService.getCurrentUser().name;
+              LoggingService.setLoggingContextUser(username);
+              analyticsService.setUser(username);
+            } else {
+              LoggingService.setLoggingContextUser(undefined);
+              analyticsService.setUser(undefined);
+            }
+          });
+
+          if (environment.production) {
+            analyticsService.init();
+          }
+          if (environment.demo_mode) {
+            const m = await import("./core/demo-data/demo-data.module");
+            await createInjector(m.DemoDataModule, injector)
+              .get(m.DemoDataModule)
+              .publishDemoData();
+          }
+        },
+      deps: [
+        Injector,
+        ConfigService,
+        RouterService,
+        EntityConfigService,
+        Router,
+        SessionService,
+        AnalyticsService,
+        ActivatedRoute,
+      ],
+      multi: true,
     },
   ],
   bootstrap: [AppComponent],
