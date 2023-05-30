@@ -40,6 +40,7 @@ import { DemoConfigurableEnumGeneratorService } from "../configurable-enum/demo-
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
 
 const demoDataGeneratorProviders = [
+  ...DemoConfigGeneratorService.provider(),
   ...DemoPermissionGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
@@ -66,8 +67,6 @@ const demoDataGeneratorProviders = [
     maxCountAttributes: 5,
   }),
   ...DemoTodoGeneratorService.provider(),
-  // keep Demo service last to ensure all entities are already initialized
-  ...DemoConfigGeneratorService.provider(),
 ];
 
 /**
