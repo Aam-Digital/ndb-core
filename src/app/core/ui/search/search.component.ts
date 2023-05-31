@@ -1,4 +1,8 @@
-import { Component, ViewEncapsulation } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { Observable } from "rxjs";
 import { concatMap, debounceTime, tap } from "rxjs/operators";
@@ -39,6 +43,7 @@ import { SearchService } from "./search.service";
     AsyncPipe,
   ],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SearchComponent {
   static INPUT_DEBOUNCE_TIME_MS = 400;
