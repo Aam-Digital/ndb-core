@@ -6,7 +6,7 @@ import {
 import { ConfigService } from "./core/config/config.service";
 import { RouterService } from "./core/view/dynamic-routing/router.service";
 import { EntityConfigService } from "./core/entity/entity-config.service";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { SessionService } from "./core/session/session-service/session.service";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { LoginState } from "./core/session/session-states/login-state.enum";
@@ -23,18 +23,15 @@ export const appInitializers = {
       entityConfigService: EntityConfigService,
       router: Router,
       sessionService: SessionService,
-      analyticsService: AnalyticsService,
-      activatedRoute: ActivatedRoute
+      analyticsService: AnalyticsService
     ) =>
     async () => {
       // Re-trigger services that depend on the config when something changes
       configService.configUpdates.subscribe(() => {
         routerService.initRouting();
         entityConfigService.setupEntitiesFromConfig();
-        router.navigate([], {
-          relativeTo: activatedRoute,
-          queryParamsHandling: "preserve",
-        });
+        const url = location.href.replace(location.origin, "");
+        router.navigateByUrl(url, { skipLocationChange: true });
       });
 
       // update the user context for remote error logging and tracking and load config initially
@@ -67,7 +64,6 @@ export const appInitializers = {
     Router,
     SessionService,
     AnalyticsService,
-    ActivatedRoute,
   ],
   multi: true,
 };
