@@ -18,13 +18,12 @@ import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { Database } from "../database/database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
-import { EntityConfigService } from "app/core/entity/entity-config.service";
-import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
+import { environment } from "environments/environment";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -44,17 +43,13 @@ describe("QueryService", () => {
     (i) => i.id === "COACHING_CLASS"
   );
 
-  beforeEach(waitForAsync(async () => {
+  beforeEach(waitForAsync(() => {
+    environment.demo_mode = false;
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
     });
     service = TestBed.inject(QueryService);
-    const configService = TestBed.inject(ConfigService);
-    const entityConfigService = TestBed.inject(EntityConfigService);
     entityMapper = TestBed.inject(EntityMapperService);
-    await configService.loadConfig();
-    entityConfigService.addConfigAttributes(School);
-    entityConfigService.addConfigAttributes(Child);
   }));
 
   afterEach(() => TestBed.inject(Database).destroy());

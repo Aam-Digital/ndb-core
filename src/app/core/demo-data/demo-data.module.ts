@@ -108,8 +108,6 @@ export class DemoDataModule {
   constructor(private demoDataInitializer: DemoDataInitializerService) {}
 
   publishDemoData() {
-    return this.demoDataInitializer
-      .run()
-      .then(() => console.log("demo data initialised"));
+    return this.demoDataInitializer.run();
   }
 }
