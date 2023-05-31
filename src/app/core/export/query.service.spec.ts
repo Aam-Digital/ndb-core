@@ -23,7 +23,6 @@ import { AttendanceStatusType } from "../../child-dev-project/attendance/model/a
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
-import { environment } from "environments/environment";
 
 describe("QueryService", () => {
   let service: QueryService;
@@ -44,7 +43,6 @@ describe("QueryService", () => {
   );
 
   beforeEach(waitForAsync(() => {
-    environment.demo_mode = false;
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
     });
