@@ -267,15 +267,12 @@ describe("SyncedSessionService", () => {
     expect(sessionService.checkPassword("TestUser", "wrongPW")).toBeFalse();
   });
 
-  it("should restart the sync if it is canceled at one point", fakeAsync(() => {
-    let errorCallback, completeCallback, pauseCallback;
+  it("should restart the sync if it fails at one point", fakeAsync(() => {
+    let errorCallback, pauseCallback;
     const syncHandle = {
       on: (action, callback) => {
         if (action === "error") {
           errorCallback = callback;
-        }
-        if (action === "complete") {
-          completeCallback = callback;
         }
         if (action === "paused") {
           pauseCallback = callback;
@@ -299,21 +296,16 @@ describe("SyncedSessionService", () => {
     errorCallback();
     expect(syncSpy).toHaveBeenCalled();
 
-    // complete -> sync should restart
-    syncSpy.calls.reset();
-    completeCallback();
-    expect(syncSpy).toHaveBeenCalled();
-
     // pause -> no restart required
     syncSpy.calls.reset();
     pauseCallback();
     expect(syncSpy).not.toHaveBeenCalled();
 
-    // logout + complete -> no restart
+    // logout + error -> no restart
     syncSpy.calls.reset();
     sessionService.logout();
     tick();
-    completeCallback();
+    errorCallback();
     expect(syncSpy).not.toHaveBeenCalled();
   }));
 

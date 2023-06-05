@@ -9,6 +9,7 @@ import {
 import { firstValueFrom } from "rxjs";
 import { AppSettings } from "../../../app-config/app-settings";
 import { AuthUser } from "../../session-service/auth-user";
+import { tap } from "rxjs/operators";
 
 @Injectable()
 export class CouchdbAuthService extends AuthService {
@@ -25,11 +26,13 @@ export class CouchdbAuthService extends AuthService {
 
   authenticate(username: string, password: string): Promise<AuthUser> {
     return firstValueFrom(
-      this.http.post<AuthUser>(
-        `${AppSettings.DB_PROXY_PREFIX}/_session`,
-        { name: username, password: password },
-        { withCredentials: true }
-      )
+      this.http
+        .post<AuthUser>(
+          `${AppSettings.DB_PROXY_PREFIX}/_session`,
+          { name: username, password: password },
+          { withCredentials: true }
+        )
+        .pipe(tap(() => this.logSuccessfulAuth()))
     );
   }
 
@@ -41,6 +44,7 @@ export class CouchdbAuthService extends AuthService {
       )
     ).then((res: any) => {
       if (res.userCtx.name) {
+        this.logSuccessfulAuth();
         return res.userCtx;
       } else {
         throw new HttpErrorResponse({
