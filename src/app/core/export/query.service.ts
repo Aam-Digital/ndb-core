@@ -307,6 +307,7 @@ export class QueryService {
     key: string,
     value: string
   ): any[] {
+    // splits at "|" and removes optional whitespace before or after the symbol
     const values = value.trim().split(/\s*\|\s*/);
     return objs.filter((obj) => {
       if (obj?.hasOwnProperty(attr)) {
