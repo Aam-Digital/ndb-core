@@ -228,7 +228,7 @@ export class SyncedSessionService extends SessionService {
       })
       .on("error", this.handleStoppedSync())
       .on("complete", (info) =>
-        this.loggingService.info(`Life sync completed: ${JSON.stringify(info)}`)
+        this.loggingService.info(`Live sync completed: ${JSON.stringify(info)}`)
       );
   }
 
