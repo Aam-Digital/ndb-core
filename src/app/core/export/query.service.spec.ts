@@ -616,6 +616,19 @@ describe("QueryService", () => {
     ).toBeResolvedTo({});
   });
 
+  it("should support enum ids that contain spaces", async () => {
+    const newGender = { id: "another gender", label: "some label" };
+    genders.push(newGender);
+    await createChild(newGender.id);
+    await createChild("M");
+
+    const res = await queryData(
+      `${Child.ENTITY_TYPE}:toArray:filterByObjectAttribute(gender, id, another gender):count`
+    );
+
+    expect(res).toBe(1);
+  });
+
   function queryData(query: string, from?: Date, to?: Date, data?: any) {
     return service
       .cacheRequiredData(query, from, to)
@@ -623,7 +636,7 @@ describe("QueryService", () => {
   }
 
   async function createChild(
-    gender: "M" | "F" = "F",
+    gender: "M" | "F" | string = "F",
     religion?: "muslim" | "christian"
   ): Promise<Child> {
     const child = new Child();
