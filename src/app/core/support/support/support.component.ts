@@ -131,6 +131,7 @@ export class SupportComponent implements OnInit {
         swLog: this.swLog,
         storageInfo: this.storageInfo,
         dbInfo: this.dbInfo,
+        timestamp: new Date().toISOString(),
       },
     });
     Sentry.showReportDialog({
