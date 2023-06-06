@@ -78,6 +78,7 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() valueMapper = (option: O) => option as unknown as V;
   @Input() optionToString = (option: O) => option?.toString();
   @Input() createOption: (input: string) => O;
+  @Input() hideOption: (option: O) => boolean = () => false;
   @Input() multi?: boolean;
 
   autocompleteForm = new FormControl("");
@@ -173,8 +174,10 @@ export class BasicAutocompleteComponent<O, V = O>
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
     let filteredOptions = this._options;
     if (inputText) {
-      filteredOptions = this._options.filter((option) =>
-        option.asString.toLowerCase().includes(inputText.toLowerCase())
+      filteredOptions = this._options.filter(
+        (option) =>
+          !this.hideOption(option.initial) &&
+          option.asString.toLowerCase().includes(inputText.toLowerCase())
       );
       this.showAddOption = !this._options.some(
         (o) => o.asString.toLowerCase() === inputText.toLowerCase()
