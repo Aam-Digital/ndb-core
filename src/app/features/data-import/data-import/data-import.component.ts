@@ -23,7 +23,11 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { MatDialog } from "@angular/material/dialog";
 import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mapping.component";
 
-type PropertyConfig = { name: string; schema: EntitySchemaField };
+type PropertyConfig = {
+  name: string;
+  schema: EntitySchemaField;
+  discrete: boolean;
+};
 // TODO rename (duplicate in subrecord)
 export type ColumnConfig = {
   column: string;
@@ -79,10 +83,19 @@ export class DataImportComponent implements OnInit {
     this.allProps = [...this.entity.schema.entries()].map(([name, schema]) => ({
       name,
       schema,
+      discrete: this.isDiscreteValue(schema),
     }));
   }
 
   change() {}
+
+  private isDiscreteValue(schema: EntitySchemaField): boolean {
+    return (
+      schema.dataType === "boolean" ||
+      schema.dataType === "configurable-enum" ||
+      schema.innerDataType === "configurable-enum"
+    );
+  }
 
   showEnumConfig(col: ColumnConfig) {
     this.matDialog.open(EnumValueMappingComponent, { data: col });
