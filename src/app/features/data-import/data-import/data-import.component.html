@@ -6,8 +6,10 @@
         <mat-label>{{ col.column }}</mat-label>
         <app-basic-autocomplete
           [options]="allProps"
-          [(ngModel)]="col.schema"
+          [(ngModel)]="col.property"
           [optionToString]="labelMapper"
+          [hideOption]="isUsed"
+          (ngModelChange)="change()"
         />
       </mat-form-field>
     </div>

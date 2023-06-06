@@ -5,7 +5,6 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { BehaviorSubject } from "rxjs";
 import { RouteTarget } from "../../../app.routing";
 import { EntityConstructor } from "app/core/entity/model/entity";
 import { InputFileComponent } from "../input-file/input-file.component";
@@ -22,9 +21,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { Child } from "../../../child-dev-project/children/model/child";
 
+type PropertyConfig = { name: string; schema: EntitySchemaField };
 type ColumnConfig = {
   column: string;
-  schema?: EntitySchemaField;
+  property?: PropertyConfig;
   additional?: any;
 };
 
@@ -57,23 +57,11 @@ export class DataImportComponent implements OnInit {
   entityForm = new FormControl("", [Validators.required]);
   entity: EntityConstructor = Child;
 
-  allProps: { name: string; schema: EntitySchemaField }[] = [];
+  allProps: PropertyConfig[] = [];
 
-  labelMapper = ({
-    name,
-    schema,
-  }: {
-    name: string;
-    schema: EntitySchemaField;
-  }) => schema.label ?? name;
-
-  get unused(): { name: string; schema: EntitySchemaField }[] {
-    return this.allProps.filter(
-      ({ schema }) => !this.columnMapping.some((p) => p?.schema === schema)
-    );
-  }
-
-  filteredProps = new BehaviorSubject<{ label: string; key: string }[]>([]);
+  labelMapper = ({ name, schema }: PropertyConfig) => schema.label ?? name;
+  isUsed = (option: PropertyConfig) =>
+    this.columnMapping.some(({ property }) => property === option);
 
   columnMapping: ColumnConfig[] = [
     { column: "first" },
@@ -87,4 +75,6 @@ export class DataImportComponent implements OnInit {
       schema,
     }));
   }
+
+  change() {}
 }
