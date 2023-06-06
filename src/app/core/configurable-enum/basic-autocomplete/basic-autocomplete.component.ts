@@ -76,7 +76,7 @@ export class BasicAutocompleteComponent<O, V = O>
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
   @Input() valueMapper = (option: O) => option as unknown as V;
-  @Input() optionToString = (option) => option?.toString();
+  @Input() optionToString = (option: O) => option?.toString();
   @Input() createOption: (input: string) => O;
   @Input() multi?: boolean;
 
@@ -232,6 +232,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this.showAutocomplete();
     } else {
       this.value = option.asValue;
+      this.autocompleteForm.setValue(option.asString);
     }
   }
 
