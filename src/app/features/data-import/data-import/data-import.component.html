@@ -12,6 +12,14 @@
           (ngModelChange)="change()"
         />
       </mat-form-field>
+      <!--      TODO support multi -->
+      <button
+        mat-button
+        *ngIf="col.property?.schema.dataType === 'configurable-enum'"
+        (click)="showEnumConfig(col)"
+      >
+        Map values
+      </button>
     </div>
   </div>
 </mat-expansion-panel>

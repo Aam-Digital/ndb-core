@@ -20,12 +20,16 @@ import { DisplayEntityComponent } from "../../../core/entity-components/entity-s
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { Child } from "../../../child-dev-project/children/model/child";
+import { MatDialog } from "@angular/material/dialog";
+import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mapping.component";
 
 type PropertyConfig = { name: string; schema: EntitySchemaField };
-type ColumnConfig = {
+// TODO rename (duplicate in subrecord)
+export type ColumnConfig = {
   column: string;
   property?: PropertyConfig;
   additional?: any;
+  values: string[];
 };
 
 @RouteTarget("Import")
@@ -64,10 +68,12 @@ export class DataImportComponent implements OnInit {
     this.columnMapping.some(({ property }) => property === option);
 
   columnMapping: ColumnConfig[] = [
-    { column: "first" },
-    { column: "second" },
-    { column: "third" },
+    { column: "first", values: ["male", "female", ""] },
+    { column: "second", values: ["yes", "no", "yes"] },
+    { column: "third", values: ["01/01/2022", "03/02/2022", "31/03/2022"] },
   ];
+
+  constructor(private matDialog: MatDialog) {}
 
   ngOnInit() {
     this.allProps = [...this.entity.schema.entries()].map(([name, schema]) => ({
@@ -77,4 +83,8 @@ export class DataImportComponent implements OnInit {
   }
 
   change() {}
+
+  showEnumConfig(col: ColumnConfig) {
+    this.matDialog.open(EnumValueMappingComponent, { data: col });
+  }
 }
