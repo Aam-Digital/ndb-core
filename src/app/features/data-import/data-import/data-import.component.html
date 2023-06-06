@@ -15,7 +15,7 @@
       <!--      TODO support multi -->
       <button
         mat-button
-        *ngIf="col.property?.schema.dataType === 'configurable-enum'"
+        *ngIf="col.property?.schema.dataType === 'configurable-enum' || col.property?.schema.dataType === 'boolean'"
         (click)="showEnumConfig(col)"
       >
         Map values

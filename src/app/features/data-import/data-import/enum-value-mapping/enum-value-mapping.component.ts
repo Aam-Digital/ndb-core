@@ -6,37 +6,40 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { ColumnConfig } from "../data-import.component";
-import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { EnumDropdownComponent } from "../../../../core/configurable-enum/enum-dropdown/enum-dropdown.component";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
-import { EditConfigurableEnumComponent } from "../../../../core/configurable-enum/edit-configurable-enum/edit-configurable-enum.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
+import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
+import { DynamicComponentDirective } from "../../../../core/view/dynamic-components/dynamic-component.directive";
 
 @Component({
   selector: "app-enum-value-mapping",
   standalone: true,
   imports: [
     CommonModule,
-    EditConfigurableEnumComponent,
     MatDialogModule,
     MatButtonModule,
+    DynamicComponentDirective,
   ],
   templateUrl: "./enum-value-mapping.component.html",
   styleUrls: ["./enum-value-mapping.component.scss"],
 })
 export class EnumValueMappingComponent {
-  enumValues: ConfigurableEnumValue[];
   form: FormGroup;
+  component: string;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public col: ColumnConfig,
     private fb: FormBuilder,
     private dialog: MatDialogRef<any>,
-    private confirmation: ConfirmationDialogService
+    private confirmation: ConfirmationDialogService,
+    private schemaService: EntitySchemaService
   ) {
     this.dialog.disableClose = true;
+    this.component = this.schemaService.getComponent(
+      col.property.schema,
+      "edit"
+    );
     const formObj = { ...col.additional };
     col.values
       .filter((val) => !!val && !formObj.hasOwnProperty(val))

@@ -1,10 +1,15 @@
 <mat-dialog-content>
-  <app-edit-configurable-enum
+  <ng-container
     *ngFor="let ctrl of form.controls | keyvalue"
-    [formControl]="ctrl.value"
-    [propertySchema]="col.property.schema"
-    [formFieldConfig]="{ label: ctrl.key, id: ctrl.key }"
-  />
+    [appDynamicComponent]="{
+      component: component,
+      config: {
+        formFieldConfig: { label: ctrl.key, id: ctrl.key },
+        propertySchema: col.property.schema,
+        formControl: ctrl.value
+      }
+    }"
+  ></ng-container>
 </mat-dialog-content>
 <mat-dialog-actions>
   <button mat-raised-button color="accent" (click)="save()">Save & Close</button>
