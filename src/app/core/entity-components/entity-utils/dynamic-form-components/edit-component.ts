@@ -57,7 +57,7 @@ export abstract class EditComponent<T> implements OnInit {
 
   ngOnInit() {
     if (!this.formFieldConfig?.forTable) {
-      this.label = this.formFieldConfig?.label || this.propertySchema?.label;
+      this.label = this.formFieldConfig?.label ?? this.propertySchema?.label;
     }
     if (this.formFieldConfig?.forTable) {
       this.tooltip = undefined;
