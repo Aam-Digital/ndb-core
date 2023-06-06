@@ -12,7 +12,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { entityRegistry } from "../core/entity/database-entity.decorator";
 import { ConfigService } from "../core/config/config.service";
 import { AbilityService } from "../core/permissions/ability/ability.service";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, NEVER, Subject } from "rxjs";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { defineAbility } from "@casl/ability";
 import { SessionService } from "../core/session/session-service/session.service";
@@ -61,6 +61,7 @@ export const mockAbilityService = {
         getCurrentUser: () => ({ name: "demo-user" }),
         syncState: new BehaviorSubject(SyncState.COMPLETED),
         isLoggedIn: () => true,
+        loginState: NEVER,
       },
     },
   ],

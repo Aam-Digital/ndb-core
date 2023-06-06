@@ -76,13 +76,13 @@ describe("DataImportComponent", () => {
     component.entitySelectionChanged();
 
     component.processChange("", "Project");
-    expect(component.filteredProperties.value).toEqual([
+    expect(component.filteredProps.value).toEqual([
       { key: "projectNumber", label: "Project Number" },
     ]);
 
     component.selectOption("Project", "PN");
     component.processChange("", "Project");
-    expect(component.filteredProperties.value).toEqual([]);
+    expect(component.filteredProps.value).toEqual([]);
   });
 
   it("should initialize forms when loading a config", async () => {
@@ -147,15 +147,15 @@ describe("DataImportComponent", () => {
     expect(component.entityForm).toHaveValue("Testing");
 
     component.processChange("", "");
-    expect(component.filteredProperties.value).toContain({
+    expect(component.filteredProps.value).toContain({
       key: "databaseString",
       label: "String",
     });
-    expect(component.filteredProperties.value).toContain({
+    expect(component.filteredProps.value).toContain({
       key: "databaseDate",
       label: "Date",
     });
-    expect(component.filteredProperties.value).not.toContain(
+    expect(component.filteredProps.value).not.toContain(
       jasmine.objectContaining({ key: "nonDatabaseString" })
     );
   });
