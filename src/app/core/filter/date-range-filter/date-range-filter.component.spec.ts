@@ -4,12 +4,12 @@ import { DateRangeFilterComponent } from "./date-range-filter.component";
 import { MatDialog } from "@angular/material/dialog";
 import { MatNativeDateModule } from "@angular/material/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { DateFilter, Filter } from "../filters/filters";
+import { DateFilter } from "../filters/filters";
 import { DateRangeFilterConfigOption } from "app/core/entity-components/entity-list/EntityListConfig";
 import moment from "moment";
 import { DateRange } from "@angular/material/datepicker";
 
-fdescribe("DateRangeFilterComponent", () => {
+describe("DateRangeFilterComponent", () => {
   let component: DateRangeFilterComponent<any>;
   let fixture: ComponentFixture<DateRangeFilterComponent<any>>;
 
@@ -28,7 +28,7 @@ fdescribe("DateRangeFilterComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should set the correct date filter when inputting one of the defined standard date ranges", () => {
+  it("should set the correct date filter when inputting one of the predefined standard date ranges via the URL", () => {
     const standardOptions: DateRangeFilterConfigOption[] = [
       {
         startOffsets: [{ amount: 0, unit: "weeks" }],
@@ -72,7 +72,7 @@ fdescribe("DateRangeFilterComponent", () => {
     expect(component._dateFilter.filter).toEqual(expectedDataFilter);
   });
 
-  it("should set the correct date filter when inputting a specific date range", () => {
+  it("should set the correct date filter when inputting a specific date range via the URL", () => {
     let dateFilter = new DateFilter(
       "test1",
       "test1",
@@ -98,7 +98,7 @@ fdescribe("DateRangeFilterComponent", () => {
     expect(component._dateFilter.filter).toEqual(expectedDataFilter);
   });
 
-  it("should set the correct date filter when changing the date range manually", () => {
+  it("should set the correct date filter when changing the date range manually in the date input field", () => {
     component.dateRangeFilterConfig = new DateFilter(
       "test1",
       "test1",
@@ -119,18 +119,18 @@ fdescribe("DateRangeFilterComponent", () => {
     expect(component._dateFilter.filter).toEqual(expectedDataFilter);
   });
 
-  it("should set the correct date filter according to the result of the date range panel dialogue when a date range is chosen", () => {
+  it("should set the correct date filter according to the result of the date range panel dialogue when a date range is chosen in the dialogue", () => {
     component.dateRangeFilterConfig = new DateFilter(
       "test1",
       "test1",
       new Array<DateRangeFilterConfigOption>()
     );
+
     component.assignDateRangePanelResult({
       selectedRangeValue: new DateRange(
         new Date("2022-12-31"),
         new Date("2023-01-02")
       ),
-      selectedIndexOfDateRanges: "1",
     });
     let expectedDataFilter = {
       ["test1"]: {
@@ -139,17 +139,24 @@ fdescribe("DateRangeFilterComponent", () => {
       },
     };
     expect(component._dateFilter.filter).toEqual(expectedDataFilter);
-    expect(component._dateFilter.selectedOption).toEqual("1");
+    expect(component._dateFilter.selectedOption).toEqual(
+      "2022-12-31_2023-01-02"
+    );
+
+    component.assignDateRangePanelResult({
+      selectedRangeValue: new DateRange(
+        new Date("2023-06-04"),
+        new Date("2023-06-10")
+      ),
+      selectedIndexOfDateRanges: "0",
+    });
+    expectedDataFilter = {
+      ["test1"]: {
+        $gte: "2023-06-04",
+        $lte: "2023-06-10",
+      },
+    };
+    expect(component._dateFilter.filter).toEqual(expectedDataFilter);
+    expect(component._dateFilter.selectedOption).toEqual("0");
   });
-
-  // it("should set the correct date filter according to the result of the date range panel dialogue when one the predefined standard date ranges is selected", () => {
-  //   component.assignDateRangePanelResult(XXX);
-  //   expect(component._dateFilter.filter).toEqual(XXX);
-  //   expect(component._dateFilter.filter).toEqual(XXX);
-  // });
-
-  // it("should set the correct date filter according to the result of the date range panel dialogue when the dialogue is cancelled", () => {
-  //   component.assignDateRangePanelResult(XXX);
-  //   expect(component._dateFilter.filter).toEqual(XXX);
-  // });
 });

@@ -114,7 +114,9 @@ export class DateRangeFilterPanelComponent {
   }
 }
 
-export function calculateDateRange(dateRangeOption): DateRange<Date> {
+export function calculateDateRange(
+  dateRangeOption: DateRangeFilterConfigOption
+): DateRange<Date> {
   const startOffsets = dateRangeOption.startOffsets ?? [
     { amount: 0, unit: "days" },
   ];

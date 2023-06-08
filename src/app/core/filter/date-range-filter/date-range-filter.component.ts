@@ -10,7 +10,7 @@ import {
   calculateDateRange,
 } from "./date-range-filter-panel/date-range-filter-panel.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { DateRange, MatDatepickerModule } from "@angular/material/datepicker";
+import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { dateToString, isValidDate } from "app/utils/utils";
 
