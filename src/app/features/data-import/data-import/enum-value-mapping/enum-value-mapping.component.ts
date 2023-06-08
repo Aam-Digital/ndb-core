@@ -35,7 +35,6 @@ export class EnumValueMappingComponent {
     private confirmation: ConfirmationDialogService,
     private schemaService: EntitySchemaService
   ) {
-    this.dialog.disableClose = true;
     this.component = this.schemaService.getComponent(
       col.property.schema,
       "edit"

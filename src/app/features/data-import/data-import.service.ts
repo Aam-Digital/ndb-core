@@ -24,7 +24,7 @@ import { ChildSchoolRelation } from "../../child-dev-project/children/model/chil
  */
 @Injectable({ providedIn: "root" })
 export class DataImportService {
-  private readonly dateDataTypes = [
+  readonly dateDataTypes = [
     dateEntitySchemaDatatype,
     dateOnlyEntitySchemaDatatype,
     monthEntitySchemaDatatype,

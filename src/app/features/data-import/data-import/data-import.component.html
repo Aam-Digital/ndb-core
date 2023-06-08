@@ -14,8 +14,8 @@
       </mat-form-field>
       <button
         mat-button
-        *ngIf="col.property?.discrete"
-        (click)="showEnumConfig(col)"
+        *ngIf="col.property?.mappingCmp"
+        (click)="openMappingComponent(col)"
       >
         Map values
       </button>

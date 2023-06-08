@@ -22,11 +22,14 @@ import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-fie
 import { Child } from "../../../child-dev-project/children/model/child";
 import { MatDialog } from "@angular/material/dialog";
 import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mapping.component";
+import { DataImportService } from "../data-import.service";
+import { DateValueMappingComponent } from "./date-value-mapping/date-value-mapping.component";
+import { ComponentType } from "@angular/cdk/overlay";
 
 type PropertyConfig = {
   name: string;
   schema: EntitySchemaField;
-  discrete: boolean;
+  mappingCmp?: ComponentType<any>;
 };
 // TODO rename (duplicate in subrecord)
 export type ColumnConfig = {
@@ -77,27 +80,38 @@ export class DataImportComponent implements OnInit {
     { column: "third", values: ["01/01/2022", "03/02/2022", "31/03/2022"] },
   ];
 
-  constructor(private matDialog: MatDialog) {}
+  constructor(
+    private matDialog: MatDialog,
+    private importService: DataImportService
+  ) {}
 
   ngOnInit() {
     this.allProps = [...this.entity.schema.entries()].map(([name, schema]) => ({
       name,
       schema,
-      discrete: this.isDiscreteValue(schema),
+      mappingCmp: this.getMappingComponent(schema),
     }));
   }
 
   change() {}
 
-  private isDiscreteValue(schema: EntitySchemaField): boolean {
-    return (
+  private getMappingComponent(schema: EntitySchemaField) {
+    if (
       schema.dataType === "boolean" ||
       schema.dataType === "configurable-enum" ||
       schema.innerDataType === "configurable-enum"
-    );
+    ) {
+      return EnumValueMappingComponent;
+    }
+    if (this.importService.dateDataTypes.includes(schema.dataType)) {
+      return DateValueMappingComponent;
+    }
   }
 
-  showEnumConfig(col: ColumnConfig) {
-    this.matDialog.open(EnumValueMappingComponent, { data: col });
+  openMappingComponent(col: ColumnConfig) {
+    this.matDialog.open(col.property.mappingCmp, {
+      data: col,
+      disableClose: true,
+    });
   }
 }

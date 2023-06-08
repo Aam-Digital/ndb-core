@@ -1,0 +1,21 @@
+<mat-dialog-content>
+  <mat-form-field>
+    <mat-label>Date format</mat-label>
+    <input [formControl]="format" matInput/>
+    <mat-error *ngIf="format.errors">
+      Format cannot parse all dates
+    </mat-error>
+  </mat-form-field>
+  <mat-list>
+    <mat-list-item
+      *ngFor="let val of values"
+      [ngClass]="{'invalid': !val.parsed}"
+    >
+      {{ val.value }} -> {{ val.parsed | date }}
+    </mat-list-item>
+  </mat-list>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="save()">Save & Close</button>
+  <button mat-stroked-button matDialogClose>Cancel</button>
+</mat-dialog-actions>
