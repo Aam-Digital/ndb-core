@@ -127,7 +127,7 @@ export function calculateDateRange(
   const start = moment();
   const end = moment();
 
-  startOffsets.forEach((offset) => start.subtract(offset.amount, offset.unit));
+  startOffsets.forEach((offset) => start.add(offset.amount, offset.unit));
   endOffsets.forEach((offset) => end.add(offset.amount, offset.unit));
 
   start.startOf(startOffsets[0].unit);

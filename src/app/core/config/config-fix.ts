@@ -226,7 +226,7 @@ export const defaultJsonConfig = {
               label: $localize`:Filter label:This week`,
             },
             {
-              startOffsets: [{ amount: 1, unit: "weeks" }],
+              startOffsets: [{ amount: -1, unit: "weeks" }],
               label: $localize`:Filter label:Since last week`,
             },
             {
@@ -235,7 +235,7 @@ export const defaultJsonConfig = {
               label: $localize`:Filter label:This month`,
             },
             {
-              startOffsets: [{ amount: 1, unit: "months" }],
+              startOffsets: [{ amount: -1, unit: "months" }],
               endOffsets: [{ amount: -1, unit: "months" }],
               label: $localize`:Filter label:Last month`,
             },

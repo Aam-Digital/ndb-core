@@ -36,7 +36,7 @@ describe("DateRangeFilterComponent", () => {
         label: $localize`:Filter label:This week`,
       },
       {
-        startOffsets: [{ amount: 1, unit: "months" }],
+        startOffsets: [{ amount: -1, unit: "months" }],
         endOffsets: [{ amount: -1, unit: "months" }],
         label: $localize`:Filter label:Last month`,
       },
