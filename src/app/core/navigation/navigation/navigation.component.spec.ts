@@ -36,10 +36,11 @@ describe("NavigationComponent", () => {
 
   beforeEach(waitForAsync(() => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);
-    mockConfigService = jasmine.createSpyObj(["getConfig"], {
+    mockConfigService = jasmine.createSpyObj(["getConfig", "getAllConfigs"], {
       configUpdates: mockConfigUpdated,
     });
     mockConfigService.getConfig.and.returnValue({ items: [] });
+    mockConfigService.getAllConfigs.and.returnValue([]);
     mockUserRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
     mockUserRoleGuard.checkRoutePermissions.and.returnValue(true);
 
