@@ -48,7 +48,7 @@ export class DateValueMappingComponent {
   checkDateValues() {
     this.format.setErrors(undefined);
     this.values.forEach((val) => {
-      const date = moment(val.value, this.format.value.toUpperCase(), true);
+      const date = moment(val.value, this.format.value?.toUpperCase(), true);
       if (date.isValid()) {
         val.parsed = date.toDate();
       } else {

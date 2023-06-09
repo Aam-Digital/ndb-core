@@ -25,6 +25,7 @@ import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mappi
 import { DataImportService } from "../data-import.service";
 import { DateValueMappingComponent } from "./date-value-mapping/date-value-mapping.component";
 import { ComponentType } from "@angular/cdk/overlay";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 
 type PropertyConfig = {
   name: string;
@@ -65,6 +66,14 @@ export type ColumnConfig = {
   standalone: true,
 })
 export class DataImportComponent implements OnInit {
+  data = [
+    { first: "male", second: "yes", third: "01/01/2022" },
+    { first: "female", second: "no", third: "03/02/2022" },
+    { first: "", second: "yes", third: "31/03/2022" },
+    { first: "male", second: "", third: "15/03/2022" },
+    { first: "", second: "yes", third: "15/03/2021" },
+  ];
+
   entityForm = new FormControl("", [Validators.required]);
   entity: EntityConstructor = Child;
 
@@ -82,14 +91,29 @@ export class DataImportComponent implements OnInit {
 
   constructor(
     private matDialog: MatDialog,
-    private importService: DataImportService
+    private importService: DataImportService,
+    private confirmation: ConfirmationDialogService
   ) {}
 
   ngOnInit() {
+    // TODO filter out the ones without a label as they are internal?
     this.allProps = [...this.entity.schema.entries()].map(([name, schema]) => ({
       name,
       schema,
       mappingCmp: this.getMappingComponent(schema),
+    }));
+    const tmp: { [s: string]: Set<any> } = {};
+    this.data.forEach((row) =>
+      Object.entries(row).forEach(([key, value]) => {
+        if (!tmp[key]) {
+          tmp[key] = new Set();
+        }
+        tmp[key].add(value);
+      })
+    );
+    this.columnMapping = Object.entries(tmp).map(([key, value]) => ({
+      column: key,
+      values: [...value],
     }));
   }
 
@@ -112,6 +136,32 @@ export class DataImportComponent implements OnInit {
     this.matDialog.open(col.property.mappingCmp, {
       data: col,
       disableClose: true,
+    });
+  }
+
+  import() {
+    const allUsed = this.columnMapping.every((col) => this.hasMapping(col));
+    const confirmed =
+      allUsed ||
+      this.confirmation.getConfirmation(
+        $localize`Mappings missing`,
+        $localize`Some columns don't have a mapping and will not be imported. Do you still want to start the import now?`
+      );
+    if (confirmed) {
+    }
+  }
+
+  private hasMapping(col: ColumnConfig) {
+    return (
+      col.property &&
+      (!col.property.mappingCmp || (col.property.mappingCmp && col.additional))
+    );
+  }
+
+  clear() {
+    this.columnMapping.forEach((col) => {
+      delete col.property;
+      delete col.additional;
     });
   }
 }
