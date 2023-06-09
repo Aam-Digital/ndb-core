@@ -6,7 +6,7 @@ import {
   Validators,
 } from "@angular/forms";
 import { RouteTarget } from "../../../app.routing";
-import { EntityConstructor } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { InputFileComponent } from "../input-file/input-file.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -26,6 +26,7 @@ import { DataImportService } from "../data-import.service";
 import { DateValueMappingComponent } from "./date-value-mapping/date-value-mapping.component";
 import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
 type PropertyConfig = {
   name: string;
@@ -89,10 +90,13 @@ export class DataImportComponent implements OnInit {
     { column: "third", values: ["01/01/2022", "03/02/2022", "31/03/2022"] },
   ];
 
+  mappedEntities: Entity[] = [];
+
   constructor(
     private matDialog: MatDialog,
     private importService: DataImportService,
-    private confirmation: ConfirmationDialogService
+    private confirmation: ConfirmationDialogService,
+    private schemaService: EntitySchemaService
   ) {}
 
   ngOnInit() {
@@ -139,15 +143,21 @@ export class DataImportComponent implements OnInit {
     });
   }
 
-  import() {
+  async import() {
     const allUsed = this.columnMapping.every((col) => this.hasMapping(col));
     const confirmed =
       allUsed ||
-      this.confirmation.getConfirmation(
+      (await this.confirmation.getConfirmation(
         $localize`Mappings missing`,
         $localize`Some columns don't have a mapping and will not be imported. Do you still want to start the import now?`
-      );
+      ));
     if (confirmed) {
+      this.mappedEntities = this.data.map((row) => {
+        const e = new this.entity();
+        this.schemaService.loadDataIntoEntity(e, row);
+        return e;
+      });
+      console.log("entities", this.mappedEntities);
     }
   }
 
