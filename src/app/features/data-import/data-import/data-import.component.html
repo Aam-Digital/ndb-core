@@ -23,3 +23,12 @@
   <button mat-raised-button color="accent" (click)="import()">Import</button>
   <button mat-stroked-button (click)="clear()">Clear</button>
 </div>
+
+<!-- TODO allow editing without saving -->
+<app-entity-subrecord
+  *ngIf="mappedEntities.length > 0"
+  [columns]="columns"
+  [records]="mappedEntities"
+  clickMode="none"
+  [editable]="false"
+/>

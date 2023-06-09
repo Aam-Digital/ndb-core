@@ -28,6 +28,7 @@ import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import moment from "moment";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 type PropertyConfig = {
   name: string;
@@ -65,6 +66,7 @@ export type ColumnConfig = {
     DisplayEntityComponent,
     MatTooltipModule,
     FormsModule,
+    EntitySubrecordComponent,
   ],
   standalone: true,
 })
@@ -90,6 +92,7 @@ export class DataImportComponent implements OnInit {
   columnMapping: ColumnConfig[] = [];
 
   mappedEntities: Entity[] = [];
+  columns: string[] = [];
 
   constructor(
     private matDialog: MatDialog,
@@ -183,7 +186,9 @@ export class DataImportComponent implements OnInit {
         });
         return e;
       });
-      console.log("entities", this.mappedEntities);
+      this.columns = this.columnMapping
+        .filter(({ property }) => !!property)
+        .map(({ property }) => property.name);
     }
   }
 
