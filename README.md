@@ -8,9 +8,13 @@
 [![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
 
 # Aam Digital
-Empowering social workers with simple to use software.
+*Enabling social organizations digitally to transform lives.*
 
-> For more information about the software and a free demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
+Aam Digital is an easy-to-use case management software for the social sector that improves the effectiveness and transparency of work with beneficiaries in the field.
+
+<div align="center"><img src="https://github.com/Aam-Digital/ndb-core/assets/1682541/2b125750-5c03-4dc7-873f-22d8278accde"  width="30%"></div>
+
+> For more information about the software and an open demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
 
 > For more information about the code including guides see the separate **[Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)**
 
@@ -20,6 +24,13 @@ Empowering social workers with simple to use software.
 You can directly run the system using Docker.
 More information in our [Aam-Digital/ndb-setup repository](https://github.com/Aam-Digital/ndb-setup/).
 In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
+
+The Aam Digital platform can be customized for different use cases through a flexible configuration file. This doesn't require changes to the generic platform code base in this repository:
+![image](https://github.com/Aam-Digital/ndb-core/assets/1682541/c9b08c0b-bb60-464d-b39f-703ae2995213)
+
+The overall architecture and tech stack including backend services looks like this:
+![image](https://github.com/Aam-Digital/ndb-core/assets/1682541/557adb8a-df93-4c83-b547-8a5e28650324)
+
 
 # Development
 
