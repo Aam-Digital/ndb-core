@@ -78,6 +78,7 @@ import { TodosModule } from "./features/todos/todos.module";
 import { SessionService } from "./core/session/session-service/session.service";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
+import { appInitializers } from "./app-initializers";
 
 /**
  * Main entry point of the application.
@@ -154,6 +155,7 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
       }),
       deps: [SessionService],
     },
+    appInitializers,
   ],
   bootstrap: [AppComponent],
 })

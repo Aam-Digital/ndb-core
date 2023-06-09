@@ -11,7 +11,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { MatDialog } from "@angular/material/dialog";
-import { BehaviorSubject, Subject } from "rxjs";
+import { BehaviorSubject, NEVER, Subject } from "rxjs";
 import { take } from "rxjs/operators";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { SyncState } from "../../../core/session/session-states/sync-state.enum";
@@ -27,7 +27,10 @@ describe("ProgressDashboardComponent", () => {
 
   beforeEach(waitForAsync(() => {
     mockSync = new BehaviorSubject(SyncState.UNSYNCED);
-    mockSession = jasmine.createSpyObj([], { syncState: mockSync });
+    mockSession = jasmine.createSpyObj([], {
+      syncState: mockSync,
+      loginState: NEVER,
+    });
 
     TestBed.configureTestingModule({
       imports: [ProgressDashboardComponent, MockedTestingModule.withState()],
