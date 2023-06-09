@@ -23,6 +23,8 @@ import { AppModule } from "../app.module";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { AuthUser } from "../core/session/session-service/auth-user";
 import { environment } from "../../environments/environment";
+import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
@@ -66,6 +68,10 @@ export function mockSessionService(currentUser?: AuthUser): SessionService {
   ],
   providers: [
     { provide: ConfigService, useValue: createTestingConfigService() },
+    {
+      provide: ConfigurableEnumService,
+      useValue: createTestingConfigurableEnumService(),
+    },
     { provide: AbilityService, useValue: mockAbilityService },
     {
       provide: EntityAbility,
