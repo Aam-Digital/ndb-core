@@ -116,6 +116,12 @@
               "src/assets",
               "src/favicon.ico",
               "src/manifest.webmanifest"
+            ],
+            "fileReplacements": [
+              {
+                "replace": "src/environments/environment.ts",
+                "with": "src/environments/environment.spec.ts"
+              }
             ]
           }
         },
