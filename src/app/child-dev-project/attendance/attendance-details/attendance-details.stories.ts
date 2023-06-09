@@ -7,8 +7,7 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";
-import { MatDialogRef } from "@angular/material/dialog";
-import { AttendanceService } from "../attendance.service";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -58,14 +57,7 @@ export default {
         StorybookBaseModule,
         MockedTestingModule.withState(),
       ],
-      declarations: [],
-      providers: [
-        {
-          provide: AttendanceService,
-          useValue: null,
-        },
-        { provide: MatDialogRef, useValue: {} },
-      ],
+      providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
     }),
   ],
 } as Meta;

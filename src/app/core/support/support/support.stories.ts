@@ -2,7 +2,6 @@ import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { SupportComponent } from "./support.component";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SwUpdate } from "@angular/service-worker";
 import { Database } from "../../database/database";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
@@ -19,8 +18,6 @@ export default {
     moduleMetadata({
       imports: [SupportComponent, StorybookBaseModule, HttpClientTestingModule],
       providers: [
-        { provide: WINDOW_TOKEN, useValue: window },
-        { provide: LOCATION_TOKEN, useValue: window.location },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         {
           provide: UpdateManagerService,

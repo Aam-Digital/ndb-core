@@ -34,7 +34,6 @@ export default {
       imports: [EntitySelectComponent, StorybookBaseModule],
       declarations: [],
       providers: [
-        { provide: BackupService, useValue: {} },
         {
           provide: EntityMapperService,
           useValue: mockEntityMapper([
@@ -44,9 +43,6 @@ export default {
             School.create({ name: "School ABC" }),
           ]),
         },
-        { provide: ComponentRegistry, useValue: componentRegistry },
-        { provide: Database, useValue: {} },
-        { provide: ChildrenService, useValue: {} },
       ],
     }),
   ],

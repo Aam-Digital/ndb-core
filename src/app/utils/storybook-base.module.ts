@@ -22,9 +22,11 @@ import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { AuthUser } from "../core/session/session-service/auth-user";
+import { environment } from "../../environments/environment";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
+environment.demo_mode = false;
 
 export const entityFormStorybookDefaultParameters = {
   controls: {
