@@ -67,7 +67,7 @@ export class DateValueMappingComponent {
         $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`
       ));
     if (confirmed) {
-      this.col.additional = this.format.value;
+      this.col.additional = this.format.value?.toUpperCase();
       this.dialog.close();
     }
   }

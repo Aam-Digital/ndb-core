@@ -27,11 +27,13 @@ import { DateValueMappingComponent } from "./date-value-mapping/date-value-mappi
 import { ComponentType } from "@angular/cdk/overlay";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import moment from "moment";
 
 type PropertyConfig = {
   name: string;
   schema: EntitySchemaField;
   mappingCmp?: ComponentType<any>;
+  mappingFn?: (val: any, cal: ColumnConfig) => any;
 };
 // TODO rename (duplicate in subrecord)
 export type ColumnConfig = {
@@ -84,11 +86,8 @@ export class DataImportComponent implements OnInit {
   isUsed = (option: PropertyConfig) =>
     this.columnMapping.some(({ property }) => property === option);
 
-  columnMapping: ColumnConfig[] = [
-    { column: "first", values: ["male", "female", ""] },
-    { column: "second", values: ["yes", "no", "yes"] },
-    { column: "third", values: ["01/01/2022", "03/02/2022", "31/03/2022"] },
-  ];
+  // TODO maybe use object/map instead
+  columnMapping: ColumnConfig[] = [];
 
   mappedEntities: Entity[] = [];
 
@@ -104,7 +103,7 @@ export class DataImportComponent implements OnInit {
     this.allProps = [...this.entity.schema.entries()].map(([name, schema]) => ({
       name,
       schema,
-      mappingCmp: this.getMappingComponent(schema),
+      ...this.getMappingComponent(schema),
     }));
     const tmp: { [s: string]: Set<any> } = {};
     this.data.forEach((row) =>
@@ -129,10 +128,17 @@ export class DataImportComponent implements OnInit {
       schema.dataType === "configurable-enum" ||
       schema.innerDataType === "configurable-enum"
     ) {
-      return EnumValueMappingComponent;
+      return {
+        mappingCmp: EnumValueMappingComponent,
+        mappingFn: (val, col: ColumnConfig) => col.additional[val],
+      };
     }
     if (this.importService.dateDataTypes.includes(schema.dataType)) {
-      return DateValueMappingComponent;
+      return {
+        mappingCmp: DateValueMappingComponent,
+        mappingFn: (val, col: ColumnConfig) =>
+          moment(val, col.additional, true).toDate(),
+      };
     }
   }
 
@@ -154,7 +160,27 @@ export class DataImportComponent implements OnInit {
     if (confirmed) {
       this.mappedEntities = this.data.map((row) => {
         const e = new this.entity();
-        this.schemaService.loadDataIntoEntity(e, row);
+        Object.entries(row).forEach(([col, val]) => {
+          const prop = this.columnMapping.find(({ column }) => column === col);
+          if (prop.property) {
+            let parsed;
+            if (prop.property.mappingFn) {
+              parsed = prop.property.mappingFn(val, prop);
+            } else {
+              parsed = this.schemaService
+                .getDatatypeOrDefault(prop.property.schema.dataType)
+                .transformToObjectFormat(
+                  val,
+                  prop.property.schema,
+                  this.schemaService,
+                  e
+                );
+            }
+            if (parsed) {
+              e[prop.property.name] = parsed;
+            }
+          }
+        });
         return e;
       });
       console.log("entities", this.mappedEntities);
