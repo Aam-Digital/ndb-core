@@ -130,7 +130,8 @@
         "build-storybook": {
           "builder": "@storybook/angular:build-storybook",
           "options": {
-            "browserTarget": "ndb-core:build"
+            "browserTarget": "ndb-core:build",
+            "compodoc": false
           }
         },
         "lint": {
