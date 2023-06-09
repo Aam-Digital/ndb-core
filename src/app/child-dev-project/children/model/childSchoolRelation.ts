@@ -46,7 +46,12 @@ export class ChildSchoolRelation extends Entity {
   /** percentage achieved in the final school exams of that year */
   @DatabaseField({
     label: $localize`:Label for the percentage result of a relation:Result`,
-    dataType: "percentage",
+    viewComponent: "DisplayPercentage",
+    editComponent: "EditNumber",
+    validators: {
+      min: 0,
+      max: 100,
+    },
   })
   result: number;
 
