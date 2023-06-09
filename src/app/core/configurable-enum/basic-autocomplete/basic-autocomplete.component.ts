@@ -156,7 +156,7 @@ export class BasicAutocompleteComponent<O, V = O>
       // cannot setValue to "" here because the current selection would be lost
       this.autocompleteForm.setValue(this.displayText);
       this.autocompleteSuggestedOptions = concat(
-        of(this._options),
+        of(this._options.filter(({ initial }) => !this.hideOption(initial))),
         this.autocompleteSuggestedOptions.pipe(skip(1))
       );
     }
@@ -172,12 +172,12 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
-    let filteredOptions = this._options;
+    let filteredOptions = this._options.filter(
+      (o) => !this.hideOption(o.initial)
+    );
     if (inputText) {
-      filteredOptions = this._options.filter(
-        (option) =>
-          !this.hideOption(option.initial) &&
-          option.asString.toLowerCase().includes(inputText.toLowerCase())
+      filteredOptions = filteredOptions.filter((o) =>
+        o.asString.toLowerCase().includes(inputText.toLowerCase())
       );
       this.showAddOption = !this._options.some(
         (o) => o.asString.toLowerCase() === inputText.toLowerCase()
