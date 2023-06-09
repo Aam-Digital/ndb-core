@@ -1,19 +1,13 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { BackupService } from "../../../admin/services/backup.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EntitySelectComponent } from "./entity-select.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { School } from "../../../../child-dev-project/schools/model/school";
-import {
-  componentRegistry,
-  ComponentRegistry,
-} from "../../../../dynamic-components";
+import { componentRegistry } from "../../../../dynamic-components";
 import { ChildBlockComponent } from "../../../../child-dev-project/children/child-block/child-block.component";
 import { SchoolBlockComponent } from "../../../../child-dev-project/schools/school-block/school-block.component";
-import { Database } from "../../../database/database";
-import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 
 const child1 = new Child();
