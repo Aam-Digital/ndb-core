@@ -4,7 +4,6 @@ import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import * as Sentry from "@sentry/browser";
-import { RemoteSession } from "../../session/session-service/remote-session";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
@@ -17,6 +16,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BackupService } from "../../admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
+import { AuthService } from "../../session/auth/auth.service";
 
 @Component({
   selector: "app-support",
@@ -80,7 +80,7 @@ export class SupportComponent implements OnInit {
 
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
-      localStorage.getItem(RemoteSession.LAST_LOGIN_KEY) || "never";
+      localStorage.getItem(AuthService.LAST_AUTH_KEY) || "never";
   }
 
   private initStorageInfo() {
@@ -131,6 +131,7 @@ export class SupportComponent implements OnInit {
         swLog: this.swLog,
         storageInfo: this.storageInfo,
         dbInfo: this.dbInfo,
+        timestamp: new Date().toISOString(),
       },
     });
     Sentry.showReportDialog({
