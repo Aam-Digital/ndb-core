@@ -29,6 +29,7 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import moment from "moment";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 type PropertyConfig = {
   name: string;
@@ -72,11 +73,16 @@ export type ColumnConfig = {
 })
 export class DataImportComponent implements OnInit {
   data = [
-    { first: "male", second: "yes", third: "01/01/2022" },
-    { first: "female", second: "no", third: "03/02/2022" },
-    { first: "", second: "yes", third: "31/03/2022" },
-    { first: "male", second: "", third: "15/03/2022" },
-    { first: "", second: "yes", third: "15/03/2021" },
+    { first: "male", second: "yes", third: "01/01/2022", fourth: "first name" },
+    {
+      first: "female",
+      second: "no",
+      third: "03/02/2022",
+      fourth: "second name",
+    },
+    { first: "", second: "yes", third: "31/03/2022", fourth: "third name" },
+    { first: "male", second: "", third: "15/03/2022", fourth: "fourth name" },
+    { first: "", second: "yes", third: "15/03/2021", fourth: "fifth name" },
   ];
 
   entityForm = new FormControl("", [Validators.required]);
@@ -98,7 +104,8 @@ export class DataImportComponent implements OnInit {
     private matDialog: MatDialog,
     private importService: DataImportService,
     private confirmation: ConfirmationDialogService,
-    private schemaService: EntitySchemaService
+    private schemaService: EntitySchemaService,
+    private entityMapper: EntityMapperService
   ) {}
 
   ngOnInit() {
@@ -152,7 +159,7 @@ export class DataImportComponent implements OnInit {
     });
   }
 
-  async import() {
+  async testImport() {
     const allUsed = this.columnMapping.every((col) => this.hasMapping(col));
     const confirmed =
       allUsed ||
@@ -204,5 +211,9 @@ export class DataImportComponent implements OnInit {
       delete col.property;
       delete col.additional;
     });
+  }
+
+  saveData() {
+    this.entityMapper.saveAll(this.mappedEntities);
   }
 }

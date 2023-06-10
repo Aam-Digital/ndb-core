@@ -20,7 +20,7 @@
   </div>
 </div>
 <div>
-  <button mat-raised-button color="accent" (click)="import()">Import</button>
+  <button mat-raised-button color="accent" (click)="testImport()">Test</button>
   <button mat-stroked-button (click)="clear()">Clear</button>
 </div>
 
@@ -32,3 +32,7 @@
   clickMode="none"
   [editable]="false"
 />
+
+<div *ngIf="mappedEntities.length > 0">
+  <button mat-raised-button color="accent" (click)="saveData()">Import data</button>
+</div>
