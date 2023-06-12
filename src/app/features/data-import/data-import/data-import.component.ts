@@ -109,12 +109,13 @@ export class DataImportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    // TODO filter out the ones without a label as they are internal?
-    this.allProps = [...this.entity.schema.entries()].map(([name, schema]) => ({
-      name,
-      schema,
-      ...this.getMappingComponent(schema),
-    }));
+    this.allProps = [...this.entity.schema.entries()]
+      .filter(([_, schema]) => schema.label)
+      .map(([name, schema]) => ({
+        name,
+        schema,
+        ...this.getMappingComponent(schema),
+      }));
     const tmp: { [s: string]: Set<any> } = {};
     this.data.forEach((row) =>
       Object.entries(row).forEach(([key, value]) => {
@@ -129,8 +130,6 @@ export class DataImportComponent implements OnInit {
       values: [...value],
     }));
   }
-
-  change() {}
 
   private getMappingComponent(schema: EntitySchemaField) {
     if (
