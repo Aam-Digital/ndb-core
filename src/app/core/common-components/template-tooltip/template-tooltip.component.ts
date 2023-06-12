@@ -1,9 +1,10 @@
 import {
   Component,
+  ElementRef,
   EventEmitter,
   HostBinding,
-  HostListener,
   Input,
+  NgZone,
   Output,
   TemplateRef,
 } from "@angular/core";
@@ -65,14 +66,11 @@ export class TemplateTooltipComponent {
 
   @Output() show = new EventEmitter<void>();
 
-  @HostListener("mouseenter")
-  onMouseEnter() {
-    this.show.emit();
-  }
-
-  @HostListener("mouseleave")
-  onMouseLeave() {
-    this.hide.emit();
+  constructor(zone: NgZone, el: ElementRef<HTMLElement>) {
+    zone.runOutsideAngular(() => {
+      el.nativeElement.addEventListener("mouseenter", () => this.show.emit());
+      el.nativeElement.addEventListener("mouseleave", (ev) => this.hide.emit());
+    });
   }
 
   @HostBinding("@appear") animation = true;
