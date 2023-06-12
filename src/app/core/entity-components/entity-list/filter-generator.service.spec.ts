@@ -9,7 +9,6 @@ import { defaultInteractionTypes } from "../../config/default-config/default-int
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
-import { EntityConfigService } from "app/core/entity/entity-config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FilterService } from "../../filter/filter.service";
 import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
@@ -25,9 +24,6 @@ describe("FilterGeneratorService", () => {
     });
     service = TestBed.inject(FilterGeneratorService);
     filterService = TestBed.inject(FilterService);
-    const entityConfigService = TestBed.inject(EntityConfigService);
-    entityConfigService.addConfigAttributes(School);
-    entityConfigService.addConfigAttributes(Child);
   });
 
   it("should be created", () => {
