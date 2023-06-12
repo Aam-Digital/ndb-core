@@ -3,7 +3,7 @@ import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 import { ParseResult } from "ngx-papaparse";
-import { ImportMetaData } from "../import-meta-data.type";
+import { ImportMetaDataOld } from "../import-meta-data.type";
 import { Entity } from "../../../core/entity/model/entity";
 import {
   DatabaseEntity,
@@ -18,7 +18,7 @@ describe("DataImportComponent", () => {
   let component: DataImportComponent;
   let fixture: ComponentFixture<DataImportComponent>;
   let mockDataImportService: jasmine.SpyObj<DataImportService>;
-  const importMeta: ImportMetaData = {
+  const importMeta: ImportMetaDataOld = {
     transactionId: "transId",
     entityType: "Child",
     dateFormat: "MM-DD-YYYY",

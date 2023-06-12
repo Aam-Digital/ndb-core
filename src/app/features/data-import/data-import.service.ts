@@ -3,7 +3,7 @@ import { Database } from "../../core/database/database";
 import { BackupService } from "../../core/admin/services/backup.service";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ImportMetaData } from "./import-meta-data.type";
+import { ImportMetaDataOld } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { dateEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date";
@@ -62,13 +62,13 @@ export class DataImportService {
 
   /**
    * Add the data from the loaded file to the database, inserting and updating records.
-   * If a transactionId is provided in the ImportMetaData, all records starting with this ID will be deleted from the database before importing
+   * If a transactionId is provided in the ImportMetaDataOld, all records starting with this ID will be deleted from the database before importing
    * @param data The objects parsed from a file to be loaded
    * @param importMeta Additional information required for importing the file
    */
   async handleCsvImport(
     data: any[],
-    importMeta: ImportMetaData
+    importMeta: ImportMetaDataOld
   ): Promise<void> {
     const restorePoint = await this.backupService.getDatabaseExport();
     const confirmed = await this.getUserConfirmation(data, importMeta);
@@ -97,7 +97,7 @@ export class DataImportService {
 
   private getUserConfirmation(
     data: any[],
-    importMeta: ImportMetaData
+    importMeta: ImportMetaDataOld
   ): Promise<boolean> {
     const refTitle = $localize`Import new data?`;
     let refText = $localize`Are you sure you want to import this file?
@@ -108,7 +108,7 @@ export class DataImportService {
     return this.confirmationDialog.getConfirmation(refTitle, refText);
   }
 
-  private async deleteExistingRecords(importMeta: ImportMetaData) {
+  private async deleteExistingRecords(importMeta: ImportMetaDataOld) {
     const existing = await this.db.getAll(
       Entity.createPrefixedId(importMeta.entityType, importMeta.transactionId)
     );
@@ -117,7 +117,7 @@ export class DataImportService {
 
   private async importCsvContentToDB(
     data: any[],
-    importMeta: ImportMetaData
+    importMeta: ImportMetaDataOld
   ): Promise<void> {
     const entities = data.map((row) => {
       const entity = this.createEntityWithRowData(row, importMeta);
@@ -135,7 +135,10 @@ export class DataImportService {
     }
   }
 
-  private createEntityWithRowData(row: any, importMeta: ImportMetaData): any {
+  private createEntityWithRowData(
+    row: any,
+    importMeta: ImportMetaDataOld
+  ): any {
     const rawEntity = {};
     const schema = this.entities.get(importMeta.entityType).schema;
     Object.keys(row)
@@ -158,7 +161,7 @@ export class DataImportService {
   private getPropertyValue(
     property: string,
     value: any,
-    importMeta: ImportMetaData,
+    importMeta: ImportMetaDataOld,
     dataType: string
   ): any {
     if (property === "_id") {
@@ -197,7 +200,7 @@ export class DataImportService {
     }
   }
 
-  private linkEntities(entities: any[], importMeta: ImportMetaData) {
+  private linkEntities(entities: any[], importMeta: ImportMetaDataOld) {
     return this.linkableEntities[importMeta.entityType].find(
       ([type]) => type.ENTITY_TYPE === importMeta.linkEntity.type
     )[1](entities, importMeta.linkEntity.id);

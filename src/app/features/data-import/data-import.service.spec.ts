@@ -5,7 +5,7 @@ import { ConfirmationDialogService } from "../../core/confirmation-dialog/confir
 import { MatSnackBar, MatSnackBarRef } from "@angular/material/snack-bar";
 import { NEVER, of } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { ImportMetaData } from "./import-meta-data.type";
+import { ImportMetaDataOld } from "./import-meta-data.type";
 import { expectEntitiesToBeInDatabase } from "../../utils/expect-entity-data.spec";
 import { Child } from "../../child-dev-project/children/model/child";
 import moment from "moment";
@@ -55,7 +55,7 @@ describe("DataImportService", () => {
         name: "First",
       },
     ];
-    const importMeta: ImportMetaData = {
+    const importMeta: ImportMetaDataOld = {
       entityType: "Child",
       columnMap: {
         _id: { label: "_id", key: "_id" },
@@ -93,7 +93,7 @@ describe("DataImportService", () => {
       Birthday: { key: "dateOfBirth", label: "Date of birth" },
       notExistingProperty: undefined,
     };
-    const importMeta: ImportMetaData = {
+    const importMeta: ImportMetaDataOld = {
       entityType: "Child",
       columnMap: columnMap,
     };
@@ -117,7 +117,7 @@ describe("DataImportService", () => {
   it("should delete existing records and prepend the transactionID to ID's of the newly uploaded entities", async () => {
     const data = [{ Name: "test1" }, { Name: "test2" }];
     const transactionID = "12345678";
-    const importMeta: ImportMetaData = {
+    const importMeta: ImportMetaDataOld = {
       entityType: "Child",
       columnMap: { Name: { key: "name", label: "Name" } },
       transactionId: transactionID,
@@ -145,7 +145,7 @@ describe("DataImportService", () => {
       { ID: "test1", Birthday: "17/12/2010" },
       { ID: "test2", Birthday: "7/6/2011" },
     ];
-    const importMeta: ImportMetaData = {
+    const importMeta: ImportMetaDataOld = {
       entityType: "Child",
       columnMap: {
         ID: { key: "_id", label: "_id" },
@@ -169,7 +169,7 @@ describe("DataImportService", () => {
       { ID: "3", children: "two" },
       { ID: "4", children: "" },
     ];
-    const importMeta: ImportMetaData = {
+    const importMeta: ImportMetaDataOld = {
       entityType: "Note",
       columnMap: {
         ID: { key: "_id", label: "_id" },
@@ -192,7 +192,7 @@ describe("DataImportService", () => {
 
   it("should create relations to the linked entities", async () => {
     const data = [{ ID: "1" }];
-    const importMeta: ImportMetaData = {
+    const importMeta: ImportMetaDataOld = {
       entityType: "Child",
       columnMap: {
         ID: { key: "_id", label: "_id" },

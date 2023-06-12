@@ -4,6 +4,8 @@ import { DataImportComponent } from "./data-import.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum-testing";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 export default {
   title: "Features/DataImport",
@@ -16,6 +18,10 @@ export default {
         {
           provide: ConfigurableEnumService,
           useValue: createTestingConfigurableEnumService(),
+        },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(),
         },
       ],
     }),

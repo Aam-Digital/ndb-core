@@ -1,7 +1,24 @@
+import { Entity } from "../../core/entity/model/entity";
+import { DatabaseEntity } from "../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../core/entity/database-field.decorator";
+
+@DatabaseEntity("ImportMetadata")
+export class ImportMetadata extends Entity {
+  @DatabaseField({ label: "Date" }) date = new Date();
+  @DatabaseField({ label: "User", dataType: "entity" }) user: string;
+  @DatabaseField() config: ImportConfig;
+  @DatabaseField() ids: string[];
+}
+
+export interface ImportConfig {
+  entity: string;
+  columnMapping: { property: string; additional: any }[];
+}
+
 /**
  * This interface stores all the setting done in the import wizard which define how data is imported
  */
-export interface ImportMetaData {
+export interface ImportMetaDataOld {
   /**
    * The entity type of the imported data based on the name provided with `@DatabaseEntity()`
    */

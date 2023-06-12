@@ -30,6 +30,8 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import moment from "moment";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { ImportMetadata } from "../import-meta-data.type";
+import { SessionService } from "../../../core/session/session-service/session.service";
 
 type PropertyConfig = {
   name: string;
@@ -105,7 +107,8 @@ export class DataImportComponent implements OnInit {
     private importService: DataImportService,
     private confirmation: ConfirmationDialogService,
     private schemaService: EntitySchemaService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
+    private sessionService: SessionService
   ) {}
 
   ngOnInit() {
@@ -212,7 +215,20 @@ export class DataImportComponent implements OnInit {
     });
   }
 
-  saveData() {
-    this.entityMapper.saveAll(this.mappedEntities);
+  async saveData() {
+    await this.entityMapper.saveAll(this.mappedEntities);
+    const importMeta = new ImportMetadata();
+    importMeta.user = this.sessionService.getCurrentUser().name;
+    importMeta.config = {
+      entity: this.entity.name,
+      columnMapping: this.columnMapping
+        .filter((col) => this.hasMapping(col))
+        .map((col) => ({
+          property: col.property.name,
+          additional: col.additional,
+        })),
+    };
+    importMeta.ids = this.mappedEntities.map((entity) => entity.getId(true));
+    await this.entityMapper.save(importMeta);
   }
 }
