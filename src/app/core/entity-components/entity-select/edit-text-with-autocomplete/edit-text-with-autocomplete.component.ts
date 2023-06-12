@@ -13,6 +13,7 @@ import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../display-entity/display-entity.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { ErrorHintComponent } from "../../entity-utils/error-hint/error-hint.component";
 
 /**
  * This component creates a normal text input with autocomplete.
@@ -51,6 +52,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     NgIf,
     FontAwesomeModule,
     MatTooltipModule,
+    ErrorHintComponent,
   ],
   standalone: true,
 })
