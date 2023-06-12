@@ -1,7 +1,8 @@
 import {
   ChangeDetectionStrategy,
+  ChangeDetectorRef,
   Component,
-  NgZone,
+  OnInit,
   TemplateRef,
   ViewChild,
 } from "@angular/core";
@@ -20,24 +21,27 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class PwaInstallComponent {
+export class PwaInstallComponent implements OnInit {
   @ViewChild("iOSInstallInstructions")
   templateIOSInstallInstructions: TemplateRef<any>;
 
   set showPWAInstallButton(value: boolean) {
-    this.zone.run(() => (this._showPWAInstallButton = value));
+    this._showPWAInstallButton = value;
+    this.changeDetector.detectChanges();
   }
 
   _showPWAInstallButton = false;
 
-  private readonly pwaInstallType: PWAInstallType;
+  private pwaInstallType: PWAInstallType;
 
   constructor(
     public snackBar: MatSnackBar,
     private pwaInstallService: PwaInstallService,
-    private zone: NgZone
-  ) {
-    this.pwaInstallType = pwaInstallService.getPWAInstallType();
+    private changeDetector: ChangeDetectorRef
+  ) {}
+
+  ngOnInit() {
+    this.pwaInstallType = this.pwaInstallService.getPWAInstallType();
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
       this.showPWAInstallButton = true;
     }
