@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { DialogButtonsComponent } from "./dialog-buttons.component";
@@ -25,13 +26,15 @@ describe("DialogButtonsComponent", () => {
   let fixture: ComponentFixture<DialogButtonsComponent>;
   let dialogRef: jasmine.SpyObj<MatDialogRef<any>>;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     dialogRef = jasmine.createSpyObj(["close"]);
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [DialogButtonsComponent, MockedTestingModule.withState()],
       providers: [{ provide: MatDialogRef, useValue: dialogRef }],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(DialogButtonsComponent);
     component = fixture.componentInstance;
     component.entity = new Entity();
