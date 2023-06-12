@@ -1,4 +1,9 @@
-import { Component, TemplateRef, ViewChild } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  TemplateRef,
+  ViewChild,
+} from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { NgIf } from "@angular/common";
@@ -10,13 +15,9 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   selector: "app-pwa-install",
   templateUrl: "./pwa-install.component.html",
   styleUrls: ["./pwa-install.component.scss"],
-  imports: [
-    NgIf,
-    MatButtonModule,
-    Angulartics2Module,
-    FontAwesomeModule
-  ],
-  standalone: true
+  imports: [NgIf, MatButtonModule, Angulartics2Module, FontAwesomeModule],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PwaInstallComponent {
   @ViewChild("iOSInstallInstructions")

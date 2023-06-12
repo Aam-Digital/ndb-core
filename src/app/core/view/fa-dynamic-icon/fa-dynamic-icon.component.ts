@@ -1,15 +1,15 @@
-import { Component, Input } from "@angular/core";
+import { ChangeDetectionStrategy, Component, Input } from "@angular/core";
 import {
   IconDefinition,
   IconName,
   IconPrefix,
 } from "@fortawesome/fontawesome-svg-core";
 import {
-  faChartLine,
-  faQuestionCircle,
-  faCalendarCheck,
-  faFileAlt,
   faCalendarAlt,
+  faCalendarCheck,
+  faChartLine,
+  faFileAlt,
+  faQuestionCircle,
   faUsers,
 } from "@fortawesome/free-solid-svg-icons";
 import {
@@ -41,6 +41,7 @@ const iconAliases = new Map<string, IconDefinition>([
   template: ` <fa-icon *ngIf="_icon" [icon]="_icon"></fa-icon>`,
   imports: [FontAwesomeModule, NgIf],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FaDynamicIconComponent {
   /** The fallback icon if the given icon is neither known (inside the internal map)
