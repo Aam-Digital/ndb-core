@@ -7,7 +7,7 @@ import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
-import { Angulartics2Module } from "angulartics2";
+import { AnalyticsService } from "../../../../analytics/analytics.service";
 
 @Component({
   selector: "app-password-reset",
@@ -18,7 +18,6 @@ import { Angulartics2Module } from "angulartics2";
     MatFormFieldModule,
     ReactiveFormsModule,
     MatInputModule,
-    Angulartics2Module,
   ],
   standalone: true,
 })
@@ -27,7 +26,11 @@ export class PasswordResetComponent {
   passwordResetActive = false;
   email = new FormControl("", [Validators.required, Validators.email]);
 
-  constructor(authService: AuthService, private snackbar: MatSnackBar) {
+  constructor(
+    authService: AuthService,
+    private snackbar: MatSnackBar,
+    private analytics: AnalyticsService
+  ) {
     if (authService instanceof KeycloakAuthService) {
       this.keycloakAuth = authService;
     }
@@ -41,6 +44,7 @@ export class PasswordResetComponent {
     if (this.email.invalid) {
       return;
     }
+    this.analytics.eventTrack("password_reset", { category: "User" });
 
     this.keycloakAuth.forgotPassword(this.email.value).subscribe({
       next: () => {
