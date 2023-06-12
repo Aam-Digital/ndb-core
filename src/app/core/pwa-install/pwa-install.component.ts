@@ -1,4 +1,10 @@
-import { Component, TemplateRef, ViewChild } from "@angular/core";
+import {
+  ChangeDetectionStrategy,
+  Component,
+  NgZone,
+  TemplateRef,
+  ViewChild,
+} from "@angular/core";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 import { NgIf } from "@angular/common";
@@ -12,18 +18,24 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   styleUrls: ["./pwa-install.component.scss"],
   imports: [NgIf, MatButtonModule, Angulartics2Module, FontAwesomeModule],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PwaInstallComponent {
   @ViewChild("iOSInstallInstructions")
   templateIOSInstallInstructions: TemplateRef<any>;
 
-  showPWAInstallButton = false;
+  set showPWAInstallButton(value: boolean) {
+    this.zone.run(() => (this._showPWAInstallButton = value));
+  }
+
+  _showPWAInstallButton = false;
 
   private readonly pwaInstallType: PWAInstallType;
 
   constructor(
     public snackBar: MatSnackBar,
-    private pwaInstallService: PwaInstallService
+    private pwaInstallService: PwaInstallService,
+    private zone: NgZone
   ) {
     this.pwaInstallType = pwaInstallService.getPWAInstallType();
     if (this.pwaInstallType === PWAInstallType.ShowiOSInstallInstructions) {
