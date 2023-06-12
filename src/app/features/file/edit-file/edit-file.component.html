@@ -22,4 +22,7 @@
           i18n-matTooltip="Tooltip upload file button" matTooltip="Upload file">
     <fa-icon icon="upload"></fa-icon>
   </button>
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
+  </mat-error>
 </mat-form-field>

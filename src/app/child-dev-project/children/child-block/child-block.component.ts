@@ -1,4 +1,10 @@
-import { Component, Input, OnInit, Optional } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  Optional,
+  SimpleChanges,
+} from "@angular/core";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -22,7 +28,7 @@ import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dy
   ],
   standalone: true,
 })
-export class ChildBlockComponent implements OnInit {
+export class ChildBlockComponent implements OnChanges {
   @Input() entity: Child;
   @Input() entityId: string;
 
@@ -40,11 +46,12 @@ export class ChildBlockComponent implements OnInit {
     @Optional() private childrenService: ChildrenService
   ) {}
 
-  async ngOnInit() {
-    if (this.entityId) {
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty("entityId")) {
       this.entity = await this.childrenService.getChild(this.entityId);
     }
-    if (this.entity.photo) {
+    this.imgPath = undefined;
+    if (this.entity?.photo) {
       this.fileService
         .loadFile(this.entity, "photo")
         .subscribe((res) => (this.imgPath = res));

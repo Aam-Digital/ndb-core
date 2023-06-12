@@ -17,6 +17,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ErrorHintComponent } from "../../../core/entity-components/entity-utils/error-hint/error-hint.component";
 
 @DynamicComponent("EditLocation")
 @Component({
@@ -32,6 +33,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     FontAwesomeModule,
     AsyncPipe,
     NgForOf,
+    ErrorHintComponent,
   ],
   standalone: true,
   styleUrls: ["./edit-location.component.scss"],

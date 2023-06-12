@@ -6,6 +6,8 @@ import { AuthUser } from "../session-service/auth-user";
  * See {@link AuthProvider} for available options.
  */
 export abstract class AuthService {
+  static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
+
   /**
    * Authenticate a user with credentials.
    * @param username The username of the user
@@ -30,4 +32,12 @@ export abstract class AuthService {
    * Clear the local session of the currently logged-in user.
    */
   abstract logout(): Promise<void>;
+
+  /**
+   * Log timestamp of last successful authentication
+   * @protected
+   */
+  protected logSuccessfulAuth() {
+    localStorage.setItem(AuthService.LAST_AUTH_KEY, new Date().toISOString());
+  }
 }

@@ -10,6 +10,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSelectModule } from "@angular/material/select";
 import { NgForOf, NgIf } from "@angular/common";
+import { ErrorHintComponent } from "../../../../core/entity-components/entity-utils/error-hint/error-hint.component";
 
 /**
  * Form field to edit a time interval for repetitions.
@@ -29,6 +30,7 @@ import { NgForOf, NgIf } from "@angular/common";
     MatSelectModule,
     NgIf,
     NgForOf,
+    ErrorHintComponent,
   ],
 })
 export class EditRecurringIntervalComponent extends EditComponent<any> {
