@@ -79,7 +79,7 @@ jobs:
         with:
           persist-credentials: false
       - name: Semantic Release
-        uses: cycjimmy/semantic-release-action@v3
+        uses: cycjimmy/semantic-release-action@v3.4.1
         env:
           GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
