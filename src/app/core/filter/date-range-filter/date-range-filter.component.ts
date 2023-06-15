@@ -31,38 +31,44 @@ export class DateRangeFilterComponent<T extends Entity> {
   @Input()
   public set dateRangeFilterConfig(value: Filter<T>) {
     this._dateFilter = value as DateFilter<T>;
-    if (this._dateFilter.selectedOption) {
-      if (/^\d+$/.test(this._dateFilter.selectedOption)) {
-        let dateRangeIndex = parseInt(this._dateFilter.selectedOption);
-        if (
-          dateRangeIndex >= 0 &&
-          dateRangeIndex < this._dateFilter.standardDateRanges.length
-        ) {
-          let selectedDateRange = calculateDateRange(
-            this._dateFilter.standardDateRanges[dateRangeIndex]
-          );
-          this.fromDate = selectedDateRange.start;
-          this.toDate = selectedDateRange.end;
-          this.apply();
-        }
-      } else {
-        const dates = this._dateFilter.selectedOption.split("_");
-        if (dates.length == 2) {
-          const firstDate = new Date(dates[0]);
-          const secondDate = new Date(dates[1]);
-          if (isValidDate(firstDate) && isValidDate(secondDate)) {
-            this.fromDate = firstDate;
-            this.toDate = secondDate;
-            this.apply();
-          }
-        }
+    if (
+      this._dateFilter.selectedOption &&
+      /^\d+$/.test(this._dateFilter.selectedOption)
+    ) {
+      let dateRangeIndex = parseInt(this._dateFilter.selectedOption);
+      if (
+        dateRangeIndex >= 0 &&
+        dateRangeIndex < this._dateFilter.standardDateRanges.length
+      ) {
+        let selectedDateRange = calculateDateRange(
+          this._dateFilter.standardDateRanges[dateRangeIndex]
+        );
+        this.apply({
+          fromDate: selectedDateRange.start,
+          toDate: selectedDateRange.end,
+        });
+      }
+    } else if (
+      this._dateFilter.selectedOption &&
+      this._dateFilter.selectedOption.split("_").length == 2
+    ) {
+      const firstDate = new Date(this._dateFilter.selectedOption.split("_")[0]);
+      const secondDate = new Date(
+        this._dateFilter.selectedOption.split("_")[1]
+      );
+      if (isValidDate(firstDate) && isValidDate(secondDate)) {
+        this.apply({ fromDate: firstDate, toDate: secondDate });
       }
     }
   }
 
   constructor(private dialog: MatDialog) {}
 
-  apply() {
+  apply(fromAndToDates?: { fromDate: Date; toDate?: Date }) {
+    if (fromAndToDates) {
+      this.fromDate = fromAndToDates.fromDate;
+      this.toDate = fromAndToDates.toDate;
+    }
     this._dateFilter.filter = this.buildFilter();
     this.selectedOptionChange.emit(this._dateFilter.selectedOption);
   }
