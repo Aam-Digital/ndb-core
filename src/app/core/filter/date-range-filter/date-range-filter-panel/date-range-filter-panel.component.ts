@@ -13,10 +13,7 @@ import {
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { NgForOf } from "@angular/common";
-import {
-  DateRangeFilterConfig,
-  DateRangeFilterConfigOption,
-} from "app/core/entity-components/entity-list/EntityListConfig";
+import { DateRangeFilterConfigOption } from "app/core/entity-components/entity-list/EntityListConfig";
 import moment from "moment";
 import { FormsModule } from "@angular/forms";
 
@@ -63,8 +60,6 @@ const standardOptions: DateRangeFilterConfigOption[] = [
   ],
 })
 export class DateRangeFilterPanelComponent {
-  dateRangeFilterConfig: DateRangeFilterConfig;
-  dateRangeOptions: DateRangeFilterConfigOption;
   dateRanges: DateRangeFilterConfigOption[] = standardOptions;
   indexOfCorrespondingDateRange: number;
 
@@ -82,7 +77,7 @@ export class DateRangeFilterPanelComponent {
   ) {
     this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
     this.dateRanges = this.data.standardDateRanges ?? this.dateRanges;
-    if (this.dateRanges.length > 1 && data.fromDate && data.toDate) {
+    if (this.dateRanges.length > 0 && data.fromDate && data.toDate) {
       for (const [index, dateRange] of this.dateRanges.entries()) {
         let cDR = calculateDateRange(dateRange);
         if (

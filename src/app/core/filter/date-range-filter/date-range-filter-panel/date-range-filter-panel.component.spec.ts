@@ -12,7 +12,7 @@ import { DateRange } from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
 
-describe("DateRangeFilterPanelComponent", () => {
+fdescribe("DateRangeFilterPanelComponent", () => {
   let component: DateRangeFilterPanelComponent;
   let fixture: ComponentFixture<DateRangeFilterPanelComponent>;
   let loader: HarnessLoader;
@@ -20,16 +20,28 @@ describe("DateRangeFilterPanelComponent", () => {
 
   beforeEach(async () => {
     closeSpy = jasmine.createSpy();
+    let mockedToday = moment("2023-04-08").toDate();
+    jasmine.clock().mockDate(mockedToday);
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule],
       providers: [
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            dateRangeFilterConfig: {
-              id: "test1",
-              options: [],
-            },
+            fromDate: moment("2023-05-01").startOf("day").toDate(),
+            toDate: moment("2023-05-31").endOf("day").toDate(),
+            standardDateRanges: [
+              {
+                startOffsets: [{ amount: -1, unit: "weeks" }],
+                endOffsets: [{ amount: -1, unit: "weeks" }],
+                label: $localize`:Filter label:Last week`,
+              },
+              {
+                startOffsets: [{ amount: 1, unit: "months" }],
+                endOffsets: [{ amount: 1, unit: "months" }],
+                label: $localize`:Filter label:Next month`,
+              },
+            ],
           },
         },
         { provide: MatDialogRef, useValue: { close: closeSpy } },
@@ -43,6 +55,10 @@ describe("DateRangeFilterPanelComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should highlight the standard date range corresponding to the inputtet date", () => {
+    expect(component.indexOfCorrespondingDateRange).toEqual(1);
   });
 
   it("should display the given dates in the calendar", async () => {
@@ -150,7 +166,7 @@ describe("DateRangeFilterPanelComponent", () => {
         { amount: -2, unit: "week" },
         { amount: 3, unit: "months" },
       ],
-      label: $localize`:Filter label:From today until endOf(today minus 2 weeks) and then endOf (this date plus 3 months)`,
+      label: $localize`:Filter label:From today until endOf(today minus 2 weeks) and then endOf(this date plus 3 months)`,
     });
     let fromDate = moment("2023-06-08").startOf("day").toDate();
     let toDate = moment("2023-08-26").endOf("day").toDate();
@@ -161,7 +177,7 @@ describe("DateRangeFilterPanelComponent", () => {
         { amount: 3, unit: "months" },
         { amount: -2, unit: "week" },
       ],
-      label: $localize`:Filter label:From today until endOf(today minus 2 weeks) and then endOf (this date plus 3 months)`,
+      label: $localize`:Filter label:From today until endOf(today minus 2 weeks) and then endOf(this date plus 3 months)`,
     });
     fromDate = moment("2023-06-08").startOf("day").toDate();
     toDate = moment("2023-08-31").endOf("day").toDate();
