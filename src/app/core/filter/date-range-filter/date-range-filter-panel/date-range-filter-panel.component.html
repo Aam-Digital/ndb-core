@@ -18,6 +18,9 @@
           class="button"
           mat-button
           color="primary"
+          [class.markCorrespondingDateRange]="
+            indexOfCorrespondingDateRange === selectedIndexOfDateRanges
+          "
           (mouseenter)="preselectRange(item)"
           (mouseleave)="unselectRange()"
           (click)="selectRangeAndClose(selectedIndexOfDateRanges)"

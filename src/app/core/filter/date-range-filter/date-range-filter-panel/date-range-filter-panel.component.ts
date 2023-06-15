@@ -66,6 +66,7 @@ export class DateRangeFilterPanelComponent {
   dateRangeFilterConfig: DateRangeFilterConfig;
   dateRangeOptions: DateRangeFilterConfigOption;
   dateRanges: DateRangeFilterConfigOption[] = standardOptions;
+  indexOfCorrespondingDateRange: number;
 
   selectedRangeValue: DateRange<Date>;
   comparisonRange: DateRange<Date> = new DateRange(null, null);
@@ -81,6 +82,20 @@ export class DateRangeFilterPanelComponent {
   ) {
     this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
     this.dateRanges = this.data.standardDateRanges ?? this.dateRanges;
+    if (this.dateRanges.length > 1 && data.fromDate && data.toDate) {
+      for (const [index, dateRange] of this.dateRanges.entries()) {
+        let cDR = calculateDateRange(dateRange);
+        if (
+          moment(cDR.start).format("YYYY-MM-DD") ===
+            moment(data.fromDate).format("YYYY-MM-DD") &&
+          moment(cDR.end).format("YYYY-MM-DD") ===
+            moment(data.toDate).format("YYYY-MM-DD")
+        ) {
+          this.indexOfCorrespondingDateRange = index;
+          break;
+        }
+      }
+    }
   }
 
   preselectRange(dateRangeOption): void {
