@@ -110,6 +110,7 @@ export class DateRangeFilterPanelComponent {
   }
 
   selectedRangeChange(selectedDate: Date) {
+    this.indexOfCorrespondingDateRange = undefined;
     if (!this.selectedRangeValue?.start || this.selectedRangeValue?.end) {
       this.selectedRangeValue = new DateRange(selectedDate, null);
     } else {
