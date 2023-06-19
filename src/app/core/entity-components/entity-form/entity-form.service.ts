@@ -108,17 +108,7 @@ export class EntityFormService {
           formConfig[formField.id].push(validators);
         }
       });
-    const formGroup = this.fb.group<Partial<T>>(formConfig);
-    // TODO needs to be unsubscribed
-    formGroup.valueChanges.subscribe({
-      next: () => (this.unsavedChanges.pending = formGroup.dirty),
-      complete: () =>
-        console.log(
-          "complete form",
-          formFields.map(({ id }) => id)
-        ),
-    });
-    return formGroup;
+    return this.fb.group<Partial<T>>(formConfig);
   }
 
   /**

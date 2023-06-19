@@ -14,6 +14,7 @@ import { DynamicComponentDirective } from "../../../view/dynamic-components/dyna
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DialogButtonsComponent } from "../../../form-dialog/dialog-buttons/dialog-buttons.component";
+import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -56,9 +57,14 @@ export class RowDetailsComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
-    private formService: EntityFormService
+    private formService: EntityFormService,
+    private unsavedChanges: UnsavedChangesService
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
+    // TODO this would make more sense inside the service but can't be unsubscribed there. That might not be a problem though
+    this.form.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe(() => (this.unsavedChanges.pending = this.form.dirty));
     this.columns = data.columns.map((col) => [col]);
     this.tempEntity = this.data.entity;
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
