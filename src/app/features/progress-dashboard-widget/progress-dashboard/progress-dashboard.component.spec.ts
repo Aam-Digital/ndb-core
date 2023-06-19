@@ -43,15 +43,15 @@ describe("ProgressDashboardComponent", () => {
         },
       ],
     }).compileComponents();
+  }));
+
+  beforeEach(() => {
     mockEntityMapper = TestBed.inject(EntityMapperService) as any;
     spyOn(mockEntityMapper, "load").and.resolveTo({
       title: "test",
       parts: [],
     } as any);
     spyOn(mockEntityMapper, "save").and.resolveTo();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ProgressDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
