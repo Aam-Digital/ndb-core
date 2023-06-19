@@ -8,6 +8,7 @@ import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-vali
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { omit } from "lodash-es";
+import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.service";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -26,7 +27,8 @@ export class EntityFormService {
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
     private dynamicValidator: DynamicValidatorsService,
-    private ability: EntityAbility
+    private ability: EntityAbility,
+    private unsavedChanges: UnsavedChangesService
   ) {}
 
   /**
@@ -106,7 +108,17 @@ export class EntityFormService {
           formConfig[formField.id].push(validators);
         }
       });
-    return this.fb.group<Partial<T>>(formConfig);
+    const formGroup = this.fb.group<Partial<T>>(formConfig);
+    // TODO needs to be unsubscribed
+    formGroup.valueChanges.subscribe({
+      next: () => (this.unsavedChanges.pending = formGroup.dirty),
+      complete: () =>
+        console.log(
+          "complete form",
+          formFields.map(({ id }) => id)
+        ),
+    });
+    return formGroup;
   }
 
   /**
@@ -133,7 +145,10 @@ export class EntityFormService {
 
     return this.entityMapper
       .save(updatedEntity)
-      .then(() => Object.assign(entity, updatedEntity))
+      .then(() => {
+        this.unsavedChanges.pending = false;
+        return Object.assign(entity, updatedEntity);
+      })
       .catch((err) => {
         throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
       });
@@ -162,5 +177,6 @@ export class EntityFormService {
     const newKeys = Object.keys(omit(form.controls, Object.keys(entity)));
     newKeys.forEach((key) => form.get(key).setValue(null));
     form.markAsPristine();
+    this.unsavedChanges.pending = false;
   }
 }

@@ -17,10 +17,9 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router, RouterLink } from "@angular/router";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { UnsavedChangesService } from "../../entity-components/entity-details/form/unsaved-changes.service";
 
-@UntilDestroy()
 @Component({
   selector: "app-dialog-buttons",
   standalone: true,
@@ -49,15 +48,20 @@ export class DialogButtonsComponent implements OnInit {
     private entityRemoveService: EntityRemoveService,
     private router: Router,
     private ability: EntityAbility,
-    private confirmation: ConfirmationDialogService
+    private confirmation: ConfirmationDialogService,
+    private unsavedChanges: UnsavedChangesService
   ) {
-    this.dialog.backdropClick().subscribe(() => {
-      if (this.form.dirty) {
-        this.confirmation
-          .getDiscardConfirmation()
-          .then((confirmed) => (confirmed ? this.save() : undefined));
-      }
-    });
+    this.dialog.disableClose = true;
+    this.dialog.backdropClick().subscribe(() =>
+      this.unsavedChanges.checkUnsavedChanges().then((confirmed) => {
+        if (confirmed) {
+          this.dialog.close();
+        }
+      })
+    );
+    this.dialog
+      .afterClosed()
+      .subscribe(() => (this.unsavedChanges.pending = false));
   }
 
   ngOnInit() {
@@ -67,9 +71,6 @@ export class DialogButtonsComponent implements OnInit {
       }
       this.initializeDetailsRouteIfAvailable();
     }
-    this.form.statusChanges
-      .pipe(untilDestroyed(this))
-      .subscribe(() => (this.dialog.disableClose = this.form.dirty));
   }
 
   private initializeDetailsRouteIfAvailable() {

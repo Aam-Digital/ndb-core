@@ -15,7 +15,6 @@ import { toFormFieldConfig } from "../../entity-subrecord/entity-subrecord/entit
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
-import { UnsavedChangesService } from "./unsaved-changes.service";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -50,8 +49,7 @@ export class FormComponent<E extends Entity> implements OnInit {
     private router: Router,
     private location: Location,
     private entityFormService: EntityFormService,
-    private alertService: AlertService,
-    private unsavedChanges: UnsavedChangesService
+    private alertService: AlertService
   ) {}
 
   ngOnInit() {
@@ -62,9 +60,6 @@ export class FormComponent<E extends Entity> implements OnInit {
     if (!this.creatingNew) {
       this.form.disable();
     }
-    this.form.valueChanges.subscribe(
-      () => (this.unsavedChanges.pending = this.form.dirty)
-    );
   }
 
   async saveClicked() {
@@ -73,7 +68,6 @@ export class FormComponent<E extends Entity> implements OnInit {
       this.form.markAsPristine();
       this.form.disable();
       if (this.creatingNew) {
-        this.unsavedChanges.pending = false;
         await this.router.navigate([
           getParentUrl(this.router),
           this.entity.getId(),
@@ -92,7 +86,5 @@ export class FormComponent<E extends Entity> implements OnInit {
     }
     this.entityFormService.resetForm(this.form, this.entity);
     this.form.disable();
-    // TODO this might overwrite active changes from another panel with a form
-    this.unsavedChanges.pending = false;
   }
 }
