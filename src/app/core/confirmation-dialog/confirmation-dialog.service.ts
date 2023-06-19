@@ -56,10 +56,10 @@ export class ConfirmationDialogService {
     );
   }
 
-  getSaveConfirmation() {
+  getDiscardConfirmation() {
     return this.getConfirmation(
-      $localize`:Save changes header:Save Changes?`,
-      $localize`:Save changes message:You have unsaved changes. Do you really want to leave this page? All unsaved changes will be lost.`
+      $localize`:Discard changes header:Discard Changes?`,
+      $localize`:Discard changes message:You have unsaved changes. Do you really want to leave this page? All unsaved changes will be lost.`
     );
   }
 }

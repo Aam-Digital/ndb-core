@@ -54,7 +54,7 @@ export class DialogButtonsComponent implements OnInit {
     this.dialog.backdropClick().subscribe(() => {
       if (this.form.dirty) {
         this.confirmation
-          .getSaveConfirmation()
+          .getDiscardConfirmation()
           .then((confirmed) => (confirmed ? this.save() : undefined));
       }
     });

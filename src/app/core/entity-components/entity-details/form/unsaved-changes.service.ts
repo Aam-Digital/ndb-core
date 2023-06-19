@@ -8,7 +8,7 @@ export class UnsavedChangesService {
   pending = false;
 
   constructor(private confirmation: ConfirmationDialogService) {
-    // prevent navigation if changes are pending
+    // prevent browser navigation if changes are pending
     window.onbeforeunload = (e) => {
       if (this.pending) {
         e.preventDefault();
@@ -19,7 +19,7 @@ export class UnsavedChangesService {
 
   async checkUnsavedChanges() {
     if (this.pending) {
-      const confirmed = await this.confirmation.getSaveConfirmation();
+      const confirmed = await this.confirmation.getDiscardConfirmation();
       if (confirmed) {
         this.pending = false;
         return true;

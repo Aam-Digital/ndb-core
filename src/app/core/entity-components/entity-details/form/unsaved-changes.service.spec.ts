@@ -8,7 +8,7 @@ describe("UnsavedChangesService", () => {
   let mockConfirmation: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(() => {
-    mockConfirmation = jasmine.createSpyObj(["getSaveConfirmation"]);
+    mockConfirmation = jasmine.createSpyObj(["getDiscardConfirmation"]);
     TestBed.configureTestingModule({
       providers: [
         { provide: ConfirmationDialogService, useValue: mockConfirmation },
@@ -22,17 +22,17 @@ describe("UnsavedChangesService", () => {
   });
 
   it("should only ask for confirmation if changes are pending", async () => {
-    mockConfirmation.getSaveConfirmation.and.resolveTo(false);
+    mockConfirmation.getDiscardConfirmation.and.resolveTo(false);
 
     await expectAsync(service.checkUnsavedChanges()).toBeResolvedTo(true);
-    expect(mockConfirmation.getSaveConfirmation).not.toHaveBeenCalled();
+    expect(mockConfirmation.getDiscardConfirmation).not.toHaveBeenCalled();
 
     service.pending = true;
 
     await expectAsync(service.checkUnsavedChanges()).toBeResolvedTo(false);
-    expect(mockConfirmation.getSaveConfirmation).toHaveBeenCalled();
+    expect(mockConfirmation.getDiscardConfirmation).toHaveBeenCalled();
 
-    mockConfirmation.getSaveConfirmation.and.resolveTo(true);
+    mockConfirmation.getDiscardConfirmation.and.resolveTo(true);
 
     await expectAsync(service.checkUnsavedChanges()).toBeResolvedTo(true);
   });
