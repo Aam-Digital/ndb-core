@@ -18,6 +18,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Subscription } from "rxjs";
+import moment from "moment";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -136,13 +137,15 @@ export class EntityFormComponent<T extends Entity = Entity>
   }
 
   private formIsUpToDate(entity: T): boolean {
-    return Object.entries(this.form.getRawValue()).every(([key, value]) => {
-      return this.entityEqualsFormValue(entity[key], value);
-    });
+    return Object.entries(this.form.getRawValue()).every(([key, value]) =>
+      this.entityEqualsFormValue(entity[key], value)
+    );
   }
 
   private entityEqualsFormValue(entityValue, formValue) {
     return (
+      (entityValue instanceof Date &&
+        moment(entityValue).isSame(formValue, "day")) ||
       (entityValue === undefined && formValue === null) ||
       entityValue === formValue ||
       JSON.stringify(entityValue) === JSON.stringify(formValue)

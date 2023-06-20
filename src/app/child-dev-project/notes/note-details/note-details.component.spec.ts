@@ -1,6 +1,6 @@
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { Child } from "../../children/model/child";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
@@ -32,11 +32,11 @@ describe("NoteDetailsComponent", () => {
 
   let testNote: Note;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     const children = [new Child("1"), new Child("2"), new Child("3")];
     testNote = generateTestNote(children);
 
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [
         NoteDetailsComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, children),
@@ -49,7 +49,9 @@ describe("NoteDetailsComponent", () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     TestBed.inject(EntityConfigService).setupEntitiesFromConfig();
     fixture = TestBed.createComponent(NoteDetailsComponent);
     component = fixture.componentInstance;

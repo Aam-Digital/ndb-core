@@ -25,11 +25,8 @@
     <span *ngIf="!selectedEntity" i18n>Creating new record.</span>
     <span *ngIf="selectedEntity" i18n>Editing existing record.</span>
   </mat-hint>
-  <mat-error
-    *ngIf="formControl.errors?.required"
-    i18n="Error message for any input"
-  >
-    This field is required
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
 </mat-form-field>
 
