@@ -59,6 +59,7 @@ export class DialogButtonsComponent implements OnInit {
         }
       })
     );
+    // This happens before the `canDeactivate` check and therefore does not warn when leaving
     this.dialog
       .afterClosed()
       .subscribe(() => (this.unsavedChanges.pending = false));
