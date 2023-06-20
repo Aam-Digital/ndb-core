@@ -24,7 +24,10 @@ describe("RowDetailsComponent", () => {
       imports: [RowDetailsComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
-        { provide: MatDialogRef, useValue: { backdropClick: () => NEVER } },
+        {
+          provide: MatDialogRef,
+          useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
+        },
       ],
     }).compileComponents();
     spyOn(TestBed.inject(EntityAbility), "cannot").and.returnValue(true);

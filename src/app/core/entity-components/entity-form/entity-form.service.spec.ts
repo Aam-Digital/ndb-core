@@ -14,6 +14,7 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
+import { MatDialogModule } from "@angular/material/dialog";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -23,6 +24,7 @@ describe("EntityFormService", () => {
     mockEntityMapper = jasmine.createSpyObj(["save"]);
     mockEntityMapper.save.and.resolveTo();
     TestBed.configureTestingModule({
+      imports: [MatDialogModule],
       providers: [
         FormBuilder,
         EntitySchemaService,

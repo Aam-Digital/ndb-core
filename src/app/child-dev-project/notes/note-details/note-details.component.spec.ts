@@ -43,7 +43,10 @@ describe("NoteDetailsComponent", () => {
       ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: { entity: testNote } },
-        { provide: MatDialogRef, useValue: { backdropClick: () => NEVER } },
+        {
+          provide: MatDialogRef,
+          useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
+        },
       ],
     }).compileComponents();
 

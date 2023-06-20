@@ -18,7 +18,7 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { EMPTY, of } from "rxjs";
+import { NEVER, of } from "rxjs";
 
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent;
@@ -26,8 +26,9 @@ describe("DialogButtonsComponent", () => {
   let dialogRef: jasmine.SpyObj<MatDialogRef<any>>;
 
   beforeEach(async () => {
-    dialogRef = jasmine.createSpyObj(["close", "backdropClick"]);
-    dialogRef.backdropClick.and.returnValue(EMPTY);
+    dialogRef = jasmine.createSpyObj(["close", "backdropClick", "afterClosed"]);
+    dialogRef.backdropClick.and.returnValue(NEVER);
+    dialogRef.afterClosed.and.returnValue(NEVER);
     await TestBed.configureTestingModule({
       imports: [DialogButtonsComponent, MockedTestingModule.withState()],
       providers: [{ provide: MatDialogRef, useValue: dialogRef }],

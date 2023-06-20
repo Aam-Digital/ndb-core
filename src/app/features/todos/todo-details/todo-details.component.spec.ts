@@ -28,7 +28,11 @@ describe("TodoDetailsComponent", () => {
         },
         {
           provide: MatDialogRef,
-          useValue: { close: () => {}, backdropClick: () => NEVER },
+          useValue: {
+            close: () => {},
+            backdropClick: () => NEVER,
+            afterClosed: () => NEVER,
+          },
         },
         TodoService,
       ],
