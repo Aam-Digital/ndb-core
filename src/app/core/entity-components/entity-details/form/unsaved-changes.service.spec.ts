@@ -36,4 +36,20 @@ describe("UnsavedChangesService", () => {
 
     await expectAsync(service.checkUnsavedChanges()).toBeResolvedTo(true);
   });
+
+  it("should prevent closing the window if changes are pending", () => {
+    const e = { preventDefault: jasmine.createSpy(), returnValue: undefined };
+
+    service.pending = false;
+    window.onbeforeunload(e as any);
+
+    expect(e.preventDefault).not.toHaveBeenCalled();
+    expect(e.returnValue).toBeUndefined();
+
+    service.pending = true;
+    window.onbeforeunload(e as any);
+
+    expect(e.preventDefault).toHaveBeenCalled();
+    expect(e.returnValue).toBe("onbeforeunload");
+  });
 });

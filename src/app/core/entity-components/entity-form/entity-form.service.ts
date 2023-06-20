@@ -25,7 +25,7 @@ export type EntityForm<T extends Entity> = TypedForm<Partial<T>>;
  */
 @Injectable({ providedIn: "root" })
 export class EntityFormService {
-  subscriptions: Subscription[] = [];
+  private subscriptions: Subscription[] = [];
 
   constructor(
     private fb: FormBuilder,
