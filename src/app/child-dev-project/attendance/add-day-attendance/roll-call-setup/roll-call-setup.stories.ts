@@ -5,7 +5,6 @@ import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
 import { Note } from "../../../notes/model/note";
 import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
-import { SessionService } from "../../../../core/session/session-service/session.service";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
@@ -40,7 +39,7 @@ const demoActivities = [
 demoActivities[0].assignedTo = ["demo"];
 
 export default {
-  title: "Attendance/Views/RollCallSetup",
+  title: "Features/Attendance/Views/RollCallSetup",
   component: RollCallSetupComponent,
   decorators: [
     moduleMetadata({
@@ -52,16 +51,6 @@ export default {
           ...demoEvents,
           ...demoActivities,
         ]),
-      ],
-      providers: [
-        {
-          provide: SessionService,
-          useValue: {
-            getCurrentUser: () => {
-              return { name: "username" };
-            },
-          },
-        },
       ],
     }),
   ],
