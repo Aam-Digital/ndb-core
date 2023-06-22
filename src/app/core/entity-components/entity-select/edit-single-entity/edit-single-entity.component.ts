@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
+import { ErrorHintComponent } from "../../entity-utils/error-hint/error-hint.component";
 import { User } from "../../../user/user";
 import { SessionService } from "../../../session/session-service/session.service";
 import { entityEntitySchemaDatatype } from "../../../entity/schema-datatypes/datatype-entity";
@@ -25,6 +26,7 @@ import { entityEntitySchemaDatatype } from "../../../entity/schema-datatypes/dat
     MatFormFieldModule,
     FontAwesomeModule,
     NgIf,
+    ErrorHintComponent,
   ],
   standalone: true,
 })

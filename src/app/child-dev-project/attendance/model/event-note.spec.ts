@@ -44,7 +44,7 @@ describe("EventNote", () => {
     authors: ["some-coach"],
     relatesTo: "RecurringActivity:some-id",
     relatedEntities: ["RecurringActivity:some-id"],
-    date: new Date(),
+    date: "2023-05-01",
     schools: [],
     subject: "some subject",
     text: "some text about the event",

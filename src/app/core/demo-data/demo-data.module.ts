@@ -40,9 +40,9 @@ import { DemoConfigurableEnumGeneratorService } from "../configurable-enum/demo-
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
 
 const demoDataGeneratorProviders = [
+  ...DemoConfigGeneratorService.provider(),
   ...DemoPermissionGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
-  ...DemoConfigGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
   ...DemoConfigurableEnumGeneratorService.provider(),
   ...DemoChildGenerator.provider({ count: 120 }),
@@ -105,7 +105,9 @@ const demoDataGeneratorProviders = [
   exports: [DemoDataGeneratingProgressDialogComponent],
 })
 export class DemoDataModule {
-  constructor(demoDataInitializer: DemoDataInitializerService) {
-    demoDataInitializer.run();
+  constructor(private demoDataInitializer: DemoDataInitializerService) {}
+
+  publishDemoData() {
+    return this.demoDataInitializer.run();
   }
 }

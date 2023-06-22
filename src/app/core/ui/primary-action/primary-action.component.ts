@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { NoteDetailsComponent } from "../../../child-dev-project/notes/note-details/note-details.component";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
@@ -24,6 +24,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     FontAwesomeModule,
   ],
   standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class PrimaryActionComponent {
   noteConstructor = Note;

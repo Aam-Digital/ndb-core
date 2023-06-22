@@ -52,7 +52,11 @@ export const TEST_PASSWORD = "pass";
     { provide: SwRegistrationOptions, useValue: { enabled: false } },
     {
       provide: AnalyticsService,
-      useValue: { eventTrack: () => undefined },
+      useValue: {
+        eventTrack: () => undefined,
+        setUser: () => undefined,
+        init: () => undefined,
+      },
     },
     {
       provide: DatabaseIndexingService,

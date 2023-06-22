@@ -25,7 +25,7 @@ describe("Scenario: Linking a child to a school - E2E test", function () {
 
     // choose the school to add
     cy.contains("mat-form-field", "School")
-      .find("[matInput]")
+      .find("[matInput]:visible")
       .type("E2E School{enter}");
 
     // save school in child profile

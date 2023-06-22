@@ -28,6 +28,8 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  */
 export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "month",
+  viewComponent: "DisplayMonth",
+  editComponent: "EditMonth",
 
   transformToDatabaseFormat: (value) => {
     if (!(value instanceof Date)) {

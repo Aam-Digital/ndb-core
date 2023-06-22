@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
@@ -14,6 +14,7 @@ import { DatabaseField } from "../../../entity/database-field.decorator";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
+import { FormComponent } from "../../entity-details/form/form.component";
 
 const testUser = new User("1");
 testUser.name = "test entity";
@@ -24,7 +25,7 @@ child1.name = "test child";
 
 export default {
   title: "Core/EntityComponents/Entity Property Fields/Entity Reference",
-  component: EntityFormComponent,
+  component: FormComponent,
   decorators: [
     moduleMetadata({
       imports: [EntityFormComponent, StorybookBaseModule],
@@ -40,8 +41,7 @@ export default {
   parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
-const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
-  component: EntityFormComponent,
+const Template: Story<FormComponent<any>> = (args: FormComponent<any>) => ({
   props: args,
 });
 
@@ -67,7 +67,7 @@ class TestEntity extends Entity {
   })
   relatedEntity: string;
 
-  @DatabaseField() x = 1;
+  @DatabaseField() x;
 
   @DatabaseField({
     dataType: "entity-reference",
@@ -81,13 +81,7 @@ testEntity.relatedEntity = testUser.getId();
 
 export const Primary = Template.bind({});
 Primary.args = {
-  columns: [[fieldConfig]],
-  entity: testEntity,
-};
-
-export const Edit = Template.bind({});
-Edit.args = {
-  columns: [
+  cols: [
     [
       otherField,
       fieldConfig,
@@ -96,5 +90,4 @@ Edit.args = {
     ],
   ],
   entity: testEntity,
-  editing: true,
 };

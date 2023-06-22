@@ -26,7 +26,7 @@ export class DataAggregationService {
   ): Promise<ReportRow[]> {
     this.fromDate = from;
     this.toDate = to;
-    const fullQuery = aggregations.map((a) => this.concatQueries(a)).join("");
+    const fullQuery = aggregations.map((a) => this.concatQueries(a)).join("|");
     await this.queryService.cacheRequiredData(
       fullQuery,
       this.fromDate,

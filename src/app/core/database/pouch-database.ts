@@ -387,7 +387,9 @@ export class PouchDatabase extends Database {
       newObject._rev = existingObject._rev;
       return this.put(newObject);
     } else {
-      existingError.message = existingError.message + " (unable to resolve)";
+      existingError.message = `${
+        existingError.message
+      } (unable to resolve) ID: ${JSON.stringify(newObject)}`;
       throw new DatabaseException(existingError);
     }
   }

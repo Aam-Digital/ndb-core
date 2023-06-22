@@ -3,9 +3,7 @@ import { SessionService } from "../../session/session-service/session.service";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
-import { Database } from "../../database/database";
 import * as Sentry from "@sentry/browser";
-import { RemoteSession } from "../../session/session-service/remote-session";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
@@ -14,16 +12,18 @@ import { AuthUser } from "../../session/session-service/auth-user";
 import { firstValueFrom } from "rxjs";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
+import { PouchDatabase } from "../../database/pouch-database";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { BackupService } from "../../admin/services/backup.service";
+import { DownloadService } from "../../export/download-service/download.service";
+import { AuthService } from "../../session/auth/auth.service";
 
 @Component({
   selector: "app-support",
   templateUrl: "./support.component.html",
   styleUrls: ["./support.component.scss"],
-  imports: [
-    MatExpansionModule,
-    MatButtonModule
-  ],
-  standalone: true
+  imports: [MatExpansionModule, MatButtonModule, MatTooltipModule],
+  standalone: true,
 })
 export class SupportComponent implements OnInit {
   currentUser: AuthUser;
@@ -35,18 +35,21 @@ export class SupportComponent implements OnInit {
   swLog = "not available";
   userAgent = this.window.navigator.userAgent;
   appVersion: string;
+  dbInfo: string;
 
   constructor(
     private sessionService: SessionService,
     private sw: SwUpdate,
-    private database: Database,
+    private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,
     private http: HttpClient,
+    private backupService: BackupService,
+    private downloadService: DownloadService,
     @Inject(WINDOW_TOKEN) private window: Window,
     @Inject(LOCATION_TOKEN) private location: Location
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.currentUser = this.sessionService.getCurrentUser();
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
@@ -54,6 +57,7 @@ export class SupportComponent implements OnInit {
     this.initLastRemoteLogin();
     this.initStorageInfo();
     this.initSwStatus();
+    return this.initDbInfo();
   }
 
   private initCurrentSyncState() {
@@ -76,7 +80,7 @@ export class SupportComponent implements OnInit {
 
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
-      localStorage.getItem(RemoteSession.LAST_LOGIN_KEY) || "never";
+      localStorage.getItem(AuthService.LAST_AUTH_KEY) || "never";
   }
 
   private initStorageInfo() {
@@ -103,6 +107,16 @@ export class SupportComponent implements OnInit {
       .then((res) => (this.swLog = res));
   }
 
+  private initDbInfo() {
+    return this.database
+      .getPouchDB()
+      .info()
+      .then(
+        (res) =>
+          (this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`)
+      );
+  }
+
   sendReport() {
     // This is sent even without submitting the crash report.
     Sentry.captureMessage("report information", {
@@ -116,6 +130,8 @@ export class SupportComponent implements OnInit {
         userAgent: this.userAgent,
         swLog: this.swLog,
         storageInfo: this.storageInfo,
+        dbInfo: this.dbInfo,
+        timestamp: new Date().toISOString(),
       },
     });
     Sentry.showReportDialog({
@@ -145,5 +161,14 @@ export class SupportComponent implements OnInit {
     await Promise.all(unregisterPromises);
     localStorage.clear();
     this.location.reload();
+  }
+
+  async downloadLocalDatabase() {
+    const backup = await this.backupService.getDatabaseExport();
+    await this.downloadService.triggerDownload(
+      backup,
+      "json",
+      "aamdigital_data_" + new Date().toISOString()
+    );
   }
 }

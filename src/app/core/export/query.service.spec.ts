@@ -18,8 +18,6 @@ import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { Database } from "../database/database";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { genders } from "../../child-dev-project/children/model/genders";
-import { EntityConfigService } from "app/core/entity/entity-config.service";
-import { ConfigService } from "app/core/config/config.service";
 import { EventAttendance } from "../../child-dev-project/attendance/model/event-attendance";
 import { AttendanceStatusType } from "../../child-dev-project/attendance/model/attendance-status";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
@@ -44,17 +42,12 @@ describe("QueryService", () => {
     (i) => i.id === "COACHING_CLASS"
   );
 
-  beforeEach(waitForAsync(async () => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
     });
     service = TestBed.inject(QueryService);
-    const configService = TestBed.inject(ConfigService);
-    const entityConfigService = TestBed.inject(EntityConfigService);
     entityMapper = TestBed.inject(EntityMapperService);
-    await configService.loadConfig();
-    entityConfigService.addConfigAttributes(School);
-    entityConfigService.addConfigAttributes(Child);
   }));
 
   afterEach(() => TestBed.inject(Database).destroy());
@@ -616,6 +609,19 @@ describe("QueryService", () => {
     ).toBeResolvedTo({});
   });
 
+  it("should support enum ids that contain spaces", async () => {
+    const newGender = { id: "another gender", label: "some label" };
+    genders.push(newGender);
+    await createChild(newGender.id);
+    await createChild("M");
+
+    const res = await queryData(
+      `${Child.ENTITY_TYPE}:toArray:filterByObjectAttribute(gender, id, another gender):count`
+    );
+
+    expect(res).toBe(1);
+  });
+
   function queryData(query: string, from?: Date, to?: Date, data?: any) {
     return service
       .cacheRequiredData(query, from, to)
@@ -623,7 +629,7 @@ describe("QueryService", () => {
   }
 
   async function createChild(
-    gender: "M" | "F" = "F",
+    gender: "M" | "F" | string = "F",
     religion?: "muslim" | "christian"
   ): Promise<Child> {
     const child = new Child();

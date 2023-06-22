@@ -15,5 +15,6 @@ export default defineConfig({
     supportFile: "e2e/support/index.ts",
     baseUrl: "http://localhost:4200",
     testIsolation: false,
+    defaultCommandTimeout: 10000,
   },
 });

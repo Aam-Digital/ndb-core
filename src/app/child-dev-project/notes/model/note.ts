@@ -40,6 +40,7 @@ import { dateEntitySchemaDatatype } from "../../../core/entity/schema-datatypes/
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
+  static toStringAttributes = ["subject"];
   static label = $localize`:label for entity:Note`;
   static labelPlural = $localize`:label (plural) for entity:Notes`;
 
@@ -93,16 +94,17 @@ export class Note extends Entity {
 
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
+    dataType: "date-only",
     defaultValue: dateEntitySchemaDatatype.PLACEHOLDERS.NOW,
   })
   date: Date;
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
-  subject: string = "";
+  subject: string;
   @DatabaseField({
     label: $localize`:Label for the actual notes of a note:Notes`,
     editComponent: "EditLongText",
   })
-  text: string = "";
+  text: string;
   /** IDs of users that authored this note */
   @DatabaseField({
     label: $localize`:Label for the social worker(s) who created the note:SW`,
@@ -117,7 +119,7 @@ export class Note extends Entity {
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
-  category: InteractionType = { id: "", label: "" };
+  category: InteractionType;
 
   /**
    * id referencing a different entity (e.g. a recurring activity) this note is related to
@@ -167,7 +169,7 @@ export class Note extends Entity {
   public getColor() {
     const actualLevel = this.getWarningLevel();
     if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
-      return this.category.color;
+      return this.category?.color;
     } else {
       return super.getColor();
     }
@@ -175,7 +177,7 @@ export class Note extends Entity {
 
   public getColorForId(childId: string): string {
     if (
-      this.category.isMeeting &&
+      this.category?.isMeeting &&
       this.childrenAttendance.get(childId)?.status.countAs ===
         AttendanceLogicalStatus.ABSENT
     ) {

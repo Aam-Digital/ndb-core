@@ -184,10 +184,11 @@ export class ChildrenService {
       // TODO: filter notes to only include them if the given child is marked "present"
 
       for (const entityId of note[noteProperty]) {
+        const trimmedId = Entity.extractEntityIdFromId(entityId);
         const daysSinceNote = moment().diff(note.date, "days");
-        const previousValue = results.get(entityId);
+        const previousValue = results.get(trimmedId);
         if (previousValue > daysSinceNote) {
-          results.set(entityId, daysSinceNote);
+          results.set(trimmedId, daysSinceNote);
         }
       }
     }

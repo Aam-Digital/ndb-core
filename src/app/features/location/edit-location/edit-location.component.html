@@ -25,7 +25,10 @@
       {{option.display_name}}
     </mat-option>
   </mat-autocomplete>
-  <mat-hint align="end"  i18n class="map-data-source-hint">
+  <mat-hint align="end" i18n class="map-data-source-hint">
     Map data from <a target="_blank" href="https://openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
   </mat-hint>
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
+  </mat-error>
 </mat-form-field>

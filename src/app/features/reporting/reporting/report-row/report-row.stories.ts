@@ -4,17 +4,13 @@ import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { ReportRow } from "../../report-row";
 import { ReportingComponent } from "../reporting.component";
-import { MatTreeModule } from "@angular/material/tree";
-import { MatButtonModule } from "@angular/material/button";
 
 export default {
   title: "Features/Reporting/Report Row",
   component: ReportRowComponent,
   decorators: [
     moduleMetadata({
-      imports: [StorybookBaseModule, MatTreeModule, MatButtonModule],
-      declarations: [ReportingComponent],
-      providers: [],
+      imports: [ReportingComponent, StorybookBaseModule],
     }),
   ],
 } as Meta;

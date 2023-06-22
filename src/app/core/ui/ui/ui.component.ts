@@ -35,7 +35,6 @@ import { LanguageSelectComponent } from "../../language/language-select/language
 import { NavigationComponent } from "../../navigation/navigation/navigation.component";
 import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
 import { AppVersionComponent } from "../../latest-changes/app-version/app-version.component";
-import { LoginComponent } from "../../session/login/login.component";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 
 /**
@@ -62,7 +61,6 @@ import { PrimaryActionComponent } from "../primary-action/primary-action.compone
     PwaInstallComponent,
     AppVersionComponent,
     RouterOutlet,
-    LoginComponent,
     PrimaryActionComponent,
   ],
   standalone: true,
