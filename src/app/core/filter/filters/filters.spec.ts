@@ -28,13 +28,11 @@ describe("Filters", () => {
       { id: 1, category: "x" },
       { id: 2, category: "y" },
     ] as any;
-    const selectedCategory = "x";
-    const predicate = filterService.getFilterPredicate(
-      fs.getFilter(selectedCategory)
-    );
+    fs.selectedOption = "x";
+    const predicate = filterService.getFilterPredicate(fs.getFilter());
     const filteredData = testData.filter(predicate);
 
     expect(filteredData).toHaveSize(1);
-    expect(filteredData[0].category).toBe(selectedCategory);
+    expect(filteredData[0].category).toBe("x");
   });
 });

@@ -22,28 +22,59 @@ import {
 } from "app/core/entity-components/entity-list/EntityListConfig";
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../../entity/model/entity";
+import { DateRange } from "@angular/material/datepicker";
+import { isValidDate } from "../../../utils/utils";
+import { calculateDateRange } from "../date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import moment from "moment/moment";
 
 export abstract class Filter<T extends Entity> {
   public selectedOption: string;
 
   constructor(public name: string, public label: string = name) {}
 
-  abstract getFilter(key?: string): DataFilter<T>;
+  abstract getFilter(): DataFilter<T>;
 }
 
 export class DateFilter<T extends Entity> extends Filter<T> {
-  filter: DataFilter<T>;
-
   constructor(
     public name: string,
     public label: string = name,
-    public standardDateRanges: DateRangeFilterConfigOption[]
+    public rangeOptions: DateRangeFilterConfigOption[]
   ) {
     super(name, label);
   }
 
-  public getFilter(key: string): DataFilter<T> {
-    return this.filter;
+  getDateRange(): DateRange<Date> {
+    if (this.getSelectedOption()) {
+      return calculateDateRange(this.getSelectedOption());
+    }
+    const dates = this.selectedOption.split("_");
+    if (dates.length == 2) {
+      const firstDate = new Date(dates[0]);
+      const secondDate = new Date(dates[1]);
+      if (isValidDate(firstDate) && isValidDate(secondDate)) {
+        return new DateRange(firstDate, secondDate);
+      }
+    }
+    return new DateRange(undefined, undefined);
+  }
+
+  getFilter(): DataFilter<T> {
+    const range = this.getDateRange();
+    if (range) {
+      return {
+        [this.name]: {
+          $gte: moment(range.start).format("YYYY-MM-DD"),
+          $lte: moment(range.end).format("YYYY-MM-DD"),
+        },
+      } as DataFilter<T>;
+    } else {
+      return {} as DataFilter<T>;
+    }
+  }
+
+  getSelectedOption() {
+    return this.rangeOptions[this.selectedOption as any];
   }
 }
 
@@ -125,8 +156,8 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * Get the filter query for the given option.
    * If the given key is undefined or invalid, the returned filter matches any elements.
    */
-  public getFilter(key: string): DataFilter<T> {
-    const option = this.getOption(key);
+  public getFilter(): DataFilter<T> {
+    const option = this.getOption(this.selectedOption);
 
     if (!option) {
       return this.defaultFilter as DataFilter<T>;

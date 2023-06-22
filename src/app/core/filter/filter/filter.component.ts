@@ -100,8 +100,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   private applyFilterSelections() {
     const previousFilter = JSON.stringify(this.filterObj);
     const newFilter = this.filterSelections.reduce(
-      (obj, filter) =>
-        Object.assign(obj, filter.getFilter(filter.selectedOption)),
+      (obj, filter) => Object.assign(obj, filter.getFilter()),
       {} as DataFilter<T>
     );
 

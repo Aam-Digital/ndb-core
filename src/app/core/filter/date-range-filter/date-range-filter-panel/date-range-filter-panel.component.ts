@@ -16,8 +16,10 @@ import { NgForOf } from "@angular/common";
 import { DateRangeFilterConfigOption } from "app/core/entity-components/entity-list/EntityListConfig";
 import moment from "moment";
 import { FormsModule } from "@angular/forms";
+import { DateFilter } from "../../filters/filters";
+import { dateToString } from "../../../../utils/utils";
 
-export const standardOptions: DateRangeFilterConfigOption[] = [
+export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   {
     label: $localize`:Filter label:Today`,
   },
@@ -27,7 +29,7 @@ export const standardOptions: DateRangeFilterConfigOption[] = [
     label: $localize`:Filter label:This week`,
   },
   {
-    startOffsets: [{ amount: 1, unit: "weeks" }],
+    startOffsets: [{ amount: -1, unit: "weeks" }],
     label: $localize`:Filter label:Since last week`,
   },
   {
@@ -60,38 +62,14 @@ export const standardOptions: DateRangeFilterConfigOption[] = [
   ],
 })
 export class DateRangeFilterPanelComponent {
-  dateRanges = standardOptions;
-  indexOfCorrespondingDateRange: number;
-
-  selectedRangeValue: DateRange<Date>;
+  selectedRangeValue = this.filter.getDateRange();
+  selectedOption = this.filter.getSelectedOption();
   comparisonRange: DateRange<Date> = new DateRange(null, null);
 
   constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: {
-      fromDate: Date;
-      toDate: Date;
-      standardDateRanges: DateRangeFilterConfigOption[];
-    },
+    @Inject(MAT_DIALOG_DATA) public filter: DateFilter<any>,
     private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>
-  ) {
-    this.selectedRangeValue = new DateRange(data.fromDate, data.toDate);
-    this.dateRanges = this.data.standardDateRanges ?? this.dateRanges;
-    if (this.dateRanges.length > 0 && data.fromDate && data.toDate) {
-      for (const [index, dateRange] of this.dateRanges.entries()) {
-        let cDR = calculateDateRange(dateRange);
-        if (
-          moment(cDR.start).format("YYYY-MM-DD") ===
-            moment(data.fromDate).format("YYYY-MM-DD") &&
-          moment(cDR.end).format("YYYY-MM-DD") ===
-            moment(data.toDate).format("YYYY-MM-DD")
-        ) {
-          this.indexOfCorrespondingDateRange = index;
-          break;
-        }
-      }
-    }
-  }
+  ) {}
 
   preselectRange(dateRangeOption): void {
     this.comparisonRange = calculateDateRange(dateRangeOption);
@@ -101,26 +79,21 @@ export class DateRangeFilterPanelComponent {
     this.comparisonRange = new DateRange(null, null);
   }
 
-  selectRangeAndClose(selectedIndexOfDateRanges: number): void {
-    this.selectedRangeValue = this.comparisonRange;
-    this.dialogRef.close({
-      selectedRangeValue: this.selectedRangeValue,
-      selectedIndexOfDateRanges: selectedIndexOfDateRanges.toString(),
-    });
+  selectRangeAndClose(index: number): void {
+    this.filter.selectedOption = index.toString();
+    this.dialogRef.close();
   }
 
   selectedRangeChange(selectedDate: Date) {
-    this.indexOfCorrespondingDateRange = undefined;
     if (!this.selectedRangeValue?.start || this.selectedRangeValue?.end) {
       this.selectedRangeValue = new DateRange(selectedDate, null);
     } else {
       const start = this.selectedRangeValue.start;
-      const end = selectedDate;
-      this.selectedRangeValue =
-        end < start ? new DateRange(end, start) : new DateRange(start, end);
-      this.dialogRef.close({
-        selectedRangeValue: this.selectedRangeValue,
-      });
+      this.filter.selectedOption =
+        start < selectedDate
+          ? dateToString(start) + "_" + dateToString(selectedDate)
+          : dateToString(selectedDate) + "_" + dateToString(start);
+      this.dialogRef.close();
     }
   }
 }
@@ -145,9 +118,4 @@ export function calculateDateRange(
   end.endOf(endOffsets[0].unit);
 
   return new DateRange(start.toDate(), end.toDate());
-}
-
-export interface DateRangePanelResult {
-  selectedRangeValue: DateRange<Date>;
-  selectedIndexOfDateRanges?: string;
 }

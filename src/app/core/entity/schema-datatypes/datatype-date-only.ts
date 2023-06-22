@@ -16,7 +16,7 @@
  */
 
 import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
-import { dateToString } from "app/utils/utils";
+import { dateToString } from "../../../utils/utils";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").

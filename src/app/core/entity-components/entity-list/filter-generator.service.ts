@@ -18,6 +18,8 @@ import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 import { FilterService } from "app/core/filter/filter.service";
+import { defaultDateFilters } from "../../filter/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { dateDataTypes } from "../../entity/schema-datatypes/date-datatypes";
 
 @Injectable({
   providedIn: "root",
@@ -72,11 +74,11 @@ export class FilterGeneratorService {
           (filterConfig as PrebuiltFilterConfig<T>).options,
           filterConfig.label
         );
-      } else if (type === "date") {
+      } else if (dateDataTypes.includes(type)) {
         filter = new DateFilter(
           filterConfig.id,
           filterConfig.label || schema.label,
-          (filterConfig as DateRangeFilterConfig).options
+          (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters
         );
       } else if (
         this.entities.has(filterConfig.type) ||
