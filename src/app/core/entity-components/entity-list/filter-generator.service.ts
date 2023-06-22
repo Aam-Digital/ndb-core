@@ -47,10 +47,11 @@ export class FilterGeneratorService {
     for (const filterConfig of filterConfigs) {
       const schema = entityConstructor.schema.get(filterConfig.id) || {};
       let filter: Filter<T>;
+      const type = filterConfig.type ?? schema.dataType;
+      // TODO can this maybe be moved to the component so no prior setup is required?
       if (
-        filterConfig.type == "configurable-enum" ||
-        schema.innerDataType == "configurable-enum" ||
-        schema.dataType == "configurable-enum"
+        type == "configurable-enum" ||
+        schema.innerDataType === "configurable-enum"
       ) {
         filter = new ConfigurableEnumFilter(
           filterConfig.id,
@@ -59,22 +60,19 @@ export class FilterGeneratorService {
             schema.additional ?? schema.innerDataType
           )
         );
-      } else if (
-        filterConfig.type == "boolean" ||
-        schema.dataType == "boolean"
-      ) {
+      } else if (type == "boolean") {
         filter = new BooleanFilter(
           filterConfig.id,
           filterConfig.label || schema.label,
           filterConfig as BooleanFilterConfig
         );
-      } else if (filterConfig.type == "prebuilt") {
+      } else if (type == "prebuilt") {
         filter = new SelectableFilter(
           filterConfig.id,
           (filterConfig as PrebuiltFilterConfig<T>).options,
           filterConfig.label
         );
-      } else if (filterConfig.id === "date") {
+      } else if (type === "date") {
         filter = new DateFilter(
           filterConfig.id,
           filterConfig.label || schema.label,
@@ -101,12 +99,6 @@ export class FilterGeneratorService {
 
       if (filterConfig.hasOwnProperty("default")) {
         filter.selectedOption = filterConfig.default;
-        console.log(
-          "selectedOption set for filter",
-          filterConfig.id,
-          " to ",
-          filterConfig.default
-        );
       }
 
       if (filter instanceof SelectableFilter) {

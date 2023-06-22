@@ -25,20 +25,21 @@ import { Entity } from "../../entity/model/entity";
 
 export abstract class Filter<T extends Entity> {
   public selectedOption: string;
+
   constructor(public name: string, public label: string = name) {}
+
   abstract getFilter(key?: string): DataFilter<T>;
 }
 
 export class DateFilter<T extends Entity> extends Filter<T> {
   filter: DataFilter<T>;
+
   constructor(
     public name: string,
     public label: string = name,
     public standardDateRanges: DateRangeFilterConfigOption[]
   ) {
     super(name, label);
-    // if (this.standardDateRanges)
-    //   this.selectedOption = this.standardDateRanges[0].label;
   }
 
   public getFilter(key: string): DataFilter<T> {
@@ -194,14 +195,18 @@ export class ConfigurableEnumFilter<
 export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
   constructor(name: string, label: string, filterEntities) {
     filterEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
-    let options: { key: string; label: string; color?: string; filter: {} }[] =
-      [
-        {
-          key: "all",
-          label: $localize`:Filter label:All`,
-          filter: {},
-        },
-      ];
+    const options: {
+      key: string;
+      label: string;
+      color?: string;
+      filter: {};
+    }[] = [
+      {
+        key: "all",
+        label: $localize`:Filter label:All`,
+        filter: {},
+      },
+    ];
     options.push(
       ...filterEntities.map((filterEntity) => ({
         key: filterEntity.getId(),

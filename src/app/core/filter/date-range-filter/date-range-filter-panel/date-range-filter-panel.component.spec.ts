@@ -12,7 +12,7 @@ import { DateRange } from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
 
-fdescribe("DateRangeFilterPanelComponent", () => {
+describe("DateRangeFilterPanelComponent", () => {
   let component: DateRangeFilterPanelComponent;
   let fixture: ComponentFixture<DateRangeFilterPanelComponent>;
   let loader: HarnessLoader;

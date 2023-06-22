@@ -2,6 +2,7 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { standardOptions } from "../filter/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -215,31 +216,8 @@ export const defaultJsonConfig = {
         },
         {
           "id": "date",
-          "default": 3,
-          "options": [
-            {
-              label: $localize`:Filter label:Today`,
-            },
-            {
-              startOffsets: [{ amount: 0, unit: "weeks" }],
-              endOffsets: [{ amount: 0, unit: "weeks" }],
-              label: $localize`:Filter label:This week`,
-            },
-            {
-              startOffsets: [{ amount: -1, unit: "weeks" }],
-              label: $localize`:Filter label:Since last week`,
-            },
-            {
-              startOffsets: [{ amount: 0, unit: "months" }],
-              endOffsets: [{ amount: 0, unit: "months" }],
-              label: $localize`:Filter label:This month`,
-            },
-            {
-              startOffsets: [{ amount: -1, unit: "months" }],
-              endOffsets: [{ amount: -1, unit: "months" }],
-              label: $localize`:Filter label:Last month`,
-            },
-          ]
+          "default": 1,
+          "options": standardOptions
         },
         {
           "id": "category"

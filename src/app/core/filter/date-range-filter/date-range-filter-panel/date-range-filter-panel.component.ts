@@ -17,7 +17,7 @@ import { DateRangeFilterConfigOption } from "app/core/entity-components/entity-l
 import moment from "moment";
 import { FormsModule } from "@angular/forms";
 
-const standardOptions: DateRangeFilterConfigOption[] = [
+export const standardOptions: DateRangeFilterConfigOption[] = [
   {
     label: $localize`:Filter label:Today`,
   },
@@ -60,7 +60,7 @@ const standardOptions: DateRangeFilterConfigOption[] = [
   ],
 })
 export class DateRangeFilterPanelComponent {
-  dateRanges: DateRangeFilterConfigOption[] = standardOptions;
+  dateRanges = standardOptions;
   indexOfCorrespondingDateRange: number;
 
   selectedRangeValue: DateRange<Date>;
