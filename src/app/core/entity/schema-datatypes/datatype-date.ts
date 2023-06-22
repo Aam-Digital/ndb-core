@@ -44,8 +44,6 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
   },
 
   transformToObjectFormat: (value, schemaField, schemaService, parent) => {
-    value = dateEntitySchemaDatatype.transformPlaceholderValue(value);
-
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       throw new Error(
@@ -53,12 +51,5 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
       );
     }
     return date;
-  },
-
-  transformPlaceholderValue(value) {
-    if (value === dateEntitySchemaDatatype.PLACEHOLDERS.NOW) {
-      return new Date();
-    }
-    return value;
   },
 };

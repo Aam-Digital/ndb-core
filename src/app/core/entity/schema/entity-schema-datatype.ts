@@ -49,7 +49,6 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
    * (e.g. "$now" to set to current date)
    */
   readonly PLACEHOLDERS?: { [key: string]: string };
-  transformPlaceholderValue?: (value: string) => string | EntityType;
 
   /**
    * Transformation function taking a value in the format that is used in entity instances and returning the value

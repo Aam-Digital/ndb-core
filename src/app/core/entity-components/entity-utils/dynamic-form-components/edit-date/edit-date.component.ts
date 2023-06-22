@@ -27,11 +27,7 @@ export class EditDateComponent extends EditComponent<Date> {
       this.propertySchema.defaultValue ===
       dateEntitySchemaDatatype.PLACEHOLDERS.NOW
     ) {
-      this.formControl.setValue(
-        dateEntitySchemaDatatype.transformPlaceholderValue(
-          this.propertySchema.defaultValue
-        )
-      );
+      this.formControl.setValue(new Date());
     } else {
       super.initDefaultValue();
     }
