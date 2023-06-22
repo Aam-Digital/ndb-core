@@ -142,7 +142,7 @@ describe("EntityFormService", () => {
     formGroup.get("inactive").setValue(true);
     expect(unsavedChanges.pending).toBeTrue();
 
-    await service.resetForm(formGroup, new Entity());
+    service.resetForm(formGroup, new Entity());
 
     expect(unsavedChanges.pending).toBeFalse();
   });
