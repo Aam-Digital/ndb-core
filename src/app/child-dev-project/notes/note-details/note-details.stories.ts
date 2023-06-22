@@ -5,7 +5,7 @@ import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ChildrenService } from "../../children/children.service";
-import { of } from "rxjs";
+import { NEVER, of } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -26,7 +26,10 @@ export default {
           provide: MAT_DIALOG_DATA,
           useValue: { data: { entity: Note.create(new Date()) } },
         },
-        { provide: MatDialogRef, useValue: {} },
+        {
+          provide: MatDialogRef,
+          useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
+        },
         {
           provide: ChildrenService,
           useValue: { getChild: () => of(Child.create("John Doe")) },

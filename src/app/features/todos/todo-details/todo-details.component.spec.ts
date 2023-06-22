@@ -8,6 +8,7 @@ import { TodoService } from "../todo.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { NEVER } from "rxjs";
 
 describe("TodoDetailsComponent", () => {
   let component: TodoDetailsComponent;
@@ -25,7 +26,14 @@ describe("TodoDetailsComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: { entity: new Todo(), columns: [] },
         },
-        { provide: MatDialogRef, useValue: jasmine.createSpyObj(["close"]) },
+        {
+          provide: MatDialogRef,
+          useValue: {
+            close: () => {},
+            backdropClick: () => NEVER,
+            afterClosed: () => NEVER,
+          },
+        },
         TodoService,
       ],
     }).compileComponents();
