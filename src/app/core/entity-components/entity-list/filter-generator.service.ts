@@ -50,7 +50,6 @@ export class FilterGeneratorService {
       const schema = entityConstructor.schema.get(filterConfig.id) || {};
       let filter: Filter<T>;
       const type = filterConfig.type ?? schema.dataType;
-      // TODO can this maybe be moved to the component so no prior setup is required?
       if (
         type == "configurable-enum" ||
         schema.innerDataType === "configurable-enum"

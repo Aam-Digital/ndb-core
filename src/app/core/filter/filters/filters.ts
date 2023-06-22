@@ -35,6 +35,10 @@ export abstract class Filter<T extends Entity> {
   abstract getFilter(): DataFilter<T>;
 }
 
+/**
+ * Represents a filter for date values.
+ * The filter can either be one of the predefined options or two manually entered dates.
+ */
 export class DateFilter<T extends Entity> extends Filter<T> {
   constructor(
     public name: string,
@@ -44,6 +48,9 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     super(name, label);
   }
 
+  /**
+   * Returns the date range according to the selected option or dates
+   */
   getDateRange(): DateRange<Date> {
     if (this.getSelectedOption()) {
       return calculateDateRange(this.getSelectedOption());
@@ -98,27 +105,27 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    *        that is true of a data item's property exactly matches that value.
    * @param attributeName The name of the property of a data item that is compared to the value in the filter function.
    */
-  public static generateOptions<TT extends Entity>(
+  public static generateOptions<T extends Entity>(
     valuesToMatchAsOptions: string[],
     attributeName: string
-  ): FilterSelectionOption<TT>[] {
+  ): FilterSelectionOption<T>[] {
     const options = [
       {
         key: "",
         label: $localize`:generic filter option showing all entries:All`,
-        filter: {} as DataFilter<TT>,
+        filter: {} as DataFilter<T>,
       },
     ];
 
-    valuesToMatchAsOptions.forEach((k) => {
-      if (k) {
-        options.push({
+    options.push(
+      ...valuesToMatchAsOptions
+        .filter((k) => !!k)
+        .map((k) => ({
           key: k.toLowerCase(),
           label: k.toString(),
-          filter: { [attributeName]: k } as DataFilter<TT>,
-        });
-      }
-    });
+          filter: { [attributeName]: k } as DataFilter<T>,
+        }))
+    );
 
     return options;
   }
@@ -201,22 +208,21 @@ export class ConfigurableEnumFilter<
     label: string,
     enumValues: ConfigurableEnumValue[]
   ) {
-    let options: { key: string; label: string; color?: string; filter: {} }[] =
-      [
-        {
-          key: "all",
-          label: $localize`:Filter label:All`,
-          filter: {},
-        },
-      ];
-    for (const enumValue of enumValues) {
-      options.push({
+    let options: FilterSelectionOption<T>[] = [
+      {
+        key: "all",
+        label: $localize`:Filter label:All`,
+        filter: {},
+      },
+    ];
+    options.push(
+      ...enumValues.map((enumValue) => ({
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
         filter: { [name + ".id"]: enumValue.id },
-      });
-    }
+      }))
+    );
     super(name, options, label);
   }
 }
@@ -224,12 +230,7 @@ export class ConfigurableEnumFilter<
 export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
   constructor(name: string, label: string, filterEntities) {
     filterEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
-    const options: {
-      key: string;
-      label: string;
-      color?: string;
-      filter: {};
-    }[] = [
+    const options: FilterSelectionOption<T>[] = [
       {
         key: "all",
         label: $localize`:Filter label:All`,
@@ -268,8 +269,6 @@ export interface FilterSelectionOption<T> {
 
   /**
    * The filter query which should be used if this filter is selected
-   *
-   * TODO type safety is not yet given -> any should be removed
    */
   filter: DataFilter<T> | any;
 }

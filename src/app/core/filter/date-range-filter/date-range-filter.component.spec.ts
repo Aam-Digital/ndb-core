@@ -26,7 +26,7 @@ describe("DateRangeFilterComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should set the correct date filter when inputting one of the predefined standard date ranges via the URL", () => {
+  it("should set the correct date filter when a new option is selected", () => {
     const dateFilter = new DateFilter("test", "Test", defaultDateFilters);
 
     dateFilter.selectedOption = "9";
