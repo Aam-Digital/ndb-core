@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { Child } from "../../model/child";
 import { moduleMetadata } from "@storybook/angular";
 import { CommonModule } from "@angular/common";
@@ -7,7 +7,7 @@ import { ChildBlockTooltipComponent } from "./child-block-tooltip.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 export default {
-  title: "Child Dev Project/ChildBlockTooltip",
+  title: "Features/Participant/ChildBlockTooltip",
   component: ChildBlockTooltipComponent,
   decorators: [
     moduleMetadata({

@@ -6,9 +6,6 @@ import { Note } from "../../../notes/model/note";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { ConfigService } from "../../../../core/config/config.service";
-import { ATTENDANCE_STATUS_CONFIG_ID } from "../../model/attendance-status";
-import { defaultAttendanceStatusTypes } from "../../../../core/config/default-config/default-attendance-status-types";
 
 const demoEvent = Note.create(new Date(), "coaching");
 const demoChildren = [
@@ -19,7 +16,7 @@ const demoChildren = [
 demoChildren.forEach((c) => demoEvent.addChild(c));
 
 export default {
-  title: "Attendance/Views/RollCall",
+  title: "Features/Attendance/Views/RollCall",
   component: RollCallComponent,
   decorators: [
     moduleMetadata({
@@ -29,16 +26,6 @@ export default {
           provide: EntityMapperService,
           useValue: mockEntityMapper(demoChildren),
         },
-        {
-          provide: ConfigService,
-          useValue: {
-            getConfigurableEnumValues(id: string) {
-              if (id === ATTENDANCE_STATUS_CONFIG_ID) {
-                return defaultAttendanceStatusTypes;
-              }
-            }
-          },
-        }
       ],
     }),
   ],

@@ -1,31 +1,19 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { DatePipe } from "@angular/common";
-import { ConfigService } from "../../../core/config/config.service";
 import { HistoricalEntityData } from "../model/historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataService } from "../historical-data.service";
 import { ratingAnswers } from "../model/rating-answers";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 export default {
   title: "Features/HistoricalDataComponent",
   component: HistoricalDataComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        HistoricalDataComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
+      imports: [HistoricalDataComponent, StorybookBaseModule],
       declarations: [],
       providers: [
-        DatePipe,
-        {
-          provide: ConfigService,
-          useValue: { getConfig: () => ratingAnswers },
-        },
         {
           provide: HistoricalDataService,
           useValue: {

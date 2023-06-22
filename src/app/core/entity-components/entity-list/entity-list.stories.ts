@@ -33,6 +33,8 @@ const Template: Story<EntityListComponent<Child>> = (
 
 const children = new DemoChildGenerator({ count: 25 }).generateEntities();
 
+// TODO: fix or reimplement ListComponent stories
+/*
 export const Primary = Template.bind({});
 Primary.args = {
   allEntities: children,
@@ -80,3 +82,4 @@ Primary.args = {
     ],
   },
 };
+*/

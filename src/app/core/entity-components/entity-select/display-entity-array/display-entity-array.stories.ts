@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
@@ -9,19 +9,19 @@ import { ChildrenService } from "../../../../child-dev-project/children/children
 
 const child1 = new Child();
 child1.name = "Test Name";
-child1.projectNumber = "10";
+child1.projectNumber = "1";
 const child2 = new Child();
 child2.name = "First Name";
-child2.projectNumber = "14";
+child2.projectNumber = "2";
 const child3 = new Child();
 child3.name = "Second Name";
-child3.projectNumber = "11";
+child3.projectNumber = "3";
 const child4 = new Child();
 child4.name = "Third Name";
-child4.projectNumber = "12";
+child4.projectNumber = "4";
 const child5 = new Child();
 child5.name = "Fifth Name";
-child5.projectNumber = "13";
+child5.projectNumber = "5";
 
 export default {
   title: "Core/EntityComponents/DisplayEntityArray",
@@ -30,7 +30,10 @@ export default {
     moduleMetadata({
       imports: [StorybookBaseModule, DisplayEntityArrayComponent],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper([]) },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper([child1, child2, child3, child4, child5]),
+        },
         { provide: ChildrenService, useValue: null },
       ],
     }),
@@ -46,10 +49,10 @@ const Template: Story<DisplayEntityArrayComponent> = (
 
 export const FewEntities = Template.bind({});
 FewEntities.args = {
-  entities: [child1, child2, child3],
+  value: [child1, child2].map((x) => x.getId(true)),
 };
 
 export const ManyEntities = Template.bind({});
 ManyEntities.args = {
-  entities: [child1, child2, child3, child4, child5],
+  value: [child1, child2, child3, child4, child5].map((x) => x.getId(true)),
 };

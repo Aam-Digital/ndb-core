@@ -49,7 +49,7 @@ const events: Note[] = [
 ];
 
 export default {
-  title: "Attendance/Dashboards/AttendanceWeekDashboard",
+  title: "Features/Attendance/Dashboards/AttendanceWeekDashboard",
   component: AttendanceWeekDashboardComponent,
   decorators: [
     moduleMetadata({
@@ -77,6 +77,11 @@ export default {
       ],
     }),
   ],
+  parameters: {
+    controls: {
+      exclude: ["tableDataSource"],
+    },
+  },
 } as Meta;
 
 const Template: Story<AttendanceWeekDashboardComponent> = (

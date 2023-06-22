@@ -12,7 +12,7 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 const demoChildren: Child[] = [Child.create("Joe"), Child.create("Jane")];
 
 export default {
-  title: "Child Dev Project/NoteDetails",
+  title: "Features/NoteDetails",
   component: NoteDetailsComponent,
   decorators: [
     moduleMetadata({
