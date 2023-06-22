@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import {
   DateRangeFilterPanelComponent,
   calculateDateRange,
+  defaultDateFilters,
 } from "./date-range-filter-panel.component";
 import { MatNativeDateModule } from "@angular/material/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
@@ -11,40 +12,23 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { DateRange } from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
+import { DateFilter } from "../../filters/filters";
 
 describe("DateRangeFilterPanelComponent", () => {
   let component: DateRangeFilterPanelComponent;
   let fixture: ComponentFixture<DateRangeFilterPanelComponent>;
   let loader: HarnessLoader;
-  let closeSpy: jasmine.Spy;
+  let dateFilter: DateFilter<any>;
 
   beforeEach(async () => {
-    closeSpy = jasmine.createSpy();
-    let mockedToday = moment("2023-04-08").toDate();
-    jasmine.clock().mockDate(mockedToday);
+    dateFilter = new DateFilter("test", "Test", defaultDateFilters);
+    dateFilter.selectedOption = "1";
+    jasmine.clock().mockDate(new Date("2023-04-08"));
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule],
       providers: [
-        {
-          provide: MAT_DIALOG_DATA,
-          useValue: {
-            fromDate: moment("2023-05-01").startOf("day").toDate(),
-            toDate: moment("2023-05-31").endOf("day").toDate(),
-            standardDateRanges: [
-              {
-                startOffsets: [{ amount: -1, unit: "weeks" }],
-                endOffsets: [{ amount: -1, unit: "weeks" }],
-                label: $localize`:Filter label:Last week`,
-              },
-              {
-                startOffsets: [{ amount: 1, unit: "months" }],
-                endOffsets: [{ amount: 1, unit: "months" }],
-                label: $localize`:Filter label:Next month`,
-              },
-            ],
-          },
-        },
-        { provide: MatDialogRef, useValue: { close: closeSpy } },
+        { provide: MAT_DIALOG_DATA, useValue: dateFilter },
+        { provide: MatDialogRef, useValue: { close: () => undefined } },
       ],
     }).compileComponents();
     fixture = TestBed.createComponent(DateRangeFilterPanelComponent);
@@ -57,11 +41,11 @@ describe("DateRangeFilterPanelComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should highlight the standard date range corresponding to the inputtet date", () => {
-    expect(component.indexOfCorrespondingDateRange).toEqual(1);
+  it("should highlight the currently selected option", () => {
+    expect(component.selectedOption).toEqual(defaultDateFilters[1]);
   });
 
-  it("should display the given dates in the calendar", async () => {
+  it("should display selected dates in the calendar", async () => {
     const fromDate = moment().startOf("month");
     const toDate = moment().startOf("month").add(13, "days");
     component.selectedRangeValue = new DateRange(
@@ -80,38 +64,29 @@ describe("DateRangeFilterPanelComponent", () => {
     }
   });
 
-  it("should return the manually selected dates", async () => {
+  it("should set the manually selected dates", async () => {
     const calendar = await loader.getHarness(MatCalendarHarness);
     const cells = await calendar.getCells();
     await cells[7].select();
     await cells[12].select();
-    const fromDate = new Date();
-    const toDate = new Date();
-    fromDate.setDate(8);
-    fromDate.setHours(0, 0, 0, 0);
-    toDate.setDate(13);
-    toDate.setHours(0, 0, 0, 0);
-    let dateRange = new DateRange(fromDate, toDate);
-    expect(closeSpy).toHaveBeenCalledWith({ selectedRangeValue: dateRange });
+
+    const filterRange = dateFilter.getDateRange();
+    expect(filterRange.start).toEqual(new Date("2023-04-08"));
+    expect(filterRange.end).toEqual(new Date("2023-04-13"));
   });
 
-  it("should return the dates selected via the preset labels", async () => {
-    component.preselectRange({
-      startOffsets: [{ amount: -1, unit: "months" }],
-      endOffsets: [{ amount: 0, unit: "months" }],
-      label: "Last and this month",
-    });
+  it("should set the dates selected via the preset options", async () => {
     component.selectRangeAndClose(0);
-    const fromDate = moment().startOf("month").subtract(1, "months").toDate();
-    const toDate = moment().endOf("month").toDate();
-    let dateRange = new DateRange(fromDate, toDate);
-    expect(closeSpy).toHaveBeenCalledWith({
-      selectedRangeValue: dateRange,
-      selectedIndexOfDateRanges: "0",
-    });
+
+    const filterRange = dateFilter.getDateRange();
+    expect(filterRange.start).toEqual(
+      moment("2023-04-08").startOf("day").toDate()
+    );
+    expect(filterRange.end).toEqual(moment("2023-04-08").endOf("day").toDate());
+    expect(dateFilter.selectedOption).toBe("0");
   });
 
-  it("should highlight the daterange when hovering over a preset label", async () => {
+  it("should highlight the date range when hovering over a option", async () => {
     const calendar = await loader.getHarness(MatCalendarHarness);
     const cells = await calendar.getCells();
     component.preselectRange({
@@ -128,10 +103,8 @@ describe("DateRangeFilterPanelComponent", () => {
     }
   });
 
-  it("should correctly calculate date ranges for simple DateRangeFilterConfigOption inputs", () => {
-    let res = calculateDateRange({
-      label: $localize`:Filter label:Today`,
-    });
+  it("should correctly calculate date ranges based on the config", () => {
+    let res = calculateDateRange({ label: "Today" });
     let fromDate = moment().startOf("day").toDate();
     let toDate = moment().endOf("day").toDate();
     expect(res).toEqual(new DateRange(fromDate, toDate));
@@ -142,7 +115,7 @@ describe("DateRangeFilterPanelComponent", () => {
     res = calculateDateRange({
       startOffsets: [{ amount: 0, unit: "weeks" }],
       endOffsets: [{ amount: 0, unit: "weeks" }],
-      label: $localize`:Filter label:This week`,
+      label: "This week",
     });
     fromDate = moment("2023-06-04").startOf("day").toDate();
     toDate = moment("2023-06-10").endOf("day").toDate();
@@ -151,25 +124,22 @@ describe("DateRangeFilterPanelComponent", () => {
     res = calculateDateRange({
       startOffsets: [{ amount: 1, unit: "weeks" }],
       endOffsets: [{ amount: 1, unit: "weeks" }],
-      label: $localize`:Filter label:Next week`,
+      label: "Next week",
     });
     fromDate = moment("2023-06-11").startOf("day").toDate();
     toDate = moment("2023-06-17").endOf("day").toDate();
     expect(res).toEqual(new DateRange(fromDate, toDate));
-  });
 
-  it("should correctly calculate date ranges for DateRangeFilterConfigOption inputs with several offsets", () => {
-    let mockedToday = moment("2023-06-08").toDate();
-    jasmine.clock().mockDate(mockedToday);
-    let res = calculateDateRange({
+    res = calculateDateRange({
       endOffsets: [
         { amount: -2, unit: "week" },
         { amount: 3, unit: "months" },
       ],
-      label: $localize`:Filter label:From today until endOf(today minus 2 weeks) and then endOf(this date plus 3 months)`,
+      label:
+        "From today until endOf(today minus 2 weeks) and then endOf(this date plus 3 months)",
     });
-    let fromDate = moment("2023-06-08").startOf("day").toDate();
-    let toDate = moment("2023-08-26").endOf("day").toDate();
+    fromDate = moment("2023-06-08").startOf("day").toDate();
+    toDate = moment("2023-08-26").endOf("day").toDate();
     expect(res).toEqual(new DateRange(fromDate, toDate));
 
     res = calculateDateRange({
@@ -177,7 +147,8 @@ describe("DateRangeFilterPanelComponent", () => {
         { amount: 3, unit: "months" },
         { amount: -2, unit: "week" },
       ],
-      label: $localize`:Filter label:From today until endOf(today minus 2 weeks) and then endOf(this date plus 3 months)`,
+      label:
+        "From today until endOf(today minus 2 weeks) and then endOf(this date plus 3 months)",
     });
     fromDate = moment("2023-06-08").startOf("day").toDate();
     toDate = moment("2023-08-31").endOf("day").toDate();

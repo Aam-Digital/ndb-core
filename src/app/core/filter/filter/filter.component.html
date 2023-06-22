@@ -13,7 +13,7 @@
 
   <app-date-range-filter
     *ngIf="filter.name === 'date'"
-    [dateRangeFilterConfig]="filter"
+    [filterConfig]="filter"
     (selectedOptionChange)="filterOptionSelected(filter, $event)"
   >
   </app-date-range-filter>

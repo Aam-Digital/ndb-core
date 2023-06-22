@@ -22,7 +22,7 @@ export class DateRangeFilterComponent<T extends Entity> {
 
   @Output() selectedOptionChange = new EventEmitter<string>();
 
-  @Input() set dateRangeFilterConfig(value: Filter<T>) {
+  @Input() set filterConfig(value: Filter<T>) {
     this.dateFilter = value as DateFilter<T>;
     this.initDates();
   }
