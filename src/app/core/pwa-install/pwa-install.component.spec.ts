@@ -1,4 +1,9 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { PwaInstallComponent } from "./pwa-install.component";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
@@ -8,6 +13,8 @@ import { take } from "rxjs/operators";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 
 describe("PwaInstallComponent", () => {
+  let fixture: ComponentFixture<PwaInstallComponent>;
+  let component: PwaInstallComponent;
   let mockPWAInstallService: jasmine.SpyObj<PwaInstallService>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   const pwaInstallResult = new Subject<any>();
@@ -30,8 +37,13 @@ describe("PwaInstallComponent", () => {
     }).compileComponents();
   });
 
+  beforeEach(() => {
+    fixture = TestBed.createComponent(PwaInstallComponent);
+    component = fixture.componentInstance;
+  });
+
   it("should create", () => {
-    expect(createComponent()).toBeTruthy();
+    expect(component).toBeTruthy();
   });
 
   it("should show the pwa install instructions on iOS devices", () => {
@@ -39,8 +51,8 @@ describe("PwaInstallComponent", () => {
       PWAInstallType.ShowiOSInstallInstructions
     );
 
-    const component = createComponent();
-    expect(component.showPWAInstallButton).toBeTrue();
+    fixture.detectChanges();
+    expect(component._showPWAInstallButton).toBeTrue();
 
     component.pwaInstallButtonClicked();
     expect(mockSnackbar.openFromTemplate).toHaveBeenCalled();
@@ -49,21 +61,15 @@ describe("PwaInstallComponent", () => {
   it("should call installPWA when no install instructions are defined and remove button once confirmed", fakeAsync(() => {
     pwaInstallResult.next(undefined);
 
-    const component = createComponent();
+    fixture.detectChanges();
     tick();
-    expect(component.showPWAInstallButton).toBeTrue();
+    expect(component._showPWAInstallButton).toBeTrue();
 
     mockPWAInstallService.installPWA.and.resolveTo({ outcome: "accepted" });
     component.pwaInstallButtonClicked();
     expect(mockPWAInstallService.installPWA).toHaveBeenCalled();
 
     tick();
-    expect(component.showPWAInstallButton).toBeFalse();
+    expect(component._showPWAInstallButton).toBeFalse();
   }));
-
-  function createComponent(): PwaInstallComponent {
-    const fixture = TestBed.createComponent(PwaInstallComponent);
-    fixture.detectChanges();
-    return fixture.componentInstance;
-  }
 });

@@ -52,6 +52,7 @@
             required
             name="password"
             autocomplete="current-password"
+            (keydown.enter)="login()"
           />
           <fa-icon
             [icon]="passwordVisible ? 'eye-slash' : 'eye'"
@@ -66,7 +67,7 @@
       <p>
         <button
           mat-raised-button
-          type="submit"
+          type="button"
           [disabled]="loginInProgress"
           (click)="login()"
           i18n="Login button"

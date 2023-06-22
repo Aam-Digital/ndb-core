@@ -14,6 +14,10 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
+import { MatDialogModule } from "@angular/material/dialog";
+import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.service";
+import { Router } from "@angular/router";
+import { NotFoundComponent } from "../../view/dynamic-routing/not-found/not-found.component";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -23,6 +27,7 @@ describe("EntityFormService", () => {
     mockEntityMapper = jasmine.createSpyObj(["save"]);
     mockEntityMapper.save.and.resolveTo();
     TestBed.configureTestingModule({
+      imports: [MatDialogModule],
       providers: [
         FormBuilder,
         EntitySchemaService,
@@ -107,7 +112,6 @@ describe("EntityFormService", () => {
 
   it("should create a error if form is invalid", () => {
     const formFields = [{ id: "schoolId" }, { id: "start" }];
-    service.extendFormFieldConfig(formFields, ChildSchoolRelation);
     const formGroup = service.createFormGroup(
       formFields,
       new ChildSchoolRelation()
@@ -116,5 +120,52 @@ describe("EntityFormService", () => {
     return expectAsync(
       service.saveChanges(formGroup, new ChildSchoolRelation())
     ).toBeRejectedWith(jasmine.any(InvalidFormFieldError));
+  });
+
+  it("should set pending changes once a form is edited and reset it once saved or canceled", async () => {
+    const formFields = [{ id: "inactive" }];
+    const formGroup = service.createFormGroup(formFields, new Entity());
+    const unsavedChanges = TestBed.inject(UnsavedChangesService);
+
+    formGroup.markAsDirty();
+    formGroup.get("inactive").setValue(true);
+    expect(unsavedChanges.pending).toBeTrue();
+
+    TestBed.inject(EntityAbility).update([
+      { action: "manage", subject: "all" },
+    ]);
+    await service.saveChanges(formGroup, new Entity());
+
+    expect(unsavedChanges.pending).toBeFalse();
+
+    formGroup.markAsDirty();
+    formGroup.get("inactive").setValue(true);
+    expect(unsavedChanges.pending).toBeTrue();
+
+    service.resetForm(formGroup, new Entity());
+
+    expect(unsavedChanges.pending).toBeFalse();
+  });
+
+  it("should reset state once navigation happens", async () => {
+    const router = TestBed.inject(Router);
+    router.resetConfig([{ path: "test", component: NotFoundComponent }]);
+    const unsavedChanged = TestBed.inject(UnsavedChangesService);
+    const formFields = [{ id: "inactive" }];
+    const formGroup = service.createFormGroup(formFields, new Entity());
+    formGroup.markAsDirty();
+    formGroup.get("inactive").setValue(true);
+
+    expect(unsavedChanged.pending).toBeTrue();
+
+    await router.navigate(["test"]);
+
+    expect(unsavedChanged.pending).toBeFalse();
+
+    // Changes are not listened to anymore
+    formGroup.markAsDirty();
+    formGroup.get("inactive").setValue(true);
+
+    expect(unsavedChanged.pending).toBeFalse();
   });
 });

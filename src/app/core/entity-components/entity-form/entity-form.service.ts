@@ -8,6 +8,10 @@ import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-vali
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
 import { omit } from "lodash-es";
+import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.service";
+import { ActivationStart, Router } from "@angular/router";
+import { Subscription } from "rxjs";
+import { filter } from "rxjs/operators";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -21,13 +25,26 @@ export type EntityForm<T extends Entity> = TypedForm<Partial<T>>;
  */
 @Injectable({ providedIn: "root" })
 export class EntityFormService {
+  private subscriptions: Subscription[] = [];
+
   constructor(
     private fb: FormBuilder,
     private entityMapper: EntityMapperService,
     private entitySchemaService: EntitySchemaService,
     private dynamicValidator: DynamicValidatorsService,
-    private ability: EntityAbility
-  ) {}
+    private ability: EntityAbility,
+    private unsavedChanges: UnsavedChangesService,
+    router: Router
+  ) {
+    router.events
+      .pipe(filter((e) => e instanceof ActivationStart))
+      .subscribe(() => {
+        // Clean up everything once navigation happens
+        this.subscriptions.forEach((sub) => sub.unsubscribe());
+        this.subscriptions = [];
+        this.unsavedChanges.pending = false;
+      });
+  }
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.
@@ -106,7 +123,12 @@ export class EntityFormService {
           formConfig[formField.id].push(validators);
         }
       });
-    return this.fb.group<Partial<T>>(formConfig);
+    const group = this.fb.group<Partial<T>>(formConfig);
+    const sub = group.valueChanges.subscribe(
+      () => (this.unsavedChanges.pending = group.dirty)
+    );
+    this.subscriptions.push(sub);
+    return group;
   }
 
   /**
@@ -133,7 +155,10 @@ export class EntityFormService {
 
     return this.entityMapper
       .save(updatedEntity)
-      .then(() => Object.assign(entity, updatedEntity))
+      .then(() => {
+        this.unsavedChanges.pending = false;
+        return Object.assign(entity, updatedEntity);
+      })
       .catch((err) => {
         throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
       });
@@ -162,5 +187,6 @@ export class EntityFormService {
     const newKeys = Object.keys(omit(form.controls, Object.keys(entity)));
     newKeys.forEach((key) => form.get(key).setValue(null));
     form.markAsPristine();
+    this.unsavedChanges.pending = false;
   }
 }

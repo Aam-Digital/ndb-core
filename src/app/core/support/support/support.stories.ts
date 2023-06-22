@@ -1,14 +1,15 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { SupportComponent } from "./support.component";
-import { SessionService } from "../../session/session-service/session.service";
-import { BehaviorSubject } from "rxjs";
-import { SyncState } from "../../session/session-states/sync-state.enum";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SwUpdate } from "@angular/service-worker";
 import { Database } from "../../database/database";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
+import { UpdateManagerService } from "../../latest-changes/update-manager.service";
+
+// TODO: fix layout of SupportComponent buttons on mobile
 
 export default {
   title: "Core/Support",
@@ -17,17 +18,24 @@ export default {
     moduleMetadata({
       imports: [SupportComponent, StorybookBaseModule, HttpClientTestingModule],
       providers: [
-        { provide: WINDOW_TOKEN, useValue: window },
-        { provide: LOCATION_TOKEN, useValue: window.location },
+        { provide: EntityMapperService, useValue: mockEntityMapper() },
         {
-          provide: SessionService,
+          provide: UpdateManagerService,
           useValue: {
-            getCurrentUser: () => ({ name: "demo-user" }),
-            syncState: new BehaviorSubject(SyncState.COMPLETED),
+            notifyUserWhenUpdateAvailable: () => {},
+            regularlyCheckForUpdates: () => {},
+            detectUnrecoverableState: () => {},
           },
         },
         { provide: SwUpdate, useValue: { isEnabled: true } },
-        { provide: Database, useValue: {} },
+        {
+          provide: Database,
+          useValue: {
+            getPouchDB: () => ({
+              info: async () => ({ doc_count: 2, update_seq: 33 }),
+            }),
+          },
+        },
       ],
     }),
   ],

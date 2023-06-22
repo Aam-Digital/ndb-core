@@ -30,7 +30,7 @@ child5.dateOfBirth = new DateWithAge(
 );
 
 export default {
-  title: "Children/Dashboards/BirthdayDashboard",
+  title: "Features/Dashboards/BirthdayDashboard",
   component: BirthdayDashboardComponent,
   decorators: [
     moduleMetadata({
