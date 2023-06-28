@@ -46,6 +46,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     public rangeOptions: DateRangeFilterConfigOption[]
   ) {
     super(name, label);
+    this.selectedOption = "1";
   }
 
   /**
