@@ -62,21 +62,18 @@ describe("NotesRelatedToEntityComponent", () => {
     component.ngOnInit();
     let note = component.generateNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
-    expect(note.authors).toEqual([TEST_USER]);
 
     entity = new School();
     component.entity = entity;
     component.ngOnInit();
     note = component.generateNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
-    expect(note.authors).toEqual([TEST_USER]);
 
     entity = new User();
     component.entity = entity;
     component.ngOnInit();
     note = component.generateNewRecordFactory()();
-    // adding a note for a User does not make that User an author of the note!
-    expect(note.authors).toEqual([TEST_USER]);
+    expect(note.relatedEntities).toEqual([entity.getId(true)]);
 
     entity = new ChildSchoolRelation();
     entity["childId"] = "someChild";

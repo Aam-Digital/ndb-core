@@ -18,6 +18,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.service";
 import { Router } from "@angular/router";
 import { NotFoundComponent } from "../../view/dynamic-routing/not-found/not-found.component";
+import { SessionService } from "../../session/session-service/session.service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -33,6 +34,7 @@ describe("EntityFormService", () => {
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
         EntityAbility,
+        { provide: SessionService, useValue: {} },
       ],
     });
     service = TestBed.inject(EntityFormService);
