@@ -51,7 +51,6 @@ export class AserComponent implements OnInit {
   generateNewRecordFactory() {
     return () => {
       const newAtt = new Aser(Date.now().toString());
-      newAtt.date = new Date();
       newAtt.child = this.entity.getId();
       return newAtt;
     };
