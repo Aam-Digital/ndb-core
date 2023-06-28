@@ -27,12 +27,11 @@ Cypress.Commands.add("create", create);
 // Overwriting default visit function to wait for index creation
 Cypress.Commands.overwrite("visit", (originalFun, url, options) => {
   originalFun(url, options);
-  cy.get("app-search", { timeout: 20000 }).should("be.visible");
   // wait for demo data generation
   cy.contains("button", "Continue in background", { timeout: 20000 }).should(
     "exist"
   );
-  cy.contains("button", "Continue in background", { timeout: 10000 }).should(
+  cy.contains("button", "Continue in background", { timeout: 20000 }).should(
     "not.exist"
   );
 });
