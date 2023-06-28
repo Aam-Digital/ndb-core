@@ -160,7 +160,7 @@ export class SupportComponent implements OnInit {
     const unregisterPromises = registrations.map((reg) => reg.unregister());
     await Promise.all(unregisterPromises);
     localStorage.clear();
-    this.location.reload();
+    this.location.pathname = "";
   }
 
   async downloadLocalDatabase() {
