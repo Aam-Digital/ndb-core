@@ -12,9 +12,8 @@ import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.se
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
-import { dateEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-date";
-import { entityEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-entity";
 import { SessionService } from "../../session/session-service/session.service";
+import { PLACEHOLDERS } from "../../entity/schema/entity-schema-field";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -140,14 +139,14 @@ export class EntityFormService {
     return group;
   }
 
-  private setDefaultValue<T>(val: any, defaultValue: string) {
+  private setDefaultValue<T>(val: any, defaultValue: PLACEHOLDERS | any) {
     let newVal;
     const isArray = Array.isArray(val);
     switch (defaultValue) {
-      case dateEntitySchemaDatatype.PLACEHOLDERS.NOW:
+      case PLACEHOLDERS.NOW:
         newVal = new Date();
         break;
-      case entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER:
+      case PLACEHOLDERS.CURRENT_USER:
         newVal = this.session.getCurrentUser().name;
         break;
       default:

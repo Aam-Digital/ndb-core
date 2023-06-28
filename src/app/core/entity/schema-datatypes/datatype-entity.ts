@@ -31,10 +31,6 @@ export const entityEntitySchemaDatatype: EntitySchemaDatatype = {
   editComponent: "EditSingleEntity",
   viewComponent: "DisplayEntity",
 
-  PLACEHOLDERS: {
-    CURRENT_USER: "$current_user",
-  },
-
   transformToDatabaseFormat: (value) => {
     return value;
   },

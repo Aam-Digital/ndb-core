@@ -45,12 +45,6 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
   editComponent?: string;
 
   /**
-   * Available placeholder variables that can be used to configure a dynamic default value.
-   * (e.g. "$now" to set to current date)
-   */
-  readonly PLACEHOLDERS?: { [key: string]: string };
-
-  /**
    * Transformation function taking a value in the format that is used in entity instances and returning the value
    * in the format used in database objects.
    *

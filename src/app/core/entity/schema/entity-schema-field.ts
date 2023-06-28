@@ -105,3 +105,12 @@ export interface EntitySchemaField {
   /** whether to show this field in the default details view */
   showInDetailsView?: boolean;
 }
+
+/**
+ * Available placeholder variables that can be used to configure a dynamic default value.
+ * (e.g. "$now" to set to current date)
+ */
+export enum PLACEHOLDERS {
+  NOW = "$now",
+  CURRENT_USER = "$current_user",
+}

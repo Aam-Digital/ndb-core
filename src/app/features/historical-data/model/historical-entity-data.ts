@@ -1,7 +1,7 @@
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { dateEntitySchemaDatatype } from "../../../core/entity/schema-datatypes/datatype-date";
+import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 /**
  * A general class that represents data that is collected for a entity over time.
@@ -11,7 +11,7 @@ import { dateEntitySchemaDatatype } from "../../../core/entity/schema-datatypes/
 export class HistoricalEntityData extends Entity {
   @DatabaseField({
     label: $localize`:Label for date of historical data:Date`,
-    defaultValue: dateEntitySchemaDatatype.PLACEHOLDERS.NOW,
+    defaultValue: PLACEHOLDERS.NOW,
   })
   date: Date;
   @DatabaseField() relatedEntity: string;

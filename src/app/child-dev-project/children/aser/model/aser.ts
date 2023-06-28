@@ -21,14 +21,14 @@ import { DatabaseEntity } from "../../../../core/entity/database-entity.decorato
 import { SkillLevel } from "./skill-levels";
 import { WarningLevel } from "../../../../core/entity/model/warning-level";
 import { ConfigurableEnumDatatype } from "../../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { dateEntitySchemaDatatype } from "../../../../core/entity/schema-datatypes/datatype-date";
+import { PLACEHOLDERS } from "../../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Aser")
 export class Aser extends Entity {
   @DatabaseField() child: string; // id of Child entity
   @DatabaseField({
     label: $localize`:Label for date of the ASER results:Date`,
-    defaultValue: dateEntitySchemaDatatype.PLACEHOLDERS.NOW,
+    defaultValue: PLACEHOLDERS.NOW,
   })
   date: Date;
   @DatabaseField({
