@@ -12,6 +12,9 @@ import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.se
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
+import { dateEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-date";
+import { entityEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-entity";
+import { SessionService } from "../../session/session-service/session.service";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -34,6 +37,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
+    private session: SessionService,
     router: Router
   ) {
     router.events
@@ -115,7 +119,12 @@ export class EntityFormService {
     formFields
       .filter((formField) => entitySchema.get(formField.id))
       .forEach((formField) => {
-        formConfig[formField.id] = [copy[formField.id]];
+        const schema = entitySchema.get(formField.id);
+        let val = copy[formField.id];
+        if (schema.defaultValue && (!val || (val as []).length === 0)) {
+          val = this.setDefaultValue(val, schema.defaultValue);
+        }
+        formConfig[formField.id] = [val];
         if (formField.validators) {
           const validators = this.dynamicValidator.buildValidators(
             formField.validators
@@ -129,6 +138,25 @@ export class EntityFormService {
     );
     this.subscriptions.push(sub);
     return group;
+  }
+
+  private setDefaultValue<T>(val: any, defaultValue: string) {
+    let newVal;
+    const isArray = Array.isArray(val);
+    switch (defaultValue) {
+      case dateEntitySchemaDatatype.PLACEHOLDERS.NOW:
+        newVal = new Date();
+        break;
+      case entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER:
+        newVal = this.session.getCurrentUser().name;
+        break;
+      default:
+        newVal = defaultValue;
+    }
+    if (isArray) {
+      newVal = [newVal];
+    }
+    return newVal;
   }
 
   /**
