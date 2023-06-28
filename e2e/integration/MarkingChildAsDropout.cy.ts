@@ -3,8 +3,6 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
     // go to a child
     cy.visit("child");
     cy.get("tr").eq(2).click();
-    // save the name of this Child to the variable
-    cy.get(".mat-title > .remove-margin-bottom").invoke("text").as("childName");
   });
 
   it("WHEN I select a dropout date for this child", () => {
@@ -19,6 +17,8 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
     cy.get(".mat-calendar-body-active:visible").click();
     // click on button with the content "Save"
     cy.get(".form-buttons-wrapper:visible").contains("button", "Save").click();
+    // save the name of this Child to the variable
+    cy.get(".mat-title > .remove-margin-bottom").invoke("text").as("childName");
   });
 
   it("THEN I should not see this child in the list of all children at first", function () {
@@ -34,7 +34,7 @@ describe("Scenario: Marking a child as dropout - E2E test", function () {
 
   it("AND I should see the child when I activate the 'inactive' filter", function () {
     // click on the button with the content "Inactive"
-    cy.get('[ng-reflect-placeholder="isActive"]').click();
+    cy.contains("span", "Active").click();
     cy.contains("span", "Inactive").should("be.visible").click();
     // find at this table the name of child and it should exist
     cy.get("table").contains(this.childName.trim()).should("exist");

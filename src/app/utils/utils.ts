@@ -15,6 +15,16 @@ export function isValidDate(date: any): boolean {
   );
 }
 
+export function dateToString(value: Date) {
+  return (
+    value.getFullYear() +
+    "-" +
+    (value.getMonth() + 1).toString().padStart(2, "0") +
+    "-" +
+    value.getDate().toString().padStart(2, "0")
+  );
+}
+
 export function getUrlWithoutParams(router: Router): string {
   const urlTree = router.parseUrl(router.url);
   urlTree.queryParams = {};

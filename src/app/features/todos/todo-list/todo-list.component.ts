@@ -13,7 +13,7 @@ import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
+import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 
 @RouteTarget("TodoList")
 @Component({

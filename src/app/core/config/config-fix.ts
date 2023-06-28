@@ -2,6 +2,7 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
+import { defaultDateFilters } from "../filter/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 
 // prettier-ignore
 export const defaultJsonConfig = {
@@ -215,7 +216,8 @@ export const defaultJsonConfig = {
         },
         {
           "id": "date",
-          "type": "prebuilt"
+          "default": 1,
+          "options": defaultDateFilters
         },
         {
           "id": "category"
