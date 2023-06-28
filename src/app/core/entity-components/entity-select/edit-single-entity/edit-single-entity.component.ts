@@ -10,9 +10,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { ErrorHintComponent } from "../../entity-utils/error-hint/error-hint.component";
-import { User } from "../../../user/user";
-import { SessionService } from "../../../session/session-service/session.service";
-import { entityEntitySchemaDatatype } from "../../../entity/schema-datatypes/datatype-entity";
 
 @DynamicComponent("EditSingleEntity")
 @Component({
@@ -34,36 +31,15 @@ export class EditSingleEntityComponent extends EditComponent<string> {
   entities: Entity[] = [];
   entityToId = (e: Entity) => e?.getId();
 
-  private entityType: string;
-
-  constructor(
-    private entityMapperService: EntityMapperService,
-    private sessionService: SessionService
-  ) {
+  constructor(private entityMapperService: EntityMapperService) {
     super();
   }
 
   async ngOnInit() {
-    this.entityType =
-      this.formFieldConfig.additional || this.propertySchema.additional;
-
-    // call later to have entityType available in initDefaultValue
     super.ngOnInit();
-
-    this.entities = await this.entityMapperService.loadType(this.entityType);
+    const entityType: string =
+      this.formFieldConfig.additional || this.propertySchema.additional;
+    this.entities = await this.entityMapperService.loadType(entityType);
     this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
-  }
-
-  protected initDefaultValue() {
-    if (
-      this.entityType === User.ENTITY_TYPE && // TODO: support multiple types in the EditSingleEntity
-      this.propertySchema.defaultValue ===
-        entityEntitySchemaDatatype.PLACEHOLDERS.CURRENT_USER
-    ) {
-      const user = this.sessionService.getCurrentUser();
-      this.formControl.setValue(user.name);
-    } else {
-      super.initDefaultValue();
-    }
   }
 }

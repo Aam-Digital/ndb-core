@@ -4,7 +4,6 @@ import { EditDateComponent } from "./edit-date.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { setupEditComponent } from "../edit-component.spec";
 import { MatNativeDateModule } from "@angular/material/core";
-import moment from "moment";
 
 describe("EditDateComponent", () => {
   let component: EditDateComponent;
@@ -19,36 +18,11 @@ describe("EditDateComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditDateComponent);
     component = fixture.componentInstance;
+    setupEditComponent(component);
+    fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("Should have the date set to the current date when the relevant property is set in the property scheme", () => {
-    setupEditComponent(component, "testProperty", {
-      defaultValue: "$now",
-    });
-    fixture.detectChanges();
-    expect(
-      moment(component.formControl.value).isSame(moment(), "days")
-    ).toBeTrue();
-  });
-
-  it("Should not start of with a default date by default", () => {
-    // No setup required; this is the default case
-    setupEditComponent(component);
-    fixture.detectChanges();
-    expect(component.formControl.value).toBeFalsy();
-  });
-
-  it("should accept fixed date as defaultValue", () => {
-    setupEditComponent(component, "testProperty", {
-      defaultValue: "2022-01-01",
-    });
-    fixture.detectChanges();
-    expect(
-      moment(component.formControl.value).isSame(moment("2022-01-01"), "days")
-    ).toBeTrue();
   });
 });

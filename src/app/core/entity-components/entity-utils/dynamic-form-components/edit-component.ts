@@ -67,27 +67,5 @@ export abstract class EditComponent<T> implements OnInit {
     this.formControlName = this.formFieldConfig?.id;
     // This type casts are needed as the normal types throw errors in the templates
     this.parent = this.formControl.parent as FormGroup;
-    //
-    // if (
-    //   this.propertySchema?.defaultValue &&
-    //   // the entity is new (i.e. the revision is undefined)
-    //   this.entity._rev === undefined &&
-    //   // and no value set yet
-    //   (this.formControl.value === null ||
-    //     (Array.isArray(this.formControl.value) &&
-    //       this.formControl.value?.length === 0))
-    // ) {
-    //   this.initDefaultValue();
-    // }
-  }
-
-  /**
-   * Override this template function to define logic of setting a dynamic default value
-   * (e.g. parsing "$now" to the current date).
-   *
-   * default implementation simply assigns "defaultValue" directly.
-   */
-  protected initDefaultValue() {
-    this.formControl.setValue(this.propertySchema.defaultValue);
   }
 }
