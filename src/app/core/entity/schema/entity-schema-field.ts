@@ -56,7 +56,7 @@ export interface EntitySchemaField {
    * Whether the field should be initialized with a default value if undefined
    * (which is then run through dataType transformation);
    */
-  defaultValue?: any;
+  defaultValue?: PLACEHOLDERS | any;
 
   /**
    * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.

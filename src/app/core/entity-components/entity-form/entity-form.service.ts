@@ -13,7 +13,11 @@ import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { SessionService } from "../../session/session-service/session.service";
-import { PLACEHOLDERS } from "../../entity/schema/entity-schema-field";
+import {
+  EntitySchemaField,
+  PLACEHOLDERS,
+} from "../../entity/schema/entity-schema-field";
+import { isArrayDataType } from "../entity-utils/entity-utils";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -121,7 +125,7 @@ export class EntityFormService {
         const schema = entitySchema.get(formField.id);
         let val = copy[formField.id];
         if (schema.defaultValue && (!val || (val as []).length === 0)) {
-          val = this.setDefaultValue(val, schema.defaultValue);
+          val = this.getDefaultValue(schema);
         }
         formConfig[formField.id] = [val];
         if (formField.validators) {
@@ -139,10 +143,9 @@ export class EntityFormService {
     return group;
   }
 
-  private setDefaultValue<T>(val: any, defaultValue: PLACEHOLDERS | any) {
+  private getDefaultValue<T>(schema: EntitySchemaField) {
     let newVal;
-    const isArray = Array.isArray(val);
-    switch (defaultValue) {
+    switch (schema.defaultValue) {
       case PLACEHOLDERS.NOW:
         newVal = new Date();
         break;
@@ -150,9 +153,9 @@ export class EntityFormService {
         newVal = this.session.getCurrentUser().name;
         break;
       default:
-        newVal = defaultValue;
+        newVal = schema.defaultValue;
     }
-    if (isArray) {
+    if (isArrayDataType(schema.dataType)) {
       newVal = [newVal];
     }
     return newVal;

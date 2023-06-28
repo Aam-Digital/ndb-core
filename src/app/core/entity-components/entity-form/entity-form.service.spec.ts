@@ -19,6 +19,13 @@ import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.se
 import { Router } from "@angular/router";
 import { NotFoundComponent } from "../../view/dynamic-routing/not-found/not-found.component";
 import { SessionService } from "../../session/session-service/session.service";
+import {
+  EntitySchemaField,
+  PLACEHOLDERS,
+} from "../../entity/schema/entity-schema-field";
+import { TEST_USER } from "../../../utils/mocked-testing.module";
+import { arrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-array";
+import { entityArrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-entity-array";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -34,7 +41,10 @@ describe("EntityFormService", () => {
         EntitySchemaService,
         { provide: EntityMapperService, useValue: mockEntityMapper },
         EntityAbility,
-        { provide: SessionService, useValue: {} },
+        {
+          provide: SessionService,
+          useValue: { getCurrentUser: () => ({ name: TEST_USER }) },
+        },
       ],
     });
     service = TestBed.inject(EntityFormService);
@@ -169,5 +179,31 @@ describe("EntityFormService", () => {
     formGroup.get("inactive").setValue(true);
 
     expect(unsavedChanged.pending).toBeFalse();
+  });
+
+  it("should assign default values", () => {
+    const schema: EntitySchemaField = {
+      defaultValue: 1,
+    };
+    Entity.schema.set("test", schema);
+
+    let form = service.createFormGroup([{ id: "test" }], new Entity());
+    expect(form.get("test")).toHaveValue(1);
+
+    schema.defaultValue = PLACEHOLDERS.NOW;
+    form = service.createFormGroup([{ id: "test" }], new Entity());
+    expect(form.get("test")).toHaveValue(new Date());
+
+    schema.defaultValue = PLACEHOLDERS.CURRENT_USER;
+    form = service.createFormGroup([{ id: "test" }], new Entity());
+    expect(form.get("test")).toHaveValue(TEST_USER);
+
+    schema.dataType = arrayEntitySchemaDatatype.name;
+    form = service.createFormGroup([{ id: "test" }], new Entity());
+    expect(form.get("test")).toHaveValue([TEST_USER]);
+
+    schema.dataType = entityArrayEntitySchemaDatatype.name;
+    form = service.createFormGroup([{ id: "test" }], new Entity());
+    expect(form.get("test")).toHaveValue([TEST_USER]);
   });
 });

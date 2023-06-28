@@ -8,10 +8,7 @@ import {
 import { ChildrenService } from "../../children/children.service";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
-import {
-  MockedTestingModule,
-  TEST_USER,
-} from "../../../utils/mocked-testing.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
 import { User } from "../../../core/user/user";
