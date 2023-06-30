@@ -1,0 +1,45 @@
+<mat-stepper #stepper>
+  <ng-template matStepperIcon="edit">
+    <fa-icon icon="check" class="stepper-icon"></fa-icon>
+  </ng-template>
+
+  <mat-step>
+    <ng-template matStepLabel i18n="Import Step - upload"
+      >Select File
+    </ng-template>
+
+    <div></div>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel i18n="Import Step - import types"
+      >Select Import Type(s)
+    </ng-template>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel i18n="Import Step - map columns"
+      >Map Columns
+    </ng-template>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel i18n="Import Step - review data"
+      >Review & Edit Data
+    </ng-template>
+  </mat-step>
+
+  <mat-step>
+    <ng-template matStepLabel i18n="Import Step - confirm"
+      >Run Import
+    </ng-template>
+    <p>You are now done.</p>
+    <div>
+      <button mat-stroked-button color="accent">Confirm & Run Import</button>
+    </div>
+    <div>
+      <button mat-button matStepperPrevious>Back</button>
+      <button mat-button (click)="stepper.reset()">Cancel</button>
+    </div>
+  </mat-step>
+</mat-stepper>
