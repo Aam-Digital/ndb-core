@@ -124,7 +124,11 @@ export class EntityFormService {
       .forEach((formField) => {
         const schema = entitySchema.get(formField.id);
         let val = copy[formField.id];
-        if (schema.defaultValue && (!val || (val as []).length === 0)) {
+        if (
+          entity.isNew &&
+          schema.defaultValue &&
+          (!val || (val as []).length === 0)
+        ) {
           val = this.getDefaultValue(schema);
         }
         formConfig[formField.id] = [val];

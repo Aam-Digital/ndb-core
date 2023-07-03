@@ -182,9 +182,7 @@ describe("EntityFormService", () => {
   });
 
   it("should assign default values", () => {
-    const schema: EntitySchemaField = {
-      defaultValue: 1,
-    };
+    const schema: EntitySchemaField = { defaultValue: 1 };
     Entity.schema.set("test", schema);
 
     let form = service.createFormGroup([{ id: "test" }], new Entity());
@@ -205,5 +203,29 @@ describe("EntityFormService", () => {
     schema.dataType = entityArrayEntitySchemaDatatype.name;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([TEST_USER]);
+
+    Entity.schema.delete("test");
+  });
+
+  it("should not assign default values to existing entities", () => {
+    Entity.schema.set("test", { defaultValue: 1 });
+
+    const entity = new Entity();
+    entity._rev = "1-existing_entity";
+    const form = service.createFormGroup([{ id: "test" }], entity);
+    expect(form.get("test")).toHaveValue(null);
+
+    Entity.schema.delete("test");
+  });
+
+  it("should not overwrite existing values with default value", () => {
+    Entity.schema.set("test", { defaultValue: 1 });
+
+    const entity = new Entity();
+    entity["test"] = 2;
+    const form = service.createFormGroup([{ id: "test" }], entity);
+    expect(form.get("test")).toHaveValue(2);
+
+    Entity.schema.delete("test");
   });
 });
