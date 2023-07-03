@@ -54,7 +54,7 @@ export interface EntitySchemaField {
 
   /**
    * Whether the field should be initialized with a default value if undefined
-   * (which is then run through dataType transformation);
+   * Default values are applied to form fields before they are displayed to users
    */
   defaultValue?: PLACEHOLDERS | any;
 
