@@ -8,35 +8,44 @@
       >Select File
     </ng-template>
 
-    <div></div>
+    <div class="flex-row gap-large">
+      <app-import-select-file></app-import-select-file>
+
+      <app-import-history></app-import-history>
+    </div>
   </mat-step>
 
   <mat-step>
     <ng-template matStepLabel i18n="Import Step - import types"
       >Select Import Type(s)
     </ng-template>
+
+    <app-import-select-type></app-import-select-type>
   </mat-step>
 
   <mat-step>
     <ng-template matStepLabel i18n="Import Step - map columns"
       >Map Columns
     </ng-template>
+
+    <app-import-map-columns></app-import-map-columns>
   </mat-step>
 
   <mat-step>
     <ng-template matStepLabel i18n="Import Step - review data"
       >Review & Edit Data
     </ng-template>
+
+    <app-import-review-data></app-import-review-data>
   </mat-step>
 
   <mat-step>
     <ng-template matStepLabel i18n="Import Step - confirm"
       >Run Import
     </ng-template>
-    <p>You are now done.</p>
-    <div>
-      <button mat-stroked-button color="accent">Confirm & Run Import</button>
-    </div>
+
+    <app-import-confirm-summary></app-import-confirm-summary>
+
     <div>
       <button mat-button matStepperPrevious>Back</button>
       <button mat-button (click)="stepper.reset()">Cancel</button>
