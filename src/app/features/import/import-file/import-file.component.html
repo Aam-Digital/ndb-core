@@ -1,0 +1,5 @@
+<p>Select a .csv file with data you would like to import.</p>
+
+<app-input-file (fileLoad)="onFileLoad($event)" fileType="csv"></app-input-file>
+
+<div *ngIf="data">{{ data.data?.length }} rows detected for import</div>

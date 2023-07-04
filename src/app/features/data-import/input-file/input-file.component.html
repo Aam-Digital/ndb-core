@@ -5,9 +5,10 @@
   (change)="loadFile($event)"
 />
 <mat-form-field>
-  <mat-label i18n="Label for file select input">Selected File:</mat-label>
+  <mat-label i18n="Label for file select input">Select file</mat-label>
   <input
-    matInput readonly
+    matInput
+    readonly
     [formControl]="formControl"
     i18n-placeholder="placeholder for file-input"
     placeholder="No file selected"
@@ -16,6 +17,7 @@
   <button mat-icon-button matIconSuffix (click)="fileInput.click()">
     <fa-icon icon="upload"></fa-icon>
   </button>
-  <mat-error
-    *ngIf="formControl.invalid">{{ formControl.errors.fileInvalid || formControl.errors.parsingError }}</mat-error>
+  <mat-error *ngIf="formControl.invalid">{{
+    formControl.errors.fileInvalid || formControl.errors.parsingError
+  }}</mat-error>
 </mat-form-field>
