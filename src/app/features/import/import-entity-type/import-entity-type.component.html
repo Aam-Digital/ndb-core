@@ -1,1 +1,23 @@
-<p (click)="entityTypeChange.emit('Child')">import-select-type works!</p>
+<h2 i18n>Select Import Target Type</h2>
+<p i18n>
+  What type of records should your imported data become in the system? Select
+  the target "Entity Type" here. In the next step you can map your imported data
+  to that type's fields.
+</p>
+
+<form>
+  <mat-form-field>
+    <mat-label>Entity Type</mat-label>
+    <mat-select
+      [(ngModel)]="entityType"
+      (selectionChange)="entityTypeChange.emit($event.value)"
+    >
+      <mat-option
+        *ngFor="let entity of entityTypes | keyvalue"
+        [value]="entity.key"
+      >
+        {{ entity.key }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+</form>
