@@ -4,7 +4,13 @@ import { ImportModule } from "../import.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportComponent } from "./import.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { IMPORT_SAMPLE_RAW_DATA } from "./import-sample-raw-data";
+import {
+  IMPORT_SAMPLE_LINKABLE_DATA,
+  IMPORT_SAMPLE_RAW_DATA,
+} from "./import-sample-raw-data";
+import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 
 export default {
   title: "Features/Import/> Overall Module",
@@ -12,7 +18,13 @@ export default {
   decorators: [
     moduleMetadata({
       imports: [ImportModule, StorybookBaseModule, FontAwesomeModule],
-      providers: [],
+      providers: [
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(IMPORT_SAMPLE_LINKABLE_DATA),
+        },
+        EntityTypeLabelPipe,
+      ],
     }),
   ],
 } as Meta;

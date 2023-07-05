@@ -5,6 +5,7 @@ import { MatStepper } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -18,6 +19,7 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 export class ImportComponent {
   rawData: ParsedData<any>;
   entityType: string;
+  additionalImportActions: AdditionalImportAction[];
   columnMapping: ColumnMapping[];
 
   @ViewChild(MatStepper) stepper: MatStepper;

@@ -1,1 +1,83 @@
-<p>import-additional-actions works!</p>
+<h2 i18n>Additional Import Actions</h2>
+<p i18n>
+  In addition to creating new records directly for the imported data you can
+  also define some additional actions, like adding the new records to an
+  existing group. Add any further steps to be executed for this import here:
+</p>
+
+<!-- Existing additional actions -->
+<div>
+  <ul>
+    <li *ngFor="let action of importActions" class="flex-row">
+      <div class="flex-grow">
+        <span i18n>Link to {{ action.type | entityTypeLabel }}</span> &nbsp;
+        <app-display-entity
+          [entityType]="action.type"
+          [entityId]="action.id"
+          [linkDisabled]="true"
+        ></app-display-entity>
+      </div>
+      <button mat-stroked-button (click)="removeAction(action)">
+        <fa-icon icon="trash"></fa-icon>
+        Remove
+      </button>
+    </li>
+  </ul>
+</div>
+
+<!-- Create new additional action -->
+<form [formGroup]="linkEntityForm">
+  <div>
+    <mat-error *ngIf="linkEntityForm.disabled" i18n>
+      Select an Import Target Type before defining additional actions.
+    </mat-error>
+  </div>
+
+  <div class="flex-row gap-regular">
+    <mat-form-field>
+      <mat-label i18n="Label for linked entity type input"
+        >Linked record type
+      </mat-label>
+      <app-basic-autocomplete
+        formControlName="type"
+        [options]="linkableEntityTypes"
+        [optionToString]="typeToString"
+      ></app-basic-autocomplete>
+    </mat-form-field>
+
+    <mat-form-field>
+      <mat-label i18n="Label for linked entity input">Linked record</mat-label>
+      <app-basic-autocomplete
+        formControlName="id"
+        [options]="linkableEntities"
+        [valueMapper]="entityToId"
+      >
+        <ng-template let-item>
+          <app-display-entity
+            [entityToDisplay]="item"
+            [linkDisabled]="true"
+          ></app-display-entity>
+        </ng-template>
+      </app-basic-autocomplete>
+    </mat-form-field>
+
+    <button
+      (click)="addAction()"
+      [disabled]="!actionSelected"
+      mat-stroked-button
+      color="accent"
+      class="action-add-button"
+      i18n
+    >
+      Add Action
+    </button>
+  </div>
+</form>
+
+<p i18n>
+  The “additional import actions” here help you to do fixed things for all your
+  imported records. In the “Map Columns” step of the import process you can also
+  create individual links for each row of your import based on different values
+  in your imported data (e.g. linking imported participants to their school
+  using a school_id value that is part of your imported data).
+</p>

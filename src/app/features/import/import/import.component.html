@@ -61,7 +61,10 @@
       [rawData]="rawData"
     ></app-import-entity-type>
 
-    <app-import-additional-actions></app-import-additional-actions>
+    <app-import-additional-actions
+      [entityType]="entityType"
+      [(importActions)]="additionalImportActions"
+    ></app-import-additional-actions>
 
     <div class="margin-top-regular">
       <button mat-button i18n="import back button" matStepperPrevious>
