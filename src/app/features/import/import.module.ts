@@ -22,6 +22,7 @@ import { BasicAutocompleteComponent } from "../../core/configurable-enum/basic-a
 import { DisplayEntityComponent } from "../../core/entity-components/entity-select/display-entity/display-entity.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatListModule } from "@angular/material/list";
+import { EntitySubrecordComponent } from "../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 @NgModule({
   declarations: [
@@ -51,6 +52,7 @@ import { MatListModule } from "@angular/material/list";
     ReactiveFormsModule,
     MatTooltipModule,
     MatListModule,
+    EntitySubrecordComponent,
   ],
   exports: [ImportComponent],
 })
