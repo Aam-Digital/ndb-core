@@ -28,6 +28,7 @@ import { EnumValueMappingComponent } from "./import-column-mapping/enum-value-ma
 import { MatDialogModule } from "@angular/material/dialog";
 import { DynamicComponentDirective } from "../../core/view/dynamic-components/dynamic-component.directive";
 import { MatInputModule } from "@angular/material/input";
+import { ImportService } from "./import.service";
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { MatInputModule } from "@angular/material/input";
     DynamicComponentDirective,
     MatInputModule,
   ],
+  providers: [ImportService],
   exports: [ImportComponent],
 })
 export class ImportModule {}

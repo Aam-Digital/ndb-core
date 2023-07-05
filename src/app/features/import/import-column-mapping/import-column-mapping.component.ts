@@ -3,10 +3,8 @@ import { ColumnMapping } from "../column-mapping";
 import { ComponentType } from "@angular/cdk/overlay";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../core/entity/model/entity";
-import { DataImportService } from "../../data-import/data-import.service";
-import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mapping.component";
-import { DateValueMappingComponent } from "./date-value-mapping/date-value-mapping.component";
 import { MatDialog } from "@angular/material/dialog";
+import { ImportService } from "../import.service";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -23,39 +21,32 @@ export class ImportColumnMappingComponent {
 
   @Input()
   set entityType(value: string) {
-    this._entityType = this.entities.get(value);
+    this.entityCtr = this.entities.get(value);
     this.mappingCmp = {};
-    this.allProps = [...this._entityType.schema.entries()]
+    this.allProps = [...this.entityCtr.schema.entries()]
       .filter(([_, schema]) => schema.label)
       .map(([name, schema]) => {
-        // TODO can we move this to a better place?
-        if (
-          schema.dataType === "boolean" ||
-          schema.dataType === "configurable-enum" ||
-          schema.innerDataType === "configurable-enum"
-        ) {
-          this.mappingCmp[name] = EnumValueMappingComponent;
-        }
-        if (this.importService.dateDataTypes.includes(schema.dataType)) {
-          this.mappingCmp[name] = DateValueMappingComponent;
+        const cmp = this.importService.getMappingComponent(schema);
+        if (cmp) {
+          this.mappingCmp[name] = cmp;
         }
         return name;
       });
   }
 
-  private _entityType: EntityConstructor;
+  private entityCtr: EntityConstructor;
   // entity properties that have a label
   allProps: string[] = [];
   // properties that need further adjustments through a component
   mappingCmp: { [key: string]: ComponentType<any> };
 
-  labelMapper = (name: string) => this._entityType.schema.get(name).label;
+  labelMapper = (name: string) => this.entityCtr.schema.get(name).label;
   isUsed = (option: string) =>
     this.columnMapping.some(({ propertyName }) => propertyName === option);
 
   constructor(
     private entities: EntityRegistry,
-    private importService: DataImportService,
+    private importService: ImportService,
     private dialog: MatDialog
   ) {}
 
@@ -68,7 +59,7 @@ export class ImportColumnMappingComponent {
         data: {
           col: col,
           values: [...uniqueValues],
-          entityType: this._entityType,
+          entityType: this.entityCtr,
         },
         disableClose: true,
       }
