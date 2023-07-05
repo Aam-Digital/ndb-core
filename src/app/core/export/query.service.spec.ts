@@ -622,6 +622,20 @@ describe("QueryService", () => {
     expect(res).toBe(1);
   });
 
+  it("should allow to sum values", () => {
+    const data = [
+      { a: 1, b: 2 },
+      { a: "4" }, // also allows strings
+      { b: 5 }, // not existing as 0
+      { a: -2 }, // allows negative
+      { a: "three" }, // skips invalid
+    ];
+
+    const res = service.queryData("a:sum", undefined, undefined, data);
+
+    expect(res).toBe(3);
+  });
+
   function queryData(query: string, from?: Date, to?: Date, data?: any) {
     return service
       .cacheRequiredData(query, from, to)
