@@ -3,6 +3,7 @@
     <fa-icon icon="check" class="stepper-icon"></fa-icon>
   </ng-template>
 
+  <!-- STEP 1: SELECT FILE -->
   <mat-step [completed]="rawData?.data?.length > 0" #step1>
     <ng-template matStepLabel>
       <div i18n="Import Step - upload">Select File</div>
@@ -40,6 +41,7 @@
     </div>
   </mat-step>
 
+  <!-- STEP 2: SELECT IMPORT TYPE -->
   <mat-step [completed]="!!entityType" #step2>
     <ng-template matStepLabel i18n="Import Step - import types"
       >Select Import Type(s)
@@ -67,6 +69,7 @@
     </div>
   </mat-step>
 
+  <!-- STEP 3: MAP COLUMNS -->
   <mat-step [completed]="!!columnMapping" #step3>
     <ng-template matStepLabel i18n="Import Step - map columns"
       >Map Columns
@@ -93,7 +96,8 @@
     </div>
   </mat-step>
 
-  <mat-step>
+  <!-- STEP 4: REVIEW DATA -->
+  <mat-step #step4>
     <ng-template matStepLabel i18n="Import Step - review data"
       >Review & Edit Data
     </ng-template>
