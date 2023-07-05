@@ -21,6 +21,12 @@ import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-la
 import { BasicAutocompleteComponent } from "../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
 import { DisplayEntityComponent } from "../../core/entity-components/entity-select/display-entity/display-entity.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { DateValueMappingComponent } from "./import-column-mapping/date-value-mapping/date-value-mapping.component";
+import { EnumValueMappingComponent } from "./import-column-mapping/enum-value-mapping/enum-value-mapping.component";
+import { MatDialogModule } from "@angular/material/dialog";
+import { MatListModule } from "@angular/material/list";
+import { DynamicComponentDirective } from "../../core/view/dynamic-components/dynamic-component.directive";
+import { MatInputModule } from "@angular/material/input";
 
 @NgModule({
   declarations: [
@@ -32,6 +38,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     ImportReviewDataComponent,
     ImportConfirmSummaryComponent,
     ImportAdditionalActionsComponent,
+    DateValueMappingComponent,
+    EnumValueMappingComponent,
   ],
   imports: [
     CommonModule,
@@ -49,6 +57,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     DisplayEntityComponent,
     ReactiveFormsModule,
     MatTooltipModule,
+    MatDialogModule,
+    MatListModule,
+    DynamicComponentDirective,
+    MatInputModule,
   ],
   exports: [ImportComponent],
 })

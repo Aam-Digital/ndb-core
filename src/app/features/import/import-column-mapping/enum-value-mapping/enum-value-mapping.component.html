@@ -1,0 +1,29 @@
+<mat-dialog-content>
+  <table>
+    <tr>
+      <th i18n="Import mapping header">Imported values</th>
+      <th i18n="Import mapping header">Assigned values</th>
+    </tr>
+    <tr *ngFor="let ctrl of form.controls | keyvalue">
+      <td style="padding-right: 20px">
+        {{ ctrl.key }}:
+      </td>
+      <td>
+        <ng-container
+          [appDynamicComponent]="{
+            component: component,
+            config: {
+              formFieldConfig: { forTable: true, id: ctrl.key },
+              propertySchema: schema,
+              formControl: ctrl.value
+            }
+          }"
+        ></ng-container>
+      </td>
+    </tr>
+  </table>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="save()">Save & Close</button>
+  <button mat-stroked-button matDialogClose>Cancel</button>
+</mat-dialog-actions>

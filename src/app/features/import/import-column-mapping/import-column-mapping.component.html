@@ -1,1 +1,20 @@
-<p (click)="columnMappingChange.emit([])">import-map-columns works!</p>
+<div>
+  <div *ngFor="let col of columnMapping">
+    <mat-form-field>
+      <mat-label>{{ col.column }}</mat-label>
+      <app-basic-autocomplete
+        [options]="allProps"
+        [(ngModel)]="col.propertyName"
+        [optionToString]="labelMapper"
+        [hideOption]="isUsed"
+      />
+    </mat-form-field>
+    <button
+      mat-button
+      *ngIf="mappingCmp[col.propertyName]"
+      (click)="openMappingComponent(col)"
+    >
+      Map values
+    </button>
+  </div>
+</div>

@@ -82,13 +82,13 @@
 
   <!-- STEP 3: MAP COLUMNS -->
   <mat-step [completed]="!!columnMapping" #step3>
-    <ng-template matStepLabel i18n="Import Step - map columns"
-      >Map Columns
+    <ng-template matStepLabel i18n="Import Step - map columns">
+      Map Columns
     </ng-template>
 
     <app-import-column-mapping
       [entityType]="entityType"
-      [(columnMapping)]="columnMapping"
+      [columnMapping]="columnMapping"
       [rawData]="rawData"
     ></app-import-column-mapping>
 
@@ -109,8 +109,8 @@
 
   <!-- STEP 4: REVIEW DATA -->
   <mat-step #step4>
-    <ng-template matStepLabel i18n="Import Step - review data"
-      >Review & Edit Data
+    <ng-template matStepLabel i18n="Import Step - review data">
+      Review & Edit Data
     </ng-template>
 
     <app-import-review-data

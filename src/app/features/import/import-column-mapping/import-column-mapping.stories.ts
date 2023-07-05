@@ -1,16 +1,16 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ImportColumnMappingComponent } from "./import-column-mapping.component";
 import { IMPORT_SAMPLE_RAW_DATA } from "../import/import-sample-raw-data";
+import { MatInputModule } from "@angular/material/input";
 
 export default {
   title: "Features/Import/3 Map Columns",
   component: ImportColumnMappingComponent,
   decorators: [
     moduleMetadata({
-      imports: [StorybookBaseModule, FontAwesomeModule],
+      imports: [StorybookBaseModule, MatInputModule],
       declarations: [ImportColumnMappingComponent],
       providers: [],
     }),
@@ -25,7 +25,7 @@ const Template: Story<ImportColumnMappingComponent> = (
 
 export const Basic = Template.bind({});
 Basic.args = {
-  rawData: IMPORT_SAMPLE_RAW_DATA,
+  rawData: IMPORT_SAMPLE_RAW_DATA.data,
   entityType: "Child",
-  columnMapping: [],
+  columnMapping: IMPORT_SAMPLE_RAW_DATA.fields.map((column) => ({ column })),
 };

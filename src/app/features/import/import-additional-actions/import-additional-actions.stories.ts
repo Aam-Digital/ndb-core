@@ -27,8 +27,6 @@ export default {
     moduleMetadata({
       imports: [
         StorybookBaseModule,
-        FontAwesomeModule,
-        ReactiveFormsModule,
         MatFormFieldModule,
         BasicAutocompleteComponent,
         DisplayEntityComponent,

@@ -1,7 +1,12 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
-import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { ComponentType } from "@angular/cdk/overlay";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EntityConstructor } from "../../../core/entity/model/entity";
+import { DataImportService } from "../../data-import/data-import.service";
+import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mapping.component";
+import { DateValueMappingComponent } from "./date-value-mapping/date-value-mapping.component";
+import { MatDialog } from "@angular/material/dialog";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -13,24 +18,66 @@ import { ComponentType } from "@angular/cdk/overlay";
   styleUrls: ["./import-column-mapping.component.scss"],
 })
 export class ImportColumnMappingComponent {
-  @Input() entityType: string;
-
-  @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
+  @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[];
 
-  @Input() rawData: any[];
+  @Input()
+  set entityType(value: string) {
+    this._entityType = this.entities.get(value);
+    this.mappingCmp = {};
+    this.allProps = [...this._entityType.schema.entries()]
+      .filter(([_, schema]) => schema.label)
+      .map(([name, schema]) => {
+        // TODO can we move this to a better place?
+        if (
+          schema.dataType === "boolean" ||
+          schema.dataType === "configurable-enum" ||
+          schema.innerDataType === "configurable-enum"
+        ) {
+          this.mappingCmp[name] = EnumValueMappingComponent;
+        }
+        if (this.importService.dateDataTypes.includes(schema.dataType)) {
+          this.mappingCmp[name] = DateValueMappingComponent;
+        }
+        return name;
+      });
+  }
+
+  private _entityType: EntityConstructor;
+  // entity properties that have a label
+  allProps: string[] = [];
+  // properties that need further adjustments through a component
+  mappingCmp: { [key: string]: ComponentType<any> };
+
+  labelMapper = (name: string) => this._entityType.schema.get(name).label;
+  isUsed = (option: string) =>
+    this.columnMapping.some(({ propertyName }) => propertyName === option);
+
+  constructor(
+    private entities: EntityRegistry,
+    private importService: DataImportService,
+    private dialog: MatDialog
+  ) {}
+
+  openMappingComponent(col: ColumnMapping) {
+    const uniqueValues = new Set();
+    this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
+    this.dialog.open<any, MappingDialogData>(
+      this.mappingCmp[col.propertyName],
+      {
+        data: {
+          col: col,
+          values: [...uniqueValues],
+          entityType: this._entityType,
+        },
+        disableClose: true,
+      }
+    );
+  }
 }
 
-type PropertyConfig = {
-  /** schema of the mapped entity property */
-  schema: EntitySchemaField;
-
-  /** popup component to allow user to manually map or configure the data transformation */
-  mappingCmp?: ComponentType<any>;
-
-  /** data transformation of values to be imported */
-  mappingFn?: (val: any, cal: ColumnMapping) => any;
-
-  /** all unique values appearing in import data */
-  uniqueValues: string[];
-};
+export interface MappingDialogData {
+  col: ColumnMapping;
+  values: any[];
+  entityType: EntityConstructor;
+}
