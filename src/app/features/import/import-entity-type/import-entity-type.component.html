@@ -5,19 +5,17 @@
   to that type's fields.
 </p>
 
-<form>
-  <mat-form-field>
-    <mat-label>Entity Type</mat-label>
-    <mat-select
-      [(ngModel)]="entityType"
-      (selectionChange)="entityTypeChange.emit($event.value)"
+<mat-form-field>
+  <mat-label i18n>Import as</mat-label>
+  <mat-select
+    [(value)]="entityType"
+    (selectionChange)="entityTypeChange.emit($event.value)"
+  >
+    <mat-option
+      *ngFor="let entity of entityTypes | keyvalue"
+      [value]="entity.key"
     >
-      <mat-option
-        *ngFor="let entity of entityTypes | keyvalue"
-        [value]="entity.key"
-      >
-        {{ entity.key }}
-      </mat-option>
-    </mat-select>
-  </mat-form-field>
-</form>
+      {{ entity.value.label }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>

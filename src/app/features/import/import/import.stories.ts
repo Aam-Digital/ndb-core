@@ -27,4 +27,5 @@ Basic.args = {};
 export const WithSampleData = Template.bind({});
 WithSampleData.args = {
   rawData: IMPORT_SAMPLE_RAW_DATA,
+  entityType: "Child",
 };

@@ -21,7 +21,7 @@ export class ImportEntityTypeComponent {
   /** pre-selected entity type */
   @Input() entityType: string;
 
-  constructor(public entityTypes: EntityRegistry) {
-    // TODO: display EntityType label (!)
-  }
+  constructor(public entityTypes: EntityRegistry) {}
+
+  // TODO: infer entityType automatically -> pre-select + UI explanatory text
 }

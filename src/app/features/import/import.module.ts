@@ -13,10 +13,14 @@ import { ImportReviewDataComponent } from "./import-review-data/import-review-da
 import { ImportConfirmSummaryComponent } from "./import-confirm-summary/import-confirm-summary.component";
 import { ImportAdditionalActionsComponent } from "./import-additional-actions/import-additional-actions.component";
 import { MatCardModule } from "@angular/material/card";
-import { FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
+import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { BasicAutocompleteComponent } from "../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
+import { DisplayEntityComponent } from "../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @NgModule({
   declarations: [
@@ -40,6 +44,11 @@ import { MatSelectModule } from "@angular/material/select";
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
+    EntityTypeLabelPipe,
+    BasicAutocompleteComponent,
+    DisplayEntityComponent,
+    ReactiveFormsModule,
+    MatTooltipModule,
   ],
   exports: [ImportComponent],
 })
