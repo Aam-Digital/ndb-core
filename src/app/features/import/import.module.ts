@@ -21,6 +21,7 @@ import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-la
 import { BasicAutocompleteComponent } from "../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
 import { DisplayEntityComponent } from "../../core/entity-components/entity-select/display-entity/display-entity.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatListModule } from "@angular/material/list";
 
 @NgModule({
   declarations: [
@@ -49,6 +50,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     DisplayEntityComponent,
     ReactiveFormsModule,
     MatTooltipModule,
+    MatListModule,
   ],
   exports: [ImportComponent],
 })

@@ -13,8 +13,12 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { ReactiveFormsModule } from "@angular/forms";
 import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
-import { IMPORT_SAMPLE_LINKABLE_DATA } from "../import/import-sample-raw-data";
+import {
+  IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
+  IMPORT_SAMPLE_LINKABLE_DATA,
+} from "../import/import-sample-raw-data";
 import { MatButtonModule } from "@angular/material/button";
+import { MatListModule } from "@angular/material/list";
 
 const mockImportService = {
   getLinkableEntityTypes: () => ["RecurringActivity", "School"],
@@ -33,6 +37,7 @@ export default {
         BasicAutocompleteComponent,
         DisplayEntityComponent,
         MatButtonModule,
+        MatListModule,
         EntityTypeLabelPipe,
       ],
       declarations: [ImportAdditionalActionsComponent],
@@ -65,16 +70,5 @@ Disabled.args = {};
 export const WithExistingActions = Template.bind({});
 WithExistingActions.args = {
   entityType: "Child",
-  importActions: [
-    {
-      type: "School",
-      id: IMPORT_SAMPLE_LINKABLE_DATA.find((e) => e.getType() === "School"),
-    },
-    {
-      type: "RecurringActivity",
-      id: IMPORT_SAMPLE_LINKABLE_DATA.find(
-        (e) => e.getType() === "RecurringActivity"
-      ),
-    },
-  ],
+  importActions: IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
 };
