@@ -7,22 +7,28 @@
 
 <!-- Existing additional actions -->
 <div>
-  <ul>
-    <li *ngFor="let action of importActions" class="flex-row">
-      <div class="flex-grow">
-        <span i18n>Link to {{ action.type | entityTypeLabel }}</span> &nbsp;
+  <mat-list>
+    <mat-list-item *ngFor="let action of importActions">
+      <fa-icon
+        icon="xmark"
+        matListItemIcon
+        (click)="removeAction(action)"
+        matTooltip="Remove"
+        i18n-matTooltip
+        class="existing-action-remove"
+      ></fa-icon>
+      <div matListItemTitle i18n>
+        Link all imported records to {{ action.type | entityTypeLabel }}
+      </div>
+      <div matListItemLine>
         <app-display-entity
           [entityType]="action.type"
           [entityId]="action.id"
           [linkDisabled]="true"
         ></app-display-entity>
       </div>
-      <button mat-stroked-button (click)="removeAction(action)">
-        <fa-icon icon="trash"></fa-icon>
-        Remove
-      </button>
-    </li>
-  </ul>
+    </mat-list-item>
+  </mat-list>
 </div>
 
 <!-- Create new additional action -->

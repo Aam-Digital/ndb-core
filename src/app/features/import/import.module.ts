@@ -21,10 +21,11 @@ import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-la
 import { BasicAutocompleteComponent } from "../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
 import { DisplayEntityComponent } from "../../core/entity-components/entity-select/display-entity/display-entity.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatListModule } from "@angular/material/list";
+import { EntitySubrecordComponent } from "../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { DateValueMappingComponent } from "./import-column-mapping/date-value-mapping/date-value-mapping.component";
 import { EnumValueMappingComponent } from "./import-column-mapping/enum-value-mapping/enum-value-mapping.component";
 import { MatDialogModule } from "@angular/material/dialog";
-import { MatListModule } from "@angular/material/list";
 import { DynamicComponentDirective } from "../../core/view/dynamic-components/dynamic-component.directive";
 import { MatInputModule } from "@angular/material/input";
 
@@ -57,8 +58,9 @@ import { MatInputModule } from "@angular/material/input";
     DisplayEntityComponent,
     ReactiveFormsModule,
     MatTooltipModule,
-    MatDialogModule,
     MatListModule,
+    EntitySubrecordComponent,
+    MatDialogModule,
     DynamicComponentDirective,
     MatInputModule,
   ],
