@@ -4,7 +4,7 @@
   </ng-template>
 
   <!-- STEP 1: SELECT FILE -->
-  <mat-step [completed]="rawData?.data?.length > 0" #step1>
+  <mat-step [completed]="rawData?.length > 0" #step1>
     <ng-template matStepLabel>
       <div i18n="Import Step - upload">Select File</div>
 
@@ -13,7 +13,7 @@
         class="step-label-extra"
         i18n="Import Step - upload - sub-label"
       >
-        {{ rawData?.data?.length }} rows to import
+        {{ rawData?.length }} rows to import
       </div>
     </ng-template>
 
@@ -58,7 +58,6 @@
 
     <app-import-entity-type
       [(entityType)]="entityType"
-      [rawData]="rawData"
     ></app-import-entity-type>
 
     <app-import-additional-actions

@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { ParsedData } from "../../data-import/input-file/input-file.component";
 import { ColumnMapping } from "../column-mapping";
 
 @Component({
@@ -8,7 +7,7 @@ import { ColumnMapping } from "../column-mapping";
   styleUrls: ["./import-review-data.component.scss"],
 })
 export class ImportReviewDataComponent {
-  @Input() rawData: ParsedData<any>;
+  @Input() rawData: any[];
   @Input() entityType: string;
   @Input() columnMapping: ColumnMapping[];
 

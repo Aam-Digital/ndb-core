@@ -1,5 +1,4 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { ParsedData } from "../../data-import/input-file/input-file.component";
 import { ColumnMapping } from "../column-mapping";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { ComponentType } from "@angular/cdk/overlay";
@@ -19,7 +18,7 @@ export class ImportColumnMappingComponent {
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
   @Input() columnMapping: ColumnMapping[];
 
-  @Input() rawData: ParsedData<any>;
+  @Input() rawData: any[];
 }
 
 type PropertyConfig = {

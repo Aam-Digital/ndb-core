@@ -17,7 +17,7 @@ import { AdditionalImportAction } from "../import-additional-actions/additional-
   styleUrls: ["./import.component.scss"],
 })
 export class ImportComponent {
-  rawData: ParsedData<any>;
+  rawData: any[];
   entityType: string;
   additionalImportActions: AdditionalImportAction[];
   columnMapping: ColumnMapping[];
@@ -45,7 +45,8 @@ export class ImportComponent {
   }
 
   onDataLoaded(data: ParsedData<any>) {
-    this.rawData = data;
+    this.rawData = data.data;
+    this.columnMapping = data.fields.map((field) => ({ column: field }));
 
     // trigger next step automatically after change detection ran and recognized the current step as [completed]
     setTimeout(() => this.stepper.next());

@@ -6,7 +6,7 @@ export interface ColumnMapping {
   column: string;
 
   /** mapped entity property id */
-  propertyName: string;
+  propertyName?: string;
 
   /**
    * details of data transformation or parsing into the property.
