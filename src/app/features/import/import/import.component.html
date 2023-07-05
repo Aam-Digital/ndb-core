@@ -4,8 +4,15 @@
   </ng-template>
 
   <mat-step [completed]="rawData?.data?.length > 0" #step1>
-    <ng-template matStepLabel i18n="Import Step - upload"
-      >Select File
+    <ng-template matStepLabel>
+      <div i18n="Import Step - upload">Select File</div>
+      <div
+        *ngIf="step1.completed"
+        class="step-label-extra"
+        i18n="Import Step - upload - sub-label"
+      >
+        {{ rawData?.data?.length }} rows to import
+      </div>
     </ng-template>
 
     <div class="flex-row gap-large">

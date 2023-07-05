@@ -1,5 +1,8 @@
-import { Component, EventEmitter, Output } from "@angular/core";
-import { ParsedData } from "../../data-import/input-file/input-file.component";
+import { Component, EventEmitter, Output, ViewChild } from "@angular/core";
+import {
+  InputFileComponent,
+  ParsedData,
+} from "../../data-import/input-file/input-file.component";
 
 /**
  * Import sub-step: Let user load a file and return parsed data.
@@ -13,9 +16,15 @@ export class ImportFileComponent {
   @Output() dataLoaded = new EventEmitter<ParsedData<any>>();
 
   data: ParsedData<any>;
+  @ViewChild(InputFileComponent) inputFileField: InputFileComponent;
 
   onFileLoad($event: ParsedData<any>) {
     this.dataLoaded.emit($event);
     this.data = $event;
+  }
+
+  public reset() {
+    delete this.data;
+    this.inputFileField.formControl.reset();
   }
 }

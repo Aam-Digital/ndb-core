@@ -3,6 +3,8 @@ import { RouteTarget } from "../../../app.routing";
 import { ParsedData } from "../../data-import/input-file/input-file.component";
 import { MatStepper } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
+import { ImportFileComponent } from "../import-file/import-file.component";
+import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -19,12 +21,24 @@ export class ImportComponent {
   columnMapping: ColumnMapping[];
 
   @ViewChild(MatStepper) stepper: MatStepper;
+  @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;
 
-  reset() {
+  constructor(private confirmationDialog: ConfirmationDialogService) {}
+
+  async reset() {
+    if (
+      !(await this.confirmationDialog.getConfirmation(
+        $localize`:Import Reset Confirmation title:Cancel Import?`,
+        $localize`:Import Reset Confirmation text:Do you really want to discard the currently prepared import?`
+      ))
+    ) {
+      return;
+    }
+
     delete this.rawData;
     delete this.entityType;
     delete this.columnMapping;
-    // TODO: properly reset the data in the sub-step components like import-file
+    this.importFileComponent.reset();
     this.stepper.reset();
   }
 
