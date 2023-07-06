@@ -47,8 +47,4 @@ export class EnumValueMappingComponent {
       this.dialog.close();
     }
   }
-
-  cancel() {
-    this.dialog.close();
-  }
 }
