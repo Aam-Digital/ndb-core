@@ -30,8 +30,5 @@ export class DisplayAgeComponent
 
   ngOnInit() {
     this.date = this.entity[this.config];
-    console.log(this.entity);
-    console.log(this.date);
-    console.log(this.date.age);
   }
 }
