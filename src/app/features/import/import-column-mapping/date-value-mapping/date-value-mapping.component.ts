@@ -20,7 +20,9 @@ export class DateValueMappingComponent {
     private confirmation: ConfirmationDialogService,
     private dialog: MatDialogRef<any>
   ) {
-    this.values = this.data.values.map((value) => ({ value }));
+    this.values = this.data.values
+      .filter((val) => !!val)
+      .map((value) => ({ value }));
     this.format.valueChanges.subscribe(() => this.checkDateValues());
     this.format.setValue(this.data.col.additional);
   }
@@ -36,7 +38,9 @@ export class DateValueMappingComponent {
         this.format.setErrors({ parsingError: true });
       }
     });
-    this.values.sort((v) => (v.parsed ? 1 : 0));
+    this.values.sort((v1, v2) =>
+      v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0
+    );
   }
 
   async save() {
