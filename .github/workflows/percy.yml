@@ -8,7 +8,8 @@ on:
 
 jobs:
   run-visual-regression-tests:
-    if: github.ref_name == 'master' || github.event.pull_request.draft == false
+    # Run on (master) push or non-draft PRs
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v3
