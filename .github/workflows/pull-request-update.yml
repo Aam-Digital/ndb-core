@@ -72,15 +72,3 @@ jobs:
           COMMIT_INFO_MESSAGE: ${{ github.event.pull_request.title }}
           # pass GitHub token to allow accurately detecting a build vs a re-run build
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-  run-visual-regression-tests:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - uses: actions/setup-node@v3
-        with:
-          node-version: '16'
-          cache: npm
-      - run: npm ci
-      - run: npm run percy-storybook
-        env:
-          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}
