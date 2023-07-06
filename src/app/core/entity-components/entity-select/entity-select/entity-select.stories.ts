@@ -21,7 +21,7 @@ child3.name = "Third Child";
 child3.projectNumber = "3";
 
 export default {
-  title: "Core/EntityComponents/EntitySelect",
+  title: "Core/Entities/EntitySelect",
   component: EntitySelectComponent,
   decorators: [
     moduleMetadata({

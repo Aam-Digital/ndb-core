@@ -12,7 +12,7 @@ import { UpdateManagerService } from "../../latest-changes/update-manager.servic
 // TODO: fix layout of SupportComponent buttons on mobile
 
 export default {
-  title: "Core/Support",
+  title: "Core/> App Layout/Support",
   component: SupportComponent,
   decorators: [
     moduleMetadata({
