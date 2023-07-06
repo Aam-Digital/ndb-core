@@ -12,6 +12,12 @@ import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.se
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
+import { SessionService } from "../../session/session-service/session.service";
+import {
+  EntitySchemaField,
+  PLACEHOLDERS,
+} from "../../entity/schema/entity-schema-field";
+import { isArrayDataType } from "../entity-utils/entity-utils";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -34,6 +40,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
+    private session: SessionService,
     router: Router
   ) {
     router.events
@@ -115,7 +122,16 @@ export class EntityFormService {
     formFields
       .filter((formField) => entitySchema.get(formField.id))
       .forEach((formField) => {
-        formConfig[formField.id] = [copy[formField.id]];
+        const schema = entitySchema.get(formField.id);
+        let val = copy[formField.id];
+        if (
+          entity.isNew &&
+          schema.defaultValue &&
+          (!val || (val as []).length === 0)
+        ) {
+          val = this.getDefaultValue(schema);
+        }
+        formConfig[formField.id] = [val];
         if (formField.validators) {
           const validators = this.dynamicValidator.buildValidators(
             formField.validators
@@ -129,6 +145,24 @@ export class EntityFormService {
     );
     this.subscriptions.push(sub);
     return group;
+  }
+
+  private getDefaultValue<T>(schema: EntitySchemaField) {
+    let newVal;
+    switch (schema.defaultValue) {
+      case PLACEHOLDERS.NOW:
+        newVal = new Date();
+        break;
+      case PLACEHOLDERS.CURRENT_USER:
+        newVal = this.session.getCurrentUser().name;
+        break;
+      default:
+        newVal = schema.defaultValue;
+    }
+    if (isArrayDataType(schema.dataType)) {
+      newVal = [newVal];
+    }
+    return newVal;
   }
 
   /**
