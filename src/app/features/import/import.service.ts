@@ -43,7 +43,14 @@ export class ImportService {
     if (this.dateDataTypes.includes(schema.dataType)) {
       return {
         mappingCmp: DateValueMappingComponent,
-        mappingFn: (val, additional) => moment(val, additional, true).toDate(),
+        mappingFn: (val, additional) => {
+          const date = moment(val, additional, true);
+          if (date.isValid()) {
+            return date.toDate();
+          } else {
+            return undefined;
+          }
+        },
       };
     }
   }

@@ -17,29 +17,31 @@
       </div>
     </ng-template>
 
-    <div class="flex-row gap-large">
-      <app-import-file
-        class="flex-grow"
-        (dataLoaded)="onDataLoaded($event)"
-      ></app-import-file>
+    <ng-template matStepContent>
+      <div class="flex-row gap-large">
+        <app-import-file
+          class="flex-grow"
+          (dataLoaded)="onDataLoaded($event)"
+        ></app-import-file>
 
-      <mat-card>
-        <mat-card-content>
-          <app-import-history></app-import-history>
-        </mat-card-content>
-      </mat-card>
-    </div>
+        <mat-card>
+          <mat-card-content>
+            <app-import-history></app-import-history>
+          </mat-card-content>
+        </mat-card>
+      </div>
 
-    <div class="margin-top-regular">
-      <button
-        mat-button
-        [disabled]="!step1.completed"
-        i18n="import next step button"
-        matStepperNext
-      >
-        Continue
-      </button>
-    </div>
+      <div class="margin-top-regular">
+        <button
+          mat-button
+          [disabled]="!step1.completed"
+          i18n="import next step button"
+          matStepperNext
+        >
+          Continue
+        </button>
+      </div>
+    </ng-template>
   </mat-step>
 
   <!-- STEP 2: SELECT IMPORT TYPE -->
@@ -56,28 +58,30 @@
       </div>
     </ng-template>
 
-    <app-import-entity-type
-      [(entityType)]="entityType"
-    ></app-import-entity-type>
+    <ng-template matStepContent>
+      <app-import-entity-type
+        [(entityType)]="entityType"
+      ></app-import-entity-type>
 
-    <app-import-additional-actions
-      [entityType]="entityType"
-      [(importActions)]="additionalImportActions"
-    ></app-import-additional-actions>
+      <app-import-additional-actions
+        [entityType]="entityType"
+        [(importActions)]="additionalImportActions"
+      ></app-import-additional-actions>
 
-    <div class="margin-top-regular">
-      <button mat-button i18n="import back button" matStepperPrevious>
-        Back
-      </button>
-      <button
-        mat-button
-        [disabled]="!step2.completed"
-        i18n="import next step button"
-        matStepperNext
-      >
-        Continue
-      </button>
-    </div>
+      <div class="margin-top-regular">
+        <button mat-button i18n="import back button" matStepperPrevious>
+          Back
+        </button>
+        <button
+          mat-button
+          [disabled]="!step2.completed"
+          i18n="import next step button"
+          matStepperNext
+        >
+          Continue
+        </button>
+      </div>
+    </ng-template>
   </mat-step>
 
   <!-- STEP 3: MAP COLUMNS -->
@@ -86,25 +90,27 @@
       Map Columns
     </ng-template>
 
-    <app-import-column-mapping
-      [entityType]="entityType"
-      [columnMapping]="columnMapping"
-      [rawData]="rawData"
-    ></app-import-column-mapping>
+    <ng-template matStepContent>
+      <app-import-column-mapping
+        [entityType]="entityType"
+        [columnMapping]="columnMapping"
+        [rawData]="rawData"
+      ></app-import-column-mapping>
 
-    <div class="margin-top-regular">
-      <button mat-button i18n="import back button" matStepperPrevious>
-        Back
-      </button>
-      <button
-        mat-button
-        [disabled]="!step3.completed"
-        i18n="import next step button"
-        matStepperNext
-      >
-        Continue
-      </button>
-    </div>
+      <div class="margin-top-regular">
+        <button mat-button i18n="import back button" matStepperPrevious>
+          Back
+        </button>
+        <button
+          mat-button
+          [disabled]="!step3.completed"
+          i18n="import next step button"
+          matStepperNext
+        >
+          Continue
+        </button>
+      </div>
+    </ng-template>
   </mat-step>
 
   <!-- STEP 4: REVIEW DATA -->
@@ -113,16 +119,18 @@
       Review & Edit Data
     </ng-template>
 
-    <app-import-review-data
-      [rawData]="rawData"
-      [entityType]="entityType"
-      [columnMapping]="columnMapping"
-      (importComplete)="reset()"
-    ></app-import-review-data>
+    <ng-template matStepContent>
+      <app-import-review-data
+        [rawData]="rawData"
+        [entityType]="entityType"
+        [columnMapping]="columnMapping"
+        (importComplete)="reset()"
+      ></app-import-review-data>
 
-    <div>
-      <button mat-button matStepperPrevious>Back</button>
-      <button mat-button (click)="reset()">Cancel</button>
-    </div>
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="reset()">Cancel</button>
+      </div>
+    </ng-template>
   </mat-step>
 </mat-stepper>
