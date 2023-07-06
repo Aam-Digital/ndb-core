@@ -19,8 +19,7 @@ export class ImportColumnMappingComponent {
   @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[];
 
-  @Input()
-  set entityType(value: string) {
+  @Input() set entityType(value: string) {
     this.entityCtr = this.entities.get(value);
     this.mappingCmp = {};
     this.allProps = [...this.entityCtr.schema.entries()]

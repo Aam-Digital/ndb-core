@@ -17,7 +17,6 @@ import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
-import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-label/entity-type-label.pipe";
 import { BasicAutocompleteComponent } from "../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
 import { DisplayEntityComponent } from "../../core/entity-components/entity-select/display-entity/display-entity.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -29,6 +28,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { DynamicComponentDirective } from "../../core/view/dynamic-components/dynamic-component.directive";
 import { MatInputModule } from "@angular/material/input";
 import { ImportService } from "./import.service";
+import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-label/entity-type-label.pipe";
 
 @NgModule({
   declarations: [
@@ -54,7 +54,6 @@ import { ImportService } from "./import.service";
     MatFormFieldModule,
     MatOptionModule,
     MatSelectModule,
-    EntityTypeLabelPipe,
     BasicAutocompleteComponent,
     DisplayEntityComponent,
     ReactiveFormsModule,
@@ -65,7 +64,7 @@ import { ImportService } from "./import.service";
     DynamicComponentDirective,
     MatInputModule,
   ],
-  providers: [ImportService],
+  providers: [ImportService, EntityTypeLabelPipe],
   exports: [ImportComponent],
 })
 export class ImportModule {}

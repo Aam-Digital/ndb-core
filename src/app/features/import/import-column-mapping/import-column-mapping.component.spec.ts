@@ -1,6 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportColumnMappingComponent } from "./import-column-mapping.component";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { ImportModule } from "../import.module";
 
 describe("ImportMapColumnsComponent", () => {
   let component: ImportColumnMappingComponent;
@@ -8,6 +10,7 @@ describe("ImportMapColumnsComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
+      imports: [MockedTestingModule, ImportModule],
       declarations: [ImportColumnMappingComponent],
     }).compileComponents();
 
