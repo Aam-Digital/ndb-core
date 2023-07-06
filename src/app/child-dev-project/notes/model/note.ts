@@ -35,6 +35,7 @@ import {
 } from "../../../core/entity/model/warning-level";
 import { School } from "../../schools/model/school";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
@@ -93,6 +94,7 @@ export class Note extends Entity {
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
     dataType: "date-only",
+    defaultValue: PLACEHOLDERS.NOW,
   })
   date: Date;
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
@@ -107,6 +109,7 @@ export class Note extends Entity {
     label: $localize`:Label for the social worker(s) who created the note:SW`,
     dataType: "entity-array",
     additional: User.ENTITY_TYPE,
+    defaultValue: PLACEHOLDERS.CURRENT_USER,
   })
   authors: string[] = [];
 

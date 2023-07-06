@@ -116,9 +116,7 @@ export class TodoListComponent implements OnInit {
   }
 
   createNew() {
-    const newEntity = new Todo();
-    newEntity.assignedTo = [this.sessionService.getCurrentUser().name];
-    this.showDetails(newEntity);
+    this.showDetails(new Todo());
   }
 
   showDetails(entity: Todo) {
