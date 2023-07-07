@@ -9,7 +9,7 @@ import { SessionService } from "../../session/session-service/session.service";
 import { User } from "../user";
 
 export default {
-  title: "Core/User/User Security",
+  title: "Core/Admin/User Security",
   component: UserSecurityComponent,
   decorators: [
     moduleMetadata({

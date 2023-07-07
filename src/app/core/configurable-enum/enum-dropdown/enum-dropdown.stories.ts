@@ -17,7 +17,7 @@ const centerEnum = Object.assign(new ConfigurableEnum("center"), {
 });
 
 export default {
-  title: "Core/EntityComponents/Entity Property Fields/Enum Dropdown",
+  title: "Core/Entities/Edit Properties/Enum Dropdown",
   component: EnumDropdownComponent,
   decorators: [
     moduleMetadata({

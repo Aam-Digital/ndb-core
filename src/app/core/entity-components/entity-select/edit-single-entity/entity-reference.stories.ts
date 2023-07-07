@@ -24,7 +24,7 @@ const child1 = new Child("1");
 child1.name = "test child";
 
 export default {
-  title: "Core/EntityComponents/Entity Property Fields/Entity Reference",
+  title: "Core/Entities/Edit Properties/Entity Reference",
   component: FormComponent,
   decorators: [
     moduleMetadata({
