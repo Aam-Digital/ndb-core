@@ -24,7 +24,7 @@ jobs:
           SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK_URL }}
         with:
           extra_plugins: |
-            semantic-release-replace-plugin@1.2.4
+            @google/semantic-release-replace-plugin@1.2.0
             @semantic-release/git
             @semantic-release/github
             semantic-release-slack-bot
