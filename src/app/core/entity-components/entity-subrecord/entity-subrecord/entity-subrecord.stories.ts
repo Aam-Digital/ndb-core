@@ -21,7 +21,7 @@ const data = new DemoNoteGeneratorService(
 // TODO: fix stories for EntitySubrecord
 /*
 export default {
-  title: "Core/EntityComponents/EntitySubrecord",
+  title: "Core/Entities/EntitySubrecord",
   component: EntitySubrecordComponent,
   decorators: [
     moduleMetadata({

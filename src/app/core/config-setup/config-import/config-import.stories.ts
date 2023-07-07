@@ -4,7 +4,7 @@ import { ConfigImportComponent } from "./config-import.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
-  title: "Core/Config Import",
+  title: "Core/Admin/Config Import",
   component: ConfigImportComponent,
   decorators: [
     moduleMetadata({

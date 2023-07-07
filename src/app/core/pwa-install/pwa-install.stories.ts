@@ -5,7 +5,7 @@ import { PwaInstallComponent } from "./pwa-install.component";
 import { PwaInstallService, PWAInstallType } from "./pwa-install.service";
 
 export default {
-  title: "Core/PwaInstall",
+  title: "Core/> App Layout/PwaInstall",
   component: PwaInstallComponent,
   decorators: [
     moduleMetadata({

@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { DisplayEntityComponent } from "./display-entity.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
@@ -10,7 +10,7 @@ import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 
 export default {
-  title: "Core/EntityComponents/DisplayEntity",
+  title: "Core/Entities/Display Properties/DisplayEntity",
   component: DisplayEntityComponent,
   decorators: [
     moduleMetadata({
