@@ -63,6 +63,7 @@ import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-la
     MatDialogModule,
     DynamicComponentDirective,
     MatInputModule,
+    EntityTypeLabelPipe,
   ],
   providers: [ImportService, EntityTypeLabelPipe],
   exports: [ImportComponent],

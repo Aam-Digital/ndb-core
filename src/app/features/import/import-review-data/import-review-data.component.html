@@ -1,6 +1,7 @@
 <app-entity-subrecord
   *ngIf="mappedEntities.length > 0"
   [columns]="displayColumns"
+  [columnsToDisplay]="displayColumns"
   [records]="mappedEntities"
   clickMode="none"
   [editable]="false"

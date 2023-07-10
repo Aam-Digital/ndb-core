@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { ComponentType } from "@angular/cdk/overlay";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -18,6 +18,7 @@ import { ImportService } from "../import.service";
 export class ImportColumnMappingComponent {
   @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[];
+  @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   @Input() set entityType(value: string) {
     this.entityCtr = this.entities.get(value);
@@ -63,6 +64,13 @@ export class ImportColumnMappingComponent {
         disableClose: true,
       }
     );
+  }
+
+  /**
+   * Emit an updated columnMapping array and emit change event, to ensure smooth change detection.
+   */
+  updateMapping() {
+    this.columnMappingChange.emit([...this.columnMapping]);
   }
 }
 

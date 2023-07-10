@@ -42,4 +42,7 @@ WithSampleData.args = {
   rawData: IMPORT_SAMPLE_RAW_DATA,
   entityType: "Child",
   additionalImportActions: IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
+  columnMapping: Object.keys(IMPORT_SAMPLE_RAW_DATA[0]).map((k) => ({
+    column: k,
+  })),
 };
