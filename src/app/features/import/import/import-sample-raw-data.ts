@@ -2,6 +2,7 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
 import { Entity } from "../../../core/entity/model/entity";
+import { ColumnMapping } from "../column-mapping";
 
 /**
  * Sample raw data that can be used in Storybook and tests.
@@ -9,10 +10,21 @@ import { Entity } from "../../../core/entity/model/entity";
 export const IMPORT_SAMPLE_RAW_DATA: any[] = [
   {
     name: "John Doe",
-    dateOfBirth: "2001-01-31",
+    birthDate: "2001-01-31",
     gender: "M",
   },
 ];
+
+export const IMPORT_SAMPLE_COLUMN_MAPPING: ColumnMapping[] = Object.keys(
+  IMPORT_SAMPLE_RAW_DATA[0]
+).map((k) => ({
+  column: k,
+}));
+IMPORT_SAMPLE_COLUMN_MAPPING.find((c) => c.column === "name").propertyName =
+  "name";
+IMPORT_SAMPLE_COLUMN_MAPPING.find(
+  (c) => c.column === "birthDate"
+).propertyName = "dateOfBirth";
 
 export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
   School.create({ name: "Sample School" }),

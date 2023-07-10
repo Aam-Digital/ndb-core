@@ -25,6 +25,9 @@ export class ImportComponent {
   @ViewChild(MatStepper) stepper: MatStepper;
   @ViewChild(ImportFileComponent) importFileComponent: ImportFileComponent;
 
+  /** calculated for validation on columnMapping changes */
+  mappedColumnsCount: number;
+
   constructor(private confirmationDialog: ConfirmationDialogService) {}
 
   async reset() {
@@ -50,5 +53,12 @@ export class ImportComponent {
 
     // trigger next step automatically after change detection ran and recognized the current step as [completed]
     setTimeout(() => this.stepper.next());
+  }
+
+  onColumnMappingUpdate(newColumnMapping: ColumnMapping[]) {
+    this.columnMapping = newColumnMapping;
+    this.mappedColumnsCount = newColumnMapping.filter(
+      (m) => !!m.propertyName
+    ).length;
   }
 }

@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { ComponentType } from "@angular/cdk/overlay";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -15,7 +22,7 @@ import { ImportService } from "../import.service";
   templateUrl: "./import-column-mapping.component.html",
   styleUrls: ["./import-column-mapping.component.scss"],
 })
-export class ImportColumnMappingComponent {
+export class ImportColumnMappingComponent implements OnChanges {
   @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
@@ -49,6 +56,23 @@ export class ImportColumnMappingComponent {
     private importService: ImportService,
     private dialog: MatDialog
   ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.hasOwnProperty("entityType")) {
+      this.resetMappingToEntityType();
+    }
+  }
+
+  /**
+   * un-map properties not matching the entityType
+   * @private
+   */
+  private resetMappingToEntityType() {
+    this.columnMapping
+      .filter((c) => !this.allProps.includes(c.propertyName))
+      .forEach((c) => (c.propertyName = undefined));
+    this.updateMapping();
+  }
 
   openMappingComponent(col: ColumnMapping) {
     const uniqueValues = new Set();

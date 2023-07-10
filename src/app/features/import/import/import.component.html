@@ -85,15 +85,24 @@
   </mat-step>
 
   <!-- STEP 3: MAP COLUMNS -->
-  <mat-step [completed]="!!columnMapping" #step3>
-    <ng-template matStepLabel i18n="Import Step - map columns">
-      Map Columns
+  <mat-step [completed]="mappedColumnsCount > 0" #step3>
+    <ng-template matStepLabel>
+      <div i18n="Import Step - map columns">Map Columns</div>
+
+      <div
+        *ngIf="step3.completed"
+        class="step-label-extra"
+        i18n="Import Step - map columns - sub-label"
+      >
+        {{ mappedColumnsCount }} columns selected
+      </div>
     </ng-template>
 
     <ng-template matStepContent>
       <app-import-column-mapping
         [entityType]="entityType"
-        [(columnMapping)]="columnMapping"
+        [columnMapping]="columnMapping"
+        (columnMappingChange)="onColumnMappingUpdate($event)"
         [rawData]="rawData"
       ></app-import-column-mapping>
 
@@ -114,7 +123,7 @@
   </mat-step>
 
   <!-- STEP 4: REVIEW DATA -->
-  <mat-step #step4>
+  <mat-step [completed]="false" #step4>
     <ng-template matStepLabel i18n="Import Step - review data">
       Review & Edit Data
     </ng-template>
@@ -127,7 +136,7 @@
         (importComplete)="reset()"
       ></app-import-review-data>
 
-      <div>
+      <div class="stepper-navigation-margin">
         <button mat-button matStepperPrevious>Back</button>
         <button mat-button (click)="reset()">Cancel</button>
       </div>
