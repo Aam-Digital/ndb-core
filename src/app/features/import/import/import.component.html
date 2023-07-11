@@ -63,10 +63,16 @@
         [(entityType)]="entityType"
       ></app-import-entity-type>
 
-      <app-import-additional-actions
-        [entityType]="entityType"
-        [(importActions)]="additionalImportActions"
-      ></app-import-additional-actions>
+      <mat-expansion-panel>
+        <mat-expansion-panel-header>
+          <mat-panel-title i18n>Additional Import Actions</mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <app-import-additional-actions
+          [entityType]="entityType"
+          [(importActions)]="additionalImportActions"
+        ></app-import-additional-actions>
+      </mat-expansion-panel>
 
       <div class="margin-top-regular">
         <button mat-button i18n="import back button" matStepperPrevious>

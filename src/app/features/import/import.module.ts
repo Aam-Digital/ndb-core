@@ -29,6 +29,7 @@ import { DynamicComponentDirective } from "../../core/view/dynamic-components/dy
 import { MatInputModule } from "@angular/material/input";
 import { ImportService } from "./import.service";
 import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { MatExpansionModule } from "@angular/material/expansion";
 
 @NgModule({
   declarations: [
@@ -64,6 +65,7 @@ import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-la
     DynamicComponentDirective,
     MatInputModule,
     EntityTypeLabelPipe,
+    MatExpansionModule,
   ],
   providers: [ImportService, EntityTypeLabelPipe],
   exports: [ImportComponent],

@@ -12,6 +12,7 @@ export const IMPORT_SAMPLE_RAW_DATA: any[] = [
     name: "John Doe",
     birthDate: "2001-01-31",
     gender: "M",
+    remarks: "foo bar",
   },
 ];
 
@@ -25,6 +26,8 @@ IMPORT_SAMPLE_COLUMN_MAPPING.find((c) => c.column === "name").propertyName =
 IMPORT_SAMPLE_COLUMN_MAPPING.find(
   (c) => c.column === "birthDate"
 ).propertyName = "dateOfBirth";
+IMPORT_SAMPLE_COLUMN_MAPPING.find((c) => c.column === "gender").propertyName =
+  "gender";
 
 export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
   School.create({ name: "Sample School" }),

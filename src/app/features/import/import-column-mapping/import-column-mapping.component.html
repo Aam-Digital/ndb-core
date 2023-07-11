@@ -1,3 +1,10 @@
+<p i18n>
+  The form below lists all columns from your imported file. Select a property of
+  the record type in the system, into which you want to import that column. If
+  you do not select anything for a column, that column will be ignored during
+  the import.
+</p>
+
 <div>
   <div *ngFor="let col of columnMapping">
     <mat-form-field>
@@ -10,12 +17,17 @@
         [hideOption]="isUsed"
       />
     </mat-form-field>
+
     <button
+      class="margin-left-small"
       mat-button
       *ngIf="mappingCmp[col.propertyName]"
       (click)="openMappingComponent(col)"
+      i18n="
+        import - column mapping - configure additional transformation button
+      "
     >
-      Map values
+      Configure value mapping
     </button>
   </div>
 </div>
