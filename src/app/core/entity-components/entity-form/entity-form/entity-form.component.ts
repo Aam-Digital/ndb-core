@@ -19,6 +19,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Subscription } from "rxjs";
 import moment from "moment";
+import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -45,6 +46,7 @@ import moment from "moment";
     MatTooltipModule,
     FontAwesomeModule,
     NgClass,
+    HelpButtonComponent,
   ],
   standalone: true,
 })
