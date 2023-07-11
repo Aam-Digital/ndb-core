@@ -2,17 +2,26 @@ import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportReviewDataComponent } from "./import-review-data.component";
-import { IMPORT_SAMPLE_RAW_DATA } from "../import/import-sample-raw-data";
+import {
+  IMPORT_SAMPLE_COLUMN_MAPPING,
+  IMPORT_SAMPLE_RAW_DATA,
+} from "../import/import-sample-raw-data";
 import { ImportService } from "../import.service";
-import { genders } from "../../../child-dev-project/children/model/genders";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { MatButtonModule } from "@angular/material/button";
+import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
 
 export default {
   title: "Features/Import/4 Review & Edit Data",
   component: ImportReviewDataComponent,
   decorators: [
     moduleMetadata({
-      imports: [StorybookBaseModule, EntitySubrecordComponent],
+      imports: [
+        StorybookBaseModule,
+        EntitySubrecordComponent,
+        MatButtonModule,
+        HelpButtonComponent,
+      ],
       declarations: [ImportReviewDataComponent],
       providers: [ImportService],
     }),
@@ -29,17 +38,5 @@ export const Basic = Template.bind({});
 Basic.args = {
   rawData: IMPORT_SAMPLE_RAW_DATA,
   entityType: "Child",
-  columnMapping: [
-    { column: "name", propertyName: "name" },
-    {
-      column: "dateOfBirth",
-      propertyName: "dateOfBirth",
-      additional: "YYYY-MM-DD",
-    },
-    {
-      column: "gender",
-      propertyName: "gender",
-      additional: { M: genders.find(({ id }) => id === "M") },
-    },
-  ],
+  columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
 };

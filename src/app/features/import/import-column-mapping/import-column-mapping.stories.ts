@@ -11,6 +11,7 @@ import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basi
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
+import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
 
 export default {
   title: "Features/Import/3 Map Columns",
@@ -23,6 +24,7 @@ export default {
         MatButtonModule,
         BasicAutocompleteComponent,
         FormsModule,
+        HelpButtonComponent,
       ],
       declarations: [ImportColumnMappingComponent],
       providers: [ImportService],

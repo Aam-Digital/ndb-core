@@ -17,6 +17,7 @@ import {
 } from "../import/import-sample-raw-data";
 import { MatButtonModule } from "@angular/material/button";
 import { MatListModule } from "@angular/material/list";
+import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
 
 const mockImportService = {
   getLinkableEntityTypes: () => ["RecurringActivity", "School"],
@@ -34,6 +35,7 @@ export default {
         DisplayEntityComponent,
         MatButtonModule,
         MatListModule,
+        HelpButtonComponent,
       ],
       declarations: [ImportAdditionalActionsComponent],
       providers: [

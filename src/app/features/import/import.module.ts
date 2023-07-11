@@ -30,6 +30,7 @@ import { MatInputModule } from "@angular/material/input";
 import { ImportService } from "./import.service";
 import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-label/entity-type-label.pipe";
 import { MatExpansionModule } from "@angular/material/expansion";
+import { HelpButtonComponent } from "../../core/common-components/help-button/help-button.component";
 
 @NgModule({
   declarations: [
@@ -66,6 +67,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
     MatInputModule,
     EntityTypeLabelPipe,
     MatExpansionModule,
+    HelpButtonComponent,
   ],
   providers: [ImportService, EntityTypeLabelPipe],
   exports: [ImportComponent],

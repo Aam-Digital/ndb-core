@@ -3,6 +3,7 @@ import { RecurringActivity } from "../../../child-dev-project/attendance/model/r
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
 import { Entity } from "../../../core/entity/model/entity";
 import { ColumnMapping } from "../column-mapping";
+import { genders } from "../../../child-dev-project/children/model/genders";
 
 /**
  * Sample raw data that can be used in Storybook and tests.
@@ -26,8 +27,13 @@ IMPORT_SAMPLE_COLUMN_MAPPING.find((c) => c.column === "name").propertyName =
 IMPORT_SAMPLE_COLUMN_MAPPING.find(
   (c) => c.column === "birthDate"
 ).propertyName = "dateOfBirth";
-IMPORT_SAMPLE_COLUMN_MAPPING.find((c) => c.column === "gender").propertyName =
-  "gender";
+Object.assign(
+  IMPORT_SAMPLE_COLUMN_MAPPING.find((c) => c.column === "gender"),
+  {
+    propertyName: "gender",
+    additional: { M: genders.find(({ id }) => id === "M") },
+  }
+);
 
 export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
   School.create({ name: "Sample School" }),

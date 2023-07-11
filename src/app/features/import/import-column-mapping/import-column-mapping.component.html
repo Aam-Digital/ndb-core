@@ -1,9 +1,16 @@
-<p i18n>
-  The form below lists all columns from your imported file. Select a property of
-  the record type in the system, into which you want to import that column. If
-  you do not select anything for a column, that column will be ignored during
-  the import.
-</p>
+<div>
+  <span i18n>Define how columns will be imported:</span>
+
+  <app-help-button
+    style="float: right"
+    text="The form below lists all columns from your imported file. Select a property of
+  the record type in the system, into which you want to import that column. If you do
+  not select anything for a column, that column will be ignored during the import.
+  For advanced data types you can also configure how the imported data should be mapped and transformed."
+    i18n-text="import - column mapping - help text"
+  >
+  </app-help-button>
+</div>
 
 <div>
   <div *ngFor="let col of columnMapping">

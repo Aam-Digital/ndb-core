@@ -1,3 +1,17 @@
+<div class="flex-row gap-regular align-center">
+  <span class="flex-grow" i18n>Review your import and confirm:</span>
+
+  <button mat-raised-button color="accent" i18n>Confirm & Import</button>
+
+  <app-help-button
+    text="The data previewed here is mapped and transformed according to the 'Column Mapping' you defined in the previous step.
+        If necessary, you can go back to that and make changes to the mapping.
+        You can also manually edit any row of the data here before it is imported."
+    i18n-text="import - review data - help text"
+  >
+  </app-help-button>
+</div>
+
 <app-entity-subrecord
   *ngIf="mappedEntities.length > 0"
   [columns]="displayColumns"
