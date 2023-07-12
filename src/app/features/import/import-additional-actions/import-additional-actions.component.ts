@@ -85,7 +85,8 @@ export class ImportAdditionalActionsComponent implements OnChanges {
       type: this.linkEntityForm.get("type").value,
       id: this.linkEntityForm.get("id").value,
     };
-    this.importActions = [...this.importActions, newAction];
+    this.importActions = [...(this.importActions ?? []), newAction];
+    this.linkEntityForm.reset();
     this.importActionsChange.emit(this.importActions);
   }
 
