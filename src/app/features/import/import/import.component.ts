@@ -1,5 +1,4 @@
 import { Component, ViewChild } from "@angular/core";
-import { RouteTarget } from "../../../app.routing";
 import { ParsedData } from "../../data-import/input-file/input-file.component";
 import { MatStepper } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
@@ -12,7 +11,7 @@ import { AlertService } from "../../../core/alerts/alert.service";
 /**
  * View providing a full UI workflow to import data from an uploaded file.
  */
-@RouteTarget("Import")
+//TODO: @RouteTarget("Import")
 @Component({
   selector: "app-import",
   templateUrl: "./import.component.html",

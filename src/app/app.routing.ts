@@ -22,6 +22,7 @@ import { UserAccountComponent } from "./core/user/user-account/user-account.comp
 import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
+import { ImportComponent } from "./features/import/import/import.component";
 
 /**
  * Marks a class to be the target when routing.
@@ -62,6 +63,10 @@ export const allRoutes: Routes = [
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
+
+  // TODO: properly register this with @RouteTarget() ...
+  { path: "import", component: ImportComponent },
+
   {
     path: "**",
     pathMatch: "full",

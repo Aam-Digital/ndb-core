@@ -1,5 +1,9 @@
 @use "src/styles/variables/colors";
 
+mat-stepper {
+  background-color: transparent;
+}
+
 .stepper-icon {
   font-size: 0.8em;
 }
