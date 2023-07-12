@@ -2,7 +2,8 @@ import { Component, Inject } from "@angular/core";
 import { ImportService } from "../import.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/model/entity";
-import { ImportSettings } from "../import-metadata";
+import { ImportMetadata, ImportSettings } from "../import-metadata";
+import { MatSnackBar } from "@angular/material/snack-bar";
 
 /**
  * Data passed into Import Confirmation Dialog.
@@ -23,6 +24,7 @@ export class ImportConfirmSummaryComponent {
   constructor(
     private dialogRef: MatDialogRef<ImportConfirmSummaryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ImportDialogData,
+    private snackBar: MatSnackBar,
     private importService: ImportService
   ) {}
 
@@ -32,13 +34,27 @@ export class ImportConfirmSummaryComponent {
     this.importInProgress = true;
     this.dialogRef.disableClose = true;
 
-    await this.importService.executeImport(
+    const completedImport = await this.importService.executeImport(
       this.data.entitiesToImport,
       this.data.importSettings
     );
+    this.showImportSuccessToast(completedImport);
 
     this.importInProgress = false;
     this.dialogRef.disableClose = false;
-    this.dialogRef.close(true);
+    this.dialogRef.close(completedImport);
+  }
+
+  private showImportSuccessToast(completedImport: ImportMetadata) {
+    const snackBarRef = this.snackBar.open(
+      $localize`Import completed`,
+      $localize`Undo`,
+      {
+        duration: 8000,
+      }
+    );
+    snackBarRef.onAction().subscribe(async () => {
+      await this.importService.undoImport(completedImport);
+    });
   }
 }

@@ -60,20 +60,21 @@ export class ImportService {
     }
   }
 
-  async executeImport(entitiesToImport: Entity[], settings: ImportSettings) {
+  async executeImport(
+    entitiesToImport: Entity[],
+    settings: ImportSettings
+  ): Promise<ImportMetadata> {
     const savedDocs = await this.entityMapper.saveAll(entitiesToImport);
     // TODO: execute additional import actions
-    await this.saveImportHistory(savedDocs, settings);
+    return await this.saveImportHistory(savedDocs, settings);
   }
 
-  private async saveImportHistory(
-    savedDocs: Entity[],
-    settings: ImportSettings
-  ) {
+  private async saveImportHistory(savedDocs: any[], settings: ImportSettings) {
     const importMeta = new ImportMetadata();
     importMeta.config = settings;
-    importMeta.ids = savedDocs.map((entity) => entity.getId(true));
+    importMeta.ids = savedDocs.map((entity) => entity["_id"]);
     await this.entityMapper.save(importMeta);
+    return importMeta;
   }
 
   undoImport(item: ImportMetadata) {

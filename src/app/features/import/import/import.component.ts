@@ -75,4 +75,8 @@ export class ImportComponent {
     // TODO: ensure all and only rawData columns exist
     this.columnMapping = importMetadata.config.columnMapping;
   }
+
+  onImportCompleted(completedImport: ImportMetadata) {
+    this.reset(true);
+  }
 }

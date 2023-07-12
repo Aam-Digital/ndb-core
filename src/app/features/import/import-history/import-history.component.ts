@@ -3,7 +3,10 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { ImportMetadata } from "../import-metadata";
 import { ImportService } from "../import.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { applyUpdate } from "../../../core/entity/model/entity-update";
 
+@UntilDestroy()
 @Component({
   selector: "app-import-history",
   templateUrl: "./import-history.component.html",
@@ -20,16 +23,31 @@ export class ImportHistoryComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private importService: ImportService,
     private confirmationDialog: ConfirmationDialogService
-  ) {}
+  ) {
+    this.entityMapper
+      .receiveUpdates(ImportMetadata)
+      .pipe(untilDestroyed(this))
+      .subscribe((update) => {
+        this.previousImports = applyUpdate(this.previousImports, update);
+        this.sortAndHighlightImports();
+      });
+  }
 
   ngOnInit(): void {
     this.loadPreviousImports();
   }
 
   private async loadPreviousImports() {
-    this.previousImports = (
-      await this.entityMapper.loadType<ImportMetadata>(ImportMetadata)
-    ).sort((a, b) => b.date.getTime() - a.date.getTime());
+    this.previousImports = await this.entityMapper.loadType<ImportMetadata>(
+      ImportMetadata
+    );
+    this.sortAndHighlightImports();
+  }
+
+  private sortAndHighlightImports() {
+    this.previousImports = this.previousImports.sort(
+      (a, b) => b.date.getTime() - a.date.getTime()
+    );
 
     if (!this.highlightedPreviousImport) {
       this.highlightedPreviousImport = this.previousImports?.[0];

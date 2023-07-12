@@ -17,6 +17,7 @@ import {
   ImportDialogData,
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
+import { ImportMetadata } from "../import-metadata";
 
 @Component({
   selector: "app-import-review-data",
@@ -28,7 +29,7 @@ export class ImportReviewDataComponent implements OnChanges {
   @Input() entityType: string;
   @Input() columnMapping: ColumnMapping[];
 
-  @Output() importComplete = new EventEmitter<void>();
+  @Output() importComplete = new EventEmitter<ImportMetadata>();
 
   mappedEntities: Entity[] = [];
   displayColumns: string[] = [];
@@ -104,8 +105,8 @@ export class ImportReviewDataComponent implements OnChanges {
         .afterClosed()
     );
 
-    if (confirmationResult) {
-      this.importComplete.emit();
+    if (!!confirmationResult) {
+      this.importComplete.emit(confirmationResult);
     }
   }
 }

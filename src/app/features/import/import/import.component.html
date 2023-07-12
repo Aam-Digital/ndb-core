@@ -150,7 +150,7 @@
         [rawData]="rawData"
         [entityType]="entityType"
         [columnMapping]="columnMapping"
-        (importComplete)="reset(true)"
+        (importComplete)="onImportCompleted($event)"
       ></app-import-review-data>
 
       <div class="stepper-navigation-margin">
