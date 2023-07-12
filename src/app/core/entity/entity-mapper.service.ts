@@ -156,7 +156,7 @@ export class EntityMapperService {
    * saved
    * @param entities The entities to save
    */
-  public async saveAll(entities: Entity[]): Promise<any> {
+  public async saveAll(entities: Entity[]): Promise<any[]> {
     entities.forEach((e) => this.setEntityMetadata(e));
     const rawData = entities.map((e) =>
       this.entitySchemaService.transformEntityToDatabaseFormat(e)

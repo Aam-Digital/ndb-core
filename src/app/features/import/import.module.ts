@@ -31,6 +31,7 @@ import { ImportService } from "./import.service";
 import { EntityTypeLabelPipe } from "../../core/entity-components/entity-type-label/entity-type-label.pipe";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { HelpButtonComponent } from "../../core/common-components/help-button/help-button.component";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
 
 @NgModule({
   declarations: [
@@ -68,6 +69,7 @@ import { HelpButtonComponent } from "../../core/common-components/help-button/he
     EntityTypeLabelPipe,
     MatExpansionModule,
     HelpButtonComponent,
+    MatProgressBarModule,
   ],
   providers: [ImportService, EntityTypeLabelPipe],
   exports: [ImportComponent],

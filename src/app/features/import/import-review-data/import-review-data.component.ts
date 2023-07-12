@@ -11,6 +11,12 @@ import { Entity } from "../../../core/entity/model/entity";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ImportService } from "../import.service";
+import { MatDialog } from "@angular/material/dialog";
+import {
+  ImportConfirmSummaryComponent,
+  ImportData,
+} from "../import-confirm-summary/import-confirm-summary.component";
+import { lastValueFrom } from "rxjs";
 
 @Component({
   selector: "app-import-review-data",
@@ -30,7 +36,8 @@ export class ImportReviewDataComponent implements OnChanges {
   constructor(
     private entityTypes: EntityRegistry,
     private schemaService: EntitySchemaService,
-    private importService: ImportService
+    private importService: ImportService,
+    private matDialog: MatDialog
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -79,6 +86,20 @@ export class ImportReviewDataComponent implements OnChanges {
       return this.schemaService
         .getDatatypeOrDefault(schema.dataType)
         .transformToObjectFormat(val, schema, this.schemaService, entity);
+    }
+  }
+
+  async startImport() {
+    const confirmationResult = await lastValueFrom(
+      this.matDialog
+        .open(ImportConfirmSummaryComponent, {
+          data: { entitiesToImport: this.mappedEntities } as ImportData,
+        })
+        .afterClosed()
+    );
+
+    if (confirmationResult) {
+      this.importComplete.emit();
     }
   }
 }

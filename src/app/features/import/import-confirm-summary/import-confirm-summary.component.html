@@ -1,4 +1,33 @@
-<p>You are now done.</p>
-<div>
-  <button mat-stroked-button color="accent">Confirm & Run Import</button>
-</div>
+<h2 *ngIf="!importInProgress" mat-dialog-title i18n>Start Import?</h2>
+<h2 *ngIf="importInProgress" mat-dialog-title i18n>Importing Data</h2>
+
+<mat-dialog-content>
+  <!-- Summary -->
+  <div i18n>{{ data.entitiesToImport?.length }} records will be imported.</div>
+
+  <!-- Progress -->
+  <div *ngIf="importInProgress" class="margin-top-large">
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    <div i18n>Importing data ...</div>
+  </div>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button
+    mat-stroked-button
+    color="accent"
+    (click)="executeImport()"
+    [disabled]="importInProgress"
+    i18n
+  >
+    Confirm & Run Import
+  </button>
+  <button
+    mat-stroked-button
+    [mat-dialog-close]="false"
+    [disabled]="importInProgress"
+    i18n
+  >
+    Cancel
+  </button>
+</mat-dialog-actions>

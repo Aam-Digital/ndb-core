@@ -8,6 +8,9 @@ import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
 import { ComponentType } from "@angular/cdk/overlay";
+import { Entity } from "../../core/entity/model/entity";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { ImportMetadata } from "./import-metadata";
 
 @Injectable()
 export class ImportService {
@@ -17,6 +20,8 @@ export class ImportService {
     monthEntitySchemaDatatype,
     dateWithAgeEntitySchemaDatatype,
   ].map((dataType) => dataType.name);
+
+  constructor(private entityMapper: EntityMapperService) {}
 
   getMappingComponent(schema: EntitySchemaField) {
     return this.getImportMapping(schema)?.mappingCmp;
@@ -53,5 +58,21 @@ export class ImportService {
         },
       };
     }
+  }
+
+  async executeImport(entitiesToImport: Entity[]) {
+    const savedDocs = await this.entityMapper.saveAll(entitiesToImport);
+    // TODO: execute additional import actions
+    await this.saveImportHistory(savedDocs);
+  }
+
+  private async saveImportHistory(savedDocs: Entity[]) {
+    const importMeta = new ImportMetadata();
+    importMeta.config = {
+      entityType: null, // TODO
+      columnMapping: null, // TODO
+    };
+    importMeta.ids = savedDocs.map((entity) => entity.getId(true));
+    await this.entityMapper.save(importMeta);
   }
 }

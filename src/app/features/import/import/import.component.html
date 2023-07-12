@@ -65,7 +65,15 @@
 
       <mat-expansion-panel>
         <mat-expansion-panel-header>
-          <mat-panel-title i18n>Additional Import Actions</mat-panel-title>
+          <mat-panel-title>
+            <span i18n>Additional Import Actions</span>
+            <app-help-button
+              style="float: right"
+              text="In addition to creating new records directly for the imported data you can also define some additional actions, like adding the new records to an existing group."
+              i18n-text="import - additional actions - help text"
+            >
+            </app-help-button>
+          </mat-panel-title>
         </mat-expansion-panel-header>
 
         <app-import-additional-actions
@@ -139,7 +147,7 @@
         [rawData]="rawData"
         [entityType]="entityType"
         [columnMapping]="columnMapping"
-        (importComplete)="reset()"
+        (importComplete)="reset(true)"
       ></app-import-review-data>
 
       <div class="stepper-navigation-margin">

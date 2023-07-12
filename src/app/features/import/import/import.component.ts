@@ -30,8 +30,9 @@ export class ImportComponent {
 
   constructor(private confirmationDialog: ConfirmationDialogService) {}
 
-  async reset() {
+  async reset(skipConfirmation?: boolean) {
     if (
+      !skipConfirmation &&
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Import Reset Confirmation title:Cancel Import?`,
         $localize`:Import Reset Confirmation text:Do you really want to discard the currently prepared import?`
