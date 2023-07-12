@@ -1,5 +1,5 @@
 import { Component, ViewChild } from "@angular/core";
-import { ParsedData } from "../../data-import/input-file/input-file.component";
+import { ParsedData } from "../../../core/input-file/input-file.component";
 import { MatStepper } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";

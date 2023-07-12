@@ -65,7 +65,7 @@ export class ImportService {
     settings: ImportSettings
   ): Promise<ImportMetadata> {
     const savedDocs = await this.entityMapper.saveAll(entitiesToImport);
-    // TODO: execute additional import actions
+    // TODO: execute additional import actions; see former DataImportService .linkEntities .linkToSchool .linkToActivity
     return await this.saveImportHistory(savedDocs, settings);
   }
 

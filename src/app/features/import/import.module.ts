@@ -6,7 +6,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ImportFileComponent } from "./import-file/import-file.component";
 import { ImportHistoryComponent } from "./import-history/import-history.component";
-import { InputFileComponent } from "../data-import/input-file/input-file.component";
+import { InputFileComponent } from "../../core/input-file/input-file.component";
 import { ImportEntityTypeComponent } from "./import-entity-type/import-entity-type.component";
 import { ImportColumnMappingComponent } from "./import-column-mapping/import-column-mapping.component";
 import { ImportReviewDataComponent } from "./import-review-data/import-review-data.component";

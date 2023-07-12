@@ -5,11 +5,8 @@ import { ImportAdditionalActionsComponent } from "./import-additional-actions.co
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
 import { DisplayEntityComponent } from "../../../core/entity-components/entity-select/display-entity/display-entity.component";
-import { DataImportService } from "../../data-import/data-import.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
-import { School } from "../../../child-dev-project/schools/model/school";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
 import {
   IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
@@ -18,10 +15,6 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatListModule } from "@angular/material/list";
 import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
-
-const mockImportService = {
-  getLinkableEntityTypes: () => ["RecurringActivity", "School"],
-};
 
 export default {
   title: "Features/Import/2b Select Additional Actions",
@@ -39,7 +32,6 @@ export default {
       ],
       declarations: [ImportAdditionalActionsComponent],
       providers: [
-        { provide: DataImportService, useValue: mockImportService },
         {
           provide: EntityMapperService,
           useValue: mockEntityMapper(IMPORT_SAMPLE_LINKABLE_DATA),

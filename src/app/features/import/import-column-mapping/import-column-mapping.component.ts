@@ -96,6 +96,26 @@ export class ImportColumnMappingComponent implements OnChanges {
   updateMapping() {
     this.columnMappingChange.emit([...this.columnMapping]);
   }
+
+  // TODO: infer column mapping from data. The following is from old DataImportModule
+  /**
+   * Try to guess mappings of import file columns to entity properties.
+   * (e.g. based on column headers)
+   * @private
+   */
+  private inferColumnPropertyMapping() {
+    //const columnMap: ImportColumnMap = {};
+    //    for (const p of this.properties) {
+    //      const match = this.importData?.fields.find(
+    //        (f) => f === p.label || f === p.key
+    //      );
+    //      if (match) {
+    //        columnMap[match] = p;
+    //      }
+    //    }
+    //
+    //    this.loadColumnMapping(columnMap);
+  }
 }
 
 export interface MappingDialogData {

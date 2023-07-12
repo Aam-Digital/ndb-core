@@ -1,5 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { readFile } from "../../../utils/utils";
+import { readFile } from "../../utils/utils";
 import { Papa } from "ngx-papaparse";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -22,9 +22,9 @@ import { NgIf } from "@angular/common";
     ReactiveFormsModule,
     MatButtonModule,
     FontAwesomeModule,
-    NgIf
+    NgIf,
   ],
-  standalone: true
+  standalone: true,
 })
 export class InputFileComponent<T = any> {
   /** returns parsed data as an object on completing load after user selects a file */

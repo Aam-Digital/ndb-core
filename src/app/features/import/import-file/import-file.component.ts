@@ -2,7 +2,7 @@ import { Component, EventEmitter, Output, ViewChild } from "@angular/core";
 import {
   InputFileComponent,
   ParsedData,
-} from "../../data-import/input-file/input-file.component";
+} from "../../../core/input-file/input-file.component";
 
 /**
  * Import sub-step: Let user load a file and return parsed data.

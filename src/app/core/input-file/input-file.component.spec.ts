@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { InputFileComponent } from "./input-file.component";
 import { Papa } from "ngx-papaparse";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { MockedTestingModule } from "../../utils/mocked-testing.module";
 
 function mockFileEvent(mockFile: { name: string }): Event {
   return { target: { files: [mockFile] } } as unknown as Event;
