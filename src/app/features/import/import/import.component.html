@@ -19,27 +19,30 @@
 
     <ng-template matStepContent>
       <div class="flex-row gap-large">
-        <app-import-file
-          class="flex-grow"
-          (dataLoaded)="onDataLoaded($event)"
-        ></app-import-file>
+        <div class="flex-grow">
+          <app-import-file
+            (dataLoaded)="onDataLoaded($event)"
+          ></app-import-file>
 
-        <mat-card>
+          <div class="margin-top-regular">
+            <button
+              mat-button
+              [disabled]="!step1.completed"
+              i18n="import next step button"
+              matStepperNext
+            >
+              Continue
+            </button>
+          </div>
+        </div>
+
+        <mat-card class="flex-grow-1-3">
           <mat-card-content>
-            <app-import-history></app-import-history>
+            <app-import-history
+              (itemSelected)="applyPreviousMapping($event)"
+            ></app-import-history>
           </mat-card-content>
         </mat-card>
-      </div>
-
-      <div class="margin-top-regular">
-        <button
-          mat-button
-          [disabled]="!step1.completed"
-          i18n="import next step button"
-          matStepperNext
-        >
-          Continue
-        </button>
       </div>
     </ng-template>
   </mat-step>

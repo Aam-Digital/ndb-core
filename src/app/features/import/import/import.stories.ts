@@ -8,11 +8,14 @@ import {
   IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
   IMPORT_SAMPLE_COLUMN_MAPPING,
   IMPORT_SAMPLE_LINKABLE_DATA,
+  IMPORT_SAMPLE_PREVIOUS_IMPORTS,
   IMPORT_SAMPLE_RAW_DATA,
 } from "./import-sample-raw-data";
 import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { User } from "../../../core/user/user";
+import { TEST_USER } from "../../../utils/mocked-testing.module";
 
 export default {
   title: "Features/Import/> Overall Module",
@@ -23,7 +26,11 @@ export default {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper(IMPORT_SAMPLE_LINKABLE_DATA),
+          useValue: mockEntityMapper([
+            ...IMPORT_SAMPLE_LINKABLE_DATA,
+            ...IMPORT_SAMPLE_PREVIOUS_IMPORTS,
+            Object.assign(new User(TEST_USER), { name: TEST_USER }),
+          ]),
         },
         EntityTypeLabelPipe,
       ],

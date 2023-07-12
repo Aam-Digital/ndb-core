@@ -6,6 +6,8 @@ import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
+import { ImportMetadata } from "../import-metadata";
+import { AlertService } from "../../../core/alerts/alert.service";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -28,7 +30,10 @@ export class ImportComponent {
   /** calculated for validation on columnMapping changes */
   mappedColumnsCount: number;
 
-  constructor(private confirmationDialog: ConfirmationDialogService) {}
+  constructor(
+    private confirmationDialog: ConfirmationDialogService,
+    private alertService: AlertService
+  ) {}
 
   async reset(skipConfirmation?: boolean) {
     if (
@@ -50,10 +55,13 @@ export class ImportComponent {
 
   onDataLoaded(data: ParsedData<any>) {
     this.rawData = data.data;
-    this.columnMapping = data.fields.map((field) => ({ column: field }));
 
-    // trigger next step automatically after change detection ran and recognized the current step as [completed]
-    setTimeout(() => this.stepper.next());
+    if (this.columnMapping) {
+      this.alertService.addInfo(
+        $localize`:alert info after file load:Column Mappings have been reset`
+      );
+    }
+    this.onColumnMappingUpdate(data.fields.map((field) => ({ column: field })));
   }
 
   onColumnMappingUpdate(newColumnMapping: ColumnMapping[]) {
@@ -61,5 +69,11 @@ export class ImportComponent {
     this.mappedColumnsCount = newColumnMapping.filter(
       (m) => !!m.propertyName
     ).length;
+  }
+
+  applyPreviousMapping(importMetadata: ImportMetadata) {
+    this.entityType = importMetadata.config.entityType;
+    // TODO: ensure all and only rawData columns exist
+    this.columnMapping = importMetadata.config.columnMapping;
   }
 }

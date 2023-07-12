@@ -14,7 +14,7 @@ import { ImportService } from "../import.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
   ImportConfirmSummaryComponent,
-  ImportData,
+  ImportDialogData,
 } from "../import-confirm-summary/import-confirm-summary.component";
 import { lastValueFrom } from "rxjs";
 
@@ -93,7 +93,13 @@ export class ImportReviewDataComponent implements OnChanges {
     const confirmationResult = await lastValueFrom(
       this.matDialog
         .open(ImportConfirmSummaryComponent, {
-          data: { entitiesToImport: this.mappedEntities } as ImportData,
+          data: {
+            entitiesToImport: this.mappedEntities,
+            importSettings: {
+              columnMapping: this.columnMapping,
+              entityType: this.entityType,
+            },
+          } as ImportDialogData,
         })
         .afterClosed()
     );

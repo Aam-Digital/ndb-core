@@ -32,7 +32,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { pick } from "lodash-es";
 
-@RouteTarget("Import")
+@RouteTarget("ImportLegacy")
 @Component({
   selector: "app-data-import",
   templateUrl: "./data-import.component.html",

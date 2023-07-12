@@ -1,4 +1,44 @@
-<p>PLACEHOLDER</p>
-<div style="border: 1px solid black">
-  an overview of previous imports and options to manage/undo these
-</div>
+<h3 i18n>Previous Imports</h3>
+
+<mat-accordion>
+  <mat-expansion-panel
+    *ngFor="let item of previousImports"
+    [expanded]="item === highlightedPreviousImport"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>
+        {{ item.date | date }}
+      </mat-panel-title>
+
+      <mat-panel-description i18n>
+        {{ item.ids.length }}
+        "{{ item.config.entityType | entityTypeLabel }}" records
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div i18n>
+      imported by&nbsp;
+      <app-display-entity
+        [entityId]="item.user"
+        entityType="User"
+        [linkDisabled]="true"
+      ></app-display-entity>
+      at {{ item.date | date : "medium" }}
+    </div>
+
+    <div class="flex-row gap-regular margin-top-regular">
+      <button
+        (click)="itemSelected.emit(item)"
+        mat-stroked-button
+        color="accent"
+        i18n
+      >
+        Re-use Column Mapping
+      </button>
+
+      <button (click)="undoImport(item)" mat-stroked-button color="warn" i18n>
+        Undo Import
+      </button>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>

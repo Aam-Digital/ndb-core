@@ -2,11 +2,14 @@ import { Component, Inject } from "@angular/core";
 import { ImportService } from "../import.service";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/model/entity";
-import { ColumnMapping } from "../column-mapping";
+import { ImportSettings } from "../import-metadata";
 
-export interface ImportData {
+/**
+ * Data passed into Import Confirmation Dialog.
+ */
+export interface ImportDialogData {
   entitiesToImport: Entity[];
-  columnMapping: ColumnMapping[];
+  importSettings: ImportSettings;
 }
 
 @Component({
@@ -19,7 +22,7 @@ export class ImportConfirmSummaryComponent {
 
   constructor(
     private dialogRef: MatDialogRef<ImportConfirmSummaryComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ImportData,
+    @Inject(MAT_DIALOG_DATA) public data: ImportDialogData,
     private importService: ImportService
   ) {}
 
@@ -29,7 +32,10 @@ export class ImportConfirmSummaryComponent {
     this.importInProgress = true;
     this.dialogRef.disableClose = true;
 
-    await this.importService.executeImport(this.data.entitiesToImport);
+    await this.importService.executeImport(
+      this.data.entitiesToImport,
+      this.data.importSettings
+    );
 
     this.importInProgress = false;
     this.dialogRef.disableClose = false;

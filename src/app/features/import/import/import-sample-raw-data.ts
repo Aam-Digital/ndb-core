@@ -4,6 +4,8 @@ import { AdditionalImportAction } from "../import-additional-actions/additional-
 import { Entity } from "../../../core/entity/model/entity";
 import { ColumnMapping } from "../column-mapping";
 import { genders } from "../../../child-dev-project/children/model/genders";
+import { ImportMetadata } from "../import-metadata";
+import { TEST_USER } from "../../../utils/mocked-testing.module";
 
 /**
  * Sample raw data that can be used in Storybook and tests.
@@ -55,4 +57,20 @@ export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [
       (e) => e.getType() === "RecurringActivity"
     ).getId(),
   },
+];
+
+export const IMPORT_SAMPLE_PREVIOUS_IMPORTS: ImportMetadata[] = [
+  ImportMetadata.create({
+    created: { by: TEST_USER, at: new Date("2022-12-27") },
+    ids: ["1", "2", "3"],
+    config: {
+      entityType: "Child",
+      columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+    },
+  }),
+  ImportMetadata.create({
+    created: { by: TEST_USER, at: new Date("2023-01-04") },
+    ids: ["1", "3"],
+    config: { entityType: "School", columnMapping: [] },
+  }),
 ];

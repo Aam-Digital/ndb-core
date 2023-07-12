@@ -10,7 +10,7 @@ import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-dataty
 import { ComponentType } from "@angular/cdk/overlay";
 import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { ImportMetadata } from "./import-metadata";
+import { ImportMetadata, ImportSettings } from "./import-metadata";
 
 @Injectable()
 export class ImportService {
@@ -60,19 +60,23 @@ export class ImportService {
     }
   }
 
-  async executeImport(entitiesToImport: Entity[]) {
+  async executeImport(entitiesToImport: Entity[], settings: ImportSettings) {
     const savedDocs = await this.entityMapper.saveAll(entitiesToImport);
     // TODO: execute additional import actions
-    await this.saveImportHistory(savedDocs);
+    await this.saveImportHistory(savedDocs, settings);
   }
 
-  private async saveImportHistory(savedDocs: Entity[]) {
+  private async saveImportHistory(
+    savedDocs: Entity[],
+    settings: ImportSettings
+  ) {
     const importMeta = new ImportMetadata();
-    importMeta.config = {
-      entityType: null, // TODO
-      columnMapping: null, // TODO
-    };
+    importMeta.config = settings;
     importMeta.ids = savedDocs.map((entity) => entity.getId(true));
     await this.entityMapper.save(importMeta);
+  }
+
+  undoImport(item: ImportMetadata) {
+    // TODO: implement undo of import
   }
 }
