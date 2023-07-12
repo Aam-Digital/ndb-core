@@ -42,3 +42,7 @@
     </div>
   </mat-expansion-panel>
 </mat-accordion>
+
+<div *ngIf="!(previousImports?.length > 0)" class="no-results">
+  no existing imports
+</div>

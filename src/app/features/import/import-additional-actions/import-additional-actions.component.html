@@ -22,6 +22,14 @@
       </div>
     </mat-list-item>
   </mat-list>
+
+  <div
+    *ngIf="!(importActions?.length > 0)"
+    class="no-actions margin-bottom-large"
+    i18n="import additional actions"
+  >
+    no additional actions selected
+  </div>
 </div>
 
 <!-- Create new additional action -->

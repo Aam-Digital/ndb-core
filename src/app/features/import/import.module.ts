@@ -72,6 +72,17 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     MatProgressBarModule,
   ],
   providers: [ImportService, EntityTypeLabelPipe],
-  exports: [ImportComponent],
+  exports: [
+    ImportComponent,
+    ImportFileComponent,
+    ImportHistoryComponent,
+    ImportEntityTypeComponent,
+    ImportColumnMappingComponent,
+    ImportReviewDataComponent,
+    ImportConfirmSummaryComponent,
+    ImportAdditionalActionsComponent,
+    DateValueMappingComponent,
+    EnumValueMappingComponent,
+  ],
 })
 export class ImportModule {}

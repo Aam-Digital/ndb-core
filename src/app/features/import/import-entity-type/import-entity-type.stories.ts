@@ -5,6 +5,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ImportEntityTypeComponent } from "./import-entity-type.component";
 import { MatSelectModule } from "@angular/material/select";
 import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
+import { ImportModule } from "../import.module";
 
 export default {
   title: "Features/Import/2 Select Entity Type",
@@ -13,11 +14,11 @@ export default {
     moduleMetadata({
       imports: [
         StorybookBaseModule,
+        ImportModule,
         FontAwesomeModule,
         MatSelectModule,
         HelpButtonComponent,
       ],
-      declarations: [ImportEntityTypeComponent],
       providers: [],
     }),
   ],

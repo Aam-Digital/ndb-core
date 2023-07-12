@@ -1,5 +1,5 @@
 <div class="flex-row gap-regular align-center">
-  <span class="flex-grow" i18n>Review your data to be imported:</span>
+  <span class="flex-grow" i18n>Review your mapped data to be imported:</span>
 
   <button (click)="startImport()" mat-raised-button color="accent" i18n>
     Start Import
@@ -7,8 +7,8 @@
 
   <app-help-button
     text="The data previewed here is mapped and transformed according to the 'Column Mapping' you defined in the previous step.
-        If necessary, you can go back to that and make changes to the mapping.
-        You can also manually edit any row of the data here before it is imported."
+        Only columns for which you selected a field there will be imported and appears here in this preview.
+        If necessary, you can go back to the previous step and make changes to the mapping."
     i18n-text="import - review data - help text"
   >
   </app-help-button>
