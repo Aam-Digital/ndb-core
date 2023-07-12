@@ -7,6 +7,7 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
 import { ImportMetadata } from "../import-metadata";
 import { AlertService } from "../../../core/alerts/alert.service";
+import { ActivatedRoute } from "@angular/router";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -31,8 +32,15 @@ export class ImportComponent {
 
   constructor(
     private confirmationDialog: ConfirmationDialogService,
-    private alertService: AlertService
-  ) {}
+    private alertService: AlertService,
+    private route: ActivatedRoute
+  ) {
+    this.route.queryParamMap.subscribe((params) => {
+      if (params.has("entityType")) {
+        this.entityType = params.get("entityType");
+      }
+    });
+  }
 
   async reset(skipConfirmation?: boolean) {
     if (
