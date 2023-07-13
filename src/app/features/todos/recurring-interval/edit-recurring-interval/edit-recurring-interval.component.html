@@ -9,18 +9,20 @@
       {{ o.label }}
     </mat-option>
 
-    <mat-option (onSelectionChange)="openCustomIntervalSelection($event)" i18n="recurring interval option" class="special-option">
+    <mat-option (onSelectionChange)="openCustomIntervalSelection($event)" i18n="recurring interval option"
+                class="special-option">
       <fa-icon icon="tools" [fixedWidth]="true"></fa-icon>
       define other interval
     </mat-option>
 
-    <mat-option [value]="undefined" (onSelectionChange)="resetSelection()" i18n="recurring interval option" class="special-option">
+    <mat-option [value]="undefined" (onSelectionChange)="resetSelection()" i18n="recurring interval option"
+                class="special-option">
       <fa-icon icon="xmark" [fixedWidth]="true"></fa-icon>
       does not repeat
     </mat-option>
   </mat-select>
 
-  <mat-error *ngIf="formControl.errors?.required" i18n="Error message for any input">
-    This field is required
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
 </mat-form-field>

@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { PublicFormComponent } from "./public-form.component";
@@ -23,12 +24,12 @@ describe("PublicFormComponent", () => {
   let initRemoteDBSpy: jasmine.Spy;
   let testFormConfig: PublicFormConfig;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     testFormConfig = new PublicFormConfig("form-id");
     testFormConfig.title = "test form";
     testFormConfig.entity = "Child";
     testFormConfig.columns = [["name"], ["gender"]];
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [PublicFormComponent, MockedTestingModule.withState()],
       providers: [
         {
@@ -39,7 +40,9 @@ describe("PublicFormComponent", () => {
         },
       ],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     initRemoteDBSpy = spyOn(TestBed.inject(PouchDatabase), "initRemoteDB");
 
     fixture = TestBed.createComponent(PublicFormComponent<Child>);

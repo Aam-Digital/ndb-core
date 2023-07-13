@@ -8,6 +8,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { NEVER } from "rxjs";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent;
@@ -23,7 +24,10 @@ describe("RowDetailsComponent", () => {
       imports: [RowDetailsComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
-        { provide: MatDialogRef, useValue: {} },
+        {
+          provide: MatDialogRef,
+          useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
+        },
       ],
     }).compileComponents();
     spyOn(TestBed.inject(EntityAbility), "cannot").and.returnValue(true);

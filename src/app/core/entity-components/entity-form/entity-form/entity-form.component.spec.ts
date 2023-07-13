@@ -6,6 +6,7 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form.service";
+import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent<Child>;
@@ -14,7 +15,12 @@ describe("EntityFormComponent", () => {
   let mockConfirmation: jasmine.SpyObj<ConfirmationDialogService>;
 
   const testColumns = [
-    [{ id: "name" }, { id: "projectNumber" }, { id: "photo" }],
+    [
+      { id: "name" },
+      { id: "projectNumber" },
+      { id: "photo" },
+      { id: "dateOfBirth" },
+    ],
   ];
 
   beforeEach(waitForAsync(() => {
@@ -102,6 +108,15 @@ describe("EntityFormComponent", () => {
         _rev: "new rev",
       }
     );
+  });
+
+  it("should not show popup if date was saved as day-only", async () => {
+    const form = { dateOfBirth: new DateWithAge() };
+    const dateOnly = new DateWithAge();
+    dateOnly.setHours(0, 0, 0, 0);
+    const remoteValues = { dateOfBirth: dateOnly };
+
+    await expectApplyChangesPopup("not-shown", form, form, remoteValues, form);
   });
 
   async function expectApplyChangesPopup(

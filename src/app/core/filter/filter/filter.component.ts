@@ -8,14 +8,15 @@ import {
 } from "@angular/core";
 import { FilterConfig } from "../../entity-components/entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { FilterComponentSettings } from "../../entity-components/entity-list/filter-component.settings";
 import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { ListFilterComponent } from "../list-filter/list-filter.component";
-import { NgForOf } from "@angular/common";
+import { NgForOf, NgIf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
+import { DateRangeFilterComponent } from "../date-range-filter/date-range-filter.component";
+import { Filter } from "../filters/filters";
 
 /**
  * This component can be used to display filters, for example above tables.
@@ -23,7 +24,13 @@ import { Angulartics2Module } from "angulartics2";
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
-  imports: [ListFilterComponent, NgForOf, Angulartics2Module],
+  imports: [
+    ListFilterComponent,
+    NgForOf,
+    Angulartics2Module,
+    DateRangeFilterComponent,
+    NgIf,
+  ],
   standalone: true,
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
@@ -60,7 +67,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
    */
   @Output() filterObjChange = new EventEmitter<DataFilter<T>>();
 
-  filterSelections: FilterComponentSettings<T>[] = [];
+  filterSelections: Filter<T>[] = [];
   urlPath = getUrlWithoutParams(this.router);
 
   constructor(
@@ -82,25 +89,18 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     }
   }
 
-  filterOptionSelected(
-    filter: FilterComponentSettings<T>,
-    selectedOption: string
-  ) {
+  filterOptionSelected(filter: Filter<T>, selectedOption: string) {
     filter.selectedOption = selectedOption;
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
-      this.updateUrl(filter.filterSettings.name, selectedOption);
+      this.updateUrl(filter.name, selectedOption);
     }
   }
 
   private applyFilterSelections() {
     const previousFilter = JSON.stringify(this.filterObj);
     const newFilter = this.filterSelections.reduce(
-      (obj, filter) =>
-        Object.assign(
-          obj,
-          filter.filterSettings.getFilter(filter.selectedOption)
-        ),
+      (obj, filter) => Object.assign(obj, filter.getFilter()),
       {} as DataFilter<T>
     );
 
@@ -128,8 +128,8 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     }
     const params = parameters || this.route.snapshot.queryParams;
     this.filterSelections.forEach((f) => {
-      if (params.hasOwnProperty(f.filterSettings.name)) {
-        f.selectedOption = params[f.filterSettings.name];
+      if (params.hasOwnProperty(f.name)) {
+        f.selectedOption = params[f.name];
       }
     });
   }

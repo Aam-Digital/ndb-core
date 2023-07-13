@@ -17,6 +17,8 @@ import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router, RouterLink } from "@angular/router";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { UnsavedChangesService } from "../../entity-components/entity-details/form/unsaved-changes.service";
 
 @Component({
   selector: "app-dialog-buttons",
@@ -45,8 +47,23 @@ export class DialogButtonsComponent implements OnInit {
     private alertService: AlertService,
     private entityRemoveService: EntityRemoveService,
     private router: Router,
-    private ability: EntityAbility
-  ) {}
+    private ability: EntityAbility,
+    private confirmation: ConfirmationDialogService,
+    private unsavedChanges: UnsavedChangesService
+  ) {
+    this.dialog.disableClose = true;
+    this.dialog.backdropClick().subscribe(() =>
+      this.unsavedChanges.checkUnsavedChanges().then((confirmed) => {
+        if (confirmed) {
+          this.dialog.close();
+        }
+      })
+    );
+    // This happens before the `canDeactivate` check and therefore does not warn when leaving
+    this.dialog
+      .afterClosed()
+      .subscribe(() => (this.unsavedChanges.pending = false));
+  }
 
   ngOnInit() {
     if (!this.entity.isNew) {
@@ -73,6 +90,7 @@ export class DialogButtonsComponent implements OnInit {
       .then((res) => {
         // Attachments are only saved once form is disabled
         this.form.disable();
+        this.form.markAsPristine();
         this.dialog.close(res);
       })
       .catch((err) => {
