@@ -31,7 +31,7 @@ const Template: Story<DisplayEntityComponent> = (
 });
 
 const testChild = new Child();
-testChild.name = "Test Name";
+testChild.name = "Test NameXXX";
 testChild.projectNumber = "10";
 export const ChildComponent = Template.bind({});
 ChildComponent.args = {
