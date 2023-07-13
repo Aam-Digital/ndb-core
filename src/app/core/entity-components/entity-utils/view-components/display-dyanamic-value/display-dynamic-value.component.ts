@@ -1,19 +1,22 @@
-import { Component, HostBinding, OnInit } from "@angular/core";
+import { Component, HostBinding, Input, OnInit } from "@angular/core";
 import { ViewDirective } from "../view.directive";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
 @DynamicComponent("DisplayDynamicValue")
 @Component({
   selector: "app-display-dynamic-value",
-  template: "{{ testinput1 }}",
+  template: "{{ result }}",
   standalone: true,
 })
 export class DisplayDynamicValueComponent
   extends ViewDirective<number>
   implements OnInit
 {
-  @HostBinding("style") style = {};
-  private testinput1: string;
+  @Input() data: any;
+  @Input() config: {
+    calculation: "percentage" | "summarize";
+  };
+  public result: string;
 
   /**
    * returns a css-compatible color value from green to red using the given
@@ -33,11 +36,18 @@ export class DisplayDynamicValueComponent
   }
 
   ngOnInit() {
-    this.style = {
-      "background-color": DisplayDynamicValueComponent.fromPercent(this.value),
-      "border-radius": "5%",
-      padding: "5px",
-      width: "min-content",
-    };
+    if (this.config.calculation === "summarize") {
+      let calc = 0;
+      (this.data as Array<number>).forEach((e) => {
+        calc += e;
+      });
+      this.result = calc.toString();
+    } else if (this.config.calculation === "percentage") {
+      let calc =
+        Math.round(
+          ((this.data.part / this.data.total) * 100 + Number.EPSILON) * 100
+        ) / 100;
+      this.result = calc.toFixed(2) + " %";
+    }
   }
 }
