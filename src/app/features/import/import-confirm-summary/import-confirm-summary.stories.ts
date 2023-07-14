@@ -10,7 +10,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 @Component({
-  selector: "storybook-dialog-launcher",
+  selector: "app-storybook-dialog-launcher",
   template: "<button (click)='launch()'>open dialog</button>",
 })
 abstract class LaunchDialogComponent implements OnInit {

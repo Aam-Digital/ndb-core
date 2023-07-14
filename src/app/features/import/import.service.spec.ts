@@ -1,13 +1,20 @@
 import { TestBed } from "@angular/core/testing";
 
 import { ImportService } from "./import.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 
 describe("ImportService", () => {
   let service: ImportService;
 
-  beforeEach(() => {
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+
+  beforeEach(async () => {
+    mockEntityMapper = jasmine.createSpyObj(["save", "saveAll"]);
     TestBed.configureTestingModule({
-      providers: [ImportService],
+      providers: [
+        ImportService,
+        { provide: EntityMapperService, useValue: mockEntityMapper },
+      ],
     });
     service = TestBed.inject(ImportService);
   });

@@ -81,7 +81,7 @@ export class ImportComponent {
   applyPreviousMapping(importMetadata: ImportMetadata) {
     this.entityType = importMetadata.config.entityType;
     // TODO: ensure all and only rawData columns exist
-    this.columnMapping = importMetadata.config.columnMapping;
+    this.onColumnMappingUpdate(importMetadata.config.columnMapping);
   }
 
   onImportCompleted(completedImport: ImportMetadata) {
