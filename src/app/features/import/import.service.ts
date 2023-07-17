@@ -26,11 +26,22 @@ export class ImportService {
   ].map((dataType) => dataType.name);
 
   private linkableEntities: {
-    [key: string]: { [key: string]: (e: any[], link: string) => Promise<any> };
+    [key: string]: {
+      [key: string]: {
+        create: (e: any[], link: string) => Promise<any>;
+        undo: (importMeta: ImportMetadata) => Promise<any>;
+      };
+    };
   } = {
     [Child.ENTITY_TYPE]: {
-      [RecurringActivity.ENTITY_TYPE]: this.linkToActivity.bind(this),
-      [School.ENTITY_TYPE]: this.linkToSchool.bind(this),
+      [RecurringActivity.ENTITY_TYPE]: {
+        create: this.linkToActivity.bind(this),
+        undo: undefined,
+      },
+      [School.ENTITY_TYPE]: {
+        create: this.linkToSchool.bind(this),
+        undo: undefined,
+      },
     },
   };
 
@@ -100,7 +111,7 @@ export class ImportService {
   private linkEntities(entities: any[], settings: ImportSettings) {
     return Promise.all(
       settings.additionalActions.map(({ type, id }) =>
-        this.linkableEntities[settings.entityType][type](entities, id)
+        this.linkableEntities[settings.entityType][type].create(entities, id)
       )
     );
   }
