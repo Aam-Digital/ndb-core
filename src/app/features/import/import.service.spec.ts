@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { TestBed } from "@angular/core/testing";
 
 import { ImportService } from "./import.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
@@ -12,6 +12,9 @@ import { ColumnMapping } from "./column-mapping";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { HealthCheck } from "../../child-dev-project/children/health-checkup/model/health-check";
 import moment from "moment";
+import { Child } from "../../child-dev-project/children/model/child";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -19,7 +22,7 @@ describe("ImportService", () => {
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["save", "saveAll"]);
+    mockEntityMapper = jasmine.createSpyObj(["save", "saveAll", "load"]);
     TestBed.configureTestingModule({
       providers: [
         ImportService,
@@ -30,17 +33,14 @@ describe("ImportService", () => {
     service = TestBed.inject(ImportService);
   });
 
-  it("should execute import, saving entities and creating history record", fakeAsync(() => {
+  it("should execute import, saving entities and creating history record", async () => {
     const testEntities: Entity[] = [new Entity("1"), new Entity("2")];
-    mockEntityMapper.saveAll.and.resolveTo(testEntities);
     const testImportSettings: ImportSettings = {
       entityType: "Entity",
-      columnMapping: [],
-      additionalActions: [],
+      columnMapping: undefined,
     };
 
-    service.executeImport(testEntities, testImportSettings);
-    tick();
+    await service.executeImport(testEntities, testImportSettings);
 
     expect(mockEntityMapper.saveAll).toHaveBeenCalledWith(testEntities);
 
@@ -50,7 +50,7 @@ describe("ImportService", () => {
         config: testImportSettings,
       })
     );
-  }));
+  });
 
   it("should transform raw data to mapped entities", async () => {
     const rawData: any[] = [
@@ -91,4 +91,32 @@ describe("ImportService", () => {
       true
     );
   });
+
+  it("should link imported data to other entities", async () => {
+    const testEntities: Entity[] = [new Child("1"), new Child("2")];
+    const activity = new RecurringActivity("3");
+    mockEntityMapper.load.and.resolveTo(activity);
+
+    const testImportSettings: ImportSettings = {
+      entityType: "Child",
+      columnMapping: undefined,
+      additionalActions: [
+        { type: "RecurringActivity", id: "3" },
+        { type: "School", id: "4" },
+      ],
+    };
+    await service.executeImport(testEntities, testImportSettings);
+
+    const createRelations = mockEntityMapper.saveAll.calls.mostRecent().args[0];
+    const expectedRelations = [
+      { childId: "1", schoolId: "4" },
+      { childId: "2", schoolId: "4" },
+    ].map((e) => Object.assign(new ChildSchoolRelation(), e));
+    expectEntitiesToMatch(createRelations, expectedRelations, true);
+
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(activity);
+    expect(activity.participants).toEqual(["1", "2"]);
+  });
+
+  it("should allow to removed entities and links", () => {});
 });

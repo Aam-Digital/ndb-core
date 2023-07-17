@@ -117,9 +117,9 @@ export class ImportService {
 
   private linkEntities(entities: any[], settings: ImportSettings) {
     return Promise.all(
-      settings.additionalActions.map(({ type, id }) =>
+      settings.additionalActions?.map(({ type, id }) =>
         this.linkableEntities[settings.entityType][type].create(entities, id)
-      )
+      ) ?? []
     );
   }
 
