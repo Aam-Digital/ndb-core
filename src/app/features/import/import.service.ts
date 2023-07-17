@@ -14,6 +14,9 @@ import { RecurringActivity } from "../../child-dev-project/attendance/model/recu
 import { School } from "../../child-dev-project/schools/model/school";
 import { Entity } from "../../core/entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
+import { ColumnMapping } from "./column-mapping";
+import { EntityRegistry } from "../../core/entity/database-entity.decorator";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 @Injectable()
@@ -45,7 +48,11 @@ export class ImportService {
     },
   };
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(
+    private entityMapper: EntityMapperService,
+    private entityTypes: EntityRegistry,
+    private schemaService: EntitySchemaService
+  ) {}
 
   getMappingComponent(schema: EntitySchemaField) {
     return this.getImportMapping(schema)?.mappingCmp;
@@ -165,5 +172,62 @@ export class ImportService {
 
     // Or should the ImportMetadata still be kept indicating that it has been undone?
     return Promise.all([...removes, ...undoes, this.entityMapper.remove(item)]);
+  }
+
+  /**
+   * Use the given mapping to transform raw data into Entity instances that can be displayed or saved.
+   * @param rawData
+   * @param entityType
+   * @param columnMapping
+   */
+  async transformRawDataToEntities(
+    rawData: any[],
+    entityType: string,
+    columnMapping: ColumnMapping[]
+  ): Promise<Entity[]> {
+    const entityConstructor = this.entityTypes.get(entityType);
+
+    const mappedEntities = rawData.map((row) => {
+      const entity = new entityConstructor();
+      let hasMappedProperty = false;
+
+      for (const col in row) {
+        const mapping: ColumnMapping = columnMapping.find(
+          (c) => c.column === col
+        );
+        if (!mapping) {
+          continue;
+        }
+
+        const parsed = this.parseRow(row[col], mapping, entity);
+
+        // ignoring empty strings or un-parseable values for import
+        if (!!parsed || parsed === 0) {
+          entity[mapping.propertyName] = parsed;
+          hasMappedProperty = true;
+        }
+      }
+
+      return hasMappedProperty ? entity : undefined;
+    });
+
+    return mappedEntities.filter((e) => e !== undefined);
+  }
+
+  private parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
+    const schema = entity.getSchema().get(mapping.propertyName);
+
+    if (!schema) {
+      return undefined;
+    }
+
+    const mappingFn = this.getMappingFunction(schema);
+    if (mappingFn) {
+      return mappingFn(val, mapping.additional);
+    } else {
+      return this.schemaService
+        .getDatatypeOrDefault(schema.dataType)
+        .transformToObjectFormat(val, schema, this.schemaService, entity);
+    }
   }
 }

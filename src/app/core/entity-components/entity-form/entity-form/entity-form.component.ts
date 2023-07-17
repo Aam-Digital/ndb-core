@@ -14,9 +14,6 @@ import { ConfirmationDialogService } from "../../../confirmation-dialog/confirma
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
-import { MatButtonModule } from "@angular/material/button";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Subscription } from "rxjs";
 import moment from "moment";
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
@@ -42,9 +39,6 @@ import { HelpButtonComponent } from "../../../common-components/help-button/help
     NgForOf,
     DynamicComponentDirective,
     NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    FontAwesomeModule,
     NgClass,
     HelpButtonComponent,
   ],

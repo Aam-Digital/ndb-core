@@ -24,7 +24,7 @@ import { ImportService } from "../import.service";
 })
 export class ImportColumnMappingComponent implements OnChanges {
   @Input() rawData: any[] = [];
-  @Input() columnMapping: ColumnMapping[];
+  @Input() columnMapping: ColumnMapping[] = [];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   @Input() set entityType(value: string) {

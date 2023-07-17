@@ -6,6 +6,8 @@ import { ImportModule } from "../import.module";
 import { MatDialog } from "@angular/material/dialog";
 import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mapping.component";
 import { Child } from "../../../child-dev-project/children/model/child";
+import { SimpleChange } from "@angular/core";
+import { ColumnMapping } from "../column-mapping";
 
 describe("ImportMapColumnsComponent", () => {
   let component: ImportColumnMappingComponent;
@@ -20,10 +22,33 @@ describe("ImportMapColumnsComponent", () => {
     fixture = TestBed.createComponent(ImportColumnMappingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    spyOn(component.columnMappingChange, "emit");
   });
 
-  it("should create", () => {
-    expect(component).toBeTruthy();
+  it("should reset invalid mappings when new entityType selected", () => {
+    component.columnMapping = [
+      { column: "x", propertyName: "name" }, // property also exists on new entityType
+      { column: "y", propertyName: "projectNumber" }, // property does not exist on new entityType
+    ];
+
+    component.entityType = "School";
+    component.ngOnChanges({
+      entityType: new SimpleChange("Child", "School", false),
+    });
+
+    const expectedNewMapping: ColumnMapping[] = [
+      { column: "x", propertyName: "name" },
+      {
+        column: "y",
+        propertyName: undefined,
+      },
+    ];
+
+    expect(component.columnMapping).toEqual(expectedNewMapping);
+    expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
+      expectedNewMapping
+    );
   });
 
   it("should open mapping component with required data", () => {
@@ -48,5 +73,15 @@ describe("ImportMapColumnsComponent", () => {
       },
       disableClose: true,
     });
+  });
+
+  it("should emit on updateMapping from UI", () => {
+    component.updateMapping();
+
+    expect(component.columnMappingChange.emit).toHaveBeenCalled();
+  });
+
+  it("should emit on changes from popup form with additional details", () => {
+    // TODO: test additional mapping details from popup form to be applied and emitted
   });
 });
