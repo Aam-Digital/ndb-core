@@ -4,6 +4,7 @@ on:
     branches:
       - master
       - official-release
+      - semantic_update
 
 jobs:
   run-semantic-release:
