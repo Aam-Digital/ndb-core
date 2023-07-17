@@ -15,19 +15,17 @@ import moment from "moment";
 import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
 
 describe("ImportService", () => {
   let service: ImportService;
 
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
-
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["save", "saveAll", "load"]);
     TestBed.configureTestingModule({
       providers: [
         ImportService,
         { provide: EntityRegistry, useValue: entityRegistry },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityMapperService, useValue: mockEntityMapper() },
       ],
     });
     service = TestBed.inject(ImportService);
@@ -39,12 +37,15 @@ describe("ImportService", () => {
       entityType: "Entity",
       columnMapping: undefined,
     };
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "saveAll");
+    spyOn(entityMapper, "save");
 
     await service.executeImport(testEntities, testImportSettings);
 
-    expect(mockEntityMapper.saveAll).toHaveBeenCalledWith(testEntities);
+    expect(entityMapper.saveAll).toHaveBeenCalledWith(testEntities);
 
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(
+    expect(entityMapper.save).toHaveBeenCalledWith(
       jasmine.objectContaining({
         ids: testEntities.map((e) => e.getId(true)),
         config: testImportSettings,
@@ -95,7 +96,8 @@ describe("ImportService", () => {
   it("should link imported data to other entities", async () => {
     const testEntities: Entity[] = [new Child("1"), new Child("2")];
     const activity = new RecurringActivity("3");
-    mockEntityMapper.load.and.resolveTo(activity);
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.save(activity);
 
     const testImportSettings: ImportSettings = {
       entityType: "Child",
@@ -107,16 +109,15 @@ describe("ImportService", () => {
     };
     await service.executeImport(testEntities, testImportSettings);
 
-    const createRelations = mockEntityMapper.saveAll.calls.mostRecent().args[0];
+    const createRelations = await entityMapper.loadType(ChildSchoolRelation);
     const expectedRelations = [
       { childId: "1", schoolId: "4" },
       { childId: "2", schoolId: "4" },
     ].map((e) => Object.assign(new ChildSchoolRelation(), e));
     expectEntitiesToMatch(createRelations, expectedRelations, true);
 
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(activity);
     expect(activity.participants).toEqual(["1", "2"]);
   });
 
-  it("should allow to removed entities and links", () => {});
+  it("should allow to removed entities and links", async () => {});
 });
