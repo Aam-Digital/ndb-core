@@ -189,7 +189,7 @@ export class EntityMapperService {
     }
   }
 
-  private setEntityMetadata(entity: Entity) {
+  protected setEntityMetadata(entity: Entity) {
     const newMetadata = new UpdateMetadata(
       this.sessionService.getCurrentUser()?.name
     );

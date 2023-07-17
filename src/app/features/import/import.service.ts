@@ -29,18 +29,18 @@ export class ImportService {
     [key: string]: {
       [key: string]: {
         create: (e: any[], link: string) => Promise<any>;
-        undo: (importMeta: ImportMetadata) => Promise<any>;
+        undo: (importMeta: ImportMetadata, id: string) => Promise<any>;
       };
     };
   } = {
     [Child.ENTITY_TYPE]: {
       [RecurringActivity.ENTITY_TYPE]: {
         create: this.linkToActivity.bind(this),
-        undo: undefined,
+        undo: this.undoActivityLink.bind(this),
       },
       [School.ENTITY_TYPE]: {
         create: this.linkToSchool.bind(this),
-        undo: undefined,
+        undo: this.undoSchoolLink.bind(this),
       },
     },
   };
@@ -126,6 +126,16 @@ export class ImportService {
     return this.entityMapper.saveAll(relations);
   }
 
+  private async undoSchoolLink(importMeta: ImportMetadata, id: string) {
+    const relations = await this.entityMapper.loadType(ChildSchoolRelation);
+    const imported = relations.filter(
+      (rel) =>
+        rel.schoolId === id &&
+        importMeta.ids.includes(Entity.createPrefixedId("Child", rel.childId))
+    );
+    return Promise.all(imported.map((rel) => this.entityMapper.remove(rel)));
+  }
+
   private async linkToActivity(entities: any[], link: string) {
     const activity = await this.entityMapper.load(RecurringActivity, link);
     const ids = entities.map((e) => Entity.extractEntityIdFromId(e._id));
@@ -133,7 +143,27 @@ export class ImportService {
     return this.entityMapper.save(activity);
   }
 
+  private async undoActivityLink(importMeta: ImportMetadata, id: string) {
+    const activity = await this.entityMapper.load(RecurringActivity, id);
+    activity.participants = activity.participants.filter(
+      (p) => !importMeta.ids.includes(Entity.createPrefixedId("Child", p))
+    );
+    return this.entityMapper.save(activity);
+  }
+
   undoImport(item: ImportMetadata) {
-    // TODO: implement undo of import
+    const removes = item.ids.map(
+      (id) =>
+        this.entityMapper
+          .load(item.config.entityType, id)
+          .then((e) => this.entityMapper.remove(e))
+          .catch(() => undefined) // TODO test
+    );
+    const undoes = item.config.additionalActions.map(({ type, id }) =>
+      this.linkableEntities[item.config.entityType][type].undo(item, id)
+    );
+
+    // Or should the ImportMetadata still be kept indicating that it has been undone?
+    return Promise.all([...removes, ...undoes, this.entityMapper.remove(item)]);
   }
 }
