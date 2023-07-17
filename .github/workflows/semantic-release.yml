@@ -24,7 +24,7 @@ jobs:
         with:
           # Latest release-replace plugin fails https://github.com/jpoehnelt/semantic-release-replace-plugin/issues/223
           extra_plugins: |
-            @google/semantic-release-replace-plugin@1.2.0
+            semantic-release-replace-plugin@1.2.0
             @semantic-release/git
             @semantic-release/github
             semantic-release-slack-bot
