@@ -8,9 +8,13 @@ import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
 import { ComponentType } from "@angular/cdk/overlay";
-import { Entity } from "../../core/entity/model/entity";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { Child } from "../../child-dev-project/children/model/child";
+import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
+import { School } from "../../child-dev-project/schools/model/school";
+import { Entity } from "../../core/entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 @Injectable()
 export class ImportService {
@@ -21,6 +25,15 @@ export class ImportService {
     dateWithAgeEntitySchemaDatatype,
   ].map((dataType) => dataType.name);
 
+  private linkableEntities: {
+    [key: string]: { [key: string]: (e: any[], link: string) => Promise<any> };
+  } = {
+    [Child.ENTITY_TYPE]: {
+      [RecurringActivity.ENTITY_TYPE]: this.linkToActivity.bind(this),
+      [School.ENTITY_TYPE]: this.linkToSchool.bind(this),
+    },
+  };
+
   constructor(private entityMapper: EntityMapperService) {}
 
   getMappingComponent(schema: EntitySchemaField) {
@@ -29,6 +42,10 @@ export class ImportService {
 
   getMappingFunction(schema: EntitySchemaField) {
     return this.getImportMapping(schema)?.mappingFn;
+  }
+
+  getLinkableEntities(entityType: string): string[] {
+    return Object.keys(this.linkableEntities[entityType] ?? {});
   }
 
   private getImportMapping(schema: EntitySchemaField): {
@@ -64,17 +81,45 @@ export class ImportService {
     entitiesToImport: Entity[],
     settings: ImportSettings
   ): Promise<ImportMetadata> {
-    const savedDocs = await this.entityMapper.saveAll(entitiesToImport);
-    // TODO: execute additional import actions; see former DataImportService .linkEntities .linkToSchool .linkToActivity
-    return await this.saveImportHistory(savedDocs, settings);
+    await this.entityMapper.saveAll(entitiesToImport);
+    await this.linkEntities(entitiesToImport, settings);
+    return this.saveImportHistory(entitiesToImport, settings);
   }
 
-  private async saveImportHistory(savedDocs: any[], settings: ImportSettings) {
+  private async saveImportHistory(
+    savedEntities: Entity[],
+    settings: ImportSettings
+  ) {
     const importMeta = new ImportMetadata();
     importMeta.config = settings;
-    importMeta.ids = savedDocs.map((entity) => entity["_id"]);
+    importMeta.ids = savedEntities.map((entity) => entity.getId(true));
     await this.entityMapper.save(importMeta);
     return importMeta;
+  }
+
+  private linkEntities(entities: any[], settings: ImportSettings) {
+    return Promise.all(
+      settings.additionalActions.map(({ type, id }) =>
+        this.linkableEntities[settings.entityType][type](entities, id)
+      )
+    );
+  }
+
+  private linkToSchool(entities: any[], link: string) {
+    const relations = entities.map((entity) => {
+      const relation = new ChildSchoolRelation();
+      relation.childId = Entity.extractEntityIdFromId(entity._id);
+      relation.schoolId = link;
+      return relation;
+    });
+    return this.entityMapper.saveAll(relations);
+  }
+
+  private async linkToActivity(entities: any[], link: string) {
+    const activity = await this.entityMapper.load(RecurringActivity, link);
+    const ids = entities.map((e) => Entity.extractEntityIdFromId(e._id));
+    activity.participants.push(...ids);
+    return this.entityMapper.save(activity);
   }
 
   undoImport(item: ImportMetadata) {

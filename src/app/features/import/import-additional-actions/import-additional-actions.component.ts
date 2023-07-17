@@ -6,14 +6,12 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
+import { Entity } from "../../../core/entity/model/entity";
 import { FormControl, FormGroup } from "@angular/forms";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
 import { AdditionalImportAction } from "./additional-import-action";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { School } from "../../../child-dev-project/schools/model/school";
+import { ImportService } from "../import.service";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -42,7 +40,8 @@ export class ImportAdditionalActionsComponent implements OnChanges {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private entityTypeLabelPipe: EntityTypeLabelPipe
+    private entityTypeLabelPipe: EntityTypeLabelPipe,
+    private importService: ImportService
   ) {
     this.linkEntityForm
       .get("type")
@@ -63,29 +62,12 @@ export class ImportAdditionalActionsComponent implements OnChanges {
     if (!this.entityType) {
       this.linkEntityForm.disable();
     } else {
-      this.linkableEntityTypes = this.getLinkableEntityTypes(this.entityType);
+      this.linkableEntityTypes = this.importService.getLinkableEntities(
+        this.entityType
+      );
       this.linkEntityForm.enable();
       this.updateSelectableOptions(undefined);
     }
-  }
-
-  getLinkableEntityTypes(linkEntity: string): string[] {
-    // TODO: update / fix handling of actions
-    const linkableEntities: {
-      [key: string]: [
-        EntityConstructor,
-        (e: any[], link: string) => Promise<any>
-      ][];
-    } = {
-      [Child.ENTITY_TYPE]: [
-        [RecurringActivity, null /*this.linkToActivity.bind(this)*/],
-        [School, null /*this.linkToSchool.bind(this)*/],
-      ],
-    };
-
-    return (
-      linkableEntities[linkEntity]?.map(([entity]) => entity.ENTITY_TYPE) ?? []
-    );
   }
 
   private async updateSelectableOptions(newLinkType: string) {

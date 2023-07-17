@@ -15,6 +15,7 @@ import {
 import { MatButtonModule } from "@angular/material/button";
 import { MatListModule } from "@angular/material/list";
 import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
+import { ReactiveFormsModule } from "@angular/forms";
 
 export default {
   title: "Features/Import/2b Select Additional Actions",
@@ -29,6 +30,7 @@ export default {
         MatButtonModule,
         MatListModule,
         HelpButtonComponent,
+        ReactiveFormsModule,
       ],
       declarations: [ImportAdditionalActionsComponent],
       providers: [
