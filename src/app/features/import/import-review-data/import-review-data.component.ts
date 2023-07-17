@@ -8,8 +8,6 @@ import {
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { Entity } from "../../../core/entity/model/entity";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ImportService } from "../import.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
@@ -35,59 +33,25 @@ export class ImportReviewDataComponent implements OnChanges {
   displayColumns: string[] = [];
 
   constructor(
-    private entityTypes: EntityRegistry,
-    private schemaService: EntitySchemaService,
     private importService: ImportService,
     private matDialog: MatDialog
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
     // Every change requires a complete re-calculation
-    this.transformRawDataToEntities();
+    this.parseRawData();
   }
 
-  // TODO: popup confirmation: <app-import-confirm-summary></app-import-confirm-summary>
-
-  private transformRawDataToEntities() {
-    // TODO: this may be better of in a service?
-
-    const entityConstructor = this.entityTypes.get(this.entityType);
-
-    this.mappedEntities = this.rawData.map((row) => {
-      const e = new entityConstructor();
-      Object.entries(row).forEach(([col, val]) => {
-        const mapping: ColumnMapping = this.columnMapping.find(
-          ({ column }) => column === col
-        );
-
-        const parsed = this.parseRow(val, mapping, e);
-
-        if (parsed) {
-          e[mapping.propertyName] = parsed;
-        }
-      });
-      return e;
-    });
+  private async parseRawData() {
+    this.mappedEntities = await this.importService.transformRawDataToEntities(
+      this.rawData,
+      this.entityType,
+      this.columnMapping
+    );
 
     this.displayColumns = this.columnMapping
       .filter(({ propertyName }) => !!propertyName)
       .map(({ propertyName }) => propertyName);
-  }
-
-  private parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
-    if (!mapping.propertyName) {
-      return undefined;
-    }
-
-    const schema = entity.getSchema().get(mapping.propertyName);
-    const mappingFn = this.importService.getMappingFunction(schema);
-    if (mappingFn) {
-      return mappingFn(val, mapping.additional);
-    } else {
-      return this.schemaService
-        .getDatatypeOrDefault(schema.dataType)
-        .transformToObjectFormat(val, schema, this.schemaService, entity);
-    }
   }
 
   async startImport() {

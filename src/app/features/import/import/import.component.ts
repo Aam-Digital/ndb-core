@@ -56,6 +56,7 @@ export class ImportComponent {
     delete this.rawData;
     delete this.entityType;
     delete this.columnMapping;
+    delete this.additionalImportActions;
     this.importFileComponent.reset();
     this.stepper.reset();
   }
@@ -68,7 +69,9 @@ export class ImportComponent {
         $localize`:alert info after file load:Column Mappings have been reset`
       );
     }
-    this.onColumnMappingUpdate(data.fields.map((field) => ({ column: field })));
+    this.onColumnMappingUpdate(
+      data.fields.map((field) => ({ column: field, propertyName: undefined }))
+    );
   }
 
   onColumnMappingUpdate(newColumnMapping: ColumnMapping[]) {
@@ -80,8 +83,21 @@ export class ImportComponent {
 
   applyPreviousMapping(importMetadata: ImportMetadata) {
     this.entityType = importMetadata.config.entityType;
-    // TODO: ensure all and only rawData columns exist
-    this.onColumnMappingUpdate(importMetadata.config.columnMapping);
+
+    // apply columns individually to ensure only valid mappings are merging on top of existing mapping
+    const applicableMapping: ColumnMapping[] = [];
+    for (const existingCol of this.columnMapping) {
+      let applicableCol = importMetadata.config.columnMapping.find(
+        (c) => existingCol.column === c.column
+      );
+      if (!applicableCol) {
+        // reset any existing mapping - the loading should also apply which columns are ignored
+        applicableCol = { column: existingCol.column, propertyName: undefined };
+      }
+      applicableMapping.push(Object.assign({}, existingCol, applicableCol));
+    }
+
+    this.onColumnMappingUpdate(applicableMapping);
   }
 
   onImportCompleted(completedImport: ImportMetadata) {
