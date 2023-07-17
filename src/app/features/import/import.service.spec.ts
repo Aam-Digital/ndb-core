@@ -7,9 +7,12 @@ import {
   entityRegistry,
 } from "../../core/entity/database-entity.decorator";
 import { Entity } from "../../core/entity/model/entity";
-import { ImportSettings } from "./import-metadata";
+import { ImportMetadata, ImportSettings } from "./import-metadata";
 import { ColumnMapping } from "./column-mapping";
-import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
+import {
+  expectEntitiesToBeInDatabase,
+  expectEntitiesToMatch,
+} from "../../utils/expect-entity-data.spec";
 import { HealthCheck } from "../../child-dev-project/children/health-checkup/model/health-check";
 import moment from "moment";
 import { Child } from "../../child-dev-project/children/model/child";
@@ -119,5 +122,41 @@ describe("ImportService", () => {
     expect(activity.participants).toEqual(["1", "2"]);
   });
 
-  it("should allow to removed entities and links", async () => {});
+  it("should allow to removed entities and links", async () => {
+    const importMeta = new ImportMetadata();
+    importMeta.config = {
+      entityType: "Child",
+      columnMapping: undefined,
+      additionalActions: [
+        { type: "RecurringActivity", id: "3" },
+        { type: "School", id: "4" },
+      ],
+    };
+    importMeta.ids = ["Child:1", "Child:2"];
+    const relations = [
+      { childId: "1", schoolId: "4" },
+      { childId: "2", schoolId: "4" },
+      { childId: "3", schoolId: "4" },
+      { childId: "2", schoolId: "3" },
+    ].map((e) => Object.assign(new ChildSchoolRelation(), e));
+    const activity = new RecurringActivity("3");
+    activity.participants = ["3", "2", "1"];
+    const children = ["1", "2", "3"].map((id) => new Child(id));
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.saveAll([
+      ...children,
+      ...relations,
+      activity,
+      importMeta,
+    ]);
+
+    await service.undoImport(importMeta);
+
+    await expectEntitiesToBeInDatabase([children[2]], false, true);
+    await expectEntitiesToBeInDatabase(relations.slice(2), false, true);
+    expect(activity.participants).toEqual(["3"]);
+    await expectAsync(
+      entityMapper.load(ImportMetadata, importMeta.getId())
+    ).toBeRejected();
+  });
 });
