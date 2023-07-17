@@ -13,7 +13,7 @@ import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
-import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
+import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 
 @RouteTarget("TodoList")
 @Component({
@@ -116,9 +116,7 @@ export class TodoListComponent implements OnInit {
   }
 
   createNew() {
-    const newEntity = new Todo();
-    newEntity.assignedTo = [this.sessionService.getCurrentUser().name];
-    this.showDetails(newEntity);
+    this.showDetails(new Todo());
   }
 
   showDetails(entity: Todo) {

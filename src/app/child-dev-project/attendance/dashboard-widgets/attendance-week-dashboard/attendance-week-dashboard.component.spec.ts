@@ -45,7 +45,7 @@ describe("AttendanceWeekDashboardComponent", () => {
   it("should display children with low attendance", async () => {
     const absentChild = new Child();
     const presentChild = new Child();
-    const mondayLastWeek = moment().startOf("week").subtract(6, "days");
+    const mondayLastWeek = moment().startOf("isoWeek").subtract(7, "days");
     const e1 = EventNote.create(mondayLastWeek.toDate());
     const e2 = EventNote.create(moment(e1.date).add(1, "day").toDate());
     const presentStatus = defaultAttendanceStatusTypes.find(
@@ -92,7 +92,7 @@ describe("AttendanceWeekDashboardComponent", () => {
 
   it("should correctly use the offset", () => {
     // default case: last week monday till saturday
-    const mondayLastWeek = moment().startOf("week").subtract(6, "days");
+    const mondayLastWeek = moment().startOf("isoWeek").subtract(7, "days");
     const saturdayLastWeek = mondayLastWeek.clone().add("5", "days");
     mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
 
@@ -103,7 +103,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     ).toHaveBeenCalledWith(mondayLastWeek.toDate(), saturdayLastWeek.toDate());
 
     // with offset: this week monday till saturday
-    const mondayThisWeek = moment().startOf("week").add(1, "day");
+    const mondayThisWeek = moment().startOf("isoWeek");
     const saturdayThisWeek = mondayThisWeek.clone().add(5, "days");
     mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
 

@@ -37,7 +37,7 @@ describe("SupportComponent", () => {
       serviceWorker: { getRegistrations: () => [], ready: Promise.resolve() },
     },
   };
-  let mockLocation: jasmine.SpyObj<Location>;
+  let mockLocation: any;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -49,7 +49,7 @@ describe("SupportComponent", () => {
     mockDB.getPouchDB.and.returnValue({
       info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
     } as any);
-    mockLocation = jasmine.createSpyObj(["reload"]);
+    mockLocation = {};
     await TestBed.configureTestingModule({
       imports: [
         SupportComponent,
@@ -118,7 +118,7 @@ describe("SupportComponent", () => {
     expect(mockDB.destroy).toHaveBeenCalled();
     expect(unregisterSpy).toHaveBeenCalled();
     expect(localStorage.getItem("someItem")).toBeNull();
-    expect(mockLocation.reload).toHaveBeenCalled();
+    expect(mockLocation.pathname).toBe("");
   });
 
   it("should display the service worker logs after they are available", fakeAsync(() => {

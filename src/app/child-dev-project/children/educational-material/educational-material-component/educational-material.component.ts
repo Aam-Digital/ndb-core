@@ -73,7 +73,6 @@ export class EducationalMaterialComponent implements OnInit {
     // use last entered date as default, otherwise today's date
     newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
     newAtt.child = this.entity.getId();
-    newAtt.materialAmount = 1;
 
     return newAtt;
   };

@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { DashboardWidgetComponent } from "./dashboard-widget.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -35,5 +35,5 @@ Loading.args = {
   subtitle: "of all numbers",
   icon: "child",
   theme: "child",
-  _loading: true,
+  loading: true,
 };

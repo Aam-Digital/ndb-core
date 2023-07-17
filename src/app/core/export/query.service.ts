@@ -97,6 +97,7 @@ export class QueryService {
         toArray: this.toArray,
         unique: this.unique,
         count: this.count,
+        sum: this.sum,
         addPrefix: this.addPrefix,
         toEntities: this.toEntities.bind(this),
         getRelated: this.getRelated.bind(this),
@@ -231,6 +232,19 @@ export class QueryService {
    */
   private count(data: any[]): number {
     return data ? data.length : 0;
+  }
+
+  /**
+   * Returns the (integer) sum of the provided array.
+   * It can also handle integers in strings, e.g. "3"
+   * @param data and integer array
+   * @private
+   */
+  private sum(data: any[]): number {
+    return data.reduce((res, cur) => {
+      const parsed = Number.parseInt(cur);
+      return Number.isNaN(parsed) ? res : res + parsed;
+    }, 0);
   }
 
   /**

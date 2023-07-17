@@ -3,7 +3,7 @@ import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
+import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -183,8 +183,6 @@ export class NotesManagerComponent implements OnInit {
 
   addNoteClick() {
     const newNote = new Note(Date.now().toString());
-    newNote.date = new Date();
-    newNote.authors = [this.sessionService.getCurrentUser().name];
     this.showDetails(newNote);
   }
 

@@ -39,7 +39,6 @@ export class HistoricalDataComponent implements OnInit {
     return () => {
       const newEntry = new HistoricalEntityData();
       newEntry.relatedEntity = this.entity.getId();
-      newEntry.date = new Date();
       return newEntry;
     };
   }
