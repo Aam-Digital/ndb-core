@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportEntityTypeComponent } from "./import-entity-type.component";
-import { ImportModule } from "../import.module";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -27,8 +26,11 @@ describe("ImportSelectTypeComponent", () => {
     testTypes.forEach((t) => mockRegistry.add(t.key, t.value));
 
     await TestBed.configureTestingModule({
-      imports: [ImportModule, NoopAnimationsModule, FontAwesomeTestingModule],
-      declarations: [ImportEntityTypeComponent],
+      imports: [
+        ImportEntityTypeComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [{ provide: EntityRegistry, useValue: mockRegistry }],
     }).compileComponents();
 

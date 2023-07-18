@@ -1,14 +1,34 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import moment from "moment/moment";
-import { FormControl } from "@angular/forms";
+import { FormControl, ReactiveFormsModule } from "@angular/forms";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { MappingDialogData } from "../import-column-mapping.component";
+import { MatInputModule } from "@angular/material/input";
+import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
+import { MatListModule } from "@angular/material/list";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-date-value-mapping",
   templateUrl: "./date-value-mapping.component.html",
   styleUrls: ["./date-value-mapping.component.scss"],
+  standalone: true,
+  imports: [
+    MatDialogModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    NgIf,
+    MatListModule,
+    NgForOf,
+    NgClass,
+    DatePipe,
+    MatButtonModule,
+  ],
 })
 export class DateValueMappingComponent {
   format = new FormControl("");

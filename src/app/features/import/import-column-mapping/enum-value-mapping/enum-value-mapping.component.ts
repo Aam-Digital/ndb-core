@@ -1,15 +1,30 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { FormBuilder, FormControl, FormGroup } from "@angular/forms";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
 import { MappingDialogData } from "../import-column-mapping.component";
 import { EntitySchemaField } from "../../../../core/entity/schema/entity-schema-field";
+import { KeyValuePipe, NgForOf } from "@angular/common";
+import { DynamicComponentDirective } from "../../../../core/view/dynamic-components/dynamic-component.directive";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-enum-value-mapping",
   templateUrl: "./enum-value-mapping.component.html",
   styleUrls: ["./enum-value-mapping.component.scss"],
+  standalone: true,
+  imports: [
+    MatDialogModule,
+    NgForOf,
+    KeyValuePipe,
+    DynamicComponentDirective,
+    MatButtonModule,
+  ],
 })
 export class EnumValueMappingComponent {
   form: FormGroup;

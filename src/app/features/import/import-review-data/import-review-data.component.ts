@@ -17,11 +17,22 @@ import {
 import { lastValueFrom } from "rxjs";
 import { ImportMetadata } from "../import-metadata";
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
+import { MatButtonModule } from "@angular/material/button";
+import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
+import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { NgIf } from "@angular/common";
 
 @Component({
   selector: "app-import-review-data",
   templateUrl: "./import-review-data.component.html",
   styleUrls: ["./import-review-data.component.scss"],
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    HelpButtonComponent,
+    EntitySubrecordComponent,
+    NgIf,
+  ],
 })
 export class ImportReviewDataComponent implements OnChanges {
   @Input() rawData: any[];

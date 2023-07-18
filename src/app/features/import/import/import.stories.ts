@@ -1,6 +1,5 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { ImportModule } from "../import.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportComponent } from "./import.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -22,7 +21,7 @@ export default {
   component: ImportComponent,
   decorators: [
     moduleMetadata({
-      imports: [ImportModule, StorybookBaseModule, FontAwesomeModule],
+      imports: [ImportComponent, StorybookBaseModule, FontAwesomeModule],
       providers: [
         {
           provide: EntityMapperService,

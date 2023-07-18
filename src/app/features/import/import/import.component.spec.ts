@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportComponent } from "./import.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ImportModule } from "../import.module";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { Papa } from "ngx-papaparse";
 import { ColumnMapping } from "../column-mapping";
@@ -23,7 +22,7 @@ describe("ImportComponent", () => {
     };
 
     await TestBed.configureTestingModule({
-      imports: [ImportModule, MockedTestingModule],
+      imports: [ImportComponent, MockedTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImportComponent);

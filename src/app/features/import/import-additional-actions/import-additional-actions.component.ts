@@ -7,11 +7,20 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
-import { FormControl, FormGroup } from "@angular/forms";
+import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
 import { AdditionalImportAction } from "./additional-import-action";
 import { ImportService } from "../import.service";
+import { MatListModule } from "@angular/material/list";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgForOf, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
+import { MatButtonModule } from "@angular/material/button";
+import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -20,6 +29,22 @@ import { ImportService } from "../import.service";
   selector: "app-import-additional-actions",
   templateUrl: "./import-additional-actions.component.html",
   styleUrls: ["./import-additional-actions.component.scss"],
+  standalone: true,
+  imports: [
+    MatListModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    NgForOf,
+    EntityTypeLabelPipe,
+    DisplayEntityComponent,
+    ReactiveFormsModule,
+    MatFormFieldModule,
+    BasicAutocompleteComponent,
+    MatButtonModule,
+    HelpButtonComponent,
+    NgIf,
+  ],
+  providers: [EntityTypeLabelPipe],
 })
 export class ImportAdditionalActionsComponent implements OnChanges {
   @Input() entityType: string;

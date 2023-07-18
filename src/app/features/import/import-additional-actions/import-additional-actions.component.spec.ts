@@ -1,8 +1,9 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportAdditionalActionsComponent } from "./import-additional-actions.component";
+import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { MatDialog } from "@angular/material/dialog";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ImportModule } from "../import.module";
 
 describe("ImportAdditionalActionsComponent", () => {
   let component: ImportAdditionalActionsComponent;
@@ -10,8 +11,8 @@ describe("ImportAdditionalActionsComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ImportModule, MockedTestingModule],
-      declarations: [ImportAdditionalActionsComponent],
+      imports: [ImportAdditionalActionsComponent, MockedTestingModule],
+      providers: [EntityTypeLabelPipe, { provide: MatDialog, useValue: null }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImportAdditionalActionsComponent);

@@ -1,11 +1,9 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MatButtonModule } from "@angular/material/button";
 import { ImportConfirmSummaryComponent } from "./import-confirm-summary.component";
-import { MatDialog, MatDialogModule } from "@angular/material/dialog";
+import { MatDialog } from "@angular/material/dialog";
 import { ImportService } from "../import.service";
-import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { Component, Input, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
@@ -42,12 +40,7 @@ export default {
   component: LaunchDialogComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        StorybookBaseModule,
-        MatDialogModule,
-        MatProgressBarModule,
-        MatButtonModule,
-      ],
+      imports: [StorybookBaseModule, ImportConfirmSummaryComponent],
       declarations: [LaunchDialogComponent],
       providers: [
         ImportService,

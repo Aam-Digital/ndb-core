@@ -2,7 +2,6 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportColumnMappingComponent } from "./import-column-mapping.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ImportModule } from "../import.module";
 import { MatDialog } from "@angular/material/dialog";
 import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mapping.component";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -15,8 +14,7 @@ describe("ImportMapColumnsComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [MockedTestingModule, ImportModule],
-      declarations: [ImportColumnMappingComponent],
+      imports: [MockedTestingModule, ImportColumnMappingComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImportColumnMappingComponent);

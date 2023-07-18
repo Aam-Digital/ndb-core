@@ -7,7 +7,6 @@ import {
 
 import { ImportReviewDataComponent } from "./import-review-data.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ImportModule } from "../import.module";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { ImportService } from "../import.service";
@@ -27,8 +26,7 @@ describe("ImportReviewDataComponent", () => {
     mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
 
     await TestBed.configureTestingModule({
-      imports: [MockedTestingModule, ImportModule],
-      declarations: [ImportReviewDataComponent],
+      imports: [MockedTestingModule, ImportReviewDataComponent],
       providers: [
         { provide: ImportService, useValue: mockImportService },
         { provide: MatDialog, useValue: mockDialog },

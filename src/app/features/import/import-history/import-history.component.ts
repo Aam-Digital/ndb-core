@@ -5,12 +5,27 @@ import { ImportService } from "../import.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { DatePipe, NgForOf, NgIf } from "@angular/common";
+import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { DisplayEntityComponent } from "../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { MatButtonModule } from "@angular/material/button";
 
 @UntilDestroy()
 @Component({
   selector: "app-import-history",
   templateUrl: "./import-history.component.html",
   styleUrls: ["./import-history.component.scss"],
+  standalone: true,
+  imports: [
+    MatExpansionModule,
+    DatePipe,
+    EntityTypeLabelPipe,
+    DisplayEntityComponent,
+    MatButtonModule,
+    NgIf,
+    NgForOf,
+  ],
 })
 export class ImportHistoryComponent implements OnInit {
   @Input() highlightedPreviousImport: ImportMetadata;

@@ -19,7 +19,12 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
-@Injectable()
+/**
+ * Supporting import of data from spreadsheets.
+ */
+@Injectable({
+  providedIn: "root",
+})
 export class ImportService {
   readonly dateDataTypes = [
     dateEntitySchemaDatatype,

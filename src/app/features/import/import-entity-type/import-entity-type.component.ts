@@ -1,6 +1,12 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../core/entity/model/entity";
+import { MatInputModule } from "@angular/material/input";
+import { MatSelectModule } from "@angular/material/select";
+import { NgForOf } from "@angular/common";
+import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { FormsModule } from "@angular/forms";
 
 /**
  * Import sub-step: Let user select which entity type data should be imported as.
@@ -9,6 +15,15 @@ import { EntityConstructor } from "../../../core/entity/model/entity";
   selector: "app-import-entity-type",
   templateUrl: "./import-entity-type.component.html",
   styleUrls: ["./import-entity-type.component.scss"],
+  standalone: true,
+  imports: [
+    MatInputModule,
+    MatSelectModule,
+    NgForOf,
+    HelpButtonComponent,
+    MatSlideToggleModule,
+    FormsModule,
+  ],
 })
 export class ImportEntityTypeComponent {
   /** user selected entity type */

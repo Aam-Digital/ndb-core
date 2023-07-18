@@ -9,7 +9,6 @@ import { ImportConfirmSummaryComponent } from "./import-confirm-summary.componen
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ImportService } from "../import.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ImportModule } from "../import.module";
 import { ImportMetadata } from "../import-metadata";
 import { of } from "rxjs";
 
@@ -28,7 +27,7 @@ describe("ImportConfirmSummaryComponent", () => {
     mockDialogRef = jasmine.createSpyObj(["close"]);
 
     await TestBed.configureTestingModule({
-      imports: [ImportModule],
+      imports: [ImportConfirmSummaryComponent],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: {} },
         { provide: MatDialogRef, useValue: mockDialogRef },

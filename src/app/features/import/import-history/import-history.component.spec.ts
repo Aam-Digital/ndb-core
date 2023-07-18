@@ -10,7 +10,6 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { ImportService } from "../import.service";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
 import { of } from "rxjs";
-import { ImportModule } from "../import.module";
 import { ImportMetadata } from "../import-metadata";
 
 describe("ImportHistoryComponent", () => {
@@ -40,7 +39,7 @@ describe("ImportHistoryComponent", () => {
     mockConfirmationDialogService = jasmine.createSpyObj(["getConfirmation"]);
 
     await TestBed.configureTestingModule({
-      imports: [ImportModule],
+      imports: [ImportHistoryComponent],
       providers: [
         { provide: ImportService, useValue: mockImportService },
         { provide: EntityMapperService, useValue: mockEntityMapper },

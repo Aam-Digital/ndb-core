@@ -1,6 +1,6 @@
 import { Component, ViewChild } from "@angular/core";
 import { ParsedData } from "../../../core/input-file/input-file.component";
-import { MatStepper } from "@angular/material/stepper";
+import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
 import { ImportFileComponent } from "../import-file/import-file.component";
 import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
@@ -8,6 +8,18 @@ import { AdditionalImportAction } from "../import-additional-actions/additional-
 import { ImportMetadata } from "../import-metadata";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { ActivatedRoute } from "@angular/router";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { NgIf } from "@angular/common";
+import { MatCardModule } from "@angular/material/card";
+import { ImportHistoryComponent } from "../import-history/import-history.component";
+import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { ImportEntityTypeComponent } from "../import-entity-type/import-entity-type.component";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
+import { ImportAdditionalActionsComponent } from "../import-additional-actions/import-additional-actions.component";
+import { MatButtonModule } from "@angular/material/button";
+import { ImportColumnMappingComponent } from "../import-column-mapping/import-column-mapping.component";
+import { ImportReviewDataComponent } from "../import-review-data/import-review-data.component";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -17,6 +29,23 @@ import { ActivatedRoute } from "@angular/router";
   selector: "app-import",
   templateUrl: "./import.component.html",
   styleUrls: ["./import.component.scss"],
+  standalone: true,
+  imports: [
+    MatStepperModule,
+    FontAwesomeModule,
+    NgIf,
+    ImportFileComponent,
+    MatCardModule,
+    ImportHistoryComponent,
+    EntityTypeLabelPipe,
+    ImportEntityTypeComponent,
+    MatExpansionModule,
+    HelpButtonComponent,
+    ImportAdditionalActionsComponent,
+    MatButtonModule,
+    ImportColumnMappingComponent,
+    ImportReviewDataComponent,
+  ],
 })
 export class ImportComponent {
   rawData: any[];

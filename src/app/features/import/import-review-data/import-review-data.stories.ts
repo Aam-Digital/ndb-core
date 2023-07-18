@@ -7,22 +7,13 @@ import {
   IMPORT_SAMPLE_RAW_DATA,
 } from "../import/import-sample-raw-data";
 import { ImportService } from "../import.service";
-import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { MatButtonModule } from "@angular/material/button";
-import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
 
 export default {
   title: "Features/Import/4 Review & Edit Data",
   component: ImportReviewDataComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        StorybookBaseModule,
-        EntitySubrecordComponent,
-        MatButtonModule,
-        HelpButtonComponent,
-      ],
-      declarations: [ImportReviewDataComponent],
+      imports: [StorybookBaseModule, ImportReviewDataComponent],
       providers: [ImportService],
     }),
   ],

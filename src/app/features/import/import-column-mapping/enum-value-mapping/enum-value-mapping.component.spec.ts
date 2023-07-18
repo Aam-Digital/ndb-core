@@ -1,7 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EnumValueMappingComponent } from "./enum-value-mapping.component";
-import { ImportModule } from "../../import.module";
 import { MappingDialogData } from "../import-column-mapping.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Child } from "../../../../child-dev-project/children/model/child";
@@ -22,8 +21,7 @@ describe("EnumValueMappingComponent", () => {
       entityType: Child,
     };
     await TestBed.configureTestingModule({
-      declarations: [EnumValueMappingComponent],
-      imports: [ImportModule, MockedTestingModule],
+      imports: [EnumValueMappingComponent, MockedTestingModule],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: { close: () => undefined } },

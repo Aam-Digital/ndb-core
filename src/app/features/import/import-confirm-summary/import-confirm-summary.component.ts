@@ -1,9 +1,16 @@
 import { Component, Inject } from "@angular/core";
 import { ImportService } from "../import.service";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { Entity } from "../../../core/entity/model/entity";
 import { ImportMetadata, ImportSettings } from "../import-metadata";
 import { MatSnackBar } from "@angular/material/snack-bar";
+import { NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatButtonModule } from "@angular/material/button";
 
 /**
  * Data passed into Import Confirmation Dialog.
@@ -13,10 +20,15 @@ export interface ImportDialogData {
   importSettings: ImportSettings;
 }
 
+/**
+ * Summary screen and confirmation / execution dialog for running an import.
+ */
 @Component({
   selector: "app-import-confirm-summary",
   templateUrl: "./import-confirm-summary.component.html",
   styleUrls: ["./import-confirm-summary.component.scss"],
+  standalone: true,
+  imports: [MatDialogModule, NgIf, MatProgressBarModule, MatButtonModule],
 })
 export class ImportConfirmSummaryComponent {
   importInProgress: boolean;

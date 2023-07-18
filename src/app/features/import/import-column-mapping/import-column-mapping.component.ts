@@ -12,6 +12,12 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
 import { ImportService } from "../import.service";
+import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatInputModule } from "@angular/material/input";
+import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
+import { FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -21,6 +27,16 @@ import { ImportService } from "../import.service";
   selector: "app-import-column-mapping",
   templateUrl: "./import-column-mapping.component.html",
   styleUrls: ["./import-column-mapping.component.scss"],
+  standalone: true,
+  imports: [
+    HelpButtonComponent,
+    NgForOf,
+    MatInputModule,
+    BasicAutocompleteComponent,
+    FormsModule,
+    MatButtonModule,
+    NgIf,
+  ],
 })
 export class ImportColumnMappingComponent implements OnChanges {
   @Input() rawData: any[] = [];
