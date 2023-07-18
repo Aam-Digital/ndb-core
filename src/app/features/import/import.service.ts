@@ -82,7 +82,7 @@ export class ImportService {
     ) {
       return {
         mappingCmp: EnumValueMappingComponent,
-        mappingFn: (val, additional) => additional[val],
+        mappingFn: (val, additional) => additional?.[val],
       };
     }
     if (this.dateDataTypes.includes(schema.dataType)) {
@@ -138,12 +138,10 @@ export class ImportService {
     return this.entityMapper.saveAll(relations);
   }
 
-  private async undoSchoolLink(importMeta: ImportMetadata, id: string) {
+  private async undoSchoolLink(importMeta: ImportMetadata) {
     const relations = await this.entityMapper.loadType(ChildSchoolRelation);
-    const imported = relations.filter(
-      (rel) =>
-        rel.schoolId === id &&
-        importMeta.ids.includes(Entity.createPrefixedId("Child", rel.childId))
+    const imported = relations.filter((rel) =>
+      importMeta.ids.includes(Entity.createPrefixedId("Child", rel.childId))
     );
     return Promise.all(imported.map((rel) => this.entityMapper.remove(rel)));
   }

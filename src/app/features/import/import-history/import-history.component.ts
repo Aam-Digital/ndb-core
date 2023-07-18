@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, OnInit, Output } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ImportMetadata } from "../import-metadata";
 import { ImportService } from "../import.service";
@@ -28,8 +28,6 @@ import { MatButtonModule } from "@angular/material/button";
   ],
 })
 export class ImportHistoryComponent implements OnInit {
-  @Input() highlightedPreviousImport: ImportMetadata;
-
   @Output() itemSelected = new EventEmitter<ImportMetadata>();
 
   previousImports: ImportMetadata[];
@@ -44,7 +42,7 @@ export class ImportHistoryComponent implements OnInit {
       .pipe(untilDestroyed(this))
       .subscribe((update) => {
         this.previousImports = applyUpdate(this.previousImports, update);
-        this.sortAndHighlightImports();
+        this.sortImports();
       });
   }
 
@@ -56,17 +54,11 @@ export class ImportHistoryComponent implements OnInit {
     this.previousImports = await this.entityMapper.loadType<ImportMetadata>(
       ImportMetadata
     );
-    this.sortAndHighlightImports();
+    this.sortImports();
   }
 
-  private sortAndHighlightImports() {
-    this.previousImports = this.previousImports.sort(
-      (a, b) => b.date.getTime() - a.date.getTime()
-    );
-
-    if (!this.highlightedPreviousImport) {
-      this.highlightedPreviousImport = this.previousImports?.[0];
-    }
+  private sortImports() {
+    this.previousImports.sort((a, b) => b.date.getTime() - a.date.getTime());
   }
 
   async undoImport(item: ImportMetadata) {

@@ -136,8 +136,8 @@ describe("ImportService", () => {
     const relations = [
       { childId: "1", schoolId: "4" },
       { childId: "2", schoolId: "4" },
-      { childId: "3", schoolId: "4" },
-      { childId: "2", schoolId: "3" },
+      { childId: "3", schoolId: "4" }, // Other child same school -> keep
+      { childId: "2", schoolId: "3" }, // Imported child different school -> remove
     ].map((e) => Object.assign(new ChildSchoolRelation(), e));
     const activity = new RecurringActivity("3");
     activity.participants = ["3", "2", "1"];
@@ -153,7 +153,7 @@ describe("ImportService", () => {
     await service.undoImport(importMeta);
 
     await expectEntitiesToBeInDatabase([children[2]], false, true);
-    await expectEntitiesToBeInDatabase(relations.slice(2), false, true);
+    await expectEntitiesToBeInDatabase([relations[2]], false, true);
     expect(activity.participants).toEqual(["3"]);
     await expectAsync(
       entityMapper.load(ImportMetadata, importMeta.getId())

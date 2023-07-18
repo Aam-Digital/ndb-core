@@ -19,7 +19,7 @@
       <app-basic-autocomplete
         [options]="allProps"
         [(ngModel)]="col.propertyName"
-        (ngModelChange)="updateMapping()"
+        (ngModelChange)="emitUpdate()"
         [optionToString]="labelMapper"
         [hideOption]="isUsed"
       />

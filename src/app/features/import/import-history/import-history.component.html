@@ -2,8 +2,8 @@
 
 <mat-accordion>
   <mat-expansion-panel
-    *ngFor="let item of previousImports"
-    [expanded]="item === highlightedPreviousImport"
+    *ngFor="let item of previousImports; index as i"
+    [expanded]="i === 0"
   >
     <mat-expansion-panel-header>
       <mat-panel-title i18n>

@@ -5,8 +5,8 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { MatDialog } from "@angular/material/dialog";
 import { EnumValueMappingComponent } from "./enum-value-mapping/enum-value-mapping.component";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { SimpleChange } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
+import { of } from "rxjs";
 
 describe("ImportMapColumnsComponent", () => {
   let component: ImportColumnMappingComponent;
@@ -24,31 +24,6 @@ describe("ImportMapColumnsComponent", () => {
     spyOn(component.columnMappingChange, "emit");
   });
 
-  it("should reset invalid mappings when new entityType selected", () => {
-    component.columnMapping = [
-      { column: "x", propertyName: "name" }, // property also exists on new entityType
-      { column: "y", propertyName: "projectNumber" }, // property does not exist on new entityType
-    ];
-
-    component.entityType = "School";
-    component.ngOnChanges({
-      entityType: new SimpleChange("Child", "School", false),
-    });
-
-    const expectedNewMapping: ColumnMapping[] = [
-      { column: "x", propertyName: "name" },
-      {
-        column: "y",
-        propertyName: undefined,
-      },
-    ];
-
-    expect(component.columnMapping).toEqual(expectedNewMapping);
-    expect(component.columnMappingChange.emit).toHaveBeenCalledWith(
-      expectedNewMapping
-    );
-  });
-
   it("should open mapping component with required data", () => {
     component.rawData = [
       { name: "first", gender: "male" },
@@ -58,6 +33,7 @@ describe("ImportMapColumnsComponent", () => {
     component.entityType = "Child";
     component.columnMapping = [{ column: "name" }, { column: "gender" }];
     const openSpy = spyOn(TestBed.inject(MatDialog), "open");
+    openSpy.and.returnValue({ afterClosed: () => of(undefined) } as any);
 
     const genderColumn = component.columnMapping[1];
     genderColumn.propertyName = "gender";
@@ -73,13 +49,18 @@ describe("ImportMapColumnsComponent", () => {
     });
   });
 
-  it("should emit on updateMapping from UI", () => {
-    component.updateMapping();
+  it("should emit changes after popup is closed", () => {
+    spyOn(TestBed.inject(MatDialog), "open").and.returnValue({
+      afterClosed: () => of(undefined),
+    } as any);
+    component.entityType = "Child";
+    const columnMapping: ColumnMapping = {
+      column: "test",
+      propertyName: "gender",
+    };
+
+    component.openMappingComponent(columnMapping);
 
     expect(component.columnMappingChange.emit).toHaveBeenCalled();
-  });
-
-  it("should emit on changes from popup form with additional details", () => {
-    // TODO: test additional mapping details from popup form to be applied and emitted
   });
 });

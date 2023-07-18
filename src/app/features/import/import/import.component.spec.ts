@@ -122,10 +122,7 @@ describe("ImportComponent", () => {
 
     testApplyColumnMapping(
       loadedMapping,
-      [
-        { column: "x", propertyName: "name" },
-        { column: "y", propertyName: undefined },
-      ],
+      [{ column: "x", propertyName: "name" }, { column: "y" }],
       1
     );
   });
@@ -142,10 +139,7 @@ describe("ImportComponent", () => {
 
     testApplyColumnMapping(
       loadedMapping,
-      [
-        { column: "x", propertyName: "name" },
-        { column: "y", propertyName: undefined },
-      ],
+      [{ column: "x", propertyName: "name" }, { column: "y" }],
       1
     );
   });

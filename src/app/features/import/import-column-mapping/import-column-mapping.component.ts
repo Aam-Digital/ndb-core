@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { ComponentType } from "@angular/cdk/overlay";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
@@ -38,7 +31,7 @@ import { MatButtonModule } from "@angular/material/button";
     NgIf,
   ],
 })
-export class ImportColumnMappingComponent implements OnChanges {
+export class ImportColumnMappingComponent {
   @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[] = [];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
@@ -73,43 +66,24 @@ export class ImportColumnMappingComponent implements OnChanges {
     private dialog: MatDialog
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.hasOwnProperty("entityType")) {
-      this.resetMappingToEntityType();
-    }
-  }
-
-  /**
-   * un-map properties not matching the entityType
-   * @private
-   */
-  private resetMappingToEntityType() {
-    this.columnMapping
-      .filter((c) => !this.allProps.includes(c.propertyName))
-      .forEach((c) => (c.propertyName = undefined));
-    this.updateMapping();
-  }
-
   openMappingComponent(col: ColumnMapping) {
-    const uniqueValues = new Set();
+    const uniqueValues = new Set<any>();
     this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
-    this.dialog.open<any, MappingDialogData>(
-      this.mappingCmp[col.propertyName],
-      {
+    this.dialog
+      .open<any, MappingDialogData>(this.mappingCmp[col.propertyName], {
         data: {
           col: col,
           values: [...uniqueValues],
           entityType: this.entityCtor,
         },
         disableClose: true,
-      }
-    );
+      })
+      .afterClosed()
+      .subscribe(() => this.emitUpdate());
   }
 
-  /**
-   * Emit an updated columnMapping array and emit change event, to ensure smooth change detection.
-   */
-  updateMapping() {
+  emitUpdate() {
+    // Emitting copy of array to trigger change detection
     this.columnMappingChange.emit([...this.columnMapping]);
   }
 

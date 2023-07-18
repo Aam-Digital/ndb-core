@@ -20,11 +20,12 @@ import { ImportAdditionalActionsComponent } from "../import-additional-actions/i
 import { MatButtonModule } from "@angular/material/button";
 import { ImportColumnMappingComponent } from "../import-column-mapping/import-column-mapping.component";
 import { ImportReviewDataComponent } from "../import-review-data/import-review-data.component";
+import { RouteTarget } from "../../../app.routing";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
  */
-//TODO: @RouteTarget("Import")
+@RouteTarget("Import")
 @Component({
   selector: "app-import",
   templateUrl: "./import.component.html",
@@ -113,25 +114,19 @@ export class ImportComponent {
   applyPreviousMapping(importMetadata: ImportMetadata) {
     this.entityType = importMetadata.config.entityType;
 
-    // apply columns individually to ensure only valid mappings are merging on top of existing mapping
-    const applicableMapping: ColumnMapping[] = [];
-    for (const existingCol of this.columnMapping) {
-      let applicableCol = importMetadata.config.columnMapping.find(
-        (c) => existingCol.column === c.column
-      );
-      if (!applicableCol) {
-        // reset any existing mapping - the loading should also apply which columns are ignored
-        applicableCol = { column: existingCol.column, propertyName: undefined };
-      }
-      applicableMapping.push(Object.assign({}, existingCol, applicableCol));
-    }
+    const adjustedMappings = this.columnMapping.map(
+      ({ column }) =>
+        importMetadata.config.columnMapping.find(
+          (c) => column === c.column
+        ) ?? { column }
+    );
 
-    this.onColumnMappingUpdate(applicableMapping);
+    this.onColumnMappingUpdate(adjustedMappings);
   }
 
   onImportCompleted(completedImport: ImportMetadata) {
     // TODO EntitySubrecord shows saved entities for a moment (because it listens to the entity updates)
     // TODO some components can't handle the reset and throw errors (maybe reload page instead to destroy the state completely)
-    this.reset(true);
+    return this.reset(true);
   }
 }

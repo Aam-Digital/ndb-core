@@ -55,14 +55,13 @@ describe("ImportHistoryComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should load all previous imports, sorted by date and highlight most recent", fakeAsync(() => {
+  it("should load all previous imports, sorted by date", fakeAsync(() => {
     mockEntityMapper.loadType.and.resolveTo([testImport1, testImport2]);
 
     component.ngOnInit();
     tick();
 
     expect(component.previousImports).toEqual([testImport2, testImport1]);
-    expect(component.highlightedPreviousImport).toEqual(testImport2);
   }));
 
   it("should ask for confirmation before undo action", fakeAsync(() => {
