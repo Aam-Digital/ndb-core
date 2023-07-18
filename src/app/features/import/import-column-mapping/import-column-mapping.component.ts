@@ -44,9 +44,9 @@ export class ImportColumnMappingComponent implements OnChanges {
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   @Input() set entityType(value: string) {
-    this.entityCtr = this.entities.get(value);
+    this.entityCtor = this.entities.get(value);
     this.mappingCmp = {};
-    this.allProps = [...this.entityCtr.schema.entries()]
+    this.allProps = [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
       .map(([name, schema]) => {
         const cmp = this.importService.getMappingComponent(schema);
@@ -57,13 +57,13 @@ export class ImportColumnMappingComponent implements OnChanges {
       });
   }
 
-  private entityCtr: EntityConstructor;
+  private entityCtor: EntityConstructor;
   // entity properties that have a label
   allProps: string[] = [];
   // properties that need further adjustments through a component
   mappingCmp: { [key: string]: ComponentType<any> };
 
-  labelMapper = (name: string) => this.entityCtr.schema.get(name).label;
+  labelMapper = (name: string) => this.entityCtor.schema.get(name).label;
   isUsed = (option: string) =>
     this.columnMapping.some(({ propertyName }) => propertyName === option);
 
@@ -99,7 +99,7 @@ export class ImportColumnMappingComponent implements OnChanges {
         data: {
           col: col,
           values: [...uniqueValues],
-          entityType: this.entityCtr,
+          entityType: this.entityCtor,
         },
         disableClose: true,
       }

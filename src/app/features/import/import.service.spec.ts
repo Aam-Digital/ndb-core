@@ -60,10 +60,10 @@ describe("ImportService", () => {
     const rawData: any[] = [
       { x: "John", y: "111" },
       { x: "Jane" },
-      { x: "broken date", y: "foo" }, // date column ("y") ignored
+      { x: "broken date", y: "foo" }, // date column; ("y") ignored
       { x: "with broken mapping column", brokenMapping: "foo" }, // column mapped to non-existing property ignored
       { x: "", onlyUnmappedColumn: "1" }, // only empty or unmapped columns => row skipped
-      { x: "with zero", y: "0" }, // "" value ignored; 0 value mapped
+      { x: "with zero", y: "0" }, // 0 value mapped
       { x: "custom mapping fn", z: "30.01.2023" },
     ];
     const entityType: string = "HealthCheck";
@@ -158,5 +158,20 @@ describe("ImportService", () => {
     await expectAsync(
       entityMapper.load(ImportMetadata, importMeta.getId())
     ).toBeRejected();
+  });
+
+  it("should not fail undo if some entities have already been removed", async () => {
+    const importMeta = new ImportMetadata();
+    importMeta.config = { entityType: "Child", columnMapping: undefined };
+    importMeta.ids = ["Child:1", "Child:2"];
+    const children = ["1", "2", "3"].map((id) => new Child(id));
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.saveAll([...children, importMeta]);
+
+    await entityMapper.remove(children[1]);
+
+    await service.undoImport(importMeta);
+
+    await expectEntitiesToBeInDatabase([children[2]], false, true);
   });
 });

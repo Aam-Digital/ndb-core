@@ -21,9 +21,9 @@ export class ImportFileComponent {
   data: ParsedData<any>;
   @ViewChild(InputFileComponent) inputFileField: InputFileComponent;
 
-  onFileLoad($event: ParsedData<any>) {
-    this.dataLoaded.emit($event);
-    this.data = $event;
+  onFileLoad(parsedData: ParsedData<any>) {
+    this.dataLoaded.emit(parsedData);
+    this.data = parsedData;
   }
 
   public reset() {

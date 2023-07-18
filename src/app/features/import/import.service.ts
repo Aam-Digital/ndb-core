@@ -36,7 +36,7 @@ export class ImportService {
   private linkableEntities: {
     [key: string]: {
       [key: string]: {
-        create: (e: any[], link: string) => Promise<any>;
+        create: (entities: Entity[], id: string) => Promise<any>;
         undo: (importMeta: ImportMetadata, id: string) => Promise<any>;
       };
     };
@@ -120,7 +120,7 @@ export class ImportService {
     return importMeta;
   }
 
-  private linkEntities(entities: any[], settings: ImportSettings) {
+  private linkEntities(entities: Entity[], settings: ImportSettings) {
     return Promise.all(
       settings.additionalActions?.map(({ type, id }) =>
         this.linkableEntities[settings.entityType][type].create(entities, id)
@@ -128,11 +128,11 @@ export class ImportService {
     );
   }
 
-  private linkToSchool(entities: any[], link: string) {
+  private linkToSchool(entities: Entity[], id: string) {
     const relations = entities.map((entity) => {
       const relation = new ChildSchoolRelation();
-      relation.childId = Entity.extractEntityIdFromId(entity._id);
-      relation.schoolId = link;
+      relation.childId = entity.getId();
+      relation.schoolId = id;
       return relation;
     });
     return this.entityMapper.saveAll(relations);
@@ -148,9 +148,9 @@ export class ImportService {
     return Promise.all(imported.map((rel) => this.entityMapper.remove(rel)));
   }
 
-  private async linkToActivity(entities: any[], link: string) {
-    const activity = await this.entityMapper.load(RecurringActivity, link);
-    const ids = entities.map((e) => Entity.extractEntityIdFromId(e._id));
+  private async linkToActivity(entities: Entity[], id: string) {
+    const activity = await this.entityMapper.load(RecurringActivity, id);
+    const ids = entities.map((e) => e.getId());
     activity.participants.push(...ids);
     return this.entityMapper.save(activity);
   }
@@ -164,16 +164,16 @@ export class ImportService {
   }
 
   undoImport(item: ImportMetadata) {
-    const removes = item.ids.map(
-      (id) =>
-        this.entityMapper
-          .load(item.config.entityType, id)
-          .then((e) => this.entityMapper.remove(e))
-          .catch(() => undefined) // TODO test
+    const removes = item.ids.map((id) =>
+      this.entityMapper
+        .load(item.config.entityType, id)
+        .then((e) => this.entityMapper.remove(e))
+        .catch(() => undefined)
     );
-    const undoes = item.config.additionalActions.map(({ type, id }) =>
-      this.linkableEntities[item.config.entityType][type].undo(item, id)
-    );
+    const undoes =
+      item.config.additionalActions?.map(({ type, id }) =>
+        this.linkableEntities[item.config.entityType][type].undo(item, id)
+      ) ?? [];
 
     // Or should the ImportMetadata still be kept indicating that it has been undone?
     return Promise.all([...removes, ...undoes, this.entityMapper.remove(item)]);
@@ -206,7 +206,7 @@ export class ImportService {
 
         const parsed = this.parseRow(row[col], mapping, entity);
 
-        // ignoring empty strings or un-parseable values for import
+        // ignoring falsy values except 0 (=> null, undefined, empty string)
         if (!!parsed || parsed === 0) {
           entity[mapping.propertyName] = parsed;
           hasMappedProperty = true;

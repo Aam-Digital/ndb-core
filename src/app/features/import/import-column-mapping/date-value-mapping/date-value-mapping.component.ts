@@ -58,6 +58,7 @@ export class DateValueMappingComponent {
         this.format.setErrors({ parsingError: true });
       }
     });
+    // Sort unparsed dates to front
     this.values.sort((v1, v2) =>
       v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0
     );

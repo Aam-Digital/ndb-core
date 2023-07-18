@@ -90,7 +90,7 @@ export class ImportComponent {
     this.stepper.reset();
   }
 
-  onDataLoaded(data: ParsedData<any>) {
+  onDataLoaded(data: ParsedData) {
     this.rawData = data.data;
 
     if (this.columnMapping) {

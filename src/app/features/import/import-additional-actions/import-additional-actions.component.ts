@@ -49,8 +49,8 @@ import { HelpButtonComponent } from "../../../core/common-components/help-button
 export class ImportAdditionalActionsComponent implements OnChanges {
   @Input() entityType: string;
 
-  @Output() importActionsChange = new EventEmitter<AdditionalImportAction[]>();
   @Input() importActions: AdditionalImportAction[] = [];
+  @Output() importActionsChange = new EventEmitter<AdditionalImportAction[]>();
 
   linkableEntityTypes: string[] = [];
   typeToString = (val) => this.entityTypeLabelPipe.transform(val);
@@ -106,10 +106,7 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   }
 
   addAction() {
-    const newAction: AdditionalImportAction = {
-      type: this.linkEntityForm.get("type").value,
-      id: this.linkEntityForm.get("id").value,
-    };
+    const newAction = this.linkEntityForm.getRawValue();
     this.importActions = [...(this.importActions ?? []), newAction];
     this.linkEntityForm.reset();
     this.importActionsChange.emit(this.importActions);
