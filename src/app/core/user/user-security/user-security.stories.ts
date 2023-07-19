@@ -1,11 +1,15 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { UserSecurityComponent } from "./user-security.component";
-import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import {
+  mockSessionService,
+  StorybookBaseModule,
+} from "../../../utils/storybook-base.module";
 import { SessionService } from "../../session/session-service/session.service";
+import { User } from "../user";
 
 export default {
-  title: "Core/User/User Security",
+  title: "Core/Admin/User Security",
   component: UserSecurityComponent,
   decorators: [
     moduleMetadata({
@@ -13,12 +17,10 @@ export default {
       providers: [
         {
           provide: SessionService,
-          useValue: {
-            getCurrentUser: () => ({
-              name: "Test",
-              roles: ["account_manager"],
-            }),
-          },
+          useValue: mockSessionService({
+            name: "Test",
+            roles: ["account_manager"],
+          }),
         },
       ],
     }),
@@ -28,9 +30,10 @@ export default {
 const Template: Story<UserSecurityComponent> = (
   args: UserSecurityComponent
 ) => ({
-  component: UserSecurityComponent,
   props: args,
 });
 
 export const NotRegistered = Template.bind({});
-NotRegistered.args = {};
+NotRegistered.args = {
+  entity: new User(),
+};

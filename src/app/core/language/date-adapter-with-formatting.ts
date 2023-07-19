@@ -5,6 +5,7 @@ import {
 } from "@angular/material/core";
 import moment from "moment";
 import { Injectable } from "@angular/core";
+import { getLocaleFirstDayOfWeek } from "@angular/common";
 
 /**
  * Extend MAT_NATIVE_DATE_FORMATS to also support parsing.
@@ -26,5 +27,9 @@ export class DateAdapterWithFormatting extends NativeDateAdapter {
       return moment(value, parseFormat, this.locale, true).toDate();
     }
     return value ? moment(value, true).locale(this.locale).toDate() : null;
+  }
+
+  override getFirstDayOfWeek(): number {
+    return getLocaleFirstDayOfWeek(this.locale);
   }
 }

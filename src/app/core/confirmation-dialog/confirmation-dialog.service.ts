@@ -55,4 +55,11 @@ export class ConfirmationDialogService {
         .afterClosed()
     );
   }
+
+  getDiscardConfirmation() {
+    return this.getConfirmation(
+      $localize`:Discard changes header:Discard Changes?`,
+      $localize`:Discard changes message:You have unsaved changes. Do you really want to leave this page? All unsaved changes will be lost.`
+    );
+  }
 }

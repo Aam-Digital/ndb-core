@@ -42,6 +42,7 @@ export class EducationalMaterial extends Entity {
   materialType: ConfigurableEnumValue;
   @DatabaseField({
     label: $localize`:The amount of the material which has been borrowed:Amount`,
+    defaultValue: 1,
     validators: {
       required: true,
     },

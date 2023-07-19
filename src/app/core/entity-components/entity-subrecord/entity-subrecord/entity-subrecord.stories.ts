@@ -1,24 +1,8 @@
-import { moduleMetadata } from "@storybook/angular";
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { EntitySubrecordComponent } from "./entity-subrecord.component";
-import { Note } from "../../../../child-dev-project/notes/model/note";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { DatePipe } from "@angular/common";
 import { DemoNoteGeneratorService } from "../../../../child-dev-project/notes/demo-data/demo-note-generator.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { DemoChildGenerator } from "../../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoUserGeneratorService } from "../../../user/demo-user-generator.service";
 import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { NEVER, of, Subject } from "rxjs";
-import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { AbilityService } from "../../../permissions/ability/ability.service";
-import { faker } from "../../../demo-data/faker";
-import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { Ability } from "@casl/ability";
-import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { ConfigurableEnumService } from "../../../configurable-enum/configurable-enum.service";
 
 const enumService = {
@@ -34,8 +18,10 @@ const data = new DemoNoteGeneratorService(
   userGenerator
 ).generateEntities();
 
+// TODO: fix stories for EntitySubrecord
+/*
 export default {
-  title: "Core/EntityComponents/EntitySubrecord",
+  title: "Core/Entities/EntitySubrecord",
   component: EntitySubrecordComponent,
   decorators: [
     moduleMetadata({
@@ -126,3 +112,4 @@ WithAttendance.args = {
   ],
   records: data,
 };
+*/

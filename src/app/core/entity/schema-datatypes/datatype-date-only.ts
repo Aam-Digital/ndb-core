@@ -16,6 +16,7 @@
  */
 
 import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { dateToString } from "../../../utils/utils";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").
@@ -36,16 +37,12 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype<Date, string> =
       if (!(value instanceof Date)) {
         return undefined;
       }
-      return (
-        value.getFullYear() +
-        "-" +
-        (value.getMonth() + 1).toString().padStart(2, "0") +
-        "-" +
-        value.getDate().toString().padStart(2, "0")
-      );
+      return dateToString(value);
     },
 
     transformToObjectFormat: (value: string) => {
+      value = migrateIsoDatesToInferredDateOnly(value);
+
       // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time
       // -> we want local time to represent the same day wherever used.
       const values = value.split("-").map((v) => Number(v));
@@ -60,3 +57,29 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype<Date, string> =
       return date;
     },
   };
+
+function migrateIsoDatesToInferredDateOnly(value: string): string {
+  if (!value.match(/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\dZ/)) {
+    // not ISO Date format (2023-01-06T10:03:35.726Z)
+    return value;
+  }
+
+  const date = new Date(value);
+  if (
+    date.getMinutes() % 15 === 0 &&
+    date.getSeconds() === 0 &&
+    date.getMilliseconds() === 0
+  ) {
+    // this date was originally created without time information
+    // -> infer the time zone and adjust its offset
+    if (date.getHours() > 12) {
+      // adjust because these are showing the previous day due to timezone offset
+      date.setDate(date.getDate() + 1);
+    }
+    return dateToString(date);
+  }
+
+  // not a clean offset but a custom date => cannot reliably infer timezone here
+  // cut off the time details and use the UTC date
+  return value.substring(0, 10);
+}

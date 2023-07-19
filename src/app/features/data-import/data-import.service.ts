@@ -6,31 +6,21 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ImportMetaData } from "./import-meta-data.type";
 import { v4 as uuid } from "uuid";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
-import { dateEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date";
-import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-only";
-import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import moment from "moment";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
 import { isArrayDataType } from "../../core/entity-components/entity-utils/entity-utils";
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { Child } from "app/child-dev-project/children/model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { dateDataTypes } from "../../core/entity/schema-datatypes/date-datatypes";
 
 /**
  * This service handels the parsing of CSV files and importing of data
  */
 @Injectable({ providedIn: "root" })
 export class DataImportService {
-  private readonly dateDataTypes = [
-    dateEntitySchemaDatatype,
-    dateOnlyEntitySchemaDatatype,
-    monthEntitySchemaDatatype,
-    dateWithAgeEntitySchemaDatatype,
-  ].map((dataType) => dataType.name);
-
   private linkableEntities: {
     [key: string]: [
       EntityConstructor,
@@ -163,7 +153,7 @@ export class DataImportService {
   ): any {
     if (property === "_id") {
       return Entity.createPrefixedId(importMeta.entityType, value);
-    } else if (importMeta.dateFormat && this.dateDataTypes.includes(dataType)) {
+    } else if (importMeta.dateFormat && dateDataTypes.includes(dataType)) {
       return this.transform2Date(value, importMeta.dateFormat);
     } else if (isArrayDataType(dataType)) {
       return this.parseArrayValue(value);

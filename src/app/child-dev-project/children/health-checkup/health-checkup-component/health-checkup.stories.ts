@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { HealthCheckupComponent } from "./health-checkup.component";
 import { ChildrenService } from "../../children.service";
@@ -23,7 +23,7 @@ hc3.height = 175;
 hc3.weight = 80;
 
 export default {
-  title: "child-dev-project/Health Checkup",
+  title: "Features/Health Checkup",
   component: HealthCheckupComponent,
   decorators: [
     moduleMetadata({

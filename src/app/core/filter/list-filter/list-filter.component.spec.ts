@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ListFilterComponent } from "./list-filter.component";
-import { FilterSelection } from "../filter-selection/filter-selection";
+import { SelectableFilter } from "../filters/filters";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("ListFilterComponent", () => {
@@ -17,7 +17,7 @@ describe("ListFilterComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ListFilterComponent);
     component = fixture.componentInstance;
-    component.filterConfig = new FilterSelection<any>("test", []);
+    component.filterConfig = new SelectableFilter<any>("test", []);
     fixture.detectChanges();
   });
 
