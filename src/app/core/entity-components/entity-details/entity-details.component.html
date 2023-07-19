@@ -60,7 +60,7 @@
 <mat-tab-group (selectedIndexChange)="trackTabChanged($event)" appTabStateMemo [preserveContent]="true">
   <mat-tab
     *ngFor="let panelConfig of panels"
-    [disabled]="creatingNew"
+    [disabled]="creatingNew || unsavedChanges.pending"
   >
     <ng-template mat-tab-label>
     <span

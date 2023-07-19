@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import {
   ActivityAttendance,
@@ -12,7 +12,7 @@ import { RecurringActivity } from "../model/recurring-activity";
 import { ConfigService } from "../../../core/config/config.service";
 
 export default {
-  title: "Attendance/Components/AttendanceBlock",
+  title: "Features/Attendance/Components/AttendanceBlock",
   component: AttendanceBlockComponent,
   decorators: [
     moduleMetadata({

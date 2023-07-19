@@ -33,7 +33,6 @@ import { AuthUser } from "./auth-user";
  */
 @Injectable()
 export class RemoteSession extends SessionService {
-  static readonly LAST_LOGIN_KEY = "LAST_REMOTE_LOGIN";
   /** remote (!) PouchDB  */
   private readonly database: PouchDatabase;
   private currentDBUser: AuthUser;
@@ -58,10 +57,6 @@ export class RemoteSession extends SessionService {
     try {
       const user = await this.authService.authenticate(username, password);
       await this.handleSuccessfulLogin(user);
-      localStorage.setItem(
-        RemoteSession.LAST_LOGIN_KEY,
-        new Date().toISOString()
-      );
       this.loginState.next(LoginState.LOGGED_IN);
     } catch (error) {
       const httpError = error as HttpErrorResponse;

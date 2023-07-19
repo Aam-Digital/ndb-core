@@ -20,13 +20,19 @@ import { SyncState } from "../core/session/session-states/sync-state.enum";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
+import { LoginState } from "../core/session/session-states/login-state.enum";
+import { AuthUser } from "../core/session/session-service/auth-user";
+import { environment } from "../../environments/environment";
+import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
+environment.demo_mode = false;
 
 export const entityFormStorybookDefaultParameters = {
   controls: {
-    exclude: ["_columns"],
+    exclude: ["_columns", "_cols", "enumValueToString"],
   },
 };
 
@@ -34,6 +40,18 @@ export const mockAbilityService = {
   abilityUpdated: new Subject<void>(),
   initializeRules: () => {},
 };
+
+export function mockSessionService(currentUser?: AuthUser): SessionService {
+  if (!currentUser) {
+    currentUser = { name: "demo-user", roles: [] };
+  }
+  return {
+    getCurrentUser: () => currentUser,
+    syncState: new BehaviorSubject(SyncState.COMPLETED),
+    isLoggedIn: () => true,
+    loginState: new BehaviorSubject(LoginState.LOGGED_IN),
+  } as SessionService;
+}
 
 /**
  * Utility module to be imported in Storybook stories to ensure central setup like fontawesome icons are available.
@@ -50,6 +68,10 @@ export const mockAbilityService = {
   ],
   providers: [
     { provide: ConfigService, useValue: createTestingConfigService() },
+    {
+      provide: ConfigurableEnumService,
+      useValue: createTestingConfigurableEnumService(),
+    },
     { provide: AbilityService, useValue: mockAbilityService },
     {
       provide: EntityAbility,
@@ -57,11 +79,7 @@ export const mockAbilityService = {
     },
     {
       provide: SessionService,
-      useValue: {
-        getCurrentUser: () => ({ name: "demo-user" }),
-        syncState: new BehaviorSubject(SyncState.COMPLETED),
-        isLoggedIn: () => true,
-      },
+      useValue: mockSessionService(),
     },
   ],
 })

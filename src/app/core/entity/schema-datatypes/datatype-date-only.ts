@@ -16,6 +16,7 @@
  */
 
 import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { dateToString } from "../../../utils/utils";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").
@@ -56,16 +57,6 @@ export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype<Date, string> =
       return date;
     },
   };
-
-function dateToString(value: Date) {
-  return (
-    value.getFullYear() +
-    "-" +
-    (value.getMonth() + 1).toString().padStart(2, "0") +
-    "-" +
-    value.getDate().toString().padStart(2, "0")
-  );
-}
 
 function migrateIsoDatesToInferredDateOnly(value: string): string {
   if (!value.match(/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\dZ/)) {

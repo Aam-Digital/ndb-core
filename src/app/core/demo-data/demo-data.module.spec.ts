@@ -22,6 +22,7 @@ describe("DemoDataModule", () => {
   });
 
   it("should generate the demo data once the module is loaded", fakeAsync(() => {
+    TestBed.inject(DemoDataModule).publishDemoData();
     expect(mockEntityMapper.saveAll).not.toHaveBeenCalled();
 
     TestBed.inject(DemoDataModule);

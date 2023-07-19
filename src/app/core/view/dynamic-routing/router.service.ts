@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { inject, Injectable } from "@angular/core";
 import { Route, Router } from "@angular/router";
 import { ConfigService } from "../../config/config.service";
 import { LoggingService } from "../../logging/logging.service";
@@ -11,6 +11,7 @@ import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guar
 import { NotFoundComponent } from "./not-found/not-found.component";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { AuthGuard } from "../../session/auth.guard";
+import { UnsavedChangesService } from "../../entity-components/entity-details/form/unsaved-changes.service";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -90,6 +91,9 @@ export class RouterService {
   private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
     const routeData: RouteData = {};
     route.canActivate = [AuthGuard];
+    route.canDeactivate = [
+      () => inject(UnsavedChangesService).checkUnsavedChanges(),
+    ];
 
     if (view.permittedUserRoles) {
       route.canActivate.push(UserRoleGuard);

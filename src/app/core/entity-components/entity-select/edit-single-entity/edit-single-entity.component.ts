@@ -9,6 +9,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
+import { ErrorHintComponent } from "../../entity-utils/error-hint/error-hint.component";
 
 @DynamicComponent("EditSingleEntity")
 @Component({
@@ -22,6 +23,7 @@ import { NgIf } from "@angular/common";
     MatFormFieldModule,
     FontAwesomeModule,
     NgIf,
+    ErrorHintComponent,
   ],
   standalone: true,
 })
