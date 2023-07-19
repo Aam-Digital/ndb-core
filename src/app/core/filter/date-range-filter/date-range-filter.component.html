@@ -1,0 +1,25 @@
+<mat-form-field>
+  <mat-label i18n="Input label">Enter a date range</mat-label>
+
+  <mat-date-range-input>
+    <input
+      matStartDate
+      (dateChange)="dateChangedManually()"
+      [(ngModel)]="fromDate"
+      i18n-placeholder="Date selection"
+      placeholder="Start date"
+    />
+    <input
+      matEndDate
+      (dateChange)="dateChangedManually()"
+      [(ngModel)]="toDate"
+      i18n-placeholder="Date selection"
+      placeholder="End date"
+    />
+  </mat-date-range-input>
+
+  <mat-datepicker-toggle
+    matSuffix
+    (click)="openDialog($event)"
+  ></mat-datepicker-toggle>
+</mat-form-field>

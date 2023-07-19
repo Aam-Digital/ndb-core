@@ -13,6 +13,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ErrorHintComponent } from "../../../core/entity-components/entity-utils/error-hint/error-hint.component";
 
 /**
  * This component should be used as a `editComponent` when a property should store files.
@@ -32,6 +33,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     NgIf,
     MatButtonModule,
     FontAwesomeModule,
+    ErrorHintComponent,
   ],
   standalone: true,
 })

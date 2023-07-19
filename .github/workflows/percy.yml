@@ -1,0 +1,23 @@
+name: Percy
+on:
+  pull_request:
+    types: [ opened, synchronize, reopened, ready_for_review ]
+  push:
+    branches:
+      - master
+
+jobs:
+  run-visual-regression-tests:
+    # Run on (master) push or non-draft PRs
+    if: github.event_name == 'push' || github.event.pull_request.draft == false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: npm
+      - run: npm ci
+      - run: npm run percy-storybook
+        env:
+          PERCY_TOKEN: ${{ secrets.PERCY_TOKEN }}

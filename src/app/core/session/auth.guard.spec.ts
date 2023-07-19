@@ -2,43 +2,38 @@ import { TestBed } from "@angular/core/testing";
 
 import { AuthGuard } from "./auth.guard";
 import { SessionService } from "./session-service/session.service";
-import { Router } from "@angular/router";
+import { RouterTestingModule } from "@angular/router/testing";
 
 describe("AuthGuard", () => {
-  let guard: AuthGuard;
   let mockSession: jasmine.SpyObj<SessionService>;
-  let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(() => {
     mockSession = jasmine.createSpyObj(["isLoggedIn"]);
-    mockRouter = jasmine.createSpyObj(["navigate"]);
     TestBed.configureTestingModule({
-      providers: [
-        { provide: SessionService, useValue: mockSession },
-        { provide: Router, useValue: mockRouter },
-      ],
+      imports: [RouterTestingModule],
+      providers: [{ provide: SessionService, useValue: mockSession }],
     });
-    guard = TestBed.inject(AuthGuard);
   });
 
   it("should be created", () => {
-    expect(guard).toBeTruthy();
+    expect(AuthGuard).toBeTruthy();
   });
 
   it("should return true if user is logged in", () => {
     mockSession.isLoggedIn.and.returnValue(true);
 
-    expect(guard.canActivate(undefined, undefined)).toBeTrue();
+    const res = TestBed.runInInjectionContext(() =>
+      AuthGuard(undefined, undefined)
+    );
+    expect(res).toBeTrue();
   });
 
   it("should navigate to login page with redirect url if not logged in", () => {
     mockSession.isLoggedIn.and.returnValue(false);
 
-    expect(
-      guard.canActivate(undefined, { url: "/some/url" } as any)
-    ).toBeFalse();
-    expect(mockRouter.navigate).toHaveBeenCalledWith(["/login"], {
-      queryParams: { redirect_uri: "/some/url" },
-    });
+    const res = TestBed.runInInjectionContext(() =>
+      AuthGuard(undefined, { url: "/some/url" } as any)
+    );
+    expect(res.toString()).toBe("/login?redirect_uri=%2Fsome%2Furl");
   });
 });

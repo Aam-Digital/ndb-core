@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
+import { ErrorHandler, Inject, LOCALE_ID, NgModule } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
@@ -75,9 +75,12 @@ import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-wid
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
+import moment from "moment";
+import { getLocaleFirstDayOfWeek } from "@angular/common";
 import { SessionService } from "./core/session/session-service/session.service";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
+import { appInitializers } from "./app-initializers";
 
 /**
  * Main entry point of the application.
@@ -154,11 +157,17 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
       }),
       deps: [SessionService],
     },
+    appInitializers,
   ],
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(icons: FaIconLibrary) {
+  constructor(icons: FaIconLibrary, @Inject(LOCALE_ID) locale: string) {
     icons.addIconPacks(fas, far);
+    moment.updateLocale(moment.locale(), {
+      week: {
+        dow: getLocaleFirstDayOfWeek(locale),
+      },
+    });
   }
 }

@@ -1,9 +1,10 @@
 <form [ngClass]="{ 'grid-layout': gridLayout }">
-  <div *ngFor="let col of columns; let i=index" class="entity-form-cell">
-    <h2 *ngIf="columnHeaders?.[i]">{{columnHeaders[i]}}</h2>
+  <div *ngFor="let col of columns; let i = index" class="entity-form-cell">
+    <h2 *ngIf="columnHeaders?.[i]">{{ columnHeaders[i] }}</h2>
     <div *ngFor="let row of col">
       <div [class.field-with-tooltip-suffix]="row.tooltip">
-        <ng-container [appDynamicComponent]="{
+        <ng-container
+          [appDynamicComponent]="{
             component: row.edit,
             config: {
               formFieldConfig: row,
@@ -11,20 +12,11 @@
               formControl: form.get(row.id),
               entity: entity
             }
-          }">
+          }"
+        >
         </ng-container>
       </div>
-      <button
-        *ngIf="row.tooltip"
-        mat-icon-button
-        type="button"
-        #tooltipElement="matTooltip"
-        [matTooltip]="row.tooltip"
-        (click)="tooltipElement.show()"
-      >
-        <fa-icon icon="question-circle"></fa-icon>
-      </button>
+      <app-help-button [text]="row.tooltip"></app-help-button>
     </div>
   </div>
 </form>
-

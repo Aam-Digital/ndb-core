@@ -1,12 +1,8 @@
 <mat-form-field appearance="fill" class="full-width">
-  <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
-  <mat-select
-    [id]="filterConfig.name"
-    [value]="selectedOption"
-    [placeholder]="filterConfig.name"
-  >
+  <mat-label>{{ _filterConfig.label || _filterConfig.name }}</mat-label>
+  <mat-select [id]="_filterConfig.name" [value]="selectedOption">
     <mat-option
-      *ngFor="let option of filterConfig.options"
+      *ngFor="let option of _filterConfig.options"
       [value]="option.key"
       (click)="selectOption(option.key)"
       [appBorderHighlight]="option.color"

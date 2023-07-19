@@ -34,7 +34,7 @@ rel3.end = new Date();
 rel3.result = 23;
 
 export default {
-  title: "child-dev-project/Previous Schools",
+  title: "Features/Previous Schools",
   component: ChildSchoolOverviewComponent,
   decorators: [
     moduleMetadata({

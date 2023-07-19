@@ -4,7 +4,7 @@ import { LanguageSelectComponent } from "./language-select.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
-  title: "Core/LanguageSelect",
+  title: "Core/> App Layout/Language Select",
   decorators: [
     moduleMetadata({
       imports: [LanguageSelectComponent, StorybookBaseModule],

@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { DialogButtonsComponent } from "./dialog-buttons.component";
@@ -18,20 +19,27 @@ import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { of } from "rxjs";
+import { firstValueFrom, of, Subject } from "rxjs";
+import { UnsavedChangesService } from "../../entity-components/entity-details/form/unsaved-changes.service";
 
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent;
   let fixture: ComponentFixture<DialogButtonsComponent>;
   let dialogRef: jasmine.SpyObj<MatDialogRef<any>>;
+  let backdropClick = new Subject<any>();
+  let closed = new Subject<void>();
 
-  beforeEach(async () => {
-    dialogRef = jasmine.createSpyObj(["close"]);
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    dialogRef = jasmine.createSpyObj(["close", "backdropClick", "afterClosed"]);
+    dialogRef.backdropClick.and.returnValue(backdropClick);
+    dialogRef.afterClosed.and.returnValue(closed);
+    TestBed.configureTestingModule({
       imports: [DialogButtonsComponent, MockedTestingModule.withState()],
       providers: [{ provide: MatDialogRef, useValue: dialogRef }],
     }).compileComponents();
+  }));
 
+  beforeEach(() => {
     fixture = TestBed.createComponent(DialogButtonsComponent);
     component = fixture.componentInstance;
     component.entity = new Entity();
@@ -96,5 +104,32 @@ describe("DialogButtonsComponent", () => {
     component.delete();
 
     expect(dialogRef.close).toHaveBeenCalled();
+  });
+
+  it("should only close the dialog if user confirms to discard changes", fakeAsync(() => {
+    const confirmed = new Subject<boolean>();
+    spyOn(
+      TestBed.inject(UnsavedChangesService),
+      "checkUnsavedChanges"
+    ).and.returnValue(firstValueFrom(confirmed));
+
+    backdropClick.next(undefined);
+    tick();
+
+    expect(dialogRef.close).not.toHaveBeenCalled();
+
+    confirmed.next(true);
+    tick();
+
+    expect(dialogRef.close).toHaveBeenCalled();
+  }));
+
+  it("should reset pending changes when dialog is closed", () => {
+    const unsavedChanges = TestBed.inject(UnsavedChangesService);
+    unsavedChanges.pending = true;
+
+    closed.next();
+
+    expect(unsavedChanges.pending).toBeFalse();
   });
 });

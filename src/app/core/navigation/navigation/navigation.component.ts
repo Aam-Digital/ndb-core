@@ -41,9 +41,9 @@ import { FaDynamicIconComponent } from "../../view/fa-dynamic-icon/fa-dynamic-ic
     NgForOf,
     Angulartics2Module,
     RouterLink,
-    FaDynamicIconComponent
+    FaDynamicIconComponent,
   ],
-  standalone: true
+  standalone: true,
 })
 export class NavigationComponent {
   /** The menu-item link (not the actual router link) that is currently active */
@@ -113,15 +113,10 @@ export class NavigationComponent {
    * Load menu items from config file
    */
   private initMenuItemsFromConfig() {
-    this.menuItems = [];
     const config: NavigationMenuConfig =
       this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
-    for (const configItem of config.items) {
-      if (this.userRoleGuard.checkRoutePermissions(configItem.link)) {
-        this.menuItems.push(
-          new MenuItem(configItem.name, configItem.icon, configItem.link)
-        );
-      }
-    }
+    this.menuItems = config.items
+      .filter(({ link }) => this.userRoleGuard.checkRoutePermissions(link))
+      .map(({ name, icon, link }) => new MenuItem(name, icon, link));
   }
 }

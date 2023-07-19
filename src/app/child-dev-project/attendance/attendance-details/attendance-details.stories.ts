@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import {
@@ -7,8 +7,7 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";
-import { MatDialogRef } from "@angular/material/dialog";
-import { AttendanceService } from "../attendance.service";
+import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -49,7 +48,7 @@ activityAttendance.periodTo = new Date("2020-01-31");
 activityAttendance.activity = demoActivity;
 
 export default {
-  title: "Attendance/Views/AttendanceDetails",
+  title: "Features/Attendance/Views/AttendanceDetails",
   component: AttendanceDetailsComponent,
   decorators: [
     moduleMetadata({
@@ -58,14 +57,7 @@ export default {
         StorybookBaseModule,
         MockedTestingModule.withState(),
       ],
-      declarations: [],
-      providers: [
-        {
-          provide: AttendanceService,
-          useValue: null,
-        },
-        { provide: MatDialogRef, useValue: {} },
-      ],
+      providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
     }),
   ],
 } as Meta;

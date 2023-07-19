@@ -1,7 +1,8 @@
-import { FilterSelectionOption } from "../../filter/filter-selection/filter-selection";
+import { FilterSelectionOption } from "../../filter/filters/filters";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { Sort } from "@angular/material/sort";
+import { unitOfTime } from "moment";
 
 export interface EntityListConfig {
   /**
@@ -87,6 +88,19 @@ export interface BooleanFilterConfig extends BasicFilterConfig {
   true: string;
   false: string;
   all: string;
+}
+
+export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {
+  options: FilterSelectionOption<T>[];
+}
+export interface DateRangeFilterConfig extends BasicFilterConfig {
+  options: DateRangeFilterConfigOption[];
+}
+
+export interface DateRangeFilterConfigOption {
+  startOffsets?: { amount: number; unit: unitOfTime.Base }[];
+  endOffsets?: { amount: number; unit: unitOfTime.Base }[];
+  label: string;
 }
 
 export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {

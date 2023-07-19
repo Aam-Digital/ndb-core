@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
@@ -13,6 +13,7 @@ import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
+import { FormComponent } from "../../entity-details/form/form.component";
 
 const testUser = new User("1");
 testUser.name = "test entity";
@@ -20,8 +21,8 @@ const user2 = new User("2");
 user2.name = "other entity";
 
 export default {
-  title: "Core/EntityComponents/Entity Property Fields/Entity Reference Array",
-  component: EntityFormComponent,
+  title: "Core/Entities/Edit Properties/Entity Reference Array",
+  component: FormComponent,
   decorators: [
     moduleMetadata({
       imports: [EntityFormComponent, StorybookBaseModule],
@@ -37,8 +38,7 @@ export default {
   parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
-const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
-  component: EntityFormComponent,
+const Template: Story<FormComponent<any>> = (args: FormComponent<any>) => ({
   props: args,
 });
 
@@ -63,7 +63,7 @@ class TestEntity extends Entity {
     additional: User.ENTITY_TYPE,
   })
   relatedEntities: string[];
-  @DatabaseField() x: number = 1;
+  @DatabaseField() x: number;
 }
 
 const testEntity = new TestEntity();
@@ -71,13 +71,6 @@ testEntity.relatedEntities = [testUser.getId()];
 
 export const Primary = Template.bind({});
 Primary.args = {
-  columns: [[otherField, fieldConfig, otherField, otherField]],
+  cols: [[otherField, fieldConfig, otherField, otherField]],
   entity: testEntity,
-};
-
-export const Edit = Template.bind({});
-Edit.args = {
-  columns: [[otherField, fieldConfig, otherField, otherField]],
-  entity: testEntity,
-  editing: true,
 };

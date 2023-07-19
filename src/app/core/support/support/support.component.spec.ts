@@ -13,7 +13,6 @@ import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { TEST_USER } from "../../../utils/mocked-testing.module";
-import { RemoteSession } from "../../session/session-service/remote-session";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
@@ -23,6 +22,7 @@ import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouch-database";
 import { BackupService } from "../../admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
+import { AuthService } from "../../session/auth/auth.service";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -37,7 +37,7 @@ describe("SupportComponent", () => {
       serviceWorker: { getRegistrations: () => [], ready: Promise.resolve() },
     },
   };
-  let mockLocation: jasmine.SpyObj<Location>;
+  let mockLocation: any;
 
   beforeEach(async () => {
     localStorage.clear();
@@ -49,7 +49,7 @@ describe("SupportComponent", () => {
     mockDB.getPouchDB.and.returnValue({
       info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
     } as any);
-    mockLocation = jasmine.createSpyObj(["reload"]);
+    mockLocation = {};
     await TestBed.configureTestingModule({
       imports: [
         SupportComponent,
@@ -93,7 +93,7 @@ describe("SupportComponent", () => {
     const lastSync = new Date("2022-01-01").toISOString();
     localStorage.setItem(SyncedSessionService.LAST_SYNC_KEY, lastSync);
     const lastRemoteLogin = new Date("2022-01-02").toISOString();
-    localStorage.setItem(RemoteSession.LAST_LOGIN_KEY, lastRemoteLogin);
+    localStorage.setItem(AuthService.LAST_AUTH_KEY, lastRemoteLogin);
 
     await component.ngOnInit();
 
@@ -118,7 +118,7 @@ describe("SupportComponent", () => {
     expect(mockDB.destroy).toHaveBeenCalled();
     expect(unregisterSpy).toHaveBeenCalled();
     expect(localStorage.getItem("someItem")).toBeNull();
-    expect(mockLocation.reload).toHaveBeenCalled();
+    expect(mockLocation.pathname).toBe("");
   });
 
   it("should display the service worker logs after they are available", fakeAsync(() => {
