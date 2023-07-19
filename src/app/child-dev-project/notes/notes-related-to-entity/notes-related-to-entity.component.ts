@@ -3,7 +3,6 @@ import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ChildrenService } from "../../children/children.service";
 import moment from "moment";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
@@ -50,7 +49,6 @@ export class NotesRelatedToEntityComponent implements OnInit {
 
   constructor(
     private childrenService: ChildrenService,
-    private sessionService: SessionService,
     private formDialog: FormDialogService,
     private filterService: FilterService
   ) {}
@@ -80,11 +78,8 @@ export class NotesRelatedToEntityComponent implements OnInit {
   }
 
   generateNewRecordFactory() {
-    const user = this.sessionService.getCurrentUser().name;
-
     return () => {
       const newNote = new Note(Date.now().toString());
-      newNote.date = new Date();
 
       //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
       if (this.entity.getType() === Child.ENTITY_TYPE) {
@@ -99,10 +94,6 @@ export class NotesRelatedToEntityComponent implements OnInit {
         newNote.relatedEntities.push(this.entity.getId(true));
       }
 
-      if (!newNote.authors.includes(user)) {
-        // TODO: should we keep authors completely separate of also add them into the relatedEntities as well?
-        newNote.authors.push(user);
-      }
       this.filterService.alignEntityWithFilter(newNote, this.filter);
 
       return newNote;

@@ -41,7 +41,7 @@ export function generateFormFieldStory<T>(
   };
 
   const meta: Meta = {
-    title: "Core/EntityComponents/Entity Property Fields/" + editComponent,
+    title: "Core/Entities/Edit Properties/" + editComponent,
     component: FormComponent,
     decorators: [
       moduleMetadata({

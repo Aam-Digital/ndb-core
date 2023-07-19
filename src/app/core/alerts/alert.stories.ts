@@ -1,10 +1,10 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../utils/storybook-base.module";
 import { AlertStoriesHelperComponent } from "./alert-stories-helper.component";
 
 export default {
-  title: "Core/Alerts",
+  title: "Core/> App Layout/Alerts",
   component: AlertStoriesHelperComponent,
   decorators: [
     moduleMetadata({

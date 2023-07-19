@@ -11,7 +11,7 @@ const user = new User();
 user.paginatorSettingsPageSize["ageprojectNumbernamegendercenterstatus"] = 13;
 
 export default {
-  title: "Core/EntityComponents/Entity List",
+  title: "Core/Entities/Entity List",
   component: EntityListComponent,
   decorators: [
     moduleMetadata({
