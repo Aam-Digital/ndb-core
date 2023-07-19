@@ -15,6 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { FormValidatorConfig } from "../../entity-components/entity-form/dynamic-form-validators/form-validator-config";
+
 /**
  * Interface for additional configuration about a DatabaseField schema.
  *
@@ -46,10 +48,15 @@ export interface EntitySchemaField {
   generateIndex?: boolean; // TODO: implement index support in EntitySchema
 
   /**
-   * Whether the field should be initialized with a default value if undefined
-   * (which is then run through dataType transformation);
+   * If set to `true`, the entity can be found in the global search by entering this value
    */
-  defaultValue?: any;
+  searchable?: boolean;
+
+  /**
+   * Whether the field should be initialized with a default value if undefined
+   * Default values are applied to form fields before they are displayed to users
+   */
+  defaultValue?: PLACEHOLDERS | any;
 
   /**
    * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.
@@ -62,7 +69,8 @@ export interface EntitySchemaField {
   /**
    * (Optional) Define using which component this property should be displayed in lists and forms.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    * If nothing is defined, the default component for this datatype will be used.
    */
   viewComponent?: string;
@@ -70,13 +78,14 @@ export interface EntitySchemaField {
   /**
    * (Optional) Define using which component this property should be editable in lists and forms.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    * If nothing is defined, the default component for this datatype will be used.
    */
   editComponent?: string;
 
   /**
-   * A label which explains this value in a human readable way
+   * A label which explains this value in a human-readable way
    */
   label?: string;
 
@@ -91,8 +100,17 @@ export interface EntitySchemaField {
    */
   description?: string;
 
-  /**
-   * If set to true, the entity cannot be saved without setting a value for this property.
-   */
-  required?: boolean;
+  validators?: FormValidatorConfig;
+
+  /** whether to show this field in the default details view */
+  showInDetailsView?: boolean;
+}
+
+/**
+ * Available placeholder variables that can be used to configure a dynamic default value.
+ * (e.g. "$now" to set to current date)
+ */
+export enum PLACEHOLDERS {
+  NOW = "$now",
+  CURRENT_USER = "$current_user",
 }

@@ -1,16 +1,23 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
-import { OperationType } from "../../../permissions/entity-permissions.service";
 import { FormFieldConfig } from "./FormConfig";
-import { FormGroup } from "@angular/forms";
-import { EntityFormService } from "../entity-form.service";
-import { AlertService } from "../../../alerts/alert.service";
+import { EntityForm } from "../entity-form.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { filter } from "rxjs/operators";
+import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
+import { Subscription } from "rxjs";
+import moment from "moment";
+import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 
-@Component({
-  selector: "app-entity-form",
-  templateUrl: "./entity-form.component.html",
-  styleUrls: ["./entity-form.component.scss"],
-})
 /**
  * A general purpose form component for displaying and editing entities.
  * It uses the FormFieldConfig interface for building the form fields but missing information are also fetched from
@@ -18,97 +25,126 @@ import { AlertService } from "../../../alerts/alert.service";
  * the name of this property (and not an FormFieldConfig object).
  *
  * This component can be used directly or in a popup.
- * Inside the entity details component use the FormComponent which is part of the DYNAMIC_COMPONENT_MAP.
+ * Inside the entity details component use the FormComponent which is registered as dynamic component.
  */
-export class EntityFormComponent implements OnInit {
+@UntilDestroy()
+@Component({
+  selector: "app-entity-form",
+  templateUrl: "./entity-form.component.html",
+  styleUrls: ["./entity-form.component.scss"],
+  // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
+  // dynamically created)
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    NgForOf,
+    DynamicComponentDirective,
+    NgIf,
+    NgClass,
+    HelpButtonComponent,
+  ],
+  standalone: true,
+})
+export class EntityFormComponent<T extends Entity = Entity>
+  implements OnChanges
+{
   /**
    * The entity which should be displayed and edited
    */
-  @Input() entity: Entity;
+  @Input() entity: T;
+
+  @Input() columns: FormFieldConfig[][];
+
+  @Input() columnHeaders?: (string | null)[];
+
+  @Input() form: EntityForm<T>;
 
   /**
-   * Whether the form should be opened in editing mode or not
+   * Whether the component should use a grid layout or just rows
    */
-  @Input() editing = false;
+  @Input() gridLayout = true;
 
-  /**
-   * The form field definitions. Either as a string or as a FormFieldConfig object.
-   * Missing information will be fetched from the entity schema definition.
-   * @param columns The columns which should be displayed
-   */
-  @Input() set columns(columns: (FormFieldConfig | string)[][]) {
-    this._columns = columns.map((row) =>
-      row.map((field) => {
-        if (typeof field === "string") {
-          return { id: field };
-        } else {
-          return field;
-        }
-      })
-    );
-  }
-  _columns: FormFieldConfig[][] = [];
-
-  /**
-   * This will be emitted whenever changes have been successfully saved to the entity.
-   */
-  @Output() onSave = new EventEmitter<Entity>();
-
-  /**
-   * This will be emitted whenever the cancel button is pressed.
-   */
-  @Output() onCancel = new EventEmitter<void>();
-
-  operationType = OperationType;
-  form: FormGroup;
+  private initialFormValues: any;
+  private changesSubscription: Subscription;
 
   constructor(
-    private entityFormService: EntityFormService,
-    private alertService: AlertService
+    private entityMapper: EntityMapperService,
+    private confirmationDialog: ConfirmationDialogService
   ) {}
 
-  ngOnInit() {
-    this.buildFormConfig();
-    if (this.editing) {
-      this.switchEdit();
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.entity && this.entity) {
+      this.changesSubscription?.unsubscribe();
+      this.changesSubscription = this.entityMapper
+        .receiveUpdates(this.entity.getConstructor())
+        .pipe(
+          filter(({ entity }) => entity.getId() === this.entity.getId()),
+          filter(({ type }) => type !== "remove"),
+          untilDestroyed(this)
+        )
+        .subscribe(({ entity }) => this.applyChanges(entity));
+    }
+    if (changes.form && this.form) {
+      this.initialFormValues = this.form.getRawValue();
     }
   }
 
-  switchEdit() {
-    if (this.form.disabled) {
-      this.form.enable();
-    } else {
-      this.form.disable();
+  private async applyChanges(entity: T) {
+    if (this.formIsUpToDate(entity)) {
+      Object.assign(this.entity, entity as any);
+      return;
+    }
+    if (
+      this.changesOnlyAffectPristineFields(entity) ||
+      (await this.confirmationDialog.getConfirmation(
+        $localize`Load changes?`,
+        $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
+      ))
+    ) {
+      Object.assign(this.initialFormValues, entity);
+      this.form.patchValue(entity as any);
+      Object.assign(this.entity, entity as any);
     }
   }
 
-  async save(): Promise<void> {
-    try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
-      this.onSave.emit(this.entity);
-      this.switchEdit();
-    } catch (err) {
-      this.alertService.addWarning(err.message);
+  private changesOnlyAffectPristineFields(updatedEntity: T) {
+    if (this.form.pristine) {
+      return true;
     }
+
+    const dirtyFields = Object.entries(this.form.controls).filter(
+      ([_, form]) => form.dirty
+    );
+    for (const [key] of dirtyFields) {
+      if (
+        this.entityEqualsFormValue(
+          updatedEntity[key],
+          this.initialFormValues[key]
+        )
+      ) {
+        // keep our pending form field changes
+        delete updatedEntity[key];
+      } else {
+        // dirty form field has conflicting change
+        return false;
+      }
+    }
+
+    return true;
   }
 
-  cancel() {
-    this.onCancel.emit();
-    this.buildFormConfig();
+  private formIsUpToDate(entity: T): boolean {
+    return Object.entries(this.form.getRawValue()).every(([key, value]) =>
+      this.entityEqualsFormValue(entity[key], value)
+    );
   }
 
-  private buildFormConfig() {
-    const flattenedFormFields = new Array<FormFieldConfig>().concat(
-      ...this._columns
+  private entityEqualsFormValue(entityValue, formValue) {
+    return (
+      (entityValue instanceof Date &&
+        moment(entityValue).isSame(formValue, "day")) ||
+      (entityValue === undefined && formValue === null) ||
+      entityValue === formValue ||
+      JSON.stringify(entityValue) === JSON.stringify(formValue)
     );
-    this.entityFormService.extendFormFieldConfig(
-      flattenedFormFields,
-      this.entity
-    );
-    this.form = this.entityFormService.createFormGroup(
-      flattenedFormFields,
-      this.entity
-    );
-    this.form.disable();
   }
 }

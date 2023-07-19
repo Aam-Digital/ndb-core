@@ -1,0 +1,25 @@
+<button
+  *ngIf="!entity.completed"
+  mat-raised-button
+  color="accent"
+  (click)="complete.emit()"
+>
+  <fa-icon icon="check" class="margin-right-small"></fa-icon>
+  <span i18n>Complete Task</span>
+</button>
+
+<div *ngIf="entity.completed" class="flex-row align-center gap-regular">
+  <app-display-todo-completion
+    [value]="entity.completed"
+  ></app-display-todo-completion>
+
+  <button
+    mat-icon-button
+    color="accent"
+    (click)="uncomplete.emit()"
+    matTooltip="mark as incomplete again"
+    i18n-matTooltip="todo uncomplete button tooltip"
+  >
+    <fa-icon icon="undo-alt"></fa-icon>
+  </button>
+</div>

@@ -1,9 +1,0 @@
-<ng-container *ngIf="entities">
-  <app-display-entity style="display: inline-block; margin-right: 10px"
-    *ngFor="let entity of entities"
-    [entityToDisplay]="entity"
-  ></app-display-entity>
-</ng-container>
-<ng-container *ngIf="!entities" i18n="Displaying the amount of involved entities|context 10 in total">
-  {{ entity[property]?.length }} in total
-</ng-container>

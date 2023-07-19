@@ -1,36 +1,27 @@
-.search-icon {
-  font-size: 15pt;
-}
-
-.search-field {
-  color: white;
-
-  span {
-    margin-right: 6px;
-  }
-}
-
-.desktop-search-bar {
-  font-size: 16px;
-}
-
-.search-header {
-  position: fixed;
-  background: white;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 3;
-}
-
-.header-icon {
-  color: white;
-  font-size: 15pt;
-}
+@use "@angular/material" as mat;
 
 .result-hint {
-  background-color: lightgrey;
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, status-bar);
   font-style: italic;
-  font-size: 14px;
-  height: 36px;
+}
+
+.search-input {
+  caret-color: white !important;
+}
+
+.search-input, .search-input::placeholder {
+  color: white !important;
+}
+
+
+.searchbar {
+  margin-top: 10px;
+
+  .mat-mdc-form-field-focus-overlay {
+    background-color: transparent !important;
+  }
+
+  .mdc-text-field--filled .mdc-line-ripple::before, .mdc-text-field--active .mdc-line-ripple::before, .mdc-text-field--filled .mdc-line-ripple::after {
+    border-bottom-color: white !important;
+  }
 }

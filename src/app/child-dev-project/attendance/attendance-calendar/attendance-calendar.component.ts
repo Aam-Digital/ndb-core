@@ -4,12 +4,16 @@ import {
   OnChanges,
   SimpleChanges,
   ViewChild,
+  ViewEncapsulation,
 } from "@angular/core";
 import { Note } from "../../notes/model/note";
-import { MatCalendarCellCssClasses } from "@angular/material/datepicker/calendar-body";
+import {
+  MatCalendar,
+  MatCalendarCellCssClasses,
+  MatDatepickerModule,
+} from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
 import { EventAttendance } from "../model/event-attendance";
-import { MatCalendar } from "@angular/material/datepicker";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
@@ -23,11 +27,34 @@ import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
+import { DatePipe, NgIf, PercentPipe } from "@angular/common";
+import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
+import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { FormsModule } from "@angular/forms";
+import { MatButtonModule } from "@angular/material/button";
+import { Angulartics2Module } from "angulartics2";
 
 @Component({
   selector: "app-attendance-calendar",
   templateUrl: "./attendance-calendar.component.html",
   styleUrls: ["./attendance-calendar.component.scss"],
+  encapsulation: ViewEncapsulation.None,
+  imports: [
+    MatDatepickerModule,
+    DatePipe,
+    NgIf,
+    DialogCloseComponent,
+    AttendanceStatusSelectComponent,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    PercentPipe,
+    MatButtonModule,
+    Angulartics2Module,
+  ],
+  standalone: true,
 })
 @UntilDestroy()
 export class AttendanceCalendarComponent implements OnChanges {
@@ -56,7 +83,7 @@ export class AttendanceCalendarComponent implements OnChanges {
       .pipe(untilDestroyed(this))
       .subscribe((newNotes) => {
         this.records = applyUpdate(this.records, newNotes);
-        this.selectDay(this.selectedDate.toDate());
+        this.selectDay(this.selectedDate?.toDate());
       });
   }
 
@@ -137,9 +164,12 @@ export class AttendanceCalendarComponent implements OnChanges {
       this.selectedEvent = this.records.find((e) =>
         this.selectedDate.isSame(e.date, "day")
       );
-      this.selectedEventAttendance = this.selectedEvent?.getAttendance(
-        this.highlightForChild
-      );
+      if (this.selectedEvent && this.highlightForChild) {
+        this.selectedEvent.addChild(this.highlightForChild); // ensure child is part of the event
+        this.selectedEventAttendance = this.selectedEvent.getAttendance(
+          this.highlightForChild
+        );
+      }
       // clone attendance information to allow detecting and reverting changes
       this.selectedEventAttendanceOriginal = Object.assign(
         {},
@@ -187,6 +217,6 @@ export class AttendanceCalendarComponent implements OnChanges {
   }
 
   showEventDetails(selectedEvent: Note) {
-    this.formDialog.openDialog(NoteDetailsComponent, selectedEvent);
+    this.formDialog.openFormPopup(selectedEvent, [], NoteDetailsComponent);
   }
 }

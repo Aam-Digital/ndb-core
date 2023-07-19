@@ -50,10 +50,9 @@ export function expectEntitiesToMatch(
 
   for (let i = 0; i < cleanExpected.length; i++) {
     const data = cleanExpected[i];
-    expect(cleanActual).toContain(
-      data,
-      "expected object not found: index " + i
-    );
+    expect(cleanActual)
+      .withContext("expected object not found: index " + i)
+      .toContain(data);
   }
 }
 
@@ -157,12 +156,10 @@ function comparableEntityData(obj: any | any[], withoutId: boolean = false) {
   if (Array.isArray(obj)) {
     return obj.map((o) => comparableEntityData(o, withoutId));
   } else {
-    const result = TestBed.inject(
-      EntitySchemaService
-    ).transformEntityToDatabaseFormat(obj);
+    const result =
+      TestBed.inject(EntitySchemaService).transformEntityToDatabaseFormat(obj);
 
     delete result._rev;
-    delete result.searchIndices;
     if (withoutId) {
       delete result._id;
     }

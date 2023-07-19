@@ -1,9 +1,5 @@
 import { Directive, Input, TemplateRef, ViewContainerRef } from "@angular/core";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../configurable-enum.interface";
-import { ConfigService } from "../../config/config.service";
+import { ConfigurableEnumService } from "../configurable-enum.service";
 
 /**
  * Enumerate over all {@link ConfigurableEnumConfig} values for the given enum config id.
@@ -14,6 +10,7 @@ import { ConfigService } from "../../config/config.service";
  */
 @Directive({
   selector: "[appConfigurableEnum]",
+  standalone: true,
 })
 export class ConfigurableEnumDirective {
   /**
@@ -21,13 +18,7 @@ export class ConfigurableEnumDirective {
    * @param enumConfigId
    */
   @Input() set appConfigurableEnumOf(enumConfigId: string) {
-    if (!enumConfigId.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)) {
-      enumConfigId = CONFIGURABLE_ENUM_CONFIG_PREFIX + enumConfigId;
-    }
-
-    const options = this.configService.getConfig<ConfigurableEnumConfig>(
-      enumConfigId
-    );
+    const options = this.enumService.getEnumValues(enumConfigId);
     for (const item of options) {
       this.viewContainerRef.createEmbeddedView(this.templateRef, {
         $implicit: item,
@@ -39,14 +30,10 @@ export class ConfigurableEnumDirective {
    * For implementation details see
    * https://www.talkinghightech.com/en/create-ngfor-directive/ and
    * https://angular.io/guide/structural-directives#write-a-structural-directive
-   *
-   * @param templateRef
-   * @param viewContainerRef
-   * @param configService
    */
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
-    private configService: ConfigService
+    private enumService: ConfigurableEnumService
   ) {}
 }

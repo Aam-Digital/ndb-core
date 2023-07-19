@@ -1,8 +1,9 @@
 import { warningLevels } from "../../warning-levels";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 
 export const noteIndividualStories = [
   {
-    category: "HOME_VISIT",
+    category: defaultInteractionTypes.find((t) => t.id === "VISIT"),
     warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: $localize`:Note demo subject:Mother sick`,
     text: $localize`:Note demo text:
@@ -11,7 +12,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "GUARDIAN_TALK",
+    category: defaultInteractionTypes.find((t) => t.id === "GUARDIAN_TALK"),
     warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: $localize`:Note demo subject:Discussed school change`,
     text: $localize`:Note demo text:
@@ -21,7 +22,7 @@ export const noteIndividualStories = [
   },
 
   {
-    category: "PHONE_CALL",
+    category: defaultInteractionTypes.find((t) => t.id === "GUARDIAN_TALK"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Follow up for school absence`,
     text: $localize`:Note demo text:
@@ -29,7 +30,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "PHONE_CALL",
+    category: defaultInteractionTypes.find((t) => t.id === "GUARDIAN_TALK"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Absent because ill`,
     text: $localize`:Note demo text:
@@ -37,7 +38,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "PHONE_CALL",
+    category: defaultInteractionTypes.find((t) => t.id === "GUARDIAN_TALK"),
     warningLevel: warningLevels.find((level) => level.id === "URGENT"),
     subject: $localize`:Note demo subject:Absence without information`,
     text: $localize`:Note demo text:
@@ -46,7 +47,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "VISIT",
+    category: defaultInteractionTypes.find((t) => t.id === "VISIT"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:School is happy about progress`,
     text: $localize`:Note demo text:
@@ -55,7 +56,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "COACHING_TALK",
+    category: defaultInteractionTypes.find((t) => t.id === "VISIT"),
     warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: $localize`:Note demo subject:Needs to work more for school`,
     text: $localize`:Note demo text:
@@ -64,7 +65,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "INCIDENT",
+    category: defaultInteractionTypes.find((t) => t.id === "INCIDENT"),
     warningLevel: warningLevels.find((level) => level.id === "URGENT"),
     subject: $localize`:Note demo subject:Fight at school`,
     text: $localize`:Note demo text:
@@ -73,7 +74,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "DISCUSSION",
+    category: defaultInteractionTypes.find((t) => t.id === "INCIDENT"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Special help for family`,
     text: $localize`:Note demo text:
@@ -82,7 +83,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "DISCUSSION",
+    category: defaultInteractionTypes.find((t) => t.id === "INCIDENT"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Chance to repeat class`,
     text: $localize`:Note demo text:
@@ -92,7 +93,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "CHILD_TALK",
+    category: defaultInteractionTypes.find((t) => t.id === "NOTE"),
     warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: $localize`:Note demo subject:Distracted in class`,
     text: $localize`:Note demo text:
@@ -101,7 +102,7 @@ export const noteIndividualStories = [
       `,
   },
   {
-    category: "CHILD_TALK",
+    category: defaultInteractionTypes.find((t) => t.id === "NOTE"),
     warningLevel: warningLevels.find((level) => level.id === "WARNING"),
     subject: $localize`:Note demo subject:Disturbing class`,
     text: $localize`:Note demo text:

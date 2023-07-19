@@ -1,86 +1,83 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
-import { AttendanceModule } from "../attendance.module";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
-import { RouterTestingModule } from "@angular/router/testing";
-import { AttendanceService } from "../attendance.service";
 import {
   ActivityAttendance,
   generateEventWithAttendance,
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
-import { MatNativeDateModule } from "@angular/material/core";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import moment from "moment";
+import { AttendanceService } from "../attendance.service";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { Child } from "../../children/model/child";
-import { EntitySubrecordModule } from "../../../core/entity-components/entity-subrecord/entity-subrecord.module";
-import { Angulartics2Module } from "angulartics2";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
-  ActivityAttendance.create(new Date("2020-01-01"), [
+  ActivityAttendance.create(
+    moment().subtract(1, "month").startOf("month").toDate(),
+    [
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.ABSENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+      generateEventWithAttendance([
+        ["1", AttendanceLogicalStatus.PRESENT],
+        ["2", AttendanceLogicalStatus.ABSENT],
+      ]),
+    ]
+  ),
+
+  ActivityAttendance.create(moment().startOf("month").toDate(), [
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.PRESENT],
         ["3", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-01")
+      moment().subtract(5, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-02")
+      moment().subtract(4, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.ABSENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-03")
+      moment().subtract(3, "days").toDate()
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      new Date("2020-01-04")
+      moment().subtract(2, "days").toDate()
     ),
   ]),
-
-  ActivityAttendance.create(new Date("2020-02-01"), [
-    generateEventWithAttendance([
-      ["1", AttendanceLogicalStatus.ABSENT],
-      ["2", AttendanceLogicalStatus.ABSENT],
-    ]),
-    generateEventWithAttendance([
-      ["1", AttendanceLogicalStatus.PRESENT],
-      ["2", AttendanceLogicalStatus.ABSENT],
-    ]),
-  ]),
 ];
-attendanceRecords.forEach((a) => (a.activity = demoActivity));
+attendanceRecords.forEach((a) => {
+  a.activity = demoActivity;
+  a.periodTo = moment(a.periodFrom).endOf("month").toDate();
+});
 
 export default {
-  title: "Attendance/Sections/ActivityAttendanceSection",
+  title: "Features/Attendance/Sections/ActivityAttendanceSection",
   component: ActivityAttendanceSectionComponent,
   decorators: [
     moduleMetadata({
       imports: [
-        AttendanceModule,
-        EntitySubrecordModule,
-        FontAwesomeIconsModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        Angulartics2Module.forRoot(),
-        MockSessionModule.withState(),
+        ActivityAttendanceSectionComponent,
+        StorybookBaseModule,
+        MockedTestingModule.withState(),
       ],
-      declarations: [],
       providers: [
         {
           provide: AttendanceService,

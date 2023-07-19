@@ -6,8 +6,9 @@ import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../../core/demo-data/demo-data-generator";
 import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
-import { addDefaultChildPhoto } from "../../../../../.storybook/utils/addDefaultChildPhoto";
 import { genders } from "../model/genders";
+import { calculateAge } from "../../../utils/utils";
+import { DateWithAge } from "../model/dateWithAge";
 
 export class DemoChildConfig {
   count: number;
@@ -33,28 +34,31 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     const child = new Child(id);
     child.name = faker.name.firstName() + " " + faker.name.lastName();
     child.projectNumber = id;
-    child["religion"] = faker.random.arrayElement(religions);
-    child.gender = faker.random.arrayElement(genders.slice(1));
-    child.dateOfBirth = faker.dateOfBirth(5, 20);
-    child["motherTongue"] = faker.random.arrayElement(languages);
-    child.center = faker.random.arrayElement(centersWithProbability);
+    child["religion"] = faker.helpers.arrayElement(religions);
+    child.gender = faker.helpers.arrayElement(genders.slice(1));
+    child.dateOfBirth = new DateWithAge(faker.dateOfBirth(5, 20));
+    child["motherTongue"] = faker.helpers.arrayElement(languages);
+    child.center = faker.helpers.arrayElement(centersWithProbability);
+    child.phone =
+      "+" +
+      faker.datatype.number({ min: 10, max: 99 }) +
+      " " +
+      faker.datatype.number({ min: 10000000, max: 99999999 });
 
-    child.admissionDate = faker.date.past(child.age - 4);
+    child.admissionDate = faker.date.past(calculateAge(child.dateOfBirth) - 4);
+
+    child["address"] = faker.geoAddress();
 
     if (faker.datatype.number(100) > 90) {
       DemoChildGenerator.makeChildDropout(child);
     }
-
-    // add default photo for easier use in storybook stories
-    addDefaultChildPhoto(child);
-
     return child;
   }
 
   private static makeChildDropout(child: Child) {
     child.dropoutDate = faker.date.between(child.admissionDate, new Date());
     child.dropoutRemarks = faker.lorem.sentence();
-    child.dropoutType = faker.random.arrayElement(dropoutTypes);
+    child.dropoutType = faker.helpers.arrayElement(dropoutTypes);
     child.status = $localize`:Child status:Dropout`;
   }
 

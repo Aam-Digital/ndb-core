@@ -15,17 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
 import { SyncState } from "../../session/session-states/sync-state.enum";
-import { AlertService } from "../../alerts/alert.service";
-import { MatDialog, MatDialogRef } from "@angular/material/dialog";
-import { InitialSyncDialogComponent } from "./initial-sync-dialog.component";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BackgroundProcessState } from "../background-process-state.interface";
 import { BehaviorSubject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
-import { LoggingService } from "../../logging/logging.service";
+import { BackgroundProcessingIndicatorComponent } from "../background-processing-indicator/background-processing-indicator.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -34,71 +32,39 @@ import { LoggingService } from "../../logging/logging.service";
  * This component also triggers a blocking dialog box when an initial sync is detected that prevents
  * user login (because user accounts need to be synced first).
  */
+@UntilDestroy()
 @Component({
   selector: "app-sync-status",
   templateUrl: "./sync-status.component.html",
-  styleUrls: ["./sync-status.component.scss"],
+  imports: [BackgroundProcessingIndicatorComponent],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SyncStatusComponent implements OnInit {
-  private syncInProgress: boolean;
+export class SyncStatusComponent {
   private indexingProcesses: BackgroundProcessState[];
 
-  private _backgroundProcesses: BehaviorSubject<
-    BackgroundProcessState[]
-  > = new BehaviorSubject([]);
+  private _backgroundProcesses = new BehaviorSubject<BackgroundProcessState[]>(
+    []
+  );
   /** background processes to be displayed to users, with short delay to avoid flickering */
   backgroundProcesses = this._backgroundProcesses
     .asObservable()
     .pipe(debounceTime(1000));
 
-  private dialogRef: MatDialogRef<InitialSyncDialogComponent>;
-
   constructor(
-    public dialog: MatDialog,
     private sessionService: SessionService,
-    private dbIndexingService: DatabaseIndexingService,
-    private alertService: AlertService,
-    private loggingService: LoggingService
-  ) {}
+    private dbIndexingService: DatabaseIndexingService
+  ) {
+    this.dbIndexingService.indicesRegistered
+      .pipe(untilDestroyed(this))
+      .subscribe((indicesStatus) => {
+        this.indexingProcesses = indicesStatus;
+        this.updateBackgroundProcessesList();
+      });
 
-  ngOnInit(): void {
-    this.dbIndexingService.indicesRegistered.subscribe((indicesStatus) =>
-      this.handleIndexingState(indicesStatus)
-    );
-
-    this.sessionService.syncState.subscribe((state) =>
-      this.handleSyncState(state)
-    );
-  }
-
-  private handleSyncState(state: SyncState) {
-    switch (state) {
-      case SyncState.STARTED:
-        this.syncInProgress = true;
-        if (!this.sessionService.isLoggedIn() && !this.dialogRef) {
-          this.dialogRef = this.dialog.open(InitialSyncDialogComponent);
-        }
-        break;
-      case SyncState.COMPLETED:
-        this.syncInProgress = false;
-        if (this.dialogRef) {
-          this.dialogRef.close();
-        }
-        this.loggingService.debug("Database sync completed.");
-        break;
-      case SyncState.FAILED:
-        this.syncInProgress = false;
-        if (this.dialogRef) {
-          this.dialogRef.close();
-        }
-        break;
-    }
-    this.updateBackgroundProcessesList();
-  }
-
-  private handleIndexingState(indicesStatus: BackgroundProcessState[]) {
-    this.indexingProcesses = indicesStatus;
-    this.updateBackgroundProcessesList();
+    this.sessionService.syncState
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.updateBackgroundProcessesList());
   }
 
   /**
@@ -107,7 +73,7 @@ export class SyncStatusComponent implements OnInit {
    */
   private updateBackgroundProcessesList() {
     let currentProcesses: BackgroundProcessState[] = [];
-    if (this.syncInProgress) {
+    if (this.sessionService.syncState.value === SyncState.STARTED) {
       currentProcesses.push({
         title: $localize`Synchronizing database`,
         pending: true,

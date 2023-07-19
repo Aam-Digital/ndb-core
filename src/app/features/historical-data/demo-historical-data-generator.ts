@@ -1,14 +1,11 @@
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
-import { HistoricalEntityData } from "./historical-entity-data";
+import { HistoricalEntityData } from "./model/historical-entity-data";
 import { Injectable } from "@angular/core";
 import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
-import { ConfigService } from "../../core/config/config.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../core/configurable-enum/configurable-enum.interface";
 import { faker } from "../../core/demo-data/faker";
 import { ENTITY_CONFIG_PREFIX } from "../../core/entity/model/entity";
+import { DemoConfigGeneratorService } from "../../core/config/demo-config-generator.service";
+import { ratingAnswers } from "./model/rating-answers";
 
 export class DemoHistoricalDataConfig {
   minCountAttributes: number;
@@ -29,19 +26,17 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
 
   constructor(
     private childrenGenerator: DemoChildGenerator,
-    private configService: ConfigService,
+    private configGenerator: DemoConfigGeneratorService,
     private config: DemoHistoricalDataConfig
   ) {
     super();
   }
 
   protected generateEntities(): HistoricalEntityData[] {
-    const attributes: any[] = this.configService
-      .getConfig<any>(ENTITY_CONFIG_PREFIX + HistoricalEntityData.ENTITY_TYPE)
-      .attributes.map((attr) => attr.name);
-    const ratingAnswer = this.configService.getConfig<ConfigurableEnumConfig>(
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + "rating-answer"
-    );
+    const config = this.configGenerator.entities[0];
+    const attributes: any[] = config.data[
+      ENTITY_CONFIG_PREFIX + HistoricalEntityData.ENTITY_TYPE
+    ].attributes.map((attr) => attr.name);
     const entities: HistoricalEntityData[] = [];
     for (const child of this.childrenGenerator.entities) {
       const countOfData =
@@ -52,7 +47,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
         historicalData.date = faker.date.past();
         historicalData.relatedEntity = child.getId();
         for (const attribute of attributes) {
-          historicalData[attribute] = faker.random.arrayElement(ratingAnswer);
+          historicalData[attribute] = faker.helpers.arrayElement(ratingAnswers);
         }
         return historicalData;
       });

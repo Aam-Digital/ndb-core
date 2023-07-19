@@ -4,13 +4,11 @@ import {
   EventEmitter,
   Input,
   OnChanges,
-  OnInit,
   Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import {
   ColumnGroupsConfig,
   EntityListConfig,
@@ -18,38 +16,85 @@ import {
   GroupConfig,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { OperationType } from "../../permissions/entity-permissions.service";
 import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { FilterGeneratorService } from "./filter-generator.service";
-import { FilterComponentSettings } from "./filter-component.settings";
 import { entityFilterPredicate } from "./filter-predicate";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { AnalyticsService } from "../../analytics/analytics.service";
+import { RouteTarget } from "../../../app.routing";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
+import { MatDialog } from "@angular/material/dialog";
+import { NgForOf, NgIf, NgStyle, NgTemplateOutlet } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { Angulartics2OnModule } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { FormsModule } from "@angular/forms";
+import { FilterComponent } from "../../filter/filter/filter.component";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { ViewTitleComponent } from "../entity-utils/view-title/view-title.component";
+import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
+import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 
 /**
- * This component allows to create a full blown table with pagination, filtering, searching and grouping.
+ * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
  * The filter and grouping settings are written into the URL params to allow going back to the previous view.
  * The pagination settings are stored for each user.
  * The columns can be any kind of component.
  * The column components will be provided with the Entity object, the id for this column, as well as its static config.
+ *
+ * The component can be either used inside a template, or directly in a route through the config object.
  */
-@UntilDestroy()
+@RouteTarget("EntityList")
 @Component({
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
+  imports: [
+    NgIf,
+    NgStyle,
+    MatButtonModule,
+    Angulartics2OnModule,
+    FontAwesomeModule,
+    MatMenuModule,
+    NgTemplateOutlet,
+    MatTabsModule,
+    NgForOf,
+    MatFormFieldModule,
+    MatInputModule,
+    EntitySubrecordComponent,
+    FormsModule,
+    FilterComponent,
+    TabStateModule,
+    ViewTitleComponent,
+    ExportDataDirective,
+    DisableEntityOperationDirective,
+  ],
+  standalone: true,
 })
+@UntilDestroy()
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, OnInit, AfterViewInit {
-  @Input() allEntities: T[] = [];
-  filteredEntities: T[] = [];
+  implements OnChanges, AfterViewInit
+{
+  @Input() allEntities: T[];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
+  @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
+  @Input() isLoading: boolean;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
+
+  isDesktop: boolean;
 
   listName = "";
   columns: (FormFieldConfig | string)[] = [];
@@ -58,46 +103,106 @@ export class EntityListComponent<T extends Entity>
   mobileColumnGroup = "";
   filtersConfig: FilterConfig[] = [];
 
-  operationType = OperationType;
-
   columnsToDisplay: string[] = [];
-  selectedColumnGroup: string = "";
 
-  filterSelections: FilterComponentSettings<T>[] = [];
+  filterObj: DataFilter<T>;
   filterString = "";
 
+  get selectedColumnGroupIndex(): number {
+    return this.selectedColumnGroupIndex_;
+  }
+
+  set selectedColumnGroupIndex(newValue: number) {
+    this.selectedColumnGroupIndex_ = newValue;
+    this.columnsToDisplay = this.columnGroups[newValue].columns;
+  }
+
+  selectedColumnGroupIndex_: number = 0;
+
+  /**
+   * defines the bottom margin of the topmost row in the
+   * desktop version. This has to be bigger when there are
+   * several column groups since there are
+   * tabs with zero top-padding in this case
+   */
+  get offsetFilterStyle(): object {
+    const bottomMargin = this.columnGroups.length > 1 ? 29 : 14;
+    return {
+      "margin-bottom": `${bottomMargin}px`,
+    };
+  }
+
   constructor(
-    private media: MediaObserver,
+    private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
-    private filterGeneratorService: FilterGeneratorService
-  ) {}
+    private entityMapperService: EntityMapperService,
+    private entities: EntityRegistry,
+    private dialog: MatDialog
+  ) {
+    if (this.activatedRoute.component === EntityListComponent) {
+      // the component is used for a route and not inside a template
+      this.activatedRoute.data.subscribe((data: RouteData<EntityListConfig>) =>
+        this.buildComponentFromConfig(data.config)
+      );
+    }
 
-  ngOnInit() {
-    this.media
-      .asObservable()
+    this.screenWidthObserver
+      .platform()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        switch (change[0].mqAlias) {
-          case "xs":
-          case "sm": {
-            this.displayColumnGroup(this.mobileColumnGroup);
-            break;
-          }
-          case "md": {
-            this.displayColumnGroup(this.defaultColumnGroup);
-            break;
-          }
-          case "lg":
-          case "xl": {
-            break;
-          }
+      .subscribe((isDesktop) => {
+        if (!isDesktop) {
+          this.displayColumnGroupByName(this.mobileColumnGroup);
+        } else if (
+          this.selectedColumnGroupIndex ===
+          this.getSelectedColumnIndexByName(this.mobileColumnGroup)
+        ) {
+          this.displayColumnGroupByName(this.defaultColumnGroup);
         }
+
+        this.isDesktop = isDesktop;
       });
-    this.activatedRoute.queryParams.subscribe((params) => {
-      this.loadUrlParams(params);
-    });
+  }
+
+  private async buildComponentFromConfig(newConfig: EntityListConfig) {
+    this.listConfig = newConfig;
+
+    if (this.listConfig?.entity) {
+      this.entityConstructor = this.entities.get(
+        this.listConfig.entity
+      ) as EntityConstructor<T>;
+    }
+
+    if (!this.allEntities) {
+      // if no entities are passed as input, by default load all entities of the type
+      await this.loadEntities();
+    }
+
+    this.listName =
+      this.listConfig.title ||
+      this.listName ||
+      this.entityConstructor?.labelPlural;
+
+    this.addColumnsFromColumnGroups();
+    this.initColumnGroups(this.listConfig.columnGroups);
+    this.filtersConfig = this.listConfig.filters ?? this.filtersConfig ?? [];
+
+    this.displayColumnGroupByName(
+      this.screenWidthObserver.isDesktop()
+        ? this.defaultColumnGroup
+        : this.mobileColumnGroup
+    );
+  }
+
+  private async loadEntities() {
+    this.isLoading = true;
+
+    this.allEntities = await this.entityMapperService.loadType(
+      this.entityConstructor
+    );
+
+    this.isLoading = false;
   }
 
   ngAfterViewInit() {
@@ -107,17 +212,8 @@ export class EntityListComponent<T extends Entity>
 
   async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.hasOwnProperty("listConfig")) {
-      this.listName = this.listConfig.title;
-      this.addColumnsFromColumnGroups();
-      this.initColumnGroups(this.listConfig.columnGroups);
-      this.filtersConfig = this.listConfig.filters || [];
-      this.displayColumnGroup(this.defaultColumnGroup);
+      await this.buildComponentFromConfig(this.listConfig);
     }
-    if (changes.hasOwnProperty("allEntities")) {
-      await this.initFilterSelections();
-      this.applyFilterSelections();
-    }
-    this.loadUrlParams();
   }
 
   private addColumnsFromColumnGroups() {
@@ -155,27 +251,6 @@ export class EntityListComponent<T extends Entity>
     }
   }
 
-  private loadUrlParams(parameters?: Params) {
-    const params = parameters || this.activatedRoute.snapshot.queryParams;
-    if (params["view"]) {
-      this.displayColumnGroup(params["view"]);
-    }
-    this.filterSelections.forEach((f) => {
-      if (params.hasOwnProperty(f.filterSettings.name)) {
-        f.selectedOption = params[f.filterSettings.name];
-      }
-    });
-    this.applyFilterSelections();
-    if (params["search"]) {
-      this.applyFilter(params["search"]);
-    }
-  }
-
-  columnGroupClick(columnGroupName: string) {
-    this.displayColumnGroup(columnGroupName);
-    this.updateUrl("view", columnGroupName);
-  }
-
   applyFilter(filterValue: string) {
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
@@ -186,56 +261,37 @@ export class EntityListComponent<T extends Entity>
     });
   }
 
-  filterOptionSelected(
-    filter: FilterComponentSettings<T>,
-    selectedOption: string
-  ) {
-    filter.selectedOption = selectedOption;
-    this.applyFilterSelections();
-    this.updateUrl(filter.filterSettings.name, selectedOption);
-  }
-
-  private applyFilterSelections() {
-    let filteredData = this.allEntities;
-
-    this.filterSelections.forEach((f) => {
-      filteredData = filteredData.filter(
-        f.filterSettings.getFilterFunction(f.selectedOption)
-      );
-    });
-
-    this.filteredEntities = filteredData;
-  }
-
-  private updateUrl(key: string, value: string) {
-    const params = {};
-    params[key] = value;
-    this.router.navigate([], {
-      relativeTo: this.activatedRoute,
-      queryParams: params,
-      queryParamsHandling: "merge",
-    });
-  }
-
-  private async initFilterSelections(): Promise<void> {
-    this.filterSelections = await this.filterGeneratorService.generate(
-      this.filtersConfig,
-      this.entityConstructor,
-      this.allEntities
-    );
-  }
-
-  private displayColumnGroup(columnGroupName: string) {
-    const selectedColumns = this.columnGroups.find(
-      (c) => c.name === columnGroupName
-    )?.columns;
-    if (selectedColumns) {
-      this.columnsToDisplay = selectedColumns;
-      this.selectedColumnGroup = columnGroupName;
+  private displayColumnGroupByName(columnGroupName: string) {
+    const selectedColumnIndex =
+      this.getSelectedColumnIndexByName(columnGroupName);
+    if (selectedColumnIndex !== -1) {
+      this.selectedColumnGroupIndex = selectedColumnIndex;
     }
   }
 
-  getNewRecordFactory(): () => T {
-    return () => new this.entityConstructor();
+  private getSelectedColumnIndexByName(columnGroupName: string) {
+    return this.columnGroups.findIndex((c) => c.name === columnGroupName);
+  }
+
+  /**
+   * Calling this function will display the filters in a popup
+   */
+  openFilterOverlay() {
+    this.dialog.open(FilterOverlayComponent, {
+      data: {
+        filterConfig: this.filtersConfig,
+        entityType: this.entityConstructor,
+        entities: this.allEntities,
+        useUrlQueryParams: true,
+        filterObjChange: (filter: DataFilter<T>) => (this.filterObj = filter),
+      },
+    });
+  }
+
+  addNew() {
+    if (this.clickMode === "navigate") {
+      this.router.navigate(["new"], { relativeTo: this.activatedRoute });
+    }
+    this.addNewClick.emit();
   }
 }

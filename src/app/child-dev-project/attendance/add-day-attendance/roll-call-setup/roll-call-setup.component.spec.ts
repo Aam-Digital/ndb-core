@@ -9,14 +9,12 @@ import { RollCallSetupComponent } from "./roll-call-setup.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { ChildrenService } from "../../../children/children.service";
-import { AttendanceModule } from "../../attendance.module";
-import { MatNativeDateModule } from "@angular/material/core";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
 import {
-  MockSessionModule,
+  MockedTestingModule,
   TEST_USER,
-} from "../../../../core/session/mock-session.module";
+} from "../../../../utils/mocked-testing.module";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
@@ -26,21 +24,17 @@ describe("RollCallSetupComponent", () => {
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
   beforeEach(() => {
-    mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
-    mockChildrenService.queryRelationsOf.and.resolveTo([]);
+    mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
+    mockChildrenService.queryActiveRelationsOf.and.resolveTo([]);
     mockAttendanceService = jasmine.createSpyObj([
-      "getEventsOnDate",
+      "getEventsWithUpdatedParticipants",
       "createEventForActivity",
     ]);
-    mockAttendanceService.getEventsOnDate.and.resolveTo([]);
+    mockAttendanceService.getEventsWithUpdatedParticipants.and.resolveTo([]);
+    mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
 
     TestBed.configureTestingModule({
-      declarations: [RollCallSetupComponent],
-      imports: [
-        AttendanceModule,
-        MatNativeDateModule,
-        MockSessionModule.withState(),
-      ],
+      imports: [RollCallSetupComponent, MockedTestingModule.withState()],
       providers: [
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: AttendanceService, useValue: mockAttendanceService },
@@ -73,5 +67,32 @@ describe("RollCallSetupComponent", () => {
     expect(component.existingEvents.length).toBe(2);
     expect(component.existingEvents[0].authors).toEqual([TEST_USER]);
     expect(component.existingEvents[1].authors).toEqual([TEST_USER]);
+  }));
+
+  it("should only show active activities", fakeAsync(() => {
+    const active = new RecurringActivity();
+    const inactive = new RecurringActivity();
+    inactive["active"] = false;
+    mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "loadType").and.resolveTo([active, inactive]);
+
+    component.ngOnInit();
+    flush();
+
+    expect(component.existingEvents).toHaveSize(1);
+  }));
+
+  it("should show all activities if none are assigned to the current user or unassigned", fakeAsync(() => {
+    const activity = new RecurringActivity();
+    activity.assignedTo = ["otherUser"];
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "loadType").and.resolveTo([activity]);
+
+    component.ngOnInit();
+    flush();
+
+    expect(component.filteredExistingEvents).toHaveSize(1);
+    expect(component.showingAll).toBeTrue();
   }));
 });

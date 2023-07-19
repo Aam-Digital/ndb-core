@@ -43,7 +43,7 @@ Config is currently stored in the normal app database with the fixed _id `"_id":
 This document in the database has to contain a single property `data` that holds the config object whose parts are described here.
 
 Example:
-```
+```json
 {
   "_id": "Config:CONFIG_ENTITY",
   "data": {
@@ -66,7 +66,9 @@ On the top level of the config file, there are four different kinds of entries:
 1. The main navigation menu (`navigationMenu`)
 1. Views defining the UI of each page (`view:<path>`)
 1. Lists of select options for dropdown fields (`enum:<category-id>`, including available Note categories, etc.)
-1. Entity configuration to define [schemas](entity-schema-system.md) or permissions  (`entity:<entity-id>`)
+1. Entity configuration to define [schemas](./entity-schema.html  (`entity:<entity-id>`)
+
+_also see [User Roles & Permissions](user-roles-and-permissions.html)_
 
 
 ### Navigation Menu
@@ -75,25 +77,25 @@ The top level entry `navigationMenu` builds the visible and clickable items for 
 Each navigation menu item object has to have the three properties `name`, `icon` and `link`. `name` hold the inscription of the item in the navigation menu in the app, `icon` indicates the little icon picture that is shown before the textual inscription of the item in the navigation menu and `link` contains the URL or view that the user is directed to when clicking on the navigation menu item. For every link given, there necessarily has to be a corresponding view-entry on the top level of the config file.
 
 Example:
-```
+```json
   "navigationMenu": {
     "items": [
-        {
-            "name": "Dashboard",
-            "icon": "home",
-            "link": "/"
-        },
-        {
-            "name": "Children",
-            "icon": "child",
-            "link": "/child"
-        },
-        ...
-        {
-            "name": "Help",
-            "icon": "question-circle",
-            "link": "/help"
-        }
+      {
+        "name": "Dashboard",
+        "icon": "home",
+        "link": "/"
+      },
+      {
+        "name": "Children",
+        "icon": "child",
+        "link": "/child"
+      },
+      ...
+      {
+        "name": "Help",
+        "icon": "question-circle",
+        "link": "/help"
+      }
     ]
   },
 ```
@@ -107,10 +109,12 @@ Paths can have multiple parts, e.g. `view:admin/conflicts`.
 If we append `:id`, then this is used as a parameter directly from the app, e.g. `view:child/:id` is the path for the child details view where the app provides the child entity id to be viewed to the component.
 
 The only mandatory field for each view is `"component":` telling the app which component to use for the respective view.
-The component part has to refer to an existing angular component within the app.
-Components currently have to be registered additionally in the [COMPONENT_MAP](../../miscellaneous/variables.html#COMPONENT_MAP).
+The component part has to refer to an existing angular component within the app. Components that are valid and may
+be used for the view have the `@DynamicComponent` decorator present
 
-The two optional fields of each view are `"config":` and `"requiresAdmin":`. The latter is a boolean telling the app whether the user has to be logged in as an administrator in order to be able the see the component. 
+The two optional fields of each view are `"config":` and `"permittedUserRoles":`.
+`"permittedUserRoles"` expects an array of user role strings.
+If one or more roles are specified, only users with these roles are able to see this menu item and visit this page in the app.
 
 What comes within the `"config":` object depends on the component being used.
 The Dashboard-Component for example takes as `"widgets:"` an array of subcomponents, where every entry has to have a `"component:"` and may have an own `"config:"` object.
@@ -118,25 +122,25 @@ The Dashboard-Component for example takes as `"widgets:"` an array of subcompone
 
 Example:
 
-```
+```json
 "view:": {
-    "component": "Dashboard",
-    "config": {
-      "widgets": [
-        {
-            "component": "ChildrenCountDashboard"
-        },
-        {
-            "component": "RecentNotesDashboard"
-        },
-        {
-            "component": "NoRecentNotesDashboard",
-            "config": {
-                "sinceDays": 28,
-                "fromBeginningOfWeek": false
-        }
-        },
-        ...
+  "component": "Dashboard",
+  "config": {
+    "widgets": [
+      {
+        "component": "ChildrenCountDashboard"
+      },
+      {
+        "component": "RecentNotesDashboard"
+      },
+      {
+        "component": "NoRecentNotesDashboard",
+        "config": {
+          "sinceDays": 28,
+          "fromBeginningOfWeek": false
+      }
+      },
+      ...
 ```
 
 #### List components
@@ -150,19 +154,19 @@ The configuration for the columns happens with the [FormFieldConfiguration](../.
 If all the information is available on the schema or through the datatype of a property, it is sufficient to put a string with the name of the property into the columns array.
 
 Example:
-```
+```json
 "view:child": {
-    "component": "ChildrenList",
-    "config": {
-        "title": "Children List",
-        "columns": [
-          "projectNumber",
-          {
-            "view": "ChildBlock",
-            "label": "Name",
-            "id": "name"
-          },
-            ...
+  "component": "ChildrenList",
+  "config": {
+    "title": "Children List",
+    "columns": [
+      "projectNumber",
+      {
+        "view": "ChildBlock",
+        "label": "Name",
+        "id": "name"
+      },
+        ...
 ```
 
 The `"columnGroup"` object holds the three properties `"default"`, `"mobile"` and `"groups"`.
@@ -173,28 +177,28 @@ If `"default"` or `"mobile"` is not defined, the first entry of `"groups"` will 
 Properties that are listed in any of the `groups` arrays and don't require further configurations, can be omitted from the `columns` array, the `EntityListComponent` will automatically add them.
 
 Example:
-```
-        "columnGroup": {
-            "default": "School Info",
-            "mobile": "Mobile",
-            "groups": [
-            {
-                "name": "Basic Info",
-                "columns": [
-                    "projectNumber",
-                    "name",
-                    ...
-                    "status"
-                ]
-            },
-            {
-                "name": "School Info",
-                "columns": [
-                    "projectNumber",
-                    "name",
-                    ...
-                ]
-            },
+```json
+"columnGroup": {
+  "default": "School Info",
+  "mobile": "Mobile",
+  "groups": [
+  {
+    "name": "Basic Info",
+    "columns": [
+      "projectNumber",
+      "name",
+      ...
+      "status"
+    ]
+  },
+  {
+    "name": "School Info",
+    "columns": [
+      "projectNumber",
+      "name",
+      ...
+    ]
+  },
 
 ```
 
@@ -207,23 +211,23 @@ The prebuilt option is used to enable or disable filters that contain more logic
 This option requires the fields `"type"` and `"id"`, where `"id"` matched the `id` of a prebuilt filter inside a component.
 
 Example:
-```
-        "filters": [
-                {
-                    "id": "language"
-                },
-                {
-                    "id": "privateSchool",
-                    "default": "all",
-                    "true": "Private School",
-                    "false": "Government School",
-                    "all": "All"
-                },
-                {
-                  "id": "date",
-                  "type": "prebuilt"
-                },
-        ]
+```json
+"filters": [
+  {
+    "id": "language"
+  },
+  {
+    "id": "privateSchool",
+    "default": "all",
+    "true": "Private School",
+    "false": "Government School",
+    "all": "All"
+  },
+  {
+    "id": "date",
+    "type": "prebuilt"
+  },
+]
 ```
 
 #### Detail components
@@ -240,7 +244,7 @@ The entity will then be loaded using the entity name and the id which is read fr
 The `"panels"` field expects an array of panel definitions.
 Each panel has a `"title"` and an array of `"components"`.
 The component configuration requires another `"title"`, the `"component"` that should be rendered (the component has to be defined here [OnInitDynamicComponent](../../interfaces/OnInitDynamicComponent.html)) and a configuration (`"config"`) which is passed to this component.
-```
+```json
     "config": {
       "icon": "child",
       "entity": "Child",
@@ -282,7 +286,7 @@ The definitions for the columns is defined by the [FormFieldConfiguration](../..
 However, the schema definitions of the entity should be sufficient so that only the names of the properties which should be editable in the form have to be provided.
 This means instead of placing an object in the `cols` array, simple strings do the same job.
 
-```
+```json
   "config": {
     "cols": [
       [
@@ -309,7 +313,7 @@ This should only be set to  `true`, when the use-case only allows one active sch
 The configuration is according to the [EntitySubrecordComponent](../how-to-guides/entity-subrecord-component.md);
 
 Example:
-```
+```json
   "config": {
     "single": true,
     "columns": [
@@ -324,14 +328,14 @@ Example:
 
 ### Entity
 The entity object within the config file can be used to extend and configure existing entities.
-The name of the entity to which this config refers comes ofter the colon in this case `"child"`.
+The name of the entity to which this config refers comes after the colon in this case `"child"`.
 
 #### Attributes
 The attribute field allows to add attributes to an entity:
 Each attribute requires a `"name"` and a `"schema"` which refers to the entity [schemas](entity-schema-system.md).
 
 Example:
-```
+```json
 "entity:Child": {
     "attributes": [
         {"name": "address", "schema": { "dataType": "string", "label": "Address" } },
@@ -343,28 +347,49 @@ Example:
 
 ```
 
-#### Permissions
-Permissions for interaction on entities can be given or denied using the config.
-This will disable buttons in the app to create, delete or edit entities if the user is not permitted.
+#### String representation
+It is possible to overwrite, how an entity is converted to a string using the optional `toStringAttributes` key.
+This expects an array of strings referring to properties of that child which should be printed out.
+The order of these strings is also the order in which the property values are printed.
 
-The following example will only allow `admin` users to create, edit and delete `School` objects:
+E.g. while some projects use a `name` property on a child, others might use `firstname` and `lastname`.
+In this case they probably want to show both the first and the last name in the app.
+To achieve this, the configuration of the `Child` entity can be extended like this:
+
+```json
+"entity:Child": {
+    "toStringAttributes": ["firstname", "lastname"],
+    "attributes": [
+        {"name": "firstname", "schema": { "dataType": "string", "label": "First name" } },
+        {"name": "lastname", "schema": { "dataType": "string", "label": "Last name" } },
+        ...
+    ]
+}
+
 ```
-"entity:School": {
-  "permissions": {
-    "create": ["admin"],
-    "update": ["admin"],
-    "delete": ["admin"]
-  }
+
+#### Icons and labels
+For different organisations, entities might refer to different real life objects.
+In other words, it is not always suitable to call the entities *Child* or *School* and the icon might also be
+misleading.
+Therefore, the names and icons of entities can be changed through the config.
+This allows to change a text like *Participants with unhealthy BMI* to *Patients with unhealthy BMI*.
+To achieve this a `label` and `labelPlural` can be defined in the entity config.
+Additionally, the `icon` property allows to exchange the icon to another one from
+the [FontAwesome Icon Library](https://fontawesome.com/search?o=r&m=free).
+
+This also has to be adjusted when configuring in a different language.
+
+E.g.
+
+```json
+"entity:Child": {
+  "label": "Patient",
+  "labelPlural": "Patients",
+  "icon": "bed",
+  ...
 }
 ```
-Buttons can be marked as part of an interaction using the `appDisableEntityInteraction` directive:
-```
-<button
-  (click)="switchEdit()"
-  *appDisableEntityOperation="{entity: entity?.getConstructor(), operation: operationType.UPDATE}"
->Edit</button>
-```
-This will disable the button if the current user is not allowed to perform the update operation on the given entity.
 
 ### Option Lists
 Option lists or `ConfigurableEnumValue`s can provide a pre-set list of options for a field
@@ -379,7 +404,7 @@ The `"id"` should always stay the same as it is written to the database and iden
 This text may be changed without any negative effect to data consistency and the change will instantly be visible in all saved entries of this type.
 
 Example:
-```
+```json
 "enum:project-status": [
     {
         "id": "ACTIVE",
@@ -393,7 +418,7 @@ Example:
         "id": "DROPPED",
         "label": "dropped out of the programme"
     }
-}
+]
 ```
 
 #### Defining configurable enum properties
@@ -401,7 +426,7 @@ Example:
 In order to use such an "enum" in entity fields, you need to set the schema datatype and the form type in the according config objects:
 
 In the entity, set the dataType to "configurable-enum" and the "innerDataType" to the id of the enum config:
-```
+```json
 "entity:Child": {
   {"name": "status", "schema": { "dataType": "configurable-enum", "innerDataType": "project-status"  } }
   ...
@@ -410,7 +435,7 @@ In the entity, set the dataType to "configurable-enum" and the "innerDataType" t
 #### Display a configurable enum property in the list view
 
 In the List View columns config, use the "DisplayConfigurableEnum" component for the field:
-```
+```json
 "columns": [
   {
     "component": "DisplayConfigurableEnum",
@@ -425,7 +450,7 @@ In the List View columns config, use the "DisplayConfigurableEnum" component for
 
 In the Details View config for a "Form" component, use the "configurable-enum-select" input type
 and additionally define the "enumId" of the enum config it refers to:
-```
+```json
 "component": "Form",
 "config": {
   "cols": [
@@ -435,9 +460,29 @@ and additionally define the "enumId" of the enum config it refers to:
         "input": "configurable-enum-select",
         "enumId": "project-status",
         "placeholder": "Status"
-      },
+      }
+    ]
+  ]
+}
 ```
 
+#### Allowing multi select
+
+A property can also be defined in a way that multiple values can be selected.
+To allow multiple selection, the `dataType` needs to be `array`, the `innerDataType` `configurable-enum` and the name of the configurable enum has to be in the `additional` field.
+The following example creates a property `materials` where multiple values from the `materials` configurable enum can be selected.
+
+```json
+{
+  "name": "materials",
+  "schema": {
+    "dataType": "array",
+    "innerDataType": "configurable-enum",
+    "additional": "materials",
+    "label": "Materials"
+  }
+}
+```
 
 #### Defining Note interaction types
 There are a few specially built-in types of enums.

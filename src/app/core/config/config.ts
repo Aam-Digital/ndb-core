@@ -6,19 +6,24 @@ import { DatabaseEntity } from "../entity/database-entity.decorator";
  * The class which represents the config for the application.
  */
 @DatabaseEntity("Config")
-export class Config extends Entity {
+export class Config<T = any> extends Entity {
   /**
-   * The key of the ID of the config for the database
+   * The ID for the UI and data-model config
    */
   static readonly CONFIG_KEY = "CONFIG_ENTITY";
 
   /**
+   * The ID for the permission configuration
+   */
+  static readonly PERMISSION_KEY = "Permissions";
+
+  /**
    * This field contains all the configuration and does not have a predefined type.
    */
-  @DatabaseField({ dataType: "default" }) data: any;
+  @DatabaseField({ dataType: "default" }) data: T;
 
-  constructor(configuration?: any) {
-    super(Config.CONFIG_KEY);
+  constructor(id = Config.CONFIG_KEY, configuration?: T) {
+    super(id);
     this.data = configuration;
   }
 }

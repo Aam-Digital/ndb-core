@@ -1,16 +1,11 @@
-.container {
-  height: 100%;
+// Moves the component 12 pixels to the left so that
+// the "go back" button is aligned with the left border
+.relative-left {
+  position: relative;
+  left: -12px;
 }
 
-.form-field {
-  padding-bottom: 17px;
-}
-
-.nav-button {
-  margin: 10px;
-  flex: none;
-}
-
-.flex-fill-section {
-  min-height: 0;
+:host {
+  display: flex;
+  flex-direction: column;
 }

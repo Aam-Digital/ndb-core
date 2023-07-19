@@ -1,11 +1,11 @@
-import {
-  AttendanceLogicalStatus,
-  AttendanceStatusType,
-} from "./attendance-status";
+import { AttendanceLogicalStatus } from "./attendance-status";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EventNote } from "./event-note";
-import { WarningLevel } from "../../../core/entity/model/warning-level";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../core/entity/model/warning-level";
 import { Entity } from "../../../core/entity/model/entity";
 
 /**
@@ -46,6 +46,7 @@ export class ActivityAttendance extends Entity {
     this._events = value;
     this.recalculateStats();
   }
+
   get events(): EventNote[] {
     return this._events;
   }
@@ -72,53 +73,12 @@ export class ActivityAttendance extends Entity {
     return this.events.length;
   }
 
-  countEventsWithStatusForChild(
-    status: AttendanceStatusType,
-    childId: string
-  ): number {
-    return this.events.reduce(
-      (prev: number, currentEvent: EventNote) =>
-        currentEvent.getAttendance(childId)?.status === status
-          ? prev + 1
-          : prev,
-      0
-    );
-  }
-
-  countEventsWithUnknownStatus(): number {
-    return this.events.reduce(
-      (prev: number, currentEvent: EventNote) =>
-        currentEvent.hasUnknownAttendances() ? prev + 1 : prev,
-      0
-    );
-  }
-
   countEventsPresent(childId: string): number {
     return this.countIndividual(childId, AttendanceLogicalStatus.PRESENT);
   }
 
   countEventsAbsent(childId: string): number {
     return this.countIndividual(childId, AttendanceLogicalStatus.ABSENT);
-  }
-
-  getAttendancePercentage(childId: string): number {
-    const present = this.countEventsPresent(childId);
-    const absent = this.countEventsAbsent(childId);
-
-    return present / (present + absent);
-  }
-
-  getAttendancePercentageAverage(): number {
-    // TODO calculate overall averaged attendance percentage
-    return NaN;
-  }
-
-  countEventsPresentAverage(rounded: boolean = false) {
-    return this.countAverage(AttendanceLogicalStatus.PRESENT, rounded);
-  }
-
-  countEventsAbsentAverage(rounded: boolean = false) {
-    return this.countAverage(AttendanceLogicalStatus.ABSENT, rounded);
   }
 
   private countIndividual(
@@ -131,7 +91,33 @@ export class ActivityAttendance extends Entity {
     ).length;
   }
 
-  private countAverage(
+  getAttendancePercentage(childId: string): number {
+    const present = this.countEventsPresent(childId);
+    const absent = this.countEventsAbsent(childId);
+
+    return present / (present + absent);
+  }
+
+  countTotalPresent() {
+    return this.countWithStatus(AttendanceLogicalStatus.PRESENT);
+  }
+
+  countTotalAbsent() {
+    return this.countWithStatus(AttendanceLogicalStatus.ABSENT);
+  }
+
+  private countWithStatus(matchingType: AttendanceLogicalStatus) {
+    return this.events.reduce(
+      (total, event) => total + event.countWithStatus(matchingType),
+      0
+    );
+  }
+
+  getAttendancePercentageAverage(): number {
+    return this.countPercentage(AttendanceLogicalStatus.PRESENT, false);
+  }
+
+  private countPercentage(
     matchingType: AttendanceLogicalStatus,
     rounded: boolean = false
   ) {
@@ -161,13 +147,29 @@ export class ActivityAttendance extends Entity {
         { total: 0, matching: 0 }
       );
 
-    const result =
-      calculatedStats.matching / (calculatedStats.total / this.events.length);
+    const result = calculatedStats.matching / calculatedStats.total;
     if (rounded) {
       return Math.round(result * 10) / 10;
     } else {
       return result;
     }
+  }
+
+  /**
+   * The number of events that have at least one participant with an undefined status.
+   * This may occur when the user does not complete the full roll call or skips participants.
+   * The count of unknown status can indicate if manual checking and corrections are required.
+   *
+   * @param forChildId filter the calculation to only include status of the given participant id
+   */
+  countEventsWithUnknownStatus(forChildId?: string): number {
+    return this.events
+      .filter((e) => !forChildId || e.children.includes(forChildId))
+      .reduce(
+        (count: number, e: EventNote) =>
+          e.hasUnknownAttendances(forChildId) ? count + 1 : count,
+        0
+      );
   }
 
   recalculateStats() {
@@ -216,6 +218,10 @@ export class ActivityAttendance extends Entity {
       return WarningLevel.OK;
     }
   }
+
+  public getColor(forChildId?: string): string {
+    return getWarningLevelColor(this.getWarningLevel(forChildId));
+  }
 }
 
 /**
@@ -228,7 +234,10 @@ export class ActivityAttendance extends Entity {
  * @param activity (Optional) reference to the connected activity entity
  */
 export function generateEventWithAttendance(
-  participating: [string, AttendanceLogicalStatus][],
+  participating: (
+    | [string, AttendanceLogicalStatus]
+    | [string, AttendanceLogicalStatus, string]
+  )[],
   date = new Date(),
   activity?: RecurringActivity
 ): EventNote {
@@ -238,7 +247,10 @@ export function generateEventWithAttendance(
     event.getAttendance(att[0]).status = defaultAttendanceStatusTypes.find(
       (t) => t.countAs === att[1]
     );
+    if (att.length === 3) {
+      event.getAttendance(att[0]).remarks = att[2];
+    }
   }
-  event.relatesTo = activity?._id;
+  event.relatesTo = activity?.getId(true);
   return event;
 }

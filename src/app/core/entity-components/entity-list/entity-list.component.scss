@@ -1,30 +1,18 @@
-.filter-panel {
-  padding-top: 10px;
-  border-radius: 0;
+@use "../../../../styles/variables/breakpoints";
+
+/**
+ * Aligns the baseline of the filter-field with the baseline
+ * of the other controls.
+ * This only has to be done on the desktop
+ */
+.filter-field {
+  @media screen and (min-width: breakpoints.$md) {
+    // restricts the width so that the field does not feel too big
+    max-width: 412px;
+  }
 }
 
-.toggle-selection-section {
-  margin-top: 10px;
-}
-
-.table-list {
-  margin-top: 10px;
-}
-
-.table-list td {
-  padding-left: 8px;
-}
-
-.button-icon {
-  font-size: 1.5em;
-  margin-right: 5px;
-}
-
-.align-form-field {
-  padding-bottom: 1.25em;
-}
-
-.cell-with-blocks {
-  white-space: nowrap;
-  overflow: hidden;
+.standard-add-button {
+  background-color: white !important;
+  height: 100%;
 }

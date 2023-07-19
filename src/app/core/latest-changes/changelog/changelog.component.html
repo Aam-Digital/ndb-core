@@ -18,50 +18,39 @@
 <h1 mat-dialog-title>Latest Changes</h1>
 
 <mat-dialog-content #changelogContainer>
-  <mat-card *ngFor="let changelog of changelogs" class="mat-elevation-z2">
-    <mat-card-header>
-      <mat-card-title>{{
-        changelog ? changelog.name : noChangelogAvailable
-      }}</mat-card-title>
-      <mat-card-subtitle>
-        <span class="meta-info"
-          ><mat-icon fontIcon="fa-calendar-o"></mat-icon
-          >{{ changelog?.published_at | date }}</span
-        >
-        <span class="meta-info"
-          ><mat-icon fontIcon="fa-tag"></mat-icon
-          >{{ changelog?.tag_name }}</span
-        >
-      </mat-card-subtitle>
-    </mat-card-header>
-
-    <mat-card-content>
-      <markdown [data]="changelog?.body"></markdown>
-    </mat-card-content>
-
-    <mat-card-actions *ngIf="showAdvancedDetails">
-      <button mat-stroked-button>
-        <a
-          [href]="'https://www.github.com'"
-          target="_blank"
-          i18n="Show more information about a change that was made to the app"
-        >
-          More Information
-        </a>
-      </button>
-    </mat-card-actions>
-  </mat-card>
+  <div *ngFor="let changelog of changelogs" class="changelog-entry-container">
+    <h2>{{ changelog?.name || noChangelogAvailable }}</h2>
+    <div class="padding-bottom-regular">
+      <span
+        ><fa-icon icon="calendar-alt"></fa-icon>
+        {{ changelog?.published_at | date }}</span
+      >
+      <span class="padding-left-small"
+        ><fa-icon icon="tag"></fa-icon> {{ changelog?.tag_name }}</span
+      >
+    </div>
+    <markdown [data]="changelog?.body"></markdown>
+    <a
+      *ngIf="showAdvancedDetails"
+      mat-stroked-button
+      [href]="'https://www.github.com'"
+      target="_blank"
+      i18n="Show more information about a change that was made to the app"
+    >
+      More Information
+    </a>
+  </div>
 </mat-dialog-content>
 
-<mat-dialog-actions class="general-actions">
-  <button mat-raised-button (click)="loadPreviousRelease()" i18n>
+<mat-dialog-actions class="flex-row gap-regular flex-wrap">
+  <button mat-stroked-button (click)="loadPreviousRelease()" i18n>
     Show previous changes
   </button>
   <button
     mat-raised-button
-    color="accent"
     [mat-dialog-close]="true"
     i18n="Generic close button"
+    class="remove-margin-left"
   >
     Close
   </button>

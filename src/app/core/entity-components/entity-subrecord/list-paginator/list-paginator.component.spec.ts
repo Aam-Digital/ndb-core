@@ -7,28 +7,21 @@ import {
 } from "@angular/core/testing";
 
 import { ListPaginatorComponent } from "./list-paginator.component";
-import { EntityListModule } from "../../entity-list/entity-list.module";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { MatTableDataSource } from "@angular/material/table";
 import { PageEvent } from "@angular/material/paginator";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { User } from "../../../user/user";
 
 describe("ListPaginatorComponent", () => {
   let component: ListPaginatorComponent<any>;
   let fixture: ComponentFixture<ListPaginatorComponent<any>>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [
-          EntityListModule,
-          NoopAnimationsModule,
-          MockSessionModule.withState(),
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [ListPaginatorComponent, MockedTestingModule.withState()],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ListPaginatorComponent);
@@ -50,23 +43,31 @@ describe("ListPaginatorComponent", () => {
 
     expect(saveEntitySpy).toHaveBeenCalledWith(component.user);
     expect(component.user.paginatorSettingsPageSize["table-id"]).toEqual(20);
-    expect(component.user.paginatorSettingsPageIndex["table-id"]).toEqual(1);
   }));
 
-  it("should reset the pagination size when clicking the all toggle twice", () => {
-    component.pageSize = 20;
-    component.dataSource.data = new Array(100);
-    component.showingAll = false;
-    component.ngOnChanges({ dataSource: null });
+  it("should update pagination when the idForSavingPagination changed", fakeAsync(() => {
+    const userPaginationSettings = {
+      c1: 11,
+      c2: 12,
+    };
+    component.user = {
+      paginatorSettingsPageSize: userPaginationSettings,
+    } as Partial<User> as User;
 
-    component.changeAllToggle();
+    component.idForSavingPagination = "c1";
+    component.ngOnChanges({ idForSavingPagination: undefined });
+    tick();
+    fixture.detectChanges();
 
-    expect(component.pageSize).toBe(100);
-    expect(component.showingAll).toBeTrue();
+    expect(component.pageSize).toBe(userPaginationSettings.c1);
+    expect(component.paginator.pageSize).toBe(userPaginationSettings.c1);
 
-    component.changeAllToggle();
+    component.idForSavingPagination = "c2";
+    component.ngOnChanges({ idForSavingPagination: undefined });
+    tick();
+    fixture.detectChanges();
 
-    expect(component.pageSize).toBe(20);
-    expect(component.showingAll).toBeFalse();
-  });
+    expect(component.pageSize).toBe(userPaginationSettings.c2);
+    expect(component.paginator.pageSize).toBe(userPaginationSettings.c2);
+  }));
 });

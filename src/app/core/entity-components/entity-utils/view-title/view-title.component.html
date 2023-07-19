@@ -1,0 +1,13 @@
+<button
+  *ngIf="(parentUrl || !navigateToParentBehaviour) && !disableBackButton"
+  mat-icon-button
+  (click)="navigateBack()"
+  i18n-matTooltip="Generic back button"
+  matTooltip="Back"
+>
+  <fa-icon icon="arrow-left"></fa-icon>
+</button>
+
+<h1 class="remove-margin-bottom truncate-text">
+  <ng-content></ng-content>
+</h1>

@@ -1,82 +1,66 @@
-import { moduleMetadata } from "@storybook/angular";
-import { RouterTestingModule } from "@angular/router/testing";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { EntitySubrecordComponent } from "./entity-subrecord.component";
-import { EntitySubrecordModule } from "../entity-subrecord.module";
-import { Note } from "../../../../child-dev-project/notes/model/note";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { DatePipe } from "@angular/common";
 import { DemoNoteGeneratorService } from "../../../../child-dev-project/notes/demo-data/demo-note-generator.service";
-import { ConfigService } from "../../../config/config.service";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { DemoChildGenerator } from "../../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { DemoUserGeneratorService } from "../../../user/demo-user-generator.service";
 import { ConfigurableEnumDatatype } from "../../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { MatNativeDateModule } from "@angular/material/core";
-import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { ChildrenModule } from "../../../../child-dev-project/children/children.module";
-import { ChildrenService } from "../../../../child-dev-project/children/children.service";
-import { of } from "rxjs";
-import * as faker from "faker";
-import { EntityPermissionsService } from "../../../permissions/entity-permissions.service";
-import { AttendanceLogicalStatus } from "../../../../child-dev-project/attendance/model/attendance-status";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { ConfigurableEnumService } from "../../../configurable-enum/configurable-enum.service";
 
-const configService = new ConfigService();
+const enumService = {
+  getEnumValues: () => [],
+} as unknown as ConfigurableEnumService;
 const schemaService = new EntitySchemaService();
-schemaService.registerSchemaDatatype(
-  new ConfigurableEnumDatatype(configService)
-);
+schemaService.registerSchemaDatatype(new ConfigurableEnumDatatype(enumService));
 const childGenerator = new DemoChildGenerator({ count: 10 });
 const userGenerator = new DemoUserGeneratorService();
 const data = new DemoNoteGeneratorService(
   { minNotesPerChild: 5, maxNotesPerChild: 10, groupNotes: 2 },
   childGenerator,
-  userGenerator,
-  schemaService,
-  configService
+  userGenerator
 ).generateEntities();
 
+// TODO: fix stories for EntitySubrecord
+/*
 export default {
-  title: "Core/EntitySubrecord",
+  title: "Core/Entities/EntitySubrecord",
   component: EntitySubrecordComponent,
   decorators: [
     moduleMetadata({
       imports: [
-        EntitySubrecordModule,
-        RouterTestingModule,
-        BrowserAnimationsModule,
-        MatNativeDateModule,
-        ChildrenModule,
-        MockSessionModule.withState(),
+        EntitySubrecordComponent,
+        StorybookBaseModule,
+        MockedTestingModule.withState(),
       ],
       providers: [
         {
           provide: EntityMapperService,
           useValue: {
-            save: () => null,
-            remove: () => null,
+            save: () => Promise.resolve(),
+            remove: () => Promise.resolve(),
             load: () =>
               Promise.resolve(
-                faker.random.arrayElement(childGenerator.entities)
+                faker.helpers.arrayElement(childGenerator.entities)
               ),
             loadType: () => Promise.resolve(childGenerator.entities),
+            receiveUpdates: () => NEVER,
           },
         },
         { provide: EntitySchemaService, useValue: schemaService },
-        { provide: ConfigService, useValue: configService },
         DatePipe,
         {
           provide: ChildrenService,
           useValue: {
             getChild: () =>
-              of(faker.random.arrayElement(childGenerator.entities)),
+              of(faker.helpers.arrayElement(childGenerator.entities)),
           },
         },
         {
-          provide: EntityPermissionsService,
-          useValue: { userIsPermitted: () => true },
+          provide: AbilityService,
+          useValue: { abilityUpdated: new Subject() },
+        },
+
+        {
+          provide: EntityAbility,
+          useValue: new Ability([{ subject: "all", action: "manage" }]),
         },
       ],
     }),
@@ -85,10 +69,13 @@ export default {
 
 const Template: Story<EntitySubrecordComponent<Note>> = (
   args: EntitySubrecordComponent<Note>
-) => ({
-  component: EntitySubrecordComponent,
-  props: args,
-});
+) => {
+  EntitySubrecordComponent.prototype.newRecordFactory = () => new Note();
+  return {
+    component: EntitySubrecordComponent,
+    props: args,
+  };
+};
 
 export const Primary = Template.bind({});
 Primary.args = {
@@ -99,7 +86,6 @@ Primary.args = {
     { id: "children" },
   ],
   records: data,
-  newRecordFactory: () => new Note(),
 };
 
 export const WithAttendance = Template.bind({});
@@ -125,5 +111,5 @@ WithAttendance.args = {
     },
   ],
   records: data,
-  newRecordFactory: () => new Note(),
 };
+*/

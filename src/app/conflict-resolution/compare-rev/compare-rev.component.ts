@@ -1,10 +1,16 @@
 import { Component, Input } from "@angular/core";
 import { diff } from "deep-object-diff";
-import _ from "lodash";
 import { ConfirmationDialogService } from "../../core/confirmation-dialog/confirmation-dialog.service";
 import { Database } from "../../core/database/database";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { AutoResolutionService } from "../auto-resolution/auto-resolution.service";
+import { merge } from "lodash-es";
+import { MatExpansionModule } from "@angular/material/expansion";
+import { NgIf } from "@angular/common";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { FormsModule } from "@angular/forms";
 
 /**
  * Visualize one specific conflicting document revision and offer resolution options.
@@ -13,6 +19,15 @@ import { AutoResolutionService } from "../auto-resolution/auto-resolution.servic
   selector: "app-compare-rev",
   templateUrl: "./compare-rev.component.html",
   styleUrls: ["./compare-rev.component.scss"],
+  imports: [
+    MatExpansionModule,
+    NgIf,
+    MatTooltipModule,
+    MatInputModule,
+    MatButtonModule,
+    FormsModule,
+  ],
+  standalone: true,
 })
 export class CompareRevComponent {
   /** revision key (_rev) of the confliction version to be displayed */
@@ -62,10 +77,11 @@ export class CompareRevComponent {
     this.diffsReverse = this.stringify(diffReverseObject);
     this.diffsCustom = this.stringify(diffReverseObject);
 
-    const isIrrelevantConflictingDoc = this.conflictResolver.shouldDeleteConflictingRevision(
-      this.doc,
-      this.revDoc
-    );
+    const isIrrelevantConflictingDoc =
+      this.conflictResolver.shouldDeleteConflictingRevision(
+        this.doc,
+        this.revDoc
+      );
     if (isIrrelevantConflictingDoc) {
       const success = await this.deleteDoc(this.revDoc);
       if (success) {
@@ -90,22 +106,20 @@ export class CompareRevComponent {
    * Resolve the displayed conflict by deleting the conflicting revision doc and keeping the current doc.
    * @param docToDelete Document to be deleted
    */
-  public resolveByDelete(docToDelete: any) {
-    const dialogRef = this.confirmationDialog.openDialog(
+  public async resolveByDelete(docToDelete: any) {
+    const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Delete Conflicting Version?`,
       $localize`Are you sure you want to keep the current version and delete this conflicting version? ${this.stringify(
         docToDelete
       )}`
     );
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (confirmed) {
-        const success = await this.deleteDoc(docToDelete);
-        if (success) {
-          this.resolution = $localize`deleted conflicting version`;
-        }
+    if (confirmed) {
+      const success = await this.deleteDoc(docToDelete);
+      if (success) {
+        this.resolution = $localize`deleted conflicting version`;
       }
-    });
+    }
   }
 
   private async deleteDoc(docToDelete: any): Promise<boolean> {
@@ -144,30 +158,28 @@ export class CompareRevComponent {
    * @param diffStringToApply The (user-edited) diff to be applied to the current doc
    */
   public async resolveByManualEdit(diffStringToApply: string) {
-    const originalDoc = _.merge({}, this.doc);
+    const originalDoc = merge({}, this.doc);
     const diffToApply = JSON.parse(diffStringToApply);
-    _.merge(this.doc, diffToApply);
+    merge(this.doc, diffToApply);
 
     const newChanges = diff(originalDoc, this.doc);
 
-    const dialogRef = this.confirmationDialog.openDialog(
+    const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Save Changes for Conflict Resolution?`,
       $localize`Are you sure you want to save the following changes and delete the conflicting version? ${this.stringify(
         newChanges
       )}`
     );
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (confirmed) {
-        const successSave = await this.saveDoc(this.doc);
-        const successDel = await this.deleteDoc(this.revDoc);
-        if (successSave && successDel) {
-          if (diffStringToApply === this.diffs) {
-            this.resolution = $localize`selected conflicting version`;
-          } else {
-            this.resolution = $localize`resolved manually`;
-          }
+    if (confirmed) {
+      const successSave = await this.saveDoc(this.doc);
+      const successDel = await this.deleteDoc(this.revDoc);
+      if (successSave && successDel) {
+        if (diffStringToApply === this.diffs) {
+          this.resolution = $localize`selected conflicting version`;
+        } else {
+          this.resolution = $localize`resolved manually`;
         }
       }
-    });
+    }
   }
 }

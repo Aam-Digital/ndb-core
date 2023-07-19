@@ -1,100 +1,103 @@
 <!-- Individual Student's Page -->
-<div *ngIf="!isFinished() && entries?.length > 0">
-  <div class="attendance-progress-bar">
-    <mat-progress-bar
-      class="filler"
-      mode="determinate"
-      [value]="(currentIndex / entries.length) * 100"
-    ></mat-progress-bar>
-    <app-child-block [entity]="entries[currentIndex].child"></app-child-block>
-    <div class="progress-label">{{ currentIndex }} / {{ entries.length }}</div>
+<div *ngIf="children?.length > 0" class="flex-column gap-regular">
+  <mat-progress-bar
+    mode="determinate"
+    [value]="(currentIndex / children.length) * 100"
+  ></mat-progress-bar>
+
+  <div class="progress-nav">
+    <div style="margin-left: -10px">
+      <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip">
+        <fa-icon icon="angle-double-left"></fa-icon>
+      </button>
+      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip">
+        <fa-icon icon="angle-left"></fa-icon>
+      </button>
+    </div>
+    <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
+      {{ currentIndex+1 }} / {{ children.length }}
+    </div>
+    <div style="margin-right: -10px">
+      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip">
+        <fa-icon icon="angle-right"></fa-icon>
+      </button>
+      <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip">
+        <fa-icon icon="angle-double-right"></fa-icon>
+      </button>
+    </div>
   </div>
 
-  <div
-    fxLayout="column"
-    fxLayoutAlign="space-between stretch"
-    class="options-wrapper"
-  >
-    <div
-      class="group-select-option"
-      *ngFor="let option of availableStatus"
-      (click)="markAttendance(entries[currentIndex].attendance, option)"
-      [ngClass]="
-        entries[currentIndex].attendance.status.id === option.id
-          ? option.style
-          : ''
-      "
-    >
-      <span
-        class="fa fa-check"
-        *ngIf="entries[currentIndex].attendance.status.id === option.id"
-      ></span>
-      {{ option.label }}
-    </div>
+  <app-child-block
+    class="margin-small"
+    *ngIf="!isFinished"
+    [entity]="currentChild"
+    [linkDisabled]="true"
+    [tooltipDisabled]="true">
+  </app-child-block>
+
+  <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
+    <app-roll-call-tab
+      (swiperight)="goToPrevious()"
+      (swipeleft)="goToNext()"
+      *ngFor="let child of children; let i = index"
+      class="tab-body"
+      [class.tab-body-active]="currentIndex === i"
+      [position]="i - currentIndex" >
+      <div>
+        <div
+          class="group-select-option"
+          *ngFor="let option of availableStatus"
+          (click)="markAttendance(option)"
+          [ngClass]="
+          eventEntity.getAttendance(child).status.id === option.id
+            ? option.style
+            : ''
+          "
+        >
+          <div style="display: flex; flex-direction: row; padding: 16px; gap: 16px">
+            <fa-icon
+              *ngIf="eventEntity.getAttendance(child).status.id === option.id"
+              icon="check"
+            ></fa-icon>
+            <p style="margin: 0">{{ option.label }}</p>
+          </div>
+        </div>
+      </div>
+    </app-roll-call-tab>
   </div>
 </div>
 
 <!-- Completion Page -->
-<div *ngIf="isFinished()" class="roll-call-complete" [@completeRollCall]>
-  <span class="fa fa-check-circle-o roll-call-complete-icon"></span>
-  <div
-    i18n="
-      Attendance completed|shows when the user has registered the attendance of
-      all children
-    "
-  >
-    Attendance completed.
+<div *ngIf="isFinished" class="flex-column gap-regular margin-top-regular">
+  <div class="roll-call-complete" @completeRollCall>
+    <fa-icon icon="check-circle" size="3x"></fa-icon>
+    <div
+      i18n="
+        Attendance completed|shows when the user has registered the attendance of
+        all children
+      "
+      (click)="finish()"
+    >
+      Attendance completed.
+    </div>
+
+    <button
+      (click)="showDetails()"
+      class="finished-screen-button"
+      mat-raised-button
+      color="accent"
+      i18n="Open details of recorded event for review"
+    >
+      Review Details
+    </button>
   </div>
-</div>
-
-<!-- Control Buttons -->
-<div>
-  <button
-    mat-stroked-button
-    [disabled]="isFinished()"
-    (click)="save()"
-    class="nav-button"
-    fxFlex
-    i18n="Save-Button|Button to finish roll call early"
-    angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="rollcall_save-exit"
-  >
-    Save & Exit
-  </button>
 
   <button
-    i18n="Back-button|Button to go to the previous child"
-    mat-stroked-button
-    [disabled]="currentIndex < 1"
-    (click)="currentIndex = currentIndex - 1"
-    class="nav-button"
-    fxFlex
-    angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="rollcall_back"
+    (click)="finish()"
+    color="primary"
+    mat-raised-button
+    i18n="Back to overview button after finishing a roll call"
   >
-    Back
-  </button>
-
-  <button
-    mat-stroked-button
-    [disabled]="isFinished()"
-    (click)="goToNextParticipant()"
-    class="nav-button"
-    fxFlex
-    i18n="Skip-Button|Button to skip a step in the roll call"
-    angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="rollcall_skip"
-  >
-    Skip
-  </button>
-</div>
-<div>
-  <button mat-stroked-button (click)="abort()" class="nav-button" fxFlex
-          angulartics2On="click"
-          angularticsCategory="Record Attendance"
-          [angularticsAction]="isFinished() ? 'rollcall_finish' : 'rollcall_abort'">
-    <span *ngIf="isFinished()" i18n="Finish entering the attendance of a child">
-      Finish
-    </span>
-    <span *ngIf="!isFinished()" i18n="Abort entering the attendance of a child">
-      Abort
-    </span>
+    Back to Overview
   </button>
 </div>

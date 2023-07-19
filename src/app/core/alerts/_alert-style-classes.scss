@@ -1,0 +1,20 @@
+@use "@angular/material" as mat;
+@use "src/styles/variables/ndb-light-theme" as theme;
+@use "src/styles/variables/colors";
+
+.ndb-alert {
+
+  white-space: pre-wrap;
+
+  // There is no `ndb-alert--info` class since `info` has the default styling.
+
+  &--warning {
+    background-color: colors.$warn !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+
+  &--danger {
+    background-color: colors.$error !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+}

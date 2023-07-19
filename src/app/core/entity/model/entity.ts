@@ -19,6 +19,8 @@ import { v4 as uuid } from "uuid";
 import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
 import { getWarningLevelColor, WarningLevel } from "./warning-level";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { UpdateMetadata } from "./update-metadata";
 
 /**
  * This represents a static class of type <T>.
@@ -26,7 +28,9 @@ import { getWarningLevelColor, WarningLevel } from "./warning-level";
  * It can also be used to check the ENTITY_TYPE of a class
  * For example usage check the {@link EntityMapperService}.
  */
-export type EntityConstructor<T extends Entity> = (new (id?: string) => T) &
+export type EntityConstructor<T extends Entity = Entity> = (new (
+  id?: string
+) => T) &
   typeof Entity;
 
 export const ENTITY_CONFIG_PREFIX = "entity:";
@@ -57,6 +61,67 @@ export class Entity {
    * see {@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
    */
   static schema: EntitySchema;
+
+  /**
+   * Defining which attribute values of an entity should be shown in the `.toString()` method.
+   *
+   * The default is the ID of the entity (`entityId`).
+   * This can be overwritten in subclasses or through the config.
+   */
+  static toStringAttributes = ["entityId"];
+
+  /**
+   * human-readable name/label of the entity in the UI
+   */
+  static get label(): string {
+    return this._label ?? this.ENTITY_TYPE;
+  }
+
+  static set label(value: string) {
+    this._label = value;
+  }
+
+  private static _label: string;
+
+  /**
+   * human-readable label for uses of plural of the entity in the UI
+   */
+  static get labelPlural(): string {
+    return this._labelPlural ?? this.label;
+  }
+
+  static set labelPlural(value: string) {
+    this._labelPlural = value;
+  }
+
+  private static _labelPlural: string;
+
+  /**
+   * icon id used for this entity
+   */
+  static icon: IconName;
+
+  /**
+   * color used for to highlight this entity type across the app
+   */
+  static color: string;
+
+  /**
+   * Base route of the entity (list/details) view for this entity type.
+   */
+  static get route(): string {
+    let route = this._route ?? this.ENTITY_TYPE.toLowerCase();
+    if (!route.startsWith("/")) {
+      route = "/" + route;
+    }
+    return route;
+  }
+
+  static set route(value: string) {
+    this._route = value;
+  }
+
+  private static _route: string;
 
   /**
    * Extract the ENTITY_TYPE from an id.
@@ -100,13 +165,36 @@ export class Entity {
    * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`
    * @example "Entity:123"
    */
-  @DatabaseField() _id: string;
+  @DatabaseField() private _id: string;
 
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
   @DatabaseField() _rev: string;
 
+  @DatabaseField({
+    dataType: "schema-embed",
+    additional: UpdateMetadata,
+  })
+  created: UpdateMetadata;
+
+  @DatabaseField({
+    dataType: "schema-embed",
+    additional: UpdateMetadata,
+  })
+  updated: UpdateMetadata;
+
+  @DatabaseField({
+    label: $localize`:Label of checkbox:Inactive`,
+    description: $localize`:Description of checkbox:Ticking this box will archive the record. No data will be lost but the record will be hidden.`,
+  })
+  inactive: boolean;
+
+  /** whether this entity object is newly created and not yet saved to database */
+  get isNew(): boolean {
+    return !this._rev;
+  }
+
   /** actual id without prefix */
-  get entityId(): string {
+  private get entityId(): string {
     return Entity.extractEntityIdFromId(this._id);
   }
 
@@ -114,30 +202,33 @@ export class Entity {
    * Set id without prefix.
    * @param newEntityId The new id without prefix.
    */
-  set entityId(newEntityId: string) {
+  private set entityId(newEntityId: string) {
     this._id = Entity.createPrefixedId(this.getType(), newEntityId);
   }
 
   /**
-   * Returns an array of strings by which the entity can be searched.
-   *
-   * By default the parts of the "name" property (split at spaces) is used if it is present.
-   *
-   * <b>Overwrite this method in subtypes if you want an entity type to be searchable by other properties.</b>
+   * Check, if this entity is considered active.
+   * This is either taken from the property "inactive" (configured) or "active" (not configured).
+   * If the property doesn't exist, the default is `true`.
+   * Subclasses may overwrite this functionality.
    */
-  @DatabaseField() get searchIndices(): string[] {
-    let indices = [];
-
-    // default indices generated from "name" property
-    if (this.hasOwnProperty("name")) {
-      indices = this["name"].split(" ");
+  get isActive(): boolean {
+    if (this["active"] !== undefined) {
+      return this["active"];
     }
-
-    return indices;
+    if (this.inactive !== undefined) {
+      return !this.inactive;
+    }
+    return true;
   }
-  set searchIndices(value) {
-    // do nothing, always generated on the fly
-    // searchIndices is only saved to database so it can be used internally for database indexing
+
+  /**
+   * If existing entities with `isActive: false` exist, then these values are assigned to the property "active".
+   * @param isActive
+   */
+  set isActive(isActive: boolean) {
+    this["active"] = isActive;
+    this.inactive = !isActive;
   }
 
   /**
@@ -153,8 +244,8 @@ export class Entity {
   /**
    * Get the class (Entity or the actual subclass of the instance) to call static methods on the correct class considering inheritance
    */
-  getConstructor(): EntityConstructor<Entity> {
-    return <typeof Entity>this.constructor;
+  getConstructor(): EntityConstructor<this> {
+    return this.constructor as EntityConstructor<this>;
   }
 
   /**
@@ -172,7 +263,8 @@ export class Entity {
    *
    * @returns {string} the unique id of this entity
    */
-  public getId(): string {
+  public getId(withPrefix: boolean = false): string {
+    if (withPrefix) return this._id;
     return this.entityId;
   }
 
@@ -189,13 +281,14 @@ export class Entity {
 
   /**
    * Returns a string representation or summary of the instance.
-   *
-   * <b>Important: Overwrite this method in subtypes!</b>
+   * This can be configured with the static `toStringAttributes` for each subclass.
    *
    * @returns {string} the instance's string representation.
    */
   public toString(): string {
-    return this.getId();
+    return this.getConstructor()
+      .toStringAttributes.map((attr) => this[attr])
+      .join(" ");
   }
 
   /**
@@ -219,9 +312,15 @@ export class Entity {
    * The resulting entity will be of the same type as this
    * (taking into account subclassing)
    */
-  public copy(): Entity {
+  public copy(generateNewId: boolean = false): this {
     const other = new (this.getConstructor())(this._id);
     Object.assign(other, this);
+
+    if (generateNewId) {
+      delete other._rev;
+      other.entityId = uuid();
+    }
+
     return other;
   }
 

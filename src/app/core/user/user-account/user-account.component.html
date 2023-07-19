@@ -15,143 +15,29 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<mat-tab-group>
+<mat-tab-group appTabStateMemo>
   <mat-tab i18n-label="User-Account label" label="User Account">
-    <ng-template matTabContent>
-      <div class="user-profile-tab">
-        <p>
-          <mat-form-field>
-            <input
-              i18n-placeholder="Username placeholder"
-              placeholder="Username"
-              matInput="text"
-              id="username"
-              type="text"
-              [value]="username"
-              disabled
-            />
-          </mat-form-field>
-        </p>
+    <div class="min-width-1-3 margin-top-large" [matTooltip]="tooltipText">
+      <mat-form-field class="full-width">
+        <input
+          i18n-placeholder="Username placeholder"
+          placeholder="Username"
+          matInput="text"
+          id="username"
+          type="text"
+          [value]="username"
+          disabled
+        />
+      </mat-form-field>
 
-        <form [formGroup]="passwordForm" class="form-container">
-          <p *ngIf="disabledForDemoMode" class="info">
-            <mat-icon fontIcon="fa-exclamation-circle"></mat-icon>
-            <ng-container i18n>
-              Password change is not allowed in demo mode.
-            </ng-container>
-          </p>
-          <p *ngIf="disabledForOfflineMode" class="info">
-            <mat-icon fontIcon="fa-exclamation-circle"></mat-icon>
-            <ng-container i18n>
-              Password change is not possible while being offline.
-            </ng-container>
-            <button
-              mat-stroked-button
-              (click)="checkIfPasswordChangeAllowed()"
-              i18n="retry switching from offline to online"
-            >
-              retry
-            </button>
-          </p>
+      <app-password-form
+        [username]="username"
+        [disabled]="passwordChangeDisabled"
+      ></app-password-form>
 
-          <mat-form-field class="user-form-field">
-            <label i18n>
-              Current Password
-              <input
-                matInput
-                type="password"
-                formControlName="currentPassword"
-              />
-            </label>
-            <mat-error
-              *ngIf="passwordForm.get('currentPassword').invalid"
-              i18n="
-                Password Confirmation|An incorrect password was entered trying
-                to change the password
-              "
-            >
-              Please provide your correct current password for confirmation.
-            </mat-error>
-          </mat-form-field>
-          <br />
-
-          <mat-form-field class="user-form-field" style="height: 80px">
-            <label i18n>
-              New password
-              <input matInput type="password" formControlName="newPassword" />
-            </label>
-            <mat-error *ngIf="passwordForm.get('newPassword').invalid">
-              <div
-                *ngIf="passwordForm.get('newPassword').errors.minlength"
-                i18n="Password validation"
-              >
-                Must be at least 8 characters long.
-              </div>
-              <div
-                *ngIf="passwordForm.get('newPassword').errors.pattern"
-                i18n="Illegal password pattern"
-              >
-                Must contain lower case letters, upper case letters, symbols and
-                numbers to be secure.
-              </div>
-            </mat-error>
-          </mat-form-field>
-          <br />
-
-          <mat-form-field class="user-form-field">
-            <label i18n>
-              Confirm new password
-              <input
-                matInput
-                type="password"
-                formControlName="confirmPassword"
-              />
-            </label>
-            <mat-error
-              *ngIf="
-                passwordForm.get('confirmPassword').invalid &&
-                passwordForm.get('confirmPassword').touched
-              "
-              i18n="Illegal new password"
-            >
-              Confirmation does not match your new password.
-            </mat-error>
-          </mat-form-field>
-          <br />
-
-          <div *ngIf="passwordChangeResult">
-            <div *ngIf="passwordChangeResult.success" class="info success" i18n>
-              Password changed successfully.
-            </div>
-            <div *ngIf="!passwordChangeResult.success" class="info error" i18n>
-              Failed to change password: {{ passwordChangeResult.error }}<br />
-              Please try again. If the problem persists contact Aam Digital
-              support.
-            </div>
-          </div>
-
-          <button
-            mat-raised-button
-            type="submit"
-            [disabled]="passwordForm.invalid || passwordForm.disabled"
-            (click)="changePassword()"
-            (submit)="changePassword()"
-            i18n="Change password button"
-          >
-            Change Password
-          </button>
-        </form>
-      </div>
-    </ng-template>
-  </mat-tab>
-
-  <mat-tab label="Image Service" *ngIf="webdavEnabled">
-    <ng-template matTabContent>
-      <div class="user-profile-tab">
-        <app-cloud-file-service-user-settings
-          [username]="username"
-        ></app-cloud-file-service-user-settings>
-      </div>
-    </ng-template>
+      <app-account-page
+        [disabled]="passwordChangeDisabled"
+      ></app-account-page>
+    </div>
   </mat-tab>
 </mat-tab-group>

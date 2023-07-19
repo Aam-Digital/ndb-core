@@ -1,0 +1,6 @@
+@use "src/styles/variables/colors";
+
+.label {
+  font-size: 12px;
+  color: colors.$muted;
+}

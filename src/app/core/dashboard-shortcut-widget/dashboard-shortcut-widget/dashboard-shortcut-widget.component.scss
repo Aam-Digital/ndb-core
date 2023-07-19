@@ -1,6 +1,6 @@
-@use 'src/app/core/dashboard/dashboard-widget-base';
+@use "../../dashboard/dashboard-widget-base";
 
-.clickable {
-  cursor: pointer;
-  line-height: 3em;
+.table-container {
+  margin-left: 10px;
+  margin-right: 10px;
 }

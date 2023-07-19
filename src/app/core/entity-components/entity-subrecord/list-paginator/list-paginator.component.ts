@@ -4,38 +4,35 @@ import {
   Input,
   OnChanges,
   SimpleChanges,
-  AfterViewInit,
+  OnInit,
 } from "@angular/core";
-import { Entity } from "../../../entity/model/entity";
-import { MatPaginator, PageEvent } from "@angular/material/paginator";
+import {
+  MatPaginator,
+  MatPaginatorModule,
+  PageEvent,
+} from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { User } from "../../../user/user";
 import { SessionService } from "../../../session/session-service/session.service";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { filter } from "rxjs/operators";
 
-@UntilDestroy()
 @Component({
   selector: "app-list-paginator",
   templateUrl: "./list-paginator.component.html",
   styleUrls: ["./list-paginator.component.scss"],
+  imports: [MatPaginatorModule],
+  standalone: true,
 })
-export class ListPaginatorComponent<E extends Entity>
-  implements OnChanges, AfterViewInit {
-  readonly pageSizeOptions = [10, 20, 50];
-  readonly defaultPageSize = 10;
+export class ListPaginatorComponent<E> implements OnChanges, OnInit {
+  readonly pageSizeOptions = [10, 20, 50, 100];
 
   @Input() dataSource: MatTableDataSource<E>;
   @Input() idForSavingPagination: string;
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
   user: User;
-  pageSize = this.defaultPageSize;
-  currentPageIndex = 0;
-  showingAll = false;
-  sizeBeforeToggling = this.defaultPageSize;
+  pageSize = 10;
 
   constructor(
     private sessionService: SessionService,
@@ -46,96 +43,51 @@ export class ListPaginatorComponent<E extends Entity>
     if (changes.hasOwnProperty("idForSavingPagination")) {
       this.applyUserPaginationSettings();
     }
-    if (changes.hasOwnProperty("dataSource")) {
-      this.dataSource
-        .connect()
-        .pipe(
-          untilDestroyed(this),
-          // When showingAll is false, nothing needs to be done -> filtered out
-          filter((updatedDataSource) => this.showingAll && !!this.paginator),
-          filter((updatedDataSource) => updatedDataSource.length > 0)
-        )
-        .subscribe(() => {
-          this.pageSize = this.dataSource.data.length;
-          this.paginator.pageSize = this.dataSource.data.length;
-        });
-    }
   }
 
-  ngAfterViewInit() {
+  ngOnInit() {
     this.dataSource.paginator = this.paginator;
   }
 
   onPaginateChange(event: PageEvent) {
     this.pageSize = event.pageSize;
-    this.currentPageIndex = event.pageIndex;
-
-    if (this.pageSize !== this.dataSource.data.length) {
-      this.showingAll = false;
-    }
-
-    this.updateUserPaginationSettings();
-  }
-
-  changeAllToggle() {
-    this.showingAll = !this.showingAll;
-
-    if (this.showingAll) {
-      this.sizeBeforeToggling = this.pageSize;
-      this.pageSize = this.dataSource.data.length;
-    } else {
-      this.pageSize = this.sizeBeforeToggling;
-    }
-    this.paginator._changePageSize(this.pageSize);
     this.updateUserPaginationSettings();
   }
 
   private async applyUserPaginationSettings() {
-    await this.ensureUserIsLoaded();
-
-    const pageSize = this.user.paginatorSettingsPageSize[
-      this.idForSavingPagination
-    ];
-    if (pageSize) {
-      if (pageSize === -1) {
-        this.pageSize = this.dataSource.data.length;
-        this.showingAll = true;
-      } else {
-        this.pageSize = pageSize;
-      }
+    if (!(await this.ensureUserIsLoaded())) {
+      return;
     }
-    this.currentPageIndex =
-      this.user.paginatorSettingsPageIndex[this.idForSavingPagination] ||
-      this.currentPageIndex;
+
+    const savedSize =
+      this.user?.paginatorSettingsPageSize[this.idForSavingPagination];
+    this.pageSize = savedSize && savedSize !== -1 ? savedSize : this.pageSize;
   }
 
   private async updateUserPaginationSettings() {
-    await this.ensureUserIsLoaded();
-
-    // save "all" as -1
-    const sizeToBeSaved = this.showingAll ? -1 : this.pageSize;
-
+    if (!(await this.ensureUserIsLoaded())) {
+      return;
+    }
     // The page size is stored in the database, the page index is only in memory
     const hasChangesToBeSaved =
-      sizeToBeSaved !==
+      this.pageSize !==
       this.user.paginatorSettingsPageSize[this.idForSavingPagination];
 
-    this.user.paginatorSettingsPageIndex[
-      this.idForSavingPagination
-    ] = this.currentPageIndex;
-    this.user.paginatorSettingsPageSize[
-      this.idForSavingPagination
-    ] = sizeToBeSaved;
+    this.user.paginatorSettingsPageSize[this.idForSavingPagination] =
+      this.pageSize;
 
     if (hasChangesToBeSaved) {
       await this.entityMapperService.save<User>(this.user);
     }
   }
 
-  private async ensureUserIsLoaded() {
+  private async ensureUserIsLoaded(): Promise<boolean> {
     if (!this.user) {
       const currentUser = this.sessionService.getCurrentUser();
-      this.user = await this.entityMapperService.load(User, currentUser.name);
+      this.user = await this.entityMapperService
+        .load(User, currentUser.name)
+        .catch(() => undefined);
     }
+    return !!this.user;
   }
 }

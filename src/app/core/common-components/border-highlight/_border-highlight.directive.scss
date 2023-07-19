@@ -1,0 +1,15 @@
+/*
+ * Since style-sheets cannot be imported in directives, this is a partial and it is imported
+ * in the main `styles.scss` file
+ */
+
+@use "../../../../styles/variables/sizes";
+
+/**
+ * adds a border to the left side of an element that can be used to highlight things.
+ * This itself does not actually change the appearance, but specifying a border-color will do so.
+ */
+.border-left-highlight {
+  border-left-width: sizes.$small !important;
+  border-left-style: solid !important;
+}

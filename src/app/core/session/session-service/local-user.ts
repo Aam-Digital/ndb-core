@@ -1,18 +1,10 @@
-import * as CryptoJS from "crypto-js";
-
-/**
- * User object as received from the remote server database.
- * See {@link https://docs.couchdb.org/en/stable/intro/security.html?highlight=_users#users-documents}
- */
-export interface DatabaseUser {
-  name: string;
-  roles: string[];
-}
+import CryptoES from "crypto-es";
+import { AuthUser } from "./auth-user";
 
 /**
  * User object as prepared and used by the local session.
  */
-export interface LocalUser extends DatabaseUser {
+export interface LocalUser extends AuthUser {
   encryptedPassword: EncryptedPassword;
 }
 
@@ -27,9 +19,9 @@ export function encryptPassword(
   password: string,
   iterations = 128,
   keySize = 256 / 32,
-  salt = CryptoJS.lib.WordArray.random(128 / 8).toString()
+  salt = CryptoES.lib.WordArray.random(128 / 8).toString()
 ): EncryptedPassword {
-  const hash = CryptoJS.PBKDF2(password, salt, {
+  const hash = CryptoES.PBKDF2(password, salt, {
     keySize: keySize,
     iterations: iterations,
   }).toString();
@@ -45,7 +37,7 @@ export function passwordEqualsEncrypted(
   password: string,
   encryptedPassword: EncryptedPassword
 ): boolean {
-  const hash = CryptoJS.PBKDF2(password, encryptedPassword?.salt, {
+  const hash = CryptoES.PBKDF2(password, encryptedPassword?.salt, {
     iterations: encryptedPassword?.iterations,
     keySize: encryptedPassword?.keySize,
   }).toString();

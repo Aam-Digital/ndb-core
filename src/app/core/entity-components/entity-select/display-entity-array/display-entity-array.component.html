@@ -1,0 +1,9 @@
+<ng-container *ngIf="entities">
+  <app-display-entity class="display-entity"
+    *ngFor="let e of entities"
+    [entityToDisplay]="e"
+  ></app-display-entity>
+</ng-container>
+<ng-container *ngIf="!entities" i18n="Displaying the amount of involved entities|context 10 in total">
+  {{ value?.length }} in total
+</ng-container>

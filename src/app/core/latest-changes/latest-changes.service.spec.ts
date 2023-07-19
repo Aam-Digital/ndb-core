@@ -79,7 +79,7 @@ describe("LatestChangesService", () => {
     spyOn(http, "get").and.returnValue(of(testReleases));
 
     service.getChangelogsBetweenVersions("1.1").subscribe((result) => {
-      expect(result.length).toBe(1);
+      expect(result).toHaveSize(1);
       expect(result[0].name).toBe(testReleases[1].name);
       done();
     });
@@ -89,7 +89,7 @@ describe("LatestChangesService", () => {
     spyOn(http, "get").and.returnValue(of(testReleases));
 
     service.getChangelogsBetweenVersions("2.0", "1.0").subscribe((result) => {
-      expect(result.length).toBe(2);
+      expect(result).toHaveSize(2);
       expect(result[0].name).toBe(testReleases[0].name);
       expect(result[1].name).toBe(testReleases[1].name);
       done();
@@ -111,23 +111,24 @@ describe("LatestChangesService", () => {
     spyOn(http, "get").and.returnValue(of([]));
 
     service.getChangelogsBetweenVersions("1.0").subscribe((result) => {
-      expect(result.length).toBe(0);
+      expect(result).toBeEmpty();
       done();
     });
   });
 
   it("should add Alert on failing to get changelog", (done) => {
     spyOn(http, "get").and.returnValue(
-      throwError({ status: 404, message: "not found" })
+      throwError(() => ({ status: 404, message: "not found" }))
     );
     const alertSpy = spyOn(alertService, "addAlert");
-    service.getChangelogsBetweenVersions("1.0").subscribe(
-      () => {},
-      (err) => {
-        expect(alertSpy.calls.count()).toBe(1, "no Alert message created");
+    service.getChangelogsBetweenVersions("1.0").subscribe({
+      error: () => {
+        expect(alertSpy)
+          .withContext('"not found" error not defined')
+          .toHaveBeenCalledTimes(1);
         done();
-      }
-    );
+      },
+    });
   });
 
   it("should not include prereleases", (done) => {
@@ -169,8 +170,7 @@ describe("LatestChangesService", () => {
     const testRelease = {
       name: "test with notes",
       tag_name: "3.0",
-      body:
-        "* fix ([e03dcca](https://github.com/Aam-Digital/ndb-core/commit/e03dcca7d89e584b8f08cc7fe30621c1ad428dba))",
+      body: "* fix ([e03dcca](https://github.com/Aam-Digital/ndb-core/commit/e03dcca7d89e584b8f08cc7fe30621c1ad428dba))",
     };
 
     spyOn(http, "get").and.returnValue(of([testRelease]));

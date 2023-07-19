@@ -1,23 +1,20 @@
 import { ConfigurableEnumDirective } from "./configurable-enum.directive";
-import { ConfigService } from "../../config/config.service";
 import { ViewContainerRef } from "@angular/core";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../configurable-enum.interface";
+import { ConfigurableEnumConfig } from "../configurable-enum.interface";
+import { ConfigurableEnumService } from "../configurable-enum.service";
 
 describe("ConfigurableEnumDirective", () => {
   let testTemplateRef;
   let mockViewContainerRef: jasmine.SpyObj<ViewContainerRef>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let mockEnumService: jasmine.SpyObj<ConfigurableEnumService>;
 
   beforeEach(() => {
     testTemplateRef = {};
     mockViewContainerRef = jasmine.createSpyObj("mockViewContainerRef", [
       "createEmbeddedView",
     ]);
-    mockConfigService = jasmine.createSpyObj("mockConfigService", [
-      "getConfig",
+    mockEnumService = jasmine.createSpyObj("mockConfigService", [
+      "getEnumValues",
     ]);
   });
 
@@ -25,7 +22,7 @@ describe("ConfigurableEnumDirective", () => {
     const directive = new ConfigurableEnumDirective(
       testTemplateRef,
       mockViewContainerRef,
-      mockConfigService
+      mockEnumService
     );
     expect(directive).toBeTruthy();
   });
@@ -36,18 +33,18 @@ describe("ConfigurableEnumDirective", () => {
       { id: "1", label: "A" },
       { id: "2", label: "B" },
     ];
-    mockConfigService.getConfig.and.returnValue(testEnumValues);
+    mockEnumService.getEnumValues.and.returnValue(testEnumValues);
 
     const directive = new ConfigurableEnumDirective(
       testTemplateRef,
       mockViewContainerRef,
-      mockConfigService
+      mockEnumService
     );
 
     directive.appConfigurableEnumOf = testEnumConfigId;
 
-    expect(mockConfigService.getConfig).toHaveBeenCalledWith(
-      CONFIGURABLE_ENUM_CONFIG_PREFIX + testEnumConfigId
+    expect(mockEnumService.getEnumValues).toHaveBeenCalledWith(
+      testEnumConfigId
     );
     expect(mockViewContainerRef.createEmbeddedView).toHaveBeenCalledTimes(
       testEnumValues.length

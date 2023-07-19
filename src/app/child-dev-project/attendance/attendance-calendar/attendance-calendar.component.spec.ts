@@ -5,49 +5,49 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper.service"
 import { generateEventWithAttendance } from "../model/activity-attendance";
 import { SimpleChange } from "@angular/core";
 import moment from "moment";
-import { FormDialogModule } from "../../../core/form-dialog/form-dialog.module";
 import { Note } from "../../notes/model/note";
 import { Child } from "../../children/model/child";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { MatDatepickerModule } from "@angular/material/datepicker";
-import { MatNativeDateModule } from "@angular/material/core";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
+import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { MatNativeDateModule } from "@angular/material/core";
 
 describe("AttendanceCalendarComponent", () => {
   let component: AttendanceCalendarComponent;
   let fixture: ComponentFixture<AttendanceCalendarComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      const mockAttendanceService = jasmine.createSpyObj([
-        "createEventForActivity",
-      ]);
-      mockAttendanceService.createEventForActivity.and.resolveTo(
-        new EventNote()
-      );
-      TestBed.configureTestingModule({
-        imports: [FormDialogModule, MatDatepickerModule, MatNativeDateModule],
-        declarations: [AttendanceCalendarComponent],
-        providers: [
-          {
-            provide: EntityMapperService,
-            useValue: mockEntityMapper(),
-          },
-          {
-            provide: AnalyticsService,
-            useValue: jasmine.createSpyObj(["eventTrack"]),
-          },
-          {
-            provide: AttendanceService,
-            useValue: mockAttendanceService,
-          },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    const mockAttendanceService = jasmine.createSpyObj([
+      "createEventForActivity",
+    ]);
+    mockAttendanceService.createEventForActivity.and.resolveTo(new EventNote());
+    TestBed.configureTestingModule({
+      imports: [AttendanceCalendarComponent, MatNativeDateModule],
+      providers: [
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(),
+        },
+        {
+          provide: AnalyticsService,
+          useValue: jasmine.createSpyObj(["eventTrack"]),
+        },
+        {
+          provide: AttendanceService,
+          useValue: mockAttendanceService,
+        },
+        {
+          provide: EntityAbility,
+          useValue: jasmine.createSpyObj(["cannot"]),
+        },
+        { provide: FormDialogService, useValue: null },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceCalendarComponent);
@@ -101,5 +101,18 @@ describe("AttendanceCalendarComponent", () => {
     expect(component.selectedEventStats).not.toBeNull();
     expect(component.selectedEventStats.average).toEqual(0.5);
     expect(component.selectedEventStats.excludedUnknown).toBe(1);
+  });
+
+  it("should add focused participant on the fly if not part of event already", () => {
+    const testDate = new Date();
+    const excludedChild = new Child("excluded_child");
+    const note = new Note();
+    note.date = testDate;
+    component.records = [note];
+    component.highlightForChild = excludedChild.getId();
+
+    component.selectDay(testDate);
+
+    expect(component.selectedEvent.children).toContain(excludedChild.getId());
   });
 });

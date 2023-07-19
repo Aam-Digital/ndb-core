@@ -1,40 +1,24 @@
 import { moduleMetadata } from "@storybook/angular";
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { EntityListComponent } from "./entity-list.component";
-import { EntityListModule } from "./entity-list.module";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { User } from "../../user/user";
-import { RouterTestingModule } from "@angular/router/testing";
-import { BackupService } from "../../admin/services/backup.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { Angulartics2Module } from "angulartics2";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
-import { DatePipe } from "@angular/common";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 const user = new User();
 user.paginatorSettingsPageSize["ageprojectNumbernamegendercenterstatus"] = 13;
 
 export default {
-  title: "Core/Entity List",
+  title: "Core/Entities/Entity List",
   component: EntityListComponent,
   decorators: [
     moduleMetadata({
       imports: [
-        EntityListModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
-        BrowserAnimationsModule,
-        ConfigurableEnumModule,
-      ],
-      providers: [
-        DatePipe,
-        { provide: BackupService, useValue: {} },
-        {
-          provide: EntityMapperService,
-          useValue: { save: () => Promise.resolve() },
-        },
+        EntityListComponent,
+        StorybookBaseModule,
+        MockedTestingModule.withState(),
       ],
     }),
   ],
@@ -49,6 +33,8 @@ const Template: Story<EntityListComponent<Child>> = (
 
 const children = new DemoChildGenerator({ count: 25 }).generateEntities();
 
+// TODO: fix or reimplement ListComponent stories
+/*
 export const Primary = Template.bind({});
 Primary.args = {
   allEntities: children,
@@ -96,3 +82,4 @@ Primary.args = {
     ],
   },
 };
+*/

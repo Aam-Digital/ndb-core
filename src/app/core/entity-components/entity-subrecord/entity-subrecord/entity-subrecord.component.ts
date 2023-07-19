@@ -1,32 +1,62 @@
 import {
   Component,
+  EventEmitter,
   Input,
   OnChanges,
+  Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { MatSnackBar } from "@angular/material/snack-bar";
-import { MatSort, MatSortable } from "@angular/material/sort";
-import { MatTableDataSource } from "@angular/material/table";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
+import {
+  MatSort,
+  MatSortModule,
+  Sort,
+  SortDirection,
+} from "@angular/material/sort";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { Entity } from "../../../entity/model/entity";
-import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
+import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
-import { Subscription } from "rxjs";
-import { entityListSortingAccessor } from "./sorting-accessor";
-import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { EntityFormService } from "../../entity-form/entity-form.service";
-import { MatDialog } from "@angular/material/dialog";
-import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../entity-form/entity-form.service";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../../entity/entity-remove.service";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { tableSort } from "./table-sort";
+import {
+  ScreenSize,
+  ScreenWidthObserver,
+} from "../../../../utils/media/screen-size-observer.service";
+import { Subscription } from "rxjs";
+import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
+import {
+  ColumnConfig,
+  DataFilter,
+  toFormFieldConfig,
+} from "./entity-subrecord-config";
+import { FilterService } from "../../../filter/filter.service";
+import { FormDialogService } from "../../../form-dialog/form-dialog.service";
+import { Router } from "@angular/router";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { DynamicComponentDirective } from "../../../view/dynamic-components/dynamic-component.directive";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
+import { Angulartics2Module } from "angulartics2";
+import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
 
-export interface TableRow<T> {
+export interface TableRow<T extends Entity> {
   record: T;
-  formGroup?: FormGroup;
+  formGroup?: EntityForm<T>;
 }
 
 /**
@@ -47,22 +77,41 @@ export interface TableRow<T> {
   selector: "app-entity-subrecord",
   templateUrl: "./entity-subrecord.component.html",
   styleUrls: ["./entity-subrecord.component.scss"],
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    MatTableModule,
+    MatSortModule,
+    NgForOf,
+    MatTooltipModule,
+    DynamicComponentDirective,
+    MatButtonModule,
+    FontAwesomeModule,
+    DisableEntityOperationDirective,
+    Angulartics2Module,
+    ListPaginatorComponent,
+  ],
+  standalone: true,
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
-  /** data to be displayed */
-  @Input() records: Array<T> = [];
+  @Input() isLoading: boolean;
+
+  @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() set columns(columns: (FormFieldConfig | string)[]) {
-    this._columns = columns.map((col) => {
-      if (typeof col === "string") {
-        return { id: col };
-      } else {
-        return col;
-      }
-    });
+  @Input() set columns(columns: ColumnConfig[]) {
+    if (columns) {
+      this._columns = columns.map(toFormFieldConfig);
+      this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
+      this.idForSavingPagination = this._columns.map((col) => col.id).join("");
+    }
   }
+
   _columns: FormFieldConfig[] = [];
+  filteredColumns: FormFieldConfig[] = [];
+
+  /** data to be displayed, can also be used as two-way-binding */
+  @Input() records: T[] = [];
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -70,143 +119,254 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   @Input() newRecordFactory: () => T;
 
+  private entityConstructor: EntityConstructor<T>;
+
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
    */
-  @Input() editable: boolean = true;
+  @Input() editable = true;
 
   /** columns displayed in the template's table */
-  @Input() columnsToDisplay = [];
+  @Input() columnsToDisplay: string[] = [];
+
+  /** how to sort data by default during initialization */
+  @Input() defaultSort: Sort;
 
   /** data displayed in the template's table */
   recordsDataSource = new MatTableDataSource<TableRow<T>>();
 
-  private mediaSubscription: Subscription;
-  private screenWidth = "";
+  private updateSubscription: Subscription;
+  private mediaSubscription: Subscription = Subscription.EMPTY;
+  private screenWidth: ScreenSize | undefined = undefined;
 
-  public idForSavingPagination = "startWert";
+  idForSavingPagination = "startWert";
 
-  @ViewChild(MatSort) sort: MatSort;
+  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  /**
+   * Event triggered when the user clicks on a row (i.e. entity).
+   * This does not change the default behavior like opening popup form,
+   * you may want to additionally set `clickMode` to change that.
+   */
+  @Output() rowClick = new EventEmitter<T>();
+
+  /**
+   * Adds a filter for the displayed data.
+   * Only data, that passes the filter will be shown in the table.
+   * @param filter a valid MongoDB Query
+   */
+  @Input() filter: DataFilter<T>;
+  private predicate: (entity: T) => boolean = () => true;
 
   constructor(
-    private _entityMapper: EntityMapperService,
-    private _snackBar: MatSnackBar,
-    private _confirmationDialog: ConfirmationDialogService,
     private alertService: AlertService,
-    private media: MediaObserver,
+    private screenWidthObserver: ScreenWidthObserver,
     private entityFormService: EntityFormService,
-    private dialog: MatDialog,
+    private formDialog: FormDialogService,
+    private router: Router,
     private analyticsService: AnalyticsService,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
+    private entityRemoveService: EntityRemoveService,
+    private entityMapper: EntityMapperService,
+    private filterService: FilterService
   ) {
-    this.mediaSubscription = this.media
-      .asObservable()
+    this.mediaSubscription = this.screenWidthObserver
+      .shared()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        if (change[0].mqAlias !== this.screenWidth) {
-          this.screenWidth = change[0].mqAlias;
-          this.setupTable();
-        }
+      .subscribe((change: ScreenSize) => {
+        this.screenWidth = change;
+        this.setupTable();
       });
   }
 
-  /**
-   * A function which should be executed when a row is clicked or a new entity created.
-   * @param entity The newly created or clicked entity.
-   */
-  @Input() showEntity = (entity: T) => this.showEntityInForm(entity);
-
   /** function returns the background color for each row*/
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
+
+  private initDataSource() {
+    this.recordsDataSource.data = this.records
+      .filter(this.predicate)
+      .map((record) => ({ record }));
+  }
+
+  private entityConstructorIsAvailable(): boolean {
+    return this.records.length > 0 || !!this.newRecordFactory;
+  }
+
+  getEntityConstructor(): EntityConstructor<T> {
+    if (!this.entityConstructorIsAvailable()) {
+      throw new Error("No constructor is available");
+    }
+
+    if (!this.entityConstructor) {
+      const record =
+        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
+      this.entityConstructor = record.getConstructor();
+    }
+    return this.entityConstructor;
+  }
 
   /**
    * Update the component if any of the @Input properties were changed from outside.
    * @param changes
    */
   ngOnChanges(changes: SimpleChanges) {
-    if (
-      changes.hasOwnProperty("columns") ||
-      changes.hasOwnProperty("records")
-    ) {
-      this.initFormGroups();
-      this.initDefaultSort();
+    let reinitDataSource = false;
+    let resetupTable = false;
+    let reinitFormGroups = false;
+
+    if (changes.hasOwnProperty("records")) {
+      if (!this.records) {
+        this.records = [];
+      }
+      reinitDataSource = true;
+
+      if (this.records.length > 0) {
+        if (!this.newRecordFactory) {
+          this.newRecordFactory = () =>
+            new (this.records[0].getConstructor())();
+        }
+        reinitFormGroups = true;
+        if (this.columnsToDisplay.length < 2) {
+          resetupTable = true;
+        }
+      }
+    }
+    if (changes.hasOwnProperty("filter") && this.filter) {
+      this.predicate = this.filterService.getFilterPredicate(this.filter);
+      reinitDataSource = true;
+    }
+    if (changes.hasOwnProperty("columns")) {
+      reinitFormGroups = true;
       if (this.columnsToDisplay.length < 2) {
-        this.setupTable();
+        resetupTable = true;
       }
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
     }
+
+    if (reinitDataSource) {
+      this.initDataSource();
+    }
+    if (reinitFormGroups) {
+      this.initFormGroups();
+    }
+    if (resetupTable) {
+      this.setupTable();
+    }
+    if (changes.hasOwnProperty("records")) {
+      this.sortDefault();
+    }
+
+    this.listenToEntityUpdates();
   }
 
   private initFormGroups() {
-    if (this.records.length > 0 || this.newRecordFactory) {
-      const entity =
-        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
+    if (this.entityConstructorIsAvailable()) {
       try {
         this.entityFormService.extendFormFieldConfig(
           this._columns,
-          entity,
+          this.getEntityConstructor(),
           true
         );
-        this.idForSavingPagination = this._columns
-          .map((col) => (typeof col === "object" ? col.id : col))
-          .join("");
       } catch (err) {
         this.loggingService.warn(`Error creating form definitions: ${err}`);
       }
     }
-    this.recordsDataSource.data = this.records.map((rec) => {
-      return {
-        record: rec,
-      };
-    });
   }
 
-  private initDefaultSort() {
-    this.recordsDataSource.sort = this.sort;
-    this.recordsDataSource.sortingDataAccessor = (
-      row: TableRow<T>,
-      id: string
-    ) => entityListSortingAccessor(row.record, id);
-    if (!this.sort || this.sort.active) {
+  private sortDefault() {
+    if (
+      this.records.length === 0 ||
+      this._columns.length === 0 ||
+      this.sort.active
+    ) {
       // do not overwrite existing sort
       return;
     }
 
-    // initial sorting by first column
-    const sortBy = this.columnsToDisplay[0];
+    this.recordsDataSource.sort = this.sort;
+
+    this.recordsDataSource.sortData = (data, sort) =>
+      tableSort(data, {
+        active: sort.active as keyof T | "",
+        direction: sort.direction,
+      });
+
+    this.defaultSort = this.defaultSort ?? this.inferDefaultSort();
+
+    this.sort.sort({
+      id: this.defaultSort.active,
+      start: this.defaultSort.direction,
+      disableClear: false,
+    });
+  }
+
+  private inferDefaultSort(): Sort {
+    // initial sorting by first column, ensure that not the 'action' column is used
+    const sortBy =
+      this.columnsToDisplay[0] === "actions"
+        ? this.columnsToDisplay[1]
+        : this.columnsToDisplay[0];
     const sortByColumn = this._columns.find((c) => c.id === sortBy);
-    let sortDirection = "asc";
+
+    let sortDirection: SortDirection = "asc";
     if (
       sortByColumn?.view === "DisplayDate" ||
-      sortByColumn?.edit === "EditDate"
+      sortByColumn?.view === "DisplayMonth"
     ) {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";
     }
 
-    this.sort.sort({
-      id: sortBy,
-      start: sortDirection,
-    } as MatSortable);
+    return { active: sortBy, direction: sortDirection };
+  }
+
+  private listenToEntityUpdates() {
+    if (!this.updateSubscription && this.entityConstructorIsAvailable()) {
+      this.updateSubscription = this.entityMapper
+        .receiveUpdates(this.getEntityConstructor())
+        .pipe(untilDestroyed(this))
+        .subscribe(({ entity, type }) => {
+          if (type === "new") {
+            this.addToTable(entity);
+          } else if (type === "remove") {
+            this.removeFromDataTable(entity);
+          } else if (
+            type === "update" &&
+            !this.records.find((rec) => rec.getId() === entity.getId())
+          ) {
+            this.addToTable(entity);
+          }
+
+          if (!this.predicate(entity)) {
+            // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
+            setTimeout(() => this.initDataSource(), 5000);
+          }
+        });
+    }
   }
 
   edit(row: TableRow<T>) {
-    if (!row.formGroup) {
-      row.formGroup = this.entityFormService.createFormGroup(
-        this._columns,
-        row.record
-      );
+    if (this.screenWidthObserver.isDesktop()) {
+      if (!row.formGroup) {
+        row.formGroup = this.entityFormService.createFormGroup(
+          this._columns,
+          row.record,
+          true
+        );
+      }
+      row.formGroup.enable();
+    } else {
+      this.showEntity(row.record);
     }
-    row.formGroup.enable();
   }
 
   /**
    * Save an edited record to the database (if validation succeeds).
    * @param row The entity to be saved.
    */
-  async save(row: TableRow<T>) {
+  async save(row: TableRow<T>): Promise<void> {
     try {
       row.record = await this.entityFormService.saveChanges(
         row.formGroup,
@@ -214,7 +374,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       );
       row.formGroup.disable();
     } catch (err) {
-      this.alertService.addDanger(err.message);
+      if (!(err instanceof InvalidFormFieldError)) {
+        this.alertService.addDanger(err.message);
+      }
     }
   }
 
@@ -231,44 +393,35 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @param row The entity to be deleted.
    */
   delete(row: TableRow<T>) {
-    const dialogRef = this._confirmationDialog.openDialog(
-      $localize`:Confirmation dialog delete header:Delete?`,
-      $localize`:Delete confirmation message:Are you sure you want to delete this record?`
-    );
-
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      if (confirmed) {
-        this._entityMapper
-          .remove(row.record)
-          .then(() => this.removeFromDataTable(row));
-
-        const snackBarRef = this._snackBar.open(
-          $localize`:Record deleted info:Record deleted`,
-          "Undo",
-          {
-            duration: 8000,
-          }
-        );
-        snackBarRef
-          .onAction()
-          .pipe(untilDestroyed(this))
-          .subscribe(() => {
-            this._entityMapper.save(row.record, true);
+    this.entityRemoveService
+      .remove(row.record, {
+        deletedEntityInformation: $localize`:Record deleted info:Record deleted`,
+        dialogText: $localize`:Delete confirmation message:Are you sure you want to delete this record?`,
+      })
+      .subscribe((result) => {
+        switch (result) {
+          case RemoveResult.REMOVED:
+            this.removeFromDataTable(row.record);
+            break;
+          case RemoveResult.UNDONE:
             this.records.unshift(row.record);
             this.initFormGroups();
-          });
-      }
-    });
+        }
+      });
   }
 
-  private removeFromDataTable(row: TableRow<T>) {
-    const index = this.records.findIndex(
-      (a) => a.getId() === row.record.getId()
+  private removeFromDataTable(deleted: T) {
+    // use setter so datasource is also updated
+    this.records = this.records.filter(
+      (rec) => rec.getId() !== deleted.getId()
     );
-    if (index > -1) {
-      this.records.splice(index, 1);
-      this.initFormGroups();
-    }
+    this.initDataSource();
+  }
+
+  private addToTable(record: T) {
+    // use setter so datasource is also updated
+    this.records = [record].concat(this.records);
+    this.initDataSource();
   }
 
   /**
@@ -277,13 +430,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   create() {
     const newRecord = this.newRecordFactory();
-
-    this.records.unshift(newRecord);
-    this.recordsDataSource.data = [{ record: newRecord }].concat(
-      this.recordsDataSource.data
-    );
-    this._entityMapper.save(newRecord).then(() => this.showEntity(newRecord));
-
+    this.showEntity(newRecord);
     this.analyticsService.eventTrack("subrecord_add_new", {
       category: newRecord.getType(),
     });
@@ -293,48 +440,35 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * Show one record's details in a modal dialog (if configured).
    * @param row The entity whose details should be displayed.
    */
-  rowClick(row: TableRow<T>) {
+  onRowClick(row: TableRow<T>) {
     if (!row.formGroup || row.formGroup.disabled) {
       this.showEntity(row.record);
-
       this.analyticsService.eventTrack("subrecord_show_popup", {
         category: row.record.getType(),
       });
     }
   }
 
-  private showEntityInForm(entity: T) {
-    const dialogRef = this.dialog.open(EntityFormComponent, {
-      width: "80%",
-      maxHeight: "90vh",
-    }); // TODO: shouldn't this use FormDialogService rather than directly MatDialog? #921
-    // Making a copy of the editable columns before assigning them
-    dialogRef.componentInstance.columns = this._columns
-      .filter((col) => col.edit)
-      .map((col) => [Object.assign({}, col)]);
-    dialogRef.componentInstance.entity = entity;
-    dialogRef.componentInstance.editing = true;
-    dialogRef.componentInstance.onSave
-      .pipe(untilDestroyed(this))
-      .subscribe((updatedEntity: T) => {
-        dialogRef.close();
-        // Trigger the change detection
-        const rowIndex = this.recordsDataSource.data.findIndex(
-          (row) => row.record === entity
-        );
-        this.recordsDataSource.data[rowIndex] = { record: updatedEntity };
-        this.recordsDataSource._updateChangeSubscription();
-      });
-    dialogRef.componentInstance.onCancel
-      .pipe(untilDestroyed(this))
-      .subscribe(() => dialogRef.close());
+  private showEntity(entity: T) {
+    switch (this.clickMode) {
+      case "popup":
+        this.formDialog.openFormPopup(entity, this._columns);
+        break;
+      case "navigate":
+        this.router.navigate([
+          entity.getConstructor().route,
+          entity.getId(false),
+        ]);
+        break;
+    }
+    this.rowClick.emit(entity);
   }
 
   /**
    * resets columnsToDisplay depending on current screensize
    */
-  setupTable() {
-    if (this._columns !== undefined && this.screenWidth !== "") {
+  private setupTable() {
+    if (this._columns !== undefined && this.screenWidth !== undefined) {
       this.columnsToDisplay = this._columns
         .filter((col) => this.isVisible(col))
         .map((col) => col.id);
@@ -349,13 +483,14 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * @return returns true if column is visible
    */
   private isVisible(col: FormFieldConfig): boolean {
-    const visibilityGroups = ["sm", "md", "lg", "xl"];
-    const visibleFromIndex = visibilityGroups.indexOf(col.visibleFrom);
-    if (visibleFromIndex !== -1) {
-      const regex = visibilityGroups.slice(visibleFromIndex).join("|");
-      return !!this.screenWidth.match(regex);
-    } else {
+    if (col.hideFromTable) {
+      return false;
+    }
+    // when `ScreenSize[col.visibleFrom]` is undefined, this returns `true`
+    const numericValue = ScreenSize[col.visibleFrom];
+    if (numericValue === undefined) {
       return true;
     }
+    return this.screenWidthObserver.currentScreenSize() >= numericValue;
   }
 }

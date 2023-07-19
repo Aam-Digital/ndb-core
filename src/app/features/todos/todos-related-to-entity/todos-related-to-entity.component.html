@@ -1,0 +1,19 @@
+<app-entity-subrecord
+  [records]="entries"
+  [columns]="columns"
+  [newRecordFactory]="getNewEntryFunction()"
+  clickMode="none"
+  [filter]="filter"
+  (rowClick)="showDetails($event)"
+  [getBackgroundColor]="backgroundColorFn"
+></app-entity-subrecord>
+
+<div class="margin-top-regular">
+  <mat-slide-toggle
+    [(ngModel)]="includeInactive"
+    (change)="toggleInactive()"
+    i18n="slider|also show entries that are inactive"
+  >
+    Also show completed
+  </mat-slide-toggle>
+</div>

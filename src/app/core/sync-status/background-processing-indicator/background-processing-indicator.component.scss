@@ -1,39 +1,20 @@
 .details-header {
   font-size: small;
   text-align: justify;
+  line-height: normal;
 }
 
-.details-container {
-  padding: 0 16px;
-}
-
-.details-line {
-  line-height: 48px;
-}
-
-.process-spinner {
-  display: inline-block;
-  vertical-align: middle;
-}
 .process-checkmark {
-  font-size: 20px;
   color: green;
 }
 
-.process-title {
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
-}
-
-.details-close {
-  width: 100%;
-}
-
-.sync-icon {
-  color: white;
+.details-line {
+  line-height: 32px;
 }
 
 [hidden] {
+  // for some reason when `display: none` is set (instead of visibility and width)
+  // the pop-down menu is positioned incorrectly
   visibility: hidden !important;
+  width: 0;
 }

@@ -15,12 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { Observable } from "rxjs";
+
 /**
  * An implementation of this abstract class provides functions for direct database access.
  * This interface is an extension of the [PouchDB API](https://pouchdb.com/api.html).
- *
- * A `Database` instance is injected into the app through the {@link databaseServiceProvider}
- * with the help of the {@link SessionService}.
  */
 export abstract class Database {
   /**
@@ -47,6 +46,14 @@ export abstract class Database {
    * @param forceUpdate (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
   abstract put(object: any, forceUpdate?: boolean): Promise<any>;
+
+  /**
+   * Save a bunch of documents at once to the database
+   * @param objects The documents to be saved
+   * @param forceUpdate (Optional) Whether conflicts should be ignored and existing conflicting documents forcefully overwritten.
+   * @returns array holding success responses or errors depending on the success of the operation
+   */
+  abstract putAll(objects: any[], forceUpdate?: boolean): Promise<any[]>;
 
   /**
    * Delete a document from the database
@@ -86,7 +93,17 @@ export abstract class Database {
     });
   }
 
+  /**
+   * @returns true if there are no documents in the database
+   */
+  abstract isEmpty(): Promise<boolean>;
+
+  /**
+   * Closes all open connections to the database base and destroys it (clearing all data)
+   */
   abstract destroy(): Promise<any>;
+
+  abstract changes(prefix: string): Observable<any>;
 }
 
 /**

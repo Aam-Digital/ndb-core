@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { NoteAttendanceCountBlockComponent } from "./note-attendance-count-block.component";
 import { Note } from "../model/note";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 
 describe("NoteAttendanceBlockCountComponent", () => {
   let component: NoteAttendanceCountBlockComponent;
@@ -10,13 +11,15 @@ describe("NoteAttendanceBlockCountComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [NoteAttendanceCountBlockComponent],
+      imports: [NoteAttendanceCountBlockComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(NoteAttendanceCountBlockComponent);
     component = fixture.componentInstance;
+    component.entity = new Note();
+    component.config = { status: AttendanceLogicalStatus.ABSENT };
     fixture.detectChanges();
   });
 
@@ -39,12 +42,9 @@ describe("NoteAttendanceBlockCountComponent", () => {
     note.addChild("anotherPresentChild");
     note.getAttendance("anotherPresentChild").status = present;
 
-    component.onInitFromDynamicConfig({
-      entity: note,
-      id: "",
-      config: { status: "PRESENT" },
-    });
-
+    component.entity = note;
+    component.config = { status: AttendanceLogicalStatus.PRESENT };
+    component.ngOnInit();
     expect(component.participantsWithStatus).toBe(2);
   });
 });

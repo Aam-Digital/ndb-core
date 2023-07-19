@@ -16,20 +16,36 @@
  */
 
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { MarkdownPageComponent } from "./markdown-page/markdown-page.component";
 import { HttpClient, HttpClientModule } from "@angular/common/http";
-import { MarkdownModule } from "ngx-markdown";
+import { MarkdownModule, MarkedOptions } from "ngx-markdown";
+import { MarkedRendererCustom } from "./MarkedRendererCustom";
+
+function markedOptionsFactory(): MarkedOptions {
+  const renderer = new MarkedRendererCustom();
+
+  return {
+    renderer: renderer,
+    gfm: true,
+    breaks: false,
+    pedantic: false,
+    smartLists: true,
+    smartypants: false,
+  };
+}
 
 /**
  * Display any information contained in a markdown file.
  */
 @NgModule({
-  declarations: [MarkdownPageComponent],
   imports: [
-    CommonModule,
     HttpClientModule,
-    MarkdownModule.forRoot({ loader: HttpClient }),
+    MarkdownModule.forRoot({
+      loader: HttpClient,
+      markedOptions: {
+        provide: MarkedOptions,
+        useFactory: markedOptionsFactory,
+      },
+    }),
   ],
 })
 export class MarkdownPageModule {}

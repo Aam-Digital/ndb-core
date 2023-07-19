@@ -15,6 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { SessionType } from "../app/core/session/session-type";
+import { AuthProvider } from "../app/core/session/auth/auth-provider";
+
 /**
  * Central environment that allows to configure differences between a "dev" and a "prod" build.
  *
@@ -29,4 +32,10 @@ export const environment = {
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn:
     "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
+  /** The following settings can be overridden by the `config.json` if present, see {@link AppSettings} */
+  demo_mode: true,
+  session_type: SessionType.mock,
+  authenticator: AuthProvider.CouchDB,
+  account_url: "https://keycloak.aam-digital.net",
+  email: undefined,
 };

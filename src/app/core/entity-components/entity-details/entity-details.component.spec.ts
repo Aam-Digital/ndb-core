@@ -7,18 +7,17 @@ import {
 } from "@angular/core/testing";
 import { EntityDetailsComponent } from "./entity-details.component";
 import { Observable, of, Subscriber } from "rxjs";
-import { MatNativeDateModule } from "@angular/material/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { RouterTestingModule } from "@angular/router/testing";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityDetailsConfig, PanelConfig } from "./EntityDetailsConfig";
-import { ChildrenModule } from "../../../child-dev-project/children/children.module";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { EntityPermissionsService } from "../../permissions/entity-permissions.service";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
-import { MockEntityMapperService } from "../../entity/mock-entity-mapper-service";
-import { MockSessionModule } from "../../session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../entity/entity-remove.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
@@ -27,7 +26,6 @@ describe("EntityDetailsComponent", () => {
   let routeObserver: Subscriber<any>;
 
   const routeConfig: EntityDetailsConfig = {
-    icon: "child",
     entity: "Child",
     panels: [
       {
@@ -55,42 +53,37 @@ describe("EntityDetailsComponent", () => {
       observer.next({ get: () => "new" });
     }),
     data: of({ config: routeConfig }),
+    snapshot: {
+      queryParamMap: {
+        get: () => "",
+      },
+    },
   };
 
-  const mockEntityPermissionsService: jasmine.SpyObj<EntityPermissionsService> = jasmine.createSpyObj(
-    ["userIsPermitted"]
-  );
-
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockedEntityMapper: MockEntityMapperService;
+  let mockEntityRemoveService: jasmine.SpyObj<EntityRemoveService>;
+  let mockAbility: jasmine.SpyObj<EntityAbility>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildrenService = jasmine.createSpyObj([
-        "getSchoolRelationsFor",
-        "getAserResultsOfChild",
-      ]);
-      mockChildrenService.getSchoolRelationsFor.and.resolveTo([]);
-      mockChildrenService.getAserResultsOfChild.and.returnValue(of([]));
-      TestBed.configureTestingModule({
-        imports: [
-          ChildrenModule,
-          MatNativeDateModule,
-          RouterTestingModule,
-          MockSessionModule.withState(),
-        ],
-        providers: [
-          { provide: ActivatedRoute, useValue: mockedRoute },
-          {
-            provide: EntityPermissionsService,
-            useValue: mockEntityPermissionsService,
-          },
-          { provide: ChildrenService, useValue: mockChildrenService },
-        ],
-      }).compileComponents();
-      mockedEntityMapper = TestBed.inject(MockEntityMapperService);
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    mockChildrenService = jasmine.createSpyObj([
+      "queryRelationsOf",
+      "getAserResultsOfChild",
+    ]);
+    mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
+    mockChildrenService.queryRelationsOf.and.resolveTo([]);
+    mockChildrenService.getAserResultsOfChild.and.resolveTo([]);
+    mockAbility = jasmine.createSpyObj(["cannot", "update"]);
+    mockAbility.cannot.and.returnValue(false);
+    TestBed.configureTestingModule({
+      imports: [EntityDetailsComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: ActivatedRoute, useValue: mockedRoute },
+        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: EntityRemoveService, useValue: mockEntityRemoveService },
+        { provide: EntityAbility, useValue: mockAbility },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityDetailsComponent);
@@ -104,7 +97,8 @@ describe("EntityDetailsComponent", () => {
 
   it("sets the panels config with child and creating status", fakeAsync(() => {
     const testChild = new Child("Test-Child");
-    mockedEntityMapper.add(testChild);
+    TestBed.inject(EntityMapperService).save(testChild);
+    tick();
     component.creatingNew = false;
     routeObserver.next({ get: () => testChild.getId() });
     tick();
@@ -119,49 +113,50 @@ describe("EntityDetailsComponent", () => {
   }));
 
   it("should load the correct child on startup", fakeAsync(() => {
+    component.isLoading = true;
     const testChild = new Child("Test-Child");
-    mockedEntityMapper.add(testChild);
-    spyOn(mockedEntityMapper, "load").and.callThrough();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    entityMapper.save(testChild);
+    tick();
+    spyOn(entityMapper, "load").and.callThrough();
 
     routeObserver.next({ get: () => testChild.getId() });
+    expect(component.isLoading).toBeTrue();
     tick();
 
-    expect(mockedEntityMapper.load).toHaveBeenCalledWith(
-      Child,
-      testChild.getId()
-    );
+    expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
     expect(component.entity).toBe(testChild);
+    expect(component.isLoading).toBeFalse();
+  }));
+
+  it("should navigate back when deleting an entity", fakeAsync(() => {
+    const mockRemoveResult = of(RemoveResult.REMOVED);
+    mockEntityRemoveService.remove.and.returnValue(mockRemoveResult);
+    component.entity = new Child("Test-Child");
+    // @ts-ignore
+    const routerNavigateSpy = spyOn(component.router, "navigate");
+
+    component.removeEntity();
+    tick();
+
+    expect(routerNavigateSpy).toHaveBeenCalled();
   }));
 
   it("should route back when deleting is undone", fakeAsync(() => {
-    const testChild = new Child("Test-Child");
-    component.entity = testChild;
-    const dialogRef = fixture.debugElement.injector.get(
-      ConfirmationDialogService
-    );
-    const snackBar = fixture.debugElement.injector.get(MatSnackBar);
+    const mockResult = of(RemoveResult.REMOVED, RemoveResult.UNDONE);
+    mockEntityRemoveService.remove.and.returnValue(mockResult);
+    component.entity = new Child("Test-Child");
     const router = fixture.debugElement.injector.get(Router);
-    const dialogReturn: any = { afterClosed: () => of(true) };
-    spyOn(dialogRef, "openDialog").and.returnValue(dialogReturn);
-    spyOn(mockedEntityMapper, "remove").and.resolveTo();
-    spyOn(mockedEntityMapper, "save").and.resolveTo();
-    spyOn(component, "navigateBack");
-    const snackBarReturn: any = { onAction: () => of({}) };
-    spyOn(snackBar, "open").and.returnValue(snackBarReturn);
     spyOn(router, "navigate");
 
     component.removeEntity();
     tick();
 
-    expect(dialogRef.openDialog).toHaveBeenCalled();
-    expect(mockedEntityMapper.remove).toHaveBeenCalledWith(testChild);
-    expect(snackBar.open).toHaveBeenCalled();
-    expect(mockedEntityMapper.save).toHaveBeenCalledWith(testChild, true);
     expect(router.navigate).toHaveBeenCalled();
   }));
 
   it("should call router when user is not permitted to create entities", () => {
-    mockEntityPermissionsService.userIsPermitted.and.returnValue(false);
+    mockAbility.cannot.and.returnValue(true);
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
     routeObserver.next({ get: () => "new" });

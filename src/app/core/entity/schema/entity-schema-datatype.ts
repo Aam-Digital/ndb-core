@@ -37,7 +37,8 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
   /**
    * The default component how this datatype should be displayed in lists and forms.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    */
   viewComponent?: string;
 

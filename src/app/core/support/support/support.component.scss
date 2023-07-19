@@ -1,0 +1,71 @@
+@use "@angular/material" as mat;
+@use "src/styles/variables/sizes";
+
+$tech-details             : mat.get-color-from-palette(mat.$grey-palette, 600);
+$table-odd-color          : mat.get-color-from-palette(mat.$grey-palette, 50);
+$table-even-color         : mat.get-color-from-palette(mat.$grey-palette, 100);
+$table-border-color       : mat.get-color-from-palette(mat.$grey-palette, 300);
+
+$table-border             : 1px solid $table-border-color;
+
+$table-padding-horizontal : 12px;
+$table-padding-vertical   : 16px;
+
+$table-padding            : $table-padding-vertical $table-padding-horizontal;
+
+:host {
+  max-width: sizes.$max-text-width;
+  margin: 0 auto;
+  display: block;
+}
+
+.support-table {
+
+  border-collapse: collapse;
+  border-spacing: 0;
+  margin-bottom: sizes.$large;
+
+  &--body {
+    > tr:nth-of-type(odd) {
+      background-color: $table-odd-color;
+      border-top: $table-border;
+      border-bottom: $table-border;
+    }
+
+    > tr:nth-of-type(even) {
+      background-color: $table-even-color;
+    }
+
+    > tr td:first-child {
+      width: 25%;
+    }
+
+    > tr td:nth-child(2) {
+      width: 75%;
+    }
+  }
+
+  th {
+    padding: $table-padding;
+    text-align: left;
+  }
+
+  td {
+    padding: $table-padding;
+  }
+}
+
+.tech-details {
+  color: $tech-details;
+}
+
+.mat-expansion-panel {
+  background-color: transparent;
+  border: 1px $tech-details solid;
+  margin-bottom: sizes.$large;
+}
+
+.sw-logs {
+  overflow: auto;
+  white-space: pre;
+}

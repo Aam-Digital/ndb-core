@@ -1,0 +1,127 @@
+<div mat-dialog-title style="display: flex">
+  <mat-form-field class="title-field margin-top-small">
+    <input
+      [formControl]="title"
+      matInput
+      type="text"
+      i18n-placeholder="
+        Title Progress|Edit the progress of one or multiple tasks
+      "
+      placeholder="Title"
+    />
+    <mat-error *ngIf="title.hasError('required')" i18n>
+      This field is required
+    </mat-error>
+  </mat-form-field>
+
+  <app-dialog-close mat-dialog-close></app-dialog-close>
+</div>
+
+<mat-dialog-content class="dialog-content">
+  <div
+    *ngFor="let control of parts.controls; let index = index"
+    class="entry-wrapper mat-elevation-z1"
+    [formGroup]="$any(control)"
+  >
+    <mat-form-field class="header-field">
+      <input
+        formControlName="label"
+        matInput
+        type="text"
+        i18n-placeholder="Process Label|The label of a process or task"
+        placeholder="Task"
+      />
+      <mat-error *ngIf="control.hasError('required', 'label')" i18n>
+        This field is required
+      </mat-error>
+    </mat-form-field>
+
+    <button mat-icon-button color="accent" (click)="removePart(index)">
+      <fa-icon
+        class="button-icon"
+        aria-label="remove element"
+        icon="trash"
+      ></fa-icon>
+    </button>
+
+    <mat-form-field class="current-field">
+      <input
+        formControlName="currentValue"
+        matInput
+        type="number"
+        i18n-placeholder="
+          Current process|The Current value of a process or task
+        "
+        placeholder="Current"
+        [errorStateMatcher]="currentErrorStateMatcher"
+      />
+      <mat-error *ngIf="control.hasError('required', 'currentValue')" i18n>
+        This field is required
+      </mat-error>
+      <mat-error *ngIf="control.hasError('min', 'currentValue')" i18n>
+        Must be greater than 0
+      </mat-error>
+      <mat-error
+        *ngIf="control.hasError('currentGtTarget')"
+        i18n="
+          The number entered in this form is less than another field but should
+          not be
+        "
+      >
+        Must not be greater than target
+      </mat-error>
+    </mat-form-field>
+
+    <mat-form-field class="target-field">
+      <input
+        formControlName="targetValue"
+        matInput
+        type="number"
+        i18n-placeholder="Target process|The target amount of a process"
+        placeholder="Target"
+      />
+      <mat-error
+        *ngIf="control.hasError('required', 'targetValue')"
+        i18n="A field entered in a form is required and wasn't provided"
+      >
+        This field is required
+      </mat-error>
+      <mat-error
+        *ngIf="control.hasError('min', 'targetValue')"
+        i18n="A field entered in a form must be greater than 0"
+      >
+        Must be greater than 0
+      </mat-error>
+    </mat-form-field>
+  </div>
+
+  <div>
+    <button mat-button color="accent" (click)="addPart()">
+      <fa-icon
+        class="button-icon margin-sides-small"
+        aria-label="add element"
+        icon="plus-circle"
+      ></fa-icon>
+      <span i18n="Add a task to the progress dashboard list">
+        Add New Task
+      </span>
+    </button>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <button
+    mat-raised-button
+    color="accent"
+    [mat-dialog-close]="outputData.value"
+    [disabled]="outputData.invalid"
+  >
+    <span
+      matTooltip="Fix the errors to save the form"
+      [matTooltipDisabled]="outputData.valid"
+      i18n-matTooltip="Shown when there are errors that prevent saving"
+      i18n
+    >Save</span
+    >
+  </button>
+  <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
+</mat-dialog-actions>

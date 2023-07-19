@@ -1,142 +1,158 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntityFormComponent } from "./entity-form.component";
-import { ChildPhotoService } from "../../../../child-dev-project/children/child-photo-service/child-photo.service";
-import { Entity } from "../../../entity/model/entity";
-import { RouterTestingModule } from "@angular/router/testing";
-import { ConfigService } from "../../../config/config.service";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { AlertService } from "../../../alerts/alert.service";
-import { DatabaseField } from "../../../entity/database-field.decorator";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { EntityFormModule } from "../entity-form.module";
-import { FormBuilder } from "@angular/forms";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { EntityMapperService } from "../../../entity/entity-mapper.service";
+import { ConfirmationDialogService } from "../../../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form.service";
-import { MockSessionModule } from "../../../session/mock-session.module";
+import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 
 describe("EntityFormComponent", () => {
-  let component: EntityFormComponent;
-  let fixture: ComponentFixture<EntityFormComponent>;
+  let component: EntityFormComponent<Child>;
+  let fixture: ComponentFixture<EntityFormComponent<Child>>;
 
-  let mockChildPhotoService: jasmine.SpyObj<ChildPhotoService>;
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
+  let mockConfirmation: jasmine.SpyObj<ConfirmationDialogService>;
 
-  const testChild = new Child("Test Name");
+  const testColumns = [
+    [
+      { id: "name" },
+      { id: "projectNumber" },
+      { id: "photo" },
+      { id: "dateOfBirth" },
+    ],
+  ];
 
-  beforeEach(
-    waitForAsync(() => {
-      mockChildPhotoService = jasmine.createSpyObj([
-        "canSetImage",
-        "setImage",
-        "getImage",
-      ]);
-      mockConfigService = jasmine.createSpyObj(["getConfig"]);
-      mockEntitySchemaService = jasmine.createSpyObj([
-        "getComponent",
-        "registerSchemaDatatype",
-      ]);
-
-      TestBed.configureTestingModule({
-        declarations: [EntityFormComponent],
-        imports: [
-          EntityFormModule,
-          NoopAnimationsModule,
-          RouterTestingModule,
-          MatSnackBarModule,
-          MockSessionModule.withState(),
-        ],
-        providers: [
-          FormBuilder,
-          AlertService,
-          { provide: ChildPhotoService, useValue: mockChildPhotoService },
-          { provide: ConfigService, useValue: mockConfigService },
-          { provide: EntitySchemaService, useValue: mockEntitySchemaService },
-        ],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    mockConfirmation = jasmine.createSpyObj(["getConfirmation"]);
+    TestBed.configureTestingModule({
+      imports: [MockedTestingModule.withState(), EntityFormComponent],
+      providers: [
+        { provide: ConfirmationDialogService, useValue: mockConfirmation },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
-    testChild.name = "Test Name";
-    mockChildPhotoService.canSetImage.and.returnValue(false);
-    fixture = TestBed.createComponent(EntityFormComponent);
+    fixture = TestBed.createComponent(EntityFormComponent<Child>);
     component = fixture.componentInstance;
-    component.entity = testChild;
-    fixture.detectChanges();
+
+    setupInitialForm(new Child(), testColumns);
   });
+
+  function setupInitialForm(entity, columns) {
+    component.entity = entity;
+    component.columns = columns;
+    component.form = TestBed.inject(EntityFormService).createFormGroup(
+      component.columns[0],
+      component.entity
+    );
+    component.ngOnChanges({ entity: true, form: true } as any);
+    fixture.detectChanges();
+  }
 
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should emit notification when a child is saved", (done) => {
-    spyOnProperty(component.form, "valid").and.returnValue(true);
-    const subscription = component.onSave.subscribe((child) => {
-      expect(child).toEqual(testChild);
-      subscription.unsubscribe();
-      done();
-    });
-
-    component.save();
-  });
-
-  it("should show an warning alert when form service rejects saving", async () => {
-    const alertService = TestBed.inject(AlertService);
-    spyOn(alertService, "addWarning");
-    const entityFormService = TestBed.inject(EntityFormService);
-    spyOn(entityFormService, "saveChanges").and.rejectWith(
-      new Error("error message")
+  it("should not change anything if changed entity has same values as form", () => {
+    return expectApplyChangesPopup(
+      "not-shown",
+      { _rev: "0" },
+      { name: "updated" },
+      { name: "updated", _rev: "1" },
+      { name: "updated", _rev: "1" }
     );
-
-    await component.save();
-
-    expect(alertService.addWarning).toHaveBeenCalledWith("error message");
   });
 
-  it("should add column definitions from property schema", () => {
-    class Test extends Entity {
-      @DatabaseField({ description: "Property description" })
-      propertyField: string;
+  it("should overwrite form if user confirms it", async () => {
+    const formValues = { name: "other" };
+    const remoteValues = { name: "changed" };
+    await expectApplyChangesPopup(
+      "yes",
+      {},
+      formValues,
+      remoteValues,
+      remoteValues
+    );
+  });
+
+  it("should not overwrite form if user declines it", async () => {
+    const formValues = { name: "other" };
+    const remoteValues = { name: "changed" };
+    await expectApplyChangesPopup(
+      "no",
+      {},
+      formValues,
+      remoteValues,
+      formValues
+    );
+  });
+
+  it("should overwrite without popup for changes affecting untouched fields", async () => {
+    const originalEntity = { projectNumber: "p1" };
+    const formValues = { projectNumber: "p2" };
+    const remoteValues = {
+      name: "changed",
+      projectNumber: "p1",
+      _rev: "new rev",
+    };
+    await expectApplyChangesPopup(
+      "not-shown",
+      originalEntity,
+      formValues,
+      remoteValues,
+      {
+        projectNumber: "p2",
+        name: "changed",
+        _rev: "new rev",
+      }
+    );
+  });
+
+  it("should not show popup if date was saved as day-only", async () => {
+    const form = { dateOfBirth: new DateWithAge() };
+    const dateOnly = new DateWithAge();
+    dateOnly.setHours(0, 0, 0, 0);
+    const remoteValues = { dateOfBirth: dateOnly };
+
+    await expectApplyChangesPopup("not-shown", form, form, remoteValues, form);
+  });
+
+  async function expectApplyChangesPopup(
+    popupAction: "not-shown" | "yes" | "no",
+    originalEntity: Partial<Child>,
+    formChanges: Partial<Child>,
+    remoteChanges: Partial<Child>,
+    expectedFormValues: Partial<Child>
+  ) {
+    setupInitialForm(Object.assign(new Child(), originalEntity), testColumns);
+
+    mockConfirmation.getConfirmation.and.resolveTo(popupAction === "yes");
+    for (const c in formChanges) {
+      component.form.get(c).setValue(formChanges[c]);
+      component.form.get(c).markAsDirty();
     }
-    mockEntitySchemaService.getComponent.and.returnValue("PredefinedComponent");
-    component.entity = new Test();
-    component.columns = [
-      [
-        {
-          id: "fieldWithDefinition",
-          edit: "EditComponent",
-          view: "DisplayComponent",
-          label: "Field with definition",
-          tooltip: "Custom tooltip",
-        },
-        { id: "propertyField", label: "Property" },
-      ],
-    ];
+    const updatedChild = new Child(component.entity.getId());
+    Object.assign(updatedChild, remoteChanges);
 
-    component.ngOnInit();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.save(updatedChild);
 
-    expect(component._columns).toEqual([
-      [
-        {
-          id: "fieldWithDefinition",
-          edit: "EditComponent",
-          view: "DisplayComponent",
-          label: "Field with definition",
-          forTable: false,
-          tooltip: "Custom tooltip",
-        },
-        {
-          id: "propertyField",
-          edit: "PredefinedComponent",
-          view: "PredefinedComponent",
-          label: "Property",
-          forTable: false,
-          tooltip: "Property description",
-        },
-      ],
-    ]);
-  });
+    const entityAfterSave = Object.assign(
+      {},
+      component.entity,
+      component.form.getRawValue()
+    );
+    for (const [key, value] of Object.entries(expectedFormValues)) {
+      const form = component.form.get(key);
+      if (form) {
+        expect(form).toHaveValue(value);
+      }
+      expect(entityAfterSave[key]).toEqual(value);
+    }
+    expect(mockConfirmation.getConfirmation.calls.any()).toBe(
+      popupAction !== "not-shown"
+    );
+  }
 });

@@ -1,46 +1,25 @@
+@use "src/styles/variables/sizes";
+@use "src/styles/mixins/grid-layout";
+
 .input-medium {
   width: 100%;
   max-width: 500px;
 }
 
-.input-max {
-  width: 100%;
+.content-header {
+  @include grid-layout.adaptive(450px);
 }
 
-.primary-section-elevated {
-  margin-left: -12px;
-  margin-right: -12px;
-
-  padding: 12px;
-
-  margin-bottom: 12px;
+.additional-actions-menu {
+  position: absolute;
+  right: sizes.$small;
+  top: sizes.$regular;
 }
 
-.form-section-primary {
+.form-section {
+  margin-top: 24px;
 }
 
-.form-section-secondary {
-  font-size: 0.9em;
-}
-.list-container-left {
-  max-width: 45%;
-  align-self: start;
-}
-
-.padding-container {
-  padding-right: 20px;
-  padding-left: 20px;
-}
-
-.padding-bottom {
-  padding-bottom: 15px;
-}
-
-.bottom-spacing {
-  padding-bottom: 20px;
-}
-
-.list-container-right {
-  max-width: 45%;
-  align-self: end;
+.middle-form-field mat-form-field {
+  width: 100%
 }

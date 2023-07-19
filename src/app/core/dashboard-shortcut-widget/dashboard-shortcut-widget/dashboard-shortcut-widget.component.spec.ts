@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.component";
-import { DashboardShortcutWidgetModule } from "../dashboard-shortcut-widget.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
 describe("ShortcutDashboardWidgetComponent", () => {
   let component: DashboardShortcutWidgetComponent;
@@ -8,7 +9,8 @@ describe("ShortcutDashboardWidgetComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [DashboardShortcutWidgetModule],
+      imports: [DashboardShortcutWidgetComponent, FontAwesomeTestingModule],
+      providers: [{ provide: EntityMapperService, useValue: undefined }],
     }).compileComponents();
   });
 

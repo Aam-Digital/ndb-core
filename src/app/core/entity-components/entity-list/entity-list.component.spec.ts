@@ -1,28 +1,31 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 import { EntityListComponent } from "./entity-list.component";
-import { CommonModule, DatePipe } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { RouterTestingModule } from "@angular/router/testing";
-import { SimpleChange } from "@angular/core";
 import { BooleanFilterConfig, EntityListConfig } from "./EntityListConfig";
 import { Entity } from "../../entity/model/entity";
-import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { ConfigService } from "../../config/config.service";
-import { LoggingService } from "../../logging/logging.service";
-import { EntityListModule } from "./entity-list.module";
-import { Angulartics2Module } from "angulartics2";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { ReactiveFormsModule } from "@angular/forms";
 import { AttendanceService } from "../../../child-dev-project/attendance/attendance.service";
-import { ExportModule } from "../../export/export.module";
-import { ExportService } from "../../export/export-service/export.service";
-import { MockSessionModule } from "../../session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { ActivatedRoute, Router } from "@angular/router";
+import { Subject } from "rxjs";
+import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { HarnessLoader } from "@angular/cdk/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatTabGroupHarness } from "@angular/material/tabs/testing";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
   let fixture: ComponentFixture<EntityListComponent<Entity>>;
+  let loader: HarnessLoader;
+
   const testConfig: EntityListConfig = {
     title: "Children List",
     columns: [
@@ -64,120 +67,94 @@ describe("EntityListComponent", () => {
       },
       {
         id: "religion",
-        display: "dropdown",
       },
     ],
   };
-  let mockConfigService: jasmine.SpyObj<ConfigService>;
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  let mockEntitySchemaService: jasmine.SpyObj<EntitySchemaService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
+  let mockActivatedRoute: Partial<ActivatedRoute>;
+  let routeData: Subject<RouteData<EntityListConfig>>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockConfigService = jasmine.createSpyObj(["getConfig"]);
-      mockLoggingService = jasmine.createSpyObj(["warn"]);
-      mockEntitySchemaService = jasmine.createSpyObj([
-        "getComponent",
-        "registerSchemaDatatype",
-      ]);
-      mockAttendanceService = jasmine.createSpyObj([
-        "getActivitiesForChild",
-        "getAllActivityAttendancesForPeriod",
-      ]);
-      mockAttendanceService.getActivitiesForChild.and.resolveTo([]);
-      mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo(
-        []
-      );
+  beforeEach(waitForAsync(() => {
+    mockAttendanceService = jasmine.createSpyObj([
+      "getActivitiesForChild",
+      "getAllActivityAttendancesForPeriod",
+    ]);
+    mockAttendanceService.getActivitiesForChild.and.resolveTo([]);
+    mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([]);
+    routeData = new Subject<RouteData<EntityListConfig>>();
+    mockActivatedRoute = {
+      component: undefined,
+      queryParams: new Subject(),
+      data: routeData,
+      snapshot: { queryParams: {}, queryParamMap: new Map() } as any,
+    };
 
-      TestBed.configureTestingModule({
-        declarations: [EntityListComponent],
-        imports: [
-          CommonModule,
-          NoopAnimationsModule,
-          EntityListModule,
-          ExportModule,
-          Angulartics2Module.forRoot(),
-          ReactiveFormsModule,
-          RouterTestingModule.withRoutes([
-            { path: "child", component: ChildrenListComponent },
-          ]),
-          MockSessionModule.withState(),
-        ],
-        providers: [
-          DatePipe,
-          { provide: ConfigService, useValue: mockConfigService },
-          { provide: LoggingService, useValue: mockLoggingService },
-          { provide: ExportService, useValue: {} },
-          { provide: EntitySchemaService, useValue: mockEntitySchemaService },
-          { provide: AttendanceService, useValue: mockAttendanceService },
-        ],
-      }).compileComponents();
-    })
-  );
-
-  beforeEach(() => {
-    fixture = TestBed.createComponent(EntityListComponent);
-    component = fixture.componentInstance;
-    component.listConfig = testConfig;
-    component.entityConstructor = Child;
-    component.ngOnChanges({
-      allEntities: new SimpleChange(null, component.allEntities, false),
-      listConfig: new SimpleChange(null, component.listConfig, false),
-    });
-    fixture.detectChanges();
-  });
+    TestBed.configureTestingModule({
+      imports: [EntityListComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: AttendanceService, useValue: mockAttendanceService },
+        { provide: ActivatedRoute, useValue: mockActivatedRoute },
+        { provide: FormDialogService, useValue: null },
+      ],
+    }).compileComponents();
+  }));
 
   it("should create", () => {
+    createComponent();
+    initComponentInputs();
     expect(component).toBeTruthy();
   });
 
-  it("should creates columns from config", () => {
+  it("should create columns from config", fakeAsync(() => {
+    createComponent();
+    initComponentInputs();
+    tick();
     expect(component.columns).toEqual(testConfig.columns);
-  });
+  }));
 
-  it("should create column groups from config and set correct one", () => {
+  it("should create column groups from config and set correct one", fakeAsync(() => {
+    createComponent();
+    initComponentInputs();
+    tick();
+
     expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
-    const defaultGroup = testConfig.columnGroups.groups.find(
+    const defaultGroup = testConfig.columnGroups.groups.findIndex(
       (g) => g.name === testConfig.columnGroups.default
     );
-    expect(component.selectedColumnGroup).toEqual(defaultGroup.name);
-    expect(component.columnsToDisplay).toEqual(defaultGroup.columns);
-  });
+    expect(component.selectedColumnGroupIndex).toEqual(defaultGroup);
+    expect(component.columnsToDisplay).toEqual(
+      testConfig.columnGroups.groups[defaultGroup].columns
+    );
+  }));
 
-  it("should set the clicked column group", () => {
+  it("should set the clicked column group", async () => {
+    createComponent();
+    await initComponentInputs();
+    expect(component.selectedColumnGroupIndex).toBe(1);
+
+    const tabGroup = await loader.getHarness(MatTabGroupHarness);
+    const groups = await tabGroup.getTabs();
+    const clickedTab = groups[0];
     const clickedColumnGroup = testConfig.columnGroups.groups[0];
-    component.columnGroupClick(clickedColumnGroup.name);
-    expect(component.selectedColumnGroup).toEqual(clickedColumnGroup.name);
+    const tabLabel = await clickedTab.getLabel();
+    expect(tabLabel).toBe(clickedColumnGroup.name);
+
+    await clickedTab.select();
+
+    expect(component.selectedColumnGroupIndex).toEqual(0);
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
 
-  it("should apply the clicked filter", (done) => {
-    const clickedOption = "false";
-    const child1 = new Child("dropoutId");
-    child1.status = "Dropout";
-    const child2 = new Child("activeId");
-    component.allEntities = [child1, child2];
-    component.ngOnChanges({ allEntities: null });
-    setTimeout(() => {
-      const activeFs = component.filterSelections[0];
-      component.filterOptionSelected(activeFs, clickedOption);
-      expect(component.filterSelections[0].selectedOption).toEqual(
-        clickedOption
-      );
-      expect(component.allEntities.length).toEqual(2);
-      expect(component.filteredEntities.length).toEqual(1);
-      expect(component.filteredEntities[0]).toEqual(child1);
-      done();
-    });
-  });
+  it("should add and initialize columns which are only mentioned in the columnGroups", fakeAsync(() => {
+    createComponent();
+    initComponentInputs();
+    tick();
 
-  it("should add and initialize columns which are only mentioned in the columnGroups", () => {
     class Test extends Entity {
       @DatabaseField({ label: "Test Property" }) testProperty: string;
     }
+
     component.entityConstructor = Test;
-    mockEntitySchemaService.getComponent.and.returnValue("DisplayText");
     component.listConfig = {
       title: "",
       columns: [
@@ -196,19 +173,68 @@ describe("EntityListComponent", () => {
     };
 
     component.ngOnChanges({ listConfig: null });
+    tick();
 
     expect(
       component.columns.map((col) => (typeof col === "string" ? col : col.id))
     ).toEqual(
       jasmine.arrayWithExactContents(["testProperty", "anotherColumn"])
     );
+  }));
+
+  it("should automatically initialize values if directly referenced from config", fakeAsync(() => {
+    mockActivatedRoute.component = EntityListComponent;
+    const config = {
+      entity: "Child",
+      title: "Some title",
+      columns: ["name", "gender"],
+    };
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const children = [new Child(), new Child()];
+    spyOn(entityMapper, "loadType").and.resolveTo(children);
+
+    createComponent();
+    routeData.next({ config });
+    tick();
+
+    expect(component.entityConstructor).toBe(Child);
+    expect(component.listConfig).toEqual(config);
+    expect(component.allEntities).toEqual(children);
+    expect(component.listName).toBe("Some title");
+
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    component.addNew();
+    expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["new"]);
+  }));
+
+  it("should not navigate on addNew if clickMode is not 'navigate'", () => {
+    createComponent();
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+
+    component.clickMode = "popup";
+    component.addNew();
+    expect(navigateSpy).not.toHaveBeenCalled();
+
+    navigateSpy.calls.reset();
+    component.clickMode = "navigate";
+    component.addNew();
+    expect(navigateSpy).toHaveBeenCalled();
   });
 
-  it("should create records of the correct entity", () => {
+  function createComponent() {
+    fixture = TestBed.createComponent(EntityListComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
+  }
+
+  async function initComponentInputs() {
+    component.listConfig = testConfig;
     component.entityConstructor = Child;
-
-    const res = component.getNewRecordFactory()();
-
-    expect(res.getType()).toEqual(Child.ENTITY_TYPE);
-  });
+    await component.ngOnChanges({
+      allEntities: undefined,
+      listConfig: undefined,
+    });
+    fixture.detectChanges();
+  }
 });

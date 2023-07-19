@@ -1,10 +1,9 @@
-import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
-import { MediaObserver } from "@angular/flex-layout";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { FilterSelectionOption } from "../../../core/filter/filter-selection/filter-selection";
+import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -13,9 +12,17 @@ import { EntityListComponent } from "../../../core/entity-components/entity-list
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
-import { EntityConstructor } from "../../../core/entity/model/entity";
 import { WarningLevel } from "../../../core/entity/model/warning-level";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { merge } from "rxjs";
+import { RouteTarget } from "../../../app.routing";
+import moment from "moment";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { NgIf } from "@angular/common";
+import { FormsModule } from "@angular/forms";
+import { Angulartics2Module } from "angulartics2";
+import { MatMenuModule } from "@angular/material/menu";
+import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -28,56 +35,64 @@ export interface NotesManagerConfig {
   showEventNotesToggle?: boolean;
 }
 
+@RouteTarget("NotesManager")
 @Component({
   selector: "app-notes-manager",
   templateUrl: "./notes-manager.component.html",
-  styleUrls: ["./notes-manager.component.scss"],
+  imports: [
+    EntityListComponent,
+    MatSlideToggleModule,
+    NgIf,
+    FormsModule,
+    Angulartics2Module,
+    MatMenuModule,
+    FaDynamicIconComponent,
+  ],
+  standalone: true,
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {
-  @ViewChild("entityList") entityList: EntityListComponent<Note>;
-
   @Input() includeEventNotes: boolean;
   @Input() showEventNotesToggle: boolean;
 
   config: EntityListConfig;
   noteConstructor = Note;
   notes: Note[] = [];
+  isLoading: boolean = true;
 
   private statusFS: FilterSelectionOption<Note>[] = [
     {
       key: "urgent",
       label: $localize`:Filter-option for notes:Urgent`,
-      filterFun: (n: Note) => n.getWarningLevel() === WarningLevel.URGENT,
+      filter: { "warningLevel.id": WarningLevel.URGENT },
     },
     {
       key: "follow-up",
       label: $localize`:Filter-option for notes:Needs Follow-Up`,
-      filterFun: (n: Note) =>
-        n.getWarningLevel() === WarningLevel.URGENT ||
-        n.getWarningLevel() === WarningLevel.WARNING,
+      filter: {
+        "warningLevel.id": { $in: [WarningLevel.URGENT, WarningLevel.WARNING] },
+      },
     },
-    { key: "", label: $localize`All`, filterFun: () => true },
+    { key: "", label: $localize`All`, filter: {} },
   ];
 
   private dateFS: FilterSelectionOption<Note>[] = [
     {
       key: "current-week",
       label: $localize`:Filter-option for notes:This Week`,
-      filterFun: (n: Note) => n.date > this.getPreviousSunday(0),
+      filter: { date: this.getWeeksFilter(0) },
     },
     {
       key: "last-week",
       label: $localize`:Filter-option for notes:Since Last Week`,
-      filterFun: (n: Note) => n.date > this.getPreviousSunday(1),
+      filter: { date: this.getWeeksFilter(1) },
     },
-    { key: "", label: $localize`All`, filterFun: () => true },
+    { key: "", label: $localize`All`, filter: {} },
   ];
 
   constructor(
     private formDialog: FormDialogService,
     private sessionService: SessionService,
-    private media: MediaObserver,
     private entityMapperService: EntityMapperService,
     private route: ActivatedRoute,
     private log: LoggingService
@@ -95,8 +110,7 @@ export class NotesManagerComponent implements OnInit {
       }
     );
 
-    this.subscribeEntityUpdates(Note);
-    this.subscribeEntityUpdates(EventNote);
+    this.subscribeEntityUpdates();
   }
 
   private async loadEntities(): Promise<Note[]> {
@@ -105,14 +119,15 @@ export class NotesManagerComponent implements OnInit {
       const eventNotes = await this.entityMapperService.loadType(EventNote);
       notes = notes.concat(eventNotes);
     }
+    this.isLoading = false;
     return notes;
   }
 
-  private subscribeEntityUpdates(
-    entityType: EntityConstructor<Note | EventNote>
-  ) {
-    this.entityMapperService
-      .receiveUpdates<Note>(entityType)
+  private subscribeEntityUpdates() {
+    merge(
+      this.entityMapperService.receiveUpdates(Note),
+      this.entityMapperService.receiveUpdates(EventNote)
+    )
       .pipe(untilDestroyed(this))
       .subscribe((updatedNote) => {
         if (
@@ -127,6 +142,8 @@ export class NotesManagerComponent implements OnInit {
   }
 
   async updateIncludeEvents() {
+    this.includeEventNotes = !this.includeEventNotes;
+    this.isLoading = true;
     this.notes = await this.loadEntities();
   }
 
@@ -156,21 +173,20 @@ export class NotesManagerComponent implements OnInit {
     }
   }
 
-  private getPreviousSunday(weeksBack: number) {
-    const today = new Date();
-    const day = today.getDay();
-    const diff = today.getDate() - day - 7 * weeksBack; // adjust when day is sunday
-    return new Date(today.setDate(diff));
+  private getWeeksFilter(weeksBack: number) {
+    const start = moment().subtract(weeksBack, "weeks").startOf("week");
+    const end = moment().endOf("day");
+    const startString = start.format("YYYY-MM-DD");
+    const endString = end.format("YYYY-MM-DD");
+    return { $gte: startString, $lte: endString };
   }
 
   addNoteClick() {
     const newNote = new Note(Date.now().toString());
-    newNote.date = new Date();
-    newNote.authors = [this.sessionService.getCurrentUser().name];
     this.showDetails(newNote);
   }
 
   showDetails(entity: Note) {
-    this.formDialog.openDialog(NoteDetailsComponent, entity.copy());
+    this.formDialog.openFormPopup(entity, [], NoteDetailsComponent);
   }
 }

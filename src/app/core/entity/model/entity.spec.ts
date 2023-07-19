@@ -15,89 +15,40 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "./entity";
-import { waitForAsync } from "@angular/core/testing";
+import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
+import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { DatabaseEntity } from "../database-entity.decorator";
+import { createTestingConfigurableEnumService } from "../../configurable-enum/configurable-enum-testing";
+import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
-
-  it("has ID and entityId", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-
-    expect(entity.getId()).toBe(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
+  beforeEach(() => {
+    entitySchemaService = new EntitySchemaService();
   });
 
-  it("has correct type/prefix", function () {
-    const entity = new Entity();
-
-    expect(entity.getType()).toBe("Entity");
-    expect(Entity.extractTypeFromId(entity._id)).toBe("Entity");
-  });
-
-  it("all schema fields exist", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-    entity._rev = "XYZ";
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData._id).toBe(Entity.createPrefixedId(Entity.ENTITY_TYPE, id));
-    expect(rawData._rev).toBe("XYZ");
-  });
-
-  it("load() assigns all data", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-
-    const data = {
-      _id: "test2",
-      _rev: "1.2.3",
-      other: "x",
-    };
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity._id).toBe(data._id);
-    expect(entity._rev).toBe(data._rev);
-    // @ts-ignore   because other is not a defined property of the class (-> TypeScript error) and only added from load(data)
-    expect(entity.other).toBe(data.other);
-  });
+  testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
 
   it("rawData() returns only data matching the schema", function () {
+    @DatabaseEntity("TestWithIgnoredFieldEntity")
     class TestEntity extends Entity {
       @DatabaseField() text: string = "text";
       @DatabaseField() defaultText: string = "default";
       otherText: string = "other Text";
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
     const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
+    expect(data._id).toBe("TestWithIgnoredFieldEntity:" + id);
     expect(data.text).toBe("text");
     expect(data.defaultText).toBe("default");
     expect(data.otherText).toBeUndefined();
-  });
-
-  it("rawData() includes searchIndices containing name parts", function () {
-    const id = "test1";
-    const entity = new Entity(id);
-    entity["name"] = "John Doe";
-
-    const data = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(data.searchIndices).toBeDefined();
-    expect(data.searchIndices).toContain("John");
-    expect(data.searchIndices).toContain("Doe");
   });
 
   it("can perform a shallow copy of itself", () => {
@@ -111,6 +62,7 @@ describe("Entity", () => {
   it("preserves it's type when copying", () => {
     class TestEntity extends Entity {
       value: number;
+
       constructor(id: string, value: number) {
         super(id);
         this.value = value;
@@ -123,4 +75,84 @@ describe("Entity", () => {
     expect(otherEntity).toEqual(entity);
     expect(otherEntity).toBeInstanceOf(TestEntity);
   });
+
+  it("should use entity type as default label if none is explicitly configured", () => {
+    @DatabaseEntity("TestEntityForLabel")
+    class TestEntity extends Entity {}
+
+    expect(TestEntity.label).toBe("TestEntityForLabel");
+    expect(TestEntity.labelPlural).toBe("TestEntityForLabel");
+  });
+
+  it("should return the route based on entity type name", () => {
+    @DatabaseEntity("TestEntityForRoute")
+    class TestEntity extends Entity {}
+
+    expect(TestEntity.route).toBe("/testentityforroute");
+
+    TestEntity.route = "/custom-route";
+    expect(TestEntity.route).toBe("/custom-route");
+  });
+
+  it("should determine isActive based on active or inactive property", () => {
+    const testEntity1 = new Entity();
+    expect(testEntity1.isActive).withContext("default value").toBeTrue();
+
+    testEntity1["active"] = false;
+    expect(testEntity1.isActive).withContext("setting 'active'").toBeFalse();
+
+    const testEntity2 = new Entity();
+    testEntity2["inactive"] = true;
+    expect(testEntity2.isActive).withContext("setting 'inactive'").toBeFalse();
+
+    const testEntity3 = new Entity();
+    testEntity3.isActive = false;
+    expect(testEntity3.isActive).withContext("setting 'isActive'").toBeFalse();
+  });
+
+  it("should be 'isNew' if newly created before save", () => {
+    const entity = new Entity();
+    expect(entity.isNew).toBeTrue();
+
+    entity._rev = "123";
+    expect(entity.isNew).toBeFalse();
+  });
 });
+
+export function testEntitySubclass(
+  entityType: string,
+  entityClass: EntityConstructor,
+  expectedDatabaseFormat: any
+) {
+  it("should be a valid entity subclass", () => {
+    const id = "test1";
+    const entity = new entityClass(id);
+
+    // correct ID
+    expect(entity).toHaveId(id);
+    expect(Entity.extractEntityIdFromId(entity.getId(true))).toBe(id);
+
+    // correct Type
+    expect(entity).toBeInstanceOf(entityClass);
+    expect(entity).toBeInstanceOf(Entity);
+    expect(entity).toHaveType(entityType);
+    // @ts-ignore
+    expect(Entity.extractTypeFromId(entity._id)).toBe(entityType);
+  });
+
+  it("should only load and store properties defined in the schema", fakeAsync(() => {
+    const schemaService = new EntitySchemaService();
+    schemaService.registerSchemaDatatype(
+      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
+    );
+    tick();
+    const entity = new entityClass();
+
+    schemaService.loadDataIntoEntity(
+      entity,
+      JSON.parse(JSON.stringify(expectedDatabaseFormat))
+    );
+    const rawData = schemaService.transformEntityToDatabaseFormat(entity);
+    expect(rawData).toEqual(expectedDatabaseFormat);
+  }));
+}

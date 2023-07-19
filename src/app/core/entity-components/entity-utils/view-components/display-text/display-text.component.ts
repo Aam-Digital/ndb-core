@@ -1,11 +1,14 @@
 import { Component } from "@angular/core";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
 /**
  * This component displays a text attribute.
  */
+@DynamicComponent("DisplayText")
 @Component({
   selector: "app-display-text",
-  template: `{{ entity[property] }}`,
+  template: `{{ value }}`,
+  standalone: true,
 })
-export class DisplayTextComponent extends ViewComponent {}
+export class DisplayTextComponent extends ViewDirective<string> {}

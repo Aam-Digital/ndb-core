@@ -8,7 +8,7 @@ We will focus on things specific to our project.
 But there will be links to other tutorials and resources about the basics of the technologies we use.
 
 If anything is unclear or missing, _please_ open an issue on GitHub.
-This not only allows us to answer your question but also helps us to improve this document.
+Your questions and feedback are very welcome!
 
 -----
 Let's get started with

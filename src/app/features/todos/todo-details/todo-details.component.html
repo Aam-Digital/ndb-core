@@ -1,0 +1,22 @@
+<h1 *ngIf="!entity.isNew" mat-dialog-title>{{ entity.subject }}</h1>
+<h1 *ngIf="entity.isNew" mat-dialog-title i18n="Todo details heading for new record">Creating new item</h1>
+<app-dialog-close mat-dialog-close=""></app-dialog-close>
+
+<mat-dialog-content>
+  <app-entity-form
+    [entity]="entity"
+    [columns]="formColumns"
+    [form]="form"
+  ></app-entity-form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <app-todo-completion
+    [entity]="entity"
+    (complete)="completeTodo()"
+    (uncomplete)="uncompleteTodo()"
+    *ngIf="!entity.isNew"
+    style="margin-right: 8px;"
+  ></app-todo-completion>
+  <app-dialog-buttons [form]="form" [entity]="entity"/>
+</mat-dialog-actions>

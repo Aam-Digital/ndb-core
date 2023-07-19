@@ -1,28 +1,33 @@
-<div class="container" fxLayout="column">
-  <div fxFlex>
-    <h1
-      i18n="
-        Record Attendance|Title when recording the attendance at a particular
-        stage (e.g. selecting the event, recording it)
-      "
-    >
-      Record Attendance: {{ stages[currentStage] }}
-    </h1>
-  </div>
+<app-view-title
+  [disableBackButton]="currentStage !== 0"
+  i18n="
+    Record Attendance|Title when recording the attendance at a particular
+    stage (e.g. selecting the event, recording it)
+  "
+>
+  Record Attendance
+</app-view-title>
 
-  <div fxFlex="grow" class="flex-fill-section">
-    <app-roll-call-setup
-      *ngIf="currentStage === 0"
-      (eventSelected)="finishBasicInformationStage($event)"
-    >
-    </app-roll-call-setup>
-
-    <app-roll-call
-      *ngIf="currentStage === 1"
-      [eventEntity]="event"
-      (exit)="finishRollCallState()"
-      (complete)="saveRollCallResult($event)"
-    >
-    </app-roll-call>
-  </div>
+<h2 *ngIf="currentStage === 0">
+  {{ stages[currentStage] }}
+</h2>
+<div class="flex-row align-center relative-left margin-bottom-small" *ngIf="currentStage !== 0">
+  <button mat-icon-button (click)="exit()" matTooltip="Back" i18n-matTooltip>
+    <fa-icon icon="arrow-left"></fa-icon>
+  </button>
+  <h2 class="remove-margin-bottom">{{event.subject}}</h2>
 </div>
+<app-roll-call-setup
+  *ngIf="currentStage === 0"
+  (eventSelected)="finishBasicInformationStage($event)"
+>
+</app-roll-call-setup>
+
+<app-roll-call
+  *ngIf="currentStage === 1"
+  [eventEntity]="event"
+  [sortParticipantsBy]="config?.sortParticipantsBy"
+  (exit)="finishRollCallState()"
+  (complete)="saveRollCallResult($event)"
+>
+</app-roll-call>

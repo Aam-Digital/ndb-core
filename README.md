@@ -1,15 +1,20 @@
 [![Release Version](https://img.shields.io/github/release/Aam-Digital/ndb-core.svg)](https://github.com/Aam-Digital/ndb-core/releases)
-[![Build Status](https://travis-ci.org/Aam-Digital/ndb-core.svg?branch=master)](https://travis-ci.org/Aam-Digital/ndb-core)
+[![Build Status](https://github.com/Aam-Digital/ndb-core/actions/workflows/master-push.yml/badge.svg)](https://github.com/Aam-Digital/ndb-core/actions/workflows/master-push.yml)
 [![Code Climate](https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/Aam-Digital/ndb-core)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
-[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-20-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
+[![E2E Tests](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/2petka/master&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/2petka/runs)
+[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-22-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 [![Doc CoverageDocs](https://aam-digital.github.io/ndb-core/documentation/images/coverage-badge-documentation.svg)](https://aam-digital.github.io/ndb-core/documentation/modules.html)
-
+[![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
 
 # Aam Digital
-Empowering social workers with simple to use software.
+*Enabling social organizations digitally to transform lives.*
 
-> For more information about the software and a free demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
+Aam Digital is an easy-to-use case management software for the social sector that improves the effectiveness and transparency of work with beneficiaries in the field.
+
+<div align="center"><img src="https://github.com/Aam-Digital/ndb-core/assets/1682541/2b125750-5c03-4dc7-873f-22d8278accde"  width="30%"></div>
+
+> For more information about the software and an open demo system visit **[www.aam-digital.com](https://www.aam-digital.com)**.
 
 > For more information about the code including guides see the separate **[Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)**
 
@@ -20,41 +25,12 @@ You can directly run the system using Docker.
 More information in our [Aam-Digital/ndb-setup repository](https://github.com/Aam-Digital/ndb-setup/).
 In that case you do not have to clone this repository and install all the dependencies as everything is packaged into the docker image already.
 
-## Configuration
-The custom configuration for your service instance is set in the `assets/config.json` file.
-You can copy the `assets/config.default.json` as a starting point.
+The Aam Digital platform can be customized for different use cases through a flexible configuration file. This doesn't require changes to the generic platform code base in this repository:
+![image](https://github.com/Aam-Digital/ndb-core/assets/1682541/c9b08c0b-bb60-464d-b39f-703ae2995213)
 
-### Nextcloud (webdav) Integration
-You can integrate Aam Digital with an existing Nextcloud server to allow users to update photos on their own.
-To avoid CORS issues the webdav URL in your _config.json_ should be a relative URL
-in combination with a reverse-proxy that is forwarding to the actual Nextcloud server address:
+The overall architecture and tech stack including backend services looks like this:
+![image](https://github.com/Aam-Digital/ndb-core/assets/1682541/557adb8a-df93-4c83-b547-8a5e28650324)
 
-_assets/config.json:_
-```
-  "webdav": {
-    "remote_url": "nextcloud/"
-  }
-```
-
-_proxy.conf.json_ (for local development):
-```
-  "/nextcloud": {
-    "target": "https://<your-nextcloud-server>/remote.php/webdav",
-    "secure": true,
-    "changeOrigin": true,
-    "pathRewrite": {
-      "^/nextcloud": ""
-    }
-  }
-```
-
-_docker-compose.yml_ (for production server):
-```
-  environment:
-    WEBDAV_URL: https://<your-nextcloud-server>/remote.php/webdav
-```
-
------
 
 # Development
 
@@ -97,8 +73,10 @@ Run `ng test` to execute the unit tests via [Karma](https://karma-runner.github.
 
 ### Running end-to-end tests
 
-Run `ng e2e` to execute the end-to-end tests via [Protractor](http://www.protractortest.org/).
-Before running the tests make sure you are serving the app via `ng serve`.
+Run `npm run e2e` to execute the end-to-end tests via [Cypress](http://www.cypress.io/) in the terminal.
+
+Run `npm run e2e-open` to execute the end-to-end tests via Cypress own User Interface.
+
 
 ### Build a docker image locally
 Deployment on a server can be done through a docker image, our [ndb-setup project](https://github.com/Aam-Digital/ndb-setup) provides tools and a starting point to run the system using docker.

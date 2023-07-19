@@ -6,12 +6,13 @@ import {
 } from "@angular/core/testing";
 
 import { ReportingComponent } from "./reporting.component";
-import { CommonModule } from "@angular/common";
-import { ReportingModule } from "../reporting.module";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { Subject } from "rxjs";
 import { ActivatedRoute } from "@angular/router";
-import { ReportingService } from "../reporting.service";
+import {
+  Aggregation,
+  DataAggregationService,
+} from "../data-aggregation.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { ReportRow } from "../report-row";
@@ -20,12 +21,16 @@ import {
   ReportingComponentConfig,
 } from "./reporting-component-config";
 import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouterTestingModule } from "@angular/router/testing";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
   const mockRouteData = new Subject<RouteData<ReportingComponentConfig>>();
-  let mockReportingService: jasmine.SpyObj<ReportingService>;
+  let mockReportingService: jasmine.SpyObj<DataAggregationService>;
+  let mockDataTransformationService: jasmine.SpyObj<DataTransformationService>;
 
   const testReport: ReportConfig = {
     title: "test report",
@@ -41,18 +46,25 @@ describe("ReportingComponent", () => {
 
   beforeEach(async () => {
     mockReportingService = jasmine.createSpyObj(["calculateReport"]);
+    mockDataTransformationService = jasmine.createSpyObj([
+      "queryAndTransformData",
+    ]);
     mockReportingService.calculateReport.and.resolveTo([]);
     await TestBed.configureTestingModule({
-      declarations: [ReportingComponent],
       imports: [
-        CommonModule,
-        ReportingModule,
+        ReportingComponent,
         NoopAnimationsModule,
+        FontAwesomeTestingModule,
         MatNativeDateModule,
+        RouterTestingModule,
       ],
       providers: [
         { provide: ActivatedRoute, useValue: { data: mockRouteData } },
-        { provide: ReportingService, useValue: mockReportingService },
+        { provide: DataAggregationService, useValue: mockReportingService },
+        {
+          provide: DataTransformationService,
+          useValue: mockDataTransformationService,
+        },
       ],
     }).compileComponents();
   });
@@ -69,28 +81,22 @@ describe("ReportingComponent", () => {
   });
 
   it("should call the reporting service with the aggregation config", fakeAsync(() => {
-    const aggregationConfig: ReportingComponentConfig = {
-      reports: [testReport],
-    };
-    mockRouteData.next({ config: aggregationConfig });
-
     expect(component.loading).toBeFalsy();
 
-    component.calculateResults();
+    component.calculateResults(testReport, new Date(), new Date());
 
     expect(component.loading).toBeTrue();
     tick();
     expect(component.loading).toBeFalse();
 
     expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
-      testReport.aggregationDefinitions,
-      undefined,
+      testReport.aggregationDefinitions as Aggregation[],
+      jasmine.any(Date),
       jasmine.any(Date)
     );
   }));
 
   it("should display the report results", fakeAsync(() => {
-    component.selectedReport = testReport;
     const results: ReportRow[] = [
       {
         header: { label: "test label", groupedBy: [], result: 1 },
@@ -99,14 +105,13 @@ describe("ReportingComponent", () => {
     ];
     mockReportingService.calculateReport.and.resolveTo(results);
 
-    component.calculateResults();
+    component.calculateResults(testReport, new Date(), new Date());
 
     tick();
-    expect(component.results).toEqual(results);
+    expect(component.data).toEqual(results);
   }));
 
   it("should create a table that can be exported", fakeAsync(() => {
-    component.selectedReport = testReport;
     const schoolClass = defaultInteractionTypes.find(
       (it) => it.id === "SCHOOL_CLASS"
     );
@@ -179,10 +184,10 @@ describe("ReportingComponent", () => {
       },
     ]);
 
-    component.calculateResults();
+    component.calculateResults(testReport, new Date(), new Date());
     tick();
 
-    expect(component.exportableTable).toEqual([
+    expect(component.exportableData).toEqual([
       { label: "Total # of events", result: 3 },
       { label: `Total # of events (${coachingClass.label})`, result: 1 },
       { label: `Total # of events (${schoolClass.label})`, result: 2 },
@@ -194,4 +199,24 @@ describe("ReportingComponent", () => {
       { label: `Total # of schools (not privateSchool)`, result: 1 },
     ]);
   }));
+
+  it("should use the export service when aggregation has mode 'exporting'", async () => {
+    const data = [
+      { First: 1, Second: 2 },
+      { First: 3, Second: 4 },
+    ];
+    mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
+
+    await component.calculateResults(
+      { aggregationDefinitions: [], title: "", mode: "exporting" },
+      new Date(),
+      new Date()
+    );
+
+    expect(
+      mockDataTransformationService.queryAndTransformData
+    ).toHaveBeenCalledWith([], jasmine.any(Date), jasmine.any(Date));
+    expect(component.data).toEqual(data);
+    expect(component.mode).toBe("exporting");
+  });
 });

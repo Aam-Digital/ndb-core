@@ -1,324 +1,158 @@
-import { Injectable, Optional } from "@angular/core";
-import { from, Observable, Subject } from "rxjs";
+import { Injectable } from "@angular/core";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
-import { AttendanceMonth } from "../attendance/model/attendance-month";
 import { Note } from "../notes/model/note";
-import { EducationalMaterial } from "../educational-material/model/educational-material";
-import { Aser } from "../aser/model/aser";
+import { Aser } from "./aser/model/aser";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
-import { HealthCheck } from "../health-checkup/model/health-check";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { ChildPhotoService } from "./child-photo-service/child-photo.service";
+import { HealthCheck } from "./health-checkup/model/health-check";
 import moment, { Moment } from "moment";
-import { LoggingService } from "../../core/logging/logging.service";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import { QueryOptions } from "../../core/database/database";
+import { Entity } from "../../core/entity/model/entity";
+import { School } from "../schools/model/school";
+import { User } from "../../core/user/user";
+import { groupBy } from "../../utils/utils";
 
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class ChildrenService {
   constructor(
     private entityMapper: EntityMapperService,
-    private entitySchemaService: EntitySchemaService,
-    private dbIndexing: DatabaseIndexingService,
-    @Optional() childPhotoService: ChildPhotoService,
-    @Optional() private logger: LoggingService
+    private dbIndexing: DatabaseIndexingService
   ) {
     this.createDatabaseIndices();
   }
 
-  public createDatabaseIndices() {
-    this.createAttendanceAnalysisIndex();
+  private createDatabaseIndices() {
     this.createNotesIndex();
-    this.createAttendancesIndex();
     this.createChildSchoolRelationIndex();
   }
 
   /**
-   * returns an observable which retrieves children from the database and loads their pictures
+   * returns a list of children with additional school info
    */
-  getChildren(): Observable<Child[]> {
-    const results = new Subject<Child[]>();
-
-    this.entityMapper.loadType<Child>(Child).then(async (loadedChildren) => {
-      results.next(loadedChildren);
-
-      for (const loadedChild of loadedChildren) {
-        const childCurrentSchoolInfo = await this.getCurrentSchoolInfoForChild(
-          loadedChild.getId()
-        );
-        await this.migrateToNewChildSchoolRelationModel(
-          loadedChild,
-          childCurrentSchoolInfo
-        );
-        loadedChild.schoolClass = childCurrentSchoolInfo.schoolClass;
-        loadedChild.schoolId = childCurrentSchoolInfo.schoolId;
+  async getChildren(): Promise<Child[]> {
+    const children = await this.entityMapper.loadType(Child);
+    const relations = await this.entityMapper.loadType(ChildSchoolRelation);
+    groupBy(relations, "childId").forEach(([id, rels]) => {
+      const child = children.find((c) => c.getId() === id);
+      if (child) {
+        this.extendChildWithSchoolInfo(child, rels);
       }
-      results.next(loadedChildren);
-      results.complete();
     });
-
-    return results;
+    return children;
   }
 
   /**
-   * DATA MODEL UPGRADE
-   * Check if the Child Entity still contains direct links to schoolId and schoolClass
-   * and create a new ChildSchoolRelation if necessary.
-   * @param loadedChild Child entity to be checked and migrated
-   * @param childCurrentSchoolInfo Currently available school information according to new data model from ChildSchoolRelation entities
-   */
-  private async migrateToNewChildSchoolRelationModel(
-    loadedChild: Child,
-    childCurrentSchoolInfo: { schoolId: string; schoolClass: string }
-  ) {
-    if (!loadedChild.schoolClass && !loadedChild.schoolId) {
-      // no data from old model -> skip migration
-      return;
-    }
-
-    if (
-      loadedChild.schoolId !== childCurrentSchoolInfo.schoolId ||
-      loadedChild.schoolClass !== childCurrentSchoolInfo.schoolClass
-    ) {
-      // generate a ChildSchoolRelation entity from the information of the previous data model
-      const autoMigratedChildSchoolRelation = new ChildSchoolRelation();
-      autoMigratedChildSchoolRelation.childId = loadedChild.getId();
-      autoMigratedChildSchoolRelation.schoolId = loadedChild.schoolId;
-      autoMigratedChildSchoolRelation.schoolClass = loadedChild.schoolClass;
-      await this.entityMapper.save(autoMigratedChildSchoolRelation);
-      this.logger?.debug(
-        "migrated Child entity to new ChildSchoolRelation model " +
-          loadedChild._id
-      );
-      console.log(autoMigratedChildSchoolRelation);
-    }
-
-    // save the Child entity to remove the deprecated attributes from the doc in the database
-    await this.entityMapper.save(loadedChild);
-  }
-
-  /**
-   * returns an observable which retrieves a single child and loads its photo
+   * returns a child with additional school info
    * @param id id of child
    */
-  getChild(id: string): Observable<Child> {
-    const promise = this.entityMapper
-      .load<Child>(Child, id)
-      .then((loadedChild) => {
-        return this.getCurrentSchoolInfoForChild(id).then(
-          (currentSchoolInfo) => {
-            loadedChild.schoolClass = currentSchoolInfo.schoolClass;
-            loadedChild.schoolId = currentSchoolInfo.schoolId;
-            return loadedChild;
-          }
-        );
-      });
-    return from(promise);
+  async getChild(id: string): Promise<Child> {
+    const child = await this.entityMapper.load(Child, id);
+    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}:${id}`);
+    this.extendChildWithSchoolInfo(child, relations);
+    return child;
   }
 
-  getAttendances(): Observable<AttendanceMonth[]> {
-    return from(this.entityMapper.loadType<AttendanceMonth>(AttendanceMonth));
-  }
-
-  getAttendancesOfChild(childId: string): Observable<AttendanceMonth[]> {
-    const promise = this.dbIndexing.queryIndexDocs(
-      AttendanceMonth,
-      "attendances_index/by_child",
-      childId
-    );
-
-    return from(promise);
-  }
-
-  getAttendancesOfMonth(month: Date): Observable<AttendanceMonth[]> {
-    const monthString =
-      month.getFullYear().toString() + "-" + (month.getMonth() + 1).toString();
-    const promise = this.dbIndexing.queryIndexDocs(
-      AttendanceMonth,
-      "attendances_index/by_month",
-      monthString
-    );
-
-    return from(promise);
-  }
-
-  /**
-   * @deprecated use AttendanceService instead. This can be removed after all AttendanceMigrationService tasks are completed.
-   * @private
-   */
-  private createAttendancesIndex(): Promise<any> {
-    const designDoc = {
-      _id: "_design/attendances_index",
-      views: {
-        by_child: {
-          map:
-            "(doc) => { " +
-            'if (!doc._id.startsWith("' +
-            AttendanceMonth.ENTITY_TYPE +
-            '")) return;' +
-            "emit(doc.student); " +
-            "}",
-        },
-        by_month: {
-          map:
-            "(doc) => { " +
-            'if (!doc._id.startsWith("' +
-            AttendanceMonth.ENTITY_TYPE +
-            '")) return;' +
-            "emit(doc.month); " +
-            "}",
-        },
-      },
-    };
-
-    return this.dbIndexing.createIndex(designDoc);
+  private extendChildWithSchoolInfo(
+    child: Child,
+    relations: ChildSchoolRelation[]
+  ) {
+    const active = relations.filter((r) => r.isActive);
+    child.schoolId = active.map((r) => r.schoolId);
+    if (active.length > 0) {
+      child.schoolClass = active[0].schoolClass;
+    }
   }
 
   private createChildSchoolRelationIndex(): Promise<any> {
     const designDoc = {
       _id: "_design/childSchoolRelations_index",
       views: {
-        by_child: {
+        by_child_school: {
           map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            emit(doc.childId);
-            }`,
-        },
-        by_school: {
-          map: `(doc) => {
-            if ( (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) ||
-                (doc.start && isAfterToday(new Date(doc.start))) ||
-                (doc.end && !isAfterToday(new Date(doc.end))) ) {
+            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}:")) {
               return;
-            }
-            emit(doc.schoolId);
-            function isAfterToday(date) {
-              const tomorrow = new Date();
-              tomorrow.setHours(0, 0, 0, 0);
-              tomorrow.setDate(tomorrow.getDate() + 1);
-              return date >= tomorrow;
-            }
-            }`,
-        },
-        by_date: {
-          map: `(doc) => {
-            if (!doc._id.startsWith("${ChildSchoolRelation.ENTITY_TYPE}")) return;
-            let timestamp = (new Date(doc.start || '3000-01-01')).getTime().toString().padStart(14, "0");
-            emit(doc.childId + '_' + timestamp);
-            }`,
+            };
+            const start = new Date(doc.start || '3000-01-01').getTime();
+            emit(["${Child.ENTITY_TYPE}:" + doc.childId, start]);
+            emit(["${School.ENTITY_TYPE}:" + doc.schoolId, start]);
+            return;
+          }`,
         },
       },
     };
     return this.dbIndexing.createIndex(designDoc);
   }
 
-  queryLatestRelation(childId: string): Promise<ChildSchoolRelation> {
-    return this.querySortedRelations(childId, 1).then(
-      (children) => children[0]
-    );
-  }
-
-  async querySortedRelations(
-    childId: string,
-    limit?: number
-  ): Promise<ChildSchoolRelation[]> {
-    const options: QueryOptions = {
-      startkey: childId + "_\uffff", //  higher value needs to be startkey
-      endkey: childId + "_", //  \uffff is not a character -> only relations staring with childId will be selected
-      descending: true,
-      include_docs: true,
-      limit: limit,
-    };
+  private queryRelations(prefix: string) {
+    const startkey = prefix.endsWith(":") ? [prefix + "\uffff"] : [prefix, {}];
     return this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
-      "childSchoolRelations_index/by_date",
-      options
+      "childSchoolRelations_index/by_child_school",
+      {
+        startkey,
+        endkey: [prefix],
+        descending: true,
+      }
     );
   }
 
-  async queryRelationsOf(
+  queryActiveRelationsOf(
+    queryType: "child" | "school",
+    id: string,
+    date = new Date()
+  ): Promise<ChildSchoolRelation[]> {
+    return this.queryRelationsOf(queryType, id).then((relations) =>
+      relations.filter((rel) => rel.isActiveAt(date))
+    );
+  }
+
+  queryRelationsOf(
     queryType: "child" | "school",
     id: string
   ): Promise<ChildSchoolRelation[]> {
-    return this.dbIndexing.queryIndexDocs(
-      ChildSchoolRelation,
-      "childSchoolRelations_index/by_" + queryType,
-      id
-    );
+    const type = queryType === "child" ? Child.ENTITY_TYPE : School.ENTITY_TYPE;
+    const prefixed = Entity.createPrefixedId(type, id);
+    return this.queryRelations(prefixed);
   }
 
-  async queryAttendanceLast3Months() {
-    return this.dbIndexing.queryIndexStats("avg_attendance_index/three_months");
-  }
+  /**
+   * Query all notes that have been linked to the given other entity.
+   * @param entityId ID (with prefix!) of the related record
+   */
+  async getNotesRelatedTo(entityId: string): Promise<Note[]> {
+    let legacyLinkedNotes = [];
+    if (this.inferNoteLinkPropertyFromEntityType(entityId)) {
+      legacyLinkedNotes = await this.dbIndexing.queryIndexDocs(
+        Note,
+        `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
+        Entity.extractEntityIdFromId(entityId)
+      );
+    }
 
-  async queryAttendanceLastMonth() {
-    return this.dbIndexing.queryIndexStats("avg_attendance_index/last_month");
-  }
-
-  private createAttendanceAnalysisIndex(): Promise<any> {
-    const designDoc = {
-      _id: "_design/avg_attendance_index",
-      views: {
-        three_months: {
-          map: this.getAverageAttendanceMapFunction(),
-          reduce: "_stats",
-        },
-        last_month: {
-          map: this.getLastAverageAttendanceMapFunction(),
-          reduce: "_stats",
-        },
-      },
-    };
-
-    return this.dbIndexing.createIndex(designDoc);
-  }
-
-  private getAverageAttendanceMapFunction() {
-    return (
-      "(doc) => {" +
-      'if (!doc._id.startsWith("AttendanceMonth:") ) { return; }' +
-      "if (!isWithinLast3Months(new Date(doc.month), new Date())) { return; }" +
-      "var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));" +
-      "if (!Number.isNaN(attendance)) { emit(doc.student, attendance); }" +
-      "function isWithinLast3Months(date, now) {" +
-      "  let months;" +
-      "  months = (now.getFullYear() - date.getFullYear()) * 12;" +
-      "  months -= date.getMonth();" +
-      "  months += now.getMonth();" +
-      "  if (months < 0) { return false; }" +
-      "  return months <= 3;" +
-      "}" +
-      "}"
-    );
-  }
-
-  private getLastAverageAttendanceMapFunction() {
-    return (
-      "(doc) => {" +
-      'if (!doc._id.startsWith("AttendanceMonth:")) { return; }' +
-      "if (!isWithinLastMonth(new Date(doc.month), new Date())) { return; }" +
-      "var attendance = (doc.daysAttended / (doc.daysWorking - doc.daysExcused));" +
-      "if (!Number.isNaN(attendance)) { emit(doc.student, attendance); }" +
-      "function isWithinLastMonth(date, now) {" +
-      "  let months;" +
-      "  months = (now.getFullYear() - date.getFullYear()) * 12;" +
-      "  months -= date.getMonth();" +
-      "  months += now.getMonth();" +
-      "  return months === 1;" +
-      "}" +
-      "}"
-    );
-  }
-
-  getNotesOfChild(childId: string): Observable<Note[]> {
-    const promise = this.dbIndexing.queryIndexDocs(
+    const explicitlyLinkedNotes = await this.dbIndexing.queryIndexDocsRange(
       Note,
-      "notes_index/by_child",
-      childId
+      `notes_related_index/note_by_relatedEntities`,
+      [entityId],
+      [entityId]
     );
 
-    return from(promise);
+    return [...legacyLinkedNotes, ...explicitlyLinkedNotes].filter(
+      // remove duplicates
+      (element, index, array) =>
+        array.findIndex((e) => e._id === element._id) === index
+    );
+  }
+
+  private inferNoteLinkPropertyFromEntityType(entityId: string): string {
+    const entityType = Entity.extractTypeFromId(entityId);
+    switch (entityType) {
+      case Child.ENTITY_TYPE:
+        return "children";
+      case School.ENTITY_TYPE:
+        return "schools";
+      case User.ENTITY_TYPE:
+        return "authors";
+    }
   }
 
   /**
@@ -326,11 +160,13 @@ export class ChildrenService {
    *
    * Warning: Children without any notes will be missing from this map.
    *
+   * @param entityType (Optional) entity for which days since last note are calculated. Default "Child".
    * @param forLastNDays (Optional) cut-off boundary how many days into the past the analysis will be done.
    * @return A map of childIds as key and days since last note as value;
    *         For performance reasons the days since last note are set to infinity when larger then the forLastNDays parameter
    */
-  public async getDaysSinceLastNoteOfEachChild(
+  public async getDaysSinceLastNoteOfEachEntity(
+    entityType = Child.ENTITY_TYPE,
     forLastNDays: number = 30
   ): Promise<Map<string, number>> {
     const startDay = moment().subtract(forLastNDays, "days");
@@ -338,19 +174,21 @@ export class ChildrenService {
     const notes = await this.getNotesInTimespan(startDay);
 
     const results = new Map();
-    const children = await this.entityMapper.loadType(Child);
-    children
+    const entities = await this.entityMapper.loadType(entityType);
+    entities
       .filter((c) => c.isActive)
       .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
+    const noteProperty = Note.getPropertyFor(entityType);
     for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
-      for (const childId of note.children) {
+      for (const entityId of note[noteProperty]) {
+        const trimmedId = Entity.extractEntityIdFromId(entityId);
         const daysSinceNote = moment().diff(note.date, "days");
-        const previousValue = results.get(childId);
+        const previousValue = results.get(trimmedId);
         if (previousValue > daysSinceNote) {
-          results.set(childId, daysSinceNote);
+          results.set(trimmedId, daysSinceNote);
         }
       }
     }
@@ -376,20 +214,10 @@ export class ChildrenService {
     );
   }
 
-  private createNotesIndex(): Promise<any> {
+  private async createNotesIndex(): Promise<any> {
     const designDoc = {
       _id: "_design/notes_index",
       views: {
-        by_child: {
-          map:
-            "(doc) => { " +
-            'if (!doc._id.startsWith("' +
-            Note.ENTITY_TYPE +
-            '")) return;' +
-            "if (!Array.isArray(doc.children)) return;" +
-            "doc.children.forEach(childId => emit(childId)); " +
-            "}",
-        },
         note_child_by_date: {
           map: `(doc) => {
             if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
@@ -402,19 +230,44 @@ export class ChildrenService {
       },
     };
 
-    return this.dbIndexing.createIndex(designDoc);
+    // TODO: remove these and use general note_by_relatedEntities instead --> to be decided later #1501
+    // creating a by_... view for each of the following properties
+    ["children", "schools", "authors"].forEach(
+      (prop) =>
+        (designDoc.views[`by_${prop}`] = this.createNotesByFunction(prop))
+    );
+
+    await this.dbIndexing.createIndex(designDoc);
+
+    const newDesignDoc = {
+      _id: "_design/notes_related_index",
+      views: {
+        note_by_relatedEntities: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+
+            var d = new Date(doc.date || null);
+            var dateString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+
+            doc.relatedEntities.forEach((relatedEntity) => {
+              emit([relatedEntity, dateString]);
+            });
+          }`,
+        },
+      },
+    };
+    await this.dbIndexing.createIndex(newDesignDoc);
   }
 
-  getEducationalMaterialsOfChild(
-    childId: string
-  ): Observable<EducationalMaterial[]> {
-    return from(
-      this.entityMapper
-        .loadType<EducationalMaterial>(EducationalMaterial)
-        .then((loadedEntities) => {
-          return loadedEntities.filter((o) => o.child === childId);
-        })
-    );
+  private createNotesByFunction(property: string) {
+    return {
+      map: `(doc) => {
+        if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
+        if (!Array.isArray(doc.${property})) return;
+        doc.${property}.forEach(val => emit(val));
+      }`,
+    };
   }
 
   /**
@@ -422,47 +275,15 @@ export class ChildrenService {
    * @param childId should be set in the specific components and is passed by the URL as a parameter
    * This function should be considered refactored and should use a index, once they're made generic
    */
-  getHealthChecksOfChild(childId: string): Observable<HealthCheck[]> {
-    return from(
-      this.entityMapper
-        .loadType<HealthCheck>(HealthCheck)
-        .then((loadedEntities) => {
-          return loadedEntities.filter((h) => h.child === childId);
-        })
-    );
+  getHealthChecksOfChild(childId: string): Promise<HealthCheck[]> {
+    return this.entityMapper
+      .loadType<HealthCheck>(HealthCheck)
+      .then((res) => res.filter((h) => h.child === childId));
   }
 
-  getAserResultsOfChild(childId: string): Observable<Aser[]> {
-    return from(
-      this.entityMapper.loadType<Aser>(Aser).then((loadedEntities) => {
-        return loadedEntities.filter((o) => o.child === childId);
-      })
-    );
-  }
-
-  async getCurrentSchoolInfoForChild(
-    childId: string
-  ): Promise<{ schoolId: string; schoolClass: string }> {
-    const relations = (await this.querySortedRelations(childId)) || [];
-    for (const rel of relations) {
-      if (
-        moment(rel.start).isSameOrBefore(moment(), "days") &&
-        moment(rel.end).isSameOrAfter(moment(), "days")
-      ) {
-        return {
-          schoolId: rel.schoolId,
-          schoolClass: rel.schoolClass,
-        };
-      }
-    }
-
-    return {
-      schoolId: null,
-      schoolClass: null,
-    };
-  }
-
-  async getSchoolRelationsFor(childId: string): Promise<ChildSchoolRelation[]> {
-    return await this.querySortedRelations(childId);
+  getAserResultsOfChild(childId: string): Promise<Aser[]> {
+    return this.entityMapper
+      .loadType<Aser>(Aser)
+      .then((res) => res.filter((o) => o.child === childId));
   }
 }

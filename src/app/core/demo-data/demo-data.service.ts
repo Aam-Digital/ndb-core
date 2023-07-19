@@ -24,8 +24,7 @@ import {
 } from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
 import { EntityMapperService } from "../entity/entity-mapper.service";
-import { LoggingService } from "../logging/logging.service";
-import { User } from "../user/user";
+import { Database } from "../database/database";
 
 /**
  * General config object to pass all initially register DemoDataGenerators
@@ -39,11 +38,8 @@ export class DemoDataServiceConfig {
    *
    * This may also include providers for services a DemoDataGenerator depends on.
    */
-  dataGeneratorProviders: (
-    | ValueProvider
-    | ClassProvider
-    | FactoryProvider
-  )[] = [];
+  dataGeneratorProviders: (ValueProvider | ClassProvider | FactoryProvider)[] =
+    [];
 }
 
 /**
@@ -60,12 +56,10 @@ export class DemoDataService {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private loggingService: LoggingService,
     private injector: Injector,
-    private config: DemoDataServiceConfig
-  ) {
-    this.registerAllProvidedDemoDataGenerators();
-  }
+    private config: DemoDataServiceConfig,
+    private database: Database
+  ) {}
 
   private registerAllProvidedDemoDataGenerators() {
     for (const provider of this.config.dataGeneratorProviders) {
@@ -81,9 +75,10 @@ export class DemoDataService {
    * and add all the generated entities to the Database.
    */
   async publishDemoData() {
-    if (!(await this.hasEmptyDatabase())) {
+    if (!(await this.database.isEmpty())) {
       return;
     }
+    this.registerAllProvidedDemoDataGenerators();
 
     // completely generate all data (i.e. call every generator) before starting to save the data
     // to allow generators to delete unwanted entities of other generators before they are saved
@@ -92,18 +87,9 @@ export class DemoDataService {
 
     // save the generated data
     for (const generator of this.dataGenerators) {
-      for (const entity of generator.entities) {
-        try {
-          await this.entityMapper.save(entity);
-        } catch (e) {
-          this.loggingService.warn(e);
-        }
-      }
+      await this.entityMapper.saveAll(generator.entities);
+      // Wait for other async tasks in the queue e.g. ConfigService setting up config after it has been saved
+      await new Promise((resolve) => setTimeout(resolve));
     }
-  }
-
-  async hasEmptyDatabase(): Promise<boolean> {
-    const existingUsers = await this.entityMapper.loadType(User);
-    return existingUsers.length === 0;
   }
 }

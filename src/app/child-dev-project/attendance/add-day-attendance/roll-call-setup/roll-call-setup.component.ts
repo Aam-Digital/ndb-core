@@ -1,4 +1,10 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { Note } from "../../../notes/model/note";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
@@ -6,13 +12,40 @@ import { RecurringActivity } from "../../model/recurring-activity";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { FilterComponentSettings } from "../../../../core/entity-components/entity-list/filter-component.settings";
-import { FilterGeneratorService } from "../../../../core/entity-components/entity-list/filter-generator.service";
+import { AlertService } from "../../../../core/alerts/alert.service";
+import { AlertDisplay } from "../../../../core/alerts/alert-display";
+import { FormsModule, NgModel } from "@angular/forms";
+import { FilterService } from "../../../../core/filter/filter.service";
+import { DataFilter } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { MatDatepickerModule } from "@angular/material/datepicker";
+import { Angulartics2OnModule } from "angulartics2";
+import { FilterComponent } from "../../../../core/filter/filter/filter.component";
+import { NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { ActivityCardComponent } from "../../activity-card/activity-card.component";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-roll-call-setup",
   templateUrl: "./roll-call-setup.component.html",
   styleUrls: ["./roll-call-setup.component.scss"],
+  imports: [
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatDatepickerModule,
+    Angulartics2OnModule,
+    FilterComponent,
+    NgIf,
+    MatProgressBarModule,
+    ActivityCardComponent,
+    NgForOf,
+    MatButtonModule,
+  ],
+  standalone: true,
 })
 export class RollCallSetupComponent implements OnInit {
   date = new Date();
@@ -20,12 +53,18 @@ export class RollCallSetupComponent implements OnInit {
   existingEvents: NoteForActivitySetup[] = [];
   filteredExistingEvents: NoteForActivitySetup[] = [];
 
-  selectedEvent: NoteForActivitySetup;
   @Output() eventSelected = new EventEmitter<Note>();
 
   allActivities: RecurringActivity[] = [];
   visibleActivities: RecurringActivity[] = [];
-  filterSettings: FilterComponentSettings<Note>[] = [];
+  filterConfig: FilterConfig[] = [{ id: "category" }, { id: "schools" }];
+  entityType = Note;
+
+  showingAll = false;
+
+  @ViewChild("dateField") dateField: NgModel;
+
+  isLoading = true;
 
   /**
    * filters are displayed in the UI only if at least this many events are listed.
@@ -39,7 +78,8 @@ export class RollCallSetupComponent implements OnInit {
     private attendanceService: AttendanceService,
     private sessionService: SessionService,
     private formDialog: FormDialogService,
-    private filterGenerator: FilterGeneratorService
+    private alertService: AlertService,
+    private filerService: FilterService
   ) {}
 
   async ngOnInit() {
@@ -47,63 +87,67 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   private async initAvailableEvents() {
-    this.existingEvents = await this.attendanceService.getEventsOnDate(
-      this.date
-    );
+    this.isLoading = true;
+    this.existingEvents =
+      await this.attendanceService.getEventsWithUpdatedParticipants(this.date);
     await this.loadActivities();
-    await this.updateEventsList();
+    this.sortEvents();
+    this.filteredExistingEvents = this.existingEvents;
+    this.isLoading = false;
   }
 
   private async loadActivities() {
-    this.allActivities = await this.entityMapper.loadType<RecurringActivity>(
-      RecurringActivity
-    );
+    this.allActivities = await this.entityMapper
+      .loadType(RecurringActivity)
+      .then((res) => res.filter((a) => a.isActive));
 
-    this.visibleActivities = this.allActivities.filter((a) =>
-      a.assignedTo.includes(this.sessionService.getCurrentUser().name)
-    );
-    if (this.visibleActivities.length === 0) {
-      this.visibleActivities = this.allActivities.filter(
-        (a) => a.assignedTo.length === 0
+    if (this.showingAll) {
+      this.visibleActivities = this.allActivities;
+    } else {
+      this.visibleActivities = this.allActivities.filter((a) =>
+        a.isAssignedTo(this.sessionService.getCurrentUser().name)
       );
-    }
-
-    for (const activity of this.visibleActivities) {
-      const newEvent = await this.createEventForActivity(activity);
-      if (newEvent) {
-        this.existingEvents.push(newEvent);
+      if (this.visibleActivities.length === 0) {
+        this.visibleActivities = this.allActivities.filter(
+          (a) => a.assignedTo.length === 0
+        );
+      }
+      if (this.visibleActivities.length === 0) {
+        this.visibleActivities = this.allActivities;
+        this.showingAll = true;
       }
     }
+
+    const newEvents = await Promise.all(
+      this.visibleActivities.map((activity) =>
+        this.createEventForActivity(activity)
+      )
+    );
+    this.existingEvents = this.existingEvents.concat(
+      ...newEvents.filter((e) => !!e)
+    );
   }
 
   async showMore() {
-    const additionalActivities = this.allActivities.filter(
-      (a) => !this.visibleActivities.includes(a)
-    );
-    for (const activity of additionalActivities) {
-      const newEvent = await this.createEventForActivity(activity);
-      if (newEvent) {
-        this.existingEvents.push(newEvent);
-      }
-      this.visibleActivities.push(activity);
-    }
-    await this.updateEventsList();
+    this.showingAll = !this.showingAll;
+    await this.initAvailableEvents();
+  }
+
+  async showLess() {
+    this.showingAll = !this.showingAll;
+    await this.initAvailableEvents();
   }
 
   async setNewDate(date: Date) {
     this.date = date;
 
     await this.initAvailableEvents();
-
-    if (!RecurringActivity.isActivityEventNote(this.selectedEvent)) {
-      this.selectedEvent = null;
-    }
   }
 
   private async createEventForActivity(
     activity: RecurringActivity
   ): Promise<NoteForActivitySetup> {
-    if (this.existingEvents.find((e) => e.relatesTo === activity._id)) {
+    if (this.existingEvents.find((e) => e.relatesTo === activity.getId(true))) {
       return undefined;
     }
 
@@ -121,7 +165,7 @@ export class RollCallSetupComponent implements OnInit {
       let score = 0;
 
       const activityAssignedUsers = this.allActivities.find(
-        (a) => a._id === event.relatesTo
+        (a) => a.getId(true) === event.relatesTo
       )?.assignedTo;
       // use parent activities' assigned users and only fall back to event if necessary
       const assignedUsers = activityAssignedUsers ?? event.authors;
@@ -138,7 +182,7 @@ export class RollCallSetupComponent implements OnInit {
       return score;
     };
 
-    this.existingEvents = this.existingEvents.sort(
+    this.existingEvents.sort(
       (a, b) => calculateEventPriority(b) - calculateEventPriority(a)
     );
   }
@@ -148,49 +192,29 @@ export class RollCallSetupComponent implements OnInit {
     newNote.authors = [this.sessionService.getCurrentUser().name];
 
     this.formDialog
-      .openDialog(NoteDetailsComponent, newNote)
+      .openFormPopup(newNote, [], NoteDetailsComponent)
       .afterClosed()
       .subscribe((createdNote: Note) => {
         if (createdNote) {
           this.existingEvents.push(createdNote);
-          this.selectedEvent = createdNote;
         }
       });
   }
 
-  private async updateEventsList() {
-    await this.updateFilterOptions();
-    this.filterExistingEvents();
-    this.sortEvents();
+  filterExistingEvents(filter: DataFilter<Note>) {
+    const predicate = this.filerService.getFilterPredicate(filter);
+    this.filteredExistingEvents = this.existingEvents.filter(predicate);
   }
 
-  private async updateFilterOptions() {
-    this.filterSettings = await this.filterGenerator.generate(
-      [{ id: "category" }, { id: "schools" }],
-      Note,
-      this.existingEvents,
-      true
-    );
-  }
-
-  private filterExistingEvents() {
-    let filteredEvents = this.existingEvents;
-    for (const filter of this.filterSettings) {
-      const filterFun = filter.filterSettings.getFilterFunction(
-        filter.selectedOption
+  selectEvent(event: NoteForActivitySetup) {
+    if (this.dateField.valid) {
+      this.eventSelected.emit(event);
+    } else {
+      this.alertService.addWarning(
+        $localize`:Alert when selected date is invalid:Invalid Date`,
+        AlertDisplay.TEMPORARY
       );
-      filteredEvents = filteredEvents.filter(filterFun);
     }
-
-    this.filteredExistingEvents = filteredEvents;
-  }
-
-  applyFilter(
-    selectedFilter: FilterComponentSettings<Note>,
-    optionKey: string
-  ) {
-    selectedFilter.selectedOption = optionKey;
-    this.filterExistingEvents();
   }
 }
 

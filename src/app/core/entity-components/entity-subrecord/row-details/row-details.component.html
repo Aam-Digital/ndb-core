@@ -1,0 +1,32 @@
+<app-dialog-close mat-dialog-close></app-dialog-close>
+<mat-dialog-content>
+  <app-entity-form
+    [columns]="columns"
+    [entity]="data.entity"
+    [form]="form"
+  >
+  </app-entity-form>
+
+  <div *ngFor="let col of viewOnlyColumns">
+    <app-pill
+      [matTooltip]="col.tooltip"
+      [style.background-color]="tempEntity.getColor()"
+      class="mat-body-strong"
+    >
+      <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
+      <ng-template
+        [appDynamicComponent]="{
+        component: col.view,
+        config: {
+          id: col.id,
+          entity: tempEntity,
+          config: col.additional
+        }
+      }"
+      ></ng-template>
+    </app-pill>
+  </div>
+</mat-dialog-content>
+<mat-dialog-actions>
+  <app-dialog-buttons [form]="form" [entity]="data.entity"/>
+</mat-dialog-actions>

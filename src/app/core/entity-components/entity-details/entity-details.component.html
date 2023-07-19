@@ -15,73 +15,79 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<div fxLayout="row" fxLayoutAlign="space-between">
-  <div>
-    <h1 class="page-header section-child">
-      <button
-        mat-icon-button
-        (click)="navigateBack()"
-        i18n-matTooltip="Generic back button"
-        matTooltip="Back"
-        style="vertical-align: middle"
-      >
-        <mat-icon fontIcon="fa-backward"></mat-icon>
-      </button>
+<div class="flex-row justify-space-between">
+  <app-view-title *ngIf="!creatingNew">
+    {{ entity?.toString() }}
+  </app-view-title>
+  <app-view-title
+    *ngIf="creatingNew"
+    i18n="Title when adding a new entity|An entity is a child, note, school, etc."
+  >
+    Adding new {{ this.entityConstructor?.label }}
+  </app-view-title>
 
-      <i [className]="classNamesWithIcon"></i>
-      <span *ngIf="!creatingNew">{{ entity?.toString() }}</span>
-      <span
-        *ngIf="creatingNew"
-        i18n="
-          Title when adding a new entity|An entity is a child, note, school,
-          e.t.c
-        "
-      >
-        Adding new {{ config?.entity }}
-      </span>
-    </h1>
-  </div>
+  <button
+    mat-icon-button
+    class="additional-button"
+    color="primary"
+    [matMenuTriggerFor]="additional"
+  >
+    <fa-icon icon="ellipsis-v"></fa-icon>
+  </button>
 </div>
 
-<mat-accordion multi="true">
-  <mat-expansion-panel
-    *ngFor="let panelConfig of panels; let i = index"
-    [expanded]="i == 0"
-    [disabled]="creatingNew && i > 0"
-    (opened)="trackPanelOpen(panelConfig.title)"
+<mat-menu #additional>
+  <button
+    mat-menu-item
+    (click)="removeEntity()"
+    *appDisabledEntityOperation="{
+      entity: entity,
+      operation: 'delete'
+    }"
+    angulartics2On="click"
+    [angularticsCategory]="config?.entity"
+    angularticsAction="entity_delete"
   >
-    <mat-expansion-panel-header class="section-header">
-      <mat-icon
-        fontIcon="fa-exclamation-triangle"
-        *ngIf="creatingNew && i > 0"
-        class="locked-icon"
-        i18n-matTooltip
-        matTooltip="Please save before entering further data"
-        [matTooltipDisabled]="!creatingNew"
-      >
-      </mat-icon>
+    <fa-icon
+      class="standard-icon-with-text color-accent"
+      aria-label="remove element"
+      icon="trash"
+    ></fa-icon>
+    <span i18n="Generic delete button"> Delete </span>
+  </button>
+</mat-menu>
+
+<mat-tab-group (selectedIndexChange)="trackTabChanged($event)" appTabStateMemo [preserveContent]="true">
+  <mat-tab
+    *ngFor="let panelConfig of panels"
+    [disabled]="creatingNew || unsavedChanges.pending"
+  >
+    <ng-template mat-tab-label>
+    <span
+      [matTooltipDisabled]="!creatingNew"
+      matTooltip="Save the new record to create it before accessing other details"
+      i18n-matTooltip="
+        Tooltip explaining disabled sections when creating new entity
+      "
+    >
       {{ panelConfig.title }}
-    </mat-expansion-panel-header>
-    <div *ngFor="let componentConfig of panelConfig.components; let j = index">
-      <h3 *ngIf="componentConfig.title !== ''">{{ componentConfig.title }}</h3>
-      <ng-template [appDynamicComponent]="componentConfig"></ng-template>
-      <br *ngIf="j < panelConfig.components.length - 1" />
-    </div>
-  </mat-expansion-panel>
-</mat-accordion>
-<button
-  mat-raised-button
-  color="warn"
-  class="delete-button"
-  (click)="removeEntity()"
-  *appDisabledEntityOperation="{
-    entity: entity?.getConstructor(),
-    operation: operationType.DELETE
-  }"
-  angulartics2On="click"
-  [angularticsCategory]="config?.entity"
-  angularticsAction="entity_delete"
-  i18n="Generic delete button"
->
-  Delete
-</button>
+    </span>
+    </ng-template>
+
+    <ng-template matTabContent>
+      <div *ngIf="isLoading" class="process-spinner">
+        <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+      </div>
+
+      <div *ngFor="let componentConfig of panelConfig.components; let j = index" class="padding-top-large">
+        <h3 *ngIf="componentConfig.title && componentConfig.title !== ''">
+          {{ componentConfig.title }}
+        </h3>
+        <ng-template [appDynamicComponent]="componentConfig"></ng-template>
+        <br *ngIf="j < panelConfig.components.length - 1"/>
+      </div>
+    </ng-template>
+
+  </mat-tab>
+</mat-tab-group>
+

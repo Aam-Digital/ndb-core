@@ -33,7 +33,7 @@ describe("@DatabaseField Decorator", () => {
   it("keeps correct default values", async () => {
     const testClass = new TestClass("1");
 
-    expect(testClass.fieldUndefined).toBe(undefined);
+    expect(testClass.fieldUndefined).toBeUndefined();
     expect(testClass.fieldWithDefault).toBe("default");
   });
 

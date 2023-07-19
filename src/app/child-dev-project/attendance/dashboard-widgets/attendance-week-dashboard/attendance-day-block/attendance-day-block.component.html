@@ -1,15 +1,9 @@
 <div
-  class="status day-cell attendance-{{ attendance?.status?.shortName }}"
-  [ngClass]="{ 'has-remark': attendance?.remarks }"
+  class="day-cell attendance-{{ attendance?.status?.shortName || 'U' }} "
+  [class.has-remark]="attendance?.remarks"
+  [matTooltipShowDelay]="200"
+  [matTooltip]="tooltip"
+  matTooltipPosition="above"
 >
-  <span
-    *ngIf="attendance"
-    [matTooltipShowDelay]="200"
-    [matTooltip]="attendance.remarks"
-    matTooltipPosition="above"
-  >
-    {{ attendance.status.shortName }}
-  </span>
-
-  <span *ngIf="!attendance"> - </span>
+  {{ attendance?.status?.shortName || '-' }}
 </div>

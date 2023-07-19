@@ -17,12 +17,15 @@
 
 import { Component, OnInit } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { WebdavModule } from "../../webdav/webdav.module";
-import { UserAccountService } from "./user-account.service";
-import { FormBuilder, ValidationErrors, Validators } from "@angular/forms";
-import { AppConfig } from "../../app-config/app-config";
-import { LoggingService } from "../../logging/logging.service";
+import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
+import { MatTabsModule } from "@angular/material/tabs";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatInputModule } from "@angular/material/input";
+import { PasswordFormComponent } from "../../session/auth/couchdb/password-form/password-form.component";
+import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -31,45 +34,25 @@ import { SessionType } from "../../session/session-type";
   selector: "app-user-account",
   templateUrl: "./user-account.component.html",
   styleUrls: ["./user-account.component.scss"],
+  imports: [
+    MatTabsModule,
+    TabStateModule,
+    MatFormFieldModule,
+    MatTooltipModule,
+    MatInputModule,
+    PasswordFormComponent,
+    AccountPageComponent
+  ],
+  standalone: true
 })
 export class UserAccountComponent implements OnInit {
   /** user to be edited */
   username: string;
 
-  /** whether webdav integration is configured and the cloud settings section should be displayed */
-  webdavEnabled = WebdavModule.isEnabled;
+  passwordChangeDisabled = false;
+  tooltipText;
 
-  /** whether password change is disallowed because of demo mode */
-  disabledForDemoMode: boolean;
-  disabledForOfflineMode: boolean;
-
-  passwordChangeResult: { success: boolean; error?: any };
-
-  passwordForm = this.fb.group(
-    {
-      currentPassword: ["", Validators.required],
-      newPassword: [
-        "",
-        [
-          Validators.required,
-          Validators.minLength(8),
-          Validators.pattern(/[A-Z]/),
-          Validators.pattern(/[a-z]/),
-          Validators.pattern(/[0-9]/),
-          Validators.pattern(/[^A-Za-z0-9]/),
-        ],
-      ],
-      confirmPassword: ["", [Validators.required]],
-    },
-    { validators: () => this.passwordMatchValidator() }
-  );
-
-  constructor(
-    private sessionService: SessionService,
-    private userAccountService: UserAccountService,
-    private fb: FormBuilder,
-    private loggingService: LoggingService
-  ) {}
+  constructor(private sessionService: SessionService) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();
@@ -77,57 +60,14 @@ export class UserAccountComponent implements OnInit {
   }
 
   checkIfPasswordChangeAllowed() {
-    this.disabledForDemoMode = false;
-    this.disabledForOfflineMode = false;
-    this.passwordForm.enable();
+    this.passwordChangeDisabled = false;
+    this.tooltipText = "";
 
-    if (AppConfig.settings.session_type !== SessionType.synced) {
-      this.disabledForDemoMode = true;
-      this.passwordForm.disable();
+    if (environment.session_type !== SessionType.synced) {
+      this.passwordChangeDisabled = true;
+      this.tooltipText = $localize`:Password reset disabled tooltip:Password change is not allowed in demo mode.`;
     } else if (!navigator.onLine) {
-      this.disabledForOfflineMode = true;
-      this.passwordForm.disable();
+      this.tooltipText = $localize`:Password reset disabled tooltip:Password change is not possible while being offline.`;
     }
-  }
-
-  changePassword() {
-    this.passwordChangeResult = undefined;
-
-    const currentPassword = this.passwordForm.get("currentPassword").value;
-
-    if (!this.sessionService.checkPassword(this.username, currentPassword)) {
-      this.passwordForm
-        .get("currentPassword")
-        .setErrors({ incorrectPassword: true });
-      return;
-    }
-
-    const newPassword = this.passwordForm.get("newPassword").value;
-    this.userAccountService
-      .changePassword(this.username, currentPassword, newPassword)
-      .then(() => this.sessionService.login(this.username, newPassword))
-      .then(() => (this.passwordChangeResult = { success: true }))
-      .catch((err: Error) => {
-        this.passwordChangeResult = { success: false, error: err.message };
-        this.loggingService.error({
-          error: "password change failed",
-          details: err.message,
-        });
-        // rethrow to properly report to sentry.io; this exception is not expected, only caught to display in UI
-        throw err;
-      });
-  }
-
-  private passwordMatchValidator(): ValidationErrors | null {
-    const newPassword: string = this?.passwordForm?.get("newPassword")?.value;
-    const confirmPassword: string = this?.passwordForm?.get("confirmPassword")
-      ?.value;
-    if (newPassword !== confirmPassword) {
-      this.passwordForm
-        .get("confirmPassword")
-        .setErrors({ passwordConfirmationMismatch: true });
-      return { passwordConfirmationMismatch: true };
-    }
-    return null;
   }
 }

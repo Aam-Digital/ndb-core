@@ -1,0 +1,25 @@
+<ng-container *ngIf="attendance">
+  <h4 class="summary-title" i18n="Attendance summary title">Overall Attendance</h4>
+  <p class="summary-period">
+    {{ attendance.periodFrom | date: "shortDate" }} -
+    {{ attendance.periodTo | date: "shortDate" }}
+  </p>
+
+  <table class="summary-table">
+    <tr *ngFor="let col of _columns" class="summary-row">
+      <td class="padding-small">{{ col.label }}:</td>
+      <td class="summary-cell">
+        <ng-container
+          [appDynamicComponent]="{
+            component: col.view,
+            config: {
+              id: col.id,
+              entity: attendance,
+              config: col.additional
+            }
+          }"
+        ></ng-container>
+      </td>
+    </tr>
+  </table>
+</ng-container>

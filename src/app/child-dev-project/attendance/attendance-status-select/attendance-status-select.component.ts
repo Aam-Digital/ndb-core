@@ -1,29 +1,31 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-import { ConfigService } from "../../../core/config/config.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../../core/configurable-enum/configurable-enum.interface";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceStatusType,
   NullAttendanceStatusType,
 } from "../model/attendance-status";
+import { compareEnums } from "../../../utils/utils";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatSelectModule } from "@angular/material/select";
+import { FormsModule } from "@angular/forms";
+import { ConfigurableEnumDirective } from "../../../core/configurable-enum/configurable-enum-directive/configurable-enum.directive";
 
 @Component({
   selector: "app-attendance-status-select",
   templateUrl: "./attendance-status-select.component.html",
   styleUrls: ["./attendance-status-select.component.scss"],
+  imports: [
+    MatFormFieldModule,
+    MatSelectModule,
+    FormsModule,
+    ConfigurableEnumDirective,
+  ],
+  standalone: true,
 })
 export class AttendanceStatusSelectComponent {
   @Input() value: AttendanceStatusType = NullAttendanceStatusType;
+  @Input() disabled: boolean = false;
   @Output() valueChange = new EventEmitter<AttendanceStatusType>();
-
-  statusValues: AttendanceStatusType[];
-
-  constructor(private configService: ConfigService) {
-    this.statusValues = this.configService.getConfig<
-      ConfigurableEnumConfig<AttendanceStatusType>
-    >(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
-  }
+  statusID = ATTENDANCE_STATUS_CONFIG_ID;
+  compareFn = compareEnums;
 }

@@ -1,0 +1,10 @@
+@use "@angular/material" as mat;
+
+:host {
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, card);
+  border-radius: 4px;
+  border: 1px solid mat.get-color-from-palette(mat.$grey-palette, 400);
+  transform-origin: center 0;
+  display: block;
+  @include mat.elevation(3);
+}

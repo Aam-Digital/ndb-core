@@ -1,33 +1,42 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EditAgeComponent } from "./edit-age.component";
-import { EntityDetailsModule } from "../../../entity-details/entity-details.module";
-import { FormControl, FormGroup } from "@angular/forms";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { setupEditComponent } from "../edit-component.spec";
+import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
+import { HarnessLoader } from "@angular/cdk/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
+import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 
 describe("EditAgeComponent", () => {
   let component: EditAgeComponent;
   let fixture: ComponentFixture<EditAgeComponent>;
+  let loader: HarnessLoader;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EntityDetailsModule, NoopAnimationsModule],
-      declarations: [EditAgeComponent],
+      imports: [EditAgeComponent, MockedTestingModule],
     }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditAgeComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
-    const formControl = new FormControl();
-    const formGroup = new FormGroup({});
-    component.formControlName = "testControl";
-    component.formControl = formControl;
-    formGroup.registerControl(component.formControlName, formControl);
+    setupEditComponent(component);
     fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should transform Date to DateOfBirth", async () => {
+    const datepicker = await loader.getHarness(MatDatepickerInputHarness);
+
+    await datepicker.setValue("6/21/2019");
+
+    expect(component.formControl.value).toBeInstanceOf(DateWithAge);
+    expect(component.formControl.value).toBeDate("2019-06-21");
   });
 });

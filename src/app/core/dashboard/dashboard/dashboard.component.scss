@@ -15,8 +15,22 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.widget-wrapper > * {
-  margin-bottom: 20px;
-  min-width: min-content;
-  margin-right: 10px !important;
+@use "src/styles/mixins/grid-layout";
+@use "src/styles/variables/sizes";
+
+// The minimum size of a widget for big screens
+// The minimum size on small screens is whatever size is available
+$min-widget-width: 330px;
+// There will only be one column below this screen width, as defined by the media query
+$max-screen-width: $min-widget-width + sizes.$margin-main-view-right + sizes.$margin-main-view-left;
+$widget-height: 430px;
+
+:host {
+  @include grid-layout.adaptive($min-widget-width, $max-screen-width);
+  // Make all rows be equal in height
+  grid-auto-rows: $widget-height;
+}
+
+.grid-item {
+  transition: all 1s;
 }

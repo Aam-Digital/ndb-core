@@ -1,54 +1,45 @@
-<div fxLayout="column" fxLayoutAlign="center center">
-  <h1 fxFlex i18n="Coming Soon header">Coming Soon</h1>
-  <p fxFlex i18n="Coming Soon description">
+<app-dialog-close mat-dialog-close></app-dialog-close>
+<mat-dialog-content>
+  <h1 i18n="Coming Soon header">Coming Soon</h1>
+  <h3 i18n="Coming Soon description">
     Sorry, this feature isn't quite ready yet. We are working hard to make this
     available for you. Let us know below if you need this functionality.
-  </p>
+  </h3>
 
-  <div
-    fxFlex
-    fxLayout="row wrap"
-    fxLayoutGap="1rem grid"
-    fxLayoutAlign="center center"
-    class="feedback-section"
-  >
-    <div fxFlex="20rem">
-      <button
-        mat-raised-button
-        color="primary"
-        class="feedback-button"
-        (click)="reportFeatureRequest()"
-        [disabled]="requested"
-        i18n="
-          Feature Button|Indicates that the user needs this feature and can send
-          a feature-request
-        "
-      >
-        <mat-icon
-          *ngIf="requested"
-          aria-label="requested"
-          fontIcon="fa-check"
-          class="requested-icon"
-        ></mat-icon>
-        I need this feature
-      </button>
-    </div>
+  <div class="feedback-section margin-bottom-regular">
+    <button
+      mat-raised-button
+      color="primary"
+      class="full-width"
+      (click)="reportFeatureRequest()"
+      [disabled]="requested"
+      i18n="
+      Feature Button|Indicates that the user needs this feature and can send
+      a feature-request
+    "
+    >
+      <fa-icon
+        *ngIf="requested"
+        aria-label="requested"
+        icon="check"
+      ></fa-icon>
+      I need this feature
+    </button>
 
-    <div fxFlex="20rem">
-      <a
-        i18n
-        mat-stroked-button
-        class="feedback-button"
-        target="_blank"
-        rel="noopener"
-        href="mailto:info@aam-digital.com?subject=Feature-Request%20{{
-          featureId
-        }}"
-      >
-        I can tell you about my use case
-      </a>
-    </div>
+    <a
+      i18n
+      mat-stroked-button
+      class="full-width"
+      target="_blank"
+      rel="noopener"
+      href="mailto:info@aam-digital.com?subject=Feature-Request%20{{
+      featureId
+    }}"
+    >
+      I can tell you about my use case
+    </a>
   </div>
 
-  <img src="assets/canvas-stand.png" alt="" class="illustration" fxFlex />
-</div>
+  <img src="assets/canvas-stand.png" alt="" class="illustration"/>
+</mat-dialog-content>
+

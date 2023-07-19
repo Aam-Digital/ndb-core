@@ -16,23 +16,7 @@
  */
 
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import { AppVersionComponent } from "./app-version/app-version.component";
-import { AlertsModule } from "../alerts/alerts.module";
-import { HttpClientModule } from "@angular/common/http";
-import { SessionModule } from "../session/session.module";
-import { MatButtonModule } from "@angular/material/button";
-import { MatDialogModule } from "@angular/material/dialog";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { ChangelogComponent } from "./changelog/changelog.component";
-import { SwUpdate } from "@angular/service-worker";
 import { UpdateManagerService } from "./update-manager.service";
-import { FlexModule } from "@angular/flex-layout";
-import { MarkdownModule } from "ngx-markdown";
-import { MatIconModule } from "@angular/material/icon";
-import { MatCardModule } from "@angular/material/card";
-import { LatestChangesDialogService } from "./latest-changes-dialog.service";
-import { LatestChangesService } from "./latest-changes.service";
 
 /**
  * Displaying app version and changelog information to the user
@@ -43,37 +27,11 @@ import { LatestChangesService } from "./latest-changes.service";
  * pre-releases are excluded and individual lines in the body can be hidden by starting
  * text (after markdown characters) with a ".".
  */
-@NgModule({
-  imports: [
-    CommonModule,
-    AlertsModule,
-    SessionModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatSnackBarModule,
-    HttpClientModule,
-    FlexModule,
-    MarkdownModule,
-    MatIconModule,
-    MatCardModule,
-  ],
-  declarations: [AppVersionComponent, ChangelogComponent],
-  exports: [AppVersionComponent],
-  providers: [
-    LatestChangesService,
-    LatestChangesDialogService,
-    UpdateManagerService,
-  ],
-})
+@NgModule({})
 export class LatestChangesModule {
-  constructor(
-    private updates: SwUpdate,
-    private latestChangesDialogService: LatestChangesDialogService,
-    private updateManagerService: UpdateManagerService
-  ) {
-    this.latestChangesDialogService.showLatestChangesIfUpdated();
-
+  constructor(private updateManagerService: UpdateManagerService) {
     this.updateManagerService.notifyUserWhenUpdateAvailable();
     this.updateManagerService.regularlyCheckForUpdates();
+    this.updateManagerService.detectUnrecoverableState();
   }
 }

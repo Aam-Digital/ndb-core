@@ -8,11 +8,11 @@ export enum WarningLevel {
 export function getWarningLevelColor(warningLevel: WarningLevel) {
   switch (warningLevel) {
     case WarningLevel.WARNING:
-      return "#ffa50080";
+      return "rgba(255,165,0,0.4)";
     case WarningLevel.URGENT:
-      return "#fd727280";
+      return "rgba(253,114,114,0.4)";
     case WarningLevel.OK:
-      return "#90ee9040";
+      return "rgba(144,238,144,0.25)";
     default:
       return "";
   }

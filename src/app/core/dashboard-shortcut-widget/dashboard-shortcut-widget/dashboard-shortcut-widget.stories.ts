@@ -1,22 +1,19 @@
 import { Story, Meta } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
-import { Angulartics2Module } from "angulartics2";
-import { FontAwesomeIconsModule } from "../../icons/font-awesome-icons.module";
-import { DashboardShortcutWidgetModule } from "../dashboard-shortcut-widget.module";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.component";
 import { MenuItem } from "../../navigation/menu-item";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
-  title: "Core/ShortcutDashboardWidget",
+  title: "Core/Dashboards/ShortcutDashboardWidget",
   component: DashboardShortcutWidgetComponent,
   decorators: [
     moduleMetadata({
       imports: [
-        DashboardShortcutWidgetModule,
-        FontAwesomeIconsModule,
         RouterTestingModule,
-        Angulartics2Module.forRoot(),
+        StorybookBaseModule,
+        DashboardShortcutWidgetComponent,
       ],
     }),
   ],
@@ -35,7 +32,7 @@ Primary.args = {
     {
       label: "Record Attendance",
       icon: "calendar-check-o",
-      link: "/attendance/add/day",
+      link: "/attendance/add-day",
     },
     {
       label: "All Notes",

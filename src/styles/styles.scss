@@ -1,0 +1,37 @@
+/*
+ *     This file is part of ndb-core.
+ *
+ *     ndb-core is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ndb-core is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+/*
+ * The main styles.scss file is mainly used to make all global styles
+ * available in a single file.
+ *
+ * Actual styles (classes, variables, e.t.c) should be placed into the correct sub folder
+ * (i.e. '../globals' or '../variables')
+ */
+
+// Include all global styles
+@use "globals";
+@use "../app/core/ui/ui/ui.component.global-styles";
+
+// Include reset-files that alter the display of predefined components
+// such as material components or native html components
+@use "resets";
+
+// Include the styles for directives here to make them available as global style (currently, it
+// is not possible to use styles in a directive)
+@use "../app/core/common-components/border-highlight/border-highlight.directive";
+@use "../app/core/alerts/alert-style-classes";

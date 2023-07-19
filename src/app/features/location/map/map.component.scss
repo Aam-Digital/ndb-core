@@ -1,0 +1,20 @@
+.map-frame {
+  border: 1px solid lightgrey;
+  border-radius: 2px;
+}
+
+#map {
+  height: 100%;
+}
+
+.action-elements {
+  position: absolute;
+  bottom: 3px;
+  left: 0;
+  z-index: 1000;
+}
+
+button {
+  background-color: white !important;
+  margin-left: 3px;
+}

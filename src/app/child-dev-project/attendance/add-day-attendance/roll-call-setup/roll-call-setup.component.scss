@@ -1,39 +1,32 @@
-.overall-container {
-  height: 100%;
-  min-height: 300px;
-  padding-left: 16px;
-  padding-right: 16px;
-  padding-bottom: 0;
+@use "src/styles/mixins/grid-layout";
+@use "src/styles/variables/sizes";
+@use "@angular/material" as mat;
+@use "src/styles/variables/ndb-light-theme" as theme;
+
+.top-control {
+  position: sticky;
+  top: 0;
+  // make this visible while other contents go "under"
+  // this top control
+  z-index: 1;
+  // These small hacks remove the global margin
+  // and re-apply them as padding.
+  // This way, the margin stays consistent and scrolling works
+  // as intended (there is no overflow left or right)
+  margin-left: - sizes.$margin-main-view-left;
+  padding-left: sizes.$margin-main-view-left;
+  margin-right: - sizes.$margin-main-view-right;
+  padding-right: sizes.$margin-main-view-right;
+  margin-top: - sizes.$margin-main-view-top;
+  padding-top: sizes.$margin-main-view-top;
+  background-color: mat.get-color-from-palette(theme.$primary, 50);
 }
 
-.bottom-control {
-  margin-top: 8px;
-  margin-left: calc(-16px - 24px); /* global content container has 24/12px margin */
-  margin-right: calc(-16px - 24px);
-  margin-bottom: -24px;
-  @media (max-width: 599px) {
-    margin-left: calc(-16px - 12px); /* global content container has 24/12px margin */
-    margin-right: calc(-16px - 12px);
-    margin-bottom: -12px;
-  }
-  padding: 16px;
+.cards-list {
+  @include grid-layout.adaptive(350px, 414px);
 }
 
-.confirm-button {
-  height: calc(112px - 2 * 16px);
-}
-
-.selected-card {
-  max-height: calc(112px - 2 * 16px);
-  overflow: auto;
-}
-
-.event-card {
-  margin-bottom: 8px;
-  width: 300px;
-}
-
-.flex-scroll-container {
-  min-height: 100px;
-  overflow: auto;
+.process-spinner {
+  display: flex;
+  justify-content: center;
 }

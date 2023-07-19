@@ -1,88 +1,27 @@
-import {
-  Component,
-  HostListener,
-  Input,
-  OnChanges,
-  OnInit,
-  SimpleChanges,
-} from "@angular/core";
-import { Router } from "@angular/router";
+import { Component, Input, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { School } from "../model/school";
-import { OnInitDynamicComponent } from "../../../core/view/dynamic-components/on-init-dynamic-component.interface";
-import { ConfigService } from "../../../core/config/config.service";
-import { ViewConfig } from "../../../core/view/dynamic-routing/view-config.interface";
+import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
 
+@DynamicComponent("SchoolBlock")
 @Component({
   selector: "app-school-block",
   templateUrl: "./school-block.component.html",
-  styleUrls: ["./school-block.component.scss"],
+  standalone: true,
+  imports: [FaDynamicIconComponent],
 })
-export class SchoolBlockComponent
-  implements OnInitDynamicComponent, OnChanges, OnInit {
-  iconName: String;
-  @Input() entity: School = new School("");
+export class SchoolBlockComponent implements OnInit {
+  icon = School.icon;
+  @Input() entity = new School("");
   @Input() entityId: string;
-  @Input() linkDisabled: boolean;
-  tooltip = false;
-  tooltipTimeout;
+  @Input() linkDisabled = false;
 
-  constructor(
-    private router: Router,
-    private entityMapper: EntityMapperService,
-    private configService: ConfigService
-  ) {}
+  constructor(private entityMapper: EntityMapperService) {}
 
-  ngOnInit() {
-    this.iconName =
-      "fa-" +
-      this.configService.getConfig<ViewConfig>("view:school/:id")?.config?.icon;
-  }
-
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("entityId")) {
-      this.initFromEntityId();
+  async ngOnInit() {
+    if (this.entityId) {
+      this.entity = await this.entityMapper.load(School, this.entityId);
     }
-  }
-
-  onInitFromDynamicConfig(config: any) {
-    this.entity = config.entity;
-    if (config.hasOwnProperty("entityId")) {
-      this.entityId = config.entityId;
-      this.initFromEntityId();
-    }
-    this.linkDisabled = config.linkDisabled;
-  }
-
-  private async initFromEntityId() {
-    if (!this.entityId) {
-      return;
-    }
-    this.entity = await this.entityMapper.load(School, this.entityId);
-  }
-
-  showTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 1000);
-  }
-  hideTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 150);
-  }
-
-  @HostListener("click") onClick() {
-    this.showDetailsPage();
-  }
-
-  showDetailsPage() {
-    if (this.linkDisabled) {
-      return;
-    }
-    const path = "/" + School.ENTITY_TYPE.toLowerCase();
-    this.router?.navigate([path, this.entity.getId()]);
   }
 }

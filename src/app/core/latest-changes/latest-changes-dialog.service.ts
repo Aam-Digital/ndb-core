@@ -25,9 +25,9 @@ import { LatestChangesService } from "./latest-changes.service";
  * Manage the changelog information and display it to the user
  * on request or automatically on the first visit of a new version after update.
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class LatestChangesDialogService {
-  private static STORAGE_KEY = "AppVersion";
+  public static readonly VERSION_KEY = "AppVersion";
 
   constructor(
     private dialog: MatDialog,
@@ -60,13 +60,13 @@ export class LatestChangesDialogService {
    */
   public showLatestChangesIfUpdated() {
     const previousVersion = window.localStorage.getItem(
-      LatestChangesDialogService.STORAGE_KEY
+      LatestChangesDialogService.VERSION_KEY
     );
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
       this.showLatestChanges(previousVersion);
     }
     window.localStorage.setItem(
-      LatestChangesDialogService.STORAGE_KEY,
+      LatestChangesDialogService.VERSION_KEY,
       this.getCurrentVersion()
     );
   }

@@ -1,12 +1,19 @@
-import { Component } from "@angular/core";
-import { ViewComponent } from "../view-component";
+import { Component, HostBinding, OnInit } from "@angular/core";
+import { ViewDirective } from "../view.directive";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("DisplayPercentage")
 @Component({
   selector: "app-display-percentage",
-  templateUrl: "./display-percentage.component.html",
-  styleUrls: ["./display-percentage.component.scss"],
+  template: "{{ value ? value + '%' : '-' }}",
+  standalone: true,
 })
-export class DisplayPercentageComponent extends ViewComponent {
+export class DisplayPercentageComponent
+  extends ViewDirective<number>
+  implements OnInit
+{
+  @HostBinding("style") style = {};
+
   /**
    * returns a css-compatible color value from green to red using the given
    * input value
@@ -24,9 +31,9 @@ export class DisplayPercentageComponent extends ViewComponent {
     return "hsl(" + color + ", 100%, 85%)";
   }
 
-  resultColorStyleBuilder(value: number) {
-    return {
-      "background-color": DisplayPercentageComponent.fromPercent(value),
+  ngOnInit() {
+    this.style = {
+      "background-color": DisplayPercentageComponent.fromPercent(this.value),
       "border-radius": "5%",
       padding: "5px",
       width: "min-content",

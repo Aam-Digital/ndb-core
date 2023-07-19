@@ -1,24 +1,24 @@
-.general-description {
-  font-style: italic;
+@use "src/styles/variables/sizes";
+@use "src/styles/mixins/grid-layout";
+@use "@angular/material" as mat;
+@use "src/styles/typography/custom-typography";
+
+.cards-wrapper {
+  @include grid-layout.adaptive($min-block-width: 250px);
+  margin-top: sizes.$large;
 }
 
-.action-button {
-  width: 100%;
+.mat-mdc-card[disabled] {
+  background-color: mat.get-color-from-palette(mat.$grey-palette, $hue: 400, $opacity: 0.1);
 }
 
-.mat-card {
+mat-card-content {
   display: flex;
   flex-direction: column;
-  min-width: 250px;
-  margin-right: 24px;
-  margin-bottom: 24px;
-}
+  justify-content: space-between;
+  height: 100%;
 
-.mat-card-header {
-  flex-shrink: 0;
-}
-
-.mat-card-content {
-  flex-grow: 1;
-  overflow: auto;
+  > button {
+    width: 100%;
+  }
 }

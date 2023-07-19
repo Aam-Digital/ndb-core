@@ -1,78 +1,90 @@
 import { Component } from "@angular/core";
 import { ActivatedRoute, Router } from "@angular/router";
-import { Location } from "@angular/common";
-import { MatSnackBar } from "@angular/material/snack-bar";
 import {
-  PanelConfig,
   EntityDetailsConfig,
   Panel,
   PanelComponent,
+  PanelConfig,
 } from "./EntityDetailsConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { getUrlWithoutParams } from "../../../utils/utils";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import {
-  EntityPermissionsService,
-  OperationType,
-} from "../../permissions/entity-permissions.service";
-import { User } from "../../user/user";
-import { Note } from "../../../child-dev-project/notes/model/note";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
-
-export const ENTITY_MAP: Map<string, EntityConstructor<Entity>> = new Map<
-  string,
-  EntityConstructor<Entity>
->([
-  ["Child", Child],
-  ["Participant", Child],
-  ["School", School],
-  ["Team", School],
-  ["RecurringActivity", RecurringActivity],
-  ["Note", Note],
-  ["User", User],
-]);
+import {
+  EntityRemoveService,
+  RemoveResult,
+} from "../../entity/entity-remove.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { RouteTarget } from "../../../app.routing";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { MatButtonModule } from "@angular/material/button";
+import { MatMenuModule } from "@angular/material/menu";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Angulartics2OnModule } from "angulartics2";
+import { MatTabsModule } from "@angular/material/tabs";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { NgForOf, NgIf } from "@angular/common";
+import { ViewTitleComponent } from "../entity-utils/view-title/view-title.component";
+import { DynamicComponentDirective } from "../../view/dynamic-components/dynamic-component.directive";
+import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
+import { LoggingService } from "../../logging/logging.service";
+import { UnsavedChangesService } from "./form/unsaved-changes.service";
 
 /**
- * This component can be used to display a entity in more detail.
+ * This component can be used to display an entity in more detail.
  * It groups subcomponents in panels.
- * Any component from the DYNAMIC_COMPONENT_MAP can be used as a subcomponent.
- * The subcomponents will be provided with the Entity object and the creating new status, as well as it's static config.
+ * Any component that is registered (has the `DynamicComponent` decorator) can be used as a subcomponent.
+ * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
  */
-@UntilDestroy()
+@RouteTarget("EntityDetails")
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
   styleUrls: ["./entity-details.component.scss"],
+  standalone: true,
+  imports: [
+    MatButtonModule,
+    MatMenuModule,
+    FontAwesomeModule,
+    Angulartics2OnModule,
+    MatTabsModule,
+    TabStateModule,
+    MatTooltipModule,
+    MatProgressBarModule,
+    NgIf,
+    NgForOf,
+    ViewTitleComponent,
+    DynamicComponentDirective,
+    DisableEntityOperationDirective,
+  ],
 })
 export class EntityDetailsComponent {
   entity: Entity;
   creatingNew = false;
-
-  operationType = OperationType;
+  isLoading = true;
 
   panels: Panel[] = [];
-  classNamesWithIcon: string;
   config: EntityDetailsConfig;
+  entityConstructor: EntityConstructor;
 
   constructor(
     private entityMapperService: EntityMapperService,
     private route: ActivatedRoute,
     private router: Router,
-    private location: Location,
-    private snackBar: MatSnackBar,
     private analyticsService: AnalyticsService,
-    private confirmationDialog: ConfirmationDialogService,
-    private permissionService: EntityPermissionsService
+    private entityRemoveService: EntityRemoveService,
+    private ability: EntityAbility,
+    private entities: EntityRegistry,
+    private logger: LoggingService,
+    public unsavedChanges: UnsavedChangesService
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
-      this.classNamesWithIcon = "fa fa-" + data.config.icon + " fa-fw";
+      this.entityConstructor = this.entities.get(this.config.entity);
+      this.setInitialPanelsConfig();
       this.route.paramMap.subscribe((params) =>
         this.loadEntity(params.get("id"))
       );
@@ -80,96 +92,82 @@ export class EntityDetailsComponent {
   }
 
   private loadEntity(id: string) {
-    const constr: EntityConstructor<Entity> = ENTITY_MAP.get(
-      this.config.entity
-    );
     if (id === "new") {
-      this.entity = new constr();
-      if (
-        !this.permissionService.userIsPermitted(
-          this.entity.getConstructor(),
-          this.operationType.CREATE
-        )
-      ) {
+      if (this.ability.cannot("create", this.entityConstructor)) {
         this.router.navigate([""]);
+        return;
       }
+      this.entity = new this.entityConstructor();
       this.creatingNew = true;
-      this.setPanelsConfig();
+      this.setFullPanelsConfig();
     } else {
       this.creatingNew = false;
-      this.entityMapperService.load<Entity>(constr, id).then((entity) => {
-        this.entity = entity;
-        this.setPanelsConfig();
-      });
+      this.entityMapperService
+        .load(this.entityConstructor, id)
+        .then((entity) => {
+          this.entity = entity;
+          this.setFullPanelsConfig();
+        });
     }
   }
 
-  private setPanelsConfig() {
-    this.panels = this.config.panels.map((p) => {
-      return {
-        title: p.title,
-        components: p.components.map((c) => {
-          return {
-            title: c.title,
-            component: c.component,
-            config: this.getPanelConfig(c),
-          };
-        }),
-      };
-    });
+  private setInitialPanelsConfig() {
+    this.panels = this.config.panels.map((p) => ({
+      title: p.title,
+      components: [],
+    }));
+  }
+
+  private setFullPanelsConfig() {
+    this.panels = this.config.panels.map((p) => ({
+      title: p.title,
+      components: p.components.map((c) => ({
+        title: c.title,
+        component: c.component,
+        config: this.getPanelConfig(c),
+      })),
+    }));
+    this.isLoading = false;
   }
 
   private getPanelConfig(c: PanelComponent): PanelConfig {
-    return {
+    let panelConfig: PanelConfig = {
       entity: this.entity,
-      config: c.config,
       creatingNew: this.creatingNew,
     };
+    if (typeof c.config === "object" && !Array.isArray(c.config)) {
+      if (c.config?.entity) {
+        this.logger.warn(
+          `DEPRECATION panel config uses 'entity' keyword: ${JSON.stringify(c)}`
+        );
+        c.config["entityType"] = c.config.entity;
+        delete c.config.entity;
+      }
+      panelConfig = { ...c.config, ...panelConfig };
+    } else {
+      panelConfig.config = c.config;
+    }
+    return panelConfig;
   }
 
   removeEntity() {
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`:Delete confirmation title:Delete?`,
-      $localize`:Delete confirmation text:Are you sure you want to delete this ${this.config.entity} ?`
-    );
-
-    dialogRef.afterClosed().subscribe((confirmed) => {
-      const currentUrl = getUrlWithoutParams(this.router);
-      if (confirmed) {
-        this.entityMapperService
-          .remove<Entity>(this.entity)
-          .then(() => this.navigateBack())
-          .catch((err) => console.log("error", err));
-
-        const snackBarRef = this.snackBar.open(
-          $localize`:Deleted Entity information:Deleted Entity ${this.entity.toString()}`,
-          "Undo",
-          { duration: 8000 }
-        );
-        snackBarRef
-          .onAction()
-          .pipe(untilDestroyed(this))
-          .subscribe(() => {
-            this.entityMapperService.save(this.entity, true);
-            this.router.navigate([currentUrl]);
-          });
+    const currentUrl = getUrlWithoutParams(this.router);
+    const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
+    this.entityRemoveService.remove(this.entity).subscribe(async (result) => {
+      switch (result) {
+        case RemoveResult.REMOVED:
+          await this.router.navigate([parentUrl]);
+          break;
+        case RemoveResult.UNDONE:
+          await this.router.navigate([currentUrl]);
       }
     });
   }
 
-  navigateBack() {
-    this.location.back();
-  }
-
-  /**
-   * Usage analytics tracking when a section is opened.
-   * (directive `angulartics2On="click"` doesn't work as it fires too often and blocks events within the panel)
-   * @param panelTitle
-   */
-  trackPanelOpen(panelTitle: string) {
-    this.analyticsService.eventTrack("details_section_expanded", {
+  trackTabChanged(index: number) {
+    this.analyticsService.eventTrack("details_tab_changed", {
       category: this.config?.entity,
-      label: panelTitle,
+      label: this.config.panels[index].title,
     });
   }
 }

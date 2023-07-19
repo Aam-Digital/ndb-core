@@ -18,8 +18,7 @@
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
-
-import * as CryptoJS from "crypto-js";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 /**
  * Entity representing a User object including password.
@@ -29,60 +28,38 @@ import * as CryptoJS from "crypto-js";
  */
 @DatabaseEntity("User")
 export class User extends Entity {
+  static toStringAttributes = ["name"];
+  static icon: IconName = "user";
+  static label = $localize`:label for entity:User`;
+  static labelPlural = $localize`:label (plural) for entity:Users`;
+
   /** username used for login and identification */
-  @DatabaseField() name: string;
-
-  /** settings for the mat-paginator for tables
-   * pageSizeOptions is set in the corresponding html of the component,
-   * pageSize is stored persistently in the database and
-   * pageIndex is saved only temporarily for the session
-   */
-  @DatabaseField() paginatorSettingsPageSize: any = {};
-  public paginatorSettingsPageIndex: any = {};
-
-  /** password for webdav account (encrypted) */
-  @DatabaseField() private cloudPasswordEnc: any;
-
-  /** username for webdav account */
-  @DatabaseField() public cloudUserName: string;
-
-  /** password for webdav account (plaintext, decrypted during runtime from user.cloudPasswordEnc, not written to db) */
-  public cloudPasswordDec: any;
-
-  /** base folder for webdav, all actions of the app will happen relative to this as the root folder */
-  @DatabaseField() public cloudBaseFolder: string = "/aam-digital/";
-
-  /**
-   * Decrypt the stored cloud password with the user's regular password.
-   * @param givenPassword The user entity's password (not the webdav cloud password)
-   * @return the decrypted cloud password
-   */
-  public decryptCloudPassword(givenPassword: string): string {
-    if (!this.cloudPasswordEnc) {
-      return;
+  @DatabaseField({
+    label: $localize`:Label of username:Username`,
+    validators: { required: true },
+  })
+  set name(value: string) {
+    if (this._name && value !== this._name) {
+      // Throwing error if trying to change existing username
+      const label = User.schema.get("name").label;
+      throw new Error(
+        $localize`:Error message when trying to change the username|e.g. username cannot be changed after initialization:${label} cannot be changed after initialization`
+      );
     }
 
-    this.cloudPasswordDec = CryptoJS.AES.decrypt(
-      this.cloudPasswordEnc.toString(),
-      givenPassword
-    ).toString(CryptoJS.enc.Utf8);
-    return this.cloudPasswordDec;
+    // @ts-ignore allow overwriting of id in this special case, as the name is only given by user editing the form of the new entity
+    this.entityId = value;
+    this._name = value;
   }
+
+  get name(): string {
+    return this._name;
+  }
+
+  private _name: string;
 
   /**
-   * Set a new webdav cloud password.
-   * @param blobPassword The password for the cloud account.
-   * @param givenPassword The user entity's password (used for encrypting the cloud password before storage)
+   * This map holds information for the page size settings for different tables in the app
    */
-  public setCloudPassword(blobPassword: string, givenPassword: string) {
-    this.cloudPasswordDec = blobPassword;
-    this.cloudPasswordEnc = CryptoJS.AES.encrypt(
-      blobPassword,
-      givenPassword
-    ).toString();
-  }
-
-  toString(): string {
-    return this.name;
-  }
+  @DatabaseField() paginatorSettingsPageSize: { [id: string]: number } = {};
 }

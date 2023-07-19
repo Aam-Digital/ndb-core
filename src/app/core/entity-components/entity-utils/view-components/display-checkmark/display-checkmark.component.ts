@@ -1,12 +1,15 @@
 import { Component } from "@angular/core";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 
 /**
  * This component allows to display a boolean attribute of an entity.
  * It will display a checkmark when the attribute is true.
  */
+@DynamicComponent("DisplayCheckmark")
 @Component({
   selector: "app-display-tick",
-  template: `{{ entity[property] ? "✓" : "" }}`,
+  template: `{{ value ? "✓" : "" }}`,
+  standalone: true,
 })
-export class DisplayCheckmarkComponent extends ViewComponent {}
+export class DisplayCheckmarkComponent extends ViewDirective<boolean> {}

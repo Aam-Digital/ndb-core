@@ -28,6 +28,8 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  */
 export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
   name: "month",
+  viewComponent: "DisplayMonth",
+  editComponent: "EditMonth",
 
   transformToDatabaseFormat: (value) => {
     if (!(value instanceof Date)) {
@@ -40,12 +42,9 @@ export const monthEntitySchemaDatatype: EntitySchemaDatatype = {
     );
   },
 
-  transformToObjectFormat: (value) => {
-    value = value
-      .toString()
-      .replace(/-(\d)-/g, "-0$1-")
-      .replace(/-(\d)$/g, "-0$1");
-    const date = new Date(value);
+  transformToObjectFormat: (value: string) => {
+    const values = value.split("-").map((v) => Number(v));
+    const date = new Date(values[0], values[1] - 1);
     if (Number.isNaN(date.getTime())) {
       throw new Error("failed to convert data to Date object: " + value);
     }

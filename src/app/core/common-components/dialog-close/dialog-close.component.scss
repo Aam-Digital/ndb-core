@@ -1,0 +1,14 @@
+/**
+ * Positions the 'x' button that is shown for an overlay to
+ * the top-right of the overlay
+ */
+.overlay-close-button {
+  position: absolute;
+  top: 0;
+  right: 0;
+  border-radius: 0 4px 0 4px;
+}
+
+:host ::ng-deep .mat-mdc-icon-button .mat-mdc-button-persistent-ripple {
+  border-radius: 0 4px 0 4px;
+}

@@ -12,11 +12,8 @@ export function DatabaseField(propertySchema: EntitySchemaField = {}) {
   return (target, propertyName: string) => {
     // Retrieve datatype from TypeScript type definition
     if (propertySchema.dataType === undefined) {
-      propertySchema.dataType = Reflect.getMetadata(
-        "design:type",
-        target,
-        propertyName
-      ).name.toLowerCase();
+      const type = Reflect.getMetadata("design:type", target, propertyName);
+      propertySchema.dataType = type.DATA_TYPE ?? type.name.toLowerCase();
     }
     addPropertySchema(target, propertyName, propertySchema);
   };

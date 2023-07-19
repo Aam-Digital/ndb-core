@@ -1,9 +1,12 @@
 {
   "/db": {
-    "target": "https://dev.aam-digital.com",
+    "target": "https://dev.aam-digital.net/db",
     "secure": true,
     "logLevel": "debug",
-    "changeOrigin": true
+    "changeOrigin": true,
+    "pathRewrite": {
+      "/db": ""
+    }
   },
   "/logging": {
     "target": "http://localhost:81",
@@ -11,13 +14,12 @@
     "logLevel": "debug",
     "changeOrigin": true
   },
-  "/nextcloud": {
-    "target": "https://nextcloud.aam-digital.com/remote.php/webdav",
+  "/nominatim": {
+    "target": "https://nominatim.openstreetmap.org",
     "secure": true,
-    "logLevel": "debug",
     "changeOrigin": true,
     "pathRewrite": {
-      "^/nextcloud": ""
+      "/nominatim": ""
     }
   }
 }

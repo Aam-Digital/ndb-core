@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
+import { ChangeDetectionStrategy, Component, OnInit } from "@angular/core";
 import { LatestChangesDialogService } from "../latest-changes-dialog.service";
 
 /**
@@ -25,7 +25,8 @@ import { LatestChangesDialogService } from "../latest-changes-dialog.service";
 @Component({
   selector: "app-version",
   templateUrl: "./app-version.component.html",
-  styleUrls: ["./app-version.component.scss"],
+  standalone: true,
+  changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AppVersionComponent implements OnInit {
   /** the current app version */

@@ -29,15 +29,20 @@ import {
 } from "../../attendance/model/attendance-status";
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
 import {
   getWarningLevelColor,
   WarningLevel,
 } from "../../../core/entity/model/warning-level";
 import { School } from "../../schools/model/school";
+import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
+  static toStringAttributes = ["subject"];
+  static label = $localize`:label for entity:Note`;
+  static labelPlural = $localize`:label (plural) for entity:Notes`;
+
   static create(
     date: Date,
     subject: string = "",
@@ -52,12 +57,29 @@ export class Note extends Entity {
     return instance;
   }
 
+  /**
+   * Returns the name of the Note property where entities of the given entity type are stored
+   * @param entityType
+   */
+  static getPropertyFor(entityType: string) {
+    switch (entityType) {
+      case "Child":
+        return "children";
+      case "School":
+        return "schools";
+      case "User":
+        return "authors";
+      default:
+        return "relatedEntities";
+    }
+  }
+
   /** IDs of Child entities linked with this note */
   @DatabaseField({
     label: $localize`:Label for the children of a note:Children`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
+    editComponent: "EditAttendance",
   })
   children: string[] = [];
 
@@ -69,21 +91,25 @@ export class Note extends Entity {
   @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
-  @DatabaseField({ label: $localize`:Label for the date of a note:Date` })
+  @DatabaseField({
+    label: $localize`:Label for the date of a note:Date`,
+    dataType: "date-only",
+    defaultValue: PLACEHOLDERS.NOW,
+  })
   date: Date;
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
-  subject: string = "";
+  subject: string;
   @DatabaseField({
     label: $localize`:Label for the actual notes of a note:Notes`,
     editComponent: "EditLongText",
   })
-  text: string = "";
+  text: string;
   /** IDs of users that authored this note */
   @DatabaseField({
     label: $localize`:Label for the social worker(s) who created the note:SW`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: User.ENTITY_TYPE,
+    defaultValue: PLACEHOLDERS.CURRENT_USER,
   })
   authors: string[] = [];
 
@@ -92,7 +118,7 @@ export class Note extends Entity {
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
   })
-  category: InteractionType = { id: "", label: "" };
+  category: InteractionType;
 
   /**
    * id referencing a different entity (e.g. a recurring activity) this note is related to
@@ -100,20 +126,36 @@ export class Note extends Entity {
   @DatabaseField() relatesTo: string;
 
   /**
+   * other records (e.g. a recurring activity, group membership, ...) to which this note is related in some way,
+   * so that notes can be displayed linked to these entities.
+   *
+   * This property saves ids including their entity type prefix.
+   */
+  @DatabaseField({
+    label: $localize`:label for the related Entities:Related Records`,
+    viewComponent: "DisplayEntityArray",
+    editComponent: "EditEntityArray",
+    // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
+    additional: undefined,
+  })
+  relatedEntities: string[] = [];
+
+  /**
    * related school ids (e.g. to infer participants for event roll calls)
    */
   @DatabaseField({
-    label: "Groups",
+    label: $localize`:label for the linked schools:Groups`,
+    dataType: "entity-array",
     additional: School.ENTITY_TYPE,
   })
   schools: string[] = [];
 
   @DatabaseField({
-    label: "",
+    label: $localize`:Status of a note:Status`,
     dataType: "configurable-enum",
     innerDataType: "warning-levels",
   })
-  warningLevel: ConfigurableEnumValue;
+  warningLevel: Ordering.EnumValue;
 
   getWarningLevel(): WarningLevel {
     if (this.warningLevel) {
@@ -126,7 +168,7 @@ export class Note extends Entity {
   public getColor() {
     const actualLevel = this.getWarningLevel();
     if (actualLevel === WarningLevel.OK || actualLevel === WarningLevel.NONE) {
-      return this.category.color;
+      return this.category?.color;
     } else {
       return super.getColor();
     }
@@ -134,7 +176,7 @@ export class Note extends Entity {
 
   public getColorForId(childId: string): string {
     if (
-      this.category.isMeeting &&
+      this.category?.isMeeting &&
       this.childrenAttendance.get(childId)?.status.countAs ===
         AttendanceLogicalStatus.ABSENT
     ) {
@@ -155,9 +197,10 @@ export class Note extends Entity {
 
   /**
    * adds a new child to this note
-   * @param childId The id of the child to add to the notes
+   * @param child The child or the id of the child to add to the notes
    */
-  addChild(childId: string) {
+  addChild(child: Child | string) {
+    const childId = typeof child === "string" ? child : child.getId();
     if (this.children.includes(childId)) {
       return;
     }
@@ -166,14 +209,28 @@ export class Note extends Entity {
   }
 
   /**
+   * adds a new school to this note
+   * @param school The school or its id to be added to the note
+   */
+  addSchool(school: School | string) {
+    const schoolId = typeof school === "string" ? school : school.getId();
+    if (this.schools.includes(schoolId)) {
+      return;
+    }
+
+    this.schools = this.schools.concat(schoolId);
+  }
+
+  /**
    * Returns the event attendance details for the given child.
    *
    * This method returns a default object that can be used and updated even if no attendance has been recorded yet.
    * Returns undefined if the child is not added to this event/note instance.
    *
-   * @param childId
+   * @param child: The child or the id of the child to look for
    */
-  getAttendance(childId: string): EventAttendance {
+  getAttendance(child: string | Child): EventAttendance {
+    const childId = typeof child === "string" ? child : child.getId();
     if (!this.children.includes(childId)) {
       return undefined;
     }
@@ -195,7 +252,13 @@ export class Note extends Entity {
    * While getAttendance will always set and return at least a default value `hasUnknownAttendances` can be used
    * to flag events with incomplete data.
    */
-  hasUnknownAttendances(): boolean {
+  hasUnknownAttendances(childId?: string): boolean {
+    if (childId) {
+      return (
+        this.getAttendance(childId).status.id === NullAttendanceStatusType.id
+      );
+    }
+
     if (this.childrenAttendance.size < this.children.length) {
       return true;
     } else {
@@ -226,9 +289,16 @@ export class Note extends Entity {
    * (such as the date, author, e.t.c.) as well as copying the
    * child-array
    */
-  copy(): Note {
-    const note: Note = super.copy() as Note;
+  copy(): this {
+    const note = super.copy();
     note.children = [...this.children];
+    note.schools = [...this.schools];
+    note.relatedEntities = [...this.relatedEntities];
+    note.authors = [...this.authors];
+    note.childrenAttendance = new Map();
+    this.childrenAttendance.forEach((value, key) => {
+      note.childrenAttendance.set(key, value.copy());
+    });
     return note;
   }
 }

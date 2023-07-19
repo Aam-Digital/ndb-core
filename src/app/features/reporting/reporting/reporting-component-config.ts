@@ -1,4 +1,5 @@
-import { Aggregation } from "../reporting.service";
+import { Aggregation } from "../data-aggregation.service";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 
 /**
  * The config object format that can be set for this component in the config database
@@ -16,6 +17,12 @@ export interface ReportConfig {
   /** human-readable title of the report */
   title: string;
 
+  /**
+   * (optional) mode whether the aggregation definitions are of type {@interface Aggregation} or {@interface ExportColumnConfig}
+   * Default is "reporting"
+   */
+  mode?: "reporting" | "exporting";
+
   /** the definitions to calculate the report's aggregations */
-  aggregationDefinitions?: Aggregation[];
+  aggregationDefinitions?: Aggregation[] | ExportColumnConfig[];
 }

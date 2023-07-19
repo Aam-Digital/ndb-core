@@ -1,97 +1,72 @@
-<h1
+<app-view-title
   i18n="
     Heading for Attendance Register|The heading for the view showing the
     Attendance Register
   "
 >
-  Attendance Register
-</h1>
+  Managing Attendance
+</app-view-title>
 
-<p
-  class="general-description"
-  i18n="General description|A general description-header"
->
-  Attendance data can be seen and edited in an individual's details as well as
-  here across groups.
-</p>
-
-<div fxLayout="row wrap">
-  <mat-card fxFlex>
+<div class="cards-wrapper">
+  <mat-card appearance="raised">
     <mat-card-header>
       <mat-card-title i18n="Record attendance title">
         Record Attendance
-      </mat-card-title
-      >
-      <mat-card-subtitle i18n="Add day attendance subtitle">
-        add a day's attendance
-      </mat-card-subtitle
-      >
+      </mat-card-title>
     </mat-card-header>
-    <mat-card-content i18n="Record attendance content">
-      Select a group of children and easily mark their attendance one by one.
-      This works well on a smartphone to record attendance on site.
-    </mat-card-content>
-    <mat-card-actions>
+    <mat-card-content>
+      <p i18n="Record attendance content">
+        Record attendance for an activity on a certain day.
+        Optimized for smartphones.
+      </p>
       <button
-        routerLink="/attendance/add/day"
-        class="action-button"
-        mat-stroked-button
+        routerLink="/attendance/add-day"
+        mat-raised-button
         i18n="Record attendance button"
       >
-        Record an event's attendance
+        Record
       </button>
-    </mat-card-actions>
+    </mat-card-content>
   </mat-card>
 
-  <mat-card fxFlex>
+  <mat-card appearance="raised">
+    <mat-card-header>
+      <mat-card-title i18n="Manage Activities title">
+        Recurring Activities
+      </mat-card-title>
+    </mat-card-header>
+    <mat-card-content>
+      <p i18n="Manage Activities content">
+        Manage "recurring activities" for which you regularly record attendance.
+        You can assign participants and users to these activities and analyze their attendance across time.
+      </p>
+      <button
+        routerLink="/attendance/recurring-activity"
+        mat-raised-button
+        i18n="Manage activities button"
+      >
+        Manage Activities
+      </button>
+    </mat-card-content>
+  </mat-card>
+
+  <mat-card appearance="raised" disabled>
     <mat-card-header>
       <mat-card-title i18n="Monthly attendance title">
-        Enter Monthly Attendance
+        Monthly Attendance
       </mat-card-title>
-      <mat-card-subtitle i18n="Monthly attendance subtitle">
-        add a month's attendance
-      </mat-card-subtitle>
     </mat-card-header>
-    <mat-card-content i18n="Monthly attendance content">
-      Enter attendance numbers for a whole month in a table format for a group
-      of children. This allows you to quickly record attendance that was
-      collected on paper. However, as you only enter a monthly total for each
-      child you cannot see attendance in the day-wise calender.
-    </mat-card-content>
-    <mat-card-actions>
+    <mat-card-content>
+      <p i18n="Monthly attendance content">
+        Document attendance totals for a whole month that were collected on paper.
+      </p>
       <button
-        routerLink="/coming-soon/monthly-attendance"
-        class="action-button"
+        (click)="comingSoonDialog.open('monthly-attendance')"
         mat-stroked-button
         i18n="Enter attendance button"
       >
-        Enter Attendance
+        Document Month
       </button>
-    </mat-card-actions>
-  </mat-card>
-
-  <mat-card fxFlex>
-    <mat-card-header>
-      <mat-card-title i18n="Analyse attendance title">
-        Analyse Attendance
-      </mat-card-title>
-      <mat-card-subtitle i18n="Analyze attendance subtitle">
-        calculate summaries and averages
-      </mat-card-subtitle>
-    </mat-card-header>
-    <mat-card-content i18n="Analyze attendance content">
-      Analyse and compare attendance for all children. To see an individual's
-      attendance history you can open the child's overall details page.
     </mat-card-content>
-    <mat-card-actions>
-      <button
-        routerLink="/coming-soon/attendance-analysis"
-        class="action-button"
-        mat-stroked-button
-        i18n="Analyze attendance button"
-      >
-        Analyse Attendance
-      </button>
-    </mat-card-actions>
   </mat-card>
 </div>

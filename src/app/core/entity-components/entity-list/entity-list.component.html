@@ -1,134 +1,188 @@
-<h1>{{ listName }}</h1>
+<!-- Desktop version -->
+<div *ngIf="isDesktop">
+  <!-- Header bar; contains the title on the left and controls on the right -->
 
-<mat-expansion-panel expanded="true" class="filter-panel mat-elevation-z2">
-  <div fxLayout="row" fxLayoutGap="10px" fxLayoutAlign="none end">
-    <!-- text search -->
-    <div fxFlex="50">
-      <mat-form-field style="width: 100%">
-        <input
-          matInput
-          i18n-placeholder="
-            Filter placeholder|Allows the user to filter through entities
-          "
-          placeholder="Filter"
-          (ngModelChange)="applyFilter($event)"
-          [(ngModel)]="filterString"
-        />
-        <button
-          mat-icon-button
-          *ngIf="filterString"
-          matSuffix
-          aria-label="Clear"
-          (click)="filterString = ''; applyFilter('')"
-        >
-          <mat-icon fontIcon="fa-times"></mat-icon>
-        </button>
-      </mat-form-field>
-    </div>
-    <!-- number of table entries -->
-    <div
-      fxFlex="25"
-      fxHide.xs="true"
-      class="align-form-field"
-      i18n="The amount of entities that can be seen in a list"
-    >
-      (Showing {{ filteredEntities.length }} entries)
-    </div>
-    <!-- add new button -->
-    <div fxFlex="25" class="align-form-field">
+  <div class="flex-row justify-space-between" [ngStyle]="offsetFilterStyle">
+    <app-view-title>
+      {{ listName }}
+    </app-view-title>
+
+    <div class="flex-row gap-regular">
       <button
         mat-stroked-button
         color="accent"
-        (click)="addNewClick.emit()"
+        class="standard-add-button"
+        (click)="addNew()"
         angulartics2On="click"
-        [angularticsCategory]="entityConstructor.ENTITY_TYPE"
+        angularticsCategory="UserAction"
+        [angularticsAction]="
+          listName.toLowerCase().replace(' ', '_') + '_add_new'
+        "
+        [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
         angularticsAction="list_add_entity"
         *appDisabledEntityOperation="{
           entity: entityConstructor,
-          operation: operationType.CREATE
+          operation: 'create'
         }"
+        i18n
       >
-        <mat-icon
-          class="button-icon"
+        <fa-icon
           aria-label="add element"
-          fontIcon="fa-plus-circle"
-        ></mat-icon>
-        <span fxHide.lt-md="true" i18n="Add New Button"> Add New </span>
+          icon="plus-circle"
+          class="standard-icon-with-text"
+        ></fa-icon>
+        Add New
       </button>
-      <button
-        mat-stroked-button
-        style="margin: 4px"
-        color="accent"
-        [appExportData]="allEntities"
-        format="csv"
-        [exportConfig]="listConfig.exportConfig"
-        [filename]="listName.replace(' ', '')"
-        angulartics2On="click"
-        [angularticsCategory]="entityConstructor.ENTITY_TYPE"
-        angularticsAction="list_csv_export"
-      >
-        <mat-icon
-          class="button-icon"
-          aria-label="download csv"
-          fontIcon="fa-download"
-        ></mat-icon>
-        <span fxHide.lt-md="true" i18n="Download list contents as CSV">
-          Download CSV
-        </span>
+      <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
+        <fa-icon icon="ellipsis-v"></fa-icon>
       </button>
     </div>
   </div>
 
-  <div
-    *ngIf="filterSelections.length > 0"
-    class="toggle-selection-section"
-    fxLayout="row wrap"
-    fxLayoutGap="10px grid"
-  >
-    <app-list-filter
-      *ngFor="let filter of filterSelections"
-      [filterConfig]="filter.filterSettings"
-      [(selectedOption)]="filter.selectedOption"
-      [displayAsToggle]="filter.display !== 'dropdown'"
-      (selectedOptionChange)="filterOptionSelected(filter, $event)"
-      angulartics2On="click"
-      [angularticsCategory]="entityConstructor.ENTITY_TYPE"
-      angularticsAction="list_filter"
-      [angularticsLabel]="filter.filterSettings.label"
-    >
-    </app-list-filter>
+  <!-- Filters -->
+
+  <div class="flex-row gap-regular flex-wrap">
+    <div *ngTemplateOutlet="filterDialog"></div>
+    <app-filter
+      *ngIf="!isLoading"
+      class="flex-row gap-regular flex-wrap"
+      [filterConfig]="filtersConfig"
+      [entityType]="entityConstructor"
+      [entities]="allEntities"
+      [useUrlQueryParams]="true"
+      [(filterObj)]="filterObj"
+    ></app-filter>
   </div>
 
-  <div
-    *ngIf="columnGroups.length > 1"
-    class="toggle-selection-section"
-    fxHide.lt-sm
-  >
-    <mat-button-toggle-group
-      name="columnSelection"
-      [(value)]="selectedColumnGroup"
-    >
-      <mat-button-toggle
-        *ngFor="let item of columnGroups"
-        [value]="item.name"
-        (click)="columnGroupClick(item.name)"
-        angulartics2On="click"
-        [angularticsCategory]="entityConstructor.ENTITY_TYPE"
-        angularticsAction="list_column_view"
-        [angularticsLabel]="item.name"
+  <div>
+    <div *ngIf="columnGroups.length > 1">
+      <mat-tab-group
+        [(selectedIndex)]="selectedColumnGroupIndex"
+        appTabStateMemo
       >
-        {{ item.name }}
-      </mat-button-toggle>
-    </mat-button-toggle-group>
+        <mat-tab
+          *ngFor="let item of columnGroups"
+          [label]="item.name"
+          angulartics2On="click"
+          [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+          angularticsAction="list_column_view"
+          [angularticsLabel]="item.name"
+        ></mat-tab>
+      </mat-tab-group>
+    </div>
+    <ng-container *ngTemplateOutlet="subrecord"></ng-container>
   </div>
-</mat-expansion-panel>
+</div>
 
-<div class="mat-elevation-z2 table-list">
+<!-- Mobile Version -->
+<div *ngIf="!isDesktop">
+  <h2>{{ listName }}</h2>
+
+  <div class="flex-row">
+    <div *ngTemplateOutlet="filterDialog"></div>
+
+    <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
+      <fa-icon icon="ellipsis-v"></fa-icon>
+    </button>
+  </div>
+
+  <ng-container *ngTemplateOutlet="subrecord"></ng-container>
+</div>
+
+<!-- Templates and menus for both mobile and desktop -->
+
+<ng-template #filterDialog>
+  <mat-form-field class="full-width filter-field">
+    <mat-label
+      i18n="Filter placeholder|Allows the user to filter through entities"
+    >Filter
+    </mat-label>
+    <input
+      class="full-width"
+      matInput
+      i18n-placeholder="Examples of things to filter"
+      placeholder="e.g. name, age"
+      (ngModelChange)="applyFilter($event)"
+      [(ngModel)]="filterString"
+    />
+    <button
+      mat-icon-button
+      *ngIf="filterString"
+      matIconSuffix
+      aria-label="Clear"
+      (click)="filterString = ''; applyFilter('')"
+    >
+      <fa-icon icon="times"></fa-icon>
+    </button>
+  </mat-form-field>
+</ng-template>
+
+<ng-template #subrecord>
   <app-entity-subrecord
-    [records]="filteredEntities"
+    [records]="allEntities"
     [columns]="columns"
     [editable]="false"
-    [showEntity]="elementClick.emit.bind(elementClick)"
+    [clickMode]="clickMode"
+    (rowClick)="elementClick.emit($event)"
     [columnsToDisplay]="columnsToDisplay"
+    [isLoading]="isLoading"
+    [filter]="filterObj"
+    [defaultSort]="listConfig?.defaultSort"
   ></app-entity-subrecord>
-</div>
+</ng-template>
+
+<mat-menu #additional>
+  <div class="hide-desktop">
+    <button
+      mat-menu-item
+      (click)="addNew()"
+      angulartics2On="click"
+      angularticsCategory="UserAction"
+      [angularticsAction]="
+        listName.toLowerCase().replace(' ', '_') + '_add_new'
+      "
+      *appDisabledEntityOperation="{
+        entity: entityConstructor,
+        operation: 'create'
+      }"
+    >
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        aria-label="add element"
+        icon="plus-circle"
+      ></fa-icon>
+      <span i18n="Add a new entity to a list of multiple entities">
+        Add New
+      </span>
+    </button>
+
+    <button mat-menu-item (click)="openFilterOverlay()">
+      <fa-icon
+        aria-label="filter"
+        class="color-accent standard-icon-with-text"
+        icon="filter"
+      >
+      </fa-icon>
+      <span i18n="Show filter options popup for list"> Filter options </span>
+    </button>
+  </div>
+
+  <button
+    mat-menu-item
+    [appExportData]="allEntities"
+    format="csv"
+    [exportConfig]="listConfig?.exportConfig"
+    [filename]="listName.replace(' ', '')"
+    angulartics2On="click"
+    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    angularticsAction="list_csv_export"
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="download csv"
+      icon="download"
+    ></fa-icon>
+    <span i18n="Download list contents as CSV"> Download CSV </span>
+  </button>
+  <ng-content select="[mat-menu-item]"></ng-content>
+</mat-menu>

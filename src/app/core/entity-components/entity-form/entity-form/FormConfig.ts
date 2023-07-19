@@ -1,3 +1,5 @@
+import { FormValidatorConfig } from "../dynamic-form-validators/form-validator-config";
+
 /**
  * The general configuration for fields in tables and forms.
  * This defines which property is displayed and how it should be displayed.
@@ -12,7 +14,7 @@ export interface FormFieldConfig {
   /**
    * Defines the component that should display this form field.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * This has to be a properly configured component.
    * If nothing is defined, the component specified in the schema for this property or the default component of the
    * property's datatype will be used.
    */
@@ -21,7 +23,8 @@ export interface FormFieldConfig {
   /**
    * Defines the component which allows to edit this form field.
    *
-   * The name has to match one of the strings in the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    * If nothing is defined, the component specified in the schema for this property or the default component of the
    * property's datatype will be used. If nothing is found, the form field will be displayed in the "view" mode.
    */
@@ -67,10 +70,25 @@ export interface FormFieldConfig {
    *           lg  'screen and (min-width: 1280px) and (max-width: 1919px)'
    *           xl  'screen and (min-width: 1920px) and (max-width: 5000px)'
    */
-  visibleFrom?: string;
+  visibleFrom?: "xs" | "sm" | "md" | "lg" | "xl";
 
   /**
-   * A internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
+   * If true, the field will only be shown in forms and popups, but not in tables.
+   */
+  hideFromTable?: boolean;
+
+  /**
+   * If true, the field will only be shown in tables and excluded from forms and popups.
+   */
+  hideFromForm?: boolean;
+
+  /**
+   * An internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
    */
   forTable?: boolean;
+
+  /**
+   * Additional validators that can be used to determine the validity of the form
+   */
+  validators?: FormValidatorConfig;
 }

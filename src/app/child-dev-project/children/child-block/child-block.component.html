@@ -1,46 +1,16 @@
 <span
   *ngIf="entity"
-  (mouseenter)="showTooltip()"
-  (mouseleave)="hideTooltip()"
-  (click)="showDetailsPage()"
-  [ngClass]="{ inactive: !entity.isActive, clickable: !linkDisabled }"
+  [appTemplateTooltip]="tooltip"
+  [tooltipDisabled]="tooltipDisabled"
+  [class.inactive]="!entity.isActive"
+  class="truncate-text container"
 >
-  <img [src]="entity.photo?.photo?.value" class="child-pic" />
-  {{ entity?.name }}
-  <span style="font-size: x-small" *ngIf="entity?.projectNumber"
-    >({{ entity?.projectNumber }})</span
-  >
+  <app-fa-dynamic-icon *ngIf="!imgPath" [icon]="icon" class="margin-right-small"/>
+  <img *ngIf="imgPath" [src]="imgPath" class="child-pic" alt=""/>
+  <span class="font-size-rel">{{ entity?.toString() }}</span>
+  <span class="subnote" *ngIf="entity?.projectNumber"> ({{ entity?.projectNumber }})</span>
 </span>
 
-<div style="position: absolute" *ngIf="tooltipVisible">
-  <div
-    class="mat-elevation-z3 child-tooltip"
-    (mouseenter)="showTooltip()"
-    (mouseleave)="hideTooltip()"
-    fxLayout="row"
-    fxLayoutGap="8px"
-  >
-    <div fxFlex>
-      <img [src]="entity?.photo?.photo?.value" class="child-pic-large" />
-    </div>
-    <div fxFlex="grow">
-      <h3>{{ entity?.name }}</h3>
-      <p><span class="fa fa-phone"></span> {{ entity?.phone }}</p>
-      <ng-container>
-        <p>
-          <app-school-block [entityId]="entity?.schoolId"></app-school-block>,
-        </p>
-        <p>
-          <app-school-block
-            [entityId]="entity?.schoolId"
-            [linkDisabled]="true"
-          ></app-school-block
-          >,
-          <ng-container i18n="The class a child is attending|e.g. 'class 8'">
-            class {{ entity?.schoolClass }}
-          </ng-container>
-        </p>
-      </ng-container>
-    </div>
-  </div>
-</div>
+<ng-template #tooltip>
+  <app-child-block-tooltip [entity]="entity"></app-child-block-tooltip>
+</ng-template>

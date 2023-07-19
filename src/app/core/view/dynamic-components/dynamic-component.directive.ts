@@ -1,67 +1,84 @@
 import {
-  ComponentFactoryResolver,
+  ChangeDetectorRef,
   Directive,
   Input,
   OnChanges,
+  SimpleChange,
   SimpleChanges,
   ViewContainerRef,
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
-import { OnInitDynamicComponent } from "./on-init-dynamic-component.interface";
-import { DYNAMIC_COMPONENTS_MAP } from "../dynamic-components-map";
-import { LoggingService } from "../../logging/logging.service";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { pick } from "lodash-es";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
  *
  * Pass the DynamicComponentConfig into the directive to define the component to be injected.
  *
- * A component that is dynamically injected must implement the {@link OnInitDynamicComponent} interface
- * to allow initialization of input properties from a dynamic config object.
+ * Configurations that match properties with an `@Input()` annotations are automatically assigned
  */
 @Directive({
   selector: "[appDynamicComponent]",
+  standalone: true,
 })
 export class DynamicComponentDirective implements OnChanges {
   @Input() appDynamicComponent: DynamicComponentConfig;
 
   constructor(
     public viewContainerRef: ViewContainerRef,
-    private componentFactoryResolver: ComponentFactoryResolver,
-    private loggingService: LoggingService
+    private components: ComponentRegistry,
+    private changeDetector: ChangeDetectorRef
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    this.loadDynamicComponent();
+  async ngOnChanges() {
+    await this.loadDynamicComponent();
   }
 
-  private loadDynamicComponent() {
+  private async loadDynamicComponent() {
     if (!this.appDynamicComponent) {
       return;
     }
 
-    const component = DYNAMIC_COMPONENTS_MAP.get(
+    const component = await this.components.get(
       this.appDynamicComponent.component
-    );
-    if (!component) {
-      this.loggingService.warn(
-        "Could not load dashboard widget - component not found: " +
-          this.appDynamicComponent.component
-      );
-      return;
-    }
-
-    const componentFactory = this.componentFactoryResolver.resolveComponentFactory<OnInitDynamicComponent>(
-      component
-    );
+    )();
 
     this.viewContainerRef.clear();
 
-    const componentRef = this.viewContainerRef.createComponent<OnInitDynamicComponent>(
-      componentFactory
+    const componentRef = this.viewContainerRef.createComponent(component);
+
+    if (this.appDynamicComponent.config) {
+      this.setInputProperties(component.prototype, componentRef.instance);
+    }
+    // it seems like the asynchronicity of this function requires this
+    this.changeDetector.detectChanges();
+  }
+
+  private setInputProperties(proto, component) {
+    const inputs = Object.keys(proto.constructor["ɵcmp"].inputs).filter(
+      (input) => this.appDynamicComponent.config?.[input]
     );
-    componentRef.instance.onInitFromDynamicConfig(
-      this.appDynamicComponent.config
-    );
+    const inputValues = pick(this.appDynamicComponent.config, inputs);
+    const initialValues = pick(component, inputs);
+    Object.assign(component, inputValues);
+
+    if (
+      typeof component["ngOnChanges"] === "function" &&
+      Object.keys(inputValues).length > 0
+    ) {
+      const changes: SimpleChanges = inputs.reduce(
+        (c, prop) =>
+          Object.assign(c, {
+            [prop]: new SimpleChange(
+              initialValues[prop],
+              inputValues[prop],
+              true
+            ),
+          }),
+        {}
+      );
+      component["ngOnChanges"](changes);
+    }
   }
 }

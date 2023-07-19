@@ -19,14 +19,19 @@ import { Component, Input, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { MarkdownPageConfig } from "../MarkdownPageConfig";
 import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../app.routing";
+import { MarkdownModule } from "ngx-markdown";
+import { MarkdownPageModule } from "../markdown-page.module";
 
 /**
  * Display markdown formatted page that is dynamically loaded based on the file defined in config.
  */
+@RouteTarget("MarkdownPage")
 @Component({
   selector: "app-markdown-page",
   templateUrl: "./markdown-page.component.html",
-  styleUrls: ["./markdown-page.component.scss"],
+  imports: [MarkdownModule, MarkdownPageModule],
+  standalone: true,
 })
 export class MarkdownPageComponent implements OnInit {
   /** filepath to be loaded as markdown */

@@ -15,25 +15,38 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../../core/entity/model/entity";
 import { EventNote } from "./event-note";
+import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
+import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 
 describe("EventNote", () => {
-  const ENTITY_TYPE = "EventNote";
-
-  it("has correct _id and entityId and type", function () {
-    const id = "test1";
-    const entity = new EventNote(id);
-
-    expect(entity.getId()).toBe(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it("has correct type/prefix", function () {
-    const id = "test1";
-    const entity = new EventNote(id);
-
-    expect(entity.getType()).toBe(ENTITY_TYPE);
-    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
+  testEntitySubclass("EventNote", EventNote, {
+    _id: "EventNote:some-id",
+    children: ["child-1", "child-2"],
+    childrenAttendance: [
+      [
+        "child-1",
+        {
+          status: defaultAttendanceStatusTypes[1].id,
+          remarks: "did not show up",
+        },
+      ],
+      [
+        "child-2",
+        {
+          status: defaultAttendanceStatusTypes[0].id,
+          remarks: "",
+        },
+      ],
+    ],
+    category: defaultInteractionTypes.find((it) => it.isMeeting).id,
+    authors: ["some-coach"],
+    relatesTo: "RecurringActivity:some-id",
+    relatedEntities: ["RecurringActivity:some-id"],
+    date: "2023-05-01",
+    schools: [],
+    subject: "some subject",
+    text: "some text about the event",
   });
 });

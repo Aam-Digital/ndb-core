@@ -1,0 +1,45 @@
+<button
+  *ngIf="_showPWAInstallButton"
+  mat-button
+  class="pwa-install-button"
+  angulartics2On="click"
+  angularticsCategory="UserAction"
+  angularticsAction="install_app"
+  (click)="pwaInstallButtonClicked()"
+>
+  <fa-icon icon="cloud-download-alt" class="standard-icon-with-text"></fa-icon>
+  <span i18n="PWA Install Button Label">Install App</span>
+</button>
+
+<ng-template #iOSInstallInstructions>
+  <ng-container i18n="PWA iOS Install Instructions - Line 1">
+    To install the app
+  </ng-container>
+  <button
+    mat-button
+    style="position: absolute; right: -10px; top: 0"
+    (click)="snackBar.dismiss()"
+  >
+    <fa-icon icon="window-close" class="nav-icon"></fa-icon>
+  </button>
+  <ol>
+    <li>
+      <ng-container i18n="PWA iOS Install Instructions - Line 2-1">
+        tap on
+      </ng-container>
+      <fa-icon icon="arrow-up-from-bracket" class="nav-icon"></fa-icon>
+      <ng-container i18n="PWA iOS Install Instructions - Line 2-2">
+        at the bottom
+      </ng-container>
+    </li>
+    <li>
+      <ng-container i18n="PWA iOS Install Instructions - Line 3-1">
+        and then tap on
+      </ng-container>
+      <fa-icon icon="plus-square" class="nav-icon"></fa-icon>
+      <ng-container i18n="PWA iOS Install Instructions - Line 3-2">
+        (Add to Homescreen).
+      </ng-container>
+    </li>
+  </ol>
+</ng-template>

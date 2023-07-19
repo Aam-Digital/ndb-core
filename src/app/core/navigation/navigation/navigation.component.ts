@@ -19,12 +19,14 @@ import { Component } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { ConfigService } from "../../config/config.service";
-import { UserRoleGuard } from "../../permissions/user-role.guard";
+import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import {
-  PREFIX_VIEW_CONFIG,
-  ViewConfig,
-} from "../../view/dynamic-routing/view-config.interface";
+import { NavigationEnd, Router, RouterLink } from "@angular/router";
+import { filter, startWith } from "rxjs/operators";
+import { MatListModule } from "@angular/material/list";
+import { NgForOf } from "@angular/common";
+import { Angulartics2Module } from "angulartics2";
+import { FaDynamicIconComponent } from "../../view/fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * Main app menu listing.
@@ -34,8 +36,18 @@ import {
   selector: "app-navigation",
   templateUrl: "./navigation.component.html",
   styleUrls: ["./navigation.component.scss"],
+  imports: [
+    MatListModule,
+    NgForOf,
+    Angulartics2Module,
+    RouterLink,
+    FaDynamicIconComponent,
+  ],
+  standalone: true,
 })
 export class NavigationComponent {
+  /** The menu-item link (not the actual router link) that is currently active */
+  activeLink: string;
   /** name of config array in the config json file */
   private readonly CONFIG_ID = "navigationMenu";
   /** all menu items to be displayed */
@@ -43,41 +55,68 @@ export class NavigationComponent {
 
   constructor(
     private userRoleGuard: UserRoleGuard,
-    private configService: ConfigService
+    private configService: ConfigService,
+    private router: Router
   ) {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
       .subscribe(() => this.initMenuItemsFromConfig());
+    this.router.events
+      .pipe(
+        startWith(new NavigationEnd(0, this.router.url, "")),
+        filter((event) => event instanceof NavigationEnd)
+      )
+      .subscribe((event: NavigationEnd) => {
+        this.activeLink = this.computeActiveLink(event.url);
+      });
+  }
+
+  /**
+   * Computes the active link from a set of MenuItems.
+   * The active link is the link with the most "overlap", i.e.
+   * the most specific link that can be found given the array.
+   * @param newUrl The new url for which the navigation item should be highlighted
+   * @return the most specific link
+   * @private
+   */
+  private computeActiveLink(newUrl: string): string {
+    // conservative filter matching all items that could fit to the given url
+    const items: MenuItem[] = this.menuItems.filter((item) =>
+      newUrl.startsWith(item.link)
+    );
+    switch (items.length) {
+      case 0:
+        return "";
+      case 1:
+        const link = items[0].link;
+        // for root "/" only return on exact match to avoid confusing highlighting of unrelated items
+        return newUrl === link || link.length > 1 ? link : "";
+      default:
+        // If there are multiple matches (A user navigates with a URL that starts with
+        // multiple links from a MenuItem), use the element where the length is bigger.
+        //
+        // For example: Let there be two possible routes: '/attendance' and '/attendance/add/day'.
+        // When a user navigates to the URL '/attendance', only '/attendance' is
+        // a prefix of the possible '/attendance'. The potential other candidate '/attendance/add/day'
+        // is not a prefix of '/attendance' and there is no ambiguity.
+        //
+        // Vice Versa, when navigated to '/attendance/add/day',
+        // both '/attendance' and '/attendance/add/day' are a prefix of '/attendance/add/day'.
+        // In the latter case, the one with the longer URL should match.
+        return items.reduce((i1, i2) =>
+          i1.link.length > i2.link.length ? i1 : i2
+        ).link;
+    }
   }
 
   /**
    * Load menu items from config file
    */
   private initMenuItemsFromConfig() {
-    this.menuItems = [];
-    const config: NavigationMenuConfig = this.configService.getConfig<NavigationMenuConfig>(
-      this.CONFIG_ID
-    );
-    for (const configItem of config.items) {
-      if (this.checkMenuItemPermissions(configItem.link)) {
-        this.menuItems.push(
-          new MenuItem(configItem.name, configItem.icon, configItem.link)
-        );
-      }
-    }
-  }
-
-  /**
-   * Check whether the user has the required rights
-   */
-  private checkMenuItemPermissions(link: string): boolean {
-    const configPath = link.replace(/^\//, "");
-    const userRoles = this.configService.getConfig<ViewConfig>(
-      PREFIX_VIEW_CONFIG + configPath
-    )?.permittedUserRoles;
-    return this.userRoleGuard.canActivate({
-      routeConfig: { path: configPath },
-      data: { permittedUserRoles: userRoles },
-    } as any);
+    const config: NavigationMenuConfig =
+      this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
+    this.menuItems = config.items
+      .filter(({ link }) => this.userRoleGuard.checkRoutePermissions(link))
+      .map(({ name, icon, link }) => new MenuItem(name, icon, link));
   }
 }

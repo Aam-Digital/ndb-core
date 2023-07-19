@@ -1,6 +1,5 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { AttendanceModule } from "../attendance.module";
 import {
   ActivityAttendance,
   generateEventWithAttendance,
@@ -10,14 +9,18 @@ import { AttendanceBlockComponent } from "./attendance-block.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { MatNativeDateModule } from "@angular/material/core";
 import { RecurringActivity } from "../model/recurring-activity";
+import { ConfigService } from "../../../core/config/config.service";
 
 export default {
-  title: "Attendance/Components/AttendanceBlock",
+  title: "Features/Attendance/Components/AttendanceBlock",
   component: AttendanceBlockComponent,
   decorators: [
     moduleMetadata({
-      imports: [AttendanceModule, MatNativeDateModule],
-      providers: [{ provide: EntityMapperService, useValue: null }],
+      imports: [AttendanceBlockComponent, MatNativeDateModule],
+      providers: [
+        { provide: EntityMapperService, useValue: null },
+        { provide: ConfigService, useValue: {} },
+      ],
     }),
   ],
 } as Meta;
@@ -53,7 +56,7 @@ CriticalAttendance.args = {
 const attendanceRecord2 = ActivityAttendance.create(new Date("2021-01-01"), [
   generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
   generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
-  generateEventWithAttendance([["1", AttendanceLogicalStatus.PRESENT]]),
+  generateEventWithAttendance([["1", AttendanceLogicalStatus.ABSENT]]),
 ]);
 attendanceRecord2.activity = RecurringActivity.create("Demo Activity");
 export const MediocreAttendance = Template.bind({});

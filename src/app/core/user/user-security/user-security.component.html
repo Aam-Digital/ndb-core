@@ -1,0 +1,127 @@
+<em *ngIf="!userIsPermitted" i18n="Placeholder text when permissions are missing">
+  You account does not have the required permissions to see this page.
+</em>
+
+<div *ngIf="userIsPermitted" class="flex-column">
+  <div *ngIf="!user" class="buttons-wrapper align-self-start">
+    <p i18n="notice about user without account" class="field-hint field-warning">
+      There is no user account set up for this user yet.
+      Enable this user to log into the app by filling the details below.
+    </p>
+    <button
+      *ngIf="editing && !user"
+      mat-raised-button
+      type="submit"
+      (click)="createAccount()"
+      [disabled]="form.disabled"
+      i18n="button to invite a new user"
+    >
+      Create account & send invitation
+    </button>
+  </div>
+
+  <div class="padding-bottom-small flex-row gap-small align-self-end flex-wrap" *ngIf="user">
+    <button
+      *ngIf="editing && user?.enabled"
+      mat-stroked-button
+      color="warn"
+      (click)="toggleAccount(false)"
+      matTooltip="User will not be able to login again, no information will be lost"
+      i18n="button to update disable a user"
+    >
+      Deactivate user
+    </button>
+    <button
+      *ngIf="editing && !user?.enabled"
+      mat-raised-button
+      color="accent"
+      (click)="toggleAccount(true)"
+      matTooltip="User can login again with the previously used credentials"
+      i18n="button to enable a user"
+    >
+      Activate user
+    </button>
+    <button
+      *ngIf="editing && user?.enabled"
+      mat-raised-button
+      color="accent"
+      class="action-button"
+      (click)="updateAccount()"
+      i18n="Save button for forms"
+    >
+      Save
+    </button>
+    <button
+      *ngIf="editing"
+      mat-stroked-button
+      class="action-button"
+      (click)="disableForm()"
+      i18n="Cancel button for forms"
+    >
+      Cancel
+    </button>
+    <button
+      *ngIf="!editing"
+      mat-raised-button
+      class="action-button"
+      (click)="editForm()"
+      i18n="Edit button for forms"
+    >
+      Edit
+    </button>
+  </div>
+
+  <p
+    *ngIf="user && !user.enabled"
+    i18n="Hint in user account page"
+    class="field-hint field-warning"
+  >
+    User is currently disabled and will not be able to login to the app
+  </p>
+  <form [formGroup]="form">
+    <div>
+      <mat-form-field>
+        <mat-label i18n="label of username input">Username</mat-label>
+        <input matInput type="text" formControlName="username">
+        <mat-error *ngIf="form.hasError('required', 'username')" i18n>
+          This field is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field>
+        <mat-label i18n="label of email input">Email</mat-label>
+        <input matInput type="text" formControlName="email">
+        <mat-error *ngIf="form.hasError('email', 'email')" i18n>
+          Please enter a valid email
+        </mat-error>
+        <mat-error *ngIf="form.hasError('required', 'email')" i18n>
+          This field is required
+        </mat-error>
+      </mat-form-field>
+    </div>
+
+    <div>
+      <mat-form-field style="width: 100%">
+        <mat-label i18n="label of roles input">Roles</mat-label>
+        <mat-select formControlName="roles" multiple>
+          <mat-select-trigger>
+            <span *ngFor="let role of form.get('roles').value">{{ role.name }} </span>
+          </mat-select-trigger>
+          <mat-option
+            *ngFor="let role of availableRoles"
+            [value]="role"
+            [matTooltip]="role.description"
+          >{{ role.name }} <em style="font-size: small">({{ role.description }})</em></mat-option>
+        </mat-select>
+      </mat-form-field>
+      <p i18n="hint about assigning user roles" class="field-hint">
+        You should select at least one user role.
+        Otherwise this user will not even be able to access the basic app layout like the menu.
+      </p>
+    </div>
+
+    <mat-error *ngIf="form.getError('failed')">{{ form.getError('failed') }}</mat-error>
+  </form>
+</div>

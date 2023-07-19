@@ -1,71 +1,22 @@
-<form>
-  <div
-    fxLayout="row wrap"
-    fxLayout.xs="row wrap"
-    fxLayout.md="row wrap"
-    fxLayout.sm="row wrap"
-  >
-    <div *ngFor="let col of _columns" fxFlex>
-      <div *ngFor="let row of col" class="form-cell">
-        <div class="form-icon">
-          <mat-icon
-            (click)="tooltipElement.show()"
-            #tooltipElement="matTooltip"
-            *ngIf="row.tooltip"
-            matSuffix
-            fontIcon="fa-question-circle-o"
-            [matTooltip]="row.tooltip"
-          ></mat-icon>
-        </div>
-        <div class="form-field">
-          <ng-template
-            [appDynamicComponent]="{
-              component: row.edit,
-              config: {
-                formFieldConfig: row,
-                propertySchema: entity.getSchema().get(row.id),
-                formControl: form.get(row.id)
-              }
-            }">
-          </ng-template>
-        </div>
+<form [ngClass]="{ 'grid-layout': gridLayout }">
+  <div *ngFor="let col of columns; let i = index" class="entity-form-cell">
+    <h2 *ngIf="columnHeaders?.[i]">{{ columnHeaders[i] }}</h2>
+    <div *ngFor="let row of col">
+      <div [class.field-with-tooltip-suffix]="row.tooltip">
+        <ng-container
+          [appDynamicComponent]="{
+            component: row.edit,
+            config: {
+              formFieldConfig: row,
+              propertySchema: entity.getSchema().get(row.id),
+              formControl: form.get(row.id),
+              entity: entity
+            }
+          }"
+        >
+        </ng-container>
       </div>
+      <app-help-button [text]="row.tooltip"></app-help-button>
     </div>
   </div>
 </form>
-<div>
-  <button
-    *ngIf="form?.enabled"
-    mat-stroked-button
-    class="edit-button"
-    (click)="save()"
-    i18n="Save button for forms"
-  >
-    Save
-  </button>
-
-  <button
-    *ngIf="form?.enabled"
-    mat-stroked-button
-    class="edit-button"
-    (click)="cancel()"
-    i18n="Cancel button for forms"
-  >
-    Cancel
-  </button>
-
-  <ng-container *ngIf="form?.disabled">
-    <button
-      mat-stroked-button
-      class="edit-button"
-      (click)="switchEdit()"
-      *appDisabledEntityOperation="{
-        entity: entity?.getConstructor(),
-        operation: operationType.UPDATE
-      }"
-      i18n="Edit button for forms"
-    >
-      Edit
-    </button>
-  </ng-container>
-</div>

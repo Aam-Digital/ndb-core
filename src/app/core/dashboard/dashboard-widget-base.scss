@@ -1,26 +1,27 @@
-.dashboard-table-row {
-  border-top: 1px solid black;
-}
-
-.dashboard-table {
+.mat-mdc-table {
+  background: none;
   width: 100%;
   border-collapse: collapse;
-  table-layout: fixed;
+
+  tr {
+    border-bottom: 1px solid #c8c8c8;
+    padding-left: 8px;
+    padding-right: 8px;
+  }
 }
 
-.dashboard-table tr:first-child {
-  border-top: none;
+.mat-mdc-paginator {
+  background: none;
 }
 
-.dashboard-table-cell {
-  padding-top: 10px;
-  padding-bottom: 10px;
+.table-wrapper {
+  margin-left: 10px;
+  margin-right: 10px;
 }
-.dashboard-table-first-cell {
-  white-space: nowrap;
-  overflow: hidden;
-}
-.dashboard-table-last-cell {
-  width: 108px;
-  text-align: right;
+
+.headline {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

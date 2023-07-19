@@ -1,0 +1,34 @@
+<mat-form-field [formGroup]="parent">
+  <input [formControl]="formControl" hidden>
+  <mat-label>{{ label }}</mat-label>
+  <input
+    #inputElement
+    type="text"
+    matInput
+    [disabled]="formControl.disabled"
+    [value]="formControl.value?.display_name"
+    (keyup)="triggerInputUpdate()"
+    (focusin)="triggerInputUpdate()"
+    (focusout)="inputElement.value = formControl.value?.display_name"
+    [matAutocomplete]="auto"
+  >
+  <button *ngIf="formControl.enabled" (click)="clearInput()" matIconSuffix mat-icon-button type="button">
+    <fa-icon icon="xmark"></fa-icon>
+  </button>
+  <button (click)="openMap()" matIconSuffix mat-icon-button type="button">
+    <fa-icon icon="map"></fa-icon>
+  </button>
+  <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectLocation($event.option.value)">
+    <mat-option *ngIf="loading" disabled i18n="Loading in progress">Loading results...</mat-option>
+    <mat-option *ngIf="nothingFound" disabled i18n="No results found">Location not found</mat-option>
+    <mat-option *ngFor="let option of filteredOptions | async" [value]="option">
+      {{option.display_name}}
+    </mat-option>
+  </mat-autocomplete>
+  <mat-hint align="end" i18n class="map-data-source-hint">
+    Map data from <a target="_blank" href="https://openstreetmap.org/copyright" rel="noopener">OpenStreetMap</a>
+  </mat-hint>
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
+  </mat-error>
+</mat-form-field>

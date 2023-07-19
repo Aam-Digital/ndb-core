@@ -1,4 +1,12 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Injectable,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { animate, style, transition, trigger } from "@angular/animations";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
@@ -6,16 +14,35 @@ import {
 } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
-import { ConfigService } from "../../../../core/config/config.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../../../core/configurable-enum/configurable-enum.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
-import { FormGroup } from "@angular/forms";
-import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
+import { sortByAttribute } from "../../../../utils/utils";
+import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
+import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
+import { NgClass, NgForOf, NgIf } from "@angular/common";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ChildBlockComponent } from "../../../children/child-block/child-block.component";
+import { RollCallTabComponent } from "./roll-call-tab/roll-call-tab.component";
+import {
+  HAMMER_GESTURE_CONFIG,
+  HammerGestureConfig,
+  HammerModule,
+} from "@angular/platform-browser";
+import Hammer from "hammerjs";
+import { ConfigurableEnumService } from "../../../../core/configurable-enum/configurable-enum.service";
+
+// Only allow horizontal swiping
+@Injectable()
+class HorizontalHammerConfig extends HammerGestureConfig {
+  overrides = {
+    swipe: { direction: Hammer.DIRECTION_HORIZONTAL },
+    pinch: { enable: false },
+    rotate: { enable: false },
+  };
+}
 
 /**
  * Displays the participants of the given event one by one to mark attendance status.
@@ -27,17 +54,40 @@ import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/
   animations: [
     trigger("completeRollCall", [
       transition("void => *", [
-        style({ backgroundColor: "white" }),
+        style({ backgroundColor: "transparent" }),
         animate(1000),
       ]),
     ]),
   ],
+  imports: [
+    NgIf,
+    MatProgressBarModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    ChildBlockComponent,
+    NgForOf,
+    NgClass,
+    RollCallTabComponent,
+    HammerModule,
+  ],
+  providers: [
+    {
+      provide: HAMMER_GESTURE_CONFIG,
+      useClass: HorizontalHammerConfig,
+    },
+  ],
+  standalone: true,
 })
-export class RollCallComponent implements OnInit {
+export class RollCallComponent implements OnChanges {
   /**
    * The event to be displayed and edited.
    */
   @Input() eventEntity: Note;
+
+  /**
+   * (optional) property name of the participant entities by which they are sorted
+   */
+  @Input() sortParticipantsBy?: string;
 
   /**
    * Emitted when the roll call is finished and results can be saved.
@@ -49,35 +99,72 @@ export class RollCallComponent implements OnInit {
    */
   @Output() exit = new EventEmitter();
 
-  currentIndex: number;
+  /**
+   * The index, child and attendance that is currently being processed
+   */
+  currentIndex = 0;
+  currentChild: Child;
+  currentAttendance: EventAttendance;
+  /**
+   * whether any changes have been made to the model
+   */
+  isDirty: boolean = false;
 
   /** options available for selecting an attendance status */
   availableStatus: AttendanceStatusType[];
 
-  entries: { child: Child; attendance: EventAttendance }[];
-  form: FormGroup;
+  children: Child[] = [];
 
   constructor(
-    private configService: ConfigService,
+    private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
-    private loggingService: LoggingService,
-    private confirmationDialog: ConfirmationDialogService
+    private formDialog: FormDialogService,
+    private loggingService: LoggingService
   ) {}
 
-  async ngOnInit() {
-    this.loadAttendanceStatusTypes();
-    await this.loadParticipants();
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes.eventEntity) {
+      this.loadAttendanceStatusTypes();
+      await this.loadParticipants();
+      this.setInitialIndex();
+    }
+    if (changes.sortParticipantsBy) {
+      this.sortParticipants();
+    }
+  }
+
+  /**
+   * Set the index of the first child that expects user input.
+   * This is the first entry of the list, if the user has never recorded attendance
+   * for this event. Else it is the first child without any attendance information
+   * (i.e. got skipped or the user left at this child)
+   * @private
+   */
+  private setInitialIndex() {
+    let index = 0;
+    for (const entry of this.children) {
+      if (!this.eventEntity.getAttendance(entry.getId())?.status?.id) {
+        break;
+      }
+      index += 1;
+    }
+
+    // do not jump to end - if all participants are recorded, start with first instead
+    if (index >= this.children.length) {
+      index = 0;
+    }
+
+    this.goToParticipantWithIndex(index);
   }
 
   private loadAttendanceStatusTypes() {
-    this.availableStatus = this.configService.getConfig<
-      ConfigurableEnumConfig<AttendanceStatusType>
-    >(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
+    this.availableStatus = this.enumService.getEnumValues<AttendanceStatusType>(
+      ATTENDANCE_STATUS_CONFIG_ID
+    );
   }
 
   private async loadParticipants() {
-    this.entries = [];
-    this.currentIndex = 0;
+    this.children = [];
     for (const childId of this.eventEntity.children) {
       let child;
       try {
@@ -89,70 +176,82 @@ export class RollCallComponent implements OnInit {
             " for event " +
             this.eventEntity.getId()
         );
+        this.eventEntity.removeChild(childId);
         continue;
       }
-      this.entries.push({
-        child: child,
-        attendance: this.eventEntity.getAttendance(childId),
-      });
+      this.children.push(child);
     }
+    this.sortParticipants();
   }
 
-  markAttendance(attendance: EventAttendance, status: AttendanceStatusType) {
-    attendance.status = status;
-
-    // automatically move to next participant after a short delay giving the user visual feedback on the selected status
-    setTimeout(() => this.goToNextParticipant(), 750);
-  }
-
-  goToNextParticipant(newIndex?: number) {
-    if (newIndex !== undefined) {
-      this.currentIndex = newIndex;
-    } else {
-      this.currentIndex++;
+  private sortParticipants() {
+    if (!this.sortParticipantsBy) {
+      return;
     }
 
-    if (this.isFinished()) {
+    this.children.sort(sortByAttribute<any>(this.sortParticipantsBy, "asc"));
+    // also sort the participants in the Note entity itself for display in details view later
+    this.eventEntity.children = this.children.map((e) => e.getId());
+  }
+
+  markAttendance(status: AttendanceStatusType) {
+    this.currentAttendance.status = status;
+    this.isDirty = true;
+
+    this.goToNext();
+  }
+
+  goToParticipantWithIndex(newIndex: number) {
+    this.currentIndex = newIndex;
+
+    if (this.isFinished) {
       this.complete.emit(this.eventEntity);
-    }
-  }
-
-  isFinished(): boolean {
-    return this.currentIndex >= this.entries?.length;
-  }
-
-  save() {
-    if (this.isFinished()) {
-      this.goToNextParticipant(this.entries?.length);
     } else {
-      const remainingParticipant = this.entries.length - this.currentIndex;
-      const dialogRef = this.confirmationDialog.openDialog(
-        $localize`:Save & Next confirmation title: Save & Exit`,
-        $localize`:Save & Exit confirmation text:Are you sure you want to save, exit and skip the remaining ${remainingParticipant.toString()} participants?`
+      this.currentChild = this.children[this.currentIndex];
+      this.currentAttendance = this.eventEntity.getAttendance(
+        this.currentChild.getId()
       );
-
-      dialogRef.afterClosed().subscribe((confirmed) => {
-        if (confirmed) {
-          this.goToNextParticipant(this.entries?.length);
-        }
-      });
     }
   }
 
-  abort() {
-    if (this.isFinished()) {
-      this.exit.emit();
-    } else {
-      const dialogRef = this.confirmationDialog.openDialog(
-        $localize`:Abort confirmation title: Abort`,
-        $localize`:Abort confirmation text:Are you sure you want to exit and discard all recordings?`
-      );
-
-      dialogRef.afterClosed().subscribe((confirmed) => {
-        if (confirmed) {
-          this.exit.emit();
-        }
-      });
+  goToPrevious() {
+    if (this.currentIndex - 1 >= 0) {
+      this.goToParticipantWithIndex(this.currentIndex - 1);
     }
+  }
+
+  goToNext() {
+    if (this.currentIndex + 1 <= this.children.length) {
+      this.goToParticipantWithIndex(this.currentIndex + 1);
+    }
+  }
+
+  goToFirst() {
+    this.goToParticipantWithIndex(0);
+  }
+
+  goToLast() {
+    // jump directly to completed state, i.e. beyond last participant index
+    this.goToParticipantWithIndex(this.children.length);
+  }
+
+  get isFirst(): boolean {
+    return this.currentIndex === 0;
+  }
+
+  get isLast(): boolean {
+    return this.currentIndex === this.children.length - 1;
+  }
+
+  get isFinished(): boolean {
+    return this.currentIndex >= this.children.length;
+  }
+
+  finish() {
+    this.exit.emit();
+  }
+
+  showDetails() {
+    this.formDialog.openFormPopup(this.eventEntity, [], NoteDetailsComponent);
   }
 }

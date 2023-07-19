@@ -1,16 +1,13 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { RouterTestingModule } from "@angular/router/testing";
 import { ReportingComponent } from "./reporting.component";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
-import { ReportingService } from "../reporting.service";
-import { MatNativeDateModule } from "@angular/material/core";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { FontAwesomeIconsModule } from "../../../core/icons/font-awesome-icons.module";
-import { ReportingModule } from "../reporting.module";
+import { DataAggregationService } from "../data-aggregation.service";
 import { genders } from "../../../child-dev-project/children/model/genders";
-import { ExportService } from "../../../core/export/export-service/export.service";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { DataTransformationService } from "app/core/export/data-transformation-service/data-transformation.service";
+import { DownloadService } from "../../../core/export/download-service/download.service";
 
 const reportingService = {
   calculateReport: () => {
@@ -184,17 +181,11 @@ const reportingService = {
 };
 
 export default {
-  title: "Features/Reporting",
+  title: "Features/Reporting/Report",
   component: ReportingComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        ReportingModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        BrowserAnimationsModule,
-        FontAwesomeIconsModule,
-      ],
+      imports: [ReportingComponent, StorybookBaseModule],
       providers: [
         {
           provide: ActivatedRoute,
@@ -202,10 +193,14 @@ export default {
             data: of({ config: { reports: [{ title: "Dummy Report" }] } }),
           },
         },
-        { provide: ReportingService, useValue: reportingService },
+        { provide: DataAggregationService, useValue: reportingService },
         {
-          provide: ExportService,
-          useValue: { createJson: () => {}, createCsv: () => {} },
+          provide: DataTransformationService,
+          useValue: { queryAndTransformData: () => {} },
+        },
+        {
+          provide: DownloadService,
+          useValue: { triggerDownload: () => {} },
         },
       ],
     }),

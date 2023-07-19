@@ -1,61 +1,17 @@
-<h1 i18n="Admin Header">Administration & Configuration</h1>
+<h1>Administration & Configuration</h1>
 
-<p
-  style="font-style: italic; font-weight: bold"
-  i18n="Admin security paragraph"
->
+<strong><em>
   Warning: This section is intended for system administrators only. Make sure
   you know what you are doing.
-</p>
+</em></strong>
 
-<br />
-<hr />
-<h2 i18n="Utility Functions header">Utility Functions</h2>
-<p>
-  <button
-    (click)="updatePhotoFilenames()"
-    mat-stroked-button
-    i18n="Auto-Update button"
-  >
-    Auto-Update children's photo filenames
-  </button>
-  <button
-    (click)="attendanceMigration.createEventsForAllAttendanceMonths()"
-    mat-stroked-button
-    i18n="Data migration"
-  >
-    Migration
-  </button>
-  <button
-    (click)="notesMigration.migrateToMultiUser()"
-    mat-stroked-button
-    i18n="Data migration for notes"
-  >
-    Migrate Notes to new author users
-  </button>
-  <button
-    (click)="childrenMigrationService.migratePhotoFormat()"
-    mat-stroked-button
-    i18n="Data migration for photos"
-  >
-    Migrate Children to correct photo format
-  </button>
-  <button (click)="migrateConfigChanges()" mat-stroked-button>
-    Migrate Config to new format
-  </button>
-  <button (click)="permissionsMigrationService.migrateRoutePermissions()" mat-stroked-button>
-    Migrate Permissions to new Format
-  </button>
-</p>
-
-<br />
-<hr />
-<h2 i18n="Backup header">Backup</h2>
+<br/>
+<hr/>
+<h2>Backup</h2>
 <p>
   <button
     (click)="saveBackup()"
     mat-stroked-button
-    i18n="Download-Update button"
   >
     Download Backup (.json)
   </button>
@@ -63,53 +19,35 @@
   <button
     (click)="backupImport.click()"
     mat-stroked-button
-    i18n="Restore-Update button"
   >
     Restore Backup (.json)
   </button>
   <input
     #backupImport
     type="file"
-    style="display: none"
-    (change)="loadBackup($event.target.files[0])"
+    hidden
+    (change)="loadBackup($event)"
   />
 </p>
 
-<br />
-<hr />
-<h2 i18n="Export header">Export</h2>
+<br/>
+<hr/>
+<h2>Export</h2>
 <p>
   <button
     (click)="saveCsvExport()"
     mat-stroked-button
-    i18n="Download database button"
   >
     Download whole database (.csv)
   </button>
-  &nbsp;
-  <button
-    (click)="csvImport.click()"
-    mat-stroked-button
-    i18n="Import database button"
-  >
-    Import (.csv)
-  </button>
-  <input
-    #csvImport
-    type="file"
-    style="display: none"
-    (change)="loadCsv($event.target.files[0])"
-  />
 </p>
-
-<br />
-<hr />
-<h2 i18n="Application configuration header">Application Configuration</h2>
+<br/>
+<hr/>
+<h2>Application Configuration</h2>
 <p>
   <button
     (click)="downloadConfigClick()"
     mat-stroked-button
-    i18n="Download configuration button"
   >
     Download configuration
   </button>
@@ -117,28 +55,29 @@
   <button
     (click)="configImport.click()"
     mat-stroked-button
-    i18n="Upload configuration button"
   >
     Upload new configuration
   </button>
   <input
     #configImport
     type="file"
-    style="display: none"
-    (change)="uploadConfigFile($event.target.files[0])"
+    hidden
+    (change)="uploadConfigFile($event)"
   />
+  &nbsp;
+  <button
+    routerLink="config-import"
+    mat-stroked-button
+  >
+    Generate configuration from spreadsheet
+  </button>
 </p>
 
-<br />
-<hr />
-<h2 i18n="App-Config header">AppConfig</h2>
-<p>{{ appConfig | json }}</p>
-
-<br />
-<hr />
-<h2 i18n="Debug PouchDB header">Debug the PouchDB</h2>
+<br/>
+<hr/>
+<h2>Debug the PouchDB</h2>
 <p>
-  <button (click)="debugDatabase()" mat-stroked-button i18n="Log button">
+  <button (click)="debugDatabase()" mat-stroked-button>
     Send to console.log()
   </button>
 </p>
@@ -146,18 +85,25 @@
   <button
     (click)="clearDatabase()"
     mat-stroked-button
-    i18n="Empty database button"
   >
     Empty Database
   </button>
 </p>
 
-<br />
-<hr />
-<h2 i18n="Alert log header">Alert Log</h2>
-<table>
+<br/>
+<hr/>
+<h2 id="alert-log-heading">Alert Log</h2>
+<table aria-describedby="alert-log-heading" class="admin-table">
+  <thead>
+  <th class="shrink-width">Timestamp</th>
+  <th class="shrink-width">Type</th>
+  <th>Message</th>
+  </thead>
+  <tbody>
   <tr *ngFor="let alert of alerts.reverse()">
+    <td>{{alert.timestamp | date: "medium"}}</td>
     <td>{{ alert.type }}</td>
     <td>{{ alert.message }}</td>
   </tr>
+  </tbody>
 </table>

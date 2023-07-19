@@ -5,14 +5,8 @@ import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";
 import { groupBy } from "../../utils/utils";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
-import { ConfigService } from "../../core/config/config.service";
-import {
-  INTERACTION_TYPE_CONFIG_ID,
-  InteractionType,
-} from "../notes/model/interaction-type.interface";
 import { EventNote } from "./model/event-note";
 import { ChildrenService } from "../children/children.service";
-import { CONFIGURABLE_ENUM_CONFIG_PREFIX } from "../../core/configurable-enum/configurable-enum.interface";
 
 @Injectable({
   providedIn: "root",
@@ -21,40 +15,30 @@ export class AttendanceService {
   constructor(
     private entityMapper: EntityMapperService,
     private dbIndexing: DatabaseIndexingService,
-    private configService: ConfigService,
     private childrenService: ChildrenService
   ) {
     this.createIndices();
   }
 
   private createIndices() {
-    const meetingInteractionTypes = this.configService
-      .getConfig<InteractionType[]>(
-        CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
-      )
-      .filter((t) => t.isMeeting)
-      .map((t) => t.id);
-    this.createEventsIndex(meetingInteractionTypes);
+    this.createEventsIndex();
     this.createRecurringActivitiesIndex();
   }
 
-  private createEventsIndex(meetingInteractionTypes: string[]): Promise<void> {
+  private createEventsIndex(): Promise<void> {
     const designDoc = {
       _id: "_design/events_index",
       views: {
         by_date: {
           map: `(doc) => {
-            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") &&
-                ${JSON.stringify(
-                  meetingInteractionTypes
-                )}.includes(doc.category)
-            ) {
+            if (doc._id.startsWith("${EventNote.ENTITY_TYPE}")) {
               var d = new Date(doc.date || null);
               var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
               emit(dString);
             }
           }`,
         },
+        // TODO: remove this and use general Note's relatedEntities index?
         by_activity: {
           map: `(doc) => {
             if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {
@@ -119,19 +103,24 @@ export class AttendanceService {
 
     const relevantNormalNotes = this.childrenService
       .getNotesInTimespan(start, end)
-      .then((notes) => notes.filter((n) => n.category.isMeeting));
+      .then((notes) => notes.filter((n) => n.category?.isMeeting));
 
     const allResults = await Promise.all([eventNotes, relevantNormalNotes]);
-    const existingEvents = allResults[0].concat(allResults[1]);
+    return allResults[0].concat(allResults[1]);
+  }
 
-    for (const event of existingEvents) {
-      const participants = await this.loadParticipantsOfGroups(event.schools);
+  async getEventsWithUpdatedParticipants(date: Date) {
+    const events = await this.getEventsOnDate(date, date);
+    for (const event of events) {
+      const participants = await this.loadParticipantsOfGroups(
+        event.schools,
+        date
+      );
       for (const newParticipant of participants) {
         event.addChild(newParticipant);
       }
     }
-
-    return existingEvents;
+    return events;
   }
 
   /**
@@ -158,7 +147,7 @@ export class AttendanceService {
         String(sinceDate.getDate()).padStart(2, "0");
     }
 
-    return await this.dbIndexing.queryIndexDocsRange(
+    return this.dbIndexing.queryIndexDocsRange(
       EventNote,
       "events_index/by_activity",
       activityId + dateLimit,
@@ -176,6 +165,7 @@ export class AttendanceService {
     sinceDate?: Date
   ): Promise<ActivityAttendance[]> {
     const periods = new Map<number, ActivityAttendance>();
+
     function getOrCreateAttendancePeriod(event) {
       const month = new Date(event.date.getFullYear(), event.date.getMonth());
       let attMonth = periods.get(month.getTime());
@@ -188,7 +178,10 @@ export class AttendanceService {
       return attMonth;
     }
 
-    const events = await this.getEventsForActivity(activity._id, sinceDate);
+    const events = await this.getEventsForActivity(
+      activity.getId(true),
+      sinceDate
+    );
 
     for (const event of events) {
       const record = getOrCreateAttendancePeriod(event);
@@ -205,11 +198,7 @@ export class AttendanceService {
     until: Date
   ): Promise<ActivityAttendance[]> {
     const matchingEvents = await this.getEventsOnDate(from, until);
-
-    const groupedEvents: Map<string, EventNote[]> = groupBy(
-      matchingEvents,
-      "relatesTo"
-    );
+    const groupedEvents = groupBy(matchingEvents, "relatesTo");
 
     const records = [];
     for (const [activityId, activityEvents] of groupedEvents) {
@@ -234,9 +223,10 @@ export class AttendanceService {
       childId
     );
 
-    const visitedSchools = (
-      await this.childrenService.queryRelationsOf("child", childId)
-    ).filter((relation) => relation.isActive);
+    const visitedSchools = await this.childrenService.queryActiveRelationsOf(
+      "child",
+      childId
+    );
     for (const currentRelation of visitedSchools) {
       const activitiesThroughRelation = await this.dbIndexing.queryIndexDocs(
         RecurringActivity,
@@ -260,34 +250,50 @@ export class AttendanceService {
     date: Date
   ): Promise<EventNote> {
     const instance = new EventNote();
-    const schoolParticipants = await this.loadParticipantsOfGroups(
-      activity.linkedGroups
-    );
     instance.date = date;
     instance.subject = activity.title;
-    instance.children = [
-      ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
-    ];
+    instance.children = await this.getActiveParticipantsOfActivity(
+      activity,
+      date
+    );
     instance.schools = activity.linkedGroups;
-    instance.relatesTo = activity._id;
+    instance.relatesTo = activity.getId(true);
     instance.category = activity.type;
     return instance;
+  }
+
+  private async getActiveParticipantsOfActivity(
+    activity: RecurringActivity,
+    date: Date
+  ): Promise<string[]> {
+    const schoolParticipants = await this.loadParticipantsOfGroups(
+      activity.linkedGroups,
+      date
+    );
+
+    return [
+      ...new Set(activity.participants.concat(...schoolParticipants)), //  remove duplicates
+    ].filter((p) => !activity.excludedParticipants.includes(p));
   }
 
   /**
    * Load all participants' ids for the given list of groups
    * @param linkedGroups
+   * @param date on which the participants should be part of the group
    */
   private async loadParticipantsOfGroups(
-    linkedGroups: string[]
+    linkedGroups: string[],
+    date: Date
   ): Promise<string[]> {
     const childIdPromises = linkedGroups.map((groupId) =>
       this.childrenService
-        .queryRelationsOf("school", groupId)
-        .then((relations) => relations.map((r) => r.childId))
+        .queryActiveRelationsOf("school", groupId, date)
+        .then((relations) =>
+          relations.map((r) => r.childId).filter((id) => !!id)
+        )
     );
     const allParticipants = await Promise.all(childIdPromises);
     // flatten and remove duplicates
-    return Array.from(new Set([].concat.apply([], allParticipants)));
+    return Array.from(new Set([].concat(...allParticipants)));
   }
 }

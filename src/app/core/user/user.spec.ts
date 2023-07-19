@@ -16,67 +16,29 @@
  */
 
 import { User } from "./user";
-import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../entity/model/entity";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { testEntitySubclass } from "../entity/model/entity.spec";
 
 describe("User", () => {
-  const ENTITY_TYPE = "User";
-  let entitySchemaService: EntitySchemaService;
+  testEntitySubclass("User", User, {
+    _id: "User:tester",
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
-
-  it("has correct _id and entityId and type", function () {
-    const id = "test1";
-    const entity = new User(id);
-
-    expect(entity.getId()).toBe(id);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
+    name: "tester",
+    paginatorSettingsPageSize: {},
   });
 
-  it("has correct type/prefix", function () {
-    const id = "test1";
-    const entity = new User(id);
+  it("should not allow to change the name after initialization and set it as the ID", () => {
+    const user = new User();
+    user.name = "test-name";
 
-    expect(entity.getType()).toBe(ENTITY_TYPE);
-    expect(Entity.extractTypeFromId(entity._id)).toBe(ENTITY_TYPE);
+    expect(user.name).toBe("test-name");
+    expect(user.getId()).toBe("test-name");
+    expect(() => (user.name = "another-name")).toThrowError();
   });
 
-  it("has all and only defined schema fields in rawData", function () {
-    const id = "test1";
-    const expectedData = {
-      _id: ENTITY_TYPE + ":" + id,
+  it("should not fail when name is actually the same", () => {
+    const user = new User();
+    user.name = "test-name";
 
-      name: "tester",
-      cloudPasswordEnc: "encryptedPassword",
-      cloudBaseFolder: "/aam-digital/",
-      paginatorSettingsPageSize: {},
-
-      searchIndices: [],
-    };
-    expectedData.searchIndices.push(expectedData.name);
-
-    const entity = new User(id);
-    entity.name = expectedData.name;
-    // @ts-ignore
-    entity.cloudPasswordEnc = expectedData.cloudPasswordEnc;
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData).toEqual(expectedData);
-  });
-
-  it("sets cloud passwords", () => {
-    const user = new User("test1");
-    expect(user.cloudPasswordDec).not.toBeDefined();
-
-    user.setCloudPassword("cloudpwd", "userpwd");
-
-    expect(user.cloudPasswordDec).toEqual("cloudpwd");
-    expect(user.decryptCloudPassword("userpwd")).toEqual("cloudpwd");
+    expect(() => (user.name = "test-name")).not.toThrowError();
   });
 });

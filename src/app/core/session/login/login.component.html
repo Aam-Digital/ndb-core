@@ -15,9 +15,10 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<mat-card class="login-panel centered mat-elevation-z2">
-  <mat-card-title i18n="Sign in title"> Please Sign In </mat-card-title>
-
+<mat-card appearance="outlined" class="mat-elevation-z2 full-width border-box-sizing">
+  <mat-card-header>
+    <mat-card-title i18n="Sign in title"> Please Sign In</mat-card-title>
+  </mat-card-header>
   <mat-card-content>
     <form>
       <p class="login-error">
@@ -25,16 +26,15 @@
       </p>
 
       <p>
-        <mat-form-field class="login-field">
+        <mat-form-field class="full-width">
           <input
+            #usernameInput
             matInput
             i18n-placeholder="Username placeholder"
             placeholder="Username"
             type="text"
             [(ngModel)]="username"
-            (keyup.enter)="login()"
             required
-            autofocus
             name="username"
             autocomplete="username"
           />
@@ -42,31 +42,40 @@
         </mat-form-field>
       </p>
       <p>
-        <mat-form-field class="login-field">
+        <mat-form-field class="full-width">
           <input
             matInput
             i18n-placeholder="password placeholder"
             placeholder="Password"
-            type="password"
+            [type]="passwordVisible ? 'text' : 'password'"
             [(ngModel)]="password"
-            (keyup.enter)="login()"
             required
             name="password"
             autocomplete="current-password"
+            (keydown.enter)="login()"
           />
+          <fa-icon
+            [icon]="passwordVisible ? 'eye-slash' : 'eye'"
+            matIconSuffix
+            [matTooltip]="passwordVisible ? hidePasswordHint : showPasswordHint"
+            (click)="togglePasswordVisible()"
+          >
+          </fa-icon>
         </mat-form-field>
       </p>
 
       <p>
         <button
           mat-raised-button
-          type="submit"
+          type="button"
           [disabled]="loginInProgress"
           (click)="login()"
           i18n="Login button"
         >
           Login
         </button>
+
+        <app-password-reset></app-password-reset>
       </p>
     </form>
   </mat-card-content>

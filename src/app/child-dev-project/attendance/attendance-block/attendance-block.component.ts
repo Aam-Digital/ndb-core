@@ -1,6 +1,9 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, Inject, Input, LOCALE_ID, OnChanges } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
+import { DatePipe, formatPercent, NgIf, PercentPipe } from "@angular/common";
+import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
+import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 
 /**
  * Display attendance details of a single period for a participant as a compact block.
@@ -9,16 +12,22 @@ import { AttendanceLogicalStatus } from "../model/attendance-status";
   selector: "app-attendance-block",
   templateUrl: "./attendance-block.component.html",
   styleUrls: ["./attendance-block.component.scss"],
+  imports: [
+    NgIf,
+    PercentPipe,
+    DatePipe,
+    TemplateTooltipDirective,
+    AttendanceCalendarComponent,
+  ],
+  standalone: true,
 })
 export class AttendanceBlockComponent implements OnChanges {
   @Input() attendanceData: ActivityAttendance;
   @Input() forChild: string;
-  tooltip = false;
-  tooltipTimeout;
   LStatus = AttendanceLogicalStatus;
   logicalCount: { [key in AttendanceLogicalStatus]?: number };
 
-  constructor() {}
+  constructor(@Inject(LOCALE_ID) private locale: string) {}
 
   ngOnChanges() {
     this.logicalCount =
@@ -26,22 +35,25 @@ export class AttendanceBlockComponent implements OnChanges {
       {};
   }
 
-  showTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = true), 1000);
-  }
-  hideTooltip() {
-    if (this.tooltipTimeout) {
-      clearTimeout(this.tooltipTimeout);
-    }
-    this.tooltipTimeout = setTimeout(() => (this.tooltip = false), 150);
-  }
   get attendanceDescription(): string {
     return `${this.logicalCount[this.LStatus.PRESENT]} / ${
       (this.logicalCount[this.LStatus.PRESENT] || 0) +
       (this.logicalCount[this.LStatus.ABSENT] || 0)
     }`;
+  }
+
+  get attendancePercentage(): string {
+    const percentage = this.attendanceData.getAttendancePercentage(
+      this.forChild
+    );
+    if (!Number.isFinite(percentage)) {
+      return "-";
+    } else {
+      return formatPercent(percentage, this.locale, "1.0-0");
+    }
+  }
+
+  get warningLevel(): string {
+    return this.attendanceData.getWarningLevel(this.forChild);
   }
 }

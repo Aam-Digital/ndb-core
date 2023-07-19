@@ -15,68 +15,57 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { RouterModule, Routes } from "@angular/router";
-import { ModuleWithProviders } from "@angular/core";
-import { DashboardComponent } from "./core/dashboard/dashboard/dashboard.component";
-import { SchoolsListComponent } from "./child-dev-project/schools/schools-list/schools-list.component";
+import { Routes } from "@angular/router";
+import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/application-loading.component";
+import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
-import { ChildrenListComponent } from "./child-dev-project/children/children-list/children-list.component";
-import { AdminComponent } from "./core/admin/admin/admin.component";
-import { NotesManagerComponent } from "./child-dev-project/notes/notes-manager/notes-manager.component";
-import { AddDayAttendanceComponent } from "./child-dev-project/attendance/add-day-attendance/add-day-attendance.component";
-import { AttendanceManagerComponent } from "./child-dev-project/attendance/attendance-manager/attendance-manager.component";
-import { MarkdownPageComponent } from "./core/markdown-page/markdown-page/markdown-page.component";
-import { UserListComponent } from "./core/admin/user-list/user-list.component";
-import { EntityDetailsComponent } from "./core/entity-components/entity-details/entity-details.component";
-import { ConflictResolutionListComponent } from "./conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
-import { ActivityListComponent } from "./child-dev-project/attendance/activity-list/activity-list.component";
-import { ReportingComponent } from "./features/reporting/reporting/reporting.component";
-import { UserRoleGuard } from "./core/permissions/user-role.guard";
+import { SupportComponent } from "./core/support/support/support.component";
+import { AuthGuard } from "./core/session/auth.guard";
+import { LoginComponent } from "./core/session/login/login.component";
 
-export const COMPONENT_MAP = {
-  Dashboard: DashboardComponent,
-  UserAccount: UserAccountComponent,
-  NotesManager: NotesManagerComponent,
-  UserList: UserListComponent,
-  MarkdownPage: MarkdownPageComponent,
-  AttendanceManager: AttendanceManagerComponent,
-  AddDayAttendance: AddDayAttendanceComponent,
-  SchoolsList: SchoolsListComponent,
-  ChildrenList: ChildrenListComponent,
-  ActivityList: ActivityListComponent,
-  Admin: AdminComponent,
-  ConflictResolution: ConflictResolutionListComponent,
-  EntityDetails: EntityDetailsComponent,
-  Reporting: ReportingComponent,
-};
+/**
+ * Marks a class to be the target when routing.
+ * Use this by adding the annotation `@RouteTarget("...")` to a component.
+ * The name provided to the annotation can then be used in the configuration.
+ *
+ * IMPORTANT:
+ *  The component also needs to be added to the `...Components` list of the respective module.
+ */
+export const RouteTarget = (_name: string) => (_) => undefined;
 
 /**
  * All routes configured for the main app routing.
  */
-export const routes: Routes = [
+export const allRoutes: Routes = [
   // routes are added dynamically by the RouterService
   {
-    path: "admin/conflicts",
-    canActivate: [UserRoleGuard],
-    loadChildren: () =>
-      import("./conflict-resolution/conflict-resolution.module").then(
-        (m) => m["ConflictResolutionModule"]
+    path: "coming-soon/:feature",
+    loadComponent: () =>
+      import("./core/coming-soon/coming-soon/coming-soon.component").then(
+        (c) => c.ComingSoonComponent
       ),
+    canActivate: [AuthGuard],
   },
   {
-    path: "coming-soon",
-    loadChildren: () =>
-      import("./core/coming-soon/coming-soon.module").then(
-        (m) => m["ComingSoonModule"]
+    path: "user-account",
+    component: UserAccountComponent,
+    canActivate: [AuthGuard],
+  },
+  { path: "support", component: SupportComponent },
+  // this can't be configured in config as the config is only loaded on login
+  {
+    path: "public-form/:id",
+    loadComponent: () =>
+      import("./features/public-form/public-form.component").then(
+        (c) => c.PublicFormComponent
       ),
   },
-  { path: "**", redirectTo: "/" },
+  { path: "login", component: LoginComponent },
+  { path: "404", component: NotFoundComponent },
+  {
+    path: "**",
+    pathMatch: "full",
+    component: ApplicationLoadingComponent,
+    canActivate: [AuthGuard],
+  },
 ];
-
-/**
- * Main app RouterModule with centrally configured routes.
- */
-export const routing: ModuleWithProviders<RouterModule> = RouterModule.forRoot(
-  routes,
-  { relativeLinkResolution: "legacy" }
-);

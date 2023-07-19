@@ -6,14 +6,12 @@
 >
 </mat-calendar>
 
-<div *ngIf="selectedDate" class="form">
-  <h3 class="selected-title">
+<div *ngIf="selectedDate" class="attendance-calendar-details-form">
+  <h3 class="remove-margin-top">
     {{ selectedDate.toDate() | date }}
   </h3>
 
-  <button mat-icon-button class="form-close" (click)="selectDay()">
-    <span class="fa fa-times"></span>
-  </button>
+  <app-dialog-close (click)="selectDay()"></app-dialog-close>
 
   <div *ngIf="selectedEvent && highlightForChild">
     <div>
@@ -25,7 +23,7 @@
     </div>
 
     <div>
-      <mat-form-field style="width: 100%">
+      <mat-form-field class="full-width">
         <textarea
           matInput
           i18n-placeholder="
@@ -48,15 +46,16 @@
         percent)
       "
     >
-      All excused (out of {{ selectedEvent.children.length }}
-      { selectedEvent.children.length, plural, one {participant} other
-      {participants} })
+      All excused (out of
+      {{ selectedEvent.children.length }}
+      { selectedEvent.children.length, plural, one {participant} other {participants} }
+      )
     </div>
     <div *ngIf="hasAverage" i18n>
-      {{ selectedEventStats.average | percent: "1.0-0" }} attended (of
+      {{ selectedEventStats.average | percent: "1.0-0" }}
+      attended (of
       {{ selectedEvent.children.length }}
-      { selectedEvent.children.length, plural, one {participant} other
-      {participants} })
+      { selectedEvent.children.length, plural, one {participant} other {participants} })
     </div>
     <div
       *ngIf="selectedEventStats.excludedUnknown > 0"
@@ -64,10 +63,11 @@
       class="unknown-status-notice"
     >
       {{ selectedEventStats.excludedUnknown }}
-      { selectedEventStats.excludedUnknown, plural, one {participant} other
-      {participants} } without recorded status
+      { selectedEventStats.excludedUnknown, plural, one {participant} other {participants} }
+      without recorded status
     </div>
     <button
+      class="margin-top-regular"
       i18n="
         Show Details Button|Allows the user to see details of an event that took
         place at a particular day
@@ -80,14 +80,14 @@
     </button>
   </div>
 
-  <div *ngIf="!selectedEvent" class="no-events-notice">
-    <p
+  <ng-container *ngIf="!selectedEvent">
+    <em
       i18n="
         No Events|Informs the user that there are no events at a particular date
       "
     >
       no events on this date
-    </p>
+    </em>
     <button
       mat-stroked-button
       (click)="createNewEvent()"
@@ -95,9 +95,12 @@
         Add New Event Button|Allows the user to create a new event for the
         selected date
       "
-      angulartics2On="click" angularticsCategory="Attendance" angularticsAction="calendar_create_event"
+      angulartics2On="click"
+      angularticsCategory="Attendance"
+      angularticsAction="calendar_create_event"
+      style="margin-top: 12px; display: block"
     >
       Add new event
     </button>
-  </div>
+  </ng-container>
 </div>

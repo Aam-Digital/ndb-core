@@ -1,51 +1,69 @@
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
+@use "sass:color";
+
 .group-select-option {
   width: 100%;
-  padding: 16px;
   cursor: pointer;
   box-sizing: border-box;
   border: 1px solid;
   border-top: 0;
-}
-
-.group-select-option:first-child {
-  border-top: 1px solid;
-}
-
-.options-wrapper {
-  margin-top: 16px;
-}
-
-.hidden {
-  display: none;
-}
-
-.nav-button {
-  margin: 10px;
-  flex: none;
+  &:first-child {
+    border-top: 1px solid;
+  }
 }
 
 .roll-call-complete {
-  text-align: center;
-  line-height: 2em;
+  display: flex;
+  flex-direction: column;
+  place-content: center;
+  place-items: center;
+  height: 200px;
+  gap: sizes.$small;
 
-  padding-top: 20px;
-
-  background-color: #c8e6c9;
-  border-radius: 5px;
-}
-.roll-call-complete-icon {
-  font-size: 40px;
-}
-.roll-call-complete-save {
-  height: 72px;
-}
-
-.filler {
-  margin-bottom: 10px;
+  background-color: color.adjust(colors.$success, $alpha: -0.5);
+  border-radius: 4px;
 }
 
 .progress-label {
-  display: inline-block;
+  display: flex;
+  place-content: center;
+}
+
+.attendance-progress-bar {
+  display: flex;
+  flex-direction: column;
+  margin-top: sizes.$small;
+  margin-bottom: sizes.$small;
+}
+
+.progress-nav {
+  margin-top: -4px;
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.tab-body {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  display: flex;
+  overflow-x: hidden;
+}
+
+.tab-body-active {
   position: relative;
-  float: right;
+  flex-grow: 1;
+  place-content: center;
+  z-index: 1;
+}
+
+.tab-wrapper {
+  display: flex;
+  position: relative;
+  overflow-x: hidden;
 }

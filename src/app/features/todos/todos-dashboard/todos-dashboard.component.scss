@@ -1,0 +1,15 @@
+@use "../../../core/dashboard/dashboard-widget-base";
+@use "../../../../styles/variables/sizes";
+
+.row-view {
+  cursor: pointer;
+  position: relative;
+
+  & > td:first-child {
+    padding-left: 2 * sizes.$small;
+  }
+
+  & > td:last-child {
+    padding-right: sizes.$small;
+  }
+}

@@ -1,19 +1,16 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
-import { AttendanceModule } from "../../attendance.module";
 import { RecurringActivity } from "../../model/recurring-activity";
-import { FontAwesomeIconsModule } from "../../../../core/icons/font-awesome-icons.module";
 import { Child } from "../../../children/model/child";
 import { generateEventWithAttendance } from "../../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import moment from "moment";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Angulartics2Module } from "angulartics2";
-import { Database } from "../../../../core/database/database";
-import { PouchDatabase } from "../../../../core/database/pouch-database";
-import { SessionService } from "../../../../core/session/session-service/session.service";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { LoginState } from "../../../../core/session/session-states/login-state.enum";
+import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
 
 const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
@@ -43,7 +40,7 @@ const events: Note[] = [
   ),
   generateEventWithAttendance(
     [
-      [child1.getId(), AttendanceLogicalStatus.ABSENT],
+      [child1.getId(), AttendanceLogicalStatus.ABSENT, "Remark 123"],
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(2, "day").toDate(),
@@ -52,34 +49,39 @@ const events: Note[] = [
 ];
 
 export default {
-  title: "Attendance/Dashboards/AttendanceWeekDashboard",
+  title: "Features/Attendance/Dashboards/AttendanceWeekDashboard",
   component: AttendanceWeekDashboardComponent,
   decorators: [
     moduleMetadata({
       imports: [
-        AttendanceModule,
-        FontAwesomeIconsModule,
-        RouterTestingModule,
-        Angulartics2Module.forRoot(),
+        AttendanceWeekDashboardComponent,
+        StorybookBaseModule,
+        MockedTestingModule.withState(LoginState.LOGGED_IN, [
+          act1,
+          act2,
+          child1,
+          child2,
+          ...events,
+          act1,
+        ]),
       ],
       providers: [
         {
-          provide: SessionService,
-          useValue: null,
-        },
-        {
-          provide: Database,
-          useValue: PouchDatabase.createWithData([
-            act1,
-            act2,
-            child1,
-            child2,
-            ...events,
-          ]),
+          provide: DatabaseIndexingService,
+          useValue: {
+            queryIndexDocsRange: () => Promise.resolve(events),
+            createIndex: () => Promise.resolve(),
+            queryIndexDocs: () => Promise.resolve([]),
+          },
         },
       ],
     }),
   ],
+  parameters: {
+    controls: {
+      exclude: ["tableDataSource"],
+    },
+  },
 } as Meta;
 
 const Template: Story<AttendanceWeekDashboardComponent> = (
@@ -92,5 +94,5 @@ const Template: Story<AttendanceWeekDashboardComponent> = (
 export const Primary = Template.bind({});
 Primary.args = {
   daysOffset: 7,
-  periodLabel: "foo",
+  periodLabel: "since last week",
 };

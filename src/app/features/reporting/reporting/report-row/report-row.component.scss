@@ -1,8 +1,10 @@
-.mat-expansion-panel-header-title,
-.mat-expansion-panel-header-description {
-  width: 50%;
+@use "@angular/material" as mat;
+@use "src/styles/variables/colors";
+
+table tr:nth-child(even) {
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, background);
 }
 
-.disabled-header {
-  pointer-events: none;
+.expand-icon-button {
+  color: colors.$muted
 }

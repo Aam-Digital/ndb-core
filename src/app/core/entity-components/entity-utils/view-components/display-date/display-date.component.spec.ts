@@ -7,21 +7,19 @@ describe("DisplayDateComponent", () => {
   let component: DisplayDateComponent;
   let fixture: ComponentFixture<DisplayDateComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        declarations: [DisplayDateComponent],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [DisplayDateComponent],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(DisplayDateComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({
-      entity: new ChildSchoolRelation(),
-      id: "date",
-    });
+    component.entity = new ChildSchoolRelation();
+    component.id = "date";
+    component.value = new Date();
+    component.config = "dd-MM-yyyy";
     fixture.detectChanges();
   });
 

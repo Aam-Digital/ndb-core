@@ -2,7 +2,6 @@ import { Note } from "./note";
 import { warningLevels } from "../../warning-levels";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
-import { Entity } from "../../../core/entity/model/entity";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceLogicalStatus,
@@ -18,11 +17,14 @@ import {
   CONFIGURABLE_ENUM_CONFIG_PREFIX,
   ConfigurableEnumConfig,
 } from "../../../core/configurable-enum/configurable-enum.interface";
-import { createTestingConfigService } from "../../../core/config/config.service";
 import {
   getWarningLevelColor,
   WarningLevel,
 } from "../../../core/entity/model/warning-level";
+import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { createTestingConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum-testing";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -60,7 +62,7 @@ describe("Note", () => {
   const ENTITY_TYPE = "Note";
   let entitySchemaService: EntitySchemaService;
 
-  const testInteractionTypes: InteractionType[] = [
+  const testInteractionTypes: InteractionType[] = Ordering.imposeTotalOrdering([
     {
       id: "",
       label: "",
@@ -73,62 +75,34 @@ describe("Note", () => {
       id: "GUARDIAN_TALK",
       label: "Talk with Guardians",
     },
-  ];
+  ]);
 
-  beforeEach(
-    waitForAsync(() => {
-      const testConfigs = {};
-      testConfigs[
-        CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID
-      ] = testInteractionTypes;
-      testConfigs[
-        CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID
-      ] = testStatusTypes;
+  beforeEach(waitForAsync(() => {
+    const testConfigs = {};
+    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID] =
+      testInteractionTypes;
+    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID] =
+      testStatusTypes;
 
-      entitySchemaService = new EntitySchemaService();
-      entitySchemaService.registerSchemaDatatype(
-        new ConfigurableEnumDatatype(createTestingConfigService(testConfigs))
-      );
-    })
-  );
-
-  it("has correct _id and entityId", function () {
-    const id = "test1";
-    const entity = new Note(id);
-
-    expect(entity.getId()).toBe(id);
-    expect(entity.getType()).toBe(ENTITY_TYPE);
-    expect(Entity.extractEntityIdFromId(entity._id)).toBe(id);
-  });
-
-  it("has all and only defined schema fields in rawData", function () {
-    const id = "1";
-    const expectedData = {
-      _id: ENTITY_TYPE + ":" + id,
-
-      children: ["1", "2", "5"],
-      childrenAttendance: [],
-      schools: [],
-      date: new Date(),
-      subject: "Note Subject",
-      text: "Note text",
-      authors: ["1"],
-      category: "GUARDIAN_TALK",
-      warningLevel: "OK",
-
-      searchIndices: [],
-    };
-
-    const entity = new Note(id);
-    Object.assign(entity, expectedData);
-    entity.category = testInteractionTypes.find(
-      (c) => c.id === "GUARDIAN_TALK"
+    entitySchemaService = new EntitySchemaService();
+    entitySchemaService.registerSchemaDatatype(
+      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
     );
-    entity.warningLevel = warningLevels.find((level) => level.id === "OK");
+  }));
 
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+  testEntitySubclass("Note", Note, {
+    _id: "Note:some-id",
 
-    expect(rawData).toEqual(expectedData);
+    children: ["1", "2", "5"],
+    childrenAttendance: [],
+    schools: [],
+    relatedEntities: [],
+    date: "2023-05-01",
+    subject: "Note Subject",
+    text: "Note text",
+    authors: ["1"],
+    category: defaultInteractionTypes[1].id,
+    warningLevel: warningLevels[2].id,
   });
 
   it("should return the correct childIds", function () {
@@ -141,7 +115,7 @@ describe("Note", () => {
     const n4 = createTestModel();
     const previousLength = n4.children.length;
     n4.removeChild("1");
-    expect(n4.children.length).toBe(previousLength - 1);
+    expect(n4.children).toHaveSize(previousLength - 1);
     expect(n4.getAttendance("1")).toBeUndefined();
   });
 
@@ -149,7 +123,7 @@ describe("Note", () => {
     const n5 = createTestModel();
     const previousLength = n5.children.length;
     n5.addChild("2");
-    expect(n5.children.length).toBe(previousLength + 1);
+    expect(n5.children).toHaveSize(previousLength + 1);
   });
 
   it("should not add same twice", function () {
@@ -157,13 +131,13 @@ describe("Note", () => {
     const previousLength = n5.children.length;
     n5.addChild("2");
     n5.addChild("2");
-    expect(n5.children.length).toBe(previousLength + 1);
+    expect(n5.children).toHaveSize(previousLength + 1);
   });
 
   it("should return colors", function () {
     const note = new Note("1");
 
-    note.category = { id: "", label: "test", color: "#FFFFFF" };
+    note.category = { id: "", label: "test", color: "#FFFFFF", _ordinal: -1 };
     expect(note.getColor()).toBe("#FFFFFF");
 
     note.warningLevel = warningLevels.find((level) => level.id === "URGENT");
@@ -199,7 +173,7 @@ describe("Note", () => {
     expect(reloadedEntity.getAttendance("1").status).toEqual(status);
   });
 
-  it("sets default NullAttendanceStatusType for attendance entries with invalid value", function () {
+  it("sets default NullAttendanceStatusType for attendance entries with missing value", function () {
     const status = testStatusTypes.find((c) => c.id === "ABSENT");
     const rawData = {
       _id: ENTITY_TYPE + ":" + "test",
@@ -214,9 +188,13 @@ describe("Note", () => {
     const reloadedEntity = new Note();
     entitySchemaService.loadDataIntoEntity(reloadedEntity, rawData);
 
-    expect(reloadedEntity.getAttendance("2").status).toEqual(
-      NullAttendanceStatusType
-    );
+    expect(reloadedEntity.getAttendance("2").status).toEqual({
+      id: "non-existing-id",
+      label: "[invalid option] non-existing-id",
+      shortName: "?",
+      countAs: AttendanceLogicalStatus.IGNORE,
+      isInvalidOption: true,
+    } as any);
     expect(reloadedEntity.getAttendance("3").status).toEqual(
       NullAttendanceStatusType
     );
@@ -233,7 +211,7 @@ describe("Note", () => {
     expect(otherNote).toEqual(note);
     expect(otherNote).toBeInstanceOf(Note);
     otherNote.removeChild("5");
-    expect(otherNote.children.length).toBe(note.children.length - 1);
+    expect(otherNote.children).toHaveSize(note.children.length - 1);
   });
 
   it("should count children with a given attendance", () => {

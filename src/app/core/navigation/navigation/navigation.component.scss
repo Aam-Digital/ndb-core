@@ -15,13 +15,17 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.divider {
-  background-color: #e5e5e5;
-  height: 1px;
-  margin: 9px 0;
-  overflow: hidden;
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/ndb-light-theme" as theme;
+@use "@angular/material" as mat;
+
+/**
+ * ensures that all icons have the same width
+ */
+.nav-icon {
+  min-width: sizes.$max-icon-width;
 }
 
-.nav-history {
-  text-align: center;
+.matched-background {
+  background-color: mat.get-color-from-palette(theme.$primary, 50) !important;
 }

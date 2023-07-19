@@ -10,18 +10,9 @@ import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
 import { absenceRemarks } from "./remarks";
 import moment from "moment";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import {
-  ATTENDANCE_STATUS_CONFIG_ID,
-  AttendanceLogicalStatus,
-  AttendanceStatusType,
-} from "../../attendance/model/attendance-status";
-import { ConfigService } from "../../../core/config/config.service";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../../core/configurable-enum/configurable-enum.interface";
+import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
+import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;
@@ -52,20 +43,12 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     ];
   }
 
-  private availableStatusTypes: AttendanceStatusType[];
-
   constructor(
     private config: DemoNoteConfig,
     private demoChildren: DemoChildGenerator,
-    private demoUsers: DemoUserGeneratorService,
-    private schemaService: EntitySchemaService,
-    private configService: ConfigService
+    private demoUsers: DemoUserGeneratorService
   ) {
     super();
-
-    this.availableStatusTypes = this.configService.getConfig<
-      ConfigurableEnumConfig<AttendanceStatusType>
-    >(CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID);
   }
 
   public generateEntities(): Note[] {
@@ -113,18 +96,15 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateNoteForChild(child: Child, date?: Date): Note {
-    let note = new Note();
+    const note = new Note();
 
-    const selectedStory = faker.random.arrayElement(noteIndividualStories);
+    const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
-    // transform to ensure the category object is loaded from the generic config
-    note = this.schemaService.transformDatabaseToEntityFormat(
-      note,
-      Note.schema
-    );
 
     note.addChild(child.getId());
-    note.authors = [faker.random.arrayElement(this.demoUsers.entities).getId()];
+    note.authors = [
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+    ];
 
     if (!date) {
       date = faker.date.between(
@@ -151,33 +131,30 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   }
 
   private generateGroupNote(children: Child[]) {
-    let note = new Note();
+    const note = new Note();
 
-    const selectedStory = faker.random.arrayElement(noteGroupStories);
+    const selectedStory = faker.helpers.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
-    // transform to ensure the category object is loaded from the generic config
-    note = this.schemaService.transformDatabaseToEntityFormat(
-      note,
-      Note.schema
-    );
 
     note.children = children.map((c) => c.getId());
     children.forEach((child) => {
       const attendance = note.getAttendance(child.getId());
       // get an approximate presence of 85%
       if (faker.datatype.number(100) <= 15) {
-        attendance.status = this.availableStatusTypes.find(
+        attendance.status = defaultAttendanceStatusTypes.find(
           (t) => t.countAs === AttendanceLogicalStatus.ABSENT
         );
-        attendance.remarks = faker.random.arrayElement(absenceRemarks);
+        attendance.remarks = faker.helpers.arrayElement(absenceRemarks);
       } else {
-        attendance.status = this.availableStatusTypes.find(
+        attendance.status = defaultAttendanceStatusTypes.find(
           (t) => t.countAs === AttendanceLogicalStatus.PRESENT
         );
       }
     });
 
-    note.authors = [faker.random.arrayElement(this.demoUsers.entities).getId()];
+    note.authors = [
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+    ];
 
     note.date = faker.date.past(1);
 

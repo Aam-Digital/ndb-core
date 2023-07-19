@@ -1,0 +1,8 @@
+{
+  "realm": "dev",
+  "auth-server-url": "https://keycloak.aam-digital.net/",
+  "ssl-required": "external",
+  "resource": "app",
+  "public-client": true,
+  "confidential-port": 0
+}

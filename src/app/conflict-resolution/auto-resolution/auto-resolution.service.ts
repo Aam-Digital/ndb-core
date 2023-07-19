@@ -17,7 +17,7 @@ export class AutoResolutionService {
   constructor(
     @Optional()
     @Inject(CONFLICT_RESOLUTION_STRATEGY)
-    private resolutionStrategies: ConflictResolutionStrategy[] = []
+    private resolutionStrategies: ConflictResolutionStrategy[]
   ) {}
 
   /**
@@ -32,7 +32,7 @@ export class AutoResolutionService {
     currentDoc: any,
     conflictingDoc: any
   ): boolean {
-    for (const resolutionStrategy of this.resolutionStrategies) {
+    for (const resolutionStrategy of this.resolutionStrategies || []) {
       if (
         resolutionStrategy.autoDeleteConflictingRevision(
           currentDoc,

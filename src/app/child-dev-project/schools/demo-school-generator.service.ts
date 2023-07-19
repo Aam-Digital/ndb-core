@@ -21,6 +21,9 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
     ];
   }
 
+  private readonly normalSchool = $localize`:School demo name that is connected with a school name:School`;
+  private readonly highSchool = $localize`:School demo name that is connected with a school name:High School`;
+
   constructor(public config: DemoSchoolConfig) {
     super();
   }
@@ -30,27 +33,30 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
 
     for (let i = 1; i <= this.config.count; i++) {
       const school = new School(String(i));
-      school["language"] = faker.random.arrayElement([
-        "Hindi",
-        "English",
-        "Bengali",
+      school["language"] = faker.helpers.arrayElement([
+        $localize`:Language of a school:Hindi`,
+        $localize`:Language of a school:English`,
+        $localize`:Language of a school:Bengali`,
       ]);
-      school.name =
-        faker.name.firstName() +
-        " " +
-        faker.random.arrayElement([
-          $localize`:School demo name that is prepended to a name:School`,
-          $localize`:School demo name that is prepended to a name:High School`,
-          school["language"] + " Language",
-        ]);
-      school["address"] = faker.address.streetAddress();
-      school["phone"] = faker.phone.phoneNumberFormat();
+      const schoolNameWithType = $localize`:School demo name order for connecting the school name and (High) School|e.g. Example School:${faker.name.firstName()} ${faker.helpers.arrayElement(
+        [this.normalSchool, this.highSchool]
+      )}`;
+      const schoolNameWithLanguage = $localize`${faker.name.firstName()} ${
+        school["language"]
+      } Language`;
+      school.name = faker.helpers.arrayElement([
+        schoolNameWithType,
+        schoolNameWithLanguage,
+      ]);
+      school["phone"] = faker.phone.number();
       school["privateSchool"] = faker.datatype.boolean();
-      school["timing"] = faker.random.arrayElement([
+      school["timing"] = faker.helpers.arrayElement([
         $localize`:School demo timing:6 a.m. - 11 a.m.`,
         $localize`:School demo timing:11 a.m. - 4 p.m.`,
         $localize`:School demo timing:6:30-11:00 and 11:30-16:00`,
       ]);
+
+      school["address"] = faker.geoAddress();
 
       data.push(school);
     }

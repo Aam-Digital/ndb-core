@@ -1,19 +1,12 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { HistoricalDataComponent } from "./historical-data.component";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { HistoricalDataModule } from "../historical-data.module";
 import { Entity } from "../../../core/entity/model/entity";
-import { HistoricalEntityData } from "../historical-entity-data";
+import { HistoricalEntityData } from "../model/historical-entity-data";
 import moment from "moment";
-import { DatePipe } from "@angular/common";
 import { HistoricalDataService } from "../historical-data.service";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 
 describe("HistoricalDataComponent", () => {
   let component: HistoricalDataComponent;
@@ -25,15 +18,10 @@ describe("HistoricalDataComponent", () => {
     mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([]);
 
     await TestBed.configureTestingModule({
-      declarations: [HistoricalDataComponent],
-      imports: [
-        HistoricalDataModule,
-        NoopAnimationsModule,
-        MockSessionModule.withState(),
-      ],
+      imports: [HistoricalDataComponent, MockedTestingModule.withState()],
       providers: [
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
-        DatePipe,
+        { provide: FormDialogService, useValue: null },
       ],
     }).compileComponents();
   });
@@ -42,10 +30,7 @@ describe("HistoricalDataComponent", () => {
     fixture = TestBed.createComponent(HistoricalDataComponent);
     component = fixture.componentInstance;
 
-    component.onInitFromDynamicConfig({
-      entity: new Entity(),
-      config: [],
-    });
+    component.entity = new Entity();
     fixture.detectChanges();
   });
 
@@ -53,28 +38,26 @@ describe("HistoricalDataComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the historical data", fakeAsync(() => {
-    const entity = new Entity();
+  it("should load the historical data", async () => {
+    component.entity = new Entity();
     const relatedData = new HistoricalEntityData();
-    relatedData.relatedEntity = entity.getId();
+    relatedData.relatedEntity = component.entity.getId();
     mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([relatedData]);
 
-    component.onInitFromDynamicConfig({ entity: entity });
-    tick();
+    await component.ngOnInit();
 
     expect(component.entries).toEqual([relatedData]);
     expect(mockHistoricalDataService.getHistoricalDataFor).toHaveBeenCalledWith(
-      entity.getId()
+      component.entity.getId()
     );
-  }));
+  });
 
   it("should generate new records with a link to the passed entity", () => {
-    const entity = new Entity();
-    component.onInitFromDynamicConfig({ entity: entity });
+    component.entity = new Entity();
 
     const newEntry = component.getNewEntryFunction()();
 
-    expect(newEntry.relatedEntity).toBe(entity.getId());
+    expect(newEntry.relatedEntity).toBe(component.entity.getId());
     expect(moment(newEntry.date).isSame(new Date(), "day")).toBeTrue();
   });
 });

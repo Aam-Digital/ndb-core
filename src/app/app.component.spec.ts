@@ -15,87 +15,39 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import {
-  ComponentFixture,
-  discardPeriodicTasks,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { AppComponent } from "./app.component";
-import { ApplicationInitStatus } from "@angular/core";
 import { AppModule } from "./app.module";
-import { AppConfig } from "./core/app-config/app-config";
-import { IAppConfig } from "./core/app-config/app-config.model";
-import { Angulartics2Piwik } from "angulartics2/piwik";
-import { EntityMapperService } from "./core/entity/entity-mapper.service";
-import { Config } from "./core/config/config";
-import { USAGE_ANALYTICS_CONFIG_ID } from "./core/analytics/usage-analytics-config";
 import { environment } from "../environments/environment";
+import { Database } from "./core/database/database";
+import { HttpClientTestingModule } from "@angular/common/http/testing";
 
 describe("AppComponent", () => {
   let component: AppComponent;
   let fixture: ComponentFixture<AppComponent>;
+  const intervalBefore = jasmine.DEFAULT_TIMEOUT_INTERVAL;
 
-  const mockAppSettings: IAppConfig = {
-    database: { name: "", remote_url: "" },
-    session_type: undefined,
-    site_name: "",
-  };
+  beforeEach(waitForAsync(() => {
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = 10000;
+    environment.demo_mode = true;
+    TestBed.configureTestingModule({
+      imports: [AppModule, HttpClientTestingModule],
+    }).compileComponents();
+  }));
 
-  beforeEach(
-    waitForAsync(() => {
-      AppConfig.settings = mockAppSettings;
-
-      TestBed.configureTestingModule({
-        imports: [AppModule],
-        providers: [
-          { provide: AppConfig, useValue: jasmine.createSpyObj(["load"]) },
-        ],
-      }).compileComponents();
-      TestBed.inject(ApplicationInitStatus); // This ensures that the AppConfig is loaded before test execution
-    })
-  );
-
-  function createComponent() {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(AppComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }
+  }));
 
   afterEach(() => {
-    // hide angular component so that test results are visible in test browser window
-    fixture.debugElement.nativeElement.style.visibility = "hidden";
+    environment.demo_mode = false;
+    jasmine.DEFAULT_TIMEOUT_INTERVAL = intervalBefore;
+    return TestBed.inject(Database).destroy();
   });
 
   it("should be created", () => {
-    createComponent();
     expect(component).toBeTruthy();
   });
-
-  it("should start tracking with config from db", fakeAsync(() => {
-    environment.production = true; // tracking is only active in production mode
-    const testConfig = {
-      "appConfig:usage-analytics": {
-        url: "matomo-test-endpoint",
-        site_id: "101",
-      },
-    };
-    const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "load").and.resolveTo(new Config(testConfig));
-    const angulartics = TestBed.inject(Angulartics2Piwik);
-    const startTrackingSpy = spyOn(angulartics, "startTracking");
-
-    createComponent();
-    tick();
-
-    expect(startTrackingSpy).toHaveBeenCalledTimes(1);
-    expect(window["_paq"]).toContain([
-      "setSiteId",
-      testConfig[USAGE_ANALYTICS_CONFIG_ID].site_id,
-    ]);
-
-    discardPeriodicTasks();
-  }));
 });

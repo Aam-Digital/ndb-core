@@ -15,15 +15,27 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit, ViewChild } from "@angular/core";
+import { Component, ViewChild } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { AppConfig } from "../../app-config/app-config";
 import { Title } from "@angular/platform-browser";
-import { MediaChange, MediaObserver } from "@angular/flex-layout";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { MatDrawerMode } from "@angular/material/sidenav";
+import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ConfigService } from "../../config/config.service";
 import { UiConfig } from "../ui-config";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { MatToolbarModule } from "@angular/material/toolbar";
+import { NgIf } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { Router, RouterLink, RouterOutlet } from "@angular/router";
+import { Angulartics2Module } from "angulartics2";
+import { SearchComponent } from "../search/search.component";
+import { SyncStatusComponent } from "../../sync-status/sync-status/sync-status.component";
+import { LanguageSelectComponent } from "../../language/language-select/language-select.component";
+import { NavigationComponent } from "../../navigation/navigation/navigation.component";
+import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
+import { AppVersionComponent } from "../../latest-changes/app-version/app-version.component";
+import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -31,19 +43,36 @@ import { UiConfig } from "../ui-config";
  */
 @UntilDestroy()
 @Component({
-  moduleId: module.id,
   selector: "app-ui",
   templateUrl: "./ui.component.html",
   styleUrls: ["./ui.component.scss"],
+  imports: [
+    MatToolbarModule,
+    NgIf,
+    MatButtonModule,
+    FontAwesomeModule,
+    RouterLink,
+    Angulartics2Module,
+    SearchComponent,
+    SyncStatusComponent,
+    LanguageSelectComponent,
+    MatSidenavModule,
+    NavigationComponent,
+    PwaInstallComponent,
+    AppVersionComponent,
+    RouterOutlet,
+    PrimaryActionComponent,
+  ],
+  standalone: true,
 })
-export class UiComponent implements OnInit {
+export class UiComponent {
   /** display mode for the menu to make it responsive and usable on smaller screens */
   sideNavMode: MatDrawerMode;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
 
   /** title displayed in the app header bar */
-  title: string;
+  title = "Aam Digital";
 
   /** path to the image of a logo */
   logo_path: string;
@@ -54,31 +83,25 @@ export class UiComponent implements OnInit {
     private _sessionService: SessionService,
     private titleService: Title,
     private configService: ConfigService,
-    mediaObserver: MediaObserver
+    private screenWidthObserver: ScreenWidthObserver,
+    private router: Router
   ) {
-    // watch screen width to change sidenav mode
-    mediaObserver
-      .asObservable()
+    this.screenWidthObserver
+      .platform()
       .pipe(untilDestroyed(this))
-      .subscribe((change: MediaChange[]) => {
-        if (change[0].mqAlias === "xs" || change[0].mqAlias === "sm") {
-          this.sideNavMode = "over";
-        } else {
-          this.sideNavMode = "side";
-        }
-      });
+      .subscribe(
+        (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over")
+      );
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
       .subscribe(() => {
-        const uiConfig = this.configService.getConfig<UiConfig>("appConfig");
+        const uiConfig =
+          this.configService.getConfig<UiConfig>("appConfig") || {};
+        this.title = uiConfig.site_name || this.title;
+        this.titleService.setTitle(this.title);
         this.logo_path = uiConfig?.logo_path;
         this.showLanguageSelect = uiConfig?.displayLanguageSelect === true;
       });
-  }
-
-  ngOnInit(): void {
-    this.title = AppConfig?.settings?.site_name;
-    this.titleService.setTitle(this.title);
   }
 
   /**
@@ -93,5 +116,14 @@ export class UiComponent implements OnInit {
    */
   logout() {
     this._sessionService.logout();
+    this.router.navigate(["/login"], {
+      queryParams: { redirect_uri: this.router.routerState.snapshot.url },
+    });
+  }
+
+  closeSidenavOnMobile() {
+    if (this.sideNavMode === "over") {
+      this.sideNav.close();
+    }
   }
 }

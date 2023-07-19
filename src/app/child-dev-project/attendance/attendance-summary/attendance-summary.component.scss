@@ -1,0 +1,31 @@
+@use "@angular/material" as mat;
+@use "sass:map";
+@use "src/styles/variables/sizes";
+
+.summary-title {
+  margin-bottom: 0.25em;
+  font-size: 150%;
+}
+
+.summary-period {
+  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, hint-text);
+  font-size: 110%;
+}
+
+.summary-table {
+  border-spacing: 0 sizes.$small;
+}
+
+.summary-row {
+  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, background, 50%);
+}
+
+.summary-cell {
+   font-size: 150%;
+   text-align: right;
+   padding: sizes.$small;
+}
+
+:host {
+  display: block;
+}

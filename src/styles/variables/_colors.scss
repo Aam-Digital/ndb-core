@@ -1,0 +1,66 @@
+/*
+ *     This file is part of ndb-core.
+ *
+ *     ndb-core is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU General Public License as published by
+ *     the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     ndb-core is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU General Public License for more details.
+ *
+ *     You should have received a copy of the GNU General Public License
+ *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+ */
+@use "@angular/material" as mat;
+
+$err-palette            : mat.define-palette(mat.$red-palette);
+$warn-palette           : mat.define-palette(mat.$orange-palette);
+$success-palette        : mat.define-palette(mat.$green-palette);
+
+$success                : mat.get-color-from-palette($success-palette);
+$warn                   : mat.get-color-from-palette($warn-palette);
+$error                  : mat.get-color-from-palette($err-palette);
+
+$muted                  : rgba(0, 0, 0, 0.54);
+$disabled               : rgba(0, 0, 0, 0.38);
+
+/*
+ * Quantized warning-levels. Each level represents a color from green (all is OK)
+ * to red (nothing is OK).
+ *
+ * classes will be generated with the prefix 'w-', i.e.
+ * 'w-100', 'w-90', ..., 'w-0'
+ */
+$w-levels: (
+  100: #90ee90,
+  90 : #a5e46e,
+  80 : #bcd84e,
+  70 : #d2c92e,
+  60 : #e9b90f,
+  50 : #ffa500,
+  40 : #ff982a,
+  30 : #ff8b40,
+  20 : #ff8153,
+  10 : #ff7863,
+  0  : #fd7272,
+);
+
+@function w-level($level) {
+  @return map-get($w-levels, $level);
+}
+
+// Levels that are used when describing attendance values
+
+$attendance-levels: (
+  P: #c8e6c9,  // Present
+  H: #CFD8DC,  // ?
+  L: #FFECB3,  // Late
+  E: #D7CCC8,  // Excused
+  A: #FF8A65,  // Absent
+  U: #DDDDDD   // Unknown
+);
+
+$text-secondary: mat.get-color-from-palette(mat.$grey-palette, 800);

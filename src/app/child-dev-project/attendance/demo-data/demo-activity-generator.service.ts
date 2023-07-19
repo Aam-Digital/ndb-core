@@ -9,7 +9,7 @@ import { User } from "../../../core/user/user";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 
 /**
- * Generate AttendanceMonth entities for the last 15 months
+ * Generate RecurringActivity entities
  * Builds upon the generated demo Child entities.
  */
 @Injectable()
@@ -29,7 +29,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
     assignedUser?: User
   ): RecurringActivity {
     const activity = RecurringActivity.create();
-    const type = faker.random.arrayElement(this.ACTIVITY_TYPES);
+    const type = faker.helpers.arrayElement(this.ACTIVITY_TYPES);
 
     activity.title =
       type.label +
@@ -80,7 +80,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
       data.push(
         DemoActivityGeneratorService.generateActivityForChildren(
           participatingChildren,
-          faker.random.arrayElement(this.demoUser.entities)
+          faker.helpers.arrayElement(this.demoUser.entities)
         )
       );
       i += groupSize;

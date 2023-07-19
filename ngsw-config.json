@@ -1,37 +1,40 @@
 {
   "index": "/index.html",
-  "assetGroups": [{
-    "name": "app",
-    "installMode": "prefetch",
-    "resources": {
-      "files": [
-        "/favicon.ico",
-        "/index.html",
-        "/*.css",
-        "/*.js",
-        "/*.woff2",
-        "/*.tff"
-      ]
+  "assetGroups": [
+    {
+      "name": "app",
+      "installMode": "prefetch",
+      "resources": {
+        "files": [
+          "/favicon.ico",
+          "/index.html",
+          "/*.js",
+          "/*.css",
+          "/*.woff2",
+          "/*.tff"
+        ]
+      }
+    },
+    {
+      "name": "assets",
+      "installMode": "lazy",
+      "updateMode": "prefetch",
+      "resources": {
+        "files": [
+          "/*.svg",
+          "/assets/**",
+          "!**/keycloak.json"
+        ]
+      }
     }
-  }, {
-    "name": "assets",
-    "installMode": "lazy",
-    "updateMode": "prefetch",
-    "resources": {
-      "files": [
-        "/assets/*/**",
-        "/assets/changelog.json",
-        "/assets/child.png",
-        "/assets/config.default.json",
-        "/assets/How_To.md",
-        "assets/locale/How_To.de.md"
-      ]
-    }
-  }],
+  ],
   "dataGroups": [
     {
       "name": "config",
-      "urls": ["**/assets/config.json"],
+      "urls": [
+        "**/assets/config.json",
+        "**/assets/keycloak.json"
+      ],
       "cacheConfig": {
         "maxSize": 1,
         "maxAge": "30d",
@@ -39,21 +42,15 @@
       }
     },
     {
-      "name": "childPhotos",
-      "urls": ["**/child-photos/**"],
+      "name": "attachments",
+      "urls": [
+        "**/app-attachments/*/*"
+      ],
       "cacheConfig": {
         "maxSize": 500,
-        "maxAge": "10d",
-        "strategy": "performance"
-      }
-    },
-    {
-      "name": "webdavPhotos",
-      "urls": ["**/nextcloud/*/photos/**"],
-      "cacheConfig": {
-        "maxSize": 500,
-        "maxAge": "10d",
-        "strategy": "performance"
+        "maxAge": "100d",
+        "strategy": "freshness",
+        "timeout": "0u"
       }
     }
   ],
@@ -62,7 +59,7 @@
     "!/**/*.*",
     "!/**/*__*",
     "!/**/*__*/**",
-    "!/db/_utils",
-    "!/db/_utils/**"
+    "!/db/",
+    "!/db/**"
   ]
 }

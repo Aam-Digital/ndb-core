@@ -1,0 +1,109 @@
+@use "@angular/material" as mat;
+
+$widget-header-height: 64px;
+$widget-content-height: 320px;
+
+$font-size-headline: 40pt;
+
+$padding-header: 24px;
+
+$border-radius-card: 4px;
+
+.widget-header {
+  /* Defines a grid that roughly looks like this:
+   * |-------|--------------------------------------|
+   * |       |                                      |
+   * |       |                                      |
+   * |-------|--------------------------------------|
+   * |       |                                      |
+   * |-------|--------------------------------------|
+   *
+   * The right-upper side is where the headline will be placed.
+   * On the lower right side, the subhead-line is placed
+   * On the two left sides, the icon will be placed in a
+   * centered way
+   */
+  display: grid;
+  grid-template: 2fr 1fr / 40pt 1fr;
+  grid-template-areas:
+    "icon headline"
+    "subheadline subheadline";
+  padding: $padding-header;
+  height: $widget-header-height;
+}
+
+.widget-icon {
+  grid-area: icon;
+  color: white;
+  align-self: center;
+  font-size: $font-size-headline;
+  // fixes the correct centering of this item
+  display: table;
+}
+
+.widget-headline {
+  grid-area: headline;
+  text-align: end;
+  place-self: end;
+
+  font-size: 28pt;
+  color: white;
+}
+
+.widget-title {
+  grid-area: headline;
+  text-align: end;
+  place-self: center end;
+
+  font-size: 40pt;
+  color: white;
+}
+
+.widget-subheadline {
+  grid-area: subheadline;
+  text-align: end;
+  place-self: end;
+  margin-top: 8px;
+
+  font-size: 14px;
+  color: white;
+}
+
+.widget-content {
+  height: $widget-content-height;
+  overflow: hidden;
+  display: flex;
+  background-color: white;
+}
+
+.headline {
+  height: 100%;
+  width: 100%;
+  display: flex;
+  place-content: center;
+  place-items: center;
+}
+
+// Map containing the colors that belong to a certain theme
+$themes: (
+  general : #555555,
+  child : #1565C0,
+  attendance : #00838F,
+  note : #008f53,
+  class : #2E7D32,
+  school : #9E9D24,
+);
+
+@each $ident, $color in $themes {
+  .theme-background-#{$ident} {
+    background-color: $color;
+  }
+}
+
+:host {
+  display: block;
+  border-radius: $border-radius-card;
+  // necessary for the border-radius to apply
+  overflow: auto;
+  @include mat.elevation(3);
+}

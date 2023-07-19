@@ -1,0 +1,25 @@
+/**
+ * Styles for the `MarkedRenderer` element (the element that can render a markdown or .md file
+ * in html)
+ * These styles have to be global because the Renderer injects the html directly and does not
+ * use the 'angular' way.
+ */
+@use "../variables/sizes";
+
+.badge-label {
+  display: inline-block;
+  padding: 0 sizes.$small;
+  margin-bottom: sizes.$x-small;
+  line-height: 1.5;
+  vertical-align: middle;
+  white-space: nowrap;
+  border-radius: 2px;
+  text-transform: uppercase;
+  font-weight: bold;
+  color: white;
+}
+
+.app-list {
+  // this is a constant because this padding only removes the default from @angular/material
+  padding-left: 16px;
+}

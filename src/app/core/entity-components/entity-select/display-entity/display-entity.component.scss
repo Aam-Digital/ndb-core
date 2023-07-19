@@ -1,0 +1,13 @@
+@use "src/styles/variables/sizes";
+
+.clickable {
+  cursor: pointer;
+}
+
+.clickable:hover {
+  text-decoration: underline;
+}
+
+.block-height {
+  line-height: sizes.$icon-block;
+}

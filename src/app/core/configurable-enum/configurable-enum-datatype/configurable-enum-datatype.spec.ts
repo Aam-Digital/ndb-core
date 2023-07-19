@@ -22,8 +22,9 @@ import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { ConfigService } from "../../config/config.service";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { ConfigurableEnumModule } from "../configurable-enum.module";
+import { ConfigurableEnumService } from "../configurable-enum.service";
 
 describe("ConfigurableEnumDatatype", () => {
   const TEST_CONFIG: ConfigurableEnumConfig = [
@@ -32,35 +33,35 @@ describe("ConfigurableEnumDatatype", () => {
     { id: "TEST_3", label: "Category 3", color: "#FFFFFF", isMeeting: true },
   ];
 
+  @DatabaseEntity("ConfigurableEnumDatatypeTestEntity")
   class TestEntity extends Entity {
     @DatabaseField({
       dataType: "configurable-enum",
       innerDataType: "test-enum",
     })
     option: ConfigurableEnumValue;
+    @DatabaseField({
+      dataType: "configurable-enum",
+      additional: "test-enum",
+    })
+    optionInAdditional: ConfigurableEnumValue;
   }
 
   let entitySchemaService: EntitySchemaService;
-  let configService: jasmine.SpyObj<ConfigService>;
+  let enumService: jasmine.SpyObj<ConfigurableEnumService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      configService = jasmine.createSpyObj("configService", ["getConfig"]);
-      configService.getConfig.and.returnValue(TEST_CONFIG);
+  beforeEach(waitForAsync(() => {
+    enumService = jasmine.createSpyObj(["getEnumValues", "preLoadEnums"]);
+    enumService.getEnumValues.and.returnValue(TEST_CONFIG);
 
-      TestBed.configureTestingModule({
-        imports: [ConfigurableEnumModule],
-        providers: [
-          EntitySchemaService,
-          { provide: ConfigService, useValue: configService },
-        ],
-      });
+    TestBed.configureTestingModule({
+      imports: [ConfigurableEnumModule],
+      providers: [{ provide: ConfigurableEnumService, useValue: enumService }],
+    });
 
-      entitySchemaService = TestBed.inject<EntitySchemaService>(
-        EntitySchemaService
-      );
-    })
-  );
+    entitySchemaService =
+      TestBed.inject<EntitySchemaService>(EntitySchemaService);
+  }));
 
   it("converts objects to keys for database format", () => {
     const testOptionKey = "TEST_1";
@@ -94,5 +95,34 @@ describe("ConfigurableEnumDatatype", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData.option).toEqual(testOptionKey);
+  });
+
+  it("should also support the name of the enum in the 'additional' field", () => {
+    const data = {
+      _id: "Test",
+      optionInAdditional: "TEST_3",
+    };
+    const entity = new TestEntity();
+
+    entitySchemaService.loadDataIntoEntity(entity, data);
+
+    expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
+    expect(entity).toHaveId("Test");
+  });
+
+  it("should gracefully handle invalid enum ids and show a dummy option to users", () => {
+    const data = {
+      _id: "Test",
+      option: "INVALID_OPTION",
+    };
+    const entity = new TestEntity();
+
+    entitySchemaService.loadDataIntoEntity(entity, data);
+
+    expect(entity.option).toEqual({
+      id: "INVALID_OPTION",
+      isInvalidOption: true,
+      label: "[invalid option] INVALID_OPTION",
+    });
   });
 });

@@ -1,0 +1,78 @@
+@use "../variables/colors";
+@use "../variables/ndb-light-theme" as theme;
+@use "@angular/material" as mat;
+
+/** Color-utility classes **/
+
+.background-muted {
+  background-color: mat.get-color-from-palette(mat.$grey-palette);
+}
+
+.background-accent {
+  background-color: mat.get-color-from-palette(theme.$accent);
+}
+
+.color-accent {
+  color: mat.get-color-from-palette(theme.$accent);
+}
+
+.background-changelog-bugfix {
+  background-color: colors.w-level(50);
+}
+
+.background-changelog-feature {
+  background-color: green;
+}
+
+.background-changelog-unknown {
+  background-color: mat.get-color-from-palette(mat.$grey-palette);
+}
+
+.background-error {
+  background-color: #f44336;
+}
+
+.background-success {
+  background-color: colors.$success;
+}
+
+.color-error {
+  color: colors.$error;
+}
+
+.color-success {
+  color: colors.$success;
+}
+
+.white {
+  color: white;
+}
+
+@each $level, $color in colors.$w-levels {
+  .w-#{$level} {
+    background-color: $color !important;
+  }
+}
+
+@each $level, $color in colors.$attendance-levels {
+  .attendance-#{$level} {
+    background-color: $color !important;
+  }
+}
+
+// Selected warning levels with color-adjustments
+
+// alias for w-100
+.w-OK {
+  background-color: adjust-color(colors.w-level(100), $alpha: -0.75) !important;
+}
+
+// alias for w-50
+.w-WARNING {
+  background-color: adjust-color(colors.w-level(50), $alpha: -0.5) !important;
+}
+
+// alias for w-0
+.w-URGENT {
+  background-color: adjust-color(colors.w-level(0), $alpha: -0.5) !important;
+}

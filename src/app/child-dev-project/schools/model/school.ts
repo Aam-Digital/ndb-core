@@ -1,9 +1,16 @@
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 @DatabaseEntity("School")
 export class School extends Entity {
+  static toStringAttributes = ["name"];
+  static icon: IconName = "university";
+  static label = $localize`:label for entity:School`;
+  static labelPlural = $localize`:label (plural) for entity:Schools`;
+  static color = "#9E9D24";
+
   static getBlockComponent(): string {
     return "SchoolBlock";
   }
@@ -16,11 +23,9 @@ export class School extends Entity {
 
   @DatabaseField({
     label: $localize`:Label for the name of a school:Name`,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   name: string = "";
-
-  public toString() {
-    return this.name;
-  }
 }

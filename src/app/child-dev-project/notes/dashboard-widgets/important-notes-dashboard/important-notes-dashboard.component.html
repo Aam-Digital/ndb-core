@@ -1,0 +1,35 @@
+<app-dashboard-list-widget
+  icon="exclamation-triangle"
+  subtitle="Notes needing follow-up"
+  i18n-subtitle="subtitle|dashboard showing notes that require action"
+  theme="note"
+  entityType="Note"
+  [dataMapper]="dataMapper"
+>
+  <table mat-table aria-label="Notes needing follow-up">
+    <!-- Table header only for assistive technologies like screen readers -->
+    <tr hidden="true">
+      <th scope="col">Date</th>
+      <th scope="col">Title</th>
+    </tr>
+    <ng-container matColumnDef="date">
+      <td *matCellDef="let note" class="date-cell row-indicator">
+        {{ note.date | date }}
+      </td>
+    </ng-container>
+
+    <ng-container matColumnDef="title">
+      <td *matCellDef="let note" class="subject-cell">
+        {{ note.subject }}
+      </td>
+    </ng-container>
+
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['date', 'title']"
+      class="dashboard-table-row row-view"
+      (click)="openNote(row)"
+      [ngStyle]="{'--row-indicator-color': row.getColor?.()}"
+    ></tr>
+  </table>
+</app-dashboard-list-widget>

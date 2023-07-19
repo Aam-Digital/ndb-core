@@ -1,16 +1,13 @@
 import { Injectable } from "@angular/core";
-import { Angulartics2Piwik } from "angulartics2/piwik";
 import { environment } from "../../../environments/environment";
-import { AppConfig } from "../app-config/app-config";
 import { ConfigService } from "../config/config.service";
-import { SessionService } from "../session/session-service/session.service";
-import { LoginState } from "../session/session-states/login-state.enum";
 import {
   USAGE_ANALYTICS_CONFIG_ID,
   UsageAnalyticsConfig,
 } from "./usage-analytics-config";
-
-const md5 = require("md5");
+import { Angulartics2, Angulartics2Matomo } from "angulartics2";
+import md5 from "md5";
+import { UiConfig } from "../ui/ui-config";
 
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
@@ -21,66 +18,50 @@ const md5 = require("md5");
   providedIn: "root",
 })
 export class AnalyticsService {
-  private static getUserHash(username: string) {
-    return md5(AppConfig.settings?.site_name + username);
-  }
+  private isInitialized = false;
 
   constructor(
-    private angulartics2Piwik: Angulartics2Piwik,
-    private configService: ConfigService,
-    private sessionService: SessionService
-  ) {
-    this.subscribeToUserChanges();
+    private angulartics2: Angulartics2,
+    private angulartics2Matomo: Angulartics2Matomo,
+    private configService: ConfigService
+  ) {}
+
+  /**
+   * Sets a unique user hash which is always for the same user but does not expose the username.
+   * This improves the logging behavior.
+   * @param username actual username
+   */
+  public setUser(username: string): void {
+    const baseUrl = location.host;
+    this.angulartics2Matomo.setUsername(md5(`${baseUrl}${username ?? ""}`));
   }
 
-  private setUser(username: string): void {
-    this.angulartics2Piwik.setUsername(
-      AnalyticsService.getUserHash(username ?? "")
-    );
+  /**
+   * Set up usage analytics tracking.
+   */
+  init(): void {
+    window["_paq"] = window["_paq"] || [];
+    window["_paq"].push([
+      "setDocumentTitle",
+      document.domain + "/" + document.title,
+    ]);
+    window["_paq"].push(["trackPageView"]);
+    window["_paq"].push(["enableLinkTracking"]);
+    this.setVersion();
+    this.setUser(undefined);
+    this.configService.configUpdates.subscribe(() => this.setConfigValues());
   }
 
   private setVersion(): void {
-    this.angulartics2Piwik.setUserProperties({
+    this.angulartics2.setUserProperties.next({
       dimension1: "ndb-core@" + environment.appVersion,
     });
   }
 
   private setOrganization(orgName: string): void {
-    this.angulartics2Piwik.setUserProperties({
+    this.angulartics2.setUserProperties.next({
       dimension2: orgName,
     });
-  }
-
-  private subscribeToUserChanges() {
-    this.sessionService.loginState.subscribe((newState) => {
-      if (newState === LoginState.LOGGED_IN) {
-        this.setUser(this.sessionService.getCurrentUser().name);
-      } else {
-        this.setUser(undefined);
-      }
-    });
-  }
-
-  /**
-   * Set up usage analytics tracking - if the AppConfig specifies the required settings.
-   */
-  init(): void {
-    const config = this.configService.getConfig<UsageAnalyticsConfig>(
-      USAGE_ANALYTICS_CONFIG_ID
-    );
-
-    if (!config || !config.url || !config.site_id) {
-      // do not track
-      return;
-    }
-
-    this.setUpMatomo(config.url, config.site_id, config.no_cookies);
-
-    this.setVersion();
-    this.setOrganization(AppConfig.settings.site_name);
-    this.setUser(undefined);
-
-    this.angulartics2Piwik.startTracking();
   }
 
   /**
@@ -88,40 +69,39 @@ export class AnalyticsService {
    *
    * The code is inspired by:
    * https://github.com/Arnaud73/ngx-matomo/blob/master/projects/ngx-matomo/src/lib/matomo-injector.service.ts
-   *
-   * @param url The URL of the matomo backend
-   * @param id The id of the Matomo site as which this app will be tracked
-   * @param disableCookies (Optional) flag whether to disable use of cookies to track sessions
    * @private
    */
-  private setUpMatomo(
-    url: string,
-    id: string,
-    disableCookies: boolean = false
-  ) {
-    window["_paq"] = window["_paq"] || [];
-    window["_paq"].push([
-      "setDocumentTitle",
-      document.domain + "/" + document.title,
-    ]);
-    if (disableCookies) {
-      window["_paq"].push(["disableCookies"]);
-    }
-    window["_paq"].push(["trackPageView"]);
-    window["_paq"].push(["enableLinkTracking"]);
-    (() => {
-      const u = url.endsWith("/") ? url : url + "/";
-      window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
-      window["_paq"].push(["setSiteId", id]);
-      const d = document;
-      const g = d.createElement("script");
-      const s = d.getElementsByTagName("script")[0];
+  private setConfigValues() {
+    const { url, site_id, no_cookies } =
+      this.configService.getConfig<UsageAnalyticsConfig>(
+        USAGE_ANALYTICS_CONFIG_ID
+      ) || { url: "https://matomo.aam-digital.org" };
+    const u = url.endsWith("/") ? url : url + "/";
+
+    if (!this.isInitialized) {
+      const g = document.createElement("script");
+      const s = document.getElementsByTagName("script")[0];
       g.type = "text/javascript";
       g.async = true;
       g.defer = true;
       g.src = u + "matomo.js";
       s.parentNode.insertBefore(g, s);
-    })();
+      this.angulartics2Matomo.startTracking();
+      this.isInitialized = true;
+    }
+
+    window["_paq"].push(["setTrackerUrl", u + "matomo.php"]);
+    if (no_cookies) {
+      window["_paq"].push(["disableCookies"]);
+    }
+    if (site_id) {
+      window["_paq"].push(["setSiteId", site_id]);
+    }
+    const { site_name } =
+      this.configService.getConfig<UiConfig>("appConfig") || {};
+    if (site_name) {
+      this.setOrganization(site_name);
+    }
   }
 
   /**
@@ -140,6 +120,9 @@ export class AnalyticsService {
       label: "no_label",
     }
   ): void {
-    this.angulartics2Piwik.eventTrack(action, properties);
+    this.angulartics2.eventTrack.next({
+      action: action,
+      properties: properties,
+    });
   }
 }

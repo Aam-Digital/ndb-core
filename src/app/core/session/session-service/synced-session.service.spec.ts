@@ -16,22 +16,25 @@
  */
 
 import { SyncedSessionService } from "./synced-session.service";
-import { AlertService } from "../../alerts/alert.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { AppConfig } from "../../app-config/app-config";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { SessionType } from "../session-type";
 import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
-import { HttpClient, HttpErrorResponse } from "@angular/common/http";
-import { LoggingService } from "../../logging/logging.service";
-import { of, throwError } from "rxjs";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { DatabaseUser } from "./local-user";
-import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
+import {
+  MockedTestingModule,
+  TEST_PASSWORD,
+  TEST_USER,
+} from "../../../utils/mocked-testing.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
+import { PouchDatabase } from "../../database/pouch-database";
+import { SessionModule } from "../session.module";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { environment } from "../../../../environments/environment";
+import { AuthService } from "../auth/auth.service";
+import { AuthUser } from "./auth-user";
+import { mockAuth } from "./remote-session.spec";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -43,55 +46,39 @@ describe("SyncedSessionService", () => {
   let remoteLoginSpy: jasmine.Spy<
     (username: string, password: string) => Promise<LoginState>
   >;
-  let dbUser: DatabaseUser;
+  let dbUser: AuthUser;
   let syncSpy: jasmine.Spy<() => Promise<void>>;
-  let liveSyncSpy: jasmine.Spy<() => void>;
-  let mockHttpClient: jasmine.SpyObj<HttpClient>;
+  let liveSyncSpy: jasmine.Spy<() => any>;
+  let mockAuthService: jasmine.SpyObj<AuthService>;
+  let mockLocation: jasmine.SpyObj<Location>;
 
   beforeEach(() => {
-    mockHttpClient = jasmine.createSpyObj(["post", "delete"]);
-    mockHttpClient.delete.and.returnValue(of());
+    mockLocation = jasmine.createSpyObj(["reload"]);
+    mockAuthService = jasmine.createSpyObj([
+      "authenticate",
+      "autoLogin",
+      "logout",
+    ]);
+    mockAuthService.autoLogin.and.rejectWith();
+
     TestBed.configureTestingModule({
-      imports: [MatSnackBarModule, NoopAnimationsModule],
+      imports: [SessionModule, MockedTestingModule],
       providers: [
-        EntitySchemaService,
-        AlertService,
-        LoggingService,
-        SyncedSessionService,
-        { provide: HttpClient, useValue: mockHttpClient },
+        PouchDatabase,
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: LOCATION_TOKEN, useValue: mockLocation },
       ],
     });
-    AppConfig.settings = {
-      site_name: "Aam Digital - DEV",
-      session_type: SessionType.mock,
-      database: {
-        name: "integration_tests",
-        remote_url: "https://demo.aam-digital.com/db/",
-      },
-      webdav: { remote_url: "" },
-    };
+    environment.session_type = SessionType.mock;
     sessionService = TestBed.inject(SyncedSessionService);
 
-    // make private members localSession and remoteSession available in the tests
-    // @ts-ignore
-    localSession = sessionService._localSession;
-    // @ts-ignore
-    remoteSession = sessionService._remoteSession;
+    localSession = TestBed.inject(LocalSession);
+    remoteSession = TestBed.inject(RemoteSession);
 
     // Setting up local and remote session to accept TEST_USER and TEST_PASSWORD as valid credentials
     dbUser = { name: TEST_USER, roles: ["user_app"] };
     localSession.saveUser({ name: TEST_USER, roles: [] }, TEST_PASSWORD);
-    mockHttpClient.post.and.callFake((url, body) => {
-      if (body.name === TEST_USER && body.password === TEST_PASSWORD) {
-        return of(dbUser as any);
-      } else {
-        return throwError(
-          new HttpErrorResponse({
-            status: remoteSession.UNAUTHORIZED_STATUS_CODE,
-          })
-        );
-      }
-    });
+    mockAuthService.authenticate.and.callFake(mockAuth(dbUser));
 
     localLoginSpy = spyOn(localSession, "login").and.callThrough();
     remoteLoginSpy = spyOn(remoteSession, "login").and.callThrough();
@@ -104,11 +91,11 @@ describe("SyncedSessionService", () => {
   });
 
   it("Remote and local fail (normal login with wrong password)", fakeAsync(() => {
-    const result = sessionService.login(TEST_USER, "wrongPassword");
+    const result = sessionService.login("anotherUser", "wrongPassword");
     tick();
 
-    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
-    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "wrongPassword");
+    expect(localLoginSpy).toHaveBeenCalledWith("anotherUser", "wrongPassword");
+    expect(remoteLoginSpy).toHaveBeenCalledWith("anotherUser", "wrongPassword");
     expect(syncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
     flush();
@@ -163,7 +150,8 @@ describe("SyncedSessionService", () => {
         name: newUser.name,
         roles: newUser.roles,
       },
-      "p"
+      "p",
+      newUser.name
     );
     expect(sessionService.getCurrentUser().name).toBe("newUser");
     expect(sessionService.getCurrentUser().roles).toEqual(["user_app"]);
@@ -183,7 +171,7 @@ describe("SyncedSessionService", () => {
     // Initially the user is logged in
     expectAsync(result).toBeResolvedTo(LoginState.LOGGED_IN);
     // After remote session fails the user is logged out again
-    expect(sessionService.loginState.value).toBe(LoginState.LOGIN_FAILED);
+    expect(sessionService.loginState.value).toBe(LoginState.LOGGED_OUT);
     flush();
   }));
 
@@ -198,24 +186,10 @@ describe("SyncedSessionService", () => {
     expect(syncSpy).toHaveBeenCalled();
     expect(liveSyncSpy).toHaveBeenCalled();
     expectAsync(login).toBeResolvedTo(LoginState.LOGGED_IN);
+
+    // clear timeouts and intervals
+    sessionService.logout();
     flush();
-  }));
-
-  it("Remote succeeds, local fails, sync fails", fakeAsync(() => {
-    passRemoteLogin();
-    syncSpy.and.rejectWith();
-
-    const result = sessionService.login(TEST_USER, "anotherPassword");
-    tick();
-
-    expect(localLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
-    expect(localLoginSpy).toHaveBeenCalledTimes(2);
-    expect(remoteLoginSpy).toHaveBeenCalledWith(TEST_USER, "anotherPassword");
-    expect(remoteLoginSpy).toHaveBeenCalledTimes(1);
-    expect(syncSpy).toHaveBeenCalled();
-    expect(liveSyncSpy).not.toHaveBeenCalled();
-    expectAsync(result).toBeResolvedTo(LoginState.LOGIN_FAILED);
-    tick();
   }));
 
   it("remote and local unavailable", fakeAsync(() => {
@@ -239,7 +213,7 @@ describe("SyncedSessionService", () => {
   }));
 
   it("should update the local user object once connected", fakeAsync(() => {
-    const updatedUser: DatabaseUser = {
+    const updatedUser: AuthUser = {
       name: TEST_USER,
       roles: dbUser.roles.concat("admin"),
     };
@@ -260,19 +234,94 @@ describe("SyncedSessionService", () => {
     tick();
   }));
 
+  it("should login, if the session is still valid", fakeAsync(() => {
+    mockAuthService.autoLogin.and.resolveTo(dbUser);
+
+    sessionService.checkForValidSession();
+    tick();
+    expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_IN);
+  }));
+
+  it("should support email instead of username for login", async () => {
+    const newUser: AuthUser = { name: "test-user", roles: ["test-role"] };
+    passRemoteLogin(newUser);
+
+    const res = await sessionService.login("my@email.com", "test-pass");
+
+    expect(res).toBe(LoginState.LOGGED_IN);
+    expect(JSON.parse(localStorage.getItem("test-user"))).toEqual(
+      jasmine.objectContaining(newUser)
+    );
+    expect(JSON.parse(localStorage.getItem("my@email.com"))).toEqual(
+      jasmine.objectContaining(newUser)
+    );
+
+    localStorage.removeItem("test-user");
+    localStorage.removeItem("my@email.com");
+  });
+
+  it("should correctly check the password", () => {
+    localSession.saveUser({ name: "TestUser", roles: [] }, TEST_PASSWORD);
+
+    expect(sessionService.checkPassword("TestUser", TEST_PASSWORD)).toBeTrue();
+    expect(sessionService.checkPassword("TestUser", "wrongPW")).toBeFalse();
+  });
+
+  it("should restart the sync if it fails at one point", fakeAsync(() => {
+    let errorCallback, pauseCallback;
+    const syncHandle = {
+      on: (action, callback) => {
+        if (action === "error") {
+          errorCallback = callback;
+        }
+        if (action === "paused") {
+          pauseCallback = callback;
+        }
+        return syncHandle;
+      },
+      cancel: () => undefined,
+    };
+    syncSpy = jasmine.createSpy().and.returnValue(syncHandle);
+    liveSyncSpy.and.callThrough();
+    spyOn(localSession, "getDatabase").and.returnValue({
+      getPouchDB: () => ({ sync: syncSpy }),
+    } as any);
+
+    passRemoteLogin();
+    sessionService.login(TEST_USER, TEST_PASSWORD);
+    flush();
+
+    // error -> sync should restart
+    syncSpy.calls.reset();
+    errorCallback();
+    expect(syncSpy).toHaveBeenCalled();
+
+    // pause -> no restart required
+    syncSpy.calls.reset();
+    pauseCallback();
+    expect(syncSpy).not.toHaveBeenCalled();
+
+    // logout + error -> no restart
+    syncSpy.calls.reset();
+    sessionService.logout();
+    tick();
+    errorCallback();
+    expect(syncSpy).not.toHaveBeenCalled();
+  }));
+
   testSessionServiceImplementation(() => Promise.resolve(sessionService));
 
-  function passRemoteLogin(response: DatabaseUser = { name: "", roles: [] }) {
-    mockHttpClient.post.and.returnValue(of(response));
+  function passRemoteLogin(response: AuthUser = { name: "", roles: [] }) {
+    mockAuthService.authenticate.and.resolveTo(response);
   }
 
   function failRemoteLogin(offline = false) {
     let rejectError;
     if (!offline) {
       rejectError = new HttpErrorResponse({
-        status: remoteSession.UNAUTHORIZED_STATUS_CODE,
+        status: HttpStatusCode.Unauthorized,
       });
     }
-    mockHttpClient.post.and.returnValue(throwError(rejectError));
+    mockAuthService.authenticate.and.rejectWith(rejectError);
   }
 });

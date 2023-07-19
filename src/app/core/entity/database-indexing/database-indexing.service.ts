@@ -17,11 +17,12 @@
 
 import { Injectable } from "@angular/core";
 import { Database, QueryOptions } from "../../database/database";
-import { BehaviorSubject, Observable } from "rxjs";
+import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
 import { BackgroundProcessState } from "../../sync-status/background-process-state.interface";
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { first } from "rxjs/operators";
+import { isArrayProperty } from "../../entity-components/entity-utils/entity-utils";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -53,14 +54,18 @@ export class DatabaseIndexingService {
    * @param designDoc The design document (see @link{Database}) describing the query/index.
    */
   async createIndex(designDoc: any): Promise<void> {
+    const indexDetails = designDoc._id.replace(/_design\//, "");
     const indexState: BackgroundProcessState = {
       title: $localize`Preparing data (Indexing)`,
-      details: designDoc._id.replace(/_design\//, ""),
+      details: indexDetails,
       pending: true,
     };
+
     const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
     this._indicesRegistered.next([
-      ...this._indicesRegistered.value,
+      ...this._indicesRegistered.value.filter(
+        (state) => state.details !== indexDetails
+      ),
       indexState,
     ]);
 
@@ -75,6 +80,66 @@ export class DatabaseIndexingService {
 
     indexState.pending = false;
     this._indicesRegistered.next(this._indicesRegistered.value);
+  }
+
+  /**
+   * Generate and save a new database query index for the given entity type and property.
+   *
+   * This allows you to efficiently query documents of that entity type based on values of the reference property,
+   * e.g. query all Notes (entityType=Note) that are related to a certain user (referenceProperty="authors").
+   *
+   * Query this index using the given indexId like this:
+   * generateIndexOnProperty("myIndex", Note, "category");
+   * queryIndexDocs(Note, "myIndex/by_category")
+   *
+   * @param indexId id to query this index after creation (--> {indexId}/by_{referenceProperty})
+   * @param entity entity type to limit the documents included in this index
+   * @param referenceProperty property key on the documents whose value is indexed as a query key
+   * @param secondaryIndex (optional) additional property to emit as a secondary index to narrow queries further
+   */
+  generateIndexOnProperty<
+    E extends Entity,
+    REF extends keyof E & string,
+    SEC extends keyof E & string
+  >(
+    indexId: string,
+    entity: EntityConstructor<E>,
+    referenceProperty: REF,
+    secondaryIndex?: SEC
+  ): Promise<void> {
+    const emitParamFormatter = (primaryParam) => {
+      if (secondaryIndex) {
+        return `emit([${primaryParam}, doc.${secondaryIndex}]);`;
+      } else {
+        return `emit(${primaryParam});`;
+      }
+    };
+
+    const simpleEmit = emitParamFormatter("doc." + referenceProperty);
+    const arrayEmit = `
+      if (!Array.isArray(doc.${referenceProperty})) return;
+      doc.${referenceProperty}.forEach((relatedEntity) => {
+        ${emitParamFormatter("relatedEntity")}
+      });`;
+
+    const designDoc = {
+      _id: "_design/" + indexId,
+      views: {
+        [`by_${referenceProperty}`]: {
+          map: `(doc) => {
+            if (!doc._id.startsWith("${entity.ENTITY_TYPE}")) return;
+
+            ${
+              isArrayProperty(entity, referenceProperty)
+                ? arrayEmit
+                : simpleEmit
+            }
+          }`,
+        },
+      },
+    };
+
+    return this.createIndex(designDoc);
   }
 
   /**
@@ -105,29 +170,34 @@ export class DatabaseIndexingService {
    * Load data from the Database through the given, previously created index for a key range.
    * @param entityConstructor
    * @param indexName The name of the previously created index to be queried.
-   * @param startkey
-   * @param endkey
+   * @param startkey start id of range to query
+   * @param endkey end id of range to query (inclusive)
    */
   async queryIndexDocsRange<T extends Entity>(
     entityConstructor: EntityConstructor<T>,
     indexName: string,
-    startkey: string,
-    endkey?: string
+    startkey: string | any[],
+    endkey?: string | any[]
   ): Promise<T[]> {
+    if (Array.isArray(endkey)) {
+      endkey = [...endkey, {}];
+    } else {
+      endkey = endkey + "\ufff0";
+    }
     return this.queryIndexDocs(entityConstructor, indexName, {
       startkey: startkey,
-      endkey: endkey + "\ufff0",
+      endkey: endkey,
     });
   }
 
-  async queryIndexStats(
+  queryIndexStats(
     indexName: string,
     options: QueryOptions = {
       reduce: true,
       group: true,
     }
   ): Promise<any> {
-    return await this.queryIndexRaw(indexName, options);
+    return this.queryIndexRaw(indexName, options);
   }
 
   /**
@@ -149,7 +219,7 @@ export class DatabaseIndexingService {
       await this.waitForIndexAvailable(indexName);
     }
 
-    return await this.db.query(indexName, options);
+    return this.db.query(indexName, options);
   }
 
   /**
@@ -172,8 +242,10 @@ export class DatabaseIndexingService {
       return;
     }
 
-    await this._indicesRegistered
-      .pipe(first((processes) => relevantIndexIsReady(processes, indexName)))
-      .toPromise();
+    await firstValueFrom(
+      this._indicesRegistered.pipe(
+        first((processes) => relevantIndexIsReady(processes, indexName))
+      )
+    );
   }
 }

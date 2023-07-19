@@ -1,0 +1,28 @@
+<input type="file" style="display: none" (change)="onFileSelected($event.target['files'][0])" #fileUpload>
+
+<mat-form-field [ngClass]="{ clickable: formControl.value}" (click)="formClicked()">
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput readonly
+    class="filename"
+    [formControl]="formControl"
+    i18n-placeholder="placeholder for file-input"
+    placeholder="No file selected"
+    (click)="fileClicked()"
+    i18n-matTooltip="Tooltip show file"
+    matTooltip="Show file"
+    [matTooltipDisabled]="!formControl.value"
+  />
+  <button *ngIf="formControl.value && formControl.enabled" type="button" mat-icon-button matIconSuffix
+          (click)="delete()"
+          i18n-mattooltip="Tooltip remove file" matTooltip="Remove file">
+    <fa-icon icon="xmark"></fa-icon>
+  </button>
+  <button *ngIf="formControl.enabled" type="button" mat-icon-button matIconSuffix (click)="fileUpload.click()"
+          i18n-matTooltip="Tooltip upload file button" matTooltip="Upload file">
+    <fa-icon icon="upload"></fa-icon>
+  </button>
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
+  </mat-error>
+</mat-form-field>

@@ -1,0 +1,23 @@
+@use "src/styles/variables/sizes";
+
+/**
+ * The main content. Apply standard paddings to all edges
+ *
+ * Implementation detail:
+ * It is common that `sidenav-content` only has one child element
+ * plus the `router-outlet` element. The router-outlet should, however, not have
+ * any padding.
+ *
+ * We use the `:where()` pseudo-class to lower the specificity. This allows child views
+ * to override the padding or display (for example, the dashboard has `display: grid` instead of
+ * block).
+ */
+.sidenav-content > :where(:not(router-outlet)) {
+  padding:
+    sizes.$margin-main-view-top
+    sizes.$margin-main-view-right
+    sizes.$margin-main-view-bottom
+    sizes.$margin-main-view-left;
+  display: block;
+  box-sizing: border-box;
+}

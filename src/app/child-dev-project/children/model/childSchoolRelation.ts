@@ -12,30 +12,34 @@ import { Child } from "./child";
 export class ChildSchoolRelation extends Entity {
   @DatabaseField({
     label: $localize`:Label for the child of a relation:Child`,
-    viewComponent: "DisplayEntity",
-    editComponent: "EditSingleEntity",
+    dataType: "entity",
     additional: Child.ENTITY_TYPE,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   childId: string;
   @DatabaseField({
     label: $localize`:Label for the school of a relation:School`,
-    viewComponent: "DisplayEntity",
-    editComponent: "EditSingleEntity",
+    dataType: "entity",
     additional: School.ENTITY_TYPE,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   schoolId: string;
   @DatabaseField({ label: $localize`:Label for the class of a relation:Class` })
   schoolClass: string = "";
   @DatabaseField({
     dataType: "date-only",
-    label: $localize`:Label for the start date of a relation:From`,
+    label: $localize`:Label for the start date of a relation:Start date`,
+    description: $localize`:Description of the start date of a relation:The date a child joins a school`,
   })
   start: Date;
   @DatabaseField({
     dataType: "date-only",
-    label: $localize`:Label for the end date of a relation:To`,
+    label: $localize`:Label for the end date of a relation:End date`,
+    description: $localize`:Description of the end date of a relation:The date of a child leaving the school`,
   })
   end: Date;
 
@@ -43,16 +47,34 @@ export class ChildSchoolRelation extends Entity {
   @DatabaseField({
     label: $localize`:Label for the percentage result of a relation:Result`,
     viewComponent: "DisplayPercentage",
-    editComponent: "EditPercentage",
+    editComponent: "EditNumber",
+    validators: {
+      min: 0,
+      max: 100,
+    },
   })
   result: number;
 
+  /**
+   * Returns true if this relation is currently active
+   */
   get isActive(): boolean {
+    return this.isActiveAt(new Date());
+  }
+
+  /**
+   * Checks whether this relation was active on a specific date
+   * @param date on which the active status should be checked
+   */
+  isActiveAt(date: Date): boolean {
     return (
-      this.start &&
-      moment(this.start).isSameOrBefore(moment(), "day") &&
-      (!this.end || moment(this.end).isAfter(moment(), "day"))
+      (!this.start || moment(this.start).isSameOrBefore(date, "day")) &&
+      (!this.end || moment(this.end).isSameOrAfter(date, "day"))
     );
+  }
+
+  getColor(): string {
+    return this.isActive ? "#90ee9040" : "";
   }
 
   assertValid() {

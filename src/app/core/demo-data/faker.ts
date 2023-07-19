@@ -1,5 +1,5 @@
-import * as originalFaker from "faker";
-
+import { faker as originalFaker } from "@faker-js/faker/locale/en_IND";
+import { GeoResult } from "../../features/location/geo.service";
 /**
  * Extension of faker.js implementing additional data generation methods.
  */
@@ -12,15 +12,14 @@ class CustomFaker {
     // @ts-ignore
     private baseFaker: Faker.FakerStatic
   ) {
-    baseFaker.locale = "en_IND";
     // make baseFaker methods available from instances of this class
     Object.assign(this, baseFaker);
   }
 
   /**
    * Generate a date that works as a date of birth in the given age range.
-   * @param minAge The minimum age (today) of a person with the generated random birth date.
-   * @param maxAge The maximum age (today) of a person with the generated random birth date.
+   * @param minAge The minimum age (today) of a person with the generated random birthdate.
+   * @param maxAge The maximum age (today) of a person with the generated random birthdate.
    */
   public dateOfBirth(minAge: number, maxAge: number): Date {
     const currentYear = new Date().getFullYear();
@@ -44,6 +43,17 @@ class CustomFaker {
     } else {
       return date;
     }
+  }
+
+  geoAddress(): GeoResult {
+    const coordinates = faker.address.nearbyGPSCoordinate([
+      52.4790412, 13.4319106,
+    ]);
+    return {
+      lat: Number.parseFloat(coordinates[0]),
+      lon: Number.parseFloat(coordinates[1]),
+      display_name: faker.address.streetAddress(true),
+    } as GeoResult;
   }
 }
 

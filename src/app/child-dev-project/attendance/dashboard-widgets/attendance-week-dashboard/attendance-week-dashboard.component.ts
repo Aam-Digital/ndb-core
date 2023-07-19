@@ -1,7 +1,11 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit,
+  ViewChild,
+} from "@angular/core";
 import { Router } from "@angular/router";
-import { UntilDestroy } from "@ngneat/until-destroy";
-import { OnInitDynamicComponent } from "../../../../core/view/dynamic-components/on-init-dynamic-component.interface";
 import { Child } from "../../../children/model/child";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { AttendanceService } from "../../attendance.service";
@@ -10,6 +14,14 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment, { Moment } from "moment";
 import { groupBy } from "../../../../utils/utils";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { NgForOf, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -17,14 +29,24 @@ interface AttendanceWeekRow {
   attendanceDays: (EventAttendance | undefined)[];
 }
 
-@UntilDestroy()
+@DynamicComponent("AttendanceWeekDashboard")
 @Component({
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
+  imports: [
+    NgIf,
+    MatTableModule,
+    NgForOf,
+    MatPaginatorModule,
+    DisplayEntityComponent,
+    DashboardWidgetComponent,
+    WidgetContentComponent,
+    AttendanceDayBlockComponent,
+  ],
+  standalone: true,
 })
-export class AttendanceWeekDashboardComponent
-  implements OnInitDynamicComponent, OnInit {
+export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
   /**
    * The offset from the default time period, which is the last complete week.
    *
@@ -33,16 +55,18 @@ export class AttendanceWeekDashboardComponent
    * If you set the offset to 7 and today is Thursday, the widget displays attendance from the Monday 3 days ago
    * (i.e. the current running week).
    */
-  @Input() daysOffset: number;
+  @Input() daysOffset = 0;
 
   /**
-   * description displayed to users for the time period this widget is analysing
-   * e.g. "this week" or "previous week"
+   * description displayed to users for what this widget is analysing
+   * e.g. "Absences this week"
    */
+  @Input() label: string;
+
   @Input() periodLabel: string;
 
   /**
-   * Only participants who were absent more then this threshold are counted and shown in the dashboard.
+   * Only participants who were absent more than this threshold are counted and shown in the dashboard.
    *
    * The default is 1.
    * That means if someone was absent two or more days within a specific activity in the given week
@@ -50,34 +74,36 @@ export class AttendanceWeekDashboardComponent
    */
   @Input() absentWarningThreshold: number = 1;
 
-  dashboardRowGroups: AttendanceWeekRow[][];
+  /**
+   * The special attendance status type for which this widget should filter.
+   *
+   * (Optional) If this is not set, all status types that are counted as logically "ABSENT" are considered.
+   */
+  @Input() attendanceStatusType: string;
+
+  @ViewChild("paginator") paginator: MatPaginator;
+  tableDataSource = new MatTableDataSource<AttendanceWeekRow[]>();
+
+  loadingDone = false;
 
   constructor(
     private attendanceService: AttendanceService,
     private router: Router
   ) {}
 
-  onInitFromDynamicConfig(config: any) {
-    if (config?.daysOffset) {
-      this.daysOffset = config.daysOffset;
+  ngOnInit() {
+    if (this.periodLabel && !this.label) {
+      this.label = $localize`:Dashboard attendance component subtitle:Absences ${this.periodLabel}`;
     }
-    if (config?.periodLabel) {
-      this.periodLabel = config.periodLabel;
-    }
+    return this.loadAttendanceOfAbsentees();
   }
 
-  async ngOnInit() {
-    await this.loadAttendanceOfAbsentees(this.daysOffset);
-  }
-
-  recordTrackByFunction = (index, item) => item.childId;
-
-  async loadAttendanceOfAbsentees(daysOffset = 0) {
+  private async loadAttendanceOfAbsentees() {
     const today = new Date();
     const previousMonday = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() - today.getDay() - 6 + daysOffset
+      today.getDate() - today.getDay() - 6 + this.daysOffset
     );
     const previousSaturday = new Date(
       previousMonday.getFullYear(),
@@ -85,11 +111,11 @@ export class AttendanceWeekDashboardComponent
       previousMonday.getDate() + 5
     );
 
-    const activityAttendances = await this.attendanceService.getAllActivityAttendancesForPeriod(
-      previousMonday,
-      previousSaturday
-    );
-
+    const activityAttendances =
+      await this.attendanceService.getAllActivityAttendancesForPeriod(
+        previousMonday,
+        previousSaturday
+      );
     const lowAttendanceCases = new Set<string>();
     const records: AttendanceWeekRow[] = [];
     for (const att of activityAttendances) {
@@ -105,10 +131,11 @@ export class AttendanceWeekDashboardComponent
         .forEach((r) => lowAttendanceCases.add(r.childId));
     }
 
-    const groupedRecords = groupBy(records, "childId");
-    this.dashboardRowGroups = Array.from(
-      lowAttendanceCases.values()
-    ).map((childId) => groupedRecords.get(childId));
+    const groups = groupBy(records, "childId");
+    this.tableDataSource.data = groups
+      .filter(([childId]) => lowAttendanceCases.has(childId))
+      .map(([_, attendance]) => attendance);
+    this.loadingDone = true;
   }
 
   private generateRowsFromActivityAttendance(
@@ -147,15 +174,25 @@ export class AttendanceWeekDashboardComponent
   }
 
   private filterLowAttendance(row: AttendanceWeekRow): boolean {
-    const countAbsences = row.attendanceDays.filter(
-      (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT
-    ).length;
+    let countAbsences = 0;
+    if (!this.attendanceStatusType) {
+      countAbsences = row.attendanceDays.filter(
+        (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT
+      ).length;
+    } else {
+      countAbsences = row.attendanceDays.filter(
+        (e) => e?.status?.id === this.attendanceStatusType
+      ).length;
+    }
 
     return countAbsences > this.absentWarningThreshold;
   }
 
   goToChild(childId: string) {
-    const path = "/" + Child.ENTITY_TYPE.toLowerCase();
-    this.router.navigate([path, childId]);
+    this.router.navigate([Child.route, childId]);
+  }
+
+  ngAfterViewInit() {
+    this.tableDataSource.paginator = this.paginator;
   }
 }

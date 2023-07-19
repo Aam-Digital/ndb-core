@@ -1,20 +1,18 @@
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
-import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { of } from "rxjs";
-import { MatNativeDateModule } from "@angular/material/core";
-import { ChildrenService } from "../../children/children.service";
-import { NotesModule } from "../notes.module";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { Child } from "../../children/model/child";
-import { RouterTestingModule } from "@angular/router/testing";
-import { Angulartics2Module } from "angulartics2";
-import { MatDialogRef } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { MockSessionModule } from "../../../core/session/mock-session.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { LoginState } from "../../../core/session/session-states/login-state.enum";
+import { EntityConfigService } from "../../../core/entity/entity-config.service";
+import { NEVER } from "rxjs";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
   testNote.category = {
+    _ordinal: 0,
     id: "CHILDREN_MEETING",
     label: "Children's Meeting",
     color: "#E1F5FE",
@@ -25,7 +23,6 @@ function generateTestNote(forChildren: Child[]) {
     testNote.getAttendance(child.getId()).status =
       defaultAttendanceStatusTypes[0];
   }
-  testNote._rev = "x"; // mock an already existing note
   return testNote;
 }
 
@@ -33,40 +30,31 @@ describe("NoteDetailsComponent", () => {
   let component: NoteDetailsComponent;
   let fixture: ComponentFixture<NoteDetailsComponent>;
 
-  let children: Child[];
   let testNote: Note;
 
-  beforeEach(() => {
-    children = [new Child("1"), new Child("2"), new Child("3")];
+  beforeEach(waitForAsync(() => {
+    const children = [new Child("1"), new Child("2"), new Child("3")];
     testNote = generateTestNote(children);
 
-    const mockChildrenService = jasmine.createSpyObj("mockChildrenService", [
-      "getChildren",
-      "getChild",
-    ]);
-    mockChildrenService.getChildren.and.returnValue(of([]));
-    mockChildrenService.getChild.and.returnValue(of(new Child("")));
-
-    const dialogRefMock = { beforeClosed: () => of(), close: () => {} };
-
     TestBed.configureTestingModule({
-      declarations: [],
       imports: [
-        NotesModule,
-        RouterTestingModule,
-        MatNativeDateModule,
-        Angulartics2Module.forRoot(),
-        MockSessionModule.withState(),
+        NoteDetailsComponent,
+        MockedTestingModule.withState(LoginState.LOGGED_IN, children),
       ],
       providers: [
-        { provide: MatDialogRef, useValue: dialogRefMock },
-        { provide: ChildrenService, useValue: mockChildrenService },
+        { provide: MAT_DIALOG_DATA, useValue: { entity: testNote } },
+        {
+          provide: MatDialogRef,
+          useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
+        },
       ],
     }).compileComponents();
+  }));
+
+  beforeEach(() => {
+    TestBed.inject(EntityConfigService).setupEntitiesFromConfig();
     fixture = TestBed.createComponent(NoteDetailsComponent);
     component = fixture.componentInstance;
-
-    component.entity = testNote;
     fixture.detectChanges();
   });
 

@@ -1,0 +1,5 @@
+// Chip text should not overflow
+.mat-mdc-standard-chip .mdc-evolution-chip__cell--primary, .mat-mdc-standard-chip .mdc-evolution-chip__action--primary, .mat-mdc-standard-chip .mat-mdc-chip-action-label {
+  overflow: hidden !important;
+  text-overflow: ellipsis;
+}

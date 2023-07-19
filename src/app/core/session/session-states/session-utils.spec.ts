@@ -1,31 +1,17 @@
 import { of } from "rxjs";
 import { waitForChangeTo } from "./session-utils";
-import { fail } from "assert";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 
 describe("session-utils", () => {
-  it("(waitForChangeTo) Should only emit elements in a stream when the given condition is false", (done) => {
-    const stream = of("A", "B", "C", "D");
-    stream.pipe(waitForChangeTo("D")).subscribe(
-      (next) => {
-        expect(next).toBe("D");
-      },
-      (error) => {
-        fail(error);
-      },
-      () => {
-        done();
-      }
-    );
+  it("(waitForChangeTo) Should only emit elements in a stream when the given condition is false", () => {
+    return expectObservable(
+      of("A", "B", "C", "D").pipe(waitForChangeTo("D"))
+    ).inSequence.toBeResolvedTo(["D"]);
   });
 
-  it("(waitForChangeTo) should complete when condition is met but further elements are in the pipeline", (done) => {
-    const stream = of("A", "B", "C", "D");
-    stream.pipe(waitForChangeTo("B")).subscribe(
-      (next) => {
-        expect(next).toBe("B");
-      },
-      (error) => fail(error),
-      () => done()
-    );
+  it("(waitForChangeTo) should complete when condition is met but further elements are in the pipeline", () => {
+    return expectObservable(
+      of("A", "B", "C", "D").pipe(waitForChangeTo("B"))
+    ).inSequence.toBeResolvedTo(["B"]);
   });
 });

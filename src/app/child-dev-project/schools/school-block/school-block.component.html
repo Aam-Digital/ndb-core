@@ -1,14 +1,2 @@
-<span (mouseenter)="showTooltip()" (mouseleave)="hideTooltip()">
-  <mat-icon class="school-pic" [fontIcon]="iconName"></mat-icon>
-  {{ entity?.name }}
-</span>
-
-<div style="position: absolute" *ngIf="tooltip">
-  <div
-    class="mat-elevation-z3 school-tooltip"
-    (mouseenter)="showTooltip()"
-    (mouseleave)="hideTooltip()"
-  >
-    <div>{{ entity?.language || entity?.medium}}</div>
-  </div>
-</div>
+<app-fa-dynamic-icon [icon]="icon" class="margin-right-small"></app-fa-dynamic-icon>
+{{ entity?.toString() }}

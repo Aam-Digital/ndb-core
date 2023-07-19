@@ -1,4 +1,4 @@
-import { calculateAge, isValidDate, sortByAttribute } from "./utils";
+import { calculateAge, groupBy, isValidDate, sortByAttribute } from "./utils";
 import moment from "moment";
 
 describe("Utils", () => {
@@ -43,5 +43,38 @@ describe("Utils", () => {
     );
 
     expect(sortedDesc).toEqual([forth, third, second, first]);
+  });
+
+  it("should sort undefined last", () => {
+    const first = { number: 1 };
+    const second = { number: 10 };
+    const third = { number: undefined };
+
+    const sorted = [second, third, first].sort(
+      sortByAttribute("number", "asc")
+    );
+
+    expect(sorted).toEqual([first, second, third]);
+
+    const sortedDesc = [second, third, first].sort(
+      sortByAttribute("number", "desc")
+    );
+
+    expect(sortedDesc).toEqual([third, second, first]);
+  });
+
+  it("should create groups with the same ID, not just object equality", () => {
+    const first = { a: { id: "a", label: "A" } };
+    const second = { a: { id: "a", label: "A" } };
+    const third = { a: { id: "b", label: "B" } };
+    // we don't have object equality
+    expect(first.a).not.toBe(second.a);
+
+    const groups = groupBy([first, second, third], "a");
+
+    expect(groups).toEqual([
+      [{ id: "a", label: "A" }, [first, second]],
+      [{ id: "b", label: "B" }, [third]],
+    ]);
   });
 });

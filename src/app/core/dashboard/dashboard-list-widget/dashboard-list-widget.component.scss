@@ -1,0 +1,17 @@
+@use "../dashboard-widget-base";
+@use "../../../../styles/variables/sizes";
+
+:host ::ng-deep .row-indicator {
+  position: relative;
+
+  &::before {
+    left: 0;
+    top: 0;
+    content: '';
+    display: block;
+    width: sizes.$small;
+    height: 100%;
+    position: absolute;
+    background-color: var(--row-indicator-color);
+  }
+}

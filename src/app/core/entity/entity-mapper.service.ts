@@ -19,8 +19,12 @@ import { Injectable } from "@angular/core";
 import { Database } from "../database/database";
 import { Entity, EntityConstructor } from "./model/entity";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { Observable, Subject } from "rxjs";
+import { Observable } from "rxjs";
 import { UpdatedEntity } from "./model/entity-update";
+import { EntityRegistry } from "./database-entity.decorator";
+import { map } from "rxjs/operators";
+import { UpdateMetadata } from "./model/update-metadata";
+import { SessionService } from "../session/session-service/session.service";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -32,55 +36,62 @@ import { UpdatedEntity } from "./model/entity-update";
  * - [How to Load and Save Data]{@link /additional-documentation/how-to-guides/load-and-save-data.html}
  * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class EntityMapperService {
-  private publishers: Map<string, Subject<any>> = new Map();
   constructor(
     private _db: Database,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
+    private sessionService: SessionService,
+    private registry: EntityRegistry
   ) {}
 
   /**
-   * Load an Entity from the database with the given id.
+   * Load an Entity from the database with the given id or the registered name of that class.
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
    * @param id The id of the entity to load
    * @returns A Promise resolving to an instance of entityType filled with its data.
    */
   public async load<T extends Entity>(
-    entityType: EntityConstructor<T>,
+    entityType: EntityConstructor<T> | string,
     id: string
   ): Promise<T> {
-    const resultEntity = new entityType("");
-    const result = await this._db.get(
-      Entity.createPrefixedId(resultEntity.getType(), id)
-    );
-    this.entitySchemaService.loadDataIntoEntity(resultEntity, result);
-    return resultEntity;
+    const ctor = this.resolveConstructor(entityType);
+    const entityId = Entity.createPrefixedId(ctor.ENTITY_TYPE, id);
+    const result = await this._db.get(entityId);
+    return this.transformToEntityFormat(result, ctor);
   }
 
   /**
    * Load all entities from the database of the given type (for example a list of entities of the type User).
+   * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn't allow strict type-checking and errors can only be discovered later
    *
    * @param entityType Class that implements Entity, which is the type of Entity the results should be transformed to
+   * or the registered name of that class.
    * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
   public async loadType<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Promise<T[]> {
-    const resultArray: Array<T> = [];
+    const ctor = this.resolveConstructor(entityType);
+    const records = await this._db.getAll(ctor.ENTITY_TYPE + ":");
+    return records.map((rec) => this.transformToEntityFormat(rec, ctor));
+  }
 
-    const allRecordsOfType = await this._db.getAll(
-      new entityType("").getType() + ":"
-    );
-
-    for (const record of allRecordsOfType) {
-      const entity = new entityType("");
+  private transformToEntityFormat<T extends Entity>(
+    record: any,
+    ctor: EntityConstructor<T>
+  ): T {
+    const entity = new ctor("");
+    try {
       this.entitySchemaService.loadDataIntoEntity(entity, record);
-      resultArray.push(entity);
+    } catch (e) {
+      // add _id information to error message
+      e.message = `Could not transform entity "${record._id}": ${e.message}`;
+      throw e;
     }
-
-    return resultArray;
+    return entity;
   }
 
   /**
@@ -92,21 +103,30 @@ export class EntityMapperService {
    * This can be used in collaboration with the update(UpdatedEntity, Entities)-function
    * to update a list of entities
    * <br>
-   * The first update that one will receive - immediately after subscribing - is <code>null</code>.
-   * The <code>update</code>-function takes this into account.
-   * @param entityType the type of the entity
+   *
+   * <em>Important:</em> Loading via the constructor is always preferred compared to loading via string. The latter
+   * doesn't allow strict type-checking and errors can only be discovered later
+   * @param entityType the type of the entity or the registered name of that class.
    */
   public receiveUpdates<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
-    const type = new entityType().getType();
-    let publisher = this.publishers[type];
-    // subject doesn't exist yet or is closed
-    if (!publisher || publisher.closed) {
-      publisher = new Subject<T>();
-      this.publishers[type] = publisher;
-    }
-    return publisher.asObservable();
+    const ctor = this.resolveConstructor(entityType);
+    const type = new ctor().getType();
+    return this._db.changes(type + ":").pipe(
+      map((doc) => {
+        const entity = new ctor();
+        this.entitySchemaService.loadDataIntoEntity(entity, doc);
+        if (doc._deleted) {
+          return { type: "remove", entity: entity };
+        } else if (doc._rev.startsWith("1-")) {
+          // This does not cover all the cases as docs with higher rev-number might be synchronized for the first time
+          return { type: "new", entity: entity };
+        } else {
+          return { type: "update", entity: entity };
+        }
+      })
+    );
   }
 
   /**
@@ -119,10 +139,9 @@ export class EntityMapperService {
     entity: T,
     forceUpdate: boolean = false
   ): Promise<any> {
-    const rawData = this.entitySchemaService.transformEntityToDatabaseFormat(
-      entity
-    );
-    this.sendUpdate(entity, entity._rev === undefined ? "new" : "update");
+    this.setEntityMetadata(entity);
+    const rawData =
+      this.entitySchemaService.transformEntityToDatabaseFormat(entity);
     const result = await this._db.put(rawData, forceUpdate);
     if (result?.ok) {
       entity._rev = result.rev;
@@ -131,27 +150,52 @@ export class EntityMapperService {
   }
 
   /**
+   * Saves an array of entities that are possibly heterogeneous, i.e.
+   * the entity-type of all the entities does not have to be the same.
+   * This method should be chosen whenever a bigger number of entities needs to be
+   * saved
+   * @param entities The entities to save
+   */
+  public async saveAll(entities: Entity[]): Promise<any> {
+    entities.forEach((e) => this.setEntityMetadata(e));
+    const rawData = entities.map((e) =>
+      this.entitySchemaService.transformEntityToDatabaseFormat(e)
+    );
+    const results = await this._db.putAll(rawData);
+    results.forEach((res, idx) => {
+      if (res.ok) {
+        const entity = entities[idx];
+        entity._rev = res.rev;
+      }
+    });
+    return results;
+  }
+
+  /**
    * Delete an entity from the database.
    * @param entity The entity to be deleted
    */
   public remove<T extends Entity>(entity: T): Promise<any> {
-    this.sendUpdate(entity, "remove");
     return this._db.remove(entity);
   }
 
-  /**
-   * publishes a new entity update to all subscribing listeners
-   *
-   * @param entity The entity to update
-   * @param type The type, see {@link UpdatedEntity#type}
-   */
-  private sendUpdate<T extends Entity>(
-    entity: T,
-    type: "new" | "update" | "remove"
-  ) {
-    const publisher = this.publishers[entity.getType()];
-    if (publisher && !publisher.closed) {
-      publisher.next({ entity: entity, type: type });
+  protected resolveConstructor<T extends Entity>(
+    constructible: EntityConstructor<T> | string
+  ): EntityConstructor<T> | undefined {
+    if (typeof constructible === "string") {
+      return this.registry.get(constructible) as EntityConstructor<T>;
+    } else {
+      return constructible;
     }
+  }
+
+  private setEntityMetadata(entity: Entity) {
+    const newMetadata = new UpdateMetadata(
+      this.sessionService.getCurrentUser()?.name
+    );
+    if (entity.isNew) {
+      entity.created = newMetadata;
+    }
+    entity.updated = newMetadata;
   }
 }

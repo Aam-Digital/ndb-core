@@ -1,6 +1,6 @@
 <button
   mat-icon-button
-  class="sync-icon"
+  class="white"
   [hidden]="allTasksFinished | async"
   [matMenuTriggerFor]="taskListDropdown"
   (menuClosed)="wasClosed = true"
@@ -10,47 +10,42 @@
     matBadgeColor="accent"
     [matBadgeHidden]="allTasksFinished | async"
   >
-    <mat-icon class="header-icon" fontIcon="fa-refresh"></mat-icon>
+    <fa-icon class="white" icon="sync"></fa-icon>
   </span>
 </button>
 
-<mat-menu #taskListDropdown="matMenu" class="details-container">
-  <div class="details-header details-container" i18n>
-    The following processes are still running in the background. Until these are
-    finished some pages may be slow or incomplete.
-  </div>
-
-  <div
-    *ngFor="let process of filteredProcesses | async"
-    class="details-line details-container"
-    fxLayout="row"
-  >
-    <div fxFlex="28px">
-      <mat-spinner
-        *ngIf="process.pending"
-        [diameter]="20"
-        class="process-spinner"
-      ></mat-spinner>
-      <mat-icon
-        *ngIf="!process.pending"
-        fontIcon="fa-check"
-        class="process-checkmark"
-      ></mat-icon>
+<mat-menu #taskListDropdown="matMenu">
+  <div class="padding-left-regular padding-right-regular">
+    <div i18n class="details-header">
+      The following processes are still running in the background. Until these
+      are finished some pages may be slow or incomplete.
     </div>
-    <div class="process-title" [matTooltip]="process.description" fxFlex>
-      {{ process.title }}
-      <span *ngIf="process.details">({{ process.details }})</span>
-    </div>
-  </div>
 
-  <div class="details-container">
+    <div
+      *ngFor="let process of filteredProcesses | async"
+      class="flex-row gap-small align-center mat-subtitle-2 details-line"
+    >
+      <div>
+        <mat-spinner *ngIf="process.pending" [diameter]="20"></mat-spinner>
+        <fa-icon
+          *ngIf="!process.pending"
+          icon="check"
+          class="process-checkmark"
+        ></fa-icon>
+      </div>
+      <div class="truncate-text" [matTooltip]="process.description">
+        {{ process.title }}
+        <span *ngIf="process.details">({{ process.details }})</span>
+      </div>
+    </div>
+
     <button
       mat-stroked-button
-      class="details-close"
+      class="full-width"
       (click)="taskListDropdownTrigger.closeMenu()"
-      i18n="Generic close button"
+      i18n="Hide sync details"
     >
-      Close
+      Continue in background
     </button>
   </div>
 </mat-menu>

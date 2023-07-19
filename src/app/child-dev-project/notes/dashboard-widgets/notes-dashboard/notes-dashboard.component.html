@@ -1,0 +1,71 @@
+<app-dashboard-widget
+  icon="file-alt"
+  theme="note"
+  [title]="dataSource.data.length"
+  [subtitle]="subtitle"
+  [explanation]="tooltip"
+  [loading]="isLoading"
+>
+  <app-widget-content>
+    <div *ngIf="dataSource.data.length > 0" class="table-wrapper">
+      <table
+        mat-table
+        [dataSource]="dataSource"
+        [attr.aria-label]="subtitle"
+      >
+        <!-- Table header only for assistive technologies like screen readers -->
+        <tr hidden="true">
+          <th scope="col">{{ _entity.label }}</th>
+          <th scope="col">Days since last note</th>
+        </tr>
+        <ng-container matColumnDef="entity">
+          <td *matCellDef="let entityNoteInfo">
+            <app-display-entity
+              [entityId]="entityNoteInfo.entityId"
+              [entityType]="_entity"
+            ></app-display-entity>
+          </td>
+        </ng-container>
+
+        <ng-container
+          matColumnDef="daysSinceLastNote"
+          i18n="Amount of days back|Format like 'Days passed > 5 days'"
+        >
+          <td *matCellDef="let entityNoteInfo" class="text-align-end">
+            <ng-container
+              *ngIf="entityNoteInfo.moreThanDaysSince"
+            >
+              &gt;&nbsp;
+            </ng-container>
+            {{ entityNoteInfo.daysSinceLastNote | number: "1.0-0" }} days
+          </td>
+        </ng-container>
+
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['entity', 'daysSinceLastNote'];"
+        ></tr>
+      </table>
+    </div>
+    <div
+      *ngIf="dataSource.data.length === 0 && !isLoading"
+      class="headline"
+    >
+      <ng-container *ngIf="mode==='without-recent-notes'"
+                    i18n="There are no participants that don't have a recent report to be shown here">
+        no records without recent report
+      </ng-container>
+      <ng-container *ngIf="mode==='with-recent-notes'"
+                    i18n="There are no participants that have a recent report to be shown here">
+        no records with recent report
+      </ng-container>
+    </div>
+    <mat-paginator
+      #paginator
+      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
+      [pageSizeOptions]="[5]"
+      [hidePageSize]="true"
+    >
+    </mat-paginator>
+  </app-widget-content>
+</app-dashboard-widget>

@@ -38,7 +38,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     const data = [];
 
     for (const child of this.demoChildren.entities) {
-      data.push(...this.generateChildSchoolRecordsForChild(child as Child));
+      data.push(...this.generateChildSchoolRecordsForChild(child));
     }
 
     return data;
@@ -47,7 +47,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   private generateChildSchoolRecordsForChild(
     child: Child
   ): ChildSchoolRelation[] {
-    const data = [];
+    const data: ChildSchoolRelation[] = [];
 
     const firstYear = child.admissionDate.getFullYear();
     let finalYear = new Date().getFullYear();
@@ -72,10 +72,8 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     }
     if (Math.random() < 0.8) {
       // 80% of the latest records for each child don't have an end date, which means the child currently attends this school.
-      delete (data[data.length - 1] as ChildSchoolRelation).end;
+      delete data[data.length - 1].end;
     }
-
-    this.setChildSchoolAndClassForLegacyUse(child, data[data.length - 1]);
 
     return data;
   }
@@ -102,21 +100,13 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
    */
   private selectNextSchool(currentSchool: School) {
     if (!currentSchool) {
-      return faker.random.arrayElement(this.demoSchools.entities);
+      return faker.helpers.arrayElement(this.demoSchools.entities);
     }
 
     if (faker.datatype.number(100) > 75) {
-      return faker.random.arrayElement(this.demoSchools.entities);
+      return faker.helpers.arrayElement(this.demoSchools.entities);
     } else {
       return currentSchool;
     }
-  }
-
-  private setChildSchoolAndClassForLegacyUse(
-    child: Child,
-    latestChildSchoolRelation: ChildSchoolRelation
-  ) {
-    child.schoolId = latestChildSchoolRelation.schoolId;
-    child.schoolClass = latestChildSchoolRelation.schoolClass;
   }
 }

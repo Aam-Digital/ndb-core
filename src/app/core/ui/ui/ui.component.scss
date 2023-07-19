@@ -15,54 +15,40 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+@use "@angular/material" as mat;
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/breakpoints";
+@use "src/styles/variables/ndb-light-theme" as theme;
+
+/*
+ * outermost elements; make them as tall as possible.
+ * Consumes all of the available screen
+ */
 html,
 body {
-  height: 100%;
+  // height: 100%;
 }
 
-.app-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
+/**  Toolbar  **/
+
+/**
+ * Directive for the only toolbar row.
+ * Both of these directives are required to make the shadow show
+ */
+.ui-toolbar {
+  position: relative;
   z-index: 2;
+  justify-content: space-between;
+  @include mat.elevation(2);
 }
 
-.app-content {
-  position: fixed;
-  top: 64px;
-  left: 0;
-  right: 0;
-  bottom: 0;
-}
-
-.sidenav-menu {
-  margin-top: 64px;
-}
-
-/* App Header is smaller on XS */
-@media (max-width: 599px) {
-  .app-content {
-    top: 56px;
-  }
-  .sidenav-menu {
-    margin-top: 56px;
-  }
-}
-
-.sidenav-content {
-  padding: 24px;
-  @media (max-width: 599px) {
-    padding: 12px;
-  }
-
-  /* make this fullscreen while respecting padding: https://stackoverflow.com/a/485887/1473411 */
-  position: absolute;
-  height: auto;
-  bottom: 0;
-  top: 0;
-  left: 0;
-  right: 0;
+.search-field {
+  /**
+   * Use a fixed width here because
+   * the form field does not work with
+   * relative / computed sizes
+   */
+  width: 450px;
 }
 
 .header-icon {
@@ -70,15 +56,85 @@ body {
   font-size: 15pt;
 }
 
-.header-spacer {
-  flex: 1 1 auto;
+/**  App content  **/
+
+:host {
+  background-color: mat.get-color-from-palette(theme.$primary, 50);
+  display: grid;
+  grid-template-columns: 1fr;
+  grid-template-rows: auto 1fr;
+  height: 100vh;
+
+  // This only targets iOs devices. Note that (just like the line below), this is
+  // a hacky solution. While it is practically guaranteed that only iOs will have this
+  // property, it is not guaranteed that iOs will keep this property for ever.
+  @supports (-webkit-touch-callout: none) {
+    /* mobile viewport bug fix. */
+    // The viewport height on iOs is not necessarily the visible screen size.
+    // There might be a bar on the top of the screen. The following line
+    // fixes this, but since this is no official css feature, this line should
+    // be replaced as soon as a nicer solution exists.
+
+    height: -webkit-fill-available;
+  }
 }
 
+/**  Main content  **/
+
+mat-sidenav-container {
+  background: none;
+}
+
+/**
+ * reset the styles from the anchor element
+ */
 .header-title {
   color: white;
   text-decoration: none;
 }
 
-app-search {
-  max-height: 100%;
+/**
+ * Remove the right border so that the background color
+ * merges into the main element
+ */
+.mat-drawer-side {
+  border-right: 0;
+}
+
+.site-logo {
+  width: 180px;
+  padding: 8px;
+  margin: auto;
+}
+
+.footer-cell {
+  border-top: solid 1px rgba(0, 0, 0, 0.12);
+  border-radius: 0;
+  display: flex;
+  place-content: center;
+  place-items: center;
+  min-width: fit-content;
+
+  &:not(:last-child) {
+    border-right: solid 1px rgba(0, 0, 0, 0.12);
+  }
+
+  box-sizing: border-box;
+}
+
+.info-icon {
+  margin: auto;
+  font-size: 20px;
+  cursor: pointer;
+}
+
+.info-button {
+  width: 48px;
+  border-right: solid 1px rgba(0, 0, 0, 0.12);
+  border-radius: 0;
+  overflow: hidden;
+}
+
+.justify-content-end {
+  justify-content: end;
 }

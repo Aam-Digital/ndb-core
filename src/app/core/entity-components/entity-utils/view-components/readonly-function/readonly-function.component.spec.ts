@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ReadonlyFunctionComponent } from "./readonly-function.component";
 import { Child } from "../../../../../child-dev-project/children/model/child";
-import { EntityFunctionPipe } from "./entity-function.pipe";
+import { UntypedFormControl, UntypedFormGroup } from "@angular/forms";
 
 describe("ReadonlyFunctionComponent", () => {
   let component: ReadonlyFunctionComponent;
@@ -10,18 +10,18 @@ describe("ReadonlyFunctionComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      declarations: [ReadonlyFunctionComponent, EntityFunctionPipe],
+      imports: [ReadonlyFunctionComponent],
     }).compileComponents();
   });
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ReadonlyFunctionComponent);
     component = fixture.componentInstance;
-    component.onInitFromDynamicConfig({
-      entity: new Child(),
-      id: "",
-      config: (entity) => entity.name,
-    });
+    const formGroup = new UntypedFormGroup({});
+    const formControl = new UntypedFormControl();
+    formGroup.registerControl("name", formControl);
+    component.entity = Child.create("nameBefore");
+    component.config = (entity) => entity.toString();
     fixture.detectChanges();
   });
 

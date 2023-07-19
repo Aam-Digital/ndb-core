@@ -17,24 +17,29 @@
 import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
 import {
-  DatabaseUser,
   encryptPassword,
   LocalUser,
   passwordEqualsEncrypted,
 } from "./local-user";
-import { Database } from "../../database/database";
 import { SessionService } from "./session.service";
+import { PouchDatabase } from "../../database/pouch-database";
+import { AppSettings } from "../../app-config/app-settings";
+import { SessionType } from "../session-type";
+import { environment } from "../../../../environments/environment";
+import { AuthUser } from "./auth-user";
 
 /**
  * Responsibilities:
  * - Manage local authentication
  * - Save users in local storage
+ * - Create local PouchDB according to session type and logged in user
  */
 @Injectable()
 export class LocalSession extends SessionService {
-  private currentDBUser: DatabaseUser;
+  static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
+  private currentDBUser: AuthUser;
 
-  constructor(private database: Database) {
+  constructor(private database: PouchDatabase) {
     super();
   }
 
@@ -45,11 +50,10 @@ export class LocalSession extends SessionService {
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
-    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    const user = this.getStoredUser(username);
     if (user) {
       if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
-        this.currentDBUser = user;
-        this.loginState.next(LoginState.LOGGED_IN);
+        await this.handleSuccessfulLogin(user);
       } else {
         this.loginState.next(LoginState.LOGIN_FAILED);
       }
@@ -59,18 +63,72 @@ export class LocalSession extends SessionService {
     return this.loginState.value;
   }
 
+  private getStoredUser(username: string): LocalUser {
+    const stored = window.localStorage.getItem(username?.trim().toLowerCase());
+    return JSON.parse(stored);
+  }
+
+  public async handleSuccessfulLogin(userObject: AuthUser) {
+    this.currentDBUser = userObject;
+    await this.initializeDatabaseForCurrentUser();
+    this.loginState.next(LoginState.LOGGED_IN);
+  }
+
+  private async initializeDatabaseForCurrentUser() {
+    const userDBName = `${this.currentDBUser.name}-${AppSettings.DB_NAME}`;
+    // Work on a temporary database before initializing the real one
+    const tmpDB = new PouchDatabase(undefined);
+    this.initDatabase(userDBName, tmpDB);
+    if (!(await tmpDB.isEmpty())) {
+      // Current user has own database, we are done here
+      this.initDatabase(userDBName);
+      return;
+    }
+
+    this.initDatabase(AppSettings.DB_NAME, tmpDB);
+    const dbFallback = window.localStorage.getItem(
+      LocalSession.DEPRECATED_DB_KEY
+    );
+    const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
+    if (dbAvailable && !(await tmpDB.isEmpty())) {
+      // Old database is available and can be used by the current user
+      window.localStorage.setItem(
+        LocalSession.DEPRECATED_DB_KEY,
+        this.currentDBUser.name
+      );
+      this.initDatabase(AppSettings.DB_NAME);
+      return;
+    }
+
+    // Create a new database for the current user
+    this.initDatabase(userDBName);
+  }
+
+  private initDatabase(dbName: string, db = this.database) {
+    if (environment.session_type === SessionType.mock) {
+      db.initInMemoryDB(dbName);
+    } else {
+      db.initIndexedDB(dbName);
+    }
+  }
+
   /**
    * Saves a user to the local storage
    * @param user a object holding the username and the roles of the user
    * @param password of the user
+   * @param loginName (optional) if login also works with a username other than `user.name`. E.g. the email of the user
    */
-  public saveUser(user: DatabaseUser, password: string) {
+  public saveUser(user: AuthUser, password: string, loginName = user.name) {
     const localUser: LocalUser = {
-      name: user.name,
-      roles: user.roles,
+      ...user,
       encryptedPassword: encryptPassword(password),
     };
-    window.localStorage.setItem(localUser.name, JSON.stringify(localUser));
+    const loginNameLower = loginName.trim().toLowerCase();
+    window.localStorage.setItem(loginNameLower, JSON.stringify(localUser));
+    const userNameLower = user.name.trim().toLowerCase();
+    if (userNameLower !== loginNameLower) {
+      window.localStorage.setItem(userNameLower, JSON.stringify(localUser));
+    }
     // Update when already logged in
     if (this.getCurrentUser()?.name === localUser.name) {
       this.currentDBUser = localUser;
@@ -84,14 +142,15 @@ export class LocalSession extends SessionService {
    */
   public removeUser(username: string) {
     window.localStorage.removeItem(username);
+    window.localStorage.removeItem(username.trim().toLowerCase());
   }
 
   public checkPassword(username: string, password: string): boolean {
-    const user: LocalUser = JSON.parse(window.localStorage.getItem(username));
+    const user = this.getStoredUser(username);
     return user && passwordEqualsEncrypted(password, user.encryptedPassword);
   }
 
-  public getCurrentUser(): DatabaseUser {
+  public getCurrentUser(): AuthUser {
     return this.currentDBUser;
   }
 
@@ -103,11 +162,7 @@ export class LocalSession extends SessionService {
     this.loginState.next(LoginState.LOGGED_OUT);
   }
 
-  getDatabase(): Database {
+  getDatabase(): PouchDatabase {
     return this.database;
-  }
-
-  sync(): Promise<any> {
-    return Promise.reject(new Error("Cannot sync local session"));
   }
 }

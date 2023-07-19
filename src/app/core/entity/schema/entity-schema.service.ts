@@ -30,6 +30,9 @@ import { schemaEmbedEntitySchemaDatatype } from "../schema-datatypes/datatype-sc
 import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 import { mapEntitySchemaDatatype } from "../schema-datatypes/datatype-map";
 import { booleanEntitySchemaDatatype } from "../schema-datatypes/datatype-boolean";
+import { entityArrayEntitySchemaDatatype } from "../schema-datatypes/datatype-entity-array";
+import { entityEntitySchemaDatatype } from "../schema-datatypes/datatype-entity";
+import { dateWithAgeEntitySchemaDatatype } from "../schema-datatypes/datatype-date-with-age";
 
 /**
  * Transform between entity instances and database objects
@@ -43,7 +46,7 @@ import { booleanEntitySchemaDatatype } from "../schema-datatypes/datatype-boolea
  * also see the How-To Guides:
  * - [Create A New Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
-@Injectable()
+@Injectable({ providedIn: "root" })
 export class EntitySchemaService {
   /**
    * Internal registry of data type definitions.
@@ -61,10 +64,13 @@ export class EntitySchemaService {
     this.registerSchemaDatatype(dateEntitySchemaDatatype);
     this.registerSchemaDatatype(dateOnlyEntitySchemaDatatype);
     this.registerSchemaDatatype(monthEntitySchemaDatatype);
+    this.registerSchemaDatatype(dateWithAgeEntitySchemaDatatype);
     this.registerSchemaDatatype(arrayEntitySchemaDatatype);
     this.registerSchemaDatatype(schemaEmbedEntitySchemaDatatype);
     this.registerSchemaDatatype(mapEntitySchemaDatatype);
     this.registerSchemaDatatype(booleanEntitySchemaDatatype);
+    this.registerSchemaDatatype(entityArrayEntitySchemaDatatype);
+    this.registerSchemaDatatype(entityEntitySchemaDatatype);
   }
 
   /**
@@ -96,23 +102,19 @@ export class EntitySchemaService {
    * @param schema A schema defining the transformation
    */
   public transformDatabaseToEntityFormat(data: any, schema: EntitySchema) {
+    const transformed = {};
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
 
       if (data[key] === undefined || data[key] === null) {
-        if (schemaField.defaultValue !== undefined) {
-          data[key] = schemaField.defaultValue;
-        } else {
-          // skip and keep undefined
-          continue;
-        }
+        continue;
       }
 
       const newValue = this.getDatatypeOrDefault(
         schemaField.dataType
       ).transformToObjectFormat(data[key], schemaField, this, data);
       if (newValue !== undefined) {
-        data[key] = newValue;
+        transformed[key] = newValue;
       }
 
       if (schemaField.generateIndex) {
@@ -120,7 +122,7 @@ export class EntitySchemaService {
       }
     }
 
-    return data;
+    return transformed;
   }
 
   /**
@@ -129,11 +131,11 @@ export class EntitySchemaService {
    * @param data The database object that will be transformed and assigned to the entity
    */
   public loadDataIntoEntity(entity: Entity, data: any) {
-    data = this.transformDatabaseToEntityFormat(
+    const transformed = this.transformDatabaseToEntityFormat(
       data,
       (<typeof Entity>entity.constructor).schema
     );
-    Object.assign(entity, data);
+    Object.assign(entity, transformed);
   }
 
   /**
@@ -146,7 +148,7 @@ export class EntitySchemaService {
     schema?: EntitySchema
   ): any {
     if (!schema) {
-      schema = entity.getConstructor().schema;
+      schema = entity.getSchema();
     }
 
     const data = {};
@@ -156,12 +158,8 @@ export class EntitySchemaService {
       const schemaField: EntitySchemaField = schema.get(key);
 
       if (value === undefined || value === null) {
-        if (schemaField.defaultValue !== undefined) {
-          value = schemaField.defaultValue;
-        } else {
-          // skip and keep undefined
-          continue;
-        }
+        // skip and keep undefined
+        continue;
       }
 
       try {
@@ -182,7 +180,8 @@ export class EntitySchemaService {
 
   /**
    * Get the name of the component that should display this property.
-   * The names will be one of the DYNAMIC_COMPONENT_MAP.
+   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
+   * decorator
    *
    * @param propertySchema The schema definition of the attribute for which a component should be get
    * @param mode (Optional) The mode for which a component is required. Default is "view".
@@ -197,9 +196,20 @@ export class EntitySchemaService {
     }
     const componentAttribute =
       mode === "view" ? "viewComponent" : "editComponent";
-    return (
-      propertySchema[componentAttribute] ||
-      this.getDatatypeOrDefault(propertySchema.dataType)[componentAttribute]
+    if (propertySchema[componentAttribute]) {
+      return propertySchema[componentAttribute];
+    }
+
+    const dataType = this.getDatatypeOrDefault(propertySchema.dataType);
+    if (dataType?.[componentAttribute]) {
+      return dataType[componentAttribute];
+    }
+
+    const innerDataType = this.getDatatypeOrDefault(
+      propertySchema.innerDataType
     );
+    if (innerDataType?.[componentAttribute]) {
+      return innerDataType[componentAttribute];
+    }
   }
 }

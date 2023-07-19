@@ -1,7 +1,9 @@
 import { Entity, EntityConstructor } from "./model/entity";
 import { EntityMapperService } from "./entity-mapper.service";
 import { UpdatedEntity } from "./model/entity-update";
-import { NEVER, Observable } from "rxjs";
+import { Observable, Subject } from "rxjs";
+import { entityRegistry } from "./database-entity.decorator";
+import { HttpErrorResponse } from "@angular/common/http";
 
 export function mockEntityMapper(
   withData: Entity[] = []
@@ -17,8 +19,17 @@ export function mockEntityMapper(
  */
 export class MockEntityMapperService extends EntityMapperService {
   private data: Map<string, Map<string, Entity>> = new Map();
+  private observables: Map<string, Subject<UpdatedEntity<any>>> = new Map();
+
   constructor() {
-    super(null, null);
+    super(null, null, null, entityRegistry);
+  }
+
+  private publishUpdates(type: string, update: UpdatedEntity<any>) {
+    const subj = this.observables.get(type);
+    if (subj !== undefined) {
+      subj.next(update);
+    }
   }
 
   /**
@@ -30,11 +41,16 @@ export class MockEntityMapperService extends EntityMapperService {
     if (!this.data.get(type)) {
       this.data.set(type, new Map());
     }
+    const alreadyExists = this.contains(entity);
     this.data.get(type).set(entity.getId(), entity);
+    this.publishUpdates(
+      entity.getType(),
+      alreadyExists ? { type: "update", entity } : { type: "new", entity }
+    );
   }
 
   /**
-   * returns whether or not the given entity is known
+   * returns whether the given entity is known
    * @param entity
    */
   public contains(entity: Entity): boolean {
@@ -58,7 +74,12 @@ export class MockEntityMapperService extends EntityMapperService {
    * @param id
    */
   public get(entityType: string, id: string): Entity {
-    return this.data.get(entityType)?.get(id);
+    const entityId = id.includes(":") ? id.split(":")[1] : id;
+    const result = this.data.get(entityType)?.get(entityId);
+    if (!result) {
+      throw new HttpErrorResponse({ status: 404 });
+    }
+    return result;
   }
 
   /**
@@ -77,22 +98,30 @@ export class MockEntityMapperService extends EntityMapperService {
     const entities = this.data.get(entity.getType());
     if (entities) {
       entities.delete(entity.getId());
+      this.publishUpdates(entity.getType(), { type: "remove", entity });
     }
   }
 
   public async load<T extends Entity>(
-    entityType: EntityConstructor<T>,
+    entityType: EntityConstructor<T> | string,
     id: string
   ): Promise<T> {
-    const type = new entityType().getType();
-    return this.get(type, id) as T;
+    const ctor = this.resolveConstructor(entityType);
+    const type = new ctor().getType();
+    const entity = this.get(type, id) as T;
+    if (!entity) {
+      throw Error(`Entity ${id} does not exist in MockEntityMapper`);
+    } else {
+      return entity;
+    }
   }
 
   async loadType<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Promise<T[]> {
-    const type = new entityType().getType();
-    return this.getAll(type) as T[];
+    const ctor = this.resolveConstructor(entityType);
+    const type = new ctor().getType();
+    return this.getAll(type);
   }
 
   async save<T extends Entity>(
@@ -100,7 +129,10 @@ export class MockEntityMapperService extends EntityMapperService {
     forceUpdate: boolean = false
   ): Promise<any> {
     this.add(entity);
-    return Promise.resolve();
+  }
+
+  async saveAll(entities: Entity[]): Promise<any> {
+    this.addAll(entities);
   }
 
   remove<T extends Entity>(entity: T): Promise<any> {
@@ -109,8 +141,13 @@ export class MockEntityMapperService extends EntityMapperService {
   }
 
   receiveUpdates<T extends Entity>(
-    entityType: EntityConstructor<T>
+    entityType: EntityConstructor<T> | string
   ): Observable<UpdatedEntity<T>> {
-    return NEVER;
+    let name =
+      typeof entityType === "string" ? entityType : entityType.ENTITY_TYPE;
+    if (!this.observables.has(name)) {
+      this.observables.set(name, new Subject());
+    }
+    return this.observables.get(name);
   }
 }

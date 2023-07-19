@@ -1,17 +1,17 @@
 import { Component } from "@angular/core";
-import { ViewPropertyConfig } from "../../../entity-list/EntityListConfig";
-import { ViewComponent } from "../view-component";
+import { ViewDirective } from "../view.directive";
 import { Entity } from "../../../../entity/model/entity";
+import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
+import { EntityFunctionPipe } from "./entity-function.pipe";
 
+@DynamicComponent("ReadonlyFunction")
 @Component({
   selector: "app-readonly-function",
-  templateUrl: "./readonly-function.component.html",
-  styleUrls: ["./readonly-function.component.scss"],
+  template: `{{ entity | entityFunction : config }}`,
+  standalone: true,
+  imports: [EntityFunctionPipe],
 })
-export class ReadonlyFunctionComponent extends ViewComponent {
-  displayFunction: (entity: Entity) => any;
-  onInitFromDynamicConfig(config: ViewPropertyConfig) {
-    super.onInitFromDynamicConfig(config);
-    this.displayFunction = config.config;
-  }
-}
+export class ReadonlyFunctionComponent extends ViewDirective<
+  any,
+  (entity: Entity) => any
+> {}

@@ -29,6 +29,12 @@ import { School } from "../../schools/model/school";
 
 @DatabaseEntity("RecurringActivity")
 export class RecurringActivity extends Entity {
+  static toStringAttributes = ["title"];
+  static label = $localize`:label for entity:Recurring Activity`;
+  static labelPlural = $localize`:label (plural) for entity:Recurring Activities`;
+  static color = "#00838F";
+  static route = "attendance/recurring-activity";
+
   static create(title: string = ""): RecurringActivity {
     const instance = new RecurringActivity();
     instance.title = title;
@@ -46,7 +52,9 @@ export class RecurringActivity extends Entity {
   /** primary name to identify the activity */
   @DatabaseField({
     label: $localize`:Label for the title of a recurring activity:Title`,
-    required: true,
+    validators: {
+      required: true,
+    },
   })
   title: string = "";
 
@@ -65,8 +73,7 @@ export class RecurringActivity extends Entity {
   /** IDs of children linked to this activity */
   @DatabaseField({
     label: $localize`:Label for the participants of a recurring activity:Participants`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
   })
   participants: string[] = [];
@@ -74,22 +81,28 @@ export class RecurringActivity extends Entity {
   /** IDs of groups (schools, teams) whose (active) members should be included in the activity*/
   @DatabaseField({
     label: $localize`:Label for the linked schools of a recurring activity:Groups`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: School.ENTITY_TYPE,
   })
   linkedGroups: string[] = [];
 
+  /** IDs of children that should be excluded from this activity despite being a group member */
+  @DatabaseField({
+    label: $localize`:Label for excluded participants of a recurring activity:Excluded Participants`,
+    dataType: "entity-array",
+    additional: Child.ENTITY_TYPE,
+  })
+  excludedParticipants: string[] = [];
+
   /** IDs of the users who are responsible for conducting this activity */
   @DatabaseField({
     label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     additional: User.ENTITY_TYPE,
   })
   assignedTo: string[] = [];
 
-  toString(): string {
-    return this.title;
+  isAssignedTo(username: string): boolean {
+    return !!this.assignedTo.find((name) => username === name);
   }
 }

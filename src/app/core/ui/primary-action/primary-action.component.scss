@@ -1,8 +1,10 @@
 .primary-action {
+  font-size: 180%;
+}
+
+:host {
   position: absolute;
-  bottom: 0;
-  right: 0;
+  bottom: 10px;
+  right: 10px;
   z-index: 999;
-  margin: 10px;
-  font-size: 20px;
 }

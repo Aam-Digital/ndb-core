@@ -1,105 +1,85 @@
-<div fxLayout="column" class="overall-container">
-  <div fxFlex>
-    <mat-form-field>
-      <mat-label
-        i18n="
-          Event-Record label|Record an event for a particular date that is to be
-          inputted
-        "
-        >Record event for</mat-label
-      >
-      <input
-        matInput
-        [(ngModel)]="date"
-        required
-        [matDatepicker]="datePicker"
-        (dateChange)="setNewDate($event.value)"
-      />
-      <mat-datepicker-toggle
-        matSuffix
-        [for]="datePicker"
-        angulartics2On="click" angularticsCategory="Record Attendance" angularticsAction="select_date"
-      ></mat-datepicker-toggle>
-      <mat-datepicker #datePicker></mat-datepicker>
-    </mat-form-field>
-  </div>
-
-  <div *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD"
-       fxLayout="row wrap" fxLayoutGap="8px" fxFlex>
-    <app-list-filter
-      *ngFor="let filter of filterSettings"
-      [filterConfig]="filter.filterSettings"
-      [(selectedOption)]="filter.selectedOption"
-      (selectedOptionChange)="applyFilter(filter, $event)"
+<div class="top-control">
+  <mat-form-field>
+    <mat-label
+      i18n="
+        Event-Record label|Record an event for a particular date that is to be
+        inputted
+      "
+    >Date
+    </mat-label>
+    <input
+      matInput
+      #dateField="ngModel"
+      [(ngModel)]="date"
+      required
+      [matDatepicker]="datePicker"
+      (dateChange)="setNewDate($event.value)"
+    />
+    <mat-datepicker-toggle
+      matIconSuffix
+      [for]="datePicker"
       angulartics2On="click"
       angularticsCategory="Record Attendance"
-      angularticsAction="filter"
-      [angularticsLabel]="filter.filterSettings.label"
-    >
-    </app-list-filter>
-  </div>
+      angularticsAction="select_date"
+    ></mat-datepicker-toggle>
+    <mat-datepicker #datePicker></mat-datepicker>
+  </mat-form-field>
 
-  <div class="flex-scroll-container" fxFlex="grow">
-    <div fxLayout="row wrap" fxLayoutGap="8px">
-      <app-activity-card
-        *ngFor="let event of filteredExistingEvents"
-        [event]="event"
-        (click)="selectedEvent = event"
-        [highlighted]="selectedEvent === event"
-        [recurring]="event.isNewFromActivity"
-        class="event-card"
-      >
-      </app-activity-card>
-    </div>
+  <app-filter
+    *ngIf="existingEvents.length >= FILTER_VISIBLE_THRESHOLD"
+    class="flex-row flex-wrap gap-small"
+    [filterConfig]="filterConfig"
+    [entityType]="entityType"
+    [entities]="existingEvents"
+    [onlyShowRelevantFilterOptions]="true"
+    (filterObjChange)="filterExistingEvents($event)"
+  ></app-filter>
+</div>
 
-    <div fxLayoutGap="8px">
-      <button
-        i18n="Show more-button|Show more events to record the attendance"
-        mat-stroked-button
-        (click)="showMore()"
-        [disabled]="visibleActivities.length === allActivities.length"
-        angulartics2On="click"
-        angularticsCategory="Record Attendance"
-        angularticsAction="show_more"
-      >
-        Show more
-      </button>
-      <button
-        i18n="Not listed|Allows to create a new event"
-        mat-button
-        (click)="createOneTimeEvent()"
-        angulartics2On="click"
-        angularticsCategory="Record Attendance"
-        angularticsAction="create_onetime_event"
-      >
-        My event is not listed ...
-      </button>
-    </div>
-  </div>
 
-  <div class="mat-elevation-z5 bottom-control" fxFlex="112px">
-    <div fxLayout="row" fxLayoutGap="16px">
-      <button
-        i18n="
-          Record Attendance button|Start recording the attendance of a child at
-          an event
-        "
-        mat-raised-button
-        color="primary"
-        class="confirm-button"
-        [disabled]="!selectedEvent"
-        (click)="eventSelected.emit(selectedEvent)"
-      >
-        Record Attendance
-      </button>
+<div *ngIf="isLoading" class="process-spinner">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
 
-      <app-activity-card
-        *ngIf="selectedEvent"
-        [event]="selectedEvent"
-        class="mat-elevation-z0 selected-card"
-        fxFlex
-      >
-      </app-activity-card>
-    </div>
-  </div>
+<div class="cards-list" *ngIf="!isLoading">
+  <app-activity-card
+    class="pointer"
+    *ngFor="let event of filteredExistingEvents"
+    [event]="event"
+    [recurring]="event.isNewFromActivity"
+    (click)="selectEvent(event)"
+  >
+  </app-activity-card>
+</div>
+
+<div class="padding-top-regular gap-regular flex-row">
+  <button
+    mat-stroked-button
+    (click)="showingAll ? showLess() : showMore()"
+    angulartics2On="click"
+    angularticsCategory="Record Attendance"
+    angularticsAction="show_more"
+    class="padding-right-small"
+  >
+    <span
+      *ngIf="showingAll"
+      i18n="Show less entries of a list">
+      Show less
+    </span>
+    <span
+      *ngIf="!showingAll"
+      i18n="Show more entries of a list">
+      Show more
+    </span>
+  </button>
+  <button
+    i18n="Not listed|Allows to create a new event"
+    mat-button
+    (click)="createOneTimeEvent()"
+    angulartics2On="click"
+    angularticsCategory="Record Attendance"
+    angularticsAction="create_onetime_event"
+  >
+    My event is not listed ...
+  </button>
 </div>

@@ -1,31 +1,37 @@
-<div [formGroup]="formControl.parent">
-  <mat-form-field style="width: 120px">
+<div [formGroup]="parent">
+  <mat-form-field style="width: 70%">
+    <mat-label>{{label}}</mat-label>
     <input
       matInput
       [formControlName]="formControlName"
-      [placeholder]="label"
       [matDatepicker]="dateOfBirthDatepicker"
+      (dateChange)="dateChanged($event)"
     />
     <mat-datepicker-toggle
-      matSuffix
+      matIconSuffix
       [for]="dateOfBirthDatepicker"
     ></mat-datepicker-toggle>
     <mat-datepicker #dateOfBirthDatepicker></mat-datepicker>
+    <mat-error>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
   </mat-form-field>
-  <mat-form-field style="width: 50px">
-    <mat-icon
+  <mat-form-field style="width: 30%">
+    <mat-label i18n="Placeholder for the input that displays the age">Age</mat-label>
+    <fa-icon
       *ngIf="formControl.enabled"
-      matSuffix
-      fontIcon="fa-question-circle-o"
+      matIconSuffix
+      icon="question-circle"
       i18n-matTooltip="Tooltip for the disabled age field"
       matTooltip="This field is read-only. Edit Date of Birth to change age. Select Jan 1st if you only know the year of birth."
-    ></mat-icon>
+    ></fa-icon>
     <input
       matInput
-      i18n-placeholder="Placeholder for the input that displays the age"
-      placeholder="Age"
-      [value]="getAge(formControl.value)"
+      [value]="formControl.value?.age?.toString()"
       [disabled]="true"
     />
+    <mat-error>
+      <app-error-hint [form]="formControl"></app-error-hint>
+    </mat-error>
   </mat-form-field>
 </div>

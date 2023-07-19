@@ -1,32 +1,21 @@
-<h1 mat-dialog-title>{{ data.title }}</h1>
+<h1 mat-dialog-title>
+  {{ data.title }}
+  <app-dialog-close
+    *ngIf="data.closeButton"
+    mat-dialog-close
+  ></app-dialog-close>
+</h1>
 <div mat-dialog-content>
   <p>{{ data.text }}</p>
 </div>
 
-<div mat-dialog-actions *ngIf="data.yesNo">
+<div mat-dialog-actions>
   <button
-    i18n="Confirmation dialog Yes"
+    *ngFor="let button of data.buttons"
     mat-stroked-button
-    [mat-dialog-close]="true"
-    cdkFocusInitial
+    (click)="button.click()"
+    [mat-dialog-close]="button.dialogResult"
   >
-    Yes
-  </button>
-  <button
-    i18n="Confirmation dialog No"
-    mat-stroked-button
-    [mat-dialog-close]="false"
-  >
-    No
-  </button>
-</div>
-<div mat-dialog-actions *ngIf="!data.yesNo">
-  <button
-    i18n="Confirmation dialog OK"
-    mat-stroked-button
-    [mat-dialog-close]="true"
-    cdkFocusInitial
-  >
-    OK
+    {{ button.text }}
   </button>
 </div>

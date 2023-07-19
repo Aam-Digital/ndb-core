@@ -1,12 +1,12 @@
-<div class="desktop-search-bar" fxHide.xs="true" fxHide="false">
-  <mat-form-field fxFill class="search-field" floatLabel="never">
-    <span matPrefix>
-      <mat-icon matPrefix class="search-icon" fontIcon="fa-search"></mat-icon>
-    </span>
-    <mat-label i18n="Search label">Search</mat-label>
+<div class="white mat-subtitle-2 remove-margin-bottom full-width">
+  <mat-form-field class="full-width searchbar">
+    <fa-icon matIconPrefix class="padding-right-small" icon="search"></fa-icon>
     <input
+      class="full-width search-input"
       matInput
       title="Search"
+      i18n-placeholder="Search label"
+      placeholder="Search"
       [formControl]="formControl"
       [matAutocomplete]="autoResults"
     />
@@ -22,7 +22,7 @@
         class="result-hint"
         [disabled]="true"
       >
-        <p i18n="The user has inserted too few characters to start a search">
+        <p i18n="The user has inserted too few characters to start a search" class="remove-margin-bottom">
           Insert at least {{ MIN_CHARACTERS_FOR_SEARCH }} characters
         </p>
       </mat-option>
@@ -32,7 +32,7 @@
         *ngSwitchCase="SEARCH_IN_PROGRESS"
         [disabled]="true"
       >
-        <p i18n="A search is in progress">Search in progress...</p>
+        <p i18n="A search is in progress" class="remove-margin-bottom">Search in progress...</p>
       </mat-option>
 
       <mat-option
@@ -40,7 +40,7 @@
         *ngSwitchCase="NO_RESULTS"
         [disabled]="true"
       >
-        <p i18n="No search results are available">There were no results</p>
+        <p i18n="No search results are available" class="remove-margin-bottom">There were no results</p>
       </mat-option>
 
       <mat-option
@@ -48,7 +48,7 @@
         *ngSwitchCase="ILLEGAL_INPUT"
         [disabled]="true"
       >
-        <p i18n="Invalid characters were entered into the search field">
+        <p i18n="Invalid characters were entered into the search field" class="remove-margin-bottom">
           Please only enter numbers or letters
         </p>
       </mat-option>

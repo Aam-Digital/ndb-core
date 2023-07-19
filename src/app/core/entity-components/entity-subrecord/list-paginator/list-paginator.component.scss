@@ -1,51 +1,25 @@
-.mat-toolbar-row {
-  justify-content: space-between;
-  background-color: blue;
-}
+@use "src/styles/variables/sizes";
 
-.mat-toolbar {
+// The paginator is usually a little smaller than this
+$approx-width-paginator: 450px;
+$slider-padding-all: 16px;
+
+:host {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  @media all and (max-width: $approx-width-paginator) {
+    flex-direction: column-reverse;
+    align-items: flex-start;
+  }
+  justify-content: flex-start;
   background-color: white;
 }
 
-.mat-slide-toggle {
+.slider {
+  padding-left: sizes.$regular;
+  @media all and (max-width: $approx-width-paginator) {
+    padding-bottom: sizes.$regular;
+  }
   font-size: small;
-}
-
-/* configuration for the mat-slide-toggle feature, used e.g. in the entity-list.component for the "Show All"
-option within the pagination of the tables */
-::ng-deep .mat-slide-toggle-thumb {
-  filter: grayscale(100%);
-  width: 18px !important;
-  height: 18px !important;
-  transform: translate(0%, 0%);
-  background-image: url(~/src/assets/icons/icon-512x512.png) !important;
-  background-origin: content-box;
-  background-size: contain;
-  background-position: center center;
-}
-
-::ng-deep .mat-checked .mat-slide-toggle-thumb {
-  filter: grayscale(0);
-}
-
-::ng-deep .mat-slide-toggle-bar {
-  background-color: #cccccc;
-  border-radius: 15px !important;
-  height: 16px !important;
-}
-
-::ng-deep .mat-slide-toggle-thumb-container {
-  top: -2px !important;
-}
-
-::ng-deep
-  .mat-slide-toggle.mat-checked:not(.mat-disabled)
-  .mat-slide-toggle-bar {
-  background-color: #ffb45e;
-}
-
-::ng-deep
-  .mat-slide-toggle.mat-checked:not(.mat-disabled)
-  .mat-slide-toggle-thumb {
-  background-color: #fff;
 }

@@ -1,0 +1,11 @@
+@use "../../entity-utils/common-styles" as *;
+@use "src/styles/variables/sizes";
+
+.block-wrapper {
+  @include entity-block-border;
+}
+
+.caret-suffix {
+  cursor: pointer;
+  padding: 0 sizes.$small;
+}

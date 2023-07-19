@@ -20,20 +20,20 @@ import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaDatatype } from "./entity-schema-datatype";
+import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    entitySchemaService = new EntitySchemaService();
+  }));
 
   it("schema:string converts to strings", function () {
     class TestEntity extends Entity {
       @DatabaseField() aString: string;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -54,6 +54,7 @@ describe("EntitySchemaService", () => {
       @DatabaseField() aNumber: number;
       @DatabaseField() aFloat: number;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -77,6 +78,7 @@ describe("EntitySchemaService", () => {
       @DatabaseField() defaultDate: Date = new Date();
       @DatabaseField() otherDate: Date;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -95,13 +97,15 @@ describe("EntitySchemaService", () => {
     expect(entity.otherDate.getDate()).toEqual(1);
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.otherDate).toEqual(data.otherDate);
+    // Date is not transformed before saving
+    expect(rawData.otherDate).toEqual(new Date(data.otherDate));
   });
 
   it("schema:month converts between string and Date objects", function () {
     class TestEntity extends Entity {
       @DatabaseField({ dataType: "month" }) month: Date;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -111,8 +115,7 @@ describe("EntitySchemaService", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    const expectedDate = new Date("2018-02");
-    expect(entity.month).toEqual(expectedDate);
+    expect(entity.month).toBeDate("2018-02-01");
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.month).toEqual("2018-02");
@@ -122,6 +125,7 @@ describe("EntitySchemaService", () => {
     class TestEntity extends Entity {
       @DatabaseField({ dataType: "date-only" }) day: Date;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -131,17 +135,17 @@ describe("EntitySchemaService", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    const expectedDate = new Date("2018-01-15");
-    expect(entity.day).toEqual(expectedDate);
+    expect(entity.day).toBeDate("2018-01-15");
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.day).toBe("2018-01-15");
+    expect(rawData.day).toBeDate("2018-01-15");
   });
 
   it("schema:array converts contained dates to month for saving", function () {
     class TestEntity extends Entity {
       @DatabaseField({ innerDataType: "month" }) dateArr: Date[];
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
     entity.dateArr = [new Date("2020-01-01"), new Date("2020-12-06")];
@@ -155,6 +159,7 @@ describe("EntitySchemaService", () => {
     class TestEntity extends Entity {
       @DatabaseField({ innerDataType: "month" }) dateArr: Date[];
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -164,7 +169,7 @@ describe("EntitySchemaService", () => {
     };
     entitySchemaService.loadDataIntoEntity(entity, data);
 
-    expect(entity.dateArr).toEqual([new Date("2020-01"), new Date("2020-12")]);
+    expect(entity.dateArr).toEqual([new Date(2020, 0), new Date(2020, 11)]);
   });
 
   it("schema:schema-embed converts contained object with contained schema annotation", function () {
@@ -172,10 +177,12 @@ describe("EntitySchemaService", () => {
       @DatabaseField({ dataType: "month" }) month: Date;
       otherStuff: string;
     }
+
     class TestEntity extends Entity {
       @DatabaseField({ dataType: "schema-embed", additional: Detail })
       details: Detail;
     }
+
     const id = "test1";
     const entity = new TestEntity(id);
 
@@ -185,7 +192,7 @@ describe("EntitySchemaService", () => {
     };
 
     entitySchemaService.loadDataIntoEntity(entity, data);
-    expect(entity.details.month).toEqual(new Date("2020-01"));
+    expect(entity.details.month).toBeDate(new Date(2020, 0));
 
     entity.details.otherStuff = "foo";
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
@@ -224,6 +231,7 @@ describe("EntitySchemaService", () => {
       transformToObjectFormat: () => null,
     };
     entitySchemaService.registerSchemaDatatype(testDatatype);
+
     class Test extends Entity {
       @DatabaseField({ dataType: "test-datatype" }) stringProperty: string;
     }
@@ -234,5 +242,26 @@ describe("EntitySchemaService", () => {
     );
 
     expect(displayComponent).toEqual("DisplayText");
+  });
+
+  it("should return the display and edit component for the innerDataType if dataType is array", () => {
+    class TestEntity extends Entity {
+      @DatabaseField({ innerDataType: dateOnlyEntitySchemaDatatype.name })
+      dates: Date[];
+    }
+
+    const propertySchema = TestEntity.schema.get("dates");
+
+    const displayComponent = entitySchemaService.getComponent(
+      propertySchema,
+      "view"
+    );
+    expect(displayComponent).toBe(dateOnlyEntitySchemaDatatype.viewComponent);
+
+    const editComponent = entitySchemaService.getComponent(
+      propertySchema,
+      "edit"
+    );
+    expect(editComponent).toBe(dateOnlyEntitySchemaDatatype.editComponent);
   });
 });

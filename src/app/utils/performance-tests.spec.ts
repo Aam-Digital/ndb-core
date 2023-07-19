@@ -1,47 +1,27 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { SessionService } from "../core/session/session-service/session.service";
-import { AppModule } from "../app.module";
 import moment from "moment";
-import { LoggingService } from "../core/logging/logging.service";
 import { Database } from "../core/database/database";
 import { DemoDataService } from "../core/demo-data/demo-data.service";
-import { PouchDatabase } from "../core/database/pouch-database";
-import { LocalSession } from "app/core/session/session-service/local-session";
+import { SessionType } from "../core/session/session-type";
+import { DatabaseTestingModule } from "./database-testing.module";
+import { environment } from "../../environments/environment";
 
 xdescribe("Performance Tests", () => {
-  let mockDatabase: PouchDatabase;
-
-  beforeEach(async () => {
+  beforeEach(waitForAsync(async () => {
     jasmine.DEFAULT_TIMEOUT_INTERVAL = 150000;
 
-    const loggingService = new LoggingService();
-    // Uncomment this line to run performance tests with the InBrowser database.
-    // mockDatabase = PouchDatabase.createWithIndexedDB(
-    mockDatabase = PouchDatabase.createWithInMemoryDB(
-      "performance_db",
-      loggingService
-    );
-    const mockSessionService = new LocalSession(mockDatabase);
+    environment.session_type = SessionType.mock; // change to SessionType.local to run performance tests with the InBrowser database
 
     await TestBed.configureTestingModule({
-      imports: [AppModule],
-      providers: [
-        { provide: Database, useValue: mockDatabase },
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: LoggingService, useValue: loggingService },
-      ],
+      imports: [DatabaseTestingModule],
     }).compileComponents();
     const demoDataService = TestBed.inject(DemoDataService);
     const setup = new Timer();
     await demoDataService.publishDemoData();
     console.log("finished publishing demo data", setup.getDuration());
-  });
+  }));
 
-  afterEach(
-    waitForAsync(() => {
-      return mockDatabase.destroy();
-    })
-  );
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("basic test example", async () => {
     await comparePerformance(
@@ -86,13 +66,12 @@ async function getExecutionDiff<R>(
   const improvedTimer = new Timer();
   const improvedResult = await improvedFunction();
   const improvedDuration = improvedTimer.getDuration();
-  expect(improvedResult).toEqual(
-    currentResult,
-    "current " +
-      JSON.stringify(currentResult) +
-      " improved " +
-      JSON.stringify(improvedResult)
-  );
+  expect(improvedResult)
+    .withContext(
+      `current ${JSON.stringify(currentResult)}
+      improved ${JSON.stringify(improvedResult)}`
+    )
+    .toEqual(currentResult);
   return currentDuration - improvedDuration;
 }
 

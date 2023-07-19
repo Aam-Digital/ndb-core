@@ -1,19 +1,28 @@
-.edit-button {
-  margin-left: 10px;
+@use "src/styles/mixins/grid-layout";
+
+.grid-layout {
+  @include grid-layout.adaptive($min-block-width: 250px, $max-screen-width: 414px);
 }
 
-.form-cell {
-  min-width: 224px;
-  width: 100%;
-  white-space: nowrap;
+.entity-form-cell {
+  display: flex;
+  flex-direction: column;
+
+  // set the width of each form field to 100% in every form component that is a descendent
+  // of the columns-wrapper class
+  mat-form-field {
+    width: 100%;
+  }
+
+  // We align the photo (and only tht photo) to the center of the cell if there is one.
+  // This looks better on desktop and mobile compared to an alignment to the start of the cell
+  // which is the default for all other elements
+  > app-edit-photo {
+    align-self: center;
+  }
 }
 
-.form-icon {
-  float: left;
-  width: 20px;
-  padding-top: 20px;
-}
-
-.form-field {
-  width: 100%;
+.field-with-tooltip-suffix {
+  width: calc(100% - 48px);
+  display: inline-block;
 }

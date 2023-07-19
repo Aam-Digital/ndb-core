@@ -15,17 +15,15 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-.login-panel {
-  max-width: 400px;
-  margin-top: 20px;
-  margin-bottom: 20px;
-}
-
-.login-field {
-  width: 90%;
-}
+@use "src/styles/variables/colors";
 
 .login-error {
-  color: red;
+  color: colors.$error;
   font-weight: bold;
+}
+
+:host {
+  display: block;
+  max-width: 400px;
+  margin: 0 auto;
 }

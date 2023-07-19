@@ -1,35 +1,25 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { HistoricalDataService } from "./historical-data.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Entity } from "../../core/entity/model/entity";
-import { HistoricalEntityData } from "./historical-entity-data";
+import { HistoricalEntityData } from "./model/historical-entity-data";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
-import { PouchDatabase } from "../../core/database/pouch-database";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { Database } from "../../core/database/database";
 import moment from "moment";
+import { DatabaseTestingModule } from "../../utils/database-testing.module";
 
 describe("HistoricalDataService", () => {
   let service: HistoricalDataService;
-  let database: PouchDatabase;
 
-  beforeEach(() => {
-    database = PouchDatabase.createWithInMemoryDB();
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      providers: [
-        HistoricalDataService,
-        EntityMapperService,
-        EntitySchemaService,
-        { provide: Database, useValue: database },
-      ],
+      imports: [DatabaseTestingModule],
     });
     service = TestBed.inject(HistoricalDataService);
-  });
+  }));
 
-  afterEach(async () => {
-    await database.destroy();
-  });
+  afterEach(() => TestBed.inject(Database).destroy());
 
   it("should be created", () => {
     expect(service).toBeTruthy();

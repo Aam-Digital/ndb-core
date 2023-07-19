@@ -1,69 +1,39 @@
+@use "src/styles/variables/colors";
+@use "src/styles/functions/gradient-helpers";
+@use "src/styles/variables/sizes";
+
 mat-calendar {
   min-width: 200px;
   max-width: 300px;
 }
 
-/*
-background: linear-gradient(to right, green 0%, green 80%, red 80%, red 100%);
- */
-
-.selected-title {
-  margin-block-start: 0;
-}
-
-.no-events-notice {
-  font-style: italic;
-}
-
 .unknown-status-notice {
   font-style: italic;
-  color: red;
+  color: colors.$error;
 }
 
-::ng-deep .attendance-calendar-date-general {
-  border: 2px solid transparent;
+.attendance-calendar-date-general {
+
+  &.attendance-calendar-date-selected {
+    font-weight: 900;
+    font-size: 115%;
+  }
+
+  &.attendance-calendar-date-has-remarks {
+    background: gradient-helpers.top-right-triangle(#5f5f5f);
+  }
+
+  &.attendance-calendar-date-has-participants-with-unknown-status {
+    background: gradient-helpers.top-right-triangle(red);
+  }
 }
 
-::ng-deep .attendance-calendar-date-selected {
-  font-weight: 900;
-  font-size: 115%;
-}
-
-::ng-deep .attendance-calendar-date-has-remarks {
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    transparent 85%,
-    #5f5f5f 85%,
-    #5f5f5f 100%
-  );
-}
-
-::ng-deep .attendance-calendar-date-has-participants-with-unknown-status {
-  background: linear-gradient(
-    45deg,
-    transparent 0%,
-    transparent 85%,
-    red 85%,
-    red 100%
-  );
-}
-
-.form {
+.attendance-calendar-details-form {
   padding: 10px;
-  width: 420px;
+  max-width: 300px;
   position: relative;
 
   border: 5px solid black;
   box-sizing: border-box;
-}
-
-.form-close {
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-
-button {
-  margin: 5px;
+  margin-bottom: sizes.$regular;
 }

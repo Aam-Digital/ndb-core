@@ -1,26 +1,29 @@
-<mat-slide-toggle
-  *ngIf="showEventNotesToggle"
-  class="event-toggle"
-  ngDefaultControl
-  [(ngModel)]="includeEventNotes"
-  (change)="updateIncludeEvents()"
-  i18n="
-    Slider that allows a user to also include events|events are related to a
-    child
-  "
-  angulartics2On="click"
-  angularticsCategory="Note"
-  angularticsAction="include_events_toggle"
-  [angularticsLabel]="includeEventNotes ? 'off' : 'on'"
->
-  Include events
-</mat-slide-toggle>
-
 <app-entity-list
   [allEntities]="notes"
   [listConfig]="config"
+  [isLoading]="isLoading"
   [entityConstructor]="noteConstructor"
+  clickMode="none"
   (elementClick)="showDetails($event)"
   (addNewClick)="addNoteClick()"
-  #entityList
-></app-entity-list>
+>
+  <button
+    mat-menu-item
+    *ngIf="showEventNotesToggle"
+    (click)="updateIncludeEvents()"
+    angulartics2On="click"
+    angularticsCategory="Note"
+    angularticsAction="include_events_toggle"
+    [angularticsLabel]="includeEventNotes ? 'off' : 'on'"
+    i18n="
+        Slider that allows a user to also include events|events are related to a
+        child
+      "
+  >
+    <app-fa-dynamic-icon
+      [icon]="includeEventNotes ? 'toggle-on' : 'toggle-off'"
+      class="standard-icon-with-text color-accent"
+    ></app-fa-dynamic-icon>
+    Include events
+  </button>
+</app-entity-list>

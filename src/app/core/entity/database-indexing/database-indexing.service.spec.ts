@@ -17,9 +17,12 @@
 
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
-import { take } from "rxjs/operators";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { fakeAsync, tick } from "@angular/core/testing";
+import { firstValueFrom } from "rxjs";
+import { Todo } from "../../../features/todos/model/todo";
+import { Note } from "../../../child-dev-project/notes/model/note";
 
 describe("DatabaseIndexingService", () => {
   let service: DatabaseIndexingService;
@@ -73,13 +76,11 @@ describe("DatabaseIndexingService", () => {
     );
 
     // initially no registered indices
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual(
-      []
-    );
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([]);
 
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -89,7 +90,7 @@ describe("DatabaseIndexingService", () => {
 
     // after the index creation is done, registered indices are updated
     await indexCreationPromise;
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -108,13 +109,12 @@ describe("DatabaseIndexingService", () => {
     };
     const testErr = { msg: "error" };
     mockDb.saveDatabaseIndex.and.callFake(
-      () =>
-        new Promise((resolve, reject) => setTimeout(() => reject(testErr), 1))
+      () => new Promise((_, reject) => setTimeout(() => reject(testErr), 1))
     );
 
     // calling `createIndex` triggers a pending index state immediately
     const indexCreationPromise = service.createIndex(testDesignDoc);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -124,7 +124,7 @@ describe("DatabaseIndexingService", () => {
 
     // after the index creation failed, registered indices are updated with error state
     await expectAsync(indexCreationPromise).toBeRejectedWith(testErr);
-    expect(await service.indicesRegistered.pipe(take(1)).toPromise()).toEqual([
+    await expectObservable(service.indicesRegistered).first.toBeResolvedTo([
       {
         title: "Preparing data (Indexing)",
         details: testIndexName,
@@ -133,4 +133,90 @@ describe("DatabaseIndexingService", () => {
       },
     ]);
   });
+
+  it("should only register indices once", async () => {
+    const testDesignDoc = {
+      _id: "_design/test-index",
+      views: {},
+    };
+
+    await service.createIndex(testDesignDoc);
+    let registeredIndices = await firstValueFrom(service.indicesRegistered);
+    expect(registeredIndices).toEqual([
+      jasmine.objectContaining({ details: "test-index" }),
+    ]);
+
+    await service.createIndex(testDesignDoc);
+    registeredIndices = await firstValueFrom(service.indicesRegistered);
+    expect(registeredIndices).toEqual([
+      jasmine.objectContaining({ details: "test-index" }),
+    ]);
+  });
+
+  it("should generate index for entity property", async () => {
+    const call = spyOn(service, "createIndex");
+    await service.generateIndexOnProperty("testIndex", Todo, "relatedEntities");
+
+    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    expect(cleanedUpStringify(actualCreatedDesignDoc)).toEqual(
+      cleanedUpStringify({
+        _id: "_design/testIndex",
+        views: {
+          by_relatedEntities: {
+            map: `(doc) => {
+            if (!doc._id.startsWith("Todo")) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+            doc.relatedEntities.forEach((relatedEntity) => {
+              emit(relatedEntity);
+            });
+          }`,
+          },
+        },
+      })
+    );
+  });
+
+  it("should generate index for entity property that is not an array", async () => {
+    const call = spyOn(service, "createIndex");
+    await service.generateIndexOnProperty("testIndex", Note, "category");
+
+    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    expect(
+      cleanedUpStringify(actualCreatedDesignDoc.views.by_category.map)
+    ).toEqual(
+      cleanedUpStringify(`(doc) => {
+            if (!doc._id.startsWith("Note")) return;
+
+            emit(doc.category);
+          }`)
+    );
+  });
+
+  it("should generate index for entity property with secondary index", async () => {
+    const call = spyOn(service, "createIndex");
+    await service.generateIndexOnProperty(
+      "testIndex",
+      Todo,
+      "relatedEntities",
+      "deadline"
+    );
+
+    const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
+    expect(
+      cleanedUpStringify(actualCreatedDesignDoc.views.by_relatedEntities.map)
+    ).toEqual(
+      cleanedUpStringify(`(doc) => {
+            if (!doc._id.startsWith("Todo")) return;
+            if (!Array.isArray(doc.relatedEntities)) return;
+
+            doc.relatedEntities.forEach((relatedEntity) => {
+              emit([relatedEntity, doc.deadline]);
+            });
+          }`)
+    );
+  });
 });
+
+function cleanedUpStringify(doc) {
+  return JSON.stringify(doc).replace(/\s/g, "").replace(/\\n/g, "");
+}

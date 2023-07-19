@@ -1,18 +1,8 @@
-.child-tooltip {
-  position: relative;
-  top: -5px;
-  left: 5px;
-
-  padding: 8px;
-  background-color: white;
-  z-index: 99;
-
-  width: 400px;
-}
+@use "src/styles/variables/sizes";
 
 .child-pic {
-  width: 28px;
-  height: 28px;
+  width: sizes.$icon-block;
+  height: sizes.$icon-block;
   border-radius: 50%;
   object-fit: cover;
   margin-right: 4px;
@@ -30,6 +20,24 @@
   color: grey;
 }
 
-.clickable {
-  cursor: pointer;
+.container {
+  display: flex;
+  align-items: center;
+  font-size: 1em;
 }
+
+.font-size-rel {
+  font-size: 1em;
+  margin-right: 3px;
+  font-weight: 500;
+  color: #262626;
+}
+
+.subnote {
+  font-size: 0.7em;
+  position: relative;
+  top: 0.2em;
+  color: #5e5e5e;
+}
+
+

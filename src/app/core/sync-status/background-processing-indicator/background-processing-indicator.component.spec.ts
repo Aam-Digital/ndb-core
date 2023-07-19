@@ -1,33 +1,30 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { BackgroundProcessingIndicatorComponent } from "./background-processing-indicator.component";
-import { MatMenuModule } from "@angular/material/menu";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { MatIconModule } from "@angular/material/icon";
-import { MatBadgeModule } from "@angular/material/badge";
-import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { EMPTY, of } from "rxjs";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 
 describe("BackgroundProcessingIndicatorComponent", () => {
   let component: BackgroundProcessingIndicatorComponent;
   let fixture: ComponentFixture<BackgroundProcessingIndicatorComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [
-          MatMenuModule,
-          MatTooltipModule,
-          MatIconModule,
-          MatBadgeModule,
-          MatProgressSpinnerModule,
-          NoopAnimationsModule,
-        ],
-        declarations: [BackgroundProcessingIndicatorComponent],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [
+        BackgroundProcessingIndicatorComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(BackgroundProcessingIndicatorComponent);
@@ -41,7 +38,7 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should aggregate process states by title if set to summarize", async () => {
+  it("should aggregate process states by title if set to summarize", fakeAsync(() => {
     spyOn(component.taskListDropdownTrigger, "openMenu");
     const p1 = { title: "sync", pending: true };
     const p2a = { title: "indexing", details: "A", pending: false };
@@ -53,37 +50,35 @@ describe("BackgroundProcessingIndicatorComponent", () => {
     component.summarize = true;
     component.ngOnInit();
 
-    const taskCounter = await component.taskCounterObservable.toPromise();
-    expect(taskCounter).toBe(2);
-
-    const filteredProcesses = await component.filteredProcesses.toPromise();
-    expect(filteredProcesses).toEqual([
+    expectObservable(component.taskCounterObservable).first.toBeResolvedTo(2);
+    tick();
+    expectObservable(component.filteredProcesses).first.toBeResolvedTo([
       p1,
       { title: p2a.title, pending: true },
       p3,
     ]);
+    tick();
     expect(component.taskListDropdownTrigger.openMenu).toHaveBeenCalled();
-  });
+  }));
 
-  it("should automatically close details after all processes finished", async () => {
+  it("should automatically close details after all processes finished", fakeAsync(() => {
     component.backgroundProcesses = of([{ title: "sync", pending: false }]);
     spyOn(component.taskListDropdownTrigger, "closeMenu");
     component.ngOnInit();
 
-    const tasks = await component.taskCounterObservable.toPromise();
-
-    expect(tasks).toBe(0);
+    expectObservable(component.taskCounterObservable).first.toBeResolvedTo(0);
+    tick();
     expect(component.taskListDropdownTrigger.closeMenu).toHaveBeenCalled();
-  });
+  }));
 
-  it("should not open details again if they the state before was already pending (and user may have manually closed)", async () => {
+  it("should not open details again if they the state before was already pending (and user may have manually closed)", fakeAsync(() => {
     component.backgroundProcesses = of([
       { title: "sync", pending: true },
       { title: "other", pending: true },
       { title: "yet another", pending: true },
     ]);
     spyOn(component.taskListDropdownTrigger, "openMenu");
-
+    tick();
     expect(component.taskListDropdownTrigger.openMenu).not.toHaveBeenCalled();
-  });
+  }));
 });

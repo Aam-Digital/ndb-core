@@ -1,18 +1,12 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  flush,
-  TestBed,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { RecentAttendanceBlocksComponent } from "./recent-attendance-blocks.component";
-import { FilterPipeModule } from "ngx-filter-pipe";
 import { Child } from "../../model/child";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { ActivityAttendance } from "../../../attendance/model/activity-attendance";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
+import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 
 describe("RecentAttendanceBlocksComponent", () => {
   let component: RecentAttendanceBlocksComponent;
@@ -20,22 +14,20 @@ describe("RecentAttendanceBlocksComponent", () => {
 
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
-        "getActivitiesForChild",
-        "getAllActivityAttendancesForPeriod",
-      ]);
+  beforeEach(waitForAsync(() => {
+    mockAttendanceService = jasmine.createSpyObj("mockAttendanceService", [
+      "getActivitiesForChild",
+      "getAllActivityAttendancesForPeriod",
+    ]);
 
-      TestBed.configureTestingModule({
-        declarations: [RecentAttendanceBlocksComponent],
-        imports: [FilterPipeModule],
-        providers: [
-          { provide: AttendanceService, useValue: mockAttendanceService },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [RecentAttendanceBlocksComponent],
+      providers: [
+        { provide: AttendanceService, useValue: mockAttendanceService },
+        { provide: WINDOW_TOKEN, useValue: window },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RecentAttendanceBlocksComponent);
@@ -47,7 +39,7 @@ describe("RecentAttendanceBlocksComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should display blocks for all activities of the filtered activity type", fakeAsync(() => {
+  it("should display blocks for all activities of the filtered activity type", async () => {
     const testChild = new Child("testID");
     const testActivity1 = RecurringActivity.create("test 1");
     testActivity1.type = defaultInteractionTypes[1];
@@ -74,15 +66,12 @@ describe("RecentAttendanceBlocksComponent", () => {
       }
     );
 
-    component.onInitFromDynamicConfig({
-      entity: testChild,
-      id: "",
-      config: {
-        filterByActivityType: defaultInteractionTypes[1].id,
-      },
-    });
-    flush();
+    component.entity = testChild;
+    component.config = {
+      filterByActivityType: defaultInteractionTypes[1].id,
+    };
+    await component.ngOnInit();
 
-    expect(component.attendanceList.length).toBe(2);
-  }));
+    expect(component.attendanceList).toHaveSize(2);
+  });
 });

@@ -5,12 +5,6 @@ import { Entity } from "../../entity/model/entity";
  */
 export interface EntityDetailsConfig {
   /**
-   * The name of an icon which should be displayed next to the entity name.
-   * The name has to be a valid font-awesome icon name.
-   */
-  icon: string;
-
-  /**
    * The name of the entity (according to the ENTITY_TYPE).
    */
   entity: string;
@@ -47,7 +41,8 @@ export interface PanelComponent {
   title: string;
 
   /**
-   * The name of the component according to the DYNAMIC_COMPONENT_MAP.
+   * The name of the component. When registered, this usually is the name of the
+   * component without the `component` suffix
    */
   component: string;
 
@@ -60,8 +55,10 @@ export interface PanelComponent {
 /**
  * This interface represents the config which will be created by the entity-details component and passed to each of
  * the panel components.
+ *
+ * This is not config that is defined and stored in the config file for customization.
  */
-export interface PanelConfig {
+export interface PanelConfig<T = any> {
   /**
    * The full entity which is displayed in this details page.
    */
@@ -75,5 +72,5 @@ export interface PanelConfig {
   /**
    * An additional config which has been defined in the PanelComponent.
    */
-  config?: any;
+  config?: T;
 }

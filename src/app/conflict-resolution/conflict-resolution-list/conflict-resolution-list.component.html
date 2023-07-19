@@ -1,29 +1,21 @@
-<p
-  i18n="
-    Conflicts to be resolved|Shows the database conflicts that need to be
-    resolved
-  "
->
-  conflicts to resolve:
-</p>
+<p>conflicts to resolve:</p>
 
 <div class="mat-elevation-z1">
   <div *ngIf="dataSource?.loading$ | async">
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 
-  <table mat-table [dataSource]="dataSource" matSort style="width: 100%">
+  <table mat-table [dataSource]="dataSource"  matSort class="full-width" aria-label="Table showing the conflicts">
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>_id</th>
       <td mat-cell *matCellDef="let row">{{ row.id }}</td>
     </ng-container>
 
-    <ng-container matColumnDef="data" class="col-data">
+    <ng-container matColumnDef="data" class="full-width">
       <th
         mat-header-cell
         *matHeaderCellDef
         mat-sort-header
-        i18n="Raw data, e.g. from a database"
       >
         Data
       </th>

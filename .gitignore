@@ -23,6 +23,7 @@ dist
 *.sublime-workspace
 
 # misc
+/.angular/cache
 /.sass-cache
 /connect.lock
 /libpeerconnection.log
@@ -192,3 +193,7 @@ fabric.properties
 ### VisualStudioCode template
 .vs/*
 .vscode/*
+
+# video and screenshot of the tests from Cypress
+./e2e/screenshots
+./e2e/videos

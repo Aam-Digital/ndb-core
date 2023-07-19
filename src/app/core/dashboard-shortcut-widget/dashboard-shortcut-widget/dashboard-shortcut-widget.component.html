@@ -1,31 +1,33 @@
-<mat-card class="dashboard-widget">
-  <mat-card-header class="app-general">
-    <div mat-card-avatar>
-      <mat-icon fontIcon="fa-external-link"></mat-icon>
-    </div>
-    <mat-card-title></mat-card-title>
-    <mat-card-subtitle
-      i18n="Shows a list of certain actions that a user can click on"
-    >
-      Quick actions
-    </mat-card-subtitle>
-  </mat-card-header>
-
-  <mat-card-content>
-    <table class="dashboard-table">
-      <tr
-        *ngFor="let entry of shortcuts"
-        class="dashboard-table-row clickable"
-        [routerLink]="[entry.link]"
-        angulartics2On="click" angularticsCategory="Dashboard"
-        angularticsAction="shortcut-widget_click"
-        [angularticsLabel]="entry.link"
-      >
-        <td class="dashboard-table-cell">
-          <mat-icon fontIcon="fa-{{ entry.icon }}"></mat-icon>
-          {{ entry.label }}
-        </td>
+<app-dashboard-list-widget
+  icon="external-link-alt"
+  theme="general"
+  subtitle="Quick actions"
+  i18n-subtitle="Title of dashboard widget that shows a list of certain actions a user can click on"
+  [entries]="shortcuts"
+>
+  <div class="table-container">
+    <table mat-table aria-label="Quick actions">
+      <!-- Table header only for assistive technologies like screen readers -->
+      <tr hidden>
+        <th scope="col">Icon</th>
+        <th scope="col">Label</th>
       </tr>
+      <ng-container matColumnDef="icon">
+        <td *matCellDef="let row">
+          <app-fa-dynamic-icon [icon]="row.icon"></app-fa-dynamic-icon>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="label">
+        <td *matCellDef="let row">{{row.label}}</td>
+      </ng-container>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['icon', 'label'];"
+        class="pointer"
+        [routerLink]="row.link"
+      ></tr>
     </table>
-  </mat-card-content>
-</mat-card>
+  </div>
+</app-dashboard-list-widget>

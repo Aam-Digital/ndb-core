@@ -1,11 +1,7 @@
-<mat-form-field [formGroup]="formControl.parent">
-  <mat-label>
-    {{ label }}
-  </mat-label>
-  <mat-select [formControlName]="formControlName">
-    <mat-option *appConfigurableEnum="let o of enumId" [value]="o">
-      {{ o.label }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
-
+<app-enum-dropdown
+  [form]="formControl"
+  [label]="label"
+  [enumId]="enumId"
+  [multi]="multi"
+>
+</app-enum-dropdown>

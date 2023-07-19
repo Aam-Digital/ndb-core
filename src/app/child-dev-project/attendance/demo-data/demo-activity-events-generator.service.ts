@@ -29,15 +29,17 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
     const eventNote = EventNote.create(date, activity.title);
     eventNote.authors = activity.assignedTo;
     eventNote.category = activity.type;
-    eventNote.relatesTo = activity._id; // relatesTo requires the id including prefix!
+    eventNote.relatesTo = activity.getId(true); // relatesTo requires the id including prefix!
 
     for (const participantId of activity.participants) {
       eventNote.addChild(participantId);
       const eventAtt = eventNote.getAttendance(participantId);
-      eventAtt.status = faker.random.arrayElement(defaultAttendanceStatusTypes);
+      eventAtt.status = faker.helpers.arrayElement(
+        defaultAttendanceStatusTypes
+      );
 
       if (eventAtt.status.countAs === AttendanceLogicalStatus.ABSENT) {
-        eventAtt.remarks = faker.random.arrayElement([
+        eventAtt.remarks = faker.helpers.arrayElement([
           $localize`:Event demo attendance remarks:sick`,
           $localize`:Event demo attendance remarks:fever`,
           $localize`:Event demo attendance remarks:no information`,

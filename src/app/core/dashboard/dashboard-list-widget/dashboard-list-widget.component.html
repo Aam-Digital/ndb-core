@@ -1,0 +1,31 @@
+<app-dashboard-widget
+  [title]="title ?? dataSource.data.length"
+  [subtitle]="subtitle"
+  [theme]="theme"
+  [icon]="icon"
+  [headline]="headline"
+  [explanation]="explanation"
+  [loading]="isLoading"
+>
+  <app-widget-content>
+    <ng-container *ngIf="dataSource.data.length > 0">
+      <ng-content></ng-content>
+    </ng-container>
+
+    <div *ngIf="dataSource.data.length === 0" class="headline">
+      <span
+        i18n="Description that are no items in generic dashboard list widget"
+      >
+        no current entries
+      </span>
+    </div>
+
+    <mat-paginator
+      #paginator
+      [style.display]="dataSource.data.length <= 5 ? 'none' : ''"
+      [pageSizeOptions]="[5]"
+      [hidePageSize]="true"
+    >
+    </mat-paginator>
+  </app-widget-content>
+</app-dashboard-widget>

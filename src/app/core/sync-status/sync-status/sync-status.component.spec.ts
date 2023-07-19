@@ -23,9 +23,13 @@ import { SessionService } from "../../session/session-service/session.service";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { BehaviorSubject } from "rxjs";
-import { take } from "rxjs/operators";
 import { BackgroundProcessState } from "../background-process-state.interface";
-import { SyncStatusModule } from "../sync-status.module";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import {
+  EntityRegistry,
+  entityRegistry,
+} from "../../entity/database-entity.decorator";
+import { expectObservable } from "../../../utils/test-utils/observable-utils";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
@@ -52,10 +56,15 @@ describe("SyncStatusComponent", () => {
       mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
       TestBed.configureTestingModule({
-        imports: [SyncStatusModule, NoopAnimationsModule],
+        imports: [
+          SyncStatusComponent,
+          NoopAnimationsModule,
+          FontAwesomeTestingModule,
+        ],
         providers: [
           { provide: SessionService, useValue: mockSessionService },
           { provide: DatabaseIndexingService, useValue: mockIndexingService },
+          { provide: EntityRegistry, useValue: entityRegistry },
         ],
       });
 
@@ -73,38 +82,22 @@ describe("SyncStatusComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should open dialog without error", async () => {
-    mockSessionService.syncState.next(SyncState.STARTED);
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-    // @ts-ignore
-    expect(component.dialogRef).toBeDefined();
-
-    mockSessionService.syncState.next(SyncState.COMPLETED);
-    // @ts-ignore
-    component.dialogRef.close();
-
-    fixture.detectChanges();
-    await fixture.whenStable();
-  });
-
   it("should update backgroundProcesses details on sync", async () => {
     mockSessionService.syncState.next(SyncState.STARTED);
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
-    ).toEqual([DATABASE_SYNCING_STATE]);
+    await expectObservable(component.backgroundProcesses).first.toBeResolvedTo([
+      DATABASE_SYNCING_STATE,
+    ]);
 
     mockSessionService.syncState.next(SyncState.COMPLETED);
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
-    ).toEqual([DATABASE_SYNCED_STATE]);
+    await expectObservable(component.backgroundProcesses).first.toBeResolvedTo([
+      DATABASE_SYNCED_STATE,
+    ]);
   });
 
   it("should update backgroundProcesses with indexing", async () => {
@@ -116,8 +109,9 @@ describe("SyncStatusComponent", () => {
     fixture.detectChanges();
     await fixture.whenStable();
 
-    expect(
-      await component.backgroundProcesses.pipe(take(1)).toPromise()
-    ).toEqual([DATABASE_SYNCED_STATE, testIndexState]);
+    await expectObservable(component.backgroundProcesses).first.toBeResolvedTo([
+      DATABASE_SYNCED_STATE,
+      testIndexState,
+    ]);
   });
 });

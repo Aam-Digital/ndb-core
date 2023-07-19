@@ -1,8 +1,12 @@
-<mat-tab-group>
+<div *ngIf="loading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<mat-tab-group appTabStateMemo class="activity-tab-group">
   <mat-tab *ngFor="let activity of activities" [label]="activity.title">
     <app-activity-attendance-section
-      [activity]="activity"
-      [forChild]="child.getId()"
+      [entity]="activity"
+      [forChild]="entity.getId()"
     >
     </app-activity-attendance-section>
   </mat-tab>

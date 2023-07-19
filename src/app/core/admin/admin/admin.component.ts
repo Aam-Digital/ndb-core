@@ -1,69 +1,47 @@
 import { Component, OnInit } from "@angular/core";
-import { AppConfig } from "../../app-config/app-config";
 import { AlertService } from "../../alerts/alert.service";
-import { Alert } from "../../alerts/alert";
 import { BackupService } from "../services/backup.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import PouchDB from "pouchdb-browser";
-import { ChildPhotoUpdateService } from "../services/child-photo-update.service";
 import { ConfigService } from "../../config/config.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { AttendanceMigrationService } from "../../../child-dev-project/attendance/attendance-migration/attendance-migration.service";
-import { NotesMigrationService } from "../../../child-dev-project/notes/notes-migration/notes-migration.service";
-import { ChildrenMigrationService } from "../../../child-dev-project/children/child-photo-service/children-migration.service";
-import { ConfigMigrationService } from "../../config/config-migration.service";
-import { PermissionsMigrationService } from "../../permissions/permissions-migration.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { readFile } from "../../../utils/utils";
+import { RouteTarget } from "../../../app.routing";
+import { Database } from "../../database/database";
+import { ExtendedAlertConfig } from "../../alerts/alert-config";
+import { MatButtonModule } from "@angular/material/button";
+import { RouterLink } from "@angular/router";
+import { DatePipe, NgForOf } from "@angular/common";
+import { DownloadService } from "../../export/download-service/download.service";
 
 /**
  * Admin GUI giving administrative users different options/actions.
  */
 @UntilDestroy()
+@RouteTarget("Admin")
 @Component({
   selector: "app-admin",
   templateUrl: "./admin.component.html",
   styleUrls: ["./admin.component.scss"],
+  imports: [MatButtonModule, RouterLink, NgForOf, DatePipe],
+  standalone: true,
 })
 export class AdminComponent implements OnInit {
-  /** app-wide configuration */
-  appConfig = AppConfig.settings;
-
   /** all alerts */
-  alerts: Alert[];
-
-  /** direct database instance */
-  private db;
+  alerts: ExtendedAlertConfig[] = [];
 
   constructor(
     private alertService: AlertService,
     private backupService: BackupService,
+    private downloadService: DownloadService,
+    private db: Database,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private childPhotoUpdateService: ChildPhotoUpdateService,
-    private configService: ConfigService,
-    private entityMapper: EntityMapperService,
-    public attendanceMigration: AttendanceMigrationService,
-    public notesMigration: NotesMigrationService,
-    public childrenMigrationService: ChildrenMigrationService,
-    public configMigrationService: ConfigMigrationService,
-    public permissionsMigrationService: PermissionsMigrationService
+    private configService: ConfigService
   ) {}
 
   ngOnInit() {
     this.alerts = this.alertService.alerts;
-    this.db = new PouchDB(AppConfig.settings.database.name);
-  }
-
-  /**
-   * Trigger an automatic detection & update of Child entities' photo filenames.
-   */
-  updatePhotoFilenames() {
-    this.childPhotoUpdateService.updateChildrenPhotoFilenames();
-  }
-
-  async migrateConfigChanges() {
-    await this.configMigrationService.migrateConfig();
   }
 
   /**
@@ -77,164 +55,98 @@ export class AdminComponent implements OnInit {
    * Download a full backup of the database as (json) file.
    */
   async saveBackup() {
-    const backup = await this.backupService.getJsonExport();
-    this.startDownload(backup, "text/json", "backup.json");
+    const backup = await this.backupService.getDatabaseExport();
+    await this.downloadService.triggerDownload(backup, "json", "backup");
   }
 
   /**
    * Download a full export of the database as csv file.
    */
   async saveCsvExport() {
-    const csv = await this.backupService.getCsvExport();
-    this.startDownload(csv, "text/csv", "export.csv");
+    const backup = await this.backupService.getDatabaseExport();
+    await this.downloadService.triggerDownload(backup, "csv", "export");
   }
 
   async downloadConfigClick() {
-    const configString = await this.configService.exportConfig(
-      this.entityMapper
-    );
-    this.startDownload(configString, "text/json", "config.json");
-  }
-
-  async uploadConfigFile(file: Blob) {
-    const loadedFile = await this.readFile(file);
-    await this.configService.saveConfig(
-      this.entityMapper,
-      JSON.parse(loadedFile)
+    const configString = this.configService.exportConfig();
+    await this.downloadService.triggerDownload(
+      configString,
+      "json",
+      "config.json"
     );
   }
 
-  private startDownload(data: string, type: string, name: string) {
-    const tempLink = document.createElement("a");
-    tempLink.href =
-      "data:" + type + ";charset=utf-8," + encodeURIComponent(data);
-    tempLink.target = "_blank";
-    tempLink.download = name;
-    tempLink.click();
-  }
-
-  private readFile(file: Blob): Promise<string> {
-    return new Promise((resolve) => {
-      const fileReader = new FileReader();
-      fileReader.addEventListener("load", () =>
-        resolve(fileReader.result as string)
-      );
-      fileReader.readAsText(file);
-    });
+  async uploadConfigFile(inputEvent: Event) {
+    const loadedFile = await readFile(this.getFileFromInputEvent(inputEvent));
+    await this.configService.saveConfig(JSON.parse(loadedFile));
   }
 
   /**
    * Reset the database to the state from the loaded backup file.
-   * @param file The file object of the backup to be restored
+   * @param inputEvent for the input where a file has been selected
    */
-  async loadBackup(file) {
-    const restorePoint = await this.backupService.getJsonExport();
-    const newData = await this.readFile(file);
-
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`Overwrite complete database?`,
-      $localize`Are you sure you want to restore this backup? This will
-      delete all ${JSON.parse(restorePoint).length} existing records,
-      restoring ${JSON.parse(newData).length} records from the loaded file.`
+  async loadBackup(inputEvent: Event) {
+    const restorePoint = await this.backupService.getDatabaseExport();
+    const dataToBeRestored = JSON.parse(
+      await readFile(this.getFileFromInputEvent(inputEvent))
     );
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (!confirmed) {
-        return;
-      }
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      `Overwrite complete database?`,
+      `Are you sure you want to restore this backup? This will
+      delete all ${restorePoint.length} existing records,
+      restoring ${dataToBeRestored.length} records from the loaded file.`
+    );
 
-      await this.backupService.clearDatabase();
-      await this.backupService.importJson(newData, true);
+    if (!confirmed) {
+      return;
+    }
 
-      const snackBarRef = this.snackBar.open(
-        $localize`Backup restored`,
-        "Undo",
-        {
-          duration: 8000,
-        }
-      );
-      snackBarRef
-        .onAction()
-        .pipe(untilDestroyed(this))
-        .subscribe(async () => {
-          await this.backupService.clearDatabase();
-          await this.backupService.importJson(restorePoint, true);
-        });
+    await this.backupService.clearDatabase();
+    await this.backupService.restoreData(dataToBeRestored, true);
+
+    const snackBarRef = this.snackBar.open(`Backup restored`, "Undo", {
+      duration: 8000,
     });
+    snackBarRef
+      .onAction()
+      .pipe(untilDestroyed(this))
+      .subscribe(async () => {
+        await this.backupService.clearDatabase();
+        await this.backupService.restoreData(restorePoint, true);
+      });
   }
 
-  /**
-   * Add the data from the loaded file to the database, inserting and updating records.
-   * @param file The file object of the csv data to be loaded
-   */
-  async loadCsv(file: Blob) {
-    const restorePoint = await this.backupService.getJsonExport();
-    const newData = await this.readFile(file);
-
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`Import new data?`,
-      $localize`Are you sure you want to import this file? This will add or update ${
-        newData.trim().split("\n").length - 1
-      } records from the loaded file. Existing records with same "_id" in the database will be overwritten!`
-    );
-
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (!confirmed) {
-        return;
-      }
-
-      await this.backupService.importCsv(newData, true);
-
-      const snackBarRef = this.snackBar.open(
-        $localize`Import completed?`,
-        "Undo",
-        {
-          duration: 8000,
-        }
-      );
-      snackBarRef
-        .onAction()
-        .pipe(untilDestroyed(this))
-        .subscribe(async () => {
-          await this.backupService.clearDatabase();
-          await this.backupService.importJson(restorePoint, true);
-        });
-    });
+  private getFileFromInputEvent(inputEvent: Event): Blob {
+    const target = inputEvent.target as HTMLInputElement;
+    return target.files[0];
   }
 
   /**
    * Reset the database removing all entities except user accounts.
    */
   async clearDatabase() {
-    const restorePoint = await this.backupService.getJsonExport();
+    const restorePoint = await this.backupService.getDatabaseExport();
 
-    const dialogRef = this.confirmationDialog.openDialog(
-      $localize`Empty complete database?`,
-      $localize`Are you sure you want to clear the database? This will delete all ${
-        restorePoint.split("\n").length
-      } existing records in the database!`
+    const confirmed = await this.confirmationDialog.getConfirmation(
+      `Empty complete database?`,
+      `Are you sure you want to clear the database? This will delete all existing records in the database!`
     );
 
-    dialogRef.afterClosed().subscribe(async (confirmed) => {
-      if (!confirmed) {
-        return;
-      }
+    if (!confirmed) {
+      return;
+    }
 
-      await this.backupService.clearDatabase();
+    await this.backupService.clearDatabase();
 
-      const snackBarRef = this.snackBar.open(
-        $localize`Import completed`,
-        "Undo",
-        {
-          duration: 8000,
-        }
-      );
-      snackBarRef
-        .onAction()
-        .pipe(untilDestroyed(this))
-        .subscribe(async () => {
-          await this.backupService.importJson(restorePoint, true);
-        });
+    const snackBarRef = this.snackBar.open(`Import completed`, "Undo", {
+      duration: 8000,
     });
+    snackBarRef
+      .onAction()
+      .pipe(untilDestroyed(this))
+      .subscribe(async () => {
+        await this.backupService.restoreData(restorePoint, true);
+      });
   }
 }

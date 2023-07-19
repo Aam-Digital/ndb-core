@@ -2,25 +2,28 @@
  * Object specifying a route and config of its view
  * as stored in the config database
  */
-export interface ViewConfig {
+export interface ViewConfig<T = any> {
   /** config object id which equals the route path */
   _id: string;
 
   /**
    * string id/name of the component to be displaying this view.
    * The component id has to be registered in the component map.
+   *
+   * (optional) if the `ladyLoaded` is true, this is not required (and will be ignored)
+   *    This allows hard-coded lazy-loaded components to be dynamically extended with config or permissions.
    */
-  component: string;
+  component?: string;
 
   /**
    * Allows to restrict the route to the given list of user roles.
    * If set, the route can only be visited by users which have a role which is in the list.
-   * If not set, all logged in users can vist the route.
+   * If not set, all logged-in users can visit the route.
    */
   permittedUserRoles?: string[];
 
   /** optional object providing any kind of config to be interpreted by the component for this view */
-  config?: any;
+  config?: T;
 
   /**
    * indicate that the route is lazy loaded.

@@ -30,4 +30,10 @@ export class Changelog {
 
   /** release date */
   published_at: string;
+
+  /** whether it is a pre-release */
+  prerelease?: boolean;
+
+  /** whether it is a draft */
+  draft?: boolean;
 }

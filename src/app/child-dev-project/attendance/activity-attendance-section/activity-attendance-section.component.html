@@ -1,19 +1,33 @@
-<app-attendance-calendar
-  [records]="displayedEvents"
-  [highlightForChild]="forChild"
-  [activity]="activity"
->
-</app-attendance-calendar>
+<div *ngIf="loading">
+  <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+</div>
+
+<div class="flex-row flex-wrap gap-large" *ngIf="!loading">
+  <app-attendance-calendar
+    class="flex-grow"
+    [records]="combinedAttendance?.events || []"
+    [highlightForChild]="forChild"
+    [activity]="entity"
+  ></app-attendance-calendar>
+  <app-attendance-summary
+    [attendance]="combinedAttendance"
+    [forChild]="forChild"
+    [columns]="columns"
+    class="margin-top-regular flex-grow"
+  ></app-attendance-summary>
+</div>
 
 <app-entity-subrecord
   [records]="records"
   [columns]="columns"
-  [showEntity]="showDetails.bind(this)"
+  clickMode="none"
+  (rowClick)="showDetails($event)"
+  [getBackgroundColor]="getBackgroundColor"
   [editable]="false"
 >
 </app-entity-subrecord>
 
-<div style="margin-top: 16px">
+<div class="margin-top-regular">
   <mat-slide-toggle
     i18n="
       slider|show unrelated attendance-entries for an activity that are not

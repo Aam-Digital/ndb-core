@@ -1,0 +1,40 @@
+<app-dashboard-list-widget
+  icon="tasks"
+  subtitle="Tasks due"
+  i18n-subtitle="subtitle|dashboard showing open todos"
+  theme="note"
+  entityType="Todo"
+  [dataMapper]="dataMapper"
+>
+  <table mat-table aria-label="Notes needing follow-up">
+    <!-- Table header only for assistive technologies like screen readers -->
+    <tr hidden="true">
+      <th scope="col">Subject</th>
+      <th scope="col">Deadline</th>
+    </tr>
+
+    <ng-container matColumnDef="subject">
+      <td *matCellDef="let todo" class="subject-cell row-indicator">
+        {{ todo.subject }}
+      </td>
+    </ng-container>
+    <ng-container matColumnDef="deadline">
+      <td
+        *matCellDef="let todo"
+        class="deadline"
+        matTooltip="{{ startDateLabel }}: {{ todo.startDate | date }}"
+        [matTooltipDisabled]="!todo.startDate"
+      >
+        {{ todo.deadline | date }}
+      </td>
+    </ng-container>
+
+    <tr
+      mat-row
+      *matRowDef="let row; columns: ['subject', 'deadline']"
+      class="dashboard-table-row row-view"
+      (click)="openEntity(row)"
+      [ngStyle]="{ '--row-indicator-color': row.isOverdue ? 'red' : '' }"
+    ></tr>
+  </table>
+</app-dashboard-list-widget>

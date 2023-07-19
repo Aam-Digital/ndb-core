@@ -1,0 +1,43 @@
+<app-dashboard-list-widget
+  [icon]="entityIcon"
+  theme="child"
+  [title]="totalEntities"
+  [subtitle]="label"
+  [entries]="entityGroupCounts"
+>
+  <div class="table-wrapper">
+    <table
+      mat-table
+      i18n-aria-label="Label for children count dashboard"
+      aria-label="Table showing disaggregation of the beneficiaries"
+    >
+      <ng-container matColumnDef="label">
+        <td *matCellDef="let group">{{ group.label }}</td>
+      </ng-container>
+      <ng-container matColumnDef="value">
+        <td *matCellDef="let group" class="text-align-end">{{ group.value }}</td>
+      </ng-container>
+      <ng-container matColumnDef="link">
+        <td *matCellDef class="text-align-end">
+          <fa-icon icon="external-link-square-alt"></fa-icon>
+        </td>
+      </ng-container>
+
+      <tr hidden>
+        <th scope="col" i18n="The center that a partiipant belongs to, e.g. a city">Center</th>
+        <th scope="col" i18n="The amount of children that study at one school">Count of children</th>
+        <th scope="col" i18n="A link that takes a user to a center">Link</th>
+      </tr>
+      <tr
+        mat-row
+        *matRowDef="let row; let i=index; columns: ['label', 'value', 'link'];"
+        (click)="goToChildrenList(row.id)"
+        class="pointer"
+        angulartics2On="click"
+        angularticsCategory="Navigation"
+        angularticsAction="dashboard_children_count_school_link"
+        [angularticsLabel]="'list-entry-' + i"
+      ></tr>
+    </table>
+  </div>
+</app-dashboard-list-widget>

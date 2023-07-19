@@ -18,14 +18,15 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { SessionService } from "./session.service";
 import { SyncState } from "../session-states/sync-state.enum";
-import { TEST_PASSWORD, TEST_USER } from "../mock-session.module";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
+import { AuthUser } from "./auth-user";
 
 /**
  * Default tests for testing basic functionality of any SessionService implementation.
  * The session has to be setup, so TEST_USER and TEST_PASSWORD are (the only) valid credentials
  *
  * @example
-describe("TestSessionService", async () => {
+ describe("TestSessionService", async () => {
   testSessionServiceImplementation(async () => {
     return new TestSessionService();
   });
@@ -85,6 +86,16 @@ export function testSessionServiceImplementation(
     expectNotToBeLoggedIn(LoginState.LOGGED_OUT);
   });
 
+  it("it correctly handles the necessary steps after a successful login", async () => {
+    const dummyUser: AuthUser = {
+      name: "Hanspeter",
+      roles: ["user_app"],
+    };
+    await sessionService.handleSuccessfulLogin(dummyUser);
+    expect(sessionService.loginState.value).toEqual(LoginState.LOGGED_IN);
+    expect(sessionService.getCurrentUser()).toEqual(dummyUser);
+  });
+
   /**
    * Check all states of the session to be "logged out".
    * @param expectedLoginState The expected LoginState (failed or simply logged out)
@@ -101,7 +112,7 @@ export function testSessionServiceImplementation(
 
     expect(sessionService.isLoggedIn())
       .withContext("unexpected isLoggedIn")
-      .toEqual(false);
-    expect(sessionService.getCurrentUser()).not.toBeDefined();
+      .toBeFalse();
+    expect(sessionService.getCurrentUser()).toBeUndefined();
   }
 }

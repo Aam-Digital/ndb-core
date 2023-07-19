@@ -1,11 +1,39 @@
-.recurring-container {
-  background-color: #fdfdb7;
-}
-.highlighted-container {
-  border: solid 2px darkgray;
+@use "@angular/material" as mat;
+@use "src/styles/variables/colors";
+
+.border-ok {
+  border-color: colors.$success !important;
 }
 
-mat-card-title {
-  font-size: 16px;
+.border-warning {
+  border-color: colors.$warn !important;
+}
+
+.border-urgent {
+  border-color: colors.$error !important;
+}
+
+.main-card {
+  max-width: 500px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.card-title {
   font-weight: bold;
+}
+
+.sep {
+  font-weight: 900;
+  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, hint-text);
+
+  // Add a whitespace before the separator
+  &::before {
+    content: " "
+  }
+
+  // Add a whitespace before the separator
+  &::after {
+    content: " "
+  }
 }

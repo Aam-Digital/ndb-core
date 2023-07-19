@@ -1,8 +1,9 @@
 import { warningLevels } from "../../warning-levels";
+import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 
 export const noteGroupStories = [
   {
-    category: "GUARDIAN_MEETING",
+    category: defaultInteractionTypes.find((t) => t.id === "GUARDIAN_MEETING"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Guardians Meeting`,
     text: $localize`:Note demo text:
@@ -10,7 +11,7 @@ export const noteGroupStories = [
       `,
   },
   {
-    category: "GUARDIAN_MEETING",
+    category: defaultInteractionTypes.find((t) => t.id === "GUARDIAN_MEETING"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Guardians Meeting`,
     text: $localize`:Note demo text:
@@ -19,7 +20,7 @@ export const noteGroupStories = [
   },
 
   {
-    category: "CHILDREN_MEETING",
+    category: defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Children Meeting`,
     text: $localize`:Note demo text:
@@ -27,7 +28,7 @@ export const noteGroupStories = [
       `,
   },
   {
-    category: "CHILDREN_MEETING",
+    category: defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Children Meeting`,
     text: $localize`:Note demo text:
@@ -35,7 +36,7 @@ export const noteGroupStories = [
       `,
   },
   {
-    category: "CHILDREN_MEETING",
+    category: defaultInteractionTypes.find((t) => t.id === "COACHING_CLASS"),
     warningLevel: warningLevels.find((level) => level.id === "OK"),
     subject: $localize`:Note demo subject:Drug Prevention Workshop`,
     text: $localize`:Note demo text:

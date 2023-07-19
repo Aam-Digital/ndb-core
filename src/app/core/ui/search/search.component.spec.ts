@@ -1,67 +1,45 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { SearchComponent } from "./search.component";
-import { MatAutocompleteModule } from "@angular/material/autocomplete";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatIconModule } from "@angular/material/icon";
-import { MatInputModule } from "@angular/material/input";
-import { MatToolbarModule } from "@angular/material/toolbar";
-import { FormsModule, ReactiveFormsModule } from "@angular/forms";
-import { CommonModule } from "@angular/common";
-import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { ChildrenModule } from "../../../child-dev-project/children/children.module";
-import { SchoolsModule } from "../../../child-dev-project/schools/schools.module";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
-import { RouterTestingModule } from "@angular/router/testing";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
-import { EntityUtilsModule } from "../../entity-components/entity-utils/entity-utils.module";
 import { Subscription } from "rxjs";
-import { Entity } from "../../entity/model/entity";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { SwUpdate } from "@angular/service-worker";
 
 describe("SearchComponent", () => {
+  SearchComponent.INPUT_DEBOUNCE_TIME_MS = 4;
+
   let component: SearchComponent;
   let fixture: ComponentFixture<SearchComponent>;
 
   let mockIndexService: jasmine.SpyObj<DatabaseIndexingService>;
-  const entitySchemaService = new EntitySchemaService();
   let subscription: Subscription;
 
-  beforeEach(
-    waitForAsync(() => {
-      mockIndexService = jasmine.createSpyObj("mockIndexService", [
-        "queryIndexRaw",
-        "createIndex",
-      ]);
+  beforeEach(waitForAsync(() => {
+    mockIndexService = jasmine.createSpyObj("mockIndexService", [
+      "queryIndexRaw",
+      "createIndex",
+    ]);
+    mockIndexService.createIndex.and.resolveTo();
+    mockIndexService.queryIndexRaw.and.resolveTo({ rows: [] });
 
-      TestBed.configureTestingModule({
-        imports: [
-          MatIconModule,
-          MatFormFieldModule,
-          MatInputModule,
-          MatAutocompleteModule,
-          CommonModule,
-          FormsModule,
-          NoopAnimationsModule,
-          ChildrenModule,
-          SchoolsModule,
-          MatToolbarModule,
-          RouterTestingModule,
-          ReactiveFormsModule,
-          EntityUtilsModule,
-        ],
-        providers: [
-          { provide: EntitySchemaService, useValue: entitySchemaService },
-          { provide: DatabaseIndexingService, useValue: mockIndexService },
-        ],
-        declarations: [SearchComponent],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [SearchComponent, MockedTestingModule.withState()],
+      providers: [
+        { provide: DatabaseIndexingService, useValue: mockIndexService },
+        { provide: SwUpdate, useValue: {} },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
-    mockIndexService.createIndex.and.returnValue(Promise.resolve());
+    mockIndexService.createIndex.and.resolveTo();
     fixture = TestBed.createComponent(SearchComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -76,25 +54,25 @@ describe("SearchComponent", () => {
     expect(mockIndexService.createIndex).toHaveBeenCalled();
   });
 
-  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", (done) => {
-    const tests = ["A", "AB"];
-    let iteration = 0;
-    subscription = component.results.subscribe((next) => {
-      iteration++;
-      expect(next).toHaveSize(0);
-      expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
-      if (iteration === 2) {
-        done();
-      }
-    });
-    tests.forEach((t, index) => {
-      setTimeout(() => component.formControl.setValue(t), 600 * index); // debounce
-    });
-  });
+  it("should not search for less than MIN_CHARACTERS_FOR_SEARCH character of input", fakeAsync(() => {
+    const subscr = component.results.subscribe();
+
+    component.formControl.setValue("A");
+    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+    expect(component.state).toBe(component.TOO_FEW_CHARACTERS);
+    expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
+
+    component.formControl.setValue("AB");
+    tick(SearchComponent.INPUT_DEBOUNCE_TIME_MS * 2);
+    expect(component.state).toBe(component.NO_RESULTS);
+    expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
+
+    subscr.unsubscribe();
+  }));
 
   function expectResultToBeEmpty(done: DoneFn) {
     subscription = component.results.subscribe((next) => {
-      expect(next).toHaveSize(0);
+      expect(next).toBeEmpty();
       expect(mockIndexService.queryIndexRaw).not.toHaveBeenCalled();
       done();
     });
@@ -108,56 +86,5 @@ describe("SearchComponent", () => {
   it("should reset results if a a null search is performed", (done) => {
     expectResultToBeEmpty(done);
     component.formControl.setValue(null);
-  });
-
-  function expectResultToHave(queryResults: any, result: Entity, done: DoneFn) {
-    mockIndexService.queryIndexRaw.and.returnValue(
-      Promise.resolve(queryResults)
-    );
-
-    subscription = component.results.subscribe((next) => {
-      console.log(next);
-      expect(next).toHaveSize(1);
-      expect(next[0].getId()).toEqual(result.getId());
-      expect(mockIndexService.queryIndexRaw).toHaveBeenCalled();
-      done();
-    });
-  }
-
-  function generateDemoData(): [Child, School, object] {
-    const child1 = new Child("1");
-    child1.name = "Adam X";
-    const school1 = new School("s1");
-    school1.name = "Anglo Primary";
-    const mockQueryResults = {
-      rows: [
-        { id: child1._id, doc: { name: child1.name }, key: "adam" },
-        { id: child1._id, doc: { name: child1.name }, key: "x" },
-        { id: school1._id, doc: { name: school1.name }, key: "anglo" },
-        { id: school1._id, doc: { name: school1.name }, key: "primary" },
-      ],
-    };
-    return [child1, school1, mockQueryResults];
-  }
-
-  it("should set results correctly for search input", (done) => {
-    const [child1, , mockQueryResults] = generateDemoData();
-
-    expectResultToHave(mockQueryResults, child1, done);
-    component.formControl.setValue("Ada");
-  });
-
-  it("should not include duplicates in results", (done) => {
-    const [child1, , mockQueryResults] = generateDemoData();
-
-    expectResultToHave(mockQueryResults, child1, done);
-    component.formControl.setValue("Ada");
-  });
-
-  it("should only include results matching all search terms (words)", (done) => {
-    const [child1, , mockQueryResults] = generateDemoData();
-
-    expectResultToHave(mockQueryResults, child1, done);
-    component.formControl.setValue("A X");
   });
 });

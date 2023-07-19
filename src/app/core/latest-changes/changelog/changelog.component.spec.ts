@@ -22,10 +22,10 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { LatestChangesService } from "../latest-changes.service";
 import { Changelog } from "../changelog";
 import { of } from "rxjs";
-import { LatestChangesModule } from "../latest-changes.module";
 import { SwUpdate } from "@angular/service-worker";
 import { MarkdownModule } from "ngx-markdown";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
@@ -39,28 +39,27 @@ describe("ChangelogComponent", () => {
   testChangelog.body = "test changes body";
   testChangelog.published_at = "2018-01-01";
 
-  beforeEach(
-    waitForAsync(() => {
-      mockLatestChangesService = jasmine.createSpyObj([
-        "getChangelogsBeforeVersion",
-        "getChangelogsBetweenVersions",
-      ]);
+  beforeEach(waitForAsync(() => {
+    mockLatestChangesService = jasmine.createSpyObj([
+      "getChangelogsBeforeVersion",
+      "getChangelogsBetweenVersions",
+    ]);
 
-      TestBed.configureTestingModule({
-        imports: [
-          LatestChangesModule,
-          MarkdownModule.forRoot(),
-          NoopAnimationsModule,
-        ],
-        providers: [
-          { provide: MatDialogRef, useValue: {} },
-          { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },
-          { provide: LatestChangesService, useValue: mockLatestChangesService },
-          { provide: SwUpdate, useValue: {} },
-        ],
-      }).compileComponents();
-    })
-  );
+    TestBed.configureTestingModule({
+      imports: [
+        ChangelogComponent,
+        MarkdownModule.forRoot(),
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        { provide: MatDialogRef, useValue: {} },
+        { provide: MAT_DIALOG_DATA, useValue: of([testChangelog]) },
+        { provide: LatestChangesService, useValue: mockLatestChangesService },
+        { provide: SwUpdate, useValue: {} },
+      ],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChangelogComponent);
