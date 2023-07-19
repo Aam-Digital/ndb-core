@@ -7,11 +7,9 @@ import { ConfigService } from "./config.service";
 export function createTestingConfigService(
   configsObject: any = defaultJsonConfig
 ): ConfigService {
-  const configService = new ConfigService(
-    mockEntityMapper(),
+  return new ConfigService(
+    mockEntityMapper([new Config(Config.CONFIG_KEY, configsObject)]),
     new LoggingService(),
     { can: () => true } as any
   );
-  configService["currentConfig"] = new Config(Config.CONFIG_KEY, configsObject);
-  return configService;
 }

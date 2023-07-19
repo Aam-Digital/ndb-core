@@ -9,6 +9,7 @@ import { Todo } from "../model/todo";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { NEVER } from "rxjs";
 
 const defaultColumns: FormFieldConfig[] = [
   { id: "deadline" },
@@ -34,7 +35,10 @@ export default {
           provide: MAT_DIALOG_DATA,
           useValue: { entity: todoEntity, columns: defaultColumns },
         },
-        { provide: MatDialogRef, useValue: {} },
+        {
+          provide: MatDialogRef,
+          useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
+        },
         {
           provide: TodoService,
           useValue: {},

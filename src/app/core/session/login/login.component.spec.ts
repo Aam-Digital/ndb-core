@@ -43,7 +43,10 @@ describe("LoginComponent", () => {
   let loader: HarnessLoader;
 
   beforeEach(waitForAsync(() => {
-    mockSessionService = jasmine.createSpyObj(["login"], { loginState });
+    mockSessionService = jasmine.createSpyObj(["login", "getCurrentUser"], {
+      loginState,
+    });
+    mockSessionService.getCurrentUser.and.returnValue({ name: "", roles: [] });
     TestBed.configureTestingModule({
       imports: [LoginComponent, MockedTestingModule],
       providers: [

@@ -1,8 +1,8 @@
 import {
   Directive,
   ElementRef,
-  HostListener,
   Input,
+  NgZone,
   OnDestroy,
   OnInit,
   TemplateRef,
@@ -86,7 +86,8 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
   constructor(
     private overlay: Overlay,
     private overlayPositionBuilder: OverlayPositionBuilder,
-    private element: ElementRef
+    private element: ElementRef<HTMLElement>,
+    private zone: NgZone
   ) {}
 
   ngOnInit(): void {
@@ -105,26 +106,18 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
       ]);
 
     this.overlayRef = this.overlay.create({ positionStrategy });
+    this.zone.runOutsideAngular(() => {
+      this.element.nativeElement.addEventListener("mouseenter", () =>
+        this.show()
+      );
+      this.element.nativeElement.addEventListener("mouseleave", (ev) =>
+        this.hide(ev.relatedTarget as HTMLElement)
+      );
+    });
   }
 
   ngOnDestroy() {
     this.hide();
-  }
-
-  @HostListener("mouseenter")
-  onMouseEnter() {
-    this.show();
-  }
-
-  @HostListener("mouseleave", ["$event.relatedTarget"])
-  onMouseLeave(relatedTarget: HTMLElement) {
-    // This ensures that `hide` is not called when the popup overlaps the element that this directive is on.
-    // If the method was called, the popup would flicker; disappearing (because of this method) and then
-    // re-appearing because of the `mouseenter` method.
-    if (
-      relatedTarget?.tagName !== TemplateTooltipComponent.SELECTOR.toUpperCase()
-    )
-      this.hide();
   }
 
   /**
@@ -146,16 +139,18 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
     this.timeoutRef = setTimeout(() => {
       //attach the component if it has not already attached to the overlay
       if (!this.overlayRef.hasAttached()) {
-        const tooltipRef = this.overlayRef.attach(
-          new ComponentPortal(TemplateTooltipComponent)
-        );
-        tooltipRef.instance.contentTemplate = this.contentTemplate;
-        tooltipRef.instance.hide
-          .pipe(untilDestroyed(this))
-          .subscribe(() => this.hide());
-        tooltipRef.instance.show
-          .pipe(untilDestroyed(this))
-          .subscribe(() => this.show());
+        this.zone.run(() => {
+          const tooltipRef = this.overlayRef.attach(
+            new ComponentPortal(TemplateTooltipComponent)
+          );
+          tooltipRef.instance.contentTemplate = this.contentTemplate;
+          tooltipRef.instance.hide
+            .pipe(untilDestroyed(this))
+            .subscribe(() => this.hide());
+          tooltipRef.instance.show
+            .pipe(untilDestroyed(this))
+            .subscribe(() => this.show());
+        });
       }
     }, this.delayShow);
   }
@@ -165,13 +160,23 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
    * When the tooltip is already hidden, this operation is a noop
    * @private
    */
-  private hide() {
+  private hide(relatedTarget?: HTMLElement) {
+    // This ensures that `hide` is not called when the popup overlaps the element that this directive is on.
+    // If the method was called, the popup would flicker; disappearing (because of this method) and then
+    // re-appearing because of the `mouseenter` method.
+    if (
+      relatedTarget?.tagName === TemplateTooltipComponent.SELECTOR.toUpperCase()
+    ) {
+      return;
+    }
+
     if (this.timeoutRef) {
       clearTimeout(this.timeoutRef);
     }
-    this.timeoutRef = setTimeout(
-      () => this.overlayRef.detach(),
-      this.delayHide
-    );
+    this.timeoutRef = setTimeout(() => {
+      if (this.overlayRef.hasAttached()) {
+        this.zone.run(() => this.overlayRef.detach());
+      }
+    }, this.delayHide);
   }
 }

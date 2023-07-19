@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { ChildBlockComponent } from "./child-block.component";
 import { Child } from "../model/child";
 import { moduleMetadata } from "@storybook/angular";
@@ -6,7 +6,7 @@ import { CommonModule } from "@angular/common";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
-  title: "Child Dev Project/ChildBlock",
+  title: "Features/Participant/ChildBlock",
   component: ChildBlockComponent,
   decorators: [
     moduleMetadata({

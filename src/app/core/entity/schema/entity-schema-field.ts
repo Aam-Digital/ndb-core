@@ -54,9 +54,9 @@ export interface EntitySchemaField {
 
   /**
    * Whether the field should be initialized with a default value if undefined
-   * (which is then run through dataType transformation);
+   * Default values are applied to form fields before they are displayed to users
    */
-  defaultValue?: any;
+  defaultValue?: PLACEHOLDERS | any;
 
   /**
    * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.
@@ -104,4 +104,13 @@ export interface EntitySchemaField {
 
   /** whether to show this field in the default details view */
   showInDetailsView?: boolean;
+}
+
+/**
+ * Available placeholder variables that can be used to configure a dynamic default value.
+ * (e.g. "$now" to set to current date)
+ */
+export enum PLACEHOLDERS {
+  NOW = "$now",
+  CURRENT_USER = "$current_user",
 }

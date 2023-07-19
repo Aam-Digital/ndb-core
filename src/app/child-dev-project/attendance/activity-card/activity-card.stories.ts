@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "../../notes/model/note";
@@ -10,7 +10,7 @@ import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
 export default {
-  title: "Attendance/Components/ActivityCard",
+  title: "Features/Attendance/Components/ActivityCard",
   component: ActivityCardComponent,
   decorators: [
     moduleMetadata({

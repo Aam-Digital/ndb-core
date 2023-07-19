@@ -98,6 +98,7 @@ export class KeycloakAuthService extends AuthService {
       KeycloakAuthService.REFRESH_TOKEN_KEY,
       token.refresh_token
     );
+    this.logSuccessfulAuth();
     const parsedToken = parseJwt(this.accessToken);
     return {
       name: parsedToken.username,
