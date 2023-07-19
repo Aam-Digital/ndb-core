@@ -76,7 +76,7 @@ ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 # url to be reverse-proxied for logging endpoint (e.g. sentry.io)
 ENV LOGGING_URL=""
 # content security policy header overrides
-ENV CSP_SRC_ALLOW=""
+ENV CSP_SRC_ALLOW="https://sentry.io https://*.aam-digital.com"
 ENV CSP_FRAME_ALLOW=""
 ENV CSP_REPORT_URI=""
 

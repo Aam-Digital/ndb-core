@@ -8,12 +8,6 @@
       "/db": ""
     }
   },
-  "/logging": {
-    "target": "https://bd6aba79ca514d35bb06a4b4e0c2a21e@sentry.io/1242399",
-    "secure": true,
-    "logLevel": "debug",
-    "changeOrigin": true
-  },
   "/nominatim": {
     "target": "https://nominatim.openstreetmap.org",
     "secure": true,
