@@ -76,10 +76,9 @@ ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 # url to be reverse-proxied for logging endpoint (e.g. sentry.io)
 ENV LOGGING_URL=""
 # content security policy header overrides
-ENV CSP_SRC_ALLOW="https://sentry.io https://*.aam-digital.com"
-ENV CSP_FRAME_ALLOW=""
+ENV CSP_SRC_ALLOW="https://sentry.io https://matomo.aam-digital.org https://*.aam-digital.com"
 ENV CSP_REPORT_URI=""
 
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$LOGGING_URL $$CSP_SRC_ALLOW $$CSP_FRAME_ALLOW $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$LOGGING_URL $$CSP_SRC_ALLOW $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
