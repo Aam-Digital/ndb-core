@@ -78,8 +78,10 @@ ENV LOGGING_URL=""
 
 # content security policy headers
 ENV CSP_REPORT_URI=""
-## (optional) complete override of Content-Security-Policy headers
-ENV CSP="default-src 'self' 'unsafe-eval' https://sentry.io https://b.tile.openstreetmap.org/ https://matomo.aam-digital.org  https://*.aam-digital.com https://api.github.com/repos/Aam-Digital/ 'sha256-Sh1PNRUktjifFwuOicavxmlAcFpZMbUqQGiCIoKhDI8='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
+# overwrite the Content-Security-Policy rules (report-uri is added automatically)
+## default includes all required whitelists for production server
+## to disable any CSP blocking, set to "default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'"
+ENV CSP="default-src 'self' 'unsafe-eval' https://sentry.io https://matomo.aam-digital.org  https://*.aam-digital.com https://api.github.com/repos/Aam-Digital/ 'sha256-Sh1PNRUktjifFwuOicavxmlAcFpZMbUqQGiCIoKhDI8='; style-src 'self' 'unsafe-inline'; img-src 'self' data: https://*.tile.openstreetmap.org/; font-src 'self' data:"
 ### 'sha256-Sh1PNRUktjifFwuOicavxmlAcFpZMbUqQGiCIoKhDI8=' for index.html writing browser details
 ### 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
 
