@@ -78,12 +78,12 @@ ENV LOGGING_URL=""
 
 # content security policy headers
 ENV CSP_REPORT_URI=""
-## additional allowed default sources
+## additional allowed default sources, define URLs that you want to allow as CSP_SRC_ALLOW. This is only used if CSP_SRC is *not* overwritten
 ENV CSP_SRC_ALLOW="https://sentry.io https://api.github.com/repos/Aam-Digital/ https://matomo.aam-digital.org  https://*.aam-digital.com"
-## (optional) complete override of CSP; Warning: the defaults here will be overwritten but similar rules are required for smooth functioning of the app
+## (optional) complete override of CSP using CSP_SRC; Warning: the defaults here will be overwritten but similar rules are required for smooth functioning of the app
+ENV CSP_SRC="default-src 'self' 'unsafe-eval' $CSP_SRC_ALLOW 'sha256-Sh1PNRUktjifFwuOicavxmlAcFpZMbUqQGiCIoKhDI8='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
 ### 'sha256-Sh1PNRUktjifFwuOicavxmlAcFpZMbUqQGiCIoKhDI8=' for index.html writing browser details
 ### 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
-ENV CSP_SRC="default-src 'self' 'unsafe-eval' $CSP_SRC_ALLOW 'sha256-Sh1PNRUktjifFwuOicavxmlAcFpZMbUqQGiCIoKhDI8='; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self' data:"
 
 # variables are inserted into the nginx config
 CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$LOGGING_URL $$CSP_SRC $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
