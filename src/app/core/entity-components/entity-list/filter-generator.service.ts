@@ -1,21 +1,25 @@
 import { Injectable } from "@angular/core";
 import {
-  FilterSelection,
-  FilterSelectionOption,
-} from "../../filter/filter-selection/filter-selection";
+  DateFilter,
+  SelectableFilter,
+  BooleanFilter,
+  ConfigurableEnumFilter,
+  EntityFilter,
+  Filter,
+} from "../../filter/filters/filters";
 import {
   BooleanFilterConfig,
+  DateRangeFilterConfig,
   FilterConfig,
   PrebuiltFilterConfig,
 } from "./EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { LoggingService } from "../../logging/logging.service";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { FilterComponentSettings } from "./filter-component.settings";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { FilterService } from "../../filter/filter.service";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
+import { FilterService } from "app/core/filter/filter.service";
+import { defaultDateFilters } from "../../filter/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { dateDataTypes } from "../../entity/schema-datatypes/date-datatypes";
 
 @Injectable({
   providedIn: "root",
@@ -23,7 +27,6 @@ import { ConfigurableEnumService } from "../../configurable-enum/configurable-en
 export class FilterGeneratorService {
   constructor(
     private enumService: ConfigurableEnumService,
-    private loggingService: LoggingService,
     private entities: EntityRegistry,
     private entityMapperService: EntityMapperService,
     private filterService: FilterService
@@ -31,160 +34,87 @@ export class FilterGeneratorService {
 
   /**
    *
-   * @param filtersConfig
+   * @param filterConfigs
    * @param entityConstructor
    * @param data
    * @param onlyShowUsedOptions (Optional) whether to remove those filter options for selection that are not present in the data
    */
   async generate<T extends Entity>(
-    filtersConfig: FilterConfig[],
+    filterConfigs: FilterConfig[],
     entityConstructor: EntityConstructor<T>,
     data: T[],
     onlyShowUsedOptions = false
-  ): Promise<FilterComponentSettings<T>[]> {
-    const filterSettings: FilterComponentSettings<T>[] = [];
-    for (const filter of filtersConfig) {
-      const schema = entityConstructor.schema.get(filter.id) || {};
-      const fs: FilterComponentSettings<T> = {
-        filterSettings: new FilterSelection(
-          filter.id,
-          [],
-          filter.label || schema.label
-        ),
-      };
-      try {
-        fs.filterSettings.options = await this.getFilterOptions(
-          filter,
-          schema,
-          data
+  ): Promise<Filter<T>[]> {
+    const filters: Filter<T>[] = [];
+    for (const filterConfig of filterConfigs) {
+      const schema = entityConstructor.schema.get(filterConfig.id) || {};
+      let filter: Filter<T>;
+      const type = filterConfig.type ?? schema.dataType;
+      if (
+        type == "configurable-enum" ||
+        schema.innerDataType === "configurable-enum"
+      ) {
+        filter = new ConfigurableEnumFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          this.enumService.getEnumValues(
+            schema.additional ?? schema.innerDataType
+          )
         );
-      } catch (e) {
-        this.loggingService.warn(`Could not init filter: ${filter.id}: ${e}`);
-      }
-
-      if (onlyShowUsedOptions) {
-        fs.filterSettings.options = fs.filterSettings.options.filter((option) =>
-          data.some(this.filterService.getFilterPredicate(option.filter))
+      } else if (type == "boolean") {
+        filter = new BooleanFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          filterConfig as BooleanFilterConfig
+        );
+      } else if (type == "prebuilt") {
+        filter = new SelectableFilter(
+          filterConfig.id,
+          (filterConfig as PrebuiltFilterConfig<T>).options,
+          filterConfig.label
+        );
+      } else if (dateDataTypes.includes(type)) {
+        filter = new DateFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters
+        );
+      } else if (
+        this.entities.has(filterConfig.type) ||
+        this.entities.has(schema.additional)
+      ) {
+        const entityType = filterConfig.type || schema.additional;
+        const filterEntities = await this.entityMapperService.loadType(
+          entityType
+        );
+        filter = new EntityFilter(filterConfig.id, entityType, filterEntities);
+      } else {
+        const options = [...new Set(data.map((c) => c[filterConfig.id]))];
+        const fSO = SelectableFilter.generateOptions(options, filterConfig.id);
+        filter = new SelectableFilter<T>(
+          filterConfig.id,
+          fSO,
+          filterConfig.label || schema.label
         );
       }
 
-      // Filters should only be added, if they have more than one (the default) option
-      if (fs.filterSettings.options?.length > 1) {
-        fs.selectedOption = filter.hasOwnProperty("default")
-          ? filter.default
-          : fs.filterSettings.options[0].key;
-        filterSettings.push(fs);
+      if (filterConfig.hasOwnProperty("default")) {
+        filter.selectedOption = filterConfig.default;
       }
+
+      if (filter instanceof SelectableFilter) {
+        if (onlyShowUsedOptions) {
+          filter.options = filter.options.filter((option) =>
+            data.some(this.filterService.getFilterPredicate(option.filter))
+          );
+        }
+        // Filters should only be added, if they have more than one (the default) option
+        if (filter.options?.length <= 1) {
+          continue;
+        }
+      }
+      filters.push(filter);
     }
-    return filterSettings;
-  }
-
-  private async getFilterOptions<T extends Entity>(
-    config: FilterConfig,
-    schema: EntitySchemaField,
-    data: T[]
-  ): Promise<FilterSelectionOption<T>[]> {
-    if (config.type === "prebuilt") {
-      return (config as PrebuiltFilterConfig<T>).options;
-    } else if (schema.dataType === "boolean" || config.type === "boolean") {
-      return this.createBooleanFilterOptions(config as BooleanFilterConfig);
-    } else if (
-      schema.dataType === "configurable-enum" ||
-      schema.innerDataType === "configurable-enum"
-    ) {
-      return this.createConfigurableEnumFilterOptions(
-        config.id,
-        schema.additional ?? schema.innerDataType
-      );
-    } else if (
-      this.entities.has(config.type) ||
-      this.entities.has(schema.additional)
-    ) {
-      return this.createEntityFilterOption(
-        config.id,
-        config.type || schema.additional
-      );
-    } else {
-      const options = [...new Set(data.map((c) => c[config.id]))];
-      return FilterSelection.generateOptions(options, config.id);
-    }
-  }
-
-  private createBooleanFilterOptions<T extends Entity>(
-    filter: BooleanFilterConfig
-  ): FilterSelectionOption<T>[] {
-    return [
-      {
-        key: "all",
-        label: filter.all ?? $localize`:Filter label:All`,
-        filter: {},
-      },
-      {
-        key: "true",
-        label: filter.true ?? $localize`:Filter label default boolean true:Yes`,
-        filter: { [filter.id]: true },
-      },
-      {
-        key: "false",
-        label: filter.false ?? $localize`:Filter label default boolean true:No`,
-        filter: { [filter.id]: false },
-      },
-    ];
-  }
-
-  private createConfigurableEnumFilterOptions<T extends Entity>(
-    property: string,
-    enumId: string
-  ): FilterSelectionOption<T>[] {
-    const options: FilterSelectionOption<T>[] = [
-      {
-        key: "all",
-        label: $localize`:Filter label:All`,
-        filter: {},
-      },
-    ];
-
-    const enumValues = this.enumService.getEnumValues(enumId);
-    const key = property + ".id";
-
-    for (const enumValue of enumValues) {
-      options.push({
-        key: enumValue.id,
-        label: enumValue.label,
-        color: enumValue.color,
-        filter: { [key]: enumValue.id },
-      });
-    }
-
-    return options;
-  }
-
-  private async createEntityFilterOption<T extends Entity>(
-    property: string,
-    entityType: string
-  ): Promise<FilterSelectionOption<T>[]> {
-    const filterEntities = await this.entityMapperService.loadType(entityType);
-    filterEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
-
-    const options = [
-      {
-        key: "all",
-        label: $localize`:Filter option:All`,
-        filter: {},
-      },
-    ];
-    options.push(
-      ...filterEntities.map((filterEntity) => ({
-        key: filterEntity.getId(),
-        label: filterEntity.toString(),
-        filter: {
-          $or: [
-            { [property]: filterEntity.getId() },
-            { [property]: { $elemMatch: { $eq: filterEntity.getId() } } },
-          ],
-        },
-      }))
-    );
-    return options;
+    return filters;
   }
 }

@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
@@ -69,7 +69,7 @@ attendanceRecords.forEach((a) => {
 });
 
 export default {
-  title: "Attendance/Sections/ActivityAttendanceSection",
+  title: "Features/Attendance/Sections/ActivityAttendanceSection",
   component: ActivityAttendanceSectionComponent,
   decorators: [
     moduleMetadata({

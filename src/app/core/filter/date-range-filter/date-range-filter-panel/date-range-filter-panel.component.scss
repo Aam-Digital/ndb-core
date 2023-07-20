@@ -1,0 +1,27 @@
+.container {
+  display: flex;
+}
+
+.calendar {
+  width: 60%;
+}
+
+.panel {
+  width: 40%;
+  margin: auto;
+}
+
+.button-div {
+  display: block;
+  text-align: left;
+  line-height: 100%;
+}
+
+.button {
+  display: block;
+  text-align: left;
+}
+
+.selected-option {
+  font-weight: bold;
+}

@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ChangelogComponent } from "./changelog.component";
@@ -41,6 +41,7 @@ export default {
           useValue: {
             notifyUserWhenUpdateAvailable: () => {},
             regularlyCheckForUpdates: () => {},
+            detectUnrecoverableState: () => {},
           },
         },
       ],

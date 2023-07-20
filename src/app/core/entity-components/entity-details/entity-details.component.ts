@@ -31,6 +31,7 @@ import { ViewTitleComponent } from "../entity-utils/view-title/view-title.compon
 import { DynamicComponentDirective } from "../../view/dynamic-components/dynamic-component.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { LoggingService } from "../../logging/logging.service";
+import { UnsavedChangesService } from "./form/unsaved-changes.service";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -77,7 +78,8 @@ export class EntityDetailsComponent {
     private entityRemoveService: EntityRemoveService,
     private ability: EntityAbility,
     private entities: EntityRegistry,
-    private logger: LoggingService
+    private logger: LoggingService,
+    public unsavedChanges: UnsavedChangesService
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;

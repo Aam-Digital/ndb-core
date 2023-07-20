@@ -97,6 +97,7 @@ export class QueryService {
         toArray: this.toArray,
         unique: this.unique,
         count: this.count,
+        sum: this.sum,
         addPrefix: this.addPrefix,
         toEntities: this.toEntities.bind(this),
         getRelated: this.getRelated.bind(this),
@@ -234,6 +235,19 @@ export class QueryService {
   }
 
   /**
+   * Returns the (integer) sum of the provided array.
+   * It can also handle integers in strings, e.g. "3"
+   * @param data and integer array
+   * @private
+   */
+  private sum(data: any[]): number {
+    return data.reduce((res, cur) => {
+      const parsed = Number.parseInt(cur);
+      return Number.isNaN(parsed) ? res : res + parsed;
+    }, 0);
+  }
+
+  /**
    * Turns a list of ids (with the entity prefix) into a list of entities
    * @param ids the array of ids with entity prefix
    * @param entityPrefix (Optional) entity type prefix that should be added to the given ids where prefix is still missing
@@ -307,7 +321,8 @@ export class QueryService {
     key: string,
     value: string
   ): any[] {
-    const values = value.replace(new RegExp(" ", "g"), "").split("|");
+    // splits at "|" and removes optional whitespace before or after the symbol
+    const values = value.trim().split(/\s*\|\s*/);
     return objs.filter((obj) => {
       if (obj?.hasOwnProperty(attr)) {
         return values.includes(obj[attr][key]?.toString());

@@ -1,4 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
+import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
 import { generateEventWithAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
@@ -44,7 +44,7 @@ const demoEvents: Note[] = [
 demoEvents[0].getAttendance("1").remarks = "cough and cold";
 
 export default {
-  title: "Attendance/Components/AttendanceCalendar",
+  title: "Features/Attendance/Components/AttendanceCalendar",
   component: AttendanceCalendarComponent,
   decorators: [
     moduleMetadata({

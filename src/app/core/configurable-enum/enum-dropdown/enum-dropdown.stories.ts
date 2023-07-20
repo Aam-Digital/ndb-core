@@ -1,6 +1,9 @@
 import { Meta, Story } from "@storybook/angular/types-6-0";
 import { moduleMetadata } from "@storybook/angular";
-import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import {
+  entityFormStorybookDefaultParameters,
+  StorybookBaseModule,
+} from "../../../utils/storybook-base.module";
 import { EnumDropdownComponent } from "./enum-dropdown.component";
 import { FormControl } from "@angular/forms";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
@@ -14,7 +17,7 @@ const centerEnum = Object.assign(new ConfigurableEnum("center"), {
 });
 
 export default {
-  title: "Core/EntityComponents/Entity Property Fields/Enum Dropdown",
+  title: "Core/Entities/Edit Properties/Enum Dropdown",
   component: EnumDropdownComponent,
   decorators: [
     moduleMetadata({
@@ -24,13 +27,11 @@ export default {
           provide: EntityMapperService,
           useValue: mockEntityMapper([centerEnum]),
         },
-        {
-          provide: ConfigurableEnumService,
-          useValue: { getEnum: () => centerEnum },
-        },
+        ConfigurableEnumService,
       ],
     }),
   ],
+  parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
 const Template: Story<EnumDropdownComponent> = (
