@@ -84,5 +84,5 @@ ENV CSP="default-src 'self' 'unsafe-eval' https://sentry.io https://b.tile.opens
 ### 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
 
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$LOGGING_URL $$CSP_SRC_ALLOW $$CSP_OVERRIDE $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$LOGGING_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
