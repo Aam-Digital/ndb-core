@@ -129,7 +129,7 @@
     "xliff": "^6.1.0"
   },
   "overrides": {
-    "webpack": "5.80.0"
+    "webpack": "5.81.0"
   },
   "browser": {
     "crypto": false
