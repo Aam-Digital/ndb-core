@@ -14,7 +14,7 @@ You can simply create a new git tag and the CI setup will build and publish a do
 Run the following commands from the root folder to build, run and kill the application on your local machine:
 ```
 docker build -f build/Dockerfile -t aam/digital:latest .
-docker run -p=80:80 aam/digital:latest
+docker run -p=80:80 --name aam-digital aam/digital:latest
 docker kill aam-digital
 ```
 
