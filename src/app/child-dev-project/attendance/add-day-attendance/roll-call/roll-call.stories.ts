@@ -3,13 +3,10 @@ import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-
 import {
   applicationConfig,
   Meta,
-  moduleMetadata,
   StoryFn,
 } from "@storybook/angular";
 import { Note } from "../../../notes/model/note";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { importProvidersFrom } from "@angular/core";
 
 const demoEvent = Note.create(new Date(), "coaching");
@@ -25,16 +22,7 @@ export default {
   component: RollCallComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(StorybookBaseModule)],
-    }),
-    moduleMetadata({
-      imports: [RollCallComponent],
-      providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper(demoChildren),
-        },
-      ],
+      providers: [importProvidersFrom(StorybookBaseModule.withData(demoChildren))],
     }),
   ],
 } as Meta;

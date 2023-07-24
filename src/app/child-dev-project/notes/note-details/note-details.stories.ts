@@ -7,9 +7,8 @@ import {
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ChildrenService } from "../../children/children.service";
-import { NEVER, of } from "rxjs";
+import { MatDialogRef } from "@angular/material/dialog";
+import { NEVER } from "rxjs";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
@@ -25,16 +24,8 @@ export default {
     moduleMetadata({
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
-          useValue: { data: { entity: Note.create(new Date()) } },
-        },
-        {
           provide: MatDialogRef,
           useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
-        },
-        {
-          provide: ChildrenService,
-          useValue: { getChild: () => of(Child.create("John Doe")) },
         },
       ],
     }),
@@ -59,6 +50,6 @@ eventNote.addChild(demoChildren[0].getId());
 eventNote.addChild(demoChildren[1].getId());
 
 export const EventWithAttendance = Template.bind({});
-Primary.args = {
+EventWithAttendance.args = {
   entity: eventNote,
 };

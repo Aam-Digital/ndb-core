@@ -1,15 +1,7 @@
-import {
-  applicationConfig,
-  Meta,
-  moduleMetadata,
-  StoryFn,
-} from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
-import { ChildrenService } from "../../../../child-dev-project/children/children.service";
 import { importProvidersFrom } from "@angular/core";
 
 const child1 = new Child();
@@ -33,16 +25,16 @@ export default {
   component: DisplayEntityArrayComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(StorybookBaseModule)],
-    }),
-    moduleMetadata({
-      imports: [DisplayEntityArrayComponent],
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([child1, child2, child3, child4, child5]),
-        },
-        { provide: ChildrenService, useValue: null },
+        importProvidersFrom(
+          StorybookBaseModule.withData([
+            child1,
+            child2,
+            child3,
+            child4,
+            child5,
+          ]),
+        ),
       ],
     }),
   ],

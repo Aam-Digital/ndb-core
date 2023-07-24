@@ -1,12 +1,10 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { UserSecurityComponent } from "./user-security.component";
-import {
-  mockSessionService,
-  StorybookBaseModule,
-} from "../../../utils/storybook-base.module";
+import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { SessionService } from "../../session/session-service/session.service";
 import { User } from "../user";
 import { importProvidersFrom } from "@angular/core";
+import { createLocalSession } from "../../../utils/mocked-testing.module";
 
 export default {
   title: "Core/Admin/User Security",
@@ -17,7 +15,7 @@ export default {
         importProvidersFrom(StorybookBaseModule),
         {
           provide: SessionService,
-          useValue: mockSessionService({
+          useValue: createLocalSession(true, {
             name: "Test",
             roles: ["account_manager"],
           }),

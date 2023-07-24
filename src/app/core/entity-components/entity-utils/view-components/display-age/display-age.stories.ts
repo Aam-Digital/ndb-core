@@ -1,9 +1,4 @@
-import {
-  applicationConfig,
-  Meta,
-  moduleMetadata,
-  StoryFn,
-} from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { DisplayAgeComponent } from "./display-age.component";
 import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
@@ -16,10 +11,6 @@ export default {
     applicationConfig({
       providers: [importProvidersFrom(StorybookBaseModule)],
     }),
-    moduleMetadata({
-      imports: [DisplayAgeComponent],
-      providers: [],
-    }),
   ],
 } as Meta;
 
@@ -27,8 +18,9 @@ const Template: StoryFn<DisplayAgeComponent> = (args: DisplayAgeComponent) => ({
   props: args,
 });
 
-const date = new DateWithAge("2001-12-25");
 // currently Storybook can't handle classes extending Date - so this doesn't work: https://github.com/storybookjs/storybook/issues/14618
+const date = new DateWithAge("2001-12-25");
+(date as any)["age"] = "12";
 
 export const Basic = Template.bind({});
 Basic.args = {

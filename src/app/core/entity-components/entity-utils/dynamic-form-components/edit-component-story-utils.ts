@@ -40,7 +40,6 @@ export function generateFormFieldStory<T>(
   };
 
   const meta: Meta = {
-    title: "Core/Entities/Edit Properties/" + editComponent,
     component: FormComponent,
     decorators: [
       applicationConfig({

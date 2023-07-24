@@ -2,6 +2,7 @@
   "extends": "../tsconfig.json",
   "include": [
     "../src/**/*.stories.ts",
+    "../src/polyfills.ts",
     "preview.ts"
   ],
   "files": [

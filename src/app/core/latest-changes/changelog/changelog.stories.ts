@@ -7,7 +7,6 @@ import {
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ChangelogComponent } from "./changelog.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { UpdateManagerService } from "../update-manager.service";
 import { Changelog } from "../changelog";
 import { of } from "rxjs";
 import { importProvidersFrom } from "@angular/core";
@@ -41,18 +40,7 @@ export default {
       providers: [importProvidersFrom(StorybookBaseModule)],
     }),
     moduleMetadata({
-      imports: [ChangelogComponent],
-      providers: [
-        { provide: MAT_DIALOG_DATA, useValue: of(changelogs) },
-        {
-          provide: UpdateManagerService,
-          useValue: {
-            notifyUserWhenUpdateAvailable: () => {},
-            regularlyCheckForUpdates: () => {},
-            detectUnrecoverableState: () => {},
-          },
-        },
-      ],
+      providers: [{ provide: MAT_DIALOG_DATA, useValue: of(changelogs) }],
     }),
   ],
 } as Meta;

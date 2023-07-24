@@ -48,9 +48,7 @@ describe("DashboardListWidgetComponent", () => {
   beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "receiveUpdates"]);
     mockEntityUpdates = new Subject<UpdatedEntity<Note>>();
-    mockEntityMapper.receiveUpdates.and.returnValue(
-      mockEntityUpdates.asObservable(),
-    );
+    mockEntityMapper.receiveUpdates.and.returnValue(mockEntityUpdates);
 
     await TestBed.configureTestingModule({
       imports: [DashboardWidgetTestComponent],
