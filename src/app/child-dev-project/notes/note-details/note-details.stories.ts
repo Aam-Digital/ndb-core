@@ -10,7 +10,6 @@ import { Child } from "../../children/model/child";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { ChildrenService } from "../../children/children.service";
 import { NEVER, of } from "rxjs";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 

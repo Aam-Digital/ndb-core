@@ -1,22 +1,11 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { HealthCheckupComponent } from "./health-checkup.component";
 import { ChildrenService } from "../../children.service";
 import { HealthCheck } from "../model/health-check";
 import moment from "moment";
 import { Child } from "../../model/child";
-import { of } from "rxjs";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { importProvidersFrom } from "@angular/core";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
-import { AlertService } from "../../../../core/alerts/alert.service";
-import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
-import { EntityFormService } from "../../../../core/entity-components/entity-form/entity-form.service";
-import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import {
-  MAT_DIALOG_SCROLL_STRATEGY,
-  MatDialog,
-} from "@angular/material/dialog";
 
 const hc1 = new HealthCheck();
 hc1.date = new Date();
@@ -35,13 +24,14 @@ export default {
   title: "Features/Health Checkup",
   component: HealthCheckupComponent,
   decorators: [
-    moduleMetadata({
-      imports: [HealthCheckupComponent],
-      declarations: [],
+    applicationConfig({
       providers: [
+        importProvidersFrom(StorybookBaseModule.withData()),
         {
           provide: ChildrenService,
-          useValue: { getHealthChecksOfChild: () => of([hc1, hc2, hc3]) },
+          useValue: {
+            getHealthChecksOfChild: () => Promise.resolve([hc1, hc2, hc3]),
+          },
         },
       ],
     }),
@@ -57,5 +47,5 @@ const Template: StoryFn<HealthCheckupComponent> = (
 
 export const Primary = Template.bind({});
 Primary.args = {
-  child: new Child(),
+  entity: new Child(),
 };

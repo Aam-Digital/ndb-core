@@ -68,15 +68,15 @@ Active.args = {
   placeholder: "Select Children",
 };
 
-export const multipleTypes = Template.bind({});
-multipleTypes.args = {
+export const MultipleTypes = Template.bind({});
+MultipleTypes.args = {
   entityType: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
   label: "Related Records",
   placeholder: "Select records",
 };
 
-export const disabled = Template.bind({});
-disabled.args = {
+export const Disabled = Template.bind({});
+Disabled.args = {
   entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",
