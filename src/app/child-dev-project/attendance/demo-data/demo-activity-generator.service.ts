@@ -26,7 +26,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
    */
   static generateActivityForChildren(
     children: Child[],
-    assignedUser?: User
+    assignedUser?: User,
   ): RecurringActivity {
     const activity = RecurringActivity.create();
     const type = faker.helpers.arrayElement(this.ACTIVITY_TYPES);
@@ -34,8 +34,8 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
     activity.title =
       type.label +
       " " +
-      faker.datatype.number({ min: 1, max: 9 }) +
-      faker.random.alphaNumeric(1).toUpperCase();
+      faker.number.int({ min: 1, max: 9 }) +
+      faker.string.alphanumeric(1).toUpperCase();
     activity.type = type;
     activity.participants = children.map((c) => c.getId());
     activity.assignedTo = [assignedUser?.getId()];
@@ -61,7 +61,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
 
   constructor(
     private demoChildren: DemoChildGenerator,
-    private demoUser: DemoUserGeneratorService
+    private demoUser: DemoUserGeneratorService,
   ) {
     super();
   }
@@ -72,7 +72,7 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
 
     let i = 0;
     while (i < children.length) {
-      const groupSize = faker.datatype.number({
+      const groupSize = faker.number.int({
         min: this.MIN_PARTICIPANTS,
         max: this.MAX_PARTICIPANTS,
       });
@@ -80,8 +80,8 @@ export class DemoActivityGeneratorService extends DemoDataGenerator<RecurringAct
       data.push(
         DemoActivityGeneratorService.generateActivityForChildren(
           participatingChildren,
-          faker.helpers.arrayElement(this.demoUser.entities)
-        )
+          faker.helpers.arrayElement(this.demoUser.entities),
+        ),
       );
       i += groupSize;
     }

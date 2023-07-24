@@ -40,7 +40,7 @@ export class DemoUserGeneratorService extends DemoDataGenerator<User> {
 
     const userNames = new Set<string>();
     while (userNames.size < 10) {
-      userNames.add(faker.name.firstName());
+      userNames.add(faker.person.firstName());
     }
     for (const name of userNames) {
       const user = new User(name);

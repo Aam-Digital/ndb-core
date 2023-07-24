@@ -35,7 +35,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       minNotesPerChild: 2,
       maxNotesPerChild: 10,
       groupNotes: 5,
-    }
+    },
   ) {
     return [
       { provide: DemoNoteGeneratorService, useClass: DemoNoteGeneratorService },
@@ -46,7 +46,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
   constructor(
     private config: DemoNoteConfig,
     private demoChildren: DemoChildGenerator,
-    private demoUsers: DemoUserGeneratorService
+    private demoUsers: DemoUserGeneratorService,
   ) {
     super();
   }
@@ -59,21 +59,21 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
         continue;
       }
 
-      let numberOfNotes = faker.datatype.number({
+      let numberOfNotes = faker.number.int({
         min: this.config.minNotesPerChild,
         max: this.config.maxNotesPerChild,
       });
 
       // generate a recent note for the last week for some children to have data for dashboard
-      if (numberOfNotes > 0 && faker.datatype.number(100) < 40) {
+      if (numberOfNotes > 0 && faker.number.int(100) < 40) {
         data.push(
           this.generateNoteForChild(
             child,
-            faker.date.between(
-              moment().subtract(6, "days").toDate(),
-              faker.getEarlierDateOrToday(child.dropoutDate)
-            )
-          )
+            faker.date.between({
+              from: moment().subtract(6, "days").toDate(),
+              to: faker.getEarlierDateOrToday(child.dropoutDate),
+            }),
+          ),
         );
         numberOfNotes--;
       }
@@ -85,7 +85,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
 
     for (const center of centersUnique) {
       const children: Child[] = this.demoChildren.entities.filter(
-        (c) => c.center === center
+        (c) => c.center === center,
       );
       for (let i = 0; i < this.config.groupNotes; i++) {
         data.push(this.generateGroupNote(children));
@@ -107,10 +107,10 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     ];
 
     if (!date) {
-      date = faker.date.between(
-        child.admissionDate,
-        faker.getEarlierDateOrToday(child.dropoutDate)
-      );
+      date = faker.date.between({
+        from: child.admissionDate,
+        to: faker.getEarlierDateOrToday(child.dropoutDate),
+      });
     }
     note.date = date;
 
@@ -140,14 +140,14 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     children.forEach((child) => {
       const attendance = note.getAttendance(child.getId());
       // get an approximate presence of 85%
-      if (faker.datatype.number(100) <= 15) {
+      if (faker.number.int(100) <= 15) {
         attendance.status = defaultAttendanceStatusTypes.find(
-          (t) => t.countAs === AttendanceLogicalStatus.ABSENT
+          (t) => t.countAs === AttendanceLogicalStatus.ABSENT,
         );
         attendance.remarks = faker.helpers.arrayElement(absenceRemarks);
       } else {
         attendance.status = defaultAttendanceStatusTypes.find(
-          (t) => t.countAs === AttendanceLogicalStatus.PRESENT
+          (t) => t.countAs === AttendanceLogicalStatus.PRESENT,
         );
       }
     });
@@ -156,7 +156,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
       faker.helpers.arrayElement(this.demoUsers.entities).getId(),
     ];
 
-    note.date = faker.date.past(1);
+    note.date = faker.date.past({ years: 1 });
 
     this.removeFollowUpMarkerForOldNotes(note);
 

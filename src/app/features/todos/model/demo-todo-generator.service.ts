@@ -18,7 +18,7 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
     config: DemoTodoConfig = {
       minPerChild: 1,
       maxPerChild: 2,
-    }
+    },
   ) {
     return [
       { provide: DemoTodoGeneratorService, useClass: DemoTodoGeneratorService },
@@ -29,7 +29,7 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   constructor(
     private config: DemoTodoConfig,
     private demoChildren: DemoChildGenerator,
-    private demoUsers: DemoUserGeneratorService
+    private demoUsers: DemoUserGeneratorService,
   ) {
     super();
   }
@@ -42,7 +42,7 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
         continue;
       }
 
-      let numberOfRecords = faker.datatype.number({
+      let numberOfRecords = faker.number.int({
         min: this.config.minPerChild,
         max: this.config.maxPerChild,
       });
@@ -56,23 +56,23 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
   }
 
   private generateTodoForEntity(entity: Entity): Todo {
-    const todo = new Todo(faker.random.alphaNumeric(20));
+    const todo = new Todo(faker.string.alphanumeric(20));
 
     const selectedStory = faker.helpers.arrayElement(stories);
     todo.subject = selectedStory.subject;
     todo.description = selectedStory.description;
 
-    todo.deadline = faker.date.between(
-      moment().subtract(5, "days").toDate(),
-      moment().add(90, "days").toDate()
-    );
+    todo.deadline = faker.date.between({
+      from: moment().subtract(5, "days").toDate(),
+      to: moment().add(90, "days").toDate(),
+    });
     faker.helpers.maybe(
       () =>
-        (todo.startDate = faker.date.between(
-          moment(todo.deadline).subtract(25, "days").toDate(),
-          todo.deadline
-        )),
-      { probability: 0.5 }
+        (todo.startDate = faker.date.between({
+          from: moment(todo.deadline).subtract(25, "days").toDate(),
+          to: todo.deadline,
+        })),
+      { probability: 0.5 },
     );
 
     todo.relatedEntities = [entity.getId(true)];
