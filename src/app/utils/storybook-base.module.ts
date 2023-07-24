@@ -6,7 +6,6 @@ import {
 } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { Angulartics2Module } from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { entityRegistry } from "../core/entity/database-entity.decorator";
@@ -25,8 +24,6 @@ import { AuthUser } from "../core/session/session-service/auth-user";
 import { environment } from "../../environments/environment";
 import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "./di-tokens";
-import { MatSnackBarModule } from "@angular/material/snack-bar";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
@@ -61,14 +58,13 @@ export function mockSessionService(currentUser?: AuthUser): SessionService {
 @NgModule({
   declarations: [],
   imports: [
+    AppModule,
     CommonModule,
     FontAwesomeModule,
     Angulartics2Module.forRoot(),
     RouterTestingModule,
   ],
   providers: [
-    { provide: WINDOW_TOKEN, useValue: window },
-    { provide: LOCATION_TOKEN, useValue: window.location },
     { provide: ConfigService, useValue: createTestingConfigService() },
     {
       provide: ConfigurableEnumService,

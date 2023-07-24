@@ -1,5 +1,9 @@
 {
   "extends": "../tsconfig.json",
+  "include": [
+    "../src",
+    "preview.ts"
+  ],
   "files": [
     "./typings.d.ts"
   ]
