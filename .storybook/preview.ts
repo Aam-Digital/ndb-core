@@ -1,11 +1,14 @@
 import "@angular/localize/init";
-// polyfill buffer here as well
 import * as buffer from "buffer";
 import * as MockDate from "mockdate";
 import { Preview } from "@storybook/angular";
+import { environment } from "../src/environments/environment";
 
 // fixing a mocked "TODAY" to have persistent stories for visual regression testing
 MockDate.set(new Date("2023-06-09"));
+// polyfill buffer here as well
+window.Buffer = buffer.Buffer;
+environment.production = false;
 
 export const preview: Preview = {
   parameters: {
@@ -17,7 +20,4 @@ export const preview: Preview = {
       },
     },
   },
-  decorators: [],
 };
-
-window.Buffer = buffer.Buffer;

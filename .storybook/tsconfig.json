@@ -1,7 +1,7 @@
 {
   "extends": "../tsconfig.json",
   "include": [
-    "../src",
+    "../src/**/*.stories.ts",
     "preview.ts"
   ],
   "files": [
