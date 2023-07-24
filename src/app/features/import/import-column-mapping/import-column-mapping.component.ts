@@ -1,6 +1,5 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
-import { ComponentType } from "@angular/cdk/overlay";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
@@ -11,6 +10,9 @@ import { MatInputModule } from "@angular/material/input";
 import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
+import { MatBadgeModule } from "@angular/material/badge";
+import { AbstractValueMappingComponent } from "./abstract-value-mapping-component";
+import { ComponentType } from "@angular/cdk/overlay";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -29,6 +31,7 @@ import { MatButtonModule } from "@angular/material/button";
     FormsModule,
     MatButtonModule,
     NgIf,
+    MatBadgeModule,
   ],
 })
 export class ImportColumnMappingComponent {
@@ -55,10 +58,15 @@ export class ImportColumnMappingComponent {
   }
 
   private entityCtor: EntityConstructor;
-  // entity properties that have a label
+
+  /** entity properties that have a label */
   allProps: string[] = [];
-  // properties that need further adjustments through a component
-  mappingCmp: { [key: string]: ComponentType<any> };
+
+  /** properties that need further adjustments through a component */
+  mappingCmp: { [key: string]: ComponentType<AbstractValueMappingComponent> };
+
+  /** warning label badges for a mapped column that requires user configuration for the "additional" details */
+  mappingAdditionalWarning: { [key: string]: string } = {};
 
   labelMapper = (name: string) => this.entityCtor.schema.get(name).label;
   isUsed = (option: string) =>
@@ -83,11 +91,22 @@ export class ImportColumnMappingComponent {
         disableClose: true,
       })
       .afterClosed()
-      .subscribe(() => this.emitUpdate());
+      .subscribe(() => this.updateMapping(col, true));
   }
 
-  emitUpdate() {
-    // Emitting copy of array to trigger change detection
+  updateMapping(col: ColumnMapping, settingAdditional: boolean = false) {
+    if (!settingAdditional) {
+      // reset additional, because mapping changed
+      delete col.additional;
+    }
+
+    this.mappingAdditionalWarning[col.column] = (
+      this.mappingCmp[
+        col.propertyName
+      ] as unknown as typeof AbstractValueMappingComponent
+    ).getIncompleteAdditionalConfigBadge(col);
+
+    // Emitting copy of array to trigger change detection; values have been updated in place through data binding
     this.columnMappingChange.emit([...this.columnMapping]);
   }
 

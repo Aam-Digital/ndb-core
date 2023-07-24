@@ -19,7 +19,7 @@
       <app-basic-autocomplete
         [options]="allProps"
         [(ngModel)]="col.propertyName"
-        (ngModelChange)="emitUpdate()"
+        (ngModelChange)="updateMapping(col)"
         [optionToString]="labelMapper"
         [hideOption]="isUsed"
       />
@@ -33,6 +33,9 @@
       i18n="
         import - column mapping - configure additional transformation button
       "
+      [matBadge]="mappingAdditionalWarning?.[col.column]"
+      [matBadgeHidden]="!mappingAdditionalWarning?.[col.column]"
+      matBadgeColor="warn"
     >
       Configure value mapping
     </button>

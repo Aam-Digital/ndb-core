@@ -12,6 +12,7 @@ import { MatInputModule } from "@angular/material/input";
 import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
+import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
 
 @Component({
   selector: "app-date-value-mapping",
@@ -30,7 +31,9 @@ import { MatButtonModule } from "@angular/material/button";
     MatButtonModule,
   ],
 })
-export class DateValueMappingComponent {
+export class DateValueMappingComponent
+  implements AbstractValueMappingComponent
+{
   format = new FormControl("");
   valid = false;
   values: { value: string; parsed?: Date }[] = [];

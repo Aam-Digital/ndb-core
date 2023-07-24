@@ -7,7 +7,6 @@ import { dateEntitySchemaDatatype } from "../../core/entity/schema-datatypes/dat
 import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-only";
 import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
 import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
-import { ComponentType } from "@angular/cdk/overlay";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
@@ -18,6 +17,8 @@ import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { AbstractValueMappingComponent } from "./import-column-mapping/abstract-value-mapping-component";
+import { ComponentType } from "@angular/cdk/overlay";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -72,7 +73,7 @@ export class ImportService {
   }
 
   private getImportMapping(schema: EntitySchemaField): {
-    mappingCmp: ComponentType<any>;
+    mappingCmp: ComponentType<AbstractValueMappingComponent>;
     mappingFn: (val, additional) => any;
   } {
     if (
