@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { DisplayPercentageComponent } from "./display-percentage.component";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 
@@ -14,8 +13,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DisplayPercentageComponent> = (
-  args: DisplayPercentageComponent
+const Template: StoryFn<DisplayPercentageComponent> = (
+  args: DisplayPercentageComponent,
 ) => ({
   props: args,
 });

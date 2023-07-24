@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EntitySelectComponent } from "./entity-select.component";
@@ -59,8 +58,8 @@ export default {
 componentRegistry.add("ChildBlock", async () => ChildBlockComponent);
 componentRegistry.add("SchoolBlock", async () => SchoolBlockComponent);
 
-const Template: Story<EntitySelectComponent<Child>> = (
-  args: EntitySelectComponent<Child>
+const Template: StoryFn<EntitySelectComponent<Child>> = (
+  args: EntitySelectComponent<Child>,
 ) => ({
   component: EntitySelectComponent,
   props: args,

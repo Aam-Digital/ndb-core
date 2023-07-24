@@ -1,10 +1,9 @@
-import { Meta } from "@storybook/angular/types-6-0";
 import { FormComponent } from "../../entity-details/form/form.component";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata } from "@storybook/angular";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import {
   entityFormStorybookDefaultParameters,
@@ -13,7 +12,7 @@ import {
 
 export function generateFormFieldStory<T>(
   editComponent,
-  defaultValue
+  defaultValue,
 ): {
   meta: Meta<FormComponent<any>>;
   entityType: EntityConstructor<Entity & { main: T; other: string }>;

@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { DataImportComponent } from "./data-import.component";
 import { DataImportService } from "../data-import.service";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -44,7 +43,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DataImportComponent> = (args: DataImportComponent) => ({
+const Template: StoryFn<DataImportComponent> = (args: DataImportComponent) => ({
   component: DataImportComponent,
   props: args,
 });

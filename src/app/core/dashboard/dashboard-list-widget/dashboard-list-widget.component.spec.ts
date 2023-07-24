@@ -49,7 +49,7 @@ describe("DashboardListWidgetComponent", () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "receiveUpdates"]);
     mockEntityUpdates = new Subject<UpdatedEntity<Note>>();
     mockEntityMapper.receiveUpdates.and.returnValue(
-      mockEntityUpdates.asObservable()
+      mockEntityUpdates.asObservable(),
     );
 
     await TestBed.configureTestingModule({
@@ -60,7 +60,7 @@ describe("DashboardListWidgetComponent", () => {
     fixture = TestBed.createComponent(DashboardWidgetTestComponent);
     parentComponent = fixture.componentInstance;
     component = fixture.debugElement.query(
-      By.directive(DashboardListWidgetComponent)
+      By.directive(DashboardListWidgetComponent),
     ).componentInstance;
     fixture.detectChanges();
   });
@@ -116,7 +116,7 @@ describe("DashboardListWidgetComponent", () => {
 
   it("should filter and sort loaded entries using dataPipe", fakeAsync(() => {
     const testEntries = [
-      Note.create(new Date("2021-06-01")), // expected second
+      Note.create(new Date("2021-0faker.number.int1")), // expected second
       Note.create(new Date("2021-01-01")), // expected first
       Note.create(new Date("2022-05-27")), // expected filtered out
     ];

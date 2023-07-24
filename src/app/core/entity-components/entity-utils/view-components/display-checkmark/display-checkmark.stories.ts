@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { DisplayCheckmarkComponent } from "./display-checkmark.component";
 
@@ -14,8 +13,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DisplayCheckmarkComponent> = (
-  args: DisplayCheckmarkComponent
+const Template: StoryFn<DisplayCheckmarkComponent> = (
+  args: DisplayCheckmarkComponent,
 ) => ({
   props: args,
 });

@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { DisplayAgeComponent } from "./display-age.component";
 import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
@@ -15,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DisplayAgeComponent> = (args: DisplayAgeComponent) => ({
+const Template: StoryFn<DisplayAgeComponent> = (args: DisplayAgeComponent) => ({
   props: args,
 });
 

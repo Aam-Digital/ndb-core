@@ -1,6 +1,5 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { ReportRowComponent } from "./report-row.component";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { ReportRow } from "../../report-row";
 import { ReportingComponent } from "../reporting.component";
@@ -15,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ReportRowComponent> = (args: ReportRowComponent) => ({
+const Template: StoryFn<ReportRowComponent> = (args: ReportRowComponent) => ({
   component: ReportRowComponent,
   props: args,
 });

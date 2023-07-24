@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { UserSecurityComponent } from "./user-security.component";
 import {
   mockSessionService,
@@ -27,8 +26,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<UserSecurityComponent> = (
-  args: UserSecurityComponent
+const Template: StoryFn<UserSecurityComponent> = (
+  args: UserSecurityComponent,
 ) => ({
   props: args,
 });

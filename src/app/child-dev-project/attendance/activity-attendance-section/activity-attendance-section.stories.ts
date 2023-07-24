@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import {
@@ -28,7 +27,7 @@ const attendanceRecords = [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ]),
-    ]
+    ],
   ),
 
   ActivityAttendance.create(moment().startOf("month").toDate(), [
@@ -38,28 +37,28 @@ const attendanceRecords = [
         ["2", AttendanceLogicalStatus.PRESENT],
         ["3", AttendanceLogicalStatus.ABSENT],
       ],
-      moment().subtract(5, "days").toDate()
+      moment().subtract(5, "days").toDate(),
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      moment().subtract(4, "days").toDate()
+      moment().subtract(4, "days").toDate(),
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.ABSENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      moment().subtract(3, "days").toDate()
+      moment().subtract(3, "days").toDate(),
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      moment().subtract(2, "days").toDate()
+      moment().subtract(2, "days").toDate(),
     ),
   ]),
 ];
@@ -94,8 +93,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ActivityAttendanceSectionComponent> = (
-  args: ActivityAttendanceSectionComponent
+const Template: StoryFn<ActivityAttendanceSectionComponent> = (
+  args: ActivityAttendanceSectionComponent,
 ) => ({
   component: ActivityAttendanceSectionComponent,
   props: args,

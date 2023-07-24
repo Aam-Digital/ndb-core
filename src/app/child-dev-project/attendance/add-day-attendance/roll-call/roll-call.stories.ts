@@ -1,7 +1,6 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { RollCallComponent } from "./roll-call.component";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { Note } from "../../../notes/model/note";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
@@ -31,7 +30,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<RollCallComponent> = (args: RollCallComponent) => ({
+const Template: StoryFn<RollCallComponent> = (args: RollCallComponent) => ({
   component: RollCallComponent,
   props: args,
 });

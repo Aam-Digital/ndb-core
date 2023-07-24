@@ -1,6 +1,5 @@
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { MapComponent } from "./map.component";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 
@@ -15,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<MapComponent> = (args: MapComponent) => ({
+const Template: StoryFn<MapComponent> = (args: MapComponent) => ({
   component: MapComponent,
   props: args,
 });

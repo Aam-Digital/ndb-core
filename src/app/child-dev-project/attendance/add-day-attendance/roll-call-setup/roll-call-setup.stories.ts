@@ -1,6 +1,5 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
 import { Note } from "../../../notes/model/note";
@@ -56,8 +55,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<RollCallSetupComponent> = (
-  args: RollCallSetupComponent
+const Template: StoryFn<RollCallSetupComponent> = (
+  args: RollCallSetupComponent,
 ) => ({
   component: RollCallSetupComponent,
   props: args,

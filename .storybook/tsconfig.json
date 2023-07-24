@@ -1,20 +1,6 @@
 {
-  "extends": "../src/tsconfig.app.json",
-  "compilerOptions": {
-    "types": [
-      "node",
-      "jasmine"
-    ],
-    "allowSyntheticDefaultImports": true
-  },
-  "exclude": [
-    "../src/**/*.spec.ts",
-    "../projects/**/*.spec.ts"
-  ],
-  "include": [
-    "../src/**/*.stories.ts",
-    "../src/polyfills.ts"
-  ],
+  "extends": "../tsconfig.json",
+  "include": ["../src/app/**/*.stories.ts", "../src/polyfills.ts"],
   "files": [
     "./typings.d.ts"
   ]

@@ -1,5 +1,4 @@
-import { moduleMetadata } from "@storybook/angular";
-import { Meta, Story } from "@storybook/angular/types-6-0";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { LanguageSelectComponent } from "./language-select.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -12,7 +11,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<LanguageSelectComponent> = (args) => ({
+const Template: StoryFn<LanguageSelectComponent> = (args) => ({
   component: LanguageSelectComponent,
   props: args,
 });

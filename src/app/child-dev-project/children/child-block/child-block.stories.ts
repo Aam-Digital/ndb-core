@@ -1,7 +1,6 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { ChildBlockComponent } from "./child-block.component";
 import { Child } from "../model/child";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { CommonModule } from "@angular/common";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -21,7 +20,7 @@ demoChild.projectNumber = "99";
 demoChild.phone = "+49 199 1234567";
 demoChild.schoolClass = "5";
 
-const Template: Story<ChildBlockComponent> = (args: ChildBlockComponent) => ({
+const Template: StoryFn<ChildBlockComponent> = (args: ChildBlockComponent) => ({
   component: ChildBlockComponent,
   props: args,
 });

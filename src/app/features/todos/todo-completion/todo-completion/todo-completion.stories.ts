@@ -1,5 +1,4 @@
-import { moduleMetadata } from "@storybook/angular";
-import { Meta, Story } from "@storybook/angular/types-6-0";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { TodosModule } from "../../todos.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { TodoCompletionComponent } from "./todo-completion.component";
@@ -15,8 +14,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<TodoCompletionComponent> = (
-  args: TodoCompletionComponent
+const Template: StoryFn<TodoCompletionComponent> = (
+  args: TodoCompletionComponent,
 ) => ({
   component: TodoCompletionComponent,
   props: args,

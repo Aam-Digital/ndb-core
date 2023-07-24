@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { DisplayEntityArrayComponent } from "./display-entity-array.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
@@ -40,8 +39,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DisplayEntityArrayComponent> = (
-  args: DisplayEntityArrayComponent
+const Template: StoryFn<DisplayEntityArrayComponent> = (
+  args: DisplayEntityArrayComponent,
 ) => ({
   component: DisplayEntityArrayComponent,
   props: args,

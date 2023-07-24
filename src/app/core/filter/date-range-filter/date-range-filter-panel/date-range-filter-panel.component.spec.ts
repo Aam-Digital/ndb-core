@@ -52,7 +52,7 @@ describe("DateRangeFilterPanelComponent", () => {
     const toDate = moment().startOf("month").add(13, "days");
     component.selectedRangeValue = new DateRange(
       fromDate.toDate(),
-      toDate.toDate()
+      toDate.toDate(),
     );
     fixture.detectChanges();
     const calendar = await loader.getHarness(MatCalendarHarness);
@@ -82,7 +82,7 @@ describe("DateRangeFilterPanelComponent", () => {
 
     const filterRange = dateFilter.getDateRange();
     expect(filterRange.start).toEqual(
-      moment("2023-04-08").startOf("day").toDate()
+      moment("2023-04-08").startOf("day").toDate(),
     );
     expect(filterRange.end).toEqual(moment("2023-04-08").endOf("day").toDate());
     expect(dateFilter.selectedOption).toBe("0");
@@ -111,7 +111,7 @@ describe("DateRangeFilterPanelComponent", () => {
     let toDate = moment().endOf("day").toDate();
     expect(res).toEqual(new DateRange(fromDate, toDate));
 
-    let mockedToday = moment("2023-06-08").toDate();
+    let mockedToday = moment("2023-0faker.number.int8").toDate();
     jasmine.clock().mockDate(mockedToday);
 
     res = calculateDateRange({
@@ -119,7 +119,7 @@ describe("DateRangeFilterPanelComponent", () => {
       endOffsets: [{ amount: 0, unit: "weeks" }],
       label: "This week",
     });
-    fromDate = moment("2023-06-04").startOf("day").toDate();
+    fromDate = moment("2023-0faker.number.int4").startOf("day").toDate();
     toDate = moment("2023-06-10").endOf("day").toDate();
     expect(res).toEqual(new DateRange(fromDate, toDate));
 
@@ -140,7 +140,7 @@ describe("DateRangeFilterPanelComponent", () => {
       label:
         "From today until endOf(today minus 2 weeks) and then endOf(this date plus 3 months)",
     });
-    fromDate = moment("2023-06-08").startOf("day").toDate();
+    fromDate = moment("2023-0faker.number.int8").startOf("day").toDate();
     toDate = moment("2023-08-26").endOf("day").toDate();
     expect(res).toEqual(new DateRange(fromDate, toDate));
 
@@ -152,7 +152,7 @@ describe("DateRangeFilterPanelComponent", () => {
       label:
         "From today until endOf(today minus 2 weeks) and then endOf(this date plus 3 months)",
     });
-    fromDate = moment("2023-06-08").startOf("day").toDate();
+    fromDate = moment("2023-0faker.number.int8").startOf("day").toDate();
     toDate = moment("2023-08-31").endOf("day").toDate();
     expect(res).toEqual(new DateRange(fromDate, toDate));
   });

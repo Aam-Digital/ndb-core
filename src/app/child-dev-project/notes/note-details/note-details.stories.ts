@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
@@ -39,7 +38,9 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<NoteDetailsComponent> = (args: NoteDetailsComponent) => ({
+const Template: StoryFn<NoteDetailsComponent> = (
+  args: NoteDetailsComponent,
+) => ({
   component: NoteDetailsComponent,
   props: args,
 });

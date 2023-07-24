@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import {
   entityFormStorybookDefaultParameters,
   StorybookBaseModule,
@@ -34,8 +33,8 @@ export default {
   parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
-const Template: Story<EnumDropdownComponent> = (
-  args: EnumDropdownComponent
+const Template: StoryFn<EnumDropdownComponent> = (
+  args: EnumDropdownComponent,
 ) => ({
   props: args,
 });

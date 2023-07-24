@@ -1,5 +1,4 @@
-import { moduleMetadata } from "@storybook/angular";
-import { Meta, Story } from "@storybook/angular/types-6-0";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { HelpButtonComponent } from "./help-button.component";
 
@@ -12,7 +11,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<HelpButtonComponent> = (args) => ({
+const Template: StoryFn<HelpButtonComponent> = (args) => ({
   component: HelpButtonComponent,
   props: args,
 });

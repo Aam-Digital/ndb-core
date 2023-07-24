@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { SupportComponent } from "./support.component";
 import { SwUpdate } from "@angular/service-worker";
@@ -41,7 +40,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<SupportComponent> = (args: SupportComponent) => ({
+const Template: StoryFn<SupportComponent> = (args: SupportComponent) => ({
   component: SupportComponent,
   props: args,
 });

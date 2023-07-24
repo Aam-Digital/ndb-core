@@ -1,6 +1,5 @@
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { UiComponent } from "./ui.component";
 
 export default {
@@ -14,7 +13,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<UiComponent> = (args: UiComponent) => ({
+const Template: StoryFn<UiComponent> = (args: UiComponent) => ({
   props: args,
 });
 

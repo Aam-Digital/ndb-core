@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../utils/storybook-base.module";
 import { AlertStoriesHelperComponent } from "./alert-stories-helper.component";
 
@@ -14,8 +13,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<AlertStoriesHelperComponent> = (
-  args: AlertStoriesHelperComponent
+const Template: StoryFn<AlertStoriesHelperComponent> = (
+  args: AlertStoriesHelperComponent,
 ) => ({
   component: AlertStoriesHelperComponent,
   props: args,

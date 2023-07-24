@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { ReportingComponent } from "./reporting.component";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
@@ -207,7 +206,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ReportingComponent> = (args: ReportingComponent) => ({
+const Template: StoryFn<ReportingComponent> = (args: ReportingComponent) => ({
   component: ReportingComponent,
   props: args,
 });

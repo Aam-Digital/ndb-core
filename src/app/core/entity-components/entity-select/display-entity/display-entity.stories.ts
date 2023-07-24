@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { DisplayEntityComponent } from "./display-entity.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { School } from "../../../../child-dev-project/schools/model/school";
@@ -23,8 +22,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DisplayEntityComponent> = (
-  args: DisplayEntityComponent
+const Template: StoryFn<DisplayEntityComponent> = (
+  args: DisplayEntityComponent,
 ) => ({
   component: DisplayEntityComponent,
   props: args,

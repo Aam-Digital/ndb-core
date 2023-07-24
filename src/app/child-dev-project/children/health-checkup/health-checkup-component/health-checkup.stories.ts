@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { HealthCheckupComponent } from "./health-checkup.component";
 import { ChildrenService } from "../../children.service";
 import { HealthCheck } from "../model/health-check";
@@ -8,6 +7,16 @@ import { Child } from "../../model/child";
 import { of } from "rxjs";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { MatSnackBar, MatSnackBarModule } from "@angular/material/snack-bar";
+import { AlertService } from "../../../../core/alerts/alert.service";
+import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityFormService } from "../../../../core/entity-components/entity-form/entity-form.service";
+import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
+import {
+  MAT_DIALOG_SCROLL_STRATEGY,
+  MatDialog,
+} from "@angular/material/dialog";
 
 const hc1 = new HealthCheck();
 hc1.date = new Date();
@@ -27,11 +36,7 @@ export default {
   component: HealthCheckupComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        HealthCheckupComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
+      imports: [HealthCheckupComponent],
       declarations: [],
       providers: [
         {
@@ -43,8 +48,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<HealthCheckupComponent> = (
-  args: HealthCheckupComponent
+const Template: StoryFn<HealthCheckupComponent> = (
+  args: HealthCheckupComponent,
 ) => ({
   component: HealthCheckupComponent,
   props: args,

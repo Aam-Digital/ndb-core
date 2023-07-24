@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -67,8 +66,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<MatchingEntitiesComponent> = (
-  args: MatchingEntitiesComponent
+const Template: StoryFn<MatchingEntitiesComponent> = (
+  args: MatchingEntitiesComponent,
 ) => ({
   component: MatchingEntitiesComponent,
   props: args,

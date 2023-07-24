@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { generateEventWithAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
@@ -15,7 +14,7 @@ const demoEvents: Note[] = [
       ["2", AttendanceLogicalStatus.PRESENT],
       ["3", AttendanceLogicalStatus.ABSENT],
     ],
-    new Date()
+    new Date(),
   ),
   generateEventWithAttendance(
     [
@@ -23,21 +22,21 @@ const demoEvents: Note[] = [
       ["2", AttendanceLogicalStatus.ABSENT],
       ["3", AttendanceLogicalStatus.IGNORE],
     ],
-    moment().subtract(1, "day").toDate()
+    moment().subtract(1, "day").toDate(),
   ),
   generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.IGNORE],
       ["2", AttendanceLogicalStatus.ABSENT],
     ],
-    moment().subtract(2, "day").toDate()
+    moment().subtract(2, "day").toDate(),
   ),
   generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.IGNORE],
       ["2", AttendanceLogicalStatus.ABSENT],
     ],
-    moment().subtract(3, "day").toDate()
+    moment().subtract(3, "day").toDate(),
   ),
 ];
 
@@ -57,8 +56,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<AttendanceCalendarComponent> = (
-  args: AttendanceCalendarComponent
+const Template: StoryFn<AttendanceCalendarComponent> = (
+  args: AttendanceCalendarComponent,
 ) => ({
   component: AttendanceCalendarComponent,
   props: args,

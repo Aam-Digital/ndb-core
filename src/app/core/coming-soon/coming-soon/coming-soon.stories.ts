@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { ComingSoonComponent } from "./coming-soon.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -13,7 +12,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ComingSoonComponent> = (args: ComingSoonComponent) => ({
+const Template: StoryFn<ComingSoonComponent> = (args: ComingSoonComponent) => ({
   component: ComingSoonComponent,
   props: args,
 });

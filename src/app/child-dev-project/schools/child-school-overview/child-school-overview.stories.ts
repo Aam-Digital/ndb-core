@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { ChildSchoolOverviewComponent } from "./child-school-overview.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -53,8 +52,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ChildSchoolOverviewComponent> = (
-  args: ChildSchoolOverviewComponent
+const Template: StoryFn<ChildSchoolOverviewComponent> = (
+  args: ChildSchoolOverviewComponent,
 ) => ({
   component: ChildSchoolOverviewComponent,
   props: args,

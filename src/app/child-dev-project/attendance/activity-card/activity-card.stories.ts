@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "../../notes/model/note";
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
@@ -24,8 +23,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ActivityCardComponent> = (
-  args: ActivityCardComponent
+const Template: StoryFn<ActivityCardComponent> = (
+  args: ActivityCardComponent,
 ) => ({
   component: ActivityCardComponent,
   props: args,

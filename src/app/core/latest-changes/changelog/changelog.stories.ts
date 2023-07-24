@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ChangelogComponent } from "./changelog.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
@@ -49,7 +48,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ChangelogComponent> = (args: ChangelogComponent) => ({
+const Template: StoryFn<ChangelogComponent> = (args: ChangelogComponent) => ({
   component: ChangelogComponent,
   props: args,
 });

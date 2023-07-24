@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
@@ -41,7 +40,7 @@ export default {
   parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
-const Template: Story<FormComponent<any>> = (args: FormComponent<any>) => ({
+const Template: StoryFn<FormComponent<any>> = (args: FormComponent<any>) => ({
   props: args,
 });
 

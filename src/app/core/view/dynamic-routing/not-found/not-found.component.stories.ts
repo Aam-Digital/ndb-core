@@ -1,7 +1,6 @@
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { CommonModule } from "@angular/common";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { NotFoundComponent } from "./not-found.component";
 import { MatButtonModule } from "@angular/material/button";
 
@@ -15,7 +14,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<NotFoundComponent> = (args: NotFoundComponent) => ({
+const Template: StoryFn<NotFoundComponent> = (args: NotFoundComponent) => ({
   component: NotFoundComponent,
   props: args,
 });

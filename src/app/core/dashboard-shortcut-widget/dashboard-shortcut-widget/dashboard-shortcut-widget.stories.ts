@@ -1,5 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { RouterTestingModule } from "@angular/router/testing";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.component";
 import { MenuItem } from "../../navigation/menu-item";
@@ -19,8 +18,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DashboardShortcutWidgetComponent> = (
-  args: DashboardShortcutWidgetComponent
+const Template: StoryFn<DashboardShortcutWidgetComponent> = (
+  args: DashboardShortcutWidgetComponent,
 ) => ({
   component: DashboardShortcutWidgetComponent,
   props: args,

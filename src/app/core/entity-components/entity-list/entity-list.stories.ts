@@ -1,5 +1,4 @@
-import { moduleMetadata } from "@storybook/angular";
-import { Meta, Story } from "@storybook/angular/types-6-0";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { EntityListComponent } from "./entity-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
@@ -24,8 +23,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<EntityListComponent<Child>> = (
-  args: EntityListComponent<Child>
+const Template: StoryFn<EntityListComponent<Child>> = (
+  args: EntityListComponent<Child>,
 ) => ({
   component: EntityListComponent,
   props: args,

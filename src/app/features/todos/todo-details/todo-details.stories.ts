@@ -1,5 +1,4 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { TodoDetailsComponent } from "./todo-details.component";
@@ -49,7 +48,9 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<TodoDetailsComponent> = (args: TodoDetailsComponent) => ({
+const Template: StoryFn<TodoDetailsComponent> = (
+  args: TodoDetailsComponent,
+) => ({
   props: args,
 });
 

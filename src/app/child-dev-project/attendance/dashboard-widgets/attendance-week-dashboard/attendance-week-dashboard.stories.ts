@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { Child } from "../../../children/model/child";
@@ -28,7 +27,7 @@ const events: Note[] = [
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     new Date(),
-    act1
+    act1,
   ),
   generateEventWithAttendance(
     [
@@ -36,7 +35,7 @@ const events: Note[] = [
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(1, "day").toDate(),
-    act1
+    act1,
   ),
   generateEventWithAttendance(
     [
@@ -44,7 +43,7 @@ const events: Note[] = [
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(2, "day").toDate(),
-    act1
+    act1,
   ),
 ];
 
@@ -84,8 +83,8 @@ export default {
   },
 } as Meta;
 
-const Template: Story<AttendanceWeekDashboardComponent> = (
-  args: AttendanceWeekDashboardComponent
+const Template: StoryFn<AttendanceWeekDashboardComponent> = (
+  args: AttendanceWeekDashboardComponent,
 ) => ({
   component: AttendanceWeekDashboardComponent,
   props: args,

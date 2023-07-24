@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { ProgressDashboardComponent } from "../progress-dashboard/progress-dashboard.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
@@ -20,8 +19,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ProgressDashboardComponent> = (
-  args: ProgressDashboardComponent
+const Template: StoryFn<ProgressDashboardComponent> = (
+  args: ProgressDashboardComponent,
 ) => ({
   component: ProgressDashboardComponent,
   props: args,

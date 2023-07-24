@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { DisplayTextComponent } from "./display-text.component";
 
@@ -14,7 +13,9 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DisplayTextComponent> = (args: DisplayTextComponent) => ({
+const Template: StoryFn<DisplayTextComponent> = (
+  args: DisplayTextComponent,
+) => ({
   props: args,
 });
 

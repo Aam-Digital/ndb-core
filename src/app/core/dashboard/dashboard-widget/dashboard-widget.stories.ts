@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { DashboardWidgetComponent } from "./dashboard-widget.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 
@@ -13,8 +12,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<DashboardWidgetComponent> = (
-  args: DashboardWidgetComponent
+const Template: StoryFn<DashboardWidgetComponent> = (
+  args: DashboardWidgetComponent,
 ) => ({
   component: DashboardWidgetComponent,
   props: args,

@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import {
   ActivityAttendance,
   generateEventWithAttendance,
@@ -25,8 +24,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<AttendanceBlockComponent> = (
-  args: AttendanceBlockComponent
+const Template: StoryFn<AttendanceBlockComponent> = (
+  args: AttendanceBlockComponent,
 ) => ({
   component: AttendanceBlockComponent,
   props: args,
@@ -77,7 +76,7 @@ GoodAttendance.args = {
 
 const attendanceRecordEmpty = ActivityAttendance.create(
   new Date("2021-01-01"),
-  []
+  [],
 );
 attendanceRecordEmpty.activity = RecurringActivity.create("Demo Activity");
 export const PeriodWithoutEvents = Template.bind({});

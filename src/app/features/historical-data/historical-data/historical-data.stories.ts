@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { HistoricalEntityData } from "../model/historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataService } from "../historical-data.service";
@@ -26,8 +25,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<HistoricalDataComponent> = (
-  args: HistoricalDataComponent
+const Template: StoryFn<HistoricalDataComponent> = (
+  args: HistoricalDataComponent,
 ) => ({
   component: HistoricalDataComponent,
   props: args,

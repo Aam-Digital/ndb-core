@@ -1,9 +1,8 @@
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import {
   entityFormStorybookDefaultParameters,
   StorybookBaseModule,
 } from "../../../utils/storybook-base.module";
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
@@ -42,7 +41,7 @@ class LocationTest extends Entity {
   location: any;
 }
 
-const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
+const Template: StoryFn<EntityFormComponent> = (args: EntityFormComponent) => ({
   component: EntityFormComponent,
   props: args,
 });

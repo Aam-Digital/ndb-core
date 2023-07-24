@@ -1,6 +1,5 @@
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
 import { TodosModule } from "../../todos.module";
 import { EntityFormComponent } from "../../../../core/entity-components/entity-form/entity-form/entity-form.component";
@@ -29,7 +28,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
+const Template: StoryFn<EntityFormComponent> = (args: EntityFormComponent) => ({
   component: EntityFormComponent,
   props: args,
 });
