@@ -1,11 +1,11 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { generateEventWithAttendance } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
 import { Note } from "../../notes/model/note";
 import moment from "moment";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { importProvidersFrom } from "@angular/core";
 
 const demoEvents: Note[] = [
   generateEventWithAttendance(
@@ -46,12 +46,8 @@ export default {
   title: "Features/Attendance/Components/AttendanceCalendar",
   component: AttendanceCalendarComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        AttendanceCalendarComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

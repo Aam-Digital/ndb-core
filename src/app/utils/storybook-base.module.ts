@@ -1,4 +1,4 @@
-import { NgModule } from "@angular/core";
+import { ModuleWithProviders, NgModule } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   FaIconLibrary,
@@ -24,6 +24,14 @@ import { AuthUser } from "../core/session/session-service/auth-user";
 import { environment } from "../../environments/environment";
 import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
+import { Entity } from "../core/entity/model/entity";
+import { User } from "../core/user/user";
+import { SessionType } from "../core/session/session-type";
+import { mockEntityMapper } from "../core/entity/mock-entity-mapper-service";
+import { EntityMapperService } from "../core/entity/entity-mapper.service";
+import { Database } from "../core/database/database";
+import { createLocalSession, TEST_USER } from "./mocked-testing.module";
+import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
@@ -79,9 +87,37 @@ export function mockSessionService(currentUser?: AuthUser): SessionService {
       provide: SessionService,
       useValue: mockSessionService(),
     },
+    {
+      provide: DatabaseIndexingService,
+      useValue: {
+        createIndex: () => {},
+        queryIndexDocsRange: () => Promise.resolve([]),
+        queryIndexDocs: () => Promise.resolve([]),
+      },
+    },
   ],
 })
 export class StorybookBaseModule {
+  static withData(
+    data: Entity[] = [new User(TEST_USER)],
+  ): ModuleWithProviders<StorybookBaseModule> {
+    environment.session_type = SessionType.mock;
+    const mockedEntityMapper = mockEntityMapper([...data]);
+    const session = createLocalSession(true);
+    return {
+      ngModule: StorybookBaseModule,
+      providers: [
+        { provide: SessionService, useValue: session },
+        { provide: EntityMapperService, useValue: mockedEntityMapper },
+        { provide: ConfigService, useValue: createTestingConfigService() },
+        {
+          provide: ConfigurableEnumService,
+          useValue: createTestingConfigurableEnumService(),
+        },
+        { provide: Database, useValue: session.getDatabase() },
+      ],
+    };
+  }
   constructor(icons: FaIconLibrary) {
     icons.addIconPacks(fas, far);
   }

@@ -1,24 +1,17 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ActivityCardComponent } from "./activity-card.component";
 import { Note } from "../../notes/model/note";
 import { DemoChildGenerator } from "../../children/demo-data-generators/demo-child-generator.service";
-import { MatCardModule } from "@angular/material/card";
 import { RecurringActivity } from "../model/recurring-activity";
-import { MatTooltipModule } from "@angular/material/tooltip";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Attendance/Components/ActivityCard",
   component: ActivityCardComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        StorybookBaseModule,
-        MatCardModule,
-        MatTooltipModule,
-        BrowserAnimationsModule,
-      ],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

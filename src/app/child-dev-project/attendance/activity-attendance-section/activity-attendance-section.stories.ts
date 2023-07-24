@@ -1,4 +1,9 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import {
@@ -7,12 +12,12 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import moment from "moment";
 import { AttendanceService } from "../attendance.service";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { Child } from "../../children/model/child";
+import { importProvidersFrom } from "@angular/core";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
@@ -71,12 +76,10 @@ export default {
   title: "Features/Attendance/Sections/ActivityAttendanceSection",
   component: ActivityAttendanceSectionComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [
-        ActivityAttendanceSectionComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
       providers: [
         {
           provide: AttendanceService,

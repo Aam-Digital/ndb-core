@@ -1,4 +1,9 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import {
   ActivityAttendance,
@@ -7,8 +12,8 @@ import {
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
@@ -50,12 +55,10 @@ export default {
   title: "Features/Attendance/Views/AttendanceDetails",
   component: AttendanceDetailsComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [
-        AttendanceDetailsComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
       providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
     }),
   ],

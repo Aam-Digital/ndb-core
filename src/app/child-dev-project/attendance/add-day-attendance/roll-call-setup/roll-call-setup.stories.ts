@@ -1,12 +1,11 @@
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
 import { Note } from "../../../notes/model/note";
 import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { LoginState } from "../../../../core/session/session-states/login-state.enum";
+import { importProvidersFrom } from "@angular/core";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -41,15 +40,15 @@ export default {
   title: "Features/Attendance/Views/RollCallSetup",
   component: RollCallSetupComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        RollCallSetupComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(LoginState.LOGGED_IN, [
-          ...demoChildren,
-          ...demoEvents,
-          ...demoActivities,
-        ]),
+    applicationConfig({
+      providers: [
+        importProvidersFrom(
+          StorybookBaseModule.withData([
+            ...demoChildren,
+            ...demoEvents,
+            ...demoActivities,
+          ]),
+        ),
       ],
     }),
   ],

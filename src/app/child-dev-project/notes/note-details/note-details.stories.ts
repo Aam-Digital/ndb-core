@@ -1,4 +1,9 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
@@ -7,6 +12,7 @@ import { ChildrenService } from "../../children/children.service";
 import { NEVER, of } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 const demoChildren: Child[] = [Child.create("Joe"), Child.create("Jane")];
 
@@ -14,12 +20,10 @@ export default {
   title: "Features/NoteDetails",
   component: NoteDetailsComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule.withData())],
+    }),
     moduleMetadata({
-      imports: [
-        NoteDetailsComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
       providers: [
         {
           provide: MAT_DIALOG_DATA,

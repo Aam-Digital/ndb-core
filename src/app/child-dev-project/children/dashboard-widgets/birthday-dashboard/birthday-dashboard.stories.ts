@@ -1,11 +1,10 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { Child } from "../../model/child";
 import moment from "moment";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { DateWithAge } from "../../model/dateWithAge";
+import { importProvidersFrom } from "@angular/core";
 
 const child1 = Child.create("First Child");
 child1.dateOfBirth = new DateWithAge(
@@ -32,17 +31,17 @@ export default {
   title: "Features/Dashboards/BirthdayDashboard",
   component: BirthdayDashboardComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        BirthdayDashboardComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(LoginState.LOGGED_IN, [
-          child2,
-          child1,
-          child4,
-          child5,
-          child3,
-        ]),
+    applicationConfig({
+      providers: [
+        importProvidersFrom(
+          StorybookBaseModule.withData([
+            child2,
+            child1,
+            child4,
+            child5,
+            child3,
+          ]),
+        ),
       ],
     }),
   ],

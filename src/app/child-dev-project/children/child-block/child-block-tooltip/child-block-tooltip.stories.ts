@@ -1,16 +1,15 @@
 import { Child } from "../../model/child";
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
-import { CommonModule } from "@angular/common";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Participant/ChildBlockTooltip",
   component: ChildBlockTooltipComponent,
   decorators: [
-    moduleMetadata({
-      imports: [CommonModule, StorybookBaseModule, FontAwesomeModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

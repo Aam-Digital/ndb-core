@@ -71,7 +71,7 @@ export const TEST_PASSWORD = "pass";
 export class MockedTestingModule {
   static withState(
     loginState = LoginState.LOGGED_IN,
-    data: Entity[] = [new User(TEST_USER)]
+    data: Entity[] = [new User(TEST_USER)],
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([...data]);
@@ -96,7 +96,7 @@ export class MockedTestingModule {
   }
 }
 
-function createLocalSession(andLogin?: boolean): SessionService {
+export function createLocalSession(andLogin?: boolean): SessionService {
   const databaseMock: Partial<PouchDatabase> = {
     isEmpty: () => Promise.resolve(false),
     initIndexedDB: () => undefined,
@@ -105,7 +105,7 @@ function createLocalSession(andLogin?: boolean): SessionService {
   const localSession = new LocalSession(databaseMock as PouchDatabase);
   localSession.saveUser(
     { name: TEST_USER, roles: ["user_app"] },
-    TEST_PASSWORD
+    TEST_PASSWORD,
   );
   if (andLogin === true) {
     localSession.login(TEST_USER, TEST_PASSWORD);

@@ -1,4 +1,9 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { Child } from "../../../children/model/child";
@@ -7,9 +12,8 @@ import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import moment from "moment";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
+import { importProvidersFrom } from "@angular/core";
 
 const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
@@ -51,20 +55,18 @@ export default {
   title: "Features/Attendance/Dashboards/AttendanceWeekDashboard",
   component: AttendanceWeekDashboardComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        AttendanceWeekDashboardComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(LoginState.LOGGED_IN, [
-          act1,
-          act2,
-          child1,
-          child2,
-          ...events,
-          act1,
-        ]),
-      ],
+    applicationConfig({
       providers: [
+        importProvidersFrom(
+          StorybookBaseModule.withData([
+            act1,
+            act2,
+            child1,
+            child2,
+            ...events,
+            act1,
+          ]),
+        ),
         {
           provide: DatabaseIndexingService,
           useValue: {
