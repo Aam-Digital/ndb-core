@@ -1,8 +1,5 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import {
   entityFormStorybookDefaultParameters,
   StorybookBaseModule,
@@ -10,9 +7,9 @@ import {
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { FormComponent } from "../../entity-details/form/form.component";
+import { importProvidersFrom } from "@angular/core";
 
 const testUser = new User("1");
 testUser.name = "test entity";
@@ -23,14 +20,9 @@ export default {
   title: "Core/Entities/Edit Properties/Entity Reference Array",
   component: FormComponent,
   decorators: [
-    moduleMetadata({
-      imports: [EntityFormComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
-        EntitySchemaService,
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([testUser, user2]),
-        },
+        importProvidersFrom(StorybookBaseModule.withData([testUser, user2])),
       ],
     }),
   ],

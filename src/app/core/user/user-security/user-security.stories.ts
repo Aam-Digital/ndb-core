@@ -1,4 +1,4 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { UserSecurityComponent } from "./user-security.component";
 import {
   mockSessionService,
@@ -6,14 +6,15 @@ import {
 } from "../../../utils/storybook-base.module";
 import { SessionService } from "../../session/session-service/session.service";
 import { User } from "../user";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Admin/User Security",
   component: UserSecurityComponent,
   decorators: [
-    moduleMetadata({
-      imports: [UserSecurityComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
+        importProvidersFrom(StorybookBaseModule),
         {
           provide: SessionService,
           useValue: mockSessionService({

@@ -1,11 +1,11 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ChildSchoolOverviewComponent } from "./child-school-overview.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { LoginState } from "../../../core/session/session-states/login-state.enum";
 import { School } from "../model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { Child } from "../../children/model/child";
+import { importProvidersFrom } from "@angular/core";
+import { ChildrenService } from "../../children/children.service";
 
 const child = new Child("testChild");
 const school1 = new School("1");
@@ -36,17 +36,17 @@ export default {
   title: "Features/Previous Schools",
   component: ChildSchoolOverviewComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        ChildSchoolOverviewComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(LoginState.LOGGED_IN, [
-          school1,
-          school2,
-          rel1,
-          rel2,
-          rel3,
-        ]),
+    applicationConfig({
+      providers: [
+        importProvidersFrom(
+          StorybookBaseModule.withData([school1, school2, rel1, rel2, rel3]),
+        ),
+        {
+          provide: ChildrenService,
+          useValue: {
+            queryRelationsOf: () => Promise.resolve([rel1, rel2, rel3]),
+          },
+        },
       ],
     }),
   ],
@@ -61,5 +61,5 @@ const Template: StoryFn<ChildSchoolOverviewComponent> = (
 
 export const Primary = Template.bind({});
 Primary.args = {
-  child: child,
+  entity: child,
 };

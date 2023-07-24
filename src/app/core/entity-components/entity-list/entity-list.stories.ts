@@ -1,10 +1,10 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { EntityListComponent } from "./entity-list.component";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DemoChildGenerator } from "../../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { User } from "../../user/user";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { importProvidersFrom } from "@angular/core";
 
 const user = new User();
 user.paginatorSettingsPageSize["ageprojectNumbernamegendercenterstatus"] = 13;
@@ -13,12 +13,8 @@ export default {
   title: "Core/Entities/Entity List",
   component: EntityListComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        EntityListComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

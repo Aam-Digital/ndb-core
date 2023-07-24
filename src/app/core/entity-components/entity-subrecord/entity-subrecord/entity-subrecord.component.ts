@@ -168,7 +168,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private loggingService: LoggingService,
     private entityRemoveService: EntityRemoveService,
     private entityMapper: EntityMapperService,
-    private filterService: FilterService
+    private filterService: FilterService,
   ) {
     this.mediaSubscription = this.screenWidthObserver
       .shared()
@@ -267,7 +267,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         this.entityFormService.extendFormFieldConfig(
           this._columns,
           this.getEntityConstructor(),
-          true
+          true,
         );
       } catch (err) {
         this.loggingService.warn(`Error creating form definitions: ${err}`);
@@ -353,7 +353,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         row.formGroup = this.entityFormService.createFormGroup(
           this._columns,
           row.record,
-          true
+          true,
         );
       }
       row.formGroup.enable();
@@ -370,7 +370,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     try {
       row.record = await this.entityFormService.saveChanges(
         row.formGroup,
-        row.record
+        row.record,
       );
       row.formGroup.disable();
     } catch (err) {
@@ -413,7 +413,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private removeFromDataTable(deleted: T) {
     // use setter so datasource is also updated
     this.records = this.records.filter(
-      (rec) => rec.getId() !== deleted.getId()
+      (rec) => rec.getId() !== deleted.getId(),
     );
     this.initDataSource();
   }

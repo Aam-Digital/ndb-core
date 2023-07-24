@@ -1,20 +1,14 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ProgressDashboardComponent } from "../progress-dashboard/progress-dashboard.component";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Dashboards/Progress Dashboard Widget",
   component: ProgressDashboardComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        ProgressDashboardComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
-      declarations: [],
-      providers: [],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule.withData())],
     }),
   ],
 } as Meta;
