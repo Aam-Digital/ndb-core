@@ -1,10 +1,16 @@
 import { RollCallComponent } from "./roll-call.component";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { Note } from "../../../notes/model/note";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { importProvidersFrom } from "@angular/core";
 
 const demoEvent = Note.create(new Date(), "coaching");
 const demoChildren = [
@@ -18,8 +24,11 @@ export default {
   title: "Features/Attendance/Views/RollCall",
   component: RollCallComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [StorybookBaseModule, RollCallComponent],
+      imports: [RollCallComponent],
       providers: [
         {
           provide: EntityMapperService,

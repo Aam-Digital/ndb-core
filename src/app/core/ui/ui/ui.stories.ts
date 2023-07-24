@@ -1,13 +1,22 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { UiComponent } from "./ui.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/> App Layout/> Overall Layout",
   component: UiComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [StorybookBaseModule, UiComponent],
+      imports: [UiComponent],
       providers: [],
     }),
   ],

@@ -1,14 +1,23 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { DisplayAgeComponent } from "./display-age.component";
 import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Entities/Display Properties/DisplayAge",
   component: DisplayAgeComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [StorybookBaseModule, DisplayAgeComponent],
+      imports: [DisplayAgeComponent],
       providers: [],
     }),
   ],
