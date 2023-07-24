@@ -1,6 +1,5 @@
 {
   "extends": "../tsconfig.json",
-  "include": ["../src/app/**/*.stories.ts", "../src/polyfills.ts"],
   "files": [
     "./typings.d.ts"
   ]
