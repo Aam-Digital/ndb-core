@@ -1,9 +1,4 @@
-import {
-  applicationConfig,
-  Meta,
-  moduleMetadata,
-  StoryFn,
-} from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { Child } from "../../../children/model/child";
