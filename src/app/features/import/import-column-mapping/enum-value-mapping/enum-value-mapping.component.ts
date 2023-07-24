@@ -14,6 +14,7 @@ import { DynamicComponentDirective } from "../../../../core/view/dynamic-compone
 import { MatButtonModule } from "@angular/material/button";
 import { ColumnMapping } from "../../column-mapping";
 import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
+import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
 
 @Component({
   selector: "app-enum-value-mapping",
@@ -26,6 +27,7 @@ import { AbstractValueMappingComponent } from "../abstract-value-mapping-compone
     KeyValuePipe,
     DynamicComponentDirective,
     MatButtonModule,
+    HelpButtonComponent,
   ],
 })
 export class EnumValueMappingComponent extends AbstractValueMappingComponent {

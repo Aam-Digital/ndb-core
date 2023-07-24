@@ -13,6 +13,7 @@ import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
+import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
 
 @Component({
   selector: "app-date-value-mapping",
@@ -29,6 +30,7 @@ import { AbstractValueMappingComponent } from "../abstract-value-mapping-compone
     NgClass,
     DatePipe,
     MatButtonModule,
+    HelpButtonComponent,
   ],
 })
 export class DateValueMappingComponent
