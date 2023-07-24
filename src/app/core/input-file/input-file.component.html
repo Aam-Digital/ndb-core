@@ -3,6 +3,7 @@
   type="file"
   style="display: none"
   (change)="loadFile($event)"
+  [value]="formControl.value"
 />
 <mat-form-field>
   <mat-label i18n="Label for file select input">Select file</mat-label>

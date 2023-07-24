@@ -188,6 +188,10 @@ export class ImportService {
     entityType: string,
     columnMapping: ColumnMapping[]
   ): Promise<Entity[]> {
+    if (!rawData || !entityType || !columnMapping) {
+      return [];
+    }
+
     const entityConstructor = this.entityTypes.get(entityType);
 
     const mappedEntities = rawData.map((row) => {

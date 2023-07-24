@@ -85,8 +85,8 @@ export class ImportComponent {
 
     delete this.rawData;
     delete this.entityType;
-    delete this.columnMapping;
-    delete this.additionalImportActions;
+    this.columnMapping = [];
+    this.additionalImportActions = [];
     this.importFileComponent.reset();
     this.stepper.reset();
   }
@@ -125,8 +125,6 @@ export class ImportComponent {
   }
 
   onImportCompleted(completedImport: ImportMetadata) {
-    // TODO EntitySubrecord shows saved entities for a moment (because it listens to the entity updates)
-    // TODO some components can't handle the reset and throw errors (maybe reload page instead to destroy the state completely)
     return this.reset(true);
   }
 }

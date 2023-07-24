@@ -37,6 +37,10 @@ export class ImportColumnMappingComponent {
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
 
   @Input() set entityType(value: string) {
+    if (!value) {
+      return;
+    }
+
     this.entityCtor = this.entities.get(value);
     this.mappingCmp = {};
     this.allProps = [...this.entityCtor.schema.entries()]
