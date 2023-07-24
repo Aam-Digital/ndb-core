@@ -1,12 +1,13 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { LanguageSelectComponent } from "./language-select.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/> App Layout/Language Select",
   decorators: [
-    moduleMetadata({
-      imports: [LanguageSelectComponent, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

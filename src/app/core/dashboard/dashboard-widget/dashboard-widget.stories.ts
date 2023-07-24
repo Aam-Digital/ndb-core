@@ -1,13 +1,14 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { DashboardWidgetComponent } from "./dashboard-widget.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Dashboards/Dashboard Base Widget",
   component: DashboardWidgetComponent,
   decorators: [
-    moduleMetadata({
-      imports: [DashboardWidgetComponent, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

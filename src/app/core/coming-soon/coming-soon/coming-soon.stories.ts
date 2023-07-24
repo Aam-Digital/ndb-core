@@ -1,13 +1,14 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ComingSoonComponent } from "./coming-soon.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/> App Layout/Coming Soon Page",
   component: ComingSoonComponent,
   decorators: [
-    moduleMetadata({
-      imports: [ComingSoonComponent, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

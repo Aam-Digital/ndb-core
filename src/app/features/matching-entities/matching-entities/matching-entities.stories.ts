@@ -1,14 +1,13 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
+import { importProvidersFrom } from "@angular/core";
 
 const addressSchema: EntitySchemaField = {
   label: "Address",
@@ -54,13 +53,11 @@ export default {
   title: "Features/Matching Entities",
   component: MatchingEntitiesComponent,
   decorators: [
-    moduleMetadata({
-      imports: [MatchingEntitiesComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([...entitiesA, ...entitiesB]),
-        },
+        importProvidersFrom(
+          StorybookBaseModule.withData([...entitiesA, ...entitiesB]),
+        ),
       ],
     }),
   ],

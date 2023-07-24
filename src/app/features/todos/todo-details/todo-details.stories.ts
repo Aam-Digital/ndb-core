@@ -1,13 +1,10 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { TodoDetailsComponent } from "./todo-details.component";
-import { TodosModule } from "../todos.module";
-import { TodoService } from "../todo.service";
 import { Todo } from "../model/todo";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { importProvidersFrom } from "@angular/core";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NEVER } from "rxjs";
 
 const defaultColumns: FormFieldConfig[] = [
@@ -27,9 +24,9 @@ export default {
   title: "Features/Todos/TodoDetails",
   component: TodoDetailsComponent,
   decorators: [
-    moduleMetadata({
-      imports: [TodosModule, StorybookBaseModule],
+    applicationConfig({
       providers: [
+        importProvidersFrom(StorybookBaseModule.withData()),
         {
           provide: MAT_DIALOG_DATA,
           useValue: { entity: todoEntity, columns: defaultColumns },
@@ -38,11 +35,6 @@ export default {
           provide: MatDialogRef,
           useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
         },
-        {
-          provide: TodoService,
-          useValue: {},
-        },
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
       ],
     }),
   ],

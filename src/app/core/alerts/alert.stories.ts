@@ -1,14 +1,14 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../utils/storybook-base.module";
 import { AlertStoriesHelperComponent } from "./alert-stories-helper.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/> App Layout/Alerts",
   component: AlertStoriesHelperComponent,
   decorators: [
-    moduleMetadata({
-      declarations: [AlertStoriesHelperComponent],
-      imports: [StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

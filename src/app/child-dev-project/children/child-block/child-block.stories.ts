@@ -1,15 +1,15 @@
 import { ChildBlockComponent } from "./child-block.component";
 import { Child } from "../model/child";
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
-import { CommonModule } from "@angular/common";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Participant/ChildBlock",
   component: ChildBlockComponent,
   decorators: [
-    moduleMetadata({
-      imports: [CommonModule, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

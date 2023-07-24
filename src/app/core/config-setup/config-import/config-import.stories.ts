@@ -1,13 +1,14 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ConfigImportComponent } from "./config-import.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Admin/Config Import",
   component: ConfigImportComponent,
   decorators: [
-    moduleMetadata({
-      imports: [ConfigImportComponent, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

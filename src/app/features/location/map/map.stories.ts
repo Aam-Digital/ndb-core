@@ -1,15 +1,14 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { MapComponent } from "./map.component";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Location/Map",
   component: MapComponent,
   decorators: [
-    moduleMetadata({
-      imports: [MapComponent, StorybookBaseModule],
-      providers: [EntitySchemaService],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

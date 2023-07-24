@@ -1,13 +1,12 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EntitySelectComponent } from "./entity-select.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { componentRegistry } from "../../../../dynamic-components";
 import { ChildBlockComponent } from "../../../../child-dev-project/children/child-block/child-block.component";
 import { SchoolBlockComponent } from "../../../../child-dev-project/schools/school-block/school-block.component";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
+import { importProvidersFrom } from "@angular/core";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -23,19 +22,16 @@ export default {
   title: "Core/Entities/EntitySelect",
   component: EntitySelectComponent,
   decorators: [
-    moduleMetadata({
-      imports: [EntitySelectComponent, StorybookBaseModule],
-      declarations: [],
+    applicationConfig({
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([
+        importProvidersFrom(
+          StorybookBaseModule.withData([
             child1,
             child2,
             child3,
             School.create({ name: "School ABC" }),
           ]),
-        },
+        ),
       ],
     }),
   ],

@@ -1,15 +1,15 @@
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
-import { TodosModule } from "../../todos.module";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { TodoCompletionComponent } from "./todo-completion.component";
 import { Todo } from "../../model/todo";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Todos/TodoCompletion",
   component: TodoCompletionComponent,
   decorators: [
-    moduleMetadata({
-      imports: [TodosModule, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;

@@ -1,15 +1,15 @@
 import { ReportRowComponent } from "./report-row.component";
-import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { ReportRow } from "../../report-row";
-import { ReportingComponent } from "../reporting.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Reporting/Report Row",
   component: ReportRowComponent,
   decorators: [
-    moduleMetadata({
-      imports: [ReportingComponent, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
