@@ -1,19 +1,18 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { HistoricalEntityData } from "../model/historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataService } from "../historical-data.service";
 import { ratingAnswers } from "../model/rating-answers";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/HistoricalDataComponent",
   component: HistoricalDataComponent,
   decorators: [
-    moduleMetadata({
-      imports: [HistoricalDataComponent, StorybookBaseModule],
-      declarations: [],
+    applicationConfig({
       providers: [
+        importProvidersFrom(StorybookBaseModule),
         {
           provide: HistoricalDataService,
           useValue: {
@@ -26,8 +25,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<HistoricalDataComponent> = (
-  args: HistoricalDataComponent
+const Template: StoryFn<HistoricalDataComponent> = (
+  args: HistoricalDataComponent,
 ) => ({
   component: HistoricalDataComponent,
   props: args,

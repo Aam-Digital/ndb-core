@@ -1,20 +1,21 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { DisplayTextComponent } from "./display-text.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Entities/Display Properties/DisplayText",
   component: DisplayTextComponent,
   decorators: [
-    moduleMetadata({
-      imports: [StorybookBaseModule, DisplayTextComponent],
-      providers: [],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<DisplayTextComponent> = (args: DisplayTextComponent) => ({
+const Template: StoryFn<DisplayTextComponent> = (
+  args: DisplayTextComponent,
+) => ({
   props: args,
 });
 

@@ -49,15 +49,15 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
       aserResult.date = date;
       aserResult.math = this.selectNextSkillLevel(
         mathLevels.slice(1),
-        previousResult.math
+        previousResult.math,
       );
       aserResult.english = this.selectNextSkillLevel(
         readingLevels.slice(1),
-        previousResult.english
+        previousResult.english,
       );
       aserResult[firstLanguage] = this.selectNextSkillLevel(
         readingLevels.slice(1),
-        previousResult[firstLanguage]
+        previousResult[firstLanguage],
       );
 
       data.push(aserResult);
@@ -81,7 +81,7 @@ export class DemoAserGeneratorService extends DemoDataGenerator<Aser> {
     const previousSkillLevelIndex = skillRange.indexOf(previousSkillLevel);
 
     let nextSkillLevelIndex;
-    const random = faker.datatype.number(100);
+    const random = faker.number.int(100);
     if (random < 20) {
       nextSkillLevelIndex = previousSkillLevelIndex;
     } else if (random < 90) {

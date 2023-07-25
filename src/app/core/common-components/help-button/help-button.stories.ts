@@ -1,18 +1,18 @@
-import { moduleMetadata } from "@storybook/angular";
-import { Meta, Story } from "@storybook/angular/types-6-0";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { HelpButtonComponent } from "./help-button.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/> App Layout/Help Button",
   decorators: [
-    moduleMetadata({
-      imports: [HelpButtonComponent, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<HelpButtonComponent> = (args) => ({
+const Template: StoryFn<HelpButtonComponent> = (args) => ({
   component: HelpButtonComponent,
   props: args,
 });

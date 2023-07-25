@@ -3,6 +3,7 @@ import {
   Inject,
   Input,
   OnInit,
+  Optional,
   ViewEncapsulation,
 } from "@angular/core";
 import { Note } from "../model/note";
@@ -66,14 +67,16 @@ export class NoteDetailsComponent implements OnInit {
   constructor(
     private configService: ConfigService,
     private entityFormService: EntityFormService,
-    @Inject(MAT_DIALOG_DATA) data: { entity: Note }
+    @Optional() @Inject(MAT_DIALOG_DATA) data: { entity: Note },
   ) {
-    this.entity = data.entity;
+    if (data) {
+      this.entity = data.entity;
+    }
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
     const formConfig = this.configService.getConfig<any>(
-      "appConfig:note-details"
+      "appConfig:note-details",
     );
     this.topForm =
       formConfig?.topForm?.map((field) => [toFormFieldConfig(field)]) ??
@@ -88,7 +91,7 @@ export class NoteDetailsComponent implements OnInit {
   ngOnInit() {
     this.form = this.entityFormService.createFormGroup(
       this.middleForm.concat(...this.topForm, this.bottomForm),
-      this.entity
+      this.entity,
     );
     // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
     this.tmpEntity = this.entity.copy();

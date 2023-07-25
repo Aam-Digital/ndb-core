@@ -1,9 +1,5 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
-import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
-import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import {
   entityFormStorybookDefaultParameters,
   StorybookBaseModule,
@@ -11,10 +7,10 @@ import {
 import { DatabaseEntity } from "../../../entity/database-entity.decorator";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
 import { User } from "../../../user/user";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { FormComponent } from "../../entity-details/form/form.component";
+import { importProvidersFrom } from "@angular/core";
 
 const testUser = new User("1");
 testUser.name = "test entity";
@@ -27,21 +23,18 @@ export default {
   title: "Core/Entities/Edit Properties/Entity Reference",
   component: FormComponent,
   decorators: [
-    moduleMetadata({
-      imports: [EntityFormComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
-        EntitySchemaService,
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([testUser, user2, child1]),
-        },
+        importProvidersFrom(
+          StorybookBaseModule.withData([testUser, user2, child1]),
+        ),
       ],
     }),
   ],
   parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
-const Template: Story<FormComponent<any>> = (args: FormComponent<any>) => ({
+const Template: StoryFn<FormComponent<any>> = (args: FormComponent<any>) => ({
   props: args,
 });
 

@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { AttendanceWeekDashboardComponent } from "./attendance-week-dashboard.component";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { Child } from "../../../children/model/child";
@@ -8,9 +7,8 @@ import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import moment from "moment";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { DatabaseIndexingService } from "../../../../core/entity/database-indexing/database-indexing.service";
+import { importProvidersFrom } from "@angular/core";
 
 const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
@@ -28,7 +26,7 @@ const events: Note[] = [
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     new Date(),
-    act1
+    act1,
   ),
   generateEventWithAttendance(
     [
@@ -36,7 +34,7 @@ const events: Note[] = [
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(1, "day").toDate(),
-    act1
+    act1,
   ),
   generateEventWithAttendance(
     [
@@ -44,7 +42,7 @@ const events: Note[] = [
       [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(2, "day").toDate(),
-    act1
+    act1,
   ),
 ];
 
@@ -52,20 +50,18 @@ export default {
   title: "Features/Attendance/Dashboards/AttendanceWeekDashboard",
   component: AttendanceWeekDashboardComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        AttendanceWeekDashboardComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(LoginState.LOGGED_IN, [
-          act1,
-          act2,
-          child1,
-          child2,
-          ...events,
-          act1,
-        ]),
-      ],
+    applicationConfig({
       providers: [
+        importProvidersFrom(
+          StorybookBaseModule.withData([
+            act1,
+            act2,
+            child1,
+            child2,
+            ...events,
+            act1,
+          ]),
+        ),
         {
           provide: DatabaseIndexingService,
           useValue: {
@@ -84,8 +80,8 @@ export default {
   },
 } as Meta;
 
-const Template: Story<AttendanceWeekDashboardComponent> = (
-  args: AttendanceWeekDashboardComponent
+const Template: StoryFn<AttendanceWeekDashboardComponent> = (
+  args: AttendanceWeekDashboardComponent,
 ) => ({
   component: AttendanceWeekDashboardComponent,
   props: args,

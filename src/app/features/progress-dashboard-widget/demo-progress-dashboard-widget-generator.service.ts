@@ -42,10 +42,10 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
     dashboardProgressWidget.title = $localize`:Widget title:Annual Survey`;
 
     for (const task of this.DEMO_TASKS) {
-      const targetNumber = faker.datatype.number({ min: 5, max: 50 });
+      const targetNumber = faker.number.int({ min: 5, max: 50 });
       dashboardProgressWidget.parts.push({
         label: task,
-        currentValue: faker.datatype.number(targetNumber),
+        currentValue: faker.number.int(targetNumber),
         targetValue: targetNumber,
       });
     }
@@ -62,10 +62,10 @@ export class DemoProgressDashboardWidgetGeneratorService extends DemoDataGenerat
     ];
 
     for (const task of evaluationEntries) {
-      const targetNumber = faker.datatype.number({ min: 5, max: 50 });
+      const targetNumber = faker.number.int({ min: 5, max: 50 });
       dashboardProgressWidget.parts.push({
         label: task,
-        currentValue: faker.datatype.number(targetNumber),
+        currentValue: faker.number.int(targetNumber),
         targetValue: targetNumber,
       });
     }

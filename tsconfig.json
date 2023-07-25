@@ -11,19 +11,16 @@
     "experimentalDecorators": true,
     "target": "ES2022",
     "downlevelIteration": true,
-    "types": [
-      "node",
-      "jasmine"
-    ],
-    "typeRoots": [
-      "../node_modules/@types"
-    ],
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "useDefineForClassFields": false,
     "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "types": ["jasmine"],
     "lib": [
       "es2018",
       "dom"
     ],
-    "resolveJsonModule": true,
     "paths": {
       "stream": [
         "../node_modules/stream-browserify"
@@ -35,11 +32,11 @@
         "../node_modules/assert"
       ]
     },
-    "esModuleInterop": true,
-    "skipLibCheck": true,
-    "useDefineForClassFields": false
   },
   "angularCompilerOptions": {
     "strictTemplates": true
-  }
+  },
+  "include": [
+    "src"
+  ]
 }

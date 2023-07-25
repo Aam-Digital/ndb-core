@@ -63,6 +63,13 @@ export class ChildSchoolOverviewComponent implements OnInit {
 
   ngOnInit() {
     this.mode = this.inferMode(this.entity);
+    // display the related entity that is *not* the current main entity
+    const idColumn = this._columns.find(
+      (c) => c.id === "childId" || c.id === "schoolId",
+    );
+    if (idColumn) {
+      idColumn.id = this.mode === "child" ? "schoolId" : "childId";
+    }
     return this.loadData();
   }
 
@@ -83,7 +90,7 @@ export class ChildSchoolOverviewComponent implements OnInit {
     this.isLoading = true;
     this.allRecords = await this.childrenService.queryRelationsOf(
       this.mode,
-      this.entity.getId(false)
+      this.entity.getId(false),
     );
 
     this.prepareDisplayedData();
@@ -91,16 +98,8 @@ export class ChildSchoolOverviewComponent implements OnInit {
   }
 
   prepareDisplayedData() {
-    // display the related entity that is *not* the current main entity
-    const idColumn = this._columns.find(
-      (c) => c.id === "childId" || c.id === "schoolId"
-    );
-    if (idColumn) {
-      idColumn.id = this.mode === "child" ? "schoolId" : "childId";
-    }
-
     this.hasCurrentlyActiveEntry = this.allRecords.some(
-      (record) => record.isActive
+      (record) => record.isActive,
     );
 
     if (this.showInactive) {
