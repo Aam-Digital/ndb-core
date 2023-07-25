@@ -1,30 +1,23 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { DisplayEntityComponent } from "./display-entity.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { User } from "../../../user/user";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../entity/mock-entity-mapper-service";
-import { ChildrenService } from "../../../../child-dev-project/children/children.service";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Entities/Display Properties/DisplayEntity",
   component: DisplayEntityComponent,
   decorators: [
-    moduleMetadata({
-      imports: [StorybookBaseModule, DisplayEntityComponent],
-      providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper([]) },
-        { provide: ChildrenService, useValue: null },
-      ],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<DisplayEntityComponent> = (
-  args: DisplayEntityComponent
+const Template: StoryFn<DisplayEntityComponent> = (
+  args: DisplayEntityComponent,
 ) => ({
   component: DisplayEntityComponent,
   props: args,

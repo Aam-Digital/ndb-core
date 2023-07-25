@@ -27,7 +27,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
   constructor(
     private childrenGenerator: DemoChildGenerator,
     private configGenerator: DemoConfigGeneratorService,
-    private config: DemoHistoricalDataConfig
+    private config: DemoHistoricalDataConfig,
   ) {
     super();
   }
@@ -40,7 +40,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
     const entities: HistoricalEntityData[] = [];
     for (const child of this.childrenGenerator.entities) {
       const countOfData =
-        faker.datatype.number(this.config.maxCountAttributes) +
+        faker.number.int(this.config.maxCountAttributes) +
         this.config.minCountAttributes;
       const historicalDataOfChild = [...Array(countOfData)].map(() => {
         const historicalData = new HistoricalEntityData();

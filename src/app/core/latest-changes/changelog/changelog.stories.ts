@@ -1,11 +1,15 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ChangelogComponent } from "./changelog.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { UpdateManagerService } from "../update-manager.service";
 import { Changelog } from "../changelog";
 import { of } from "rxjs";
+import { importProvidersFrom } from "@angular/core";
 
 const changelogs: Changelog[] = [
   {
@@ -32,24 +36,16 @@ export default {
   title: "Core/Changelog",
   component: ChangelogComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [StorybookBaseModule, ChangelogComponent],
-      providers: [
-        { provide: MAT_DIALOG_DATA, useValue: of(changelogs) },
-        {
-          provide: UpdateManagerService,
-          useValue: {
-            notifyUserWhenUpdateAvailable: () => {},
-            regularlyCheckForUpdates: () => {},
-            detectUnrecoverableState: () => {},
-          },
-        },
-      ],
+      providers: [{ provide: MAT_DIALOG_DATA, useValue: of(changelogs) }],
     }),
   ],
 } as Meta;
 
-const Template: Story<ChangelogComponent> = (args: ChangelogComponent) => ({
+const Template: StoryFn<ChangelogComponent> = (args: ChangelogComponent) => ({
   component: ChangelogComponent,
   props: args,
 });

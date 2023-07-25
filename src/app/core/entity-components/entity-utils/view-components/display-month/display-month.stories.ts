@@ -1,21 +1,20 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { DisplayMonthComponent } from "./display-month.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Entities/Display Properties/DisplayMonth",
   component: DisplayMonthComponent,
   decorators: [
-    moduleMetadata({
-      imports: [StorybookBaseModule, DisplayMonthComponent],
-      providers: [],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<DisplayMonthComponent> = (
-  args: DisplayMonthComponent
+const Template: StoryFn<DisplayMonthComponent> = (
+  args: DisplayMonthComponent,
 ) => ({
   props: args,
 });
