@@ -5,11 +5,10 @@ module.exports = {
     "@storybook/addon-essentials",
     "@storybook/addon-interactions",
   ],
-  framework: "@storybook/angular",
-  core: {
-    builder: {
-      name: "webpack5",
-      options: {
+  framework: {
+    name: "@storybook/angular",
+    options: {
+      builder: {
         lazyCompilation: true,
         fsCache: true,
       },

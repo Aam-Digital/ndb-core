@@ -1,26 +1,21 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
-import { RouterTestingModule } from "@angular/router/testing";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { DashboardShortcutWidgetComponent } from "./dashboard-shortcut-widget.component";
 import { MenuItem } from "../../navigation/menu-item";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Dashboards/ShortcutDashboardWidget",
   component: DashboardShortcutWidgetComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        RouterTestingModule,
-        StorybookBaseModule,
-        DashboardShortcutWidgetComponent,
-      ],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<DashboardShortcutWidgetComponent> = (
-  args: DashboardShortcutWidgetComponent
+const Template: StoryFn<DashboardShortcutWidgetComponent> = (
+  args: DashboardShortcutWidgetComponent,
 ) => ({
   component: DashboardShortcutWidgetComponent,
   props: args,

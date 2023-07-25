@@ -1,20 +1,21 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
 import { DisplayDateComponent } from "./display-date.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Entities/Display Properties/DisplayDate",
   component: DisplayDateComponent,
   decorators: [
-    moduleMetadata({
-      imports: [StorybookBaseModule, DisplayDateComponent],
-      providers: [],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<DisplayDateComponent> = (args: DisplayDateComponent) => ({
+const Template: StoryFn<DisplayDateComponent> = (
+  args: DisplayDateComponent,
+) => ({
   props: args,
 });
 

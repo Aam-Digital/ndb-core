@@ -130,13 +130,13 @@ describe("DataImportService", () => {
     await expectEntitiesToBeInDatabase(
       [Child.create("test1"), Child.create("test2")],
       true,
-      true
+      true,
     );
     const imported = await db.getAll(`Child:${transactionID}`);
     expect(imported).toHaveSize(2);
     const ids = imported.map((doc) => doc._id as string);
     ids.forEach((id) =>
-      expect(id.startsWith(`Child:${transactionID}`)).toBeTrue()
+      expect(id.startsWith(`Child:${transactionID}`)).toBeTrue(),
     );
   });
 
@@ -224,7 +224,7 @@ describe("DataImportService", () => {
   function mockSnackbar(clicked: boolean): jasmine.SpyObj<MatSnackBarRef<any>> {
     const mockSnackBarRef = jasmine.createSpyObj<MatSnackBarRef<any>>(
       "mockSnackBarRef",
-      ["onAction"]
+      ["onAction"],
     );
     if (clicked) {
       mockSnackBarRef.onAction.and.returnValue(of(null));

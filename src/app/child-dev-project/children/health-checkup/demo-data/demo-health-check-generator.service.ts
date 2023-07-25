@@ -53,7 +53,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
       this.setNextHeightAndWeight(
         record,
         previousRecord,
-        this.getAgeAtDate(child, date)
+        this.getAgeAtDate(child, date),
       );
 
       data.push(record);
@@ -80,17 +80,17 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
   private setNextHeightAndWeight(
     record: HealthCheck,
     previousRecord: HealthCheck,
-    age: number
+    age: number,
   ) {
     const ageRoundedToHalfYear = Math.round(2 * age) / 2;
 
-    const randomHeight = faker.datatype.number(
-      heightRangeForAge.get(ageRoundedToHalfYear)
+    const randomHeight = faker.number.int(
+      heightRangeForAge.get(ageRoundedToHalfYear),
     );
     record.height = Math.max(randomHeight, previousRecord.height); // height will not become less
 
-    record.weight = faker.datatype.number(
-      weightRangeForAge.get(ageRoundedToHalfYear)
+    record.weight = faker.number.int(
+      weightRangeForAge.get(ageRoundedToHalfYear),
     );
   }
 }
