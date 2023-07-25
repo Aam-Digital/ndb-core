@@ -32,7 +32,7 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
 
   static generateEntity(id: string) {
     const child = new Child(id);
-    child.name = faker.name.firstName() + " " + faker.name.lastName();
+    child.name = faker.person.firstName() + " " + faker.person.lastName();
     child.projectNumber = id;
     child["religion"] = faker.helpers.arrayElement(religions);
     child.gender = faker.helpers.arrayElement(genders.slice(1));
@@ -41,22 +41,27 @@ export class DemoChildGenerator extends DemoDataGenerator<Child> {
     child.center = faker.helpers.arrayElement(centersWithProbability);
     child.phone =
       "+" +
-      faker.datatype.number({ min: 10, max: 99 }) +
+      faker.number.int({ min: 10, max: 99 }) +
       " " +
-      faker.datatype.number({ min: 10000000, max: 99999999 });
+      faker.number.int({ min: 10000000, max: 99999999 });
 
-    child.admissionDate = faker.date.past(calculateAge(child.dateOfBirth) - 4);
+    child.admissionDate = faker.date.past({
+      years: calculateAge(child.dateOfBirth) - 4,
+    });
 
     child["address"] = faker.geoAddress();
 
-    if (faker.datatype.number(100) > 90) {
+    if (faker.number.int(100) > 90) {
       DemoChildGenerator.makeChildDropout(child);
     }
     return child;
   }
 
   private static makeChildDropout(child: Child) {
-    child.dropoutDate = faker.date.between(child.admissionDate, new Date());
+    child.dropoutDate = faker.date.between({
+      from: child.admissionDate,
+      to: new Date(),
+    });
     child.dropoutRemarks = faker.lorem.sentence();
     child.dropoutType = faker.helpers.arrayElement(dropoutTypes);
     child.status = $localize`:Child status:Dropout`;

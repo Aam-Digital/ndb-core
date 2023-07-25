@@ -15,8 +15,10 @@ const userGenerator = new DemoUserGeneratorService();
 const data = new DemoNoteGeneratorService(
   { minNotesPerChild: 5, maxNotesPerChild: 10, groupNotes: 2 },
   childGenerator,
-  userGenerator
+  userGenerator,
 ).generateEntities();
+
+export default { title: "EntitySubrecord" };
 
 // TODO: fix stories for EntitySubrecord
 /*
@@ -67,7 +69,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<EntitySubrecordComponent<Note>> = (
+const Template: StoryFn<EntitySubrecordComponent<Note>> = (
   args: EntitySubrecordComponent<Note>
 ) => {
   EntitySubrecordComponent.prototype.newRecordFactory = () => new Note();

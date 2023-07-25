@@ -68,7 +68,7 @@ export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
   implements OnChanges
 {
-  @ContentChild(TemplateRef) templateRef: TemplateRef<O>;
+  @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
   // `_elementRef` is protected in `MapInput`
   @ViewChild(MatInput, { static: true }) inputElement: MatInput & {
     _elementRef: ElementRef<HTMLElement>;
@@ -86,7 +86,7 @@ export class BasicAutocompleteComponent<O, V = O>
     filter((val) => typeof val === "string"),
     distinctUntilChanged(),
     map((val) => this.updateAutocomplete(val)),
-    startWith([] as SelectableOption<O, V>[])
+    startWith([] as SelectableOption<O, V>[]),
   );
   showAddOption = false;
 
@@ -122,26 +122,26 @@ export class BasicAutocompleteComponent<O, V = O>
     errorStateMatcher: ErrorStateMatcher,
     @Optional() @Self() ngControl: NgControl,
     @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective
+    @Optional() parentFormGroup: FormGroupDirective,
   ) {
     super(
       elementRef,
       errorStateMatcher,
       ngControl,
       parentForm,
-      parentFormGroup
+      parentFormGroup,
     );
   }
 
   ngOnChanges(changes: { [key in keyof this]?: any }) {
     if (changes.valueMapper) {
       this._options.forEach(
-        (opt) => (opt.asValue = this.valueMapper(opt.initial))
+        (opt) => (opt.asValue = this.valueMapper(opt.initial)),
       );
     }
     if (changes.optionToString) {
       this._options.forEach(
-        (opt) => (opt.asString = this.optionToString(opt.initial))
+        (opt) => (opt.asString = this.optionToString(opt.initial)),
       );
     }
     if (changes.value || changes.options) {
@@ -157,7 +157,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this.autocompleteForm.setValue(this.displayText);
       this.autocompleteSuggestedOptions = concat(
         of(this._options.filter(({ initial }) => !this.hideOption(initial))),
-        this.autocompleteSuggestedOptions.pipe(skip(1))
+        this.autocompleteSuggestedOptions.pipe(skip(1)),
       );
     }
     setTimeout(() => {
@@ -177,10 +177,10 @@ export class BasicAutocompleteComponent<O, V = O>
     );
     if (inputText) {
       filteredOptions = filteredOptions.filter((o) =>
-        o.asString.toLowerCase().includes(inputText.toLowerCase())
+        o.asString.toLowerCase().includes(inputText.toLowerCase()),
       );
       this.showAddOption = !this._options.some(
-        (o) => o.asString.toLowerCase() === inputText.toLowerCase()
+        (o) => o.asString.toLowerCase() === inputText.toLowerCase(),
       );
     }
     return filteredOptions;
@@ -189,7 +189,7 @@ export class BasicAutocompleteComponent<O, V = O>
   private setInitialInputValue() {
     if (this.multi) {
       this._options.forEach(
-        (o) => (o.selected = (this.value as V[])?.includes(o.asValue))
+        (o) => (o.selected = (this.value as V[])?.includes(o.asValue)),
       );
     }
   }
@@ -212,7 +212,7 @@ export class BasicAutocompleteComponent<O, V = O>
   async createNewOption(option: string) {
     const userConfirmed = await this.confirmation.getConfirmation(
       $localize`Create new option`,
-      $localize`Do you want to create the new option "${option}"?`
+      $localize`Do you want to create the new option "${option}"?`,
     );
     if (userConfirmed) {
       const newOption = this.toSelectableOption(this.createOption(option));
