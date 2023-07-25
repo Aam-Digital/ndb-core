@@ -19,6 +19,10 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
+import { genders } from "../../child-dev-project/children/model/genders";
+import { ConfigurableEnumService } from "../../core/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumDatatype } from "../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -29,6 +33,10 @@ describe("ImportService", () => {
         ImportService,
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
+        {
+          provide: ConfigurableEnumService,
+          useValue: new ConfigurableEnumService(mockEntityMapper(), null),
+        },
       ],
     });
     service = TestBed.inject(ImportService);
@@ -173,5 +181,32 @@ describe("ImportService", () => {
     await service.undoImport(importMeta);
 
     await expectEntitiesToBeInDatabase([children[2]], false, true);
+  });
+
+  it("should map values using enum mappingFn", async () => {
+    const mappingFn = service.getMappingFunction({ dataType: "date" });
+    const input = "30.11.2023";
+
+    const actualMapped = mappingFn(input, "DD.MM.YYYY");
+
+    expect(actualMapped).toEqual(new Date(2023, 10, 30));
+  });
+
+  it("should map values using date mappingFn", async () => {
+    const enumService = TestBed.inject(ConfigurableEnumService);
+    spyOn(enumService, "getEnumValues").and.returnValue(genders);
+    TestBed.inject(EntitySchemaService).registerSchemaDatatype(
+      new ConfigurableEnumDatatype(enumService)
+    );
+
+    const mappingFn = service.getMappingFunction({
+      dataType: "configurable-enum",
+      additional: "genders",
+    });
+    const input = "MALE";
+
+    const actualMapped = mappingFn(input, { MALE: "M" });
+
+    expect(actualMapped).toEqual(genders.find((e) => e.id === "M"));
   });
 });

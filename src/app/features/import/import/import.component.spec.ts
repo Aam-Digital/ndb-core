@@ -43,8 +43,8 @@ describe("ImportComponent", () => {
 
     expect(component.entityType).toBeUndefined();
     expect(component.rawData).toBeUndefined();
-    expect(component.columnMapping).toBeUndefined();
-    expect(component.additionalImportActions).toBeUndefined();
+    expect(component.columnMapping).toEqual([]);
+    expect(component.additionalImportActions).toEqual([]);
 
     expect(component.mappedColumnsCount).toBeUndefined();
     expect(component.stepper.selectedIndex).toBe(0);

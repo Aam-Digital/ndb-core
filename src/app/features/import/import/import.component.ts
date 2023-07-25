@@ -121,6 +121,8 @@ export class ImportComponent {
         ) ?? { column }
     );
 
+    // TODO: load additionalActions also
+
     this.onColumnMappingUpdate(adjustedMappings);
   }
 

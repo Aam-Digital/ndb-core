@@ -110,7 +110,7 @@ export class ImportColumnMappingComponent {
     this.columnMappingChange.emit([...this.columnMapping]);
   }
 
-  // TODO: infer column mapping from data. The following is from old DataImportModule
+  // TODO: infer column mapping from data. The following is from old DataImportModule (#1942)
   /**
    * Try to guess mappings of import file columns to entity properties.
    * (e.g. based on column headers)
