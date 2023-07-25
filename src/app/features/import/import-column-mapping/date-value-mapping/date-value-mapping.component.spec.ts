@@ -6,6 +6,7 @@ import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import moment from "moment";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("DateValueMappingComponent", () => {
   let component: DateValueMappingComponent;
@@ -16,7 +17,11 @@ describe("DateValueMappingComponent", () => {
   beforeEach(async () => {
     data = { values, col: { column: "" }, entityType: undefined };
     await TestBed.configureTestingModule({
-      imports: [DateValueMappingComponent, NoopAnimationsModule],
+      imports: [
+        DateValueMappingComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: { close: () => undefined } },

@@ -40,7 +40,7 @@ export class ImportConfirmSummaryComponent {
     private importService: ImportService,
   ) {}
 
-  // TODO: detailed summary including warnings of unmapped columns, ignored values, etc.
+  // TODO: detailed summary including warnings of unmapped columns, ignored values, etc. (#1943)
 
   async executeImport() {
     this.importInProgress = true;

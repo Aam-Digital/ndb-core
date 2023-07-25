@@ -83,7 +83,8 @@ export class ImportService {
     ) {
       return {
         mappingCmp: EnumValueMappingComponent,
-        mappingFn: (val, additional) => additional?.[val],
+        mappingFn: (val, additional) =>
+          this.schemaService.valueToEntityFormat(additional?.[val], schema),
       };
     }
     if (this.dateDataTypes.includes(schema.dataType)) {

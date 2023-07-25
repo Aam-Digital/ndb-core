@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -30,7 +30,10 @@ import { HelpButtonComponent } from "../../../../core/common-components/help-but
     HelpButtonComponent,
   ],
 })
-export class EnumValueMappingComponent extends AbstractValueMappingComponent {
+export class EnumValueMappingComponent
+  extends AbstractValueMappingComponent
+  implements OnInit
+{
   form: FormGroup;
   component: string;
   schema: EntitySchemaField;
@@ -57,18 +60,39 @@ export class EnumValueMappingComponent extends AbstractValueMappingComponent {
     private schemaService: EntitySchemaService
   ) {
     super();
+  }
 
-    this.schema = data.entityType.schema.get(data.col.propertyName);
+  ngOnInit() {
+    this.schema = this.data.entityType.schema.get(this.data.col.propertyName);
     this.component = this.schemaService.getComponent(this.schema, "edit");
-    const formObj = { ...data.col.additional };
-    data.values
-      .filter((val) => !!val && !formObj.hasOwnProperty(val))
-      .forEach((val) => (formObj[val] = new FormControl()));
-    this.form = this.fb.group(formObj);
+
+    this.form = this.fb.group(this.initFormValues(this.data.col.additional));
+  }
+
+  private initFormValues(additional: any) {
+    if (!additional) {
+      additional = {};
+    }
+
+    const formObj = {};
+    this.data.values
+      .filter((val) => !!val)
+      .forEach((val) => {
+        let selectedMapping;
+        if (additional.hasOwnProperty(val)) {
+          selectedMapping = this.schemaService.valueToEntityFormat(
+            additional[val],
+            this.schema
+          );
+        }
+        formObj[val] = new FormControl(selectedMapping);
+      });
+
+    return formObj;
   }
 
   async save() {
-    const rawValues = this.form.getRawValue();
+    const rawValues = this.getValuesInDatabaseFormat(this.form.getRawValue());
     const allFilled = Object.values(rawValues).every((val) => !!val);
     const confirmed =
       allFilled ||
@@ -80,5 +104,20 @@ export class EnumValueMappingComponent extends AbstractValueMappingComponent {
       this.data.col.additional = rawValues;
       this.dialog.close();
     }
+  }
+
+  /**
+   * Transform object property values into their database format values to be stored.
+   * @private
+   */
+  private getValuesInDatabaseFormat(rawValues: any) {
+    for (const k in rawValues) {
+      rawValues[k] = this.schemaService.valueToDatabaseFormat(
+        rawValues[k],
+        this.schema
+      );
+    }
+
+    return rawValues;
   }
 }
