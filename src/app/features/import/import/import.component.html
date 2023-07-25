@@ -39,6 +39,7 @@
         <mat-card class="flex-grow-1-3">
           <mat-card-content>
             <app-import-history
+              [data]="rawData"
               (itemSelected)="applyPreviousMapping($event)"
             ></app-import-history>
           </mat-card-content>

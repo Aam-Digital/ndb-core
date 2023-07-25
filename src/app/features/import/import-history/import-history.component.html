@@ -27,14 +27,17 @@
     </div>
 
     <div class="flex-row gap-regular margin-top-regular">
-      <button
-        (click)="itemSelected.emit(item)"
-        mat-stroked-button
-        color="accent"
-        i18n
-      >
-        Re-use Column Mapping
-      </button>
+      <div i18n-matTooltip="Tooltip help text for button" matTooltip="Please select a file first" [matTooltipDisabled]="data?.length > 0">
+        <button
+          [disabled]="!data?.length"
+          (click)="itemSelected.emit(item)"
+          mat-stroked-button
+          color="accent"
+          i18n
+        >
+          Re-use Column Mapping
+        </button>
+      </div>
 
       <button (click)="undoImport(item)" mat-stroked-button color="warn" i18n>
         Undo Import

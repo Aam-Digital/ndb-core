@@ -1,4 +1,4 @@
-import { Component, EventEmitter, OnInit, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { ImportMetadata } from "../import-metadata";
 import { ImportService } from "../import.service";
@@ -10,6 +10,7 @@ import { DatePipe, NgForOf, NgIf } from "@angular/common";
 import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
 import { DisplayEntityComponent } from "../../../core/entity-components/entity-select/display-entity/display-entity.component";
 import { MatButtonModule } from "@angular/material/button";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @UntilDestroy()
 @Component({
@@ -25,9 +26,11 @@ import { MatButtonModule } from "@angular/material/button";
     MatButtonModule,
     NgIf,
     NgForOf,
+    MatTooltipModule,
   ],
 })
 export class ImportHistoryComponent implements OnInit {
+  @Input() data: any[];
   @Output() itemSelected = new EventEmitter<ImportMetadata>();
 
   previousImports: ImportMetadata[];
@@ -35,7 +38,7 @@ export class ImportHistoryComponent implements OnInit {
   constructor(
     private entityMapper: EntityMapperService,
     private importService: ImportService,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
   ) {
     this.entityMapper
       .receiveUpdates(ImportMetadata)
@@ -52,7 +55,7 @@ export class ImportHistoryComponent implements OnInit {
 
   private async loadPreviousImports() {
     this.previousImports = await this.entityMapper.loadType<ImportMetadata>(
-      ImportMetadata
+      ImportMetadata,
     );
     this.sortImports();
   }
@@ -64,7 +67,7 @@ export class ImportHistoryComponent implements OnInit {
   async undoImport(item: ImportMetadata) {
     const confirmation = await this.confirmationDialog.getConfirmation(
       $localize`:Import Undo Confirmation Title:Revert Import?`,
-      $localize`:Import Undo Confirmation Text:Are you sure you want to undo this import? All records that had been imported at that time will be delete from the system.`
+      $localize`:Import Undo Confirmation Text:Are you sure you want to undo this import? All records that had been imported at that time will be delete from the system.`,
     );
 
     if (confirmation) {
