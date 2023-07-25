@@ -1,4 +1,4 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, Inject, ViewChild } from "@angular/core";
 import { ParsedData } from "../../../core/input-file/input-file.component";
 import { MatStepper, MatStepperModule } from "@angular/material/stepper";
 import { ColumnMapping } from "../column-mapping";
@@ -21,6 +21,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { ImportColumnMappingComponent } from "../import-column-mapping/import-column-mapping.component";
 import { ImportReviewDataComponent } from "../import-review-data/import-review-data.component";
 import { RouteTarget } from "../../../app.routing";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.
@@ -65,6 +66,7 @@ export class ImportComponent {
     private alertService: AlertService,
     private route: ActivatedRoute,
     private router: Router,
+    @Inject(LOCATION_TOKEN) private location: Location,
   ) {
     this.route.queryParamMap.subscribe((params) => {
       if (params.has("entityType")) {
@@ -83,7 +85,7 @@ export class ImportComponent {
     ) {
       return;
     }
-    const currentRoute = location.pathname;
+    const currentRoute = this.location.pathname;
     return this.router
       .navigate([""], { skipLocationChange: true })
       .then(() =>

@@ -7,12 +7,15 @@ import { Papa } from "ngx-papaparse";
 import { ColumnMapping } from "../column-mapping";
 import { ParsedData } from "../../../core/input-file/input-file.component";
 import { ImportMetadata } from "../import-metadata";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { Router } from "@angular/router";
 
 describe("ImportComponent", () => {
   let component: ImportComponent;
   let fixture: ComponentFixture<ImportComponent>;
 
   let testDataRaw: ParsedData<any>;
+  const mockLocation = {} as Location;
 
   beforeEach(async () => {
     const parseResult = new Papa().parse("x,y\na,1\nb,2", { header: true });
@@ -23,6 +26,7 @@ describe("ImportComponent", () => {
 
     await TestBed.configureTestingModule({
       imports: [ImportComponent, MockedTestingModule],
+      providers: [{ provide: LOCATION_TOKEN, useValue: mockLocation }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ImportComponent);
@@ -30,25 +34,23 @@ describe("ImportComponent", () => {
     fixture.detectChanges();
   });
 
-  it("should reset state after executing import", () => {
+  it("should trigger navigation after executing import", async () => {
     const confirmationDialog = TestBed.inject(ConfirmationDialogService);
     spyOn(confirmationDialog, "getConfirmation");
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    navigateSpy.and.resolveTo();
+    mockLocation.pathname = "/import";
     component.entityType = "Child";
     component.rawData = [{ test: "data" }];
     component.columnMapping = [{ column: "test", propertyName: "name" }];
     component.additionalImportActions = [{ type: "x", id: "y" }];
 
     component.stepper.next();
-    component.onImportCompleted(null);
+    await component.onImportCompleted();
 
-    expect(component.entityType).toBeUndefined();
-    expect(component.rawData).toBeUndefined();
-    expect(component.columnMapping).toEqual([]);
-    expect(component.additionalImportActions).toEqual([]);
-
-    expect(component.mappedColumnsCount).toBeUndefined();
-    expect(component.stepper.selectedIndex).toBe(0);
     expect(confirmationDialog.getConfirmation).not.toHaveBeenCalled();
+    expect(navigateSpy).toHaveBeenCalledWith([""], jasmine.anything());
+    expect(navigateSpy).toHaveBeenCalledWith(["/import"], jasmine.anything());
   });
 
   it("should update an empty column mapping upon loading rawData", () => {
@@ -67,7 +69,7 @@ describe("ImportComponent", () => {
   function testApplyColumnMapping(
     appliedMapping: ColumnMapping[],
     expectedMapping: ColumnMapping[],
-    expectedMappingCount: number
+    expectedMappingCount: number,
   ) {
     component.applyPreviousMapping(
       ImportMetadata.create({
@@ -77,7 +79,7 @@ describe("ImportComponent", () => {
           additionalActions: [],
         },
         ids: [],
-      })
+      }),
     );
 
     expect(component.columnMapping).toEqual(expectedMapping);
@@ -123,7 +125,7 @@ describe("ImportComponent", () => {
     testApplyColumnMapping(
       loadedMapping,
       [{ column: "x", propertyName: "name" }, { column: "y" }],
-      1
+      1,
     );
   });
 
@@ -140,7 +142,7 @@ describe("ImportComponent", () => {
     testApplyColumnMapping(
       loadedMapping,
       [{ column: "x", propertyName: "name" }, { column: "y" }],
-      1
+      1,
     );
   });
 });
