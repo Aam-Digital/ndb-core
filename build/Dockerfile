@@ -73,8 +73,6 @@ ENV PORT=80
 ENV COUCHDB_URL="http://localhost"
 # The url to a nominatim instance, see https://nominatim.org/
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
-# url to be reverse-proxied for logging endpoint (e.g. sentry.io)
-ENV LOGGING_URL=""
 
 # content security policy headers
 ENV CSP_REPORT_URI=""
@@ -86,5 +84,5 @@ ENV CSP="default-src 'self' 'unsafe-eval' https://sentry.io https://matomo.aam-d
 ### 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
 
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$LOGGING_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
