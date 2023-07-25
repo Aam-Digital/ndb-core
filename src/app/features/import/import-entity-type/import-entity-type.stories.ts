@@ -1,21 +1,20 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportEntityTypeComponent } from "./import-entity-type.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Import/2 Select Entity Type",
   component: ImportEntityTypeComponent,
   decorators: [
-    moduleMetadata({
-      imports: [StorybookBaseModule, ImportEntityTypeComponent],
-      providers: [],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<ImportEntityTypeComponent> = (
-  args: ImportEntityTypeComponent
+const Template: StoryFn<ImportEntityTypeComponent> = (
+  args: ImportEntityTypeComponent,
 ) => ({
   props: args,
 });

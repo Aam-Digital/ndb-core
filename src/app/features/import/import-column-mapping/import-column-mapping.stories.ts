@@ -1,26 +1,24 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportColumnMappingComponent } from "./import-column-mapping.component";
 import {
   IMPORT_SAMPLE_COLUMN_MAPPING,
   IMPORT_SAMPLE_RAW_DATA,
 } from "../import/import-sample-raw-data";
-import { ImportService } from "../import.service";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Import/3 Map Columns",
   component: ImportColumnMappingComponent,
   decorators: [
-    moduleMetadata({
-      imports: [StorybookBaseModule, ImportColumnMappingComponent],
-      providers: [ImportService],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<ImportColumnMappingComponent> = (
-  args: ImportColumnMappingComponent
+const Template: StoryFn<ImportColumnMappingComponent> = (
+  args: ImportColumnMappingComponent,
 ) => ({
   props: args,
 });

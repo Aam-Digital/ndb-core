@@ -1,32 +1,28 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportAdditionalActionsComponent } from "./import-additional-actions.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
 import {
   IMPORT_SAMPLE_ADDITIONAL_ACTIONS,
   IMPORT_SAMPLE_LINKABLE_DATA,
 } from "../import/import-sample-raw-data";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Import/2b Select Additional Actions",
   component: ImportAdditionalActionsComponent,
   decorators: [
-    moduleMetadata({
-      imports: [ImportAdditionalActionsComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper(IMPORT_SAMPLE_LINKABLE_DATA),
-        },
+        importProvidersFrom(
+          StorybookBaseModule.withData([...IMPORT_SAMPLE_LINKABLE_DATA]),
+        ),
       ],
     }),
   ],
 } as Meta;
 
-const Template: Story<ImportAdditionalActionsComponent> = (
-  args: ImportAdditionalActionsComponent
+const Template: StoryFn<ImportAdditionalActionsComponent> = (
+  args: ImportAdditionalActionsComponent,
 ) => ({
   props: args,
 });

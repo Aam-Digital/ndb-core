@@ -1,10 +1,14 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportConfirmSummaryComponent } from "./import-confirm-summary.component";
 import { MatDialog } from "@angular/material/dialog";
 import { ImportService } from "../import.service";
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, importProvidersFrom, Input, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 
 @Component({
@@ -39,9 +43,10 @@ export default {
   title: "Features/Import/5 Summary & Executing Import",
   component: LaunchDialogComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [StorybookBaseModule, ImportConfirmSummaryComponent],
-      declarations: [LaunchDialogComponent],
       providers: [
         ImportService,
         {
@@ -57,8 +62,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<LaunchDialogComponent> = (
-  args: LaunchDialogComponent
+const Template: StoryFn<LaunchDialogComponent> = (
+  args: LaunchDialogComponent,
 ) => ({
   props: args,
 });
