@@ -113,6 +113,7 @@ export class ImportComponent {
 
   applyPreviousMapping(importMetadata: ImportMetadata) {
     this.entityType = importMetadata.config.entityType;
+    this.additionalImportActions = importMetadata.config.additionalActions;
 
     const adjustedMappings = this.columnMapping.map(
       ({ column }) =>
