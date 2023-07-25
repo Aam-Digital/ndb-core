@@ -33,9 +33,7 @@ import { HelpButtonComponent } from "../../../../core/common-components/help-but
     HelpButtonComponent,
   ],
 })
-export class DateValueMappingComponent
-  implements AbstractValueMappingComponent
-{
+export class DateValueMappingComponent extends AbstractValueMappingComponent {
   format = new FormControl("");
   valid = false;
   values: { value: string; parsed?: Date }[] = [];
@@ -45,6 +43,8 @@ export class DateValueMappingComponent
     private confirmation: ConfirmationDialogService,
     private dialog: MatDialogRef<any>
   ) {
+    super();
+
     this.values = this.data.values
       .filter((val) => !!val)
       .map((value) => ({ value }));

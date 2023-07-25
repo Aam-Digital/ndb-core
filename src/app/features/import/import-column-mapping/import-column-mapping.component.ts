@@ -104,7 +104,7 @@ export class ImportColumnMappingComponent {
       this.mappingCmp[
         col.propertyName
       ] as unknown as typeof AbstractValueMappingComponent
-    ).getIncompleteAdditionalConfigBadge(col);
+    )?.getIncompleteAdditionalConfigBadge(col);
 
     // Emitting copy of array to trigger change detection; values have been updated in place through data binding
     this.columnMappingChange.emit([...this.columnMapping]);
