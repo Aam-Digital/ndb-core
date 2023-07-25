@@ -7,7 +7,7 @@ import { ConfirmationDialogService } from "../../../core/confirmation-dialog/con
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
 import { ImportMetadata } from "../import-metadata";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
@@ -63,7 +63,8 @@ export class ImportComponent {
   constructor(
     private confirmationDialog: ConfirmationDialogService,
     private alertService: AlertService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
+    private router: Router,
   ) {
     this.route.queryParamMap.subscribe((params) => {
       if (params.has("entityType")) {
@@ -77,18 +78,17 @@ export class ImportComponent {
       !skipConfirmation &&
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Import Reset Confirmation title:Cancel Import?`,
-        $localize`:Import Reset Confirmation text:Do you really want to discard the currently prepared import?`
+        $localize`:Import Reset Confirmation text:Do you really want to discard the currently prepared import?`,
       ))
     ) {
       return;
     }
-
-    delete this.rawData;
-    delete this.entityType;
-    this.columnMapping = [];
-    this.additionalImportActions = [];
-    this.importFileComponent.reset();
-    this.stepper.reset();
+    const currentRoute = location.pathname;
+    return this.router
+      .navigate([""], { skipLocationChange: true })
+      .then(() =>
+        this.router.navigate([currentRoute], { skipLocationChange: true }),
+      );
   }
 
   onDataLoaded(data: ParsedData) {
@@ -96,18 +96,18 @@ export class ImportComponent {
 
     if (this.columnMapping) {
       this.alertService.addInfo(
-        $localize`:alert info after file load:Column Mappings have been reset`
+        $localize`:alert info after file load:Column Mappings have been reset`,
       );
     }
     this.onColumnMappingUpdate(
-      data.fields.map((field) => ({ column: field, propertyName: undefined }))
+      data.fields.map((field) => ({ column: field, propertyName: undefined })),
     );
   }
 
   onColumnMappingUpdate(newColumnMapping: ColumnMapping[]) {
     this.columnMapping = newColumnMapping;
     this.mappedColumnsCount = newColumnMapping.filter(
-      (m) => !!m.propertyName
+      (m) => !!m.propertyName,
     ).length;
   }
 
@@ -117,14 +117,14 @@ export class ImportComponent {
     const adjustedMappings = this.columnMapping.map(
       ({ column }) =>
         importMetadata.config.columnMapping.find(
-          (c) => column === c.column
-        ) ?? { column }
+          (c) => column === c.column,
+        ) ?? { column },
     );
 
     this.onColumnMappingUpdate(adjustedMappings);
   }
 
-  onImportCompleted(completedImport: ImportMetadata) {
+  onImportCompleted() {
     return this.reset(true);
   }
 }

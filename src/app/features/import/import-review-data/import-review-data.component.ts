@@ -47,7 +47,7 @@ export class ImportReviewDataComponent implements OnChanges {
 
   constructor(
     private importService: ImportService,
-    private matDialog: MatDialog
+    private matDialog: MatDialog,
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -59,7 +59,7 @@ export class ImportReviewDataComponent implements OnChanges {
     this.mappedEntities = await this.importService.transformRawDataToEntities(
       this.rawData,
       this.entityType,
-      this.columnMapping
+      this.columnMapping,
     );
 
     this.displayColumns = this.columnMapping
@@ -80,7 +80,7 @@ export class ImportReviewDataComponent implements OnChanges {
             },
           } as ImportDialogData,
         })
-        .afterClosed()
+        .afterClosed(),
     );
 
     if (!!confirmationResult) {

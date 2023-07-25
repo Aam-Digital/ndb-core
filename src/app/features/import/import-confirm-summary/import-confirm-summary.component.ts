@@ -37,7 +37,7 @@ export class ImportConfirmSummaryComponent {
     private dialogRef: MatDialogRef<ImportConfirmSummaryComponent>,
     @Inject(MAT_DIALOG_DATA) public data: ImportDialogData,
     private snackBar: MatSnackBar,
-    private importService: ImportService
+    private importService: ImportService,
   ) {}
 
   // TODO: detailed summary including warnings of unmapped columns, ignored values, etc.
@@ -48,12 +48,10 @@ export class ImportConfirmSummaryComponent {
 
     const completedImport = await this.importService.executeImport(
       this.data.entitiesToImport,
-      this.data.importSettings
+      this.data.importSettings,
     );
     this.showImportSuccessToast(completedImport);
 
-    this.importInProgress = false;
-    this.dialogRef.disableClose = false;
     this.dialogRef.close(completedImport);
   }
 
@@ -63,7 +61,7 @@ export class ImportConfirmSummaryComponent {
       $localize`Undo`,
       {
         duration: 8000,
-      }
+      },
     );
     snackBarRef.onAction().subscribe(async () => {
       await this.importService.undoImport(completedImport);
