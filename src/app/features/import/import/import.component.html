@@ -1,4 +1,4 @@
-<mat-stepper [linear]="true" #stepper>
+<mat-stepper [linear]="true" #stepper style="height: 100%">
   <ng-template matStepperIcon="edit">
     <fa-icon icon="check" class="stepper-icon"></fa-icon>
   </ng-template>
@@ -18,22 +18,22 @@
     </ng-template>
 
     <ng-template matStepContent>
+      <div class="stepper-navigation">
+        <button
+          mat-raised-button
+          [disabled]="!step1.completed"
+          i18n="import next step button"
+          matStepperNext
+        >
+          Continue
+        </button>
+      </div>
+
       <div class="flex-row gap-large">
         <div class="flex-grow">
           <app-import-file
             (dataLoaded)="onDataLoaded($event)"
           ></app-import-file>
-
-          <div class="margin-top-regular">
-            <button
-              mat-button
-              [disabled]="!step1.completed"
-              i18n="import next step button"
-              matStepperNext
-            >
-              Continue
-            </button>
-          </div>
         </div>
 
         <mat-card class="flex-grow-1-3">
@@ -63,6 +63,20 @@
     </ng-template>
 
     <ng-template matStepContent>
+      <div class="stepper-navigation">
+        <button mat-stroked-button i18n="import back button" matStepperPrevious>
+          Back
+        </button>
+        <button
+          mat-raised-button
+          [disabled]="!step2.completed"
+          i18n="import next step button"
+          matStepperNext
+        >
+          Continue
+        </button>
+      </div>
+
       <app-import-entity-type
         [(entityType)]="entityType"
       ></app-import-entity-type>
@@ -88,20 +102,6 @@
           [(importActions)]="additionalImportActions"
         ></app-import-additional-actions>
       </mat-expansion-panel>
-
-      <div class="margin-top-regular">
-        <button mat-button i18n="import back button" matStepperPrevious>
-          Back
-        </button>
-        <button
-          mat-button
-          [disabled]="!step2.completed"
-          i18n="import next step button"
-          matStepperNext
-        >
-          Continue
-        </button>
-      </div>
     </ng-template>
   </mat-step>
 
@@ -120,19 +120,12 @@
     </ng-template>
 
     <ng-template matStepContent>
-      <app-import-column-mapping
-        [entityType]="entityType"
-        [columnMapping]="columnMapping"
-        (columnMappingChange)="onColumnMappingUpdate($event)"
-        [rawData]="rawData"
-      ></app-import-column-mapping>
-
-      <div class="margin-top-regular">
-        <button mat-button i18n="import back button" matStepperPrevious>
+      <div class="stepper-navigation">
+        <button mat-stroked-button i18n="import back button" matStepperPrevious>
           Back
         </button>
         <button
-          mat-button
+          mat-raised-button
           [disabled]="!step3.completed"
           i18n="import next step button"
           matStepperNext
@@ -140,6 +133,13 @@
           Continue
         </button>
       </div>
+
+      <app-import-column-mapping
+        [entityType]="entityType"
+        [columnMapping]="columnMapping"
+        (columnMappingChange)="onColumnMappingUpdate($event)"
+        [rawData]="rawData"
+      ></app-import-column-mapping>
     </ng-template>
   </mat-step>
 
@@ -150,6 +150,13 @@
     </ng-template>
 
     <ng-template matStepContent>
+      <div class="stepper-navigation">
+        <button mat-stroked-button matStepperPrevious>Back</button>
+        <button mat-stroked-button color="warn" (click)="reset()">
+          Cancel
+        </button>
+      </div>
+
       <app-import-review-data
         [rawData]="rawData"
         [entityType]="entityType"
@@ -157,11 +164,6 @@
         [additionalActions]="additionalImportActions"
         (importComplete)="onImportCompleted()"
       ></app-import-review-data>
-
-      <div class="stepper-navigation-margin">
-        <button mat-button matStepperPrevious>Back</button>
-        <button mat-button (click)="reset()">Cancel</button>
-      </div>
     </ng-template>
   </mat-step>
 </mat-stepper>
