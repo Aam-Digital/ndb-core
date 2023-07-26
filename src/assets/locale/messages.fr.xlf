@@ -5559,15 +5559,19 @@
       <trans-unit id="45493a221c09f4d2550f928e73f2e8ea49ceef55" datatype="html">
         <source> Back </source>
         <target state="translated">Retour</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/import/import/import.component.html</context>
-          <context context-type="linenumber">67,69</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/import/import/import.component.html</context>
-          <context context-type="linenumber">124,126</context>
-        </context-group>
         <note priority="1" from="description">import back button</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/import/import/import.component.html</context>
+          <context context-type="linenumber">67</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/import/import/import.component.html</context>
+          <context context-type="linenumber">124</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/import/import/import.component.html</context>
+          <context context-type="linenumber">154</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="fc24dc2e209dee77f1d083558911691d58bbc51e" datatype="html">
         <source>Advanced Import Actions [optional]</source>
@@ -5618,6 +5622,15 @@
           <context context-type="linenumber">148,150</context>
         </context-group>
         <note priority="1" from="description">Import Step - review data</note>
+      </trans-unit>
+      <trans-unit id="fb8aad312b72bbb7e5a1e2cc0b55fae8962bf0fb" datatype="html">
+        <source> Cancel </source>
+        <target state="translated"> Annuler </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/import/import/import.component.html</context>
+          <context context-type="linenumber">162,164</context>
+        </context-group>
+        <note priority="1" from="description">import cancel/reset button</note>
       </trans-unit>
       <trans-unit id="337608868269561556" datatype="html">
         <source>Cancel Import?</source>

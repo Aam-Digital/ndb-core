@@ -151,8 +151,15 @@
 
     <ng-template matStepContent>
       <div class="stepper-navigation">
-        <button mat-stroked-button matStepperPrevious>Back</button>
-        <button mat-stroked-button color="warn" (click)="reset()">
+        <button mat-stroked-button matStepperPrevious i18n="import back button">
+          Back
+        </button>
+        <button
+          mat-stroked-button
+          color="warn"
+          (click)="reset()"
+          i18n="import cancel/reset button"
+        >
           Cancel
         </button>
       </div>
