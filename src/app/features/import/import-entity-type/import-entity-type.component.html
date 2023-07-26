@@ -1,0 +1,28 @@
+<p i18n>Select the import target type:</p>
+
+<div class="flex-row align-center">
+  <mat-form-field>
+    <mat-label i18n>Import as</mat-label>
+    <mat-select
+      [(value)]="entityType"
+      (selectionChange)="entityTypeChange.emit($event.value)"
+    >
+      <mat-option
+        *ngFor="let entity of entityTypes"
+        [value]="entity.key"
+        [hidden]="true"
+      >
+        {{ entity.value.label }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <app-help-button
+    text="What type of records should your imported data become in the system? Select the target 'Entity Type' here. (e.g. are you trying to import participants, events or team members etc.)"
+    i18n-text="import - select type - help text"
+  >
+  </app-help-button>
+
+  <span class="flex-grow"></span>
+  <mat-slide-toggle [(ngModel)]="expertMode">Expert Mode</mat-slide-toggle>
+</div>

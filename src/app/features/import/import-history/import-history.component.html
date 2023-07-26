@@ -1,0 +1,51 @@
+<h3 i18n>Previous Imports</h3>
+
+<mat-accordion>
+  <mat-expansion-panel
+    *ngFor="let item of previousImports; index as i"
+    [expanded]="i === 0"
+  >
+    <mat-expansion-panel-header>
+      <mat-panel-title i18n>
+        {{ item.date | date }}
+      </mat-panel-title>
+
+      <mat-panel-description i18n>
+        {{ item.ids.length }}
+        "{{ item.config.entityType | entityTypeLabel }}" records
+      </mat-panel-description>
+    </mat-expansion-panel-header>
+
+    <div i18n>
+      imported by
+      <app-display-entity
+        [entityId]="item.user"
+        entityType="User"
+        [linkDisabled]="true"
+      ></app-display-entity>
+      at {{ item.date | date : "medium" }}
+    </div>
+
+    <div class="flex-row gap-regular margin-top-regular">
+      <div i18n-matTooltip="Tooltip help text for button" matTooltip="Please select a file first" [matTooltipDisabled]="data?.length > 0">
+        <button
+          [disabled]="!data?.length"
+          (click)="itemSelected.emit(item)"
+          mat-stroked-button
+          color="accent"
+          i18n
+        >
+          Re-use Column Mapping
+        </button>
+      </div>
+
+      <button (click)="undoImport(item)" mat-stroked-button color="warn" i18n>
+        Undo Import
+      </button>
+    </div>
+  </mat-expansion-panel>
+</mat-accordion>
+
+<div *ngIf="!(previousImports?.length > 0)" class="no-results">
+  no existing imports
+</div>

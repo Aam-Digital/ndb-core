@@ -63,6 +63,11 @@ export class Entity {
   static schema: EntitySchema;
 
   /**
+   * True if this type's schema has been customized dynamically from the config.
+   */
+  static _isCustomizedType?: boolean;
+
+  /**
    * Defining which attribute values of an entity should be shown in the `.toString()` method.
    *
    * The default is the ID of the entity (`entityId`).

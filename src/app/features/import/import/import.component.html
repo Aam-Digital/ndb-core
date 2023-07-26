@@ -1,0 +1,169 @@
+<mat-stepper [linear]="true" #stepper style="height: 100%">
+  <ng-template matStepperIcon="edit">
+    <fa-icon icon="check" class="stepper-icon"></fa-icon>
+  </ng-template>
+
+  <!-- STEP 1: SELECT FILE -->
+  <mat-step [completed]="rawData?.length > 0" #step1>
+    <ng-template matStepLabel>
+      <div i18n="Import Step - upload">Select File</div>
+
+      <div
+        *ngIf="step1.completed"
+        class="step-label-extra"
+        i18n="Import Step - upload - sub-label"
+      >
+        {{ rawData?.length }} rows to import
+      </div>
+    </ng-template>
+
+    <ng-template matStepContent>
+      <div class="stepper-navigation">
+        <button
+          mat-raised-button
+          [disabled]="!step1.completed"
+          i18n="import next step button"
+          matStepperNext
+        >
+          Continue
+        </button>
+      </div>
+
+      <div class="flex-row gap-large">
+        <div class="flex-grow">
+          <app-import-file
+            (dataLoaded)="onDataLoaded($event)"
+          ></app-import-file>
+        </div>
+
+        <mat-card class="flex-grow-1-3">
+          <mat-card-content>
+            <app-import-history
+              [data]="rawData"
+              (itemSelected)="applyPreviousMapping($event)"
+            ></app-import-history>
+          </mat-card-content>
+        </mat-card>
+      </div>
+    </ng-template>
+  </mat-step>
+
+  <!-- STEP 2: SELECT IMPORT TYPE -->
+  <mat-step [completed]="!!entityType" #step2>
+    <ng-template matStepLabel>
+      <div i18n="Import Step - import types">Select Import Type(s)</div>
+
+      <div
+        *ngIf="step2.completed"
+        class="step-label-extra"
+        i18n="Import Step - type - sub-label"
+      >
+        as {{ entityType | entityTypeLabel }}
+      </div>
+    </ng-template>
+
+    <ng-template matStepContent>
+      <div class="stepper-navigation">
+        <button mat-stroked-button i18n="import back button" matStepperPrevious>
+          Back
+        </button>
+        <button
+          mat-raised-button
+          [disabled]="!step2.completed"
+          i18n="import next step button"
+          matStepperNext
+        >
+          Continue
+        </button>
+      </div>
+
+      <app-import-entity-type
+        [(entityType)]="entityType"
+      ></app-import-entity-type>
+
+      <mat-expansion-panel [expanded]="additionalImportActions?.length > 0">
+        <mat-expansion-panel-header>
+          <mat-panel-title>
+            <span i18n>Advanced Import Actions [optional]</span>
+            <app-help-button
+              style="float: right"
+              text="In addition to creating new records directly for the imported data you can also define additional actions
+                    (e.g. to make all imported records members of an existing activity or group).
+                    This is an advanced functionality you do not have to use.
+                    If uncertain, please refer to the user guides, videos or support contact."
+              i18n-text="import - additional actions - help text"
+            >
+            </app-help-button>
+          </mat-panel-title>
+        </mat-expansion-panel-header>
+
+        <app-import-additional-actions
+          [entityType]="entityType"
+          [(importActions)]="additionalImportActions"
+        ></app-import-additional-actions>
+      </mat-expansion-panel>
+    </ng-template>
+  </mat-step>
+
+  <!-- STEP 3: MAP COLUMNS -->
+  <mat-step [completed]="mappedColumnsCount > 0" #step3>
+    <ng-template matStepLabel>
+      <div i18n="Import Step - map columns">Map Columns</div>
+
+      <div
+        *ngIf="step3.completed"
+        class="step-label-extra"
+        i18n="Import Step - map columns - sub-label"
+      >
+        {{ mappedColumnsCount }} columns selected
+      </div>
+    </ng-template>
+
+    <ng-template matStepContent>
+      <div class="stepper-navigation">
+        <button mat-stroked-button i18n="import back button" matStepperPrevious>
+          Back
+        </button>
+        <button
+          mat-raised-button
+          [disabled]="!step3.completed"
+          i18n="import next step button"
+          matStepperNext
+        >
+          Continue
+        </button>
+      </div>
+
+      <app-import-column-mapping
+        [entityType]="entityType"
+        [columnMapping]="columnMapping"
+        (columnMappingChange)="onColumnMappingUpdate($event)"
+        [rawData]="rawData"
+      ></app-import-column-mapping>
+    </ng-template>
+  </mat-step>
+
+  <!-- STEP 4: REVIEW DATA -->
+  <mat-step [completed]="false" #step4>
+    <ng-template matStepLabel i18n="Import Step - review data">
+      Review & Edit Data
+    </ng-template>
+
+    <ng-template matStepContent>
+      <div class="stepper-navigation">
+        <button mat-stroked-button matStepperPrevious>Back</button>
+        <button mat-stroked-button color="warn" (click)="reset()">
+          Cancel
+        </button>
+      </div>
+
+      <app-import-review-data
+        [rawData]="rawData"
+        [entityType]="entityType"
+        [columnMapping]="columnMapping"
+        [additionalActions]="additionalImportActions"
+        (importComplete)="onImportCompleted()"
+      ></app-import-review-data>
+    </ng-template>
+  </mat-step>
+</mat-stepper>
