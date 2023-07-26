@@ -67,7 +67,7 @@ export class ImportHistoryComponent implements OnInit {
   async undoImport(item: ImportMetadata) {
     const confirmation = await this.confirmationDialog.getConfirmation(
       $localize`:Import Undo Confirmation Title:Revert Import?`,
-      $localize`:Import Undo Confirmation Text:Are you sure you want to undo this import? All records that had been imported at that time will be delete from the system.`,
+      $localize`:Import Undo Confirmation Text:Are you sure you want to undo this import? All records that had been imported at that time will be deleted from the system.`,
     );
 
     if (confirmation) {

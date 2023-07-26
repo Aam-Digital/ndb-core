@@ -20,7 +20,6 @@ import { DisplayEntityComponent } from "../../../core/entity-components/entity-s
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basic-autocomplete/basic-autocomplete.component";
 import { MatButtonModule } from "@angular/material/button";
-import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
 
 /**
  * Import sub-step: Let user select additional import actions like adding entities to a group entity.
@@ -41,7 +40,6 @@ import { HelpButtonComponent } from "../../../core/common-components/help-button
     MatFormFieldModule,
     BasicAutocompleteComponent,
     MatButtonModule,
-    HelpButtonComponent,
     NgIf,
   ],
   providers: [EntityTypeLabelPipe],
@@ -66,7 +64,7 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   constructor(
     private entityMapper: EntityMapperService,
     private entityTypeLabelPipe: EntityTypeLabelPipe,
-    private importService: ImportService
+    private importService: ImportService,
   ) {
     this.linkEntityForm
       .get("type")
@@ -88,7 +86,7 @@ export class ImportAdditionalActionsComponent implements OnChanges {
       this.linkEntityForm.disable();
     } else {
       this.linkableEntityTypes = this.importService.getLinkableEntities(
-        this.entityType
+        this.entityType,
       );
       this.linkEntityForm.enable();
       this.updateSelectableOptions(undefined);

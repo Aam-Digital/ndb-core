@@ -6,7 +6,7 @@
     [expanded]="i === 0"
   >
     <mat-expansion-panel-header>
-      <mat-panel-title i18n>
+      <mat-panel-title>
         {{ item.date | date }}
       </mat-panel-title>
 
@@ -35,17 +35,17 @@
           color="accent"
           i18n
         >
-          Re-use Column Mapping
+          Re-use configuration
         </button>
       </div>
 
       <button (click)="undoImport(item)" mat-stroked-button color="warn" i18n>
-        Undo Import
+        Undo import
       </button>
     </div>
   </mat-expansion-panel>
 </mat-accordion>
 
-<div *ngIf="!(previousImports?.length > 0)" class="no-results">
+<div *ngIf="!(previousImports?.length > 0)" class="no-results" i18n="Placeholder text">
   no existing imports
 </div>
