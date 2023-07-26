@@ -60,7 +60,7 @@ describe("ImportService", () => {
       jasmine.objectContaining({
         ids: testEntities.map((e) => e.getId(true)),
         config: testImportSettings,
-      })
+      }),
     );
   });
 
@@ -85,7 +85,7 @@ describe("ImportService", () => {
     const parsedEntities = await service.transformRawDataToEntities(
       rawData,
       entityType,
-      columnMapping
+      columnMapping,
     );
 
     let expectedEntities: any[] = [
@@ -100,7 +100,7 @@ describe("ImportService", () => {
     expectEntitiesToMatch(
       parsedEntities,
       expectedEntities.map((e) => Object.assign(new HealthCheck(), e)),
-      true
+      true,
     );
   });
 
@@ -164,7 +164,7 @@ describe("ImportService", () => {
     await expectEntitiesToBeInDatabase([relations[2]], false, true);
     expect(activity.participants).toEqual(["3"]);
     await expectAsync(
-      entityMapper.load(ImportMetadata, importMeta.getId())
+      entityMapper.load(ImportMetadata, importMeta.getId()),
     ).toBeRejected();
   });
 
@@ -183,7 +183,7 @@ describe("ImportService", () => {
     await expectEntitiesToBeInDatabase([children[2]], false, true);
   });
 
-  it("should map values using enum mappingFn", async () => {
+  it("should map values using enum mappingFn", () => {
     const mappingFn = service.getMappingFunction({ dataType: "date" });
     const input = "30.11.2023";
 
@@ -192,11 +192,11 @@ describe("ImportService", () => {
     expect(actualMapped).toEqual(new Date(2023, 10, 30));
   });
 
-  it("should map values using date mappingFn", async () => {
+  it("should map values using date mappingFn", () => {
     const enumService = TestBed.inject(ConfigurableEnumService);
     spyOn(enumService, "getEnumValues").and.returnValue(genders);
     TestBed.inject(EntitySchemaService).registerSchemaDatatype(
-      new ConfigurableEnumDatatype(enumService)
+      new ConfigurableEnumDatatype(enumService),
     );
 
     const mappingFn = service.getMappingFunction({

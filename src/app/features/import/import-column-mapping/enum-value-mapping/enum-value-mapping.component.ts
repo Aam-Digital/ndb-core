@@ -43,7 +43,7 @@ export class EnumValueMappingComponent
       return "?";
     }
     const unmappedValues = Object.values(col.additional).filter(
-      (v) => v === undefined
+      (v) => v === undefined,
     );
     if (unmappedValues.length > 0) {
       return unmappedValues.length.toString();
@@ -57,7 +57,7 @@ export class EnumValueMappingComponent
     private fb: FormBuilder,
     private dialog: MatDialogRef<any>,
     private confirmation: ConfirmationDialogService,
-    private schemaService: EntitySchemaService
+    private schemaService: EntitySchemaService,
   ) {
     super();
   }
@@ -66,10 +66,10 @@ export class EnumValueMappingComponent
     this.schema = this.data.entityType.schema.get(this.data.col.propertyName);
     this.component = this.schemaService.getComponent(this.schema, "edit");
 
-    this.form = this.fb.group(this.initFormValues(this.data.col.additional));
+    this.form = this.fb.group(this.getFormValues(this.data.col.additional));
   }
 
-  private initFormValues(additional: any) {
+  private getFormValues(additional: any) {
     if (!additional) {
       additional = {};
     }
@@ -82,7 +82,7 @@ export class EnumValueMappingComponent
         if (additional.hasOwnProperty(val)) {
           selectedMapping = this.schemaService.valueToEntityFormat(
             additional[val],
-            this.schema
+            this.schema,
           );
         }
         formObj[val] = new FormControl(selectedMapping);
@@ -98,7 +98,7 @@ export class EnumValueMappingComponent
       allFilled ||
       (await this.confirmation.getConfirmation(
         $localize`Ignore values?`,
-        $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`
+        $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
       ));
     if (confirmed) {
       this.data.col.additional = rawValues;
@@ -114,7 +114,7 @@ export class EnumValueMappingComponent
     for (const k in rawValues) {
       rawValues[k] = this.schemaService.valueToDatabaseFormat(
         rawValues[k],
-        this.schema
+        this.schema,
       );
     }
 

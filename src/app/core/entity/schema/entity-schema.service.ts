@@ -131,7 +131,7 @@ export class EntitySchemaService {
   public loadDataIntoEntity(entity: Entity, data: any) {
     const transformed = this.transformDatabaseToEntityFormat(
       data,
-      (<typeof Entity>entity.constructor).schema
+      (<typeof Entity>entity.constructor).schema,
     );
     Object.assign(entity, transformed);
   }
@@ -143,7 +143,7 @@ export class EntitySchemaService {
    */
   public transformEntityToDatabaseFormat(
     entity: Entity,
-    schema?: EntitySchema
+    schema?: EntitySchema,
   ): any {
     if (!schema) {
       schema = entity.getSchema();
@@ -185,7 +185,7 @@ export class EntitySchemaService {
    */
   getComponent(
     propertySchema: EntitySchemaField,
-    mode: "view" | "edit" = "view"
+    mode: "view" | "edit" = "view",
   ): string {
     if (!propertySchema) {
       return undefined;
@@ -202,7 +202,7 @@ export class EntitySchemaService {
     }
 
     const innerDataType = this.getDatatypeOrDefault(
-      propertySchema.innerDataType
+      propertySchema.innerDataType,
     );
     if (innerDataType?.[componentAttribute]) {
       return innerDataType[componentAttribute];
@@ -218,15 +218,15 @@ export class EntitySchemaService {
   valueToDatabaseFormat(
     value: any,
     schemaField: EntitySchemaField,
-    entity?: Entity
+    entity?: Entity,
   ) {
     return this.getDatatypeOrDefault(
-      schemaField.dataType
+      schemaField.dataType,
     ).transformToDatabaseFormat(value, schemaField, this, entity);
   }
 
   /**
-   * Transform a single value into database format
+   * Transform a single value into entity format
    * @param value
    * @param schemaField
    * @param dataObject
@@ -234,10 +234,10 @@ export class EntitySchemaService {
   valueToEntityFormat(
     value: any,
     schemaField: EntitySchemaField,
-    dataObject?: any
+    dataObject?: any,
   ) {
     return this.getDatatypeOrDefault(
-      schemaField.dataType
+      schemaField.dataType,
     ).transformToObjectFormat(value, schemaField, this, dataObject);
   }
 }
