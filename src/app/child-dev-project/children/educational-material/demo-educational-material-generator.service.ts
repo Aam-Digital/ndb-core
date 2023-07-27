@@ -33,7 +33,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
 
   constructor(
     private config: DemoEducationMaterialConfig,
-    private demoChildren: DemoChildGenerator
+    private demoChildren: DemoChildGenerator,
   ) {
     super();
   }
@@ -42,7 +42,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     const data = [];
 
     for (const child of this.demoChildren.entities) {
-      const count = faker.datatype.number({
+      const count = faker.number.int({
         min: this.config.minCount,
         max: this.config.maxCount,
       });
@@ -52,7 +52,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
 
       const specialMaterial = this.generateEducationalMaterialEntity(child);
       specialMaterial.materialType = faker.helpers.arrayElement(
-        materials.filter((material) => material.hasOwnProperty("color"))
+        materials.filter((material) => material.hasOwnProperty("color")),
       );
       specialMaterial.materialAmount = 1;
       data.push(specialMaterial);
@@ -65,10 +65,10 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
     const entity = new EducationalMaterial();
 
     entity.child = child.getId();
-    entity.date = faker.date.between(
-      child.admissionDate,
-      faker.getEarlierDateOrToday(child.dropoutDate)
-    );
+    entity.date = faker.date.between({
+      from: child.admissionDate,
+      to: faker.getEarlierDateOrToday(child.dropoutDate),
+    });
     entity.materialAmount = faker.helpers.arrayElement([1, 1, 1, 2, 3]);
     entity.materialType = faker.helpers.arrayElement(materials);
 

@@ -4,6 +4,7 @@ import { UpdatedEntity } from "./model/entity-update";
 import { Observable, Subject } from "rxjs";
 import { entityRegistry } from "./database-entity.decorator";
 import { HttpErrorResponse } from "@angular/common/http";
+import { TEST_USER } from "../../utils/mocked-testing.module";
 
 export function mockEntityMapper(
   withData: Entity[] = []
@@ -22,7 +23,12 @@ export class MockEntityMapperService extends EntityMapperService {
   private observables: Map<string, Subject<UpdatedEntity<any>>> = new Map();
 
   constructor() {
-    super(null, null, null, entityRegistry);
+    super(
+      null,
+      null,
+      { getCurrentUser: () => ({ name: TEST_USER }) } as any,
+      entityRegistry
+    );
   }
 
   private publishUpdates(type: string, update: UpdatedEntity<any>) {
@@ -41,6 +47,7 @@ export class MockEntityMapperService extends EntityMapperService {
     if (!this.data.get(type)) {
       this.data.set(type, new Map());
     }
+    super.setEntityMetadata(entity);
     const alreadyExists = this.contains(entity);
     this.data.get(type).set(entity.getId(), entity);
     this.publishUpdates(
@@ -74,7 +81,7 @@ export class MockEntityMapperService extends EntityMapperService {
    * @param id
    */
   public get(entityType: string, id: string): Entity {
-    const entityId = id.includes(":") ? id.split(":")[1] : id;
+    const entityId = Entity.extractEntityIdFromId(id);
     const result = this.data.get(entityType)?.get(entityId);
     if (!result) {
       throw new HttpErrorResponse({ status: 404 });

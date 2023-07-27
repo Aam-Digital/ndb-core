@@ -1,13 +1,11 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ReportingComponent } from "./reporting.component";
 import { ActivatedRoute } from "@angular/router";
 import { of } from "rxjs";
 import { DataAggregationService } from "../data-aggregation.service";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { DataTransformationService } from "app/core/export/data-transformation-service/data-transformation.service";
-import { DownloadService } from "../../../core/export/download-service/download.service";
+import { importProvidersFrom } from "@angular/core";
 
 const reportingService = {
   calculateReport: () => {
@@ -184,30 +182,22 @@ export default {
   title: "Features/Reporting/Report",
   component: ReportingComponent,
   decorators: [
-    moduleMetadata({
-      imports: [ReportingComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
+        importProvidersFrom(StorybookBaseModule),
+        { provide: DataAggregationService, useValue: reportingService },
         {
           provide: ActivatedRoute,
           useValue: {
             data: of({ config: { reports: [{ title: "Dummy Report" }] } }),
           },
         },
-        { provide: DataAggregationService, useValue: reportingService },
-        {
-          provide: DataTransformationService,
-          useValue: { queryAndTransformData: () => {} },
-        },
-        {
-          provide: DownloadService,
-          useValue: { triggerDownload: () => {} },
-        },
       ],
     }),
   ],
 } as Meta;
 
-const Template: Story<ReportingComponent> = (args: ReportingComponent) => ({
+const Template: StoryFn<ReportingComponent> = (args: ReportingComponent) => ({
   component: ReportingComponent,
   props: args,
 });

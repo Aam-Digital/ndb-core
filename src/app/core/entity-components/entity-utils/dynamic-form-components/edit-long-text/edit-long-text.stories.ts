@@ -1,10 +1,13 @@
-import { Story } from "@storybook/angular/types-6-0";
+import { StoryFn } from "@storybook/angular";
 import { generateFormFieldStory } from "../edit-component-story-utils";
 
 const formFieldStory = generateFormFieldStory("EditLongText", "abcde\nxyz");
 
-export default formFieldStory.meta;
-const Template: Story = (args) => ({
+export default {
+  title: "Core/Entities/Edit Properties/EditLongText",
+  ...formFieldStory.meta,
+};
+const Template: StoryFn = (args) => ({
   props: args,
 });
 

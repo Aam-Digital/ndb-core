@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import {
   entityFormStorybookDefaultParameters,
   StorybookBaseModule,
@@ -7,10 +6,8 @@ import {
 import { EnumDropdownComponent } from "./enum-dropdown.component";
 import { FormControl } from "@angular/forms";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
 import { ConfigurableEnum } from "../configurable-enum";
-import { ConfigurableEnumService } from "../configurable-enum.service";
+import { importProvidersFrom } from "@angular/core";
 
 const centerEnum = Object.assign(new ConfigurableEnum("center"), {
   values: centersUnique,
@@ -20,22 +17,17 @@ export default {
   title: "Core/Entities/Edit Properties/Enum Dropdown",
   component: EnumDropdownComponent,
   decorators: [
-    moduleMetadata({
-      imports: [EnumDropdownComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([centerEnum]),
-        },
-        ConfigurableEnumService,
+        importProvidersFrom(StorybookBaseModule.withData([centerEnum])),
       ],
     }),
   ],
   parameters: entityFormStorybookDefaultParameters,
 } as Meta;
 
-const Template: Story<EnumDropdownComponent> = (
-  args: EnumDropdownComponent
+const Template: StoryFn<EnumDropdownComponent> = (
+  args: EnumDropdownComponent,
 ) => ({
   props: args,
 });

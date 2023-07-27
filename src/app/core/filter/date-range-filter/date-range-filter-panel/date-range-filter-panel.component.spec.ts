@@ -37,6 +37,8 @@ describe("DateRangeFilterPanelComponent", () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => jasmine.clock().uninstall());
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
@@ -50,7 +52,7 @@ describe("DateRangeFilterPanelComponent", () => {
     const toDate = moment().startOf("month").add(13, "days");
     component.selectedRangeValue = new DateRange(
       fromDate.toDate(),
-      toDate.toDate()
+      toDate.toDate(),
     );
     fixture.detectChanges();
     const calendar = await loader.getHarness(MatCalendarHarness);
@@ -80,7 +82,7 @@ describe("DateRangeFilterPanelComponent", () => {
 
     const filterRange = dateFilter.getDateRange();
     expect(filterRange.start).toEqual(
-      moment("2023-04-08").startOf("day").toDate()
+      moment("2023-04-08").startOf("day").toDate(),
     );
     expect(filterRange.end).toEqual(moment("2023-04-08").endOf("day").toDate());
     expect(dateFilter.selectedOption).toBe("0");

@@ -3,7 +3,7 @@ import { RouteTarget } from "../../../app.routing";
 import {
   InputFileComponent,
   ParsedData,
-} from "../../../features/data-import/input-file/input-file.component";
+} from "../../input-file/input-file.component";
 import { ConfigImportParserService } from "../config-import-parser.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";

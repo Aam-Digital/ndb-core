@@ -286,7 +286,6 @@ export const defaultJsonConfig = {
   },
   "view:import": {
     "component": "Import",
-    "permittedUserRoles": ["admin_app"]
   },
   "view:user": {
     "component": "EntityList",

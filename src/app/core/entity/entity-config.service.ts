@@ -85,6 +85,8 @@ export class EntityConfigService {
     entityType.icon = (entityConfig.icon as IconName) ?? entityType.icon;
     entityType.color = entityConfig.color ?? entityType.color;
     entityType.route = entityConfig.route ?? entityType.route;
+
+    entityType._isCustomizedType = true;
   }
 
   /**

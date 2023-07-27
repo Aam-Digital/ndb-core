@@ -1,14 +1,17 @@
-import { Story } from "@storybook/angular/types-6-0";
 import { generateFormFieldStory } from "../edit-component-story-utils";
 import { DateWithAge } from "../../../../../child-dev-project/children/model/dateWithAge";
+import { StoryFn } from "@storybook/angular";
 
 const formFieldStory = generateFormFieldStory(
   "EditAge",
-  new DateWithAge("2001-01-25")
+  new DateWithAge("2001-01-25"),
 );
 
-export default formFieldStory.meta;
-const Template: Story = (args) => ({
+export default {
+  title: "Core/Entities/Edit Properties/EditAge",
+  ...formFieldStory.meta,
+};
+const Template: StoryFn = (args) => ({
   props: args,
 });
 

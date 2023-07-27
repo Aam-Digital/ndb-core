@@ -53,6 +53,7 @@ describe("DateRangeFilterComponent", () => {
       },
     };
     expect(component.dateFilter.getFilter()).toEqual(expectedDataFilter);
+    jasmine.clock().uninstall();
   });
 
   it("should set the correct date filter when inputting a specific date range via the URL", () => {

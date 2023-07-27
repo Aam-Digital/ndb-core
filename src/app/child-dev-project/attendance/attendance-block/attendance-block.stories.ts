@@ -1,5 +1,4 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import {
   ActivityAttendance,
   generateEventWithAttendance,
@@ -7,7 +6,6 @@ import {
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceBlockComponent } from "./attendance-block.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { MatNativeDateModule } from "@angular/material/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ConfigService } from "../../../core/config/config.service";
 
@@ -16,7 +14,6 @@ export default {
   component: AttendanceBlockComponent,
   decorators: [
     moduleMetadata({
-      imports: [AttendanceBlockComponent, MatNativeDateModule],
       providers: [
         { provide: EntityMapperService, useValue: null },
         { provide: ConfigService, useValue: {} },
@@ -25,8 +22,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<AttendanceBlockComponent> = (
-  args: AttendanceBlockComponent
+const Template: StoryFn<AttendanceBlockComponent> = (
+  args: AttendanceBlockComponent,
 ) => ({
   component: AttendanceBlockComponent,
   props: args,
@@ -77,7 +74,7 @@ GoodAttendance.args = {
 
 const attendanceRecordEmpty = ActivityAttendance.create(
   new Date("2021-01-01"),
-  []
+  [],
 );
 attendanceRecordEmpty.activity = RecurringActivity.create("Demo Activity");
 export const PeriodWithoutEvents = Template.bind({});

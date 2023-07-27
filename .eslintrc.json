@@ -1,8 +1,5 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "projects/**/*"
-  ],
   "overrides": [
     {
       "files": [
@@ -10,8 +7,7 @@
       ],
       "parserOptions": {
         "project": [
-          "tsconfig.json",
-          "e2e/tsconfig.json"
+          "tsconfig.json"
         ],
         "createDefaultProgram": true
       },
@@ -46,8 +42,15 @@
       "extends": [
         "plugin:@angular-eslint/template/recommended"
       ],
+      "rules": {}
+    },    {
+      "files": ["*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],
       "rules": {
+        "storybook/story-exports": "off"
       }
     }
+  ],
+  "extends": [
+    "plugin:storybook/recommended"
   ]
 }
