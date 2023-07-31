@@ -26,7 +26,7 @@ export const coreComponents: ComponentTuple[] = [
     "Form",
     () =>
       import("./entity-components/entity-details/form/form.component").then(
-        (c) => c.FormComponent
+        (c) => c.FormComponent,
       ),
   ],
   [
@@ -114,6 +114,13 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.EditNumberComponent),
   ],
   [
+    "EditDescriptionOnly",
+    () =>
+      import(
+        "./entity-components/entity-utils/dynamic-form-components/edit-description-only/edit-description-only.component"
+      ).then((c) => c.EditDescriptionOnlyComponent),
+  ],
+  [
     "DisplayCheckmark",
     () =>
       import(
@@ -173,21 +180,21 @@ export const coreComponents: ComponentTuple[] = [
     "UserSecurity",
     () =>
       import("./user/user-security/user-security.component").then(
-        (c) => c.UserSecurityComponent
+        (c) => c.UserSecurityComponent,
       ),
   ],
   [
     "Dashboard",
     () =>
       import("./dashboard/dashboard/dashboard.component").then(
-        (c) => c.DashboardComponent
+        (c) => c.DashboardComponent,
       ),
   ],
   [
     "EntityList",
     () =>
       import("./entity-components/entity-list/entity-list.component").then(
-        (c) => c.EntityListComponent
+        (c) => c.EntityListComponent,
       ),
   ],
   [
@@ -205,14 +212,14 @@ export const coreComponents: ComponentTuple[] = [
     "ConfigImport",
     () =>
       import("./config-setup/config-import/config-import.component").then(
-        (c) => c.ConfigImportComponent
+        (c) => c.ConfigImportComponent,
       ),
   ],
   [
     "MarkdownPage",
     () =>
       import("./markdown-page/markdown-page/markdown-page.component").then(
-        (c) => c.MarkdownPageComponent
+        (c) => c.MarkdownPageComponent,
       ),
   ],
   [
