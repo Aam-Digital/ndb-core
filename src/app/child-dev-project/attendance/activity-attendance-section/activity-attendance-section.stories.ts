@@ -1,5 +1,9 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ActivityAttendanceSectionComponent } from "./activity-attendance-section.component";
 import {
@@ -8,12 +12,12 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import moment from "moment";
 import { AttendanceService } from "../attendance.service";
 import { ChildrenService } from "../../children/children.service";
 import { of } from "rxjs";
 import { Child } from "../../children/model/child";
+import { importProvidersFrom } from "@angular/core";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const attendanceRecords = [
@@ -28,7 +32,7 @@ const attendanceRecords = [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ]),
-    ]
+    ],
   ),
 
   ActivityAttendance.create(moment().startOf("month").toDate(), [
@@ -38,28 +42,28 @@ const attendanceRecords = [
         ["2", AttendanceLogicalStatus.PRESENT],
         ["3", AttendanceLogicalStatus.ABSENT],
       ],
-      moment().subtract(5, "days").toDate()
+      moment().subtract(5, "days").toDate(),
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      moment().subtract(4, "days").toDate()
+      moment().subtract(4, "days").toDate(),
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.ABSENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      moment().subtract(3, "days").toDate()
+      moment().subtract(3, "days").toDate(),
     ),
     generateEventWithAttendance(
       [
         ["1", AttendanceLogicalStatus.PRESENT],
         ["2", AttendanceLogicalStatus.ABSENT],
       ],
-      moment().subtract(2, "days").toDate()
+      moment().subtract(2, "days").toDate(),
     ),
   ]),
 ];
@@ -69,15 +73,13 @@ attendanceRecords.forEach((a) => {
 });
 
 export default {
-  title: "Attendance/Sections/ActivityAttendanceSection",
+  title: "Features/Attendance/Sections/ActivityAttendanceSection",
   component: ActivityAttendanceSectionComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [
-        ActivityAttendanceSectionComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
       providers: [
         {
           provide: AttendanceService,
@@ -94,8 +96,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<ActivityAttendanceSectionComponent> = (
-  args: ActivityAttendanceSectionComponent
+const Template: StoryFn<ActivityAttendanceSectionComponent> = (
+  args: ActivityAttendanceSectionComponent,
 ) => ({
   component: ActivityAttendanceSectionComponent,
   props: args,

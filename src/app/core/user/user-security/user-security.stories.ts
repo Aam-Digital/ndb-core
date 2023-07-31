@@ -1,36 +1,37 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { UserSecurityComponent } from "./user-security.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { SessionService } from "../../session/session-service/session.service";
+import { User } from "../user";
+import { importProvidersFrom } from "@angular/core";
+import { createLocalSession } from "../../../utils/mocked-testing.module";
 
 export default {
-  title: "Core/User/User Security",
+  title: "Core/Admin/User Security",
   component: UserSecurityComponent,
   decorators: [
-    moduleMetadata({
-      imports: [UserSecurityComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
+        importProvidersFrom(StorybookBaseModule),
         {
           provide: SessionService,
-          useValue: {
-            getCurrentUser: () => ({
-              name: "Test",
-              roles: ["account_manager"],
-            }),
-          },
+          useValue: createLocalSession(true, {
+            name: "Test",
+            roles: ["account_manager"],
+          }),
         },
       ],
     }),
   ],
 } as Meta;
 
-const Template: Story<UserSecurityComponent> = (
-  args: UserSecurityComponent
+const Template: StoryFn<UserSecurityComponent> = (
+  args: UserSecurityComponent,
 ) => ({
-  component: UserSecurityComponent,
   props: args,
 });
 
 export const NotRegistered = Template.bind({});
-NotRegistered.args = {};
+NotRegistered.args = {
+  entity: new User(),
+};

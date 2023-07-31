@@ -1,21 +1,13 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
-import { DownloadService } from "../../../core/export/download-service/download.service";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
-import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../../child-dev-project/children/model/genders";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
-import { ConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum.service";
-import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
+import { importProvidersFrom } from "@angular/core";
 
 const addressSchema: EntitySchemaField = {
   label: "Address",
@@ -61,37 +53,18 @@ export default {
   title: "Features/Matching Entities",
   component: MatchingEntitiesComponent,
   decorators: [
-    moduleMetadata({
-      imports: [MatchingEntitiesComponent, StorybookBaseModule],
+    applicationConfig({
       providers: [
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper([...entitiesA, ...entitiesB]),
-        },
-        { provide: DownloadService, useValue: null },
-        {
-          provide: EntitySchemaService,
-          useFactory: (
-            entityMapper: EntityMapperService,
-            ability: EntityAbility
-          ) => {
-            const schemaService = new EntitySchemaService();
-            schemaService.registerSchemaDatatype(
-              new ConfigurableEnumDatatype(
-                new ConfigurableEnumService(entityMapper, ability)
-              )
-            );
-            return schemaService;
-          },
-        },
-        FormDialogService,
+        importProvidersFrom(
+          StorybookBaseModule.withData([...entitiesA, ...entitiesB]),
+        ),
       ],
     }),
   ],
 } as Meta;
 
-const Template: Story<MatchingEntitiesComponent> = (
-  args: MatchingEntitiesComponent
+const Template: StoryFn<MatchingEntitiesComponent> = (
+  args: MatchingEntitiesComponent,
 ) => ({
   component: MatchingEntitiesComponent,
   props: args,

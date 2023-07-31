@@ -1,14 +1,11 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { RollCallSetupComponent } from "./roll-call-setup.component";
 import moment from "moment";
 import { Note } from "../../../notes/model/note";
 import { DemoActivityGeneratorService } from "../../demo-data/demo-activity-generator.service";
-import { SessionService } from "../../../../core/session/session-service/session.service";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { LoginState } from "../../../../core/session/session-states/login-state.enum";
+import { importProvidersFrom } from "@angular/core";
 
 const demoEvents: Note[] = [
   Note.create(new Date(), "Class 5a Parents Meeting"),
@@ -40,35 +37,25 @@ const demoActivities = [
 demoActivities[0].assignedTo = ["demo"];
 
 export default {
-  title: "Attendance/Views/RollCallSetup",
+  title: "Features/Attendance/Views/RollCallSetup",
   component: RollCallSetupComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        RollCallSetupComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(LoginState.LOGGED_IN, [
-          ...demoChildren,
-          ...demoEvents,
-          ...demoActivities,
-        ]),
-      ],
+    applicationConfig({
       providers: [
-        {
-          provide: SessionService,
-          useValue: {
-            getCurrentUser: () => {
-              return { name: "username" };
-            },
-          },
-        },
+        importProvidersFrom(
+          StorybookBaseModule.withData([
+            ...demoChildren,
+            ...demoEvents,
+            ...demoActivities,
+          ]),
+        ),
       ],
     }),
   ],
 } as Meta;
 
-const Template: Story<RollCallSetupComponent> = (
-  args: RollCallSetupComponent
+const Template: StoryFn<RollCallSetupComponent> = (
+  args: RollCallSetupComponent,
 ) => ({
   component: RollCallSetupComponent,
   props: args,

@@ -1,26 +1,19 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ComingSoonComponent } from "./coming-soon.component";
-import { AnalyticsService } from "../../analytics/analytics.service";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/ComingSoonPage",
+  title: "Core/> App Layout/Coming Soon Page",
   component: ComingSoonComponent,
   decorators: [
-    moduleMetadata({
-      imports: [ComingSoonComponent, StorybookBaseModule],
-      providers: [
-        {
-          provide: AnalyticsService,
-          useValue: { eventTrack: (x) => console.log("track", x) },
-        },
-      ],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<ComingSoonComponent> = (args: ComingSoonComponent) => ({
+const Template: StoryFn<ComingSoonComponent> = (args: ComingSoonComponent) => ({
   component: ComingSoonComponent,
   props: args,
 });

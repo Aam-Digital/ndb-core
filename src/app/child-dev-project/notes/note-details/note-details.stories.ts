@@ -1,42 +1,40 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { NoteDetailsComponent } from "./note-details.component";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
-import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { ChildrenService } from "../../children/children.service";
-import { of } from "rxjs";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { MatDialogRef } from "@angular/material/dialog";
+import { NEVER } from "rxjs";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 const demoChildren: Child[] = [Child.create("Joe"), Child.create("Jane")];
 
 export default {
-  title: "Child Dev Project/NoteDetails",
+  title: "Features/NoteDetails",
   component: NoteDetailsComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule.withData())],
+    }),
     moduleMetadata({
-      imports: [
-        NoteDetailsComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
       providers: [
         {
-          provide: MAT_DIALOG_DATA,
-          useValue: { data: { entity: Note.create(new Date()) } },
-        },
-        { provide: MatDialogRef, useValue: {} },
-        {
-          provide: ChildrenService,
-          useValue: { getChild: () => of(Child.create("John Doe")) },
+          provide: MatDialogRef,
+          useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
         },
       ],
     }),
   ],
 } as Meta;
 
-const Template: Story<NoteDetailsComponent> = (args: NoteDetailsComponent) => ({
+const Template: StoryFn<NoteDetailsComponent> = (
+  args: NoteDetailsComponent,
+) => ({
   component: NoteDetailsComponent,
   props: args,
 });
@@ -52,6 +50,6 @@ eventNote.addChild(demoChildren[0].getId());
 eventNote.addChild(demoChildren[1].getId());
 
 export const EventWithAttendance = Template.bind({});
-Primary.args = {
+EventWithAttendance.args = {
   entity: eventNote,
 };

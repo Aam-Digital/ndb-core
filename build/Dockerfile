@@ -64,7 +64,7 @@ RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
 
 ### PROD image
 
-FROM nginx:1.23.3-alpine
+FROM nginx:1.25.1-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container
@@ -73,6 +73,16 @@ ENV PORT=80
 ENV COUCHDB_URL="http://localhost"
 # The url to a nominatim instance, see https://nominatim.org/
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
+
+# content security policy headers
+ENV CSP_REPORT_URI=""
+# overwrite the Content-Security-Policy rules (report-uri is added automatically)
+## default includes all required whitelists for production server
+## to disable any CSP blocking, set to "default-src *  data: blob: filesystem: about: ws: wss: 'unsafe-inline' 'unsafe-eval'"
+ENV CSP="default-src 'self' 'unsafe-eval' data: https://sentry.io https://*.tile.openstreetmap.org/ https://matomo.aam-digital.org  https://*.aam-digital.com https://api.github.com/repos/Aam-Digital/ 'sha256-Sh1PNRUktjifFwuOicavxmlAcFpZMbUqQGiCIoKhDI8='; style-src 'self' 'unsafe-inline'"
+### 'sha256-Sh1PNRUktjifFwuOicavxmlAcFpZMbUqQGiCIoKhDI8=' for index.html writing browser details
+### 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
+
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'

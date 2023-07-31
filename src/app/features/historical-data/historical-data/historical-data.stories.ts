@@ -1,31 +1,18 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
-import { DatePipe } from "@angular/common";
-import { ConfigService } from "../../../core/config/config.service";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { HistoricalEntityData } from "../model/historical-entity-data";
 import { HistoricalDataComponent } from "./historical-data.component";
 import { HistoricalDataService } from "../historical-data.service";
 import { ratingAnswers } from "../model/rating-answers";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/HistoricalDataComponent",
   component: HistoricalDataComponent,
   decorators: [
-    moduleMetadata({
-      imports: [
-        HistoricalDataComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
-      declarations: [],
+    applicationConfig({
       providers: [
-        DatePipe,
-        {
-          provide: ConfigService,
-          useValue: { getConfig: () => ratingAnswers },
-        },
+        importProvidersFrom(StorybookBaseModule),
         {
           provide: HistoricalDataService,
           useValue: {
@@ -38,8 +25,8 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<HistoricalDataComponent> = (
-  args: HistoricalDataComponent
+const Template: StoryFn<HistoricalDataComponent> = (
+  args: HistoricalDataComponent,
 ) => ({
   component: HistoricalDataComponent,
   props: args,

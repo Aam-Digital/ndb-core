@@ -107,17 +107,10 @@ export class EntitySchemaService {
       const schemaField: EntitySchemaField = schema.get(key);
 
       if (data[key] === undefined || data[key] === null) {
-        if (schemaField.defaultValue !== undefined) {
-          data[key] = schemaField.defaultValue;
-        } else {
-          // skip and keep undefined
-          continue;
-        }
+        continue;
       }
 
-      const newValue = this.getDatatypeOrDefault(
-        schemaField.dataType
-      ).transformToObjectFormat(data[key], schemaField, this, data);
+      const newValue = this.valueToEntityFormat(data[key], schemaField, data);
       if (newValue !== undefined) {
         transformed[key] = newValue;
       }
@@ -138,7 +131,7 @@ export class EntitySchemaService {
   public loadDataIntoEntity(entity: Entity, data: any) {
     const transformed = this.transformDatabaseToEntityFormat(
       data,
-      (<typeof Entity>entity.constructor).schema
+      (<typeof Entity>entity.constructor).schema,
     );
     Object.assign(entity, transformed);
   }
@@ -150,7 +143,7 @@ export class EntitySchemaService {
    */
   public transformEntityToDatabaseFormat(
     entity: Entity,
-    schema?: EntitySchema
+    schema?: EntitySchema,
   ): any {
     if (!schema) {
       schema = entity.getSchema();
@@ -163,18 +156,12 @@ export class EntitySchemaService {
       const schemaField: EntitySchemaField = schema.get(key);
 
       if (value === undefined || value === null) {
-        if (schemaField.defaultValue !== undefined) {
-          value = schemaField.defaultValue;
-        } else {
-          // skip and keep undefined
-          continue;
-        }
+        // skip and keep undefined
+        continue;
       }
 
       try {
-        data[key] = this.getDatatypeOrDefault(
-          schemaField.dataType
-        ).transformToDatabaseFormat(value, schemaField, this, entity);
+        data[key] = this.valueToDatabaseFormat(value, schemaField, entity);
       } catch (err) {
         throw new Error(`Transformation for ${key} failed: ${err}`);
       }
@@ -198,7 +185,7 @@ export class EntitySchemaService {
    */
   getComponent(
     propertySchema: EntitySchemaField,
-    mode: "view" | "edit" = "view"
+    mode: "view" | "edit" = "view",
   ): string {
     if (!propertySchema) {
       return undefined;
@@ -215,10 +202,42 @@ export class EntitySchemaService {
     }
 
     const innerDataType = this.getDatatypeOrDefault(
-      propertySchema.innerDataType
+      propertySchema.innerDataType,
     );
     if (innerDataType?.[componentAttribute]) {
       return innerDataType[componentAttribute];
     }
+  }
+
+  /**
+   * Transform a single value into database format
+   * @param value
+   * @param schemaField
+   * @param entity
+   */
+  valueToDatabaseFormat(
+    value: any,
+    schemaField: EntitySchemaField,
+    entity?: Entity,
+  ) {
+    return this.getDatatypeOrDefault(
+      schemaField.dataType,
+    ).transformToDatabaseFormat(value, schemaField, this, entity);
+  }
+
+  /**
+   * Transform a single value into entity format
+   * @param value
+   * @param schemaField
+   * @param dataObject
+   */
+  valueToEntityFormat(
+    value: any,
+    schemaField: EntitySchemaField,
+    dataObject?: any,
+  ) {
+    return this.getDatatypeOrDefault(
+      schemaField.dataType,
+    ).transformToObjectFormat(value, schemaField, this, dataObject);
   }
 }

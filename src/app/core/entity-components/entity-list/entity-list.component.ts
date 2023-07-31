@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   ColumnGroupsConfig,
   EntityListConfig,
@@ -77,6 +77,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
     ViewTitleComponent,
     ExportDataDirective,
     DisableEntityOperationDirective,
+    RouterLink,
   ],
   standalone: true,
 })

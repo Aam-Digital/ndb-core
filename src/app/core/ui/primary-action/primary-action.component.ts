@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { SessionService } from "../../session/session-service/session.service";
 import { NoteDetailsComponent } from "../../../child-dev-project/notes/note-details/note-details.component";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { MatButtonModule } from "@angular/material/button";
@@ -31,7 +30,6 @@ export class PrimaryActionComponent {
   noteConstructor = Note;
 
   constructor(
-    private sessionService: SessionService,
     private formDialog: FormDialogService
   ) {}
 
@@ -47,9 +45,6 @@ export class PrimaryActionComponent {
   }
 
   private createNewNote() {
-    const newNote = new Note(Date.now().toString());
-    newNote.date = new Date();
-    newNote.authors = [this.sessionService.getCurrentUser().name];
-    return newNote;
+    return new Note(Date.now().toString());
   }
 }

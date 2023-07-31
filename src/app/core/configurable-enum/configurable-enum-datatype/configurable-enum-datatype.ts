@@ -17,7 +17,7 @@ export class ConfigurableEnumDatatype
    * @param value Object to be saved as specified in config file; e.g. `{id: 'CALL', label:'Phone Call', color:'#FFFFFF'}`
    */
   public transformToDatabaseFormat(value: ConfigurableEnumValue): string {
-    return value.id;
+    return value?.id;
   }
 
   /**

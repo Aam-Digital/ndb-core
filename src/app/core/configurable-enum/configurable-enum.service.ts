@@ -45,7 +45,6 @@ export class ConfigurableEnumService {
     ) {
       const newEnum = new ConfigurableEnum(id);
       this.cacheEnum(newEnum);
-      this.entityMapper.save(newEnum);
     }
     return this.enums.get(entityId);
   }

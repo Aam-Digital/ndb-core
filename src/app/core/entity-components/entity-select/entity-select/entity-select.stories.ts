@@ -1,19 +1,12 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { BackupService } from "../../../admin/services/backup.service";
-import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { EntitySelectComponent } from "./entity-select.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { School } from "../../../../child-dev-project/schools/model/school";
-import {
-  componentRegistry,
-  ComponentRegistry,
-} from "../../../../dynamic-components";
+import { componentRegistry } from "../../../../dynamic-components";
 import { ChildBlockComponent } from "../../../../child-dev-project/children/child-block/child-block.component";
 import { SchoolBlockComponent } from "../../../../child-dev-project/schools/school-block/school-block.component";
-import { Database } from "../../../database/database";
-import { ChildrenService } from "../../../../child-dev-project/children/children.service";
+import { importProvidersFrom } from "@angular/core";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -26,29 +19,19 @@ child3.name = "Third Child";
 child3.projectNumber = "3";
 
 export default {
-  title: "Core/EntityComponents/EntitySelect",
+  title: "Core/Entities/EntitySelect",
   component: EntitySelectComponent,
   decorators: [
-    moduleMetadata({
-      imports: [EntitySelectComponent, StorybookBaseModule],
-      declarations: [],
+    applicationConfig({
       providers: [
-        { provide: BackupService, useValue: {} },
-        {
-          provide: EntityMapperService,
-          useValue: {
-            loadType: () =>
-              Promise.resolve([
-                child1,
-                child2,
-                child3,
-                School.create({ name: "School ABC" }),
-              ]),
-          },
-        },
-        { provide: ComponentRegistry, useValue: componentRegistry },
-        { provide: Database, useValue: {} },
-        { provide: ChildrenService, useValue: {} },
+        importProvidersFrom(
+          StorybookBaseModule.withData([
+            child1,
+            child2,
+            child3,
+            School.create({ name: "School ABC" }),
+          ]),
+        ),
       ],
     }),
   ],
@@ -71,29 +54,29 @@ export default {
 componentRegistry.add("ChildBlock", async () => ChildBlockComponent);
 componentRegistry.add("SchoolBlock", async () => SchoolBlockComponent);
 
-const Template: Story<EntitySelectComponent<Child>> = (
-  args: EntitySelectComponent<Child>
+const Template: StoryFn<EntitySelectComponent<Child>> = (
+  args: EntitySelectComponent<Child>,
 ) => ({
   component: EntitySelectComponent,
   props: args,
 });
 
-export const primary = Template.bind({});
-primary.args = {
+export const Active = Template.bind({});
+Active.args = {
   entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",
 };
 
-export const multipleTypes = Template.bind({});
-multipleTypes.args = {
+export const MultipleTypes = Template.bind({});
+MultipleTypes.args = {
   entityType: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
   label: "Related Records",
   placeholder: "Select records",
 };
 
-export const disabled = Template.bind({});
-disabled.args = {
+export const Disabled = Template.bind({});
+Disabled.args = {
   entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",

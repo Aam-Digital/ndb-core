@@ -1,17 +1,15 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
 import { Child } from "../../model/child";
-import { moduleMetadata } from "@storybook/angular";
-import { CommonModule } from "@angular/common";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Child Dev Project/ChildBlockTooltip",
+  title: "Features/Participant/ChildBlockTooltip",
   component: ChildBlockTooltipComponent,
   decorators: [
-    moduleMetadata({
-      imports: [CommonModule, StorybookBaseModule, FontAwesomeModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
@@ -23,8 +21,8 @@ demoChild.phone = "+49 199 1234567";
 demoChild.schoolClass = "5";
 demoChild.schoolId = ["0"];
 
-const Template: Story<ChildBlockTooltipComponent> = (
-  args: ChildBlockTooltipComponent
+const Template: StoryFn<ChildBlockTooltipComponent> = (
+  args: ChildBlockTooltipComponent,
 ) => ({
   component: ChildBlockTooltipComponent,
   props: args,

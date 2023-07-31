@@ -1,16 +1,15 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
 import { ChildBlockComponent } from "./child-block.component";
 import { Child } from "../model/child";
-import { moduleMetadata } from "@storybook/angular";
-import { CommonModule } from "@angular/common";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Child Dev Project/ChildBlock",
+  title: "Features/Participant/ChildBlock",
   component: ChildBlockComponent,
   decorators: [
-    moduleMetadata({
-      imports: [CommonModule, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
@@ -21,7 +20,7 @@ demoChild.projectNumber = "99";
 demoChild.phone = "+49 199 1234567";
 demoChild.schoolClass = "5";
 
-const Template: Story<ChildBlockComponent> = (args: ChildBlockComponent) => ({
+const Template: StoryFn<ChildBlockComponent> = (args: ChildBlockComponent) => ({
   component: ChildBlockComponent,
   props: args,
 });

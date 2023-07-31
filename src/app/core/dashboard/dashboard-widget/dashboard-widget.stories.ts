@@ -1,20 +1,20 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { DashboardWidgetComponent } from "./dashboard-widget.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Dashboards/Dashboard Base Widget",
   component: DashboardWidgetComponent,
   decorators: [
-    moduleMetadata({
-      imports: [DashboardWidgetComponent, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<DashboardWidgetComponent> = (
-  args: DashboardWidgetComponent
+const Template: StoryFn<DashboardWidgetComponent> = (
+  args: DashboardWidgetComponent,
 ) => ({
   component: DashboardWidgetComponent,
   props: args,
@@ -35,5 +35,5 @@ Loading.args = {
   subtitle: "of all numbers",
   icon: "child",
   theme: "child",
-  _loading: true,
+  loading: true,
 };

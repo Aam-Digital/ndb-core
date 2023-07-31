@@ -1,27 +1,20 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { ConfigImportComponent } from "./config-import.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { ConfigService } from "../../config/config.service";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Config Import",
+  title: "Core/Admin/Config Import",
   component: ConfigImportComponent,
   decorators: [
-    moduleMetadata({
-      imports: [ConfigImportComponent, StorybookBaseModule],
-      providers: [
-        {
-          provide: ConfigService,
-          useValue: { getAllConfigs: () => [] },
-        },
-      ],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<ConfigImportComponent> = (
-  args: ConfigImportComponent
+const Template: StoryFn<ConfigImportComponent> = (
+  args: ConfigImportComponent,
 ) => ({
   component: ConfigImportComponent,
   props: args,

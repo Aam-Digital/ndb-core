@@ -1,25 +1,20 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { ReportRowComponent } from "./report-row.component";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { ReportRow } from "../../report-row";
-import { ReportingComponent } from "../reporting.component";
-import { MatTreeModule } from "@angular/material/tree";
-import { MatButtonModule } from "@angular/material/button";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Reporting/Report Row",
   component: ReportRowComponent,
   decorators: [
-    moduleMetadata({
-      imports: [StorybookBaseModule, MatTreeModule, MatButtonModule],
-      declarations: [ReportingComponent],
-      providers: [],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<ReportRowComponent> = (args: ReportRowComponent) => ({
+const Template: StoryFn<ReportRowComponent> = (args: ReportRowComponent) => ({
   component: ReportRowComponent,
   props: args,
 });

@@ -1,39 +1,43 @@
-import { Story, Meta } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { SupportComponent } from "./support.component";
-import { SessionService } from "../../session/session-service/session.service";
-import { BehaviorSubject } from "rxjs";
-import { SyncState } from "../../session/session-states/sync-state.enum";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SwUpdate } from "@angular/service-worker";
 import { Database } from "../../database/database";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
+import { UpdateManagerService } from "../../latest-changes/update-manager.service";
+import { importProvidersFrom } from "@angular/core";
+
+// TODO: fix layout of SupportComponent buttons on mobile
 
 export default {
-  title: "Core/Support",
+  title: "Core/> App Layout/Support",
   component: SupportComponent,
   decorators: [
-    moduleMetadata({
-      imports: [SupportComponent, StorybookBaseModule, HttpClientTestingModule],
+    applicationConfig({
       providers: [
-        { provide: WINDOW_TOKEN, useValue: window },
-        { provide: LOCATION_TOKEN, useValue: window.location },
+        importProvidersFrom(StorybookBaseModule.withData()),
         {
-          provide: SessionService,
+          provide: UpdateManagerService,
           useValue: {
-            getCurrentUser: () => ({ name: "demo-user" }),
-            syncState: new BehaviorSubject(SyncState.COMPLETED),
+            notifyUserWhenUpdateAvailable: () => {},
+            regularlyCheckForUpdates: () => {},
+            detectUnrecoverableState: () => {},
           },
         },
         { provide: SwUpdate, useValue: { isEnabled: true } },
-        { provide: Database, useValue: {} },
+        {
+          provide: Database,
+          useValue: {
+            getPouchDB: () => ({
+              info: async () => ({ doc_count: 2, update_seq: 33 }),
+            }),
+          },
+        },
       ],
     }),
   ],
 } as Meta;
 
-const Template: Story<SupportComponent> = (args: SupportComponent) => ({
+const Template: StoryFn<SupportComponent> = (args: SupportComponent) => ({
   component: SupportComponent,
   props: args,
 });

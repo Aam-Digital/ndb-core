@@ -1,0 +1,36 @@
+<mat-dialog-content>
+  <table>
+    <tr>
+      <th i18n="Import mapping header">Imported values</th>
+      <th i18n="Import mapping header">Assigned values</th>
+      <th>
+        <app-help-button
+          text="For each unique value from your imported data (left), select the category value from the system's data structure into which it will be transformed. The values you do not assign here will be ignored (remain empty) during import."
+          i18n-text="import - value mapping (enum) - help text"
+        ></app-help-button>
+      </th>
+    </tr>
+    <tr *ngFor="let ctrl of form.controls | keyvalue">
+      <td style="padding-right: 20px">{{ ctrl.key }}:</td>
+      <td>
+        <ng-container
+          [appDynamicComponent]="{
+            component: component,
+            config: {
+              formFieldConfig: { forTable: true, id: ctrl.key },
+              propertySchema: schema,
+              formControl: ctrl.value
+            }
+          }"
+        ></ng-container>
+      </td>
+    </tr>
+  </table>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-raised-button color="accent" (click)="save()" i18n>
+    Save & Close
+  </button>
+  <button mat-stroked-button matDialogClose i18n>Cancel</button>
+</mat-dialog-actions>

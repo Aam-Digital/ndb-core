@@ -1,22 +1,21 @@
-import { moduleMetadata } from "@storybook/angular";
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { TodosModule } from "../../todos.module";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { TodoCompletionComponent } from "./todo-completion.component";
 import { Todo } from "../../model/todo";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Todos/TodoCompletion",
   component: TodoCompletionComponent,
   decorators: [
-    moduleMetadata({
-      imports: [TodosModule, StorybookBaseModule],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<TodoCompletionComponent> = (
-  args: TodoCompletionComponent
+const Template: StoryFn<TodoCompletionComponent> = (
+  args: TodoCompletionComponent,
 ) => ({
   component: TodoCompletionComponent,
   props: args,

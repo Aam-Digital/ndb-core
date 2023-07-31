@@ -4,7 +4,6 @@ import { Entity } from "../../../core/entity/model/entity";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
@@ -53,8 +52,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
 
   constructor(
     private formDialog: FormDialogService,
-    private dbIndexingService: DatabaseIndexingService,
-    private sessionService: SessionService
+    private dbIndexingService: DatabaseIndexingService
   ) {
     // TODO: move this generic index creation into schema
     this.dbIndexingService.generateIndexOnProperty(
@@ -86,7 +84,6 @@ export class TodosRelatedToEntityComponent implements OnInit {
     return () => {
       const newEntry = new Todo();
       newEntry.relatedEntities = [this.entity.getId(true)];
-      newEntry.assignedTo = [this.sessionService.getCurrentUser().name];
       return newEntry;
     };
   }

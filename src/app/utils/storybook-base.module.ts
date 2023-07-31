@@ -1,38 +1,36 @@
 import { NgModule } from "@angular/core";
-import { CommonModule } from "@angular/common";
-import {
-  FaIconLibrary,
-  FontAwesomeModule,
-} from "@fortawesome/angular-fontawesome";
+import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
 import { fas } from "@fortawesome/free-solid-svg-icons";
 import { far } from "@fortawesome/free-regular-svg-icons";
-import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { Angulartics2Module } from "angulartics2";
-import { RouterTestingModule } from "@angular/router/testing";
 import { entityRegistry } from "../core/entity/database-entity.decorator";
 import { ConfigService } from "../core/config/config.service";
 import { AbilityService } from "../core/permissions/ability/ability.service";
-import { BehaviorSubject, Subject } from "rxjs";
+import { EMPTY, Subject } from "rxjs";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { defineAbility } from "@casl/ability";
 import { SessionService } from "../core/session/session-service/session.service";
-import { SyncState } from "../core/session/session-states/sync-state.enum";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
+import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
+import { Entity } from "../core/entity/model/entity";
+import { User } from "../core/user/user";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../core/entity/mock-entity-mapper-service";
+import { EntityMapperService } from "../core/entity/entity-mapper.service";
+import { createLocalSession, TEST_USER } from "./mocked-testing.module";
+import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
 
 export const entityFormStorybookDefaultParameters = {
   controls: {
-    exclude: ["_columns"],
+    exclude: ["_columns", "_cols", "enumValueToString"],
   },
-};
-
-export const mockAbilityService = {
-  abilityUpdated: new Subject<void>(),
-  initializeRules: () => {},
 };
 
 /**
@@ -40,33 +38,55 @@ export const mockAbilityService = {
  */
 @NgModule({
   declarations: [],
-  imports: [
-    AppModule,
-    CommonModule,
-    BrowserAnimationsModule,
-    FontAwesomeModule,
-    Angulartics2Module.forRoot(),
-    RouterTestingModule,
-  ],
+  imports: [AppModule],
   providers: [
     { provide: ConfigService, useValue: createTestingConfigService() },
-    { provide: AbilityService, useValue: mockAbilityService },
+    {
+      provide: ConfigurableEnumService,
+      useValue: createTestingConfigurableEnumService(),
+    },
+    {
+      provide: AbilityService,
+      useValue: {
+        abilityUpdated: new Subject<void>(),
+        initializeRules: () => {},
+      },
+    },
     {
       provide: EntityAbility,
       useValue: defineAbility((can) => can("manage", "all")),
     },
     {
       provide: SessionService,
+      useValue: createLocalSession(true),
+    },
+    {
+      provide: DatabaseIndexingService,
       useValue: {
-        getCurrentUser: () => ({ name: "demo-user" }),
-        syncState: new BehaviorSubject(SyncState.COMPLETED),
-        isLoggedIn: () => true,
+        createIndex: () => {},
+        queryIndexDocsRange: () => Promise.resolve([]),
+        queryIndexDocs: () => Promise.resolve([]),
+        indicesRegistered: EMPTY,
       },
     },
+    { provide: ConfigService, useValue: createTestingConfigService() },
+    {
+      provide: ConfigurableEnumService,
+      useValue: createTestingConfigurableEnumService(),
+    },
+    { provide: EntityMapperService, useValue: mockEntityMapper() },
   ],
 })
 export class StorybookBaseModule {
-  constructor(icons: FaIconLibrary) {
+  private static initData: Entity[] = [];
+  static withData(data: Entity[] = [new User(TEST_USER)]) {
+    StorybookBaseModule.initData = data;
+    return StorybookBaseModule;
+  }
+  constructor(icons: FaIconLibrary, entityMapper: EntityMapperService) {
+    (entityMapper as MockEntityMapperService).addAll(
+      StorybookBaseModule.initData,
+    );
     icons.addIconPacks(fas, far);
   }
 }

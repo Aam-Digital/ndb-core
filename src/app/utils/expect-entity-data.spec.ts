@@ -160,6 +160,8 @@ function comparableEntityData(obj: any | any[], withoutId: boolean = false) {
       TestBed.inject(EntitySchemaService).transformEntityToDatabaseFormat(obj);
 
     delete result._rev;
+    delete result.created;
+    delete result.updated;
     if (withoutId) {
       delete result._id;
     }

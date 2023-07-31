@@ -1,35 +1,24 @@
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
-import { Meta, Story } from "@storybook/angular/types-6-0";
 import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
-import { TodosModule } from "../../todos.module";
 import { EntityFormComponent } from "../../../../core/entity-components/entity-form/entity-form/entity-form.component";
-import { EntitySchemaService } from "../../../../core/entity/schema/entity-schema.service";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
-import { mockEntityMapper } from "../../../../core/entity/mock-entity-mapper-service";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Features/Todos/Recurring Interval",
   component: EditRecurringIntervalComponent,
   decorators: [
-    moduleMetadata({
-      imports: [TodosModule, StorybookBaseModule],
-      providers: [
-        EntitySchemaService,
-        {
-          provide: EntityMapperService,
-          useValue: mockEntityMapper(),
-        },
-      ],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<EntityFormComponent> = (args: EntityFormComponent) => ({
+const Template: StoryFn<EntityFormComponent> = (args: EntityFormComponent) => ({
   component: EntityFormComponent,
   props: args,
 });

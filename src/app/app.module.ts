@@ -17,7 +17,7 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, LOCALE_ID, NgModule } from "@angular/core";
+import { ErrorHandler, Inject, LOCALE_ID, NgModule } from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
 
 import { AppComponent } from "./app.component";
@@ -68,17 +68,19 @@ import { AttendanceModule } from "./child-dev-project/attendance/attendance.modu
 import { NotesModule } from "./child-dev-project/notes/notes.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
 import { ConflictResolutionModule } from "./conflict-resolution/conflict-resolution.module";
-import { DataImportModule } from "./features/data-import/data-import.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
+import moment from "moment";
+import { getLocaleFirstDayOfWeek } from "@angular/common";
 import { SessionService } from "./core/session/session-service/session.service";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { appInitializers } from "./app-initializers";
+import { ImportModule } from "./features/import/import.module";
 
 /**
  * Main entry point of the application.
@@ -113,7 +115,7 @@ import { appInitializers } from "./app-initializers";
     // conflict resolution
     ConflictResolutionModule,
     // feature module
-    DataImportModule,
+    ImportModule,
     FileModule,
     HistoricalDataModule,
     LocationModule,
@@ -160,7 +162,12 @@ import { appInitializers } from "./app-initializers";
   bootstrap: [AppComponent],
 })
 export class AppModule {
-  constructor(icons: FaIconLibrary) {
+  constructor(icons: FaIconLibrary, @Inject(LOCALE_ID) locale: string) {
     icons.addIconPacks(fas, far);
+    moment.updateLocale(moment.locale(), {
+      week: {
+        dow: getLocaleFirstDayOfWeek(locale),
+      },
+    });
   }
 }

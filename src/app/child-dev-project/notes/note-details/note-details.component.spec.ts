@@ -7,6 +7,7 @@ import { defaultAttendanceStatusTypes } from "../../../core/config/default-confi
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 import { EntityConfigService } from "../../../core/entity/entity-config.service";
+import { NEVER } from "rxjs";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -42,7 +43,10 @@ describe("NoteDetailsComponent", () => {
       ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: { entity: testNote } },
-        { provide: MatDialogRef, useValue: {} },
+        {
+          provide: MatDialogRef,
+          useValue: { backdropClick: () => NEVER, afterClosed: () => NEVER },
+        },
       ],
     }).compileComponents();
   }));
