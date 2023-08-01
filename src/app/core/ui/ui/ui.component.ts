@@ -84,13 +84,13 @@ export class UiComponent {
     private titleService: Title,
     private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver,
-    private router: Router
+    private router: Router,
   ) {
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))
       .subscribe(
-        (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over")
+        (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over"),
       );
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
@@ -125,5 +125,23 @@ export class UiComponent {
     if (this.sideNavMode === "over") {
       this.sideNav.close();
     }
+  }
+
+  changeColor() {
+    document.documentElement.style.setProperty("--primary-50", "#e2f6fe");
+    document.documentElement.style.setProperty("--primary-100", "#b5e7fb");
+    document.documentElement.style.setProperty("--primary-200", "#84d8f9");
+    document.documentElement.style.setProperty("--primary-300", "#55c8f6");
+    document.documentElement.style.setProperty("--primary-400", "#32bcf5");
+    document.documentElement.style.setProperty("--primary-500", "#14b0f4");
+    document.documentElement.style.setProperty("--primary-600", "#0fa2e5");
+    document.documentElement.style.setProperty("--primary-700", "#068fd2");
+    document.documentElement.style.setProperty("--primary-800", "#067ebe");
+    document.documentElement.style.setProperty("--primary-900", "#005e9c");
+    document.documentElement.style.setProperty("--primary-A100", "#9DBFFF");
+    document.documentElement.style.setProperty("--primary-A200", "#6A9EFF");
+    document.documentElement.style.setProperty("--primary-A400", "#377DFF");
+    document.documentElement.style.setProperty("--primary-A700", "#1E6CFF");
+    document.documentElement.style.setProperty("--font-family", "fantasy");
   }
 }
