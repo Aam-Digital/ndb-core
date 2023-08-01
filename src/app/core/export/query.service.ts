@@ -68,10 +68,10 @@ export class QueryService {
     private entityMapper: EntityMapperService,
     private childrenService: ChildrenService,
     private attendanceService: AttendanceService,
-    entityRegistry: EntityRegistry
+    entityRegistry: EntityRegistry,
   ) {
     entityRegistry.forEach((entity, name) =>
-      this.queryStringMap.push([name, entity])
+      this.queryStringMap.push([name, entity]),
     );
   }
 
@@ -166,9 +166,10 @@ export class QueryService {
    */
   private getUncachedEntities(query: string, from: Date, to: Date) {
     return this.queryStringMap
-      .filter(([matcher]) =>
-        // matches query string without any alphanumeric characters before or after (e.g. so Child does not match ChildSchoolRelation)
-        query?.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`))
+      .filter(
+        ([matcher]) =>
+          // matches query string without any alphanumeric characters before or after (e.g. so Child does not match ChildSchoolRelation)
+          query?.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`)),
       )
       .map(([_, entity]) => entity)
       .filter((entity) => {
@@ -185,12 +186,12 @@ export class QueryService {
 
   private setEntities<T extends Entity>(
     entityClass: EntityConstructor<T>,
-    entities: T[]
+    entities: T[],
   ) {
     this.entities[entityClass.ENTITY_TYPE] = {};
     entities.forEach(
       (entity) =>
-        (this.entities[entityClass.ENTITY_TYPE][entity.getId(true)] = entity)
+        (this.entities[entityClass.ENTITY_TYPE][entity.getId(true)] = entity),
     );
   }
 
@@ -281,7 +282,7 @@ export class QueryService {
   private getRelated(
     srcEntities: Entity[],
     entityType: string,
-    relationKey: string
+    relationKey: string,
   ): Entity[] {
     const targetEntities = this.toArray(this.entities[entityType]);
     const srcIds = srcEntities
@@ -293,14 +294,14 @@ export class QueryService {
     ) {
       return targetEntities.filter((entity) =>
         (entity[relationKey] as Array<string>).some((id) =>
-          srcIds.includes(id.split(":").pop())
-        )
+          srcIds.includes(id.split(":").pop()),
+        ),
       );
     } else {
       return targetEntities.filter((entity) =>
         entity[relationKey]
           ? srcIds.includes(entity[relationKey].split(":").pop())
-          : false
+          : false,
       );
     }
   }
@@ -319,7 +320,7 @@ export class QueryService {
     objs: any[],
     attr: string,
     key: string,
-    value: string
+    value: string,
   ): any[] {
     // splits at "|" and removes optional whitespace before or after the symbol
     const values = value.trim().split(/\s*\|\s*/);
@@ -357,7 +358,7 @@ export class QueryService {
    */
   private getParticipantsWithAttendance(
     events: EventNote[],
-    attendanceStatus: string
+    attendanceStatus: string,
   ): string[] {
     const attendedChildren: string[] = [];
     events.forEach((e) =>
@@ -365,7 +366,7 @@ export class QueryService {
         if (e.getAttendance(childId).status.countAs === attendanceStatus) {
           attendedChildren.push(childId);
         }
-      })
+      }),
     );
     return attendedChildren;
   }
@@ -378,7 +379,7 @@ export class QueryService {
    */
   private getAttendanceArray(
     events: Note[],
-    includeSchool = false
+    includeSchool = false,
   ): AttendanceInfo[] {
     const attendances: AttendanceInfo[] = [];
     for (const event of events) {
@@ -407,7 +408,7 @@ export class QueryService {
     return this.toArray(this.entities[ChildSchoolRelation.ENTITY_TYPE]).filter(
       (relation) =>
         event.schools.includes(relation.schoolId) &&
-        relation.isActiveAt(event.date)
+        relation.isActiveAt(event.date),
     );
   }
 
@@ -417,7 +418,7 @@ export class QueryService {
    * @returns AttendanceReport[] for each participant the ID, the number of present and total absences as well as the attendance percentage.
    */
   private getAttendanceReport(
-    attendances: AttendanceInfo[]
+    attendances: AttendanceInfo[],
   ): AttendanceReport[] {
     const participantMap: { [key in string]: AttendanceReport } = {};
     attendances.forEach((attendance) => {
@@ -464,8 +465,8 @@ export class QueryService {
    * @param value the string which should replace initial data
    * @returns array of same length as data where every input is value
    */
-  private setString(data: any[], value: string): string[] {
-    return data.map(() => value);
+  private setString(data: any[], value: string): string[] | string {
+    return Array.isArray(data) ? data.map(() => value) : value;
   }
 }
 

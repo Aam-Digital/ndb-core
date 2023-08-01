@@ -26,7 +26,6 @@ export class DataTransformationService {
     for (const c of config) {
       await this.queryService.cacheRequiredData(c.query, from, to);
       const baseData = this.queryService.queryData(c.query, from, to);
-      console.log("data", baseData, config);
       const result: ExportRow[] = [];
       if (c.subQueries) {
         result.push(
@@ -44,8 +43,9 @@ export class DataTransformationService {
 
       combinedResults.push(...result);
     }
-    console.log("combined results", combinedResults);
-    return [totalRow, ...combinedResults];
+    return Object.keys(totalRow).length > 0
+      ? [totalRow, ...combinedResults]
+      : combinedResults;
   }
 
   private concatQueries(config: ExportColumnConfig) {
