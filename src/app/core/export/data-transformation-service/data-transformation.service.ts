@@ -19,28 +19,39 @@ export class DataTransformationService {
   async queryAndTransformData(
     config: ExportColumnConfig[],
     from?: Date,
-    to?: Date
+    to?: Date,
   ): Promise<ExportRow[]> {
     const combinedResults: ExportRow[] = [];
+    const totalRow: ExportRow = {};
     for (const c of config) {
       await this.queryService.cacheRequiredData(c.query, from, to);
       const baseData = this.queryService.queryData(c.query, from, to);
-      const result = await this.transformData(
-        baseData,
-        c.subQueries,
-        from,
-        to,
-        c.groupBy
-      );
+      console.log("data", baseData, config);
+      const result: ExportRow[] = [];
+      if (c.subQueries) {
+        result.push(
+          ...(await this.transformData(
+            baseData,
+            c.subQueries,
+            from,
+            to,
+            c.groupBy,
+          )),
+        );
+      } else {
+        totalRow[c.label] = baseData;
+      }
+
       combinedResults.push(...result);
     }
-    return combinedResults;
+    console.log("combined results", combinedResults);
+    return [totalRow, ...combinedResults];
   }
 
   private concatQueries(config: ExportColumnConfig) {
     return (config.subQueries ?? []).reduce(
       (query, c) => query + this.concatQueries(c),
-      config.query
+      config.query,
     );
   }
 
@@ -58,12 +69,12 @@ export class DataTransformationService {
     config: ExportColumnConfig[],
     from?: Date,
     to?: Date,
-    groupByProperty?: { label: string; property: string }
+    groupByProperty?: { label: string; property: string },
   ): Promise<ExportRow[]> {
     const fullQuery = config.map((c) => this.concatQueries(c)).join("");
     await this.queryService.cacheRequiredData(fullQuery, from, to);
     return this.generateRows(data, config, from, to, groupByProperty).map(
-      transformToReadableFormat
+      transformToReadableFormat,
     );
   }
 
@@ -72,7 +83,7 @@ export class DataTransformationService {
     config: ExportColumnConfig[],
     from: Date,
     to: Date,
-    groupByProperty?: { label: string; property: string }
+    groupByProperty?: { label: string; property: string },
   ) {
     const result: ExportRow[] = [];
     if (groupByProperty) {
@@ -86,7 +97,7 @@ export class DataTransformationService {
           values,
           [groupColumn].concat(...config),
           from,
-          to
+          to,
         );
         result.push(...rows);
       }
@@ -112,7 +123,7 @@ export class DataTransformationService {
     data: any | any[],
     config: ExportColumnConfig[],
     from: Date,
-    to: Date
+    to: Date,
   ): ExportRow[] {
     let exportRows: ExportRow[] = [{}];
     for (const exportColumnConfig of config) {
@@ -120,12 +131,12 @@ export class DataTransformationService {
         data,
         exportColumnConfig,
         from,
-        to
+        to,
       );
 
       exportRows = this.mergePartialExportRows(
         exportRows,
-        partialExportObjects
+        partialExportObjects,
       );
     }
     return exportRows;
@@ -143,7 +154,7 @@ export class DataTransformationService {
     data: any | any[],
     exportColumnConfig: ExportColumnConfig,
     from: Date,
-    to: Date
+    to: Date,
   ): ExportRow[] {
     const label =
       exportColumnConfig.label ?? exportColumnConfig.query.replace(".", "");
@@ -156,7 +167,7 @@ export class DataTransformationService {
         {},
         exportColumnConfig.subQueries,
         from,
-        to
+        to,
       );
     } else {
       return this.generateRows(
@@ -164,7 +175,7 @@ export class DataTransformationService {
         exportColumnConfig.subQueries,
         from,
         to,
-        exportColumnConfig.groupBy
+        exportColumnConfig.groupBy,
       );
     }
   }
@@ -173,13 +184,13 @@ export class DataTransformationService {
     exportColumnConfig: ExportColumnConfig,
     data: any | any[],
     from: Date,
-    to: Date
+    to: Date,
   ): any {
     const value = this.queryService.queryData(
       exportColumnConfig.query,
       from,
       to,
-      Array.isArray(data) ? data : [data]
+      Array.isArray(data) ? data : [data],
     );
 
     if (!Array.isArray(value)) {
@@ -202,10 +213,10 @@ export class DataTransformationService {
    */
   private mergePartialExportRows(
     exportRows: ExportRow[],
-    additionalExportRows: ExportRow[]
+    additionalExportRows: ExportRow[],
   ): ExportRow[] {
     const rowsOfRows: ExportRow[][] = additionalExportRows.map((addRow) =>
-      exportRows.map((row) => Object.assign({}, row, addRow))
+      exportRows.map((row) => Object.assign({}, row, addRow)),
     );
     // return flattened array
     return rowsOfRows.reduce((acc, rowOfRows) => acc.concat(rowOfRows), []);
