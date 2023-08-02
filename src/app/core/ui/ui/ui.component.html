@@ -26,14 +26,14 @@
     </span>
 
     <a
-      *ngIf="title && sideNavMode !== 'over'"
+      *ngIf="sideNavMode !== 'over'"
       [routerLink]="['']"
       class="header-title"
       angulartics2On="click"
       angularticsCategory="Navigation"
       angularticsAction="navbar_site_title_link"
     >
-      {{ title }}
+      {{ siteSettings.siteName | async }}
     </a>
   </div>
 
@@ -43,7 +43,7 @@
 
     <app-sync-status></app-sync-status>
 
-    <app-language-select *ngIf="showLanguageSelect"></app-language-select>
+    <app-language-select *ngIf="siteSettings.displayLanguageSelect | async"></app-language-select>
   </div>
   <button (click)="changeColor()" mat-button>Change style</button>
 </mat-toolbar>

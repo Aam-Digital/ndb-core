@@ -1,8 +1,7 @@
 import { Inject, Injectable, LOCALE_ID } from "@angular/core";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
-import { UiConfig } from "../ui/ui-config";
-import { ConfigService } from "../config/config.service";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
+import { SiteSettingsService } from "../site-settings/site-settings.service";
 
 /**
  * Service that contains
@@ -27,23 +26,21 @@ export class LanguageService {
   constructor(
     @Inject(LOCALE_ID) private baseLocale: string,
     @Inject(WINDOW_TOKEN) private window: Window,
-    private configService: ConfigService
+    private siteSettings: SiteSettingsService,
   ) {}
 
   initDefaultLanguage(): void {
     const languageSelected = this.window.localStorage.getItem(
-      LANGUAGE_LOCAL_STORAGE_KEY
+      LANGUAGE_LOCAL_STORAGE_KEY,
     );
 
     if (!languageSelected) {
-      this.configService.configUpdates.subscribe(() => {
-        const { default_language } =
-          this.configService.getConfig<UiConfig>("appConfig") ?? {};
-        if (default_language && default_language !== this.baseLocale) {
+      this.siteSettings.defaultLanguage.subscribe((language) => {
+        if (language !== this.baseLocale) {
           // Reload app with default language from config
           this.window.localStorage.setItem(
             LANGUAGE_LOCAL_STORAGE_KEY,
-            default_language
+            language,
           );
           this.window.location.reload();
         }

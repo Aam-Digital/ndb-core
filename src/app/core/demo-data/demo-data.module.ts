@@ -38,10 +38,12 @@ import { DemoPermissionGeneratorService } from "../permissions/demo-permission-g
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
 import { DemoConfigurableEnumGeneratorService } from "../configurable-enum/demo-configurable-enum-generator.service";
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
+import { DemoSiteSettingsGeneratorService } from "../site-settings/demo-site-settings-generator.service";
 
 const demoDataGeneratorProviders = [
   ...DemoConfigGeneratorService.provider(),
   ...DemoPermissionGeneratorService.provider(),
+  ...DemoSiteSettingsGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
   ...DemoConfigurableEnumGeneratorService.provider(),
