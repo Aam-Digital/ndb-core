@@ -143,5 +143,7 @@ export class UiComponent {
     document.documentElement.style.setProperty("--primary-A400", "#377DFF");
     document.documentElement.style.setProperty("--primary-A700", "#1E6CFF");
     document.documentElement.style.setProperty("--font-family", "fantasy");
+    const favIcon: HTMLLinkElement = document.querySelector("#appIcon");
+    favIcon.href = "assets/codo.png";
   }
 }
