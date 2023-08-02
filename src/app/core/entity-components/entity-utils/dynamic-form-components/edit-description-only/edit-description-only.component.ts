@@ -5,7 +5,8 @@ import { FormFieldConfig } from "../../../entity-form/entity-form/FormConfig";
 @DynamicComponent("EditDescriptionOnly")
 @Component({
   selector: "app-edit-description-only",
-  template: "{{formFieldConfig?.label}}",
+  template: "<div class='container'>{{formFieldConfig?.label}}</div>",
+  styleUrls: ["./edit-description-only.component.scss"],
   standalone: true,
 })
 export class EditDescriptionOnlyComponent {

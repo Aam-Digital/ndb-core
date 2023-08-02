@@ -13,6 +13,7 @@ import { importProvidersFrom } from "@angular/core";
 export function generateFormFieldStory<T>(
   editComponent,
   defaultValue,
+  withTooltip = true,
 ): {
   meta: Meta<FormComponent<any>>;
   entityType: EntityConstructor<Entity & { main: T; other: string }>;
@@ -31,7 +32,7 @@ export function generateFormFieldStory<T>(
     id: "main",
     edit: editComponent,
     label: "test field label",
-    tooltip: "test tooltip",
+    tooltip: withTooltip ? "test tooltip" : undefined,
   };
   const otherFieldConf: FormFieldConfig = {
     id: "other",
