@@ -14,6 +14,7 @@ import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-to
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../../../features/file/file.service";
 import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
+import { DisplayImgDirective } from "../../../features/file/display-img/display-img.directive";
 
 @DynamicComponent("ChildBlock")
 @Component({
@@ -25,6 +26,7 @@ import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dy
     TemplateTooltipDirective,
     ChildBlockTooltipComponent,
     FaDynamicIconComponent,
+    DisplayImgDirective,
   ],
   standalone: true,
 })
@@ -43,7 +45,7 @@ export class ChildBlockComponent implements OnChanges {
 
   constructor(
     private fileService: FileService,
-    @Optional() private childrenService: ChildrenService
+    @Optional() private childrenService: ChildrenService,
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {

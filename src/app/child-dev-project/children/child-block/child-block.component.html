@@ -6,7 +6,7 @@
   class="truncate-text container"
 >
   <app-fa-dynamic-icon *ngIf="!imgPath" [icon]="icon" class="margin-right-small"/>
-  <img *ngIf="imgPath" [src]="imgPath" class="child-pic" alt=""/>
+  <img [appDisplayImg]="entity" imgProperty="photo" class="child-pic"/>
   <span class="font-size-rel">{{ entity?.toString() }}</span>
   <span class="subnote" *ngIf="entity?.projectNumber"> ({{ entity?.projectNumber }})</span>
 </span>

@@ -36,6 +36,7 @@ import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
 import { AppVersionComponent } from "../../latest-changes/app-version/app-version.component";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
+import { DisplayImgDirective } from "../../../features/file/display-img/display-img.directive";
 
 /**
  * The main user interface component as root element for the app structure
@@ -63,6 +64,7 @@ import { SiteSettingsService } from "../../site-settings/site-settings.service";
     RouterOutlet,
     PrimaryActionComponent,
     AsyncPipe,
+    DisplayImgDirective,
   ],
   standalone: true,
 })
