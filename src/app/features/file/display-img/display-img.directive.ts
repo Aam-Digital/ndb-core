@@ -1,6 +1,7 @@
 import { Directive, ElementRef, Input, OnChanges } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
 import { FileService } from "../file.service";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Directive({
   selector: "[appDisplayImg]",
@@ -9,34 +10,44 @@ import { FileService } from "../file.service";
 export class DisplayImgDirective implements OnChanges {
   @Input() appDisplayImg: Entity;
   @Input() imgProperty: string;
-  @Input() defaultImage: string;
+  @Input() defaultImage: string = "assets/child.png";
+  @Input() defaultIcon: string = "child";
+
+  private imgEl: HTMLImageElement;
+  private iconEl: FaIconComponent;
 
   constructor(
-    private el: ElementRef<HTMLImageElement>,
+    private el: ElementRef<HTMLElement>,
     private fileService: FileService,
   ) {}
 
   ngOnChanges() {
-    delete this.el.nativeElement.src;
-    this.hide();
+    this.hideImg();
     if (this.appDisplayImg?.[this.imgProperty]) {
       this.fileService
         .loadFile(this.appDisplayImg, this.imgProperty)
         .subscribe((res) => {
           // doesn't work with safeUrl
-          this.el.nativeElement.src = Object.values(res)[0];
-          this.show();
+          this.showImg(Object.values(res)[0]);
         });
     } else if (this.defaultImage) {
-      this.el.nativeElement.src = this.defaultImage;
-      this.show();
+      this.showImg(this.defaultImage);
+    } else if (this.defaultIcon) {
     }
   }
 
-  show() {
-    this.el.nativeElement.style.display = "";
+  showImg(src: string) {
+    if (!this.imgEl) {
+      this.imgEl = document.createElement("img");
+      this.imgEl.style.setProperty("all", "inherit");
+      this.el.nativeElement.appendChild(this.imgEl);
+    }
+    this.imgEl.src = src;
+    this.imgEl.style.display = "";
   }
-  hide() {
-    this.el.nativeElement.style.display = "none";
+  hideImg() {
+    if (this.imgEl) {
+      this.imgEl.style.display = "none";
+    }
   }
 }
