@@ -3,15 +3,15 @@ import { ViewDirective } from "../view.directive";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { DisplayPercentageComponent } from "../display-percentage/display-percentage.component";
 
-@DynamicComponent("DisplayDynamicValue")
+@DynamicComponent("DisplayDynamicPercentage")
 @Component({
-  selector: "app-display-dynamic-value",
+  selector: "app-display-dynamic-percentage",
   template:
     "<app-display-percentage [value]=result [config]=config></app-display-percentage>",
   standalone: true,
   imports: [DisplayPercentageComponent],
 })
-export class DisplayDynamicValueComponent
+export class DisplayDynamicPercentageComponent
   extends ViewDirective<
     number,
     { total: string; actual: string; numberOfDigits?: number }
