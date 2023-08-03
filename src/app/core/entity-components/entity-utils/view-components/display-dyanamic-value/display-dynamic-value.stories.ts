@@ -20,19 +20,12 @@ const Template: Story<DisplayDynamicValueComponent> = (
   props: args,
 });
 
-export const Summarize = Template.bind({});
-Summarize.args = {
-  data: [10, 5],
+export const Primary = Template.bind({});
+Primary.args = {
+  entity: { allDays: 110, presentDays: 5 },
   config: {
-    properties: [],
-    calculation: "summarize",
-  },
-};
-
-export const Percentage = Template.bind({});
-Percentage.args = {
-  data: { total: 110, part: 5 },
-  config: {
-    calculation: "percentage",
+    actual: "presentDays",
+    total: "allDays",
+    numberOfDigits: 1,
   },
 };
