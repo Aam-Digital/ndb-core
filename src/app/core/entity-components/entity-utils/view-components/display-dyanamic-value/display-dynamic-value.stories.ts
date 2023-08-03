@@ -26,6 +26,6 @@ Primary.args = {
   config: {
     actual: "presentDays",
     total: "allDays",
-    numberOfDigits: 1,
+    decimalPlaces: 2,
   },
 };
