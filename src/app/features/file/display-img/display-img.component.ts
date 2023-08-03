@@ -19,6 +19,7 @@ export class DisplayImgComponent implements OnChanges {
   imgSrc: string;
 
   constructor(private fileService: FileService) {}
+
   ngOnChanges(changes: SimpleChanges) {
     if (changes.entity || changes.imgProperty) {
       delete this.imgSrc;

@@ -36,6 +36,7 @@ import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
 import { AppVersionComponent } from "../../latest-changes/app-version/app-version.component";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
+import { DisplayImgComponent } from "../../../features/file/display-img/display-img.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -63,6 +64,7 @@ import { SiteSettingsService } from "../../site-settings/site-settings.service";
     RouterOutlet,
     PrimaryActionComponent,
     AsyncPipe,
+    DisplayImgComponent,
   ],
   standalone: true,
 })
@@ -71,9 +73,6 @@ export class UiComponent {
   sideNavMode: MatDrawerMode;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
-
-  /** path to the image of a logo */
-  logo_path: string;
 
   constructor(
     private _sessionService: SessionService,
@@ -89,12 +88,6 @@ export class UiComponent {
       .subscribe(
         (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over"),
       );
-    this.siteSettings.siteSettings
-      .pipe(untilDestroyed(this))
-      .subscribe((settings) => {
-        // TODO needs to be actual image
-        this.logo_path = settings?.logo;
-      });
   }
 
   /**
