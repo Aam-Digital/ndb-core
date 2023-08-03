@@ -35,7 +35,7 @@ export class LanguageService {
     );
 
     if (!languageSelected) {
-      this.siteSettings.defaultLanguage.subscribe((language) => {
+      this.siteSettings.language.subscribe((language) => {
         if (language !== this.baseLocale) {
           // Reload app with default language from config
           this.window.localStorage.setItem(

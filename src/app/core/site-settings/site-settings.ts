@@ -4,10 +4,15 @@ import { DatabaseField } from "../entity/database-field.decorator";
 
 @DatabaseEntity("SiteSettings")
 export class SiteSettings extends Entity {
-  @DatabaseField({ label: $localize`Site name` }) siteName = "Aam Digital";
-  @DatabaseField({ label: $localize`Language` }) language = "en-US";
-  @DatabaseField({ label: $localize`Display langauge select` })
-  displayLanguageSelect = true;
+  @DatabaseField({ label: $localize`Site name` }) siteName: string =
+    "Aam Digital";
+  // TODO should be enum?
+  @DatabaseField({ label: $localize`Language` }) language: string = "en-US";
+  @DatabaseField({
+    label: $localize`Display langauge select`,
+    description: $localize`This will only be applied once the app is reloaded`,
+  })
+  displayLanguageSelect: boolean = true;
   @DatabaseField({
     label: $localize`Logo`,
     dataType: "file",
@@ -28,6 +33,7 @@ export class SiteSettings extends Entity {
   logoAsIcon = false;
 
   constructor() {
+    // TODO fix id
     super("test");
   }
 }

@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { SiteSettings } from "./site-settings";
-import { ReplaySubject } from "rxjs";
-import { map } from "rxjs/operators";
+import { delay, firstValueFrom, Observable, ReplaySubject } from "rxjs";
+import { distinctUntilChanged, filter, map } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
+import { FileService } from "../../features/file/file.service";
 
 @Injectable({
   providedIn: "root",
@@ -11,15 +12,17 @@ import { Title } from "@angular/platform-browser";
 export class SiteSettingsService {
   siteSettings = new ReplaySubject<SiteSettings>(1);
 
-  siteName = this.siteSettings.pipe(map(({ siteName }) => siteName));
-  defaultLanguage = this.siteSettings.pipe(map(({ language }) => language));
-  displayLanguageSelect = this.siteSettings.pipe(
-    map(({ displayLanguageSelect }) => displayLanguageSelect),
+  siteName = this.getPropertyObservable("siteName");
+  language = this.getPropertyObservable("language");
+  displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
+  icon = this.getPropertyObservable("icon").pipe(
+    filter((v) => !!v),
+    delay(0),
   );
-  logo = this.siteSettings.pipe(map(({ logo }) => logo));
   constructor(
     private entityMapper: EntityMapperService,
     private title: Title,
+    private fileService: FileService,
   ) {
     this.entityMapper
       .load(SiteSettings, "test")
@@ -32,5 +35,22 @@ export class SiteSettingsService {
     this.siteName.subscribe((name) => {
       this.title.setTitle(name);
     });
+    this.icon.subscribe(async () => {
+      const entity = await firstValueFrom(this.siteSettings);
+      const imgUrl = await firstValueFrom(
+        this.fileService.loadFile(entity, "icon"),
+      );
+      const favIcon: HTMLLinkElement = document.querySelector("#appIcon");
+      favIcon.href = Object.values(imgUrl)[0];
+    });
+  }
+
+  getPropertyObservable<P extends keyof SiteSettings>(
+    property: P,
+  ): Observable<SiteSettings[P]> {
+    return this.siteSettings.pipe(
+      map((s) => s[property]),
+      distinctUntilChanged(),
+    );
   }
 }
