@@ -39,7 +39,7 @@ export class SiteSettingsService {
     this.siteName.subscribe((name) => {
       this.title.setTitle(name);
     });
-    this.icon.subscribe(async (ic) => {
+    this.icon.subscribe(async () => {
       // TODO reset when deleted
       const entity = await firstValueFrom(this.siteSettings);
       const imgUrl = await firstValueFrom(
