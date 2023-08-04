@@ -7,6 +7,7 @@
 >
 <img [src]="imgPath" alt="profile photo" class="child-pic" (click)="openPopup()">
 <div>
+<!--  TODO we should probably show a label here-->
   <button *ngIf="formControl.value && formControl.enabled" type="button" mat-icon-button
           (click)="delete()"
           i18n-mattooltip="Tooltip remove file" matTooltip="Remove file">

@@ -62,6 +62,7 @@
     disableClose
   >
     <div class="flex-column justify-space-between full-height overflow-y-hidden">
+<!--      TODO this does not support *ngIf and therefore applies the padding/margin even if no logo is shown-->
       <app-display-img [entity]="siteSettings.siteSettings | async" imgProperty="logo" class="site-logo"></app-display-img>
       <app-navigation
         class="overflow-auto-y"
