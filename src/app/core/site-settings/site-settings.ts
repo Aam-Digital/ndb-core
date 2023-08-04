@@ -4,6 +4,7 @@ import { DatabaseField } from "../entity/database-field.decorator";
 
 @DatabaseEntity("SiteSettings")
 export class SiteSettings extends Entity {
+  static label = $localize`Site settings`;
   @DatabaseField({ label: $localize`Site name` }) siteName: string =
     "Aam Digital";
   // TODO should be enum?
@@ -28,7 +29,10 @@ export class SiteSettings extends Entity {
     editComponent: "EditPhoto",
   })
   icon: string;
-  @DatabaseField({ label: $localize`Primary color` }) primaryColor: string;
+  @DatabaseField({ label: $localize`Primary color` }) primary: string;
+  @DatabaseField({ label: $localize`Secondary color` }) secondary: string;
+  @DatabaseField({ label: $localize`Error color` }) error: string;
+  @DatabaseField({ label: $localize`Text font` }) font: string;
 
   // TODO implement?
   @DatabaseField({
@@ -41,5 +45,9 @@ export class SiteSettings extends Entity {
   constructor() {
     // TODO fix id
     super("test");
+  }
+
+  toString() {
+    return this.getConstructor().label;
   }
 }
