@@ -33,6 +33,7 @@
     "@angular/platform-browser-dynamic": "^16.1.6",
     "@angular/router": "^16.1.6",
     "@angular/service-worker": "^16.1.6",
+    "@aytek/material-color-picker": "^1.0.4",
     "@casl/ability": "^6.5.0",
     "@casl/angular": "^8.2.1",
     "@faker-js/faker": "^8.0.2",

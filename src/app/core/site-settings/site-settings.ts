@@ -7,10 +7,13 @@ export class SiteSettings extends Entity {
   @DatabaseField({ label: $localize`Site name` }) siteName: string =
     "Aam Digital";
   // TODO should be enum?
-  @DatabaseField({ label: $localize`Language` }) language: string = "en-US";
+  @DatabaseField({
+    label: $localize`Language`,
+    description: $localize`This will only be applied once the app is reloaded`,
+  })
+  language: string = "en-US";
   @DatabaseField({
     label: $localize`Display langauge select`,
-    description: $localize`This will only be applied once the app is reloaded`,
   })
   displayLanguageSelect: boolean = true;
   @DatabaseField({
@@ -25,6 +28,9 @@ export class SiteSettings extends Entity {
     editComponent: "EditPhoto",
   })
   icon: string;
+  @DatabaseField({ label: $localize`Primary color` }) primaryColor: string;
+
+  // TODO implement?
   @DatabaseField({
     label: $localize`Use logo as icon`,
     dataType: "file",

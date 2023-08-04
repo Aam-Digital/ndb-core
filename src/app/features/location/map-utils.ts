@@ -32,13 +32,66 @@ export function getHueForEntity(entity: Entity, offset = 145): string {
   if (!color) {
     return "0";
   }
-  const r = parseInt(color.substring(1, 3), 16) / 255;
-  const g = parseInt(color.substring(3, 5), 16) / 255;
-  const b = parseInt(color.substring(5, 7), 16) / 255;
+  const { r, g, b } = hexToRGB(color);
   const hue = getHue(r, g, b);
   const offsetHue = (hue * 360 + offset) % 360;
 
   return offsetHue.toFixed(0);
+}
+
+export function hexToRGB(color: string) {
+  const r = parseInt(color.substring(1, 3), 16) / 255;
+  const g = parseInt(color.substring(3, 5), 16) / 255;
+  const b = parseInt(color.substring(5, 7), 16) / 255;
+  return { r, g, b };
+}
+
+export function hexToHSL(color: string) {
+  const { r, g, b } = hexToRGB(color);
+  let max = Math.max(r, g, b),
+    min = Math.min(r, g, b);
+  let h: number,
+    s: number,
+    l: number = (max + min) / 2;
+
+  if (max == min) {
+    h = s = 0; // achromatic
+  } else {
+    let d = max - min;
+    s = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+    switch (max) {
+      case r:
+        h = (g - b) / d + (g < b ? 6 : 0);
+        break;
+      case g:
+        h = (b - r) / d + 2;
+        break;
+      case b:
+        h = (r - g) / d + 4;
+        break;
+    }
+    h /= 6;
+  }
+
+  s = s * 100;
+  s = Math.round(s);
+  l = l * 100;
+  l = Math.round(l);
+  h = Math.round(360 * h);
+  return { h, s, l };
+}
+
+export function hslToHex({ h, s, l }: { h: number; s: number; l: number }) {
+  l /= 100;
+  const a = (s * Math.min(l, 1 - l)) / 100;
+  const f = (n) => {
+    const k = (n + h / 30) % 12;
+    const color = l - a * Math.max(Math.min(k - 3, 9 - k, 1), -1);
+    return Math.round(255 * color)
+      .toString(16)
+      .padStart(2, "0"); // convert to Hex and prefix "0" if needed
+  };
+  return `#${f(0)}${f(8)}${f(4)}`;
 }
 
 /**
@@ -71,7 +124,7 @@ export function getKmDistance(x: Coordinates, y: Coordinates) {
 export function getLocationProperties(entity: EntityConstructor) {
   return [...entity.schema.entries()]
     .filter(
-      ([_, schema]) => schema.dataType === locationEntitySchemaDataType.name
+      ([_, schema]) => schema.dataType === locationEntitySchemaDataType.name,
     )
     .map(([name]) => name);
 }

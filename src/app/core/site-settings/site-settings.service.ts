@@ -5,6 +5,7 @@ import { delay, firstValueFrom, Observable, ReplaySubject } from "rxjs";
 import { distinctUntilChanged, filter, map } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
 import { FileService } from "../../features/file/file.service";
+import materialColours from "@aytek/material-color-picker";
 
 @Injectable({
   providedIn: "root",
@@ -36,12 +37,25 @@ export class SiteSettingsService {
       this.title.setTitle(name);
     });
     this.icon.subscribe(async () => {
+      // TODO reset when deleted
       const entity = await firstValueFrom(this.siteSettings);
       const imgUrl = await firstValueFrom(
         this.fileService.loadFile(entity, "icon"),
       );
       const favIcon: HTMLLinkElement = document.querySelector("#appIcon");
       favIcon.href = Object.values(imgUrl)[0];
+    });
+    this.getPropertyObservable("primaryColor").subscribe((color) => {
+      if (color) {
+        const palette2 = materialColours(color);
+        console.log("material colours", palette2);
+        Object.entries(palette2).forEach(([key, value]) =>
+          document.documentElement.style.setProperty(
+            `--primary-${key}`,
+            `#${value}`,
+          ),
+        );
+      }
     });
   }
 

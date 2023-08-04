@@ -294,6 +294,7 @@ export const defaultJsonConfig = {
                   ["displayLanguageSelect"],
                   ["logo"],
                   ["icon"],
+                  ["primaryColor"]
                 ]
               }
             }
