@@ -80,6 +80,7 @@ export class FilterGeneratorService {
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
         );
       } else if (
+        // type: entity reference
         this.entities.has(filterConfig.type) ||
         this.entities.has(schema.additional)
       ) {
@@ -87,7 +88,11 @@ export class FilterGeneratorService {
         const filterEntities = await this.entityMapperService.loadType(
           entityType,
         );
-        filter = new EntityFilter(filterConfig.id, entityType, filterEntities);
+        filter = new EntityFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          filterEntities,
+        );
       } else {
         const options = [...new Set(data.map((c) => c[filterConfig.id]))];
         const fSO = SelectableFilter.generateOptions(options, filterConfig.id);
