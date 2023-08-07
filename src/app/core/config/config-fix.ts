@@ -222,7 +222,8 @@ export const defaultJsonConfig = {
         },
         {
           "id": "category"
-        }
+        },
+        { "id": "authors" },
       ],
       "exportConfig": [
         {"label": "event_id", "query": "_id"},
