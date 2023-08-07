@@ -125,8 +125,8 @@ export class LocalSession extends SessionService {
     };
     const loginNameLower = loginName.trim().toLowerCase();
     window.localStorage.setItem(loginNameLower, JSON.stringify(localUser));
-    const userNameLower = user.name.trim().toLowerCase();
-    if (userNameLower !== loginNameLower) {
+    const userNameLower = user.name?.trim()?.toLowerCase();
+    if (!!userNameLower && userNameLower !== loginNameLower) {
       window.localStorage.setItem(userNameLower, JSON.stringify(localUser));
     }
     // Update when already logged in
