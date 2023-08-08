@@ -13,7 +13,6 @@ import { KeyValuePipe, NgForOf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../../core/view/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
 import { ColumnMapping } from "../../column-mapping";
-import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
 
 @Component({
@@ -30,10 +29,7 @@ import { HelpButtonComponent } from "../../../../core/common-components/help-but
     HelpButtonComponent,
   ],
 })
-export class EnumValueMappingComponent
-  extends AbstractValueMappingComponent
-  implements OnInit
-{
+export class EnumValueMappingComponent implements OnInit {
   form: FormGroup;
   component: string;
   schema: EntitySchemaField;
@@ -58,9 +54,7 @@ export class EnumValueMappingComponent
     private dialog: MatDialogRef<any>,
     private confirmation: ConfirmationDialogService,
     private schemaService: EntitySchemaService,
-  ) {
-    super();
-  }
+  ) {}
 
   ngOnInit() {
     this.schema = this.data.entityType.schema.get(this.data.col.propertyName);

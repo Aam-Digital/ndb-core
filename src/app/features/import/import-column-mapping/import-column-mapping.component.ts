@@ -11,8 +11,7 @@ import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basi
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
-import { AbstractValueMappingComponent } from "./abstract-value-mapping-component";
-import { ComponentType } from "@angular/cdk/overlay";
+import { ImportValueMapping } from "./import-value-mapping";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -45,13 +44,13 @@ export class ImportColumnMappingComponent {
     }
 
     this.entityCtor = this.entities.get(value);
-    this.mappingCmp = {};
+    this.valueMapper = {};
     this.allProps = [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
       .map(([name, schema]) => {
-        const cmp = this.importService.getMappingComponent(schema);
-        if (cmp) {
-          this.mappingCmp[name] = cmp;
+        const m = this.importService.getValueMapper(schema);
+        if (m) {
+          this.valueMapper[name] = m;
         }
         return name;
       });
@@ -63,7 +62,7 @@ export class ImportColumnMappingComponent {
   allProps: string[] = [];
 
   /** properties that need further adjustments through a component */
-  mappingCmp: { [key: string]: ComponentType<AbstractValueMappingComponent> };
+  valueMapper: { [key: string]: ImportValueMapping };
 
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: { [key: string]: string } = {};
@@ -82,14 +81,17 @@ export class ImportColumnMappingComponent {
     const uniqueValues = new Set<any>();
     this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
     this.dialog
-      .open<any, MappingDialogData>(this.mappingCmp[col.propertyName], {
-        data: {
-          col: col,
-          values: [...uniqueValues],
-          entityType: this.entityCtor,
+      .open<any, MappingDialogData>(
+        this.valueMapper[col.propertyName].configComponent,
+        {
+          data: {
+            col: col,
+            values: [...uniqueValues],
+            entityType: this.entityCtor,
+          },
+          disableClose: true,
         },
-        disableClose: true,
-      })
+      )
       .afterClosed()
       .subscribe(() => this.updateMapping(col, true));
   }
@@ -100,11 +102,8 @@ export class ImportColumnMappingComponent {
       delete col.additional;
     }
 
-    this.mappingAdditionalWarning[col.column] = (
-      this.mappingCmp[
-        col.propertyName
-      ] as unknown as typeof AbstractValueMappingComponent
-    )?.getIncompleteAdditionalConfigBadge(col);
+    this.mappingAdditionalWarning[col.column] =
+      this.valueMapper[col.propertyName]?.incompleteAdditionalConfigBadge(col);
 
     // Emitting copy of array to trigger change detection; values have been updated in place through data binding
     this.columnMappingChange.emit([...this.columnMapping]);

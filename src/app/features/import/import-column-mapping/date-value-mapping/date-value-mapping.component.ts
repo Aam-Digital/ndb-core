@@ -12,8 +12,30 @@ import { MatInputModule } from "@angular/material/input";
 import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
-import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
+
+// TODO implement an ImportValueMapping service for this
+/*
+const dateDataTypes = [
+      dateEntitySchemaDatatype,
+      dateOnlyEntitySchemaDatatype,
+      monthEntitySchemaDatatype,
+      dateWithAgeEntitySchemaDatatype,
+    ].map((dataType) => dataType.name);
+    if (dateDataTypes.includes(schema.dataType)) {
+      return {
+        mappingCmp: DateValueMappingComponent,
+        mappingFn: (val, additional) => {
+          const date = moment(val, additional, true);
+          if (date.isValid()) {
+            return date.toDate();
+          } else {
+            return undefined;
+          }
+        },
+      };
+    }
+ */
 
 @Component({
   selector: "app-date-value-mapping",
@@ -33,7 +55,7 @@ import { HelpButtonComponent } from "../../../../core/common-components/help-but
     HelpButtonComponent,
   ],
 })
-export class DateValueMappingComponent extends AbstractValueMappingComponent {
+export class DateValueMappingComponent {
   format = new FormControl("");
   valid = false;
   values: { value: string; parsed?: Date }[] = [];
@@ -43,8 +65,6 @@ export class DateValueMappingComponent extends AbstractValueMappingComponent {
     private confirmation: ConfirmationDialogService,
     private dialog: MatDialogRef<any>,
   ) {
-    super();
-
     this.values = this.data.values
       .filter((val) => !!val)
       .map((value) => ({ value }));

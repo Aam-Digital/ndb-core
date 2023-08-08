@@ -1,12 +1,5 @@
-import { Injectable } from "@angular/core";
+import { Injectable, Injector } from "@angular/core";
 import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
-import { EnumValueMappingComponent } from "./import-column-mapping/enum-value-mapping/enum-value-mapping.component";
-import { DateValueMappingComponent } from "./import-column-mapping/date-value-mapping/date-value-mapping.component";
-import moment from "moment/moment";
-import { dateEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date";
-import { dateOnlyEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-only";
-import { monthEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-month";
-import { dateWithAgeEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-date-with-age";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
@@ -17,8 +10,10 @@ import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { AbstractValueMappingComponent } from "./import-column-mapping/abstract-value-mapping-component";
-import { ComponentType } from "@angular/cdk/overlay";
+import {
+  IMPORT_VALUE_MAPPER_TOKEN,
+  ImportValueMapping,
+} from "./import-column-mapping/import-value-mapping";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -27,13 +22,6 @@ import { ComponentType } from "@angular/cdk/overlay";
   providedIn: "root",
 })
 export class ImportService {
-  readonly dateDataTypes = [
-    dateEntitySchemaDatatype,
-    dateOnlyEntitySchemaDatatype,
-    monthEntitySchemaDatatype,
-    dateWithAgeEntitySchemaDatatype,
-  ].map((dataType) => dataType.name);
-
   private linkableEntities: {
     [key: string]: {
       [key: string]: {
@@ -58,48 +46,30 @@ export class ImportService {
     private entityMapper: EntityMapperService,
     private entityTypes: EntityRegistry,
     private schemaService: EntitySchemaService,
+    private injector: Injector,
   ) {}
 
-  getMappingComponent(schema: EntitySchemaField) {
-    return this.getImportMapping(schema)?.mappingCmp;
-  }
+  getValueMapper(schema: EntitySchemaField): ImportValueMapping {
+    let dataType = schema.dataType;
+    if (schema.dataType === "array") {
+      dataType = schema.innerDataType;
+    }
 
-  getMappingFunction(schema: EntitySchemaField) {
-    return this.getImportMapping(schema)?.mappingFn;
+    const defaultValueMapping: ImportValueMapping = {
+      mapFunction: (val, schema) =>
+        this.schemaService
+          .getDatatypeOrDefault(schema.dataType)
+          .transformToObjectFormat(val, schema, this.schemaService),
+    };
+
+    return this.injector.get<ImportValueMapping>(
+      IMPORT_VALUE_MAPPER_TOKEN(dataType),
+      defaultValueMapping,
+    );
   }
 
   getLinkableEntities(entityType: string): string[] {
     return Object.keys(this.linkableEntities[entityType] ?? {});
-  }
-
-  private getImportMapping(schema: EntitySchemaField): {
-    mappingCmp: ComponentType<AbstractValueMappingComponent>;
-    mappingFn: (val, additional) => any;
-  } {
-    if (
-      schema.dataType === "boolean" ||
-      schema.dataType === "configurable-enum" ||
-      schema.innerDataType === "configurable-enum"
-    ) {
-      return {
-        mappingCmp: EnumValueMappingComponent,
-        mappingFn: (val, additional) =>
-          this.schemaService.valueToEntityFormat(additional?.[val], schema),
-      };
-    }
-    if (this.dateDataTypes.includes(schema.dataType)) {
-      return {
-        mappingCmp: DateValueMappingComponent,
-        mappingFn: (val, additional) => {
-          const date = moment(val, additional, true);
-          if (date.isValid()) {
-            return date.toDate();
-          } else {
-            return undefined;
-          }
-        },
-      };
-    }
   }
 
   async executeImport(
@@ -230,13 +200,10 @@ export class ImportService {
       return undefined;
     }
 
-    const mappingFn = this.getMappingFunction(schema);
-    if (mappingFn) {
-      return mappingFn(val, mapping.additional);
-    } else {
-      return this.schemaService
-        .getDatatypeOrDefault(schema.dataType)
-        .transformToObjectFormat(val, schema, this.schemaService, entity);
-    }
+    return this.getValueMapper(schema).mapFunction(
+      val,
+      schema,
+      mapping.additional,
+    );
   }
 }
