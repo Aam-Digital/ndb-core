@@ -42,7 +42,7 @@ export class MarkdownPageComponent implements OnInit {
   ngOnInit() {
     this.route.data.subscribe(
       (data: RouteData<MarkdownPageConfig>) =>
-        (this.markdownFile = data.config.markdownFile)
+        (this.markdownFile = data.config.markdownFile),
     );
   }
 }

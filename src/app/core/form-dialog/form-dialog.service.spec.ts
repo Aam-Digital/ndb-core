@@ -36,7 +36,7 @@ describe("FormDialogService", () => {
     }
 
     const actualFields = FormDialogService.getSchemaFieldsForDetailsView(
-      new TestWithShowInDetails()
+      new TestWithShowInDetails(),
     );
 
     expect(actualFields.map((x) => x.id)).toEqual(["shown"]);
@@ -50,7 +50,7 @@ describe("FormDialogService", () => {
     }
 
     const actualFields = FormDialogService.getSchemaFieldsForDetailsView(
-      new TestWithoutShowInDetails()
+      new TestWithoutShowInDetails(),
     );
 
     expect(actualFields.map((x) => x.id)).toEqual(["field1", "field2"]);

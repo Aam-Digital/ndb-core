@@ -74,7 +74,7 @@ describe("ChangelogComponent", () => {
 
   it("should add release info to end of array on 'show previous'", () => {
     mockLatestChangesService.getChangelogsBeforeVersion.and.returnValue(
-      of([testChangelog])
+      of([testChangelog]),
     );
     component.loadPreviousRelease();
 

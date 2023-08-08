@@ -35,7 +35,7 @@ describe("UiComponent", () => {
       ["createIndex"],
       {
         indicesRegistered: new Subject(),
-      }
+      },
     );
     mockIndexingService.createIndex.and.resolveTo();
 

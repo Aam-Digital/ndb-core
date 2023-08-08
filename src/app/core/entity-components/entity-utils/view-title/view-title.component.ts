@@ -16,13 +16,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   selector: "app-view-title",
   templateUrl: "./view-title.component.html",
   styleUrls: ["./view-title.component.scss"],
-  imports: [
-    NgIf,
-    MatButtonModule,
-    MatTooltipModule,
-    FontAwesomeModule
-  ],
-  standalone: true
+  imports: [NgIf, MatButtonModule, MatTooltipModule, FontAwesomeModule],
+  standalone: true,
 })
 export class ViewTitleComponent implements OnChanges {
   /** The page title to be displayed */
@@ -38,7 +33,10 @@ export class ViewTitleComponent implements OnChanges {
 
   readonly parentUrl: string;
 
-  constructor(private router: Router, private location: Location) {
+  constructor(
+    private router: Router,
+    private location: Location,
+  ) {
     this.parentUrl = this.findParentUrl();
   }
 

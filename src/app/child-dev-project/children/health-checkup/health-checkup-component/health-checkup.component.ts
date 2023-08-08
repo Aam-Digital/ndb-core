@@ -68,11 +68,11 @@ export class HealthCheckupComponent implements OnInit {
    */
   async loadData() {
     this.records = await this.childrenService.getHealthChecksOfChild(
-      this.entity.getId()
+      this.entity.getId(),
     );
     this.records.sort(
       (a, b) =>
-        (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0)
+        (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0),
     );
   }
 }

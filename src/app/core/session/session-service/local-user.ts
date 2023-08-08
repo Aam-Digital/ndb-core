@@ -19,7 +19,7 @@ export function encryptPassword(
   password: string,
   iterations = 128,
   keySize = 256 / 32,
-  salt = CryptoES.lib.WordArray.random(128 / 8).toString()
+  salt = CryptoES.lib.WordArray.random(128 / 8).toString(),
 ): EncryptedPassword {
   const hash = CryptoES.PBKDF2(password, salt, {
     keySize: keySize,
@@ -35,7 +35,7 @@ export function encryptPassword(
 
 export function passwordEqualsEncrypted(
   password: string,
-  encryptedPassword: EncryptedPassword
+  encryptedPassword: EncryptedPassword,
 ): boolean {
   const hash = CryptoES.PBKDF2(password, encryptedPassword?.salt, {
     iterations: encryptedPassword?.iterations,

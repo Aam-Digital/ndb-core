@@ -17,7 +17,7 @@ export class UserRoleGuard implements CanActivate {
   constructor(
     private sessionService: SessionService,
     private router: Router,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
@@ -47,7 +47,7 @@ export class UserRoleGuard implements CanActivate {
   public checkRoutePermissions(path: string) {
     path = path.replace(/^\//, "");
     const userRoles = this.configService.getConfig<ViewConfig>(
-      PREFIX_VIEW_CONFIG + path
+      PREFIX_VIEW_CONFIG + path,
     )?.permittedUserRoles;
     return this.canActivate({
       routeConfig: { path: path },

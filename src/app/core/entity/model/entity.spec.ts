@@ -122,7 +122,7 @@ describe("Entity", () => {
 export function testEntitySubclass(
   entityType: string,
   entityClass: EntityConstructor,
-  expectedDatabaseFormat: any
+  expectedDatabaseFormat: any,
 ) {
   it("should be a valid entity subclass", () => {
     const id = "test1";
@@ -143,14 +143,14 @@ export function testEntitySubclass(
   it("should only load and store properties defined in the schema", fakeAsync(() => {
     const schemaService = new EntitySchemaService();
     schemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
+      new ConfigurableEnumDatatype(createTestingConfigurableEnumService()),
     );
     tick();
     const entity = new entityClass();
 
     schemaService.loadDataIntoEntity(
       entity,
-      JSON.parse(JSON.stringify(expectedDatabaseFormat))
+      JSON.parse(JSON.stringify(expectedDatabaseFormat)),
     );
     const rawData = schemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData).toEqual(expectedDatabaseFormat);

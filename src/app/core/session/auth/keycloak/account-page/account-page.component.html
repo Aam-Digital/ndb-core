@@ -19,14 +19,16 @@
         i18n-placeholder="Email address input field"
         placeholder="Your email address"
         matInput
-      >
+      />
       <mat-error
         *ngIf="email.errors?.email || email.errors?.required"
         i18n="Error message if email format is invalid"
       >
         Please provide a valid email
       </mat-error>
-      <mat-error *ngIf="email.errors?.other">{{ email.errors.other }}</mat-error>
+      <mat-error *ngIf="email.errors?.other">{{
+        email.errors.other
+      }}</mat-error>
     </mat-form-field>
     <p>
       <button

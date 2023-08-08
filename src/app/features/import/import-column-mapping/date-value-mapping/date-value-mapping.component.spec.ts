@@ -59,7 +59,7 @@ describe("DateValueMappingComponent", () => {
   it("should ask for confirmation on save if some dates could not be parsed", () => {
     const confirmationSpy = spyOn(
       TestBed.inject(ConfirmationDialogService),
-      "getConfirmation"
+      "getConfirmation",
     );
     component.format.setValue("dd/mm/yyyy");
 

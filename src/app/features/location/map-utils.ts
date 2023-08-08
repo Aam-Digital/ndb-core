@@ -71,7 +71,7 @@ export function getKmDistance(x: Coordinates, y: Coordinates) {
 export function getLocationProperties(entity: EntityConstructor) {
   return [...entity.schema.entries()]
     .filter(
-      ([_, schema]) => schema.dataType === locationEntitySchemaDataType.name
+      ([_, schema]) => schema.dataType === locationEntitySchemaDataType.name,
     )
     .map(([name]) => name);
 }

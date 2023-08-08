@@ -38,7 +38,7 @@ type PositionState = "left" | "center" | "right";
           transform: "translate(-110%)",
           minHeight: "1px",
           visibility: "hidden",
-        })
+        }),
       ),
       state(
         "right",
@@ -46,13 +46,13 @@ type PositionState = "left" | "center" | "right";
           transform: "translate(110%)",
           minHeight: "1px",
           visibility: "hidden",
-        })
+        }),
       ),
 
       transition("void => *", []),
       transition(
         "* => left, * => right, left => center, right => center",
-        animate("800ms cubic-bezier(0.35, 0, 0.25, 1)")
+        animate("800ms cubic-bezier(0.35, 0, 0.25, 1)"),
       ),
     ]),
   ],

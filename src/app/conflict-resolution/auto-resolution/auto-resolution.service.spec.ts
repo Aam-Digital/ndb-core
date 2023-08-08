@@ -40,11 +40,11 @@ describe("AutoResolutionService", () => {
 
     const result = service.shouldDeleteConflictingRevision(
       testDoc,
-      testConflictDoc
+      testConflictDoc,
     );
 
     expect(
-      mockResolutionStrategy.autoDeleteConflictingRevision
+      mockResolutionStrategy.autoDeleteConflictingRevision,
     ).toHaveBeenCalled();
     expect(result).toBeTrue();
   });
@@ -57,11 +57,11 @@ describe("AutoResolutionService", () => {
 
     const result = service.shouldDeleteConflictingRevision(
       testDoc,
-      testConflictDoc
+      testConflictDoc,
     );
 
     expect(
-      mockResolutionStrategy.autoDeleteConflictingRevision
+      mockResolutionStrategy.autoDeleteConflictingRevision,
     ).toHaveBeenCalled();
     expect(result).toBeFalse();
   });

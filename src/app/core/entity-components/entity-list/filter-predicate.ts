@@ -3,6 +3,6 @@ import { getReadableValue } from "../entity-subrecord/entity-subrecord/value-acc
 
 export function entityFilterPredicate(data: Entity, filter: string): boolean {
   return [...Object.values(data)].some((value) =>
-    String(getReadableValue(value)).toLowerCase().includes(filter)
+    String(getReadableValue(value)).toLowerCase().includes(filter),
   );
 }

@@ -8,7 +8,7 @@ import { locationComponents } from "./location-components";
 export class LocationModule {
   constructor(
     schemaService: EntitySchemaService,
-    components: ComponentRegistry
+    components: ComponentRegistry,
   ) {
     schemaService.registerSchemaDatatype(locationEntitySchemaDataType);
     components.addAll(locationComponents);

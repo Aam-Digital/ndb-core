@@ -42,8 +42,8 @@ export class EducationalMaterialComponent implements OnInit {
         untilDestroyed(this),
         filter(
           ({ entity, type }) =>
-            type === "remove" || entity.child === this.entity.getId()
-        )
+            type === "remove" || entity.child === this.entity.getId(),
+        ),
       )
       .subscribe((update) => {
         this.records = applyUpdate(this.records, update);
@@ -62,7 +62,7 @@ export class EducationalMaterialComponent implements OnInit {
   private async loadData() {
     const allMaterials = await this.entityMapper.loadType(EducationalMaterial);
     this.records = allMaterials.filter(
-      (mat) => mat.child === this.entity.getId()
+      (mat) => mat.child === this.entity.getId(),
     );
     this.updateSummary();
   }

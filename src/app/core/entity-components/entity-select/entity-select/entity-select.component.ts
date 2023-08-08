@@ -86,11 +86,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     this.loading
       .pipe(
         untilDestroyed(this),
-        filter((isLoading) => !isLoading)
+        filter((isLoading) => !isLoading),
       )
       .subscribe((_) => {
         this.selectedEntities = this.allEntities.filter((e) =>
-          sel.find((s) => s === e.getId(true) || s === e.getId())
+          sel.find((s) => s === e.getId(true) || s === e.getId()),
         );
       });
   }
@@ -167,7 +167,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       .pipe(
         untilDestroyed(this),
         filter((value) => value === null || typeof value === "string"), // sometimes produces entities
-        map((searchText?: string) => this.filter(searchText))
+        map((searchText?: string) => this.filter(searchText)),
       )
       .subscribe((value) => {
         this.filteredEntities = value;
@@ -232,7 +232,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
     if (value) {
       const entity = this.allEntities.find(
-        (e) => this.accessor(e) === value.trim()
+        (e) => this.accessor(e) === value.trim(),
       );
       if (entity) {
         this.selectEntity(entity);
@@ -250,12 +250,12 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   private filter(value?: string): E[] {
     let filteredEntities: E[] = this.allEntities.filter(
-      (e) => this.additionalFilter(e) && !this.isSelected(e)
+      (e) => this.additionalFilter(e) && !this.isSelected(e),
     );
     if (value) {
       const filterValue = value.toLowerCase();
       filteredEntities = filteredEntities.filter((entity) =>
-        this.accessor(entity).toLowerCase().includes(filterValue)
+        this.accessor(entity).toLowerCase().includes(filterValue),
       );
     }
     return filteredEntities;
@@ -267,7 +267,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   unselectEntity(entity: E) {
     const index = this.selectedEntities.findIndex(
-      (e) => e.getId(true) === entity.getId(true)
+      (e) => e.getId(true) === entity.getId(true),
     );
     if (index !== -1) {
       this.selectedEntities.splice(index, 1);
@@ -279,13 +279,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   private emitChange() {
     this.selectionChange.emit(
-      this.selectedEntities.map((e) => e.getId(this.withPrefix))
+      this.selectedEntities.map((e) => e.getId(this.withPrefix)),
     );
   }
 
   private isSelected(entity: E): boolean {
     return this.selectedEntities.some(
-      (e) => e.getId(true) === entity.getId(true)
+      (e) => e.getId(true) === entity.getId(true),
     );
   }
 }

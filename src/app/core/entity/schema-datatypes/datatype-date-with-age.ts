@@ -15,7 +15,7 @@ export const dateWithAgeEntitySchemaDatatype: EntitySchemaDatatype<
 
   transformToObjectFormat: (value) =>
     new DateWithAge(
-      dateOnlyEntitySchemaDatatype.transformToObjectFormat(value)
+      dateOnlyEntitySchemaDatatype.transformToObjectFormat(value),
     ),
   transformToDatabaseFormat: (value) =>
     dateOnlyEntitySchemaDatatype.transformToDatabaseFormat(value),

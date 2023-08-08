@@ -1,5 +1,7 @@
 <ng-container *ngIf="attendance">
-  <h4 class="summary-title" i18n="Attendance summary title">Overall Attendance</h4>
+  <h4 class="summary-title" i18n="Attendance summary title">
+    Overall Attendance
+  </h4>
   <p class="summary-period">
     {{ attendance.periodFrom | date: "shortDate" }} -
     {{ attendance.periodTo | date: "shortDate" }}

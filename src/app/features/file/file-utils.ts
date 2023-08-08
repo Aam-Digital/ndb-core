@@ -1,6 +1,6 @@
 export function resizeImage(
   file: File,
-  maxSize = 360
+  maxSize = 360,
 ): Promise<HTMLCanvasElement> {
   const image = new Image();
   image.src = URL.createObjectURL(file);

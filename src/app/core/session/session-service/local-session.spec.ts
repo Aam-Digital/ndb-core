@@ -67,12 +67,12 @@ describe("LocalSessionService", () => {
 
   it("should save user objects to local storage", () => {
     const storedUser: LocalUser = JSON.parse(
-      window.localStorage.getItem(testUser.name)
+      window.localStorage.getItem(testUser.name),
     );
     expect(storedUser.name).toBe(testUser.name);
     expect(storedUser.roles).toEqual(testUser.roles);
     expect(
-      passwordEqualsEncrypted(TEST_PASSWORD, storedUser.encryptedPassword)
+      passwordEqualsEncrypted(TEST_PASSWORD, storedUser.encryptedPassword),
     ).toBeTrue();
   });
 
@@ -134,7 +134,7 @@ describe("LocalSessionService", () => {
     await localSession.login(TEST_USER, TEST_PASSWORD);
 
     expect(database.initInMemoryDB).toHaveBeenCalledWith(
-      TEST_USER + "-" + AppSettings.DB_NAME
+      TEST_USER + "-" + AppSettings.DB_NAME,
     );
     expect(localSession.getDatabase()).toBe(database);
   });
@@ -142,7 +142,7 @@ describe("LocalSessionService", () => {
   it("should create the database according to the session type in the AppSettings", async () => {
     async function testDatabaseCreation(
       sessionType: SessionType,
-      expectedDB: "inMemory" | "indexed"
+      expectedDB: "inMemory" | "indexed",
     ) {
       database.initInMemoryDB.calls.reset();
       database.initIndexedDB.calls.reset();
@@ -177,7 +177,7 @@ describe("LocalSessionService", () => {
 
     expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(deprecatedDBName);
     const dbReservation = window.localStorage.getItem(
-      LocalSession.DEPRECATED_DB_KEY
+      LocalSession.DEPRECATED_DB_KEY,
     );
     expect(dbReservation).toBe(TEST_USER);
   });
@@ -201,7 +201,7 @@ describe("LocalSessionService", () => {
   async function defineExistingDatabases(
     initUserDB: boolean,
     initDeprecatedDB: boolean,
-    reserved?: string
+    reserved?: string,
   ) {
     if (reserved) {
       window.localStorage.setItem(LocalSession.DEPRECATED_DB_KEY, reserved);

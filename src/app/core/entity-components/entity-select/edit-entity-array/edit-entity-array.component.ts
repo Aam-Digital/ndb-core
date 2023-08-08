@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { EditComponent } from "../../entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntitySelectComponent } from "../entity-select/entity-select.component";
@@ -10,7 +10,10 @@ import { EntitySelectComponent } from "../entity-select/entity-select.component"
   imports: [EntitySelectComponent],
   standalone: true,
 })
-export class EditEntityArrayComponent extends EditComponent<string[]> {
+export class EditEntityArrayComponent
+  extends EditComponent<string[]>
+  implements OnInit
+{
   @Input() showEntities = true;
   placeholder: string;
 

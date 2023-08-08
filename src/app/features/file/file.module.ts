@@ -24,7 +24,7 @@ import { fileComponents } from "./file-components";
 export class FileModule {
   constructor(
     entitySchemaService: EntitySchemaService,
-    components: ComponentRegistry
+    components: ComponentRegistry,
   ) {
     entitySchemaService.registerSchemaDatatype(fileDataType);
     components.addAll(fileComponents);

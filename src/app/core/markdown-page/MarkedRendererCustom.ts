@@ -6,7 +6,7 @@ export class MarkedRendererCustom extends MarkedRenderer {
     text: string,
     level: 1 | 2 | 3 | 4 | 5 | 6,
     raw: string,
-    slugger: Slugger
+    slugger: Slugger,
   ): string {
     if (level === 3) {
       switch (text.toLowerCase()) {

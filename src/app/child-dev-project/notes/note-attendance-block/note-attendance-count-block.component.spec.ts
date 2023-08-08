@@ -29,10 +29,10 @@ describe("NoteAttendanceBlockCountComponent", () => {
 
   it("should count the present children", () => {
     const present = defaultAttendanceStatusTypes.find(
-      (status) => status.id === "PRESENT"
+      (status) => status.id === "PRESENT",
     );
     const absent = defaultAttendanceStatusTypes.find(
-      (status) => status.id === "ABSENT"
+      (status) => status.id === "ABSENT",
     );
     const note = new Note();
     note.addChild("presentChild");

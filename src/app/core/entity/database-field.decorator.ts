@@ -22,7 +22,7 @@ export function DatabaseField(propertySchema: EntitySchemaField = {}) {
 export function addPropertySchema(
   target,
   propertyName: string,
-  propertySchema: EntitySchemaField
+  propertySchema: EntitySchemaField,
 ) {
   target[propertyName] = undefined; // This ensures that the field is not read only
 

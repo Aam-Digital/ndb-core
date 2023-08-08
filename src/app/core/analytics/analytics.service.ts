@@ -23,7 +23,7 @@ export class AnalyticsService {
   constructor(
     private angulartics2: Angulartics2,
     private angulartics2Matomo: Angulartics2Matomo,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   /**
@@ -74,7 +74,7 @@ export class AnalyticsService {
   private setConfigValues() {
     const { url, site_id, no_cookies } =
       this.configService.getConfig<UsageAnalyticsConfig>(
-        USAGE_ANALYTICS_CONFIG_ID
+        USAGE_ANALYTICS_CONFIG_ID,
       ) || { url: "https://matomo.aam-digital.org" };
     const u = url.endsWith("/") ? url : url + "/";
 
@@ -118,7 +118,7 @@ export class AnalyticsService {
     } = {
       category: "no_category",
       label: "no_label",
-    }
+    },
   ): void {
     this.angulartics2.eventTrack.next({
       action: action,

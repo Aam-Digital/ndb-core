@@ -56,7 +56,7 @@ export class NavigationComponent {
   constructor(
     private userRoleGuard: UserRoleGuard,
     private configService: ConfigService,
-    private router: Router
+    private router: Router,
   ) {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
@@ -64,7 +64,7 @@ export class NavigationComponent {
     this.router.events
       .pipe(
         startWith(new NavigationEnd(0, this.router.url, "")),
-        filter((event) => event instanceof NavigationEnd)
+        filter((event) => event instanceof NavigationEnd),
       )
       .subscribe((event: NavigationEnd) => {
         this.activeLink = this.computeActiveLink(event.url);
@@ -82,7 +82,7 @@ export class NavigationComponent {
   private computeActiveLink(newUrl: string): string {
     // conservative filter matching all items that could fit to the given url
     const items: MenuItem[] = this.menuItems.filter((item) =>
-      newUrl.startsWith(item.link)
+      newUrl.startsWith(item.link),
     );
     switch (items.length) {
       case 0:
@@ -104,7 +104,7 @@ export class NavigationComponent {
         // both '/attendance' and '/attendance/add/day' are a prefix of '/attendance/add/day'.
         // In the latter case, the one with the longer URL should match.
         return items.reduce((i1, i2) =>
-          i1.link.length > i2.link.length ? i1 : i2
+          i1.link.length > i2.link.length ? i1 : i2,
         ).link;
     }
   }

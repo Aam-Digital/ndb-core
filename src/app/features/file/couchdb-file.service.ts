@@ -49,20 +49,20 @@ export class CouchdbFileService extends FileService {
     private snackbar: MatSnackBar,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    logger: LoggingService
+    logger: LoggingService,
   ) {
     super(entityMapper, entities, logger);
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
     const obs = this.requestQueue.add(
-      this.runFileUpload(file, entity, property)
+      this.runFileUpload(file, entity, property),
     );
     this.reportProgress($localize`Uploading "${file.name}"`, obs);
     this.cache[`${entity.getId(true)}/${property}`] = obs.pipe(
       last(),
       map(() => URL.createObjectURL(file)),
-      shareReplay()
+      shareReplay(),
     );
     return obs;
   }
@@ -76,15 +76,15 @@ export class CouchdbFileService extends FileService {
           headers: { "Content-Type": file.type, "ngsw-bypass": "" },
           reportProgress: true,
           observe: "events",
-        })
+        }),
       ),
       // prevent http request to be executed multiple times (whenever .subscribe is called)
-      shareReplay()
+      shareReplay(),
     );
   }
 
   private getAttachmentsDocument(
-    attachmentPath: string
+    attachmentPath: string,
   ): Observable<{ _rev: string }> {
     return this.http.get<{ _id: string; _rev: string }>(attachmentPath).pipe(
       catchError((err) => {
@@ -94,7 +94,7 @@ export class CouchdbFileService extends FileService {
             .pipe(map((res) => ({ _rev: res.rev })));
         }
         throw err;
-      })
+      }),
     );
   }
 
@@ -108,7 +108,7 @@ export class CouchdbFileService extends FileService {
       .get<{ _rev: string }>(`${this.attachmentsUrl}/${entity.getId(true)}`)
       .pipe(
         concatMap(({ _rev }) =>
-          this.http.delete(`${this.attachmentsUrl}/${path}?rev=${_rev}`)
+          this.http.delete(`${this.attachmentsUrl}/${path}?rev=${_rev}`),
         ),
         tap(() => delete this.cache[path]),
         catchError((err) => {
@@ -117,7 +117,7 @@ export class CouchdbFileService extends FileService {
           } else {
             throw err;
           }
-        })
+        }),
       );
   }
 
@@ -131,8 +131,8 @@ export class CouchdbFileService extends FileService {
       .get<{ _rev: string }>(attachmentPath)
       .pipe(
         concatMap(({ _rev }) =>
-          this.http.delete(`${attachmentPath}?rev=${_rev}`)
-        )
+          this.http.delete(`${attachmentPath}?rev=${_rev}`),
+        ),
       );
   }
 
@@ -167,25 +167,25 @@ export class CouchdbFileService extends FileService {
         })
         .pipe(
           map((blob) => URL.createObjectURL(blob)),
-          shareReplay()
+          shareReplay(),
         );
     }
     return this.cache[path].pipe(
-      map((url) => this.sanitizer.bypassSecurityTrustUrl(url))
+      map((url) => this.sanitizer.bypassSecurityTrustUrl(url)),
     );
   }
 
   private reportProgress(
     message: string,
-    obs: Observable<HttpEvent<any> | any>
+    obs: Observable<HttpEvent<any> | any>,
   ) {
     const progress = obs.pipe(
       filter(
         (e) =>
           e.type === HttpEventType.DownloadProgress ||
-          e.type === HttpEventType.UploadProgress
+          e.type === HttpEventType.UploadProgress,
       ),
-      map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total)))
+      map((e: HttpProgressEvent) => Math.round(100 * (e.loaded / e.total))),
     );
     const ref = this.snackbar.openFromComponent(ProgressComponent, {
       data: { message, progress },

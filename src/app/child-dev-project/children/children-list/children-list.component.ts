@@ -29,12 +29,12 @@ export class ChildrenListComponent implements OnInit {
 
   constructor(
     private childrenService: ChildrenService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   async ngOnInit() {
     this.route.data.subscribe(
-      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
+      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config),
     );
     this.childrenList = await this.childrenService.getChildren();
     this.isLoading = false;

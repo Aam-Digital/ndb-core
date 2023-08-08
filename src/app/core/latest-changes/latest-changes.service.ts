@@ -32,7 +32,10 @@ import { AUTH_ENABLED } from "../session/auth/auth.interceptor";
 export class LatestChangesService {
   private static GITHUB_API = "https://api.github.com/repos/";
 
-  constructor(private http: HttpClient, private alertService: AlertService) {}
+  constructor(
+    private http: HttpClient,
+    private alertService: AlertService,
+  ) {}
 
   /**
    * Load the changelog information of changes since the last update.
@@ -41,20 +44,20 @@ export class LatestChangesService {
    */
   getChangelogsBetweenVersions(
     currentVersion: string,
-    previousVersion?: string
+    previousVersion?: string,
   ): Observable<Changelog[]> {
     return this.getChangelogs((releases) =>
-      this.filterReleasesBetween(releases, currentVersion, previousVersion)
+      this.filterReleasesBetween(releases, currentVersion, previousVersion),
     );
   }
 
   private filterReleasesBetween(
     releases: Changelog[],
     currentVersion: string,
-    previousVersion?: string
+    previousVersion?: string,
   ) {
     const releasesUpToCurrentVersion = releases.filter(
-      (r) => this.compareVersion(r.tag_name, currentVersion) <= 0
+      (r) => this.compareVersion(r.tag_name, currentVersion) <= 0,
     );
     if (releasesUpToCurrentVersion.length < 1) {
       return [];
@@ -76,17 +79,17 @@ export class LatestChangesService {
    */
   getChangelogsBeforeVersion(
     version: string,
-    count: number
+    count: number,
   ): Observable<Changelog[]> {
     return this.getChangelogs((releases: Changelog[]) =>
-      this.filterReleasesBefore(releases, version, count)
+      this.filterReleasesBefore(releases, version, count),
     );
   }
 
   private filterReleasesBefore(
     releases: Changelog[],
     version: string,
-    count: number
+    count: number,
   ) {
     return releases
       .filter((r) => (version ? r.tag_name < version : true))
@@ -103,30 +106,30 @@ export class LatestChangesService {
    * @param releaseFilter Filter function that is selecting relevant objects from the array of GitHub releases
    */
   private getChangelogs(
-    releaseFilter: (releases: Changelog[]) => Changelog[]
+    releaseFilter: (releases: Changelog[]) => Changelog[],
   ): Observable<Changelog[]> {
     return this.http
       .get<Changelog[]>(
         `${LatestChangesService.GITHUB_API}${environment.repositoryId}/releases`,
-        { context: new HttpContext().set(AUTH_ENABLED, false) }
+        { context: new HttpContext().set(AUTH_ENABLED, false) },
       )
       .pipe(
         map(excludePrereleases),
         map(releaseFilter),
         map((relevantReleases) =>
-          relevantReleases.map((r) => this.parseGithubApiRelease(r))
+          relevantReleases.map((r) => this.parseGithubApiRelease(r)),
         ),
         catchError((error) => {
           this.alertService.addWarning(
-            $localize`Could not load latest changes: ${error}`
+            $localize`Could not load latest changes: ${error}`,
           );
           return throwError(() => "Could not load latest changes.");
-        })
+        }),
       );
 
     function excludePrereleases(releases: Changelog[]): Changelog[] {
       return releases.filter(
-        (release) => !release.prerelease && !release.draft
+        (release) => !release.prerelease && !release.draft,
       );
     }
   }
@@ -136,17 +139,17 @@ export class LatestChangesService {
       .replace(
         // remove heading
         /#{1,2}[^###]*/,
-        ""
+        "",
       )
       .replace(
         // remove commit refs
         / \(\[\w{7}\]\([^\)]*\)\)/g,
-        ""
+        "",
       )
       .replace(
         // remove lines starting with "." after markdown characters
         /^(\*|\#)* *\.(.*)(\n|\r\n)/gm,
-        ""
+        "",
       );
 
     return {

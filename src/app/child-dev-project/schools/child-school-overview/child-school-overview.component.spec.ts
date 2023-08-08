@@ -48,7 +48,7 @@ describe("ChildSchoolOverviewComponent", () => {
     await component.ngOnInit();
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "child",
-      testChild.getId()
+      testChild.getId(),
     );
   });
 
@@ -61,7 +61,7 @@ describe("ChildSchoolOverviewComponent", () => {
     expect(component.mode).toBe("school");
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "school",
-      testSchool.getId()
+      testSchool.getId(),
     );
   });
 
@@ -84,14 +84,14 @@ describe("ChildSchoolOverviewComponent", () => {
 
     component._columns.push(
       { id: "schoolClass", label: "Class", view: "text" },
-      { id: "result", label: "Result", view: "percentageResult" }
+      { id: "result", label: "Result", view: "percentageResult" },
     );
 
     await component.ngOnInit();
 
     columnNames = component._columns.map((column) => column.label);
     expect(columnNames).toEqual(
-      jasmine.arrayContaining(["Team", "From", "To", "Class", "Result"])
+      jasmine.arrayContaining(["Team", "From", "To", "Class", "Result"]),
     );
   });
 
@@ -111,7 +111,7 @@ describe("ChildSchoolOverviewComponent", () => {
     expect(
       moment(existingRelation.end)
         .add(1, "day")
-        .isSame(newRelation.start, "day")
+        .isSame(newRelation.start, "day"),
     ).toBeTrue();
   });
 
@@ -137,7 +137,7 @@ describe("ChildSchoolOverviewComponent", () => {
 
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "school",
-      school.getId()
+      school.getId(),
     );
     expect(component.displayedRecords).toEqual([active1, active2]);
   });

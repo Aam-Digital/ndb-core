@@ -108,7 +108,7 @@ describe("EntityDetailsComponent", () => {
         const panelConfig = c.config as PanelConfig;
         expect(panelConfig.entity).toEqual(testChild);
         expect(panelConfig.creatingNew).toBeFalse();
-      })
+      }),
     );
   }));
 

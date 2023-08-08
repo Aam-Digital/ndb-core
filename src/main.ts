@@ -66,7 +66,7 @@ async function initLanguage(locale: string): Promise<void> {
       // parse translation at runtime if JSON file is not available
       fetch("/assets/locale/messages." + locale + ".xlf")
         .then((r) => r.text())
-        .then((t) => parseXliffToJson(t))
+        .then((t) => parseXliffToJson(t)),
     );
 
   loadTranslations(json);

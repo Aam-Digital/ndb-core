@@ -26,7 +26,7 @@ describe("ConfigImportParserService", () => {
 
   function expectToBeParsedIntoEntityConfig(
     inputs: ConfigFieldRaw[],
-    expectedOutputs: { name: string; schema: EntitySchemaField }[]
+    expectedOutputs: { name: string; schema: EntitySchemaField }[],
   ) {
     const entityName = "test";
     const result = service.parseImportDefinition(inputs, entityName, false);
@@ -40,7 +40,7 @@ describe("ConfigImportParserService", () => {
   function expectToGenerateViewConfig(
     inputs: ConfigFieldRaw[],
     expectedOutputs: EntityListConfig | EntityDetailsConfig,
-    detailsView: boolean
+    detailsView: boolean,
   ) {
     const entityName = "test";
     const result = service.parseImportDefinition(inputs, entityName, false);
@@ -95,7 +95,7 @@ describe("ConfigImportParserService", () => {
             description: configImport_dob.description,
           },
         },
-      ]
+      ],
     );
   });
 
@@ -121,7 +121,7 @@ describe("ConfigImportParserService", () => {
             label: "name",
           },
         },
-      ]
+      ],
     );
   });
 
@@ -142,7 +142,7 @@ describe("ConfigImportParserService", () => {
             label: "date of birth",
           },
         },
-      ]
+      ],
     );
   });
 
@@ -159,7 +159,7 @@ describe("ConfigImportParserService", () => {
 
     for (const testCase of labelIdPairs) {
       const generatedId = ConfigImportParserService.generateIdFromLabel(
-        testCase[0]
+        testCase[0],
       );
       expect(generatedId).toBe(testCase[1]);
     }
@@ -212,7 +212,7 @@ describe("ConfigImportParserService", () => {
             innerDataType: ConfigImportParserService.NOT_CONFIGURED_KEY, // reuse the previous enum!
           },
         },
-      ]
+      ],
     );
 
     expect(parsedConfig["enum:hometown"]).toEqual([
@@ -256,7 +256,7 @@ describe("ConfigImportParserService", () => {
           ],
         },
       },
-      false
+      false,
     );
   });
 
@@ -305,7 +305,7 @@ describe("ConfigImportParserService", () => {
           },
         ],
       } as EntityDetailsConfig,
-      true
+      true,
     );
   });
 
@@ -346,7 +346,7 @@ describe("ConfigImportParserService", () => {
           },
         ],
       } as EntityDetailsConfig,
-      true
+      true,
     );
   });
 
@@ -395,7 +395,7 @@ describe("ConfigImportParserService", () => {
           },
         ],
       } as EntityDetailsConfig,
-      true
+      true,
     );
   });
 
@@ -441,7 +441,7 @@ describe("ConfigImportParserService", () => {
           },
         ],
       } as EntityDetailsConfig,
-      true
+      true,
     );
   });
 });

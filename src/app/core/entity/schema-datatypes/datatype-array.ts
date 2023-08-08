@@ -38,13 +38,13 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
     value: any[],
     schemaField: EntitySchemaField,
     schemaService: EntitySchemaService,
-    parent
+    parent,
   ) => {
     if (!Array.isArray(value)) {
       console.warn(
         `property to be transformed with "array" EntitySchema is not an array`,
         value,
-        parent
+        parent,
       );
       return value;
     }
@@ -56,8 +56,8 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
         el,
         generateSubSchemaField(schemaField),
         schemaService,
-        parent
-      )
+        parent,
+      ),
     );
   },
 
@@ -65,13 +65,13 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
     value: any[],
     schemaField: EntitySchemaField,
     schemaService: EntitySchemaService,
-    parent
+    parent,
   ) => {
     if (!Array.isArray(value)) {
       console.warn(
         'property to be transformed with "array" EntitySchema is not an array',
         value,
-        parent
+        parent,
       );
       value = value ? [value] : [];
     }
@@ -84,8 +84,8 @@ export const arrayEntitySchemaDatatype: EntitySchemaDatatype = {
         el,
         generateSubSchemaField(schemaField),
         schemaService,
-        parent
-      )
+        parent,
+      ),
     );
   },
 };

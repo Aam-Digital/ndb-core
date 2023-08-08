@@ -50,7 +50,7 @@ export class NotesRelatedToEntityComponent implements OnInit {
   constructor(
     private childrenService: ChildrenService,
     private formDialog: FormDialogService,
-    private filterService: FilterService
+    private filterService: FilterService,
   ) {}
 
   ngOnInit(): void {

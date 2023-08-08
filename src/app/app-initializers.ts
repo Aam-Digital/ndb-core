@@ -23,7 +23,7 @@ export const appInitializers = {
       entityConfigService: EntityConfigService,
       router: Router,
       sessionService: SessionService,
-      analyticsService: AnalyticsService
+      analyticsService: AnalyticsService,
     ) =>
     async () => {
       // Re-trigger services that depend on the config when something changes

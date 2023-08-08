@@ -10,7 +10,7 @@ export class TodosModule {
 
   constructor(
     components: ComponentRegistry,
-    entitySchemaService: EntitySchemaService
+    entitySchemaService: EntitySchemaService,
   ) {
     entitySchemaService.registerSchemaDatatype(timeIntervalDatatype);
     components.addAll(dynamicComponents);
@@ -22,7 +22,7 @@ const dynamicComponents: [string, AsyncComponent][] = [
     "TodoList",
     () =>
       import("./todo-list/todo-list.component").then(
-        (c) => c.TodoListComponent
+        (c) => c.TodoListComponent,
       ),
   ],
   [
@@ -36,7 +36,7 @@ const dynamicComponents: [string, AsyncComponent][] = [
     "TodosDashboard",
     () =>
       import("./todos-dashboard/todos-dashboard.component").then(
-        (c) => c.TodosDashboardComponent
+        (c) => c.TodosDashboardComponent,
       ),
   ],
   [

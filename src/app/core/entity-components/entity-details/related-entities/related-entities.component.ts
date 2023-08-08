@@ -29,7 +29,7 @@ export class RelatedEntitiesComponent implements OnInit {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
   ) {}
 
   async ngOnInit() {

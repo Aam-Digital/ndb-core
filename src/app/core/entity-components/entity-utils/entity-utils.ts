@@ -11,7 +11,7 @@ export function isArrayDataType(dataType: string) {
 
 export function isArrayProperty(
   entity: EntityConstructor,
-  property: string
+  property: string,
 ): boolean {
   const dataType = entity.schema.get(property).dataType;
   return isArrayDataType(dataType);

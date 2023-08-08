@@ -29,9 +29,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 export class PrimaryActionComponent {
   noteConstructor = Note;
 
-  constructor(
-    private formDialog: FormDialogService
-  ) {}
+  constructor(private formDialog: FormDialogService) {}
 
   /**
    * The primary action to be triggered when the user clicks the hovering button.
@@ -40,7 +38,7 @@ export class PrimaryActionComponent {
     this.formDialog.openFormPopup(
       this.createNewNote(),
       [],
-      NoteDetailsComponent
+      NoteDetailsComponent,
     );
   }
 

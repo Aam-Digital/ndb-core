@@ -58,7 +58,7 @@ describe("FormComponent", () => {
     spyOn(alertService, "addDanger");
     const entityFormService = TestBed.inject(EntityFormService);
     spyOn(entityFormService, "saveChanges").and.rejectWith(
-      new Error("error message")
+      new Error("error message"),
     );
 
     await component.saveClicked();
@@ -100,7 +100,7 @@ describe("FormComponent", () => {
     }
 
     spyOn(TestBed.inject(EntitySchemaService), "getComponent").and.returnValue(
-      "PredefinedComponent"
+      "PredefinedComponent",
     );
     component.entity = new Test();
     component.cols = [

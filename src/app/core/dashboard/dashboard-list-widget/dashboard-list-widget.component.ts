@@ -100,7 +100,7 @@ export class DashboardListWidgetComponent<E>
       .pipe(
         filter((d) => !!d),
         map((d) => (this.dataMapper ? this.dataMapper(d) : d)),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((newData) => {
         this.dataSource.data = newData;
@@ -118,7 +118,7 @@ export class DashboardListWidgetComponent<E>
       .receiveUpdates(this.entityType)
       .pipe(untilDestroyed(this))
       .subscribe((update) =>
-        this.data.next(applyUpdate(this.data.value as Entity[], update) as E[])
+        this.data.next(applyUpdate(this.data.value as Entity[], update) as E[]),
       );
   }
 

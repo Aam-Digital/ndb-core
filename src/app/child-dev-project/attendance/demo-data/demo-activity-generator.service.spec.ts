@@ -20,7 +20,7 @@ describe("DemoActivityGenerator", () => {
 
     service = new DemoActivityGeneratorService(
       mockChildGenerator,
-      mockUserGenerator
+      mockUserGenerator,
     );
   });
 

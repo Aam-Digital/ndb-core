@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DisplayMonthComponent } from './display-month.component';
+import { DisplayMonthComponent } from "./display-month.component";
 
-describe('DisplayMonthComponent', () => {
+describe("DisplayMonthComponent", () => {
   let component: DisplayMonthComponent;
   let fixture: ComponentFixture<DisplayMonthComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ DisplayMonthComponent ]
-    })
-    .compileComponents();
+      imports: [DisplayMonthComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(DisplayMonthComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

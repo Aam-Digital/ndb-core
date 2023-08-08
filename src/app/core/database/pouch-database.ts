@@ -91,7 +91,7 @@ export class PouchDatabase extends Database {
    */
   initIndexedDB(
     dbName = "indexed-database",
-    options?: PouchDB.Configuration.DatabaseConfiguration
+    options?: PouchDB.Configuration.DatabaseConfiguration,
   ): PouchDatabase {
     this.pouchDB = new PouchDB(dbName, options);
     this.databaseInitialized.complete();
@@ -106,7 +106,7 @@ export class PouchDatabase extends Database {
    */
   initRemoteDB(
     dbName = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
-    fetch = this.defaultFetch
+    fetch = this.defaultFetch,
   ): PouchDatabase {
     const options = {
       adapter: "http",
@@ -150,7 +150,7 @@ export class PouchDatabase extends Database {
   get(
     id: string,
     options: GetOptions = {},
-    returnUndefined?: boolean
+    returnUndefined?: boolean,
   ): Promise<any> {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.get(id, options))
@@ -228,7 +228,7 @@ export class PouchDatabase extends Database {
         results[i] = await this.resolveConflict(
           objects.find((obj) => obj._id === result.id),
           false,
-          result
+          result,
         ).catch((e) => e);
       }
     }
@@ -276,8 +276,8 @@ export class PouchDatabase extends Database {
               include_docs: true,
             })
             .addListener("change", (change) =>
-              this.changesFeed.next(change.doc)
-            )
+              this.changesFeed.next(change.doc),
+            ),
         )
         .catch((err) => {
           if (err.statusCode === HttpStatusCode.Unauthorized) {
@@ -312,7 +312,7 @@ export class PouchDatabase extends Database {
    */
   query(
     fun: string | ((doc: any, emit: any) => void),
-    options: QueryOptions
+    options: QueryOptions,
   ): Promise<any> {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.query(fun, options))
@@ -371,18 +371,18 @@ export class PouchDatabase extends Database {
   private async resolveConflict(
     newObject: any,
     overwriteChanges = false,
-    existingError: any = {}
+    existingError: any = {},
   ): Promise<any> {
     const existingObject = await this.get(newObject._id);
     const resolvedObject = this.mergeObjects(existingObject, newObject);
     if (resolvedObject) {
       this.loggingService.debug(
-        "resolved document conflict automatically (" + resolvedObject._id + ")"
+        "resolved document conflict automatically (" + resolvedObject._id + ")",
       );
       return this.put(resolvedObject);
     } else if (overwriteChanges) {
       this.loggingService.debug(
-        "overwriting conflicting document version (" + newObject._id + ")"
+        "overwriting conflicting document version (" + newObject._id + ")",
       );
       newObject._rev = existingObject._rev;
       return this.put(newObject);

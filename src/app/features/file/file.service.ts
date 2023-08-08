@@ -15,7 +15,7 @@ export abstract class FileService {
   protected constructor(
     private entityMapper: EntityMapperService,
     private entities: EntityRegistry,
-    private logger: LoggingService
+    private logger: LoggingService,
   ) {
     // TODO maybe registration is to late (only when component is rendered)
     this.deleteFilesOfDeletedEntities();
@@ -90,6 +90,6 @@ export abstract class FileService {
   abstract uploadFile(
     file: File,
     entity: Entity,
-    property: string
+    property: string,
   ): Observable<any>;
 }

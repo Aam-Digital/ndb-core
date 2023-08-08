@@ -60,8 +60,8 @@ export class ActivitiesOverviewComponent implements OnInit {
       .loadType(RecurringActivity)
       .then((activities) =>
         activities.filter((activity) =>
-          activity.linkedGroups.includes(this.entity.getId())
-        )
+          activity.linkedGroups.includes(this.entity.getId()),
+        ),
       );
   }
 

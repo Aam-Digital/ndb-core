@@ -36,7 +36,10 @@ export class QueryDataSource<T extends Entity> implements DataSource<T> {
     }
   }
 
-  constructor(private database: Database, private queryName: string) {}
+  constructor(
+    private database: Database,
+    private queryName: string,
+  ) {}
 
   /**
    * Connect to the datasource and receive an observable to subscribe to loaded data.

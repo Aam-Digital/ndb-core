@@ -17,20 +17,16 @@ import { NgTemplateOutlet } from "@angular/common";
  */
 @Component({
   selector: "app-disabled-wrapper",
-  template: `
-    <div
-      [matTooltip]="text"
-      [matTooltipDisabled]="!elementDisabled"
-      style="display: inline"
-      #wrapper
-    >
-      <ng-container *ngTemplateOutlet="template"></ng-container>
-    </div>`,
-  imports: [
-    MatTooltipModule,
-    NgTemplateOutlet
-  ],
-  standalone: true
+  template: ` <div
+    [matTooltip]="text"
+    [matTooltipDisabled]="!elementDisabled"
+    style="display: inline"
+    #wrapper
+  >
+    <ng-container *ngTemplateOutlet="template"></ng-container>
+  </div>`,
+  imports: [MatTooltipModule, NgTemplateOutlet],
+  standalone: true,
 })
 export class DisabledWrapperComponent implements AfterViewInit {
   /**

@@ -12,7 +12,7 @@ import { DatePipe } from "@angular/common";
 @DynamicComponent("DisplayDate")
 @Component({
   selector: "app-display-date",
-  template: `{{ value | date : config }}`,
+  template: `{{ value | date: config }}`,
   standalone: true,
   imports: [DatePipe],
 })

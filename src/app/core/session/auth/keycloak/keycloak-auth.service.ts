@@ -48,7 +48,7 @@ export class KeycloakAuthService extends AuthService {
 
   private credentialAuth(
     username: string,
-    password: string
+    password: string,
   ): Promise<OIDCTokenResponse> {
     const body = new URLSearchParams();
     body.set("username", username);
@@ -69,14 +69,14 @@ export class KeycloakAuthService extends AuthService {
     body.set("client_id", "app");
     const headers = new HttpHeaders().set(
       "Content-Type",
-      "application/x-www-form-urlencoded"
+      "application/x-www-form-urlencoded",
     );
     return firstValueFrom(
       this.httpClient
         .post<OIDCTokenResponse>(
           `${this.realmUrl}/protocol/openid-connect/token`,
           body.toString(),
-          { headers }
+          { headers },
         )
         .pipe(
           catchError((err) => {
@@ -87,8 +87,8 @@ export class KeycloakAuthService extends AuthService {
             } else {
               throw err;
             }
-          })
-        )
+          }),
+        ),
     );
   }
 
@@ -96,7 +96,7 @@ export class KeycloakAuthService extends AuthService {
     this.accessToken = token.access_token;
     localStorage.setItem(
       KeycloakAuthService.REFRESH_TOKEN_KEY,
-      token.refresh_token
+      token.refresh_token,
     );
     this.logSuccessfulAuth();
     const parsedToken = parseJwt(this.accessToken);
@@ -135,7 +135,7 @@ export class KeycloakAuthService extends AuthService {
 
   getUserinfo(): Observable<any> {
     return this.httpClient.get(
-      `${this.realmUrl}/protocol/openid-connect/userinfo`
+      `${this.realmUrl}/protocol/openid-connect/userinfo`,
     );
   }
 
@@ -152,7 +152,7 @@ export class KeycloakAuthService extends AuthService {
         email,
         realm: this.keycloak.realm,
         client: this.keycloak.clientId,
-      }
+      },
     );
   }
 
@@ -163,13 +163,13 @@ export class KeycloakAuthService extends AuthService {
   updateUser(userId: string, user: Partial<KeycloakUser>): Observable<any> {
     return this.httpClient.put(
       `${environment.account_url}/account/${userId}`,
-      user
+      user,
     );
   }
 
   getUser(username: string): Observable<KeycloakUser> {
     return this.httpClient.get<KeycloakUser>(
-      `${environment.account_url}/account/${username}`
+      `${environment.account_url}/account/${username}`,
     );
   }
 
@@ -178,7 +178,7 @@ export class KeycloakAuthService extends AuthService {
    */
   getRoles(): Observable<Role[]> {
     return this.httpClient.get<Role[]>(
-      `${environment.account_url}/account/roles`
+      `${environment.account_url}/account/roles`,
     );
   }
 }

@@ -25,7 +25,7 @@ export class TabStateMemoDirective implements OnInit {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private tab: MatTabGroup
+    private tab: MatTabGroup,
   ) {}
 
   ngOnInit() {
@@ -34,7 +34,7 @@ export class TabStateMemoDirective implements OnInit {
     // (i.e. we override any binding to [(selectedIndex)] for the initial index)
     const potentialNextTabIndex = parseInt(
       this.route.snapshot.queryParamMap.get(this.tabIndexKey),
-      10
+      10,
     );
     if (!Number.isNaN(potentialNextTabIndex)) {
       this.tab.selectedIndex = potentialNextTabIndex;

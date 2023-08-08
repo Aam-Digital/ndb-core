@@ -5,7 +5,7 @@ export const notesComponents: ComponentTuple[] = [
     "NotesManager",
     () =>
       import("./notes-manager/notes-manager.component").then(
-        (c) => c.NotesManagerComponent
+        (c) => c.NotesManagerComponent,
       ),
   ],
   [

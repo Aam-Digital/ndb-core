@@ -61,7 +61,7 @@ export class ConfigImportParserService {
   parseImportDefinition(
     configRaw: ConfigFieldRaw[],
     entityName: string,
-    includingDefaultConfigs: boolean
+    includingDefaultConfigs: boolean,
   ): GeneratedConfig {
     this.reset();
 
@@ -122,7 +122,7 @@ export class ConfigImportParserService {
       schema.dataType = "configurable-enum";
       schema.innerDataType = this.generateOrMatchEnum(
         fieldDef.additional_type_details,
-        fieldId
+        fieldId,
       );
     }
     if (fieldDef.dataType === "enum-multi") {
@@ -130,7 +130,7 @@ export class ConfigImportParserService {
       schema.innerDataType = "configurable-enum";
       schema.additional = this.generateOrMatchEnum(
         fieldDef.additional_type_details,
-        fieldId
+        fieldId,
       );
     }
 
@@ -192,7 +192,7 @@ export class ConfigImportParserService {
   private generateOrUpdateListViewConfig(
     fieldDef: ConfigFieldRaw,
     entityType: string,
-    fieldId: string
+    fieldId: string,
   ) {
     if (
       !fieldDef.show_in_list ||
@@ -208,7 +208,7 @@ export class ConfigImportParserService {
     for (const fieldColGroup of fieldDef.show_in_list.split(",")) {
       const columnGroup = this.generateOrFindColumnGroup(
         listView,
-        fieldColGroup.trim()
+        fieldColGroup.trim(),
       );
       columnGroup.columns.push(fieldId);
     }
@@ -231,10 +231,10 @@ export class ConfigImportParserService {
 
   private generateOrFindColumnGroup(
     listView: EntityListConfig,
-    columnGroupName: string
+    columnGroupName: string,
   ) {
     const existingColumnGroup = listView.columnGroups.groups.find(
-      (c) => c.name === columnGroupName
+      (c) => c.name === columnGroupName,
     );
     if (existingColumnGroup) {
       return existingColumnGroup;
@@ -248,7 +248,7 @@ export class ConfigImportParserService {
   private generateOrUpdateDetailsViewConfig(
     fieldDef: ConfigFieldRaw,
     entityType: string,
-    fieldId: string
+    fieldId: string,
   ) {
     if (
       !fieldDef.show_in_details ||
@@ -266,7 +266,7 @@ export class ConfigImportParserService {
       const [tabName, fieldGroupName] = detailsTab.split(":");
       const panel: PanelComponent = this.generateOrFindDetailsPanel(
         detailsView,
-        tabName.trim()
+        tabName.trim(),
       );
 
       let fieldGroupIndex = 0;
@@ -276,7 +276,7 @@ export class ConfigImportParserService {
         }
 
         fieldGroupIndex = panel.config.headers.findIndex(
-          (header) => header === fieldGroupName
+          (header) => header === fieldGroupName,
         );
         if (fieldGroupIndex === -1) {
           panel.config.headers.push(fieldGroupName);
@@ -291,7 +291,7 @@ export class ConfigImportParserService {
 
   private generateEmptyDetailsView(
     viewId: string,
-    entityType: string
+    entityType: string,
   ): EntityDetailsConfig {
     const newDetailsView = {
       entity: entityType,
@@ -309,10 +309,10 @@ export class ConfigImportParserService {
 
   private generateOrFindDetailsPanel(
     detailsView: EntityDetailsConfig,
-    panelName: string
+    panelName: string,
   ): PanelComponent {
     const existingPanel = detailsView.panels.find(
-      (c) => c.title === panelName && c.components[0].component === "Form"
+      (c) => c.title === panelName && c.components[0].component === "Form",
     );
     if (existingPanel) {
       return existingPanel.components[0];

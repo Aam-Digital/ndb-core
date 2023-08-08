@@ -3,7 +3,7 @@
  * as stored in the config database
  */
 export type ConfigurableEnumConfig<
-  T extends ConfigurableEnumValue = ConfigurableEnumValue
+  T extends ConfigurableEnumValue = ConfigurableEnumValue,
 > = Array<T>;
 
 /**

@@ -38,7 +38,7 @@ export const entityArrayEntitySchemaDatatype: EntitySchemaDatatype = {
       console.warn(
         `property to be transformed with "entity-array" EntitySchema is not an array`,
         value,
-        parent
+        parent,
       );
     }
 
@@ -49,14 +49,14 @@ export const entityArrayEntitySchemaDatatype: EntitySchemaDatatype = {
     value: any[],
     schemaField: EntitySchemaField,
     schemaService: EntitySchemaService,
-    parent
+    parent,
   ) => {
     if (!Array.isArray(value)) {
       console.warn(
         //TODO: should this be a sentry error instead?
         'property to be transformed with "entity-array" EntitySchema is not an array',
         value,
-        parent
+        parent,
       );
       return value;
     }

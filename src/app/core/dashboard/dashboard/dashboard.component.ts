@@ -43,7 +43,7 @@ export class DashboardComponent implements OnInit {
     this.activatedRoute.data.subscribe(
       (data: RouteData<{ widgets: DynamicComponentConfig[] }>) => {
         this.widgets = data.config.widgets;
-      }
+      },
     );
   }
 }
