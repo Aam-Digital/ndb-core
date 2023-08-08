@@ -107,4 +107,30 @@ describe("EnumDropdownComponent", () => {
       { id: "a", label: "a", isInvalidOption: true },
     ]);
   });
+
+  it("should delete the selected value if the option was deleted in the settings dialog", () => {
+    component.enumEntity = new ConfigurableEnum();
+    const option1 = { id: "1", label: "1" };
+    const option2 = { id: "2", label: "2" };
+    component.enumEntity.values = [option1, option2];
+    component.form = new FormControl(option1);
+
+    component.ngOnChanges({ form: true } as any);
+
+    // simulate removing option "2"
+    mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
+    component.enumEntity.values.pop();
+    component.openSettings({ stopPropagation: () => {} } as any);
+
+    expect(component.options).toEqual([option1]);
+    expect(component.form.value).toEqual(option1);
+
+    // simulate removing option "1"
+    mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
+    component.enumEntity.values.pop();
+    component.openSettings({ stopPropagation: () => {} } as any);
+
+    expect(component.options).toEqual([]);
+    expect(component.form.value).toEqual(undefined);
+  });
 });
