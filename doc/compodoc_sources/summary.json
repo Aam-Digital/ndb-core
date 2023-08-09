@@ -26,6 +26,48 @@
     ]
   },
   {
+    "title": "Concepts",
+    "file": "concepts/_index.md",
+    "children": [
+      {
+        "title": "Overall Architecture",
+        "file": "concepts/overall-architecture.md"
+      },
+      {
+        "title": "Extendability and Plugin Approach",
+        "file": "concepts/extendability.md"
+      },
+      {
+        "title": "Entity Schema",
+        "file": "concepts/entity-schema-system.md"
+      },
+      {
+        "title": "Session and Authentication System",
+        "file": "concepts/session-system.md"
+      },
+      {
+        "title": "Configuration",
+        "file": "concepts/configuration.md"
+      },
+      {
+        "title": "User Roles and Permissions",
+        "file": "concepts/permissions.md"
+      },
+      {
+        "title": "UX Guidelines",
+        "file": "concepts/ux-guidelines.md"
+      },
+      {
+        "title": "Documentation Structure",
+        "file": "concepts/documentation-structure.md"
+      },
+      {
+        "title": "Infrastructure",
+        "file": "concepts/infrastructure.md"
+      }
+    ]
+  },
+  {
     "title": "How-To Guides",
     "file": "how-to-guides/_index.md",
     "children": [
@@ -100,44 +142,6 @@
       {
         "title": "Add Another Language",
         "file": "how-to-guides/add-another-language.md"
-      }
-    ]
-  },
-  {
-    "title": "Concepts",
-    "file": "concepts/_index.md",
-    "children": [
-      {
-        "title": "Overall Architecture",
-        "file": "concepts/overall-architecture.md"
-      },
-      {
-        "title": "Entity Schema",
-        "file": "concepts/entity-schema-system.md"
-      },
-      {
-        "title": "Session and Authentication System",
-        "file": "concepts/session-system.md"
-      },
-      {
-        "title": "Configuration",
-        "file": "concepts/configuration.md"
-      },
-      {
-        "title": "User Roles and Permissions",
-        "file": "concepts/permissions.md"
-      },
-      {
-        "title": "UX Guidelines",
-        "file": "concepts/ux-guidelines.md"
-      },
-      {
-        "title": "Documentation Structure",
-        "file": "concepts/documentation-structure.md"
-      },
-      {
-        "title": "Infrastructure",
-        "file": "concepts/infrastructure.md"
       }
     ]
   },
