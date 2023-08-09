@@ -42,7 +42,7 @@ export class RemoteSession extends SessionService {
    */
   constructor(
     private loggingService: LoggingService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     super();
     this.database = new PouchDatabase(this.loggingService);
@@ -63,6 +63,7 @@ export class RemoteSession extends SessionService {
       if (httpError?.status === HttpStatusCode.Unauthorized) {
         this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
+        this.loggingService.error(error);
         this.loginState.next(LoginState.UNAVAILABLE);
       }
     }
@@ -86,10 +87,10 @@ export class RemoteSession extends SessionService {
                   // return initial response if request failed again
                   .then((newRes) => (newRes.ok ? newRes : initialRes))
                   .catch(() => initialRes)
-              : initialRes
+              : initialRes,
           );
         }
-      }
+      },
     );
     this.currentDBUser = userObject;
     this.loginState.next(LoginState.LOGGED_IN);
