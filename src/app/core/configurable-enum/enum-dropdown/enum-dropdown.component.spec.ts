@@ -126,7 +126,6 @@ describe("EnumDropdownComponent", () => {
     expect(component.form.value).toEqual(option1);
 
     // simulate removing option "1"
-    mockDialog.open.and.returnValue({ afterClosed: () => of({}) } as any);
     component.enumEntity.values.pop();
     component.openSettings({ stopPropagation: () => {} } as any);
 
