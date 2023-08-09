@@ -23,6 +23,8 @@ import { genders } from "../../child-dev-project/children/model/genders";
 import { ConfigurableEnumService } from "../../core/configurable-enum/configurable-enum.service";
 import { ConfigurableEnumDatatype } from "../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { School } from "../../child-dev-project/schools/model/school";
+import { entityEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-entity";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -183,16 +185,16 @@ describe("ImportService", () => {
     await expectEntitiesToBeInDatabase([children[2]], false, true);
   });
 
-  it("should map values using enum mappingFn", () => {
+  it("should map values using enum mappingFn", async () => {
     const mappingFn = service.getMappingFunction({ dataType: "date" });
     const input = "30.11.2023";
 
-    const actualMapped = mappingFn(input, "DD.MM.YYYY");
+    const actualMapped = await mappingFn(input, "DD.MM.YYYY");
 
-    expect(actualMapped).toEqual(new Date(2023, 10, 30));
+    expect(actualMapped).toBeDate("2023-11-30");
   });
 
-  it("should map values using date mappingFn", () => {
+  it("should map values using date mappingFn", async () => {
     const enumService = TestBed.inject(ConfigurableEnumService);
     spyOn(enumService, "getEnumValues").and.returnValue(genders);
     TestBed.inject(EntitySchemaService).registerSchemaDatatype(
@@ -205,8 +207,28 @@ describe("ImportService", () => {
     });
     const input = "MALE";
 
-    const actualMapped = mappingFn(input, { MALE: "M" });
+    const actualMapped = await mappingFn(input, { MALE: "M" });
 
     expect(actualMapped).toEqual(genders.find((e) => e.id === "M"));
+  });
+
+  it("should map to the referenced entity", async () => {
+    const c1 = Child.create("first");
+    const c2 = new Child();
+    c2.projectNumber = "123";
+    await TestBed.inject(EntityMapperService).saveAll([c1, c2]);
+
+    const mappingFn = service.getMappingFunction({
+      dataType: entityEntitySchemaDatatype.name,
+      additional: "Child",
+    });
+
+    await expectAsync(mappingFn("first", "name")).toBeResolvedTo(c1.getId());
+    await expectAsync(mappingFn("123", "projectNumber")).toBeResolvedTo(
+      c2.getId(),
+    );
+    await expectAsync(mappingFn("345", "projectNumber")).toBeResolvedTo(
+      undefined,
+    );
   });
 });

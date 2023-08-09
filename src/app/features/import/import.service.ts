@@ -86,15 +86,15 @@ export class ImportService {
     ) {
       return {
         mappingCmp: EnumValueMappingComponent,
-        mappingFn: async (val, additional) =>
-          this.schemaService.valueToEntityFormat(additional?.[val], schema),
+        mappingFn: async (val, map) =>
+          this.schemaService.valueToEntityFormat(map?.[val], schema),
       };
     }
     if (this.dateDataTypes.includes(schema.dataType)) {
       return {
         mappingCmp: DateValueMappingComponent,
-        mappingFn: async (val, additional) => {
-          const date = moment(val, additional, true);
+        mappingFn: async (val, format) => {
+          const date = moment(val, format, true);
           if (date.isValid()) {
             return date.toDate();
           } else {
@@ -111,18 +111,13 @@ export class ImportService {
       // TODO when to use full ID?
       return {
         mappingCmp: EntityValueMappingComponent,
-        mappingFn: (
-          val: string,
-          additional: { entity: string; property: string },
-        ) => {
-          if (!additional) {
+        mappingFn: (val: string, property: string) => {
+          if (!property) {
             return Promise.resolve(undefined);
           }
           return this.entityMapper
-            .loadType(additional.entity)
-            .then(
-              (res) => res.find((e) => e[additional.property] === val)?.getId(),
-            );
+            .loadType(schema.additional)
+            .then((res) => res.find((e) => e[property] === val)?.getId());
         },
       };
     }

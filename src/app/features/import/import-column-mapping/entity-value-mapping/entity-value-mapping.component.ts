@@ -64,10 +64,7 @@ export class EntityValueMappingComponent extends AbstractValueMappingComponent {
         $localize`If not property is selected, no import will be done.`,
       ));
     if (confirmed) {
-      this.data.col.additional = {
-        entity: this.entity.ENTITY_TYPE,
-        property: this.propertyForm.value,
-      };
+      this.data.col.additional = this.propertyForm.value;
       this.dialog.close();
     }
   }
