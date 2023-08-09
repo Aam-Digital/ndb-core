@@ -59,7 +59,7 @@ describe("ConfigureEnumPopupComponent", () => {
     entityMapper.addAll([m1, m2, f1, other]);
     const confirmationSpy = spyOn(
       TestBed.inject(ConfirmationDialogService),
-      "getConfirmation"
+      "getConfirmation",
     );
 
     await component.delete(male, genders.indexOf(male));
@@ -67,8 +67,8 @@ describe("ConfigureEnumPopupComponent", () => {
     expect(confirmationSpy).toHaveBeenCalledWith(
       "Delete option",
       jasmine.stringContaining(
-        `The option is still used in 2 ${Child.label} records.`
-      )
+        `The option is still used in 2 ${Child.label} records.`,
+      ),
     );
 
     entityMapper.delete(m1);
@@ -78,7 +78,7 @@ describe("ConfigureEnumPopupComponent", () => {
 
     expect(confirmationSpy).toHaveBeenCalledWith(
       "Delete option",
-      `Are you sure that you want to delete the option "${male.label}"?`
+      `Are you sure that you want to delete the option "${male.label}"?`,
     );
   });
 });

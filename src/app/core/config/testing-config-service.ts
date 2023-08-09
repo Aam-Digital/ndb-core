@@ -5,11 +5,11 @@ import { Config } from "./config";
 import { ConfigService } from "./config.service";
 
 export function createTestingConfigService(
-  configsObject: any = defaultJsonConfig
+  configsObject: any = defaultJsonConfig,
 ): ConfigService {
   return new ConfigService(
     mockEntityMapper([new Config(Config.CONFIG_KEY, configsObject)]),
     new LoggingService(),
-    { can: () => true } as any
+    { can: () => true } as any,
   );
 }

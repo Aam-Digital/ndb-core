@@ -29,7 +29,7 @@ export interface MapPopupConfig {
 export class MapPopupComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    public data: MapPopupConfig
+    public data: MapPopupConfig,
   ) {}
 
   mapClicked(newCoordinates: Coordinates) {

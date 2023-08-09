@@ -56,7 +56,7 @@ export class InputFileComponent<T = any> {
 
   private getFileFromInputEvent(
     inputEvent: Event,
-    allowedFileType?: string
+    allowedFileType?: string,
   ): File {
     const target = inputEvent.target as HTMLInputElement;
     const file = target.files[0];

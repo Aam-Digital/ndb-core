@@ -49,13 +49,13 @@ export class FormComponent<E extends Entity> implements OnInit {
     private router: Router,
     private location: Location,
     private entityFormService: EntityFormService,
-    private alertService: AlertService
+    private alertService: AlertService,
   ) {}
 
   ngOnInit() {
     this.form = this.entityFormService.createFormGroup(
       [].concat(...this._cols),
-      this.entity
+      this.entity,
     );
     if (!this.creatingNew) {
       this.form.disable();

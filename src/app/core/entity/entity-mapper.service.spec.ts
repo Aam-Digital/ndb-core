@@ -49,7 +49,7 @@ describe("EntityMapperService", () => {
       testDatabase,
       new EntitySchemaService(),
       mockSessionService,
-      entityRegistry
+      entityRegistry,
     );
 
     return Promise.all([
@@ -65,7 +65,7 @@ describe("EntityMapperService", () => {
   function expectEntity(actualEntity, expectedEntity) {
     expect(actualEntity.getId()).toBe(expectedEntity.entityId);
     expect(
-      Entity.createPrefixedId(actualEntity.getType(), actualEntity.getId())
+      Entity.createPrefixedId(actualEntity.getType(), actualEntity.getId()),
     ).toBe(expectedEntity._id);
 
     expect(actualEntity).toBeInstanceOf(Entity);
@@ -74,7 +74,7 @@ describe("EntityMapperService", () => {
   it("loads existing entity", async () => {
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
-      existingEntity.entityId
+      existingEntity.entityId,
     );
     expectEntity(loadedEntity, existingEntity);
   });
@@ -111,7 +111,7 @@ describe("EntityMapperService", () => {
     await entityMapper.save<Entity>(entity);
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
-      entity.getId()
+      entity.getId(),
     );
     expectEntity(loadedEntity, entity);
   });
@@ -132,7 +132,7 @@ describe("EntityMapperService", () => {
   it("saves new version of existing entity", async () => {
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
-      existingEntity.entityId
+      existingEntity.entityId,
     );
     expect(loadedEntity).toHaveId(existingEntity.entityId);
 
@@ -142,12 +142,12 @@ describe("EntityMapperService", () => {
   it("removes existing entity", async () => {
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
-      existingEntity.entityId
+      existingEntity.entityId,
     );
     await entityMapper.remove<Entity>(loadedEntity);
 
     await expectAsync(
-      entityMapper.load<Entity>(Entity, existingEntity.entityId)
+      entityMapper.load<Entity>(Entity, existingEntity.entityId),
     ).toBeRejected();
   });
 
@@ -169,16 +169,16 @@ describe("EntityMapperService", () => {
 
     const loadedByEntityId = await entityMapper.load<Entity>(
       Entity,
-      testEntity.getId()
+      testEntity.getId(),
     );
     expect(loadedByEntityId).toBeDefined();
 
     expect(
-      loadedByEntityId.getId(true).startsWith(Entity.ENTITY_TYPE)
+      loadedByEntityId.getId(true).startsWith(Entity.ENTITY_TYPE),
     ).toBeTrue();
     const loadedByFullId = await entityMapper.load<Entity>(
       Entity,
-      loadedByEntityId.getId(true)
+      loadedByEntityId.getId(true),
     );
     expect(loadedByFullId.getId(true)).toBe(loadedByEntityId.getId(true));
     expect(loadedByFullId._rev).toBe(loadedByEntityId._rev);

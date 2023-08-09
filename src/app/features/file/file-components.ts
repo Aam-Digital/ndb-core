@@ -5,14 +5,14 @@ export const fileComponents: ComponentTuple[] = [
     "EditFile",
     () =>
       import("./edit-file/edit-file.component").then(
-        (c) => c.EditFileComponent
+        (c) => c.EditFileComponent,
       ),
   ],
   [
     "ViewFile",
     () =>
       import("./view-file/view-file.component").then(
-        (c) => c.ViewFileComponent
+        (c) => c.ViewFileComponent,
       ),
   ],
 ];

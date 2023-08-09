@@ -41,7 +41,7 @@ describe("EnumValueMappingComponent", () => {
 
   it("should use the edit component for the selected property", () => {
     expect(component.component).toBe(
-      new ConfigurableEnumDatatype(undefined).editComponent
+      new ConfigurableEnumDatatype(undefined).editComponent,
     );
     expect(component.schema).toBe(Child.schema.get("gender"));
   });
@@ -49,7 +49,7 @@ describe("EnumValueMappingComponent", () => {
   it("should ask for confirmation on save if not all values were assigned", async () => {
     const confirmationSpy = spyOn(
       TestBed.inject(ConfirmationDialogService),
-      "getConfirmation"
+      "getConfirmation",
     );
     component.form.patchValue({ male: "M" });
 
@@ -62,7 +62,7 @@ describe("EnumValueMappingComponent", () => {
     data.col.additional = { male: "M" };
     spyOn(
       TestBed.inject(ConfigurableEnumService),
-      "getEnumValues"
+      "getEnumValues",
     ).and.returnValue(genders);
 
     component.ngOnInit();

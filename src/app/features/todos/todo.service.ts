@@ -12,7 +12,7 @@ export class TodoService {
   constructor(
     private sessionService: SessionService,
     private alertService: AlertService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
   ) {}
 
   async completeTodo(todo: Todo) {
@@ -41,7 +41,7 @@ export class TodoService {
 
     await this.entityMapper.save(nextTodo);
     this.alertService.addInfo(
-      $localize`:snackbar message informing about next recurring task:A new recurring ${Todo.label} has been created based on the repetition interval.`
+      $localize`:snackbar message informing about next recurring task:A new recurring ${Todo.label} has been created based on the repetition interval.`,
     );
 
     return nextTodo;

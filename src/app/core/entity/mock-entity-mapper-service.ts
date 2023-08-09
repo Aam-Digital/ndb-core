@@ -7,7 +7,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { TEST_USER } from "../../utils/mocked-testing.module";
 
 export function mockEntityMapper(
-  withData: Entity[] = []
+  withData: Entity[] = [],
 ): MockEntityMapperService {
   const ems = new MockEntityMapperService();
   ems.addAll(withData);
@@ -27,7 +27,7 @@ export class MockEntityMapperService extends EntityMapperService {
       null,
       null,
       { getCurrentUser: () => ({ name: TEST_USER }) } as any,
-      entityRegistry
+      entityRegistry,
     );
   }
 
@@ -52,7 +52,7 @@ export class MockEntityMapperService extends EntityMapperService {
     this.data.get(type).set(entity.getId(), entity);
     this.publishUpdates(
       entity.getType(),
-      alreadyExists ? { type: "update", entity } : { type: "new", entity }
+      alreadyExists ? { type: "update", entity } : { type: "new", entity },
     );
   }
 
@@ -111,7 +111,7 @@ export class MockEntityMapperService extends EntityMapperService {
 
   public async load<T extends Entity>(
     entityType: EntityConstructor<T> | string,
-    id: string
+    id: string,
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
@@ -124,7 +124,7 @@ export class MockEntityMapperService extends EntityMapperService {
   }
 
   async loadType<T extends Entity>(
-    entityType: EntityConstructor<T> | string
+    entityType: EntityConstructor<T> | string,
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
@@ -133,7 +133,7 @@ export class MockEntityMapperService extends EntityMapperService {
 
   async save<T extends Entity>(
     entity: T,
-    forceUpdate: boolean = false
+    forceUpdate: boolean = false,
   ): Promise<any> {
     this.add(entity);
   }
@@ -148,7 +148,7 @@ export class MockEntityMapperService extends EntityMapperService {
   }
 
   receiveUpdates<T extends Entity>(
-    entityType: EntityConstructor<T> | string
+    entityType: EntityConstructor<T> | string,
   ): Observable<UpdatedEntity<T>> {
     let name =
       typeof entityType === "string" ? entityType : entityType.ENTITY_TYPE;

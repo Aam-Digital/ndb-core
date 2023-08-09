@@ -45,12 +45,12 @@ export function getParentUrl(router: Router): string {
  */
 export function groupBy<T, P extends keyof T>(
   array: T[],
-  propertyToGroupBy: P
+  propertyToGroupBy: P,
 ): [T[P], T[]][] {
   return array.reduce((allGroups, currentElement) => {
     const currentValue = currentElement[propertyToGroupBy];
     let existingGroup = allGroups.find(([group]) =>
-      equals(group, currentValue)
+      equals(group, currentValue),
     );
     if (!existingGroup) {
       existingGroup = [currentValue, []];
@@ -86,7 +86,7 @@ export function calculateAge(dateOfBirth: Date): number {
 
 export function sortByAttribute<OBJECT>(
   attribute: keyof OBJECT,
-  order: "asc" | "desc" = "asc"
+  order: "asc" | "desc" = "asc",
 ): (e1: OBJECT, e2: OBJECT) => number {
   return (e1, e2) => {
     const value1 = e1[attribute];
@@ -115,7 +115,7 @@ export function readFile(file: Blob): Promise<string> {
   return new Promise((resolve) => {
     const fileReader = new FileReader();
     fileReader.addEventListener("load", () =>
-      resolve(fileReader.result as string)
+      resolve(fileReader.result as string),
     );
     fileReader.readAsText(file);
   });
@@ -123,7 +123,7 @@ export function readFile(file: Blob): Promise<string> {
 
 export function compareEnums(
   a: ConfigurableEnumValue,
-  b: ConfigurableEnumValue
+  b: ConfigurableEnumValue,
 ): boolean {
   return a?.id === b?.id;
 }
@@ -146,7 +146,7 @@ export function parseJwt(token): {
       .atob(base64)
       .split("")
       .map((c) => "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2))
-      .join("")
+      .join(""),
   );
 
   return JSON.parse(jsonPayload);
@@ -161,7 +161,7 @@ export function parseJwt(token): {
 export function serviceProvider<T>(
   // Allow abstract or normal classes as first argument
   service: { prototype: T } | { new (...args: any[]): T },
-  factory: (injector: Injector) => T
+  factory: (injector: Injector) => T,
 ): FactoryProvider {
   return {
     provide: service,

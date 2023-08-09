@@ -17,7 +17,7 @@ describe("TemplateTooltipDirective", () => {
         view: window,
         bubbles: true,
         cancelable: true,
-      })
+      }),
     );
   }
 
@@ -27,7 +27,7 @@ describe("TemplateTooltipDirective", () => {
         view: window,
         bubbles: true,
         cancelable: true,
-      })
+      }),
     );
   }
 

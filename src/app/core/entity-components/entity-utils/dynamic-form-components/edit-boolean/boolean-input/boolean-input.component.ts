@@ -36,14 +36,14 @@ export class BooleanInputComponent extends CustomFormControlDirective<boolean> {
     errorStateMatcher: ErrorStateMatcher,
     @Optional() @Self() ngControl: NgControl,
     @Optional() parentForm: NgForm,
-    @Optional() parentFormGroup: FormGroupDirective
+    @Optional() parentFormGroup: FormGroupDirective,
   ) {
     super(
       elementRef,
       errorStateMatcher,
       ngControl,
       parentForm,
-      parentFormGroup
+      parentFormGroup,
     );
   }
 

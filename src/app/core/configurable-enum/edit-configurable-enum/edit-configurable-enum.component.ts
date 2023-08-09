@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
@@ -24,7 +24,10 @@ import { EnumDropdownComponent } from "../enum-dropdown/enum-dropdown.component"
   ],
   standalone: true,
 })
-export class EditConfigurableEnumComponent extends EditComponent<ConfigurableEnumValue> {
+export class EditConfigurableEnumComponent
+  extends EditComponent<ConfigurableEnumValue>
+  implements OnInit
+{
   enumId: string;
   multi = false;
 

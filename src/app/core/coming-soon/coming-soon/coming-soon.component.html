@@ -14,15 +14,11 @@
       (click)="reportFeatureRequest()"
       [disabled]="requested"
       i18n="
-      Feature Button|Indicates that the user needs this feature and can send
-      a feature-request
-    "
+        Feature Button|Indicates that the user needs this feature and can send a
+        feature-request
+      "
     >
-      <fa-icon
-        *ngIf="requested"
-        aria-label="requested"
-        icon="check"
-      ></fa-icon>
+      <fa-icon *ngIf="requested" aria-label="requested" icon="check"></fa-icon>
       I need this feature
     </button>
 
@@ -33,13 +29,12 @@
       target="_blank"
       rel="noopener"
       href="mailto:info@aam-digital.com?subject=Feature-Request%20{{
-      featureId
-    }}"
+        featureId
+      }}"
     >
       I can tell you about my use case
     </a>
   </div>
 
-  <img src="assets/canvas-stand.png" alt="" class="illustration"/>
+  <img src="assets/canvas-stand.png" alt="" class="illustration" />
 </mat-dialog-content>
-

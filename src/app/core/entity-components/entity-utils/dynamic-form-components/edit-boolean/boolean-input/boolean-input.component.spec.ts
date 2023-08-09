@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { BooleanInputComponent } from './boolean-input.component';
+import { BooleanInputComponent } from "./boolean-input.component";
 
-describe('BooleanInputComponent', () => {
+describe("BooleanInputComponent", () => {
   let component: BooleanInputComponent;
   let fixture: ComponentFixture<BooleanInputComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ BooleanInputComponent ]
-    })
-    .compileComponents();
+      imports: [BooleanInputComponent],
+    }).compileComponents();
 
     fixture = TestBed.createComponent(BooleanInputComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });

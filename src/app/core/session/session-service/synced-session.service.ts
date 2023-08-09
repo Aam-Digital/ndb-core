@@ -53,7 +53,7 @@ export class SyncedSessionService extends SessionService {
     private localSession: LocalSession,
     private remoteSession: RemoteSession,
     private authService: AuthService,
-    @Inject(LOCATION_TOKEN) private location: Location
+    @Inject(LOCATION_TOKEN) private location: Location,
   ) {
     super();
     this.syncState
@@ -61,8 +61,8 @@ export class SyncedSessionService extends SessionService {
       .subscribe(() =>
         localStorage.setItem(
           SyncedSessionService.LAST_SYNC_KEY,
-          new Date().toISOString()
-        )
+          new Date().toISOString(),
+        ),
       );
     this.checkForValidSession();
   }
@@ -130,7 +130,7 @@ export class SyncedSessionService extends SessionService {
         // New user or password changed
         const localLoginRetry = await this.localSession.login(
           username,
-          password
+          password,
         );
         this.loginState.next(localLoginRetry);
       } else if (
@@ -150,7 +150,7 @@ export class SyncedSessionService extends SessionService {
   private startSyncAfterLocalAndRemoteLogin() {
     zip(
       this.localSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
-      this.remoteSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN))
+      this.remoteSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
     ).subscribe(() => this.startSync());
   }
 
@@ -229,7 +229,7 @@ export class SyncedSessionService extends SessionService {
       .on("error", this.handleFailedSync())
       .on("complete", (info) => {
         this.loggingService.info(
-          `Live sync completed: ${JSON.stringify(info)}`
+          `Live sync completed: ${JSON.stringify(info)}`,
         );
         this.syncState.next(SyncState.COMPLETED);
       });
@@ -241,7 +241,7 @@ export class SyncedSessionService extends SessionService {
         this.syncState.next(SyncState.FAILED);
         const lastAuth = localStorage.getItem(AuthService.LAST_AUTH_KEY);
         this.loggingService.warn(
-          `Live sync failed (last auth ${lastAuth}): ${JSON.stringify(info)}`
+          `Live sync failed (last auth ${lastAuth}): ${JSON.stringify(info)}`,
         );
         this.liveSync();
       }

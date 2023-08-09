@@ -246,7 +246,7 @@ describe("EntitySubrecordComponent", () => {
   it("should show a error message when saving fails", fakeAsync(() => {
     const entityFormService = TestBed.inject(EntityFormService);
     spyOn(entityFormService, "saveChanges").and.rejectWith(
-      new Error("Form invalid")
+      new Error("Form invalid"),
     );
     const alertService = TestBed.inject(AlertService);
     spyOn(alertService, "addDanger");
@@ -285,7 +285,7 @@ describe("EntitySubrecordComponent", () => {
 
     expect(dialog.openFormPopup).toHaveBeenCalledWith(
       child,
-      defaultTestColumns.map((x) => ({ id: x }))
+      defaultTestColumns.map((x) => ({ id: x })),
     );
   });
 

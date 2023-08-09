@@ -34,7 +34,7 @@ export class HistoricalDataService {
         startkey: [entityId, "\uffff"],
         endkey: [entityId],
         descending: true,
-      }
+      },
     );
   }
 }

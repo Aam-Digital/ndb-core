@@ -57,7 +57,7 @@ describe("InputFileComponent", () => {
 });
 
 function mockFileReader(
-  result = '_id,name,projectNumber\nChild:1,"John Doe",123'
+  result = '_id,name,projectNumber\nChild:1,"John Doe",123',
 ) {
   const fileReader: any = {
     result: result,

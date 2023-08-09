@@ -20,21 +20,21 @@ export const IMPORT_SAMPLE_RAW_DATA: any[] = [
 ];
 
 export const IMPORT_SAMPLE_COLUMN_MAPPING: ColumnMapping[] = Object.keys(
-  IMPORT_SAMPLE_RAW_DATA[0]
+  IMPORT_SAMPLE_RAW_DATA[0],
 ).map((k) => ({
   column: k,
 }));
 IMPORT_SAMPLE_COLUMN_MAPPING.find((c) => c.column === "name").propertyName =
   "name";
 IMPORT_SAMPLE_COLUMN_MAPPING.find(
-  (c) => c.column === "birthDate"
+  (c) => c.column === "birthDate",
 ).propertyName = "dateOfBirth";
 Object.assign(
   IMPORT_SAMPLE_COLUMN_MAPPING.find((c) => c.column === "gender"),
   {
     propertyName: "gender",
     additional: { M: genders.find(({ id }) => id === "M") },
-  }
+  },
 );
 
 export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
@@ -48,13 +48,13 @@ export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [
   {
     type: "School",
     id: IMPORT_SAMPLE_LINKABLE_DATA.find(
-      (e) => e.getType() === "School"
+      (e) => e.getType() === "School",
     ).getId(),
   },
   {
     type: "RecurringActivity",
     id: IMPORT_SAMPLE_LINKABLE_DATA.find(
-      (e) => e.getType() === "RecurringActivity"
+      (e) => e.getType() === "RecurringActivity",
     ).getId(),
   },
 ];

@@ -16,11 +16,11 @@
 }
 
 .entry-wrapper:last-child {
- margin-bottom: sizes.$regular;
+  margin-bottom: sizes.$regular;
 }
 
 .title-field {
-  input{
+  input {
     font-size: 32px;
   }
   width: 90%;
@@ -47,4 +47,3 @@
     height: 40vh;
   }
 }
-

@@ -16,7 +16,7 @@ export class SearchService {
   constructor(
     private indexingService: DatabaseIndexingService,
     private schemaService: EntitySchemaService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
   ) {
     this.createSearchIndex();
   }
@@ -44,14 +44,14 @@ export class SearchService {
     this.searchableEntities = [...this.entities.entries()]
       .map(([name, ctr]) => {
         const stringAttributes = ctr.toStringAttributes.filter((attr) =>
-          ctr.schema.has(attr)
+          ctr.schema.has(attr),
         );
         const searchableAttributes = [...ctr.schema.entries()]
           .filter(([_, schema]) => schema.searchable)
           .map(([name]) => name);
         return [name, [...stringAttributes, ...searchableAttributes]] as [
           string,
-          string[]
+          string[],
         ];
       })
       .filter(([_, props]) => props.length > 0);
@@ -86,7 +86,7 @@ export class SearchService {
         startkey: searchTerms[0],
         endkey: searchTerms[0] + "\ufff0",
         include_docs: true,
-      }
+      },
     );
     return this.getUniqueDocs(res.rows)
       .filter((doc) => this.containsSecondarySearchTerms(doc, searchTerms))

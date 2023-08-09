@@ -42,7 +42,7 @@ describe("TabStateService", () => {
   it("should change the URL when the tab index changes", fakeAsync(async () => {
     const tabGroupHarness = await TestbedHarnessEnvironment.harnessForFixture(
       fixture,
-      MatTabGroupHarness
+      MatTabGroupHarness,
     );
     const activatedRoute = TestBed.inject(ActivatedRoute);
     await tabGroupHarness.selectTab({ label: "D" });

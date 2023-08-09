@@ -76,7 +76,7 @@ export class AddDayAttendanceComponent {
   constructor(
     private entityMapper: EntityMapperService,
     private route: ActivatedRoute,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
   ) {
     this.route.data.subscribe((data: RouteData<AddDayAttendanceConfig>) => {
       this.config = data.config;
@@ -94,7 +94,7 @@ export class AddDayAttendanceComponent {
         $localize`:Exit from the current screen:Exit`,
         $localize`Do you want to save your progress before going back?`,
         this.buttons,
-        true
+        true,
       );
     } else {
       this.finishRollCallState();

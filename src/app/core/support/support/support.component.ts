@@ -46,7 +46,7 @@ export class SupportComponent implements OnInit {
     private backupService: BackupService,
     private downloadService: DownloadService,
     @Inject(WINDOW_TOKEN) private window: Window,
-    @Inject(LOCATION_TOKEN) private location: Location
+    @Inject(LOCATION_TOKEN) private location: Location,
   ) {}
 
   ngOnInit() {
@@ -102,7 +102,7 @@ export class SupportComponent implements OnInit {
     }
     this.window.navigator.serviceWorker.ready
       .then(() =>
-        firstValueFrom(this.http.get("/ngsw/state", { responseType: "text" }))
+        firstValueFrom(this.http.get("/ngsw/state", { responseType: "text" })),
       )
       .then((res) => (this.swLog = res));
   }
@@ -113,7 +113,7 @@ export class SupportComponent implements OnInit {
       .info()
       .then(
         (res) =>
-          (this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`)
+          (this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`),
       );
   }
 
@@ -148,7 +148,7 @@ export class SupportComponent implements OnInit {
   async resetApplication() {
     const choice = await this.confirmationDialog.getConfirmation(
       "Reset Application",
-      "Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again."
+      "Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again.",
     );
     if (!choice) {
       return;
@@ -168,7 +168,7 @@ export class SupportComponent implements OnInit {
     await this.downloadService.triggerDownload(
       backup,
       "json",
-      "aamdigital_data_" + new Date().toISOString()
+      "aamdigital_data_" + new Date().toISOString(),
     );
   }
 }

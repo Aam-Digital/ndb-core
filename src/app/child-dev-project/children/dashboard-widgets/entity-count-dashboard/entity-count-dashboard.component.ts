@@ -55,7 +55,7 @@ export class EntityCountDashboardComponent implements OnInit {
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
   ) {}
 
   async ngOnInit() {
@@ -91,7 +91,7 @@ export class EntityCountDashboardComponent implements OnInit {
  * @param value
  */
 function extractHumanReadableLabel(
-  value: string | ConfigurableEnumValue | any
+  value: string | ConfigurableEnumValue | any,
 ): string {
   if (value === undefined) {
     return "";

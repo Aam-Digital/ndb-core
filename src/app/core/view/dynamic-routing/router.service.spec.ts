@@ -134,7 +134,7 @@ describe("RouterService", () => {
     ];
     const getAllConfigSpy = spyOn(
       TestBed.inject(ConfigService),
-      "getAllConfigs"
+      "getAllConfigs",
     );
     getAllConfigSpy.and.returnValue(routeConfigs1);
     service.initRouting();

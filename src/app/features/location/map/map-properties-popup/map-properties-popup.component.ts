@@ -43,7 +43,7 @@ export class MapPropertiesPopupComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) mapProperties: LocationProperties,
     entities: EntityRegistry,
-    private dialogRef: MatDialogRef<MapPropertiesPopupComponent>
+    private dialogRef: MatDialogRef<MapPropertiesPopupComponent>,
   ) {
     this.entityProperties = Object.entries(mapProperties).map(
       ([entityType, selected]) => {
@@ -54,14 +54,14 @@ export class MapPropertiesPopupComponent {
           label: entity.schema.get(name).label,
         }));
         return { entity, properties, selected };
-      }
+      },
     );
   }
 
   closeDialog() {
     const result: LocationProperties = {};
     this.entityProperties.forEach(
-      ({ entity, selected }) => (result[entity.ENTITY_TYPE] = selected)
+      ({ entity, selected }) => (result[entity.ENTITY_TYPE] = selected),
     );
     this.dialogRef.close(result);
   }

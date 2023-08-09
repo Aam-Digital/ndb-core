@@ -82,7 +82,7 @@ describe("DateRangeFilterComponent", () => {
     component.dateChangedManually();
 
     expect(component.dateFilter.selectedOption).toEqual(
-      "2021-10-28_2024-02-12"
+      "2021-10-28_2024-02-12",
     );
     let expectedDataFilter = {
       test: {

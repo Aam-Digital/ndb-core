@@ -35,7 +35,7 @@ export class EventAttendance {
 
   constructor(
     status: AttendanceStatusType = NullAttendanceStatusType,
-    remarks: string = ""
+    remarks: string = "",
   ) {
     this.status = status;
     this.remarks = remarks;

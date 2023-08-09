@@ -59,7 +59,7 @@ describe("BmiBlockComponent", () => {
     fixture.detectChanges();
 
     expect(mockChildrenService.getHealthChecksOfChild).toHaveBeenCalledWith(
-      testChild.getId()
+      testChild.getId(),
     );
     tick();
     expect(component.currentHealthCheck).toEqual(healthCheck2);

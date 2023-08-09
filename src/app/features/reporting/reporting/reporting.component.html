@@ -1,6 +1,10 @@
 <app-view-title
   class="view-section"
-  i18n="Reports concern a group of for example children and include data about these children in a certain date range">
+  i18n="
+    Reports concern a group of for example children and include data about these
+    children in a certain date range
+  "
+>
   Reports
 </app-view-title>
 
@@ -12,5 +16,11 @@
   class="view-section"
 ></app-select-report>
 
-<app-report-row *ngIf="data?.length > 0 && mode === 'reporting'" [rows]="data"></app-report-row>
-<app-object-table *ngIf="data?.length > 0 && mode === 'exporting'" [objects]="data"></app-object-table>
+<app-report-row
+  *ngIf="data?.length > 0 && mode === 'reporting'"
+  [rows]="data"
+></app-report-row>
+<app-object-table
+  *ngIf="data?.length > 0 && mode === 'exporting'"
+  [objects]="data"
+></app-object-table>

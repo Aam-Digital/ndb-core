@@ -48,10 +48,10 @@ import { ConfigurableEnumService } from "./configurable-enum.service";
 export class ConfigurableEnumModule {
   constructor(
     private enumService: ConfigurableEnumService,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
   ) {
     this.entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(enumService)
+      new ConfigurableEnumDatatype(enumService),
     );
     enumService.preLoadEnums();
   }

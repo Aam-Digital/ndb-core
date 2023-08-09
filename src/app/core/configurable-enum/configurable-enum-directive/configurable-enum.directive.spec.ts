@@ -22,7 +22,7 @@ describe("ConfigurableEnumDirective", () => {
     const directive = new ConfigurableEnumDirective(
       testTemplateRef,
       mockViewContainerRef,
-      mockEnumService
+      mockEnumService,
     );
     expect(directive).toBeTruthy();
   });
@@ -38,16 +38,16 @@ describe("ConfigurableEnumDirective", () => {
     const directive = new ConfigurableEnumDirective(
       testTemplateRef,
       mockViewContainerRef,
-      mockEnumService
+      mockEnumService,
     );
 
     directive.appConfigurableEnumOf = testEnumConfigId;
 
     expect(mockEnumService.getEnumValues).toHaveBeenCalledWith(
-      testEnumConfigId
+      testEnumConfigId,
     );
     expect(mockViewContainerRef.createEmbeddedView).toHaveBeenCalledTimes(
-      testEnumValues.length
+      testEnumValues.length,
     );
   });
 });

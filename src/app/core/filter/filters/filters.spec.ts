@@ -7,7 +7,7 @@ describe("Filters", () => {
     const fs = new SelectableFilter(
       "",
       [{ key: "", label: "", filter: "" }],
-      ""
+      "",
     );
     expect(fs).toBeTruthy();
   });
@@ -16,7 +16,7 @@ describe("Filters", () => {
     const fs = new SelectableFilter(
       "",
       [{ key: "", label: "", filter: "" }],
-      ""
+      "",
     );
 
     const keys = ["x", "y"];

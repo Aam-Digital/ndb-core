@@ -63,7 +63,7 @@ describe("EducationalMaterialComponent", () => {
   it("produces a summary of all records when they are all different", () => {
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 2 },
-      { materialType: RULER, materialAmount: 1 }
+      { materialType: RULER, materialAmount: 1 },
     );
     expect(component.summary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
   });
@@ -72,7 +72,7 @@ describe("EducationalMaterialComponent", () => {
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
-      { materialType: PENCIL, materialAmount: 3 }
+      { materialType: PENCIL, materialAmount: 3 },
     );
     expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
   });
@@ -83,7 +83,7 @@ describe("EducationalMaterialComponent", () => {
       { materialType: RULER, materialAmount: 2, child: child.getId() },
     ].map(EducationalMaterial.create);
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
-      educationalData
+      educationalData,
     );
     component.entity = new Child("22");
     await component.ngOnInit();

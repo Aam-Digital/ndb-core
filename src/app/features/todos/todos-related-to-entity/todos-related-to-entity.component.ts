@@ -52,14 +52,14 @@ export class TodosRelatedToEntityComponent implements OnInit {
 
   constructor(
     private formDialog: FormDialogService,
-    private dbIndexingService: DatabaseIndexingService
+    private dbIndexingService: DatabaseIndexingService,
   ) {
     // TODO: move this generic index creation into schema
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",
       Todo,
       this.referenceProperty,
-      "deadline"
+      "deadline",
     );
   }
 
@@ -76,7 +76,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
         startkey: [entityId, "\uffff"],
         endkey: [entityId],
         descending: true,
-      }
+      },
     );
   }
 

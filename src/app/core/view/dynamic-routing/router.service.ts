@@ -27,7 +27,7 @@ export class RouterService {
     private configService: ConfigService,
     private router: Router,
     private loggingService: LoggingService,
-    private components: ComponentRegistry
+    private components: ComponentRegistry,
   ) {}
 
   /**
@@ -53,14 +53,14 @@ export class RouterService {
         routes.push(this.createRoute(view, additionalRoutes));
       } catch (e) {
         this.loggingService.warn(
-          `Failed to create route for view ${view._id}: ${e.message}`
+          `Failed to create route for view ${view._id}: ${e.message}`,
         );
       }
     }
 
     // add routes from other sources (e.g. pre-existing  hard-coded routes)
     const noDuplicates = additionalRoutes.filter(
-      (r) => !routes.find((o) => o.path === r.path)
+      (r) => !routes.find((o) => o.path === r.path),
     );
 
     // change wildcard route to show not-found component instead of empty page

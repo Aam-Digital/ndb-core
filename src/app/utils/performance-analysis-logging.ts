@@ -12,7 +12,7 @@ class TestClass {
 export function PerformanceAnalysisLogging(
   target: Object,
   propertyKey: string,
-  descriptor: TypedPropertyDescriptor<any>
+  descriptor: TypedPropertyDescriptor<any>,
 ) {
   const originalMethod = descriptor.value;
   descriptor.value = async function (...args) {
@@ -26,7 +26,7 @@ export function PerformanceAnalysisLogging(
     const paramDetails = args.map((a) => JSON.stringify(a._id ?? a)).join(", ");
     console.log(
       `duration [s] for ${target.constructor.name}.${propertyKey}(${paramDetails})`,
-      duration
+      duration,
     );
 
     return actualResult;

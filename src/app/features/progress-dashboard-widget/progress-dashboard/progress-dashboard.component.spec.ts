@@ -69,7 +69,7 @@ describe("ProgressDashboardComponent", () => {
 
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
       ProgressDashboardConfig,
-      configID
+      configID,
     );
   }));
 

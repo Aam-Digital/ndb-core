@@ -7,7 +7,8 @@ import {
 import {
   FormBuilder,
   FormControl,
-  FormGroup, ReactiveFormsModule,
+  FormGroup,
+  ReactiveFormsModule,
   ValidationErrors,
   Validators,
 } from "@angular/forms";
@@ -40,9 +41,9 @@ export interface EditProgressDashboardComponentData {
     NgForOf,
     MatButtonModule,
     FontAwesomeModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  standalone: true
+  standalone: true,
 })
 export class EditProgressDashboardComponent {
   /**
@@ -54,7 +55,7 @@ export class EditProgressDashboardComponent {
 
   title = new FormControl(this.data.title, [Validators.required]);
   parts = this.fb.array(
-    this.data.parts.map((part) => this.createPartForm(part))
+    this.data.parts.map((part) => this.createPartForm(part)),
   );
   outputData = new FormGroup({
     title: this.title,
@@ -63,7 +64,7 @@ export class EditProgressDashboardComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) private data: ProgressDashboardConfig,
-    private fb: FormBuilder
+    private fb: FormBuilder,
   ) {}
 
   createPartForm(part: ProgressDashboardPart) {
@@ -81,12 +82,12 @@ export class EditProgressDashboardComponent {
       },
       {
         validators: [this.currentLessThanTarget],
-      }
+      },
     );
   }
 
   currentLessThanTarget(
-    control: AngularForm<ProgressDashboardPart>
+    control: AngularForm<ProgressDashboardPart>,
   ): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");

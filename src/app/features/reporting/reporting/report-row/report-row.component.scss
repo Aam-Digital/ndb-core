@@ -2,9 +2,12 @@
 @use "src/styles/variables/colors";
 
 table tr:nth-child(even) {
-  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, background);
+  background-color: mat.get-color-from-palette(
+    mat.$light-theme-background-palette,
+    background
+  );
 }
 
 .expand-icon-button {
-  color: colors.$muted
+  color: colors.$muted;
 }

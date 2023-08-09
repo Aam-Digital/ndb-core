@@ -35,7 +35,7 @@ import { AuthUser } from "./auth-user";
  * @param sessionSetupFunction An async function creating a session instance to be tested
  */
 export function testSessionServiceImplementation(
-  sessionSetupFunction: () => Promise<SessionService>
+  sessionSetupFunction: () => Promise<SessionService>,
 ) {
   let sessionService: SessionService;
 
@@ -104,7 +104,7 @@ export function testSessionServiceImplementation(
     expectedLoginState:
       | LoginState.LOGGED_OUT
       | LoginState.LOGIN_FAILED
-      | LoginState.UNAVAILABLE
+      | LoginState.UNAVAILABLE,
   ) {
     expect(sessionService.loginState.value)
       .withContext("unexpected LoginState")

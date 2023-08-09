@@ -26,9 +26,13 @@ export namespace Ordering {
     return isObject(value) && "_ordinal" in value;
   }
 
-  export type EnumValue<T extends ConfigurableEnumValue = ConfigurableEnumValue> = T & HasOrdinal;
+  export type EnumValue<
+    T extends ConfigurableEnumValue = ConfigurableEnumValue,
+  > = T & HasOrdinal;
 
-  export type Config<T extends ConfigurableEnumValue> = ConfigurableEnumConfig<T & HasOrdinal>;
+  export type Config<T extends ConfigurableEnumValue> = ConfigurableEnumConfig<
+    T & HasOrdinal
+  >;
 
   /**
    * Extends an array of configurable enum values with an ordinal value so that the
@@ -42,8 +46,8 @@ export namespace Ordering {
    * @param values The values to impose a total ordering on
    */
   export function imposeTotalOrdering<T extends ConfigurableEnumValue>(
-    values: ConfigurableEnumConfig<T>
+    values: ConfigurableEnumConfig<T>,
   ): ConfigurableEnumConfig<EnumValue<T>> {
-    return values.map((val, i) => Object.assign({ _ordinal: i }, val))
+    return values.map((val, i) => Object.assign({ _ordinal: i }, val));
   }
 }

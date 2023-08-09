@@ -74,7 +74,7 @@ describe("BackupService", () => {
     expect(res).toHaveSize(2);
     expect(res.map(ignoreRevProperty))
       .withContext(
-        "restored records not identical to original records (_rev ignored)"
+        "restored records not identical to original records (_rev ignored)",
       )
       .toEqual(originalData.map(ignoreRevProperty));
   });

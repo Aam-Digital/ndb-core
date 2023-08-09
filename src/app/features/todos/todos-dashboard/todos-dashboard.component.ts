@@ -32,7 +32,7 @@ export class TodosDashboardComponent {
 
   constructor(
     private formDialog: FormDialogService,
-    private sessionService: SessionService
+    private sessionService: SessionService,
   ) {}
 
   filterEntries = (todo: Todo) => {

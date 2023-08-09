@@ -1,6 +1,6 @@
 <div [formGroup]="parent">
   <mat-form-field style="width: 70%">
-    <mat-label>{{label}}</mat-label>
+    <mat-label>{{ label }}</mat-label>
     <input
       matInput
       [formControlName]="formControlName"
@@ -17,7 +17,9 @@
     </mat-error>
   </mat-form-field>
   <mat-form-field style="width: 30%">
-    <mat-label i18n="Placeholder for the input that displays the age">Age</mat-label>
+    <mat-label i18n="Placeholder for the input that displays the age"
+      >Age</mat-label
+    >
     <fa-icon
       *ngIf="formControl.enabled"
       matIconSuffix

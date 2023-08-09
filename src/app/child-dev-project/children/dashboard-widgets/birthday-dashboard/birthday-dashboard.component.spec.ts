@@ -104,15 +104,15 @@ describe("BirthdayDashboardComponent", () => {
 
     const e1 = new BirthdayEntity();
     e1.birthday = new DateWithAge(
-      moment().subtract(1, "year").add(1, "day").toDate()
+      moment().subtract(1, "year").add(1, "day").toDate(),
     );
     const e2 = new BirthdayEntity();
     e2.birthday = new DateWithAge(
-      moment().subtract(3, "years").add(3, "days").toDate()
+      moment().subtract(3, "years").add(3, "days").toDate(),
     );
     const e3 = new Child();
     e3.dateOfBirth = new DateWithAge(
-      moment().subtract(2, "years").add(2, "days").toDate()
+      moment().subtract(2, "years").add(2, "days").toDate(),
     );
     entityMapper.saveAll([e1, e2, e3]);
 

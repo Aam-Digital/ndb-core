@@ -17,7 +17,7 @@ const actions = [
  * The type allows all strings defined in the `actions` array.
  * E.g. "read" or "manage"
  */
-export type EntityAction = typeof actions[number];
+export type EntityAction = (typeof actions)[number];
 
 /**
  * The type which defines which subjects can be used for permissions.

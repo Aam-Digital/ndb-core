@@ -18,5 +18,5 @@ export const warningLevels: Ordering.EnumValue[] = Ordering.imposeTotalOrdering(
       id: "URGENT",
       label: $localize`:Label warning level:Urgent Follow-Up`,
     },
-  ]
+  ],
 );

@@ -63,7 +63,7 @@ describe("RecentAttendanceBlocksComponent", () => {
           results.push(record);
         }
         return Promise.resolve(results);
-      }
+      },
     );
 
     component.entity = testChild;

@@ -24,7 +24,7 @@ describe("Schema data type:Date", () => {
 
   it("should fallback to legacy date parsing if format is unsupported", () => {
     let date: Date = dateOnlyEntitySchemaDatatype.transformToObjectFormat(
-      "2013-01-12T00:00:00.000Z"
+      "2013-01-12T00:00:00.000Z",
     );
     expect(date.getFullYear()).toBe(2013);
     expect(date.getMonth()).toBe(0);
@@ -51,7 +51,7 @@ describe("Schema data type:Date", () => {
 
     for (const test of testCases) {
       const obj = dateOnlyEntitySchemaDatatype.transformToObjectFormat(
-        test.input
+        test.input,
       );
       const actualString =
         dateOnlyEntitySchemaDatatype.transformToDatabaseFormat(obj);

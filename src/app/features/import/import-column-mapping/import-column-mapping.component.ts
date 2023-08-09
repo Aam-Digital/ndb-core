@@ -75,7 +75,7 @@ export class ImportColumnMappingComponent {
   constructor(
     private entities: EntityRegistry,
     private importService: ImportService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   openMappingComponent(col: ColumnMapping) {

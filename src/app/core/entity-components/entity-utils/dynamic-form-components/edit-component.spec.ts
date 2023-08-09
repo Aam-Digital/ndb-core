@@ -9,7 +9,7 @@ import { Entity } from "../../../entity/model/entity";
  */
 export function setupEditComponent<T>(
   component: EditComponent<T>,
-  propertyName = "testProperty"
+  propertyName = "testProperty",
 ): UntypedFormGroup {
   const formControl = new UntypedFormControl();
   const fromGroupConfig = {};

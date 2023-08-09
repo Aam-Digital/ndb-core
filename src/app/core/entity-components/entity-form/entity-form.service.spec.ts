@@ -110,7 +110,7 @@ describe("EntityFormService", () => {
     service.extendFormFieldConfig(formFields, ChildSchoolRelation);
     const formGroup = service.createFormGroup(
       formFields,
-      new ChildSchoolRelation()
+      new ChildSchoolRelation(),
     );
 
     expect(formGroup.invalid).toBeTrue();
@@ -126,11 +126,11 @@ describe("EntityFormService", () => {
     const formFields = [{ id: "schoolId" }, { id: "start" }];
     const formGroup = service.createFormGroup(
       formFields,
-      new ChildSchoolRelation()
+      new ChildSchoolRelation(),
     );
 
     return expectAsync(
-      service.saveChanges(formGroup, new ChildSchoolRelation())
+      service.saveChanges(formGroup, new ChildSchoolRelation()),
     ).toBeRejectedWith(jasmine.any(InvalidFormFieldError));
   });
 

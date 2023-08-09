@@ -59,7 +59,7 @@ describe("DisplayEntityComponent", () => {
     expect(component.entityBlockComponent).toEqual(School.getBlockComponent());
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
       school.getType(),
-      school.getId()
+      school.getId(),
     );
     expect(component.entityToDisplay).toEqual(school);
   });

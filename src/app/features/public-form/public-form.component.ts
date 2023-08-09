@@ -43,7 +43,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     private entityFormService: EntityFormService,
     private configService: ConfigService,
     private entitySchemaService: EntitySchemaService,
-    private snackbar: MatSnackBar
+    private snackbar: MatSnackBar,
   ) {}
 
   ngOnInit() {
@@ -71,16 +71,16 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     const id = this.route.snapshot.paramMap.get("id");
     this.formConfig = await this.entityMapper.load(PublicFormConfig, id);
     this.entityType = this.entities.get(
-      this.formConfig.entity
+      this.formConfig.entity,
     ) as EntityConstructor<E>;
     if (this.formConfig.prefilled) {
       this.prefilled = this.entitySchemaService.transformDatabaseToEntityFormat(
         this.formConfig.prefilled,
-        this.entityType.schema
+        this.entityType.schema,
       );
     }
     this.columns = this.formConfig.columns.map((row) =>
-      row.map(toFormFieldConfig)
+      row.map(toFormFieldConfig),
     );
     this.initForm();
   }
@@ -92,7 +92,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     });
     this.form = this.entityFormService.createFormGroup(
       [].concat(...this.columns),
-      this.entity
+      this.entity,
     );
   }
 }

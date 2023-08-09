@@ -29,7 +29,7 @@ import { UpdateMetadata } from "./update-metadata";
  * For example usage check the {@link EntityMapperService}.
  */
 export type EntityConstructor<T extends Entity = Entity> = (new (
-  id?: string
+  id?: string,
 ) => T) &
   typeof Entity;
 

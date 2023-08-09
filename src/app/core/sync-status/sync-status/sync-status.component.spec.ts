@@ -47,30 +47,28 @@ describe("SyncStatusComponent", () => {
     pending: false,
   };
 
-  beforeEach(
-    waitForAsync(() => {
-      mockSessionService = jasmine.createSpyObj(["isLoggedIn"], {
-        syncState: new BehaviorSubject(SyncState.UNSYNCED),
-      });
-      mockSessionService.isLoggedIn.and.returnValue(false);
-      mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
+  beforeEach(waitForAsync(() => {
+    mockSessionService = jasmine.createSpyObj(["isLoggedIn"], {
+      syncState: new BehaviorSubject(SyncState.UNSYNCED),
+    });
+    mockSessionService.isLoggedIn.and.returnValue(false);
+    mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
-      TestBed.configureTestingModule({
-        imports: [
-          SyncStatusComponent,
-          NoopAnimationsModule,
-          FontAwesomeTestingModule,
-        ],
-        providers: [
-          { provide: SessionService, useValue: mockSessionService },
-          { provide: DatabaseIndexingService, useValue: mockIndexingService },
-          { provide: EntityRegistry, useValue: entityRegistry },
-        ],
-      });
+    TestBed.configureTestingModule({
+      imports: [
+        SyncStatusComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
+      providers: [
+        { provide: SessionService, useValue: mockSessionService },
+        { provide: DatabaseIndexingService, useValue: mockIndexingService },
+        { provide: EntityRegistry, useValue: entityRegistry },
+      ],
+    });
 
-      TestBed.compileComponents();
-    })
-  );
+    TestBed.compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(SyncStatusComponent);

@@ -20,7 +20,7 @@ describe("LoggingService", () => {
 
     expect(loggingService["logToConsole"]).toHaveBeenCalledWith(
       testMessage,
-      LogLevel.DEBUG
+      LogLevel.DEBUG,
     );
     expect(loggingService["logToRemoteMonitoring"]).not.toHaveBeenCalled();
   });
@@ -30,7 +30,7 @@ describe("LoggingService", () => {
 
     expect(loggingService["logToConsole"]).toHaveBeenCalledWith(
       testMessage,
-      LogLevel.INFO
+      LogLevel.INFO,
     );
     expect(loggingService["logToRemoteMonitoring"]).not.toHaveBeenCalled();
   });
@@ -40,11 +40,11 @@ describe("LoggingService", () => {
 
     expect(loggingService["logToConsole"]).toHaveBeenCalledWith(
       testMessage,
-      LogLevel.WARN
+      LogLevel.WARN,
     );
     expect(loggingService["logToRemoteMonitoring"]).toHaveBeenCalledWith(
       testMessage,
-      LogLevel.WARN
+      LogLevel.WARN,
     );
   });
 
@@ -53,11 +53,11 @@ describe("LoggingService", () => {
 
     expect(loggingService["logToConsole"]).toHaveBeenCalledWith(
       testMessage,
-      LogLevel.ERROR
+      LogLevel.ERROR,
     );
     expect(loggingService["logToRemoteMonitoring"]).toHaveBeenCalledWith(
       testMessage,
-      LogLevel.ERROR
+      LogLevel.ERROR,
     );
   });
 
@@ -66,11 +66,11 @@ describe("LoggingService", () => {
 
     expect(loggingService["logToConsole"]).toHaveBeenCalledWith(
       testMessage,
-      LogLevel.WARN
+      LogLevel.WARN,
     );
     expect(loggingService["logToRemoteMonitoring"]).toHaveBeenCalledWith(
       testMessage,
-      LogLevel.WARN
+      LogLevel.WARN,
     );
   });
 });

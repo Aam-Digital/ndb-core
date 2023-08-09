@@ -44,7 +44,7 @@ export class SyncStatusComponent {
   private indexingProcesses: BackgroundProcessState[];
 
   private _backgroundProcesses = new BehaviorSubject<BackgroundProcessState[]>(
-    []
+    [],
   );
   /** background processes to be displayed to users, with short delay to avoid flickering */
   backgroundProcesses = this._backgroundProcesses
@@ -53,7 +53,7 @@ export class SyncStatusComponent {
 
   constructor(
     private sessionService: SessionService,
-    private dbIndexingService: DatabaseIndexingService
+    private dbIndexingService: DatabaseIndexingService,
   ) {
     this.dbIndexingService.indicesRegistered
       .pipe(untilDestroyed(this))

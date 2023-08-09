@@ -13,7 +13,7 @@ export interface AverageAttendanceStats {
 }
 
 export function calculateAverageAttendance(
-  event: Note
+  event: Note,
 ): AverageAttendanceStats {
   const stats = new Map<AttendanceLogicalStatus, number>();
   stats.set(AttendanceLogicalStatus.PRESENT, 0);
