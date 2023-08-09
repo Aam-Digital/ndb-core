@@ -100,6 +100,11 @@ export class KeycloakAuthService extends AuthService {
     );
     this.logSuccessfulAuth();
     const parsedToken = parseJwt(this.accessToken);
+    if (!parsedToken.username) {
+      throw new Error(
+        `Login error: User is not correctly set up (userId: ${parsedToken.sub})`,
+      );
+    }
     return {
       name: parsedToken.username,
       roles: parsedToken["_couchdb.roles"],

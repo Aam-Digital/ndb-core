@@ -63,6 +63,7 @@ export class RemoteSession extends SessionService {
       if (httpError?.status === HttpStatusCode.Unauthorized) {
         this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
+        this.loggingService.error(error);
         this.loginState.next(LoginState.UNAVAILABLE);
       }
     }
