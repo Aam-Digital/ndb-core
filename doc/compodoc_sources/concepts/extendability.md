@@ -6,9 +6,9 @@ to implement further functionality in a modular way.
 The following aspects are specifically designed to be extended:
 - **DataTypes**
   - transformation functions how data is stored in / read from database
-  - editComponent how data is displayed and edited in forms
-  - viewComponent how data is displayed in tables
-  - importValueMapping to support smart import into the data type
+  - `editComponent` how data is displayed and edited in forms
+  - `viewComponent` how data is displayed in tables
+  - `importValueMapping` to support smart import into the data type
 - **Entity Types**
   - pre-define a data structure with various fields and custom logic that may be interconnected. This mostly is useful if you implement very specialized UI components for a specific data structure.
   - any entity type can be extended through config for individual clients (e.g. adding further properties at runtime)
@@ -23,8 +23,8 @@ The following aspects are specifically designed to be extended:
   - specialized logic and UIs to filter list data
 - **Technical "Backend" Implementations**
   - less common to change, but possible to implement integrations with different technical systems are
-  - Authentication Services (e.g. switch between native CouchDB users and more advance Keycloak)
-  - Database / Local Storage (e.g. switch between PouchDB using IndexedDB and purely in-memory, discardable data storage - or possibly implement an integration with a different system)
+    - Authentication Services (e.g. switch between native CouchDB users and more advance Keycloak)
+    - Database / Local Storage (e.g. switch between PouchDB using IndexedDB and purely in-memory, discardable data storage - or possibly implement an integration with a different system)
 
 The folder structure of the code base (while containing some intertwined legacy structures) also reflects this architecture:
 - *src/app/core*: generic structures and platform code
