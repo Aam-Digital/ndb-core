@@ -1,0 +1,15 @@
+<mat-dialog-content>
+    <mat-form-field>
+        <mat-label i18n="Label for property selection">Matching {{ entity.label }} property</mat-label>
+        <mat-select [formControl]="propertyForm">
+            <mat-option *ngFor="let property of availableProperties" [value]="property.property">{{ property.label }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-raised-button color="accent" (click)="save()" i18n>
+        Save & Close
+    </button>
+    <button mat-stroked-button matDialogClose i18n>Cancel</button>
+</mat-dialog-actions>

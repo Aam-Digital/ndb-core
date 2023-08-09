@@ -19,6 +19,9 @@ import { EntitySchemaService } from "../../core/entity/schema/entity-schema.serv
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { AbstractValueMappingComponent } from "./import-column-mapping/abstract-value-mapping-component";
 import { ComponentType } from "@angular/cdk/overlay";
+import { entityEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-entity";
+import { entityArrayEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-entity-array";
+import { EntityValueMappingComponent } from "./import-column-mapping/entity-value-mapping/entity-value-mapping.component";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -74,7 +77,7 @@ export class ImportService {
 
   private getImportMapping(schema: EntitySchemaField): {
     mappingCmp: ComponentType<AbstractValueMappingComponent>;
-    mappingFn: (val, additional) => any;
+    mappingFn: (val, additional) => Promise<any>;
   } {
     if (
       schema.dataType === "boolean" ||
@@ -83,20 +86,43 @@ export class ImportService {
     ) {
       return {
         mappingCmp: EnumValueMappingComponent,
-        mappingFn: (val, additional) =>
+        mappingFn: async (val, additional) =>
           this.schemaService.valueToEntityFormat(additional?.[val], schema),
       };
     }
     if (this.dateDataTypes.includes(schema.dataType)) {
       return {
         mappingCmp: DateValueMappingComponent,
-        mappingFn: (val, additional) => {
+        mappingFn: async (val, additional) => {
           const date = moment(val, additional, true);
           if (date.isValid()) {
             return date.toDate();
           } else {
             return undefined;
           }
+        },
+      };
+    }
+    if (
+      schema.dataType === entityEntitySchemaDatatype.name ||
+      schema.dataType === entityArrayEntitySchemaDatatype.name
+    ) {
+      // TODO array support
+      // TODO when to use full ID?
+      return {
+        mappingCmp: EntityValueMappingComponent,
+        mappingFn: (
+          val: string,
+          additional: { entity: string; property: string },
+        ) => {
+          if (!additional) {
+            return Promise.resolve(undefined);
+          }
+          return this.entityMapper
+            .loadType(additional.entity)
+            .then(
+              (res) => res.find((e) => e[additional.property] === val)?.getId(),
+            );
         },
       };
     }
@@ -195,8 +221,9 @@ export class ImportService {
     }
 
     const entityConstructor = this.entityTypes.get(entityType);
+    const mappedEntities: Entity[] = [];
 
-    const mappedEntities = rawData.map((row) => {
+    for (const row of rawData) {
       const entity = new entityConstructor();
       let hasMappedProperty = false;
 
@@ -208,7 +235,7 @@ export class ImportService {
           continue;
         }
 
-        const parsed = this.parseRow(row[col], mapping, entity);
+        const parsed = await this.parseRow(row[col], mapping, entity);
 
         // ignoring falsy values except 0 (=> null, undefined, empty string)
         if (!!parsed || parsed === 0) {
@@ -217,13 +244,15 @@ export class ImportService {
         }
       }
 
-      return hasMappedProperty ? entity : undefined;
-    });
+      if (hasMappedProperty) {
+        mappedEntities.push(entity);
+      }
+    }
 
-    return mappedEntities.filter((e) => e !== undefined);
+    return mappedEntities;
   }
 
-  private parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
+  private async parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
     const schema = entity.getSchema().get(mapping.propertyName);
 
     if (!schema) {
