@@ -15,55 +15,27 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../model/entity";
-import { DatabaseField } from "../database-field.decorator";
-import { EntitySchemaService } from "../schema/entity-schema.service";
-import { waitForAsync } from "@angular/core/testing";
+import { testDatatype } from "../schema/entity-schema.service.spec";
+import { EntityArrayDatatype } from "./datatype-entity-array";
 
 describe("Schema data type: entity-array", () => {
-  class TestEntity extends Entity {
-    @DatabaseField({ dataType: "entity-array", additional: "User" })
-    relatedUsers: string[] = [];
+  testDatatype(EntityArrayDatatype, ["1", "User:5"], ["1", "User:5"], "User");
 
-    @DatabaseField({
-      dataType: "entity-array",
-      additional: ["User", "Child", "School"],
-    })
-    relatedEntities: string[] = [];
-  }
-
-  let entitySchemaService: EntitySchemaService;
-
-  beforeEach(waitForAsync(() => {
-    entitySchemaService = new EntitySchemaService();
-  }));
-
-  it("keeps ids unchanged to store in db", () => {
-    const entity = new TestEntity();
-    entity.relatedUsers = ["1", "User:5"];
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.relatedUsers).toEqual(["1", "User:5"]);
-  });
-
-  it("keeps ids unchanged when loading from db", () => {
-    const data = {
-      relatedEntities: ["User:1", "Child:1"],
-    };
-    const loadedEntity = new TestEntity();
-    entitySchemaService.loadDataIntoEntity(loadedEntity, data);
-
-    expect(loadedEntity.relatedEntities).toEqual(["User:1", "Child:1"]);
-  });
+  testDatatype(
+    EntityArrayDatatype,
+    ["User:1", "Child:1"],
+    ["User:1", "Child:1"],
+    ["User", "Child", "School"],
+  );
 
   xit("adds prefix to ids when a definite entity type is given in schema", () => {
     // TODO discuss whether we want to switch to prefixed ids always (also see #1526)
     const data = {
       relatedUsers: ["User:1", "2"],
     };
-    const loadedEntity = new TestEntity();
-    entitySchemaService.loadDataIntoEntity(loadedEntity, data);
+    //const loadedEntity = new TestEntity();
+    //entitySchemaService.loadDataIntoEntity(loadedEntity, data);
 
-    expect(loadedEntity.relatedUsers).toEqual(["User:1", "User:2"]);
+    //expect(loadedEntity.relatedUsers).toEqual(["User:1", "User:2"]);
   });
 });

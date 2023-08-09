@@ -58,4 +58,13 @@ describe("Schema data type:Date", () => {
       expect(actualString).withContext(test.input).toEqual(test.expected);
     }
   });
+
+  it("should parse dates using importMappingFunction", () => {
+    //TODO const mappingFn = service.getMappingFunction({ dataType: "date" });
+    const input = "30.11.2023";
+
+    const actualMapped = null; //mappingFn(input, "DD.MM.YYYY");
+
+    expect(actualMapped).toEqual(new Date(2023, 10, 30));
+  });
 });

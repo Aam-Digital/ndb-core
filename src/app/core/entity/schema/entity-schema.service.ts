@@ -16,29 +16,17 @@
  */
 
 import { Entity } from "../model/entity";
-import { EntitySchemaDatatype } from "./entity-schema-datatype";
-import { Injectable } from "@angular/core";
-import { defaultEntitySchemaDatatype } from "../schema-datatypes/datatype-default";
+import { Injectable, Injector } from "@angular/core";
 import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
-import { stringEntitySchemaDatatype } from "../schema-datatypes/datatype-string";
-import { numberEntitySchemaDatatype } from "../schema-datatypes/datatype-number";
-import { dateEntitySchemaDatatype } from "../schema-datatypes/datatype-date";
-import { monthEntitySchemaDatatype } from "../schema-datatypes/datatype-month";
-import { arrayEntitySchemaDatatype } from "../schema-datatypes/datatype-array";
-import { schemaEmbedEntitySchemaDatatype } from "../schema-datatypes/datatype-schema-embed";
-import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
-import { mapEntitySchemaDatatype } from "../schema-datatypes/datatype-map";
-import { booleanEntitySchemaDatatype } from "../schema-datatypes/datatype-boolean";
-import { entityArrayEntitySchemaDatatype } from "../schema-datatypes/datatype-entity-array";
-import { entityEntitySchemaDatatype } from "../schema-datatypes/datatype-entity";
-import { dateWithAgeEntitySchemaDatatype } from "../schema-datatypes/datatype-date-with-age";
+import { AbstractDatatype } from "./entity-schema-datatype";
+import { DefaultDatatype } from "../schema-datatypes/datatype-default";
 
 /**
  * Transform between entity instances and database objects
  * based on the dataType set for properties in Entity classes using the {@link DatabaseField} annotation.
  *
- * You can inject the EntitySchemaService in your code to register your custom {@link EntitySchemaDatatype} implementations.
+ * You can inject the EntitySchemaService in your code to register your custom {@link AbstractDatatype} implementations.
  *
  * This service is used by the {@link EntityMapperService} to internally transform objects.
  * You should normally use the EntityMapperService instead of transforming objects yourself with the EntitySchemaService.
@@ -49,17 +37,20 @@ import { dateWithAgeEntitySchemaDatatype } from "../schema-datatypes/datatype-da
 @Injectable({ providedIn: "root" })
 export class EntitySchemaService {
   /**
-   * Internal registry of data type definitions.
-   * You can extend the Schema system with your data type conversions by using EntitySchema.registerSchemaDatatype()
+   * Internal cache of datatype implementations.
    */
-  private schemaTypes = new Map<string, EntitySchemaDatatype>();
+  private schemaTypes = new Map<string, AbstractDatatype>();
 
-  constructor() {
-    this.registerBasicDatatypes();
-  }
+  private defaultDatatype: AbstractDatatype = new DefaultDatatype();
 
-  private registerBasicDatatypes() {
-    this.registerSchemaDatatype(stringEntitySchemaDatatype);
+  constructor(private injector: Injector) {}
+
+  // TODO: merge import-value-mapping structure into the datatype structure
+  // TODO: adapt import components to handle value mappings using the datatype instead of own import mapping stuff.
+  // TODO: update documentation and how-to guides
+
+  // TODO: implement all datatypes as service
+  /*
     this.registerSchemaDatatype(numberEntitySchemaDatatype);
     this.registerSchemaDatatype(dateEntitySchemaDatatype);
     this.registerSchemaDatatype(dateOnlyEntitySchemaDatatype);
@@ -71,29 +62,29 @@ export class EntitySchemaService {
     this.registerSchemaDatatype(booleanEntitySchemaDatatype);
     this.registerSchemaDatatype(entityArrayEntitySchemaDatatype);
     this.registerSchemaDatatype(entityEntitySchemaDatatype);
-  }
-
-  /**
-   * Add a datatype definition to the registry to provide a conversion between what is written into the database
-   * and what is available in Entity objects.
-   * @param type The EntitySchemaDatatype object definition providing data transformation functions.
-   */
-  public registerSchemaDatatype(type: EntitySchemaDatatype) {
-    this.schemaTypes.set(type.name, type);
-  }
+    */
 
   /**
    * Get the datatype for the giving name (or the default datatype if no other registered type fits)
    * @param datatypeName The key/name of the datatype
    */
   public getDatatypeOrDefault(datatypeName: string) {
-    datatypeName = datatypeName ? datatypeName.toLowerCase() : undefined;
-
     if (this.schemaTypes.has(datatypeName)) {
       return this.schemaTypes.get(datatypeName);
-    } else {
-      return defaultEntitySchemaDatatype;
     }
+
+    // use Injector instead of normal dependency injection in the constructor, because some Datatypes use the SchemaService (--> Circular Dependency)
+    const dataTypes: AbstractDatatype[] = this.injector.get(
+      AbstractDatatype,
+    ) as unknown as AbstractDatatype[];
+
+    let dataType = dataTypes.find((d) => d.dataType === datatypeName);
+    if (dataType) {
+      this.schemaTypes.set(datatypeName, dataType);
+    } else {
+      dataType = this.defaultDatatype;
+    }
+    return dataType;
   }
 
   /**
@@ -222,7 +213,7 @@ export class EntitySchemaService {
   ) {
     return this.getDatatypeOrDefault(
       schemaField.dataType,
-    ).transformToDatabaseFormat(value, schemaField, this, entity);
+    ).transformToDatabaseFormat(value, schemaField, entity);
   }
 
   /**
@@ -238,6 +229,6 @@ export class EntitySchemaService {
   ) {
     return this.getDatatypeOrDefault(
       schemaField.dataType,
-    ).transformToObjectFormat(value, schemaField, this, dataObject);
+    ).transformToObjectFormat(value, schemaField, dataObject);
   }
 }

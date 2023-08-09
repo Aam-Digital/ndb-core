@@ -3,7 +3,6 @@ import { ColumnMapping } from "../column-mapping";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
-import { ImportService } from "../import.service";
 import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
@@ -12,6 +11,8 @@ import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { ImportValueMapping } from "./import-value-mapping";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { getInnermostDatatype } from "../../../core/entity-components/entity-utils/entity-utils";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -48,10 +49,9 @@ export class ImportColumnMappingComponent {
     this.allProps = [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
       .map(([name, schema]) => {
-        const m = this.importService.getValueMapper(schema);
-        if (m) {
-          this.valueMapper[name] = m;
-        }
+        this.valueMapper[name] = this.schemaService.getDatatypeOrDefault(
+          getInnermostDatatype(schema),
+        );
         return name;
       });
   }
@@ -73,7 +73,7 @@ export class ImportColumnMappingComponent {
 
   constructor(
     private entities: EntityRegistry,
-    private importService: ImportService,
+    private schemaService: EntitySchemaService,
     private dialog: MatDialog,
   ) {}
 
@@ -82,7 +82,7 @@ export class ImportColumnMappingComponent {
     this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
     this.dialog
       .open<any, MappingDialogData>(
-        this.valueMapper[col.propertyName].configComponent,
+        this.valueMapper[col.propertyName].importConfigComponent,
         {
           data: {
             col: col,
@@ -103,7 +103,9 @@ export class ImportColumnMappingComponent {
     }
 
     this.mappingAdditionalWarning[col.column] =
-      this.valueMapper[col.propertyName]?.incompleteAdditionalConfigBadge(col);
+      this.valueMapper[col.propertyName]?.importIncompleteAdditionalConfigBadge(
+        col,
+      );
 
     // Emitting copy of array to trigger change detection; values have been updated in place through data binding
     this.columnMappingChange.emit([...this.columnMapping]);

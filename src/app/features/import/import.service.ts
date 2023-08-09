@@ -1,5 +1,4 @@
-import { Injectable, Injector } from "@angular/core";
-import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
+import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
@@ -10,10 +9,7 @@ import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import {
-  IMPORT_VALUE_MAPPER_TOKEN,
-  ImportValueMapping,
-} from "./import-column-mapping/import-value-mapping";
+import { getInnermostDatatype } from "../../core/entity-components/entity-utils/entity-utils";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -46,27 +42,7 @@ export class ImportService {
     private entityMapper: EntityMapperService,
     private entityTypes: EntityRegistry,
     private schemaService: EntitySchemaService,
-    private injector: Injector,
   ) {}
-
-  getValueMapper(schema: EntitySchemaField): ImportValueMapping {
-    let dataType = schema.dataType;
-    if (schema.dataType === "array") {
-      dataType = schema.innerDataType;
-    }
-
-    const defaultValueMapping: ImportValueMapping = {
-      mapFunction: (val, schema) =>
-        this.schemaService
-          .getDatatypeOrDefault(schema.dataType)
-          .transformToObjectFormat(val, schema, this.schemaService),
-    };
-
-    return this.injector.get<ImportValueMapping>(
-      IMPORT_VALUE_MAPPER_TOKEN(dataType),
-      defaultValueMapping,
-    );
-  }
 
   getLinkableEntities(entityType: string): string[] {
     return Object.keys(this.linkableEntities[entityType] ?? {});
@@ -200,10 +176,8 @@ export class ImportService {
       return undefined;
     }
 
-    return this.getValueMapper(schema).mapFunction(
-      val,
-      schema,
-      mapping.additional,
-    );
+    return this.schemaService
+      .getDatatypeOrDefault(getInnermostDatatype(schema))
+      .importMapFunction(val, schema, mapping.additional);
   }
 }

@@ -19,6 +19,9 @@ import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { waitForAsync } from "@angular/core/testing";
+import { Injector } from "@angular/core";
+import { SchemaEmbedDatatype } from "./datatype-schema-embed";
+import { MonthDatatype } from "./datatype-month";
 
 describe("Schema data type: schema-embed", () => {
   class InnerClass {
@@ -44,9 +47,16 @@ describe("Schema data type: schema-embed", () => {
   }
 
   let entitySchemaService: EntitySchemaService;
+  let mockInjector: jasmine.SpyObj<Injector>;
 
   beforeEach(waitForAsync(() => {
-    entitySchemaService = new EntitySchemaService();
+    mockInjector = jasmine.createSpyObj(["get"]);
+    entitySchemaService = new EntitySchemaService(mockInjector);
+
+    mockInjector.get.and.returnValue([
+      new SchemaEmbedDatatype(entitySchemaService),
+      new MonthDatatype(),
+    ]);
   }));
 
   it("applies inner schema transformation for database format", () => {

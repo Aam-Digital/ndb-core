@@ -15,10 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { AbstractDatatype } from "../schema/entity-schema-datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { EntityConstructor } from "../model/entity";
+import { Injectable } from "@angular/core";
 
 /**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
@@ -35,27 +36,24 @@ import { EntityConstructor } from "../model/entity";
  *
  * `@DatabaseField({ dataType: 'schema-embed', additional: MyClass })`
  */
-export const schemaEmbedEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "schema-embed",
+@Injectable()
+export class SchemaEmbedDatatype extends AbstractDatatype {
+  static dataType = "schema-embed";
 
-  transformToDatabaseFormat: (
-    value: any,
-    schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-  ) => {
-    return schemaService.transformEntityToDatabaseFormat(
+  constructor(private schemaService: EntitySchemaService) {
+    super();
+  }
+
+  transformToDatabaseFormat(value: any, schemaField: EntitySchemaField) {
+    return this.schemaService.transformEntityToDatabaseFormat(
       value,
       schemaField.additional.schema,
     );
-  },
+  }
 
-  transformToObjectFormat: (
-    value: any,
-    schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-  ) => {
+  transformToObjectFormat(value: any, schemaField: EntitySchemaField) {
     const instance = new (schemaField.additional as EntityConstructor<any>)();
-    schemaService.loadDataIntoEntity(instance, value);
+    this.schemaService.loadDataIntoEntity(instance, value);
     return instance;
-  },
-};
+  }
+}

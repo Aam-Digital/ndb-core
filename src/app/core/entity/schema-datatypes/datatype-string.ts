@@ -15,7 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { Injectable } from "@angular/core";
+import { AbstractDatatype } from "../schema/entity-schema-datatype";
 
 /**
  * Datatype for the EntitySchemaService transforming values to "string".
@@ -29,16 +30,18 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  *
  * `@DatabaseField({dataType: 'string'}) myValue: any;`
  */
-export const stringEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "string",
-  viewComponent: "DisplayText",
-  editComponent: "EditText",
+@Injectable()
+export class StringDatatype extends AbstractDatatype {
+  static dataType = "string";
 
-  transformToDatabaseFormat: (value) => {
-    return String(value);
-  },
+  viewComponent: "DisplayText";
+  editComponent: "EditText";
 
-  transformToObjectFormat: (value) => {
+  transformToDatabaseFormat(value) {
     return String(value);
-  },
-};
+  }
+
+  transformToObjectFormat(value) {
+    return String(value);
+  }
+}

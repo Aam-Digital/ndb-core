@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { locationEntitySchemaDataType } from "./location-data-type";
 import { ComponentRegistry } from "../../dynamic-components";
 import { locationComponents } from "./location-components";
 
@@ -10,7 +9,7 @@ export class LocationModule {
     schemaService: EntitySchemaService,
     components: ComponentRegistry,
   ) {
-    schemaService.registerSchemaDatatype(locationEntitySchemaDataType);
+    //schemaService.registerSchemaDatatype(locationEntitySchemaDataType);
     components.addAll(locationComponents);
   }
 }

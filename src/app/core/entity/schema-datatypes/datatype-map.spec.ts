@@ -19,6 +19,8 @@ import { Entity } from "../model/entity";
 import { waitForAsync } from "@angular/core/testing";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import { Injector } from "@angular/core";
+import { MapDatatype } from "./datatype-map";
 
 describe("Schema data type: map", () => {
   class TestEntity extends Entity {
@@ -27,9 +29,13 @@ describe("Schema data type: map", () => {
   }
 
   let entitySchemaService: EntitySchemaService;
+  let mockInjector: jasmine.SpyObj<Injector>;
 
   beforeEach(waitForAsync(() => {
-    entitySchemaService = new EntitySchemaService();
+    mockInjector = jasmine.createSpyObj(["get"]);
+    entitySchemaService = new EntitySchemaService(mockInjector);
+
+    mockInjector.get.and.returnValue([new MapDatatype(entitySchemaService)]);
   }));
 
   it("converts contained dates to month for saving", () => {

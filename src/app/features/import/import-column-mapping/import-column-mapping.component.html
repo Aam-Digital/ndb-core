@@ -28,7 +28,7 @@
     <button
       class="margin-left-small"
       mat-stroked-button
-      *ngIf="valueMapper[col.propertyName]?.configComponent"
+      *ngIf="valueMapper[col.propertyName]?.importConfigComponent"
       (click)="openMappingComponent(col)"
       i18n="
         import - column mapping - configure additional transformation button

@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { timeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
 import { Todo } from "./model/todo";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
 
@@ -12,7 +11,7 @@ export class TodosModule {
     components: ComponentRegistry,
     entitySchemaService: EntitySchemaService,
   ) {
-    entitySchemaService.registerSchemaDatatype(timeIntervalDatatype);
+    //entitySchemaService.registerSchemaDatatype(timeIntervalDatatype);
     components.addAll(dynamicComponents);
   }
 }

@@ -18,9 +18,7 @@
 import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
-import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { createTestingConfigurableEnumService } from "../../configurable-enum/configurable-enum-testing";
 import { fakeAsync, tick } from "@angular/core/testing";
 
 describe("Entity", () => {
@@ -142,9 +140,6 @@ export function testEntitySubclass(
 
   it("should only load and store properties defined in the schema", fakeAsync(() => {
     const schemaService = new EntitySchemaService();
-    schemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(createTestingConfigurableEnumService()),
-    );
     tick();
     const entity = new entityClass();
 

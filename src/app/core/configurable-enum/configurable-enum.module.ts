@@ -1,6 +1,5 @@
 import { NgModule } from "@angular/core";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configurable-enum-datatype";
 import { ConfigurableEnumService } from "./configurable-enum.service";
 
 /**
@@ -50,9 +49,7 @@ export class ConfigurableEnumModule {
     private enumService: ConfigurableEnumService,
     private entitySchemaService: EntitySchemaService,
   ) {
-    this.entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(enumService),
-    );
+    //this.entitySchemaService.registerSchemaDatatype(new ConfigurableEnumDatatype(enumService));
     enumService.preLoadEnums();
   }
 }

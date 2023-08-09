@@ -15,9 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { AbstractDatatype } from "../schema/entity-schema-datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
-import { EntitySchemaService } from "../schema/entity-schema.service";
+import { Injectable } from "@angular/core";
 
 /**
  * Datatype for the EntitySchemaService to handle multiple references to other entities
@@ -28,12 +28,14 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
  *
  * `@DatabaseField({dataType: 'entity-array', additional: 'Child'}) relatedEntities: string[] = [];`
  */
-export const entityArrayEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "entity-array",
-  editComponent: "EditEntityArray",
-  viewComponent: "DisplayEntityArray",
+@Injectable()
+export class EntityArrayDatatype extends AbstractDatatype {
+  static dataType = "entity-array";
 
-  transformToDatabaseFormat: (value) => {
+  editComponent = "EditEntityArray";
+  viewComponent = "DisplayEntityArray";
+
+  transformToDatabaseFormat(value) {
     if (!Array.isArray(value)) {
       console.warn(
         `property to be transformed with "entity-array" EntitySchema is not an array`,
@@ -43,14 +45,9 @@ export const entityArrayEntitySchemaDatatype: EntitySchemaDatatype = {
     }
 
     return value;
-  },
+  }
 
-  transformToObjectFormat: (
-    value: any[],
-    schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-    parent,
-  ) => {
+  transformToObjectFormat(value, schemaField: EntitySchemaField, parent) {
     if (!Array.isArray(value)) {
       console.warn(
         //TODO: should this be a sentry error instead?
@@ -74,5 +71,5 @@ export const entityArrayEntitySchemaDatatype: EntitySchemaDatatype = {
     } else {
       return value;
     }*/
-  },
-};
+  }
+}

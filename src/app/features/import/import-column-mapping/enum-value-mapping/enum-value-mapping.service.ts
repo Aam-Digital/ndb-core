@@ -13,9 +13,9 @@ import { EntitySchemaField } from "../../../../core/entity/schema/entity-schema-
 export class EnumValueMappingService implements ImportValueMapping {
   constructor(private schemaService: EntitySchemaService) {}
 
-  configComponent: ComponentType<any> = EnumValueMappingComponent;
+  importConfigComponent: ComponentType<any> = EnumValueMappingComponent;
 
-  mapFunction(
+  importMapFunction(
     val,
     schema: EntitySchemaField,
     additional: { [key: string]: any },
@@ -23,7 +23,7 @@ export class EnumValueMappingService implements ImportValueMapping {
     this.schemaService.valueToEntityFormat(additional?.[val], schema);
   }
 
-  incompleteAdditionalConfigBadge(col: ColumnMapping): string {
+  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
     if (!col.additional) {
       return "?";
     }

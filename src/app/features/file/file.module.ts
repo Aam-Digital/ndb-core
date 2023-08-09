@@ -6,7 +6,6 @@ import { FileService } from "./file.service";
 import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { fileDataType } from "./file-data-type";
 import { ComponentRegistry } from "../../dynamic-components";
 import { fileComponents } from "./file-components";
 
@@ -26,7 +25,7 @@ export class FileModule {
     entitySchemaService: EntitySchemaService,
     components: ComponentRegistry,
   ) {
-    entitySchemaService.registerSchemaDatatype(fileDataType);
+    //entitySchemaService.registerSchemaDatatype(fileDataType);
     components.addAll(fileComponents);
   }
 }
