@@ -58,7 +58,7 @@ export class DemoDataService {
     private entityMapper: EntityMapperService,
     private injector: Injector,
     private config: DemoDataServiceConfig,
-    private database: Database
+    private database: Database,
   ) {}
 
   private registerAllProvidedDemoDataGenerators() {

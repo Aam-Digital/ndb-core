@@ -16,7 +16,7 @@ describe("ConflictResolutionListComponent", () => {
       "query",
     ]);
     mockDatabase.query.and.returnValue(
-      Promise.resolve({ total_rows: 0, rows: [] })
+      Promise.resolve({ total_rows: 0, rows: [] }),
     );
 
     TestBed.configureTestingModule({

@@ -27,12 +27,12 @@ export class LanguageService {
   constructor(
     @Inject(LOCALE_ID) private baseLocale: string,
     @Inject(WINDOW_TOKEN) private window: Window,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   initDefaultLanguage(): void {
     const languageSelected = this.window.localStorage.getItem(
-      LANGUAGE_LOCAL_STORAGE_KEY
+      LANGUAGE_LOCAL_STORAGE_KEY,
     );
 
     if (!languageSelected) {
@@ -43,7 +43,7 @@ export class LanguageService {
           // Reload app with default language from config
           this.window.localStorage.setItem(
             LANGUAGE_LOCAL_STORAGE_KEY,
-            default_language
+            default_language,
           );
           this.window.location.reload();
         }

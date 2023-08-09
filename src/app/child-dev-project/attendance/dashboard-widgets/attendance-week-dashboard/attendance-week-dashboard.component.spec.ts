@@ -49,10 +49,10 @@ describe("AttendanceWeekDashboardComponent", () => {
     const e1 = EventNote.create(mondayLastWeek.toDate());
     const e2 = EventNote.create(moment(e1.date).add(1, "day").toDate());
     const presentStatus = defaultAttendanceStatusTypes.find(
-      (s) => s.countAs === AttendanceLogicalStatus.PRESENT
+      (s) => s.countAs === AttendanceLogicalStatus.PRESENT,
     );
     const absentStatus = defaultAttendanceStatusTypes.find(
-      (s) => s.countAs === AttendanceLogicalStatus.ABSENT
+      (s) => s.countAs === AttendanceLogicalStatus.ABSENT,
     );
     [e1, e2].forEach((e) => {
       e.addChild(absentChild);
@@ -99,7 +99,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     component.ngOnInit();
 
     expect(
-      mockAttendanceService.getAllActivityAttendancesForPeriod
+      mockAttendanceService.getAllActivityAttendancesForPeriod,
     ).toHaveBeenCalledWith(mondayLastWeek.toDate(), saturdayLastWeek.toDate());
 
     // with offset: this week monday till saturday
@@ -111,7 +111,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     component.ngOnInit();
 
     expect(
-      mockAttendanceService.getAllActivityAttendancesForPeriod
+      mockAttendanceService.getAllActivityAttendancesForPeriod,
     ).toHaveBeenCalledWith(mondayThisWeek.toDate(), saturdayThisWeek.toDate());
   });
 });

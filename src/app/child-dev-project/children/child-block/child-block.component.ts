@@ -43,7 +43,7 @@ export class ChildBlockComponent implements OnChanges {
 
   constructor(
     private fileService: FileService,
-    @Optional() private childrenService: ChildrenService
+    @Optional() private childrenService: ChildrenService,
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {

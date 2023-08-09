@@ -1,11 +1,13 @@
 <!-- Header -->
-<div class="widget-header theme-background-{{theme}}">
-  <div *ngIf="headline" class="widget-headline">{{headline}}</div>
+<div class="widget-header theme-background-{{ theme }}">
+  <div *ngIf="headline" class="widget-headline">{{ headline }}</div>
   <div *ngIf="!headline" class="widget-title">
-    <ng-container *ngIf="!loading">{{title}}</ng-container>
+    <ng-container *ngIf="!loading">{{ title }}</ng-container>
     <mat-spinner *ngIf="loading" diameter="40"></mat-spinner>
   </div>
-  <div *ngIf="!headline" class="widget-subheadline" [matTooltip]="explanation">{{subtitle}}</div>
+  <div *ngIf="!headline" class="widget-subheadline" [matTooltip]="explanation">
+    {{ subtitle }}
+  </div>
   <app-fa-dynamic-icon class="widget-icon" [icon]="icon"></app-fa-dynamic-icon>
 </div>
 

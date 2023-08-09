@@ -4,7 +4,7 @@ describe("getReadableValue", () => {
   function expectObjectToContain<OBJECT, PROPERTY extends keyof OBJECT>(
     obj: OBJECT,
     expected: (OBJECT[PROPERTY] | "string")[],
-    type: string
+    type: string,
   ) {
     let index = 0;
     for (const value of Object.values(obj)) {

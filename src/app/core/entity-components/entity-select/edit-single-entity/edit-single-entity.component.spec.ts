@@ -27,10 +27,10 @@ describe("EditSingleEntityComponent", () => {
     const entityFormService = TestBed.inject(EntityFormService);
     component.parent = entityFormService.createFormGroup(
       [{ id: "schoolId" }],
-      new ChildSchoolRelation()
+      new ChildSchoolRelation(),
     );
     component.formControl = component.parent.get(
-      "schoolId"
+      "schoolId",
     ) as FormControl<string>;
     component.formControlName = "schoolId";
     component.formFieldConfig = { id: "childId" };

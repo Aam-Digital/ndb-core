@@ -23,7 +23,7 @@ describe("EntityTypeLabelPipe", () => {
 
   it("returns entity-type label plural if flag given", () => {
     expect(pipe.transform(TestEntity.ENTITY_TYPE, true)).toBe(
-      TestEntity.labelPlural
+      TestEntity.labelPlural,
     );
   });
 

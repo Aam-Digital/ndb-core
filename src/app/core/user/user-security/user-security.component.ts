@@ -61,7 +61,7 @@ export class UserSecurityComponent implements OnInit {
     sessionService: SessionService,
     private fb: FormBuilder,
     private alertService: AlertService,
-    private http: HttpClient
+    private http: HttpClient,
   ) {
     if (
       sessionService
@@ -121,8 +121,8 @@ export class UserSecurityComponent implements OnInit {
       .get("roles")
       .setValue(
         this.user.roles.map((role) =>
-          this.availableRoles.find((r) => r.id === role.id)
-        )
+          this.availableRoles.find((r) => r.id === role.id),
+        ),
       );
     this.form.markAsPristine();
   }
@@ -157,7 +157,7 @@ export class UserSecurityComponent implements OnInit {
           this.alertService.addInfo(
             $localize`:Snackbar message:Account created. An email has been sent to ${
               this.form.get("email").value
-            }`
+            }`,
           );
           this.user = user as KeycloakUser;
           this.disableForm();
@@ -171,12 +171,12 @@ export class UserSecurityComponent implements OnInit {
     const update = this.getFormValues();
     // only send values that have changed
     Object.keys(this.form.controls).forEach((control) =>
-      this.form.get(control).pristine ? delete update[control] : undefined
+      this.form.get(control).pristine ? delete update[control] : undefined,
     );
     if (update) {
       this.updateKeycloakUser(
         update,
-        $localize`:Snackbar message:Successfully updated user`
+        $localize`:Snackbar message:Successfully updated user`,
       );
     }
   }
@@ -209,7 +209,7 @@ export class UserSecurityComponent implements OnInit {
     this.http
       .post(
         `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}/clear_local`,
-        undefined
+        undefined,
       )
       .subscribe({
         next: () => undefined,

@@ -52,7 +52,7 @@ export class ImportEntityTypeComponent {
 
   private loadEntityTypes(expertMode?: boolean) {
     let entities = Array.from(this.entityRegistry.entries()).map(
-      ([key, value]) => ({ key, value })
+      ([key, value]) => ({ key, value }),
     );
     if (!expertMode) {
       entities = entities.filter(({ key, value }) => value._isCustomizedType);

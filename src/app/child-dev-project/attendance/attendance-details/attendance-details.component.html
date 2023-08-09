@@ -24,16 +24,16 @@
   <div
     class="summary w-{{ entity.getWarningLevel() }}"
     i18n="
-        Attendance|Attendance of a child (in percent) or the average of the
-        event (in percent)
-      "
+      Attendance|Attendance of a child (in percent) or the average of the event
+      (in percent)
+    "
   >
     Attendance:
     {{
-    (forChild
+      (forChild
         ? entity?.getAttendancePercentage(forChild)
         : entity?.getAttendancePercentageAverage()
-    ) | percent: "1.0-0"
+      ) | percent: "1.0-0"
     }}
   </div>
 
@@ -64,7 +64,10 @@
       <input
         matInput
         type="number"
-        i18n-placeholder="days absent|How many days the presence or absence of a child is unknown"
+        i18n-placeholder="
+          days absent|How many days the presence or absence of a child is
+          unknown
+        "
         placeholder="unknown status"
         [value]="entity.countEventsWithUnknownStatus(forChild)"
         readonly
@@ -99,7 +102,10 @@
       <input
         matInput
         type="number"
-        i18n-placeholder="Total unknown|How many children have an unknown presence or absence status"
+        i18n-placeholder="
+          Total unknown|How many children have an unknown presence or absence
+          status
+        "
         placeholder="Total unknown"
         [value]="entity.countEventsWithUnknownStatus()"
         readonly

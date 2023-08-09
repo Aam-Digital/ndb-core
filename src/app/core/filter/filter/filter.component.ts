@@ -73,7 +73,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   constructor(
     private filterGenerator: FilterGeneratorService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -82,7 +82,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
         this.filterConfig,
         this.entityType,
         this.entities,
-        this.onlyShowRelevantFilterOptions
+        this.onlyShowRelevantFilterOptions,
       );
       this.loadUrlParams();
       this.applyFilterSelections();
@@ -101,7 +101,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     const previousFilter = JSON.stringify(this.filterObj);
     const newFilter = this.filterSelections.reduce(
       (obj, filter) => Object.assign(obj, filter.getFilter()),
-      {} as DataFilter<T>
+      {} as DataFilter<T>,
     );
 
     if (previousFilter === JSON.stringify(newFilter)) {

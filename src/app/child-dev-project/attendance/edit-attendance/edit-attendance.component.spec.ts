@@ -44,7 +44,7 @@ describe("EditAttendanceComponent", () => {
     fixture.detectChanges();
 
     const element = fixture.debugElement.query(
-      By.directive(AttendanceStatusSelectComponent)
+      By.directive(AttendanceStatusSelectComponent),
     );
 
     expect(element).toBeTruthy();
@@ -55,7 +55,7 @@ describe("EditAttendanceComponent", () => {
     fixture.detectChanges();
 
     const element = fixture.debugElement.query(
-      By.directive(AttendanceStatusSelectComponent)
+      By.directive(AttendanceStatusSelectComponent),
     );
 
     expect(element).toBeFalsy();

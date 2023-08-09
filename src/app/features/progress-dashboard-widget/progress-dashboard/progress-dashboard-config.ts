@@ -27,11 +27,11 @@ export class ProgressDashboardConfig extends Entity {
   getTotalPercentage() {
     const currentTotal = this.parts.reduce(
       (acc, entry) => acc + entry.currentValue,
-      0
+      0,
     );
     const targetTotal = this.parts.reduce(
       (acc, entry) => acc + entry.targetValue,
-      0
+      0,
     );
     return currentTotal / targetTotal;
   }

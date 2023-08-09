@@ -73,7 +73,7 @@ describe("PermissionEnforcerService", () => {
 
   afterEach(() => {
     window.localStorage.removeItem(
-      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
     );
   });
 
@@ -85,7 +85,7 @@ describe("PermissionEnforcerService", () => {
     await service.enforcePermissionsOnLocalData(userRules);
 
     const storedRules = window.localStorage.getItem(
-      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
     );
     expect(JSON.parse(storedRules)).toEqual(userRules);
   });
@@ -208,7 +208,7 @@ describe("PermissionEnforcerService", () => {
       "destroying local db due to lost permissions",
       {
         category: "Migration",
-      }
+      },
     );
   }));
 
@@ -221,7 +221,7 @@ describe("PermissionEnforcerService", () => {
     tick();
 
     const storedRules = localStorage.getItem(
-      `${TEST_USER}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`
+      `${TEST_USER}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`,
     );
     expect(JSON.parse(storedRules)).toEqual(rules);
   }));

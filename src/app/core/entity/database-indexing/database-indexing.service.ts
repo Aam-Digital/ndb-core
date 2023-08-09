@@ -33,7 +33,7 @@ import { isArrayProperty } from "../../entity-components/entity-utils/entity-uti
 })
 export class DatabaseIndexingService {
   private _indicesRegistered = new BehaviorSubject<BackgroundProcessState[]>(
-    []
+    [],
   );
 
   /** All currently registered indices with their status */
@@ -43,7 +43,7 @@ export class DatabaseIndexingService {
 
   constructor(
     private db: Database,
-    private entitySchemaService: EntitySchemaService
+    private entitySchemaService: EntitySchemaService,
   ) {}
 
   /**
@@ -64,7 +64,7 @@ export class DatabaseIndexingService {
     const indexCreationPromise = this.db.saveDatabaseIndex(designDoc);
     this._indicesRegistered.next([
       ...this._indicesRegistered.value.filter(
-        (state) => state.details !== indexDetails
+        (state) => state.details !== indexDetails,
       ),
       indexState,
     ]);
@@ -100,12 +100,12 @@ export class DatabaseIndexingService {
   generateIndexOnProperty<
     E extends Entity,
     REF extends keyof E & string,
-    SEC extends keyof E & string
+    SEC extends keyof E & string,
   >(
     indexId: string,
     entity: EntityConstructor<E>,
     referenceProperty: REF,
-    secondaryIndex?: SEC
+    secondaryIndex?: SEC,
   ): Promise<void> {
     const emitParamFormatter = (primaryParam) => {
       if (secondaryIndex) {
@@ -151,7 +151,7 @@ export class DatabaseIndexingService {
   async queryIndexDocs<T extends Entity>(
     entityConstructor: EntityConstructor<T>,
     indexName: string,
-    options: QueryOptions | string = {}
+    options: QueryOptions | string = {},
   ): Promise<T[]> {
     if (typeof options === "string") {
       options = { key: options };
@@ -177,7 +177,7 @@ export class DatabaseIndexingService {
     entityConstructor: EntityConstructor<T>,
     indexName: string,
     startkey: string | any[],
-    endkey?: string | any[]
+    endkey?: string | any[],
   ): Promise<T[]> {
     if (Array.isArray(endkey)) {
       endkey = [...endkey, {}];
@@ -195,7 +195,7 @@ export class DatabaseIndexingService {
     options: QueryOptions = {
       reduce: true,
       group: true,
-    }
+    },
   ): Promise<any> {
     return this.queryIndexRaw(indexName, options);
   }
@@ -213,7 +213,7 @@ export class DatabaseIndexingService {
   async queryIndexRaw(
     indexName: string,
     options: QueryOptions,
-    doNotWaitForIndexCreation?: boolean
+    doNotWaitForIndexCreation?: boolean,
   ): Promise<any> {
     if (!doNotWaitForIndexCreation) {
       await this.waitForIndexAvailable(indexName);
@@ -233,7 +233,7 @@ export class DatabaseIndexingService {
       const relevantProcess = processes.find(
         (process) =>
           process.details === requiredIndexName ||
-          requiredIndexName.startsWith(process.details + "/")
+          requiredIndexName.startsWith(process.details + "/"),
       );
       return relevantProcess && !relevantProcess.pending;
     }
@@ -244,8 +244,8 @@ export class DatabaseIndexingService {
 
     await firstValueFrom(
       this._indicesRegistered.pipe(
-        first((processes) => relevantIndexIsReady(processes, indexName))
-      )
+        first((processes) => relevantIndexIsReady(processes, indexName)),
+      ),
     );
   }
 }

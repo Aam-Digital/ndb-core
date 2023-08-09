@@ -70,13 +70,13 @@ describe("EntityCountDashboardComponent", () => {
       .withContext("unexpected number of centersWithProbability")
       .toHaveSize(2);
     const actualCenterAEntry = component.entityGroupCounts.filter(
-      (e) => e.label === centerA.label
+      (e) => e.label === centerA.label,
     )[0];
     expect(actualCenterAEntry.value)
       .withContext("child count of CenterA not correct")
       .toBe(2);
     const actualCenterBEntry = component.entityGroupCounts.filter(
-      (e) => e.label === centerB.label
+      (e) => e.label === centerB.label,
     )[0];
     expect(actualCenterBEntry.value)
       .withContext("child count of CenterB not correct")

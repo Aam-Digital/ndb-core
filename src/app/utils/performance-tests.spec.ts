@@ -28,7 +28,7 @@ xdescribe("Performance Tests", () => {
       (num) => new Promise((resolve) => setTimeout(() => resolve(num), 100)),
       (num) => Promise.resolve(num),
       "Basic performance test example",
-      [10, 20, 30]
+      [10, 20, 30],
     );
   });
 });
@@ -37,14 +37,14 @@ async function comparePerformance<V, R>(
   currentFunction: (val?: V) => Promise<R>,
   improvedFunction: (val?: V) => Promise<R>,
   description: string,
-  input?: V[]
+  input?: V[],
 ) {
   const diffs: number[] = [];
   if (input) {
     for (const el of input) {
       const diff = await getExecutionDiff(
         () => currentFunction(el),
-        () => improvedFunction(el)
+        () => improvedFunction(el),
       );
       diffs.push(diff);
     }
@@ -58,7 +58,7 @@ async function comparePerformance<V, R>(
 
 async function getExecutionDiff<R>(
   currentFunction: () => Promise<R>,
-  improvedFunction: () => Promise<R>
+  improvedFunction: () => Promise<R>,
 ): Promise<number> {
   const currentTimer = new Timer();
   const currentResult = await currentFunction();
@@ -69,7 +69,7 @@ async function getExecutionDiff<R>(
   expect(improvedResult)
     .withContext(
       `current ${JSON.stringify(currentResult)}
-      improved ${JSON.stringify(improvedResult)}`
+      improved ${JSON.stringify(improvedResult)}`,
     )
     .toEqual(currentResult);
   return currentDuration - improvedDuration;

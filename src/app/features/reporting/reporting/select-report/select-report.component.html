@@ -9,8 +9,7 @@
   </a>
 </div>
 
-<div *ngIf="reports?.length > 0"
-     class="work-panel">
+<div *ngIf="reports?.length > 0" class="work-panel">
   <div class="flex-row flex-wrap gap-regular">
     <mat-form-field>
       <mat-label i18n>Select Report</mat-label>
@@ -37,7 +36,10 @@
           placeholder="End date"
         />
       </mat-date-range-input>
-      <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker-toggle
+        matIconSuffix
+        [for]="picker"
+      ></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
     </mat-form-field>
   </div>
@@ -48,7 +50,13 @@
       color="accent"
       class="primary-button"
       [disabled]="!selectedReport || (!fromDate && !toDate) || loading"
-      (click)="calculateClick.emit({ report: selectedReport, from: fromDate, to: toDate})"
+      (click)="
+        calculateClick.emit({
+          report: selectedReport,
+          from: fromDate,
+          to: toDate
+        })
+      "
       i18n="Calculate the results for a report"
       angulartics2On="click"
       angularticsCategory="Reporting"
@@ -65,7 +73,7 @@
       [disabled]="!exportableData"
       format="csv"
       filename="report"
-      style="float: right;"
+      style="float: right"
       angulartics2On="click"
       angularticsCategory="Reporting"
       angularticsAction="export"
@@ -76,9 +84,7 @@
         class="standard-icon-with-text"
         aria-label="download csv"
       ></fa-icon>
-      <ng-container i18n="Button to download data">
-        Download
-      </ng-container>
+      <ng-container i18n="Button to download data"> Download </ng-container>
     </button>
   </div>
   <div style="clear: both; padding-bottom: 5px"></div>

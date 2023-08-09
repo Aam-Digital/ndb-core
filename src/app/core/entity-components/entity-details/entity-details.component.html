@@ -21,7 +21,9 @@
   </app-view-title>
   <app-view-title
     *ngIf="creatingNew"
-    i18n="Title when adding a new entity|An entity is a child, note, school, etc."
+    i18n="
+      Title when adding a new entity|An entity is a child, note, school, etc.
+    "
   >
     Adding new {{ this.entityConstructor?.label }}
   </app-view-title>
@@ -57,21 +59,25 @@
   </button>
 </mat-menu>
 
-<mat-tab-group (selectedIndexChange)="trackTabChanged($event)" appTabStateMemo [preserveContent]="true">
+<mat-tab-group
+  (selectedIndexChange)="trackTabChanged($event)"
+  appTabStateMemo
+  [preserveContent]="true"
+>
   <mat-tab
     *ngFor="let panelConfig of panels"
     [disabled]="creatingNew || unsavedChanges.pending"
   >
     <ng-template mat-tab-label>
-    <span
-      [matTooltipDisabled]="!creatingNew"
-      matTooltip="Save the new record to create it before accessing other details"
-      i18n-matTooltip="
-        Tooltip explaining disabled sections when creating new entity
-      "
-    >
-      {{ panelConfig.title }}
-    </span>
+      <span
+        [matTooltipDisabled]="!creatingNew"
+        matTooltip="Save the new record to create it before accessing other details"
+        i18n-matTooltip="
+          Tooltip explaining disabled sections when creating new entity
+        "
+      >
+        {{ panelConfig.title }}
+      </span>
     </ng-template>
 
     <ng-template matTabContent>
@@ -79,15 +85,16 @@
         <mat-progress-bar mode="indeterminate"></mat-progress-bar>
       </div>
 
-      <div *ngFor="let componentConfig of panelConfig.components; let j = index" class="padding-top-large">
+      <div
+        *ngFor="let componentConfig of panelConfig.components; let j = index"
+        class="padding-top-large"
+      >
         <h3 *ngIf="componentConfig.title && componentConfig.title !== ''">
           {{ componentConfig.title }}
         </h3>
         <ng-template [appDynamicComponent]="componentConfig"></ng-template>
-        <br *ngIf="j < panelConfig.components.length - 1"/>
+        <br *ngIf="j < panelConfig.components.length - 1" />
       </div>
     </ng-template>
-
   </mat-tab>
 </mat-tab-group>
-

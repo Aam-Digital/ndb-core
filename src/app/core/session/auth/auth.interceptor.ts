@@ -33,7 +33,7 @@ export class AuthInterceptor implements HttpInterceptor {
 
   intercept(
     request: HttpRequest<unknown>,
-    next: HttpHandler
+    next: HttpHandler,
   ): Observable<HttpEvent<unknown>> {
     const authEnabled = request.context.get(AUTH_ENABLED);
     if (authEnabled) {
@@ -47,12 +47,12 @@ export class AuthInterceptor implements HttpInterceptor {
               // re-throw initial error
               throw err;
             }),
-            concatMap(() => next.handle(this.getRequestWithAuth(request)))
+            concatMap(() => next.handle(this.getRequestWithAuth(request))),
           );
         } else {
           throw err;
         }
-      })
+      }),
     );
   }
 

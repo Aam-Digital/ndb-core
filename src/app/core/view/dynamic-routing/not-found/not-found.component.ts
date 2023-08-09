@@ -8,21 +8,18 @@ import { RouterLink } from "@angular/router";
   selector: "app-not-found",
   templateUrl: "./not-found.component.html",
   styleUrls: ["./not-found.component.scss"],
-  imports: [
-    MatButtonModule,
-    RouterLink
-  ],
-  standalone: true
+  imports: [MatButtonModule, RouterLink],
+  standalone: true,
 })
 export class NotFoundComponent implements OnInit {
   constructor(
     private loggingService: LoggingService,
-    @Inject(LOCATION_TOKEN) private location: Location
+    @Inject(LOCATION_TOKEN) private location: Location,
   ) {}
 
   ngOnInit() {
     this.loggingService.warn(
-      "Could not find component for route: " + this.location.pathname
+      "Could not find component for route: " + this.location.pathname,
     );
   }
 }

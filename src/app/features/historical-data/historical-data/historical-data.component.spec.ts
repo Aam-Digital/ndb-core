@@ -48,7 +48,7 @@ describe("HistoricalDataComponent", () => {
 
     expect(component.entries).toEqual([relatedData]);
     expect(mockHistoricalDataService.getHistoricalDataFor).toHaveBeenCalledWith(
-      component.entity.getId()
+      component.entity.getId(),
     );
   });
 

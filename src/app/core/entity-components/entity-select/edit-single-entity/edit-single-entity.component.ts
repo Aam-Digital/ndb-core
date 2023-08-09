@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../../entity-utils/dynamic-form-components/edit-component";
 import { Entity } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
@@ -27,7 +27,10 @@ import { ErrorHintComponent } from "../../entity-utils/error-hint/error-hint.com
   ],
   standalone: true,
 })
-export class EditSingleEntityComponent extends EditComponent<string> {
+export class EditSingleEntityComponent
+  extends EditComponent<string>
+  implements OnInit
+{
   entities: Entity[] = [];
   entityToId = (e: Entity) => e?.getId();
 

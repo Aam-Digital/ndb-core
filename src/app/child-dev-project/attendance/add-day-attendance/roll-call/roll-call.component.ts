@@ -119,7 +119,7 @@ export class RollCallComponent implements OnChanges {
     private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -159,7 +159,7 @@ export class RollCallComponent implements OnChanges {
 
   private loadAttendanceStatusTypes() {
     this.availableStatus = this.enumService.getEnumValues<AttendanceStatusType>(
-      ATTENDANCE_STATUS_CONFIG_ID
+      ATTENDANCE_STATUS_CONFIG_ID,
     );
   }
 
@@ -174,7 +174,7 @@ export class RollCallComponent implements OnChanges {
           "Could not find child " +
             childId +
             " for event " +
-            this.eventEntity.getId()
+            this.eventEntity.getId(),
         );
         this.eventEntity.removeChild(childId);
         continue;
@@ -209,7 +209,7 @@ export class RollCallComponent implements OnChanges {
     } else {
       this.currentChild = this.children[this.currentIndex];
       this.currentAttendance = this.eventEntity.getAttendance(
-        this.currentChild.getId()
+        this.currentChild.getId(),
       );
     }
   }

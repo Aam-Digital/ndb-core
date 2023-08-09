@@ -21,7 +21,7 @@ describe("PwaInstallComponent", () => {
 
   beforeEach(async () => {
     PwaInstallService.canInstallDirectly = firstValueFrom(
-      pwaInstallResult.pipe(take(1))
+      pwaInstallResult.pipe(take(1)),
     );
     mockPWAInstallService = jasmine.createSpyObj([
       "getPWAInstallType",
@@ -48,7 +48,7 @@ describe("PwaInstallComponent", () => {
 
   it("should show the pwa install instructions on iOS devices", () => {
     mockPWAInstallService.getPWAInstallType.and.returnValue(
-      PWAInstallType.ShowiOSInstallInstructions
+      PWAInstallType.ShowiOSInstallInstructions,
     );
 
     fixture.detectChanges();

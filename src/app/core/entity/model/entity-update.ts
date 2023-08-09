@@ -32,7 +32,7 @@ export interface UpdatedEntity<T extends Entity> {
  */
 export function applyUpdate<T extends Entity>(
   entities: T[],
-  next: UpdatedEntity<T>
+  next: UpdatedEntity<T>,
 ): T[] {
   if (!next || !next.entity || !entities) {
     return entities;
@@ -42,7 +42,7 @@ export function applyUpdate<T extends Entity>(
       return [next.entity].concat(entities);
     case "update":
       return entities.map((e) =>
-        e.getId() === next.entity.getId() ? next.entity : e
+        e.getId() === next.entity.getId() ? next.entity : e,
       );
     case "remove":
       return entities.filter((e) => e.getId() !== next.entity.getId());

@@ -60,7 +60,7 @@ export class AttendanceDetailsComponent {
   constructor(
     private formDialog: FormDialogService,
     @Inject(MAT_DIALOG_DATA)
-    data: { forChild: string; attendance: ActivityAttendance }
+    data: { forChild: string; attendance: ActivityAttendance },
   ) {
     this.entity = data.attendance;
     this.forChild = data.forChild;

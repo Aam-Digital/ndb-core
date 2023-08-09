@@ -29,7 +29,7 @@ function keycloakAuthHttpFake(_url, body) {
       () =>
         new HttpErrorResponse({
           status: HttpStatusCode.Unauthorized,
-        })
+        }),
     );
   }
 }
@@ -77,7 +77,7 @@ describe("KeycloakAuthService", () => {
   });
 
   afterEach(() =>
-    window.localStorage.removeItem(KeycloakAuthService.REFRESH_TOKEN_KEY)
+    window.localStorage.removeItem(KeycloakAuthService.REFRESH_TOKEN_KEY),
   );
 
   it("should be created", () => {
@@ -95,7 +95,7 @@ describe("KeycloakAuthService", () => {
     expect(mockHttpClient.post).toHaveBeenCalledWith(
       jasmine.anything(),
       jasmine.stringContaining(`username=${TEST_USER}&`),
-      jasmine.anything()
+      jasmine.anything(),
     );
   });
 
@@ -104,7 +104,7 @@ describe("KeycloakAuthService", () => {
 
     expect(service.accessToken).toBe(jwtTokenResponse.access_token);
     expect(
-      window.localStorage.getItem(KeycloakAuthService.REFRESH_TOKEN_KEY)
+      window.localStorage.getItem(KeycloakAuthService.REFRESH_TOKEN_KEY),
     ).toBe("test-refresh-token");
   });
 
@@ -118,8 +118,8 @@ describe("KeycloakAuthService", () => {
               error: "invalid_grant",
               error_description: "Account disabled",
             },
-          })
-      )
+          }),
+      ),
     );
     service.authenticate(TEST_USER, TEST_PASSWORD).catch((err) => {
       expect(err.status).toBe(HttpStatusCode.Unauthorized);
@@ -133,14 +133,14 @@ describe("KeycloakAuthService", () => {
     service.changePassword();
 
     expect(loginSpy).toHaveBeenCalledWith(
-      jasmine.objectContaining({ action: "UPDATE_PASSWORD" })
+      jasmine.objectContaining({ action: "UPDATE_PASSWORD" }),
     );
   });
 
   it("should login, if there is a valid refresh token", async () => {
     localStorage.setItem(
       KeycloakAuthService.REFRESH_TOKEN_KEY,
-      "some-refresh-token"
+      "some-refresh-token",
     );
     mockHttpClient.post.and.returnValue(of(jwtTokenResponse));
     const user = await service.autoLogin();
@@ -157,8 +157,8 @@ describe("KeycloakAuthService", () => {
               error: "invalid_grant",
               error_description: "Token is not active",
             },
-          })
-      )
+          }),
+      ),
     );
     return expectAsync(service.autoLogin()).toBeRejected();
   });

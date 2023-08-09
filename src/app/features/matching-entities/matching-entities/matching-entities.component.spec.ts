@@ -135,7 +135,7 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(component.sideDetails[0].selected).toEqual(testEntity);
     expect(component.sideDetails[0].entityType).toEqual(
-      testEntity.getConstructor()
+      testEntity.getConstructor(),
     );
     expect(component.sideDetails[0].availableEntities).toBeUndefined();
     expect(component.sideDetails[0].columns).toEqual(["_id", "_rev"]);
@@ -174,7 +174,7 @@ describe("MatchingEntitiesComponent", () => {
         childId: matchedEntity.getId(false),
         name:
           "ChildSchoolRelation " + testEntity.toString() + " - matched child",
-      } as Partial<ChildSchoolRelation>)
+      } as Partial<ChildSchoolRelation>),
     );
     expect(saveSpy).toHaveBeenCalledWith(jasmine.any(ChildSchoolRelation));
   }));
@@ -201,7 +201,7 @@ describe("MatchingEntitiesComponent", () => {
 
     let newCoordinates: Coordinates[];
     distanceColumn.additional.compareCoordinates.subscribe(
-      (res) => (newCoordinates = res)
+      (res) => (newCoordinates = res),
     );
 
     const compare = new Child();
@@ -276,10 +276,10 @@ describe("MatchingEntitiesComponent", () => {
     let lastLeftValue: Coordinates[];
     let lastRightValue: Coordinates[];
     leftSide.distanceColumn.compareCoordinates.subscribe(
-      (res) => (lastLeftValue = res)
+      (res) => (lastLeftValue = res),
     );
     rightSide.distanceColumn.compareCoordinates.subscribe(
-      (res) => (lastRightValue = res)
+      (res) => (lastRightValue = res),
     );
 
     expect(lastLeftValue).toEqual([]);
@@ -414,15 +414,15 @@ describe("MatchingEntitiesComponent", () => {
 
 function expectConfigToMatch(
   component: MatchingEntitiesComponent,
-  configToLoad: MatchingEntitiesConfig
+  configToLoad: MatchingEntitiesConfig,
 ) {
   expect(component.columns).toEqual(configToLoad.columns);
   expect(component.onMatch).toEqual(configToLoad.onMatch);
   expect(component.matchActionLabel).toEqual(configToLoad.matchActionLabel);
   expect(component.rightSide.entityType).toEqual(
-    configToLoad.rightSide.entityType
+    configToLoad.rightSide.entityType,
   );
   expect(component.leftSide.entityType).toEqual(
-    configToLoad.leftSide.entityType
+    configToLoad.leftSide.entityType,
   );
 }

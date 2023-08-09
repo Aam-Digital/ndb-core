@@ -16,16 +16,16 @@
  */
 @use "@angular/material" as mat;
 
-$err-palette            : mat.define-palette(mat.$red-palette);
-$warn-palette           : mat.define-palette(mat.$orange-palette);
-$success-palette        : mat.define-palette(mat.$green-palette);
+$err-palette: mat.define-palette(mat.$red-palette);
+$warn-palette: mat.define-palette(mat.$orange-palette);
+$success-palette: mat.define-palette(mat.$green-palette);
 
-$success                : mat.get-color-from-palette($success-palette);
-$warn                   : mat.get-color-from-palette($warn-palette);
-$error                  : mat.get-color-from-palette($err-palette);
+$success: mat.get-color-from-palette($success-palette);
+$warn: mat.get-color-from-palette($warn-palette);
+$error: mat.get-color-from-palette($err-palette);
 
-$muted                  : rgba(0, 0, 0, 0.54);
-$disabled               : rgba(0, 0, 0, 0.38);
+$muted: rgba(0, 0, 0, 0.54);
+$disabled: rgba(0, 0, 0, 0.38);
 
 /*
  * Quantized warning-levels. Each level represents a color from green (all is OK)
@@ -36,16 +36,16 @@ $disabled               : rgba(0, 0, 0, 0.38);
  */
 $w-levels: (
   100: #90ee90,
-  90 : #a5e46e,
-  80 : #bcd84e,
-  70 : #d2c92e,
-  60 : #e9b90f,
-  50 : #ffa500,
-  40 : #ff982a,
-  30 : #ff8b40,
-  20 : #ff8153,
-  10 : #ff7863,
-  0  : #fd7272,
+  90: #a5e46e,
+  80: #bcd84e,
+  70: #d2c92e,
+  60: #e9b90f,
+  50: #ffa500,
+  40: #ff982a,
+  30: #ff8b40,
+  20: #ff8153,
+  10: #ff7863,
+  0: #fd7272,
 );
 
 @function w-level($level) {
@@ -55,12 +55,17 @@ $w-levels: (
 // Levels that are used when describing attendance values
 
 $attendance-levels: (
-  P: #c8e6c9,  // Present
-  H: #CFD8DC,  // ?
-  L: #FFECB3,  // Late
-  E: #D7CCC8,  // Excused
-  A: #FF8A65,  // Absent
-  U: #DDDDDD   // Unknown
+  P: #c8e6c9,
+  // Present
+  H: #cfd8dc,
+  // ?
+  L: #ffecb3,
+  // Late
+  E: #d7ccc8,
+  // Excused
+  A: #ff8a65,
+  // Absent
+  U: #dddddd // Unknown,
 );
 
 $text-secondary: mat.get-color-from-palette(mat.$grey-palette, 800);

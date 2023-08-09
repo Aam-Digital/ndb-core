@@ -77,7 +77,7 @@ describe("EntitySelectComponent", () => {
 
     component.selectedEntities.forEach((s) => expect(s).toBeInstanceOf(User));
     expect(component.selectedEntities.map((s) => s.getId())).toEqual(
-      expectation
+      expectation,
     );
   }));
 
@@ -142,7 +142,7 @@ describe("EntitySelectComponent", () => {
       .filter((c) => c.getId() !== testUsers[0].getId())
       .map((c) => c.getId());
     expect(component.selectionChange.emit).toHaveBeenCalledWith(
-      remainingChildren
+      remainingChildren,
     );
   });
 

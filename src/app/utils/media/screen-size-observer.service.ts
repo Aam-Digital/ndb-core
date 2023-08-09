@@ -86,13 +86,13 @@ export class ScreenWidthObserver {
    * @private
    */
   private static matching(
-    query: MediaQueryList
+    query: MediaQueryList,
   ): Observable<MediaQueryListEvent> {
     return fromEvent<MediaQueryListEvent>(query, "change").pipe(
       startWith({
         matches: query.matches,
         media: query.media,
-      } as MediaQueryListEvent)
+      } as MediaQueryListEvent),
     );
   }
 
@@ -102,7 +102,7 @@ export class ScreenWidthObserver {
    */
   private queryLists: MediaQueryList[] = [SM, MD, LG, XL, XXL].map((size) =>
     // matches when the screen's width is greater than `size`
-    this.window.matchMedia(`screen and (min-width: ${size})`)
+    this.window.matchMedia(`screen and (min-width: ${size})`),
   );
 
   private readonly _shared: Observable<ScreenSize>;
@@ -131,19 +131,19 @@ export class ScreenWidthObserver {
   constructor(@Inject(WINDOW_TOKEN) private window: Window) {
     this._shared = combineLatest(
       this.queryLists.map((queryList) =>
-        ScreenWidthObserver.matching(queryList)
-      )
+        ScreenWidthObserver.matching(queryList),
+      ),
     ).pipe(
       map(() => {
         // Listening to the events requires parsing (or understanding) the event and the
         // attached media-string which requires more logic than simply computing the result in-place.
         return this.currentScreenSize();
-      })
+      }),
     );
 
     this._platform = this._shared.pipe(
       map((screenSize) => screenSize > MOBILE_THRESHOLD),
-      distinctUntilChanged()
+      distinctUntilChanged(),
     );
   }
 

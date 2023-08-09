@@ -98,7 +98,7 @@ describe("UserSecurityComponent", () => {
 
     expect(mockHttp.put).toHaveBeenCalledWith(
       jasmine.stringMatching(/\/account\/userId$/),
-      { email: "other@email.com" }
+      { email: "other@email.com" },
     );
     flush();
   }));
@@ -121,7 +121,7 @@ describe("UserSecurityComponent", () => {
         email: "new@email.com",
         roles: [assignedRole],
         enabled: true,
-      }
+      },
     );
     flush();
   }));
@@ -129,8 +129,9 @@ describe("UserSecurityComponent", () => {
   it("should assign error message when http call fails", fakeAsync(() => {
     mockHttp.post.and.returnValue(
       throwError(
-        () => new HttpErrorResponse({ error: { message: "user unauthorized" } })
-      )
+        () =>
+          new HttpErrorResponse({ error: { message: "user unauthorized" } }),
+      ),
     );
 
     component.form.patchValue({ username: "test-name", email: "my@email.com" });
@@ -164,7 +165,7 @@ describe("UserSecurityComponent", () => {
 
     expect(mockHttp.post).toHaveBeenCalledWith(
       `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}/clear_local`,
-      undefined
+      undefined,
     );
     flush();
   }));
@@ -189,7 +190,7 @@ describe("UserSecurityComponent", () => {
 
     expect(component.form.errors).toBeNull();
     expect(component.form.get("email")).toHaveValue(
-      "some_copied_email@mail.com"
+      "some_copied_email@mail.com",
     );
   }));
 

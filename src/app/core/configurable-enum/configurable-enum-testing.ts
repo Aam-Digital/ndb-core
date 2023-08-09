@@ -37,7 +37,7 @@ export function createTestingConfigurableEnumService() {
       loadType: () => Promise.resolve(demoEnums),
       save: () => Promise.resolve(),
     } as any,
-    { can: () => true } as any
+    { can: () => true } as any,
   );
   service.preLoadEnums();
   return service;

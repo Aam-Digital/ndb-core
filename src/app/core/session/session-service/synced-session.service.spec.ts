@@ -151,7 +151,7 @@ describe("SyncedSessionService", () => {
         roles: newUser.roles,
       },
       "p",
-      newUser.name
+      newUser.name,
     );
     expect(sessionService.getCurrentUser().name).toBe("newUser");
     expect(sessionService.getCurrentUser().roles).toEqual(["user_app"]);
@@ -200,11 +200,11 @@ describe("SyncedSessionService", () => {
 
     expect(localLoginSpy).toHaveBeenCalledWith(
       "anotherUser",
-      "anotherPassword"
+      "anotherPassword",
     );
     expect(remoteLoginSpy).toHaveBeenCalledWith(
       "anotherUser",
-      "anotherPassword"
+      "anotherPassword",
     );
     expect(syncSpy).not.toHaveBeenCalled();
     expectAsync(result).toBeResolvedTo(LoginState.UNAVAILABLE);
@@ -250,10 +250,10 @@ describe("SyncedSessionService", () => {
 
     expect(res).toBe(LoginState.LOGGED_IN);
     expect(JSON.parse(localStorage.getItem("test-user"))).toEqual(
-      jasmine.objectContaining(newUser)
+      jasmine.objectContaining(newUser),
     );
     expect(JSON.parse(localStorage.getItem("my@email.com"))).toEqual(
-      jasmine.objectContaining(newUser)
+      jasmine.objectContaining(newUser),
     );
 
     localStorage.removeItem("test-user");

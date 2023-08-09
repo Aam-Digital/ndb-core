@@ -34,7 +34,7 @@ describe("NotesManagerComponent", () => {
   let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
-    ["openFormPopup"]
+    ["openFormPopup"],
   );
 
   const routeData: EntityListConfig = {
@@ -100,7 +100,7 @@ describe("NotesManagerComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.callFake((entityType) =>
       (entityType as any) === Note
         ? (mockNoteObservable as any)
-        : (mockEventNoteObservable as any)
+        : (mockEventNoteObservable as any),
     );
   });
 
@@ -132,7 +132,7 @@ describe("NotesManagerComponent", () => {
     expect(dialogMock.openFormPopup).toHaveBeenCalledWith(
       note,
       [],
-      NoteDetailsComponent
+      NoteDetailsComponent,
     );
   });
 
@@ -193,7 +193,7 @@ describe("NotesManagerComponent", () => {
     routeMock.data.next({
       config: Object.assign(
         { includeEventNotes: true } as NotesManagerConfig,
-        routeData
+        routeData,
       ),
     });
 

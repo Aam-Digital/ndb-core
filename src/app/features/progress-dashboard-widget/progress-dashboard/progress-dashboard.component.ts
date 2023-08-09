@@ -41,17 +41,19 @@ export class ProgressDashboardComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private loggingService: LoggingService,
     private dialog: MatDialog,
-    private sessionService: SessionService
+    private sessionService: SessionService,
   ) {}
 
   async ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);
     this.loadConfigFromDatabase().catch(() =>
       firstValueFrom(
-        this.sessionService.syncState.pipe(waitForChangeTo(SyncState.COMPLETED))
+        this.sessionService.syncState.pipe(
+          waitForChangeTo(SyncState.COMPLETED),
+        ),
       )
         .then(() => this.loadConfigFromDatabase())
-        .catch(() => this.createDefaultConfig())
+        .catch(() => this.createDefaultConfig()),
     );
   }
 
@@ -63,7 +65,7 @@ export class ProgressDashboardComponent implements OnInit {
 
   private createDefaultConfig() {
     this.loggingService.debug(
-      `ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`
+      `ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`,
     );
     this.data.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;
     this.save();

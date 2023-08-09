@@ -110,7 +110,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       file,
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
   });
 
@@ -149,7 +149,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
   });
 
@@ -194,7 +194,7 @@ describe("EditFileComponent", () => {
     expect(component.formControl).toHaveValue(null);
     expect(mockFileService.removeFile).toHaveBeenCalledWith(
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
     expect(mockAlertService.addInfo).toHaveBeenCalled();
   });
@@ -214,7 +214,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
   });
 
@@ -247,7 +247,7 @@ describe("EditFileComponent", () => {
 
     expect(mockFileService.showFile).toHaveBeenCalledWith(
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
   });
 

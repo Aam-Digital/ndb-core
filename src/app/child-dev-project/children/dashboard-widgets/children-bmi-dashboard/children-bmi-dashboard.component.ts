@@ -55,7 +55,7 @@ export class ChildrenBmiDashboardComponent implements OnInit, AfterViewInit {
     const BMIs: BmiRow[] = [];
     groupBy(healthChecks, "child").forEach(([childId, checks]) => {
       const latest = checks.reduce((prev, cur) =>
-        cur.date > prev.date ? cur : prev
+        cur.date > prev.date ? cur : prev,
       );
       if (latest && latest.getWarningLevel() === WarningLevel.URGENT) {
         BMIs.push({ childId: childId, bmi: latest?.bmi });

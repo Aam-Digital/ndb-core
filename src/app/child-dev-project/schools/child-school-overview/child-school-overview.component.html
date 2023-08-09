@@ -1,10 +1,14 @@
-<app-pill class="hint-badge" *ngIf="!hasCurrentlyActiveEntry && mode === 'child'">
+<app-pill
+  class="hint-badge"
+  *ngIf="!hasCurrentlyActiveEntry && mode === 'child'"
+>
   Currently there is no active entry. To add a new entry, click on the
   <fa-icon
     class="pointer color-accent"
     aria-label="add"
     icon="plus-circle"
-    (click)="entitySubrecord.create()"></fa-icon>
+    (click)="entitySubrecord.create()"
+  ></fa-icon>
   button.
 </app-pill>
 
@@ -23,12 +27,13 @@
   <mat-slide-toggle
     [(ngModel)]="showInactive"
     (change)="prepareDisplayedData()"
-    i18n-matTooltip="Show ended tooltip|Tooltip that will appear when hovered over the show-ended button"
+    i18n-matTooltip="
+      Show ended tooltip|Tooltip that will appear when hovered over the
+      show-ended button
+    "
     matTooltip="Show entries where the end date is in the past"
     i18n="slider|also show entries that are inactive"
   >
     Include inactive past records
   </mat-slide-toggle>
 </div>
-
-

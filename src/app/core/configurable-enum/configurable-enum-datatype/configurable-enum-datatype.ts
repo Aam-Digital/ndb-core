@@ -27,7 +27,7 @@ export class ConfigurableEnumDatatype
    */
   public transformToObjectFormat(
     value: string,
-    schemaField: EntitySchemaField
+    schemaField: EntitySchemaField,
   ): ConfigurableEnumValue {
     let enumId = schemaField.additional || schemaField.innerDataType;
     let enumOption = this.enumService

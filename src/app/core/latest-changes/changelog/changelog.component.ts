@@ -74,7 +74,7 @@ export class ChangelogComponent implements OnInit {
    */
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>,
-    private latestChangesService: LatestChangesService
+    private latestChangesService: LatestChangesService,
   ) {}
 
   ngOnInit(): void {

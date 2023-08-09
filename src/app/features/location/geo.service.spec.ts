@@ -63,7 +63,7 @@ describe("GeoService", () => {
     service.reverseLookup(coordinates).subscribe();
     expect(mockAnalytics.eventTrack).toHaveBeenCalledWith(
       "reverse_lookup_executed",
-      { category: "Map" }
+      { category: "Map" },
     );
   });
 });

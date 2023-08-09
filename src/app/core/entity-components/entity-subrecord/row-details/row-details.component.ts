@@ -56,7 +56,7 @@ export class RowDetailsComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
-    private formService: EntityFormService
+    private formService: EntityFormService,
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
     this.columns = data.columns.map((col) => [col]);

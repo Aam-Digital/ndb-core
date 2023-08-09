@@ -19,7 +19,7 @@ export function mockAuth(user: AuthUser) {
       return Promise.reject(
         new HttpErrorResponse({
           status: HttpStatusCode.Unauthorized,
-        })
+        }),
       );
     }
   };
@@ -54,7 +54,7 @@ describe("RemoteSessionService", () => {
 
   it("should be unavailable if requests fails with error other than 401", async () => {
     mockAuthService.authenticate.and.rejectWith(
-      new HttpErrorResponse({ status: 501 })
+      new HttpErrorResponse({ status: 501 }),
     );
 
     await service.login(TEST_USER, TEST_PASSWORD);
@@ -69,7 +69,7 @@ describe("RemoteSessionService", () => {
         status: HttpStatusCode.Unauthorized,
         ok: false,
       } as Response),
-      Promise.resolve({ status: HttpStatusCode.Ok, ok: true } as Response)
+      Promise.resolve({ status: HttpStatusCode.Ok, ok: true } as Response),
     );
     let calls = 0;
     mockAuthService.addAuthHeader.and.callFake((headers) => {

@@ -43,7 +43,7 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       throw new Error(
-        `failed to convert data '${value}' to Date object for ${parent._id}`
+        `failed to convert data '${value}' to Date object for ${parent._id}`,
       );
     }
     return date;

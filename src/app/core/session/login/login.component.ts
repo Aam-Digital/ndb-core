@@ -75,12 +75,12 @@ export class LoginComponent implements AfterViewInit {
     private _sessionService: SessionService,
     private loggingService: LoggingService,
     private route: ActivatedRoute,
-    private router: Router
+    private router: Router,
   ) {
     this._sessionService.loginState
       .pipe(
         untilDestroyed(this),
-        filter((state) => state === LoginState.LOGGED_IN)
+        filter((state) => state === LoginState.LOGGED_IN),
       )
       .subscribe(() => this.routeAfterLogin());
   }
@@ -110,12 +110,12 @@ export class LoginComponent implements AfterViewInit {
             break;
           case LoginState.UNAVAILABLE:
             this.onLoginFailure(
-              $localize`:LoginError:Please connect to the internet and try again`
+              $localize`:LoginError:Please connect to the internet and try again`,
             );
             break;
           case LoginState.LOGIN_FAILED:
             this.onLoginFailure(
-              $localize`:LoginError:Username and/or password incorrect`
+              $localize`:LoginError:Username and/or password incorrect`,
             );
             break;
           default:

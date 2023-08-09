@@ -119,11 +119,11 @@ describe("EntityListComponent", () => {
 
     expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
     const defaultGroup = testConfig.columnGroups.groups.findIndex(
-      (g) => g.name === testConfig.columnGroups.default
+      (g) => g.name === testConfig.columnGroups.default,
     );
     expect(component.selectedColumnGroupIndex).toEqual(defaultGroup);
     expect(component.columnsToDisplay).toEqual(
-      testConfig.columnGroups.groups[defaultGroup].columns
+      testConfig.columnGroups.groups[defaultGroup].columns,
     );
   }));
 
@@ -176,9 +176,9 @@ describe("EntityListComponent", () => {
     tick();
 
     expect(
-      component.columns.map((col) => (typeof col === "string" ? col : col.id))
+      component.columns.map((col) => (typeof col === "string" ? col : col.id)),
     ).toEqual(
-      jasmine.arrayWithExactContents(["testProperty", "anotherColumn"])
+      jasmine.arrayWithExactContents(["testProperty", "anotherColumn"]),
     );
   }));
 

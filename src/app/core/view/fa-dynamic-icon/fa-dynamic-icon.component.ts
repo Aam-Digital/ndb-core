@@ -78,12 +78,12 @@ export class FaDynamicIconComponent {
       if (iconAndDef.length === 1) {
         definition = this.iconLibrary.getIconDefinition(
           "fas",
-          icon as IconName
+          icon as IconName,
         );
       } else {
         definition = this.iconLibrary.getIconDefinition(
           iconAndDef[0] as IconPrefix,
-          iconAndDef[1] as IconName
+          iconAndDef[1] as IconName,
         );
       }
       // Fallback if the icon is not available: search through the icon definitions
@@ -92,7 +92,7 @@ export class FaDynamicIconComponent {
       // Fallback if the icon is neither in the map nor a registered icon
       definition = FaDynamicIconComponent.fallbackIcon;
       this.loggingService.warn(
-        `Tried to set icon "${icon}" but it does not exist as a font awesome regular item nor is it registered as an alias.`
+        `Tried to set icon "${icon}" but it does not exist as a font awesome regular item nor is it registered as an alias.`,
       );
     }
     this._icon = definition;
@@ -105,6 +105,6 @@ export class FaDynamicIconComponent {
 
   constructor(
     private iconLibrary: FaIconLibrary,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
   ) {}
 }

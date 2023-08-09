@@ -1,4 +1,4 @@
-import { Component, Input } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { EditEntityArrayComponent } from "../../../core/entity-components/entity-select/edit-entity-array/edit-entity-array.component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
@@ -38,7 +38,10 @@ import { MatCardModule } from "@angular/material/card";
   templateUrl: "./edit-attendance.component.html",
   styleUrls: ["./edit-attendance.component.scss"],
 })
-export class EditAttendanceComponent extends EditComponent<string[]> {
+export class EditAttendanceComponent
+  extends EditComponent<string[]>
+  implements OnInit
+{
   showAttendance = false;
   mobile = false;
   @Input() entity: Note;
@@ -55,14 +58,14 @@ export class EditAttendanceComponent extends EditComponent<string[]> {
   ngOnInit() {
     super.ngOnInit();
     const category = this.parent.get(
-      "category"
+      "category",
     ) as FormControl<InteractionType>;
     if (category) {
       category.valueChanges.pipe(startWith(category.value)).subscribe((val) => {
         this.showAttendance = !!val?.isMeeting;
         if (this.showAttendance) {
           this.attendanceForm = new FormControl(
-            this.entity.copy()["childrenAttendance"]
+            this.entity.copy()["childrenAttendance"],
           );
           this.parent.addControl("childrenAttendance", this.attendanceForm);
         } else {

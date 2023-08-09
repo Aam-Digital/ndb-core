@@ -83,11 +83,11 @@ export class ActivityAttendance extends Entity {
 
   private countIndividual(
     childId: string,
-    countingType: AttendanceLogicalStatus
+    countingType: AttendanceLogicalStatus,
   ) {
     return this.events.filter(
       (eventNote) =>
-        eventNote.getAttendance(childId)?.status.countAs === countingType
+        eventNote.getAttendance(childId)?.status.countAs === countingType,
     ).length;
   }
 
@@ -109,7 +109,7 @@ export class ActivityAttendance extends Entity {
   private countWithStatus(matchingType: AttendanceLogicalStatus) {
     return this.events.reduce(
       (total, event) => total + event.countWithStatus(matchingType),
-      0
+      0,
     );
   }
 
@@ -119,7 +119,7 @@ export class ActivityAttendance extends Entity {
 
   private countPercentage(
     matchingType: AttendanceLogicalStatus,
-    rounded: boolean = false
+    rounded: boolean = false,
   ) {
     const calculatedStats = this.events
       .map((event) => {
@@ -144,7 +144,7 @@ export class ActivityAttendance extends Entity {
           accumulatedStats.matching += currentEventStats.matching;
           return accumulatedStats;
         },
-        { total: 0, matching: 0 }
+        { total: 0, matching: 0 },
       );
 
     const result = calculatedStats.matching / calculatedStats.total;
@@ -168,7 +168,7 @@ export class ActivityAttendance extends Entity {
       .reduce(
         (count: number, e: EventNote) =>
           e.hasUnknownAttendances(forChildId) ? count + 1 : count,
-        0
+        0,
       );
   }
 
@@ -239,13 +239,13 @@ export function generateEventWithAttendance(
     | [string, AttendanceLogicalStatus, string]
   )[],
   date = new Date(),
-  activity?: RecurringActivity
+  activity?: RecurringActivity,
 ): EventNote {
   const event = EventNote.create(date);
   for (const att of participating) {
     event.addChild(att[0]);
     event.getAttendance(att[0]).status = defaultAttendanceStatusTypes.find(
-      (t) => t.countAs === att[1]
+      (t) => t.countAs === att[1],
     );
     if (att.length === 3) {
       event.getAttendance(att[0]).remarks = att[2];

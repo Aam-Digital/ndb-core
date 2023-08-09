@@ -11,7 +11,7 @@ export class ConfigurableEnumService {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private ability: EntityAbility
+    private ability: EntityAbility,
   ) {
     this.entityMapper
       .receiveUpdates(ConfigurableEnum)
@@ -29,7 +29,7 @@ export class ConfigurableEnumService {
   }
 
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(
-    id: string
+    id: string,
   ): T[] {
     return this.getEnum(id).values as T[];
   }

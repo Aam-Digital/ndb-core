@@ -118,7 +118,7 @@ describe("LatestChangesService", () => {
 
   it("should add Alert on failing to get changelog", (done) => {
     spyOn(http, "get").and.returnValue(
-      throwError(() => ({ status: 404, message: "not found" }))
+      throwError(() => ({ status: 404, message: "not found" })),
     );
     const alertSpy = spyOn(alertService, "addAlert");
     service.getChangelogsBetweenVersions("1.0").subscribe({

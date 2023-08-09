@@ -40,7 +40,7 @@ export class ConfirmationDialogService {
     title: string,
     text: string,
     buttons: ConfirmationDialogButton[] = YesNoButtons,
-    closeButton = true
+    closeButton = true,
   ): Promise<boolean> {
     return firstValueFrom(
       this.dialog
@@ -52,14 +52,14 @@ export class ConfirmationDialogService {
             closeButton: closeButton,
           },
         })
-        .afterClosed()
+        .afterClosed(),
     );
   }
 
   getDiscardConfirmation() {
     return this.getConfirmation(
       $localize`:Discard changes header:Discard Changes?`,
-      $localize`:Discard changes message:You have unsaved changes. Do you really want to leave this page? All unsaved changes will be lost.`
+      $localize`:Discard changes message:You have unsaved changes. Do you really want to leave this page? All unsaved changes will be lost.`,
     );
   }
 }

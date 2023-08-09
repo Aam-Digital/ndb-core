@@ -27,7 +27,10 @@ export class AccountPageComponent implements OnInit {
   keycloakAuthService: KeycloakAuthService;
   email = new FormControl("", [Validators.required, Validators.email]);
 
-  constructor(authService: AuthService, private alertService: AlertService) {
+  constructor(
+    authService: AuthService,
+    private alertService: AlertService,
+  ) {
     if (authService instanceof KeycloakAuthService) {
       this.keycloakAuthService = authService;
     }
@@ -50,7 +53,7 @@ export class AccountPageComponent implements OnInit {
     this.keycloakAuthService.setEmail(this.email.value).subscribe({
       next: () =>
         this.alertService.addInfo(
-          $localize`Please click the link in the email we sent you to verify your email address.`
+          $localize`Please click the link in the email we sent you to verify your email address.`,
         ),
       error: (err) => this.email.setErrors({ other: err.error.message }),
     });

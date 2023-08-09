@@ -7,12 +7,12 @@ const entityMatchers: jasmine.CustomMatcherFactories = {
       (entity: Entity, id: string) => entity.getId() === id,
       (entity, id) =>
         `Expected entity ${util.pp(
-          entity
+          entity,
         )} to have ID '${id}' but it has ID ${entity.getId()}`,
       (entity, id) =>
         `Expected entity ${util.pp(
-          entity
-        )} not to have ID '${id}' but it actually has ID ${entity.getId()}`
+          entity,
+        )} not to have ID '${id}' but it actually has ID ${entity.getId()}`,
     );
   },
   toHaveType: (util) => {
@@ -20,12 +20,12 @@ const entityMatchers: jasmine.CustomMatcherFactories = {
       (entity: Entity, type: string) => entity.getType() === type,
       (entity, type) =>
         `Expected entity ${util.pp(
-          entity
+          entity,
         )} to have type '${type}' but it has type ${entity.getId()}`,
       (entity, type) =>
         `Expected entity ${util.pp(
-          entity
-        )} not to have type '${type}' but it actually has type ${entity.getId()}`
+          entity,
+        )} not to have type '${type}' but it actually has type ${entity.getId()}`,
     );
   },
 };

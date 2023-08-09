@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -22,7 +22,7 @@ import { ImagePopupComponent } from "./image-popup/image-popup.component";
   imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule, NgIf],
   standalone: true,
 })
-export class EditPhotoComponent extends EditFileComponent {
+export class EditPhotoComponent extends EditFileComponent implements OnInit {
   private readonly defaultImage = "assets/child.png";
   private readonly compression = 480;
   private initialImg: SafeUrl = this.defaultImage;
@@ -33,7 +33,7 @@ export class EditPhotoComponent extends EditFileComponent {
     alertService: AlertService,
     logger: LoggingService,
     entityMapper: EntityMapperService,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     super(fileService, alertService, logger, entityMapper);
   }

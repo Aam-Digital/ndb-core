@@ -52,7 +52,7 @@ export class EntityRemoveService {
   constructor(
     private confirmationDialog: ConfirmationDialogService,
     private entityMapper: EntityMapperService,
-    private snackBar: MatSnackBar
+    private snackBar: MatSnackBar,
   ) {}
 
   /**
@@ -82,7 +82,7 @@ export class EntityRemoveService {
    */
   remove<E extends Entity>(
     entity: E,
-    textOptions?: RemoveEntityTextOptions
+    textOptions?: RemoveEntityTextOptions,
   ): Observable<RemoveResult> {
     const subject = new Subject<RemoveResult>();
     const dialogTitle =
@@ -117,7 +117,7 @@ export class EntityRemoveService {
   private async removeEntityAndOpenSnackBar(
     entity: Entity,
     snackBarTitle: string,
-    resultSender: Subject<RemoveResult>
+    resultSender: Subject<RemoveResult>,
   ) {
     await this.entityMapper.remove(entity);
     resultSender.next(RemoveResult.REMOVED);
@@ -126,11 +126,11 @@ export class EntityRemoveService {
       $localize`:Undo deleting an entity:Undo`,
       {
         duration: 8000,
-      }
+      },
     );
     race(
       snackBarRef.onAction().pipe(map(() => true)),
-      snackBarRef.afterDismissed().pipe(map(() => false))
+      snackBarRef.afterDismissed().pipe(map(() => false)),
     ).subscribe(async (next) => {
       if (next) {
         await this.entityMapper.save(entity, true);

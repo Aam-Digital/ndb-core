@@ -58,7 +58,7 @@ describe("ActivityAttendanceSectionComponent", () => {
 
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
       testActivity,
-      jasmine.any(Date)
+      jasmine.any(Date),
     );
     expect(component.allRecords).toEqual(testRecords);
   });
@@ -67,7 +67,7 @@ describe("ActivityAttendanceSectionComponent", () => {
     await component.init(true);
 
     expect(mockAttendanceService.getActivityAttendances).toHaveBeenCalledWith(
-      testActivity
+      testActivity,
     );
     expect(component.allRecords).toEqual(testRecords);
   });
@@ -80,7 +80,7 @@ describe("ActivityAttendanceSectionComponent", () => {
     eventParticipatingIn.addChild(testChildId);
     eventParticipatingIn.getAttendance(testChildId).status =
       defaultAttendanceStatusTypes.find(
-        (s) => s.countAs === AttendanceLogicalStatus.PRESENT
+        (s) => s.countAs === AttendanceLogicalStatus.PRESENT,
       );
 
     component.allRecords = [
@@ -100,13 +100,13 @@ describe("ActivityAttendanceSectionComponent", () => {
 
   it("should combine all activity attendances to have an all-time overview", async () => {
     const oldestEvent = EventNote.create(
-      moment().subtract(2, "months").toDate()
+      moment().subtract(2, "months").toDate(),
     );
     const someEvent1 = EventNote.create(
-      moment().subtract(1, "months").toDate()
+      moment().subtract(1, "months").toDate(),
     );
     const someEvent2 = EventNote.create(
-      moment().subtract(1, "months").toDate()
+      moment().subtract(1, "months").toDate(),
     );
     const latestEvent = EventNote.create(new Date());
     const oldestAttendance = ActivityAttendance.create(oldestEvent.date, [
@@ -138,7 +138,7 @@ describe("ActivityAttendanceSectionComponent", () => {
         someEvent1,
         someEvent2,
         latestEvent,
-      ])
+      ]),
     );
   });
 });

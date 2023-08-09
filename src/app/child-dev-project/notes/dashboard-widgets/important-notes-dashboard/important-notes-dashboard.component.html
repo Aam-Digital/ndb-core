@@ -29,7 +29,7 @@
       *matRowDef="let row; columns: ['date', 'title']"
       class="dashboard-table-row row-view"
       (click)="openNote(row)"
-      [ngStyle]="{'--row-indicator-color': row.getColor?.()}"
+      [ngStyle]="{ '--row-indicator-color': row.getColor?.() }"
     ></tr>
   </table>
 </app-dashboard-list-widget>

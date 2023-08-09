@@ -92,7 +92,7 @@ describe("ReportingComponent", () => {
     expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
       testReport.aggregationDefinitions as Aggregation[],
       jasmine.any(Date),
-      jasmine.any(Date)
+      jasmine.any(Date),
     );
   }));
 
@@ -113,10 +113,10 @@ describe("ReportingComponent", () => {
 
   it("should create a table that can be exported", fakeAsync(() => {
     const schoolClass = defaultInteractionTypes.find(
-      (it) => it.id === "SCHOOL_CLASS"
+      (it) => it.id === "SCHOOL_CLASS",
     );
     const coachingClass = defaultInteractionTypes.find(
-      (it) => it.id === "COACHING_CLASS"
+      (it) => it.id === "COACHING_CLASS",
     );
     mockReportingService.calculateReport.and.resolveTo([
       {
@@ -210,11 +210,11 @@ describe("ReportingComponent", () => {
     await component.calculateResults(
       { aggregationDefinitions: [], title: "", mode: "exporting" },
       new Date(),
-      new Date()
+      new Date(),
     );
 
     expect(
-      mockDataTransformationService.queryAndTransformData
+      mockDataTransformationService.queryAndTransformData,
     ).toHaveBeenCalledWith([], jasmine.any(Date), jasmine.any(Date));
     expect(component.data).toEqual(data);
     expect(component.mode).toBe("exporting");

@@ -106,11 +106,11 @@ export class MatchingEntitiesComponent implements OnInit {
     private configService: ConfigService,
     private entityRegistry: EntityRegistry,
     private filterService: FilterService,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
   ) {
     const config: MatchingEntitiesConfig =
       this.configService.getConfig<MatchingEntitiesConfig>(
-        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY
+        MatchingEntitiesComponent.DEFAULT_CONFIG_KEY,
       ) ?? {};
     Object.assign(this, JSON.parse(JSON.stringify(config)));
 
@@ -134,7 +134,7 @@ export class MatchingEntitiesComponent implements OnInit {
       await this.initSideDetails(this.rightSide, 1),
     ];
     this.sideDetails.forEach((side, index) =>
-      this.initDistanceColumn(side, index)
+      this.initDistanceColumn(side, index),
     );
     this.filterMapEntities();
     this.columnsToDisplay = ["side-0", "side-1"];
@@ -150,7 +150,7 @@ export class MatchingEntitiesComponent implements OnInit {
    */
   private async initSideDetails(
     side: MatchingSideConfig,
-    sideIndex: number
+    sideIndex: number,
   ): Promise<MatchingSide> {
     const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
 
@@ -178,7 +178,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
     if (!newSide.selected && newSide.entityType) {
       newSide.availableEntities = await this.entityMapper.loadType(
-        newSide.entityType
+        newSide.entityType,
       );
       newSide.availableFilters = newSide.availableFilters ?? [];
       newSide.filterObj = { ...(side.prefilter ?? {}) };
@@ -192,7 +192,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
   private highlightSelectedRow(
     newSelectedEntity: Entity,
-    previousSelectedEntity: Entity
+    previousSelectedEntity: Entity,
   ) {
     if (previousSelectedEntity) {
       previousSelectedEntity.getColor =
@@ -204,7 +204,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
   async createMatch() {
     const newMatchEntity = new (this.entityRegistry.get(
-      this.onMatch.newEntityType
+      this.onMatch.newEntityType,
     ))();
     const leftMatch = this.sideDetails[0].selected;
     const rightMatch = this.sideDetails[1].selected;
@@ -256,7 +256,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
   entityInMapClicked(entity: Entity) {
     const side = this.sideDetails.find(
-      (s) => s.entityType === entity.getConstructor()
+      (s) => s.entityType === entity.getConstructor(),
     );
     if (side) {
       side.selectMatch(entity);
@@ -276,7 +276,7 @@ export class MatchingEntitiesComponent implements OnInit {
       side.columns[sideIndex] = columnConfig;
       side.distanceColumn = columnConfig.additional;
       const colIndex = this.columns.findIndex(
-        (row) => row[index] === "distance"
+        (row) => row[index] === "distance",
       );
       if (colIndex !== -1) {
         this.columns[colIndex][index] = columnConfig;

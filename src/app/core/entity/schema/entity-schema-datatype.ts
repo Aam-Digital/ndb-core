@@ -58,7 +58,7 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
     value: EntityType,
     schemaField?: EntitySchemaField,
     schemaService?: EntitySchemaService,
-    parent?: Entity
+    parent?: Entity,
   ): DBType;
 
   /**
@@ -75,6 +75,6 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
     value: DBType,
     schemaField?: EntitySchemaField,
     schemaService?: EntitySchemaService,
-    parent?: any
+    parent?: any,
   ): EntityType;
 }
