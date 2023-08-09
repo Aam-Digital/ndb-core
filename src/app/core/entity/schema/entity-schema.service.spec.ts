@@ -19,10 +19,10 @@ import { Entity } from "../model/entity";
 import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
-import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
 import { Injector } from "@angular/core";
 import { StringDatatype } from "../schema-datatypes/datatype-string";
-import { AbstractDatatype } from "./entity-schema-datatype";
+import { DefaultDatatype } from "./datatype-default";
+import { DateOnlyDatatype } from "../schema-datatypes/datatype-date-only";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
@@ -79,7 +79,7 @@ describe("EntitySchemaService", () => {
   });
 
   it("should return the display component of the datatype if no other is defined", () => {
-    class TestDatatype extends AbstractDatatype {
+    class TestDatatype extends DefaultDatatype {
       static dataType = "test-datatype";
       viewComponent: "DisplayText";
       transformToDatabaseFormat = () => null;
@@ -101,7 +101,7 @@ describe("EntitySchemaService", () => {
 
   it("should return the display and edit component for the innerDataType if dataType is array", () => {
     class TestEntity extends Entity {
-      @DatabaseField({ innerDataType: dateOnlyEntitySchemaDatatype.name })
+      @DatabaseField({ innerDataType: DateOnlyDatatype.dataType })
       dates: Date[];
     }
 
@@ -111,18 +111,18 @@ describe("EntitySchemaService", () => {
       propertySchema,
       "view",
     );
-    expect(displayComponent).toBe(dateOnlyEntitySchemaDatatype.viewComponent);
+    expect(displayComponent).toBe(new DateOnlyDatatype().viewComponent);
 
     const editComponent = entitySchemaService.getComponent(
       propertySchema,
       "edit",
     );
-    expect(editComponent).toBe(dateOnlyEntitySchemaDatatype.editComponent);
+    expect(editComponent).toBe(new DateOnlyDatatype().editComponent);
   });
 });
 
 export function testDatatype(
-  dataType: typeof AbstractDatatype,
+  dataType: typeof DefaultDatatype,
   objectValue,
   databaseValue,
   additionalSchemaFieldConfig?: any,
@@ -132,7 +132,6 @@ export function testDatatype(
 
   beforeEach(waitForAsync(() => {
     mockInjector = jasmine.createSpyObj(["get"]);
-    // @ts-ignore
     mockInjector.get.and.returnValue([new dataType()]);
 
     entitySchemaService = new EntitySchemaService(mockInjector);

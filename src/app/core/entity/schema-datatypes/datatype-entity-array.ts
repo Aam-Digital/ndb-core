@@ -15,9 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AbstractDatatype } from "../schema/entity-schema-datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Injectable } from "@angular/core";
+import { EntityDatatype } from "./datatype-entity";
 
 /**
  * Datatype for the EntitySchemaService to handle multiple references to other entities
@@ -29,7 +29,7 @@ import { Injectable } from "@angular/core";
  * `@DatabaseField({dataType: 'entity-array', additional: 'Child'}) relatedEntities: string[] = [];`
  */
 @Injectable()
-export class EntityArrayDatatype extends AbstractDatatype {
+export class EntityArrayDatatype extends EntityDatatype {
   static dataType = "entity-array";
 
   editComponent = "EditEntityArray";
@@ -44,7 +44,7 @@ export class EntityArrayDatatype extends AbstractDatatype {
       );
     }
 
-    return value;
+    return value.map((v) => super.transformToDatabaseFormat(v));
   }
 
   transformToObjectFormat(value, schemaField: EntitySchemaField, parent) {
@@ -58,7 +58,9 @@ export class EntityArrayDatatype extends AbstractDatatype {
       return value;
     }
 
-    return value;
+    return value.map((v) =>
+      super.transformToObjectFormat(v, schemaField, parent),
+    );
 
     // TODO: maybe introduce a prefix transformation in the future (also see #1526)
     // this is only possible when no indices depend on un-prefixed IDs

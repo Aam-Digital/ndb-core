@@ -16,18 +16,20 @@
  */
 
 import { EntitySchemaField } from "./entity-schema-field";
-import { EntitySchemaService } from "./entity-schema.service";
 import { Entity } from "../model/entity";
 import { ImportValueMapping } from "../../../features/import/import-column-mapping/import-value-mapping";
 import { ComponentType } from "@angular/cdk/overlay";
 import { ColumnMapping } from "../../../features/import/column-mapping";
 
 /**
- * Implement this to define new data types (i.e. for properties of entities)
+ * Extend this class to define new data types (i.e. for properties of entities)
  * and provide your implementation using Angular DI:
  * `{ provide: EntityDatatype, useClass: MyCustomDatatype, multi: true },`
+ *
+ * This class is also used as the default fallback Datatype for the EntitySchemaService that keeps values unchanged between database and entity instance.
+ * This type is automatically used whenever no fitting Datatype can be found for that config or TypeScript type.
  */
-export abstract class AbstractDatatype<EntityType = any, DBType = any>
+export class DefaultDatatype<EntityType = any, DBType = any>
   implements ImportValueMapping
 {
   /**
@@ -41,7 +43,7 @@ export abstract class AbstractDatatype<EntityType = any, DBType = any>
    */
   static dataType: string;
   get dataType(): string {
-    return (this.constructor as typeof AbstractDatatype).dataType;
+    return (this.constructor as typeof DefaultDatatype).dataType;
   }
 
   /**
@@ -50,9 +52,8 @@ export abstract class AbstractDatatype<EntityType = any, DBType = any>
    * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
    * decorator
    */
-  viewComponent?: string;
-
-  editComponent?: string;
+  viewComponent = "DisplayText";
+  editComponent = "EditText";
 
   /**
    * Transformation function taking a value in the format that is used in entity instances and returning the value
@@ -64,11 +65,13 @@ export abstract class AbstractDatatype<EntityType = any, DBType = any>
    * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
-  abstract transformToDatabaseFormat(
+  transformToDatabaseFormat(
     value: EntityType,
     schemaField?: EntitySchemaField,
     parent?: Entity,
-  ): DBType;
+  ): DBType {
+    return value as any;
+  }
 
   /**
    * Transformation function taking a value in the format that is used in database objects and returning the value
@@ -80,11 +83,13 @@ export abstract class AbstractDatatype<EntityType = any, DBType = any>
    * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
-  abstract transformToObjectFormat(
+  transformToObjectFormat(
     value: DBType,
     schemaField?: EntitySchemaField,
     parent?: any,
-  ): EntityType;
+  ): EntityType {
+    return value as any;
+  }
 
   /**
    * The function used to map values from the import data to values in the entities to be created.
@@ -113,65 +118,4 @@ export abstract class AbstractDatatype<EntityType = any, DBType = any>
    * @param col
    */
   importIncompleteAdditionalConfigBadge?: (col: ColumnMapping) => string;
-}
-
-// TODO: remove
-/**
- * Interface to be implemented by any Datatype transformer of the Schema system.
- */
-export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
-  /**
-   * Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.
-   *
-   * for example `@DatabaseField({dataType: 'foo'}) myField` will trigger the datatype implementation with `name` "foo".
-   *
-   * If you set the name to a TypeScript type, class properties with this type will automatically use
-   * that EntitySchemaDatatype without the need to explicitly state the dataType config in the annotation
-   * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
-   */
-  name: string;
-
-  /**
-   * The default component how this datatype should be displayed in lists and forms.
-   *
-   * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
-   * decorator
-   */
-  viewComponent?: string;
-
-  editComponent?: string;
-
-  /**
-   * Transformation function taking a value in the format that is used in entity instances and returning the value
-   * in the format used in database objects.
-   *
-   * @param value The value (in Entity format) to be transformed
-   * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
-   *          This can be set as a parameter to the `@DatabaseField()` annotation in Entity classes.
-   * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
-   * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
-   */
-  transformToDatabaseFormat(
-    value: EntityType,
-    schemaField?: EntitySchemaField,
-    schemaService?: EntitySchemaService,
-    parent?: Entity,
-  ): DBType;
-
-  /**
-   * Transformation function taking a value in the format that is used in database objects and returning the value
-   * in the format used in entity instances.
-   *
-   * @param value The value (in database format) to be transformed
-   * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
-   *          This can be set as a parameter to the `@DatabaseField()` annotation in Entity classes.
-   * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
-   * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
-   */
-  transformToObjectFormat(
-    value: DBType,
-    schemaField?: EntitySchemaField,
-    schemaService?: EntitySchemaService,
-    parent?: any,
-  ): EntityType;
 }

@@ -20,12 +20,15 @@ import { RecurringActivity } from "../../child-dev-project/attendance/model/recu
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
 import { ConfigurableEnumService } from "../../core/configurable-enum/configurable-enum.service";
+import { CoreModule } from "../../core/core.module";
+import { ComponentRegistry } from "../../dynamic-components";
 
 describe("ImportService", () => {
   let service: ImportService;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
+      imports: [CoreModule],
       providers: [
         ImportService,
         { provide: EntityRegistry, useValue: entityRegistry },
@@ -34,6 +37,7 @@ describe("ImportService", () => {
           provide: ConfigurableEnumService,
           useValue: new ConfigurableEnumService(mockEntityMapper(), null),
         },
+        ComponentRegistry,
       ],
     });
     service = TestBed.inject(ImportService);

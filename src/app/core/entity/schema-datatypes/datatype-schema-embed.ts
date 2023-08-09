@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AbstractDatatype } from "../schema/entity-schema-datatype";
+import { DefaultDatatype } from "../schema/datatype-default";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { EntityConstructor } from "../model/entity";
@@ -37,7 +37,7 @@ import { Injectable } from "@angular/core";
  * `@DatabaseField({ dataType: 'schema-embed', additional: MyClass })`
  */
 @Injectable()
-export class SchemaEmbedDatatype extends AbstractDatatype {
+export class SchemaEmbedDatatype extends DefaultDatatype {
   static dataType = "schema-embed";
 
   constructor(private schemaService: EntitySchemaService) {

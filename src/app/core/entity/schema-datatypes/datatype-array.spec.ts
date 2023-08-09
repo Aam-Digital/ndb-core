@@ -1,6 +1,6 @@
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { ArrayDatatype } from "./datatype-array";
 import { Injector } from "@angular/core";

@@ -1,11 +1,11 @@
-import { dateEntitySchemaDatatype } from "./datatype-date";
-import { dateOnlyEntitySchemaDatatype } from "./datatype-date-only";
-import { dateWithAgeEntitySchemaDatatype } from "./datatype-date-with-age";
+import { DateDatatype } from "./datatype-date";
+import { DateOnlyDatatype } from "./datatype-date-only";
+import { DateWithAgeDatatype } from "./datatype-date-with-age";
 import { MonthDatatype } from "./datatype-month";
 
 export const dateDataTypes = [
-  dateEntitySchemaDatatype.name,
-  dateOnlyEntitySchemaDatatype.name,
+  DateDatatype.dataType,
+  DateOnlyDatatype.dataType,
   MonthDatatype.dataType,
-  dateWithAgeEntitySchemaDatatype.name,
+  DateWithAgeDatatype.dataType,
 ];

@@ -15,8 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { DefaultDatatype } from "../schema/datatype-default";
 import { dateToString } from "../../../utils/utils";
+import { Injectable } from "@angular/core";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").
@@ -27,36 +28,37 @@ import { dateToString } from "../../../utils/utils";
  *
  * `@DatabaseField({dataType: 'date-only'}) myDate: Date = new Date('2020-01-15'); // will be "2020-01-15" (without time) in the database`
  */
-export const dateOnlyEntitySchemaDatatype: EntitySchemaDatatype<Date, string> =
-  {
-    name: "date-only",
-    viewComponent: "DisplayDate",
-    editComponent: "EditDate",
+@Injectable()
+export class DateOnlyDatatype extends DefaultDatatype {
+  static dataType = "date-only";
 
-    transformToDatabaseFormat: (value: Date) => {
-      if (!(value instanceof Date)) {
-        return undefined;
-      }
-      return dateToString(value);
-    },
+  viewComponent = "DisplayDate";
+  editComponent = "EditDate";
 
-    transformToObjectFormat: (value: string) => {
-      value = migrateIsoDatesToInferredDateOnly(value);
+  transformToDatabaseFormat(value: Date) {
+    if (!(value instanceof Date)) {
+      return undefined;
+    }
+    return dateToString(value);
+  }
 
-      // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time
-      // -> we want local time to represent the same day wherever used.
-      const values = value.split("-").map((v) => Number(v));
-      let date: Date = new Date(values[0], values[1] - 1, values[2]);
-      if (isNaN(date.getTime())) {
-        // fallback to legacy date parsing if format is not "YYYY-mm-dd"
-        date = new Date(value);
-      }
-      if (Number.isNaN(date.getTime())) {
-        throw new Error("failed to convert data to Date object: " + value);
-      }
-      return date;
-    },
-  };
+  transformToObjectFormat(value: string) {
+    value = migrateIsoDatesToInferredDateOnly(value);
+
+    // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time
+    // -> we want local time to represent the same day wherever used.
+    const values = value.split("-").map((v) => Number(v));
+    let date: Date = new Date(values[0], values[1] - 1, values[2]);
+    if (isNaN(date.getTime())) {
+      // fallback to legacy date parsing if format is not "YYYY-mm-dd"
+      date = new Date(value);
+    }
+    if (Number.isNaN(date.getTime())) {
+      throw new Error("failed to convert data to Date object: " + value);
+    }
+    return date;
+  }
+}
 
 function migrateIsoDatesToInferredDateOnly(value: string): string {
   if (!value.match(/\d\d\d\d-\d\d-\d\dT\d\d:\d\d:\d\d\.\d\d\dZ/)) {

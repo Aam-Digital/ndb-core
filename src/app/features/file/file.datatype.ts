@@ -1,4 +1,4 @@
-import { EntitySchemaDatatype } from "../../core/entity/schema/entity-schema-datatype";
+import { DefaultDatatype } from "../../core/entity/schema/datatype-default";
 
 /**
  * Datatype for saving a file on an entity property.
@@ -20,10 +20,8 @@ import { EntitySchemaDatatype } from "../../core/entity/schema/entity-schema-dat
  * }
  * ```
  */
-export const fileDataType: EntitySchemaDatatype<string, string> = {
-  name: "file",
-  viewComponent: "ViewFile",
-  editComponent: "EditFile",
-  transformToDatabaseFormat: (value) => value,
-  transformToObjectFormat: (value) => value,
-};
+export class FileDatatype extends DefaultDatatype {
+  static dataType = "file";
+  viewComponent = "ViewFile";
+  editComponent = "EditFile";
+}

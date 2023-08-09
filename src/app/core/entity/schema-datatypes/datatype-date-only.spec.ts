@@ -1,21 +1,25 @@
-import { dateOnlyEntitySchemaDatatype } from "./datatype-date-only";
+import { waitForAsync } from "@angular/core/testing";
+import { DateOnlyDatatype } from "./datatype-date-only";
 
-describe("Schema data type:Date", () => {
+describe("Schema data type: date-only", () => {
+  let dataType: DateOnlyDatatype;
+
+  beforeEach(waitForAsync(() => {
+    dataType = new DateOnlyDatatype();
+  }));
+
   it("should not fail on null values", () => {
-    const nullDateRes =
-      dateOnlyEntitySchemaDatatype.transformToDatabaseFormat(null);
+    const nullDateRes = dataType.transformToDatabaseFormat(null);
     expect(nullDateRes).toBeUndefined();
   });
 
   it("should correctly transform values", () => {
     const date = new Date(2022, 0, 1);
 
-    const dbFormat =
-      dateOnlyEntitySchemaDatatype.transformToDatabaseFormat(date);
+    const dbFormat = dataType.transformToDatabaseFormat(date);
     expect(dbFormat).toBe("2022-01-01");
 
-    const objFormat: Date =
-      dateOnlyEntitySchemaDatatype.transformToObjectFormat(dbFormat);
+    const objFormat: Date = dataType.transformToObjectFormat(dbFormat);
     expect(objFormat).toBeInstanceOf(Date);
     expect(objFormat.getFullYear()).toBe(2022);
     expect(objFormat.getMonth()).toBe(0);
@@ -23,14 +27,14 @@ describe("Schema data type:Date", () => {
   });
 
   it("should fallback to legacy date parsing if format is unsupported", () => {
-    let date: Date = dateOnlyEntitySchemaDatatype.transformToObjectFormat(
+    let date: Date = dataType.transformToObjectFormat(
       "2013-01-12T00:00:00.000Z",
     );
     expect(date.getFullYear()).toBe(2013);
     expect(date.getMonth()).toBe(0);
     expect(date.getDate()).toBe(12);
 
-    date = dateOnlyEntitySchemaDatatype.transformToObjectFormat("4/1/2021");
+    date = dataType.transformToObjectFormat("4/1/2021");
     expect(date.getFullYear()).toBe(2021);
     expect(date.getMonth()).toBe(3);
     expect(date.getDate()).toBe(1);
@@ -50,11 +54,8 @@ describe("Schema data type:Date", () => {
     ];
 
     for (const test of testCases) {
-      const obj = dateOnlyEntitySchemaDatatype.transformToObjectFormat(
-        test.input,
-      );
-      const actualString =
-        dateOnlyEntitySchemaDatatype.transformToDatabaseFormat(obj);
+      const obj = dataType.transformToObjectFormat(test.input);
+      const actualString = dataType.transformToDatabaseFormat(obj);
       expect(actualString).withContext(test.input).toEqual(test.expected);
     }
   });

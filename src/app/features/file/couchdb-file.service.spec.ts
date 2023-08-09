@@ -26,8 +26,8 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../../core/entity/database-entity.decorator";
-import { fileDataType } from "./file-data-type";
 import { AppSettings } from "../../core/app-config/app-settings";
+import { FileDatatype } from "./file.datatype";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -45,7 +45,7 @@ describe("CouchdbFileService", () => {
     mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
     dismiss = jasmine.createSpy();
     mockSnackbar.openFromComponent.and.returnValue({ dismiss } as any);
-    Entity.schema.set("testProp", { dataType: fileDataType.name });
+    Entity.schema.set("testProp", { dataType: FileDatatype.dataType });
 
     TestBed.configureTestingModule({
       providers: [

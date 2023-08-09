@@ -1,11 +1,18 @@
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { DefaultDatatype } from "../schema/datatype-default";
+import { Injectable } from "@angular/core";
 
-export const booleanEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "boolean",
-  editComponent: "EditBoolean",
-  viewComponent: "DisplayCheckmark",
+@Injectable()
+export class BooleanDatatype extends DefaultDatatype {
+  static dataType = "boolean";
 
-  transformToDatabaseFormat: (value: boolean) => value,
+  editComponent = "EditBoolean";
+  viewComponent = "DisplayCheckmark";
 
-  transformToObjectFormat: (value) => value,
-};
+  transformToDatabaseFormat(value: boolean) {
+    return value;
+  }
+
+  transformToObjectFormat(value) {
+    return value;
+  }
+}

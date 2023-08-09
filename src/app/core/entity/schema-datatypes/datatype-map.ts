@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AbstractDatatype } from "../schema/entity-schema-datatype";
+import { DefaultDatatype } from "../schema/datatype-default";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { generateSubSchemaField } from "./datatype-array";
@@ -33,7 +33,7 @@ import { Injectable } from "@angular/core";
  * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `[['a', '2020-01'], ['b', '2020-04']]` in the database).
  */
 @Injectable()
-export class MapDatatype extends AbstractDatatype {
+export class MapDatatype extends DefaultDatatype {
   static dataType = "map";
 
   constructor(private schemaService: EntitySchemaService) {
@@ -53,7 +53,7 @@ export class MapDatatype extends AbstractDatatype {
       return value;
     }
 
-    const innerElementDatatype: AbstractDatatype =
+    const innerElementDatatype: DefaultDatatype =
       this.schemaService.getDatatypeOrDefault(schemaField.innerDataType);
     const result = [];
     value.forEach((item, key) => {
@@ -86,7 +86,7 @@ export class MapDatatype extends AbstractDatatype {
       return value;
     }
 
-    const innerElementType: AbstractDatatype =
+    const innerElementType: DefaultDatatype =
       this.schemaService.getDatatypeOrDefault(schemaField.innerDataType);
 
     const result = new Map();

@@ -5,9 +5,10 @@ import { SessionType } from "../../core/session/session-type";
 import { FileService } from "./file.service";
 import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ComponentRegistry } from "../../dynamic-components";
 import { fileComponents } from "./file-components";
+import { DefaultDatatype } from "../../core/entity/schema/datatype-default";
+import { FileDatatype } from "./file.datatype";
 
 @NgModule({
   providers: [
@@ -18,14 +19,11 @@ import { fileComponents } from "./file-components";
         ? injector.get(CouchdbFileService)
         : injector.get(MockFileService);
     }),
+    { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
   ],
 })
 export class FileModule {
-  constructor(
-    entitySchemaService: EntitySchemaService,
-    components: ComponentRegistry,
-  ) {
-    //entitySchemaService.registerSchemaDatatype(fileDataType);
+  constructor(components: ComponentRegistry) {
     components.addAll(fileComponents);
   }
 }

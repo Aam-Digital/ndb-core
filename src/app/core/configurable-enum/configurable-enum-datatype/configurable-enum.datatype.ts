@@ -1,16 +1,19 @@
-import { EntitySchemaDatatype } from "../../entity/schema/entity-schema-datatype";
+import { DefaultDatatype } from "../../entity/schema/datatype-default";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ConfigurableEnumService } from "../configurable-enum.service";
+import { Injectable } from "@angular/core";
 
-export class ConfigurableEnumDatatype
-  implements EntitySchemaDatatype<ConfigurableEnumValue>
-{
-  public readonly name = "configurable-enum";
+@Injectable()
+export class ConfigurableEnumDatatype extends DefaultDatatype {
+  static dataType = "configurable-enum";
+
   public readonly viewComponent = "DisplayConfigurableEnum";
   public readonly editComponent = "EditConfigurableEnum";
 
-  constructor(private enumService: ConfigurableEnumService) {}
+  constructor(private enumService: ConfigurableEnumService) {
+    super();
+  }
 
   /**
    * transforms Objects of InteractionType to strings to save in DB

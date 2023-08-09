@@ -1,12 +1,12 @@
 import { ArrayDatatype } from "../../entity/schema-datatypes/datatype-array";
-import { entityArrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-entity-array";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { EntityArrayDatatype } from "../../entity/schema-datatypes/datatype-entity-array";
 
 export function isArrayDataType(dataType: string) {
   return (
     dataType === ArrayDatatype.dataType ||
-    dataType === entityArrayEntitySchemaDatatype.name
+    dataType === EntityArrayDatatype.dataType
   );
 }
 

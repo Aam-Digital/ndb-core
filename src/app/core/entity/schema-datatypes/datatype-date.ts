@@ -15,7 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { DefaultDatatype } from "../schema/datatype-default";
+import { Injectable } from "@angular/core";
 
 /**
  * Datatype for the EntitySchemaService transforming values to Date instances.
@@ -27,19 +28,21 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  *
  * `@DatabaseField() myDate: Date; // will be a valid Date even if the database previously had "2020-01-15" as string`
  */
-export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "date",
-  viewComponent: "DisplayDate",
-  editComponent: "EditDate",
+@Injectable()
+export class DateDatatype extends DefaultDatatype {
+  static dataType = "date";
 
-  transformToDatabaseFormat: (value: Date) => {
+  viewComponent = "DisplayDate";
+  editComponent = "EditDate";
+
+  transformToDatabaseFormat(value: Date) {
     // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
     // return isValidDate(value) ? value.toISOString().slice(0, 10) : '';
     // DONE: date format is now being saved as date object
     return value;
-  },
+  }
 
-  transformToObjectFormat: (value, schemaField, schemaService, parent) => {
+  transformToObjectFormat(value, schemaField, parent) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       throw new Error(
@@ -47,5 +50,5 @@ export const dateEntitySchemaDatatype: EntitySchemaDatatype = {
       );
     }
     return date;
-  },
-};
+  }
+}

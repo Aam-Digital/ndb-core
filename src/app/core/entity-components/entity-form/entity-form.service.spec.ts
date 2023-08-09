@@ -24,8 +24,9 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { TEST_USER } from "../../../utils/mocked-testing.module";
-import { arrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-array";
-import { entityArrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-entity-array";
+import { ArrayDatatype } from "../../entity/schema-datatypes/datatype-array";
+import { EntityArrayDatatype } from "../../entity/schema-datatypes/datatype-entity-array";
+import { DefaultDatatype } from "../../entity/schema/datatype-default";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -39,6 +40,7 @@ describe("EntityFormService", () => {
       providers: [
         FormBuilder,
         EntitySchemaService,
+        { provide: DefaultDatatype, multi: true },
         { provide: EntityMapperService, useValue: mockEntityMapper },
         EntityAbility,
         {
@@ -196,11 +198,11 @@ describe("EntityFormService", () => {
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue(TEST_USER);
 
-    schema.dataType = arrayEntitySchemaDatatype.name;
+    schema.dataType = ArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([TEST_USER]);
 
-    schema.dataType = entityArrayEntitySchemaDatatype.name;
+    schema.dataType = EntityArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([TEST_USER]);
 

@@ -13,7 +13,6 @@ import { SyncedSessionService } from "../../session/session-service/synced-sessi
 import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { of, Subject } from "rxjs";
 import { EntityAbility } from "../ability/entity-ability";
 import { Config } from "../../config/config";
@@ -23,6 +22,8 @@ import {
 } from "../../entity/database-entity.decorator";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { ConfigService } from "../../config/config.service";
+import { DefaultDatatype } from "../../entity/schema/datatype-default";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
@@ -51,6 +52,7 @@ describe("PermissionEnforcerService", () => {
       providers: [
         PermissionEnforcerService,
         { provide: EntityMapperService, useValue: mockEntityMapper() },
+        { provide: DefaultDatatype, useClass: DefaultDatatype, multi: true },
         EntitySchemaService,
         EntityAbility,
         { provide: Database, useValue: mockDatabase },

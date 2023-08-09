@@ -19,16 +19,19 @@ import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { fakeAsync, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed } from "@angular/core/testing";
+import { CoreModule } from "../../core.module";
+import { ComponentRegistry } from "../../../dynamic-components";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(() => {
-    entitySchemaService = new EntitySchemaService();
-  });
-
   testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
+
+  beforeEach(() => {
+    // TestBed.configureTestingModule done in testEntitySubclass() already
+    entitySchemaService = TestBed.inject(EntitySchemaService);
+  });
 
   it("rawData() returns only data matching the schema", function () {
     @DatabaseEntity("TestWithIgnoredFieldEntity")
@@ -117,11 +120,30 @@ describe("Entity", () => {
   });
 });
 
+/**
+ *
+ * @param entityType
+ * @param entityClass
+ * @param expectedDatabaseFormat
+ * @param skipTestbedConfiguration do not run TestBed.configureTestingModule because it has been run in the parent test file already
+ */
 export function testEntitySubclass(
   entityType: string,
   entityClass: EntityConstructor,
   expectedDatabaseFormat: any,
+  skipTestbedConfiguration = false,
 ) {
+  let schemaService: EntitySchemaService;
+  beforeEach(() => {
+    if (!skipTestbedConfiguration) {
+      TestBed.configureTestingModule({
+        imports: [CoreModule],
+        providers: [ComponentRegistry],
+      });
+    }
+    schemaService = TestBed.inject(EntitySchemaService);
+  });
+
   it("should be a valid entity subclass", () => {
     const id = "test1";
     const entity = new entityClass(id);
@@ -139,8 +161,6 @@ export function testEntitySubclass(
   });
 
   it("should only load and store properties defined in the schema", fakeAsync(() => {
-    const schemaService = new EntitySchemaService();
-    tick();
     const entity = new entityClass();
 
     schemaService.loadDataIntoEntity(

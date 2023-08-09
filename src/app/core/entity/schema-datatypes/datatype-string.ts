@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { AbstractDatatype } from "../schema/entity-schema-datatype";
+import { DefaultDatatype } from "../schema/datatype-default";
 
 /**
  * Datatype for the EntitySchemaService transforming values to "string".
@@ -31,7 +31,7 @@ import { AbstractDatatype } from "../schema/entity-schema-datatype";
  * `@DatabaseField({dataType: 'string'}) myValue: any;`
  */
 @Injectable()
-export class StringDatatype extends AbstractDatatype {
+export class StringDatatype extends DefaultDatatype {
   static dataType = "string";
 
   viewComponent: "DisplayText";
