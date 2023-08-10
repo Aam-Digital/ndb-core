@@ -22,6 +22,7 @@ import { ComponentType } from "@angular/cdk/overlay";
 import { entityEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-entity";
 import { entityArrayEntitySchemaDatatype } from "../../core/entity/schema-datatypes/datatype-entity-array";
 import { EntityValueMappingComponent } from "./import-column-mapping/entity-value-mapping/entity-value-mapping.component";
+import { isArrayDataType } from "../../core/entity-components/entity-utils/entity-utils";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -107,7 +108,6 @@ export class ImportService {
       schema.dataType === entityEntitySchemaDatatype.name ||
       schema.dataType === entityArrayEntitySchemaDatatype.name
     ) {
-      // TODO array support
       // TODO when to use full ID?
       return {
         mappingCmp: EntityValueMappingComponent,
@@ -256,7 +256,11 @@ export class ImportService {
 
     const mappingFn = this.getMappingFunction(schema);
     if (mappingFn) {
-      return mappingFn(val, mapping.additional);
+      const res = await mappingFn(val, mapping.additional);
+      // Make sure an array property is always returned as an array;
+      return res && isArrayDataType(schema.dataType) && !Array.isArray(res)
+        ? [res]
+        : res;
     } else {
       return this.schemaService
         .getDatatypeOrDefault(schema.dataType)
