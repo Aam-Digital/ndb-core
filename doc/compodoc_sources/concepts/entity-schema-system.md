@@ -43,6 +43,8 @@ Basic data transformations for `string`, `number`, `date` and `month` are suppor
 You can register your own types by implementing services extending `DefaultDatatype` and
 providing these through Angular dependency injection using `multi: true`.
 
+Also see: [How to create a new Datatype](../how-to-guides/create-a-new-datatype.html).
+
 ## Schema options
 
 The schema definitions contains information regarding the schema transformation as well as how a property can be displayed.
