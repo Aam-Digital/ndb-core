@@ -117,5 +117,7 @@ export class DefaultDatatype<EntityType = any, DBType = any>
    * returns "undefined" if no user action is required.
    * @param col
    */
-  importIncompleteAdditionalConfigBadge?: (col: ColumnMapping) => string;
+  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
+    return undefined;
+  }
 }

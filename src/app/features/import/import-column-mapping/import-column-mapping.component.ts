@@ -103,9 +103,9 @@ export class ImportColumnMappingComponent {
     }
 
     this.mappingAdditionalWarning[col.column] =
-      this.valueMapper[col.propertyName]?.importIncompleteAdditionalConfigBadge(
-        col,
-      );
+      this.valueMapper[
+        col.propertyName
+      ]?.importIncompleteAdditionalConfigBadge?.(col);
 
     // Emitting copy of array to trigger change detection; values have been updated in place through data binding
     this.columnMappingChange.emit([...this.columnMapping]);

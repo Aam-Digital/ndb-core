@@ -3,6 +3,9 @@ import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { Injectable } from "@angular/core";
+import { ComponentType } from "@angular/cdk/overlay";
+import { EnumValueMappingComponent } from "../../../features/import/import-column-mapping/enum-value-mapping/enum-value-mapping.component";
+import { ColumnMapping } from "../../../features/import/column-mapping";
 
 @Injectable()
 export class ConfigurableEnumDatatype extends DefaultDatatype {
@@ -58,4 +61,31 @@ export class ConfigurableEnumDatatype extends DefaultDatatype {
         optionValue,
     };
   }
+
+  importConfigComponent: ComponentType<any> = EnumValueMappingComponent;
+
+  importMapFunction(
+    val,
+    schema: EntitySchemaField,
+    additional: { [key: string]: any },
+  ): any {
+    return this.transformToObjectFormat(additional?.[val], schema);
+  }
+
+  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
+    return getUnmappedValuesCounterBadge(col);
+  }
+}
+
+export function getUnmappedValuesCounterBadge(col: ColumnMapping) {
+  if (!col.additional) {
+    return "?";
+  }
+  const unmappedValues = Object.values(col.additional).filter(
+    (v) => v === undefined,
+  );
+  if (unmappedValues.length > 0) {
+    return unmappedValues.length.toString();
+  }
+  return undefined;
 }
