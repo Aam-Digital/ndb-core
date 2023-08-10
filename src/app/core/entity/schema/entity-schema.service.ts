@@ -45,8 +45,6 @@ export class EntitySchemaService {
 
   constructor(private injector: Injector) {}
 
-  // TODO: ! update documentation and how-to guides
-
   /**
    * Get the datatype for the giving name (or the default datatype if no other registered type fits)
    * @param datatypeName The key/name of the datatype

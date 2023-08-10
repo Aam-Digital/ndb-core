@@ -23,7 +23,7 @@ import { ColumnMapping } from "../../../features/import/column-mapping";
 /**
  * Extend this class to define new data types (i.e. for properties of entities)
  * and provide your implementation using Angular DI:
- * `{ provide: EntityDatatype, useClass: MyCustomDatatype, multi: true },`
+ * `{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true },`
  *
  * This class is also used as the default fallback Datatype for the EntitySchemaService that keeps values unchanged between database and entity instance.
  * This type is automatically used whenever no fitting Datatype can be found for that config or TypeScript type.
