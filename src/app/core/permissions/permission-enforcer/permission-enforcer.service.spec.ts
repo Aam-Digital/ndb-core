@@ -36,9 +36,10 @@ describe("PermissionEnforcerService", () => {
   let mockLocation: jasmine.SpyObj<Location>;
   let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
   let entityMapper: EntityMapperService;
-  const entityUpdates = new Subject<UpdatedEntity<Config<DatabaseRules>>>();
+  let entityUpdates: Subject<UpdatedEntity<Config<DatabaseRules>>>;
 
   beforeEach(fakeAsync(() => {
+    entityUpdates = new Subject();
     mockSession = jasmine.createSpyObj(["getCurrentUser"]);
     mockSession.getCurrentUser.and.returnValue({
       name: TEST_USER,
@@ -66,7 +67,6 @@ describe("PermissionEnforcerService", () => {
           useValue: { configUpdates: of(new Config()) },
         },
       ],
-      teardown: { destroyAfterEach: false }, // injector in SchemaService is accessed after tests ... [https://stackoverflow.com/a/74296816/1473411]
     });
     entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
