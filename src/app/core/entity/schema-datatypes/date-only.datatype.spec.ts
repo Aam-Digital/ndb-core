@@ -1,5 +1,5 @@
 import { waitForAsync } from "@angular/core/testing";
-import { DateOnlyDatatype } from "./datatype-date-only";
+import { DateOnlyDatatype } from "./date-only.datatype";
 
 describe("Schema data type: date-only", () => {
   let dataType: DateOnlyDatatype;
@@ -61,10 +61,9 @@ describe("Schema data type: date-only", () => {
   });
 
   it("should parse dates using importMappingFunction", () => {
-    //TODO const mappingFn = service.getMappingFunction({ dataType: "date" });
     const input = "30.11.2023";
 
-    const actualMapped = null; //mappingFn(input, "DD.MM.YYYY");
+    const actualMapped = dataType.importMapFunction(input, null, "DD.MM.YYYY");
 
     expect(actualMapped).toEqual(new Date(2023, 10, 30));
   });

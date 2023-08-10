@@ -17,7 +17,7 @@
 
 import { dateToString } from "../../../utils/utils";
 import { Injectable } from "@angular/core";
-import { DateDatatype } from "./datatype-date";
+import { DateDatatype } from "./date.datatype";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").
@@ -31,9 +31,6 @@ import { DateDatatype } from "./datatype-date";
 @Injectable()
 export class DateOnlyDatatype extends DateDatatype {
   static dataType = "date-only";
-
-  viewComponent = "DisplayDate";
-  editComponent = "EditDate";
 
   transformToDatabaseFormat(value: Date) {
     if (!(value instanceof Date)) {

@@ -3,19 +3,19 @@ import { ComponentRegistry } from "../dynamic-components";
 import { coreComponents } from "./core-components";
 import { User } from "./user/user";
 import { Config } from "./config/config";
-import { StringDatatype } from "./entity/schema-datatypes/datatype-string";
-import { DefaultDatatype } from "./entity/schema/datatype-default";
-import { SchemaEmbedDatatype } from "./entity/schema-datatypes/datatype-schema-embed";
-import { ArrayDatatype } from "./entity/schema-datatypes/datatype-array";
-import { MapDatatype } from "./entity/schema-datatypes/datatype-map";
-import { MonthDatatype } from "./entity/schema-datatypes/datatype-month";
-import { BooleanDatatype } from "./entity/schema-datatypes/datatype-boolean";
-import { DateDatatype } from "./entity/schema-datatypes/datatype-date";
-import { DateOnlyDatatype } from "./entity/schema-datatypes/datatype-date-only";
-import { DateWithAgeDatatype } from "./entity/schema-datatypes/datatype-date-with-age";
-import { EntityDatatype } from "./entity/schema-datatypes/datatype-entity";
-import { EntityArrayDatatype } from "./entity/schema-datatypes/datatype-entity-array";
-import { NumberDatatype } from "./entity/schema-datatypes/datatype-number";
+import { StringDatatype } from "./entity/schema-datatypes/string.datatype";
+import { DefaultDatatype } from "./entity/schema/default.datatype";
+import { SchemaEmbedDatatype } from "./entity/schema-datatypes/schema-embed.datatype";
+import { ArrayDatatype } from "./entity/schema-datatypes/array.datatype";
+import { MapDatatype } from "./entity/schema-datatypes/map.datatype";
+import { MonthDatatype } from "./entity/schema-datatypes/month.datatype";
+import { BooleanDatatype } from "./entity/schema-datatypes/boolean.datatype";
+import { DateDatatype } from "./entity/schema-datatypes/date.datatype";
+import { DateOnlyDatatype } from "./entity/schema-datatypes/date-only.datatype";
+import { DateWithAgeDatatype } from "./entity/schema-datatypes/date-with-age.datatype";
+import { EntityDatatype } from "./entity/schema-datatypes/entity.datatype";
+import { EntityArrayDatatype } from "./entity/schema-datatypes/entity-array.datatype";
+import { NumberDatatype } from "./entity/schema-datatypes/number.datatype";
 
 /**
  * Core module registering basic parts like datatypes and components.

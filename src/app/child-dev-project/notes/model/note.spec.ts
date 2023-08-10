@@ -25,7 +25,7 @@ import { defaultInteractionTypes } from "../../../core/config/default-config/def
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
 import { CoreModule } from "../../../core/core.module";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { DefaultDatatype } from "../../../core/entity/schema/datatype-default";
+import { DefaultDatatype } from "../../../core/entity/schema/default.datatype";
 import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [

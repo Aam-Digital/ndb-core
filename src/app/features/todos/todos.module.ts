@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { Todo } from "./model/todo";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
-import { DefaultDatatype } from "../../core/entity/schema/datatype-default";
+import { DefaultDatatype } from "../../core/entity/schema/default.datatype";
 import { TimeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
 
 @NgModule({

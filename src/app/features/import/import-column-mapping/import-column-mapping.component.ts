@@ -10,9 +10,9 @@ import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basi
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
-import { ImportValueMapping } from "./import-value-mapping";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { getInnermostDatatype } from "../../../core/entity-components/entity-utils/entity-utils";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { ImportValueMapping } from "./import-value-mapping";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -49,9 +49,8 @@ export class ImportColumnMappingComponent {
     this.allProps = [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
       .map(([name, schema]) => {
-        this.valueMapper[name] = this.schemaService.getDatatypeOrDefault(
-          getInnermostDatatype(schema),
-        );
+        this.valueMapper[name] =
+          this.schemaService.getInnermostDatatype(schema);
         return name;
       });
   }
@@ -74,24 +73,26 @@ export class ImportColumnMappingComponent {
   constructor(
     private entities: EntityRegistry,
     private schemaService: EntitySchemaService,
+    private componentRegistry: ComponentRegistry,
     private dialog: MatDialog,
   ) {}
 
-  openMappingComponent(col: ColumnMapping) {
+  async openMappingComponent(col: ColumnMapping) {
     const uniqueValues = new Set<any>();
     this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
+    const configComponent = await this.componentRegistry.get(
+      this.valueMapper[col.propertyName].importConfigComponent,
+    )();
+
     this.dialog
-      .open<any, MappingDialogData>(
-        this.valueMapper[col.propertyName].importConfigComponent,
-        {
-          data: {
-            col: col,
-            values: [...uniqueValues],
-            entityType: this.entityCtor,
-          },
-          disableClose: true,
+      .open<any, MappingDialogData>(configComponent, {
+        data: {
+          col: col,
+          values: [...uniqueValues],
+          entityType: this.entityCtor,
         },
-      )
+        disableClose: true,
+      })
       .afterClosed()
       .subscribe(() => this.updateMapping(col, true));
   }

@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import {
-  DateFilter,
-  SelectableFilter,
   BooleanFilter,
   ConfigurableEnumFilter,
+  DateFilter,
   EntityFilter,
   Filter,
+  SelectableFilter,
 } from "../../filter/filters/filters";
 import {
   BooleanFilterConfig,
@@ -19,6 +19,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 import { FilterService } from "app/core/filter/filter.service";
 import { defaultDateFilters } from "../../filter/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+
 import { dateDataTypes } from "../../entity/schema-datatypes/date-datatypes";
 
 @Injectable({

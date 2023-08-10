@@ -1,7 +1,7 @@
-import { DateDatatype } from "./datatype-date";
-import { DateOnlyDatatype } from "./datatype-date-only";
-import { DateWithAgeDatatype } from "./datatype-date-with-age";
-import { MonthDatatype } from "./datatype-month";
+import { DateOnlyDatatype } from "./date-only.datatype";
+import { MonthDatatype } from "./month.datatype";
+import { DateWithAgeDatatype } from "./date-with-age.datatype";
+import { DateDatatype } from "./date.datatype";
 
 export const dateDataTypes = [
   DateDatatype.dataType,

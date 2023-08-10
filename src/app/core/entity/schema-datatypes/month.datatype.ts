@@ -16,7 +16,7 @@
  */
 
 import { Injectable } from "@angular/core";
-import { DateOnlyDatatype } from "./datatype-date-only";
+import { DateDatatype } from "./date.datatype";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a short string month format ("YYYY-mm").
@@ -28,7 +28,7 @@ import { DateOnlyDatatype } from "./datatype-date-only";
  * `@DatabaseField({dataType: 'month'}) myMonth: Date = new Date('2020-01-15'); // will be "2020-01" in the database`
  */
 @Injectable()
-export class MonthDatatype extends DateOnlyDatatype {
+export class MonthDatatype extends DateDatatype {
   static dataType = "month";
 
   viewComponent = "DisplayMonth";

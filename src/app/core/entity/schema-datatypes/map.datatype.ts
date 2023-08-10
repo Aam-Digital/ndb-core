@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DefaultDatatype } from "../schema/datatype-default";
+import { DefaultDatatype } from "../schema/default.datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { generateSubSchemaField } from "./datatype-array";
+import { generateSubSchemaField } from "./array.datatype";
 import { Injectable } from "@angular/core";
 
 /**

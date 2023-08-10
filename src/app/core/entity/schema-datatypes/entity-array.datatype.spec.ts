@@ -16,8 +16,26 @@
  */
 
 import { testDatatype } from "../schema/entity-schema.service.spec";
-import { EntityDatatype } from "./datatype-entity";
+import { EntityArrayDatatype } from "./entity-array.datatype";
 
-describe("Schema data type: entity", () => {
-  testDatatype(EntityDatatype, "1", "1", "User");
+describe("Schema data type: entity-array", () => {
+  testDatatype(EntityArrayDatatype, ["1", "User:5"], ["1", "User:5"], "User");
+
+  testDatatype(
+    EntityArrayDatatype,
+    ["User:1", "Child:1"],
+    ["User:1", "Child:1"],
+    ["User", "Child", "School"],
+  );
+
+  xit("adds prefix to ids when a definite entity type is given in schema", () => {
+    // TODO discuss whether we want to switch to prefixed ids always (also see #1526)
+    const data = {
+      relatedUsers: ["User:1", "2"],
+    };
+    //const loadedEntity = new TestEntity();
+    //entitySchemaService.loadDataIntoEntity(loadedEntity, data);
+
+    //expect(loadedEntity.relatedUsers).toEqual(["User:1", "User:2"]);
+  });
 });

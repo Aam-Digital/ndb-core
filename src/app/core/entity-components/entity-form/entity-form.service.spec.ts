@@ -24,9 +24,9 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { TEST_USER } from "../../../utils/mocked-testing.module";
-import { ArrayDatatype } from "../../entity/schema-datatypes/datatype-array";
-import { EntityArrayDatatype } from "../../entity/schema-datatypes/datatype-entity-array";
-import { DefaultDatatype } from "../../entity/schema/datatype-default";
+import { ArrayDatatype } from "../../entity/schema-datatypes/array.datatype";
+import { EntityArrayDatatype } from "../../entity/schema-datatypes/entity-array.datatype";
+import { DefaultDatatype } from "../../entity/schema/default.datatype";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;

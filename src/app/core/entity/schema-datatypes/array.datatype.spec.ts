@@ -1,10 +1,12 @@
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
-import { ArrayDatatype } from "./datatype-array";
-import { Injector } from "@angular/core";
-import { waitForAsync } from "@angular/core/testing";
+import { ArrayDatatype } from "./array.datatype";
+import { TestBed, waitForAsync } from "@angular/core/testing";
+import { CoreModule } from "../../core.module";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
+import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 
 describe("Schema data type: array", () => {
   let schemaService: EntitySchemaService;
@@ -15,20 +17,22 @@ describe("Schema data type: array", () => {
   };
   let arrayDatatype: ArrayDatatype;
   let entitySchemaService: EntitySchemaService;
-  let mockInjector: jasmine.SpyObj<Injector>;
 
   beforeEach(waitForAsync(() => {
-    mockInjector = jasmine.createSpyObj(["get"]);
-    entitySchemaService = new EntitySchemaService(mockInjector);
-
+    TestBed.configureTestingModule({
+      imports: [CoreModule, ConfigurableEnumModule],
+      providers: [
+        ComponentRegistry,
+        {
+          provide: ConfigurableEnumService,
+          useValue: {
+            getEnumValues: () => defaultInteractionTypes,
+          },
+        },
+      ],
+    });
+    entitySchemaService = TestBed.inject(EntitySchemaService);
     arrayDatatype = new ArrayDatatype(entitySchemaService);
-
-    mockInjector.get.and.returnValue([
-      arrayDatatype,
-      new ConfigurableEnumDatatype({
-        getEnumValues: () => defaultInteractionTypes,
-      } as any),
-    ]);
   }));
 
   it("should transform enums inside arrays", () => {

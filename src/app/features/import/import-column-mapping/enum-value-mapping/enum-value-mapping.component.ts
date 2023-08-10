@@ -14,7 +14,9 @@ import { DynamicComponentDirective } from "../../../../core/view/dynamic-compone
 import { MatButtonModule } from "@angular/material/button";
 import { ColumnMapping } from "../../column-mapping";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("EnumValueMapping")
 @Component({
   selector: "app-enum-value-mapping",
   templateUrl: "./enum-value-mapping.component.html",

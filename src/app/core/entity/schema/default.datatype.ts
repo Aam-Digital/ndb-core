@@ -18,7 +18,6 @@
 import { EntitySchemaField } from "./entity-schema-field";
 import { Entity } from "../model/entity";
 import { ImportValueMapping } from "../../../features/import/import-column-mapping/import-value-mapping";
-import { ComponentType } from "@angular/cdk/overlay";
 import { ColumnMapping } from "../../../features/import/column-mapping";
 
 /**
@@ -109,7 +108,7 @@ export class DefaultDatatype<EntityType = any, DBType = any>
    * A component to be display as a dialog to configure the transformation function
    * (e.g. defining a format or mapping)
    */
-  importConfigComponent?: ComponentType<any>;
+  importConfigComponent?: string;
 
   /**
    * Output a label indicating whether the given column mapping needs user configuration for the "additional" config

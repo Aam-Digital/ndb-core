@@ -1,6 +1,6 @@
 import { NgModule } from "@angular/core";
 import { ConfigurableEnumService } from "./configurable-enum.service";
-import { DefaultDatatype } from "../entity/schema/datatype-default";
+import { DefaultDatatype } from "../entity/schema/default.datatype";
 import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configurable-enum.datatype";
 
 /**

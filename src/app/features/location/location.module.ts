@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../../dynamic-components";
 import { locationComponents } from "./location-components";
-import { DefaultDatatype } from "../../core/entity/schema/datatype-default";
+import { DefaultDatatype } from "../../core/entity/schema/default.datatype";
 import { LocationDatatype } from "./location.datatype";
 
 @NgModule({

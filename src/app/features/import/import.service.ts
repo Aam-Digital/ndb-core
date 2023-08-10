@@ -9,7 +9,6 @@ import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { getInnermostDatatype } from "../../core/entity-components/entity-utils/entity-utils";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -177,7 +176,7 @@ export class ImportService {
     }
 
     return this.schemaService
-      .getDatatypeOrDefault(getInnermostDatatype(schema))
+      .getInnermostDatatype(schema)
       .importMapFunction(val, schema, mapping.additional);
   }
 }

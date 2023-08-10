@@ -28,7 +28,7 @@ import { ConfigurableEnumService } from "../configurable-enum.service";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumDatatype } from "./configurable-enum.datatype";
 
-describe("ConfigurableEnumDatatype", () => {
+describe("Schema data type: configurable-enum", () => {
   const TEST_CONFIG: ConfigurableEnumConfig = [
     { id: "NONE", label: "" },
     { id: "TEST_1", label: "Category 1" },
@@ -129,20 +129,19 @@ describe("ConfigurableEnumDatatype", () => {
   });
 
   it("should map values using importMappingFunction", () => {
-    const enumService = TestBed.inject(ConfigurableEnumService);
-    spyOn(enumService, "getEnumValues").and.returnValue(genders);
+    const dataType = new ConfigurableEnumDatatype(enumService);
+    enumService.getEnumValues.and.returnValue(genders);
 
-    // TODO
-    /*
-    const mappingFn = importService({
-      dataType: "configurable-enum",
-      additional: "genders",
-    });
-    const input = "MALE";
-
-    const actualMapped = mappingFn(input, { MALE: "M" });
+    const input = "MALEx";
+    const actualMapped = dataType.importMapFunction(
+      input,
+      {
+        dataType: "configurable-enum",
+        additional: "genders",
+      },
+      { MALEx: "M" },
+    );
 
     expect(actualMapped).toEqual(genders.find((e) => e.id === "M"));
-    */
   });
 });

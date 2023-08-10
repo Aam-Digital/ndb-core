@@ -7,7 +7,7 @@ import { MockFileService } from "./mock-file.service";
 import { serviceProvider } from "../../utils/utils";
 import { ComponentRegistry } from "../../dynamic-components";
 import { fileComponents } from "./file-components";
-import { DefaultDatatype } from "../../core/entity/schema/datatype-default";
+import { DefaultDatatype } from "../../core/entity/schema/default.datatype";
 import { FileDatatype } from "./file.datatype";
 
 @NgModule({

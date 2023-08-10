@@ -16,6 +16,20 @@ export class ImportModule {
         () =>
           import("./import/import.component").then((c) => c.ImportComponent),
       ],
+      [
+        "EnumValueMapping",
+        () =>
+          import(
+            "./import-column-mapping/enum-value-mapping/enum-value-mapping.component"
+          ).then((c) => c.EnumValueMappingComponent),
+      ],
+      [
+        "DateValueMapping",
+        () =>
+          import(
+            "./import-column-mapping/date-value-mapping/date-value-mapping.component"
+          ).then((c) => c.DateValueMappingComponent),
+      ],
     ]);
   }
 }

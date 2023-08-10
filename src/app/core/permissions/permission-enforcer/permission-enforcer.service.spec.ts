@@ -22,7 +22,7 @@ import {
 } from "../../entity/database-entity.decorator";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { ConfigService } from "../../config/config.service";
-import { DefaultDatatype } from "../../entity/schema/datatype-default";
+import { DefaultDatatype } from "../../entity/schema/default.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("PermissionEnforcerService", () => {

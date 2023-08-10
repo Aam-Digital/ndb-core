@@ -1,4 +1,4 @@
-import { DefaultDatatype } from "../../../core/entity/schema/datatype-default";
+import { DefaultDatatype } from "../../../core/entity/schema/default.datatype";
 
 /**
  * Datatype for defining a time interval.

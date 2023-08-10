@@ -15,9 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DefaultDatatype } from "../schema/datatype-default";
+import { DefaultDatatype } from "../schema/default.datatype";
 import { Injectable } from "@angular/core";
-import { DateValueMappingComponent } from "../../../features/import/import-column-mapping/date-value-mapping/date-value-mapping.component";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import moment from "moment";
 
@@ -55,7 +54,7 @@ export class DateDatatype extends DefaultDatatype {
     return date;
   }
 
-  importConfigComponent = DateValueMappingComponent;
+  importConfigComponent = "DateValueMapping";
 
   importMapFunction(
     val: any,

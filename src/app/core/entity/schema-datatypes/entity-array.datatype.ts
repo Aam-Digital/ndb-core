@@ -17,7 +17,7 @@
 
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Injectable } from "@angular/core";
-import { EntityDatatype } from "./datatype-entity";
+import { EntityDatatype } from "./entity.datatype";
 
 /**
  * Datatype for the EntitySchemaService to handle multiple references to other entities

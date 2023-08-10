@@ -1,5 +1,4 @@
 import { ColumnMapping } from "../column-mapping";
-import { ComponentType } from "@angular/cdk/overlay";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 
 /**
@@ -23,7 +22,7 @@ export interface ImportValueMapping {
    * A component to be display as a dialog to configure the transformation function
    * (e.g. defining a format or mapping)
    */
-  importConfigComponent?: ComponentType<any>;
+  importConfigComponent?: string;
 
   /**
    * Output a label indicating whether the given column mapping needs user configuration for the "additional" config

@@ -20,9 +20,9 @@ import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { Injector } from "@angular/core";
-import { StringDatatype } from "../schema-datatypes/datatype-string";
-import { DefaultDatatype } from "./datatype-default";
-import { DateOnlyDatatype } from "../schema-datatypes/datatype-date-only";
+import { StringDatatype } from "../schema-datatypes/string.datatype";
+import { DefaultDatatype } from "./default.datatype";
+import { DateOnlyDatatype } from "../schema-datatypes/date-only.datatype";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
@@ -122,7 +122,7 @@ describe("EntitySchemaService", () => {
 });
 
 export function testDatatype(
-  dataType: typeof DefaultDatatype,
+  dataType: typeof DefaultDatatype | any,
   objectValue,
   databaseValue,
   additionalSchemaFieldConfig?: any,
@@ -160,6 +160,6 @@ export function testDatatype(
     const loadedEntity = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity, data);
 
-    expect(loadedEntity.field).toBeDate(objectValue);
+    expect(loadedEntity.field).toEqual(objectValue);
   });
 }

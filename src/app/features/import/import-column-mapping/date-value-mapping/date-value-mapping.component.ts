@@ -13,10 +13,12 @@ import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
 /**
  * Configuration dialog for parsing date value of data imported from a file.
  */
+@DynamicComponent("DateValueMapping")
 @Component({
   selector: "app-date-value-mapping",
   templateUrl: "./date-value-mapping.component.html",

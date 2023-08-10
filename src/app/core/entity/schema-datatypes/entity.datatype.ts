@@ -15,33 +15,30 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+import { DefaultDatatype } from "../schema/default.datatype";
 import { Injectable } from "@angular/core";
-import { DefaultDatatype } from "../schema/datatype-default";
+import { EntitySchemaField } from "../schema/entity-schema-field";
 
 /**
- * Datatype for the EntitySchemaService transforming values to "string".
- *
- * This type is automatically used if you annotate a class's property that has the TypeScript type "string"
- * ensuring that even if values in the database from other sources are not of type string, the property will be a string.
+ * Datatype for the EntitySchemaService to handle a single reference to another entity
+ * using EditSingleEntityComponent in the UI.
+ * Stored as simple id string.
  *
  * For example:
  *
- * `@DatabaseField() myString: string;`
- *
- * `@DatabaseField({dataType: 'string'}) myValue: any;`
+ * `@DatabaseField({dataType: 'entity', additional: 'Child'}) relatedEntity: string;`
  */
 @Injectable()
-export class StringDatatype extends DefaultDatatype {
-  static dataType = "string";
-
-  viewComponent: "DisplayText";
-  editComponent: "EditText";
+export class EntityDatatype extends DefaultDatatype {
+  static dataType = "entity";
+  editComponent = "EditSingleEntity";
+  viewComponent = "DisplayEntity";
 
   transformToDatabaseFormat(value) {
-    return String(value);
+    return value;
   }
 
-  transformToObjectFormat(value) {
-    return String(value);
+  transformToObjectFormat(value, schemaField: EntitySchemaField, parent) {
+    return value;
   }
 }
