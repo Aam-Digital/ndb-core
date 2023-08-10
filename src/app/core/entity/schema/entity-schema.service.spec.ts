@@ -23,6 +23,7 @@ import { Injector } from "@angular/core";
 import { StringDatatype } from "../schema-datatypes/string.datatype";
 import { DefaultDatatype } from "./default.datatype";
 import { DateOnlyDatatype } from "../schema-datatypes/date-only.datatype";
+import { ArrayDatatype } from "../schema-datatypes/array.datatype";
 
 describe("EntitySchemaService", () => {
   let entitySchemaService: EntitySchemaService;
@@ -104,6 +105,10 @@ describe("EntitySchemaService", () => {
       @DatabaseField({ innerDataType: DateOnlyDatatype.dataType })
       dates: Date[];
     }
+    mockInjector.get.and.returnValue([
+      new DateOnlyDatatype(),
+      new ArrayDatatype(entitySchemaService),
+    ]);
 
     const propertySchema = TestEntity.schema.get("dates");
 

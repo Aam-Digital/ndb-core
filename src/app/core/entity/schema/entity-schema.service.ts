@@ -19,7 +19,8 @@ import { Entity } from "../model/entity";
 import { Injectable, Injector } from "@angular/core";
 import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
-import { DefaultDatatype } from "./datatype-default";
+import { DefaultDatatype } from "./default.datatype";
+import { isArrayDataType } from "../../entity-components/entity-utils/entity-utils";
 
 /**
  * Transform between entity instances and database objects
@@ -44,8 +45,7 @@ export class EntitySchemaService {
 
   constructor(private injector: Injector) {}
 
-  // TODO: consistent file name for datatypes
-  // TODO: update documentation and how-to guides
+  // TODO: ! update documentation and how-to guides
 
   /**
    * Get the datatype for the giving name (or the default datatype if no other registered type fits)
@@ -68,6 +68,21 @@ export class EntitySchemaService {
       dataType = this.defaultDatatype;
     }
     return dataType;
+  }
+
+  /**
+   * Get the datatype of the innermost type of a field, e.g. the type contained in an array.
+   * @param schemaField
+   */
+  public getInnermostDatatype(schemaField: EntitySchemaField) {
+    let datatype;
+    if (isArrayDataType(schemaField.dataType)) {
+      datatype = schemaField.innerDataType;
+    } else {
+      datatype = schemaField.dataType;
+    }
+
+    return this.getDatatypeOrDefault(datatype);
   }
 
   /**

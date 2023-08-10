@@ -36,6 +36,10 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 export class ArrayDatatype extends DefaultDatatype {
   static dataType = "array";
 
+  // components for array should be handled by innerDatatype
+  editComponent = undefined;
+  viewComponent = undefined;
+
   constructor(private schemaService: EntitySchemaService) {
     super();
   }

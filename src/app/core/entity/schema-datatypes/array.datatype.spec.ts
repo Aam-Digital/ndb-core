@@ -5,8 +5,8 @@ import { ArrayDatatype } from "./array.datatype";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { CoreModule } from "../../core.module";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { ConfigurableEnumModule } from "../../configurable-enum/configurable-enum.module";
-import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
+import { DefaultDatatype } from "../schema/default.datatype";
+import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
 describe("Schema data type: array", () => {
   let schemaService: EntitySchemaService;
@@ -20,37 +20,32 @@ describe("Schema data type: array", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [CoreModule, ConfigurableEnumModule],
+      imports: [CoreModule],
       providers: [
         ComponentRegistry,
         {
-          provide: ConfigurableEnumService,
-          useValue: {
+          provide: DefaultDatatype,
+          useValue: new ConfigurableEnumDatatype({
             getEnumValues: () => defaultInteractionTypes,
-          },
+          } as any),
+          multi: true,
         },
       ],
     });
     entitySchemaService = TestBed.inject(EntitySchemaService);
-    arrayDatatype = new ArrayDatatype(entitySchemaService);
+    arrayDatatype = entitySchemaService.getDatatypeOrDefault(
+      ArrayDatatype.dataType,
+    ) as ArrayDatatype;
   }));
 
   it("should transform enums inside arrays", () => {
     const value = defaultInteractionTypes.map(({ id }) => id);
 
-    const obj = arrayDatatype.transformToObjectFormat(
-      value,
-      schema,
-      schemaService,
-    );
+    const obj = arrayDatatype.transformToObjectFormat(value, schema, null);
 
     expect(obj).toEqual(defaultInteractionTypes);
 
-    const db = arrayDatatype.transformToDatabaseFormat(
-      obj,
-      schema,
-      schemaService,
-    );
+    const db = arrayDatatype.transformToDatabaseFormat(obj, schema, null);
 
     expect(db).toEqual(value);
   });
@@ -61,25 +56,17 @@ describe("Schema data type: array", () => {
     const obj = arrayDatatype.transformToObjectFormat(
       value as any,
       schema,
-      schemaService,
+      null,
     );
 
     expect(obj).toEqual([defaultInteractionTypes[1]]);
   });
 
   it("should transform empty values as an empty array", () => {
-    let obj = arrayDatatype.transformToObjectFormat(
-      undefined,
-      schema,
-      schemaService,
-    );
+    let obj = arrayDatatype.transformToObjectFormat(undefined, schema, null);
     expect(obj).toEqual([]);
 
-    obj = arrayDatatype.transformToObjectFormat(
-      "" as any,
-      schema,
-      schemaService,
-    );
+    obj = arrayDatatype.transformToObjectFormat("" as any, schema, null);
     expect(obj).toEqual([]);
   });
 });

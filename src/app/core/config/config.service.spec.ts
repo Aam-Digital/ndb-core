@@ -7,6 +7,8 @@ import { UpdatedEntity } from "../entity/model/entity-update";
 import { LoggingService } from "../logging/logging.service";
 import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
 import { EntityAbility } from "../permissions/ability/entity-ability";
+import { CoreModule } from "../core.module";
+import { ComponentRegistry } from "../../dynamic-components";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -27,7 +29,9 @@ describe("ConfigService", () => {
     entityMapper.saveAll.and.resolveTo([]);
     entityMapper.save.and.resolveTo([]);
     TestBed.configureTestingModule({
+      imports: [CoreModule],
       providers: [
+        ComponentRegistry,
         { provide: EntityMapperService, useValue: entityMapper },
         ConfigService,
         LoggingService,

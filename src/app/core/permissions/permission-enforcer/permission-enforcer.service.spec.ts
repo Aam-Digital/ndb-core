@@ -66,6 +66,7 @@ describe("PermissionEnforcerService", () => {
           useValue: { configUpdates: of(new Config()) },
         },
       ],
+      teardown: { destroyAfterEach: false }, // injector in SchemaService is accessed after tests ... [https://stackoverflow.com/a/74296816/1473411]
     });
     entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
@@ -83,14 +84,15 @@ describe("PermissionEnforcerService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should write the users relevant permissions to local storage", async () => {
-    await service.enforcePermissionsOnLocalData(userRules);
+  it("should write the users relevant permissions to local storage", fakeAsync(() => {
+    service.enforcePermissionsOnLocalData(userRules);
+    tick();
 
     const storedRules = window.localStorage.getItem(
       TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
     );
     expect(JSON.parse(storedRules)).toEqual(userRules);
-  });
+  }));
 
   it("should reset page if entity with write restriction exists (inverted)", fakeAsync(() => {
     entityMapper.save(new Child());
