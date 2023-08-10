@@ -14,6 +14,7 @@ import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntityValueMappingComponent", () => {
   let component: EntityValueMappingComponent;
@@ -28,7 +29,11 @@ describe("EntityValueMappingComponent", () => {
       entityType: ChildSchoolRelation,
     };
     TestBed.configureTestingModule({
-      imports: [EntityValueMappingComponent, NoopAnimationsModule],
+      imports: [
+        EntityValueMappingComponent,
+        NoopAnimationsModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: { close: () => undefined } },
