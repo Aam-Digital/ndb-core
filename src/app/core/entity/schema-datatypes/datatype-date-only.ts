@@ -15,21 +15,21 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DefaultDatatype } from "../schema/datatype-default";
 import { dateToString } from "../../../utils/utils";
 import { Injectable } from "@angular/core";
+import { DateDatatype } from "./datatype-date";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").
  *
  * Throws an exception if the property is set to something that is not a Date instance and cannot be cast to Date either.
+ * Uses the import value mapping properties of the general DateDatatype.
  *
  * For example:
- *
  * `@DatabaseField({dataType: 'date-only'}) myDate: Date = new Date('2020-01-15'); // will be "2020-01-15" (without time) in the database`
  */
 @Injectable()
-export class DateOnlyDatatype extends DefaultDatatype {
+export class DateOnlyDatatype extends DateDatatype {
   static dataType = "date-only";
 
   viewComponent = "DisplayDate";

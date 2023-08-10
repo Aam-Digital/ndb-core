@@ -14,29 +14,9 @@ import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
 
-// TODO implement an ImportValueMapping service for this
-/*
-const dateDataTypes = [
-      dateEntitySchemaDatatype,
-      dateOnlyEntitySchemaDatatype,
-      monthEntitySchemaDatatype,
-      dateWithAgeEntitySchemaDatatype,
-    ].map((dataType) => dataType.name);
-    if (dateDataTypes.includes(schema.dataType)) {
-      return {
-        mappingCmp: DateValueMappingComponent,
-        mappingFn: (val, additional) => {
-          const date = moment(val, additional, true);
-          if (date.isValid()) {
-            return date.toDate();
-          } else {
-            return undefined;
-          }
-        },
-      };
-    }
+/**
+ * Configuration dialog for parsing date value of data imported from a file.
  */
-
 @Component({
   selector: "app-date-value-mapping",
   templateUrl: "./date-value-mapping.component.html",

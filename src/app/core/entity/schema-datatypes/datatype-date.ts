@@ -17,6 +17,9 @@
 
 import { DefaultDatatype } from "../schema/datatype-default";
 import { Injectable } from "@angular/core";
+import { DateValueMappingComponent } from "../../../features/import/import-column-mapping/date-value-mapping/date-value-mapping.component";
+import { EntitySchemaField } from "../schema/entity-schema-field";
+import moment from "moment";
 
 /**
  * Datatype for the EntitySchemaService transforming values to Date instances.
@@ -35,7 +38,7 @@ export class DateDatatype extends DefaultDatatype {
   viewComponent = "DisplayDate";
   editComponent = "EditDate";
 
-  transformToDatabaseFormat(value: Date) {
+  transformToDatabaseFormat(value: Date): any {
     // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
     // return isValidDate(value) ? value.toISOString().slice(0, 10) : '';
     // DONE: date format is now being saved as date object
@@ -50,5 +53,20 @@ export class DateDatatype extends DefaultDatatype {
       );
     }
     return date;
+  }
+
+  importConfigComponent = DateValueMappingComponent;
+
+  importMapFunction(
+    val: any,
+    schemaField: EntitySchemaField,
+    additional?: any,
+  ) {
+    const date = moment(val, additional, true);
+    if (date.isValid()) {
+      return date.toDate();
+    } else {
+      return undefined;
+    }
   }
 }

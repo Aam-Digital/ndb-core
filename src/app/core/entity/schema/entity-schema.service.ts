@@ -44,8 +44,7 @@ export class EntitySchemaService {
 
   constructor(private injector: Injector) {}
 
-  // TODO: share importMappingFunction between multiple datatypes
-  // TODO: adapt import components to handle value mappings using the datatype instead of own import mapping stuff.
+  // TODO: consistent file name for datatypes
   // TODO: update documentation and how-to guides
 
   /**

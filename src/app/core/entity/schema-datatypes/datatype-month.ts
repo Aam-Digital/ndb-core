@@ -15,21 +15,20 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DefaultDatatype } from "../schema/datatype-default";
 import { Injectable } from "@angular/core";
-import { EntitySchemaField } from "../schema/entity-schema-field";
+import { DateOnlyDatatype } from "./datatype-date-only";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a short string month format ("YYYY-mm").
  *
  * Throws an exception if the property is set to something that is not a Date instance and cannot be cast to Date either.
+ * Uses the import value mapping properties of the general DateDatatype.
  *
  * For example:
- *
  * `@DatabaseField({dataType: 'month'}) myMonth: Date = new Date('2020-01-15'); // will be "2020-01" in the database`
  */
 @Injectable()
-export class MonthDatatype extends DefaultDatatype {
+export class MonthDatatype extends DateOnlyDatatype {
   static dataType = "month";
 
   viewComponent = "DisplayMonth";
@@ -53,14 +52,5 @@ export class MonthDatatype extends DefaultDatatype {
       throw new Error("failed to convert data to Date object: " + value);
     }
     return date;
-  }
-
-  importMapFunction(
-    val: any,
-    schemaField: EntitySchemaField,
-    additional?: any,
-  ): any {
-    // TODO?
-    return super.importMapFunction(val, schemaField, additional);
   }
 }
