@@ -15,6 +15,7 @@ import { NgForOf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { ColumnMapping } from "../../column-mapping";
+import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
 
 @Component({
   selector: "app-entity-value-mapping",
@@ -28,6 +29,7 @@ import { ColumnMapping } from "../../column-mapping";
     ReactiveFormsModule,
     MatDialogModule,
     MatButtonModule,
+    HelpButtonComponent,
   ],
 })
 export class EntityValueMappingComponent extends AbstractValueMappingComponent {
@@ -52,7 +54,7 @@ export class EntityValueMappingComponent extends AbstractValueMappingComponent {
     this.availableProperties = [...this.entity.schema.entries()]
       .filter(([_, schema]) => !!schema.label)
       .map(([prop, schema]) => ({ label: schema.label, property: prop }));
-    this.propertyForm.setValue(this.data.col.additional?.property);
+    this.propertyForm.setValue(this.data.col.additional);
   }
 
   async save() {
