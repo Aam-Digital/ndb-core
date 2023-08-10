@@ -9,10 +9,12 @@ The following aspects are specifically designed to be extended:
   - `editComponent` how data is displayed and edited in forms
   - `viewComponent` how data is displayed in tables
   - `importValueMapping` to support smart import into the data type
+  - *also see [How to create a new Datatype](../how-to-guides/create-a-new-datatype.html)*
 - **Entity Types**
   - pre-define a data structure with various fields and custom logic that may be interconnected. This mostly is useful if you implement very specialized UI components for a specific data structure.
   - any entity type can be extended through config for individual clients (e.g. adding further properties at runtime)
   - demo data generator to automatically provide useful sample records
+  - *also see [How to create a new Entity Type](../how-to-guides/create-a-new-entity-type.html)*
 - **Views**
   - defining a screen completely, including data loaded, etc. and hook it into the platforms navigation and overall layout
 - **Sub-Views**
