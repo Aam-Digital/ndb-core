@@ -46,9 +46,8 @@ export class EntityValueMappingComponent extends AbstractValueMappingComponent {
     private entities: EntityRegistry,
   ) {
     super();
-    const entityName = this.data.entityType.schema.get(
-      this.data.col.propertyName,
-    ).additional;
+    const propertyName = this.data.col.propertyName;
+    const entityName = this.data.entityType.schema.get(propertyName).additional;
     this.entity = this.entities.get(entityName);
     this.availableProperties = [...this.entity.schema.entries()]
       .filter(([_, schema]) => !!schema.label)
