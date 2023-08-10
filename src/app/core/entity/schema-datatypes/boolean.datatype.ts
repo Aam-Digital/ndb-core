@@ -12,7 +12,7 @@ export class BooleanDatatype extends DiscreteDatatype<boolean, boolean> {
     return value;
   }
 
-  transformToObjectFormat(value) {
+  transformToObjectFormat(value: boolean) {
     return value;
   }
 }

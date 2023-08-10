@@ -1,4 +1,5 @@
-import { DefaultDatatype } from "../../core/entity/schema/default.datatype";
+import { StringDatatype } from "../../core/entity/schema-datatypes/string.datatype";
+import { Injectable } from "@angular/core";
 
 /**
  * Datatype for saving a file on an entity property.
@@ -20,7 +21,8 @@ import { DefaultDatatype } from "../../core/entity/schema/default.datatype";
  * }
  * ```
  */
-export class FileDatatype extends DefaultDatatype {
+@Injectable()
+export class FileDatatype extends StringDatatype {
   static dataType = "file";
   viewComponent = "ViewFile";
   editComponent = "EditFile";

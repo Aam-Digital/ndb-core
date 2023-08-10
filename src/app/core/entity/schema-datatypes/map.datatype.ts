@@ -30,10 +30,13 @@ import { Injectable } from "@angular/core";
  *
  * `@DatabaseField({ innerDataType: 'month' }) dateMap: Map<string, Date>;`
  * will ensure that in the database this property is saved as "month" date string for each key
- * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `[['a', '2020-01'], ['b', '2020-04']]` in the database).
+ * using the {@link MonthDatatype} (e.g. resulting in `[['a', '2020-01'], ['b', '2020-04']]` in the database).
  */
 @Injectable()
-export class MapDatatype extends DefaultDatatype {
+export class MapDatatype extends DefaultDatatype<
+  Map<string, any>,
+  [string, any][]
+> {
   static dataType = "map";
 
   constructor(private schemaService: EntitySchemaService) {
@@ -41,7 +44,7 @@ export class MapDatatype extends DefaultDatatype {
   }
 
   transformToDatabaseFormat(
-    value: any[],
+    value: Map<string, any>,
     schemaField: EntitySchemaField,
     parent,
   ) {
@@ -50,12 +53,12 @@ export class MapDatatype extends DefaultDatatype {
         'property to be saved with "map" EntitySchema is not of expected type',
         value,
       );
-      return value;
+      return value as any;
     }
 
     const innerElementDatatype: DefaultDatatype =
       this.schemaService.getDatatypeOrDefault(schemaField.innerDataType);
-    const result = [];
+    const result: [string, any][] = [];
     value.forEach((item, key) => {
       result.push([
         key,
@@ -83,7 +86,7 @@ export class MapDatatype extends DefaultDatatype {
         'property to be loaded with "map" EntitySchema is not valid',
         value,
       );
-      return value;
+      return value as any;
     }
 
     const innerElementType: DefaultDatatype =
