@@ -127,7 +127,7 @@ describe("EntitySchemaService", () => {
 });
 
 export function testDatatype(
-  dataType: typeof DefaultDatatype | any,
+  dataType: DefaultDatatype,
   objectValue,
   databaseValue,
   additionalSchemaFieldConfig?: any,
@@ -137,7 +137,7 @@ export function testDatatype(
 
   beforeEach(waitForAsync(() => {
     mockInjector = jasmine.createSpyObj(["get"]);
-    mockInjector.get.and.returnValue([new dataType()]);
+    mockInjector.get.and.returnValue([dataType]);
 
     entitySchemaService = new EntitySchemaService(mockInjector);
   }));

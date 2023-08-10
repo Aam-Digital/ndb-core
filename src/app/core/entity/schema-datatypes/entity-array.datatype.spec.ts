@@ -18,11 +18,17 @@
 import { testDatatype } from "../schema/entity-schema.service.spec";
 import { EntityArrayDatatype } from "./entity-array.datatype";
 
+//TODO
 describe("Schema data type: entity-array", () => {
-  testDatatype(EntityArrayDatatype, ["1", "User:5"], ["1", "User:5"], "User");
+  testDatatype(
+    new EntityArrayDatatype(undefined),
+    ["1", "User:5"],
+    ["1", "User:5"],
+    "User",
+  );
 
   testDatatype(
-    EntityArrayDatatype,
+    new EntityArrayDatatype(undefined),
     ["User:1", "Child:1"],
     ["User:1", "Child:1"],
     ["User", "Child", "School"],

@@ -31,17 +31,20 @@ import moment from "moment";
  * `@DatabaseField() myDate: Date; // will be a valid Date even if the database previously had "2020-01-15" as string`
  */
 @Injectable()
-export class DateDatatype extends DefaultDatatype {
+export class DateDatatype<DBFormat = any> extends DefaultDatatype<
+  Date,
+  DBFormat
+> {
   static dataType = "date";
 
   viewComponent = "DisplayDate";
   editComponent = "EditDate";
 
-  transformToDatabaseFormat(value: Date): any {
+  transformToDatabaseFormat(value: Date) {
     // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
     // return isValidDate(value) ? value.toISOString().slice(0, 10) : '';
     // DONE: date format is now being saved as date object
-    return value;
+    return value as any;
   }
 
   transformToObjectFormat(value, schemaField, parent) {

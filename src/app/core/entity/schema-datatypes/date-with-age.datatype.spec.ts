@@ -5,7 +5,7 @@ import moment from "moment";
 
 describe("Schema data type: date-with-age", () => {
   testDatatype(
-    DateWithAgeDatatype as any,
+    new DateWithAgeDatatype(),
     new DateWithAge(moment("2022-02-01").toDate()),
     "2022-02-01",
   );

@@ -18,6 +18,7 @@
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Injectable } from "@angular/core";
 import { EntityDatatype } from "./entity.datatype";
+import { ArrayDatatype } from "./array.datatype";
 
 /**
  * Datatype for the EntitySchemaService to handle multiple references to other entities
@@ -29,37 +30,25 @@ import { EntityDatatype } from "./entity.datatype";
  * `@DatabaseField({dataType: 'entity-array', additional: 'Child'}) relatedEntities: string[] = [];`
  */
 @Injectable()
-export class EntityArrayDatatype extends EntityDatatype {
+export class EntityArrayDatatype extends ArrayDatatype<string, string> {
   static dataType = "entity-array";
 
   editComponent = "EditEntityArray";
   viewComponent = "DisplayEntityArray";
 
-  transformToDatabaseFormat(value) {
-    if (!Array.isArray(value)) {
-      console.warn(
-        `property to be transformed with "entity-array" EntitySchema is not an array`,
-        value,
-        parent,
-      );
-    }
-
-    return value.map((v) => super.transformToDatabaseFormat(v));
+  transformToDatabaseFormat(value, schema: EntitySchemaField, parent) {
+    return super.transformToDatabaseFormat(
+      value,
+      { ...schema, innerDataType: EntityDatatype.dataType },
+      parent,
+    );
   }
 
-  transformToObjectFormat(value, schemaField: EntitySchemaField, parent) {
-    if (!Array.isArray(value)) {
-      console.warn(
-        //TODO: should this be a sentry error instead?
-        'property to be transformed with "entity-array" EntitySchema is not an array',
-        value,
-        parent,
-      );
-      return value;
-    }
-
-    return value.map((v) =>
-      super.transformToObjectFormat(v, schemaField, parent),
+  transformToObjectFormat(value, schema: EntitySchemaField, parent) {
+    return super.transformToObjectFormat(
+      value,
+      { ...schema, innerDataType: EntityDatatype.dataType },
+      parent,
     );
 
     // TODO: maybe introduce a prefix transformation in the future (also see #1526)

@@ -12,7 +12,7 @@ export class DateWithAgeDatatype extends DateOnlyDatatype {
   editComponent = "EditAge";
   viewComponent = "DisplayDate";
 
-  transformToObjectFormat(value) {
+  transformToObjectFormat(value): DateWithAge {
     return new DateWithAge(super.transformToObjectFormat(value));
   }
 

@@ -29,7 +29,7 @@ import { DateDatatype } from "./date.datatype";
  * `@DatabaseField({dataType: 'date-only'}) myDate: Date = new Date('2020-01-15'); // will be "2020-01-15" (without time) in the database`
  */
 @Injectable()
-export class DateOnlyDatatype extends DateDatatype {
+export class DateOnlyDatatype extends DateDatatype<string> {
   static dataType = "date-only";
 
   transformToDatabaseFormat(value: Date) {
@@ -39,7 +39,7 @@ export class DateOnlyDatatype extends DateDatatype {
     return dateToString(value);
   }
 
-  transformToObjectFormat(value: string) {
+  transformToObjectFormat(value: string): Date {
     value = migrateIsoDatesToInferredDateOnly(value);
 
     // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time

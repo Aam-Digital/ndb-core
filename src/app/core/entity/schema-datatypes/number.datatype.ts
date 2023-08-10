@@ -31,7 +31,7 @@ import { Injectable } from "@angular/core";
  * `@DatabaseField({dataType: 'number'}) myValue: any;`
  */
 @Injectable()
-export class NumberDatatype extends DefaultDatatype {
+export class NumberDatatype extends DefaultDatatype<number, number> {
   static dataType = "number";
 
   viewComponent = "DisplayText";

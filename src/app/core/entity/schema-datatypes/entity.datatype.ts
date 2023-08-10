@@ -29,7 +29,7 @@ import { EntitySchemaField } from "../schema/entity-schema-field";
  * `@DatabaseField({dataType: 'entity', additional: 'Child'}) relatedEntity: string;`
  */
 @Injectable()
-export class EntityDatatype extends DefaultDatatype {
+export class EntityDatatype extends DefaultDatatype<string, string> {
   static dataType = "entity";
   editComponent = "EditSingleEntity";
   viewComponent = "DisplayEntity";

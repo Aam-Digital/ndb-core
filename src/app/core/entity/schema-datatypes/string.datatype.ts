@@ -31,7 +31,7 @@ import { DefaultDatatype } from "../schema/default.datatype";
  * `@DatabaseField({dataType: 'string'}) myValue: any;`
  */
 @Injectable()
-export class StringDatatype extends DefaultDatatype {
+export class StringDatatype extends DefaultDatatype<string, string> {
   static dataType = "string";
 
   viewComponent: "DisplayText";

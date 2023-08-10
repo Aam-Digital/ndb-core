@@ -8,7 +8,10 @@ import { Entity } from "../model/entity";
  *
  * This provides import config and mapping definitions that work across all such types.
  */
-export abstract class DiscreteDatatype extends DefaultDatatype {
+export abstract class DiscreteDatatype<
+  EntityType,
+  DBType,
+> extends DefaultDatatype<EntityType, DBType> {
   importConfigComponent = "EnumValueMapping";
 
   abstract transformToDatabaseFormat(

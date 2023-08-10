@@ -5,7 +5,10 @@ import { Injectable } from "@angular/core";
 import { DiscreteDatatype } from "../../entity/schema-datatypes/discrete.datatype";
 
 @Injectable()
-export class ConfigurableEnumDatatype extends DiscreteDatatype {
+export class ConfigurableEnumDatatype extends DiscreteDatatype<
+  ConfigurableEnumValue,
+  string
+> {
   static dataType = "configurable-enum";
 
   public readonly viewComponent = "DisplayConfigurableEnum";

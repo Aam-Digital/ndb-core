@@ -33,7 +33,10 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
  * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `['2020-01', '2020-04']` in the database).
  */
 @Injectable()
-export class ArrayDatatype extends DefaultDatatype {
+export class ArrayDatatype<
+  EntityType = any,
+  DBType = any,
+> extends DefaultDatatype<EntityType[], DBType[]> {
   static dataType = "array";
 
   // components for array should be handled by innerDatatype
