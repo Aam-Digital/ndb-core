@@ -9,7 +9,6 @@ import { DefaultDatatype } from "../schema/default.datatype";
 import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
 describe("Schema data type: array", () => {
-  let schemaService: EntitySchemaService;
   const schema: EntitySchemaField = {
     dataType: "array",
     innerDataType: "configurable-enum",

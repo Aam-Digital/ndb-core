@@ -82,7 +82,7 @@ describe("EntitySchemaService", () => {
   it("should return the display component of the datatype if no other is defined", () => {
     class TestDatatype extends DefaultDatatype {
       static dataType = "test-datatype";
-      viewComponent: "DisplayText";
+      viewComponent = "DisplayText";
       transformToDatabaseFormat = () => null;
       transformToObjectFormat = () => null;
     }

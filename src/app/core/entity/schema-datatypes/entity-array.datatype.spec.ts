@@ -17,18 +17,23 @@
 
 import { testDatatype } from "../schema/entity-schema.service.spec";
 import { EntityArrayDatatype } from "./entity-array.datatype";
+import { EntitySchemaService } from "../schema/entity-schema.service";
+import { EntityDatatype } from "./entity.datatype";
 
 //TODO
 describe("Schema data type: entity-array", () => {
+  const mockEntitySchemaService: EntitySchemaService = {
+    getDatatypeOrDefault: () => new EntityDatatype(),
+  } as any;
   testDatatype(
-    new EntityArrayDatatype(undefined),
+    new EntityArrayDatatype(mockEntitySchemaService),
     ["1", "User:5"],
     ["1", "User:5"],
     "User",
   );
 
   testDatatype(
-    new EntityArrayDatatype(undefined),
+    new EntityArrayDatatype(mockEntitySchemaService),
     ["User:1", "Child:1"],
     ["User:1", "Child:1"],
     ["User", "Child", "School"],
