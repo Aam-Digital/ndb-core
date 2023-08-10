@@ -21,7 +21,7 @@ This allows you to inject and use any other service that you may need to do soph
 This could result in a Datatype class like this:
 ```
 @Injectable()
-export class MyCustomDatatype extends DefaultDatatype {
+export class MyCustomDatatype extends DefaultDatatype<SpecialObject, string> {
   static dataType = "my-custom";
   
   constructor() {
@@ -33,21 +33,24 @@ export class MyCustomDatatype extends DefaultDatatype {
   viewComponent = "DisplayText";
   // make sure to register your new components in the ComponentRegistry
   
-  transformToDatabaseFormat(value) {
+  transformToDatabaseFormat(value: SpecialObject): string {
+    // storing as string in the database for whatever reason
     return value.toString();
   }
 
-  transformToObjectFormat(value) {
+  transformToObjectFormat(value: string): SpecialObject {
     return transformToSpecialObject(value);
   }
   
   importConfigComponent = "SpecialImportValueMapping";
   
-  importMapFunction(value, schemaField: EntitySchemaField, additional?: any) {
+  importMapFunction(value: any, schemaField: EntitySchemaField, additional?: any) {
     return SpecialValueParserForDifferentImportFormats(value);
   }
 }
 ```
+
+Please also refer to the extensive JsDoc code comments in the `DefaultDatatype` class.
 
 ## Registering the new Datatype
 Provide your datatype service using Angular dependency injection:
