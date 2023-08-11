@@ -8,15 +8,9 @@ import { Injectable } from "@angular/core";
 @Injectable()
 export class DateWithAgeDatatype extends DateOnlyDatatype {
   static dataType = "date-with-age";
-
   editComponent = "EditAge";
-  viewComponent = "DisplayDate";
 
   transformToObjectFormat(value): DateWithAge {
     return new DateWithAge(super.transformToObjectFormat(value));
-  }
-
-  transformToDatabaseFormat(value) {
-    return super.transformToDatabaseFormat(value);
   }
 }

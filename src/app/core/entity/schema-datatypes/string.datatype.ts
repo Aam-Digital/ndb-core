@@ -34,9 +34,6 @@ import { DefaultDatatype } from "../schema/default.datatype";
 export class StringDatatype extends DefaultDatatype<string, string> {
   static dataType = "string";
 
-  viewComponent = "DisplayText";
-  editComponent = "EditText";
-
   transformToDatabaseFormat(value) {
     return String(value);
   }

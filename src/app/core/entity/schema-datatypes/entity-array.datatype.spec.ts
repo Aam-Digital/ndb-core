@@ -20,7 +20,6 @@ import { EntityArrayDatatype } from "./entity-array.datatype";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { EntityDatatype } from "./entity.datatype";
 
-//TODO
 describe("Schema data type: entity-array", () => {
   const mockEntitySchemaService: EntitySchemaService = {
     getDatatypeOrDefault: () => new EntityDatatype(),

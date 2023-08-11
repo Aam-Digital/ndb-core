@@ -33,8 +33,6 @@ import { Injectable } from "@angular/core";
 @Injectable()
 export class NumberDatatype extends DefaultDatatype<number, number> {
   static dataType = "number";
-
-  viewComponent = "DisplayText";
   editComponent = "EditNumber";
 
   transformToDatabaseFormat(value) {
