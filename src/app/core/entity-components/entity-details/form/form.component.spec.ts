@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { FormComponent } from "./form.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
@@ -14,12 +14,12 @@ describe("FormComponent", () => {
   let component: FormComponent<Child>;
   let fixture: ComponentFixture<FormComponent<Child>>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [FormComponent, MockedTestingModule.withState()],
       providers: [{ provide: ConfirmationDialogService, useValue: null }],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(FormComponent<Child>);

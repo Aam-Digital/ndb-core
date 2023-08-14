@@ -23,10 +23,12 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
-import { ConfigurableEnumModule } from "../configurable-enum.module";
 import { ConfigurableEnumService } from "../configurable-enum.service";
+import { genders } from "../../../child-dev-project/children/model/genders";
+import { ConfigurableEnumDatatype } from "./configurable-enum.datatype";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
-describe("ConfigurableEnumDatatype", () => {
+describe("Schema data type: configurable-enum", () => {
   const TEST_CONFIG: ConfigurableEnumConfig = [
     { id: "NONE", label: "" },
     { id: "TEST_1", label: "Category 1" },
@@ -55,7 +57,7 @@ describe("ConfigurableEnumDatatype", () => {
     enumService.getEnumValues.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule],
+      imports: [MockedTestingModule],
       providers: [{ provide: ConfigurableEnumService, useValue: enumService }],
     });
 
@@ -124,5 +126,22 @@ describe("ConfigurableEnumDatatype", () => {
       isInvalidOption: true,
       label: "[invalid option] INVALID_OPTION",
     });
+  });
+
+  it("should map values using importMappingFunction", () => {
+    const dataType = new ConfigurableEnumDatatype(enumService);
+    enumService.getEnumValues.and.returnValue(genders);
+
+    const input = "MALEx";
+    const actualMapped = dataType.importMapFunction(
+      input,
+      {
+        dataType: "configurable-enum",
+        additional: "genders",
+      },
+      { MALEx: "M" },
+    );
+
+    expect(actualMapped).toEqual(genders.find((e) => e.id === "M"));
   });
 });

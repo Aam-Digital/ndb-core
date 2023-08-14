@@ -17,13 +17,19 @@
 
 import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "./model/entity";
-import { EntitySchemaService } from "./schema/entity-schema.service";
-import { waitForAsync } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../database/pouch-database";
-import { DatabaseEntity, entityRegistry } from "./database-entity.decorator";
+import {
+  DatabaseEntity,
+  entityRegistry,
+  EntityRegistry,
+} from "./database-entity.decorator";
 import { Child } from "../../child-dev-project/children/model/child";
 import { TEST_USER } from "../../utils/mocked-testing.module";
 import { SessionService } from "../session/session-service/session.service";
+import { CoreModule } from "../core.module";
+import { Database } from "../database/database";
+import { ComponentRegistry } from "../../dynamic-components";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -45,12 +51,18 @@ describe("EntityMapperService", () => {
   beforeEach(waitForAsync(() => {
     testDatabase = PouchDatabase.create();
     mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    entityMapper = new EntityMapperService(
-      testDatabase,
-      new EntitySchemaService(),
-      mockSessionService,
-      entityRegistry,
-    );
+
+    TestBed.configureTestingModule({
+      imports: [CoreModule],
+      providers: [
+        ComponentRegistry,
+        { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: Database, useValue: testDatabase },
+        { provide: SessionService, useValue: mockSessionService },
+        EntityMapperService,
+      ],
+    });
+    entityMapper = TestBed.inject(EntityMapperService);
 
     return Promise.all([
       testDatabase.put(existingEntity),

@@ -16,9 +16,11 @@
  */
 
 import { Entity } from "../model/entity";
-import { waitForAsync } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
+import { CoreModule } from "../../core.module";
+import { ComponentRegistry } from "../../../dynamic-components";
 
 describe("Schema data type: map", () => {
   class TestEntity extends Entity {
@@ -29,7 +31,11 @@ describe("Schema data type: map", () => {
   let entitySchemaService: EntitySchemaService;
 
   beforeEach(waitForAsync(() => {
-    entitySchemaService = new EntitySchemaService();
+    TestBed.configureTestingModule({
+      imports: [CoreModule],
+      providers: [ComponentRegistry],
+    });
+    entitySchemaService = TestBed.inject(EntitySchemaService);
   }));
 
   it("converts contained dates to month for saving", () => {

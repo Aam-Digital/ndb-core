@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EditEntityArrayComponent } from "./edit-entity-array.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
@@ -9,11 +9,11 @@ describe("EditEntityArrayComponent", () => {
   let component: EditEntityArrayComponent;
   let fixture: ComponentFixture<EditEntityArrayComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [EditEntityArrayComponent, MockedTestingModule.withState()],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditEntityArrayComponent);

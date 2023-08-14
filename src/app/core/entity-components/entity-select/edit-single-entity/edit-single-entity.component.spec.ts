@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EditSingleEntityComponent } from "./edit-single-entity.component";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -13,13 +13,13 @@ describe("EditSingleEntityComponent", () => {
   let fixture: ComponentFixture<EditSingleEntityComponent>;
   let loadTypeSpy: jasmine.Spy;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [EditSingleEntityComponent, MockedTestingModule.withState()],
       providers: [EntityFormService],
     }).compileComponents();
     loadTypeSpy = spyOn(TestBed.inject(EntityMapperService), "loadType");
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditSingleEntityComponent);

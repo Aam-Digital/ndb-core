@@ -42,13 +42,13 @@ describe("MatchingEntitiesComponent", () => {
     leftSide: { entityType: "School" },
   };
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     routeData = new Subject();
     mockConfigService = jasmine.createSpyObj(["getConfig"], {
       configUpdates: NEVER,
     });
 
-    return TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [MatchingEntitiesComponent, MockedTestingModule.withState()],
       providers: [
         { provide: ActivatedRoute, useValue: { data: routeData } },
@@ -56,7 +56,7 @@ describe("MatchingEntitiesComponent", () => {
         { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(MatchingEntitiesComponent);

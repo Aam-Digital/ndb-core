@@ -24,7 +24,7 @@ describe("ImportMapColumnsComponent", () => {
     spyOn(component.columnMappingChange, "emit");
   });
 
-  it("should open mapping component with required data", () => {
+  it("should open mapping component with required data", async () => {
     component.rawData = [
       { name: "first", gender: "male" },
       { name: "second", gender: "female" },
@@ -37,7 +37,7 @@ describe("ImportMapColumnsComponent", () => {
 
     const genderColumn = component.columnMapping[1];
     genderColumn.propertyName = "gender";
-    component.openMappingComponent(genderColumn);
+    await component.openMappingComponent(genderColumn);
 
     expect(openSpy).toHaveBeenCalledWith(EnumValueMappingComponent, {
       data: {
@@ -49,7 +49,7 @@ describe("ImportMapColumnsComponent", () => {
     });
   });
 
-  it("should emit changes after popup is closed", () => {
+  it("should emit changes after popup is closed", async () => {
     spyOn(TestBed.inject(MatDialog), "open").and.returnValue({
       afterClosed: () => of(undefined),
     } as any);
@@ -59,7 +59,7 @@ describe("ImportMapColumnsComponent", () => {
       propertyName: "gender",
     };
 
-    component.openMappingComponent(columnMapping);
+    await component.openMappingComponent(columnMapping);
 
     expect(component.columnMappingChange.emit).toHaveBeenCalled();
   });

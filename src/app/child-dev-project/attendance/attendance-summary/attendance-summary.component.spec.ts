@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceSummaryComponent } from "./attendance-summary.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -7,11 +7,11 @@ describe("AttendanceSummaryComponent", () => {
   let component: AttendanceSummaryComponent;
   let fixture: ComponentFixture<AttendanceSummaryComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [AttendanceSummaryComponent, MockedTestingModule.withState()],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceSummaryComponent);

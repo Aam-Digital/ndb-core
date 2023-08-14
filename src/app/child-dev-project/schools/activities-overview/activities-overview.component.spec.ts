@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { RecurringActivity } from "app/child-dev-project/attendance/model/recurring-activity";
 import { EntityMapperService } from "app/core/entity/entity-mapper.service";
@@ -24,16 +25,16 @@ describe("ActivitiesOverviewComponent", () => {
 
   let entityMapper: MockEntityMapperService;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     entityMapper = mockEntityMapper();
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [ActivitiesOverviewComponent, MockedTestingModule.withState()],
       providers: [
         { provide: EntityMapperService, useValue: entityMapper },
         { provide: FormDialogService, useValue: null },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ActivitiesOverviewComponent);
