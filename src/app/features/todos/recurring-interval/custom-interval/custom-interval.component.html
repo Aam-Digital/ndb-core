@@ -2,7 +2,13 @@
   <span i18n>repeat every</span>
   &nbsp;
   <mat-form-field class="field-number">
-    <input matInput type="number" [(ngModel)]="selectedValue" min="1" (keyup)="validateValue()"/>
+    <input
+      matInput
+      type="number"
+      [(ngModel)]="selectedValue"
+      min="1"
+      (keyup)="validateValue()"
+    />
   </mat-form-field>
   &nbsp;
   <mat-form-field class="field-select">

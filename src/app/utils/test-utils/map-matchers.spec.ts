@@ -7,7 +7,7 @@ export const mapMatchers: jasmine.CustomMatcherFactories = {
       (expected, key) =>
         `Expected map ${util.pp(expected)} to contain '${key}'`,
       (expected, key) =>
-        `Expected map ${util.pp(expected)} not to contain '${key}'`
+        `Expected map ${util.pp(expected)} not to contain '${key}'`,
     );
   },
 };

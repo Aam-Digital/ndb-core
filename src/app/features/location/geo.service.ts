@@ -29,7 +29,7 @@ export class GeoService {
   constructor(
     private http: HttpClient,
     private analytics: AnalyticsService,
-    configService: ConfigService
+    configService: ConfigService,
   ) {
     configService.configUpdates.subscribe(() => {
       const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);

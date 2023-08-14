@@ -22,7 +22,7 @@ describe("NotesDashboardComponent", () => {
       "getDaysSinceLastNoteOfEachEntity",
     ]);
     mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
-      new Map()
+      new Map(),
     );
 
     TestBed.configureTestingModule({
@@ -51,7 +51,7 @@ describe("NotesDashboardComponent", () => {
           ["3", 30],
           ["4", 31],
           ["5", Number.POSITIVE_INFINITY],
-        ])
+        ]),
       );
 
       component.sinceDays = 30;
@@ -83,7 +83,7 @@ describe("NotesDashboardComponent", () => {
           ["3", 30],
           ["4", 31],
           ["5", 50],
-        ])
+        ]),
       );
 
       component.sinceDays = 30;
@@ -104,7 +104,7 @@ describe("NotesDashboardComponent", () => {
     it("should mark children without stats on last note", fakeAsync(() => {
       const childId1 = "1";
       mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
-        new Map([[childId1, Number.POSITIVE_INFINITY]])
+        new Map([[childId1, Number.POSITIVE_INFINITY]]),
       );
 
       component.ngOnInit();
@@ -119,7 +119,7 @@ describe("NotesDashboardComponent", () => {
 
     it("should load notes related to the configured entity", () => {
       mockChildrenService.getDaysSinceLastNoteOfEachEntity.and.resolveTo(
-        new Map()
+        new Map(),
       );
       const entity = RecurringActivity.ENTITY_TYPE;
 
@@ -128,7 +128,7 @@ describe("NotesDashboardComponent", () => {
       component.ngOnInit();
 
       expect(
-        mockChildrenService.getDaysSinceLastNoteOfEachEntity
+        mockChildrenService.getDaysSinceLastNoteOfEachEntity,
       ).toHaveBeenCalledWith(entity, jasmine.anything());
     });
   });

@@ -31,7 +31,7 @@ export const timeUnitsPrimary: { unit: unitOfTime.Base; label: string }[] = [
 
 const timeunitLabelMap: Map<unitOfTime.Base, string> = new Map([
   ...timeUnitsPrimary.map(
-    (e) => [e.unit, e.label] as [unitOfTime.Base, string]
+    (e) => [e.unit, e.label] as [unitOfTime.Base, string],
   ),
   // alternative spellings
   ["year", $localize`:time unit:years`],

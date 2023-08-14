@@ -10,10 +10,10 @@ import { first, skipWhile } from "rxjs/operators";
  * otherwise continues to emit values from the source observable
  */
 export function waitForChangeTo<State>(
-  state: State
+  state: State,
 ): MonoTypeOperatorFunction<State> {
   return pipe(
     skipWhile((nextState) => nextState !== state),
-    first()
+    first(),
   );
 }

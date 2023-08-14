@@ -90,7 +90,7 @@ describe("RollCallComponent", () => {
     await fixture.whenStable();
 
     const statusOptions = fixture.debugElement.queryAll(
-      By.css(".group-select-option")
+      By.css(".group-select-option"),
     );
     expect(statusOptions).toHaveSize(options.length);
   });
@@ -209,7 +209,7 @@ describe("RollCallComponent", () => {
     testParticipantsAreSorted(
       [participant1, participant2],
       [participant1, participant2],
-      undefined
+      undefined,
     );
   }));
 
@@ -221,7 +221,7 @@ describe("RollCallComponent", () => {
     testParticipantsAreSorted(
       [participant1, participant2, participant3],
       [participant3, participant1, participant2],
-      "name"
+      "name",
     );
   }));
 
@@ -234,14 +234,14 @@ describe("RollCallComponent", () => {
     testParticipantsAreSorted(
       [participant1, participant2],
       [participant2, participant1],
-      "priority"
+      "priority",
     );
   }));
 
   function testParticipantsAreSorted(
     participantsInput: Child[],
     expectedParticipantsOrder: Child[],
-    sortParticipantsBy: string
+    sortParticipantsBy: string,
   ) {
     const event = new Note();
     for (const p of participantsInput) {
@@ -259,7 +259,7 @@ describe("RollCallComponent", () => {
 
     expect(component.children).toEqual(expectedParticipantsOrder);
     expect(component.eventEntity.children).toEqual(
-      expectedParticipantsOrder.map((p) => p.getId())
+      expectedParticipantsOrder.map((p) => p.getId()),
     );
     flush();
   }

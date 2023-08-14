@@ -28,7 +28,7 @@ export class DynamicComponentDirective implements OnChanges {
   constructor(
     public viewContainerRef: ViewContainerRef,
     private components: ComponentRegistry,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
   ) {}
 
   async ngOnChanges() {
@@ -41,7 +41,7 @@ export class DynamicComponentDirective implements OnChanges {
     }
 
     const component = await this.components.get(
-      this.appDynamicComponent.component
+      this.appDynamicComponent.component,
     )();
 
     this.viewContainerRef.clear();
@@ -57,7 +57,7 @@ export class DynamicComponentDirective implements OnChanges {
 
   private setInputProperties(proto, component) {
     const inputs = Object.keys(proto.constructor["ɵcmp"].inputs).filter(
-      (input) => this.appDynamicComponent.config?.[input]
+      (input) => this.appDynamicComponent.config?.[input],
     );
     const inputValues = pick(this.appDynamicComponent.config, inputs);
     const initialValues = pick(component, inputs);
@@ -73,10 +73,10 @@ export class DynamicComponentDirective implements OnChanges {
             [prop]: new SimpleChange(
               initialValues[prop],
               inputValues[prop],
-              true
+              true,
             ),
           }),
-        {}
+        {},
       );
       component["ngOnChanges"](changes);
     }

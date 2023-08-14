@@ -70,10 +70,10 @@ describe("AttendanceCalendarComponent", () => {
     });
 
     expect(
-      moment(component.minDate).isSame(moment("2020-01-01"), "day")
+      moment(component.minDate).isSame(moment("2020-01-01"), "day"),
     ).toBeTrue();
     expect(
-      moment(component.maxDate).isSame(moment("2020-01-31"), "day")
+      moment(component.maxDate).isSame(moment("2020-01-31"), "day"),
     ).toBeTrue();
   });
 
@@ -87,10 +87,10 @@ describe("AttendanceCalendarComponent", () => {
     note.addChild(absentChild.getId());
     note.addChild(childWithoutAttendance.getId());
     const presentAttendance = defaultAttendanceStatusTypes.find(
-      (it) => it.id === "PRESENT"
+      (it) => it.id === "PRESENT",
     );
     const absentAttendance = defaultAttendanceStatusTypes.find(
-      (it) => it.id === "ABSENT"
+      (it) => it.id === "ABSENT",
     );
     note.getAttendance(attendedChild.getId()).status = presentAttendance;
     note.getAttendance(absentChild.getId()).status = absentAttendance;

@@ -12,7 +12,7 @@
 export function makeCustomMatcher<T>(
   condition: (actual: T, ...expected: any[]) => boolean,
   compareMessage: (actual: T, ...expected: any[]) => string,
-  negativeCompareMessage: (actual: T, ...expected: any[]) => string
+  negativeCompareMessage: (actual: T, ...expected: any[]) => string,
 ): jasmine.CustomMatcher {
   return {
     compare: (value: T, ...expected: any[]) => {

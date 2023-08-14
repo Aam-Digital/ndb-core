@@ -33,13 +33,13 @@ describe("Utils", () => {
     const forth = { number: 11 };
 
     const sorted = [second, first, third, forth].sort(
-      sortByAttribute("number", "asc")
+      sortByAttribute("number", "asc"),
     );
 
     expect(sorted).toEqual([first, second, third, forth]);
 
     const sortedDesc = [forth, first, third, second].sort(
-      sortByAttribute("number", "desc")
+      sortByAttribute("number", "desc"),
     );
 
     expect(sortedDesc).toEqual([forth, third, second, first]);
@@ -51,13 +51,13 @@ describe("Utils", () => {
     const third = { number: undefined };
 
     const sorted = [second, third, first].sort(
-      sortByAttribute("number", "asc")
+      sortByAttribute("number", "asc"),
     );
 
     expect(sorted).toEqual([first, second, third]);
 
     const sortedDesc = [second, third, first].sort(
-      sortByAttribute("number", "desc")
+      sortByAttribute("number", "desc"),
     );
 
     expect(sortedDesc).toEqual([third, second, first]);

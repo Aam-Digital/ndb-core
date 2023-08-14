@@ -15,7 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { DefaultDatatype } from "../schema/default.datatype";
+import { Injectable } from "@angular/core";
 
 /**
  * Datatype for the EntitySchemaService transforming values to "number".
@@ -29,16 +30,16 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  *
  * `@DatabaseField({dataType: 'number'}) myValue: any;`
  */
-export const numberEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "number",
-  viewComponent: "DisplayText",
-  editComponent: "EditNumber",
+@Injectable()
+export class NumberDatatype extends DefaultDatatype<number, number> {
+  static dataType = "number";
+  editComponent = "EditNumber";
 
-  transformToDatabaseFormat: (value) => {
+  transformToDatabaseFormat(value) {
     return Number(value);
-  },
+  }
 
-  transformToObjectFormat: (value) => {
+  transformToObjectFormat(value) {
     return Number(value);
-  },
-};
+  }
+}

@@ -5,20 +5,20 @@
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </div>
 
-  <table mat-table [dataSource]="dataSource"  matSort class="full-width" aria-label="Table showing the conflicts">
+  <table
+    mat-table
+    [dataSource]="dataSource"
+    matSort
+    class="full-width"
+    aria-label="Table showing the conflicts"
+  >
     <ng-container matColumnDef="id">
       <th mat-header-cell *matHeaderCellDef mat-sort-header>_id</th>
       <td mat-cell *matCellDef="let row">{{ row.id }}</td>
     </ng-container>
 
     <ng-container matColumnDef="data" class="full-width">
-      <th
-        mat-header-cell
-        *matHeaderCellDef
-        mat-sort-header
-      >
-        Data
-      </th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>Data</th>
       <td mat-cell *matCellDef="let row">
         <app-compare-rev
           *ngFor="let rev of row.key"

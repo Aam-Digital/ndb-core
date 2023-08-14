@@ -1,16 +1,16 @@
 import { NgModule } from "@angular/core";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { locationEntitySchemaDataType } from "./location-data-type";
 import { ComponentRegistry } from "../../dynamic-components";
 import { locationComponents } from "./location-components";
+import { DefaultDatatype } from "../../core/entity/schema/default.datatype";
+import { LocationDatatype } from "./location.datatype";
 
-@NgModule({})
+@NgModule({
+  providers: [
+    { provide: DefaultDatatype, useClass: LocationDatatype, multi: true },
+  ],
+})
 export class LocationModule {
-  constructor(
-    schemaService: EntitySchemaService,
-    components: ComponentRegistry
-  ) {
-    schemaService.registerSchemaDatatype(locationEntitySchemaDataType);
+  constructor(components: ComponentRegistry) {
     components.addAll(locationComponents);
   }
 }

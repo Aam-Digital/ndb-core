@@ -20,7 +20,7 @@ export class DownloadService {
   constructor(
     private dataTransformationService: DataTransformationService,
     private papa: Papa,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
   ) {}
 
   /**
@@ -34,12 +34,12 @@ export class DownloadService {
     data: any,
     format: ExportDataFormat,
     filename: string,
-    exportConfig?: ExportColumnConfig[]
+    exportConfig?: ExportColumnConfig[],
   ) {
     const blobData = await this.getFormattedBlobData(
       data,
       format,
-      exportConfig
+      exportConfig,
     );
     const filenameWithExtension = filename + "." + format.toLowerCase();
     const link = this.createDownloadLink(blobData, filenameWithExtension);
@@ -49,14 +49,14 @@ export class DownloadService {
   private async getFormattedBlobData(
     data: any,
     format: ExportDataFormat,
-    exportConfig?: ExportColumnConfig[]
+    exportConfig?: ExportColumnConfig[],
   ): Promise<Blob> {
     let result = "";
 
     if (exportConfig) {
       data = await this.dataTransformationService.transformData(
         data,
-        exportConfig
+        exportConfig,
       );
     }
 

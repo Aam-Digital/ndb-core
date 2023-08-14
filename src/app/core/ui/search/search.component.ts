@@ -65,13 +65,13 @@ export class SearchComponent {
   constructor(
     private router: Router,
     private userRoleGuard: UserRoleGuard,
-    private searchService: SearchService
+    private searchService: SearchService,
   ) {
     this.results = this.formControl.valueChanges.pipe(
       debounceTime(SearchComponent.INPUT_DEBOUNCE_TIME_MS),
       tap((next) => (this.state = this.updateState(next))),
       concatMap((next: string) => this.searchResults(next)),
-      untilDestroyed(this)
+      untilDestroyed(this),
     );
   }
 
@@ -119,7 +119,7 @@ export class SearchComponent {
 
   private prepareResults(entities: Entity[]): Entity[] {
     return entities.filter((entity) =>
-      this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route)
+      this.userRoleGuard.checkRoutePermissions(entity.getConstructor().route),
     );
   }
 }

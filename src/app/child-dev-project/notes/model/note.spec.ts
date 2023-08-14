@@ -1,14 +1,13 @@
 import { Note } from "./note";
 import { warningLevels } from "../../warning-levels";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { waitForAsync } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import {
   ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceLogicalStatus,
   AttendanceStatusType,
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
-import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
@@ -24,7 +23,10 @@ import {
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
-import { createTestingConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum-testing";
+import { CoreModule } from "../../../core/core.module";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { DefaultDatatype } from "../../../core/entity/schema/default.datatype";
+import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -84,26 +86,42 @@ describe("Note", () => {
     testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID] =
       testStatusTypes;
 
-    entitySchemaService = new EntitySchemaService();
-    entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
-    );
+    const mockEnumService = jasmine.createSpyObj(["getEnumValues"]);
+    mockEnumService.getEnumValues.and.returnValue(testStatusTypes);
+
+    TestBed.configureTestingModule({
+      imports: [CoreModule],
+      providers: [
+        ComponentRegistry,
+        {
+          provide: DefaultDatatype,
+          useValue: new ConfigurableEnumDatatype(mockEnumService),
+          multi: true,
+        },
+      ],
+    });
+    entitySchemaService = TestBed.inject(EntitySchemaService);
   }));
 
-  testEntitySubclass("Note", Note, {
-    _id: "Note:some-id",
+  testEntitySubclass(
+    "Note",
+    Note,
+    {
+      _id: "Note:some-id",
 
-    children: ["1", "2", "5"],
-    childrenAttendance: [],
-    schools: [],
-    relatedEntities: [],
-    date: "2023-05-01",
-    subject: "Note Subject",
-    text: "Note text",
-    authors: ["1"],
-    category: defaultInteractionTypes[1].id,
-    warningLevel: warningLevels[2].id,
-  });
+      children: ["1", "2", "5"],
+      childrenAttendance: [],
+      schools: [],
+      relatedEntities: [],
+      date: "2023-05-01",
+      subject: "Note Subject",
+      text: "Note text",
+      authors: ["1"],
+      category: defaultInteractionTypes[1].id,
+      warningLevel: warningLevels[2].id,
+    },
+    true,
+  );
 
   it("should return the correct childIds", function () {
     // sort since we don't care about the order
@@ -148,7 +166,7 @@ describe("Note", () => {
     const interactionTypeKey = "HOME_VISIT";
     const entity = new Note();
     entity.category = testInteractionTypes.find(
-      (c) => c.id === interactionTypeKey
+      (c) => c.id === interactionTypeKey,
     );
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
@@ -196,7 +214,7 @@ describe("Note", () => {
       isInvalidOption: true,
     } as any);
     expect(reloadedEntity.getAttendance("3").status).toEqual(
-      NullAttendanceStatusType
+      NullAttendanceStatusType,
     );
     expect(reloadedEntity.getAttendance("1").status).toEqual(status);
   });
@@ -226,7 +244,7 @@ describe("Note", () => {
     note.getAttendance("absentChild").status = absent;
 
     const presentChildren = note.countWithStatus(
-      AttendanceLogicalStatus.PRESENT
+      AttendanceLogicalStatus.PRESENT,
     );
     expect(presentChildren).toBe(2);
 

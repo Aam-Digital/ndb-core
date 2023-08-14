@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EditConfigurableEnumComponent } from "./edit-configurable-enum.component";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -10,11 +10,11 @@ describe("EditConfigurableEnumComponent", () => {
   let component: EditConfigurableEnumComponent;
   let fixture: ComponentFixture<EditConfigurableEnumComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [EditConfigurableEnumComponent, MockedTestingModule.withState()],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditConfigurableEnumComponent);

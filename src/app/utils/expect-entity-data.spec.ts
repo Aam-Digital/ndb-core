@@ -12,11 +12,11 @@ import { EntityMapperService } from "../core/entity/entity-mapper.service";
 export async function expectEntitiesToBeInDatabase(
   expectedEntities: Entity[],
   ignoreId: boolean = false,
-  onlyExpected: boolean = false
+  onlyExpected: boolean = false,
 ) {
   const entityMapperService = TestBed.inject(EntityMapperService);
   const actualData = await entityMapperService.loadType(
-    expectedEntities[0].getConstructor()
+    expectedEntities[0].getConstructor(),
   );
 
   expectEntitiesToMatch(actualData, expectedEntities, ignoreId, onlyExpected);
@@ -33,7 +33,7 @@ export function expectEntitiesToMatch(
   actualEntities: any[],
   expectedEntities: Entity[],
   ignoreId: boolean = false,
-  onlyExpected: boolean = true
+  onlyExpected: boolean = true,
 ) {
   if (onlyExpected) {
     expect(actualEntities.length).toBe(expectedEntities.length);
@@ -104,7 +104,7 @@ function printDifferences(name: string, p1: any, p2: any) {
 function printPrimitiveDifferences(name: string, p1: any, p2: any) {
   if (p1 !== p2) {
     console.error(
-      `Attribute ${name} is not the same: Expected '${p1}' but got '${p2}'`
+      `Attribute ${name} is not the same: Expected '${p1}' but got '${p2}'`,
     );
   }
 }
@@ -112,7 +112,7 @@ function printPrimitiveDifferences(name: string, p1: any, p2: any) {
 function isNotSameType(name: string, p1: any, p2: any): boolean {
   if (typeof p1 !== typeof p2) {
     console.error(
-      `Expected attribute ${name} to be of type '${typeof p1}', but it is '${typeof p2}'`
+      `Expected attribute ${name} to be of type '${typeof p1}', but it is '${typeof p2}'`,
     );
     console.error(`Want:${p1}, got: ${p2}`);
     return false;
@@ -138,7 +138,7 @@ function printObjectDifferences(name: string, obj1: object, obj2: object) {
 function printArrayDifferences(name: string, a1: Array<any>, a2: Array<any>) {
   if (a1.length !== a2.length) {
     console.log(
-      `Attribute ${name}: Expected length: ${a1.length} is not ${a2.length}`
+      `Attribute ${name}: Expected length: ${a1.length} is not ${a2.length}`,
     );
   } else {
     for (let i = 0; i < a1.length; ++i) {

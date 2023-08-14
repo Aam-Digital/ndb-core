@@ -15,10 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { DefaultDatatype } from "../schema/default.datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { generateSubSchemaField } from "./datatype-array";
+import { generateSubSchemaField } from "./array.datatype";
+import { Injectable } from "@angular/core";
 
 /**
  * Datatype for the EntitySchemaService transforming values of a javascript `Map` recursively.
@@ -29,49 +30,53 @@ import { generateSubSchemaField } from "./datatype-array";
  *
  * `@DatabaseField({ innerDataType: 'month' }) dateMap: Map<string, Date>;`
  * will ensure that in the database this property is saved as "month" date string for each key
- * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `[['a', '2020-01'], ['b', '2020-04']]` in the database).
+ * using the {@link MonthDatatype} (e.g. resulting in `[['a', '2020-01'], ['b', '2020-04']]` in the database).
  */
-export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "map",
+@Injectable()
+export class MapDatatype extends DefaultDatatype<
+  Map<string, any>,
+  [string, any][]
+> {
+  static dataType = "map";
 
-  transformToDatabaseFormat: (
-    value: any[],
+  constructor(private schemaService: EntitySchemaService) {
+    super();
+  }
+
+  transformToDatabaseFormat(
+    value: Map<string, any>,
     schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-    parent
-  ) => {
+    parent,
+  ) {
     if (!(value instanceof Map)) {
       console.warn(
         'property to be saved with "map" EntitySchema is not of expected type',
-        value
+        value,
       );
-      return value;
+      return value as any;
     }
 
-    const innerElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.innerDataType
-    );
-    const result = [];
+    const innerElementDatatype: DefaultDatatype =
+      this.schemaService.getDatatypeOrDefault(schemaField.innerDataType);
+    const result: [string, any][] = [];
     value.forEach((item, key) => {
       result.push([
         key,
         innerElementDatatype.transformToDatabaseFormat(
           item,
           generateSubSchemaField(schemaField),
-          schemaService,
-          parent
+          parent,
         ),
       ]);
     });
     return result;
-  },
+  }
 
-  transformToObjectFormat: (
+  transformToObjectFormat(
     value: any[],
     schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-    parent
-  ) => {
+    parent,
+  ) {
     if (value instanceof Map) {
       // usually this shouldn't already be a map but in MockDatabase somehow this can happen
       return value;
@@ -79,25 +84,23 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     if (!Array.isArray(value) || value === null) {
       console.warn(
         'property to be loaded with "map" EntitySchema is not valid',
-        value
+        value,
       );
-      return value;
+      return value as any;
     }
 
-    const innerElementType: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.innerDataType
-    );
+    const innerElementType: DefaultDatatype =
+      this.schemaService.getDatatypeOrDefault(schemaField.innerDataType);
 
     const result = new Map();
     for (const keyValue of value) {
       const transformedElement = innerElementType.transformToObjectFormat(
         keyValue[1],
         generateSubSchemaField(schemaField),
-        schemaService,
-        parent
+        parent,
       );
       result.set(keyValue[0], transformedElement);
     }
     return result;
-  },
-};
+  }
+}

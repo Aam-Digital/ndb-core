@@ -35,7 +35,7 @@ describe("CompareRevComponent", () => {
       "shouldDeleteConflictingRevision",
     ]);
     mockResolutionService.shouldDeleteConflictingRevision.and.returnValue(
-      false
+      false,
     );
 
     const confDialogMock = jasmine.createSpyObj<ConfirmationDialogService>([
@@ -84,7 +84,7 @@ describe("CompareRevComponent", () => {
     await component.loadRev();
 
     expect(
-      mockResolutionService.shouldDeleteConflictingRevision
+      mockResolutionService.shouldDeleteConflictingRevision,
     ).toHaveBeenCalled();
     expect(mockDatabase.remove).toHaveBeenCalledWith(testConflictDoc);
     expect(component.resolution).toBeTruthy();

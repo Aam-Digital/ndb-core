@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { PrimaryActionComponent } from "./primary-action.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -8,12 +8,12 @@ describe("PrimaryActionComponent", () => {
   let component: PrimaryActionComponent;
   let fixture: ComponentFixture<PrimaryActionComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [PrimaryActionComponent, MockedTestingModule.withState()],
       providers: [{ provide: SwUpdate, useValue: {} }],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PrimaryActionComponent);

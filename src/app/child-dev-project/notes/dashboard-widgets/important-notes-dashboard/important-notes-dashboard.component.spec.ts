@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { ImportantNotesDashboardComponent } from "./important-notes-dashboard.component";
@@ -24,8 +25,8 @@ describe("ImportantNotesDashboardComponent", () => {
     return note;
   });
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [
         MockedTestingModule.withState(LoginState.LOGGED_IN, mockNotes),
         ImportantNotesDashboardComponent,
@@ -39,7 +40,7 @@ describe("ImportantNotesDashboardComponent", () => {
         },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ImportantNotesDashboardComponent);

@@ -33,9 +33,9 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     Angulartics2Module,
     ExportDataDirective,
     FontAwesomeModule,
-    MatProgressBarModule
+    MatProgressBarModule,
   ],
-  standalone: true
+  standalone: true,
 })
 export class SelectReportComponent implements OnChanges {
   @Input() reports: ReportConfig[];

@@ -8,7 +8,10 @@
 }
 
 .summary-period {
-  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, hint-text);
+  color: mat.get-color-from-palette(
+    mat.$light-theme-foreground-palette,
+    hint-text
+  );
   font-size: 110%;
 }
 
@@ -17,13 +20,17 @@
 }
 
 .summary-row {
-  background-color: mat.get-color-from-palette(mat.$light-theme-background-palette, background, 50%);
+  background-color: mat.get-color-from-palette(
+    mat.$light-theme-background-palette,
+    background,
+    50%
+  );
 }
 
 .summary-cell {
-   font-size: 150%;
-   text-align: right;
-   padding: sizes.$small;
+  font-size: 150%;
+  text-align: right;
+  padding: sizes.$small;
 }
 
 :host {

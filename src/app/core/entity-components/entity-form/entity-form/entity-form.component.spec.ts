@@ -45,7 +45,7 @@ describe("EntityFormComponent", () => {
     component.columns = columns;
     component.form = TestBed.inject(EntityFormService).createFormGroup(
       component.columns[0],
-      component.entity
+      component.entity,
     );
     component.ngOnChanges({ entity: true, form: true } as any);
     fixture.detectChanges();
@@ -61,7 +61,7 @@ describe("EntityFormComponent", () => {
       { _rev: "0" },
       { name: "updated" },
       { name: "updated", _rev: "1" },
-      { name: "updated", _rev: "1" }
+      { name: "updated", _rev: "1" },
     );
   });
 
@@ -73,7 +73,7 @@ describe("EntityFormComponent", () => {
       {},
       formValues,
       remoteValues,
-      remoteValues
+      remoteValues,
     );
   });
 
@@ -85,7 +85,7 @@ describe("EntityFormComponent", () => {
       {},
       formValues,
       remoteValues,
-      formValues
+      formValues,
     );
   });
 
@@ -106,7 +106,7 @@ describe("EntityFormComponent", () => {
         projectNumber: "p2",
         name: "changed",
         _rev: "new rev",
-      }
+      },
     );
   });
 
@@ -124,7 +124,7 @@ describe("EntityFormComponent", () => {
     originalEntity: Partial<Child>,
     formChanges: Partial<Child>,
     remoteChanges: Partial<Child>,
-    expectedFormValues: Partial<Child>
+    expectedFormValues: Partial<Child>,
   ) {
     setupInitialForm(Object.assign(new Child(), originalEntity), testColumns);
 
@@ -142,7 +142,7 @@ describe("EntityFormComponent", () => {
     const entityAfterSave = Object.assign(
       {},
       component.entity,
-      component.form.getRawValue()
+      component.form.getRawValue(),
     );
     for (const [key, value] of Object.entries(expectedFormValues)) {
       const form = component.form.get(key);
@@ -152,7 +152,7 @@ describe("EntityFormComponent", () => {
       expect(entityAfterSave[key]).toEqual(value);
     }
     expect(mockConfirmation.getConfirmation.calls.any()).toBe(
-      popupAction !== "not-shown"
+      popupAction !== "not-shown",
     );
   }
 });

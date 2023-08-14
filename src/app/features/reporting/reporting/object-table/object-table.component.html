@@ -1,5 +1,7 @@
 <table
-  mat-table [dataSource]="dataSource" matSort
+  mat-table
+  [dataSource]="dataSource"
+  matSort
   class="full-width"
   i18n-aria-label="Label for table showing report result"
   aria-label="Table showing the report results"
@@ -11,7 +13,9 @@
   <tr mat-header-row *matHeaderRowDef="columns"></tr>
   <tr mat-row *matRowDef="let row; columns: columns"></tr>
 </table>
-<mat-paginator [pageSizeOptions]="[10, 50, 100]"
-               showFirstLastButtons
-               aria-label="Select page of periodic elements">
+<mat-paginator
+  [pageSizeOptions]="[10, 50, 100]"
+  showFirstLastButtons
+  aria-label="Select page of periodic elements"
+>
 </mat-paginator>

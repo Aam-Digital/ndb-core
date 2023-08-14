@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../edit-component";
 import { CustomNumberValidators } from "../../../../../utils/custom-number-validators";
 import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
@@ -19,7 +19,10 @@ import { ErrorHintComponent } from "../../error-hint/error-hint.component";
   ],
   standalone: true,
 })
-export class EditNumberComponent extends EditComponent<number> {
+export class EditNumberComponent
+  extends EditComponent<number>
+  implements OnInit
+{
   ngOnInit() {
     super.ngOnInit();
     const newValidators = [CustomNumberValidators.isNumber];

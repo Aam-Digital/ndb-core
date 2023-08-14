@@ -15,7 +15,7 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
   {
     direction,
     active,
-  }: { direction: "asc" | "desc" | ""; active: PROPERTY | "" }
+  }: { direction: "asc" | "desc" | ""; active: PROPERTY | "" },
 ): TableRow<OBJECT>[] {
   if (direction === "" || !active) {
     return data;
@@ -33,7 +33,7 @@ export function tableSort<OBJECT extends Entity, PROPERTY extends keyof OBJECT>(
 
 function getComparableValue<OBJECT, PROPERTY extends keyof OBJECT>(
   obj: OBJECT,
-  key: PROPERTY
+  key: PROPERTY,
 ): number | string | Symbol {
   let value = obj[key];
   if (Ordering.hasOrdinalValue(value)) {

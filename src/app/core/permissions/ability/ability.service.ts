@@ -31,7 +31,7 @@ export class AbilityService {
     private sessionService: SessionService,
     private entityMapper: EntityMapperService,
     private permissionEnforcer: PermissionEnforcerService,
-    private logger: LoggingService
+    private logger: LoggingService,
   ) {}
 
   initializeRules() {
@@ -59,7 +59,7 @@ export class AbilityService {
       // No rules or only default rules defined
       const user = this.sessionService.getCurrentUser();
       this.logger.warn(
-        `no rules found for user "${user?.name}" with roles "${user?.roles}"`
+        `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
     }
     this.updateAbilityWithRules(userRules);
@@ -84,7 +84,7 @@ export class AbilityService {
 
   private interpolateUser(
     rules: DatabaseRule[],
-    user: AuthUser
+    user: AuthUser,
   ): DatabaseRule[] {
     return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
       if (rawValue[0] !== "$") {

@@ -44,7 +44,7 @@ describe("LatestChangesDialogService", () => {
     });
 
     service = TestBed.inject<LatestChangesDialogService>(
-      LatestChangesDialogService
+      LatestChangesDialogService,
     );
   });
 
@@ -63,7 +63,7 @@ describe("LatestChangesDialogService", () => {
 
   it("should display changes if stored version differs", () => {
     const getSpy = spyOn(Storage.prototype, "getItem").and.returnValue(
-      "1.0-test"
+      "1.0-test",
     );
 
     service.showLatestChangesIfUpdated();

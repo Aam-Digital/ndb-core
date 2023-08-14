@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
-import { EntitySchemaService } from "../entity/schema/entity-schema.service";
-import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configurable-enum-datatype";
 import { ConfigurableEnumService } from "./configurable-enum.service";
+import { DefaultDatatype } from "../entity/schema/default.datatype";
+import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configurable-enum.datatype";
 
 /**
  * Provides a generic functionality to define enums (collections of selectable options) in the config database
@@ -44,15 +44,17 @@ import { ConfigurableEnumService } from "./configurable-enum.service";
  * To iterate over all enum values in a template (e.g. to set up a mat-select dropdown) you can use
  * {@link ConfigurableEnumDirective} similar to `*ngFor`.
  */
-@NgModule({})
+@NgModule({
+  providers: [
+    {
+      provide: DefaultDatatype,
+      useClass: ConfigurableEnumDatatype,
+      multi: true,
+    },
+  ],
+})
 export class ConfigurableEnumModule {
-  constructor(
-    private enumService: ConfigurableEnumService,
-    private entitySchemaService: EntitySchemaService
-  ) {
-    this.entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(enumService)
-    );
+  constructor(enumService: ConfigurableEnumService) {
     enumService.preLoadEnums();
   }
 }

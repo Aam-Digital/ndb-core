@@ -16,13 +16,18 @@
  */
 
 import { EntitySchemaField } from "./entity-schema-field";
-import { EntitySchemaService } from "./entity-schema.service";
 import { Entity } from "../model/entity";
+import { ColumnMapping } from "../../../features/import/column-mapping";
 
 /**
- * Interface to be implemented by any Datatype transformer of the Schema system.
+ * Extend this class to define new data types (i.e. for properties of entities)
+ * and provide your implementation using Angular DI:
+ * `{ provide: DefaultDatatype, useClass: MyCustomDatatype, multi: true },`
+ *
+ * This class is also used as the default fallback Datatype for the EntitySchemaService that keeps values unchanged between database and entity instance.
+ * This type is automatically used whenever no fitting Datatype can be found for that config or TypeScript type.
  */
-export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
+export class DefaultDatatype<EntityType = any, DBType = any> {
   /**
    * Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.
    *
@@ -32,7 +37,10 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
    * that EntitySchemaDatatype without the need to explicitly state the dataType config in the annotation
    * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
    */
-  name: string;
+  static dataType: string;
+  get dataType(): string {
+    return (this.constructor as typeof DefaultDatatype).dataType;
+  }
 
   /**
    * The default component how this datatype should be displayed in lists and forms.
@@ -40,9 +48,8 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
    * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
    * decorator
    */
-  viewComponent?: string;
-
-  editComponent?: string;
+  viewComponent = "DisplayText";
+  editComponent = "EditText";
 
   /**
    * Transformation function taking a value in the format that is used in entity instances and returning the value
@@ -51,15 +58,15 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
    * @param value The value (in Entity format) to be transformed
    * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
    *          This can be set as a parameter to the `@DatabaseField()` annotation in Entity classes.
-   * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
   transformToDatabaseFormat(
     value: EntityType,
     schemaField?: EntitySchemaField,
-    schemaService?: EntitySchemaService,
-    parent?: Entity
-  ): DBType;
+    parent?: Entity,
+  ): DBType {
+    return value as any;
+  }
 
   /**
    * Transformation function taking a value in the format that is used in database objects and returning the value
@@ -68,13 +75,43 @@ export interface EntitySchemaDatatype<EntityType = any, DBType = any> {
    * @param value The value (in database format) to be transformed
    * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
    *          This can be set as a parameter to the `@DatabaseField()` annotation in Entity classes.
-   * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
   transformToObjectFormat(
     value: DBType,
     schemaField?: EntitySchemaField,
-    schemaService?: EntitySchemaService,
-    parent?: any
-  ): EntityType;
+    parent?: any,
+  ): EntityType {
+    return value as any;
+  }
+
+  /**
+   * The function used to map values from the import data to values in the entities to be created.
+   * @param val The value from an imported cell to be mapped
+   * @param schemaField The schema field definition for the target property into which the value is mapped
+   * @param additional config as returned by the configComponent
+   */
+  importMapFunction(
+    val: any,
+    schemaField: EntitySchemaField,
+    additional?: any,
+  ): EntityType {
+    return this.transformToObjectFormat(val, schemaField);
+  }
+
+  /**
+   * A component to be display as a dialog to configure the transformation function
+   * (e.g. defining a format or mapping)
+   */
+  importConfigComponent?: string;
+
+  /**
+   * Output a label indicating whether the given column mapping needs user configuration for the "additional" config
+   * or has a valid, complete "additional" config.
+   * returns "undefined" if no user action is required.
+   * @param col
+   */
+  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
+    return undefined;
+  }
 }

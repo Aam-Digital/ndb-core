@@ -36,7 +36,7 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
 
   constructor(
     private sessionService: SessionService,
-    private entityMapperService: EntityMapperService
+    private entityMapperService: EntityMapperService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {

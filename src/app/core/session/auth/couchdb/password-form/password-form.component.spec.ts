@@ -84,7 +84,7 @@ describe("PasswordFormComponent", () => {
     tick();
     expect(mockSessionService.login).toHaveBeenCalledWith(
       "testUser",
-      "Password1-"
+      "Password1-",
     );
     flush();
   }));

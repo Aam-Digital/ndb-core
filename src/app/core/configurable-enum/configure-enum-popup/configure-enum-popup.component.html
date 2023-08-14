@@ -18,7 +18,7 @@
       matIconPrefix
       class="grab-icon margin-right-small"
     ></fa-icon>
-    <input matInput [(ngModel)]="v.label"/>
+    <input matInput [(ngModel)]="v.label" />
     <button mat-icon-button matIconSuffix (click)="delete(v, i)">
       <fa-icon icon="trash"></fa-icon>
     </button>
@@ -26,11 +26,5 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button
-    mat-raised-button
-    mat-dialog-close
-    i18n="Close popup"
-  >
-    Close
-  </button>
+  <button mat-raised-button mat-dialog-close i18n="Close popup">Close</button>
 </mat-dialog-actions>

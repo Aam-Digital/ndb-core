@@ -27,7 +27,7 @@ export class ConfigService {
   constructor(
     private entityMapper: EntityMapperService,
     private logger: LoggingService,
-    private ability: EntityAbility
+    private ability: EntityAbility,
   ) {
     this.loadConfig();
     this.entityMapper
@@ -80,12 +80,12 @@ export class ConfigService {
 
     if (configString.includes("ImportantNotesComponent")) {
       this.logger.warn(
-        "Legacy Config: ImportantNotesComponent found - you should use 'ImportantNotesDashboard' instead"
+        "Legacy Config: ImportantNotesComponent found - you should use 'ImportantNotesDashboard' instead",
       );
     }
 
     await this.migrateEnumsToEntities(config).catch((err) =>
-      this.logger.error(`ConfigurableEnum migration error: ${err}`)
+      this.logger.error(`ConfigurableEnum migration error: ${err}`),
     );
 
     return config;
@@ -93,7 +93,7 @@ export class ConfigService {
 
   private async migrateEnumsToEntities(config: Config) {
     const enumValues = Object.entries(config.data).filter(([key]) =>
-      key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX)
+      key.startsWith(CONFIGURABLE_ENUM_CONFIG_PREFIX),
     );
     if (enumValues.length === 0) {
       return;

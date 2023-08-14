@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { EntitySelectComponent } from "./entity-select.component";
 import { Entity } from "../../../entity/model/entity";
@@ -24,8 +25,8 @@ describe("EntitySelectComponent", () => {
   const testChildren: Entity[] = [new Child(), new Child()];
   const otherEntities: Entity[] = [new School()];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [
         EntitySelectComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
@@ -35,7 +36,7 @@ describe("EntitySelectComponent", () => {
         ]),
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySelectComponent);
@@ -77,7 +78,7 @@ describe("EntitySelectComponent", () => {
 
     component.selectedEntities.forEach((s) => expect(s).toBeInstanceOf(User));
     expect(component.selectedEntities.map((s) => s.getId())).toEqual(
-      expectation
+      expectation,
     );
   }));
 
@@ -142,7 +143,7 @@ describe("EntitySelectComponent", () => {
       .filter((c) => c.getId() !== testUsers[0].getId())
       .map((c) => c.getId());
     expect(component.selectionChange.emit).toHaveBeenCalledWith(
-      remainingChildren
+      remainingChildren,
     );
   });
 

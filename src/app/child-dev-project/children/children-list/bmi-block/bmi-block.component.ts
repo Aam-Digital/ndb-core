@@ -29,7 +29,7 @@ export class BmiBlockComponent implements OnInit {
       .then((results) => {
         if (results.length > 0) {
           this.currentHealthCheck = results.reduce((prev, cur) =>
-            cur.date > prev.date ? cur : prev
+            cur.date > prev.date ? cur : prev,
           );
         }
       });

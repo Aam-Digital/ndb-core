@@ -18,7 +18,9 @@
 import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { waitForAsync } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
+import { CoreModule } from "../../core.module";
+import { ComponentRegistry } from "../../../dynamic-components";
 
 describe("Schema data type: schema-embed", () => {
   class InnerClass {
@@ -45,11 +47,13 @@ describe("Schema data type: schema-embed", () => {
 
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [CoreModule],
+      providers: [ComponentRegistry],
+    });
+    entitySchemaService = TestBed.inject(EntitySchemaService);
+  }));
 
   it("applies inner schema transformation for database format", () => {
     const entity = new TestEntity();

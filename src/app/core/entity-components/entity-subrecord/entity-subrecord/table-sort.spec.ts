@@ -71,7 +71,7 @@ describe("TableSort", () => {
 
   function testSort(
     sortedArray: any[],
-    direction: "asc" | "desc" | "" = "asc"
+    direction: "asc" | "desc" | "" = "asc",
   ) {
     const objectArray = sortedArray.map((val) => ({ record: new E(val) }));
     for (let i = 0; i < sortedArray.length; i++) {

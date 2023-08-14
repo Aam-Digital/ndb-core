@@ -72,7 +72,7 @@ export class ActivityAttendanceSectionComponent implements OnInit {
             ? e.getAttendancePercentage(this.forChild)
             : e.getAttendancePercentageAverage(),
           this.locale,
-          "1.0-0"
+          "1.0-0",
         ),
     },
   ];
@@ -80,7 +80,7 @@ export class ActivityAttendanceSectionComponent implements OnInit {
   constructor(
     private attendanceService: AttendanceService,
     @Inject(LOCALE_ID) private locale: string,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnInit() {
@@ -91,12 +91,12 @@ export class ActivityAttendanceSectionComponent implements OnInit {
     this.loading = true;
     if (loadAll) {
       this.allRecords = await this.attendanceService.getActivityAttendances(
-        this.entity
+        this.entity,
       );
     } else {
       this.allRecords = await this.attendanceService.getActivityAttendances(
         this.entity,
-        moment().startOf("month").subtract(6, "months").toDate()
+        moment().startOf("month").subtract(6, "months").toDate(),
       );
     }
     this.updateDisplayedRecords(false);
@@ -113,7 +113,7 @@ export class ActivityAttendanceSectionComponent implements OnInit {
         !this.combinedAttendance.periodFrom ||
         moment(record.periodFrom).isBefore(
           this.combinedAttendance.periodFrom,
-          "day"
+          "day",
         )
       ) {
         this.combinedAttendance.periodFrom = record.periodFrom;
@@ -136,13 +136,13 @@ export class ActivityAttendanceSectionComponent implements OnInit {
         (r) =>
           r.countEventsAbsent(this.forChild) +
             r.countEventsPresent(this.forChild) >
-          0
+          0,
       );
     }
 
     if (this.records?.length > 0) {
       this.records.sort(
-        (a, b) => b.periodFrom.getTime() - a.periodFrom.getTime()
+        (a, b) => b.periodFrom.getTime() - a.periodFrom.getTime(),
       );
     }
   }
@@ -157,6 +157,6 @@ export class ActivityAttendanceSectionComponent implements OnInit {
   }
 
   getBackgroundColor?: (rec: ActivityAttendance) => string = (
-    rec: ActivityAttendance
+    rec: ActivityAttendance,
   ) => rec.getColor(this.forChild);
 }

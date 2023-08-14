@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { BehaviorSubject, concatMap, of, Subject } from "rxjs";
@@ -38,7 +38,10 @@ import { ErrorHintComponent } from "../../../core/entity-components/entity-utils
   standalone: true,
   styleUrls: ["./edit-location.component.scss"],
 })
-export class EditLocationComponent extends EditComponent<GeoResult> {
+export class EditLocationComponent
+  extends EditComponent<GeoResult>
+  implements OnInit
+{
   filteredOptions = new Subject<GeoResult[]>();
   loading = false;
   nothingFound = false;
@@ -47,7 +50,10 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
   private inputStream = new Subject<string>();
   private lastSearch: string;
 
-  constructor(private location: GeoService, private dialog: MatDialog) {
+  constructor(
+    private location: GeoService,
+    private dialog: MatDialog,
+  ) {
     super();
   }
 
@@ -60,7 +66,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
         filter((input) => this.isRelevantInput(input)),
         tap(() => (this.loading = true)),
         debounceTime(3000),
-        concatMap((res) => this.getGeoLookupResult(res))
+        concatMap((res) => this.getGeoLookupResult(res)),
       )
       .subscribe((res) => this.filteredOptions.next(res));
   }
@@ -95,7 +101,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
         this.lastSearch = searchTerm;
         this.loading = false;
         this.nothingFound = res.length === 0;
-      })
+      }),
     );
   }
 
@@ -136,7 +142,7 @@ export class EditLocationComponent extends EditComponent<GeoResult> {
     };
     return this.location.reverseLookup(coords).pipe(
       map((res) => (res["error"] ? fallback : res)),
-      catchError(() => of(fallback))
+      catchError(() => of(fallback)),
     );
   }
 }

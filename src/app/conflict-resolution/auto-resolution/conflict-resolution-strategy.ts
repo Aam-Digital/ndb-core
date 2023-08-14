@@ -7,9 +7,8 @@ import { InjectionToken } from "@angular/core";
  *
  * see {@link ConflictResolutionModule}
  */
-export const CONFLICT_RESOLUTION_STRATEGY = new InjectionToken<ConflictResolutionStrategy>(
-  "ConflictResolutionStrategy"
-);
+export const CONFLICT_RESOLUTION_STRATEGY =
+  new InjectionToken<ConflictResolutionStrategy>("ConflictResolutionStrategy");
 
 /**
  * Implement this interface to provide custom strategies how certain conflicts of an Entity type can be resolved automatically.

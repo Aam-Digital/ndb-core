@@ -96,12 +96,15 @@ export class MapComponent implements AfterViewInit {
     timeInterval(),
     debounceTime(400),
     filter(({ interval }) => interval >= 400),
-    map(({ value }) => value)
+    map(({ value }) => value),
   );
 
   @Output() entityClick = new EventEmitter<Entity>();
 
-  constructor(configService: ConfigService, private dialog: MatDialog) {
+  constructor(
+    configService: ConfigService,
+    private dialog: MatDialog,
+  ) {
     const config = configService.getConfig<MapConfig>(MAP_CONFIG_KEY);
     if (config?.start) {
       this.start_location = config.start;
@@ -118,7 +121,7 @@ export class MapComponent implements AfterViewInit {
       zoom: 14,
     });
     this.map.addEventListener("click", (res) =>
-      this.clickStream.emit({ lat: res.latlng.lat, lon: res.latlng.lng })
+      this.clickStream.emit({ lat: res.latlng.lat, lon: res.latlng.lng }),
     );
 
     const tiles = L.tileLayer(
@@ -128,7 +131,7 @@ export class MapComponent implements AfterViewInit {
         minZoom: 3,
         attribution:
           '&copy; <a href="http://www.openstreetmap.org/copyright">OpenStreetMap</a>',
-      }
+      },
     );
     tiles.addTo(this.map);
     // this is necessary to remove gray spots when directly opening app on a page with the map
@@ -220,7 +223,7 @@ export class MapComponent implements AfterViewInit {
       .afterClosed()
       .subscribe(() =>
         // displayed properties might have changed in map view
-        this.updatedDisplayedProperties(data.displayedProperties)
+        this.updatedDisplayedProperties(data.displayedProperties),
       );
   }
 

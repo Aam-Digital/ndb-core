@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EditAgeComponent } from "./edit-age.component";
 import { setupEditComponent } from "../edit-component.spec";
@@ -13,11 +13,11 @@ describe("EditAgeComponent", () => {
   let fixture: ComponentFixture<EditAgeComponent>;
   let loader: HarnessLoader;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [EditAgeComponent, MockedTestingModule],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EditAgeComponent);

@@ -33,7 +33,7 @@ describe("SearchService", () => {
   async function runSearchTest(
     searchTerm: string,
     expectedResults: Entity[],
-    entitiesInDb?: Entity[]
+    entitiesInDb?: Entity[],
   ) {
     if (entitiesInDb) {
       await TestBed.inject(EntityMapperService).saveAll(entitiesInDb);

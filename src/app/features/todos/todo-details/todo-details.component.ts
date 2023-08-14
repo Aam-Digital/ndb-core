@@ -51,7 +51,7 @@ export class TodoDetailsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) data: DetailsComponentData,
     private dialogRef: MatDialogRef<any>,
     private todoService: TodoService,
-    private entityFormService: EntityFormService
+    private entityFormService: EntityFormService,
   ) {
     this.entity = data.entity as Todo;
     this.formColumns = [data.columns];
@@ -60,7 +60,7 @@ export class TodoDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.entityFormService.createFormGroup(
       [].concat(...this.formColumns),
-      this.entity
+      this.entity,
     );
   }
 

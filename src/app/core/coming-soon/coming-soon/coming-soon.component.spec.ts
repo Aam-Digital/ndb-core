@@ -21,7 +21,7 @@ describe("ComingSoonComponent", () => {
       paramMap: new BehaviorSubject(
         convertToParamMap({
           feature: testFeatureId,
-        })
+        }),
       ),
     };
 
@@ -47,7 +47,7 @@ describe("ComingSoonComponent", () => {
     mockActivatedRoute.paramMap.next(
       convertToParamMap({
         feature: testFeatureId,
-      })
+      }),
     );
 
     expect(component).toBeTruthy();

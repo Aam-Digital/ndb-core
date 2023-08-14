@@ -50,13 +50,13 @@ describe("PwaInstallService", () => {
         prompt: installSpy,
         preventDefault: () => {},
         userChoice: Promise.resolve({ outcome: "accepted" }),
-      })
+      }),
     );
 
     PwaInstallService.registerPWAInstallListener();
     expect(window.addEventListener).toHaveBeenCalledWith(
       "beforeinstallprompt",
-      jasmine.anything()
+      jasmine.anything(),
     );
     await expectAsync(PwaInstallService.canInstallDirectly).toBeResolved();
 

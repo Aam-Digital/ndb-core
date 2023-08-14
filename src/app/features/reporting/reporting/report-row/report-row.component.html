@@ -3,7 +3,12 @@
     <th mat-header-cell *matHeaderCellDef>
       <span style="padding-left: 40px" i18n="Table report header"> Name </span>
     </th>
-    <td mat-cell *matCellDef="let node" class="flex-row align-center" style="height: 52px">
+    <td
+      mat-cell
+      *matCellDef="let node"
+      class="flex-row align-center"
+      style="height: 52px"
+    >
       <button
         mat-icon-button
         [style.visibility]="node.isExpandable ? '' : 'hidden'"
@@ -24,10 +29,10 @@
   </ng-container>
 
   <ng-container matColumnDef="count">
-    <th mat-header-cell *matHeaderCellDef i18n="Table report header"> Count</th>
-    <td mat-cell *matCellDef="let node"> {{node.header.result}} </td>
+    <th mat-header-cell *matHeaderCellDef i18n="Table report header">Count</th>
+    <td mat-cell *matCellDef="let node">{{ node.header.result }}</td>
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>

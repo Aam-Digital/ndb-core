@@ -60,14 +60,14 @@ describe("UpdateManagerService", () => {
     const version = "1.1.1";
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      "update-" + version
+      "update-" + version,
     );
 
     createService();
 
     expect(location.reload).toHaveBeenCalled();
     expect(
-      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY)
+      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY),
     ).toBe(version);
   });
 
@@ -75,20 +75,20 @@ describe("UpdateManagerService", () => {
     const version = "1.1.1";
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      version
+      version,
     );
     service.notifyUserWhenUpdateAvailable();
     updateSubject.next({ type: "VERSION_READY" });
 
     expect(
-      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY)
+      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY),
     ).toBe("update-" + version);
 
     // reload is triggered by clicking button on the snackbar
     snackBarAction.next();
 
     expect(
-      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY)
+      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY),
     ).toBe(version);
   }));
 
@@ -130,17 +130,17 @@ describe("UpdateManagerService", () => {
 
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      "update-1.0.0"
+      "update-1.0.0",
     );
     createService();
 
     expect(
-      latestChangesDialog.showLatestChangesIfUpdated
+      latestChangesDialog.showLatestChangesIfUpdated,
     ).not.toHaveBeenCalled();
 
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      "1.0.0"
+      "1.0.0",
     );
     createService();
 
@@ -154,7 +154,7 @@ describe("UpdateManagerService", () => {
       snackBar,
       undefined,
       latestChangesDialog,
-      location
+      location,
     );
   }
 });

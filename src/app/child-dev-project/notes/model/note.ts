@@ -46,7 +46,7 @@ export class Note extends Entity {
   static create(
     date: Date,
     subject: string = "",
-    children: string[] = []
+    children: string[] = [],
   ): Note {
     const instance = new Note();
     instance.date = date;
@@ -280,7 +280,7 @@ export class Note extends Entity {
   countWithStatus(status: AttendanceLogicalStatus): number {
     const attendanceValues = this.childrenAttendance.values();
     return [...attendanceValues].filter(
-      (attendance) => attendance.status.countAs === status
+      (attendance) => attendance.status.countAs === status,
     ).length;
   }
 

@@ -7,7 +7,10 @@
 
 .feedback-section {
   width: 70%;
-  @include grid-layout.adaptive($min-block-width: 250px, $max-screen-width: 414px)
+  @include grid-layout.adaptive(
+    $min-block-width: 250px,
+    $max-screen-width: 414px
+  );
 }
 
 mat-dialog-content {

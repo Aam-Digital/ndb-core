@@ -3,6 +3,7 @@ import {
   fakeAsync,
   flush,
   TestBed,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { RollCallSetupComponent } from "./roll-call-setup.component";
@@ -23,7 +24,7 @@ describe("RollCallSetupComponent", () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockChildrenService = jasmine.createSpyObj(["queryActiveRelationsOf"]);
     mockChildrenService.queryActiveRelationsOf.and.resolveTo([]);
     mockAttendanceService = jasmine.createSpyObj([
@@ -40,7 +41,7 @@ describe("RollCallSetupComponent", () => {
         { provide: AttendanceService, useValue: mockAttendanceService },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(RollCallSetupComponent);

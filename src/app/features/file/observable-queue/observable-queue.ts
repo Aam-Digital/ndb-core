@@ -7,11 +7,11 @@ export class ObservableQueue {
   add<T>(obs: Observable<T>): Observable<T> {
     const newJob = this.jobQueue.pipe(
       concatMap(() => obs),
-      shareReplay()
+      shareReplay(),
     );
     this.jobQueue = newJob.pipe(
       last(),
-      catchError(() => of(undefined))
+      catchError(() => of(undefined)),
     );
     return newJob;
   }

@@ -227,7 +227,8 @@ export const defaultJsonConfig = {
         },
         {
           "id": "category"
-        }
+        },
+        { "id": "authors" },
       ],
       "exportConfig": [
         {"label": "event_id", "query": "_id"},
@@ -264,15 +265,15 @@ export const defaultJsonConfig = {
     }
   },
   "appConfig:note-details": {
-    topForm: ["date", "warningLevel", "category", "authors", "attachment"]
+    "topForm": ["date", "warningLevel", "category", "authors", "attachment"]
   },
   "entity:Note": {
-    attributes: [
+    "attributes": [
       {
-        name: "attachment",
-        schema: {
-          label: $localize`Attachment`,
-          dataType: "file"
+        "name": "attachment",
+        "schema": {
+          "label": $localize`Attachment`,
+          "dataType": "file"
         }
       }
     ]
@@ -632,12 +633,12 @@ export const defaultJsonConfig = {
                 "single": true,
                 "columns": [
                   {
-                    id: "start",
-                    visibleFrom: "sm",
+                    "id": "start",
+                    "visibleFrom": "sm",
                   },
                   {
-                    id: "end",
-                    visibleFrom: "sm",
+                    "id": "end",
+                    "visibleFrom": "sm",
                   },
                   "schoolId",
                   "schoolClass",
@@ -715,18 +716,18 @@ export const defaultJsonConfig = {
           ]
         },
         {
-          title: $localize`:Panel title:Observations`,
-          components: [
+          "title": $localize`:Panel title:Observations`,
+          "components": [
             {
-              title: "",
-              component: "HistoricalDataComponent",
-              config: [
+              "title": "",
+              "component": "HistoricalDataComponent",
+              "config": [
                 "date",
-                {id: "isMotivatedDuringClass", visibleFrom: "lg"},
-                {id: "isParticipatingInClass", visibleFrom: "lg"},
-                {id: "isInteractingWithOthers", visibleFrom: "lg"},
-                {id: "doesHomework", visibleFrom: "lg"},
-                {id: "asksQuestions", visibleFrom: "lg"},
+                { "id": "isMotivatedDuringClass", "visibleFrom": "lg" },
+                { "id": "isParticipatingInClass", "visibleFrom": "lg" },
+                { "id": "isInteractingWithOthers", "visibleFrom": "lg" },
+                { "id": "doesHomework", "visibleFrom": "lg" },
+                { "id": "asksQuestions", "visibleFrom": "lg" },
               ]
             }
           ]
@@ -771,9 +772,9 @@ export const defaultJsonConfig = {
         },
       ],
       "exportConfig": [
-        {label: "Title", query: "title"},
-        {label: "Type", query: "type"},
-        {label: "Assigned users", query: "assignedTo"}
+        { "label": "Title", "query": "title" },
+        { "label": "Type", "query": "type" },
+        { "label": "Assigned users", "query": "assignedTo" }
       ]
     }
   },
@@ -888,11 +889,11 @@ export const defaultJsonConfig = {
           "aggregationDefinitions": [
             {
               "query": `${EventNote.ENTITY_TYPE}:toArray[* date >= ? & date <= ?]`,
-              groupBy: {label: "Type", property: "category"},
+              "groupBy": { "label": "Type", "property": "category" },
               "subQueries": [
                 {
-                  query: ":getAttendanceArray:getAttendanceReport",
-                  subQueries: [
+                  "query": ":getAttendanceArray:getAttendanceReport",
+                  "subQueries": [
                     {
                       "label": $localize`:Name of a column of a report:Name`,
                       "query": `.participant:toEntities(Child).name`
@@ -925,7 +926,7 @@ export const defaultJsonConfig = {
           "aggregationDefinitions": [
             {
               "query": `${EducationalMaterial.ENTITY_TYPE}:toArray[*date >= ? & date <= ?]`,
-              "groupBy": {label: "Type", property: "materialType"},
+              "groupBy": { "label": "Type", "property": "materialType" },
               "subQueries": [
                 {
                   "label": "Number of events of handing out",
@@ -950,44 +951,44 @@ export const defaultJsonConfig = {
       {
         "name": "address",
         "schema": {
-          dataType: "location",
-          label: $localize`:Label for the address of a child:Address`
+          "dataType": "location",
+          "label": $localize`:Label for the address of a child:Address`
         }
       },
       {
         "name": "health_bloodGroup",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for a child attribute:Blood Group`
+          "dataType": "string",
+          "label": $localize`:Label for a child attribute:Blood Group`
         }
       },
       {
         "name": "religion",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for the religion of a child:Religion`
+          "dataType": "string",
+          "label": $localize`:Label for the religion of a child:Religion`
         }
       },
       {
         "name": "motherTongue",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for the mother tongue of a child:Mother Tongue`,
+          "dataType": "string",
+          "label": $localize`:Label for the mother tongue of a child:Mother Tongue`,
           description: $localize`:Tooltip description for the mother tongue of a child:The primary language spoken at home`,
         }
       },
       {
         "name": "health_lastDentalCheckup",
         "schema": {
-          dataType: "Date",
-          label: $localize`:Label for a child attribute:Last Dental Check-Up`
+          "dataType": "date",
+          "label": $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },
       {
         "name": "birth_certificate",
         "schema": {
-          dataType: "file",
-          label: $localize`:Label for a child attribute:Birth certificate`
+          "dataType": "file",
+          "label": $localize`:Label for a child attribute:Birth certificate`
         }
       }
     ]
@@ -997,50 +998,50 @@ export const defaultJsonConfig = {
       {
         "name": "name",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for the name of a school:Name`
+          "dataType": "string",
+          "label": $localize`:Label for the name of a school:Name`
         }
       },
       {
         "name": "privateSchool",
         "schema": {
-          dataType: "boolean",
-          label: $localize`:Label for if a school is a private school:Private School`
+          "dataType": "boolean",
+          "label": $localize`:Label for if a school is a private school:Private School`
         }
       },
       {
         "name": "language",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for the language of a school:Language`
+          "dataType": "string",
+          "label": $localize`:Label for the language of a school:Language`
         }
       },
       {
         "name": "address",
         "schema": {
-          dataType: "location",
-          label: $localize`:Label for the address of a school:Address`
+          "dataType": "location",
+          "label": $localize`:Label for the address of a school:Address`
         }
       },
       {
         "name": "phone",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for the phone number of a school:Phone Number`
+          "dataType": "string",
+          "label": $localize`:Label for the phone number of a school:Phone Number`
         }
       },
       {
         "name": "timing",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for the timing of a school:School Timing`
+          "dataType": "string",
+          "label": $localize`:Label for the timing of a school:School Timing`
         }
       },
       {
         "name": "remarks",
         "schema": {
-          dataType: "string",
-          label: $localize`:Label for the remarks for a school:Remarks`
+          "dataType": "string",
+          "label": $localize`:Label for the remarks for a school:Remarks`
         }
       }
     ]
@@ -1052,7 +1053,7 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Motivated`,
+          "label": $localize`:Label for a child attribute:Motivated`,
           description: $localize`:Description for a child attribute:The child is motivated during the class.`
         }
       },
@@ -1061,7 +1062,7 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Participating`,
+          "label": $localize`:Label for a child attribute:Participating`,
           description: $localize`:Description for a child attribute:The child is actively participating in the class.`
         }
       },
@@ -1070,7 +1071,7 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Interacting`,
+          "label": $localize`:Label for a child attribute:Interacting`,
           description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
         }
       },
@@ -1079,7 +1080,7 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Homework`,
+          "label": $localize`:Label for a child attribute:Homework`,
           description: $localize`:Description for a child attribute:The child does its homework.`
         }
       },
@@ -1088,32 +1089,32 @@ export const defaultJsonConfig = {
         "schema": {
           "dataType": "configurable-enum",
           "innerDataType": "rating-answer",
-          label: $localize`:Label for a child attribute:Asking Questions`,
+          "label": $localize`:Label for a child attribute:Asking Questions`,
           description: $localize`:Description for a child attribute:The child is asking questions during the class.`
         }
       },
     ]
   },
   "entity:User": {
-    attributes: [
+    "attributes": [
       {
-        name: "phone",
-        schema: {
-          dataType: "string",
-          label: $localize`:Label of user phone:Contact`
+        "name": "phone",
+        "schema": {
+          "dataType": "string",
+          "label": $localize`:Label of user phone:Contact`
         }
       },
     ]
   },
   "view:matching": {
-    component: "MatchingEntities",
-    config: {
-      rightSide: {
-        entityType: School.ENTITY_TYPE,
-        prefilter: {"privateSchool": true},
-        availableFilters: [{"id": "language"}],
+    "component": "MatchingEntities",
+    "config": {
+      "rightSide": {
+        "entityType": School.ENTITY_TYPE,
+        "prefilter": { "privateSchool": true },
+        "availableFilters": [{"id": "language"}],
       },
-      leftSide: {entityType: Child.ENTITY_TYPE},
+      "leftSide": { "entityType": Child.ENTITY_TYPE },
     }
   },
   "appConfig:matching-entities": {

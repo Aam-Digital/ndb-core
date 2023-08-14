@@ -4,6 +4,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { ChildrenService } from "../../children/children.service";
 import { Note } from "../model/note";
@@ -21,14 +22,14 @@ describe("NotesRelatedToEntityComponent", () => {
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockChildrenService = jasmine.createSpyObj(["getNotesRelatedTo"]);
     mockChildrenService.getNotesRelatedTo.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [NotesRelatedToEntityComponent, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
@@ -97,7 +98,7 @@ describe("NotesRelatedToEntityComponent", () => {
     tick();
 
     expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
-      component.entity.getId(true)
+      component.entity.getId(true),
     );
     expect(component.records).toEqual([n1, n2, n3]);
   }));

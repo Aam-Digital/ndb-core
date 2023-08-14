@@ -8,14 +8,14 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
         `Expected array ${util.pp(value)} to be empty but it has size ${
           value.length
         }`,
-      (value) => `Expected array ${util.pp(value)} is unexpectedly empty`
+      (value) => `Expected array ${util.pp(value)} is unexpectedly empty`,
     );
   },
   toBeFinite: () => {
     return makeCustomMatcher(
       (value: number) => Number.isFinite(value),
       (value) => `Expected number ${value} to be finite`,
-      (value) => `Expected number ${value} not to be finite`
+      (value) => `Expected number ${value} not to be finite`,
     );
   },
   toHaveOwnProperty: (util) => {
@@ -25,8 +25,8 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
         `Expected object ${util.pp(obj)} to to contain own property ${value}`,
       (obj: object, value: string) =>
         `Expected object ${util.pp(
-          obj
-        )} not to to contain own property ${value}`
+          obj,
+        )} not to to contain own property ${value}`,
     );
   },
   toBeDate: (util) => {
@@ -41,7 +41,9 @@ const genericMatchers: jasmine.CustomMatcherFactories = {
       (actual, expected) =>
         `Expected date ${util.pp(actual)} to equal ${expected}`,
       (actual, expected) =>
-        `Expected date ${util.pp(actual)} to be different than date ${expected}`
+        `Expected date ${util.pp(
+          actual,
+        )} to be different than date ${expected}`,
     );
   },
 };

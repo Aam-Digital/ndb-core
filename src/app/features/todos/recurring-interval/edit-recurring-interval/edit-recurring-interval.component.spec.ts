@@ -47,7 +47,7 @@ describe("EditRecurringIntervalComponent", () => {
     component.ngOnInit();
 
     expect(
-      component.predefinedIntervals.find((o) => o.interval === customInterval)
+      component.predefinedIntervals.find((o) => o.interval === customInterval),
     ).toBeTruthy();
   });
 

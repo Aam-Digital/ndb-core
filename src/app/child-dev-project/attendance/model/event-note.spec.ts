@@ -19,34 +19,65 @@ import { EventNote } from "./event-note";
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { TestBed } from "@angular/core/testing";
+import { CoreModule } from "../../../core/core.module";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { ConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum.service";
+import { DefaultDatatype } from "../../../core/entity/schema/default.datatype";
+import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 
 describe("EventNote", () => {
-  testEntitySubclass("EventNote", EventNote, {
-    _id: "EventNote:some-id",
-    children: ["child-1", "child-2"],
-    childrenAttendance: [
-      [
-        "child-1",
+  beforeEach(() => {
+    TestBed.configureTestingModule({
+      imports: [CoreModule],
+      providers: [
+        ComponentRegistry,
         {
-          status: defaultAttendanceStatusTypes[1].id,
-          remarks: "did not show up",
+          provide: DefaultDatatype,
+          useClass: ConfigurableEnumDatatype,
+          multi: true,
+        },
+        {
+          provide: ConfigurableEnumService,
+          useValue: {
+            getEnumValues: () => defaultAttendanceStatusTypes,
+          },
         },
       ],
-      [
-        "child-2",
-        {
-          status: defaultAttendanceStatusTypes[0].id,
-          remarks: "",
-        },
-      ],
-    ],
-    category: defaultInteractionTypes.find((it) => it.isMeeting).id,
-    authors: ["some-coach"],
-    relatesTo: "RecurringActivity:some-id",
-    relatedEntities: ["RecurringActivity:some-id"],
-    date: "2023-05-01",
-    schools: [],
-    subject: "some subject",
-    text: "some text about the event",
+    });
   });
+
+  testEntitySubclass(
+    "EventNote",
+    EventNote,
+    {
+      _id: "EventNote:some-id",
+      children: ["child-1", "child-2"],
+      childrenAttendance: [
+        [
+          "child-1",
+          {
+            status: defaultAttendanceStatusTypes[1].id,
+            remarks: "did not show up",
+          },
+        ],
+        [
+          "child-2",
+          {
+            status: defaultAttendanceStatusTypes[0].id,
+            remarks: "",
+          },
+        ],
+      ],
+      category: defaultInteractionTypes.find((it) => it.isMeeting).id,
+      authors: ["some-coach"],
+      relatesTo: "RecurringActivity:some-id",
+      relatedEntities: ["RecurringActivity:some-id"],
+      date: "2023-05-01",
+      schools: [],
+      subject: "some subject",
+      text: "some text about the event",
+    },
+    true,
+  );
 });

@@ -37,7 +37,7 @@ export class AdminComponent implements OnInit {
     private db: Database,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   ngOnInit() {
@@ -72,7 +72,7 @@ export class AdminComponent implements OnInit {
     await this.downloadService.triggerDownload(
       configString,
       "json",
-      "config.json"
+      "config.json",
     );
   }
 
@@ -88,14 +88,14 @@ export class AdminComponent implements OnInit {
   async loadBackup(inputEvent: Event) {
     const restorePoint = await this.backupService.getDatabaseExport();
     const dataToBeRestored = JSON.parse(
-      await readFile(this.getFileFromInputEvent(inputEvent))
+      await readFile(this.getFileFromInputEvent(inputEvent)),
     );
 
     const confirmed = await this.confirmationDialog.getConfirmation(
       `Overwrite complete database?`,
       `Are you sure you want to restore this backup? This will
       delete all ${restorePoint.length} existing records,
-      restoring ${dataToBeRestored.length} records from the loaded file.`
+      restoring ${dataToBeRestored.length} records from the loaded file.`,
     );
 
     if (!confirmed) {
@@ -130,7 +130,7 @@ export class AdminComponent implements OnInit {
 
     const confirmed = await this.confirmationDialog.getConfirmation(
       `Empty complete database?`,
-      `Are you sure you want to clear the database? This will delete all existing records in the database!`
+      `Are you sure you want to clear the database? This will delete all existing records in the database!`,
     );
 
     if (!confirmed) {

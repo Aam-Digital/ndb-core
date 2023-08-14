@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { HistoricalDataComponent } from "./historical-data.component";
 import { Entity } from "../../../core/entity/model/entity";
@@ -13,18 +13,18 @@ describe("HistoricalDataComponent", () => {
   let fixture: ComponentFixture<HistoricalDataComponent>;
   let mockHistoricalDataService: jasmine.SpyObj<HistoricalDataService>;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     mockHistoricalDataService = jasmine.createSpyObj(["getHistoricalDataFor"]);
     mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([]);
 
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [HistoricalDataComponent, MockedTestingModule.withState()],
       providers: [
         { provide: HistoricalDataService, useValue: mockHistoricalDataService },
         { provide: FormDialogService, useValue: null },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(HistoricalDataComponent);
@@ -48,7 +48,7 @@ describe("HistoricalDataComponent", () => {
 
     expect(component.entries).toEqual([relatedData]);
     expect(mockHistoricalDataService.getHistoricalDataFor).toHaveBeenCalledWith(
-      component.entity.getId()
+      component.entity.getId(),
     );
   });
 

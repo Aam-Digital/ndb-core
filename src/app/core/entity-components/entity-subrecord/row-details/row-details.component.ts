@@ -56,9 +56,11 @@ export class RowDetailsComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
-    private formService: EntityFormService
+    private formService: EntityFormService,
   ) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
+    this.enableSaveWithoutChangesIfNew(data.entity);
+
     this.columns = data.columns.map((col) => [col]);
     this.tempEntity = this.data.entity;
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
@@ -66,5 +68,12 @@ export class RowDetailsComponent {
       this.tempEntity = Object.assign(new dynamicConstructor(), value);
     });
     this.viewOnlyColumns = data.viewOnlyColumns;
+  }
+
+  private enableSaveWithoutChangesIfNew(entity: Entity) {
+    if (entity.isNew) {
+      // could check here that at least some fields hold a value but the naive heuristic to allow save of all new seems ok
+      this.form.markAsDirty();
+    }
   }
 }

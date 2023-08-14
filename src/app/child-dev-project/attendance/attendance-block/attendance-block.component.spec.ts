@@ -8,13 +8,11 @@ describe("AttendanceBlockComponent", () => {
   let component: AttendanceBlockComponent;
   let fixture: ComponentFixture<AttendanceBlockComponent>;
 
-  beforeEach(
-    waitForAsync(() => {
-      TestBed.configureTestingModule({
-        imports: [AttendanceBlockComponent, MockedTestingModule.withState()],
-      }).compileComponents();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
+      imports: [AttendanceBlockComponent, MockedTestingModule.withState()],
+    }).compileComponents();
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(AttendanceBlockComponent);
