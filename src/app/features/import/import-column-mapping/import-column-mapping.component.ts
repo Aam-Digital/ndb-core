@@ -12,7 +12,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { ComponentRegistry } from "../../../dynamic-components";
-import { ImportValueMapping } from "./import-value-mapping";
+import { DefaultDatatype } from "../../../core/entity/schema/default.datatype";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -45,11 +45,11 @@ export class ImportColumnMappingComponent {
     }
 
     this.entityCtor = this.entities.get(value);
-    this.valueMapper = {};
+    this.dataTypeMap = {};
     this.allProps = [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
       .map(([name, schema]) => {
-        this.valueMapper[name] =
+        this.dataTypeMap[name] =
           this.schemaService.getInnermostDatatype(schema);
         return name;
       });
@@ -61,7 +61,7 @@ export class ImportColumnMappingComponent {
   allProps: string[] = [];
 
   /** properties that need further adjustments through a component */
-  valueMapper: { [key: string]: ImportValueMapping };
+  dataTypeMap: { [name: string]: DefaultDatatype };
 
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: { [key: string]: string } = {};
@@ -81,7 +81,7 @@ export class ImportColumnMappingComponent {
     const uniqueValues = new Set<any>();
     this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
     const configComponent = await this.componentRegistry.get(
-      this.valueMapper[col.propertyName].importConfigComponent,
+      this.dataTypeMap[col.propertyName].importConfigComponent,
     )();
 
     this.dialog
@@ -104,7 +104,7 @@ export class ImportColumnMappingComponent {
     }
 
     this.mappingAdditionalWarning[col.column] =
-      this.valueMapper[
+      this.dataTypeMap[
         col.propertyName
       ]?.importIncompleteAdditionalConfigBadge?.(col);
 

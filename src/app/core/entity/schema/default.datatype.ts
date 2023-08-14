@@ -17,7 +17,6 @@
 
 import { EntitySchemaField } from "./entity-schema-field";
 import { Entity } from "../model/entity";
-import { ImportValueMapping } from "../../../features/import/import-column-mapping/import-value-mapping";
 import { ColumnMapping } from "../../../features/import/column-mapping";
 
 /**
@@ -28,9 +27,7 @@ import { ColumnMapping } from "../../../features/import/column-mapping";
  * This class is also used as the default fallback Datatype for the EntitySchemaService that keeps values unchanged between database and entity instance.
  * This type is automatically used whenever no fitting Datatype can be found for that config or TypeScript type.
  */
-export class DefaultDatatype<EntityType = any, DBType = any>
-  implements ImportValueMapping
-{
+export class DefaultDatatype<EntityType = any, DBType = any> {
   /**
    * Key for this datatype that must be specified in the DatabaseField annotation to use this transformation.
    *
@@ -61,7 +58,6 @@ export class DefaultDatatype<EntityType = any, DBType = any>
    * @param value The value (in Entity format) to be transformed
    * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
    *          This can be set as a parameter to the `@DatabaseField()` annotation in Entity classes.
-   * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
   transformToDatabaseFormat(
@@ -79,7 +75,6 @@ export class DefaultDatatype<EntityType = any, DBType = any>
    * @param value The value (in database format) to be transformed
    * @param schemaField The EntitySchemaField configuration providing details of how the value should be transformed.
    *          This can be set as a parameter to the `@DatabaseField()` annotation in Entity classes.
-   * @param schemaService A reference to the EntitySchemaService instance (e.g. to allow recursive transformations)
    * @param parent The full entity instance this value is part of (e.g. to allow cross-related transformations)
    */
   transformToObjectFormat(
