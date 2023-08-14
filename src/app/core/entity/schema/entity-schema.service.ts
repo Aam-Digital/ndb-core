@@ -50,6 +50,9 @@ export class EntitySchemaService {
    * @param datatypeName The key/name of the datatype
    */
   public getDatatypeOrDefault(datatypeName: string) {
+    if (!datatypeName) {
+      return this.defaultDatatype;
+    }
     if (this.schemaTypes.has(datatypeName)) {
       return this.schemaTypes.get(datatypeName);
     }
@@ -62,10 +65,10 @@ export class EntitySchemaService {
     let dataType = dataTypes.find((d) => d.dataType === datatypeName);
     if (dataType) {
       this.schemaTypes.set(datatypeName, dataType);
+      return dataType;
     } else {
-      dataType = this.defaultDatatype;
+      throw new Error(`Data type "${datatypeName}" does not exist`);
     }
-    return dataType;
   }
 
   /**

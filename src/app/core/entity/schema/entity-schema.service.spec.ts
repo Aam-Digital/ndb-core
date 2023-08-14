@@ -26,14 +26,14 @@ import { DateOnlyDatatype } from "../schema-datatypes/date-only.datatype";
 import { ArrayDatatype } from "../schema-datatypes/array.datatype";
 
 describe("EntitySchemaService", () => {
-  let entitySchemaService: EntitySchemaService;
+  let service: EntitySchemaService;
   let mockInjector: jasmine.SpyObj<Injector>;
 
   beforeEach(waitForAsync(() => {
     mockInjector = jasmine.createSpyObj(["get"]);
     mockInjector.get.and.returnValue([new StringDatatype()]);
 
-    entitySchemaService = new EntitySchemaService(mockInjector);
+    service = new EntitySchemaService(mockInjector);
   }));
 
   it("should use datatype service transform methods to converts values", function () {
@@ -48,11 +48,11 @@ describe("EntitySchemaService", () => {
       _id: "test2",
       aString: 192,
     };
-    entitySchemaService.loadDataIntoEntity(entity, data);
+    service.loadDataIntoEntity(entity, data);
 
     expect(entity.aString).toEqual("192");
 
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    const rawData = service.transformEntityToDatabaseFormat(entity);
     expect(rawData.aString).toEqual("192");
   });
 
@@ -66,11 +66,11 @@ describe("EntitySchemaService", () => {
       month: Date;
     }
 
-    const viewComponent = entitySchemaService.getComponent(
+    const viewComponent = service.getComponent(
       Test.schema.get("month"),
       "view",
     );
-    const editComponent = entitySchemaService.getComponent(
+    const editComponent = service.getComponent(
       Test.schema.get("month"),
       "edit",
     );
@@ -92,7 +92,7 @@ describe("EntitySchemaService", () => {
       @DatabaseField({ dataType: "test-datatype" }) stringProperty: string;
     }
 
-    const displayComponent = entitySchemaService.getComponent(
+    const displayComponent = service.getComponent(
       Test.schema.get("stringProperty"),
       "view",
     );
@@ -107,22 +107,27 @@ describe("EntitySchemaService", () => {
     }
     mockInjector.get.and.returnValue([
       new DateOnlyDatatype(),
-      new ArrayDatatype(entitySchemaService),
+      new ArrayDatatype(service),
     ]);
 
     const propertySchema = TestEntity.schema.get("dates");
 
-    const displayComponent = entitySchemaService.getComponent(
-      propertySchema,
-      "view",
-    );
+    const displayComponent = service.getComponent(propertySchema, "view");
     expect(displayComponent).toBe(new DateOnlyDatatype().viewComponent);
 
-    const editComponent = entitySchemaService.getComponent(
-      propertySchema,
-      "edit",
-    );
+    const editComponent = service.getComponent(propertySchema, "edit");
     expect(editComponent).toBe(new DateOnlyDatatype().editComponent);
+  });
+
+  it("should return the default datatype no type is specified", () => {
+    const dataType = service.getDatatypeOrDefault(undefined);
+    expect(dataType).toBeInstanceOf(DefaultDatatype);
+  });
+
+  it("should throw an error if data type does not exist", () => {
+    expect(() =>
+      service.getDatatypeOrDefault("invalidDataType"),
+    ).toThrowError();
   });
 });
 
