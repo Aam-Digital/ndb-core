@@ -9,6 +9,7 @@ import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
+import { isArrayProperty } from "../../core/entity-components/entity-utils/entity-utils";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -158,7 +159,12 @@ export class ImportService {
 
         // ignoring falsy values except 0 (=> null, undefined, empty string)
         if (!!parsed || parsed === 0) {
-          entity[mapping.propertyName] = parsed;
+          // enforcing array values to be correctly assigned
+          entity[mapping.propertyName] =
+            isArrayProperty(entityConstructor, mapping.propertyName) &&
+            !Array.isArray(parsed)
+              ? [parsed]
+              : parsed;
           hasMappedProperty = true;
         }
       }
