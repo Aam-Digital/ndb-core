@@ -16,7 +16,7 @@ describe("Schema data type: array", () => {
     schemaService.registerSchemaDatatype(
       new ConfigurableEnumDatatype({
         getEnumValues: () => defaultInteractionTypes,
-      } as any)
+      } as any),
     );
   });
 
@@ -26,7 +26,7 @@ describe("Schema data type: array", () => {
     const obj = arrayEntitySchemaDatatype.transformToObjectFormat(
       value,
       schema,
-      schemaService
+      schemaService,
     );
 
     expect(obj).toEqual(defaultInteractionTypes);
@@ -34,7 +34,7 @@ describe("Schema data type: array", () => {
     const db = arrayEntitySchemaDatatype.transformToDatabaseFormat(
       obj,
       schema,
-      schemaService
+      schemaService,
     );
 
     expect(db).toEqual(value);
@@ -46,7 +46,7 @@ describe("Schema data type: array", () => {
     const obj = arrayEntitySchemaDatatype.transformToObjectFormat(
       value,
       schema,
-      schemaService
+      schemaService,
     );
 
     expect(obj).toEqual([defaultInteractionTypes[1]]);
@@ -56,14 +56,14 @@ describe("Schema data type: array", () => {
     let obj = arrayEntitySchemaDatatype.transformToObjectFormat(
       undefined,
       schema,
-      schemaService
+      schemaService,
     );
     expect(obj).toEqual([]);
 
     obj = arrayEntitySchemaDatatype.transformToObjectFormat(
       "",
       schema,
-      schemaService
+      schemaService,
     );
     expect(obj).toEqual([]);
   });

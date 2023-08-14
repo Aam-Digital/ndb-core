@@ -19,7 +19,7 @@ describe("entity-update", () => {
 
   beforeEach(() => {
     existingEntities = ["n1", "n2", "n3", "n5"].map(
-      (id) => new TestEntity(id, 1)
+      (id) => new TestEntity(id, 1),
     );
   });
 

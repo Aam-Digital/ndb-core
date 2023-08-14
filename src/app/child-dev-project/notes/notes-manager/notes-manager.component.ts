@@ -95,7 +95,7 @@ export class NotesManagerComponent implements OnInit {
     private sessionService: SessionService,
     private entityMapperService: EntityMapperService,
     private route: ActivatedRoute,
-    private log: LoggingService
+    private log: LoggingService,
   ) {}
 
   async ngOnInit() {
@@ -107,7 +107,7 @@ export class NotesManagerComponent implements OnInit {
         this.includeEventNotes = data.config.includeEventNotes;
         this.showEventNotesToggle = data.config.showEventNotesToggle;
         this.notes = await this.loadEntities();
-      }
+      },
     );
 
     this.subscribeEntityUpdates();
@@ -126,7 +126,7 @@ export class NotesManagerComponent implements OnInit {
   private subscribeEntityUpdates() {
     merge(
       this.entityMapperService.receiveUpdates(Note),
-      this.entityMapperService.receiveUpdates(EventNote)
+      this.entityMapperService.receiveUpdates(EventNote),
     )
       .pipe(untilDestroyed(this))
       .subscribe((updatedNote) => {
@@ -149,7 +149,7 @@ export class NotesManagerComponent implements OnInit {
 
   private addPrebuiltFilters() {
     for (const prebuiltFilter of this.config.filters.filter(
-      (filter) => filter.type === "prebuilt"
+      (filter) => filter.type === "prebuilt",
     )) {
       switch (prebuiltFilter.id) {
         case "status": {
@@ -165,7 +165,7 @@ export class NotesManagerComponent implements OnInit {
         default: {
           this.log.warn(
             "[NoteManagerComponent] No filter options available for prebuilt filter: " +
-              prebuiltFilter.id
+              prebuiltFilter.id,
           );
           prebuiltFilter["options"] = [];
         }

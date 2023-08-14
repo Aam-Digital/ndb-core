@@ -29,7 +29,7 @@ export class PasswordResetComponent {
   constructor(
     authService: AuthService,
     private snackbar: MatSnackBar,
-    private analytics: AnalyticsService
+    private analytics: AnalyticsService,
   ) {
     if (authService instanceof KeycloakAuthService) {
       this.keycloakAuth = authService;
@@ -51,7 +51,7 @@ export class PasswordResetComponent {
         this.snackbar.open(
           `Password reset email sent to ${this.email.value}`,
           undefined,
-          { duration: 10000 }
+          { duration: 10000 },
         );
         this.toggleEmailForm();
       },

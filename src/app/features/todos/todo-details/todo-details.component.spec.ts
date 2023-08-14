@@ -60,7 +60,7 @@ describe("TodoDetailsComponent", () => {
     await component.completeTodo();
 
     const savedEntity = await TestBed.inject<EntityMapperService>(
-      EntityMapperService
+      EntityMapperService,
     ).load(Todo, component.entity.getId(true));
     expect(savedEntity.subject).toBe("123");
     expect(savedEntity.completed).toBeTruthy();

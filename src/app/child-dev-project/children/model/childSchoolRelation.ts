@@ -83,11 +83,11 @@ export class ChildSchoolRelation extends Entity {
     const endLabel = this.getSchema().get("end").label;
     if (this.end && !this.start) {
       throw new Error(
-        $localize`:Error assertValid failed:No "${startLabel}" date is set`
+        $localize`:Error assertValid failed:No "${startLabel}" date is set`,
       );
     } else if (moment(this.start).isAfter(this.end, "days")) {
       throw new Error(
-        $localize`:Error assertValid failed:The "${startLabel}" date is after the "${endLabel}" date`
+        $localize`:Error assertValid failed:The "${startLabel}" date is after the "${endLabel}" date`,
       );
     }
   }

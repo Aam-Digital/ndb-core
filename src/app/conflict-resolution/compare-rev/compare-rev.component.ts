@@ -62,7 +62,7 @@ export class CompareRevComponent {
     private db: Database,
     private confirmationDialog: ConfirmationDialogService,
     private snackBar: MatSnackBar,
-    private conflictResolver: AutoResolutionService
+    private conflictResolver: AutoResolutionService,
   ) {}
 
   /**
@@ -80,7 +80,7 @@ export class CompareRevComponent {
     const isIrrelevantConflictingDoc =
       this.conflictResolver.shouldDeleteConflictingRevision(
         this.doc,
-        this.revDoc
+        this.revDoc,
       );
     if (isIrrelevantConflictingDoc) {
       const success = await this.deleteDoc(this.revDoc);
@@ -98,7 +98,7 @@ export class CompareRevComponent {
     return JSON.stringify(
       entity,
       (k, v) => (k === "_rev" ? undefined : v), // ignore "_rev"
-      2
+      2,
     );
   }
 
@@ -110,8 +110,8 @@ export class CompareRevComponent {
     const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Delete Conflicting Version?`,
       $localize`Are you sure you want to keep the current version and delete this conflicting version? ${this.stringify(
-        docToDelete
-      )}`
+        docToDelete,
+      )}`,
     );
 
     if (confirmed) {
@@ -129,7 +129,7 @@ export class CompareRevComponent {
     } catch (e) {
       const errorMessage = e.message || e.toString();
       this.snackBar.open(
-        $localize`Error trying to delete conflicting version: ${errorMessage}`
+        $localize`Error trying to delete conflicting version: ${errorMessage}`,
       );
       return false;
     }
@@ -142,7 +142,7 @@ export class CompareRevComponent {
     } catch (e) {
       const errorMessage = e.message || e.toString();
       this.snackBar.open(
-        $localize`Error trying to save version: ${errorMessage}`
+        $localize`Error trying to save version: ${errorMessage}`,
       );
       return false;
     }
@@ -167,8 +167,8 @@ export class CompareRevComponent {
     const confirmed = await this.confirmationDialog.getConfirmation(
       $localize`Save Changes for Conflict Resolution?`,
       $localize`Are you sure you want to save the following changes and delete the conflicting version? ${this.stringify(
-        newChanges
-      )}`
+        newChanges,
+      )}`,
     );
     if (confirmed) {
       const successSave = await this.saveDoc(this.doc);

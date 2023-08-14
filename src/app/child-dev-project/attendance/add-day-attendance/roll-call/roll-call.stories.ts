@@ -1,10 +1,6 @@
 import { RollCallComponent } from "./roll-call.component";
 import { DemoChildGenerator } from "../../../children/demo-data-generators/demo-child-generator.service";
-import {
-  applicationConfig,
-  Meta,
-  StoryFn,
-} from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { Note } from "../../../notes/model/note";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
@@ -22,7 +18,9 @@ export default {
   component: RollCallComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(StorybookBaseModule.withData(demoChildren))],
+      providers: [
+        importProvidersFrom(StorybookBaseModule.withData(demoChildren)),
+      ],
     }),
   ],
 } as Meta;

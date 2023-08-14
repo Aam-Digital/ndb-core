@@ -73,7 +73,7 @@ describe("AbilityService", () => {
   it("should fetch the rules object from the database", () => {
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
       Config,
-      Config.PERMISSION_KEY
+      Config.PERMISSION_KEY,
     );
   });
 
@@ -115,7 +115,7 @@ describe("AbilityService", () => {
     });
 
     expect(ability.update).toHaveBeenCalledWith(
-      rules.user_app.concat(rules.admin_app)
+      rules.user_app.concat(rules.admin_app),
     );
   });
 
@@ -187,7 +187,7 @@ describe("AbilityService", () => {
     });
 
     expect(
-      mockPermissionEnforcer.enforcePermissionsOnLocalData
+      mockPermissionEnforcer.enforcePermissionsOnLocalData,
     ).toHaveBeenCalled();
   });
 
@@ -213,7 +213,7 @@ describe("AbilityService", () => {
 
   it("should allow to check conditions with complex data types", fakeAsync(() => {
     const classInteraction = defaultInteractionTypes.find(
-      (type) => type.id === "SCHOOL_CLASS"
+      (type) => type.id === "SCHOOL_CLASS",
     );
     const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
       user_app: [
@@ -253,7 +253,7 @@ describe("AbilityService", () => {
     ];
     const config = new Config<DatabaseRules>(
       Config.PERMISSION_KEY,
-      Object.assign({ default: defaultRules } as DatabaseRules, rules)
+      Object.assign({ default: defaultRules } as DatabaseRules, rules),
     );
 
     entityUpdates.next({ entity: config, type: "update" });
@@ -268,7 +268,7 @@ describe("AbilityService", () => {
     config._rev = "update";
     entityUpdates.next({ entity: config, type: "update" });
     expect(ability.rules).toEqual(
-      defaultRules.concat(...rules.user_app, ...rules.admin_app)
+      defaultRules.concat(...rules.user_app, ...rules.admin_app),
     );
   });
 });

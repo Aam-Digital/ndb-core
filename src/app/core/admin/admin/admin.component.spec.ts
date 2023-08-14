@@ -87,7 +87,7 @@ describe("AdminComponent", () => {
   it("should call config service for configuration export", fakeAsync(() => {
     const exportConfigSpy = spyOn(
       TestBed.inject(ConfigService),
-      "exportConfig"
+      "exportConfig",
     );
 
     component.downloadConfigClick();

@@ -45,11 +45,9 @@ describe("Schema data type: schema-embed", () => {
 
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(
-    waitForAsync(() => {
-      entitySchemaService = new EntitySchemaService();
-    })
-  );
+  beforeEach(waitForAsync(() => {
+    entitySchemaService = new EntitySchemaService();
+  }));
 
   it("applies inner schema transformation for database format", () => {
     const entity = new TestEntity();

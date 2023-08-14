@@ -42,7 +42,7 @@ export const allRoutes: Routes = [
     path: "coming-soon/:feature",
     loadComponent: () =>
       import("./core/coming-soon/coming-soon/coming-soon.component").then(
-        (c) => c.ComingSoonComponent
+        (c) => c.ComingSoonComponent,
       ),
     canActivate: [AuthGuard],
   },
@@ -57,7 +57,7 @@ export const allRoutes: Routes = [
     path: "public-form/:id",
     loadComponent: () =>
       import("./features/public-form/public-form.component").then(
-        (c) => c.PublicFormComponent
+        (c) => c.PublicFormComponent,
       ),
   },
   { path: "login", component: LoginComponent },

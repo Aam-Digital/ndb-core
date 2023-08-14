@@ -38,19 +38,18 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     value: any[],
     schemaField: EntitySchemaField,
     schemaService: EntitySchemaService,
-    parent
+    parent,
   ) => {
     if (!(value instanceof Map)) {
       console.warn(
         'property to be saved with "map" EntitySchema is not of expected type',
-        value
+        value,
       );
       return value;
     }
 
-    const innerElementDatatype: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.innerDataType
-    );
+    const innerElementDatatype: EntitySchemaDatatype =
+      schemaService.getDatatypeOrDefault(schemaField.innerDataType);
     const result = [];
     value.forEach((item, key) => {
       result.push([
@@ -59,7 +58,7 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
           item,
           generateSubSchemaField(schemaField),
           schemaService,
-          parent
+          parent,
         ),
       ]);
     });
@@ -70,7 +69,7 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     value: any[],
     schemaField: EntitySchemaField,
     schemaService: EntitySchemaService,
-    parent
+    parent,
   ) => {
     if (value instanceof Map) {
       // usually this shouldn't already be a map but in MockDatabase somehow this can happen
@@ -79,14 +78,13 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
     if (!Array.isArray(value) || value === null) {
       console.warn(
         'property to be loaded with "map" EntitySchema is not valid',
-        value
+        value,
       );
       return value;
     }
 
-    const innerElementType: EntitySchemaDatatype = schemaService.getDatatypeOrDefault(
-      schemaField.innerDataType
-    );
+    const innerElementType: EntitySchemaDatatype =
+      schemaService.getDatatypeOrDefault(schemaField.innerDataType);
 
     const result = new Map();
     for (const keyValue of value) {
@@ -94,7 +92,7 @@ export const mapEntitySchemaDatatype: EntitySchemaDatatype = {
         keyValue[1],
         generateSubSchemaField(schemaField),
         schemaService,
-        parent
+        parent,
       );
       result.set(keyValue[0], transformedElement);
     }

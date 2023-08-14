@@ -42,7 +42,7 @@ export class EntityMapperService {
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
     private sessionService: SessionService,
-    private registry: EntityRegistry
+    private registry: EntityRegistry,
   ) {}
 
   /**
@@ -54,7 +54,7 @@ export class EntityMapperService {
    */
   public async load<T extends Entity>(
     entityType: EntityConstructor<T> | string,
-    id: string
+    id: string,
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
     const entityId = Entity.createPrefixedId(ctor.ENTITY_TYPE, id);
@@ -72,7 +72,7 @@ export class EntityMapperService {
    * @returns A Promise resolving to an array of instances of entityType with the data of the loaded entities.
    */
   public async loadType<T extends Entity>(
-    entityType: EntityConstructor<T> | string
+    entityType: EntityConstructor<T> | string,
   ): Promise<T[]> {
     const ctor = this.resolveConstructor(entityType);
     const records = await this._db.getAll(ctor.ENTITY_TYPE + ":");
@@ -81,7 +81,7 @@ export class EntityMapperService {
 
   private transformToEntityFormat<T extends Entity>(
     record: any,
-    ctor: EntityConstructor<T>
+    ctor: EntityConstructor<T>,
   ): T {
     const entity = new ctor("");
     try {
@@ -109,7 +109,7 @@ export class EntityMapperService {
    * @param entityType the type of the entity or the registered name of that class.
    */
   public receiveUpdates<T extends Entity>(
-    entityType: EntityConstructor<T> | string
+    entityType: EntityConstructor<T> | string,
   ): Observable<UpdatedEntity<T>> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
@@ -125,7 +125,7 @@ export class EntityMapperService {
         } else {
           return { type: "update", entity: entity };
         }
-      })
+      }),
     );
   }
 
@@ -137,7 +137,7 @@ export class EntityMapperService {
    */
   public async save<T extends Entity>(
     entity: T,
-    forceUpdate: boolean = false
+    forceUpdate: boolean = false,
   ): Promise<any> {
     this.setEntityMetadata(entity);
     const rawData =
@@ -159,7 +159,7 @@ export class EntityMapperService {
   public async saveAll(entities: Entity[]): Promise<any[]> {
     entities.forEach((e) => this.setEntityMetadata(e));
     const rawData = entities.map((e) =>
-      this.entitySchemaService.transformEntityToDatabaseFormat(e)
+      this.entitySchemaService.transformEntityToDatabaseFormat(e),
     );
     const results = await this._db.putAll(rawData);
     results.forEach((res, idx) => {
@@ -180,7 +180,7 @@ export class EntityMapperService {
   }
 
   protected resolveConstructor<T extends Entity>(
-    constructible: EntityConstructor<T> | string
+    constructible: EntityConstructor<T> | string,
   ): EntityConstructor<T> | undefined {
     if (typeof constructible === "string") {
       return this.registry.get(constructible) as EntityConstructor<T>;
@@ -191,7 +191,7 @@ export class EntityMapperService {
 
   protected setEntityMetadata(entity: Entity) {
     const newMetadata = new UpdateMetadata(
-      this.sessionService.getCurrentUser()?.name
+      this.sessionService.getCurrentUser()?.name,
     );
     if (entity.isNew) {
       entity.created = newMetadata;

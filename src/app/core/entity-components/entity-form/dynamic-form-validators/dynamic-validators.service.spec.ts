@@ -22,7 +22,7 @@ describe("DynamicValidatorsService", () => {
   function testValidator(
     validator: ValidatorFn,
     successState: any,
-    failureState: any
+    failureState: any,
   ) {
     const results = [successState, failureState].map((state) => {
       const mockControl = new UntypedFormControl(state);
@@ -80,7 +80,7 @@ describe("DynamicValidatorsService", () => {
     expect(validationErrors.pattern).toEqual(
       jasmine.objectContaining({
         message: "M",
-      })
+      }),
     );
   });
 });
@@ -95,7 +95,7 @@ describe("patternWithMessage", () => {
     expect(validationErrors.pattern).toEqual(
       jasmine.objectContaining({
         message: CUSTOM_MESSAGE,
-      })
+      }),
     );
   });
 

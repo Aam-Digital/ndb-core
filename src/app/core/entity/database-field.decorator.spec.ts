@@ -43,7 +43,7 @@ describe("@DatabaseField Decorator", () => {
         ["fieldUndefined", { dataType: "string" }],
         ["fieldWithDefault", { dataType: "string" }],
         ["fieldDate", { dataType: "date", generateIndex: true }],
-      ])
+      ]),
     );
   });
 });

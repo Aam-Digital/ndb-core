@@ -26,7 +26,7 @@ export class LanguageSelectComponent {
 
   constructor(
     public translationService: LanguageService,
-    @Inject(LOCATION_TOKEN) private location: Location
+    @Inject(LOCATION_TOKEN) private location: Location,
   ) {
     this.siteRegionCode = translationService.currentRegionCode();
   }

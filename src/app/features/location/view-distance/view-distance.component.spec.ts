@@ -45,7 +45,7 @@ describe("ViewDistanceComponent", () => {
   it("update function and trigger change detection when new coordinates are emitted", () => {
     const detectChangesSpy = spyOn(
       component["changeDetector"],
-      "detectChanges"
+      "detectChanges",
     );
 
     compareCoordinates.next([{ lat: 52.0001, lon: 13 }]);

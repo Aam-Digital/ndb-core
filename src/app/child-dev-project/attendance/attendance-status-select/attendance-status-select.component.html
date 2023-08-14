@@ -1,5 +1,9 @@
 <mat-form-field class="compact-form-field">
-  <div [class]="value.style" class="indicator indicator__prefix" matPrefix></div>
+  <div
+    [class]="value.style"
+    class="indicator indicator__prefix"
+    matPrefix
+  ></div>
   <mat-select
     [(ngModel)]="value"
     (ngModelChange)="valueChange.emit(value)"
@@ -7,7 +11,8 @@
     [compareWith]="compareFn"
   >
     <mat-option *appConfigurableEnum="let s of statusID" [value]="s">
-      <span class="indicator indicator__option" [class]="s.style"></span>{{ s.label }}
+      <span class="indicator indicator__option" [class]="s.style"></span
+      >{{ s.label }}
     </mat-option>
   </mat-select>
 </mat-form-field>

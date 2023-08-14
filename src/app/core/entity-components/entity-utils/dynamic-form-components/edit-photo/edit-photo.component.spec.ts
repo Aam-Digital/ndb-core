@@ -65,7 +65,7 @@ describe("EditPhotoComponent", () => {
     await component.onFileSelected(realFile);
 
     expect(component.imgPath).toEqual(
-      jasmine.stringContaining("data:image/png;base64,")
+      jasmine.stringContaining("data:image/png;base64,"),
     );
   });
 

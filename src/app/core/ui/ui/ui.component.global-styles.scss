@@ -13,11 +13,8 @@
  * block).
  */
 .sidenav-content > :where(:not(router-outlet)) {
-  padding:
-    sizes.$margin-main-view-top
-    sizes.$margin-main-view-right
-    sizes.$margin-main-view-bottom
-    sizes.$margin-main-view-left;
+  padding: sizes.$margin-main-view-top sizes.$margin-main-view-right
+    sizes.$margin-main-view-bottom sizes.$margin-main-view-left;
   display: block;
   box-sizing: border-box;
 }

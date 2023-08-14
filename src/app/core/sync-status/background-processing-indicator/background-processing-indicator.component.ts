@@ -29,9 +29,9 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatProgressSpinnerModule,
     NgIf,
     FontAwesomeModule,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  standalone: true
+  standalone: true,
 })
 export class BackgroundProcessingIndicatorComponent implements OnInit {
   /** details on current background processes to be displayed to user */
@@ -49,14 +49,14 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
 
   ngOnInit() {
     this.filteredProcesses = this.backgroundProcesses.pipe(
-      map((processes) => this.summarizeProcesses(processes))
+      map((processes) => this.summarizeProcesses(processes)),
     );
     this.taskCounterObservable = this.filteredProcesses.pipe(
-      map((processes) => processes.filter((p) => p.pending).length)
+      map((processes) => processes.filter((p) => p.pending).length),
     );
     this.allTasksFinished = this.taskCounterObservable.pipe(
       startWith(0),
-      map((tc) => tc === 0)
+      map((tc) => tc === 0),
     );
     this.taskCounterObservable
       .pipe(untilDestroyed(this))
@@ -74,7 +74,7 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
 
   private combineProcesses(
     first: BackgroundProcessState,
-    second: BackgroundProcessState
+    second: BackgroundProcessState,
   ): BackgroundProcessState {
     return {
       title: first.title,
@@ -83,7 +83,7 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
   }
 
   private summarizeProcesses(
-    processes: BackgroundProcessState[]
+    processes: BackgroundProcessState[],
   ): BackgroundProcessState[] {
     if (!this.summarize) {
       return processes;
@@ -91,14 +91,14 @@ export class BackgroundProcessingIndicatorComponent implements OnInit {
     const accumulator: BackgroundProcessState[] = [];
     for (const process of processes) {
       const summaryEntry = accumulator.findIndex(
-        (i) => i.title === process.title
+        (i) => i.title === process.title,
       );
       if (summaryEntry === -1) {
         accumulator.push(process);
       } else {
         accumulator[summaryEntry] = this.combineProcesses(
           accumulator[summaryEntry],
-          process
+          process,
         );
       }
     }

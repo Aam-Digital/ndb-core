@@ -41,9 +41,9 @@ import { AccountPageComponent } from "../../session/auth/keycloak/account-page/a
     MatTooltipModule,
     MatInputModule,
     PasswordFormComponent,
-    AccountPageComponent
+    AccountPageComponent,
   ],
-  standalone: true
+  standalone: true,
 })
 export class UserAccountComponent implements OnInit {
   /** user to be edited */

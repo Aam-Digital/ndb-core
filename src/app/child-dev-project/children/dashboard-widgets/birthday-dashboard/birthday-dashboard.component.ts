@@ -71,11 +71,11 @@ export class BirthdayDashboardComponent implements OnInit, AfterViewInit {
             birthday: this.getNextBirthday(entity[property]),
             newAge: entity[property]?.age + 1,
           }))
-          .filter((a) => this.daysUntil(a.birthday) < this.threshold)
+          .filter((a) => this.daysUntil(a.birthday) < this.threshold),
       );
     }
     data.sort(
-      (a, b) => this.daysUntil(a.birthday) - this.daysUntil(b.birthday)
+      (a, b) => this.daysUntil(a.birthday) - this.daysUntil(b.birthday),
     );
     this.dataSource.data = data;
     this.isLoading = false;
@@ -89,7 +89,7 @@ export class BirthdayDashboardComponent implements OnInit, AfterViewInit {
     const birthday = new Date(
       this.today.getFullYear(),
       dateOfBirth.getMonth(),
-      dateOfBirth.getDate()
+      dateOfBirth.getDate(),
     );
 
     if (this.today.getTime() > birthday.getTime()) {

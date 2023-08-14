@@ -75,7 +75,7 @@ export class AlertService {
     this.snackBar.open(
       alert.message,
       $localize`:alert dismiss action:dismiss`,
-      snackConfig
+      snackConfig,
     );
   }
 
@@ -86,7 +86,7 @@ export class AlertService {
    */
   public addInfo(
     message: string,
-    display: AlertDisplay = AlertDisplay.TEMPORARY
+    display: AlertDisplay = AlertDisplay.TEMPORARY,
   ) {
     this.addAlert({ message, type: "info", display });
   }
@@ -98,7 +98,7 @@ export class AlertService {
    */
   public addWarning(
     message: string,
-    display: AlertDisplay = AlertDisplay.PERSISTENT
+    display: AlertDisplay = AlertDisplay.PERSISTENT,
   ) {
     this.addAlert({ message, type: "warning", display });
   }
@@ -110,7 +110,7 @@ export class AlertService {
    */
   public addDanger(
     message: string,
-    display: AlertDisplay = AlertDisplay.PERSISTENT
+    display: AlertDisplay = AlertDisplay.PERSISTENT,
   ) {
     this.addAlert({ message, type: "danger", display });
   }

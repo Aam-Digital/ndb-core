@@ -9,7 +9,7 @@ import { SessionService } from "./session-service/session.service";
 
 export const AuthGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
-  state: RouterStateSnapshot
+  state: RouterStateSnapshot,
 ) => {
   if (inject(SessionService).isLoggedIn()) {
     return true;

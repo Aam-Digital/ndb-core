@@ -5,7 +5,7 @@ export const childrenComponents: ComponentTuple[] = [
     "ChildrenList",
     () =>
       import("./children-list/children-list.component").then(
-        (c) => c.ChildrenListComponent
+        (c) => c.ChildrenListComponent,
       ),
   ],
 
@@ -27,14 +27,14 @@ export const childrenComponents: ComponentTuple[] = [
     "Aser",
     () =>
       import("./aser/aser-component/aser.component").then(
-        (c) => c.AserComponent
+        (c) => c.AserComponent,
       ),
   ],
   [
     "ChildBlock",
     () =>
       import("./child-block/child-block.component").then(
-        (c) => c.ChildBlockComponent
+        (c) => c.ChildBlockComponent,
       ),
   ],
   [
@@ -69,7 +69,7 @@ export const childrenComponents: ComponentTuple[] = [
     "BmiBlock",
     () =>
       import("./children-list/bmi-block/bmi-block.component").then(
-        (c) => c.BmiBlockComponent
+        (c) => c.BmiBlockComponent,
       ),
   ],
   [

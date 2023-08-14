@@ -89,7 +89,7 @@ describe("EntitySchemaService", () => {
     entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity.defaultDate.toDateString()).toEqual(
-      new Date().toDateString()
+      new Date().toDateString(),
     );
 
     expect(entity.otherDate.getFullYear()).toEqual(2018);
@@ -212,11 +212,11 @@ describe("EntitySchemaService", () => {
 
     const viewComponent = entitySchemaService.getComponent(
       Test.schema.get("month"),
-      "view"
+      "view",
     );
     const editComponent = entitySchemaService.getComponent(
       Test.schema.get("month"),
-      "edit"
+      "edit",
     );
 
     expect(viewComponent).toEqual("DisplayDate");
@@ -238,7 +238,7 @@ describe("EntitySchemaService", () => {
 
     const displayComponent = entitySchemaService.getComponent(
       Test.schema.get("stringProperty"),
-      "view"
+      "view",
     );
 
     expect(displayComponent).toEqual("DisplayText");
@@ -254,13 +254,13 @@ describe("EntitySchemaService", () => {
 
     const displayComponent = entitySchemaService.getComponent(
       propertySchema,
-      "view"
+      "view",
     );
     expect(displayComponent).toBe(dateOnlyEntitySchemaDatatype.viewComponent);
 
     const editComponent = entitySchemaService.getComponent(
       propertySchema,
-      "edit"
+      "edit",
     );
     expect(editComponent).toBe(dateOnlyEntitySchemaDatatype.editComponent);
   });

@@ -41,15 +41,15 @@ export class UpdateManagerService {
     private snackBar: MatSnackBar,
     private logger: LoggingService,
     private latestChangesDialogService: LatestChangesDialogService,
-    @Inject(LOCATION_TOKEN) private location: Location
+    @Inject(LOCATION_TOKEN) private location: Location,
   ) {
     const currentVersion = window.localStorage.getItem(
-      LatestChangesDialogService.VERSION_KEY
+      LatestChangesDialogService.VERSION_KEY,
     );
     if (currentVersion && currentVersion.startsWith(this.UPDATE_PREFIX)) {
       window.localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
-        currentVersion.replace(this.UPDATE_PREFIX, "")
+        currentVersion.replace(this.UPDATE_PREFIX, ""),
       );
       this.location.reload();
     } else {
@@ -79,13 +79,13 @@ export class UpdateManagerService {
 
     // Allow the app to stabilize first, before starting polling for updates with `interval()`.
     const appIsStable$ = this.appRef.isStable.pipe(
-      first((isStable) => isStable === true)
+      first((isStable) => isStable === true),
     );
     const everyHours$ = interval(60 * 60 * 1000);
     const everyHoursOnceAppIsStable$ = concat(appIsStable$, everyHours$);
 
     everyHoursOnceAppIsStable$.subscribe(() =>
-      this.updates.checkForUpdate().catch((err) => this.logger.error(err))
+      this.updates.checkForUpdate().catch((err) => this.logger.error(err)),
     );
   }
 
@@ -99,19 +99,19 @@ export class UpdateManagerService {
 
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      this.UPDATE_PREFIX + currentVersion
+      this.UPDATE_PREFIX + currentVersion,
     );
 
     this.snackBar
       .open(
         $localize`A new version of the app is available!`,
-        $localize`:Action that a user can update the app with:Update`
+        $localize`:Action that a user can update the app with:Update`,
       )
       .onAction()
       .subscribe(() => {
         window.localStorage.setItem(
           LatestChangesDialogService.VERSION_KEY,
-          currentVersion
+          currentVersion,
         );
 
         this.location.reload();
@@ -131,7 +131,7 @@ export class UpdateManagerService {
       this.snackBar
         .open(
           $localize`The app is in a unrecoverable state, please reload.`,
-          $localize`:Action that a user can reload the app with:Reload`
+          $localize`:Action that a user can reload the app with:Reload`,
         )
         .onAction()
         .subscribe(() => this.location.reload());

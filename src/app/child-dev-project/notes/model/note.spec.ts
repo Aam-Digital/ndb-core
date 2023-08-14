@@ -86,7 +86,7 @@ describe("Note", () => {
 
     entitySchemaService = new EntitySchemaService();
     entitySchemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
+      new ConfigurableEnumDatatype(createTestingConfigurableEnumService()),
     );
   }));
 
@@ -148,7 +148,7 @@ describe("Note", () => {
     const interactionTypeKey = "HOME_VISIT";
     const entity = new Note();
     entity.category = testInteractionTypes.find(
-      (c) => c.id === interactionTypeKey
+      (c) => c.id === interactionTypeKey,
     );
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
@@ -196,7 +196,7 @@ describe("Note", () => {
       isInvalidOption: true,
     } as any);
     expect(reloadedEntity.getAttendance("3").status).toEqual(
-      NullAttendanceStatusType
+      NullAttendanceStatusType,
     );
     expect(reloadedEntity.getAttendance("1").status).toEqual(status);
   });
@@ -226,7 +226,7 @@ describe("Note", () => {
     note.getAttendance("absentChild").status = absent;
 
     const presentChildren = note.countWithStatus(
-      AttendanceLogicalStatus.PRESENT
+      AttendanceLogicalStatus.PRESENT,
     );
     expect(presentChildren).toBe(2);
 

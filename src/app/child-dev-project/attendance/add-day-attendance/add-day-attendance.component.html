@@ -1,8 +1,8 @@
 <app-view-title
   [disableBackButton]="currentStage !== 0"
   i18n="
-    Record Attendance|Title when recording the attendance at a particular
-    stage (e.g. selecting the event, recording it)
+    Record Attendance|Title when recording the attendance at a particular stage
+    (e.g. selecting the event, recording it)
   "
 >
   Record Attendance
@@ -11,11 +11,14 @@
 <h2 *ngIf="currentStage === 0">
   {{ stages[currentStage] }}
 </h2>
-<div class="flex-row align-center relative-left margin-bottom-small" *ngIf="currentStage !== 0">
+<div
+  class="flex-row align-center relative-left margin-bottom-small"
+  *ngIf="currentStage !== 0"
+>
   <button mat-icon-button (click)="exit()" matTooltip="Back" i18n-matTooltip>
     <fa-icon icon="arrow-left"></fa-icon>
   </button>
-  <h2 class="remove-margin-bottom">{{event.subject}}</h2>
+  <h2 class="remove-margin-bottom">{{ event.subject }}</h2>
 </div>
 <app-roll-call-setup
   *ngIf="currentStage === 0"

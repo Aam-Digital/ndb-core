@@ -1,5 +1,9 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -16,9 +20,9 @@ import { MatButtonModule } from "@angular/material/button";
     NgIf,
     MatDialogModule,
     MatButtonModule,
-    NgForOf
+    NgForOf,
   ],
-  standalone: true
+  standalone: true,
 })
 export class ConfirmationDialogComponent {
   /**
@@ -28,7 +32,7 @@ export class ConfirmationDialogComponent {
    */
   constructor(
     public dialogRef: MatDialogRef<ConfirmationDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogConfig
+    @Inject(MAT_DIALOG_DATA) public data: ConfirmationDialogConfig,
   ) {}
 }
 
@@ -53,7 +57,7 @@ export interface ConfirmationDialogConfig {
 
 export interface ConfirmationDialogButton {
   text: string;
-  dialogResult?: boolean|undefined;
+  dialogResult?: boolean | undefined;
   click();
 }
 

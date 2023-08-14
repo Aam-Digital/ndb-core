@@ -41,18 +41,18 @@ export const schemaEmbedEntitySchemaDatatype: EntitySchemaDatatype = {
   transformToDatabaseFormat: (
     value: any,
     schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService
+    schemaService: EntitySchemaService,
   ) => {
     return schemaService.transformEntityToDatabaseFormat(
       value,
-      schemaField.additional.schema
+      schemaField.additional.schema,
     );
   },
 
   transformToObjectFormat: (
     value: any,
     schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService
+    schemaService: EntitySchemaService,
   ) => {
     const instance = new (schemaField.additional as EntityConstructor<any>)();
     schemaService.loadDataIntoEntity(instance, value);

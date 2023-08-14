@@ -110,7 +110,7 @@ describe("DialogButtonsComponent", () => {
     const confirmed = new Subject<boolean>();
     spyOn(
       TestBed.inject(UnsavedChangesService),
-      "checkUnsavedChanges"
+      "checkUnsavedChanges",
     ).and.returnValue(firstValueFrom(confirmed));
 
     backdropClick.next(undefined);

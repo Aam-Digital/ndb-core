@@ -72,8 +72,8 @@ describe("PasswordResetComponent", () => {
     const errorMessage = "Email not found error";
     mockAuthService.forgotPassword.and.returnValue(
       throwError(
-        () => new HttpErrorResponse({ error: { message: errorMessage } })
-      )
+        () => new HttpErrorResponse({ error: { message: errorMessage } }),
+      ),
     );
     component.email.setValue("valid@email.com");
 

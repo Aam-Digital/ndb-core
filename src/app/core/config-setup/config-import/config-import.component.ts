@@ -47,10 +47,10 @@ export class ConfigImportComponent {
       this.configImportParser.parseImportDefinition(
         this.loadedConfigFile,
         this.entityName,
-        includingDefaultConfigs
+        includingDefaultConfigs,
       ),
       null,
-      2
+      2,
     );
   }
 }

@@ -7,7 +7,7 @@ import { EntityFunctionPipe } from "./entity-function.pipe";
 @DynamicComponent("ReadonlyFunction")
 @Component({
   selector: "app-readonly-function",
-  template: `{{ entity | entityFunction : config }}`,
+  template: `{{ entity | entityFunction: config }}`,
   standalone: true,
   imports: [EntityFunctionPipe],
 })

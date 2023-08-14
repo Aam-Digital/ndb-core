@@ -30,9 +30,9 @@ export class CouchdbAuthService extends AuthService {
         .post<AuthUser>(
           `${AppSettings.DB_PROXY_PREFIX}/_session`,
           { name: username, password: password },
-          { withCredentials: true }
+          { withCredentials: true },
         )
-        .pipe(tap(() => this.logSuccessfulAuth()))
+        .pipe(tap(() => this.logSuccessfulAuth())),
     );
   }
 
@@ -40,8 +40,8 @@ export class CouchdbAuthService extends AuthService {
     return firstValueFrom(
       this.http.get<{ userCtx: AuthUser }>(
         `${AppSettings.DB_PROXY_PREFIX}/_session`,
-        { withCredentials: true }
-      )
+        { withCredentials: true },
+      ),
     ).then((res: any) => {
       if (res.userCtx.name) {
         this.logSuccessfulAuth();
@@ -64,7 +64,7 @@ export class CouchdbAuthService extends AuthService {
   public async changePassword(
     username?: string,
     oldPassword?: string,
-    newPassword?: string
+    newPassword?: string,
   ): Promise<void> {
     let userResponse;
     try {
@@ -79,7 +79,7 @@ export class CouchdbAuthService extends AuthService {
       await this.saveNewPasswordToCouchDB(username, oldPassword, userResponse);
     } catch (e) {
       throw new Error(
-        "Could not save new password, please contact your system administrator"
+        "Could not save new password, please contact your system administrator",
       );
     }
   }
@@ -95,14 +95,14 @@ export class CouchdbAuthService extends AuthService {
   private saveNewPasswordToCouchDB(
     username: string,
     oldPassword: string,
-    userObj: any
+    userObj: any,
   ): Promise<any> {
     const userUrl = CouchdbAuthService.COUCHDB_USER_ENDPOINT + ":" + username;
     const headers: HttpHeaders = new HttpHeaders({
       Authorization: "Basic " + btoa(username + ":" + oldPassword),
     });
     return firstValueFrom(
-      this.http.put(userUrl, userObj, { headers: headers })
+      this.http.put(userUrl, userObj, { headers: headers }),
     );
   }
 
@@ -110,7 +110,7 @@ export class CouchdbAuthService extends AuthService {
     return firstValueFrom(
       this.http.delete(`${AppSettings.DB_PROXY_PREFIX}/_session`, {
         withCredentials: true,
-      })
+      }),
     );
   }
 }

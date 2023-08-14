@@ -140,12 +140,12 @@ export class EntityListComponent<T extends Entity>
     private analyticsService: AnalyticsService,
     private entityMapperService: EntityMapperService,
     private entities: EntityRegistry,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
       this.activatedRoute.data.subscribe((data: RouteData<EntityListConfig>) =>
-        this.buildComponentFromConfig(data.config)
+        this.buildComponentFromConfig(data.config),
       );
     }
 
@@ -171,7 +171,7 @@ export class EntityListComponent<T extends Entity>
 
     if (this.listConfig?.entity) {
       this.entityConstructor = this.entities.get(
-        this.listConfig.entity
+        this.listConfig.entity,
       ) as EntityConstructor<T>;
     }
 
@@ -192,7 +192,7 @@ export class EntityListComponent<T extends Entity>
     this.displayColumnGroupByName(
       this.screenWidthObserver.isDesktop()
         ? this.defaultColumnGroup
-        : this.mobileColumnGroup
+        : this.mobileColumnGroup,
     );
   }
 
@@ -200,7 +200,7 @@ export class EntityListComponent<T extends Entity>
     this.isLoading = true;
 
     this.allEntities = await this.entityMapperService.loadType(
-      this.entityConstructor
+      this.entityConstructor,
     );
 
     this.isLoading = false;
@@ -227,10 +227,10 @@ export class EntityListComponent<T extends Entity>
               // Check if the column is already defined as object or string
               typeof column === "string"
                 ? column === columnId
-                : column.id === columnId
-            )
+                : column.id === columnId,
+            ),
         )
-        .forEach((column) => this.columns.push(column))
+        .forEach((column) => this.columns.push(column)),
     );
   }
 

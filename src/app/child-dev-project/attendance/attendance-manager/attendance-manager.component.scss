@@ -9,7 +9,11 @@
 }
 
 .mat-mdc-card[disabled] {
-  background-color: mat.get-color-from-palette(mat.$grey-palette, $hue: 400, $opacity: 0.1);
+  background-color: mat.get-color-from-palette(
+    mat.$grey-palette,
+    $hue: 400,
+    $opacity: 0.1
+  );
 }
 
 mat-card-content {

@@ -68,7 +68,7 @@ export class DateRangeFilterPanelComponent {
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public filter: DateFilter<any>,
-    private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>
+    private dialogRef: MatDialogRef<DateRangeFilterPanelComponent>,
   ) {}
 
   preselectRange(dateRangeOption): void {
@@ -99,7 +99,7 @@ export class DateRangeFilterPanelComponent {
 }
 
 export function calculateDateRange(
-  dateRangeOption: DateRangeFilterConfigOption
+  dateRangeOption: DateRangeFilterConfigOption,
 ): DateRange<Date> {
   const startOffsets = dateRangeOption.startOffsets ?? [
     { amount: 0, unit: "days" },

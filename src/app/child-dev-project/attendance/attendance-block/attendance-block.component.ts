@@ -44,7 +44,7 @@ export class AttendanceBlockComponent implements OnChanges {
 
   get attendancePercentage(): string {
     const percentage = this.attendanceData.getAttendancePercentage(
-      this.forChild
+      this.forChild,
     );
     if (!Number.isFinite(percentage)) {
       return "-";

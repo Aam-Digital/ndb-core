@@ -55,21 +55,21 @@ describe("PerformanceAnalysisLogging Util Tests", () => {
     await instance.testFun(99, 1);
     expect(consoleLogSpy).toHaveBeenCalledWith(
       "duration [s] for TestClass.testFun(99, 1)",
-      jasmine.any(Number)
+      jasmine.any(Number),
     );
 
     consoleLogSpy.calls.reset();
     await instance.other();
     expect(consoleLogSpy).toHaveBeenCalledWith(
       "duration [s] for TestClass.other()",
-      jasmine.any(Number)
+      jasmine.any(Number),
     );
 
     consoleLogSpy.calls.reset();
     await instance.other({ _id: "ID:1", foo: "bar" });
     expect(consoleLogSpy).toHaveBeenCalledWith(
       'duration [s] for TestClass.other("ID:1")',
-      jasmine.any(Number)
+      jasmine.any(Number),
     );
   });
 });

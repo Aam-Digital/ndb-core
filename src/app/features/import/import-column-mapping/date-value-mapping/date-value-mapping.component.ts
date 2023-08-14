@@ -41,7 +41,7 @@ export class DateValueMappingComponent extends AbstractValueMappingComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: MappingDialogData,
     private confirmation: ConfirmationDialogService,
-    private dialog: MatDialogRef<any>
+    private dialog: MatDialogRef<any>,
   ) {
     super();
 
@@ -65,7 +65,7 @@ export class DateValueMappingComponent extends AbstractValueMappingComponent {
     });
     // Sort unparsed dates to front
     this.values.sort((v1, v2) =>
-      v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0
+      v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0,
     );
   }
 
@@ -74,7 +74,7 @@ export class DateValueMappingComponent extends AbstractValueMappingComponent {
       !this.format.errors ||
       (await this.confirmation.getConfirmation(
         $localize`Ignore values?`,
-        $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`
+        $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
       ));
     if (confirmed) {
       this.data.col.additional = this.format.value?.toUpperCase();

@@ -39,7 +39,7 @@ describe("DisableEntityOperationDirective", () => {
     createComponent(true);
 
     expect(
-      testComponent.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled,
     ).toBeTrue();
   });
 
@@ -47,7 +47,7 @@ describe("DisableEntityOperationDirective", () => {
     createComponent(false);
 
     expect(
-      testComponent.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled,
     ).toBeFalse();
   });
 
@@ -55,7 +55,7 @@ describe("DisableEntityOperationDirective", () => {
     createComponent(false);
 
     expect(
-      testComponent.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled,
     ).toBeFalse();
 
     mockAbility.cannot.and.returnValue(true);
@@ -63,7 +63,7 @@ describe("DisableEntityOperationDirective", () => {
     testComponent.detectChanges();
 
     expect(
-      testComponent.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled,
     ).toBeTrue();
   });
 
@@ -71,7 +71,7 @@ describe("DisableEntityOperationDirective", () => {
     createComponent(true);
 
     expect(
-      testComponent.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled,
     ).toBeTrue();
 
     mockAbility.cannot.and.returnValue(false);
@@ -79,7 +79,7 @@ describe("DisableEntityOperationDirective", () => {
     testComponent.detectChanges();
 
     expect(
-      testComponent.componentInstance.buttonRef.nativeElement.disabled
+      testComponent.componentInstance.buttonRef.nativeElement.disabled,
     ).toBeFalse();
   });
 

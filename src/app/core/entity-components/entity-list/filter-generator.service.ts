@@ -29,7 +29,7 @@ export class FilterGeneratorService {
     private enumService: ConfigurableEnumService,
     private entities: EntityRegistry,
     private entityMapperService: EntityMapperService,
-    private filterService: FilterService
+    private filterService: FilterService,
   ) {}
 
   /**
@@ -43,7 +43,7 @@ export class FilterGeneratorService {
     filterConfigs: FilterConfig[],
     entityConstructor: EntityConstructor<T>,
     data: T[],
-    onlyShowUsedOptions = false
+    onlyShowUsedOptions = false,
   ): Promise<Filter<T>[]> {
     const filters: Filter<T>[] = [];
     for (const filterConfig of filterConfigs) {
@@ -58,43 +58,48 @@ export class FilterGeneratorService {
           filterConfig.id,
           filterConfig.label || schema.label,
           this.enumService.getEnumValues(
-            schema.additional ?? schema.innerDataType
-          )
+            schema.additional ?? schema.innerDataType,
+          ),
         );
       } else if (type == "boolean") {
         filter = new BooleanFilter(
           filterConfig.id,
           filterConfig.label || schema.label,
-          filterConfig as BooleanFilterConfig
+          filterConfig as BooleanFilterConfig,
         );
       } else if (type == "prebuilt") {
         filter = new SelectableFilter(
           filterConfig.id,
           (filterConfig as PrebuiltFilterConfig<T>).options,
-          filterConfig.label
+          filterConfig.label,
         );
       } else if (dateDataTypes.includes(type)) {
         filter = new DateFilter(
           filterConfig.id,
           filterConfig.label || schema.label,
-          (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters
+          (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
         );
       } else if (
+        // type: entity reference
         this.entities.has(filterConfig.type) ||
         this.entities.has(schema.additional)
       ) {
         const entityType = filterConfig.type || schema.additional;
         const filterEntities = await this.entityMapperService.loadType(
-          entityType
+          entityType,
         );
-        filter = new EntityFilter(filterConfig.id, entityType, filterEntities);
+        filter = new EntityFilter(
+          filterConfig.id,
+          filterConfig.label || schema.label,
+          filterEntities,
+        );
       } else {
         const options = [...new Set(data.map((c) => c[filterConfig.id]))];
         const fSO = SelectableFilter.generateOptions(options, filterConfig.id);
         filter = new SelectableFilter<T>(
           filterConfig.id,
           fSO,
-          filterConfig.label || schema.label
+          filterConfig.label || schema.label,
         );
       }
 
@@ -105,7 +110,7 @@ export class FilterGeneratorService {
       if (filter instanceof SelectableFilter) {
         if (onlyShowUsedOptions) {
           filter.options = filter.options.filter((option) =>
-            data.some(this.filterService.getFilterPredicate(option.filter))
+            data.some(this.filterService.getFilterPredicate(option.filter)),
           );
         }
         // Filters should only be added, if they have more than one (the default) option

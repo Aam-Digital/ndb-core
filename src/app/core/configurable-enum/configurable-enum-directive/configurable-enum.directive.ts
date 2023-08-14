@@ -34,6 +34,6 @@ export class ConfigurableEnumDirective {
   constructor(
     private templateRef: TemplateRef<any>,
     private viewContainerRef: ViewContainerRef,
-    private enumService: ConfigurableEnumService
+    private enumService: ConfigurableEnumService,
   ) {}
 }

@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../../entity-utils/dynamic-form-components/edit-component";
 import { Entity } from "../../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
@@ -56,7 +56,10 @@ import { ErrorHintComponent } from "../../entity-utils/error-hint/error-hint.com
   ],
   standalone: true,
 })
-export class EditTextWithAutocompleteComponent extends EditComponent<string> {
+export class EditTextWithAutocompleteComponent
+  extends EditComponent<string>
+  implements OnInit
+{
   /**
    * Config passed using component
    */
@@ -88,7 +91,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
 
   constructor(
     private entityMapperService: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
   ) {
     super();
   }
@@ -109,7 +112,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
         filteredEntities = this.entities.filter(
           (entity) =>
             entity !== this.selectedEntity &&
-            entity.toString().toLowerCase().includes(val.toLowerCase())
+            entity.toString().toLowerCase().includes(val.toLowerCase()),
         );
       }
       this.autocompleteEntities.next(filteredEntities);
@@ -123,7 +126,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
       const entityType = this.additional.entityType;
       this.entities = await this.entityMapperService.loadType(entityType);
       this.entities.sort((e1, e2) =>
-        e1.toString().localeCompare(e2.toString())
+        e1.toString().localeCompare(e2.toString()),
       );
       this.autocompleteDisabled = false;
       this.currentValues = this.parent.getRawValue();
@@ -148,7 +151,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
       !this.valuesChanged() ||
       this.confirmationDialog.getConfirmation(
         $localize`:Discard the changes made:Discard changes`,
-        $localize`Do you want to discard the changes made to '${entity}'?`
+        $localize`Do you want to discard the changes made to '${entity}'?`,
       )
     );
   }
@@ -157,7 +160,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
     return Object.entries(this.currentValues).some(
       ([prop, value]) =>
         prop !== this.formControlName &&
-        value !== this.parent.controls[prop].value
+        value !== this.parent.controls[prop].value,
     );
   }
 
@@ -166,11 +169,11 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
       this.additional.relevantProperty &&
       this.additional.relevantValue &&
       !selected[this.additional.relevantProperty].includes(
-        this.additional.relevantValue
+        this.additional.relevantValue,
       )
     ) {
       selected[this.additional.relevantProperty].push(
-        this.additional.relevantValue
+        this.additional.relevantValue,
       );
     }
   }
@@ -192,7 +195,7 @@ export class EditTextWithAutocompleteComponent extends EditComponent<string> {
   async resetForm() {
     if (await this.userConfirmsOverwriteIfNecessary(this.selectedEntity)) {
       this.addedFormControls.forEach((control) =>
-        this.parent.removeControl(control)
+        this.parent.removeControl(control),
       );
       this.addedFormControls = [];
       this.formControl.reset();

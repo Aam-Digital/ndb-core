@@ -23,7 +23,7 @@ describe("AuthGuard", () => {
     mockSession.isLoggedIn.and.returnValue(true);
 
     const res = TestBed.runInInjectionContext(() =>
-      AuthGuard(undefined, undefined)
+      AuthGuard(undefined, undefined),
     );
     expect(res).toBeTrue();
   });
@@ -32,7 +32,7 @@ describe("AuthGuard", () => {
     mockSession.isLoggedIn.and.returnValue(false);
 
     const res = TestBed.runInInjectionContext(() =>
-      AuthGuard(undefined, { url: "/some/url" } as any)
+      AuthGuard(undefined, { url: "/some/url" } as any),
     );
     expect(res.toString()).toBe("/login?redirect_uri=%2Fsome%2Furl");
   });

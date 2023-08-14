@@ -15,7 +15,9 @@
         <td *matCellDef="let group">{{ group.label }}</td>
       </ng-container>
       <ng-container matColumnDef="value">
-        <td *matCellDef="let group" class="text-align-end">{{ group.value }}</td>
+        <td *matCellDef="let group" class="text-align-end">
+          {{ group.value }}
+        </td>
       </ng-container>
       <ng-container matColumnDef="link">
         <td *matCellDef class="text-align-end">
@@ -24,13 +26,20 @@
       </ng-container>
 
       <tr hidden>
-        <th scope="col" i18n="The center that a partiipant belongs to, e.g. a city">Center</th>
-        <th scope="col" i18n="The amount of children that study at one school">Count of children</th>
+        <th
+          scope="col"
+          i18n="The center that a partiipant belongs to, e.g. a city"
+        >
+          Center
+        </th>
+        <th scope="col" i18n="The amount of children that study at one school">
+          Count of children
+        </th>
         <th scope="col" i18n="A link that takes a user to a center">Link</th>
       </tr>
       <tr
         mat-row
-        *matRowDef="let row; let i=index; columns: ['label', 'value', 'link'];"
+        *matRowDef="let row; let i = index; columns: ['label', 'value', 'link']"
         (click)="goToChildrenList(row.id)"
         class="pointer"
         angulartics2On="click"

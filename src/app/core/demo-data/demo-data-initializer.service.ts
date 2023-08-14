@@ -32,26 +32,26 @@ export class DemoDataInitializerService {
     private localSession: LocalSession,
     private dialog: MatDialog,
     private loggingService: LoggingService,
-    private database: Database
+    private database: Database,
   ) {}
 
   async run() {
     const dialogRef = this.dialog.open(
-      DemoDataGeneratingProgressDialogComponent
+      DemoDataGeneratingProgressDialogComponent,
     );
 
     if (this.database instanceof PouchDatabase) {
       this.pouchDatabase = this.database;
     } else {
       this.loggingService.warn(
-        "Cannot create demo data with session: " + environment.session_type
+        "Cannot create demo data with session: " + environment.session_type,
       );
     }
     this.registerDemoUsers();
 
     await this.localSession.login(
       DemoUserGeneratorService.DEFAULT_USERNAME,
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
 
     await this.demoDataService.publishDemoData();
@@ -84,7 +84,7 @@ export class DemoDataInitializerService {
         name: DemoUserGeneratorService.DEFAULT_USERNAME,
         roles: ["user_app"],
       },
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
     this.localSession.saveUser(
       {
@@ -95,7 +95,7 @@ export class DemoDataInitializerService {
           KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
         ],
       },
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
   }
 

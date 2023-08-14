@@ -50,7 +50,7 @@ export class PwaInstallService {
   installPWA(): Promise<any> {
     if (!PwaInstallService.deferredInstallPrompt) {
       throw new Error(
-        "InstallPWA called, but PWA install prompt has not fired."
+        "InstallPWA called, but PWA install prompt has not fired.",
       );
     }
     PwaInstallService.deferredInstallPrompt.prompt();

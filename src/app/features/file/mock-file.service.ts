@@ -20,7 +20,7 @@ export class MockFileService extends FileService {
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
     logger: LoggingService,
-    private sanitizer: DomSanitizer
+    private sanitizer: DomSanitizer,
   ) {
     super(entityMapper, entities, logger);
   }

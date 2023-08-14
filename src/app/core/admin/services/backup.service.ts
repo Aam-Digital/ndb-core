@@ -11,7 +11,10 @@ import { Config } from "../../config/config";
   providedIn: "root",
 })
 export class BackupService {
-  constructor(private db: Database, private papa: Papa) {}
+  constructor(
+    private db: Database,
+    private papa: Papa,
+  ) {}
 
   /**
    * Creates an array holding all elements of the database.

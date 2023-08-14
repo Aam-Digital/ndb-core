@@ -68,7 +68,7 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   constructor(
     private entityMapper: EntityMapperService,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -79,7 +79,7 @@ export class EntityFormComponent<T extends Entity = Entity>
         .pipe(
           filter(({ entity }) => entity.getId() === this.entity.getId()),
           filter(({ type }) => type !== "remove"),
-          untilDestroyed(this)
+          untilDestroyed(this),
         )
         .subscribe(({ entity }) => this.applyChanges(entity));
     }
@@ -97,7 +97,7 @@ export class EntityFormComponent<T extends Entity = Entity>
       this.changesOnlyAffectPristineFields(entity) ||
       (await this.confirmationDialog.getConfirmation(
         $localize`Load changes?`,
-        $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`
+        $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`,
       ))
     ) {
       Object.assign(this.initialFormValues, entity);
@@ -112,13 +112,13 @@ export class EntityFormComponent<T extends Entity = Entity>
     }
 
     const dirtyFields = Object.entries(this.form.controls).filter(
-      ([_, form]) => form.dirty
+      ([_, form]) => form.dirty,
     );
     for (const [key] of dirtyFields) {
       if (
         this.entityEqualsFormValue(
           updatedEntity[key],
-          this.initialFormValues[key]
+          this.initialFormValues[key],
         )
       ) {
         // keep our pending form field changes
@@ -134,7 +134,7 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   private formIsUpToDate(entity: T): boolean {
     return Object.entries(this.form.getRawValue()).every(([key, value]) =>
-      this.entityEqualsFormValue(entity[key], value)
+      this.entityEqualsFormValue(entity[key], value),
     );
   }
 

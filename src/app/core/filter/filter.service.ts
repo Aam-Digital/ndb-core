@@ -22,7 +22,7 @@ export class FilterService {
   private filterFactory = createFactory(
     allParsingInstructions,
     allInterpreters,
-    { compare: this.extendedCompare.bind(this) }
+    { compare: this.extendedCompare.bind(this) },
   ) as Filter;
 
   constructor(private enumService: ConfigurableEnumService) {}
@@ -61,7 +61,7 @@ export class FilterService {
     key: string,
     value,
     schema: Map<string, EntitySchemaField>,
-    newEntity: T
+    newEntity: T,
   ) {
     if (key.includes(".")) {
       // TODO only one level deep nesting is supported (also by ucast https://github.com/stalniy/ucast/issues/32)

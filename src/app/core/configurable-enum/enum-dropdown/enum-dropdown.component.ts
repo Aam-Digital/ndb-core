@@ -47,7 +47,7 @@ export class EnumDropdownComponent implements OnChanges {
     private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
     private ability: EntityAbility,
-    private dialog: MatDialog
+    private dialog: MatDialog,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -87,9 +87,19 @@ export class EnumDropdownComponent implements OnChanges {
     this.dialog
       .open(ConfigureEnumPopupComponent, { data: this.enumEntity })
       .afterClosed()
-      .subscribe(
-        () =>
-          (this.options = [...this.enumEntity.values, ...this.invalidOptions])
-      );
+      .subscribe(() => this.updateOptions());
+  }
+
+  private updateOptions() {
+    if (
+      // value not in options anymore
+      !this.enumEntity.values.some((v) => v.id === this.form.value.id) &&
+      // but was in options previously
+      this.options.some((v) => v.id === this.form.value.id)
+    ) {
+      this.form.setValue(undefined);
+    }
+
+    this.options = [...this.enumEntity.values, ...this.invalidOptions];
   }
 }

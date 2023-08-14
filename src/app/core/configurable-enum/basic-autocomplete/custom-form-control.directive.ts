@@ -75,7 +75,7 @@ export abstract class CustomFormControlDirective<T>
     public errorStateMatcher: ErrorStateMatcher,
     public ngControl: NgControl,
     public parentForm: NgForm,
-    public parentFormGroup: FormGroupDirective
+    public parentFormGroup: FormGroupDirective,
   ) {
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
@@ -101,7 +101,7 @@ export abstract class CustomFormControlDirective<T>
   setDescribedByIds(ids: string[]) {
     this.inputElement._elementRef.nativeElement.setAttribute(
       "aria-describedby",
-      ids.join(" ")
+      ids.join(" "),
     );
   }
 

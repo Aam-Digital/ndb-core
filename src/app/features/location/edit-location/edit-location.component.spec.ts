@@ -177,7 +177,7 @@ describe("EditLocationComponent", () => {
   async function expectLookup(
     searchTerm: string,
     lookupCalled: boolean,
-    input: TestElement
+    input: TestElement,
   ) {
     await input.clear();
     await input.sendKeys(searchTerm);

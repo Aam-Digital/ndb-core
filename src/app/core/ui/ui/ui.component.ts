@@ -84,13 +84,13 @@ export class UiComponent {
     private titleService: Title,
     private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver,
-    private router: Router
+    private router: Router,
   ) {
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))
       .subscribe(
-        (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over")
+        (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over"),
       );
     this.configService.configUpdates
       .pipe(untilDestroyed(this))

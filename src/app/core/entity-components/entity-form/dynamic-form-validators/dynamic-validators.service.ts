@@ -23,7 +23,7 @@ type ValidatorFactory = (value: any, name: string) => ValidatorFn;
  */
 export function patternWithMessage(
   pattern: string | RegExp,
-  message: string
+  message: string,
 ): ValidatorFn {
   const patternValidator = Validators.pattern(pattern);
 
@@ -82,7 +82,7 @@ export class DynamicValidatorsService {
       const factory = DynamicValidatorsService.validators[key];
       if (!factory) {
         this.loggingService.warn(
-          `Trying to generate validator ${key} but it does not exist`
+          `Trying to generate validator ${key} but it does not exist`,
         );
         continue;
       }
@@ -105,7 +105,7 @@ export class DynamicValidatorsService {
    */
   public descriptionForValidator(
     validator: DynamicValidator | string,
-    validationValue: any
+    validationValue: any,
   ): string {
     switch (validator) {
       case "min":
@@ -129,8 +129,8 @@ export class DynamicValidatorsService {
       default:
         this.loggingService.error(
           `No description defined for validator "${validator}": ${JSON.stringify(
-            validationValue
-          )}`
+            validationValue,
+          )}`,
         );
         throw $localize`Invalid input`;
     }

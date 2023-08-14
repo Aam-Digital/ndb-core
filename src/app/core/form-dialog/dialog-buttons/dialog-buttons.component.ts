@@ -49,7 +49,7 @@ export class DialogButtonsComponent implements OnInit {
     private router: Router,
     private ability: EntityAbility,
     private confirmation: ConfirmationDialogService,
-    private unsavedChanges: UnsavedChangesService
+    private unsavedChanges: UnsavedChangesService,
   ) {
     this.dialog.disableClose = true;
     this.dialog.backdropClick().subscribe(() =>
@@ -57,7 +57,7 @@ export class DialogButtonsComponent implements OnInit {
         if (confirmed) {
           this.dialog.close();
         }
-      })
+      }),
     );
     // This happens before the `canDeactivate` check and therefore does not warn when leaving
     this.dialog

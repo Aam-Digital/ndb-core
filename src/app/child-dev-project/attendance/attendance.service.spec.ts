@@ -21,14 +21,14 @@ describe("AttendanceService", () => {
   let entityMapper: EntityMapperService;
 
   const meetingInteractionCategory = defaultInteractionTypes.find(
-    (it) => it.isMeeting
+    (it) => it.isMeeting,
   );
 
   function createEvent(date: Date, activityIdWithPrefix: string): EventNote {
     const event = EventNote.create(date, "generated event");
     event.relatesTo = activityIdWithPrefix;
     event.category = defaultInteractionTypes.find(
-      (t) => t.id === "COACHING_CLASS"
+      (t) => t.id === "COACHING_CLASS",
     );
 
     return event;
@@ -87,7 +87,7 @@ describe("AttendanceService", () => {
 
     const nonMeetingNote = Note.create(
       new Date("2020-01-02"),
-      "manual event note 3"
+      "manual event note 3",
     );
     nonMeetingNote.addChild("1");
     nonMeetingNote.category = defaultInteractionTypes.find((t) => !t.isMeeting);
@@ -95,7 +95,7 @@ describe("AttendanceService", () => {
 
     const actualEvents = await service.getEventsOnDate(
       new Date("2020-01-01"),
-      new Date("2020-01-02")
+      new Date("2020-01-02"),
     );
 
     expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e2_1, note1, note2]);
@@ -120,7 +120,7 @@ describe("AttendanceService", () => {
     const actualEvents = await service.getEventsWithUpdatedParticipants(date);
     expect(actualEvents).toHaveSize(1);
     expect(actualEvents[0].children).toEqual(
-      jasmine.arrayWithExactContents(["1", "2", "3"])
+      jasmine.arrayWithExactContents(["1", "2", "3"]),
     );
   });
 
@@ -135,7 +135,7 @@ describe("AttendanceService", () => {
 
     const event = await service.createEventForActivity(activity, new Date());
     expect(event.children).toEqual(
-      jasmine.arrayWithExactContents(["member", "direct"])
+      jasmine.arrayWithExactContents(["member", "direct"]),
     );
   });
 
@@ -152,8 +152,8 @@ describe("AttendanceService", () => {
     expect(
       moment(actualAttendances[0].periodFrom).isSame(
         moment("2020-01-01"),
-        "day"
-      )
+        "day",
+      ),
     ).toBeTrue();
     expectEntitiesToMatch(actualAttendances[0].events, [e1_1, e1_2]);
     expect(actualAttendances[0].activity).toEqual(activity1);
@@ -161,8 +161,8 @@ describe("AttendanceService", () => {
     expect(
       moment(actualAttendances[1].periodFrom).isSame(
         moment("2020-03-01"),
-        "day"
-      )
+        "day",
+      ),
     ).toBeTrue();
     expectEntitiesToMatch(actualAttendances[1].events, [e1_3]);
     expect(actualAttendances[1].activity).toEqual(activity1);
@@ -171,21 +171,21 @@ describe("AttendanceService", () => {
   it("getAllActivityAttendancesForPeriod creates records for every activity with events in the given period", async () => {
     const actualAttendences = await service.getAllActivityAttendancesForPeriod(
       new Date(2020, 0, 1),
-      new Date(2020, 0, 5)
+      new Date(2020, 0, 5),
     );
 
     expect(actualAttendences).toHaveSize(2);
     expectEntitiesToMatch(
       actualAttendences.find(
-        (t) => t.activity.getId(true) === activity1.getId(true)
+        (t) => t.activity.getId(true) === activity1.getId(true),
       ).events,
-      [e1_1, e1_2]
+      [e1_1, e1_2],
     );
     expectEntitiesToMatch(
       actualAttendences.find(
-        (t) => t.activity.getId(true) === activity2.getId(true)
+        (t) => t.activity.getId(true) === activity2.getId(true),
       ).events,
-      [e2_1]
+      [e2_1],
     );
 
     expect(actualAttendences[0].periodFrom).toBeDate("2020-01-01");
@@ -280,7 +280,7 @@ describe("AttendanceService", () => {
     childAttendingSchool.childId = "child attending school";
     const mockQueryRelationsOf = spyOn(
       TestBed.inject(ChildrenService),
-      "queryActiveRelationsOf"
+      "queryActiveRelationsOf",
     ).and.resolveTo([childAttendingSchool]);
 
     const directlyAddedChild = new Child();
@@ -292,7 +292,7 @@ describe("AttendanceService", () => {
     expect(mockQueryRelationsOf).toHaveBeenCalledWith(
       "school",
       linkedSchool.getId(),
-      date
+      date,
     );
     expect(event.children).toHaveSize(2);
     expect(event.children).toContain(directlyAddedChild.getId());
@@ -316,7 +316,7 @@ describe("AttendanceService", () => {
     const directlyAddedChild = new Child();
     activity.participants.push(
       directlyAddedChild.getId(),
-      duplicateChild.getId()
+      duplicateChild.getId(),
     );
 
     const event = await service.createEventForActivity(activity, new Date());
@@ -329,11 +329,11 @@ describe("AttendanceService", () => {
 
   it("should load the events for a date with date-picker format", async () => {
     const datePickerDate = new Date(
-      new Date("2021-04-05").setHours(0, 0, 0, 0)
+      new Date("2021-04-05").setHours(0, 0, 0, 0),
     );
     const sameDayEvent = EventNote.create(
       new Date("2021-04-05"),
-      "Same Day Event"
+      "Same Day Event",
     );
     sameDayEvent.category = meetingInteractionCategory;
     await entityMapper.save(sameDayEvent);
@@ -344,7 +344,7 @@ describe("AttendanceService", () => {
 
   async function createChildrenInSchool(
     schoolId: string,
-    childrenIds: string[]
+    childrenIds: string[],
   ) {
     for (const childId of childrenIds) {
       const childSchool = new ChildSchoolRelation();

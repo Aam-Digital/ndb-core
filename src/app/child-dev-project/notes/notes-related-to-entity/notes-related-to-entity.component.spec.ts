@@ -97,7 +97,7 @@ describe("NotesRelatedToEntityComponent", () => {
     tick();
 
     expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
-      component.entity.getId(true)
+      component.entity.getId(true),
     );
     expect(component.records).toEqual([n1, n2, n3]);
   }));

@@ -173,7 +173,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
     let filteredOptions = this._options.filter(
-      (o) => !this.hideOption(o.initial)
+      (o) => !this.hideOption(o.initial),
     );
     if (inputText) {
       filteredOptions = filteredOptions.filter((o) =>

@@ -27,7 +27,7 @@ export class NoteAttendanceCountBlockComponent implements OnInit {
 
   ngOnInit() {
     this.participantsWithStatus = this.entity.countWithStatus(
-      this.config.status
+      this.config.status,
     );
   }
 }

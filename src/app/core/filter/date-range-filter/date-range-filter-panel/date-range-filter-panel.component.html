@@ -12,7 +12,10 @@
     <div class="panel">
       <div
         class="button-div"
-        *ngFor="let item of filter.rangeOptions; let selectedIndexOfDateRanges = index"
+        *ngFor="
+          let item of filter.rangeOptions;
+          let selectedIndexOfDateRanges = index
+        "
       >
         <button
           class="button"

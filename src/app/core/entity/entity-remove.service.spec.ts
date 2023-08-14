@@ -66,7 +66,7 @@ describe("EntityRemoveService", () => {
     mockSnackBarRef.onAction.and.returnValues(NEVER);
     // mock that dialog is dismissed immediately
     const afterDismissed = new Observable<MatSnackBarDismiss>((subscriber) =>
-      subscriber.next({} as MatSnackBarDismiss)
+      subscriber.next({} as MatSnackBarDismiss),
     );
     mockSnackBarRef.afterDismissed.and.returnValue(afterDismissed);
     service
@@ -87,7 +87,7 @@ describe("EntityRemoveService", () => {
   it("emits twice when an entity was deleted and the user pressed undo", (done) => {
     // Mock a snackbar where 'undo' is immediately pressed
     const onSnackbarAction = new Observable<void>((subscriber) =>
-      subscriber.next()
+      subscriber.next(),
     );
     mockSnackBarRef.onAction.and.returnValue(onSnackbarAction);
     mockSnackBarRef.afterDismissed.and.returnValue(NEVER);

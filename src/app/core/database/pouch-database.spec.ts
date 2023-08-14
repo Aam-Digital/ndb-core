@@ -38,7 +38,7 @@ describe("PouchDatabase tests", () => {
         _id: id,
         name: name,
         count: count,
-      })
+      }),
     );
   });
 
@@ -174,7 +174,7 @@ describe("PouchDatabase tests", () => {
         _rev: existingIndex._rev,
         views: testIndex.views,
       },
-      true
+      true,
     );
 
     // expect all indices to be queried
@@ -225,13 +225,13 @@ describe("PouchDatabase tests", () => {
       jasmine.objectContaining({
         _id: "5",
         name: "The Grinch",
-      })
+      }),
     );
     await expectAsync(database.get("8")).toBeResolvedTo(
       jasmine.objectContaining({
         _id: "8",
         name: "Santa Claus",
-      })
+      }),
     );
   });
 
