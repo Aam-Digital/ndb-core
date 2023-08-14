@@ -8,6 +8,7 @@ import {
   flush,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -84,7 +85,7 @@ describe("NotesManagerComponent", () => {
     },
   ]);
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockNoteObservable = new Subject<UpdatedEntity<Note>>();
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
@@ -102,7 +103,7 @@ describe("NotesManagerComponent", () => {
         ? (mockNoteObservable as any)
         : (mockEventNoteObservable as any),
     );
-  });
+  }));
 
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesManagerComponent);

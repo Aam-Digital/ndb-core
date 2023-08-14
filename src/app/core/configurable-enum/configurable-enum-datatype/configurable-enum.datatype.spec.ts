@@ -23,10 +23,10 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
-import { ConfigurableEnumModule } from "../configurable-enum.module";
 import { ConfigurableEnumService } from "../configurable-enum.service";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumDatatype } from "./configurable-enum.datatype";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("Schema data type: configurable-enum", () => {
   const TEST_CONFIG: ConfigurableEnumConfig = [
@@ -57,7 +57,7 @@ describe("Schema data type: configurable-enum", () => {
     enumService.getEnumValues.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({
-      imports: [ConfigurableEnumModule],
+      imports: [MockedTestingModule],
       providers: [{ provide: ConfigurableEnumService, useValue: enumService }],
     });
 

@@ -19,9 +19,8 @@ import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { fakeAsync, TestBed } from "@angular/core/testing";
-import { CoreModule } from "../../core.module";
-import { ComponentRegistry } from "../../../dynamic-components";
+import { fakeAsync, TestBed, waitForAsync } from "@angular/core/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
@@ -134,15 +133,14 @@ export function testEntitySubclass(
   skipTestbedConfiguration = false,
 ) {
   let schemaService: EntitySchemaService;
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     if (!skipTestbedConfiguration) {
       TestBed.configureTestingModule({
-        imports: [CoreModule],
-        providers: [ComponentRegistry],
+        imports: [MockedTestingModule.withState()],
       });
     }
     schemaService = TestBed.inject(EntitySchemaService);
-  });
+  }));
 
   it("should be a valid entity subclass", () => {
     const id = "test1";
