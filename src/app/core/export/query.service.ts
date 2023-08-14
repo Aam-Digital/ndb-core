@@ -465,8 +465,8 @@ export class QueryService {
    * @param value the string which should replace initial data
    * @returns array of same length as data where every input is value
    */
-  private setString(data: any[], value: string): string[] {
-    return data.map(() => value);
+  private setString(data: any[], value: string): string[] | string {
+    return Array.isArray(data) ? data.map(() => value) : value;
   }
 }
 
