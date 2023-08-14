@@ -17,6 +17,9 @@
 
 import { Injectable } from "@angular/core";
 import { StringDatatype } from "./string.datatype";
+import { EntitySchemaField } from "../schema/entity-schema-field";
+import { EntityMapperService } from "../entity-mapper.service";
+import { ColumnMapping } from "../../../features/import/column-mapping";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity
@@ -32,4 +35,26 @@ export class EntityDatatype extends StringDatatype {
   static dataType = "entity";
   editComponent = "EditSingleEntity";
   viewComponent = "DisplayEntity";
+  importConfigComponent = "DateValueMapping";
+
+  constructor(private entityMapper: EntityMapperService) {
+    super();
+  }
+
+  importMapFunction(
+    val: any,
+    schemaField: EntitySchemaField,
+    additional?: any,
+  ) {
+    if (!additional) {
+      return Promise.resolve(undefined);
+    }
+    return this.entityMapper
+      .loadType(schemaField.additional)
+      .then((res) => res.find((e) => e[additional] === val)?.getId());
+  }
+
+  importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
+    return col.additional ? undefined : "?";
+  }
 }

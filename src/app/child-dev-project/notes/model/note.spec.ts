@@ -3,19 +3,12 @@ import { warningLevels } from "../../warning-levels";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import {
-  ATTENDANCE_STATUS_CONFIG_ID,
   AttendanceLogicalStatus,
   AttendanceStatusType,
   NullAttendanceStatusType,
 } from "../../attendance/model/attendance-status";
-import {
-  INTERACTION_TYPE_CONFIG_ID,
-  InteractionType,
-} from "./interaction-type.interface";
-import {
-  CONFIGURABLE_ENUM_CONFIG_PREFIX,
-  ConfigurableEnumConfig,
-} from "../../../core/configurable-enum/configurable-enum.interface";
+import { InteractionType } from "./interaction-type.interface";
+import { ConfigurableEnumConfig } from "../../../core/configurable-enum/configurable-enum.interface";
 import {
   getWarningLevelColor,
   WarningLevel,
@@ -23,10 +16,7 @@ import {
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
-import { CoreModule } from "../../../core/core.module";
-import { ComponentRegistry } from "../../../dynamic-components";
-import { DefaultDatatype } from "../../../core/entity/schema/default.datatype";
-import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 const testStatusTypes: ConfigurableEnumConfig<AttendanceStatusType> = [
   {
@@ -61,7 +51,6 @@ function createTestModel(): Note {
 }
 
 describe("Note", () => {
-  const ENTITY_TYPE = "Note";
   let entitySchemaService: EntitySchemaService;
 
   const testInteractionTypes: InteractionType[] = Ordering.imposeTotalOrdering([
@@ -80,25 +69,8 @@ describe("Note", () => {
   ]);
 
   beforeEach(waitForAsync(() => {
-    const testConfigs = {};
-    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + INTERACTION_TYPE_CONFIG_ID] =
-      testInteractionTypes;
-    testConfigs[CONFIGURABLE_ENUM_CONFIG_PREFIX + ATTENDANCE_STATUS_CONFIG_ID] =
-      testStatusTypes;
-
-    const mockEnumService = jasmine.createSpyObj(["getEnumValues"]);
-    mockEnumService.getEnumValues.and.returnValue(testStatusTypes);
-
     TestBed.configureTestingModule({
-      imports: [CoreModule],
-      providers: [
-        ComponentRegistry,
-        {
-          provide: DefaultDatatype,
-          useValue: new ConfigurableEnumDatatype(mockEnumService),
-          multi: true,
-        },
-      ],
+      imports: [MockedTestingModule.withState()],
     });
     entitySchemaService = TestBed.inject(EntitySchemaService);
   }));
@@ -194,8 +166,6 @@ describe("Note", () => {
   it("sets default NullAttendanceStatusType for attendance entries with missing value", function () {
     const status = testStatusTypes.find((c) => c.id === "ABSENT");
     const rawData = {
-      _id: ENTITY_TYPE + ":" + "test",
-
       children: ["1", "2", "3"],
       childrenAttendance: [
         ["1", { status: status.id, remarks: "" }],

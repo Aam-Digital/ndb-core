@@ -1,5 +1,4 @@
 import { Component, Inject } from "@angular/core";
-import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -14,7 +13,6 @@ import { MatSelectModule } from "@angular/material/select";
 import { NgForOf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
-import { ColumnMapping } from "../../column-mapping";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
 
 @Component({
@@ -32,10 +30,7 @@ import { HelpButtonComponent } from "../../../../core/common-components/help-but
     HelpButtonComponent,
   ],
 })
-export class EntityValueMappingComponent extends AbstractValueMappingComponent {
-  static getIncompleteAdditionalConfigBadge(col: ColumnMapping) {
-    return col.additional ? undefined : "?";
-  }
+export class EntityValueMappingComponent {
   entity: EntityConstructor;
   propertyForm = new FormControl("");
   availableProperties: { property: string; label: string }[] = [];
@@ -47,7 +42,6 @@ export class EntityValueMappingComponent extends AbstractValueMappingComponent {
     private fb: FormBuilder,
     private entities: EntityRegistry,
   ) {
-    super();
     const propertyName = this.data.col.propertyName;
     const entityName = this.data.entityType.schema.get(propertyName).additional;
     this.entity = this.entities.get(entityName);
