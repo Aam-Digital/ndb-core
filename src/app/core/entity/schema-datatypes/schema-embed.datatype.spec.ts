@@ -18,52 +18,69 @@
 import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { waitForAsync } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
+import { CoreModule } from "../../core.module";
+import { ComponentRegistry } from "../../../dynamic-components";
 
-describe("Schema data type: entity-array", () => {
+describe("Schema data type: schema-embed", () => {
+  class InnerClass {
+    @DatabaseField({ dataType: "month" }) value: Date;
+
+    private _value2: number;
+    @DatabaseField()
+    get value2(): number {
+      return this._value2;
+    }
+    set value2(v) {
+      if (Number.isNaN(v)) {
+        this._value2 = -1;
+      } else {
+        this._value2 = v;
+      }
+    }
+  }
+
   class TestEntity extends Entity {
-    @DatabaseField({ dataType: "entity-array", additional: "User" })
-    relatedUsers: string[] = [];
-
-    @DatabaseField({
-      dataType: "entity-array",
-      additional: ["User", "Child", "School"],
-    })
-    relatedEntities: string[] = [];
+    @DatabaseField({ dataType: "schema-embed", additional: InnerClass })
+    embedded = new InnerClass();
   }
 
   let entitySchemaService: EntitySchemaService;
 
   beforeEach(waitForAsync(() => {
-    entitySchemaService = new EntitySchemaService();
+    TestBed.configureTestingModule({
+      imports: [CoreModule],
+      providers: [ComponentRegistry],
+    });
+    entitySchemaService = TestBed.inject(EntitySchemaService);
   }));
 
-  it("keeps ids unchanged to store in db", () => {
+  it("applies inner schema transformation for database format", () => {
     const entity = new TestEntity();
-    entity.relatedUsers = ["1", "User:5"];
+    entity.embedded.value = new Date("2020-01-01");
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.relatedUsers).toEqual(["1", "User:5"]);
+    expect(rawData.embedded.value).toEqual("2020-01");
   });
 
-  it("keeps ids unchanged when loading from db", () => {
+  it("applies inner schema transformation for object format", () => {
     const data = {
-      relatedEntities: ["User:1", "Child:1"],
+      embedded: { value: "2020-01" },
     };
     const loadedEntity = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity, data);
 
-    expect(loadedEntity.relatedEntities).toEqual(["User:1", "Child:1"]);
+    expect(loadedEntity.embedded.value).toBeDate("2020-01-01");
   });
 
-  xit("adds prefix to ids when a definite entity type is given in schema", () => {
-    // TODO discuss whether we want to switch to prefixed ids always (also see #1526)
+  it("creates instance of embedded class when loading", () => {
     const data = {
-      relatedUsers: ["User:1", "2"],
+      embedded: { value2: "not a number" },
     };
     const loadedEntity = new TestEntity();
     entitySchemaService.loadDataIntoEntity(loadedEntity, data);
 
-    expect(loadedEntity.relatedUsers).toEqual(["User:1", "User:2"]);
+    expect(loadedEntity.embedded).toBeInstanceOf(InnerClass);
+    expect(loadedEntity.embedded.value2).toBe(-1); // setter used during loading
   });
 });

@@ -1,19 +1,19 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 import { ConfigService } from "./config.service";
 import { EntityMapperService } from "../entity/entity-mapper.service";
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
-import { LoggingService } from "../logging/logging.service";
 import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
 import { EntityAbility } from "../permissions/ability/entity-ability";
+import { MockedTestingModule } from "../../utils/mocked-testing.module";
 
 describe("ConfigService", () => {
   let service: ConfigService;
   let entityMapper: jasmine.SpyObj<EntityMapperService>;
   const updateSubject = new Subject<UpdatedEntity<Config>>();
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     entityMapper = jasmine.createSpyObj([
       "load",
       "save",
@@ -27,18 +27,14 @@ describe("ConfigService", () => {
     entityMapper.saveAll.and.resolveTo([]);
     entityMapper.save.and.resolveTo([]);
     TestBed.configureTestingModule({
-      providers: [
-        { provide: EntityMapperService, useValue: entityMapper },
-        ConfigService,
-        LoggingService,
-        EntityAbility,
-      ],
+      imports: [MockedTestingModule],
+      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     });
     service = TestBed.inject(ConfigService);
     TestBed.inject(EntityAbility).update([
       { subject: "all", action: "manage" },
     ]);
-  });
+  }));
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -65,6 +61,7 @@ describe("ConfigService", () => {
 
     const testConfig = new Config();
     testConfig.data = { testKey: "testValue" };
+    console.log("calling next");
     updateSubject.next({ type: "new", entity: testConfig });
     tick();
 

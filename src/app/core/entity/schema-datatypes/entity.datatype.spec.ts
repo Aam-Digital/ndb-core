@@ -15,23 +15,9 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { testDatatype } from "../schema/entity-schema.service.spec";
+import { EntityDatatype } from "./entity.datatype";
 
-/**
- * The default fallback Datatype for the EntitySchemaService that keeps values unchanged between database and entity instance.
- *
- * This type is automatically used whenever no fitting Datatype can be found for that config or TypeScript type.
- */
-export const defaultEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "any",
-  viewComponent: "DisplayText",
-  editComponent: "EditText",
-
-  transformToDatabaseFormat: (value) => {
-    return value;
-  },
-
-  transformToObjectFormat: (value) => {
-    return value;
-  },
-};
+describe("Schema data type: entity", () => {
+  testDatatype(new EntityDatatype(), "1", "1", "User");
+});

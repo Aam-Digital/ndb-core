@@ -20,7 +20,13 @@ import { LoginState } from "../session-states/login-state.enum";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { SessionType } from "../session-type";
-import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
+import {
+  fakeAsync,
+  flush,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import {
   MockedTestingModule,
@@ -52,7 +58,7 @@ describe("SyncedSessionService", () => {
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockLocation: jasmine.SpyObj<Location>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockLocation = jasmine.createSpyObj(["reload"]);
     mockAuthService = jasmine.createSpyObj([
       "authenticate",
@@ -84,7 +90,7 @@ describe("SyncedSessionService", () => {
     remoteLoginSpy = spyOn(remoteSession, "login").and.callThrough();
     syncSpy = spyOn(sessionService, "sync").and.resolveTo();
     liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
-  });
+  }));
 
   afterEach(() => {
     localSession.removeUser(TEST_USER);

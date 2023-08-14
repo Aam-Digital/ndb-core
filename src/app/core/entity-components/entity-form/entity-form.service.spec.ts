@@ -1,54 +1,39 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EntityFormService } from "./entity-form.service";
 import {
-  FormBuilder,
   FormControl,
   UntypedFormControl,
   UntypedFormGroup,
 } from "@angular/forms";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { Entity } from "../../entity/model/entity";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
-import { MatDialogModule } from "@angular/material/dialog";
 import { UnsavedChangesService } from "../entity-details/form/unsaved-changes.service";
 import { Router } from "@angular/router";
 import { NotFoundComponent } from "../../view/dynamic-routing/not-found/not-found.component";
-import { SessionService } from "../../session/session-service/session.service";
 import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
-import { TEST_USER } from "../../../utils/mocked-testing.module";
-import { arrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-array";
-import { entityArrayEntitySchemaDatatype } from "../../entity/schema-datatypes/datatype-entity-array";
+import {
+  MockedTestingModule,
+  TEST_USER,
+} from "../../../utils/mocked-testing.module";
+import { ArrayDatatype } from "../../entity/schema-datatypes/array.datatype";
+import { EntityArrayDatatype } from "../../entity/schema-datatypes/entity-array.datatype";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
-  beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["save"]);
-    mockEntityMapper.save.and.resolveTo();
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MatDialogModule],
-      providers: [
-        FormBuilder,
-        EntitySchemaService,
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        EntityAbility,
-        {
-          provide: SessionService,
-          useValue: { getCurrentUser: () => ({ name: TEST_USER }) },
-        },
-      ],
+      imports: [MockedTestingModule.withState()],
     });
     service = TestBed.inject(EntityFormService);
-  });
+  }));
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -196,11 +181,11 @@ describe("EntityFormService", () => {
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue(TEST_USER);
 
-    schema.dataType = arrayEntitySchemaDatatype.name;
+    schema.dataType = ArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([TEST_USER]);
 
-    schema.dataType = entityArrayEntitySchemaDatatype.name;
+    schema.dataType = EntityArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([TEST_USER]);
 

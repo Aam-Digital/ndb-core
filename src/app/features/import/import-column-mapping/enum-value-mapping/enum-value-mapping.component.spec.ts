@@ -4,7 +4,7 @@ import { EnumValueMappingComponent } from "./enum-value-mapping.component";
 import { MappingDialogData } from "../import-column-mapping.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { ConfigurableEnumDatatype } from "../../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { ConfigurableEnumDatatype } from "../../../../core/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";

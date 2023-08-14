@@ -1,4 +1,5 @@
-import { EntitySchemaDatatype } from "../../core/entity/schema/entity-schema-datatype";
+import { StringDatatype } from "../../core/entity/schema-datatypes/string.datatype";
+import { Injectable } from "@angular/core";
 
 /**
  * Datatype for saving a file on an entity property.
@@ -20,10 +21,9 @@ import { EntitySchemaDatatype } from "../../core/entity/schema/entity-schema-dat
  * }
  * ```
  */
-export const fileDataType: EntitySchemaDatatype<string, string> = {
-  name: "file",
-  viewComponent: "ViewFile",
-  editComponent: "EditFile",
-  transformToDatabaseFormat: (value) => value,
-  transformToObjectFormat: (value) => value,
-};
+@Injectable()
+export class FileDatatype extends StringDatatype {
+  static dataType = "file";
+  viewComponent = "ViewFile";
+  editComponent = "EditFile";
+}

@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { EntitySelectComponent } from "./entity-select.component";
 import { Entity } from "../../../entity/model/entity";
@@ -24,8 +25,8 @@ describe("EntitySelectComponent", () => {
   const testChildren: Entity[] = [new Child(), new Child()];
   const otherEntities: Entity[] = [new School()];
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [
         EntitySelectComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, [
@@ -35,7 +36,7 @@ describe("EntitySelectComponent", () => {
         ]),
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySelectComponent);

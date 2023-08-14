@@ -36,11 +36,14 @@ supporting the `EntityMapperService` and transforming the entity object into the
 
 -----
 
-`EntitySchemaService` keeps a registry of "data types",
+`EntitySchemaService` manages a registry of "data types",
 i.e. transformation functions that will be called for a specific schema field's dataType.
 
 Basic data transformations for `string`, `number`, `date` and `month` are supported by default.
-You can register your own transformations by injecting the `EntitySchemaService` and using its `registerSchemaDatatype()` method.
+You can register your own types by implementing services extending `DefaultDatatype` and
+providing these through Angular dependency injection using `multi: true`.
+
+Also see: [How to create a new Datatype](../how-to-guides/create-a-new-datatype.html).
 
 ## Schema options
 
