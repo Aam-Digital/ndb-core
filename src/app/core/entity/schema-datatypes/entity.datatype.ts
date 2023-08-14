@@ -35,7 +35,7 @@ export class EntityDatatype extends StringDatatype {
   static dataType = "entity";
   editComponent = "EditSingleEntity";
   viewComponent = "DisplayEntity";
-  importConfigComponent = "DateValueMapping";
+  importConfigComponent = "EntityValueMapping";
 
   constructor(private entityMapper: EntityMapperService) {
     super();

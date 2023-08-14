@@ -14,7 +14,9 @@ import { NgForOf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("EntityValueMapping")
 @Component({
   selector: "app-entity-value-mapping",
   standalone: true,

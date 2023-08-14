@@ -30,6 +30,13 @@ export class ImportModule {
             "./import-column-mapping/date-value-mapping/date-value-mapping.component"
           ).then((c) => c.DateValueMappingComponent),
       ],
+      [
+        "EntityValueMapping",
+        () =>
+          import(
+            "./import-column-mapping/entity-value-mapping/entity-value-mapping.component"
+          ).then((c) => c.EntityValueMappingComponent),
+      ],
     ]);
   }
 }
