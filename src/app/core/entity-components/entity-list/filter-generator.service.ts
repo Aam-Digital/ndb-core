@@ -76,7 +76,8 @@ export class FilterGeneratorService {
           filterConfig.label,
         );
       } else if (
-        this.schemaService.getDatatypeOrDefault(type) instanceof DateDatatype
+        this.schemaService.getDatatypeOrDefault(type, true) instanceof
+        DateDatatype
       ) {
         filter = new DateFilter(
           filterConfig.id,

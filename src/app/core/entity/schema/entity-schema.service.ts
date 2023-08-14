@@ -48,8 +48,9 @@ export class EntitySchemaService {
   /**
    * Get the datatype for the giving name (or the default datatype if no other registered type fits)
    * @param datatypeName The key/name of the datatype
+   * @param failSilently If set to 'true' no error is thrown if datatype does not exist
    */
-  public getDatatypeOrDefault(datatypeName: string) {
+  public getDatatypeOrDefault(datatypeName: string, failSilently = false) {
     if (!datatypeName) {
       return this.defaultDatatype;
     }
@@ -66,7 +67,7 @@ export class EntitySchemaService {
     if (dataType) {
       this.schemaTypes.set(datatypeName, dataType);
       return dataType;
-    } else {
+    } else if (!failSilently) {
       throw new Error(`Data type "${datatypeName}" does not exist`);
     }
   }
