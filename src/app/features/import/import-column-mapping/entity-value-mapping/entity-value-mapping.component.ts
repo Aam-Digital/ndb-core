@@ -58,7 +58,7 @@ export class EntityValueMappingComponent {
       this.propertyForm.value ||
       (await this.confirmation.getConfirmation(
         $localize`Cancel?`,
-        $localize`If not property is selected, no import will be done.`,
+        $localize`If no property is selected, no import will be done.`,
       ));
     if (confirmed) {
       this.data.col.additional = this.propertyForm.value;
