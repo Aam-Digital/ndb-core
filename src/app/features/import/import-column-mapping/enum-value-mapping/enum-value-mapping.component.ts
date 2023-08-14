@@ -12,7 +12,6 @@ import { EntitySchemaField } from "../../../../core/entity/schema/entity-schema-
 import { KeyValuePipe, NgForOf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../../core/view/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
-import { ColumnMapping } from "../../column-mapping";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
@@ -35,19 +34,6 @@ export class EnumValueMappingComponent implements OnInit {
   form: FormGroup;
   component: string;
   schema: EntitySchemaField;
-
-  static getIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    if (!col.additional) {
-      return "?";
-    }
-    const unmappedValues = Object.values(col.additional).filter(
-      (v) => v === undefined,
-    );
-    if (unmappedValues.length > 0) {
-      return unmappedValues.length.toString();
-    }
-    return undefined;
-  }
 
   constructor(
     @Inject(MAT_DIALOG_DATA)

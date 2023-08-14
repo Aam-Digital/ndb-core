@@ -547,7 +547,7 @@ export const defaultJsonConfig = {
         },
         {
           "id": "schoolId",
-          "type": "School",
+          "type": "school",
           "label": $localize`:Label of schools filter:School`
         }
       ]
