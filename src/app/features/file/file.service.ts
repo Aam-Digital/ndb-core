@@ -2,10 +2,10 @@ import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { Observable } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { fileDataType } from "./file-data-type";
 import { filter } from "rxjs/operators";
 import { LoggingService } from "../../core/logging/logging.service";
 import { SafeUrl } from "@angular/platform-browser";
+import { FileDatatype } from "./file.datatype";
 
 /**
  * This service allow handles the logic for files/attachments.
@@ -52,7 +52,7 @@ export abstract class FileService {
 
   private entityHasFileProperty(entity: EntityConstructor): boolean {
     for (const prop of entity.schema.values()) {
-      if (prop.dataType === fileDataType.name) {
+      if (prop.dataType === FileDatatype.dataType) {
         return true;
       }
     }

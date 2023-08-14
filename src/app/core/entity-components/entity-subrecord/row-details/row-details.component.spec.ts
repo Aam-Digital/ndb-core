@@ -1,10 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import {
   DetailsComponentData,
   RowDetailsComponent,
 } from "./row-details.component";
-import { MatDialogRef, MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
@@ -15,12 +15,12 @@ describe("RowDetailsComponent", () => {
   let fixture: ComponentFixture<RowDetailsComponent>;
   let detailsComponentData: DetailsComponentData;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     detailsComponentData = {
       entity: new Entity(),
       columns: [],
     };
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [RowDetailsComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
@@ -31,7 +31,7 @@ describe("RowDetailsComponent", () => {
       ],
     }).compileComponents();
     spyOn(TestBed.inject(EntityAbility), "cannot").and.returnValue(true);
-  });
+  }));
 
   function initComponent() {
     fixture = TestBed.createComponent(RowDetailsComponent);

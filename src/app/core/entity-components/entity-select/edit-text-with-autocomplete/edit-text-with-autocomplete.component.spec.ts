@@ -14,8 +14,8 @@ describe("EditTextWithAutocompleteComponent", () => {
   let fixture: ComponentFixture<EditTextWithAutocompleteComponent>;
   let loadTypeSpy: jasmine.Spy;
 
-  beforeEach(() => {
-    return TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [
         EditTextWithAutocompleteComponent,
         MockedTestingModule.withState(),
@@ -27,7 +27,7 @@ describe("EditTextWithAutocompleteComponent", () => {
         },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);

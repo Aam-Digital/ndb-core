@@ -74,6 +74,10 @@
         "file": "how-to-guides/create-new-entity-type.md"
       },
       {
+        "title": "Create a New Datatype",
+        "file": "how-to-guides/create-new-datatype.md"
+      },
+      {
         "title": "Generate Demo Data",
         "file": "how-to-guides/generate-demo-data.md"
       },

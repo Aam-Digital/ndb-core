@@ -952,7 +952,7 @@ export const defaultJsonConfig = {
       {
         "name": "health_lastDentalCheckup",
         "schema": {
-          "dataType": "Date",
+          "dataType": "date",
           "label": $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },

@@ -3,7 +3,6 @@ import { ColumnMapping } from "../column-mapping";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
-import { ImportService } from "../import.service";
 import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
@@ -11,8 +10,9 @@ import { BasicAutocompleteComponent } from "../../../core/configurable-enum/basi
 import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatBadgeModule } from "@angular/material/badge";
-import { AbstractValueMappingComponent } from "./abstract-value-mapping-component";
-import { ComponentType } from "@angular/cdk/overlay";
+import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { DefaultDatatype } from "../../../core/entity/schema/default.datatype";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -45,14 +45,12 @@ export class ImportColumnMappingComponent {
     }
 
     this.entityCtor = this.entities.get(value);
-    this.mappingCmp = {};
+    this.dataTypeMap = {};
     this.allProps = [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
       .map(([name, schema]) => {
-        const cmp = this.importService.getMappingComponent(schema);
-        if (cmp) {
-          this.mappingCmp[name] = cmp;
-        }
+        this.dataTypeMap[name] =
+          this.schemaService.getInnermostDatatype(schema);
         return name;
       });
   }
@@ -63,7 +61,7 @@ export class ImportColumnMappingComponent {
   allProps: string[] = [];
 
   /** properties that need further adjustments through a component */
-  mappingCmp: { [key: string]: ComponentType<AbstractValueMappingComponent> };
+  dataTypeMap: { [name: string]: DefaultDatatype };
 
   /** warning label badges for a mapped column that requires user configuration for the "additional" details */
   mappingAdditionalWarning: { [key: string]: string } = {};
@@ -74,15 +72,20 @@ export class ImportColumnMappingComponent {
 
   constructor(
     private entities: EntityRegistry,
-    private importService: ImportService,
+    private schemaService: EntitySchemaService,
+    private componentRegistry: ComponentRegistry,
     private dialog: MatDialog,
   ) {}
 
-  openMappingComponent(col: ColumnMapping) {
+  async openMappingComponent(col: ColumnMapping) {
     const uniqueValues = new Set<any>();
     this.rawData.forEach((obj) => uniqueValues.add(obj[col.column]));
+    const configComponent = await this.componentRegistry.get(
+      this.dataTypeMap[col.propertyName].importConfigComponent,
+    )();
+
     this.dialog
-      .open<any, MappingDialogData>(this.mappingCmp[col.propertyName], {
+      .open<any, MappingDialogData>(configComponent, {
         data: {
           col: col,
           values: [...uniqueValues],
@@ -100,11 +103,10 @@ export class ImportColumnMappingComponent {
       delete col.additional;
     }
 
-    this.mappingAdditionalWarning[col.column] = (
-      this.mappingCmp[
+    this.mappingAdditionalWarning[col.column] =
+      this.dataTypeMap[
         col.propertyName
-      ] as unknown as typeof AbstractValueMappingComponent
-    )?.getIncompleteAdditionalConfigBadge(col);
+      ]?.importIncompleteAdditionalConfigBadge?.(col);
 
     // Emitting copy of array to trigger change detection; values have been updated in place through data binding
     this.columnMappingChange.emit([...this.columnMapping]);

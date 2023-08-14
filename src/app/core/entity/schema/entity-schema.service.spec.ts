@@ -19,17 +19,24 @@ import { Entity } from "../model/entity";
 import { waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
-import { EntitySchemaDatatype } from "./entity-schema-datatype";
-import { dateOnlyEntitySchemaDatatype } from "../schema-datatypes/datatype-date-only";
+import { Injector } from "@angular/core";
+import { StringDatatype } from "../schema-datatypes/string.datatype";
+import { DefaultDatatype } from "./default.datatype";
+import { DateOnlyDatatype } from "../schema-datatypes/date-only.datatype";
+import { ArrayDatatype } from "../schema-datatypes/array.datatype";
 
 describe("EntitySchemaService", () => {
-  let entitySchemaService: EntitySchemaService;
+  let service: EntitySchemaService;
+  let mockInjector: jasmine.SpyObj<Injector>;
 
   beforeEach(waitForAsync(() => {
-    entitySchemaService = new EntitySchemaService();
+    mockInjector = jasmine.createSpyObj(["get"]);
+    mockInjector.get.and.returnValue([new StringDatatype()]);
+
+    service = new EntitySchemaService(mockInjector);
   }));
 
-  it("schema:string converts to strings", function () {
+  it("should use datatype service transform methods to converts values", function () {
     class TestEntity extends Entity {
       @DatabaseField() aString: string;
     }
@@ -41,163 +48,12 @@ describe("EntitySchemaService", () => {
       _id: "test2",
       aString: 192,
     };
-    entitySchemaService.loadDataIntoEntity(entity, data);
+    service.loadDataIntoEntity(entity, data);
 
     expect(entity.aString).toEqual("192");
 
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    const rawData = service.transformEntityToDatabaseFormat(entity);
     expect(rawData.aString).toEqual("192");
-  });
-
-  it("schema:number converts to numbers", function () {
-    class TestEntity extends Entity {
-      @DatabaseField() aNumber: number;
-      @DatabaseField() aFloat: number;
-    }
-
-    const id = "test1";
-    const entity = new TestEntity(id);
-
-    const data = {
-      _id: "test2",
-      aNumber: "192",
-      aFloat: "1.68",
-    };
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity.aNumber).toEqual(192);
-    expect(entity.aFloat).toEqual(1.68);
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.aNumber).toEqual(192);
-    expect(rawData.aFloat).toEqual(1.68);
-  });
-
-  it("schema:date converts to Date object", function () {
-    class TestEntity extends Entity {
-      @DatabaseField() defaultDate: Date = new Date();
-      @DatabaseField() otherDate: Date;
-    }
-
-    const id = "test1";
-    const entity = new TestEntity(id);
-
-    const data = {
-      _id: "test2",
-      otherDate: "2018-01-01",
-    };
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity.defaultDate.toDateString()).toEqual(
-      new Date().toDateString(),
-    );
-
-    expect(entity.otherDate.getFullYear()).toEqual(2018);
-    expect(entity.otherDate.getMonth()).toEqual(0);
-    expect(entity.otherDate.getDate()).toEqual(1);
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    // Date is not transformed before saving
-    expect(rawData.otherDate).toEqual(new Date(data.otherDate));
-  });
-
-  it("schema:month converts between string and Date objects", function () {
-    class TestEntity extends Entity {
-      @DatabaseField({ dataType: "month" }) month: Date;
-    }
-
-    const id = "test1";
-    const entity = new TestEntity(id);
-
-    const data = {
-      _id: "test2",
-      month: "2018-2",
-    };
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity.month).toBeDate("2018-02-01");
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.month).toEqual("2018-02");
-  });
-
-  it("schema:date-only converts between YYYY-MM-dd and Date objects", function () {
-    class TestEntity extends Entity {
-      @DatabaseField({ dataType: "date-only" }) day: Date;
-    }
-
-    const id = "test1";
-    const entity = new TestEntity(id);
-
-    const data = {
-      _id: "test2",
-      day: "2018-01-15",
-    };
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity.day).toBeDate("2018-01-15");
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.day).toBeDate("2018-01-15");
-  });
-
-  it("schema:array converts contained dates to month for saving", function () {
-    class TestEntity extends Entity {
-      @DatabaseField({ innerDataType: "month" }) dateArr: Date[];
-    }
-
-    const id = "test1";
-    const entity = new TestEntity(id);
-    entity.dateArr = [new Date("2020-01-01"), new Date("2020-12-06")];
-
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-
-    expect(rawData.dateArr).toEqual(["2020-01", "2020-12"]);
-  });
-
-  it("schema:array converts contained month strings to dates when loading", function () {
-    class TestEntity extends Entity {
-      @DatabaseField({ innerDataType: "month" }) dateArr: Date[];
-    }
-
-    const id = "test1";
-    const entity = new TestEntity(id);
-
-    const data = {
-      _id: "test2",
-      dateArr: ["2020-1", "2020-12"],
-    };
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity.dateArr).toEqual([new Date(2020, 0), new Date(2020, 11)]);
-  });
-
-  it("schema:schema-embed converts contained object with contained schema annotation", function () {
-    class Detail {
-      @DatabaseField({ dataType: "month" }) month: Date;
-      otherStuff: string;
-    }
-
-    class TestEntity extends Entity {
-      @DatabaseField({ dataType: "schema-embed", additional: Detail })
-      details: Detail;
-    }
-
-    const id = "test1";
-    const entity = new TestEntity(id);
-
-    const data = {
-      _id: "test2",
-      details: { month: "2020-1" },
-    };
-
-    entitySchemaService.loadDataIntoEntity(entity, data);
-    expect(entity.details.month).toBeDate(new Date(2020, 0));
-
-    entity.details.otherStuff = "foo";
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.details.month).toEqual("2020-01");
-    expect(rawData.details.otherStuff).toBeUndefined();
   });
 
   it("should return the directly defined component name for viewing and editing a property", () => {
@@ -210,11 +66,11 @@ describe("EntitySchemaService", () => {
       month: Date;
     }
 
-    const viewComponent = entitySchemaService.getComponent(
+    const viewComponent = service.getComponent(
       Test.schema.get("month"),
       "view",
     );
-    const editComponent = entitySchemaService.getComponent(
+    const editComponent = service.getComponent(
       Test.schema.get("month"),
       "edit",
     );
@@ -224,19 +80,19 @@ describe("EntitySchemaService", () => {
   });
 
   it("should return the display component of the datatype if no other is defined", () => {
-    const testDatatype: EntitySchemaDatatype = {
-      name: "test-datatype",
-      viewComponent: "DisplayText",
-      transformToDatabaseFormat: () => null,
-      transformToObjectFormat: () => null,
-    };
-    entitySchemaService.registerSchemaDatatype(testDatatype);
+    class TestDatatype extends DefaultDatatype {
+      static dataType = "test-datatype";
+      viewComponent = "DisplayText";
+      transformToDatabaseFormat = () => null;
+      transformToObjectFormat = () => null;
+    }
+    mockInjector.get.and.returnValue([new TestDatatype()]);
 
     class Test extends Entity {
       @DatabaseField({ dataType: "test-datatype" }) stringProperty: string;
     }
 
-    const displayComponent = entitySchemaService.getComponent(
+    const displayComponent = service.getComponent(
       Test.schema.get("stringProperty"),
       "view",
     );
@@ -246,22 +102,74 @@ describe("EntitySchemaService", () => {
 
   it("should return the display and edit component for the innerDataType if dataType is array", () => {
     class TestEntity extends Entity {
-      @DatabaseField({ innerDataType: dateOnlyEntitySchemaDatatype.name })
+      @DatabaseField({ innerDataType: DateOnlyDatatype.dataType })
       dates: Date[];
     }
+    mockInjector.get.and.returnValue([
+      new DateOnlyDatatype(),
+      new ArrayDatatype(service),
+    ]);
 
     const propertySchema = TestEntity.schema.get("dates");
 
-    const displayComponent = entitySchemaService.getComponent(
-      propertySchema,
-      "view",
-    );
-    expect(displayComponent).toBe(dateOnlyEntitySchemaDatatype.viewComponent);
+    const displayComponent = service.getComponent(propertySchema, "view");
+    expect(displayComponent).toBe(new DateOnlyDatatype().viewComponent);
 
-    const editComponent = entitySchemaService.getComponent(
-      propertySchema,
-      "edit",
-    );
-    expect(editComponent).toBe(dateOnlyEntitySchemaDatatype.editComponent);
+    const editComponent = service.getComponent(propertySchema, "edit");
+    expect(editComponent).toBe(new DateOnlyDatatype().editComponent);
+  });
+
+  it("should return the default datatype no type is specified", () => {
+    const dataType = service.getDatatypeOrDefault(undefined);
+    expect(dataType).toBeInstanceOf(DefaultDatatype);
+  });
+
+  it("should throw an error if data type does not exist", () => {
+    expect(() =>
+      service.getDatatypeOrDefault("invalidDataType"),
+    ).toThrowError();
   });
 });
+
+export function testDatatype(
+  dataType: DefaultDatatype,
+  objectValue,
+  databaseValue,
+  additionalSchemaFieldConfig?: any,
+) {
+  let entitySchemaService: EntitySchemaService;
+  let mockInjector: jasmine.SpyObj<Injector>;
+
+  beforeEach(waitForAsync(() => {
+    mockInjector = jasmine.createSpyObj(["get"]);
+    mockInjector.get.and.returnValue([dataType]);
+
+    entitySchemaService = new EntitySchemaService(mockInjector);
+  }));
+
+  class TestEntity extends Entity {
+    @DatabaseField({
+      dataType: dataType.dataType,
+      additional: additionalSchemaFieldConfig,
+    })
+    field;
+  }
+
+  it("should convert to database format", () => {
+    const entity = new TestEntity();
+    entity.field = objectValue;
+
+    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
+    expect(rawData.field).toEqual(databaseValue);
+  });
+
+  it("should convert from database to entity format", () => {
+    const data = {
+      field: databaseValue,
+    };
+    const loadedEntity = new TestEntity();
+    entitySchemaService.loadDataIntoEntity(loadedEntity, data);
+
+    expect(loadedEntity.field).toEqual(objectValue);
+  });
+}
