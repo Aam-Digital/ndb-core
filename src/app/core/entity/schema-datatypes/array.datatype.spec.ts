@@ -3,10 +3,8 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { ArrayDatatype } from "./array.datatype";
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { CoreModule } from "../../core.module";
-import { ComponentRegistry } from "../../../dynamic-components";
-import { DefaultDatatype } from "../schema/default.datatype";
-import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { ConfigurableEnumService } from "../../configurable-enum/configurable-enum.service";
 
 describe("Schema data type: array", () => {
   const schema: EntitySchemaField = {
@@ -19,18 +17,12 @@ describe("Schema data type: array", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [CoreModule],
-      providers: [
-        ComponentRegistry,
-        {
-          provide: DefaultDatatype,
-          useValue: new ConfigurableEnumDatatype({
-            getEnumValues: () => defaultInteractionTypes,
-          } as any),
-          multi: true,
-        },
-      ],
+      imports: [MockedTestingModule.withState()],
     });
+    spyOn(
+      TestBed.inject(ConfigurableEnumService),
+      "getEnumValues",
+    ).and.returnValue(defaultInteractionTypes);
     entitySchemaService = TestBed.inject(EntitySchemaService);
     arrayDatatype = entitySchemaService.getDatatypeOrDefault(
       ArrayDatatype.dataType,

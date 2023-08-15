@@ -1,9 +1,11 @@
 import { EntityConstructor } from "../../entity/model/entity";
+import { ArrayDatatype } from "../../entity/schema-datatypes/array.datatype";
+import { EntityArrayDatatype } from "../../entity/schema-datatypes/entity-array.datatype";
 
 export function isArrayDataType(dataType: string) {
   return (
-    // do not use the Datatype classes here to avoid circular dependencies with EntitySchemaService
-    dataType === "array" || dataType === "entity-array"
+    dataType === ArrayDatatype.dataType ||
+    dataType === EntityArrayDatatype.dataType
   );
 }
 

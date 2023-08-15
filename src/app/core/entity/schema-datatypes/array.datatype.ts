@@ -30,7 +30,7 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
  *
  * `@DatabaseField({ innerDataType: 'month' }) dateArr: Date[];`
  * will ensure that in the database this property is saved as an array of "month" date strings
- * using the {@link monthEntitySchemaDatatype} (e.g. resulting in `['2020-01', '2020-04']` in the database).
+ * using the {@link MonthDatatype} (e.g. resulting in `['2020-01', '2020-04']` in the database).
  */
 @Injectable()
 export class ArrayDatatype<
