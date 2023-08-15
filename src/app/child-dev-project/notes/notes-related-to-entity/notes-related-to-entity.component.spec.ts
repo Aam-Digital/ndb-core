@@ -15,6 +15,8 @@ import { School } from "../../schools/model/school";
 import { User } from "../../../core/user/user";
 import moment from "moment";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -79,9 +81,50 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = entity;
     component.ngOnInit();
     note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId(true)]);
+    expect(note.relatedEntities).toContain(entity.getId(true));
     expect(note.children).toEqual(["someChild"]);
     expect(note.schools).toEqual(["someSchool"]);
+  });
+
+  it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {
+    @DatabaseEntity("TestNewNoteRelatedRefsEntity")
+    class TestNewNoteRelatedRefsEntity extends Entity {
+      static ENTITY_TYPE = "TestNewNoteRelatedRefsEntity";
+
+      @DatabaseField({
+        dataType: "entity-array",
+        additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
+      })
+      links;
+
+      @DatabaseField({
+        dataType: "entity",
+        additional: Child.ENTITY_TYPE,
+      })
+      childrenLink;
+    }
+    let customEntity = new TestNewNoteRelatedRefsEntity();
+    customEntity.links = [
+      "Child:1",
+      "School:not-a-type-for-note.relatedEntities",
+    ];
+    customEntity.childrenLink = "child-without-prefix";
+
+    Note.schema.get("relatedEntities").additional = [
+      Child.ENTITY_TYPE,
+      TestNewNoteRelatedRefsEntity.ENTITY_TYPE,
+    ];
+    component.entity = customEntity;
+    component.ngOnInit();
+
+    let newNote = component.generateNewRecordFactory()();
+
+    expect(newNote.relatedEntities).toContain(customEntity.getId(true));
+    expect(newNote.relatedEntities).toContain(customEntity.links[0]);
+    expect(newNote.relatedEntities).not.toContain(customEntity.links[1]);
+    expect(newNote.relatedEntities).toContain(
+      Entity.createPrefixedId(Child.ENTITY_TYPE, customEntity.childrenLink),
+    );
   });
 
   it("should sort notes by date", fakeAsync(() => {
