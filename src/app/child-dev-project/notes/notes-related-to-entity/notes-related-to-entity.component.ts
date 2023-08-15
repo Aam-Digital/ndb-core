@@ -87,6 +87,8 @@ export class NotesRelatedToEntityComponent implements OnInit {
       } else if (this.entity.getType() === School.ENTITY_TYPE) {
         newNote.addSchool(this.entity as School);
       } else if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+        // TODO: generalize to add references of related entities to Note
+        //  -> could we search the schema for any entity/entity-array prop with a type that is allowed in Note.relatedEntities?
         newNote.addChild((this.entity as ChildSchoolRelation).childId);
         newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
         newNote.relatedEntities.push(this.entity.getId(true));

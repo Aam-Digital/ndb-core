@@ -38,6 +38,7 @@ export class ChildSchoolOverviewComponent implements OnInit {
   @Input() single = true;
   @Input() showInactive = false;
   @Input() clickMode: "popup" | "navigate" = "popup";
+  // TODO: add @Input to configure what EntityType should be displayed (like RelatedEntitiesComponent)
 
   @Input() set columns(value: FormFieldConfig[]) {
     this._columns = [...value, isActiveIndicator];
@@ -62,6 +63,7 @@ export class ChildSchoolOverviewComponent implements OnInit {
   constructor(private childrenService: ChildrenService) {}
 
   ngOnInit() {
+    // TODO: instead of having a "mode", allow configuration which property is used (like RelatedEntitiesComponent)
     this.mode = this.inferMode(this.entity);
     // display the related entity that is *not* the current main entity
     const idColumn = this._columns.find(
@@ -88,6 +90,7 @@ export class ChildSchoolOverviewComponent implements OnInit {
     }
 
     this.isLoading = true;
+    // TODO: load records through EntityMapper directly (without index?)
     this.allRecords = await this.childrenService.queryRelationsOf(
       this.mode,
       this.entity.getId(false),
@@ -118,6 +121,9 @@ export class ChildSchoolOverviewComponent implements OnInit {
     return () => {
       const newRelation = new ChildSchoolRelation();
 
+      // TODO: generalize pre-selected props of new record
+      //  -> use Input of linked property to set the reference
+      //  -> allow config to on/off setting default date to "today" / "last end date" / "none"
       if (mode === "child") {
         newRelation.childId = entityId;
         // start is one after the end date of the last relation or today if no other relation exists
