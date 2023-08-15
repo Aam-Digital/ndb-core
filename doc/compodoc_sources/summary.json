@@ -88,6 +88,10 @@
         "file": "how-to-guides/create-new-entity-type.md"
       },
       {
+        "title": "Create a New Datatype",
+        "file": "how-to-guides/create-new-datatype.md"
+      },
+      {
         "title": "Create a Report",
         "file": "how-to-guides/reports.md"
       },

@@ -12,9 +12,13 @@ import { MatInputModule } from "@angular/material/input";
 import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
-import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
+/**
+ * Configuration dialog for parsing date value of data imported from a file.
+ */
+@DynamicComponent("DateValueMapping")
 @Component({
   selector: "app-date-value-mapping",
   templateUrl: "./date-value-mapping.component.html",
@@ -33,7 +37,7 @@ import { HelpButtonComponent } from "../../../../core/common-components/help-but
     HelpButtonComponent,
   ],
 })
-export class DateValueMappingComponent extends AbstractValueMappingComponent {
+export class DateValueMappingComponent {
   format = new FormControl("");
   valid = false;
   values: { value: string; parsed?: Date }[] = [];
@@ -43,8 +47,6 @@ export class DateValueMappingComponent extends AbstractValueMappingComponent {
     private confirmation: ConfirmationDialogService,
     private dialog: MatDialogRef<any>,
   ) {
-    super();
-
     this.values = this.data.values
       .filter((val) => !!val)
       .map((value) => ({ value }));

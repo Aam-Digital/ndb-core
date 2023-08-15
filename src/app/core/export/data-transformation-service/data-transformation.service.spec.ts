@@ -330,9 +330,9 @@ describe("DataTransformationService", () => {
   });
 
   it("should allow to group results", async () => {
-    createSchoolInDB("sameName");
-    createSchoolInDB("sameName");
-    createSchoolInDB("otherName");
+    await createSchoolInDB("sameName");
+    await createSchoolInDB("sameName");
+    await createSchoolInDB("otherName");
 
     const result = await service.queryAndTransformData([
       {
@@ -346,6 +346,36 @@ describe("DataTransformationService", () => {
       jasmine.arrayWithExactContents([
         { Name: "sameName", Amount: 2 },
         { Name: "otherName", Amount: 1 },
+      ]),
+    );
+  });
+
+  it("should allow results for top level (un-nested) queries", async () => {
+    await createChildInDB("A");
+    await createChildInDB("A");
+    await createChildInDB("B");
+
+    const result = await service.queryAndTransformData([
+      {
+        query: `:setString(Total)`,
+        label: "Group",
+      },
+      {
+        query: `${Child.ENTITY_TYPE}:toArray:count`,
+        label: "Count",
+      },
+      {
+        query: `${Child.ENTITY_TYPE}:toArray`,
+        groupBy: { label: "Group", property: "name" },
+        subQueries: [{ query: ":count", label: "Count" }],
+      },
+    ]);
+
+    expect(result).toEqual(
+      jasmine.arrayWithExactContents([
+        { Group: "Total", Count: 3 },
+        { Group: "A", Count: 2 },
+        { Group: "B", Count: 1 },
       ]),
     );
   });

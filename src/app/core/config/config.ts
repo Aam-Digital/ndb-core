@@ -20,7 +20,7 @@ export class Config<T = any> extends Entity {
   /**
    * This field contains all the configuration and does not have a predefined type.
    */
-  @DatabaseField({ dataType: "default" }) data: T;
+  @DatabaseField() data: T;
 
   constructor(id = Config.CONFIG_KEY, configuration?: T) {
     super(id);

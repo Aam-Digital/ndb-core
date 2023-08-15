@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { TodosDashboardComponent } from "./todos-dashboard.component";
 import { Todo } from "../model/todo";
@@ -19,8 +19,8 @@ describe("TodosDashboardComponent", () => {
   ];
   let testUser: string;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [
         TodosDashboardComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, mockEntities),
@@ -34,12 +34,11 @@ describe("TodosDashboardComponent", () => {
         },
       ],
     }).compileComponents();
-
-    testUser =
-      TestBed.inject<SessionService>(SessionService).getCurrentUser().name;
-  });
+  }));
 
   beforeEach(async () => {
+    testUser =
+      TestBed.inject<SessionService>(SessionService).getCurrentUser().name;
     fixture = TestBed.createComponent(TodosDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

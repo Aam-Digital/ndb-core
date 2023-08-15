@@ -1,4 +1,4 @@
-see issue: #XX
+closes: #XX
 
 ### Visible/Frontend Changes
 - [x] 

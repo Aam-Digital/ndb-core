@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
 import { HealthCheck } from "../../health-checkup/model/health-check";
@@ -13,11 +14,11 @@ describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
   let fixture: ComponentFixture<ChildrenBmiDashboardComponent>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [ChildrenBmiDashboardComponent, MockedTestingModule.withState()],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ChildrenBmiDashboardComponent);

@@ -15,9 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
 import { EntitySchemaField } from "../schema/entity-schema-field";
-import { EntitySchemaService } from "../schema/entity-schema.service";
+import { Injectable } from "@angular/core";
+import { EntityDatatype } from "./entity.datatype";
+import { ArrayDatatype } from "./array.datatype";
 
 /**
  * Datatype for the EntitySchemaService to handle multiple references to other entities
@@ -28,40 +29,27 @@ import { EntitySchemaService } from "../schema/entity-schema.service";
  *
  * `@DatabaseField({dataType: 'entity-array', additional: 'Child'}) relatedEntities: string[] = [];`
  */
-export const entityArrayEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "entity-array",
-  editComponent: "EditEntityArray",
-  viewComponent: "DisplayEntityArray",
+@Injectable()
+export class EntityArrayDatatype extends ArrayDatatype<string, string> {
+  static dataType = "entity-array";
 
-  transformToDatabaseFormat: (value) => {
-    if (!Array.isArray(value)) {
-      console.warn(
-        `property to be transformed with "entity-array" EntitySchema is not an array`,
-        value,
-        parent,
-      );
-    }
+  editComponent = "EditEntityArray";
+  viewComponent = "DisplayEntityArray";
 
-    return value;
-  },
+  transformToDatabaseFormat(value, schema: EntitySchemaField, parent) {
+    return super.transformToDatabaseFormat(
+      value,
+      { ...schema, innerDataType: EntityDatatype.dataType },
+      parent,
+    );
+  }
 
-  transformToObjectFormat: (
-    value: any[],
-    schemaField: EntitySchemaField,
-    schemaService: EntitySchemaService,
-    parent,
-  ) => {
-    if (!Array.isArray(value)) {
-      console.warn(
-        //TODO: should this be a sentry error instead?
-        'property to be transformed with "entity-array" EntitySchema is not an array',
-        value,
-        parent,
-      );
-      return value;
-    }
-
-    return value;
+  transformToObjectFormat(value, schema: EntitySchemaField, parent) {
+    return super.transformToObjectFormat(
+      value,
+      { ...schema, innerDataType: EntityDatatype.dataType },
+      parent,
+    );
 
     // TODO: maybe introduce a prefix transformation in the future (also see #1526)
     // this is only possible when no indices depend on un-prefixed IDs
@@ -74,5 +62,5 @@ export const entityArrayEntitySchemaDatatype: EntitySchemaDatatype = {
     } else {
       return value;
     }*/
-  },
-};
+  }
+}

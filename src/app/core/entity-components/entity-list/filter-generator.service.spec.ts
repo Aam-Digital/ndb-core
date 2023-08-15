@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { FilterGeneratorService } from "./filter-generator.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -25,13 +25,13 @@ describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
   let filterService: FilterService;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
     });
     service = TestBed.inject(FilterGeneratorService);
     filterService = TestBed.inject(FilterService);
-  });
+  }));
 
   it("should be created", () => {
     expect(service).toBeTruthy();

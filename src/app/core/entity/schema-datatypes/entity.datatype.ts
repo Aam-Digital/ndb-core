@@ -15,7 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
+import { Injectable } from "@angular/core";
+import { StringDatatype } from "./string.datatype";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity
@@ -26,16 +27,9 @@ import { EntitySchemaDatatype } from "../schema/entity-schema-datatype";
  *
  * `@DatabaseField({dataType: 'entity', additional: 'Child'}) relatedEntity: string;`
  */
-export const entityEntitySchemaDatatype: EntitySchemaDatatype = {
-  name: "entity",
-  editComponent: "EditSingleEntity",
-  viewComponent: "DisplayEntity",
-
-  transformToDatabaseFormat: (value) => {
-    return value;
-  },
-
-  transformToObjectFormat: (value: any[]) => {
-    return value;
-  },
-};
+@Injectable()
+export class EntityDatatype extends StringDatatype {
+  static dataType = "entity";
+  editComponent = "EditSingleEntity";
+  viewComponent = "DisplayEntity";
+}
