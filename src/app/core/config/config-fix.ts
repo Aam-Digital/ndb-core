@@ -618,6 +618,31 @@ export const defaultJsonConfig = {
                 ],
               }
             },
+
+            {
+              "title": "new generic PreviousRelationsComponent",
+              "component": "PreviousRelations",
+              "config": {
+                "entityType": "ChildSchoolRelation",
+                "property": "childId",
+                "single": true,
+                "columns": [
+                  {
+                    "id": "start",
+                    "visibleFrom": "sm",
+                  },
+                  {
+                    "id": "end",
+                    "visibleFrom": "sm",
+                  },
+                  "schoolId",
+                  "schoolClass",
+                  "result",
+                ],
+              }
+            },
+
+
             {
               "title": $localize`:Title inside a panel:ASER Results`,
               "component": "Aser"

@@ -236,4 +236,11 @@ export const coreComponents: ComponentTuple[] = [
         "./entity-components/entity-details/related-entities/related-entities.component"
       ).then((c) => c.RelatedEntitiesComponent),
   ],
+  [
+    "PreviousRelations",
+    () =>
+      import(
+        "./entity-components/previous-relations/previous-relations.component"
+      ).then((c) => c.PreviousRelationsComponent),
+  ],
 ];

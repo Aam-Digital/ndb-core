@@ -91,6 +91,7 @@ export class ChildSchoolOverviewComponent implements OnInit {
 
     this.isLoading = true;
     // TODO: load records through EntityMapper directly (without index?)
+    // TODO: make this handle loading if linked property is array of multiple entity refs
     this.allRecords = await this.childrenService.queryRelationsOf(
       this.mode,
       this.entity.getId(false),

@@ -17,15 +17,24 @@ import { EntitySubrecordComponent } from "../../entity-subrecord/entity-subrecor
   standalone: true,
   imports: [EntitySubrecordComponent],
 })
-export class RelatedEntitiesComponent implements OnInit {
-  data: Entity[] = [];
+export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
+  data: E[] = [];
   @Input() entity: Entity;
   @Input() entityType: string;
   @Input() property: string;
-  @Input() columns: ColumnConfig[];
-  @Input() filter?: DataFilter<Entity>;
+
+  @Input() set columns(value: ColumnConfig[]) {
+    this._columns = value;
+  }
+  get columns(): ColumnConfig[] {
+    return this._columns;
+  }
+  protected _columns: ColumnConfig[];
+
+  @Input() filter?: DataFilter<any>; // TODO: somehow subrecord-entities doesn't accept DataFilter<E> here ...
   private isArray = false;
   private entityCtr: EntityConstructor;
+  isLoading = false;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -33,16 +42,24 @@ export class RelatedEntitiesComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
+    await this.initData();
+  }
+
+  protected async initData() {
+    this.isLoading = true;
+
     this.entityCtr = this.entities.get(this.entityType);
     this.isArray = isArrayProperty(this.entityCtr, this.property);
 
-    this.data = await this.entityMapper.loadType(this.entityType);
-    this.filter = {
-      ...this.filter,
-      [this.property]: this.isArray
-        ? { $elemMatch: { $eq: this.entity.getId() } }
-        : this.entity.getId(),
-    };
+    this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
+      (d) =>
+        this.isArray
+          ? d[this.property].includes(this.entity.getId())
+          : d[this.property] === this.entity.getId(),
+    );
+    // TODO: why did we previously choose to use this.filter rather than what seems a bit more simple directly filtering before assigning docs to this.data?
+
+    this.isLoading = false;
   }
 
   createNewRecordFactory() {
