@@ -8,40 +8,13 @@ To adapt the platform to a certain use case, you usually want to adapt entity ty
 This defines what fields users can see and edit in forms, among other things.
 
 There are two approaches to define entity types:
-- at runtime in the config file
-- at build time in the code
+- at runtime in the config file (see [How to Configure and Customize a System](./configure-and-customize-a-system.html))
+- at build time in the code (this guide)
 
 Unless you have special requirements and write further code specifically for your entity type, 
-you usually should rely on the more flexible and easy approach defining them in the config. 
+you usually should rely on the more flexible and easy approach defining them in the config.
 
-
-## Defining a custom Entity type only through config
-For general details about the configuration system, have a look at [Concepts / Configuration](../concepts/configuration.html).
-The configuration allows you to customize an Aam Digital instance at runtime without changes to the code base.
-A key part of that is extending existing entity types and defining additional ones.
-
-To configure an entity type, edit the config document in your database (`_id: "Config:CONFIG_ENTITY"`)
-and add a section with id `"entity:MyEntityType"`.
-"entity:" serves as a prefix for any config section that updates or creates an entity type, follow by the name of the type.
-
-Within that section, you can define attributes (i.e. properties = form fields)
-as well as some general ("static") details of the entity type.
-All options are described here: [Concepts / Configuration -> Entity](../concepts/configuration.html).
-
-For example, an entry in the config file for a new entity type could look like this:
-```
-"entity:MyEntity": {
-    "label": "My Entity", // used for titles in the UI
-    "labelPlural": "My Entities",
-    "toStringAttributes": ["firstname", "lastname"], // used when an entity is displayed as a reference/link
-    "attributes": [
-        {"name": "name", "schema": { "dataType": "string", "label": "name" } },
-        {"name": "remarks", "schema": { "dataType": "string", "label": "Further remarks", "editComponent": "EditLongText" } },
-    ]
-}
-```
-
-The [config-fix.ts](https://github.com/Aam-Digital/ndb-core/blob/master/src/app/core/config/config-fix.ts) in the repository is an example and demo configuration from which you can copy parts of configuration definitions also.
+_This guide talks about the advance topic of implementing an entity type via code._
 
 
 ---

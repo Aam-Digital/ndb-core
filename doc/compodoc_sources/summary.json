@@ -72,12 +72,24 @@
     "file": "how-to-guides/_index.md",
     "children": [
       {
+        "title": "Configure and Customize a System",
+        "file": "how-to-guides/configure-custom-system.md"
+      },
+      {
         "title": "Navigate the Code Structure",
         "file": "how-to-guides/navigate-code-structure.md"
       },
       {
         "title": "Contribute Code to the Project",
         "file": "how-to-guides/contribute-code.md"
+      },
+      {
+        "title": "Create a New Entity Type",
+        "file": "how-to-guides/create-new-entity-type.md"
+      },
+      {
+        "title": "Create a Report",
+        "file": "how-to-guides/reports.md"
       },
       {
         "title": "Load and Save Data",
@@ -112,20 +124,12 @@
         "file": "how-to-guides/use-queries-and-indices.md"
       },
       {
-        "title": "Create a New Entity Type",
-        "file": "how-to-guides/create-new-entity-type.md"
-      },
-      {
         "title": "Generate Demo Data",
         "file": "how-to-guides/generate-demo-data.md"
       },
       {
         "title": "Review a Pull Request",
         "file": "how-to-guides/review-pull-request.md"
-      },
-      {
-        "title": "Create a Report",
-        "file": "how-to-guides/reports.md"
       },
       {
         "title": "Format Data Export",
