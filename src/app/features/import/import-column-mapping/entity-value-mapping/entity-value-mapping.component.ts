@@ -60,8 +60,8 @@ export class EntityValueMappingComponent {
     const confirmed =
       this.propertyForm.value ||
       (await this.confirmation.getConfirmation(
-        $localize`Cancel?`,
-        $localize`If no property is selected, no import will be done.`,
+        $localize`Ignore for import?`,
+        $localize`If no property is selected, this column will be skipped during import. Are you sure to keep it unmapped?`,
       ));
     if (confirmed) {
       this.data.col.additional = this.propertyForm.value;
