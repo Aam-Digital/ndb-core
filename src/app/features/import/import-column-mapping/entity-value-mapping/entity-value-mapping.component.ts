@@ -16,6 +16,9 @@ import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
+/**
+ * Configuration UI for the EntityDatatype's import mapping function.
+ */
 @DynamicComponent("EntityValueMapping")
 @Component({
   selector: "app-entity-value-mapping",
