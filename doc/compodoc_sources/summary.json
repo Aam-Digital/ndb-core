@@ -120,16 +120,20 @@
         "file": "concepts/entity-schema-system.md"
       },
       {
-        "title": "Session and Authentication System",
-        "file": "concepts/session-system.md"
-      },
-      {
         "title": "Configuration",
         "file": "concepts/configuration.md"
       },
       {
+        "title": "Session and Authentication System",
+        "file": "concepts/session-system.md"
+      },
+      {
         "title": "User Roles and Permissions",
         "file": "concepts/permissions.md"
+      },
+      {
+        "title": "Security",
+        "file": "concepts/security.md"
       },
       {
         "title": "UX Guidelines",
