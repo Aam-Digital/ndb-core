@@ -10,8 +10,8 @@ import { NgIf } from "@angular/common";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
-import { Entity } from "../../entity/model/entity";
 import { RelatedEntitiesComponent } from "../entity-details/related-entities/related-entities.component";
+import { TimePeriodRelation } from "./time-period-relation";
 
 /**
  * Display a list of entity subrecords (entities related to the current entity details view)
@@ -40,8 +40,7 @@ import { RelatedEntitiesComponent } from "../entity-details/related-entities/rel
   ],
   standalone: true,
 })
-// TODO: create an (abstract) type for time-period-based relations?
-export class PreviousRelationsComponent<E extends Entity>
+export class PreviousRelationsComponent<E extends TimePeriodRelation>
   extends RelatedEntitiesComponent<E>
   implements OnInit
 {
@@ -91,9 +90,9 @@ export class PreviousRelationsComponent<E extends Entity>
     return () => {
       const newRelation = super.createNewRecordFactory()();
 
-      newRelation["start"] =
-        this.data.length && this.data[0]["end"]
-          ? moment(this.data[0]["end"]).add(1, "day").toDate()
+      newRelation.start =
+        this.data.length && this.data[0].end
+          ? moment(this.data[0].end).add(1, "day").toDate()
           : moment().startOf("day").toDate();
 
       return newRelation;
@@ -106,7 +105,7 @@ export const isActiveIndicator = {
   label: $localize`:Label for the currently active status|e.g. Currently active:Currently`,
   view: "ReadonlyFunction",
   hideFromTable: true,
-  tooltip: $localize`:Tooltip for the status of currently active or not:Only added to school/group if active.Change the start or end date to modify this status.`,
+  tooltip: $localize`:Tooltip for the status of currently active or not:Only added to linked record if active. Change the start or end date to modify this status.`,
   additional: (csr: ChildSchoolRelation) =>
     csr.isActive
       ? $localize`:Indication for the currently active status of an entry:active`
