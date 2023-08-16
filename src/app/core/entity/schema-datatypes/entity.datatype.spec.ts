@@ -17,7 +17,29 @@
 
 import { testDatatype } from "../schema/entity-schema.service.spec";
 import { EntityDatatype } from "./entity.datatype";
+import { mockEntityMapper } from "../mock-entity-mapper-service";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 
 describe("Schema data type: entity", () => {
-  testDatatype(new EntityDatatype(), "1", "1", "User");
+  testDatatype(new EntityDatatype(undefined), "1", "1", "User");
+
+  it("should map to the referenced entity", async () => {
+    const c1 = Child.create("first");
+    const c2 = new Child();
+    c2.projectNumber = "123";
+    const entityMapper = mockEntityMapper([c1, c2]);
+    const dataType = new EntityDatatype(entityMapper);
+    const schema = ChildSchoolRelation.schema.get("childId");
+
+    await expectAsync(
+      dataType.importMapFunction("first", schema, "name"),
+    ).toBeResolvedTo(c1.getId());
+    await expectAsync(
+      dataType.importMapFunction("123", schema, "projectNumber"),
+    ).toBeResolvedTo(c2.getId());
+    await expectAsync(
+      dataType.importMapFunction("345", schema, "projectNumber"),
+    ).toBeResolvedTo(undefined);
+  });
 });

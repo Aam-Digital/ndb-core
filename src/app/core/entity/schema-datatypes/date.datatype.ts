@@ -59,7 +59,7 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
 
   importConfigComponent = "DateValueMapping";
 
-  importMapFunction(
+  async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
     additional?: any,

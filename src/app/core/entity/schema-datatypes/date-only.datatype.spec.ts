@@ -60,10 +60,14 @@ describe("Schema data type: date-only", () => {
     }
   });
 
-  it("should parse dates using importMappingFunction", () => {
+  it("should parse dates using importMappingFunction", async () => {
     const input = "30.11.2023";
 
-    const actualMapped = dataType.importMapFunction(input, null, "DD.MM.YYYY");
+    const actualMapped = await dataType.importMapFunction(
+      input,
+      null,
+      "DD.MM.YYYY",
+    );
 
     expect(actualMapped).toEqual(new Date(2023, 10, 30));
   });

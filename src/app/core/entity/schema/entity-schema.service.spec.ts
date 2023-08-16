@@ -16,24 +16,25 @@
  */
 
 import { Entity } from "../model/entity";
-import { waitForAsync } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { Injector } from "@angular/core";
-import { StringDatatype } from "../schema-datatypes/string.datatype";
 import { DefaultDatatype } from "./default.datatype";
 import { DateOnlyDatatype } from "../schema-datatypes/date-only.datatype";
-import { ArrayDatatype } from "../schema-datatypes/array.datatype";
+import { EntitySchemaField } from "./entity-schema-field";
+import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { EntityDatatype } from "../schema-datatypes/entity.datatype";
 
 describe("EntitySchemaService", () => {
   let service: EntitySchemaService;
-  let mockInjector: jasmine.SpyObj<Injector>;
 
   beforeEach(waitForAsync(() => {
-    mockInjector = jasmine.createSpyObj(["get"]);
-    mockInjector.get.and.returnValue([new StringDatatype()]);
-
-    service = new EntitySchemaService(mockInjector);
+    TestBed.configureTestingModule({
+      imports: [MockedTestingModule.withState()],
+    });
+    service = TestBed.inject(EntitySchemaService);
   }));
 
   it("should use datatype service transform methods to converts values", function () {
@@ -80,24 +81,16 @@ describe("EntitySchemaService", () => {
   });
 
   it("should return the display component of the datatype if no other is defined", () => {
-    class TestDatatype extends DefaultDatatype {
-      static dataType = "test-datatype";
-      viewComponent = "DisplayText";
-      transformToDatabaseFormat = () => null;
-      transformToObjectFormat = () => null;
-    }
-    mockInjector.get.and.returnValue([new TestDatatype()]);
-
     class Test extends Entity {
-      @DatabaseField({ dataType: "test-datatype" }) stringProperty: string;
+      @DatabaseField() dateProperty: Date;
     }
 
     const displayComponent = service.getComponent(
-      Test.schema.get("stringProperty"),
+      Test.schema.get("dateProperty"),
       "view",
     );
 
-    expect(displayComponent).toEqual("DisplayText");
+    expect(displayComponent).toEqual("DisplayDate");
   });
 
   it("should return the display and edit component for the innerDataType if dataType is array", () => {
@@ -105,10 +98,6 @@ describe("EntitySchemaService", () => {
       @DatabaseField({ innerDataType: DateOnlyDatatype.dataType })
       dates: Date[];
     }
-    mockInjector.get.and.returnValue([
-      new DateOnlyDatatype(),
-      new ArrayDatatype(service),
-    ]);
 
     const propertySchema = TestEntity.schema.get("dates");
 
@@ -128,6 +117,21 @@ describe("EntitySchemaService", () => {
     expect(() =>
       service.getDatatypeOrDefault("invalidDataType"),
     ).toThrowError();
+  });
+
+  it("should return correct inner data type", () => {
+    const enumArraySchema: EntitySchemaField = {
+      dataType: "array",
+      innerDataType: "configurable-enum",
+    };
+    expect(service.getInnermostDatatype(enumArraySchema)).toBeInstanceOf(
+      ConfigurableEnumDatatype,
+    );
+
+    const entityArraySchema: EntitySchemaField = { dataType: "entity-array" };
+    expect(service.getInnermostDatatype(entityArraySchema)).toBeInstanceOf(
+      EntityDatatype,
+    );
   });
 });
 

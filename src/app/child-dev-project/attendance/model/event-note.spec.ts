@@ -19,33 +19,15 @@ import { EventNote } from "./event-note";
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
-import { TestBed } from "@angular/core/testing";
-import { CoreModule } from "../../../core/core.module";
-import { ComponentRegistry } from "../../../dynamic-components";
-import { ConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum.service";
-import { DefaultDatatype } from "../../../core/entity/schema/default.datatype";
-import { ConfigurableEnumDatatype } from "../../../core/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { TestBed, waitForAsync } from "@angular/core/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("EventNote", () => {
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [CoreModule],
-      providers: [
-        ComponentRegistry,
-        {
-          provide: DefaultDatatype,
-          useClass: ConfigurableEnumDatatype,
-          multi: true,
-        },
-        {
-          provide: ConfigurableEnumService,
-          useValue: {
-            getEnumValues: () => defaultAttendanceStatusTypes,
-          },
-        },
-      ],
+      imports: [MockedTestingModule.withState()],
     });
-  });
+  }));
 
   testEntitySubclass(
     "EventNote",
