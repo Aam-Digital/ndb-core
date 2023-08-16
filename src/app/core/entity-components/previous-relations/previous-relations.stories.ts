@@ -55,4 +55,7 @@ const Template: StoryFn<PreviousRelationsComponent<ChildSchoolRelation>> = (
 export const Primary = Template.bind({});
 Primary.args = {
   entity: child,
+  entityType: ChildSchoolRelation.ENTITY_TYPE,
+  property: "childId",
+  columns: ["start", "end", "schoolId", "schoolClass", "result"],
 };

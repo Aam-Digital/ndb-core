@@ -91,8 +91,6 @@ export class PreviousRelationsComponent<E extends Entity>
     return () => {
       const newRelation = super.createNewRecordFactory()();
 
-      // TODO: check about start value (and allow to configure whether this is set?)
-      // TODO: having a more specific interface than "Entity" would allow to have proper typing for .start and .end here
       newRelation["start"] =
         this.data.length && this.data[0]["end"]
           ? moment(this.data[0]["end"]).add(1, "day").toDate()

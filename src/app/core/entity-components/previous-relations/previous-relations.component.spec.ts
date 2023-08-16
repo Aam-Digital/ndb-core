@@ -7,14 +7,22 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { FilterService } from "../../filter/filter.service";
 
-fdescribe("PreviousRelationsComponent", () => {
+describe("PreviousRelationsComponent", () => {
   let component: PreviousRelationsComponent<ChildSchoolRelation>;
   let fixture: ComponentFixture<
     PreviousRelationsComponent<ChildSchoolRelation>
   >;
 
   let entityMapper: EntityMapperService;
+
+  function getFilteredData(comp: PreviousRelationsComponent<any>) {
+    const filterPredicate = TestBed.inject(FilterService).getFilterPredicate(
+      comp.filter,
+    );
+    return comp.data.filter(filterPredicate);
+  }
 
   let mainEntity: Child;
   const entityType = "ChildSchoolRelation";
@@ -60,7 +68,7 @@ fdescribe("PreviousRelationsComponent", () => {
     const testSchool = new School();
     active1.schoolId = testSchool.getId();
     active2.schoolId = "some-other-id";
-    inactive.schoolId = testSchool.getId();
+    inactive.schoolId = "some-other-id";
 
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([active1, active2, inactive]);
@@ -69,8 +77,7 @@ fdescribe("PreviousRelationsComponent", () => {
     component.property = "schoolId";
     await component.ngOnInit();
 
-    // TODO: can we test this or does it have to rely on subrecord entity?
-    expect(component.data).toEqual([active1, inactive]);
+    expect(getFilteredData(component)).toEqual([active1]);
   });
 
   it("should change columns to be displayed via config", async () => {
@@ -140,18 +147,17 @@ fdescribe("PreviousRelationsComponent", () => {
     await component.ngOnInit();
 
     expect(loadType).toHaveBeenCalledWith("ChildSchoolRelation");
-    expect(component.displayedData).toEqual([active1, active2]);
+    expect(getFilteredData(component)).toEqual([active1, active2]);
   });
 
   it("should show all relations if configured; with active ones being highlighted", async () => {
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([active1, active2, inactive]);
 
-    component.entity = new School();
     component.showInactive = true;
     await component.ngOnInit();
 
-    expect(component.displayedData).toEqual([active1, active2, inactive]);
+    expect(getFilteredData(component)).toEqual([active1, active2, inactive]);
     expect(component.backgroundColorFn(active1)).not.toEqual("");
     expect(component.backgroundColorFn(inactive)).toEqual("");
   });
