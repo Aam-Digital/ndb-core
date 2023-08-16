@@ -32,8 +32,8 @@ rel3.end = new Date();
 rel3.result = 23;
 
 export default {
-  title: "Features/Previous Schools",
-  component: PreviousRelationsComponent,
+  title: "Core/Entities/Previous Relations",
+  component: PreviousRelationsComponent<ChildSchoolRelation>,
   decorators: [
     applicationConfig({
       providers: [
@@ -45,10 +45,10 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<PreviousRelationsComponent> = (
-  args: PreviousRelationsComponent,
+const Template: StoryFn<PreviousRelationsComponent<ChildSchoolRelation>> = (
+  args: PreviousRelationsComponent<ChildSchoolRelation>,
 ) => ({
-  component: PreviousRelationsComponent,
+  component: PreviousRelationsComponent<ChildSchoolRelation>,
   props: args,
 });
 

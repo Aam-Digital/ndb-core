@@ -3,37 +3,40 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { PreviousRelationsComponent } from "./previous-relations.component";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
+import { EntityMapperService } from "../../entity/entity-mapper.service";
 
-// TODO: re-write tests
-describe("PreviousRelationsComponent", () => {
+fdescribe("PreviousRelationsComponent", () => {
   let component: PreviousRelationsComponent<ChildSchoolRelation>;
   let fixture: ComponentFixture<
     PreviousRelationsComponent<ChildSchoolRelation>
   >;
 
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
+  let entityMapper: EntityMapperService;
 
-  const testChild = new Child("22");
-  const school = new School("s1");
-  const active1 = new ChildSchoolRelation("r1");
-  const active2 = new ChildSchoolRelation("r2");
-  const inactive = new ChildSchoolRelation("r2");
-  inactive.end = moment().subtract("1", "week").toDate();
+  let mainEntity: Child;
+  const entityType = "ChildSchoolRelation";
+  const property = "childId";
+
+  let active1, active2, inactive: ChildSchoolRelation;
 
   beforeEach(waitForAsync(() => {
-    mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
-    mockChildrenService.queryRelationsOf.and.resolveTo([
-      new ChildSchoolRelation(),
-    ]);
+    mainEntity = new Child("22");
+    active1 = new ChildSchoolRelation("a1");
+    active1.childId = mainEntity.getId();
+    active2 = new ChildSchoolRelation("a2");
+    active2.childId = mainEntity.getId();
+    inactive = new ChildSchoolRelation("i1");
+    inactive.childId = mainEntity.getId();
+    inactive.end = moment().subtract("1", "week").toDate();
 
     TestBed.configureTestingModule({
       imports: [PreviousRelationsComponent, MockedTestingModule.withState()],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
+
+    entityMapper = TestBed.inject(EntityMapperService);
   }));
 
   beforeEach(() => {
@@ -41,7 +44,11 @@ describe("PreviousRelationsComponent", () => {
       PreviousRelationsComponent<ChildSchoolRelation>,
     );
     component = fixture.componentInstance;
-    component.entity = testChild;
+
+    component.entity = mainEntity;
+    component.entityType = entityType;
+    component.property = property;
+
     fixture.detectChanges();
   });
 
@@ -49,28 +56,24 @@ describe("PreviousRelationsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("it calls children service with id from passed child", async () => {
-    await component.ngOnInit();
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
-      "child",
-      testChild.getId(),
-    );
-  });
-
-  it("it detects mode and uses correct index to load data ", async () => {
+  it("should load data correctly filtered data", async () => {
     const testSchool = new School();
+    active1.schoolId = testSchool.getId();
+    active2.schoolId = "some-other-id";
+    inactive.schoolId = testSchool.getId();
+
+    const loadType = spyOn(entityMapper, "loadType");
+    loadType.and.resolveTo([active1, active2, inactive]);
 
     component.entity = testSchool;
+    component.property = "schoolId";
     await component.ngOnInit();
 
-    expect(component.mode).toBe("school");
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
-      "school",
-      testSchool.getId(),
-    );
+    // TODO: can we test this or does it have to rely on subrecord entity?
+    expect(component.data).toEqual([active1, inactive]);
   });
 
-  it("should allow to change the columns to be displayed by the config", async () => {
+  it("should change columns to be displayed via config", async () => {
     component.entity = new Child();
     component.single = true;
     component.columns = [
@@ -100,12 +103,7 @@ describe("PreviousRelationsComponent", () => {
     );
   });
 
-  it("should create a relation with the child ID", async () => {
-    const existingRelation = new ChildSchoolRelation();
-    existingRelation.start = moment().subtract(1, "year").toDate();
-    existingRelation.end = moment().subtract(1, "week").toDate();
-    mockChildrenService.queryRelationsOf.and.resolveTo([existingRelation]);
-
+  it("should create a new entity with the main entity's id linked", async () => {
     const child = new Child();
     component.entity = child;
     await component.ngOnInit();
@@ -113,6 +111,21 @@ describe("PreviousRelationsComponent", () => {
     const newRelation = component.generateNewRecordFactory()();
 
     expect(newRelation.childId).toEqual(child.getId());
+  });
+
+  it("should create a new entity with the start date inferred from previous relations", async () => {
+    const existingRelation = new ChildSchoolRelation();
+    existingRelation.start = moment().subtract(1, "year").toDate();
+    existingRelation.end = moment().subtract(1, "week").toDate();
+    const loadType = spyOn(entityMapper, "loadType");
+    loadType.and.resolveTo([existingRelation]);
+
+    const child = new Child();
+    component.entity = child;
+    await component.ngOnInit();
+
+    const newRelation = component.generateNewRecordFactory()();
+
     expect(
       moment(existingRelation.end)
         .add(1, "day")
@@ -120,39 +133,19 @@ describe("PreviousRelationsComponent", () => {
     ).toBeTrue();
   });
 
-  it("should create a relation with the school ID", () => {
-    component.entity = new School("testID");
-    component.ngOnInit();
+  it("should only show active relations by default", async () => {
+    const loadType = spyOn(entityMapper, "loadType");
+    loadType.and.resolveTo([active1, active2, inactive]);
 
-    const newRelation = component.generateNewRecordFactory()();
-
-    expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
-    expect(newRelation.schoolId).toBe("testID");
-  });
-
-  it("should on default only show active relations", async () => {
-    mockChildrenService.queryRelationsOf.and.resolveTo([
-      active1,
-      active2,
-      inactive,
-    ]);
-
-    component.entity = school;
     await component.ngOnInit();
 
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
-      "school",
-      school.getId(),
-    );
+    expect(loadType).toHaveBeenCalledWith("ChildSchoolRelation");
     expect(component.displayedData).toEqual([active1, active2]);
   });
 
   it("should show all relations if configured; with active ones being highlighted", async () => {
-    mockChildrenService.queryRelationsOf.and.resolveTo([
-      active1,
-      active2,
-      inactive,
-    ]);
+    const loadType = spyOn(entityMapper, "loadType");
+    loadType.and.resolveTo([active1, active2, inactive]);
 
     component.entity = new School();
     component.showInactive = true;

@@ -59,49 +59,32 @@ export class PreviousRelationsComponent<E extends Entity>
   }
 
   _columns: FormFieldConfig[] = [
-    { id: "childId" }, // schoolId/childId replaced dynamically during init
     { id: "start", visibleFrom: "md" },
     { id: "end", visibleFrom: "md" },
-    { id: "schoolClass" },
-    { id: "result" },
     isActiveIndicator,
   ];
 
-  displayedData: E[] = [];
   backgroundColorFn = (r: E) => r.getColor();
   hasCurrentlyActiveEntry: boolean;
 
   async ngOnInit() {
-    this.hideColumnOfCurrentMainEntity();
     await super.initData();
 
-    this.prepareDisplayedData();
+    this.filterActiveInactive();
   }
 
-  private hideColumnOfCurrentMainEntity() {
-    // TODO: hide the own column by default (or should we just leave this to manual config?)
-    const mode: string = "?";
-
-    const idColumn = this._columns.find(
-      (c) => c.id === "childId" || c.id === "schoolId",
-    );
-    if (idColumn) {
-      idColumn.id = mode === "child" ? "schoolId" : "childId";
-    }
-  }
-
-  prepareDisplayedData() {
-    // TODO: check filter compatibility with implementation in super class
-
+  filterActiveInactive() {
     this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
 
     if (this.showInactive) {
       this.backgroundColorFn = (r: E) => r.getColor();
-      this.displayedData = this.data;
+      delete this.filter["isActive"];
     } else {
       this.backgroundColorFn = undefined; // Do not highlight active ones when only active are shown
-      this.displayedData = this.data.filter((r) => r.isActive);
+      this.filter["isActive"] = true;
     }
+    // recreate to trigger change detection and update displayed data
+    this.filter = { ...this.filter };
   }
 
   generateNewRecordFactory() {
