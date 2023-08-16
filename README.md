@@ -3,8 +3,7 @@
 [![Code Climate](https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/Aam-Digital/ndb-core)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
 [![E2E Tests](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/2petka/master&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/2petka/runs)
-[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-22-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
-[![Doc CoverageDocs](https://aam-digital.github.io/ndb-core/documentation/images/coverage-badge-documentation.svg)](https://aam-digital.github.io/ndb-core/documentation/modules.html)
+[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 [![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
 
 # Aam Digital
