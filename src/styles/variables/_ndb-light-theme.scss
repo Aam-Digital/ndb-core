@@ -35,6 +35,7 @@ $secondary-palette: (
         800: var(--secondary-800, map-get(mat.$blue-palette, 800)),
         900: var(--secondary-900, map-get(mat.$blue-palette, 900)),
         A100: var(--secondary-A100, map-get(mat.$blue-palette, A100)),
+        // TODO this breaks the primary action button text color
         A200: var(--secondary-A200, map-get(mat.$blue-palette, A200)),
         A400: var(--secondary-A400, map-get(mat.$blue-palette, A400)),
         A700: var(--secondary-A700, map-get(mat.$blue-palette, A700)),
