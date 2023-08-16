@@ -87,9 +87,9 @@ describe("NotesRelatedToEntityComponent", () => {
   });
 
   it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {
-    @DatabaseEntity("TestNewNoteRelatedRefsEntity")
-    class TestNewNoteRelatedRefsEntity extends Entity {
-      static ENTITY_TYPE = "TestNewNoteRelatedRefsEntity";
+    @DatabaseEntity("EntityWithRelations")
+    class EntityWithRelations extends Entity {
+      static ENTITY_TYPE = "EntityWithRelations";
 
       @DatabaseField({
         dataType: "entity-array",
@@ -103,7 +103,7 @@ describe("NotesRelatedToEntityComponent", () => {
       })
       childrenLink;
     }
-    let customEntity = new TestNewNoteRelatedRefsEntity();
+    const customEntity = new EntityWithRelations();
     customEntity.links = [
       "Child:1",
       "School:not-a-type-for-note.relatedEntities",
@@ -112,12 +112,12 @@ describe("NotesRelatedToEntityComponent", () => {
 
     Note.schema.get("relatedEntities").additional = [
       Child.ENTITY_TYPE,
-      TestNewNoteRelatedRefsEntity.ENTITY_TYPE,
+      EntityWithRelations.ENTITY_TYPE,
     ];
     component.entity = customEntity;
     component.ngOnInit();
 
-    let newNote = component.generateNewRecordFactory()();
+    const newNote = component.generateNewRecordFactory()();
 
     expect(newNote.relatedEntities).toContain(customEntity.getId(true));
     expect(newNote.relatedEntities).toContain(customEntity.links[0]);
