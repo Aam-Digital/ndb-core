@@ -18,23 +18,25 @@ import { EntitySubrecordComponent } from "../../entity-subrecord/entity-subrecor
   imports: [EntitySubrecordComponent],
 })
 export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
-  data: E[] = [];
+  /** currently viewed/main entity for which related entities are displayed in this component */
   @Input() entity: Entity;
+
+  /** entity type of the related entities to be displayed */
   @Input() entityType: string;
+
+  /**
+   * property name of the related entities (type given in this.entityType) that holds the entity id
+   * to be matched with the id of the current main entity (given in this.entity)
+   */
   @Input() property: string;
 
-  @Input() set columns(value: ColumnConfig[]) {
-    this._columns = value;
-  }
-  get columns(): ColumnConfig[] {
-    return this._columns;
-  }
-  protected _columns: ColumnConfig[];
+  @Input() columns: ColumnConfig[];
+  @Input() filter?: DataFilter<E>;
 
-  @Input() filter?: DataFilter<any>; // TODO: somehow subrecord-entities doesn't accept DataFilter<E> here ...
-  private isArray = false;
-  private entityCtr: EntityConstructor;
+  data: E[] = [];
   isLoading = false;
+  private isArray = false;
+  private entityCtr: EntityConstructor<E>;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -48,16 +50,16 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   protected async initData() {
     this.isLoading = true;
 
-    this.entityCtr = this.entities.get(this.entityType);
+    this.entityCtr = this.entities.get(this.entityType) as EntityConstructor<E>;
     this.isArray = isArrayProperty(this.entityCtr, this.property);
 
-    this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
-      (d) =>
-        this.isArray
-          ? d[this.property].includes(this.entity.getId())
-          : d[this.property] === this.entity.getId(),
-    );
-    // TODO: why did we previously choose to use this.filter rather than what seems a bit more simple directly filtering before assigning docs to this.data?
+    this.data = await this.entityMapper.loadType(this.entityType);
+    this.filter = {
+      ...this.filter,
+      [this.property]: this.isArray
+        ? { $elemMatch: { $eq: this.entity.getId() } }
+        : this.entity.getId(),
+    };
 
     this.isLoading = false;
   }
