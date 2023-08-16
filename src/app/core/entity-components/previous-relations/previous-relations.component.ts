@@ -40,8 +40,8 @@ import { TimePeriodRelation } from "./time-period-relation";
   ],
   standalone: true,
 })
-export class PreviousRelationsComponent<E extends TimePeriodRelation>
-  extends RelatedEntitiesComponent<E>
+export class PreviousRelationsComponent
+  extends RelatedEntitiesComponent<TimePeriodRelation>
   implements OnInit
 {
   // also see super class for Inputs
@@ -63,7 +63,7 @@ export class PreviousRelationsComponent<E extends TimePeriodRelation>
     isActiveIndicator,
   ];
 
-  backgroundColorFn = (r: E) => r.getColor();
+  backgroundColorFn = (r: TimePeriodRelation) => r.getColor();
   hasCurrentlyActiveEntry: boolean;
 
   async ngOnInit() {
@@ -76,11 +76,13 @@ export class PreviousRelationsComponent<E extends TimePeriodRelation>
     this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
 
     if (this.showInactive) {
-      this.backgroundColorFn = (r: E) => r.getColor();
-      delete this.filter["isActive"];
+      this.backgroundColorFn = (r: TimePeriodRelation) => r.getColor();
+      // @ts-ignore type has issues with getters
+      delete this.filter.isActive;
     } else {
       this.backgroundColorFn = undefined; // Do not highlight active ones when only active are shown
-      this.filter["isActive"] = true;
+      // @ts-ignore
+      this.filter.isActive = true;
     }
     // recreate to trigger change detection and update displayed data
     this.filter = { ...this.filter };
