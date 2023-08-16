@@ -7,15 +7,17 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../../child-dev-project/children/model/childSchoolRelation";
 
 describe("RelatedEntitiesComponent", () => {
-  let component: RelatedEntitiesComponent;
-  let fixture: ComponentFixture<RelatedEntitiesComponent>;
+  let component: RelatedEntitiesComponent<ChildSchoolRelation>;
+  let fixture: ComponentFixture<RelatedEntitiesComponent<ChildSchoolRelation>>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [RelatedEntitiesComponent, MockedTestingModule.withState()],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(RelatedEntitiesComponent);
+    fixture = TestBed.createComponent(
+      RelatedEntitiesComponent<ChildSchoolRelation>,
+    );
     component = fixture.componentInstance;
     component.entity = new Child();
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
