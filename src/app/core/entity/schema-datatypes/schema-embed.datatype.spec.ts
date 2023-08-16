@@ -19,8 +19,7 @@ import { Entity } from "../model/entity";
 import { DatabaseField } from "../database-field.decorator";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { CoreModule } from "../../core.module";
-import { ComponentRegistry } from "../../../dynamic-components";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("Schema data type: schema-embed", () => {
   class InnerClass {
@@ -49,8 +48,7 @@ describe("Schema data type: schema-embed", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [CoreModule],
-      providers: [ComponentRegistry],
+      imports: [MockedTestingModule.withState()],
     });
     entitySchemaService = TestBed.inject(EntitySchemaService);
   }));

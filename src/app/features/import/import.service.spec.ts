@@ -22,6 +22,7 @@ import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
 import { ConfigurableEnumService } from "../../core/configurable-enum/configurable-enum.service";
 import { CoreModule } from "../../core/core.module";
 import { ComponentRegistry } from "../../dynamic-components";
+import { EntityArrayDatatype } from "../../core/entity/schema-datatypes/entity-array.datatype";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -66,6 +67,12 @@ describe("ImportService", () => {
   });
 
   it("should transform raw data to mapped entities", async () => {
+    HealthCheck.schema.set("entityArray", {
+      dataType: EntityArrayDatatype.dataType,
+      additional: "Child",
+    });
+    const child = Child.create("Child Name");
+    await TestBed.inject(EntityMapperService).save(child);
     const rawData: any[] = [
       { x: "John", y: "111" },
       { x: "Jane" },
@@ -74,18 +81,19 @@ describe("ImportService", () => {
       { x: "", onlyUnmappedColumn: "1" }, // only empty or unmapped columns => row skipped
       { x: "with zero", y: "0" }, // 0 value mapped
       { x: "custom mapping fn", z: "30.01.2023" },
+      { x: "entity array", childName: child.name },
     ];
-    const entityType: string = "HealthCheck";
     const columnMapping: ColumnMapping[] = [
       { column: "x", propertyName: "child" },
       { column: "y", propertyName: "height" },
       { column: "z", propertyName: "date", additional: "DD.MM.YYYY" },
       { column: "brokenMapping", propertyName: "brokenMapping" },
+      { column: "childName", propertyName: "entityArray", additional: "name" },
     ];
 
     const parsedEntities = await service.transformRawDataToEntities(
       rawData,
-      entityType,
+      HealthCheck.ENTITY_TYPE,
       columnMapping,
     );
 
@@ -96,6 +104,7 @@ describe("ImportService", () => {
       { child: "with broken mapping column" },
       { child: "with zero", height: 0 },
       { child: "custom mapping fn", date: moment("2023-01-30").toDate() },
+      { child: "entity array", entityArray: [child.getId()] },
     ];
 
     expectEntitiesToMatch(
@@ -131,7 +140,7 @@ describe("ImportService", () => {
     expect(activity.participants).toEqual(["1", "2"]);
   });
 
-  it("should allow to removed entities and links", async () => {
+  it("should allow to remove entities and links", async () => {
     const importMeta = new ImportMetadata();
     importMeta.config = {
       entityType: "Child",
