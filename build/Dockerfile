@@ -75,6 +75,7 @@ ENV COUCHDB_URL="http://localhost"
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 
 # content security policy headers
+# (also see Developer Documentation: https://aam-digital.github.io/ndb-core/documentation/additional-documentation/concepts/security.html)
 ENV CSP_REPORT_URI="https://o167951.ingest.sentry.io/api/1242399/security/"
 # overwrite the Content-Security-Policy rules (report-uri is added automatically)
 ## default includes all required whitelists for production server
