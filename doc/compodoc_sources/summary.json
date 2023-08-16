@@ -26,9 +26,59 @@
     ]
   },
   {
+    "title": "Concepts",
+    "file": "concepts/_index.md",
+    "children": [
+      {
+        "title": "Overall Architecture",
+        "file": "concepts/overall-architecture.md"
+      },
+      {
+        "title": "Extendability and Plugin Approach",
+        "file": "concepts/extendability.md"
+      },
+      {
+        "title": "Entity Schema",
+        "file": "concepts/entity-schema-system.md"
+      },
+      {
+        "title": "Configuration",
+        "file": "concepts/configuration.md"
+      },
+      {
+        "title": "Session and Authentication System",
+        "file": "concepts/session-system.md"
+      },
+      {
+        "title": "User Roles and Permissions",
+        "file": "concepts/permissions.md"
+      },
+      {
+        "title": "Security",
+        "file": "concepts/security.md"
+      },
+      {
+        "title": "UX Guidelines",
+        "file": "concepts/ux-guidelines.md"
+      },
+      {
+        "title": "Documentation Structure",
+        "file": "concepts/documentation-structure.md"
+      },
+      {
+        "title": "Infrastructure",
+        "file": "concepts/infrastructure.md"
+      }
+    ]
+  },
+  {
     "title": "How-To Guides",
     "file": "how-to-guides/_index.md",
     "children": [
+      {
+        "title": "Configure and Customize a System",
+        "file": "how-to-guides/configure-custom-system.md"
+      },
       {
         "title": "Navigate the Code Structure",
         "file": "how-to-guides/navigate-code-structure.md"
@@ -36,6 +86,18 @@
       {
         "title": "Contribute Code to the Project",
         "file": "how-to-guides/contribute-code.md"
+      },
+      {
+        "title": "Create a New Entity Type",
+        "file": "how-to-guides/create-new-entity-type.md"
+      },
+      {
+        "title": "Create a New Datatype",
+        "file": "how-to-guides/create-new-datatype.md"
+      },
+      {
+        "title": "Create a Report",
+        "file": "how-to-guides/reports.md"
       },
       {
         "title": "Load and Save Data",
@@ -70,24 +132,12 @@
         "file": "how-to-guides/use-queries-and-indices.md"
       },
       {
-        "title": "Create a New Entity Type",
-        "file": "how-to-guides/create-new-entity-type.md"
-      },
-      {
-        "title": "Create a New Datatype",
-        "file": "how-to-guides/create-new-datatype.md"
-      },
-      {
         "title": "Generate Demo Data",
         "file": "how-to-guides/generate-demo-data.md"
       },
       {
         "title": "Review a Pull Request",
         "file": "how-to-guides/review-pull-request.md"
-      },
-      {
-        "title": "Create a Report",
-        "file": "how-to-guides/reports.md"
       },
       {
         "title": "Format Data Export",
@@ -104,44 +154,6 @@
       {
         "title": "Add Another Language",
         "file": "how-to-guides/add-another-language.md"
-      }
-    ]
-  },
-  {
-    "title": "Concepts",
-    "file": "concepts/_index.md",
-    "children": [
-      {
-        "title": "Overall Architecture",
-        "file": "concepts/overall-architecture.md"
-      },
-      {
-        "title": "Entity Schema",
-        "file": "concepts/entity-schema-system.md"
-      },
-      {
-        "title": "Session and Authentication System",
-        "file": "concepts/session-system.md"
-      },
-      {
-        "title": "Configuration",
-        "file": "concepts/configuration.md"
-      },
-      {
-        "title": "User Roles and Permissions",
-        "file": "concepts/permissions.md"
-      },
-      {
-        "title": "UX Guidelines",
-        "file": "concepts/ux-guidelines.md"
-      },
-      {
-        "title": "Documentation Structure",
-        "file": "concepts/documentation-structure.md"
-      },
-      {
-        "title": "Infrastructure",
-        "file": "concepts/infrastructure.md"
       }
     ]
   },
