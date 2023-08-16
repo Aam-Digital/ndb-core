@@ -15,6 +15,9 @@ import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntityDatatype } from "../../../core/entity/schema-datatypes/entity.datatype";
+import { EntityArrayDatatype } from "../../../core/entity/schema-datatypes/entity-array.datatype";
+import { asArray } from "../../../utils/utils";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
@@ -89,15 +92,62 @@ export class NotesRelatedToEntityComponent implements OnInit {
       } else if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
         newNote.addChild((this.entity as ChildSchoolRelation).childId);
         newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
-        newNote.relatedEntities.push(this.entity.getId(true));
-      } else {
-        newNote.relatedEntities.push(this.entity.getId(true));
       }
+
+      newNote.relatedEntities.push(this.entity.getId(true));
+      this.getIndirectlyRelatedEntityIds(this.entity).forEach((e) =>
+        newNote.relatedEntities.push(e),
+      );
 
       this.filterService.alignEntityWithFilter(newNote, this.filter);
 
       return newNote;
     };
+  }
+
+  /**
+   * Get entities referenced in the given entity that match the entity types allowed for Note.relatedEntities schema
+   * and return their ids (including prefix).
+   * @param entity
+   * @private
+   */
+  private getIndirectlyRelatedEntityIds(entity: Entity): string[] {
+    let relatedIds = [];
+    let permittedRelatedTypes = asArray(
+      Note.schema.get("relatedEntities").additional,
+    );
+
+    for (const [property, schema] of entity.getSchema().entries()) {
+      if (!entity[property]) {
+        // empty - skip
+        continue;
+      }
+
+      if (
+        schema.dataType !== EntityDatatype.dataType &&
+        schema.dataType !== EntityArrayDatatype.dataType
+      ) {
+        // not referencing other entities
+        continue;
+      }
+
+      for (const referencedId of asArray(entity[property])) {
+        // TODO: can we assert that ids always have prefix? Maybe (without saving) add that in transformToEntityFormat() ?
+        let referencedType = Entity.extractTypeFromId(referencedId);
+        if (referencedType === "") {
+          referencedType = schema.additional;
+        }
+
+        if (permittedRelatedTypes.includes(referencedType)) {
+          // entity can have references of multiple entity types of which only some are allowed to be linked to Notes
+          relatedIds.push(
+            Entity.createPrefixedId(referencedType, referencedId),
+          );
+        }
+      }
+    }
+
+    return relatedIds;
   }
 
   showNoteDetails(note: Note) {
