@@ -19,7 +19,7 @@ import moment from "moment";
 import { testEntitySubclass } from "../../entity/model/entity.spec";
 import { TimePeriodRelation } from "./time-period-relation";
 
-describe("ChildSchoolRelation Entity", () => {
+describe("TimePeriodRelation Entity", () => {
   testEntitySubclass("TimePeriodRelation", TimePeriodRelation, {
     _id: "TimePeriodRelation:some-id",
 
