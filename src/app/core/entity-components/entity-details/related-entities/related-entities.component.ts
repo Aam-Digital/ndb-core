@@ -47,7 +47,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   data: E[] = [];
   isLoading = false;
   private isArray = false;
-  private entityCtr: EntityConstructor<E>;
+  protected entityCtr: EntityConstructor<E>;
 
   constructor(
     private entityMapper: EntityMapperService,

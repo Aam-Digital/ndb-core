@@ -12,6 +12,7 @@ import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../entity-details/related-entities/related-entities.component";
 import { TimePeriodRelation } from "./time-period-relation";
+import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * Display a list of entity subrecords (entities related to the current entity details view)
@@ -40,8 +41,8 @@ import { TimePeriodRelation } from "./time-period-relation";
   ],
   standalone: true,
 })
-export class PreviousRelationsComponent
-  extends RelatedEntitiesComponent<TimePeriodRelation>
+export class PreviousRelationsComponent<E extends TimePeriodRelation>
+  extends RelatedEntitiesComponent<E>
   implements OnInit
 {
   // also see super class for Inputs
@@ -63,7 +64,7 @@ export class PreviousRelationsComponent
     isActiveIndicator,
   ];
 
-  backgroundColorFn = (r: TimePeriodRelation) => r.getColor();
+  backgroundColorFn = (r: E) => r.getColor();
   hasCurrentlyActiveEntry: boolean;
 
   async ngOnInit() {
@@ -75,17 +76,17 @@ export class PreviousRelationsComponent
   filterActiveInactive() {
     this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
 
+    const filters = this.filter ?? {};
     if (this.showInactive) {
-      this.backgroundColorFn = (r: TimePeriodRelation) => r.getColor();
+      this.backgroundColorFn = (r: E) => r.getColor();
       // @ts-ignore type has issues with getters
-      delete this.filter.isActive;
+      delete filters.isActive;
     } else {
       this.backgroundColorFn = undefined; // Do not highlight active ones when only active are shown
-      // @ts-ignore
-      this.filter.isActive = true;
+      filters["isActive"] = true;
     }
     // recreate to trigger change detection and update displayed data
-    this.filter = { ...this.filter };
+    this.filter = { ...filters } as DataFilter<E>;
   }
 
   generateNewRecordFactory() {
