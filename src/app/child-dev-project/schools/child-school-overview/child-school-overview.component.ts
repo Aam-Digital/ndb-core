@@ -12,7 +12,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgIf } from "@angular/common";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { PillComponent } from "../../../core/common-components/pill/pill.component";
-import { PreviousRelationsComponent } from "../../../core/entity-components/previous-relations/previous-relations.component";
+import { RelatedTimePeriodEntitiesComponent } from "../../../core/entity-components/related-time-period-entities/related-time-period-entities.component";
 
 // TODO: once schema-generated indices are available (#262), remove this component and use its generic super class directly
 @DynamicComponent("ChildSchoolOverview")
@@ -21,9 +21,9 @@ import { PreviousRelationsComponent } from "../../../core/entity-components/prev
 @Component({
   selector: "app-child-school-overview",
   templateUrl:
-    "../../../core/entity-components/previous-relations/previous-relations.component.html",
+    "../../../core/entity-components/related-time-period-entities/related-time-period-entities.component.html",
   styleUrls: [
-    "../../../core/entity-components/previous-relations/previous-relations.component.scss",
+    "../../../core/entity-components/related-time-period-entities/related-time-period-entities.component.scss",
   ],
   imports: [
     FontAwesomeModule,
@@ -37,7 +37,7 @@ import { PreviousRelationsComponent } from "../../../core/entity-components/prev
   standalone: true,
 })
 export class ChildSchoolOverviewComponent
-  extends PreviousRelationsComponent<ChildSchoolRelation>
+  extends RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>
   implements OnInit
 {
   mode: "child" | "school" = "child";

@@ -11,7 +11,7 @@ import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/e
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../entity-details/related-entities/related-entities.component";
-import { TimePeriodRelation } from "./time-period-relation";
+import { TimePeriod } from "./time-period";
 import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
@@ -21,15 +21,12 @@ import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecor
  * This component is similar to RelatedEntities but provides some additional UI to help users
  * create a new entry if no currently active entry exists and
  * show/hide inactive entries from the list.
- *
- * TODO: this is a more generic copy of ChildSchoolOverview - remove that once schema-generated indices are available
- *  or should we just forget about that index for now? (longest running instance has total of 1000+ ChildSchoolRelation docs)
  */
-@DynamicComponent("PreviousRelations")
+@DynamicComponent("RelatedTimePeriodEntities")
 @Component({
-  selector: "app-previous-relations",
-  templateUrl: "./previous-relations.component.html",
-  styleUrls: ["./previous-relations.component.scss"],
+  selector: "app-related-time-period-entities",
+  templateUrl: "./related-time-period-entities.component.html",
+  styleUrls: ["./related-time-period-entities.component.scss"],
   imports: [
     FontAwesomeModule,
     EntitySubrecordComponent,
@@ -41,7 +38,7 @@ import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecor
   ],
   standalone: true,
 })
-export class PreviousRelationsComponent<E extends TimePeriodRelation>
+export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   extends RelatedEntitiesComponent<E>
   implements OnInit
 {

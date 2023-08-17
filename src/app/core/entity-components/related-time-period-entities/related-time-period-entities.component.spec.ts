@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
-import { PreviousRelationsComponent } from "./previous-relations.component";
+import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entities.component";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -9,15 +9,15 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { EntityMapperService } from "../../entity/entity-mapper.service";
 import { FilterService } from "../../filter/filter.service";
 
-describe("PreviousRelationsComponent", () => {
-  let component: PreviousRelationsComponent<ChildSchoolRelation>;
+describe("RelatedTimePeriodEntitiesComponent", () => {
+  let component: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>;
   let fixture: ComponentFixture<
-    PreviousRelationsComponent<ChildSchoolRelation>
+    RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>
   >;
 
   let entityMapper: EntityMapperService;
 
-  function getFilteredData(comp: PreviousRelationsComponent<any>) {
+  function getFilteredData(comp: RelatedTimePeriodEntitiesComponent<any>) {
     const filterPredicate = TestBed.inject(FilterService).getFilterPredicate(
       comp.filter,
     );
@@ -41,7 +41,10 @@ describe("PreviousRelationsComponent", () => {
     inactive.end = moment().subtract("1", "week").toDate();
 
     TestBed.configureTestingModule({
-      imports: [PreviousRelationsComponent, MockedTestingModule.withState()],
+      imports: [
+        RelatedTimePeriodEntitiesComponent,
+        MockedTestingModule.withState(),
+      ],
     }).compileComponents();
 
     entityMapper = TestBed.inject(EntityMapperService);
@@ -49,7 +52,7 @@ describe("PreviousRelationsComponent", () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(
-      PreviousRelationsComponent<ChildSchoolRelation>,
+      RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>,
     );
     component = fixture.componentInstance;
 

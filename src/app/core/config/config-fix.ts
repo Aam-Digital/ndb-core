@@ -621,7 +621,7 @@ export const defaultJsonConfig = {
 
             {
               "title": "new generic PreviousRelationsComponent",
-              "component": "PreviousRelations",
+              "component": "RelatedTimePeriodEntities",
               "config": {
                 "entityType": "ChildSchoolRelation",
                 "property": "childId",

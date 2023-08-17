@@ -17,7 +17,7 @@ import { EntityDatatype } from "./entity/schema-datatypes/entity.datatype";
 import { EntityArrayDatatype } from "./entity/schema-datatypes/entity-array.datatype";
 import { NumberDatatype } from "./entity/schema-datatypes/number.datatype";
 import { Entity } from "./entity/model/entity";
-import { TimePeriodRelation } from "./entity-components/previous-relations/time-period-relation";
+import { TimePeriod } from "./entity-components/related-time-period-entities/time-period";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -40,7 +40,7 @@ import { TimePeriodRelation } from "./entity-components/previous-relations/time-
   ],
 })
 export class CoreModule {
-  static databaseEntities = [Entity, User, Config, TimePeriodRelation];
+  static databaseEntities = [Entity, User, Config, TimePeriod];
 
   constructor(components: ComponentRegistry) {
     components.addAll(coreComponents);

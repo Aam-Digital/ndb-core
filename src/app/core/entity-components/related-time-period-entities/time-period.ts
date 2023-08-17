@@ -6,8 +6,8 @@ import moment from "moment";
 /**
  * Record that is only active for a given time period.
  */
-@DatabaseEntity("TimePeriodRelation")
-export class TimePeriodRelation extends Entity {
+@DatabaseEntity("TimePeriod")
+export class TimePeriod extends Entity {
   @DatabaseField({
     dataType: "date-only",
     label: $localize`:Label for the start date of a relation:Start date`,

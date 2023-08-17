@@ -1,5 +1,5 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { PreviousRelationsComponent } from "./previous-relations.component";
+import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entities.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
@@ -32,8 +32,8 @@ rel3.end = new Date();
 rel3.result = 23;
 
 export default {
-  title: "Core/Entities/Previous Relations",
-  component: PreviousRelationsComponent<ChildSchoolRelation>,
+  title: "Core/Entities/Related TimePeriod Entities",
+  component: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>,
   decorators: [
     applicationConfig({
       providers: [
@@ -45,10 +45,10 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<PreviousRelationsComponent<ChildSchoolRelation>> = (
-  args: PreviousRelationsComponent<ChildSchoolRelation>,
-) => ({
-  component: PreviousRelationsComponent<ChildSchoolRelation>,
+const Template: StoryFn<
+  RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>
+> = (args: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>) => ({
+  component: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>,
   props: args,
 });
 
