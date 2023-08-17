@@ -1,7 +1,7 @@
 /**
  * meta details for completion of a Todo item.
  */
-export class TodoCompletion {
+export interface TodoCompletion {
   /** user id of who completed the task */
   completedBy: string;
 
