@@ -63,9 +63,10 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     if (dates?.length == 2) {
       const firstDate = new Date(dates[0]);
       const secondDate = new Date(dates[1]);
-      if (isValidDate(firstDate) && isValidDate(secondDate)) {
-        return new DateRange(firstDate, secondDate);
-      }
+      return new DateRange(
+        isValidDate(firstDate) ? firstDate : undefined,
+        isValidDate(secondDate) ? secondDate : undefined,
+      );
     }
     return new DateRange(undefined, undefined);
   }
@@ -80,6 +81,21 @@ export class DateFilter<T extends Entity> extends Filter<T> {
         },
       } as DataFilter<T>;
     }
+    if (range.start) {
+      return {
+        [this.name]: {
+          $gte: moment(range.start).format("YYYY-MM-DD"),
+        },
+      } as DataFilter<T>;
+    }
+    if (range.end) {
+      return {
+        [this.name]: {
+          $lte: moment(range.end).format("YYYY-MM-DD"),
+        },
+      } as DataFilter<T>;
+    }
+    return {} as DataFilter<T>;
   }
 
   getSelectedOption() {

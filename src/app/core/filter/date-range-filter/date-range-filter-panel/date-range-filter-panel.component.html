@@ -10,6 +10,19 @@
     >
     </mat-calendar>
     <div class="panel">
+      <div>
+        <button
+          class="button"
+          mat-button
+          color="primary"
+          (mouseenter)="preselectAllRange()"
+          (mouseleave)="unselectRange()"
+          (click)="selectRangeAndClose('all')"
+          [class.selected-option]="filter.selectedOption === '_'"
+        >
+          All
+        </button>
+      </div>
       <div
         class="button-div"
         *ngFor="
