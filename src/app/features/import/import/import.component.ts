@@ -12,7 +12,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { MatCardModule } from "@angular/material/card";
 import { ImportHistoryComponent } from "../import-history/import-history.component";
-import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { EntityTypeLabelPipe } from "../../../core/entity-components/utils/entity-type-label/entity-type-label.pipe";
 import { ImportEntityTypeComponent } from "../import-entity-type/import-entity-type.component";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { HelpButtonComponent } from "../../../core/common-components/help-button/help-button.component";

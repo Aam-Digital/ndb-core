@@ -31,7 +31,7 @@ import { DemoNoteGeneratorService } from "../../child-dev-project/notes/demo-dat
 import { DemoAserGeneratorService } from "../../child-dev-project/children/aser/demo-aser-generator.service";
 import { DemoEducationalMaterialGeneratorService } from "../../child-dev-project/children/educational-material/demo-educational-material-generator.service";
 import { DemoHealthCheckGeneratorService } from "../../child-dev-project/children/health-checkup/demo-data/demo-health-check-generator.service";
-import { DemoProgressDashboardWidgetGeneratorService } from "../../features/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
+import { DemoProgressDashboardWidgetGeneratorService } from "../../features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../features/historical-data/demo-historical-data-generator";
 import { DemoPermissionGeneratorService } from "../permissions/demo-permission-generator.service";

@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
 import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { ConfigService } from "../../../../core/config/config.service";
-import { setupEditComponent } from "../../../../core/entity-components/entity-utils/dynamic-form-components/edit-component.spec";
+import { setupEditComponent } from "../../../../core/entity-components/entity-properties/edit/edit-component.spec";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { TimeInterval } from "../time-interval";

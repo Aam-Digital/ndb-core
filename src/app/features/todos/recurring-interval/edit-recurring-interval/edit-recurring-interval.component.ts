@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { EditComponent } from "../../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../../../core/entity-components/entity-properties/edit/edit-component";
 import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 import { MatDialog } from "@angular/material/dialog";
@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSelectModule } from "@angular/material/select";
 import { NgForOf, NgIf } from "@angular/common";
-import { ErrorHintComponent } from "../../../../core/entity-components/entity-utils/error-hint/error-hint.component";
+import { ErrorHintComponent } from "../../../../core/entity-components/utils/error-hint/error-hint.component";
 
 /**
  * Form field to edit a time interval for repetitions.

@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { EditComponent } from "../../entity-components/entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../entity-components/entity-properties/edit/edit-component";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { ArrayDatatype } from "../../entity/schema-datatypes/array.datatype";

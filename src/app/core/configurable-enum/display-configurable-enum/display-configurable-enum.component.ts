@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { ViewDirective } from "../../entity-components/entity-utils/view-components/view.directive";
+import { ViewDirective } from "../../entity-components/entity-properties/view/view.directive";
 import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { NgClass, NgForOf, NgIf } from "@angular/common";

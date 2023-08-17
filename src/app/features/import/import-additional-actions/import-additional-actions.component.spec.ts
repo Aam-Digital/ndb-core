@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { ImportAdditionalActionsComponent } from "./import-additional-actions.component";
-import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { EntityTypeLabelPipe } from "../../../core/entity-components/utils/entity-type-label/entity-type-label.pipe";
 import { MatDialog } from "@angular/material/dialog";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 

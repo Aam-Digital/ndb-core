@@ -16,13 +16,6 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.EditConfigurableEnumComponent),
   ],
   [
-    "DashboardShortcutWidget",
-    () =>
-      import(
-        "./dashboard-shortcut-widget/dashboard-shortcut-widget/dashboard-shortcut-widget.component"
-      ).then((c) => c.DashboardShortcutWidgetComponent),
-  ],
-  [
     "Form",
     () =>
       import("./entity-components/entity-details/form/form.component").then(
@@ -61,119 +54,119 @@ export const coreComponents: ComponentTuple[] = [
     "EditAge",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-age/edit-age.component"
+        "./entity-components/entity-properties/edit/edit-age/edit-age.component"
       ).then((c) => c.EditAgeComponent),
   ],
   [
     "EditText",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-text/edit-text.component"
+        "./entity-components/entity-properties/edit/edit-text/edit-text.component"
       ).then((c) => c.EditTextComponent),
   ],
   [
     "EditBoolean",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-boolean/edit-boolean.component"
+        "./entity-components/entity-properties/edit/edit-boolean/edit-boolean.component"
       ).then((c) => c.EditBooleanComponent),
   ],
   [
     "EditDate",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-date/edit-date.component"
+        "./entity-components/entity-properties/edit/edit-date/edit-date.component"
       ).then((c) => c.EditDateComponent),
   ],
   [
     "EditMonth",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-month/edit-month.component"
+        "./entity-components/entity-properties/edit/edit-month/edit-month.component"
       ).then((c) => c.EditMonthComponent),
   ],
   [
     "EditLongText",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-long-text/edit-long-text.component"
+        "./entity-components/entity-properties/edit/edit-long-text/edit-long-text.component"
       ).then((c) => c.EditLongTextComponent),
   ],
   [
     "EditPhoto",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-photo/edit-photo.component"
+        "./entity-components/entity-properties/edit/edit-photo/edit-photo.component"
       ).then((c) => c.EditPhotoComponent),
   ],
   [
     "EditNumber",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-number/edit-number.component"
+        "./entity-components/entity-properties/edit/edit-number/edit-number.component"
       ).then((c) => c.EditNumberComponent),
   ],
   [
     "EditDescriptionOnly",
     () =>
       import(
-        "./entity-components/entity-utils/dynamic-form-components/edit-description-only/edit-description-only.component"
+        "./entity-components/entity-properties/edit/edit-description-only/edit-description-only.component"
       ).then((c) => c.EditDescriptionOnlyComponent),
   ],
   [
     "DisplayCheckmark",
     () =>
       import(
-        "./entity-components/entity-utils/view-components/display-checkmark/display-checkmark.component"
+        "./entity-components/entity-properties/view/display-checkmark/display-checkmark.component"
       ).then((c) => c.DisplayCheckmarkComponent),
   ],
   [
     "DisplayText",
     () =>
       import(
-        "./entity-components/entity-utils/view-components/display-text/display-text.component"
+        "./entity-components/entity-properties/view/display-text/display-text.component"
       ).then((c) => c.DisplayTextComponent),
   ],
   [
     "DisplayDate",
     () =>
       import(
-        "./entity-components/entity-utils/view-components/display-date/display-date.component"
+        "./entity-components/entity-properties/view/display-date/display-date.component"
       ).then((c) => c.DisplayDateComponent),
   ],
   [
     "DisplayMonth",
     () =>
       import(
-        "./entity-components/entity-utils/view-components/display-month/display-month.component"
+        "./entity-components/entity-properties/view/display-month/display-month.component"
       ).then((c) => c.DisplayMonthComponent),
   ],
   [
     "ReadonlyFunction",
     () =>
       import(
-        "./entity-components/entity-utils/view-components/readonly-function/readonly-function.component"
+        "./entity-components/entity-properties/view/readonly-function/readonly-function.component"
       ).then((c) => c.ReadonlyFunctionComponent),
   ],
   [
     "DisplayPercentage",
     () =>
       import(
-        "./entity-components/entity-utils/view-components/display-percentage/display-percentage.component"
+        "./entity-components/entity-properties/view/display-percentage/display-percentage.component"
       ).then((c) => c.DisplayPercentageComponent),
   ],
   [
     "DisplayUnit",
     () =>
       import(
-        "./entity-components/entity-utils/view-components/display-unit/display-unit.component"
+        "./entity-components/entity-properties/view/display-unit/display-unit.component"
       ).then((c) => c.DisplayUnitComponent),
   ],
   [
     "DisplayAge",
     () =>
       import(
-        "./entity-components/entity-utils/view-components/display-age/display-age.component"
+        "./entity-components/entity-properties/view/display-age/display-age.component"
       ).then((c) => c.DisplayAgeComponent),
   ],
   [
@@ -233,7 +226,7 @@ export const coreComponents: ComponentTuple[] = [
     "RelatedEntities",
     () =>
       import(
-        "./entity-components/entity-details/related-entities/related-entities.component"
+        "./entity-components/related-entities/related-entities.component"
       ).then((c) => c.RelatedEntitiesComponent),
   ],
   [

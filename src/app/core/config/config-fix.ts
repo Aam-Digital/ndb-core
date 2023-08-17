@@ -86,7 +86,7 @@ export const defaultJsonConfig = {
     "config": {
       "widgets": [
         {
-          "component": "DashboardShortcutWidget",
+          "component": "ShortcutDashboard",
           "config": {
             "shortcuts": [
               {

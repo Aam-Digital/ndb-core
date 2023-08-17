@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ViewDirective } from "../../../core/entity-components/entity-utils/view-components/view.directive";
+import { ViewDirective } from "../../../core/entity-components/entity-properties/view/view.directive";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { FileService } from "../file.service";
 import { MatButtonModule } from "@angular/material/button";

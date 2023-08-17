@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { EditComponent } from "../../entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../entity-properties/edit/edit-component";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntitySelectComponent } from "../entity-select/entity-select.component";
 

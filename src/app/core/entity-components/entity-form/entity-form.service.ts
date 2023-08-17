@@ -17,7 +17,7 @@ import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
-import { isArrayDataType } from "../entity-utils/entity-utils";
+import { isArrayDataType } from "../utils/entity-utils";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`

@@ -1,5 +1,5 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../../core/entity-components/entity-properties/edit/edit-component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { LoggingService } from "../../../core/logging/logging.service";
@@ -13,7 +13,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ErrorHintComponent } from "../../../core/entity-components/entity-utils/error-hint/error-hint.component";
+import { ErrorHintComponent } from "../../../core/entity-components/utils/error-hint/error-hint.component";
 
 /**
  * This component should be used as a `editComponent` when a property should store files.

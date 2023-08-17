@@ -31,7 +31,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { EntityPropertyViewComponent } from "../../../core/entity-components/entity-utils/entity-property-view/entity-property-view.component";
+import { EntityPropertyViewComponent } from "../../../core/entity-components/utils/entity-property-view/entity-property-view.component";
 import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";

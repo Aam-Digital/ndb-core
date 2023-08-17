@@ -12,7 +12,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfigureEnumPopupComponent } from "../configure-enum-popup/configure-enum-popup.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ErrorHintComponent } from "../../entity-components/entity-utils/error-hint/error-hint.component";
+import { ErrorHintComponent } from "../../entity-components/utils/error-hint/error-hint.component";
 
 @Component({
   selector: "app-enum-dropdown",

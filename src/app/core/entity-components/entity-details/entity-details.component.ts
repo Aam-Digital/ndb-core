@@ -27,7 +27,7 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { NgForOf, NgIf } from "@angular/common";
-import { ViewTitleComponent } from "../entity-utils/view-title/view-title.component";
+import { ViewTitleComponent } from "../utils/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../view/dynamic-components/dynamic-component.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { LoggingService } from "../../logging/logging.service";

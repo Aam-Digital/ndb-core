@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../../core/entity-components/entity-properties/edit/edit-component";
 import { EditEntityArrayComponent } from "../../../core/entity-components/entity-select/edit-entity-array/edit-entity-array.component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { startWith } from "rxjs/operators";

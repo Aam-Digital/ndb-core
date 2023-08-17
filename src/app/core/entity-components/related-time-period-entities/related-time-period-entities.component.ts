@@ -10,7 +10,7 @@ import { NgIf } from "@angular/common";
 import { EntitySubrecordComponent } from "../entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
-import { RelatedEntitiesComponent } from "../entity-details/related-entities/related-entities.component";
+import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { TimePeriod } from "./time-period";
 import { DataFilter } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 

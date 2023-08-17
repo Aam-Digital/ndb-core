@@ -22,7 +22,7 @@ import { BackgroundProcessState } from "../../sync-status/background-process-sta
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { first } from "rxjs/operators";
-import { isArrayProperty } from "../../entity-components/entity-utils/entity-utils";
+import { isArrayProperty } from "../../entity-components/utils/entity-utils";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.

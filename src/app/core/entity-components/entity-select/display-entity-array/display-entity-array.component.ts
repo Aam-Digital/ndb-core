@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
-import { ViewDirective } from "../../entity-utils/view-components/view.directive";
+import { ViewDirective } from "../../entity-properties/view/view.directive";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { DisplayEntityComponent } from "../display-entity/display-entity.component";
 import { NgForOf, NgIf } from "@angular/common";

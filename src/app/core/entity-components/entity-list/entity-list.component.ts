@@ -40,7 +40,7 @@ import { MatInputModule } from "@angular/material/input";
 import { FormsModule } from "@angular/forms";
 import { FilterComponent } from "../../filter/filter/filter.component";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
-import { ViewTitleComponent } from "../entity-utils/view-title/view-title.component";
+import { ViewTitleComponent } from "../utils/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 

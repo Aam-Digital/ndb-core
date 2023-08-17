@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EditEntityArrayComponent } from "./edit-entity-array.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { setupEditComponent } from "../../entity-utils/dynamic-form-components/edit-component.spec";
+import { setupEditComponent } from "../../entity-properties/edit/edit-component.spec";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 describe("EditEntityArrayComponent", () => {

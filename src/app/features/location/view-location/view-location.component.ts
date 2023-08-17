@@ -1,6 +1,6 @@
 import { Component } from "@angular/core";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import { ViewDirective } from "../../../core/entity-components/entity-utils/view-components/view.directive";
+import { ViewDirective } from "../../../core/entity-components/entity-properties/view/view.directive";
 import { GeoResult } from "../geo.service";
 
 @DynamicComponent("ViewLocation")

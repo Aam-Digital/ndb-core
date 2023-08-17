@@ -1,5 +1,5 @@
 import { StoryFn } from "@storybook/angular";
-import { generateFormFieldStory } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component-story-utils";
+import { generateFormFieldStory } from "../../../core/entity-components/entity-properties/edit/edit-component-story-utils";
 
 const formFieldStory = generateFormFieldStory("EditLocation", {
   display_name: "some address",

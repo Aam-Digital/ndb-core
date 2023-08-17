@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { EditComponent } from "../../entity-utils/dynamic-form-components/edit-component";
+import { EditComponent } from "../../entity-properties/edit/edit-component";
 import { Entity } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
@@ -9,7 +9,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
-import { ErrorHintComponent } from "../../entity-utils/error-hint/error-hint.component";
+import { ErrorHintComponent } from "../../utils/error-hint/error-hint.component";
 
 @DynamicComponent("EditSingleEntity")
 @Component({

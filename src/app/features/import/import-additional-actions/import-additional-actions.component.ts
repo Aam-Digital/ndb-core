@@ -9,7 +9,7 @@ import {
 import { Entity } from "../../../core/entity/model/entity";
 import { FormControl, FormGroup, ReactiveFormsModule } from "@angular/forms";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
-import { EntityTypeLabelPipe } from "../../../core/entity-components/entity-type-label/entity-type-label.pipe";
+import { EntityTypeLabelPipe } from "../../../core/entity-components/utils/entity-type-label/entity-type-label.pipe";
 import { AdditionalImportAction } from "./additional-import-action";
 import { ImportService } from "../import.service";
 import { MatListModule } from "@angular/material/list";

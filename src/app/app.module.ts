@@ -70,7 +70,7 @@ import { SchoolsModule } from "./child-dev-project/schools/schools.module";
 import { ConflictResolutionModule } from "./conflict-resolution/conflict-resolution.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
-import { ProgressDashboardWidgetModule } from "./features/progress-dashboard-widget/progress-dashboard-widget.module";
+import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
 import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
@@ -81,6 +81,9 @@ import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { appInitializers } from "./app-initializers";
 import { ImportModule } from "./features/import/import.module";
+import { ShortcutDashboardWidgetModule } from "./features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module";
+import { EntityCountDashboardWidgetModule } from "./features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-widget.module";
+import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-widget.module";
 
 /**
  * Main entry point of the application.
@@ -121,6 +124,9 @@ import { ImportModule } from "./features/import/import.module";
     LocationModule,
     MatchingEntitiesModule,
     ProgressDashboardWidgetModule,
+    ShortcutDashboardWidgetModule,
+    EntityCountDashboardWidgetModule,
+    BirthdayDashboardWidgetModule,
     ReportingModule,
     TodosModule,
     // top level component

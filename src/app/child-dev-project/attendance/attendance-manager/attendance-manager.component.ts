@@ -4,7 +4,7 @@ import { RouteTarget } from "../../../app.routing";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { ViewTitleComponent } from "../../../core/entity-components/entity-utils/view-title/view-title.component";
+import { ViewTitleComponent } from "../../../core/entity-components/utils/view-title/view-title.component";
 
 @RouteTarget("AttendanceManager")
 @Component({

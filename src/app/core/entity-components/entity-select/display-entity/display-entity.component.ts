@@ -1,6 +1,6 @@
 import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
-import { ViewDirective } from "../../entity-utils/view-components/view.directive";
+import { ViewDirective } from "../../entity-properties/view/view.directive";
 import { DynamicComponent } from "../../../view/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../../entity/entity-mapper.service";
 import { Router } from "@angular/router";
