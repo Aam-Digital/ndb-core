@@ -16,6 +16,8 @@ import { DateWithAgeDatatype } from "./entity/schema-datatypes/date-with-age.dat
 import { EntityDatatype } from "./entity/schema-datatypes/entity.datatype";
 import { EntityArrayDatatype } from "./entity/schema-datatypes/entity-array.datatype";
 import { NumberDatatype } from "./entity/schema-datatypes/number.datatype";
+import { Entity } from "./entity/model/entity";
+import { TimePeriod } from "./entity-components/related-time-period-entities/time-period";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -38,7 +40,7 @@ import { NumberDatatype } from "./entity/schema-datatypes/number.datatype";
   ],
 })
 export class CoreModule {
-  static databaseEntities = [User, Config];
+  static databaseEntities = [Entity, User, Config, TimePeriod];
 
   constructor(components: ComponentRegistry) {
     components.addAll(coreComponents);

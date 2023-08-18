@@ -10,6 +10,9 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { isArrayProperty } from "../../entity-utils/entity-utils";
 import { EntitySubrecordComponent } from "../../entity-subrecord/entity-subrecord/entity-subrecord.component";
 
+/**
+ * Load and display a list of entity subrecords (entities related to the current entity details view).
+ */
 @DynamicComponent("RelatedEntities")
 @Component({
   selector: "app-related-entities",
@@ -30,13 +33,21 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
    */
   @Input() property: string;
 
-  @Input() columns: ColumnConfig[];
+  @Input()
+  public set columns(value: ColumnConfig[]) {
+    this._columns = value;
+  }
+  public get columns(): ColumnConfig[] {
+    return this._columns;
+  }
+  protected _columns: ColumnConfig[];
+
   @Input() filter?: DataFilter<E>;
 
   data: E[] = [];
   isLoading = false;
   private isArray = false;
-  private entityCtr: EntityConstructor<E>;
+  protected entityCtr: EntityConstructor<E>;
 
   constructor(
     private entityMapper: EntityMapperService,
