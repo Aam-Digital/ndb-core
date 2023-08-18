@@ -5,7 +5,6 @@ import { Todo } from "../model/todo";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { TodoCompletion } from "../model/todo-completion";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import moment from "moment";
 
@@ -48,7 +47,13 @@ describe("TodosDashboardComponent", () => {
   it("should not show completed todos", () => {
     const inputData = [
       Todo.create({ assignedTo: [testUser] }),
-      Todo.create({ completed: new TodoCompletion(), assignedTo: [testUser] }),
+      Todo.create({
+        completed: {
+          completedBy: testUser,
+          completedAt: new Date("2023-01-31"),
+        },
+        assignedTo: [testUser],
+      }),
       Todo.create({ assignedTo: [testUser] }),
     ];
     const mappedData = component.dataMapper(inputData);
