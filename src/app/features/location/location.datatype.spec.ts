@@ -67,11 +67,11 @@ describe("Schema data type: location", () => {
   });
 
   it("should not lookup empty address when importing", async () => {
-    const res1 = await service.importMapFunction(undefined, null);
+    const res1 = await service.importMapFunction(undefined);
     expect(res1).toBeUndefined();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
 
-    const res2 = await service.importMapFunction("", null);
+    const res2 = await service.importMapFunction("");
     expect(res2).toBeUndefined();
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
   });
