@@ -16,9 +16,7 @@ export class LocationDatatype extends DefaultDatatype<GeoResult, GeoResult> {
 
   async importMapFunction(
     val: any,
-    schemaField: EntitySchemaField,
-    additional?: any,
-  ): Promise<any> {
+  ): Promise<GeoResult> {
     if (!val) {
       return undefined;
     }
