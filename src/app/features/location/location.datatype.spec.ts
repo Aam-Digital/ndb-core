@@ -27,7 +27,7 @@ describe("Schema data type: location", () => {
   ) {
     mockGeoService.lookup.and.returnValue(of(mockedLookup));
 
-    const actualResult = await service.importMapFunction(importedValue, null);
+    const actualResult = await service.importMapFunction(importedValue);
 
     expect(mockGeoService.lookup).toHaveBeenCalledWith(importedValue);
     expect(actualResult).toEqual(expectedResult);
