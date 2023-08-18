@@ -67,7 +67,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load data correctly filtered data", async () => {
+  it("should load correctly filtered data", async () => {
     const testSchool = new School();
     active1.schoolId = testSchool.getId();
     active2.schoolId = "some-other-id";
