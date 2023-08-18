@@ -1,11 +1,10 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { ChildSchoolOverviewComponent } from "./child-school-overview.component";
+import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entities.component";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
-import { School } from "../model/school";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { Child } from "../../children/model/child";
 import { importProvidersFrom } from "@angular/core";
-import { ChildrenService } from "../../children/children.service";
+import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { School } from "../../../child-dev-project/schools/model/school";
 
 const child = new Child("testChild");
 const school1 = new School("1");
@@ -33,33 +32,30 @@ rel3.end = new Date();
 rel3.result = 23;
 
 export default {
-  title: "Features/Previous Schools",
-  component: ChildSchoolOverviewComponent,
+  title: "Core/Entities/Related TimePeriod Entities",
+  component: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>,
   decorators: [
     applicationConfig({
       providers: [
         importProvidersFrom(
           StorybookBaseModule.withData([school1, school2, rel1, rel2, rel3]),
         ),
-        {
-          provide: ChildrenService,
-          useValue: {
-            queryRelationsOf: () => Promise.resolve([rel1, rel2, rel3]),
-          },
-        },
       ],
     }),
   ],
 } as Meta;
 
-const Template: StoryFn<ChildSchoolOverviewComponent> = (
-  args: ChildSchoolOverviewComponent,
-) => ({
-  component: ChildSchoolOverviewComponent,
+const Template: StoryFn<
+  RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>
+> = (args: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>) => ({
+  component: RelatedTimePeriodEntitiesComponent<ChildSchoolRelation>,
   props: args,
 });
 
 export const Primary = Template.bind({});
 Primary.args = {
   entity: child,
+  entityType: ChildSchoolRelation.ENTITY_TYPE,
+  property: "childId",
+  columns: ["start", "end", "schoolId", "schoolClass", "result"],
 };
