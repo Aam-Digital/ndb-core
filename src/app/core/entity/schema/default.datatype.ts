@@ -37,7 +37,7 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * that EntitySchemaDatatype without the need to explicitly state the dataType config in the annotation
    * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
    */
-  static dataType: string;
+  static dataType: string = "";
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;
   }
