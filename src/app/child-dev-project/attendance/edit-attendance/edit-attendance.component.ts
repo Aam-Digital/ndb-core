@@ -93,4 +93,9 @@ export class EditAttendanceComponent
     this.formControl.setValue([...children]);
     this.formControl.markAsDirty();
   }
+
+  updateAttendanceValue(childId, property: "status" | "remarks", newValue) {
+    this.getAttendance(childId)[property] = newValue;
+    this.formControl.markAsDirty();
+  }
 }
