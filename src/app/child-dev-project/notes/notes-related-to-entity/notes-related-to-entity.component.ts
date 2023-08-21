@@ -33,6 +33,7 @@ import { asArray } from "../../../utils/utils";
 export class NotesRelatedToEntityComponent implements OnInit {
   @Input() entity: Entity;
   records: Array<Note> = [];
+  isLoading: boolean;
 
   @Input() columns: ColumnConfig[] = [
     { id: "date", visibleFrom: "xs" },
@@ -65,8 +66,10 @@ export class NotesRelatedToEntityComponent implements OnInit {
     this.initNotesOfEntity();
   }
 
-  private initNotesOfEntity() {
-    this.childrenService
+  private async initNotesOfEntity() {
+    this.isLoading = true;
+
+    this.records = await this.childrenService
       .getNotesRelatedTo(this.entity.getId(true))
       .then((notes: Note[]) => {
         notes.sort((a, b) => {
@@ -76,8 +79,10 @@ export class NotesRelatedToEntityComponent implements OnInit {
           }
           return moment(b.date).valueOf() - moment(a.date).valueOf();
         });
-        this.records = notes;
+        return notes;
       });
+
+    this.isLoading = false;
   }
 
   generateNewRecordFactory() {
