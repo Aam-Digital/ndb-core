@@ -5,7 +5,8 @@ import { Entity } from "../../../core/entity/model/entity";
 import { ColumnMapping } from "../column-mapping";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ImportMetadata } from "../import-metadata";
-import { TEST_USER } from "../../../utils/mocked-testing.module";
+
+import { TEST_USER } from "../../../utils/mock-local-session";
 
 /**
  * Sample raw data that can be used in Storybook and tests.

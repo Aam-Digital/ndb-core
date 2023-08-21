@@ -21,10 +21,10 @@ import { SessionType } from "../session-type";
 import { LocalUser, passwordEqualsEncrypted } from "./local-user";
 import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
-import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "./auth-user";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 
 describe("LocalSessionService", () => {
   let userDBName;

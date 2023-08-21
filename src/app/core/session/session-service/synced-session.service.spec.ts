@@ -28,11 +28,7 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
-import {
-  MockedTestingModule,
-  TEST_PASSWORD,
-  TEST_USER,
-} from "../../../utils/mocked-testing.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionModule } from "../session.module";
@@ -41,6 +37,7 @@ import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 import { mockAuth } from "./remote-session.spec";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;

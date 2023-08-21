@@ -25,11 +25,11 @@ import {
   EntityRegistry,
 } from "./database-entity.decorator";
 import { Child } from "../../child-dev-project/children/model/child";
-import { TEST_USER } from "../../utils/mocked-testing.module";
 import { SessionService } from "../session/session-service/session.service";
 import { CoreModule } from "../core.module";
 import { Database } from "../database/database";
 import { ComponentRegistry } from "../../dynamic-components";
+import { TEST_USER } from "../../utils/mock-local-session";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
