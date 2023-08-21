@@ -21,7 +21,7 @@ module.exports = async (translations) => {
     } else if (Array.isArray(translation)) {
       result[current] = translation
         .map((entry) =>
-          typeof entry === "string" ? entry : `{{${entry.Standalone.id}}}`
+          typeof entry === "string" ? entry : `{{${entry.Standalone.id}}}`,
         )
         .map((entry) => entry.replace("{{", "{$").replace("}}", "}"))
         .join("");

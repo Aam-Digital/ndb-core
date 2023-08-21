@@ -37,7 +37,7 @@ export class PwaInstallComponent implements OnInit {
   constructor(
     public snackBar: MatSnackBar,
     private pwaInstallService: PwaInstallService,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {

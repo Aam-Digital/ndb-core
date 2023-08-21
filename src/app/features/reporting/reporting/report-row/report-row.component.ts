@@ -18,12 +18,8 @@ interface FlattenedReportRow extends ReportRow {
   selector: "app-report-row",
   templateUrl: "./report-row.component.html",
   styleUrls: ["./report-row.component.scss"],
-  imports: [
-    MatTableModule,
-    MatButtonModule,
-    FontAwesomeModule
-  ],
-  standalone: true
+  imports: [MatTableModule, MatButtonModule, FontAwesomeModule],
+  standalone: true,
 })
 export class ReportRowComponent {
   @Input() set rows(rows: ReportRow[]) {
@@ -41,11 +37,11 @@ export class ReportRowComponent {
     }),
     (row) => row.level,
     (row) => row.isExpandable,
-    (row) => row.subRows
+    (row) => row.subRows,
   );
   treeControl = new FlatTreeControl<FlattenedReportRow>(
     (row) => row.level,
-    (row) => row.isExpandable
+    (row) => row.isExpandable,
   );
   dataSource = new MatTreeFlatDataSource(this.treeControl, this.treeFlattener);
 }

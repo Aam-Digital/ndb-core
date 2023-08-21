@@ -72,7 +72,7 @@ describe("BasicAutocompleteComponent", () => {
     component.options = [school1, school2, school3];
     let currentAutocompleteSuggestions: School[];
     component.autocompleteSuggestedOptions.subscribe(
-      (value) => (currentAutocompleteSuggestions = value.map((o) => o.asValue))
+      (value) => (currentAutocompleteSuggestions = value.map((o) => o.asValue)),
     );
 
     component.autocompleteForm.setValue("");
@@ -187,12 +187,12 @@ describe("BasicAutocompleteComponent", () => {
     const newOption = "new option";
     const confirmationSpy = spyOn(
       TestBed.inject<ConfirmationDialogService>(ConfirmationDialogService),
-      "getConfirmation"
+      "getConfirmation",
     );
     component.createOption = (id) => ({ id: id, label: id });
     const createOptionEventSpy = spyOn(
       component,
-      "createOption"
+      "createOption",
     ).and.callThrough();
     component.options = genders;
     const initialValue = genders[0].id;

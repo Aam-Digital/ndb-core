@@ -12,10 +12,10 @@ import { EntitySchemaField } from "../../../../core/entity/schema/entity-schema-
 import { KeyValuePipe, NgForOf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../../core/view/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
-import { ColumnMapping } from "../../column-mapping";
-import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("EnumValueMapping")
 @Component({
   selector: "app-enum-value-mapping",
   templateUrl: "./enum-value-mapping.component.html",
@@ -30,26 +30,10 @@ import { HelpButtonComponent } from "../../../../core/common-components/help-but
     HelpButtonComponent,
   ],
 })
-export class EnumValueMappingComponent
-  extends AbstractValueMappingComponent
-  implements OnInit
-{
+export class EnumValueMappingComponent implements OnInit {
   form: FormGroup;
   component: string;
   schema: EntitySchemaField;
-
-  static getIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
-    if (!col.additional) {
-      return "?";
-    }
-    const unmappedValues = Object.values(col.additional).filter(
-      (v) => v === undefined,
-    );
-    if (unmappedValues.length > 0) {
-      return unmappedValues.length.toString();
-    }
-    return undefined;
-  }
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -58,9 +42,7 @@ export class EnumValueMappingComponent
     private dialog: MatDialogRef<any>,
     private confirmation: ConfirmationDialogService,
     private schemaService: EntitySchemaService,
-  ) {
-    super();
-  }
+  ) {}
 
   ngOnInit() {
     this.schema = this.data.entityType.schema.get(this.data.col.propertyName);

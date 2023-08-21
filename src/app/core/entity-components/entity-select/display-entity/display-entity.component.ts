@@ -35,7 +35,7 @@ export class DisplayEntityComponent
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
-    private changeDetector: ChangeDetectorRef
+    private changeDetector: ChangeDetectorRef,
   ) {
     super();
   }
@@ -49,7 +49,7 @@ export class DisplayEntityComponent
       }
       this.entityToDisplay = await this.entityMapper.load(
         this.entityType,
-        this.entityId
+        this.entityId,
       );
       this.changeDetector.detectChanges();
     }

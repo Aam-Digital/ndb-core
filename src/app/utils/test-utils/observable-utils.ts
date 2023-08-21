@@ -16,7 +16,7 @@ export interface ObservableMatchers<T> {
 }
 
 export function expectObservable<T>(
-  observable: Observable<T>
+  observable: Observable<T>,
 ): ObservableMatchers<T> {
   return new ObservableMatchersImpl(observable);
 }

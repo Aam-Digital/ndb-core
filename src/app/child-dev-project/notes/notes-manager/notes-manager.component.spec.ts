@@ -8,6 +8,7 @@ import {
   flush,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -34,7 +35,7 @@ describe("NotesManagerComponent", () => {
   let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
-    ["openFormPopup"]
+    ["openFormPopup"],
   );
 
   const routeData: EntityListConfig = {
@@ -84,7 +85,7 @@ describe("NotesManagerComponent", () => {
     },
   ]);
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockNoteObservable = new Subject<UpdatedEntity<Note>>();
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
@@ -100,9 +101,9 @@ describe("NotesManagerComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.callFake((entityType) =>
       (entityType as any) === Note
         ? (mockNoteObservable as any)
-        : (mockEventNoteObservable as any)
+        : (mockEventNoteObservable as any),
     );
-  });
+  }));
 
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesManagerComponent);
@@ -132,7 +133,7 @@ describe("NotesManagerComponent", () => {
     expect(dialogMock.openFormPopup).toHaveBeenCalledWith(
       note,
       [],
-      NoteDetailsComponent
+      NoteDetailsComponent,
     );
   });
 
@@ -193,7 +194,7 @@ describe("NotesManagerComponent", () => {
     routeMock.data.next({
       config: Object.assign(
         { includeEventNotes: true } as NotesManagerConfig,
-        routeData
+        routeData,
       ),
     });
 

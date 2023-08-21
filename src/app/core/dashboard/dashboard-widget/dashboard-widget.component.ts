@@ -21,9 +21,9 @@ export type DashboardTheme =
     NgIf,
     MatProgressSpinnerModule,
     FaDynamicIconComponent,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  standalone: true
+  standalone: true,
 })
 export class DashboardWidgetComponent {
   @Input() subtitle: string;

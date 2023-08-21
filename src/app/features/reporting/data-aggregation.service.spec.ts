@@ -45,7 +45,7 @@ describe("DataAggregationService", () => {
     mockQueryService.queryData.and.returnValues(
       baseData,
       [new School()],
-      [new School(), new School()]
+      [new School(), new School()],
     );
 
     const report = await service.calculateReport([childDisaggregation]);
@@ -673,7 +673,7 @@ describe("DataAggregationService", () => {
       entityMapper,
       null,
       null,
-      entityRegistry
+      entityRegistry,
     );
     service = new DataAggregationService(queryService);
 

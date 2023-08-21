@@ -14,8 +14,8 @@ describe("EditTextWithAutocompleteComponent", () => {
   let fixture: ComponentFixture<EditTextWithAutocompleteComponent>;
   let loadTypeSpy: jasmine.Spy;
 
-  beforeEach(() => {
-    return TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [
         EditTextWithAutocompleteComponent,
         MockedTestingModule.withState(),
@@ -27,7 +27,7 @@ describe("EditTextWithAutocompleteComponent", () => {
         },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(EditTextWithAutocompleteComponent);
@@ -42,10 +42,10 @@ describe("EditTextWithAutocompleteComponent", () => {
         { id: "assignedTo" },
         { id: "linkedGroups" },
       ],
-      new RecurringActivity()
+      new RecurringActivity(),
     );
     component.formControl = component.parent.get(
-      "title"
+      "title",
     ) as FormControl<string>;
     component.formControlName = "title";
     component.formFieldConfig = {
@@ -136,7 +136,7 @@ describe("EditTextWithAutocompleteComponent", () => {
 
     fixture.detectChanges();
     const input: HTMLInputElement = fixture.debugElement.query(
-      By.css("input")
+      By.css("input"),
     ).nativeElement;
     expect(input.value).toEqual("First Recurring Activity");
   });
@@ -151,7 +151,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     loadTypeSpy.and.resolveTo([rA1, rA2]);
     const confirmationDialogueSpy: jasmine.Spy = spyOn(
       TestBed.inject(ConfirmationDialogService),
-      "getConfirmation"
+      "getConfirmation",
     );
     confirmationDialogueSpy.and.resolveTo(true);
 

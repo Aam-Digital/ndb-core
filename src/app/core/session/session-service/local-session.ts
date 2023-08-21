@@ -87,14 +87,14 @@ export class LocalSession extends SessionService {
 
     this.initDatabase(AppSettings.DB_NAME, tmpDB);
     const dbFallback = window.localStorage.getItem(
-      LocalSession.DEPRECATED_DB_KEY
+      LocalSession.DEPRECATED_DB_KEY,
     );
     const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
     if (dbAvailable && !(await tmpDB.isEmpty())) {
       // Old database is available and can be used by the current user
       window.localStorage.setItem(
         LocalSession.DEPRECATED_DB_KEY,
-        this.currentDBUser.name
+        this.currentDBUser.name,
       );
       this.initDatabase(AppSettings.DB_NAME);
       return;

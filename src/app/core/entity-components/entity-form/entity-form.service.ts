@@ -41,7 +41,7 @@ export class EntityFormService {
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
     private session: SessionService,
-    router: Router
+    router: Router,
   ) {
     router.events
       .pipe(filter((e) => e instanceof ActivationStart))
@@ -62,14 +62,14 @@ export class EntityFormService {
   public extendFormFieldConfig(
     formFields: FormFieldConfig[],
     entityType: EntityConstructor,
-    forTable = false
+    forTable = false,
   ) {
     formFields.forEach((formField) => {
       try {
         this.addFormFields(formField, entityType, forTable);
       } catch (err) {
         throw new Error(
-          `Could not create form config for ${formField.id}: ${err}`
+          `Could not create form config for ${formField.id}: ${err}`,
         );
       }
     });
@@ -78,7 +78,7 @@ export class EntityFormService {
   private addFormFields(
     formField: FormFieldConfig,
     entityType: EntityConstructor,
-    forTable: boolean
+    forTable: boolean,
   ) {
     const propertySchema = entityType.schema.get(formField.id);
     formField.edit =
@@ -113,7 +113,7 @@ export class EntityFormService {
   public createFormGroup<T extends Entity>(
     formFields: FormFieldConfig[],
     entity: T,
-    forTable = false
+    forTable = false,
   ): EntityForm<T> {
     this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
     const formConfig = {};
@@ -134,14 +134,14 @@ export class EntityFormService {
         formConfig[formField.id] = [val];
         if (formField.validators) {
           const validators = this.dynamicValidator.buildValidators(
-            formField.validators
+            formField.validators,
           );
           formConfig[formField.id].push(validators);
         }
       });
     const group = this.fb.group<Partial<T>>(formConfig);
     const sub = group.valueChanges.subscribe(
-      () => (this.unsavedChanges.pending = group.dirty)
+      () => (this.unsavedChanges.pending = group.dirty),
     );
     this.subscriptions.push(sub);
     return group;
@@ -175,7 +175,7 @@ export class EntityFormService {
    */
   public async saveChanges<T extends Entity>(
     form: EntityForm<T>,
-    entity: T
+    entity: T,
   ): Promise<T> {
     this.checkFormValidity(form);
     const updatedEntity = entity.copy() as T;
@@ -183,7 +183,7 @@ export class EntityFormService {
     updatedEntity.assertValid();
     if (!this.canSave(entity, updatedEntity)) {
       throw new Error(
-        $localize`Current user is not permitted to save these changes`
+        $localize`Current user is not permitted to save these changes`,
       );
     }
 

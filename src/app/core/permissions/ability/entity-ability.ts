@@ -43,7 +43,7 @@ export class EntityAbility extends Ability<[EntityAction, string | any]> {
     } else if (entity instanceof Entity) {
       return subject(
         entity.getType(),
-        this.entitySchemaService.transformEntityToDatabaseFormat(entity)
+        this.entitySchemaService.transformEntityToDatabaseFormat(entity),
       );
     } else if (entity.ENTITY_TYPE) {
       return entity.ENTITY_TYPE;

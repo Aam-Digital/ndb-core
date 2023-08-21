@@ -1,4 +1,4 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
 import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
@@ -37,7 +37,7 @@ import { ErrorHintComponent } from "../../../core/entity-components/entity-utils
   ],
   standalone: true,
 })
-export class EditFileComponent extends EditComponent<string> {
+export class EditFileComponent extends EditComponent<string> implements OnInit {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
   private selectedFile: File;
   private removeClicked = false;
@@ -47,7 +47,7 @@ export class EditFileComponent extends EditComponent<string> {
     protected fileService: FileService,
     private alertService: AlertService,
     private logger: LoggingService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
   ) {
     super();
   }
@@ -58,7 +58,7 @@ export class EditFileComponent extends EditComponent<string> {
     this.formControl.statusChanges
       .pipe(
         distinctUntilChanged(),
-        filter((change) => change === "DISABLED")
+        filter((change) => change === "DISABLED"),
       )
       .subscribe(() => {
         if (
@@ -127,7 +127,7 @@ export class EditFileComponent extends EditComponent<string> {
       .removeFile(this.entity, this.formControlName)
       .subscribe(() => {
         this.alertService.addInfo(
-          $localize`:Message for user:File "${this.initialValue}" deleted`
+          $localize`:Message for user:File "${this.initialValue}" deleted`,
         );
         this.initialValue = undefined;
         this.removeClicked = false;

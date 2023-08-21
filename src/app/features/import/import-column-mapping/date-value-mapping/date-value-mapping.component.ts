@@ -12,9 +12,13 @@ import { MatInputModule } from "@angular/material/input";
 import { DatePipe, NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatListModule } from "@angular/material/list";
 import { MatButtonModule } from "@angular/material/button";
-import { AbstractValueMappingComponent } from "../abstract-value-mapping-component";
 import { HelpButtonComponent } from "../../../../core/common-components/help-button/help-button.component";
+import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
 
+/**
+ * Configuration dialog for parsing date value of data imported from a file.
+ */
+@DynamicComponent("DateValueMapping")
 @Component({
   selector: "app-date-value-mapping",
   templateUrl: "./date-value-mapping.component.html",
@@ -33,7 +37,7 @@ import { HelpButtonComponent } from "../../../../core/common-components/help-but
     HelpButtonComponent,
   ],
 })
-export class DateValueMappingComponent extends AbstractValueMappingComponent {
+export class DateValueMappingComponent {
   format = new FormControl("");
   valid = false;
   values: { value: string; parsed?: Date }[] = [];
@@ -41,10 +45,8 @@ export class DateValueMappingComponent extends AbstractValueMappingComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: MappingDialogData,
     private confirmation: ConfirmationDialogService,
-    private dialog: MatDialogRef<any>
+    private dialog: MatDialogRef<any>,
   ) {
-    super();
-
     this.values = this.data.values
       .filter((val) => !!val)
       .map((value) => ({ value }));
@@ -65,7 +67,7 @@ export class DateValueMappingComponent extends AbstractValueMappingComponent {
     });
     // Sort unparsed dates to front
     this.values.sort((v1, v2) =>
-      v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0
+      v1.parsed && !v2.parsed ? 1 : !v1.parsed && v2.parsed ? -1 : 0,
     );
   }
 
@@ -74,7 +76,7 @@ export class DateValueMappingComponent extends AbstractValueMappingComponent {
       !this.format.errors ||
       (await this.confirmation.getConfirmation(
         $localize`Ignore values?`,
-        $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`
+        $localize`Some values don't have a mapping and will not be imported. Are you sure you want to keep it like this?`,
       ));
     if (confirmed) {
       this.data.col.additional = this.format.value?.toUpperCase();

@@ -7,21 +7,44 @@
 
   <div class="progress-nav">
     <div style="margin-left: -10px">
-      <button mat-icon-button (click)="goToFirst()" [disabled]="isFirst" class="button-skip">
+      <button
+        mat-icon-button
+        (click)="goToFirst()"
+        [disabled]="isFirst"
+        class="button-skip"
+      >
         <fa-icon icon="angle-double-left"></fa-icon>
       </button>
-      <button mat-icon-button (click)="goToPrevious()" [disabled]="isFirst" class="button-skip">
+      <button
+        mat-icon-button
+        (click)="goToPrevious()"
+        [disabled]="isFirst"
+        class="button-skip"
+      >
         <fa-icon icon="angle-left"></fa-icon>
       </button>
     </div>
-    <div class="progress-label" [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'">
-      {{ currentIndex+1 }} / {{ children.length }}
+    <div
+      class="progress-label"
+      [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'"
+    >
+      {{ currentIndex + 1 }} / {{ children.length }}
     </div>
     <div style="margin-right: -10px">
-      <button mat-icon-button (click)="goToNext()" [disabled]="isFinished" class="button-skip">
+      <button
+        mat-icon-button
+        (click)="goToNext()"
+        [disabled]="isFinished"
+        class="button-skip"
+      >
         <fa-icon icon="angle-right"></fa-icon>
       </button>
-      <button mat-icon-button (click)="goToLast()" [disabled]="isFinished" class="button-skip">
+      <button
+        mat-icon-button
+        (click)="goToLast()"
+        [disabled]="isFinished"
+        class="button-skip"
+      >
         <fa-icon icon="angle-double-right"></fa-icon>
       </button>
     </div>
@@ -32,7 +55,8 @@
     *ngIf="!isFinished"
     [entity]="currentChild"
     [linkDisabled]="true"
-    [tooltipDisabled]="true">
+    [tooltipDisabled]="true"
+  >
   </app-child-block>
 
   <div *ngIf="!isFinished && currentAttendance" class="tab-wrapper">
@@ -42,19 +66,22 @@
       *ngFor="let child of children; let i = index"
       class="tab-body"
       [class.tab-body-active]="currentIndex === i"
-      [position]="i - currentIndex" >
+      [position]="i - currentIndex"
+    >
       <div>
         <div
           class="group-select-option"
           *ngFor="let option of availableStatus"
           (click)="markAttendance(option)"
           [ngClass]="
-          eventEntity.getAttendance(child).status.id === option.id
-            ? option.style
-            : ''
+            eventEntity.getAttendance(child).status.id === option.id
+              ? option.style
+              : ''
           "
         >
-          <div style="display: flex; flex-direction: row; padding: 16px; gap: 16px">
+          <div
+            style="display: flex; flex-direction: row; padding: 16px; gap: 16px"
+          >
             <fa-icon
               *ngIf="eventEntity.getAttendance(child).status.id === option.id"
               icon="check"
@@ -73,8 +100,8 @@
     <fa-icon icon="check-circle" size="3x"></fa-icon>
     <div
       i18n="
-        Attendance completed|shows when the user has registered the attendance of
-        all children
+        Attendance completed|shows when the user has registered the attendance
+        of all children
       "
       (click)="finish()"
     >

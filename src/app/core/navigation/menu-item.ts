@@ -25,5 +25,9 @@ export class MenuItem {
    * @param icon The icon to be displayed left of the label.
    * @param link The url fragment to which the item will route to (e.g. '/dashboard')
    */
-  constructor(public label: string, public icon: string, public link: string) {}
+  constructor(
+    public label: string,
+    public icon: string,
+    public link: string,
+  ) {}
 }

@@ -1,56 +1,84 @@
 <div class="margin-bottom-small" #matchComparison>
-  <table mat-table [dataSource]="columns" class="match-comparison-table mat-elevation-z1">
-    <ng-container [matColumnDef]="'side-' + i" *ngFor="let side of sideDetails; let i = index">
-
-      <th mat-header-cell *matHeaderCellDef class="comparison-header" [style.color]="side.entityType?.color ?? 'black'">
+  <table
+    mat-table
+    [dataSource]="columns"
+    class="match-comparison-table mat-elevation-z1"
+  >
+    <ng-container
+      [matColumnDef]="'side-' + i"
+      *ngFor="let side of sideDetails; let i = index"
+    >
+      <th
+        mat-header-cell
+        *matHeaderCellDef
+        class="comparison-header"
+        [style.color]="side.entityType?.color ?? 'black'"
+      >
         {{ side.entityType?.label }}:
-        {{ side.selected?.toString() ?? '-' }}
+        {{ side.selected?.toString() ?? "-" }}
 
-        <fa-icon icon="lock" *ngIf="!side.availableEntities || lockedMatching"
-                 matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
-                 i18n-matTooltip="tooltip explaining that this entity in matching is locked"
+        <fa-icon
+          icon="lock"
+          *ngIf="!side.availableEntities || lockedMatching"
+          matTooltip="These details of the record are displayed to make comparison easier. You cannot select a different record here."
+          i18n-matTooltip="
+            tooltip explaining that this entity in matching is locked
+          "
         ></fa-icon>
       </th>
 
       <td mat-cell *matCellDef="let property">
         <app-entity-property-view
           *ngIf="side.selected && property[i]; else placeholder"
-          [entity]="side.selected" [property]="property[i]" [showLabel]="true"
+          [entity]="side.selected"
+          [property]="property[i]"
+          [showLabel]="true"
         ></app-entity-property-view>
 
-        <ng-template #placeholder>
-          -
-        </ng-template>
+        <ng-template #placeholder> - </ng-template>
       </td>
-
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
-    <tr mat-row *matRowDef="let row; columns: columnsToDisplay;"></tr>
+    <tr mat-row *matRowDef="let row; columns: columnsToDisplay"></tr>
   </table>
 </div>
 
 <div class="margin-bottom-large flex-column gap-small">
-  <button mat-raised-button color="accent" style="width: 100%"
-          (click)="createMatch()"
-          [disabled]="!sideDetails?.[0].selected || !sideDetails?.[1].selected || lockedMatching">
+  <button
+    mat-raised-button
+    color="accent"
+    style="width: 100%"
+    (click)="createMatch()"
+    [disabled]="
+      !sideDetails?.[0].selected || !sideDetails?.[1].selected || lockedMatching
+    "
+  >
     {{ matchActionLabel }}
   </button>
-  <app-map *ngIf="mapVisible" class="flex-grow"
-           [expandable]="true"
-           [entities]="filteredMapEntities"
-           [highlightedEntities]="[sideDetails?.[0].selected, sideDetails?.[1].selected ]"
-           (entityClick)="entityInMapClicked($event)"
-           [(displayedProperties)]="displayedProperties"
-           (displayedPropertiesChange)="updateMarkersAndDistances()"
+  <app-map
+    *ngIf="mapVisible"
+    class="flex-grow"
+    [expandable]="true"
+    [entities]="filteredMapEntities"
+    [highlightedEntities]="[
+      sideDetails?.[0].selected,
+      sideDetails?.[1].selected
+    ]"
+    (entityClick)="entityInMapClicked($event)"
+    [(displayedProperties)]="displayedProperties"
+    (displayedPropertiesChange)="updateMarkersAndDistances()"
   ></app-map>
 </div>
 
 <div class="flex-row flex-wrap gap-large" *ngIf="!lockedMatching">
   <ng-container *ngFor="let side of sideDetails">
     <div class="flex-grow" *ngIf="side.availableEntities">
-      <h3 [style.color]="side.entityType?.color ?? 'black'" class="selection-header"
-          i18n="header of section with entities available for selection">
+      <h3
+        [style.color]="side.entityType?.color ?? 'black'"
+        class="selection-header"
+        i18n="header of section with entities available for selection"
+      >
         Select {{ side.entityType?.label }}
       </h3>
 

@@ -36,7 +36,7 @@ describe("AuthInterceptor", () => {
 
   it("should add an auth header to a request", () => {
     mockAuthService.addAuthHeader.and.callFake(
-      (obj) => (obj["Authorization"] = "my-auth-header")
+      (obj) => (obj["Authorization"] = "my-auth-header"),
     );
     spyOn(mockRequest, "clone");
 
@@ -66,7 +66,7 @@ describe("AuthInterceptor", () => {
     const expectedResponse = new HttpResponse({ status: 200 });
     const handle = jasmine.createSpy().and.returnValues(
       throwError(() => errorResponse),
-      of(expectedResponse)
+      of(expectedResponse),
     );
     mockAuthService.autoLogin.and.resolveTo();
 

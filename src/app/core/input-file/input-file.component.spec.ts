@@ -1,4 +1,4 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { InputFileComponent } from "./input-file.component";
 import { Papa } from "ngx-papaparse";
@@ -12,11 +12,11 @@ describe("InputFileComponent", () => {
   let component: InputFileComponent;
   let fixture: ComponentFixture<InputFileComponent>;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [InputFileComponent, MockedTestingModule.withState()],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(InputFileComponent<Object[]>);
@@ -57,7 +57,7 @@ describe("InputFileComponent", () => {
 });
 
 function mockFileReader(
-  result = '_id,name,projectNumber\nChild:1,"John Doe",123'
+  result = '_id,name,projectNumber\nChild:1,"John Doe",123',
 ) {
   const fileReader: any = {
     result: result,

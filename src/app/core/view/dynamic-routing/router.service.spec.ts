@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { Route, Router } from "@angular/router";
 import { ChildrenListComponent } from "../../../child-dev-project/children/children-list/children-list.component";
 import { ConfigService } from "../../config/config.service";
@@ -21,7 +21,7 @@ describe("RouterService", () => {
 
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
@@ -29,7 +29,7 @@ describe("RouterService", () => {
       providers: [{ provide: LoggingService, useValue: mockLoggingService }],
     });
     service = TestBed.inject(RouterService);
-  });
+  }));
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -134,7 +134,7 @@ describe("RouterService", () => {
     ];
     const getAllConfigSpy = spyOn(
       TestBed.inject(ConfigService),
-      "getAllConfigs"
+      "getAllConfigs",
     );
     getAllConfigSpy.and.returnValue(routeConfigs1);
     service.initRouting();

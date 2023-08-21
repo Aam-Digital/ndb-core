@@ -21,6 +21,7 @@ import { FormsModule } from "@angular/forms";
 })
 export class TodosRelatedToEntityComponent implements OnInit {
   entries: Todo[] = [];
+  isLoading: boolean;
 
   @Input() entity: Entity;
   @Input() columns: FormFieldConfig[] = [
@@ -52,14 +53,14 @@ export class TodosRelatedToEntityComponent implements OnInit {
 
   constructor(
     private formDialog: FormDialogService,
-    private dbIndexingService: DatabaseIndexingService
+    private dbIndexingService: DatabaseIndexingService,
   ) {
     // TODO: move this generic index creation into schema
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",
       Todo,
       this.referenceProperty,
-      "deadline"
+      "deadline",
     );
   }
 
@@ -68,16 +69,21 @@ export class TodosRelatedToEntityComponent implements OnInit {
     this.toggleInactive();
   }
 
-  private loadDataFor(entityId: string): Promise<Todo[]> {
-    return this.dbIndexingService.queryIndexDocs(
+  private async loadDataFor(entityId: string): Promise<Todo[]> {
+    this.isLoading = true;
+
+    const data = await this.dbIndexingService.queryIndexDocs(
       Todo,
       "todo_index/by_" + this.referenceProperty,
       {
         startkey: [entityId, "\uffff"],
         endkey: [entityId],
         descending: true,
-      }
+      },
     );
+
+    this.isLoading = false;
+    return data;
   }
 
   public getNewEntryFunction(): () => Todo {

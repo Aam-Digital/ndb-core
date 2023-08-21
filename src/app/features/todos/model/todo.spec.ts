@@ -19,7 +19,7 @@ describe("Todo", () => {
     expect(
       Todo.create({
         deadline: moment().subtract(1, "day").toDate(),
-      }).isOverdue
+      }).isOverdue,
     )
       .withContext("deadline passed")
       .toBe(true);
@@ -28,7 +28,7 @@ describe("Todo", () => {
       Todo.create({
         deadline: moment().subtract(1, "day").toDate(),
         completed: { completedAt: new Date(), completedBy: null },
-      }).isOverdue
+      }).isOverdue,
     )
       .withContext("completed deadline")
       .toBe(false);

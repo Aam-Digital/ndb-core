@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { PwaInstallComponent } from "./pwa-install.component";
@@ -19,23 +20,23 @@ describe("PwaInstallComponent", () => {
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
   const pwaInstallResult = new Subject<any>();
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     PwaInstallService.canInstallDirectly = firstValueFrom(
-      pwaInstallResult.pipe(take(1))
+      pwaInstallResult.pipe(take(1)),
     );
     mockPWAInstallService = jasmine.createSpyObj([
       "getPWAInstallType",
       "installPWA",
     ]);
     mockSnackbar = jasmine.createSpyObj(["openFromTemplate"]);
-    await TestBed.configureTestingModule({
+    TestBed.configureTestingModule({
       imports: [PwaInstallComponent, MockedTestingModule],
       providers: [
         { provide: PwaInstallService, useValue: mockPWAInstallService },
         { provide: MatSnackBar, useValue: mockSnackbar },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(PwaInstallComponent);
@@ -48,7 +49,7 @@ describe("PwaInstallComponent", () => {
 
   it("should show the pwa install instructions on iOS devices", () => {
     mockPWAInstallService.getPWAInstallType.and.returnValue(
-      PWAInstallType.ShowiOSInstallInstructions
+      PWAInstallType.ShowiOSInstallInstructions,
     );
 
     fixture.detectChanges();

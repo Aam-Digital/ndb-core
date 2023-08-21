@@ -8,6 +8,8 @@ import { By } from "@angular/platform-browser";
 import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { MatInputHarness } from "@angular/material/input/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 
 describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
@@ -44,7 +46,7 @@ describe("EditAttendanceComponent", () => {
     fixture.detectChanges();
 
     const element = fixture.debugElement.query(
-      By.directive(AttendanceStatusSelectComponent)
+      By.directive(AttendanceStatusSelectComponent),
     );
 
     expect(element).toBeTruthy();
@@ -55,7 +57,7 @@ describe("EditAttendanceComponent", () => {
     fixture.detectChanges();
 
     const element = fixture.debugElement.query(
-      By.directive(AttendanceStatusSelectComponent)
+      By.directive(AttendanceStatusSelectComponent),
     );
 
     expect(element).toBeFalsy();
@@ -77,5 +79,19 @@ describe("EditAttendanceComponent", () => {
     expect(childrenForm.value).toEqual(["child1"]);
     expect([...attendanceForm.value.values()]).toHaveSize(1);
     expect(attendanceForm.value.get("child1")).toBe(a1);
+  });
+
+  it("should mark form as dirty when some attendance detail was changed", async () => {
+    categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
+    fixture.detectChanges();
+
+    const inputElements = await TestbedHarnessEnvironment.loader(
+      fixture,
+    ).getAllHarnesses(MatInputHarness);
+    const firstRemarkInput = inputElements[1];
+    await firstRemarkInput.setValue("new remarks");
+
+    expect(component.getAttendance("child1").remarks).toEqual("new remarks");
+    expect(component.formControl.dirty).toBeTrue();
   });
 });

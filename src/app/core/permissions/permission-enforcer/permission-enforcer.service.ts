@@ -32,7 +32,7 @@ export class PermissionEnforcerService {
     private analyticsService: AnalyticsService,
     private entities: EntityRegistry,
     @Inject(LOCATION_TOKEN) private location: Location,
-    private configService: ConfigService
+    private configService: ConfigService,
   ) {}
 
   async enforcePermissionsOnLocalData(userRules: DatabaseRule[]) {
@@ -44,7 +44,7 @@ export class PermissionEnforcerService {
     if (await this.dbHasEntitiesWithoutPermissions(subjects)) {
       this.analyticsService.eventTrack(
         "destroying local db due to lost permissions",
-        { category: "Migration" }
+        { category: "Migration" },
       );
       await this.database.destroy();
       this.location.reload();
@@ -64,7 +64,7 @@ export class PermissionEnforcerService {
   }
 
   private getSubjectsWithReadRestrictions(
-    rules: DatabaseRule[]
+    rules: DatabaseRule[],
   ): EntityConstructor[] {
     const subjects = new Set<string>(this.entities.keys());
     rules
@@ -106,7 +106,7 @@ export class PermissionEnforcerService {
   }
 
   private async dbHasEntitiesWithoutPermissions(
-    subjects: EntityConstructor[]
+    subjects: EntityConstructor[],
   ): Promise<boolean> {
     // wait for config service to be ready before using the entity mapper
     await firstValueFrom(this.configService.configUpdates);

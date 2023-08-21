@@ -88,7 +88,7 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
 
   constructor(
     private attendanceService: AttendanceService,
-    private router: Router
+    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -103,18 +103,18 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
     const previousMonday = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() - today.getDay() - 6 + this.daysOffset
+      today.getDate() - today.getDay() - 6 + this.daysOffset,
     );
     const previousSaturday = new Date(
       previousMonday.getFullYear(),
       previousMonday.getMonth(),
-      previousMonday.getDate() + 5
+      previousMonday.getDate() + 5,
     );
 
     const activityAttendances =
       await this.attendanceService.getAllActivityAttendancesForPeriod(
         previousMonday,
-        previousSaturday
+        previousSaturday,
       );
     const lowAttendanceCases = new Set<string>();
     const records: AttendanceWeekRow[] = [];
@@ -122,7 +122,7 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
       const rows = this.generateRowsFromActivityAttendance(
         att,
         moment(previousMonday),
-        moment(previousSaturday)
+        moment(previousSaturday),
       );
       records.push(...rows);
 
@@ -141,7 +141,7 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
   private generateRowsFromActivityAttendance(
     att: ActivityAttendance,
     from: Moment,
-    to: Moment
+    to: Moment,
   ): AttendanceWeekRow[] {
     if (!att.activity) {
       return [];
@@ -177,11 +177,11 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
     let countAbsences = 0;
     if (!this.attendanceStatusType) {
       countAbsences = row.attendanceDays.filter(
-        (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT
+        (e) => e?.status?.countAs === AttendanceLogicalStatus.ABSENT,
       ).length;
     } else {
       countAbsences = row.attendanceDays.filter(
-        (e) => e?.status?.id === this.attendanceStatusType
+        (e) => e?.status?.id === this.attendanceStatusType,
       ).length;
     }
 

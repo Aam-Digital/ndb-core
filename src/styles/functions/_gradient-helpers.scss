@@ -4,11 +4,10 @@
  */
 @function top-right-triangle($color, $threshold: 85%) {
   @return linear-gradient(
-      45deg,
-      transparent 0%,
-      transparent $threshold,
-      $color $threshold,
-      $color 100%
+    45deg,
+    transparent 0%,
+    transparent $threshold,
+    $color $threshold,
+    $color 100%
   );
 }
-

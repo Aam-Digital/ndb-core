@@ -48,7 +48,7 @@ export class ConfigureEnumPopupComponent {
     private dialog: MatDialogRef<ConfigureEnumPopupComponent>,
     private entityMapper: EntityMapperService,
     private confirmationService: ConfirmationDialogService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
   ) {
     const initialValues = JSON.stringify(enumEntity.values);
     this.dialog.afterClosed().subscribe(() => {
@@ -62,7 +62,7 @@ export class ConfigureEnumPopupComponent {
     moveItemInArray(
       this.enumEntity.values,
       event.previousIndex,
-      event.currentIndex
+      event.currentIndex,
     );
   }
 
@@ -71,12 +71,12 @@ export class ConfigureEnumPopupComponent {
     let deletionText = $localize`Are you sure that you want to delete the option "${value.label}"?`;
     if (existingUsages.length > 0) {
       deletionText += $localize` The option is still used in ${existingUsages.join(
-        ", "
+        ", ",
       )} records. If deleted, the records will not be lost but specially marked.`;
     }
     const confirmed = await this.confirmationService.getConfirmation(
       $localize`Delete option`,
-      deletionText
+      deletionText,
     );
     if (confirmed) {
       this.enumEntity.values.splice(index, 1);
@@ -91,7 +91,7 @@ export class ConfigureEnumPopupComponent {
         .filter(
           ([_, schema]) =>
             schema.innerDataType === this.enumEntity.getId() ||
-            schema.additional === this.enumEntity.getId()
+            schema.additional === this.enumEntity.getId(),
         )
         .map(([name]) => name);
       if (schemaFields.length > 0) {
@@ -101,27 +101,28 @@ export class ConfigureEnumPopupComponent {
     const entityPromises = Object.entries(enumMap).map(([entityType, props]) =>
       this.entityMapper
         .loadType(entityType)
-        .then((entities) => this.getEntitiesWithValue(entities, props, value))
+        .then((entities) => this.getEntitiesWithValue(entities, props, value)),
     );
     const possibleEntities = await Promise.all(entityPromises);
     return possibleEntities
       .filter((entities) => entities.length > 0)
       .map(
-        (entities) => `${entities.length} ${entities[0].getConstructor().label}`
+        (entities) =>
+          `${entities.length} ${entities[0].getConstructor().label}`,
       );
   }
 
   private getEntitiesWithValue(
     res: Entity[],
     props: string[],
-    value: ConfigurableEnumValue
+    value: ConfigurableEnumValue,
   ) {
     return res.filter((entity) =>
       props.some(
         (prop) =>
           entity[prop]?.id === value?.id ||
-          entity[prop]?.map?.((v) => v.id).includes(value.id)
-      )
+          entity[prop]?.map?.((v) => v.id).includes(value.id),
+      ),
     );
   }
 }

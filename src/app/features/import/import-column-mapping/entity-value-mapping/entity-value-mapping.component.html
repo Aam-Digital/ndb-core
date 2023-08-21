@@ -1,0 +1,19 @@
+<mat-dialog-content>
+    <h3 i18n="Label for property selection">Select matching {{ entity.label }} property</h3>
+    <mat-form-field>
+        <mat-select [formControl]="propertyForm">
+            <mat-option *ngFor="let property of availableProperties" [value]="property.property">{{ property.label }}</mat-option>
+        </mat-select>
+    </mat-form-field>
+    <app-help-button
+            text="Select which property of the target entity is matching with the values of this column. E.g. if your column contains names of children then select 'Name'."
+            i18n-text="import - value mapping (entity) - help text"
+    ></app-help-button>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+    <button mat-raised-button color="accent" (click)="save()" i18n>
+        Save & Close
+    </button>
+    <button mat-stroked-button matDialogClose i18n>Cancel</button>
+</mat-dialog-actions>

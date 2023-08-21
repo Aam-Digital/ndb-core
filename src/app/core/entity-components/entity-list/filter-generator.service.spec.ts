@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { FilterGeneratorService } from "./filter-generator.service";
 import { EntityMapperService } from "../../entity/entity-mapper.service";
@@ -25,13 +25,13 @@ describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
   let filterService: FilterService;
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
     });
     service = TestBed.inject(FilterGeneratorService);
     filterService = TestBed.inject(FilterService);
-  });
+  }));
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -56,7 +56,7 @@ describe("FilterGeneratorService", () => {
     expect(
       filter.options.map((option) => {
         return { key: option.key, label: option.label };
-      })
+      }),
     ).toEqual([
       { key: "all", label: "All" },
       { key: "true", label: "Private" },
@@ -66,10 +66,10 @@ describe("FilterGeneratorService", () => {
 
   it("should create a configurable enum filter", async () => {
     const interactionTypes = defaultInteractionTypes.map((it) =>
-      jasmine.objectContaining({ key: it.id, label: it.label })
+      jasmine.objectContaining({ key: it.id, label: it.label }),
     );
     interactionTypes.push(
-      jasmine.objectContaining({ key: "all", label: "All" })
+      jasmine.objectContaining({ key: "all", label: "All" }),
     );
     const schema = Note.schema.get("category");
 
@@ -83,7 +83,7 @@ describe("FilterGeneratorService", () => {
       return { key: option.key, label: option.label };
     });
     expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes)
+      jasmine.arrayWithExactContents(interactionTypes),
     );
 
     // enum name in additional field
@@ -101,7 +101,7 @@ describe("FilterGeneratorService", () => {
       return { key: option.key, label: option.label };
     });
     expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes)
+      jasmine.arrayWithExactContents(interactionTypes),
     );
 
     // enum as array
@@ -119,7 +119,7 @@ describe("FilterGeneratorService", () => {
       return { key: option.key, label: option.label };
     });
     expect(comparableOptions).toEqual(
-      jasmine.arrayWithExactContents(interactionTypes)
+      jasmine.arrayWithExactContents(interactionTypes),
     );
 
     const note = new Note();
@@ -163,12 +163,12 @@ describe("FilterGeneratorService", () => {
     expect(allFilter.label).toEqual("All");
     expect(filter(allRelations, allFilter)).toEqual(allRelations);
     const school1Filter = filterOptions.options.find(
-      (opt) => opt.key === school1.getId()
+      (opt) => opt.key === school1.getId(),
     );
     expect(school1Filter.label).toEqual(school1.name);
     expect(filter(allRelations, school1Filter)).toEqual([csr1, csr4]);
     const school2Filter = filterOptions.options.find(
-      (opt) => opt.key === school2.getId()
+      (opt) => opt.key === school2.getId(),
     );
     expect(school2Filter.label).toEqual(school2.name);
     expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
@@ -201,7 +201,7 @@ describe("FilterGeneratorService", () => {
         { key: "", label: "All" },
         { key: "muslim", label: "muslim" },
         { key: "christian", label: "christian" },
-      ])
+      ]),
     );
   });
 
@@ -256,7 +256,7 @@ describe("FilterGeneratorService", () => {
 
   function filter<T extends Entity>(
     data: T[],
-    option: FilterSelectionOption<T>
+    option: FilterSelectionOption<T>,
   ): T[] {
     return data.filter(filterService.getFilterPredicate(option.filter));
   }

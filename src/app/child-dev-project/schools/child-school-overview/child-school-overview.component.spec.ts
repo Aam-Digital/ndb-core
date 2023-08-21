@@ -15,9 +15,6 @@ describe("ChildSchoolOverviewComponent", () => {
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
   const testChild = new Child("22");
-  const school = new School("s1");
-  const active1 = new ChildSchoolRelation("r1");
-  const active2 = new ChildSchoolRelation("r2");
   const inactive = new ChildSchoolRelation("r2");
   inactive.end = moment().subtract("1", "week").toDate();
 
@@ -48,7 +45,7 @@ describe("ChildSchoolOverviewComponent", () => {
     await component.ngOnInit();
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "child",
-      testChild.getId()
+      testChild.getId(),
     );
   });
 
@@ -61,37 +58,7 @@ describe("ChildSchoolOverviewComponent", () => {
     expect(component.mode).toBe("school");
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
       "school",
-      testSchool.getId()
-    );
-  });
-
-  it("should allow to change the columns to be displayed by the config", async () => {
-    component.entity = new Child();
-    component.single = true;
-    component.columns = [
-      { id: "schoolId", label: "Team", view: "school" },
-      { id: "start", label: "From", view: "date" },
-      { id: "end", label: "To", view: "date" },
-    ];
-    await component.ngOnInit();
-
-    let columnNames = component._columns.map((column) => column.label);
-    expect(columnNames).toContain("Team");
-    expect(columnNames).toContain("From");
-    expect(columnNames).toContain("To");
-    expect(columnNames).not.toContain("Class");
-    expect(columnNames).not.toContain("Result");
-
-    component._columns.push(
-      { id: "schoolClass", label: "Class", view: "text" },
-      { id: "result", label: "Result", view: "percentageResult" }
-    );
-
-    await component.ngOnInit();
-
-    columnNames = component._columns.map((column) => column.label);
-    expect(columnNames).toEqual(
-      jasmine.arrayContaining(["Team", "From", "To", "Class", "Result"])
+      testSchool.getId(),
     );
   });
 
@@ -111,7 +78,7 @@ describe("ChildSchoolOverviewComponent", () => {
     expect(
       moment(existingRelation.end)
         .add(1, "day")
-        .isSame(newRelation.start, "day")
+        .isSame(newRelation.start, "day"),
     ).toBeTrue();
   });
 
@@ -123,38 +90,5 @@ describe("ChildSchoolOverviewComponent", () => {
 
     expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
     expect(newRelation.schoolId).toBe("testID");
-  });
-
-  it("should on default only show active relations", async () => {
-    mockChildrenService.queryRelationsOf.and.resolveTo([
-      active1,
-      active2,
-      inactive,
-    ]);
-
-    component.entity = school;
-    await component.ngOnInit();
-
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
-      "school",
-      school.getId()
-    );
-    expect(component.displayedRecords).toEqual([active1, active2]);
-  });
-
-  it("should show all relations if configured; with active ones being highlighted", async () => {
-    mockChildrenService.queryRelationsOf.and.resolveTo([
-      active1,
-      active2,
-      inactive,
-    ]);
-
-    component.entity = new School();
-    component.showInactive = true;
-    await component.ngOnInit();
-
-    expect(component.displayedRecords).toEqual([active1, active2, inactive]);
-    expect(component.backgroundColorFn(active1)).not.toEqual("");
-    expect(component.backgroundColorFn(inactive)).toEqual("");
   });
 });

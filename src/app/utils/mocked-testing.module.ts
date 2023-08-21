@@ -105,6 +105,7 @@ export function createLocalSession(
     isEmpty: () => Promise.resolve(false),
     initIndexedDB: () => undefined,
     initInMemoryDB: () => undefined,
+    destroy: () => Promise.resolve(),
   };
   const localSession = new LocalSession(databaseMock as PouchDatabase);
   localSession.saveUser(user, TEST_PASSWORD);

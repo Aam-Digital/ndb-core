@@ -6,7 +6,7 @@ Domande o problemi tecnici? Contattateci:
 - [WhatsApp](https://wa.me/491776181407)
 - [Telegram](https://telegram.me/SebastianLeidig)
 
-__Attenzione! Utilizzando questi link contattate persone esterne a Hostage Italia non abilitate ai dati sensibili delle
-nostre attivita'.__
+**Attenzione! Utilizzando questi link contattate persone esterne a Hostage Italia non abilitate ai dati sensibili delle
+nostre attivita'.**
 
 _Siamo a vostra disposizione_

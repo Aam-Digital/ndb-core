@@ -30,7 +30,10 @@ import moment from "moment/moment";
 export abstract class Filter<T extends Entity> {
   public selectedOption: string;
 
-  constructor(public name: string, public label: string = name) {}
+  constructor(
+    public name: string,
+    public label: string = name,
+  ) {}
 
   abstract getFilter(): DataFilter<T>;
 }
@@ -43,7 +46,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
   constructor(
     public name: string,
     public label: string = name,
-    public rangeOptions: DateRangeFilterConfigOption[]
+    public rangeOptions: DateRangeFilterConfigOption[],
   ) {
     super(name, label);
     this.selectedOption = "1";
@@ -108,7 +111,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    */
   public static generateOptions<T extends Entity>(
     valuesToMatchAsOptions: string[],
-    attributeName: string
+    attributeName: string,
   ): FilterSelectionOption<T>[] {
     const options = [
       {
@@ -125,7 +128,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
           key: k.toLowerCase(),
           label: k.toString(),
           filter: { [attributeName]: k } as DataFilter<T>,
-        }))
+        })),
     );
 
     return options;
@@ -141,7 +144,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
   constructor(
     public name: string,
     public options: FilterSelectionOption<T>[],
-    public label: string = name
+    public label: string = name,
   ) {
     super(name, label);
     this.selectedOption = this.options[0]?.key;
@@ -196,18 +199,18 @@ export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
           filter: { [config.id]: false },
         },
       ],
-      label
+      label,
     );
   }
 }
 
 export class ConfigurableEnumFilter<
-  T extends Entity
+  T extends Entity,
 > extends SelectableFilter<T> {
   constructor(
     name: string,
     label: string,
-    enumValues: ConfigurableEnumValue[]
+    enumValues: ConfigurableEnumValue[],
   ) {
     let options: FilterSelectionOption<T>[] = [
       {
@@ -222,7 +225,7 @@ export class ConfigurableEnumFilter<
         label: enumValue.label,
         color: enumValue.color,
         filter: { [name + ".id"]: enumValue.id },
-      }))
+      })),
     );
     super(name, options, label);
   }
@@ -248,7 +251,7 @@ export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
             { [name]: { $elemMatch: { $eq: filterEntity.getId() } } },
           ],
         },
-      }))
+      })),
     );
     super(name, options, label);
   }

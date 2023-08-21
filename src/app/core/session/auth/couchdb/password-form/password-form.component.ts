@@ -1,11 +1,22 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { FormBuilder, ReactiveFormsModule, ValidationErrors, Validators } from "@angular/forms";
+import {
+  FormBuilder,
+  ReactiveFormsModule,
+  ValidationErrors,
+  Validators,
+} from "@angular/forms";
 import { SessionService } from "../../../session-service/session.service";
 import { LoggingService } from "../../../../logging/logging.service";
 import { AuthService } from "../../auth.service";
 import { CouchdbAuthService } from "../couchdb-auth.service";
 import { AlertService } from "../../../../alerts/alert.service";
-import { KeyValuePipe, NgForOf, NgIf, NgSwitch, NgSwitchCase } from "@angular/common";
+import {
+  KeyValuePipe,
+  NgForOf,
+  NgIf,
+  NgSwitch,
+  NgSwitchCase,
+} from "@angular/common";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
@@ -25,9 +36,9 @@ import { MatButtonModule } from "@angular/material/button";
     KeyValuePipe,
     NgSwitchCase,
     MatButtonModule,
-    NgSwitch
+    NgSwitch,
   ],
-  standalone: true
+  standalone: true,
 })
 export class PasswordFormComponent implements OnInit {
   @Input() username: string;
@@ -51,7 +62,7 @@ export class PasswordFormComponent implements OnInit {
       ],
       confirmPassword: ["", [Validators.required]],
     },
-    { validators: () => this.passwordMatchValidator() }
+    { validators: () => this.passwordMatchValidator() },
   );
 
   constructor(
@@ -59,7 +70,7 @@ export class PasswordFormComponent implements OnInit {
     private sessionService: SessionService,
     private loggingService: LoggingService,
     private alertService: AlertService,
-    authService: AuthService
+    authService: AuthService,
   ) {
     if (authService instanceof CouchdbAuthService) {
       this.couchdbAuthService = authService;
@@ -91,11 +102,11 @@ export class PasswordFormComponent implements OnInit {
       .changePassword(this.username, currentPassword, newPassword)
       .then(() => this.sessionService.login(this.username, newPassword))
       .then(() =>
-        this.alertService.addInfo($localize`Password changed successfully.`)
+        this.alertService.addInfo($localize`Password changed successfully.`),
       )
       .catch((err: Error) => {
         this.alertService.addDanger(
-          $localize`Failed to change password: ${err}\nPlease try again. If the problem persists contact Aam Digital support.`
+          $localize`Failed to change password: ${err}\nPlease try again. If the problem persists contact Aam Digital support.`,
         );
         this.loggingService.error({
           error: "password change failed",

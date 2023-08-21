@@ -42,7 +42,7 @@ describe("ViewFileComponent", () => {
 
     expect(mockFileService.showFile).toHaveBeenCalledWith(
       component.entity,
-      component.id
+      component.id,
     );
   });
 

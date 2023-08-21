@@ -139,7 +139,7 @@ describe("EntityConfigService", () => {
     const dynamicEntity = entityRegistry.get("DynamicTest");
     expect(dynamicEntity.ENTITY_TYPE).toBe("DynamicTest");
     expect([...dynamicEntity.schema.entries()]).toEqual(
-      jasmine.arrayContaining([...Test.schema.entries()])
+      jasmine.arrayContaining([...Test.schema.entries()]),
     );
     expect(dynamicEntity.schema.get("dynamicProperty")).toBe(schema);
     const dynamicInstance = new dynamicEntity("someId");

@@ -86,12 +86,12 @@ $border-radius-card: 4px;
 
 // Map containing the colors that belong to a certain theme
 $themes: (
-  general : #555555,
-  child : #1565C0,
-  attendance : #00838F,
-  note : #008f53,
-  class : #2E7D32,
-  school : #9E9D24,
+  general: #555555,
+  child: #1565c0,
+  attendance: #00838f,
+  note: #008f53,
+  class: #2e7d32,
+  school: #9e9d24,
 );
 
 @each $ident, $color in $themes {

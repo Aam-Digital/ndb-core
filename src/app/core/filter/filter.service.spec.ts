@@ -39,7 +39,7 @@ describe("FilterService", () => {
 
   it("should support patching with configurable enum filters", () => {
     const guardianTalk = defaultInteractionTypes.find(
-      ({ id }) => id === "GUARDIAN_TALK"
+      ({ id }) => id === "GUARDIAN_TALK",
     );
     const filter = {
       subject: "Test",

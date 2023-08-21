@@ -15,7 +15,7 @@ export class AttendanceService {
   constructor(
     private entityMapper: EntityMapperService,
     private dbIndexing: DatabaseIndexingService,
-    private childrenService: ChildrenService
+    private childrenService: ChildrenService,
   ) {
     this.createIndices();
   }
@@ -89,7 +89,7 @@ export class AttendanceService {
    */
   async getEventsOnDate(
     startDate: Date,
-    endDate: Date = startDate
+    endDate: Date = startDate,
   ): Promise<EventNote[]> {
     const start = moment(startDate);
     const end = moment(endDate);
@@ -98,7 +98,7 @@ export class AttendanceService {
       EventNote,
       "events_index/by_date",
       start.format("YYYY-MM-DD"),
-      end.format("YYYY-MM-DD")
+      end.format("YYYY-MM-DD"),
     );
 
     const relevantNormalNotes = this.childrenService
@@ -114,7 +114,7 @@ export class AttendanceService {
     for (const event of events) {
       const participants = await this.loadParticipantsOfGroups(
         event.schools,
-        date
+        date,
       );
       for (const newParticipant of participants) {
         event.addChild(newParticipant);
@@ -130,7 +130,7 @@ export class AttendanceService {
    */
   async getEventsForActivity(
     activityId: string,
-    sinceDate?: Date
+    sinceDate?: Date,
   ): Promise<EventNote[]> {
     if (!activityId.startsWith(RecurringActivity.ENTITY_TYPE)) {
       activityId = RecurringActivity.ENTITY_TYPE + ":" + activityId;
@@ -151,7 +151,7 @@ export class AttendanceService {
       EventNote,
       "events_index/by_activity",
       activityId + dateLimit,
-      activityId
+      activityId,
     );
   }
 
@@ -162,7 +162,7 @@ export class AttendanceService {
    */
   async getActivityAttendances(
     activity: RecurringActivity,
-    sinceDate?: Date
+    sinceDate?: Date,
   ): Promise<ActivityAttendance[]> {
     const periods = new Map<number, ActivityAttendance>();
 
@@ -180,7 +180,7 @@ export class AttendanceService {
 
     const events = await this.getEventsForActivity(
       activity.getId(true),
-      sinceDate
+      sinceDate,
     );
 
     for (const event of events) {
@@ -189,13 +189,13 @@ export class AttendanceService {
     }
 
     return Array.from(periods.values()).sort(
-      (a, b) => a.periodFrom.getTime() - b.periodFrom.getTime()
+      (a, b) => a.periodFrom.getTime() - b.periodFrom.getTime(),
     );
   }
 
   async getAllActivityAttendancesForPeriod(
     from: Date,
-    until: Date
+    until: Date,
   ): Promise<ActivityAttendance[]> {
     const matchingEvents = await this.getEventsOnDate(from, until);
     const groupedEvents = groupBy(matchingEvents, "relatesTo");
@@ -220,18 +220,18 @@ export class AttendanceService {
     const activities = await this.dbIndexing.queryIndexDocs(
       RecurringActivity,
       "activities_index/by_participant",
-      childId
+      childId,
     );
 
     const visitedSchools = await this.childrenService.queryActiveRelationsOf(
       "child",
-      childId
+      childId,
     );
     for (const currentRelation of visitedSchools) {
       const activitiesThroughRelation = await this.dbIndexing.queryIndexDocs(
         RecurringActivity,
         "activities_index/by_school",
-        currentRelation.schoolId
+        currentRelation.schoolId,
       );
       for (const activityThroughRelation of activitiesThroughRelation) {
         if (
@@ -247,14 +247,14 @@ export class AttendanceService {
 
   async createEventForActivity(
     activity: RecurringActivity,
-    date: Date
+    date: Date,
   ): Promise<EventNote> {
     const instance = new EventNote();
     instance.date = date;
     instance.subject = activity.title;
     instance.children = await this.getActiveParticipantsOfActivity(
       activity,
-      date
+      date,
     );
     instance.schools = activity.linkedGroups;
     instance.relatesTo = activity.getId(true);
@@ -264,11 +264,11 @@ export class AttendanceService {
 
   private async getActiveParticipantsOfActivity(
     activity: RecurringActivity,
-    date: Date
+    date: Date,
   ): Promise<string[]> {
     const schoolParticipants = await this.loadParticipantsOfGroups(
       activity.linkedGroups,
-      date
+      date,
     );
 
     return [
@@ -283,14 +283,14 @@ export class AttendanceService {
    */
   private async loadParticipantsOfGroups(
     linkedGroups: string[],
-    date: Date
+    date: Date,
   ): Promise<string[]> {
     const childIdPromises = linkedGroups.map((groupId) =>
       this.childrenService
         .queryActiveRelationsOf("school", groupId, date)
         .then((relations) =>
-          relations.map((r) => r.childId).filter((id) => !!id)
-        )
+          relations.map((r) => r.childId).filter((id) => !!id),
+        ),
     );
     const allParticipants = await Promise.all(childIdPromises);
     // flatten and remove duplicates

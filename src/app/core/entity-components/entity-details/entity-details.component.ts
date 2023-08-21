@@ -79,14 +79,14 @@ export class EntityDetailsComponent {
     private ability: EntityAbility,
     private entities: EntityRegistry,
     private logger: LoggingService,
-    public unsavedChanges: UnsavedChangesService
+    public unsavedChanges: UnsavedChangesService,
   ) {
     this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
       this.config = data.config;
       this.entityConstructor = this.entities.get(this.config.entity);
       this.setInitialPanelsConfig();
       this.route.paramMap.subscribe((params) =>
-        this.loadEntity(params.get("id"))
+        this.loadEntity(params.get("id")),
       );
     });
   }
@@ -138,7 +138,9 @@ export class EntityDetailsComponent {
     if (typeof c.config === "object" && !Array.isArray(c.config)) {
       if (c.config?.entity) {
         this.logger.warn(
-          `DEPRECATION panel config uses 'entity' keyword: ${JSON.stringify(c)}`
+          `DEPRECATION panel config uses 'entity' keyword: ${JSON.stringify(
+            c,
+          )}`,
         );
         c.config["entityType"] = c.config.entity;
         delete c.config.entity;

@@ -34,21 +34,39 @@ $sides: right, left, top, bottom;
 
 /** Normalize utilities: removes margins or paddings from elements **/
 
-.remove-padding-bottom { padding-bottom: 0 !important; }
-.remove-padding-left   { padding-left: 0 !important; }
-.remove-margin-bottom  { margin-bottom: 0 !important; }
-.remove-margin-top     { margin-top: 0 !important; }
-.remove-margin-left    { margin-left: 0 !important; }
+.remove-padding-bottom {
+  padding-bottom: 0 !important;
+}
+.remove-padding-left {
+  padding-left: 0 !important;
+}
+.remove-margin-bottom {
+  margin-bottom: 0 !important;
+}
+.remove-margin-top {
+  margin-top: 0 !important;
+}
+.remove-margin-left {
+  margin-left: 0 !important;
+}
 
 .margin-sides-small {
   margin-right: sizes.$small;
   margin-left: sizes.$small;
 }
 
-.width-1-2   { width: 50%;   }
-.width-1-3   { width: 33.3%; }
-.full-width  { width: 100%;  }
-.full-height { height: 100%  }
+.width-1-2 {
+  width: 50%;
+}
+.width-1-3 {
+  width: 33.3%;
+}
+.full-width {
+  width: 100%;
+}
+.full-height {
+  height: 100%;
+}
 
 /* Use this class with a large paragraph of text so that the length
  * of single lines does not become too large which hinders readability

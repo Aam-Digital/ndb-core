@@ -51,7 +51,7 @@ export class ComingSoonComponent implements OnInit {
     private alertService: AlertService,
     private analyticsService: AnalyticsService,
     private activatedRoute: ActivatedRoute,
-    @Optional() @Inject(MAT_DIALOG_DATA) dialogData: { featureId: string }
+    @Optional() @Inject(MAT_DIALOG_DATA) dialogData: { featureId: string },
   ) {
     if (dialogData) {
       this.init(dialogData.featureId);
@@ -93,7 +93,7 @@ export class ComingSoonComponent implements OnInit {
     this.requested = true;
     ComingSoonComponent.featuresRequested.push(this.featureId);
     this.alertService.addInfo(
-      $localize`:Sent after the user has sent a feature-request:Thank you for letting us know.`
+      $localize`:Sent after the user has sent a feature-request:Thank you for letting us know.`,
     );
   }
 }

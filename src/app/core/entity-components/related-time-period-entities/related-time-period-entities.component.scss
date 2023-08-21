@@ -1,0 +1,10 @@
+@use "src/styles/variables/sizes";
+@use "@angular/material" as mat;
+
+.hint-badge {
+  background-color: mat.get-color-from-palette(
+    mat.$light-theme-background-palette,
+    status-bar
+  );
+  margin-bottom: sizes.$regular;
+}

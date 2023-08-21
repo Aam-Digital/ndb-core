@@ -72,7 +72,7 @@ export class NotesDashboardComponent implements OnInit, AfterViewInit {
 
   constructor(
     private childrenService: ChildrenService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
   ) {}
 
   ngOnInit() {
@@ -84,14 +84,14 @@ export class NotesDashboardComponent implements OnInit, AfterViewInit {
       case "with-recent-notes":
         this.loadConcernedEntities(
           (stat) => stat[1] <= dayRangeBoundary,
-          dayRangeBoundary
+          dayRangeBoundary,
         );
         this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities with recent reports:${this._entity.labelPlural} with recent report`;
         break;
       case "without-recent-notes":
         this.loadConcernedEntities(
           (stat) => stat[1] >= dayRangeBoundary,
-          dayRangeBoundary
+          dayRangeBoundary,
         );
         this.subtitle = $localize`:Subtitle|Subtitle informing the user that these are the entities without recent reports:${this._entity.labelPlural} having no recent reports`;
         break;
@@ -104,7 +104,7 @@ export class NotesDashboardComponent implements OnInit, AfterViewInit {
 
   private async loadConcernedEntities(
     filter: (stat: [string, number]) => boolean,
-    dayRangeBoundary: number
+    dayRangeBoundary: number,
   ) {
     const queryRange = Math.round((dayRangeBoundary * 3) / 10) * 10; // query longer range to be able to display exact date of last note for recent
 
@@ -113,7 +113,7 @@ export class NotesDashboardComponent implements OnInit, AfterViewInit {
     const recentNotesMap =
       await this.childrenService.getDaysSinceLastNoteOfEachEntity(
         this._entity.ENTITY_TYPE,
-        queryRange
+        queryRange,
       );
     this.dataSource.data = Array.from(recentNotesMap)
       .filter(filter)
@@ -168,7 +168,7 @@ interface EntityWithRecentNoteInfo {
  */
 function statsToEntityWithRecentNoteInfo(
   stat: [string, number],
-  queryRange: number
+  queryRange: number,
 ): EntityWithRecentNoteInfo {
   if (stat[1] < Number.POSITIVE_INFINITY) {
     return {

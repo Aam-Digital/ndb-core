@@ -31,7 +31,7 @@ export class LatestChangesDialogService {
 
   constructor(
     private dialog: MatDialog,
-    private latestChangesService: LatestChangesService
+    private latestChangesService: LatestChangesService,
   ) {}
 
   /**
@@ -50,7 +50,7 @@ export class LatestChangesDialogService {
       width: "80%",
       data: this.latestChangesService.getChangelogsBetweenVersions(
         this.getCurrentVersion(),
-        previousVersion
+        previousVersion,
       ),
     });
   }
@@ -60,14 +60,14 @@ export class LatestChangesDialogService {
    */
   public showLatestChangesIfUpdated() {
     const previousVersion = window.localStorage.getItem(
-      LatestChangesDialogService.VERSION_KEY
+      LatestChangesDialogService.VERSION_KEY,
     );
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
       this.showLatestChanges(previousVersion);
     }
     window.localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
-      this.getCurrentVersion()
+      this.getCurrentVersion(),
     );
   }
 }

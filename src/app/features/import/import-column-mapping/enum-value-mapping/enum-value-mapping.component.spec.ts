@@ -4,7 +4,7 @@ import { EnumValueMappingComponent } from "./enum-value-mapping.component";
 import { MappingDialogData } from "../import-column-mapping.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { ConfigurableEnumDatatype } from "../../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { ConfigurableEnumDatatype } from "../../../../core/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
@@ -41,7 +41,7 @@ describe("EnumValueMappingComponent", () => {
 
   it("should use the edit component for the selected property", () => {
     expect(component.component).toBe(
-      new ConfigurableEnumDatatype(undefined).editComponent
+      new ConfigurableEnumDatatype(undefined).editComponent,
     );
     expect(component.schema).toBe(Child.schema.get("gender"));
   });
@@ -49,7 +49,7 @@ describe("EnumValueMappingComponent", () => {
   it("should ask for confirmation on save if not all values were assigned", async () => {
     const confirmationSpy = spyOn(
       TestBed.inject(ConfirmationDialogService),
-      "getConfirmation"
+      "getConfirmation",
     );
     component.form.patchValue({ male: "M" });
 
@@ -62,7 +62,7 @@ describe("EnumValueMappingComponent", () => {
     data.col.additional = { male: "M" };
     spyOn(
       TestBed.inject(ConfigurableEnumService),
-      "getEnumValues"
+      "getEnumValues",
     ).and.returnValue(genders);
 
     component.ngOnInit();

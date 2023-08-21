@@ -19,16 +19,17 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
-import { genders } from "../../child-dev-project/children/model/genders";
 import { ConfigurableEnumService } from "../../core/configurable-enum/configurable-enum.service";
-import { ConfigurableEnumDatatype } from "../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
+import { CoreModule } from "../../core/core.module";
+import { ComponentRegistry } from "../../dynamic-components";
+import { EntityArrayDatatype } from "../../core/entity/schema-datatypes/entity-array.datatype";
 
 describe("ImportService", () => {
   let service: ImportService;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
+      imports: [CoreModule],
       providers: [
         ImportService,
         { provide: EntityRegistry, useValue: entityRegistry },
@@ -37,6 +38,7 @@ describe("ImportService", () => {
           provide: ConfigurableEnumService,
           useValue: new ConfigurableEnumService(mockEntityMapper(), null),
         },
+        ComponentRegistry,
       ],
     });
     service = TestBed.inject(ImportService);
@@ -65,6 +67,12 @@ describe("ImportService", () => {
   });
 
   it("should transform raw data to mapped entities", async () => {
+    HealthCheck.schema.set("entityArray", {
+      dataType: EntityArrayDatatype.dataType,
+      additional: "Child",
+    });
+    const child = Child.create("Child Name");
+    await TestBed.inject(EntityMapperService).save(child);
     const rawData: any[] = [
       { x: "John", y: "111" },
       { x: "Jane" },
@@ -73,18 +81,19 @@ describe("ImportService", () => {
       { x: "", onlyUnmappedColumn: "1" }, // only empty or unmapped columns => row skipped
       { x: "with zero", y: "0" }, // 0 value mapped
       { x: "custom mapping fn", z: "30.01.2023" },
+      { x: "entity array", childName: child.name },
     ];
-    const entityType: string = "HealthCheck";
     const columnMapping: ColumnMapping[] = [
       { column: "x", propertyName: "child" },
       { column: "y", propertyName: "height" },
       { column: "z", propertyName: "date", additional: "DD.MM.YYYY" },
       { column: "brokenMapping", propertyName: "brokenMapping" },
+      { column: "childName", propertyName: "entityArray", additional: "name" },
     ];
 
     const parsedEntities = await service.transformRawDataToEntities(
       rawData,
-      entityType,
+      HealthCheck.ENTITY_TYPE,
       columnMapping,
     );
 
@@ -95,6 +104,7 @@ describe("ImportService", () => {
       { child: "with broken mapping column" },
       { child: "with zero", height: 0 },
       { child: "custom mapping fn", date: moment("2023-01-30").toDate() },
+      { child: "entity array", entityArray: [child.getId()] },
     ];
 
     expectEntitiesToMatch(
@@ -130,7 +140,7 @@ describe("ImportService", () => {
     expect(activity.participants).toEqual(["1", "2"]);
   });
 
-  it("should allow to removed entities and links", async () => {
+  it("should allow to remove entities and links", async () => {
     const importMeta = new ImportMetadata();
     importMeta.config = {
       entityType: "Child",
@@ -181,32 +191,5 @@ describe("ImportService", () => {
     await service.undoImport(importMeta);
 
     await expectEntitiesToBeInDatabase([children[2]], false, true);
-  });
-
-  it("should map values using enum mappingFn", () => {
-    const mappingFn = service.getMappingFunction({ dataType: "date" });
-    const input = "30.11.2023";
-
-    const actualMapped = mappingFn(input, "DD.MM.YYYY");
-
-    expect(actualMapped).toEqual(new Date(2023, 10, 30));
-  });
-
-  it("should map values using date mappingFn", () => {
-    const enumService = TestBed.inject(ConfigurableEnumService);
-    spyOn(enumService, "getEnumValues").and.returnValue(genders);
-    TestBed.inject(EntitySchemaService).registerSchemaDatatype(
-      new ConfigurableEnumDatatype(enumService),
-    );
-
-    const mappingFn = service.getMappingFunction({
-      dataType: "configurable-enum",
-      additional: "genders",
-    });
-    const input = "MALE";
-
-    const actualMapped = mappingFn(input, { MALE: "M" });
-
-    expect(actualMapped).toEqual(genders.find((e) => e.id === "M"));
   });
 });

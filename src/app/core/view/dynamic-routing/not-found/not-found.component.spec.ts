@@ -33,7 +33,7 @@ describe("NotFoundComponent", () => {
 
   it("should call logging service with current route", () => {
     expect(mockLogging.warn).toHaveBeenCalledWith(
-      "Could not find component for route: /some/path"
+      "Could not find component for route: /some/path",
     );
   });
 });

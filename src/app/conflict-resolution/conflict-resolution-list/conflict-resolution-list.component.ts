@@ -42,7 +42,7 @@ export class ConflictResolutionListComponent implements AfterViewInit {
 
   constructor(
     private db: Database,
-    @Optional() private entitySchemaService: EntitySchemaService
+    @Optional() private entitySchemaService: EntitySchemaService,
   ) {}
 
   async ngAfterViewInit() {

@@ -17,8 +17,15 @@
       >
         <!-- Table header only for assistive technologies like screen readers -->
         <tr hidden="true">
-          <th scope="col" i18n="The participant of a group, e.g. a school">Participant</th>
-          <th scope="col" i18n="The attendance of a participant, e.g. a student">Attendance</th>
+          <th scope="col" i18n="The participant of a group, e.g. a school">
+            Participant
+          </th>
+          <th
+            scope="col"
+            i18n="The attendance of a participant, e.g. a student"
+          >
+            Attendance
+          </th>
         </tr>
         <ng-container matColumnDef="child">
           <td
@@ -26,28 +33,38 @@
             (click)="goToChild(rowGroup[0].childId)"
             class="pointer"
           >
-            <app-display-entity [entityId]="rowGroup[0].childId" entityType="Child"></app-display-entity>
+            <app-display-entity
+              [entityId]="rowGroup[0].childId"
+              entityType="Child"
+            ></app-display-entity>
           </td>
         </ng-container>
 
         <ng-container matColumnDef="attendance">
           <td *matCellDef="let rowGroup">
-            <div *ngFor="let activityRecord of rowGroup" class="activities-record">
+            <div
+              *ngFor="let activityRecord of rowGroup"
+              class="activities-record"
+            >
               <ng-container *ngFor="let day of activityRecord.attendanceDays">
-                <app-attendance-day-block [attendance]="day"></app-attendance-day-block>
+                <app-attendance-day-block
+                  [attendance]="day"
+                ></app-attendance-day-block>
               </ng-container>
             </div>
           </td>
         </ng-container>
 
-        <tr mat-row *matRowDef="let row; columns: ['child', 'attendance'];"></tr>
+        <tr mat-row *matRowDef="let row; columns: ['child', 'attendance']"></tr>
       </table>
     </div>
     <div
       *ngIf="tableDataSource.data.length === 0 && loadingDone"
       i18n="Placeholder if no absences are visible in dashboar"
       class="headline"
-    >no absences recorded</div>
+    >
+      no absences recorded
+    </div>
     <mat-paginator
       [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
       #paginator

@@ -1,4 +1,4 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { FormDialogService } from "./form-dialog.service";
 import { Entity } from "../entity/model/entity";
 import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
@@ -9,7 +9,7 @@ import { MockedTestingModule } from "../../utils/mocked-testing.module";
 describe("FormDialogService", () => {
   let service: FormDialogService;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
       providers: [
@@ -21,7 +21,7 @@ describe("FormDialogService", () => {
     });
 
     service = TestBed.inject<FormDialogService>(FormDialogService);
-  });
+  }));
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -36,7 +36,7 @@ describe("FormDialogService", () => {
     }
 
     const actualFields = FormDialogService.getSchemaFieldsForDetailsView(
-      new TestWithShowInDetails()
+      new TestWithShowInDetails(),
     );
 
     expect(actualFields.map((x) => x.id)).toEqual(["shown"]);
@@ -50,7 +50,7 @@ describe("FormDialogService", () => {
     }
 
     const actualFields = FormDialogService.getSchemaFieldsForDetailsView(
-      new TestWithoutShowInDetails()
+      new TestWithoutShowInDetails(),
     );
 
     expect(actualFields.map((x) => x.id)).toEqual(["field1", "field2"]);

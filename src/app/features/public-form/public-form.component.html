@@ -4,7 +4,12 @@
     <mat-card-subtitle>{{ formConfig?.description }}</mat-card-subtitle>
   </mat-card-header>
   <mat-card-content>
-    <app-entity-form [entity]="entity" [columns]="columns" [form]="form" [gridLayout]="false"></app-entity-form>
+    <app-entity-form
+      [entity]="entity"
+      [columns]="columns"
+      [form]="form"
+      [gridLayout]="false"
+    ></app-entity-form>
   </mat-card-content>
   <mat-card-footer>
     <button
@@ -15,11 +20,7 @@
     >
       Submit Form
     </button>
-    <button
-      mat-stroked-button
-      (click)="reset()"
-      i18n="Reset form button"
-    >
+    <button mat-stroked-button (click)="reset()" i18n="Reset form button">
       Reset
     </button>
   </mat-card-footer>

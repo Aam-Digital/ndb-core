@@ -1,8 +1,8 @@
 import { TestBed } from "@angular/core/testing";
 
 import {
-  OIDCTokenResponse,
   KeycloakAuthService,
+  OIDCTokenResponse,
 } from "./keycloak-auth.service";
 import {
   TEST_PASSWORD,
@@ -29,7 +29,7 @@ function keycloakAuthHttpFake(_url, body) {
       () =>
         new HttpErrorResponse({
           status: HttpStatusCode.Unauthorized,
-        })
+        }),
     );
   }
 }
@@ -77,7 +77,7 @@ describe("KeycloakAuthService", () => {
   });
 
   afterEach(() =>
-    window.localStorage.removeItem(KeycloakAuthService.REFRESH_TOKEN_KEY)
+    window.localStorage.removeItem(KeycloakAuthService.REFRESH_TOKEN_KEY),
   );
 
   it("should be created", () => {
@@ -95,7 +95,7 @@ describe("KeycloakAuthService", () => {
     expect(mockHttpClient.post).toHaveBeenCalledWith(
       jasmine.anything(),
       jasmine.stringContaining(`username=${TEST_USER}&`),
-      jasmine.anything()
+      jasmine.anything(),
     );
   });
 
@@ -104,7 +104,7 @@ describe("KeycloakAuthService", () => {
 
     expect(service.accessToken).toBe(jwtTokenResponse.access_token);
     expect(
-      window.localStorage.getItem(KeycloakAuthService.REFRESH_TOKEN_KEY)
+      window.localStorage.getItem(KeycloakAuthService.REFRESH_TOKEN_KEY),
     ).toBe("test-refresh-token");
   });
 
@@ -118,8 +118,8 @@ describe("KeycloakAuthService", () => {
               error: "invalid_grant",
               error_description: "Account disabled",
             },
-          })
-      )
+          }),
+      ),
     );
     service.authenticate(TEST_USER, TEST_PASSWORD).catch((err) => {
       expect(err.status).toBe(HttpStatusCode.Unauthorized);
@@ -133,14 +133,14 @@ describe("KeycloakAuthService", () => {
     service.changePassword();
 
     expect(loginSpy).toHaveBeenCalledWith(
-      jasmine.objectContaining({ action: "UPDATE_PASSWORD" })
+      jasmine.objectContaining({ action: "UPDATE_PASSWORD" }),
     );
   });
 
   it("should login, if there is a valid refresh token", async () => {
     localStorage.setItem(
       KeycloakAuthService.REFRESH_TOKEN_KEY,
-      "some-refresh-token"
+      "some-refresh-token",
     );
     mockHttpClient.post.and.returnValue(of(jwtTokenResponse));
     const user = await service.autoLogin();
@@ -157,9 +157,20 @@ describe("KeycloakAuthService", () => {
               error: "invalid_grant",
               error_description: "Token is not active",
             },
-          })
-      )
+          }),
+      ),
     );
     return expectAsync(service.autoLogin()).toBeRejected();
+  });
+
+  it("should throw an error if username claim is not available", () => {
+    const tokenWithoutUser =
+      "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpcjdiVjZoOVkxazBzTGh2aFRxWThlMzgzV3NMY0V3cmFsaC1TM2NJUTVjIn0.eyJleHAiOjE2OTE1Njc4NzcsImlhdCI6MTY5MTU2NzU3NywianRpIjoiNzNiNGUzODEtMzk4My00ZjI1LWE1ZGYtOTRlOTYxYmU3MjgwIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay5hYW0tZGlnaXRhbC5uZXQvcmVhbG1zL2RldiIsInN1YiI6IjI0YWM1Yzg5LTU3OGMtNDdmOC1hYmQ5LTE1ZjRhNmQ4M2JiNSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFwcCIsInNlc3Npb25fc3RhdGUiOiIwYjVhNGQ0OS0wOTFhLTQzOGYtOTEwNi1mNmZjYmQyMDM1Y2EiLCJzY29wZSI6ImVtYWlsIiwic2lkIjoiMGI1YTRkNDktMDkxYS00MzhmLTkxMDYtZjZmY2JkMjAzNWNhIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJfY291Y2hkYi5yb2xlcyI6WyJkZWZhdWx0LXJvbGVzLWRldiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJ1c2VyX2FwcCJdfQ.EvF1wc32KwdDCUGboviRYGqKv2C3yK5B1WL_hCm-IGg58DoE_XGOchVVfbFrtphXD3yQa8uAaY58jWb6SeZQt0P92qtn5ulZOqcs3q2gQfrvxkxafMWffpCsxusVLBuGJ4B4EgoRGp_puQJIJE4p5KBwcA_u0PznFDFyLzPD18AYXevGWKLP5L8Zfgitf3Lby5AtCoOKHM7u6F_hDGSvLw-YlHEZBupqJzbpsjOs2UF1_woChMm2vbllZgIaUu9bbobcWi1mZSfNP3r9Ojk2t0NauOiKXDqtG5XyBLYMTC6wZXxsoCPGhOAwDr9LffkLDl-zvZ-0f_ujTpU8M2jzsg";
+    mockHttpClient.post.and.returnValue(
+      of({ ...jwtTokenResponse, access_token: tokenWithoutUser }),
+    );
+    return expectAsync(
+      service.authenticate(TEST_USER, TEST_PASSWORD),
+    ).toBeRejected();
   });
 });
