@@ -106,14 +106,14 @@ describe("MatchingEntitiesComponent", () => {
     fixture.detectChanges();
     tick();
 
-    expect(component.sideDetails[0].selected).toEqual(testEntity);
+    expect(component.sideDetails[0].selected).toEqual([testEntity]);
 
     component.leftSide = { entityType: "Child" };
     component.rightSide = {};
     component.ngOnInit();
     tick();
 
-    expect(component.sideDetails[1].selected).toEqual(testEntity);
+    expect(component.sideDetails[1].selected).toEqual([testEntity]);
   }));
 
   it("should init details for template including available entities table and its columns", fakeAsync(() => {
@@ -133,7 +133,7 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(component.sideDetails.length).toBe(2);
 
-    expect(component.sideDetails[0].selected).toEqual(testEntity);
+    expect(component.sideDetails[0].selected).toEqual([testEntity]);
     expect(component.sideDetails[0].entityType).toEqual(
       testEntity.getConstructor(),
     );
@@ -223,7 +223,7 @@ describe("MatchingEntitiesComponent", () => {
     const child = new Child();
     component.entityInMapClicked(child);
 
-    expect(component.sideDetails[1].selected).toBe(child);
+    expect(component.sideDetails[1].selected).toBe([child]);
   }));
 
   it("should not change the provided config object directly", fakeAsync(() => {
@@ -233,7 +233,7 @@ describe("MatchingEntitiesComponent", () => {
     tick();
     const selectedChild = new Child();
     component.sideDetails[1].selectMatch(selectedChild);
-    expect(component.sideDetails[1].selected).toEqual(selectedChild);
+    expect(component.sideDetails[1].selected).toEqual([selectedChild]);
 
     const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
     const newComponent = newFixture.componentInstance;
@@ -242,7 +242,7 @@ describe("MatchingEntitiesComponent", () => {
     newFixture.detectChanges();
     tick();
 
-    expect(newComponent.sideDetails[1].selected).not.toEqual(selectedChild);
+    expect(newComponent.sideDetails[1].selected).not.toEqual([selectedChild]);
   }));
 
   it("should update the distance calculation when the selected map properties change", fakeAsync(() => {
