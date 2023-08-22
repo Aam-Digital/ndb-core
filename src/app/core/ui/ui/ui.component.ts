@@ -37,6 +37,7 @@ import { AppVersionComponent } from "../../latest-changes/app-version/app-versio
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { DisplayImgComponent } from "../../../features/file/display-img/display-img.component";
+import { SiteSettings } from "../../site-settings/site-settings";
 
 /**
  * The main user interface component as root element for the app structure
@@ -73,6 +74,8 @@ export class UiComponent {
   sideNavMode: MatDrawerMode;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
+  /** latest version of the site settings*/
+  siteSettings: SiteSettings;
 
   constructor(
     private _sessionService: SessionService,
@@ -80,7 +83,7 @@ export class UiComponent {
     private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
-    public siteSettings: SiteSettingsService,
+    private siteSettingsService: SiteSettingsService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -88,6 +91,9 @@ export class UiComponent {
       .subscribe(
         (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over"),
       );
+    this.siteSettingsService.siteSettings.subscribe(
+      (s) => (this.siteSettings = s),
+    );
   }
 
   /**

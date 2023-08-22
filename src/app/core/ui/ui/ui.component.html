@@ -33,7 +33,7 @@
       angularticsCategory="Navigation"
       angularticsAction="navbar_site_title_link"
     >
-      {{ siteSettings.siteName | async }}
+      {{ siteSettings.siteName }}
     </a>
   </div>
 
@@ -43,7 +43,7 @@
 
     <app-sync-status></app-sync-status>
 
-    <app-language-select *ngIf="siteSettings.displayLanguageSelect | async"></app-language-select>
+    <app-language-select *ngIf="siteSettings.displayLanguageSelect"></app-language-select>
   </div>
 </mat-toolbar>
 
@@ -61,8 +61,7 @@
     disableClose
   >
     <div class="flex-column justify-space-between full-height overflow-y-hidden">
-<!--      TODO this does not support *ngIf and therefore applies the padding/margin even if no logo is shown-->
-      <app-display-img [entity]="siteSettings.siteSettings | async" imgProperty="logo" class="site-logo"></app-display-img>
+      <app-display-img *ngIf="siteSettings.logo" [entity]="siteSettings" imgProperty="logo" class="site-logo"></app-display-img>
       <app-navigation
         class="overflow-auto-y"
         (click)="closeSidenavOnMobile()"
