@@ -1,0 +1,7 @@
+@use "src/styles/variables/ndb-light-theme" as theme;
+@use "@angular/material" as mat;
+
+
+.mat-mdc-fab.mat-accent, .mat-mdc-mini-fab.mat-accent {
+  --mat-mdc-fab-color: #{mat.get-contrast-color-from-palette(theme.$secondary-palette, A200)} !important;
+}
