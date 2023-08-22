@@ -6,7 +6,7 @@
   --mat-mdc-fab-color: #{mat.get-contrast-color-from-palette(theme.$accent, A200)} !important;
 }
 
-//
+// Text color for buttons with accent color otherwise defaults to black
 .mat-mdc-raised-button:not(:disabled)[color="accent"] {
   --mdc-protected-button-label-text-color: #{mat.get-contrast-color-from-palette(theme.$accent, A200)} !important
 }
