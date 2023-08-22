@@ -18,7 +18,7 @@ import {
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { EntitySubrecordComponent } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { entityFilterPredicate } from "../filter-generator/filter-predicate";
+import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../config/dynamic-routing/view-config.interface";

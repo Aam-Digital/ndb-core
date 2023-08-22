@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { FormFieldConfig } from "../../../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
 
 @DynamicComponent("EditDescriptionOnly")
 @Component({

@@ -110,7 +110,7 @@ export const coreComponents: ComponentTuple[] = [
     "EditDescriptionOnly",
     () =>
       import(
-        "./basic-datatypes/description-only/edit-description-only/edit-description-only.component"
+        "./common-components/description-only/edit-description-only/edit-description-only.component"
       ).then((c) => c.EditDescriptionOnlyComponent),
   ],
   [

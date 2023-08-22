@@ -12,7 +12,7 @@ import { EntityListComponent } from "../../../core/entity-list/entity-list/entit
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
-import { WarningLevel } from "../../../core/entity/model/warning-level";
+import { WarningLevel } from "../../warning-level";
 import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { merge } from "rxjs";
 import { RouteTarget } from "../../../app.routing";

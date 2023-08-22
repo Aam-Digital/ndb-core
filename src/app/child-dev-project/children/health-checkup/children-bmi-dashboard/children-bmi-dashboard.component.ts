@@ -3,7 +3,7 @@ import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { WarningLevel } from "../../../../core/entity/model/warning-level";
+import { WarningLevel } from "../../../warning-level";
 import { HealthCheck } from "../model/health-check";
 import { groupBy } from "../../../../utils/utils";
 import { Child } from "../../model/child";

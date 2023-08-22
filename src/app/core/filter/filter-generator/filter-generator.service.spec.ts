@@ -2,7 +2,10 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { FilterGeneratorService } from "./filter-generator.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { BooleanFilterConfig, PrebuiltFilterConfig } from "../EntityListConfig";
+import {
+  BooleanFilterConfig,
+  PrebuiltFilterConfig,
+} from "../../entity-list/EntityListConfig";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
@@ -10,7 +13,7 @@ import { ChildSchoolRelation } from "../../../child-dev-project/children/model/c
 import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { FilterService } from "../../filter/filter.service";
+import { FilterService } from "../filter.service";
 import {
   BooleanFilter,
   ConfigurableEnumFilter,
@@ -18,7 +21,7 @@ import {
   EntityFilter,
   FilterSelectionOption,
   SelectableFilter,
-} from "../../filter/filters/filters";
+} from "../filters/filters";
 import { Entity } from "../../entity/model/entity";
 
 describe("FilterGeneratorService", () => {

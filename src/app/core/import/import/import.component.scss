@@ -29,7 +29,7 @@ mat-stepper {
 .stepper-navigation {
   display: flex;
   flex-direction: row;
-  justify-content: end;
+  justify-content: flex-end;
   gap: sizes.$regular;
 
   position: sticky;

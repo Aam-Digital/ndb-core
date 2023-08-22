@@ -8,10 +8,10 @@ import { ConfigurableEnum } from "./configurable-enum";
 import { ConfigurableEnumService } from "./configurable-enum.service";
 import { NEVER } from "rxjs";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
-import { warningLevels } from "../../../child-dev-project/warning-levels";
 import { ratingAnswers } from "../../../features/historical-data/model/rating-answers";
 import { centersUnique } from "../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { defaultAttendanceStatusTypes } from "../../config/default-config/default-attendance-status-types";
+import { warningLevels } from "../../../child-dev-project/warning-level";
 
 export const demoEnums = Object.entries({
   genders: genders,

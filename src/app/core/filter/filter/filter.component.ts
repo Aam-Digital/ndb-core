@@ -9,7 +9,7 @@ import {
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FilterGeneratorService } from "../../entity-list/filter-generator/filter-generator.service";
+import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { ListFilterComponent } from "../list-filter/list-filter.component";

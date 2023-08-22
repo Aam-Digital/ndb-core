@@ -6,18 +6,18 @@ import {
   EntityFilter,
   Filter,
   SelectableFilter,
-} from "../../filter/filters/filters";
+} from "../filters/filters";
 import {
   BooleanFilterConfig,
   DateRangeFilterConfig,
   FilterConfig,
   PrebuiltFilterConfig,
-} from "../EntityListConfig";
+} from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
-import { FilterService } from "../../filter/filter.service";
+import { FilterService } from "../filter.service";
 import { defaultDateFilters } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
@@ -90,8 +90,9 @@ export class FilterGeneratorService {
         this.entities.has(schema.additional)
       ) {
         const entityType = filterConfig.type || schema.additional;
-        const filterEntities =
-          await this.entityMapperService.loadType(entityType);
+        const filterEntities = await this.entityMapperService.loadType(
+          entityType,
+        );
         filter = new EntityFilter(
           filterConfig.id,
           filterConfig.label || schema.label,
