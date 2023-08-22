@@ -1,7 +1,17 @@
 @use "src/styles/variables/ndb-light-theme" as theme;
 @use "@angular/material" as mat;
 
-
+// Text color for fab buttons otherwise defaults to black
 .mat-mdc-fab.mat-accent, .mat-mdc-mini-fab.mat-accent {
-  --mat-mdc-fab-color: #{mat.get-contrast-color-from-palette(theme.$secondary-palette, A200)} !important;
+  --mat-mdc-fab-color: #{mat.get-contrast-color-from-palette(theme.$accent, A200)} !important;
+}
+
+//
+.mat-mdc-raised-button:not(:disabled)[color="accent"] {
+  --mdc-protected-button-label-text-color: #{mat.get-contrast-color-from-palette(theme.$accent, A200)} !important
+}
+
+// Progress bar background color should have opacity to indicate progress
+.mat-mdc-progress-bar .mdc-linear-progress__buffer-bar {
+  opacity: 25%;
 }
