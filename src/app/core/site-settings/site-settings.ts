@@ -2,6 +2,10 @@ import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
 
+/**
+ * Global settings like styling and title to customize an instance of the app.
+ * The settings are applied at runtime.
+ */
 @DatabaseEntity("SiteSettings")
 export class SiteSettings extends Entity {
   static label = $localize`Site settings`;
@@ -24,11 +28,11 @@ export class SiteSettings extends Entity {
   })
   logo: string;
   @DatabaseField({
-    label: $localize`App icon`,
+    label: $localize`App favicon`,
     dataType: "file",
     editComponent: "EditPhoto",
   })
-  icon: string;
+  favicon: string;
   @DatabaseField({ label: $localize`Primary color` }) primary: string;
   @DatabaseField({ label: $localize`Secondary color` }) secondary: string;
   @DatabaseField({ label: $localize`Error color` }) error: string;

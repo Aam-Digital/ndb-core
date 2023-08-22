@@ -22,7 +22,7 @@ export class SiteSettingsService {
   siteName = this.getPropertyObservable("siteName");
   language = this.getPropertyObservable("language");
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
-  icon = this.getPropertyObservable("icon").pipe(delay(0));
+  icon = this.getPropertyObservable("favicon").pipe(delay(0));
   constructor(
     private entityMapper: EntityMapperService,
     private title: Title,
@@ -59,12 +59,12 @@ export class SiteSettingsService {
   private listenToColorUpdates(property: "primary" | "secondary" | "error") {
     this.getPropertyObservable(property).subscribe((color) => {
       if (color) {
-        const palette2 = materialColours(color);
-        palette2["A100"] = palette2["200"];
-        palette2["A200"] = palette2["300"];
-        palette2["A400"] = palette2["500"];
-        palette2["A700"] = palette2["800"];
-        Object.entries(palette2).forEach(([key, value]) =>
+        const palette = materialColours(color);
+        palette["A100"] = palette["200"];
+        palette["A200"] = palette["300"];
+        palette["A400"] = palette["500"];
+        palette["A700"] = palette["800"];
+        Object.entries(palette).forEach(([key, value]) =>
           document.documentElement.style.setProperty(
             `--${property}-${key}`,
             `#${value}`,

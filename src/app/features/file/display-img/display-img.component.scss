@@ -1,3 +1,4 @@
+// Inherit the styles from the surrounding component. Otherwise the img is overflowing.
 img {
   all: inherit;
 }
