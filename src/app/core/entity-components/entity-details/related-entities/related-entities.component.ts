@@ -10,6 +10,9 @@ import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { isArrayProperty } from "../../entity-utils/entity-utils";
 import { EntitySubrecordComponent } from "../../entity-subrecord/entity-subrecord/entity-subrecord.component";
 
+/**
+ * Load and display a list of entity subrecords (entities related to the current entity details view).
+ */
 @DynamicComponent("RelatedEntities")
 @Component({
   selector: "app-related-entities",
@@ -17,15 +20,34 @@ import { EntitySubrecordComponent } from "../../entity-subrecord/entity-subrecor
   standalone: true,
   imports: [EntitySubrecordComponent],
 })
-export class RelatedEntitiesComponent implements OnInit {
-  data: Entity[] = [];
+export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
+  /** currently viewed/main entity for which related entities are displayed in this component */
   @Input() entity: Entity;
+
+  /** entity type of the related entities to be displayed */
   @Input() entityType: string;
+
+  /**
+   * property name of the related entities (type given in this.entityType) that holds the entity id
+   * to be matched with the id of the current main entity (given in this.entity)
+   */
   @Input() property: string;
-  @Input() columns: ColumnConfig[];
-  @Input() filter?: DataFilter<Entity>;
+
+  @Input()
+  public set columns(value: ColumnConfig[]) {
+    this._columns = value;
+  }
+  public get columns(): ColumnConfig[] {
+    return this._columns;
+  }
+  protected _columns: ColumnConfig[];
+
+  @Input() filter?: DataFilter<E>;
+
+  data: E[] = [];
+  isLoading = false;
   private isArray = false;
-  private entityCtr: EntityConstructor;
+  protected entityCtr: EntityConstructor<E>;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -33,7 +55,13 @@ export class RelatedEntitiesComponent implements OnInit {
   ) {}
 
   async ngOnInit() {
-    this.entityCtr = this.entities.get(this.entityType);
+    await this.initData();
+  }
+
+  protected async initData() {
+    this.isLoading = true;
+
+    this.entityCtr = this.entities.get(this.entityType) as EntityConstructor<E>;
     this.isArray = isArrayProperty(this.entityCtr, this.property);
 
     this.data = await this.entityMapper.loadType(this.entityType);
@@ -43,6 +71,8 @@ export class RelatedEntitiesComponent implements OnInit {
         ? { $elemMatch: { $eq: this.entity.getId() } }
         : this.entity.getId(),
     };
+
+    this.isLoading = false;
   }
 
   createNewRecordFactory() {

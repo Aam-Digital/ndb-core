@@ -1,7 +1,4 @@
-<app-pill
-  class="hint-badge"
-  *ngIf="!hasCurrentlyActiveEntry && mode === 'child'"
->
+<app-pill class="hint-badge" *ngIf="!hasCurrentlyActiveEntry">
   Currently there is no active entry. To add a new entry, click on the
   <fa-icon
     class="pointer color-accent"
@@ -14,7 +11,8 @@
 
 <app-entity-subrecord
   #entitySubrecord
-  [records]="displayedRecords"
+  [records]="data"
+  [filter]="filter"
   [isLoading]="isLoading"
   [columns]="_columns"
   [newRecordFactory]="generateNewRecordFactory()"
@@ -26,7 +24,7 @@
 <div class="margin-top-regular">
   <mat-slide-toggle
     [(ngModel)]="showInactive"
-    (change)="prepareDisplayedData()"
+    (change)="filterActiveInactive()"
     i18n-matTooltip="
       Show ended tooltip|Tooltip that will appear when hovered over the
       show-ended button

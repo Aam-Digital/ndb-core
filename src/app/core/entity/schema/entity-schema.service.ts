@@ -20,7 +20,6 @@ import { Injectable, Injector } from "@angular/core";
 import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
 import { DefaultDatatype } from "./default.datatype";
-import { isArrayDataType } from "../../entity-components/entity-utils/entity-utils";
 
 /**
  * Transform between entity instances and database objects
@@ -78,8 +77,11 @@ export class EntitySchemaService {
    */
   public getInnermostDatatype(schemaField: EntitySchemaField) {
     let datatype;
-    if (isArrayDataType(schemaField.dataType)) {
+    // do not use the Datatype classes here to avoid circular dependencies with EntitySchemaService
+    if (schemaField.dataType === "array") {
       datatype = schemaField.innerDataType;
+    } else if (schemaField.dataType === "entity-array") {
+      datatype = "entity";
     } else {
       datatype = schemaField.dataType;
     }

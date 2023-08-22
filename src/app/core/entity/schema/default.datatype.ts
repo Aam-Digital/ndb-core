@@ -37,7 +37,7 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * that EntitySchemaDatatype without the need to explicitly state the dataType config in the annotation
    * (e.g. `@DatabaseField() myField: string` is triggering the EntitySchemaDatatype with `name` "string".
    */
-  static dataType: string;
+  static dataType: string = "";
   get dataType(): string {
     return (this.constructor as typeof DefaultDatatype).dataType;
   }
@@ -91,11 +91,11 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
    * @param schemaField The schema field definition for the target property into which the value is mapped
    * @param additional config as returned by the configComponent
    */
-  importMapFunction(
+  async importMapFunction(
     val: any,
     schemaField: EntitySchemaField,
     additional?: any,
-  ): EntityType {
+  ): Promise<EntityType> {
     return this.transformToObjectFormat(val, schemaField);
   }
 
