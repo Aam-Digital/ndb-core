@@ -25,7 +25,7 @@ import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
 import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import { AppSettings } from "./app/core/app-config/app-settings";
+import { AppSettings } from "./app/core/app-settings";
 import { LoggingService } from "./app/core/logging/logging.service";
 import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
 

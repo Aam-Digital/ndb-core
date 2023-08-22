@@ -6,7 +6,7 @@ import {
 } from "@angular/core/testing";
 
 import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { ConfigService } from "../../../../core/config/config.service";
@@ -17,7 +17,7 @@ import { DatabaseField } from "../../../../core/entity/database-field.decorator"
 import {
   mockEntityMapper,
   MockEntityMapperService,
-} from "../../../../core/entity/mock-entity-mapper-service";
+} from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 
 describe("BirthdayDashboardComponent", () => {

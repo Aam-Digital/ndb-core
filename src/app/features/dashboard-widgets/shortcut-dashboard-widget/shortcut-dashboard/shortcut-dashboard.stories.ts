@@ -2,7 +2,7 @@ import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { ShortcutDashboardComponent } from "./shortcut-dashboard.component";
-import { MenuItem } from "../../../../core/navigation/menu-item";
+import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 
 export default {
   title: "Features/Dashboard Widgets/Shortcut Dashboard",

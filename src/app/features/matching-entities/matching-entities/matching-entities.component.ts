@@ -6,9 +6,9 @@ import {
   OnInit,
   ViewChild,
 } from "@angular/core";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import {
   MatchingEntitiesConfig,
@@ -18,9 +18,9 @@ import {
 import {
   ColumnConfig,
   DataFilter,
-} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+} from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { RouteTarget } from "../../../app.routing";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
@@ -31,8 +31,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { EntityPropertyViewComponent } from "../../../core/entity-components/utils/entity-property-view/entity-property-view.component";
-import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntityPropertyViewComponent } from "../../../core/common-components/entity-property-view/entity-property-view.component";
+import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { Coordinates } from "../../location/coordinates";

@@ -7,7 +7,7 @@ import {
 } from "@angular/core/testing";
 
 import { ProgressDashboardComponent } from "./progress-dashboard.component";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { MatDialog } from "@angular/material/dialog";

@@ -7,7 +7,7 @@ import { Child } from "../model/child";
 import {
   BooleanFilterConfig,
   EntityListConfig,
-} from "../../../core/entity-components/entity-list/EntityListConfig";
+} from "../../../core/entity-list/EntityListConfig";
 import { School } from "../../schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DownloadService } from "../../../core/export/download-service/download.service";

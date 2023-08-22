@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { generateEventWithAttendance } from "../model/activity-attendance";
 import { SimpleChange } from "@angular/core";
 import moment from "moment";
 import { Note } from "../../notes/model/note";
 import { Child } from "../../children/model/child";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";

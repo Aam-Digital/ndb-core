@@ -19,14 +19,14 @@ import {
 } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UpdatedEntity } from "../../core/entity/model/entity-update";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../core/entity/database-entity.decorator";
-import { AppSettings } from "../../core/app-config/app-settings";
+import { AppSettings } from "../../core/app-settings";
 import { FileDatatype } from "./file.datatype";
 
 describe("CouchdbFileService", () => {

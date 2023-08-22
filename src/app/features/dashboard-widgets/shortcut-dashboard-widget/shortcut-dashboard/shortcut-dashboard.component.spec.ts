@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { ShortcutDashboardComponent } from "./shortcut-dashboard.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 
 describe("ShortcutDashboardComponent", () => {
   let component: ShortcutDashboardComponent;

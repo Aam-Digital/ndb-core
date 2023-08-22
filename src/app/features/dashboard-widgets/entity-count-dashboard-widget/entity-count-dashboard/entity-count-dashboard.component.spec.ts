@@ -11,12 +11,12 @@ import {
   Center,
   Child,
 } from "../../../../child-dev-project/children/model/child";
-import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
   mockEntityMapper,
   MockEntityMapperService,
-} from "../../../../core/entity/mock-entity-mapper-service";
+} from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";

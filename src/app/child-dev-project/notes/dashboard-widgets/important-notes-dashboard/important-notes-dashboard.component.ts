@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { Note } from "../../model/note";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../note-details/note-details.component";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";

@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { ViewDirective } from "../../../../core/entity-components/entity-properties/view/view.directive";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { ViewDirective } from "../../../../core/entity/default-datatype/view.directive";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 
 @DynamicComponent("DisplayRecurringInterval")

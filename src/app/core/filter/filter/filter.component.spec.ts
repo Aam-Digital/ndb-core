@@ -8,7 +8,7 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { BooleanFilterConfig } from "../../entity-components/entity-list/EntityListConfig";
+import { BooleanFilterConfig } from "../../entity-list/EntityListConfig";
 
 describe("FilterComponent", () => {
   let component: FilterComponent;

@@ -1,9 +1,9 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
-import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import {
   Entity,
   EntityConstructor,

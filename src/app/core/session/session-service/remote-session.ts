@@ -21,7 +21,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
-import { AppSettings } from "app/core/app-config/app-settings";
+import { AppSettings } from "../../app-settings";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 

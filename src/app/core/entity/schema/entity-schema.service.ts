@@ -19,7 +19,7 @@ import { Entity } from "../model/entity";
 import { Injectable, Injector } from "@angular/core";
 import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
-import { DefaultDatatype } from "./default.datatype";
+import { DefaultDatatype } from "../default-datatype/default.datatype";
 
 /**
  * Transform between entity instances and database objects

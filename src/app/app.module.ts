@@ -23,7 +23,7 @@ import { HttpClientModule } from "@angular/common/http";
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
 import { SessionModule } from "./core/session/session.module";
-import { LatestChangesModule } from "./core/latest-changes/latest-changes.module";
+import { LatestChangesModule } from "./core/ui/latest-changes/latest-changes.module";
 
 import { ChildrenModule } from "./child-dev-project/children/children.module";
 import {
@@ -33,7 +33,7 @@ import {
 import { environment } from "../environments/environment";
 import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { AnalyticsService } from "./core/analytics/analytics.service";
-import { ConfigurableEnumModule } from "./core/configurable-enum/configurable-enum.module";
+import { ConfigurableEnumModule } from "./core/basic-datatypes/configurable-enum/configurable-enum.module";
 import { MatPaginatorIntl } from "@angular/material/paginator";
 import { TranslatableMatPaginator } from "./core/language/TranslatableMatPaginator";
 import { FaIconLibrary } from "@fortawesome/angular-fontawesome";
@@ -67,7 +67,7 @@ import { LOCATION_TOKEN, WINDOW_TOKEN } from "./utils/di-tokens";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { NotesModule } from "./child-dev-project/notes/notes.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
-import { ConflictResolutionModule } from "./conflict-resolution/conflict-resolution.module";
+import { ConflictResolutionModule } from "./features/conflict-resolution/conflict-resolution.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/progress-dashboard-widget/progress-dashboard-widget.module";
@@ -80,10 +80,13 @@ import { SessionService } from "./core/session/session-service/session.service";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { appInitializers } from "./app-initializers";
-import { ImportModule } from "./features/import/import.module";
+import { ImportModule } from "./core/import/import.module";
 import { ShortcutDashboardWidgetModule } from "./features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module";
 import { EntityCountDashboardWidgetModule } from "./features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-widget.module";
 import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-widget.module";
+import { ConfigSetupModule } from "./features/config-setup/config-setup.module";
+import { MarkdownPageModule } from "./features/markdown-page/markdown-page.module";
+import { AdminModule } from "./features/admin/admin.module";
 
 /**
  * Main entry point of the application.
@@ -115,11 +118,13 @@ import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birt
     ChildrenModule,
     NotesModule,
     SchoolsModule,
-    // conflict resolution
-    ConflictResolutionModule,
     // feature module
+    ConflictResolutionModule,
+    AdminModule,
     ImportModule,
+    ConfigSetupModule,
     FileModule,
+    MarkdownPageModule,
     HistoricalDataModule,
     LocationModule,
     MatchingEntitiesModule,

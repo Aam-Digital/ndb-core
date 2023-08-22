@@ -1,8 +1,8 @@
 import { Component, Input } from "@angular/core";
-import { MenuItem } from "../../../../core/navigation/menu-item";
+import { MenuItem } from "../../../../core/ui/navigation/menu-item";
 import { MatTableModule } from "@angular/material/table";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { FaDynamicIconComponent } from "../../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { FaDynamicIconComponent } from "../../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouterLink } from "@angular/router";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 

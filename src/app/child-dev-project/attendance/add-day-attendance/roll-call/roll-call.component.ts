@@ -14,7 +14,7 @@ import {
 } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
@@ -32,7 +32,7 @@ import {
   HammerModule,
 } from "@angular/platform-browser";
 import Hammer from "hammerjs";
-import { ConfigurableEnumService } from "../../../../core/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
 
 // Only allow horizontal swiping
 @Injectable()

@@ -20,7 +20,7 @@ import { DatabaseField } from "../../../../core/entity/database-field.decorator"
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { SkillLevel } from "./skill-levels";
 import { WarningLevel } from "../../../../core/entity/model/warning-level";
-import { ConfigurableEnumDatatype } from "../../../../core/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { ConfigurableEnumDatatype } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { PLACEHOLDERS } from "../../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Aser")

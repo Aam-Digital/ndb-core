@@ -4,7 +4,7 @@ import { ActivityAttendance } from "../../../attendance/model/activity-attendanc
 import { AttendanceService } from "../../../attendance/attendance.service";
 import moment from "moment";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import {
   ScreenWidthObserver,
   ScreenSize,

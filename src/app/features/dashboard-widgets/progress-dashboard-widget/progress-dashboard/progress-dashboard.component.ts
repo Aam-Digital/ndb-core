@@ -1,10 +1,10 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { waitForChangeTo } from "../../../../core/session/session-states/session-utils";
 import { SyncState } from "../../../../core/session/session-states/sync-state.enum";

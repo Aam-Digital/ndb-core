@@ -1,11 +1,11 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { EditRecurringIntervalComponent } from "./edit-recurring-interval.component";
-import { EntityFormComponent } from "../../../../core/entity-components/entity-form/entity-form/entity-form.component";
+import { EntityFormComponent } from "../../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
-import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
 import { importProvidersFrom } from "@angular/core";
 
 export default {

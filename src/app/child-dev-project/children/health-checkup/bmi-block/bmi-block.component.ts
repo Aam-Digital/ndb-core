@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
 import { ChildrenService } from "../../children.service";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Child } from "../../model/child";
 
 @DynamicComponent("BmiBlock")

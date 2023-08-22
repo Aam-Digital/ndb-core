@@ -14,7 +14,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
-import { DisplayEntityComponent } from "../../entity-components/entity-select/display-entity/display-entity.component";
+import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-entity/display-entity.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SearchService } from "./search.service";
 

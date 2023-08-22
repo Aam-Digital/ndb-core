@@ -6,7 +6,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRouteSnapshot, Router } from "@angular/router";
 import { AuthUser } from "../../session/session-service/auth-user";
 import { ConfigService } from "../../config/config.service";
-import { PREFIX_VIEW_CONFIG } from "../../view/dynamic-routing/view-config.interface";
+import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;

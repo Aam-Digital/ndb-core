@@ -8,7 +8,7 @@ import {
 import { ChildrenBmiDashboardComponent } from "./children-bmi-dashboard.component";
 import { HealthCheck } from "../model/health-check";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 
 describe("ChildrenBmiDashboardComponent", () => {
   let component: ChildrenBmiDashboardComponent;
