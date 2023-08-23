@@ -1,57 +1,74 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import {
-  entityFormStorybookDefaultParameters,
-  StorybookBaseModule,
-} from "../../../../utils/storybook-base.module";
-import { EnumDropdownComponent } from "./enum-dropdown.component";
-import { FormControl } from "@angular/forms";
+import { StoryFn } from "@storybook/angular";
 import { centersUnique } from "../../../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { ConfigurableEnum } from "../configurable-enum";
-import { importProvidersFrom } from "@angular/core";
+import { generateFormFieldStory } from "../../../entity/default-datatype/edit-component-story-utils";
 
 const centerEnum = Object.assign(new ConfigurableEnum("center"), {
   values: centersUnique,
 });
 
-export default {
-  title: "Core/Entities/Edit Properties/Enum Dropdown",
-  component: EnumDropdownComponent,
-  decorators: [
-    applicationConfig({
-      providers: [
-        importProvidersFrom(StorybookBaseModule.withData([centerEnum])),
-      ],
-    }),
-  ],
-  parameters: entityFormStorybookDefaultParameters,
-} as Meta;
+const formFieldStory = generateFormFieldStory(
+  "EditConfigurableEnum",
+  centerEnum.values[1],
+);
 
-const Template: StoryFn<EnumDropdownComponent> = (
-  args: EnumDropdownComponent,
-) => ({
+export default {
+  title: "Core/Entities/Edit Properties/EditConfigurableEnum",
+  ...formFieldStory.meta,
+};
+const Template: StoryFn = (args) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {
-  form: new FormControl(""),
-  label: "test field",
-  enumId: "center",
+export const Checked = Template.bind({});
+
+export const Unchecked = Template.bind({});
+const entity = new formFieldStory.entityType();
+entity.main = centerEnum.values[2];
+Unchecked.args = {
+  entity: entity,
 };
 
-const disabledControl = new FormControl(centersUnique[0]);
-disabledControl.disable();
-export const Disabled = Template.bind({});
-Disabled.args = {
-  form: disabledControl,
-  label: "test field",
-  enumId: "center",
-};
+// export default {
+//   title: "Core/Entities/Edit Properties/Enum Dropdown",
+//   component: EnumDropdownComponent,
+//   decorators: [
+//     applicationConfig({
+//       providers: [
+//         importProvidersFrom(StorybookBaseModule),
+//         importProvidersFrom(FormComponent),
+//       ],
+//     }),
+//   ],
+//   parameters: entityFormStorybookDefaultParameters,
+// } as Meta;
+//
+// const Template: StoryFn<EnumDropdownComponent> = (
+//   args: EnumDropdownComponent,
+// ) => ({
+//   props: args,
+// });
+//
+// export const Primary = Template.bind({});
+// Primary.args = {
+//   form: new FormControl(""),
+//   label: "test field",
+//   enumId: "center",
+// };
 
-export const Multi = Template.bind({});
-Multi.args = {
-  form: new FormControl([centersUnique[0], centersUnique[2]]),
-  label: "test field",
-  enumId: "center",
-  multi: true,
-};
+// const disabledControl = new FormControl(centersUnique[0]);
+// disabledControl.disable();
+// export const Disabled = Template.bind({});
+// Disabled.args = {
+//   form: disabledControl,
+//   label: "test field",
+//   enumId: "center",
+// };
+//
+// export const Multi = Template.bind({});
+// Multi.args = {
+//   form: new FormControl([centersUnique[0], centersUnique[2]]),
+//   label: "test field",
+//   enumId: "center",
+//   multi: true,
+// };
