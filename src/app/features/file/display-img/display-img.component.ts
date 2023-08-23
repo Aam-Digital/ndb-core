@@ -21,14 +21,19 @@ export class DisplayImgComponent implements OnChanges {
   constructor(private fileService: FileService) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.entity || changes.imgProperty) {
+    if (
+      changes.hasOwnProperty("entity") ||
+      changes.hasOwnProperty("property")
+    ) {
       delete this.imgSrc;
-      this.fileService
-        .loadFile(this.entity, this.imgProperty)
-        .subscribe((res) => {
-          // doesn't work with safeUrl
-          this.imgSrc = Object.values(res)[0];
-        });
+      if (this.entity[this.imgProperty]) {
+        this.fileService
+          .loadFile(this.entity, this.imgProperty)
+          .subscribe((res) => {
+            // doesn't work with safeUrl
+            this.imgSrc = Object.values(res)[0];
+          });
+      }
     }
   }
 }

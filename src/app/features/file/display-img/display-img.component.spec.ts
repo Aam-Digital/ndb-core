@@ -30,6 +30,7 @@ describe("DisplayImgComponent", () => {
     const withPicture = new Child();
     withPicture.photo = "some-picture";
     component.entity = withPicture;
+    component.imgProperty = "photo";
 
     await component.ngOnChanges({ entity: undefined });
 
