@@ -40,7 +40,7 @@ import { FilterService } from "../../../core/filter/filter.service";
 import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
 import { getLocationProperties } from "../../location/map-utils";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
-import { EntityArrayDatatype } from "../../../core/entity/schema-datatypes/entity-array.datatype";
+import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
