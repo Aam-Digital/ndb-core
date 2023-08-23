@@ -28,6 +28,8 @@ import {
 } from "../../core/entity/database-entity.decorator";
 import { AppSettings } from "../../core/app-config/app-settings";
 import { FileDatatype } from "./file.datatype";
+import { SessionService } from "../../core/session/session-service/session.service";
+import { SyncState } from "../../core/session/session-states/sync-state.enum";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -58,6 +60,10 @@ describe("CouchdbFileService", () => {
           useValue: { receiveUpdates: () => updates },
         },
         { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: SessionService,
+          useValue: { syncState: of(SyncState.COMPLETED) },
+        },
       ],
     });
     service = TestBed.inject(CouchdbFileService);
