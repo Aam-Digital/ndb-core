@@ -29,7 +29,7 @@ export class SiteSettingsService {
     private fileService: FileService,
   ) {
     this.entityMapper
-      .load(SiteSettings, "test")
+      .load(SiteSettings, SiteSettings.ENTITY_ID)
       .then((entity) => this.siteSettings.next(entity))
       .catch(() => undefined);
     this.entityMapper

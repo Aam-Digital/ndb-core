@@ -1,4 +1,7 @@
 // Inherit the styles from the surrounding component. Otherwise the img is overflowing.
+// Remove padding and margin so they are not applied a second time.
 img {
   all: inherit;
+  padding: 0;
+  margin: 0;
 }

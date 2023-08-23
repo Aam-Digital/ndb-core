@@ -75,7 +75,7 @@ export class UiComponent {
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
   /** latest version of the site settings*/
-  siteSettings: SiteSettings;
+  siteSettings = new SiteSettings();
 
   constructor(
     private _sessionService: SessionService,

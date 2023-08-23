@@ -8,6 +8,7 @@ import { DatabaseField } from "../entity/database-field.decorator";
  */
 @DatabaseEntity("SiteSettings")
 export class SiteSettings extends Entity {
+  static ENTITY_ID = "global";
   static label = $localize`Site settings`;
   @DatabaseField({ label: $localize`Site name` }) siteName: string =
     "Aam Digital";
@@ -47,8 +48,7 @@ export class SiteSettings extends Entity {
   logoAsIcon = false;
 
   constructor() {
-    // TODO fix id
-    super("test");
+    super(SiteSettings.ENTITY_ID);
   }
 
   toString() {

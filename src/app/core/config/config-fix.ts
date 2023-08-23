@@ -57,7 +57,7 @@ export const defaultJsonConfig = {
       {
         "name": $localize`:Menu item:Site settings`,
         "icon": "wrench",
-        "link": "/site-settings/test"
+        "link": "/site-settings/global"
       },
       {
         "name": $localize`:Menu item:Import`,
