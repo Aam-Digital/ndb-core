@@ -10,6 +10,7 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { Changelog } from "../changelog";
 import { of } from "rxjs";
 import { importProvidersFrom } from "@angular/core";
+import { LatestChangesModule } from "../latest-changes.module";
 
 const changelogs: Changelog[] = [
   {
@@ -40,6 +41,7 @@ export default {
       providers: [importProvidersFrom(StorybookBaseModule)],
     }),
     moduleMetadata({
+      imports: [LatestChangesModule],
       providers: [{ provide: MAT_DIALOG_DATA, useValue: of(changelogs) }],
     }),
   ],

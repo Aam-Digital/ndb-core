@@ -19,7 +19,9 @@ export default {
   component: NoteDetailsComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(StorybookBaseModule.withData())],
+      providers: [
+        importProvidersFrom(StorybookBaseModule.withData(demoChildren)),
+      ],
     }),
     moduleMetadata({
       providers: [
