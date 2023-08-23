@@ -24,7 +24,7 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
 import { TimeInterval } from "../recurring-interval/time-interval";
 import { TodoCompletion } from "./todo-completion";
-import { WarningLevel } from "../../../core/entity/model/warning-level";
+import { WarningLevel } from "../../../child-dev-project/warning-level";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Todo")

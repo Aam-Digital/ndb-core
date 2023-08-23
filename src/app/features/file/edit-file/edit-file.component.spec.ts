@@ -9,7 +9,7 @@ import { Entity } from "app/core/entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FileService } from "../file.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;

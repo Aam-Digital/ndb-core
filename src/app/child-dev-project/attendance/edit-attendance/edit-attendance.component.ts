@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
-import { EditEntityArrayComponent } from "../../../core/entity-components/entity-select/edit-entity-array/edit-entity-array.component";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
+import { EditEntityArrayComponent } from "../../../core/basic-datatypes/entity-array/edit-entity-array/edit-entity-array.component";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { startWith } from "rxjs/operators";
 import { FormControl } from "@angular/forms";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { NgForOf, NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DisplayEntityComponent } from "../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DisplayEntityComponent } from "../../../core/basic-datatypes/entity/display-entity/display-entity.component";
 import { MatButtonModule } from "@angular/material/button";
 import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";

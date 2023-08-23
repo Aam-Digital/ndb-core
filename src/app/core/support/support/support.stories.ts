@@ -3,7 +3,7 @@ import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { SupportComponent } from "./support.component";
 import { SwUpdate } from "@angular/service-worker";
 import { Database } from "../../database/database";
-import { UpdateManagerService } from "../../latest-changes/update-manager.service";
+import { UpdateManagerService } from "../../ui/latest-changes/update-manager.service";
 import { importProvidersFrom } from "@angular/core";
 
 // TODO: fix layout of SupportComponent buttons on mobile

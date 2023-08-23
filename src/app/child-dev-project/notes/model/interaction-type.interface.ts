@@ -1,4 +1,4 @@
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 
 /**
  * Additional properties defined in the "interaction-type" {@link ConfigurableEnumValue} values

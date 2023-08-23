@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { EducationalMaterial } from "../model/educational-material";
 import { Child } from "../../model/child";
-import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { applyUpdate } from "../../../../core/entity/model/entity-update";
 import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntitySubrecordComponent } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 /**
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c

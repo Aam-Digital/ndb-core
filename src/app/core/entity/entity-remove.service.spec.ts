@@ -1,13 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 import { EntityRemoveService, RemoveResult } from "./entity-remove.service";
-import { EntityMapperService } from "./entity-mapper.service";
+import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import {
   MatSnackBar,
   MatSnackBarDismiss,
   MatSnackBarRef,
   TextOnlySnackBar,
 } from "@angular/material/snack-bar";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
 import { NEVER, Observable } from "rxjs";
 import { toArray } from "rxjs/operators";

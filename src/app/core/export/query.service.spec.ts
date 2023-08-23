@@ -6,7 +6,7 @@ import {
   QueryService,
 } from "./query.service";
 import { Child } from "../../child-dev-project/children/model/child";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { School } from "../../child-dev-project/schools/model/school";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";

@@ -23,7 +23,7 @@ import {
 } from "./local-user";
 import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
-import { AppSettings } from "../../app-config/app-settings";
+import { AppSettings } from "../../app-settings";
 import { SessionType } from "../session-type";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "./auth-user";

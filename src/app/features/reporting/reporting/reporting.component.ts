@@ -13,11 +13,11 @@ import {
   ReportingComponentConfig,
 } from "./reporting-component-config";
 import moment from "moment";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../app.routing";
 import { NgIf } from "@angular/common";
-import { ViewTitleComponent } from "../../../core/entity-components/entity-utils/view-title/view-title.component";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
 import { ReportRowComponent } from "./report-row/report-row.component";
 import { ObjectTableComponent } from "./object-table/object-table.component";
