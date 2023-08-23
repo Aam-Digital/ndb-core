@@ -1,4 +1,4 @@
-import { DefaultDatatype } from "../../core/entity/schema/default.datatype";
+import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 import { GeoResult, GeoService } from "./geo.service";
@@ -14,9 +14,7 @@ export class LocationDatatype extends DefaultDatatype<GeoResult, GeoResult> {
     super();
   }
 
-  async importMapFunction(
-    val: any,
-  ): Promise<GeoResult> {
+  async importMapFunction(val: any): Promise<GeoResult> {
     if (!val) {
       return undefined;
     }

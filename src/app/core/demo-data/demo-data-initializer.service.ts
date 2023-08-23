@@ -5,7 +5,7 @@ import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { LoggingService } from "../logging/logging.service";
-import { AppSettings } from "../app-config/app-settings";
+import { AppSettings } from "../app-settings";
 import { LoginState } from "../session/session-states/login-state.enum";
 import PouchDB from "pouchdb-browser";
 import { SessionType } from "../session/session-type";

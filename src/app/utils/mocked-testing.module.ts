@@ -1,8 +1,8 @@
 import { ModuleWithProviders, NgModule } from "@angular/core";
 import { SessionService } from "../core/session/session-service/session.service";
 import { LoginState } from "../core/session/session-states/login-state.enum";
-import { EntityMapperService } from "../core/entity/entity-mapper.service";
-import { mockEntityMapper } from "../core/entity/mock-entity-mapper-service";
+import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -18,8 +18,8 @@ import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { ReactiveFormsModule } from "@angular/forms";
 import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
-import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
+import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
 import { createLocalSession, TEST_USER } from "./mock-local-session";
 

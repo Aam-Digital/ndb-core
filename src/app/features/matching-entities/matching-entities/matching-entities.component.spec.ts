@@ -10,18 +10,18 @@ import {
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { MatchingEntitiesConfig } from "./matching-entities-config";
 import { Entity } from "../../../core/entity/model/entity";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { BehaviorSubject, NEVER, Subject } from "rxjs";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { School } from "../../../child-dev-project/schools/model/school";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;

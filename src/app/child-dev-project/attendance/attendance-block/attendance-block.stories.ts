@@ -5,7 +5,7 @@ import {
 } from "../model/activity-attendance";
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceBlockComponent } from "./attendance-block.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { RecurringActivity } from "../model/recurring-activity";
 import { ConfigService } from "../../../core/config/config.service";
 

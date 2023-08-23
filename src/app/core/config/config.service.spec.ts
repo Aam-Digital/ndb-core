@@ -1,10 +1,10 @@
 import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 import { ConfigService } from "./config.service";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
-import { ConfigurableEnum } from "../configurable-enum/configurable-enum";
+import { ConfigurableEnum } from "../basic-datatypes/configurable-enum/configurable-enum";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 

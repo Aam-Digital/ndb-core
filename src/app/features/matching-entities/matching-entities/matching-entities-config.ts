@@ -1,8 +1,8 @@
-import { FilterConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { FilterConfig } from "../../../core/entity-list/EntityListConfig";
 import {
   ColumnConfig,
   DataFilter,
-} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+} from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
 
 /**

@@ -3,7 +3,7 @@ import { SessionService } from "../../session/session-service/session.service";
 import { filter } from "rxjs/operators";
 import { Observable, Subject } from "rxjs";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";

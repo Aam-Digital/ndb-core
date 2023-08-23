@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AppSettings } from "../../app-config/app-settings";
+import { AppSettings } from "../../app-settings";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
 import { LocalUser, passwordEqualsEncrypted } from "./local-user";

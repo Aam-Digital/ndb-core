@@ -2,10 +2,7 @@ import { AttendanceLogicalStatus } from "./attendance-status";
 import { RecurringActivity } from "./recurring-activity";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
 import { EventNote } from "./event-note";
-import {
-  getWarningLevelColor,
-  WarningLevel,
-} from "../../../core/entity/model/warning-level";
+import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { Entity } from "../../../core/entity/model/entity";
 
 /**

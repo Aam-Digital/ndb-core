@@ -23,7 +23,7 @@ import {
   ValueProvider,
 } from "@angular/core";
 import { DemoDataGenerator } from "./demo-data-generator";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../database/database";
 
 /**

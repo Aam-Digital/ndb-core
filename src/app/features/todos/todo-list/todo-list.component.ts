@@ -5,14 +5,14 @@ import { RouteTarget } from "../../../app.routing";
 import {
   EntityListConfig,
   PrebuiltFilterConfig,
-} from "../../../core/entity-components/entity-list/EntityListConfig";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+} from "../../../core/entity-list/EntityListConfig";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
-import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 
 @RouteTarget("TodoList")

@@ -6,7 +6,7 @@ import {
 } from "@angular/core/testing";
 
 import { DashboardListWidgetComponent } from "./dashboard-list-widget.component";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Component } from "@angular/core";
 import { By } from "@angular/platform-browser";
 import { Note } from "../../../child-dev-project/notes/model/note";

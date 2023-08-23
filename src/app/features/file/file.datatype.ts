@@ -1,4 +1,4 @@
-import { StringDatatype } from "../../core/entity/schema-datatypes/string.datatype";
+import { StringDatatype } from "../../core/basic-datatypes/string/string.datatype";
 import { Injectable } from "@angular/core";
 
 /**

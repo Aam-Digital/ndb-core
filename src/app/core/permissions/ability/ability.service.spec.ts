@@ -5,7 +5,7 @@ import { Subject } from "rxjs";
 import { SessionService } from "../../session/session-service/session.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
@@ -15,7 +15,7 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { UpdatedEntity } from "../../entity/model/entity-update";
-import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
+import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../../utils/mock-local-session";
 
 describe("AbilityService", () => {

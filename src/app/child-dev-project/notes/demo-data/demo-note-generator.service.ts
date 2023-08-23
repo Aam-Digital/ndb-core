@@ -4,7 +4,6 @@ import { Injectable } from "@angular/core";
 import { Child } from "../../children/model/child";
 import { Note } from "../model/note";
 import { faker } from "../../../core/demo-data/faker";
-import { warningLevels } from "../../warning-levels";
 import { noteIndividualStories } from "./notes_individual-stories";
 import { noteGroupStories } from "./notes_group-stories";
 import { centersUnique } from "../../children/demo-data-generators/fixtures/centers";
@@ -13,6 +12,7 @@ import moment from "moment";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
 import { DemoUserGeneratorService } from "../../../core/user/demo-user-generator.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { warningLevels } from "../../warning-level";
 
 export class DemoNoteConfig {
   minNotesPerChild: number;

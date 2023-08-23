@@ -2,16 +2,16 @@ import { Component, OnInit } from "@angular/core";
 import { PouchDatabase } from "../../core/database/pouch-database";
 import { ActivatedRoute } from "@angular/router";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { PublicFormConfig } from "./public-form-config";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
-import { toFormFieldConfig } from "../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../../core/entity-components/entity-form/entity-form/FormConfig";
+import { toFormFieldConfig } from "../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FormFieldConfig } from "../../core/common-components/entity-form/entity-form/FormConfig";
 import {
   EntityForm,
   EntityFormService,
-} from "../../core/entity-components/entity-form/entity-form.service";
-import { EntityFormComponent } from "../../core/entity-components/entity-form/entity-form/entity-form.component";
+} from "../../core/common-components/entity-form/entity-form.service";
+import { EntityFormComponent } from "../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfigService } from "../../core/config/config.service";
 import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";

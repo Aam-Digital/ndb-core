@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { DashboardComponent } from "./dashboard.component";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
-import { RouteData } from "../../view/dynamic-routing/view-config.interface";
-import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
+import { RouteData } from "../../config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
 describe("DashboardComponent", () => {
   let component: DashboardComponent;

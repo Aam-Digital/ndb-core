@@ -3,7 +3,7 @@ import { Child } from "../../model/child";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgForOf, NgIf } from "@angular/common";
 import { SchoolBlockComponent } from "../../../schools/school-block/school-block.component";
-import { FaDynamicIconComponent } from "../../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
+import { FaDynamicIconComponent } from "../../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../../../../features/file/file.service";
 

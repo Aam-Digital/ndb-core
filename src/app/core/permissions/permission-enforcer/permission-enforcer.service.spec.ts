@@ -3,7 +3,7 @@ import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 import { PermissionEnforcerService } from "./permission-enforcer.service";
 import { DatabaseRule } from "../permission-types";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
@@ -13,8 +13,8 @@ import { Subject } from "rxjs";
 import { Config } from "../../config/config";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
 import { TEST_USER } from "../../../utils/mock-local-session";
+import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;

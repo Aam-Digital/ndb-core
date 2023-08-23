@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AddDayAttendanceComponent } from "./add-day-attendance.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../../notes/model/note";
 import { ChildrenService } from "../../children/children.service";
 import { AttendanceService } from "../attendance.service";
