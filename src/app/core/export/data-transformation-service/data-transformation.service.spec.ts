@@ -1,7 +1,7 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { DataTransformationService } from "./data-transformation.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Child } from "../../../child-dev-project/children/model/child";

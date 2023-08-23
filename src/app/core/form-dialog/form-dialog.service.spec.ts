@@ -1,7 +1,7 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { FormDialogService } from "./form-dialog.service";
 import { Entity } from "../entity/model/entity";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";

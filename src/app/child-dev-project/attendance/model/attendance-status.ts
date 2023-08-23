@@ -1,4 +1,4 @@
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 
 /**
  * logical type of an attendance status, i.e. how it will be considered for statistics and analysis.

@@ -5,7 +5,7 @@ import {
   PREFIX_VIEW_CONFIG,
   RouteData,
   ViewConfig,
-} from "../../view/dynamic-routing/view-config.interface";
+} from "../../config/dynamic-routing/view-config.interface";
 import { AuthUser } from "../../session/session-service/auth-user";
 import { ConfigService } from "../../config/config.service";
 

@@ -29,12 +29,9 @@ import {
 } from "../../attendance/model/attendance-status";
 import { User } from "../../../core/user/user";
 import { Child } from "../../children/model/child";
-import {
-  getWarningLevelColor,
-  WarningLevel,
-} from "../../../core/entity/model/warning-level";
+import { getWarningLevelColor, WarningLevel } from "../../warning-level";
 import { School } from "../../schools/model/school";
-import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Note")

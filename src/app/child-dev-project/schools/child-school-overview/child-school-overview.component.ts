@@ -1,5 +1,5 @@
 import { Component, OnInit } from "@angular/core";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Child } from "../../children/model/child";
 import { School } from "../model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
@@ -10,9 +10,9 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgIf } from "@angular/common";
-import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { PillComponent } from "../../../core/common-components/pill/pill.component";
-import { RelatedTimePeriodEntitiesComponent } from "../../../core/entity-components/related-time-period-entities/related-time-period-entities.component";
+import { RelatedTimePeriodEntitiesComponent } from "../../../core/entity-details/related-time-period-entities/related-time-period-entities.component";
 
 // TODO: once schema-generated indices are available (#262), remove this component and use its generic super class directly
 @DynamicComponent("ChildSchoolOverview")
@@ -21,9 +21,9 @@ import { RelatedTimePeriodEntitiesComponent } from "../../../core/entity-compone
 @Component({
   selector: "app-child-school-overview",
   templateUrl:
-    "../../../core/entity-components/related-time-period-entities/related-time-period-entities.component.html",
+    "../../../core/entity-details/related-time-period-entities/related-time-period-entities.component.html",
   styleUrls: [
-    "../../../core/entity-components/related-time-period-entities/related-time-period-entities.component.scss",
+    "../../../core/entity-details/related-time-period-entities/related-time-period-entities.component.scss",
   ],
   imports: [
     FontAwesomeModule,

@@ -1,5 +1,5 @@
 import { ChildrenService } from "./children.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { Child } from "./model/child";
 import { School } from "../schools/model/school";

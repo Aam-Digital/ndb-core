@@ -30,11 +30,11 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { SearchComponent } from "../search/search.component";
-import { SyncStatusComponent } from "../../sync-status/sync-status/sync-status.component";
+import { SyncStatusComponent } from "../sync-status/sync-status/sync-status.component";
 import { LanguageSelectComponent } from "../../language/language-select/language-select.component";
-import { NavigationComponent } from "../../navigation/navigation/navigation.component";
+import { NavigationComponent } from "../navigation/navigation/navigation.component";
 import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
-import { AppVersionComponent } from "../../latest-changes/app-version/app-version.component";
+import { AppVersionComponent } from "../latest-changes/app-version/app-version.component";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 
 /**

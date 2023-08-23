@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { DynamicComponent } from "../../view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import {
   FormBuilder,
   FormControl,
@@ -16,7 +16,7 @@ import { User } from "../user";
 import { AlertService } from "../../alerts/alert.service";
 import { SessionService } from "../../session/session-service/session.service";
 import { HttpClient } from "@angular/common/http";
-import { AppSettings } from "../../app-config/app-settings";
+import { AppSettings } from "../../app-settings";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";

@@ -2,7 +2,7 @@ import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { Child } from "../../model/child";
 import { AttendanceService } from "../../../attendance/attendance.service";
 import { RecurringActivity } from "../../../attendance/model/recurring-activity";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTabsModule } from "@angular/material/tabs";

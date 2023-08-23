@@ -6,7 +6,7 @@ import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
-import { AppSettings } from "../app-config/app-settings";
+import { AppSettings } from "../app-settings";
 import { PouchDatabase } from "../database/pouch-database";
 import { Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";

@@ -1,6 +1,6 @@
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import { Observable } from "rxjs";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { filter } from "rxjs/operators";
 import { LoggingService } from "../../core/logging/logging.service";

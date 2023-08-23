@@ -2,9 +2,9 @@ import { Component, Input, OnInit } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
-import { FormFieldConfig } from "../../../../core/entity-components/entity-form/entity-form/FormConfig";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { EntitySubrecordComponent } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 
 @DynamicComponent("HealthCheckup")
 @Component({
