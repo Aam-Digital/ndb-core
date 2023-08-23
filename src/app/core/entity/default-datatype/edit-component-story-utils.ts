@@ -14,6 +14,7 @@ export function generateFormFieldStory<T>(
   editComponent,
   defaultValue,
   withTooltip = true,
+  schemaAdditional = undefined,
 ): {
   meta: Meta<FormComponent<any>>;
   entityType: EntityConstructor<Entity & { main: T; other: string }>;
@@ -33,6 +34,7 @@ export function generateFormFieldStory<T>(
     edit: editComponent,
     label: "test field label",
     tooltip: withTooltip ? "test tooltip" : undefined,
+    additional: schemaAdditional,
   };
   const otherFieldConf: FormFieldConfig = {
     id: "other",
