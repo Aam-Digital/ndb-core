@@ -70,12 +70,11 @@ export class CouchdbFileService extends FileService {
   }
 
   private runFileUpload(file: File, entity: Entity, property: string) {
-    const blob = new Blob([file]);
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
-        this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, blob, {
-          headers: { "Content-Type": file.type, "ngsw-bypass": "" },
+        this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, file, {
+          headers: { "ngsw-bypass": "" },
           reportProgress: true,
           observe: "events",
         }),
