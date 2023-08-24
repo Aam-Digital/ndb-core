@@ -15,3 +15,7 @@
 .mat-mdc-progress-bar .mdc-linear-progress__buffer-bar {
   opacity: 25%;
 }
+
+.mdc-checkbox .mdc-checkbox__native-control:enabled~.mdc-checkbox__background .mdc-checkbox__checkmark {
+  --mdc-checkbox-selected-checkmark-color: #{mat.get-contrast-color-from-palette(theme.$accent, A200)} !important
+}

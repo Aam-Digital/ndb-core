@@ -32,7 +32,7 @@
 @use "resets";
 
 // Overwrite some MDC (Material) styles to work with variables
-@use "./mdc_overwrites/mdb_overwrites";
+@use "./mdc_overwrites/mdc_overwrites";
 
 // Include the styles for directives here to make them available as global style (currently, it
 // is not possible to use styles in a directive)
