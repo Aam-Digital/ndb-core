@@ -12,12 +12,12 @@ import { By } from "@angular/platform-browser";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { ConfirmationDialogService } from "../../../../core/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { SimpleChange } from "@angular/core";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
 import { ChildrenService } from "../../../children/children.service";
-import { ConfigurableEnumService } from "../../../../core/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
 
 const PRESENT = {
   id: "PRESENT",

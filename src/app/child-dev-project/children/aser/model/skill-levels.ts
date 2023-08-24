@@ -1,8 +1,8 @@
 import {
   ConfigurableEnumConfig,
   EMPTY,
-} from "../../../../core/configurable-enum/configurable-enum.interface";
-import { Ordering } from "../../../../core/configurable-enum/configurable-enum-ordering";
+} from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+import { Ordering } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 
 export type SkillLevel = Ordering.EnumValue & { passed?: boolean };
 

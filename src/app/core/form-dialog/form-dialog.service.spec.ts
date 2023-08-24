@@ -1,7 +1,7 @@
-import { TestBed } from "@angular/core/testing";
+import { TestBed, waitForAsync } from "@angular/core/testing";
 import { FormDialogService } from "./form-dialog.service";
 import { Entity } from "../entity/model/entity";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
@@ -9,7 +9,7 @@ import { MockedTestingModule } from "../../utils/mocked-testing.module";
 describe("FormDialogService", () => {
   let service: FormDialogService;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
       providers: [
@@ -21,7 +21,7 @@ describe("FormDialogService", () => {
     });
 
     service = TestBed.inject<FormDialogService>(FormDialogService);
-  });
+  }));
 
   it("should be created", () => {
     expect(service).toBeTruthy();

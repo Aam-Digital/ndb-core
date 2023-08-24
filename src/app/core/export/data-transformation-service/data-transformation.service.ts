@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import {
   getReadableValue,
   transformToReadableFormat,
-} from "../../entity-components/entity-subrecord/entity-subrecord/value-accessor";
+} from "../../common-components/entity-subrecord/entity-subrecord/value-accessor";
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../query.service";
 import { groupBy } from "../../../utils/utils";
@@ -22,19 +22,30 @@ export class DataTransformationService {
     to?: Date,
   ): Promise<ExportRow[]> {
     const combinedResults: ExportRow[] = [];
+    const totalRow: ExportRow = {};
     for (const c of config) {
       await this.queryService.cacheRequiredData(c.query, from, to);
       const baseData = this.queryService.queryData(c.query, from, to);
-      const result = await this.transformData(
-        baseData,
-        c.subQueries,
-        from,
-        to,
-        c.groupBy,
-      );
+      const result: ExportRow[] = [];
+      if (c.subQueries) {
+        result.push(
+          ...(await this.transformData(
+            baseData,
+            c.subQueries,
+            from,
+            to,
+            c.groupBy,
+          )),
+        );
+      } else {
+        totalRow[c.label] = baseData;
+      }
+
       combinedResults.push(...result);
     }
-    return combinedResults;
+    return Object.keys(totalRow).length > 0
+      ? [totalRow, ...combinedResults]
+      : combinedResults;
   }
 
   private concatQueries(config: ExportColumnConfig) {

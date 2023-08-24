@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "../entity/model/entity";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { ChildrenService } from "../../child-dev-project/children/children.service";
 import { AttendanceService } from "../../child-dev-project/attendance/attendance.service";
@@ -465,8 +465,8 @@ export class QueryService {
    * @param value the string which should replace initial data
    * @returns array of same length as data where every input is value
    */
-  private setString(data: any[], value: string): string[] {
-    return data.map(() => value);
+  private setString(data: any[], value: string): string[] | string {
+    return Array.isArray(data) ? data.map(() => value) : value;
   }
 }
 

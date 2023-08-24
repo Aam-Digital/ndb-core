@@ -10,8 +10,8 @@ import { DatabaseField } from "./database-field.decorator";
 import { Entity } from "./model/entity";
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
-import { EntityMapperService } from "./entity-mapper.service";
-import { mockEntityMapper } from "./mock-entity-mapper-service";
+import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;

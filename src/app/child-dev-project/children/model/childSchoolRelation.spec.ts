@@ -16,7 +16,6 @@
  */
 
 import { ChildSchoolRelation } from "./childSchoolRelation";
-import moment from "moment";
 import { testEntitySubclass } from "../../../core/entity/model/entity.spec";
 
 describe("ChildSchoolRelation Entity", () => {
@@ -28,61 +27,5 @@ describe("ChildSchoolRelation Entity", () => {
     schoolClass: "10",
     start: "2019-01-01",
     end: "2019-12-31",
-  });
-
-  it("should mark relations without end date as active", () => {
-    const relation = new ChildSchoolRelation();
-    relation.start = new Date();
-    expect(relation.isActive).toBeTrue();
-  });
-
-  it("should mark relation starting in the future as inactive", () => {
-    const relation = new ChildSchoolRelation();
-    relation.start = moment().add(1, "day").toDate();
-    expect(relation.isActive).toBeFalse();
-  });
-
-  it("should mark relation with end date in the past as inactive", () => {
-    const relation = new ChildSchoolRelation();
-    relation.start = moment().subtract(1, "week").toDate();
-    relation.end = moment().subtract(1, "day").toDate();
-    expect(relation.isActive).toBeFalse();
-  });
-
-  it("should mark relation with end date in the future as active", () => {
-    const relation = new ChildSchoolRelation();
-    relation.start = moment().subtract(1, "week").toDate();
-    relation.end = moment().add(1, "day").toDate();
-    expect(relation.isActive).toBeTrue();
-  });
-
-  it("should mark relation with end date being today as active", () => {
-    const relation = new ChildSchoolRelation();
-    relation.start = moment().subtract(1, "week").toDate();
-    relation.end = new Date();
-    expect(relation.isActive).toBeTrue();
-  });
-
-  it("should fail validation when end date but no start date is defined", () => {
-    const relation = new ChildSchoolRelation();
-    relation.schoolId = "someId";
-    relation.end = new Date();
-    expect(() => relation.assertValid()).toThrowError();
-  });
-
-  it("should fail validation when start date is after end date", () => {
-    const relation = new ChildSchoolRelation();
-    relation.schoolId = "someId";
-    relation.start = moment().add(1, "day").toDate();
-    relation.end = new Date();
-    expect(() => relation.assertValid()).toThrowError();
-  });
-
-  it("does pass validation when the start date is before the end date", () => {
-    const relation = new ChildSchoolRelation();
-    relation.schoolId = "someId";
-    relation.start = moment().subtract(1, "day").toDate();
-    relation.end = new Date();
-    expect(() => relation.assertValid()).not.toThrowError();
   });
 });

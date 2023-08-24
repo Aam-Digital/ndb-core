@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Child } from "./model/child";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../notes/model/note";
 import { Aser } from "./aser/model/aser";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";

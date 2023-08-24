@@ -19,8 +19,8 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { SkillLevel } from "./skill-levels";
-import { WarningLevel } from "../../../../core/entity/model/warning-level";
-import { ConfigurableEnumDatatype } from "../../../../core/configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
+import { WarningLevel } from "../../../warning-level";
+import { ConfigurableEnumDatatype } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { PLACEHOLDERS } from "../../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Aser")
@@ -69,10 +69,12 @@ export class Aser extends Entity {
   }
 
   private hasPassedEverything(): boolean {
-    const configurableEnum = new ConfigurableEnumDatatype(undefined).name;
     const schema = this.getSchema();
     return Object.keys(this)
-      .filter((key) => schema.get(key)?.dataType === configurableEnum)
+      .filter(
+        (key) =>
+          schema.get(key)?.dataType === ConfigurableEnumDatatype.dataType,
+      )
       .every((key) => this.isPassed(this[key]));
   }
 

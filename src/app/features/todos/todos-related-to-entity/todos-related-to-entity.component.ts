@@ -1,13 +1,13 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { Entity } from "../../../core/entity/model/entity";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
-import { DataFilter } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { DataFilter } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 
@@ -21,6 +21,7 @@ import { FormsModule } from "@angular/forms";
 })
 export class TodosRelatedToEntityComponent implements OnInit {
   entries: Todo[] = [];
+  isLoading: boolean;
 
   @Input() entity: Entity;
   @Input() columns: FormFieldConfig[] = [
@@ -68,8 +69,10 @@ export class TodosRelatedToEntityComponent implements OnInit {
     this.toggleInactive();
   }
 
-  private loadDataFor(entityId: string): Promise<Todo[]> {
-    return this.dbIndexingService.queryIndexDocs(
+  private async loadDataFor(entityId: string): Promise<Todo[]> {
+    this.isLoading = true;
+
+    const data = await this.dbIndexingService.queryIndexDocs(
       Todo,
       "todo_index/by_" + this.referenceProperty,
       {
@@ -78,6 +81,9 @@ export class TodosRelatedToEntityComponent implements OnInit {
         descending: true,
       },
     );
+
+    this.isLoading = false;
+    return data;
   }
 
   public getNewEntryFunction(): () => Todo {

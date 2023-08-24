@@ -2,7 +2,7 @@ import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { EventNote } from "../../child-dev-project/attendance/model/event-note";
-import { defaultDateFilters } from "../filter/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { defaultDateFilters } from "../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { EducationalMaterial } from "../../child-dev-project/children/educational-material/model/educational-material";
 
 // prettier-ignore
@@ -86,7 +86,7 @@ export const defaultJsonConfig = {
     "config": {
       "widgets": [
         {
-          "component": "DashboardShortcutWidget",
+          "component": "ShortcutDashboard",
           "config": {
             "shortcuts": [
               {
@@ -952,7 +952,7 @@ export const defaultJsonConfig = {
       {
         "name": "health_lastDentalCheckup",
         "schema": {
-          "dataType": "Date",
+          "dataType": "date",
           "label": $localize`:Label for a child attribute:Last Dental Check-Up`
         }
       },

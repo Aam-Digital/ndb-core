@@ -32,7 +32,8 @@
         </td>
         <td>
           <app-attendance-status-select
-            [(value)]="getAttendance(childId).status"
+            [value]="getAttendance(childId).status"
+            (valueChange)="updateAttendanceValue(childId, 'status', $event)"
             [disabled]="formControl.disabled"
           >
           </app-attendance-status-select>
@@ -47,7 +48,9 @@
               name="remarks"
               type="text"
               [value]="getAttendance(childId).remarks"
-              (change)="getAttendance(childId).remarks = inputElement.value"
+              (input)="
+                updateAttendanceValue(childId, 'remarks', inputElement.value)
+              "
               [disabled]="formControl.disabled"
             />
           </mat-form-field>
@@ -81,7 +84,8 @@
 
         <div class="attendance-item--content">
           <app-attendance-status-select
-            [(value)]="getAttendance(childId).status"
+            [value]="getAttendance(childId).status"
+            (valueChange)="updateAttendanceValue(childId, 'status', $event)"
             [disabled]="formControl.disabled"
           >
           </app-attendance-status-select>
@@ -95,7 +99,9 @@
               name="remarks"
               type="text"
               [value]="getAttendance(childId).remarks"
-              (change)="getAttendance(childId).remarks = inputElement.value"
+              (input)="
+                updateAttendanceValue(childId, 'remarks', inputElement.value)
+              "
               [disabled]="formControl.disabled"
             />
           </mat-form-field>

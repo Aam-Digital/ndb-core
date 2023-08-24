@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
-import { EntityMapperService } from "./entity-mapper.service";
+import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
+import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Entity } from "./model/entity";
 import { Observable, race, Subject } from "rxjs";

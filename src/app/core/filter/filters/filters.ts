@@ -15,16 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ConfigurableEnumValue } from "app/core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import {
   BooleanFilterConfig,
   DateRangeFilterConfigOption,
-} from "app/core/entity-components/entity-list/EntityListConfig";
-import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+} from "../../entity-list/EntityListConfig";
+import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../../entity/model/entity";
 import { DateRange } from "@angular/material/datepicker";
 import { isValidDate } from "../../../utils/utils";
-import { calculateDateRange } from "../date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import moment from "moment/moment";
 
 export abstract class Filter<T extends Entity> {

@@ -1,18 +1,18 @@
 import { NgModule } from "@angular/core";
-import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
-import { timeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
 import { Todo } from "./model/todo";
 import { AsyncComponent, ComponentRegistry } from "../../dynamic-components";
+import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
+import { TimeIntervalDatatype } from "./recurring-interval/time-interval.datatype";
 
-@NgModule({})
+@NgModule({
+  providers: [
+    { provide: DefaultDatatype, useClass: TimeIntervalDatatype, multi: true },
+  ],
+})
 export class TodosModule {
   static databaseEntities = [Todo];
 
-  constructor(
-    components: ComponentRegistry,
-    entitySchemaService: EntitySchemaService,
-  ) {
-    entitySchemaService.registerSchemaDatatype(timeIntervalDatatype);
+  constructor(components: ComponentRegistry) {
     components.addAll(dynamicComponents);
   }
 }

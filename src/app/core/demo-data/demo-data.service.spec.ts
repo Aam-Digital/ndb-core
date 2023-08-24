@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { DemoDataServiceConfig, DemoDataService } from "./demo-data.service";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { AlertService } from "../alerts/alert.service";
 import {
   DemoChildConfig,

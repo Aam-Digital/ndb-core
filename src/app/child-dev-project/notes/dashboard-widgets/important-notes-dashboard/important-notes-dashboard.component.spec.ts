@@ -3,6 +3,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 
 import { ImportantNotesDashboardComponent } from "./important-notes-dashboard.component";
@@ -10,9 +11,9 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { Note } from "../../model/note";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { warningLevels } from "../../../warning-levels";
 import { of } from "rxjs";
 import { map } from "rxjs/operators";
+import { warningLevels } from "../../../warning-level";
 
 describe("ImportantNotesDashboardComponent", () => {
   let component: ImportantNotesDashboardComponent;
@@ -24,8 +25,8 @@ describe("ImportantNotesDashboardComponent", () => {
     return note;
   });
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [
         MockedTestingModule.withState(LoginState.LOGGED_IN, mockNotes),
         ImportantNotesDashboardComponent,
@@ -39,7 +40,7 @@ describe("ImportantNotesDashboardComponent", () => {
         },
       ],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(ImportantNotesDashboardComponent);

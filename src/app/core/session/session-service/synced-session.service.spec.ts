@@ -20,13 +20,15 @@ import { LoginState } from "../session-states/login-state.enum";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
 import { SessionType } from "../session-type";
-import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
-import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
 import {
-  MockedTestingModule,
-  TEST_PASSWORD,
-  TEST_USER,
-} from "../../../utils/mocked-testing.module";
+  fakeAsync,
+  flush,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
+import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { PouchDatabase } from "../../database/pouch-database";
 import { SessionModule } from "../session.module";
@@ -35,6 +37,7 @@ import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 import { mockAuth } from "./remote-session.spec";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 
 describe("SyncedSessionService", () => {
   let sessionService: SyncedSessionService;
@@ -52,7 +55,7 @@ describe("SyncedSessionService", () => {
   let mockAuthService: jasmine.SpyObj<AuthService>;
   let mockLocation: jasmine.SpyObj<Location>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockLocation = jasmine.createSpyObj(["reload"]);
     mockAuthService = jasmine.createSpyObj([
       "authenticate",
@@ -84,7 +87,7 @@ describe("SyncedSessionService", () => {
     remoteLoginSpy = spyOn(remoteSession, "login").and.callThrough();
     syncSpy = spyOn(sessionService, "sync").and.resolveTo();
     liveSyncSpy = spyOn(sessionService, "liveSyncDeferred");
-  });
+  }));
 
   afterEach(() => {
     localSession.removeUser(TEST_USER);

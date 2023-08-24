@@ -18,8 +18,8 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { SessionService } from "./session.service";
 import { SyncState } from "../session-states/sync-state.enum";
-import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { AuthUser } from "./auth-user";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 
 /**
  * Default tests for testing basic functionality of any SessionService implementation.
