@@ -1,13 +1,14 @@
-.child-pic {
+.image {
   width: 150px;
   height: 150px;
   border-radius: 50%;
   object-fit: cover;
   cursor: pointer;
+  background: lightgrey;
+  display: block;
 }
 
-:host {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
+:host .form-field-disabled ::ng-deep .mat-mdc-text-field-wrapper {
+  // hide form-field bottom line if not in edit mode
+  --mdc-filled-text-field-active-indicator-height: 0;
 }

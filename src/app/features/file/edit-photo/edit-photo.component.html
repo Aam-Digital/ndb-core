@@ -5,13 +5,22 @@
   accept="image/*"
   #fileUpload
 />
-<img
-  [src]="imgPath"
-  alt="profile photo"
-  class="child-pic"
-  (click)="openPopup()"
-/>
-<div>
+
+<mat-form-field
+  floatLabel="always"
+  [class.form-field-disabled]="!formControl.enabled"
+>
+  <mat-label>{{ label }}</mat-label>
+
+  <img
+    [src]="imgPath"
+    alt="profile photo"
+    class="image"
+    (click)="openPopup()"
+  />
+  <input matInput readonly style="display: none" [formControl]="formControl" />
+
+  <!-- edit mode -->
   <button
     *ngIf="formControl.value && formControl.enabled"
     type="button"
@@ -32,4 +41,8 @@
   >
     <fa-icon icon="upload"></fa-icon>
   </button>
-</div>
+
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
+  </mat-error>
+</mat-form-field>

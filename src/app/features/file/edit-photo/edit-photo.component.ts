@@ -13,13 +13,27 @@ import { MatButtonModule } from "@angular/material/button";
 import { resizeImage } from "../file-utils";
 import { MatDialog } from "@angular/material/dialog";
 import { ImagePopupComponent } from "./image-popup/image-popup.component";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { ReactiveFormsModule } from "@angular/forms";
+import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
 
 @DynamicComponent("EditPhoto")
 @Component({
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",
   styleUrls: ["./edit-photo.component.scss"],
-  imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule, NgIf],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    NgIf,
+    MatFormFieldModule,
+    MatInputModule,
+    ReactiveFormsModule,
+    EditFileComponent,
+    ErrorHintComponent,
+  ],
   standalone: true,
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
