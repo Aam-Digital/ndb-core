@@ -10,11 +10,20 @@ import {
 } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
+/**
+ *
+ * @param editComponent
+ * @param defaultValue
+ * @param withTooltip set to `false` to disable tooltip (?) button
+ * @param additionalSchema an object that is applied to the schema field and allows to overwrite or add schema properties
+ * @param additionalProviders Angular service providers that should be initialized in addition to defaults
+ */
 export function generateFormFieldStory<T>(
   editComponent,
   defaultValue,
   withTooltip = true,
-  schemaAdditional = undefined,
+  additionalSchema = {},
+  additionalProviders = [],
 ): {
   meta: Meta<FormComponent<any>>;
   entityType: EntityConstructor<Entity & { main: T; other: string }>;
@@ -34,7 +43,7 @@ export function generateFormFieldStory<T>(
     edit: editComponent,
     label: "test field label",
     tooltip: withTooltip ? "test tooltip" : undefined,
-    additional: schemaAdditional,
+    ...additionalSchema,
   };
   const otherFieldConf: FormFieldConfig = {
     id: "other",
@@ -46,7 +55,10 @@ export function generateFormFieldStory<T>(
     component: FormComponent,
     decorators: [
       applicationConfig({
-        providers: [importProvidersFrom(StorybookBaseModule)],
+        providers: [
+          importProvidersFrom(StorybookBaseModule),
+          ...additionalProviders,
+        ],
       }),
     ],
     parameters: entityFormStorybookDefaultParameters,

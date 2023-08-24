@@ -5,10 +5,12 @@ const formFieldStory = generateFormFieldStory(
   "EditRecurringInterval",
   undefined,
   true,
-  [
-    { label: "every week", interval: { value: 1, unit: "week" } },
-    { label: "every two weeks", interval: { value: 2, unit: "week" } },
-  ],
+  {
+    additional: [
+      { label: "every week", interval: { value: 1, unit: "week" } },
+      { label: "every two weeks", interval: { value: 2, unit: "week" } },
+    ],
+  },
 );
 
 export default {
