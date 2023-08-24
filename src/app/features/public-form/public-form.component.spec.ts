@@ -109,6 +109,6 @@ describe("PublicFormComponent", () => {
   function initComponent() {
     TestBed.inject(EntityMapperService).save(testFormConfig);
     const configService = TestBed.inject(ConfigService);
-    configService["_configUpdates"].next(configService["currentConfig"]);
+    configService.entityUpdated.next(configService["currentConfig"]);
   }
 });

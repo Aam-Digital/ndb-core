@@ -26,7 +26,8 @@ export class SiteSettingsService extends LatestEntity<SiteSettings> {
     logger: LoggingService,
   ) {
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper, logger);
-    // super.startLoading();
+    super.startLoading();
+
     this.siteName.subscribe((name) => {
       this.title.setTitle(name);
     });
