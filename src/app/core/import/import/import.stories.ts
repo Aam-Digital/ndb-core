@@ -9,8 +9,8 @@ import {
   IMPORT_SAMPLE_RAW_DATA,
 } from "./import-sample-raw-data";
 import { User } from "../../user/user";
-import { TEST_USER } from "../../../utils/mocked-testing.module";
 import { importProvidersFrom } from "@angular/core";
+import { TEST_USER } from "../../../utils/mock-local-session";
 
 export default {
   title: "Features/Import/> Overall Module",

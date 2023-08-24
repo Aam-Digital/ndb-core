@@ -21,12 +21,18 @@
 }
 
 .comparison-header {
-  font-weight: bold;
   font-size: medium;
+}
+.comparison-header-type {
+  font-weight: bold;
 }
 .selection-header {
   font-weight: 500;
   font-size: medium;
+}
+
+.highlighted-name {
+  text-decoration: underline;
 }
 
 .entity-fixed {
