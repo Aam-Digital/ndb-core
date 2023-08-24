@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { SessionService } from "../../session/session-service/session.service";
-import { filter } from "rxjs/operators";
-import { Observable, Subject } from "rxjs";
+import { shareReplay } from "rxjs/operators";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
@@ -10,47 +9,36 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { AuthUser } from "../../session/session-service/auth-user";
+import { LatestEntity } from "../../entity/latest-entity";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
  */
 @Injectable()
-export class AbilityService {
-  private _abilityUpdated = new Subject<void>();
-
+export class AbilityService extends LatestEntity<Config<DatabaseRules>> {
   /**
    * Get notified whenever the permissions of the current user are updated.
    * Use this to re-evaluate the permissions of the currently logged-in user.
    */
-  get abilityUpdated(): Observable<void> {
-    return this._abilityUpdated.asObservable();
-  }
+  abilityUpdated = this.entityUpdated.pipe(shareReplay(1));
 
   constructor(
     private ability: EntityAbility,
     private sessionService: SessionService,
-    private entityMapper: EntityMapperService,
     private permissionEnforcer: PermissionEnforcerService,
-    private logger: LoggingService,
-  ) {}
-
-  initializeRules() {
-    // TODO this setup is very similar to `ConfigService`
-    this.loadRules();
-    this.entityMapper
-      .receiveUpdates<Config<DatabaseRules>>(Config)
-      .pipe(filter(({ entity }) => entity.getId() === Config.PERMISSION_KEY))
-      .subscribe(({ entity }) => this.updateAbilityWithUserRules(entity.data));
+    entityMapper: EntityMapperService,
+    logger: LoggingService,
+  ) {
+    super(Config, Config.PERMISSION_KEY, entityMapper, logger);
   }
 
-  private loadRules(): Promise<void> {
+  initializeRules() {
     // Initially allow everything until permission document could be fetched
-    // TODO somehow this rules is used if no other is found even after update
     this.ability.update([{ action: "manage", subject: "all" }]);
-    return this.entityMapper
-      .load<Config<DatabaseRules>>(Config, Config.PERMISSION_KEY)
-      .then((config) => this.updateAbilityWithUserRules(config.data))
-      .catch(() => undefined);
+    super.startLoading();
+    this.entityUpdated.subscribe((config) =>
+      this.updateAbilityWithUserRules(config.data),
+    );
   }
 
   private updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
@@ -104,6 +92,5 @@ export class AbilityService {
 
   private updateAbilityWithRules(rules: DatabaseRule[]) {
     this.ability.update(rules);
-    this._abilityUpdated.next();
   }
 }
