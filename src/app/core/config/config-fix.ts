@@ -290,7 +290,7 @@ export const defaultJsonConfig = {
               "component": "Form",
               "config": {
                 "cols": [
-                  ["logo", "icon"],
+                  ["logo", "favicon"],
                   ["siteName", "language", "displayLanguageSelect"],
                   ["primary", "secondary", "error", "font"],
                 ]
