@@ -40,7 +40,7 @@ import { FilterService } from "../../../core/filter/filter.service";
 import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
 import { getLocationProperties } from "../../location/map-utils";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
-import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
+import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -218,7 +218,7 @@ export class MatchingEntitiesComponent implements OnInit {
       .get(onMatchEntityType)
       .schema.get(onMatchProperty);
 
-    return schemaField.dataType === EntityArrayDatatype.dataType;
+    return isArrayDataType(schemaField.dataType);
   }
 
   private getMultiSelectFunction(newSide: MatchingSide) {
