@@ -39,14 +39,25 @@ import { Coordinates } from "../../location/coordinates";
 import { FilterService } from "../../../core/filter/filter.service";
 import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
 import { getLocationProperties } from "../../location/map-utils";
+import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
+import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
   filterObj?: DataFilter<Entity>;
+
   availableEntities?: Entity[];
   selectMatch?: (e) => void;
   entityType: EntityConstructor;
-  selected?: Entity;
+
+  /** whether this allows to select more than one selected match */
+  multiSelect: boolean;
+
+  selected?: Entity[];
+
+  /** item of `selected` that is currently highlighted */
+  highlightedSelected: Entity;
+
   distanceColumn: {
     coordinatesProperties: string[];
     compareCoordinates: BehaviorSubject<Coordinates[]>;
@@ -70,6 +81,7 @@ export interface MatchingSide extends MatchingSideConfig {
     EntityPropertyViewComponent,
     MapComponent,
     FilterComponent,
+    FlattenArrayPipe,
   ],
   standalone: true,
 })
@@ -155,26 +167,34 @@ export class MatchingEntitiesComponent implements OnInit {
     const newSide = Object.assign({}, side) as MatchingSide; // we are transforming it into this type here
 
     if (!newSide.entityType) {
-      newSide.selected = newSide.selected ?? this.entity;
-      newSide.entityType = newSide.selected.getConstructor();
+      newSide.selected = newSide.selected ?? [this.entity];
+      newSide.highlightedSelected = newSide.selected[0];
+      newSide.entityType = newSide.highlightedSelected?.getConstructor();
     }
 
     let entityType = newSide.entityType;
     if (typeof entityType === "string") {
       entityType = this.entityRegistry.get(entityType);
     }
-    newSide.entityType = entityType ?? newSide.selected.getConstructor();
+    newSide.entityType =
+      entityType ?? newSide.highlightedSelected?.getConstructor();
 
     newSide.columns =
       newSide.columns ??
       this.columns.map((p) => p[sideIndex]).filter((c) => !!c);
 
-    newSide.selectMatch = (e: Entity) => {
-      this.highlightSelectedRow(e, newSide.selected);
-      newSide.selected = e;
-      this.matchComparisonElement.nativeElement.scrollIntoView();
-      this.updateDistanceColumn(newSide);
-    };
+    newSide.multiSelect = this.checkIfMultiSelect(
+      this.onMatch.newEntityType,
+      sideIndex === 0
+        ? this.onMatch.newEntityMatchPropertyLeft
+        : this.onMatch.newEntityMatchPropertyRight,
+    );
+
+    if (newSide.multiSelect) {
+      newSide.selectMatch = this.getMultiSelectFunction(newSide);
+    } else {
+      newSide.selectMatch = this.getSingleSelectFunction(newSide);
+    }
 
     if (!newSide.selected && newSide.entityType) {
       newSide.availableEntities = await this.entityMapper.loadType(
@@ -190,36 +210,90 @@ export class MatchingEntitiesComponent implements OnInit {
     return newSide;
   }
 
-  private highlightSelectedRow(
-    newSelectedEntity: Entity,
-    previousSelectedEntity: Entity,
+  private checkIfMultiSelect(
+    onMatchEntityType: string,
+    onMatchProperty: string,
   ) {
-    if (previousSelectedEntity) {
-      previousSelectedEntity.getColor =
-        previousSelectedEntity.getConstructor().prototype.getColor;
+    const schemaField = this.entityRegistry
+      .get(onMatchEntityType)
+      .schema.get(onMatchProperty);
+
+    return isArrayDataType(schemaField.dataType);
+  }
+
+  private getMultiSelectFunction(newSide: MatchingSide) {
+    return (e: Entity) => {
+      if (!newSide.selected) {
+        newSide.selected = [];
+      }
+
+      if (newSide.selected.includes(e)) {
+        // unselect
+        this.highlightSelectedRow(e, true);
+        newSide.selected = newSide.selected.filter((s) => s !== e);
+        if (newSide.highlightedSelected === e) {
+          newSide.highlightedSelected = newSide.selected[0];
+        }
+      } else {
+        this.highlightSelectedRow(e);
+        newSide.selected = [...newSide.selected, e];
+        newSide.highlightedSelected = e;
+      }
+
+      this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(newSide);
+    };
+  }
+
+  private getSingleSelectFunction(newSide: MatchingSide) {
+    return (e: Entity) => {
+      this.highlightSelectedRow(e);
+      if (newSide.highlightedSelected) {
+        this.highlightSelectedRow(newSide.highlightedSelected, true);
+      }
+      newSide.selected = [e];
+      newSide.highlightedSelected = e;
+      this.matchComparisonElement.nativeElement.scrollIntoView();
+      this.updateDistanceColumn(newSide);
+    };
+  }
+
+  private highlightSelectedRow(newSelectedEntity: Entity, unHighlight = false) {
+    if (unHighlight) {
+      newSelectedEntity.getColor =
+        newSelectedEntity.getConstructor().prototype.getColor;
+    } else {
+      newSelectedEntity.getColor = () =>
+        addAlphaToHexColor(newSelectedEntity.getConstructor().color, 0.2);
     }
-    newSelectedEntity.getColor = () =>
-      addAlphaToHexColor(newSelectedEntity.getConstructor().color, 0.2);
   }
 
   async createMatch() {
     const newMatchEntity = new (this.entityRegistry.get(
       this.onMatch.newEntityType,
     ))();
+
     const leftMatch = this.sideDetails[0].selected;
     const rightMatch = this.sideDetails[1].selected;
 
-    newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] =
-      leftMatch.getId(false);
-    newMatchEntity[this.onMatch.newEntityMatchPropertyRight] =
-      rightMatch.getId(false);
+    newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] = this
+      .sideDetails[0].multiSelect
+      ? leftMatch.map((e) => e.getId(false))
+      : leftMatch[0].getId(false);
+    newMatchEntity[this.onMatch.newEntityMatchPropertyRight] = this
+      .sideDetails[1].multiSelect
+      ? rightMatch.map((e) => e.getId(false))
+      : rightMatch[0].getId(false);
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();
     newMatchEntity["start"] = new Date();
-    newMatchEntity["name"] = `${
-      newMatchEntity.getConstructor().label
-    } ${leftMatch.toString()} - ${rightMatch.toString()}`;
+    newMatchEntity["name"] =
+      newMatchEntity.getConstructor().label +
+      " " +
+      leftMatch.map((e) => e.toString()).join(", ") +
+      " - " +
+      rightMatch.map((e) => e.toString()).join(", ");
 
     if (this.onMatch.columnsToReview) {
       this.formDialog
@@ -306,18 +380,21 @@ export class MatchingEntitiesComponent implements OnInit {
         const lastValue = side.distanceColumn.compareCoordinates.value;
         side.distanceColumn.compareCoordinates.next(lastValue);
       }
-      if (side.selected) {
+      if (side.highlightedSelected) {
         this.updateDistanceColumn(side);
       }
     });
   }
 
   private updateDistanceColumn(side: MatchingSide) {
-    const properties = this.displayedProperties[side.selected.getType()];
+    const properties =
+      this.displayedProperties[side.highlightedSelected?.getType()];
     const otherIndex = this.sideDetails[0] === side ? 1 : 0;
     const distanceColumn = this.sideDetails[otherIndex].distanceColumn;
     if (properties && distanceColumn) {
-      const coordinates = properties.map((prop) => side.selected[prop]);
+      const coordinates = properties.map(
+        (prop) => side.highlightedSelected[prop],
+      );
       distanceColumn.compareCoordinates.next(coordinates);
     }
   }
