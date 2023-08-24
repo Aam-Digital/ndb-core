@@ -45,7 +45,7 @@ describe("ConfigService", () => {
     testConfig.data = { testKey: "testValue" };
     entityMapper.load.and.resolveTo(testConfig);
 
-    service.loadConfig();
+    service.loadOnce();
     expect(entityMapper.load).toHaveBeenCalled();
     tick();
     expect(service.getConfig("testKey")).toEqual("testValue");
@@ -55,7 +55,7 @@ describe("ConfigService", () => {
     entityMapper.load.and.rejectWith("No config found");
     const configLoaded = firstValueFrom(service.configUpdates);
 
-    service.loadConfig();
+    service.loadOnce();
     tick();
     expect(() => service.getConfig("testKey")).toThrowError();
 
@@ -77,7 +77,7 @@ describe("ConfigService", () => {
       "test:2": { name: "second" },
     };
     entityMapper.load.and.resolveTo(testConfig);
-    service.loadConfig();
+    service.loadOnce();
     tick();
     const result = service.getAllConfigs<any>("test:");
     expect(result).toHaveSize(2);
@@ -90,7 +90,7 @@ describe("ConfigService", () => {
     const testConfig = new Config();
     testConfig.data = { first: "correct", second: "wrong" };
     entityMapper.load.and.resolveTo(testConfig);
-    service.loadConfig();
+    service.loadOnce();
     tick();
     const result = service.getConfig<any>("first");
     expect(result).toBe("correct");
@@ -172,7 +172,9 @@ describe("ConfigService", () => {
       { subject: "Config", action: "read" },
     ]);
 
+    console.log("init");
     await initConfig({ "enum:1": [], other: "config" });
+    console.log("after init");
 
     expect(entityMapper.save).not.toHaveBeenCalled();
   });
@@ -181,6 +183,6 @@ describe("ConfigService", () => {
     const config = new Config();
     config.data = data;
     entityMapper.load.and.resolveTo(config);
-    return service.loadConfig();
+    return service.loadOnce();
   }
 });

@@ -1,41 +1,32 @@
 import { Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
-import {
-  delay,
-  firstValueFrom,
-  Observable,
-  ReplaySubject,
-  skipWhile,
-} from "rxjs";
-import { distinctUntilChanged, map } from "rxjs/operators";
+import { delay, firstValueFrom, Observable, skipWhile } from "rxjs";
+import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
 import { FileService } from "../../features/file/file.service";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
+import { LatestEntity } from "../entity/latest-entity";
+import { LoggingService } from "../logging/logging.service";
 
 @Injectable({
   providedIn: "root",
 })
-export class SiteSettingsService {
-  siteSettings = new ReplaySubject<SiteSettings>(1);
+export class SiteSettingsService extends LatestEntity<SiteSettings> {
+  siteSettings = this.entityUpdated.pipe(shareReplay(1));
 
   siteName = this.getPropertyObservable("siteName");
   language = this.getPropertyObservable("language");
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
   icon = this.getPropertyObservable("favicon").pipe(delay(0));
   constructor(
-    private entityMapper: EntityMapperService,
     private title: Title,
     private fileService: FileService,
+    entityMapper: EntityMapperService,
+    logger: LoggingService,
   ) {
-    this.entityMapper
-      .load(SiteSettings, SiteSettings.ENTITY_ID)
-      .then((entity) => this.siteSettings.next(entity))
-      .catch(() => undefined);
-    this.entityMapper
-      .receiveUpdates(SiteSettings)
-      .subscribe(({ entity }) => this.siteSettings.next(entity));
-
+    super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper, logger);
+    // super.startLoading();
     this.siteName.subscribe((name) => {
       this.title.setTitle(name);
     });
