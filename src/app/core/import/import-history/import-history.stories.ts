@@ -1,10 +1,10 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { ImportHistoryComponent } from "./import-history.component";
-import { TEST_USER } from "../../../utils/mocked-testing.module";
 import { User } from "../../user/user";
 import { IMPORT_SAMPLE_PREVIOUS_IMPORTS } from "../import/import-sample-raw-data";
 import { importProvidersFrom } from "@angular/core";
+import { TEST_USER } from "../../../utils/mock-local-session";
 
 export default {
   title: "Features/Import/Import History",

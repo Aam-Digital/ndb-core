@@ -77,6 +77,7 @@ const columnsMapping = [
   [undefined, "distance"],
 ];
 
+/* TODO: fix MatchingEntities stories, breaking during initialization in storybook
 export const TwoSidedMatching = Template.bind({});
 TwoSidedMatching.args = {
   leftSide: {
@@ -105,4 +106,4 @@ RightMatch.args = {
   },
   entity: entitiesA[0],
   columns: columnsMapping,
-};
+};*/
