@@ -1,10 +1,10 @@
-import { Entity, EntityConstructor } from "../model/entity";
 import { EntityMapperService } from "./entity-mapper.service";
-import { UpdatedEntity } from "../model/entity-update";
 import { Observable, Subject } from "rxjs";
-import { entityRegistry } from "../database-entity.decorator";
 import { HttpErrorResponse } from "@angular/common/http";
-import { TEST_USER } from "../../../utils/mocked-testing.module";
+import { Entity, EntityConstructor } from "../model/entity";
+import { UpdatedEntity } from "../model/entity-update";
+import { entityRegistry } from "../database-entity.decorator";
+import { TEST_USER } from "../../../utils/mock-local-session";
 
 export function mockEntityMapper(
   withData: Entity[] = [],

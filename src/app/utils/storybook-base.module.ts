@@ -21,8 +21,8 @@ import {
   MockEntityMapperService,
 } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
-import { createLocalSession, TEST_USER } from "./mocked-testing.module";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
+import { createLocalSession, TEST_USER } from "./mock-local-session";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();

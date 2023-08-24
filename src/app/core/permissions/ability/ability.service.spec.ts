@@ -13,12 +13,10 @@ import { EntityAbility } from "./entity-ability";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
-import {
-  MockedTestingModule,
-  TEST_USER,
-} from "../../../utils/mocked-testing.module";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { TEST_USER } from "../../../utils/mock-local-session";
 
 describe("AbilityService", () => {
   let service: AbilityService;

@@ -12,7 +12,6 @@ import { BehaviorSubject, of } from "rxjs";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
-import { TEST_USER } from "../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
@@ -23,6 +22,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { AuthService } from "../../session/auth/auth.service";
+import { TEST_USER } from "../../../utils/mock-local-session";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;

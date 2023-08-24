@@ -7,10 +7,8 @@ import {
   HttpStatusCode,
 } from "@angular/common/http";
 import { of, throwError } from "rxjs";
-import {
-  TEST_PASSWORD,
-  TEST_USER,
-} from "../../../../utils/mocked-testing.module";
+
+import { TEST_PASSWORD, TEST_USER } from "../../../../utils/mock-local-session";
 
 describe("CouchdbAuthService", () => {
   let service: CouchdbAuthService;

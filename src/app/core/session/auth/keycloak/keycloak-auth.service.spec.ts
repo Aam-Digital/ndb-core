@@ -4,10 +4,6 @@ import {
   KeycloakAuthService,
   OIDCTokenResponse,
 } from "./keycloak-auth.service";
-import {
-  TEST_PASSWORD,
-  TEST_USER,
-} from "../../../../utils/mocked-testing.module";
 import { of, throwError } from "rxjs";
 import {
   HttpClient,
@@ -15,6 +11,7 @@ import {
   HttpStatusCode,
 } from "@angular/common/http";
 import { AuthUser } from "../../session-service/auth-user";
+import { TEST_PASSWORD, TEST_USER } from "../../../../utils/mock-local-session";
 
 function keycloakAuthHttpFake(_url, body) {
   const params = new URLSearchParams(body);

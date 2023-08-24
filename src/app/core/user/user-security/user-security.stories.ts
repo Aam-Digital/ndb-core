@@ -4,7 +4,8 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { SessionService } from "../../session/session-service/session.service";
 import { User } from "../user";
 import { importProvidersFrom } from "@angular/core";
-import { createLocalSession } from "../../../utils/mocked-testing.module";
+
+import { createLocalSession } from "../../../utils/mock-local-session";
 
 export default {
   title: "Core/Admin/User Security",

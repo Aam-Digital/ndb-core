@@ -2,9 +2,9 @@ import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { SupportComponent } from "./support.component";
 import { SwUpdate } from "@angular/service-worker";
-import { Database } from "../../database/database";
 import { UpdateManagerService } from "../../ui/latest-changes/update-manager.service";
 import { importProvidersFrom } from "@angular/core";
+import { PouchDatabase } from "../../database/pouch-database";
 
 // TODO: fix layout of SupportComponent buttons on mobile
 
@@ -25,7 +25,7 @@ export default {
         },
         { provide: SwUpdate, useValue: { isEnabled: true } },
         {
-          provide: Database,
+          provide: PouchDatabase,
           useValue: {
             getPouchDB: () => ({
               info: async () => ({ doc_count: 2, update_seq: 33 }),
