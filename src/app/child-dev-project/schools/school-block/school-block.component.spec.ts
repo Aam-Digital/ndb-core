@@ -3,7 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { SchoolBlockComponent } from "./school-block.component";
 import { RouterTestingModule } from "@angular/router/testing";
 import { School } from "../model/school";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 

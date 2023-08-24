@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { EntityMapperService } from "../entity/entity-mapper.service";
 import { SiteSettings } from "./site-settings";
 import {
   delay,
@@ -12,6 +11,7 @@ import { distinctUntilChanged, map } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
 import { FileService } from "../../features/file/file.service";
 import materialColours from "@aytek/material-color-picker";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 
 @Injectable({
   providedIn: "root",

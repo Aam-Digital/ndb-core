@@ -38,24 +38,10 @@ export const childrenComponents: ComponentTuple[] = [
       ),
   ],
   [
-    "EntityCountDashboard",
-    () =>
-      import(
-        "./dashboard-widgets/entity-count-dashboard/entity-count-dashboard.component"
-      ).then((c) => c.EntityCountDashboardComponent),
-  ],
-  [
-    "ChildrenCountDashboard",
-    () =>
-      import(
-        "./dashboard-widgets/entity-count-dashboard/entity-count-dashboard.component"
-      ).then((c) => c.EntityCountDashboardComponent),
-  ],
-  [
     "ChildrenBmiDashboard",
     () =>
       import(
-        "./dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component"
+        "./health-checkup/children-bmi-dashboard/children-bmi-dashboard.component"
       ).then((c) => c.ChildrenBmiDashboardComponent),
   ],
   [
@@ -68,7 +54,7 @@ export const childrenComponents: ComponentTuple[] = [
   [
     "BmiBlock",
     () =>
-      import("./children-list/bmi-block/bmi-block.component").then(
+      import("./health-checkup/bmi-block/bmi-block.component").then(
         (c) => c.BmiBlockComponent,
       ),
   ],
@@ -78,12 +64,5 @@ export const childrenComponents: ComponentTuple[] = [
       import(
         "./health-checkup/health-checkup-component/health-checkup.component"
       ).then((c) => c.HealthCheckupComponent),
-  ],
-  [
-    "BirthdayDashboard",
-    () =>
-      import(
-        "./dashboard-widgets/birthday-dashboard/birthday-dashboard.component"
-      ).then((c) => c.BirthdayDashboardComponent),
   ],
 ];

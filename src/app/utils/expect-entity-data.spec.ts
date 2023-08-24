@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 import { Entity } from "../core/entity/model/entity";
-import { EntityMapperService } from "../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 
 /**
  * Run unit test expect to check that all given entities are indeed in the database.

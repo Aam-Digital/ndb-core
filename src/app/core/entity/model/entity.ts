@@ -18,7 +18,10 @@
 import { v4 as uuid } from "uuid";
 import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
-import { getWarningLevelColor, WarningLevel } from "./warning-level";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../child-dev-project/warning-level";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { UpdateMetadata } from "./update-metadata";
 

@@ -3,9 +3,9 @@
  * @param date The date to be checked
  */
 import { Router } from "@angular/router";
-import { ConfigurableEnumValue } from "../core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 import { FactoryProvider, Injector } from "@angular/core";
-import { isConfigurableEnum } from "../core/entity-components/entity-subrecord/entity-subrecord/value-accessor";
+import { isConfigurableEnum } from "../core/common-components/entity-subrecord/entity-subrecord/value-accessor";
 
 export function isValidDate(date: any): boolean {
   return (

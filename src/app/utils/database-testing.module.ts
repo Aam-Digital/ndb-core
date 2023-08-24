@@ -8,8 +8,8 @@ import { environment } from "../../environments/environment";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { AppModule } from "../app.module";
 import { ComponentRegistry } from "../dynamic-components";
-import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
+import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
 
 /**

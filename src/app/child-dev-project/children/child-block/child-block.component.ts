@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-tooltip.component";

@@ -7,7 +7,7 @@ import {
   HttpResponse,
   HttpStatusCode,
 } from "@angular/common/http";
-import { AppSettings } from "../../core/app-config/app-settings";
+import { AppSettings } from "../../core/app-settings";
 import {
   catchError,
   concatMap,
@@ -21,7 +21,7 @@ import { Observable, of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { FileService } from "./file.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";

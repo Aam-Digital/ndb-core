@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../../core/entity/model/entity";
-import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
 import { NgIf } from "@angular/common";
 import { FileService } from "../file.service";
+import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @Component({
   selector: "app-display-img",

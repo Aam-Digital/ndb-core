@@ -4,19 +4,19 @@ import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ChildrenService } from "../../children/children.service";
 import moment from "moment";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import {
   ColumnConfig,
   DataFilter,
-} from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+} from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterService } from "../../../core/filter/filter.service";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { EntitySubrecordComponent } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { EntityDatatype } from "../../../core/entity/schema-datatypes/entity.datatype";
-import { EntityArrayDatatype } from "../../../core/entity/schema-datatypes/entity-array.datatype";
+import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
+import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
 import { asArray } from "../../../utils/utils";
 
 /**

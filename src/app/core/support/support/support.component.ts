@@ -4,7 +4,7 @@ import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import * as Sentry from "@sentry/browser";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 import { environment } from "../../../../environments/environment";
@@ -14,7 +14,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
 import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { BackupService } from "../../admin/services/backup.service";
+import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { AuthService } from "../../session/auth/auth.service";
 

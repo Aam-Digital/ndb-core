@@ -2,7 +2,7 @@ import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { School } from "../../schools/model/school";
 import { Child } from "./child";
-import { TimePeriod } from "../../../core/entity-components/related-time-period-entities/time-period";
+import { TimePeriod } from "../../../core/entity-details/related-time-period-entities/time-period";
 
 /**
  * Record of a school year that a Child attended a certain class in a School.

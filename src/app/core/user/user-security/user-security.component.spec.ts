@@ -17,7 +17,7 @@ import {
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { of, throwError } from "rxjs";
 import { User } from "../user";
-import { AppSettings } from "../../app-config/app-settings";
+import { AppSettings } from "../../app-settings";
 import { SessionService } from "../../session/session-service/session.service";
 
 describe("UserSecurityComponent", () => {

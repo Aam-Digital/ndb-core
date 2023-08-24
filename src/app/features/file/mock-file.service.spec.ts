@@ -1,7 +1,7 @@
 import { TestBed } from "@angular/core/testing";
 
 import { MockFileService } from "./mock-file.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../core/entity/model/entity";
 import { firstValueFrom, NEVER, of } from "rxjs";
 import {

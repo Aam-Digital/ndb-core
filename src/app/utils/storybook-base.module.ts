@@ -12,15 +12,15 @@ import { SessionService } from "../core/session/session-service/session.service"
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
-import { ConfigurableEnumService } from "../core/configurable-enum/configurable-enum.service";
-import { createTestingConfigurableEnumService } from "../core/configurable-enum/configurable-enum-testing";
+import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { Entity } from "../core/entity/model/entity";
 import { User } from "../core/user/user";
 import {
   mockEntityMapper,
   MockEntityMapperService,
-} from "../core/entity/mock-entity-mapper-service";
-import { EntityMapperService } from "../core/entity/entity-mapper.service";
+} from "../core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { createLocalSession, TEST_USER } from "./mocked-testing.module";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 

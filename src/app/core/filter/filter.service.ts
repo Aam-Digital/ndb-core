@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { DataFilter } from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { DataFilter } from "../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../entity/model/entity";
 import {
   createFactory,
@@ -10,7 +10,7 @@ import {
   compare,
 } from "@ucast/mongo2js";
 import moment from "moment";
-import { ConfigurableEnumService } from "../configurable-enum/configurable-enum.service";
+import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 
 /**
  * Utility service to help handling and aligning filters with entities.

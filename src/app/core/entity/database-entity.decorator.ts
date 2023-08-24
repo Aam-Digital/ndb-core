@@ -1,5 +1,5 @@
 import { Entity, EntityConstructor } from "./model/entity";
-import { Registry } from "../registry/dynamic-registry";
+import { Registry } from "../config/registry/dynamic-registry";
 
 export class EntityRegistry extends Registry<EntityConstructor> {}
 

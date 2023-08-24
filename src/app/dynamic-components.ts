@@ -1,5 +1,5 @@
 import { Type } from "@angular/core";
-import { Registry } from "./core/registry/dynamic-registry";
+import { Registry } from "./core/config/registry/dynamic-registry";
 
 export type AsyncComponent = () => Promise<Type<any>>;
 

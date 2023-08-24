@@ -36,4 +36,11 @@ export const attendanceComponents: ComponentTuple[] = [
         (c) => c.EditAttendanceComponent,
       ),
   ],
+  [
+    "ActivitiesOverview",
+    () =>
+      import(
+        "../attendance/activities-overview/activities-overview.component"
+      ).then((c) => c.ActivitiesOverviewComponent),
+  ],
 ];
