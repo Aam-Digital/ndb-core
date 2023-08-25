@@ -9,8 +9,5 @@ module.exports = {
         fsCache: true,
       },
     },
-    features: {
-      storyStoreV7: false,
-    },
   },
 };
