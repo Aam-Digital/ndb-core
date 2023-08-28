@@ -14,10 +14,7 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-import {
-  ConfigurableEnumConfig,
-  ConfigurableEnumValue,
-} from "../configurable-enum.interface";
+import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
@@ -27,9 +24,10 @@ import { ConfigurableEnumService } from "../configurable-enum.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumDatatype } from "./configurable-enum.datatype";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { InteractionType } from "../../../../child-dev-project/notes/model/interaction-type.interface";
 
 describe("Schema data type: configurable-enum", () => {
-  const TEST_CONFIG: ConfigurableEnumConfig = [
+  const TEST_CONFIG: InteractionType[] = [
     { id: "NONE", label: "" },
     { id: "TEST_1", label: "Category 1" },
     { id: "TEST_3", label: "Category 3", color: "#FFFFFF", isMeeting: true },
@@ -53,7 +51,11 @@ describe("Schema data type: configurable-enum", () => {
   let enumService: jasmine.SpyObj<ConfigurableEnumService>;
 
   beforeEach(waitForAsync(() => {
-    enumService = jasmine.createSpyObj(["getEnumValues", "preLoadEnums"]);
+    enumService = jasmine.createSpyObj([
+      "getEnumValues",
+      "preLoadEnums",
+      "cacheEnum",
+    ]);
     enumService.getEnumValues.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({

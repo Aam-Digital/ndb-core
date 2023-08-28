@@ -1,3 +1,6 @@
+import { Ordering } from "./configurable-enum-ordering";
+import HasOrdinal = Ordering.HasOrdinal;
+
 /**
  * Interface specifying overall object representing an enum with all its options
  * as stored in the config database
@@ -10,7 +13,7 @@ export type ConfigurableEnumConfig<
  * Mandatory properties of each option of an configurable enum
  * the actual object can contain additional properties in the specific context of that enum (e.g. a `color` property)
  */
-export interface ConfigurableEnumValue {
+export interface ConfigurableEnumValue extends HasOrdinal {
   /**
    * identifier that is unique among all values of the same enum and does not change even when label or other things are edited
    */

@@ -5,9 +5,6 @@ import { ConfigurableEnumValue } from "../../../core/basic-datatypes/configurabl
  * providing special context for {@link Note} categories.
  */
 export interface InteractionType extends ConfigurableEnumValue {
-  /** color highlighting the individual category */
-  color?: string;
-
   /** whether the Note is a group type category that stores attendance details for each related person */
   isMeeting?: boolean;
 }

@@ -6,11 +6,12 @@ import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
 import { Subject } from "rxjs";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
+import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.interface";
 
 describe("TranslationServiceService", () => {
   let service: LanguageService;
   let reloadSpy: jasmine.Spy;
-  let languageSubject: Subject<string>;
+  let languageSubject: Subject<ConfigurableEnumValue>;
 
   beforeEach(() => {
     reloadSpy = jasmine.createSpy();
@@ -18,7 +19,7 @@ describe("TranslationServiceService", () => {
       localStorage: window.localStorage,
       location: { reload: reloadSpy } as any,
     };
-    languageSubject = new Subject<string>();
+    languageSubject = new Subject();
     TestBed.configureTestingModule({
       providers: [
         { provide: LOCALE_ID, useValue: "en-US" },
@@ -44,9 +45,9 @@ describe("TranslationServiceService", () => {
     expect(service.currentRegionCode()).toBe("us");
   });
 
-  it("should set use the default locale if no locale is set", () => {
+  it("should use the default locale if no locale is set", () => {
     service.initDefaultLanguage();
-    languageSubject.next("de");
+    languageSubject.next({ id: "de", label: "de" });
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("de");
     expect(reloadSpy).toHaveBeenCalled();
   });
@@ -54,14 +55,14 @@ describe("TranslationServiceService", () => {
   it("should not change language if a different locale is set", () => {
     window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, "fr");
     service.initDefaultLanguage();
-    languageSubject.next("de");
+    languageSubject.next({ id: "de", label: "de" });
     expect(window.localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY)).toBe("fr");
     expect(reloadSpy).not.toHaveBeenCalled();
   });
 
   it("should not reload, if the current locale is the same as the default", () => {
     service.initDefaultLanguage();
-    languageSubject.next("en-US");
+    languageSubject.next({ id: "en-US", label: "us" });
     expect(reloadSpy).not.toHaveBeenCalled();
   });
 });
