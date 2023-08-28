@@ -23,7 +23,7 @@ import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ConfigService } from "../../config/config.service";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router, RouterLink, RouterOutlet } from "@angular/router";
@@ -64,7 +64,6 @@ import { SiteSettings } from "../../site-settings/site-settings";
     AppVersionComponent,
     RouterOutlet,
     PrimaryActionComponent,
-    AsyncPipe,
     DisplayImgComponent,
   ],
   standalone: true,
