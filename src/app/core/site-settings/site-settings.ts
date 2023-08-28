@@ -26,12 +26,14 @@ export class SiteSettings extends Entity {
     label: $localize`Logo`,
     dataType: "file",
     editComponent: "EditPhoto",
+    additional: 300,
   })
   logo: string;
   @DatabaseField({
     label: $localize`App favicon`,
     dataType: "file",
     editComponent: "EditPhoto",
+    additional: 256,
   })
   favicon: string;
   @DatabaseField({ label: $localize`Primary color` }) primary: string;
