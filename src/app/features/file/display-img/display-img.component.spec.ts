@@ -26,13 +26,13 @@ describe("DisplayImgComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should reset picture if child has none", async () => {
+  it("should reset picture if child has none", () => {
     const withPicture = new Child();
     withPicture.photo = "some-picture";
     component.entity = withPicture;
     component.imgProperty = "photo";
 
-    await component.ngOnChanges({ entity: undefined });
+    component.ngOnChanges({ entity: undefined });
 
     expect(mockFileService.loadFile).toHaveBeenCalled();
     expect(component.imgSrc).toBeDefined();
@@ -41,7 +41,7 @@ describe("DisplayImgComponent", () => {
     // without picture
     component.entity = new Child();
 
-    await component.ngOnChanges({ entity: undefined });
+    component.ngOnChanges({ entity: undefined });
 
     expect(mockFileService.loadFile).not.toHaveBeenCalled();
     expect(component.imgSrc).toBeUndefined();

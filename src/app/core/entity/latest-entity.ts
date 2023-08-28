@@ -27,9 +27,7 @@ export abstract class LatestEntity<T extends Entity> {
       .load(this.entityCtor, this.entityID)
       .then((entity) => this.entityUpdated.next(entity))
       .catch((err) => {
-        if (err?.status === HttpStatusCode.NotFound) {
-          return undefined;
-        } else {
+        if (err?.status !== HttpStatusCode.NotFound) {
           this.logger.error(
             `Loading entity "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed: ${err} `,
           );

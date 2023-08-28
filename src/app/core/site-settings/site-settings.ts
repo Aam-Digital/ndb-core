@@ -19,7 +19,6 @@ export class SiteSettings extends Entity {
 
   @DatabaseField({ label: $localize`Site name` }) siteName: string =
     "Aam Digital - Demo";
-  // TODO should be enum?
   @DatabaseField({
     label: $localize`Default language`,
     description: $localize`This will only be applied once the app is reloaded`,
