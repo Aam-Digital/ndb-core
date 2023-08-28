@@ -17,16 +17,14 @@ export class KeycloakAuthService extends AuthService {
 
   public accessToken: string;
 
-  private keycloakReady = this.keycloak
-    .init({
-      config: window.location.origin + "/assets/keycloak.json",
-      initOptions: {
-        onLoad: "check-sso",
-        silentCheckSsoRedirectUri:
-          window.location.origin + "/assets/silent-check-sso.html",
-      },
-    })
-    .then((res) => console.log("init done", res));
+  private keycloakReady = this.keycloak.init({
+    config: window.location.origin + "/assets/keycloak.json",
+    initOptions: {
+      onLoad: "check-sso",
+      silentCheckSsoRedirectUri:
+        window.location.origin + "/assets/silent-check-sso.html",
+    },
+  });
 
   constructor(
     private httpClient: HttpClient,
