@@ -1,5 +1,6 @@
 import { Directive, Input, TemplateRef, ViewContainerRef } from "@angular/core";
 import { ConfigurableEnumService } from "../configurable-enum.service";
+import { ConfigurableEnumValue } from "../configurable-enum.interface";
 
 /**
  * Enumerate over all {@link ConfigurableEnumConfig} values for the given enum config id.
@@ -36,4 +37,19 @@ export class ConfigurableEnumDirective {
     private viewContainerRef: ViewContainerRef,
     private enumService: ConfigurableEnumService,
   ) {}
+
+  /**
+   * Make sure the template checker knows the type of the context with which the
+   * template of this directive will be rendered
+   * See {@link https://angular.io/guide/structural-directives#typing-the-directives-context}
+   * @param directive
+   * @param context
+   */
+
+  static ngTemplateContextGuard(
+    directive: ConfigurableEnumDirective,
+    context: unknown,
+  ): context is { $implicit: ConfigurableEnumValue } {
+    return true;
+  }
 }
