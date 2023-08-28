@@ -1,17 +1,11 @@
 import { AuthService } from "../auth.service";
 import { Injectable } from "@angular/core";
-import Keycloak from "keycloak-js";
-import {
-  HttpClient,
-  HttpErrorResponse,
-  HttpHeaders,
-  HttpStatusCode,
-} from "@angular/common/http";
-import { firstValueFrom, Observable } from "rxjs";
+import { HttpClient } from "@angular/common/http";
+import { Observable } from "rxjs";
 import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
 import { AuthUser } from "../../session-service/auth-user";
-import { catchError } from "rxjs/operators";
+import { KeycloakService } from "keycloak-angular";
 
 @Injectable()
 export class KeycloakAuthService extends AuthService {
@@ -23,81 +17,46 @@ export class KeycloakAuthService extends AuthService {
 
   public accessToken: string;
 
-  private keycloak = new Keycloak("assets/keycloak.json");
-  private keycloakReady = this.keycloak.init({});
+  private keycloakReady = this.keycloak
+    .init({
+      config: window.location.origin + "/assets/keycloak.json",
+      initOptions: {
+        onLoad: "check-sso",
+        silentCheckSsoRedirectUri:
+          window.location.origin + "/assets/silent-check-sso.html",
+      },
+    })
+    .then((res) => console.log("init done", res));
 
-  constructor(private httpClient: HttpClient) {
+  constructor(
+    private httpClient: HttpClient,
+    private keycloak: KeycloakService,
+  ) {
     super();
   }
 
   get realmUrl(): string {
-    return `${this.keycloak.authServerUrl}realms/${this.keycloak.realm}`;
+    const k = this.keycloak.getKeycloakInstance();
+    return `${k.authServerUrl}realms/${k.realm}`;
   }
 
   authenticate(username: string, password: string): Promise<AuthUser> {
-    return this.keycloakReady
-      .then(() => this.credentialAuth(username.trim(), password))
-      .then((token) => this.processToken(token));
+    return this.keycloak.login({
+      redirectUri: location.href,
+    }) as any;
   }
 
   autoLogin(): Promise<AuthUser> {
     return this.keycloakReady
-      .then(() => this.refreshTokenAuth())
+      .then(() => this.keycloak.getToken())
       .then((token) => this.processToken(token));
   }
 
-  private credentialAuth(
-    username: string,
-    password: string,
-  ): Promise<OIDCTokenResponse> {
-    const body = new URLSearchParams();
-    body.set("username", username);
-    body.set("password", password);
-    body.set("grant_type", "password");
-    return this.getToken(body);
-  }
-
-  private refreshTokenAuth(): Promise<OIDCTokenResponse> {
-    const body = new URLSearchParams();
-    const token = localStorage.getItem(KeycloakAuthService.REFRESH_TOKEN_KEY);
-    body.set("refresh_token", token);
-    body.set("grant_type", "refresh_token");
-    return this.getToken(body);
-  }
-
-  private getToken(body: URLSearchParams): Promise<OIDCTokenResponse> {
-    body.set("client_id", "app");
-    const headers = new HttpHeaders().set(
-      "Content-Type",
-      "application/x-www-form-urlencoded",
-    );
-    return firstValueFrom(
-      this.httpClient
-        .post<OIDCTokenResponse>(
-          `${this.realmUrl}/protocol/openid-connect/token`,
-          body.toString(),
-          { headers },
-        )
-        .pipe(
-          catchError((err) => {
-            // treat all invalid grants as unauthorized
-            if (err.error.error === "invalid_grant") {
-              const status = HttpStatusCode.Unauthorized;
-              throw new HttpErrorResponse({ status });
-            } else {
-              throw err;
-            }
-          }),
-        ),
-    );
-  }
-
-  private processToken(token: OIDCTokenResponse): AuthUser {
-    this.accessToken = token.access_token;
-    localStorage.setItem(
-      KeycloakAuthService.REFRESH_TOKEN_KEY,
-      token.refresh_token,
-    );
+  private processToken(token: string): AuthUser {
+    if (!token) {
+      throw new Error();
+    }
+    this.accessToken = token;
     this.logSuccessfulAuth();
     const parsedToken = parseJwt(this.accessToken);
     if (!parsedToken.username) {
@@ -124,7 +83,7 @@ export class KeycloakAuthService extends AuthService {
   }
 
   async logout() {
-    window.localStorage.removeItem(KeycloakAuthService.REFRESH_TOKEN_KEY);
+    return this.keycloak.logout(location.href);
   }
 
   /**
@@ -151,13 +110,10 @@ export class KeycloakAuthService extends AuthService {
   }
 
   forgotPassword(email: string): Observable<any> {
+    const k = this.keycloak.getKeycloakInstance();
     return this.httpClient.post(
       `${environment.account_url}/account/forgot-password`,
-      {
-        email,
-        realm: this.keycloak.realm,
-        client: this.keycloak.clientId,
-      },
+      { email, realm: k.realm, client: k.clientId },
     );
   }
 

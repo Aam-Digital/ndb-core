@@ -29,6 +29,7 @@ import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
 import { AuthProvider } from "./auth/auth-provider";
 import { AuthInterceptor } from "./auth/auth.interceptor";
 import { serviceProvider } from "../../utils/utils";
+import { KeycloakAngularModule } from "keycloak-angular";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -39,6 +40,7 @@ import { serviceProvider } from "../../utils/utils";
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
  */
 @NgModule({
+  imports: [KeycloakAngularModule],
   providers: [
     SyncedSessionService,
     LocalSession,
