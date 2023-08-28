@@ -47,14 +47,6 @@ export class SiteSettings extends Entity {
   @DatabaseField({ label: $localize`Error color` }) error: string;
   @DatabaseField({ label: $localize`Text font` }) font: string;
 
-  // TODO implement?
-  @DatabaseField({
-    label: $localize`Use logo as icon`,
-    dataType: "file",
-    editComponent: "EditPhoto",
-  })
-  logoAsIcon = false;
-
   constructor() {
     super(SiteSettings.ENTITY_ID);
   }
