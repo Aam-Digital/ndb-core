@@ -12,6 +12,11 @@ import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/conf
 export class SiteSettings extends Entity {
   static ENTITY_ID = "global";
   static label = $localize`Site settings`;
+
+  static create(value: Partial<SiteSettings>): SiteSettings {
+    return Object.assign(new SiteSettings(), value);
+  }
+
   @DatabaseField({ label: $localize`Site name` }) siteName: string =
     "Aam Digital - Demo";
   // TODO should be enum?
