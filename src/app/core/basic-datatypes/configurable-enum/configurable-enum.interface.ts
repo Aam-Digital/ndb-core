@@ -33,9 +33,9 @@ export interface ConfigurableEnumValue {
   isInvalidOption?: boolean;
 
   /**
-   * Optionally any number of additional properties specific to a certain enum collection.
+   * optional styling class that should be applied when displaying this value
    */
-  [x: string]: any;
+  style?: string;
 }
 
 export const EMPTY: ConfigurableEnumValue = {
