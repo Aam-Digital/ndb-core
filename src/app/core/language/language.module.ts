@@ -1,5 +1,7 @@
 import { NgModule } from "@angular/core";
 import { LanguageService } from "./language.service";
+import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { availableLocales } from "./languages";
 
 /**
  * Module that aids in the management and choice of translations/languages
@@ -12,7 +14,12 @@ import { LanguageService } from "./language.service";
  */
 @NgModule({})
 export class LanguageModule {
-  constructor(translationService: LanguageService) {
+  constructor(
+    translationService: LanguageService,
+    enumService: ConfigurableEnumService,
+  ) {
     translationService.initDefaultLanguage();
+    // Making locales enum available at runtime
+    enumService["cacheEnum"](availableLocales);
   }
 }

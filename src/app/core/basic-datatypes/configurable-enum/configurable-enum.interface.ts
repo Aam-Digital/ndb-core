@@ -42,10 +42,3 @@ export const EMPTY: ConfigurableEnumValue = {
   id: "",
   label: "",
 };
-
-/**
- * The prefix of all enum collection entries in the config database.
- *
- * This prefix is concatenated with the individual enum collection's id, resulting in the full config object id.
- */
-export const CONFIGURABLE_ENUM_CONFIG_PREFIX = "enum:";

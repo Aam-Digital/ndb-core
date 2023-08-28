@@ -6,4 +6,8 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 @DatabaseEntity("ConfigurableEnum")
 export class ConfigurableEnum extends Entity {
   @DatabaseField() values: ConfigurableEnumValue[] = [];
+  constructor(id?: string, values: ConfigurableEnumValue[] = []) {
+    super(id);
+    this.values = values;
+  }
 }

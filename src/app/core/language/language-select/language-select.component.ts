@@ -6,6 +6,8 @@ import { MatButtonModule } from "@angular/material/button";
 import { MatIconModule } from "@angular/material/icon";
 import { MatMenuModule } from "@angular/material/menu";
 import { NgForOf } from "@angular/common";
+import { LOCALE_ENUM_ID } from "../languages";
+import { ConfigurableEnumDirective } from "../../basic-datatypes/configurable-enum/configurable-enum-directive/configurable-enum.directive";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -14,22 +16,27 @@ import { NgForOf } from "@angular/common";
   selector: "app-language-select",
   templateUrl: "./language-select.component.html",
   styleUrls: ["./language-select.component.scss"],
-  imports: [MatButtonModule, MatIconModule, MatMenuModule, NgForOf],
+  imports: [
+    MatButtonModule,
+    MatIconModule,
+    MatMenuModule,
+    NgForOf,
+    ConfigurableEnumDirective,
+  ],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class LanguageSelectComponent {
+  localeEnumId = LOCALE_ENUM_ID;
   /**
    * The region code of the currently selected language/region
    */
-  siteRegionCode: string;
+  siteRegionCode = this.translationService.currentRegionCode();
 
   constructor(
-    public translationService: LanguageService,
+    private translationService: LanguageService,
     @Inject(LOCATION_TOKEN) private location: Location,
-  ) {
-    this.siteRegionCode = translationService.currentRegionCode();
-  }
+  ) {}
 
   changeLocale(lang: string) {
     localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, lang);

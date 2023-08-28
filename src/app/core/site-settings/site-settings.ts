@@ -1,6 +1,8 @@
 import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
+import { availableLocales, LOCALE_ENUM_ID } from "../language/languages";
+import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.interface";
 
 /**
  * Global settings like styling and title to customize an instance of the app.
@@ -14,10 +16,14 @@ export class SiteSettings extends Entity {
     "Aam Digital - Demo";
   // TODO should be enum?
   @DatabaseField({
-    label: $localize`Language`,
+    label: $localize`Default language`,
     description: $localize`This will only be applied once the app is reloaded`,
+    dataType: "configurable-enum",
+    innerDataType: LOCALE_ENUM_ID,
   })
-  language: string = "en-US";
+  language: ConfigurableEnumValue = availableLocales.values.find(
+    ({ id }) => id === "en-US",
+  );
   @DatabaseField({
     label: $localize`Display langauge select`,
   })

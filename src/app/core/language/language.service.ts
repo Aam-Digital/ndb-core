@@ -4,25 +4,12 @@ import { WINDOW_TOKEN } from "../../utils/di-tokens";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 
 /**
- * Service that contains
- * <li>The currently selected language
- * <li>All available languages
+ * Service that provides the currently active locale and applies a newly selected one.
  */
 @Injectable({
   providedIn: "root",
 })
 export class LanguageService {
-  /**
-   * A readonly array of all locales available
-   * TODO: Hardcoded
-   */
-  readonly availableLocales: { locale: string; regionCode: string }[] = [
-    { locale: "de", regionCode: "de" },
-    { locale: "en-US", regionCode: "us" },
-    { locale: "fr", regionCode: "fr" },
-    { locale: "it", regionCode: "it" },
-  ];
-
   constructor(
     @Inject(LOCALE_ID) private baseLocale: string,
     @Inject(WINDOW_TOKEN) private window: Window,
@@ -35,13 +22,10 @@ export class LanguageService {
     );
 
     if (!languageSelected) {
-      this.siteSettings.language.subscribe((language) => {
-        if (language !== this.baseLocale) {
+      this.siteSettings.language.subscribe(({ id }) => {
+        if (id !== this.baseLocale) {
           // Reload app with default language from config
-          this.window.localStorage.setItem(
-            LANGUAGE_LOCAL_STORAGE_KEY,
-            language,
-          );
+          this.window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, id);
           this.window.location.reload();
         }
       });
