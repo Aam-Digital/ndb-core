@@ -13,12 +13,13 @@ import { LoggingService } from "../logging/logging.service";
   providedIn: "root",
 })
 export class SiteSettingsService extends LatestEntity<SiteSettings> {
+  readonly DEFAULT_FAVICON = "favicon.ico";
+
   siteSettings = this.entityUpdated.pipe(shareReplay(1));
 
   siteName = this.getPropertyObservable("siteName");
   language = this.getPropertyObservable("language");
   displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
-  icon = this.getPropertyObservable("favicon").pipe(delay(0));
   constructor(
     private title: Title,
     private fileService: FileService,
@@ -28,27 +29,35 @@ export class SiteSettingsService extends LatestEntity<SiteSettings> {
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper, logger);
     super.startLoading();
 
-    this.siteName.subscribe((name) => {
-      this.title.setTitle(name);
-    });
-    this.icon.subscribe(async () => {
-      // TODO reset when deleted
-      const entity = await firstValueFrom(this.siteSettings);
-      const imgUrl = await firstValueFrom(
-        this.fileService.loadFile(entity, "icon"),
-      );
-      const favIcon: HTMLLinkElement = document.querySelector("#appIcon");
-      favIcon.href = Object.values(imgUrl)[0];
-    });
-    this.listenToColorUpdates("primary");
-    this.listenToColorUpdates("secondary");
-    this.listenToColorUpdates("error");
+    this.siteName.subscribe((name) => this.title.setTitle(name));
     this.getPropertyObservable("font").subscribe((font) =>
       document.documentElement.style.setProperty("--font-family", font),
     );
+
+    this.applyFaviconChanges();
+    this.applyColorChanges("primary");
+    this.applyColorChanges("secondary");
+    this.applyColorChanges("error");
   }
 
-  private listenToColorUpdates(property: "primary" | "secondary" | "error") {
+  private applyFaviconChanges() {
+    this.getPropertyObservable("favicon")
+      .pipe(delay(0))
+      .subscribe(async (icon) => {
+        const favIcon: HTMLLinkElement = document.querySelector("#appIcon");
+        if (icon) {
+          const entity = await firstValueFrom(this.siteSettings);
+          const imgUrl = await firstValueFrom(
+            this.fileService.loadFile(entity, "favicon"),
+          );
+          favIcon.href = Object.values(imgUrl)[0];
+        } else {
+          favIcon.href = this.DEFAULT_FAVICON;
+        }
+      });
+  }
+
+  private applyColorChanges(property: "primary" | "secondary" | "error") {
     this.getPropertyObservable(property).subscribe((color) => {
       if (color) {
         const palette = materialColours(color);

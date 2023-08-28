@@ -11,7 +11,7 @@ export class SiteSettings extends Entity {
   static ENTITY_ID = "global";
   static label = $localize`Site settings`;
   @DatabaseField({ label: $localize`Site name` }) siteName: string =
-    "Aam Digital";
+    "Aam Digital - Demo";
   // TODO should be enum?
   @DatabaseField({
     label: $localize`Language`,
