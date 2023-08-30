@@ -14,7 +14,7 @@ export abstract class AuthService {
    * @param password The password of the user
    * @returns Promise that resolves with the user if the login was successful, rejects otherwise.
    */
-  abstract authenticate(username: string, password: string): Promise<AuthUser>;
+  abstract authenticate(): void;
 
   /**
    * Authenticate a user without credentials based on a still valid session.

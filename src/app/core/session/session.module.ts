@@ -21,7 +21,7 @@ import { SyncedSessionService } from "./session-service/synced-session.service";
 import { LocalSession } from "./session-service/local-session";
 import { RemoteSession } from "./session-service/remote-session";
 import { SessionService } from "./session-service/session.service";
-import { SessionType } from "./session-type";
+import { LoginStateSubject, SessionType } from "./session-type";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "./auth/auth.service";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
@@ -62,6 +62,7 @@ import { KeycloakAngularModule } from "keycloak-angular";
       useClass: AuthInterceptor,
       multi: true,
     },
+    LoginStateSubject,
   ],
 })
 export class SessionModule {}

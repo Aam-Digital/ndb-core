@@ -25,7 +25,6 @@ import { Database } from "../../database/database";
 import { SyncState } from "../session-states/sync-state.enum";
 import { LoggingService } from "../../logging/logging.service";
 import { waitForChangeTo } from "../session-states/session-utils";
-import { zip } from "rxjs";
 import { filter } from "rxjs/operators";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AuthService } from "../auth/auth.service";
@@ -41,7 +40,6 @@ import { AuthUser } from "./auth-user";
 @Injectable()
 export class SyncedSessionService extends SessionService {
   static readonly LAST_SYNC_KEY = "LAST_SYNC";
-  private readonly LOGIN_RETRY_TIMEOUT = 60000;
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
 
   private _liveSyncHandle: any;
@@ -78,12 +76,12 @@ export class SyncedSessionService extends SessionService {
   }
 
   async handleSuccessfulLogin(userObject: AuthUser) {
-    this.startSyncAfterLocalAndRemoteLogin();
+    this.startSyncAfterRemoteLogin();
     await this.localSession.handleSuccessfulLogin(userObject);
     // The app is ready to be used once the local session is logged in
     this.loginState.next(LoginState.LOGGED_IN);
     await this.remoteSession.handleSuccessfulLogin(userObject);
-    this.updateLocalUser(undefined, undefined);
+    this.updateLocalUser();
   }
 
   /**
@@ -99,73 +97,21 @@ export class SyncedSessionService extends SessionService {
    * @param password Password
    * @returns promise resolving with the local LoginState
    */
-  public async login(username: string, password: string): Promise<LoginState> {
-    this.cancelLoginOfflineRetry(); // in case this is running in the background
-    this.syncState.next(SyncState.UNSYNCED);
-
-    const remoteLogin = this.remoteSession
-      .login(username, password)
-      .then((state) => {
-        this.updateLocalUser(password, username);
-        return state;
-      });
-
-    this.startSyncAfterLocalAndRemoteLogin();
-
-    const localLoginState = await this.localSession.login(username, password);
-
-    if (localLoginState === LoginState.LOGGED_IN) {
-      this.loginState.next(LoginState.LOGGED_IN);
-      remoteLogin.then((loginState) => {
-        if (loginState === LoginState.LOGIN_FAILED) {
-          this.localSession.removeUser(username);
-          this.logout();
-        }
-        if (loginState === LoginState.UNAVAILABLE) {
-          this.retryLoginWhileOffline(username, password);
-        }
-      });
-    } else {
-      const remoteLoginState = await remoteLogin;
-      if (remoteLoginState === LoginState.LOGGED_IN) {
-        // New user or password changed
-        const localLoginRetry = await this.localSession.login(
-          username,
-          password,
-        );
-        this.loginState.next(localLoginRetry);
-      } else if (
-        remoteLoginState === LoginState.UNAVAILABLE &&
-        localLoginState === LoginState.UNAVAILABLE
-      ) {
-        // Offline with no local user
-        this.loginState.next(LoginState.UNAVAILABLE);
-      } else {
-        // Password and or username wrong
-        this.loginState.next(LoginState.LOGIN_FAILED);
-      }
-    }
-    return this.loginState.value;
+  public async login() {
+    this.remoteSession.login();
   }
 
-  private startSyncAfterLocalAndRemoteLogin() {
-    zip(
-      this.localSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
-      this.remoteSession.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
-    ).subscribe(() => this.startSync());
+  private startSyncAfterRemoteLogin() {
+    this.remoteSession.loginState
+      .pipe(waitForChangeTo(LoginState.LOGGED_IN))
+      .subscribe(() => this.startSync());
   }
 
-  private retryLoginWhileOffline(username: string, password: string) {
-    this._offlineRetryLoginScheduleHandle = setTimeout(() => {
-      this.login(username, password);
-    }, this.LOGIN_RETRY_TIMEOUT);
-  }
-
-  private updateLocalUser(password: string, loginName: string) {
+  private updateLocalUser() {
     // Update local user object
     const remoteUser = this.remoteSession.getCurrentUser();
     if (remoteUser) {
-      this.localSession.saveUser(remoteUser, password, loginName);
+      this.localSession.saveUser(remoteUser);
     }
   }
 

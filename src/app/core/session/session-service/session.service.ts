@@ -45,7 +45,7 @@ export abstract class SessionService {
    * @param username
    * @param password
    */
-  abstract login(username: string, password: string): Promise<LoginState>;
+  abstract login(): void;
 
   /**
    * Do the necessary steps after the login has been successful.

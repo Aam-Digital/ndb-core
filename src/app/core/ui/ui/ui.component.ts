@@ -16,7 +16,6 @@
  */
 
 import { Component, ViewChild } from "@angular/core";
-import { SessionService } from "../../session/session-service/session.service";
 import { Title } from "@angular/platform-browser";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
@@ -36,6 +35,10 @@ import { NavigationComponent } from "../navigation/navigation/navigation.compone
 import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
 import { AppVersionComponent } from "../latest-changes/app-version/app-version.component";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
+import { LoginStateSubject } from "../../session/session-type";
+import { LoginState } from "../../session/session-states/login-state.enum";
+import { LocalSession } from "../../session/session-service/local-session";
+import { RemoteSession } from "../../session/session-service/remote-session";
 
 /**
  * The main user interface component as root element for the app structure
@@ -80,11 +83,13 @@ export class UiComponent {
   showLanguageSelect: boolean = false;
 
   constructor(
-    private _sessionService: SessionService,
     private titleService: Title,
     private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
+    private loginState: LoginStateSubject,
+    private localSession: LocalSession,
+    private remoteSession: RemoteSession,
   ) {
     this.screenWidthObserver
       .platform()
@@ -108,17 +113,16 @@ export class UiComponent {
    * Check if user is logged in.
    */
   isLoggedIn(): boolean {
-    return this._sessionService.isLoggedIn();
+    return this.loginState.value === LoginState.LOGGED_IN;
   }
 
   /**
    * Trigger logout of user.
    */
-  logout() {
-    this._sessionService.logout();
-    this.router.navigate(["/login"], {
-      queryParams: { redirect_uri: this.router.routerState.snapshot.url },
-    });
+  async logout() {
+    this.localSession.logout();
+    await this.remoteSession.logout();
+    location.reload();
   }
 
   closeSidenavOnMobile() {

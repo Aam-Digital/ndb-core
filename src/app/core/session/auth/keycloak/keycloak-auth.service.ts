@@ -38,10 +38,10 @@ export class KeycloakAuthService extends AuthService {
     return `${k.authServerUrl}realms/${k.realm}`;
   }
 
-  authenticate(username: string, password: string): Promise<AuthUser> {
-    return this.keycloak.login({
+  authenticate() {
+    this.keycloak.login({
       redirectUri: location.href,
-    }) as any;
+    });
   }
 
   autoLogin(): Promise<AuthUser> {

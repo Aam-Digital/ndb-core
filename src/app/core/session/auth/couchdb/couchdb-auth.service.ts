@@ -24,12 +24,12 @@ export class CouchdbAuthService extends AuthService {
     return;
   }
 
-  authenticate(username: string, password: string): Promise<AuthUser> {
+  authenticate(): Promise<AuthUser> {
     return firstValueFrom(
       this.http
         .post<AuthUser>(
           `${AppSettings.DB_PROXY_PREFIX}/_session`,
-          { name: username, password: password },
+          { name: undefined, password: undefined },
           { withCredentials: true },
         )
         .pipe(tap(() => this.logSuccessfulAuth())),

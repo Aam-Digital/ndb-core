@@ -16,7 +16,6 @@
  */
 
 import { Component } from "@angular/core";
-import { SessionService } from "../session-service/session.service";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -24,6 +23,8 @@ import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
 import { filter } from "rxjs/operators";
 import { LocalSession } from "../session-service/local-session";
+import { RemoteSession } from "../session-service/remote-session";
+import { LoginStateSubject } from "../session-type";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -38,12 +39,13 @@ import { LocalSession } from "../session-service/local-session";
 })
 export class LoginComponent {
   constructor(
-    private _sessionService: SessionService,
+    private remoteSession: RemoteSession,
     private router: Router,
     private route: ActivatedRoute,
     private localSession: LocalSession,
+    private loginState: LoginStateSubject,
   ) {
-    this._sessionService.loginState
+    this.loginState
       .pipe(
         untilDestroyed(this),
         filter((state) => state === LoginState.LOGGED_IN),
@@ -60,10 +62,10 @@ export class LoginComponent {
    * Do a login with the SessionService.
    */
   login() {
-    this._sessionService.login(undefined, undefined);
+    this.remoteSession.login();
   }
 
   useOffline() {
-    this.localSession.login(undefined, undefined);
+    this.localSession.login();
   }
 }

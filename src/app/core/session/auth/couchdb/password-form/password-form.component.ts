@@ -100,7 +100,7 @@ export class PasswordFormComponent implements OnInit {
     const newPassword = this.passwordForm.get("newPassword").value;
     return this.couchdbAuthService
       .changePassword(this.username, currentPassword, newPassword)
-      .then(() => this.sessionService.login(this.username, newPassword))
+      .then(() => this.sessionService.login())
       .then(() =>
         this.alertService.addInfo($localize`Password changed successfully.`),
       )

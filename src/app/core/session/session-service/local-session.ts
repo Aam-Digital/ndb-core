@@ -20,7 +20,7 @@ import { LocalUser, passwordEqualsEncrypted } from "./local-user";
 import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppSettings } from "../../app-settings";
-import { SessionType } from "../session-type";
+import { LoginStateSubject, SessionType } from "../session-type";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "./auth-user";
 
@@ -36,23 +36,22 @@ export class LocalSession extends SessionService {
   private currentDBUser: AuthUser;
   private static LAST_LOGGED_IN_KEY = "LAST_USER";
 
-  constructor(private database: PouchDatabase) {
+  constructor(
+    private database: PouchDatabase,
+    private loginStateSubject: LoginStateSubject,
+  ) {
     super();
   }
 
   /**
    * Get a login at the local session by fetching the user from the local storage and validating the password.
    * Returns a Promise resolving with the loginState.
-   * @param username Username
-   * @param password Password
    */
-  public async login(username: string, password: string): Promise<LoginState> {
+  public async login() {
     const user = this.getStoredUser(LocalSession.LAST_LOGGED_IN_KEY);
     if (user) {
       await this.handleSuccessfulLogin(user);
-      this.loginState.next(LoginState.LOGGED_IN);
     }
-    return this.loginState.value;
   }
 
   private getStoredUser(username: string): LocalUser {
@@ -63,7 +62,7 @@ export class LocalSession extends SessionService {
   public async handleSuccessfulLogin(userObject: AuthUser) {
     this.currentDBUser = userObject;
     await this.initializeDatabaseForCurrentUser();
-    this.loginState.next(LoginState.LOGGED_IN);
+    this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 
   private async initializeDatabaseForCurrentUser() {
@@ -107,10 +106,8 @@ export class LocalSession extends SessionService {
   /**
    * Saves a user to the local storage
    * @param user a object holding the username and the roles of the user
-   * @param password of the user
-   * @param loginName (optional) if login also works with a username other than `user.name`. E.g. the email of the user
    */
-  public saveUser(user: AuthUser, password: string, loginName = user.name) {
+  public saveUser(user: AuthUser) {
     window.localStorage.setItem(
       LocalSession.LAST_LOGGED_IN_KEY,
       JSON.stringify(user),

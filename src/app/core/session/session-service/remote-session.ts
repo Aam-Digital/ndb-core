@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { Injectable } from "@angular/core";
-import { HttpErrorResponse, HttpStatusCode } from "@angular/common/http";
+import { HttpStatusCode } from "@angular/common/http";
 import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
@@ -24,6 +24,7 @@ import PouchDB from "pouchdb-browser";
 import { AppSettings } from "../../app-settings";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
+import { LoginStateSubject } from "../session-type";
 
 /**
  * Responsibilities:
@@ -43,6 +44,7 @@ export class RemoteSession extends SessionService {
   constructor(
     private loggingService: LoggingService,
     private authService: AuthService,
+    private loginStateSubject: LoginStateSubject,
   ) {
     super();
     this.database = new PouchDatabase(this.loggingService);
@@ -50,24 +52,9 @@ export class RemoteSession extends SessionService {
 
   /**
    * Connect to the remote Database. Tries to determine from a possible error whether the login was rejected or the user is offline.
-   * @param username Username
-   * @param password Password
    */
-  public async login(username: string, password: string): Promise<LoginState> {
-    try {
-      const user = await this.authService.authenticate(username, password);
-      await this.handleSuccessfulLogin(user);
-      this.loginState.next(LoginState.LOGGED_IN);
-    } catch (error) {
-      const httpError = error as HttpErrorResponse;
-      if (httpError?.status === HttpStatusCode.Unauthorized) {
-        this.loginState.next(LoginState.LOGIN_FAILED);
-      } else {
-        this.loggingService.error(error);
-        this.loginState.next(LoginState.UNAVAILABLE);
-      }
-    }
-    return this.loginState.value;
+  public login() {
+    this.authService.authenticate();
   }
 
   public async handleSuccessfulLogin(userObject: AuthUser) {
@@ -93,7 +80,7 @@ export class RemoteSession extends SessionService {
       },
     );
     this.currentDBUser = userObject;
-    this.loginState.next(LoginState.LOGGED_IN);
+    this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 
   private sendRequest(url: string, opts) {
@@ -107,7 +94,7 @@ export class RemoteSession extends SessionService {
   public async logout(): Promise<void> {
     await this.authService.logout();
     this.currentDBUser = undefined;
-    this.loginState.next(LoginState.LOGGED_OUT);
+    this.loginStateSubject.next(LoginState.LOGGED_OUT);
   }
 
   getCurrentUser(): AuthUser {
