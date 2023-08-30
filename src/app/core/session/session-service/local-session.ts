@@ -138,7 +138,7 @@ export class LocalSession extends SessionService {
    */
   public logout() {
     this.currentDBUser = undefined;
-    this.loginState.next(LoginState.LOGGED_OUT);
+    this.loginStateSubject.next(LoginState.LOGGED_OUT);
   }
 
   getDatabase(): PouchDatabase {

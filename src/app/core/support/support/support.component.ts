@@ -1,5 +1,4 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { SessionService } from "../../session/session-service/session.service";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
@@ -18,6 +17,7 @@ import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { AuthService } from "../../session/auth/auth.service";
 import { UserService } from "../../user/user.service";
+import { SyncStateSubject } from "../../session/session-type";
 
 @Component({
   selector: "app-support",
@@ -39,7 +39,7 @@ export class SupportComponent implements OnInit {
   dbInfo: string;
 
   constructor(
-    private sessionService: SessionService,
+    private syncState: SyncStateSubject,
     private userService: UserService,
     private sw: SwUpdate,
     private database: PouchDatabase,
@@ -63,7 +63,7 @@ export class SupportComponent implements OnInit {
   }
 
   private initCurrentSyncState() {
-    switch (this.sessionService.syncState.value) {
+    switch (this.syncState.value) {
       case SyncState.COMPLETED:
         this.currentSyncState = "synced";
         return;

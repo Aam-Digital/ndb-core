@@ -42,8 +42,6 @@ export abstract class SessionService {
 
   /**
    * Authenticate a user.
-   * @param username
-   * @param password
    */
   abstract login(): void;
 

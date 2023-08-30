@@ -1,6 +1,7 @@
 import { BehaviorSubject } from "rxjs";
 import { LoginState } from "./session-states/login-state.enum";
 import { Injectable } from "@angular/core";
+import { SyncState } from "./session-states/sync-state.enum";
 
 /**
  * Available Session types with their keys that can be used in the app-config.
@@ -26,5 +27,12 @@ export enum SessionType {
 export class LoginStateSubject extends BehaviorSubject<LoginState> {
   constructor() {
     super(LoginState.LOGGED_OUT);
+  }
+}
+
+@Injectable()
+export class SyncStateSubject extends BehaviorSubject<SyncState> {
+  constructor() {
+    super(SyncState.UNSYNCED);
   }
 }

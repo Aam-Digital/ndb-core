@@ -16,7 +16,6 @@
  */
 
 import { ChangeDetectionStrategy, Component } from "@angular/core";
-import { SessionService } from "../../../session/session-service/session.service";
 import { SyncState } from "../../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../../entity/database-indexing/database-indexing.service";
 import { BackgroundProcessState } from "../background-process-state.interface";
@@ -24,6 +23,7 @@ import { BehaviorSubject } from "rxjs";
 import { debounceTime } from "rxjs/operators";
 import { BackgroundProcessingIndicatorComponent } from "../background-processing-indicator/background-processing-indicator.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { SyncStateSubject } from "../../../session/session-type";
 
 /**
  * A small indicator component that displays an icon when there is currently synchronization
@@ -52,7 +52,7 @@ export class SyncStatusComponent {
     .pipe(debounceTime(1000));
 
   constructor(
-    private sessionService: SessionService,
+    private syncState: SyncStateSubject,
     private dbIndexingService: DatabaseIndexingService,
   ) {
     this.dbIndexingService.indicesRegistered
@@ -62,7 +62,7 @@ export class SyncStatusComponent {
         this.updateBackgroundProcessesList();
       });
 
-    this.sessionService.syncState
+    this.syncState
       .pipe(untilDestroyed(this))
       .subscribe(() => this.updateBackgroundProcessesList());
   }
@@ -73,7 +73,7 @@ export class SyncStatusComponent {
    */
   private updateBackgroundProcessesList() {
     let currentProcesses: BackgroundProcessState[] = [];
-    if (this.sessionService.syncState.value === SyncState.STARTED) {
+    if (this.syncState.value === SyncState.STARTED) {
       currentProcesses.push({
         title: $localize`Synchronizing database`,
         pending: true,
