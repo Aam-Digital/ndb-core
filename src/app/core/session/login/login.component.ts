@@ -23,6 +23,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
 import { filter } from "rxjs/operators";
+import { LocalSession } from "../session-service/local-session";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -40,6 +41,7 @@ export class LoginComponent {
     private _sessionService: SessionService,
     private router: Router,
     private route: ActivatedRoute,
+    private localSession: LocalSession,
   ) {
     this._sessionService.loginState
       .pipe(
@@ -59,5 +61,9 @@ export class LoginComponent {
    */
   login() {
     this._sessionService.login(undefined, undefined);
+  }
+
+  useOffline() {
+    this.localSession.login(undefined, undefined);
   }
 }

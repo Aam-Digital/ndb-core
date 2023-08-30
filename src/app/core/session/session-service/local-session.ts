@@ -16,11 +16,7 @@
  */
 import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
-import {
-  encryptPassword,
-  LocalUser,
-  passwordEqualsEncrypted,
-} from "./local-user";
+import { LocalUser, passwordEqualsEncrypted } from "./local-user";
 import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppSettings } from "../../app-settings";
@@ -38,6 +34,7 @@ import { AuthUser } from "./auth-user";
 export class LocalSession extends SessionService {
   static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
   private currentDBUser: AuthUser;
+  private static LAST_LOGGED_IN_KEY = "LAST_USER";
 
   constructor(private database: PouchDatabase) {
     super();
@@ -50,21 +47,16 @@ export class LocalSession extends SessionService {
    * @param password Password
    */
   public async login(username: string, password: string): Promise<LoginState> {
-    const user = this.getStoredUser(username);
+    const user = this.getStoredUser(LocalSession.LAST_LOGGED_IN_KEY);
     if (user) {
-      if (passwordEqualsEncrypted(password, user.encryptedPassword)) {
-        await this.handleSuccessfulLogin(user);
-      } else {
-        this.loginState.next(LoginState.LOGIN_FAILED);
-      }
-    } else {
-      this.loginState.next(LoginState.UNAVAILABLE);
+      await this.handleSuccessfulLogin(user);
+      this.loginState.next(LoginState.LOGGED_IN);
     }
     return this.loginState.value;
   }
 
   private getStoredUser(username: string): LocalUser {
-    const stored = window.localStorage.getItem(username?.trim().toLowerCase());
+    const stored = window.localStorage.getItem(username);
     return JSON.parse(stored);
   }
 
@@ -119,20 +111,10 @@ export class LocalSession extends SessionService {
    * @param loginName (optional) if login also works with a username other than `user.name`. E.g. the email of the user
    */
   public saveUser(user: AuthUser, password: string, loginName = user.name) {
-    const localUser: LocalUser = {
-      ...user,
-      encryptedPassword: encryptPassword(password),
-    };
-    const loginNameLower = loginName.trim().toLowerCase();
-    window.localStorage.setItem(loginNameLower, JSON.stringify(localUser));
-    const userNameLower = user.name.trim().toLowerCase();
-    if (userNameLower !== loginNameLower) {
-      window.localStorage.setItem(userNameLower, JSON.stringify(localUser));
-    }
-    // Update when already logged in
-    if (this.getCurrentUser()?.name === localUser.name) {
-      this.currentDBUser = localUser;
-    }
+    window.localStorage.setItem(
+      LocalSession.LAST_LOGGED_IN_KEY,
+      JSON.stringify(user),
+    );
   }
 
   /**

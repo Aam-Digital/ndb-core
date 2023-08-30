@@ -83,6 +83,7 @@ export class SyncedSessionService extends SessionService {
     // The app is ready to be used once the local session is logged in
     this.loginState.next(LoginState.LOGGED_IN);
     await this.remoteSession.handleSuccessfulLogin(userObject);
+    this.updateLocalUser(undefined, undefined);
   }
 
   /**
