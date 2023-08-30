@@ -12,6 +12,8 @@ import { AnalyticsService } from "./core/analytics/analytics.service";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { environment } from "../environments/environment";
+import { UserService } from "./core/user/user.service";
+import { LoginStateSubject } from "./core/session/session-type";
 
 export const appInitializers = {
   provide: APP_INITIALIZER,
@@ -22,8 +24,9 @@ export const appInitializers = {
       routerService: RouterService,
       entityConfigService: EntityConfigService,
       router: Router,
-      sessionService: SessionService,
+      userService: UserService,
       analyticsService: AnalyticsService,
+      loginState: LoginStateSubject,
     ) =>
     async () => {
       // Re-trigger services that depend on the config when something changes
@@ -35,9 +38,9 @@ export const appInitializers = {
       });
 
       // update the user context for remote error logging and tracking and load config initially
-      sessionService.loginState.subscribe((newState) => {
+      loginState.subscribe((newState) => {
         if (newState === LoginState.LOGGED_IN) {
-          const username = sessionService.getCurrentUser().name;
+          const username = userService.getCurrentUser().name;
           LoggingService.setLoggingContextUser(username);
           analyticsService.setUser(username);
         } else {
@@ -64,6 +67,7 @@ export const appInitializers = {
     Router,
     SessionService,
     AnalyticsService,
+    LoginStateSubject,
   ],
   multi: true,
 };

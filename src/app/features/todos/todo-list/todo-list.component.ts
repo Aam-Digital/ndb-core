@@ -7,13 +7,13 @@ import {
   PrebuiltFilterConfig,
 } from "../../../core/entity-list/EntityListConfig";
 import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
+import { UserService } from "../../../core/user/user.service";
 
 @RouteTarget("TodoList")
 @Component({
@@ -38,7 +38,7 @@ export class TodoListComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private sessionService: SessionService,
+    private userService: UserService,
     private formDialog: FormDialogService,
     private logger: LoggingService,
   ) {}
@@ -87,7 +87,7 @@ export class TodoListComponent implements OnInit {
       (c) => c.id === "assignedTo",
     );
     if (assignedToFilter && !assignedToFilter.default) {
-      assignedToFilter.default = this.sessionService.getCurrentUser().name;
+      assignedToFilter.default = this.userService.getCurrentUser().name;
     }
   }
 

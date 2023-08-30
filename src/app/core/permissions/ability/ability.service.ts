@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { SessionService } from "../../session/session-service/session.service";
 import { filter } from "rxjs/operators";
 import { Observable, Subject } from "rxjs";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
@@ -10,6 +9,7 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { AuthUser } from "../../session/session-service/auth-user";
+import { UserService } from "../../user/user.service";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -28,7 +28,7 @@ export class AbilityService {
 
   constructor(
     private ability: EntityAbility,
-    private sessionService: SessionService,
+    private userService: UserService,
     private entityMapper: EntityMapperService,
     private permissionEnforcer: PermissionEnforcerService,
     private logger: LoggingService,
@@ -57,7 +57,7 @@ export class AbilityService {
     const userRules = this.getRulesForUser(rules);
     if (userRules.length === 0) {
       // No rules or only default rules defined
-      const user = this.sessionService.getCurrentUser();
+      const user = this.userService.getCurrentUser();
       this.logger.warn(
         `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
@@ -67,7 +67,7 @@ export class AbilityService {
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
-    const currentUser = this.sessionService.getCurrentUser();
+    const currentUser = this.userService.getCurrentUser();
     if (!currentUser) {
       return rules.public ?? [];
     }

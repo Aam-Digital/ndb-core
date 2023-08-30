@@ -1,10 +1,10 @@
 import {
   Component,
-  ViewChild,
   Input,
   OnChanges,
-  SimpleChanges,
   OnInit,
+  SimpleChanges,
+  ViewChild,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -13,8 +13,8 @@ import {
 } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
 import { User } from "../../../user/user";
-import { SessionService } from "../../../session/session-service/session.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { UserService } from "../../../user/user.service";
 
 @Component({
   selector: "app-list-paginator",
@@ -35,7 +35,7 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
   pageSize = 10;
 
   constructor(
-    private sessionService: SessionService,
+    private userService: UserService,
     private entityMapperService: EntityMapperService,
   ) {}
 
@@ -83,7 +83,7 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
 
   private async ensureUserIsLoaded(): Promise<boolean> {
     if (!this.user) {
-      const currentUser = this.sessionService.getCurrentUser();
+      const currentUser = this.userService.getCurrentUser();
       this.user = await this.entityMapperService
         .load(User, currentUser.name)
         .catch(() => undefined);

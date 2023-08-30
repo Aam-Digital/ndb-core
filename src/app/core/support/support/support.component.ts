@@ -17,6 +17,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { AuthService } from "../../session/auth/auth.service";
+import { UserService } from "../../user/user.service";
 
 @Component({
   selector: "app-support",
@@ -39,6 +40,7 @@ export class SupportComponent implements OnInit {
 
   constructor(
     private sessionService: SessionService,
+    private userService: UserService,
     private sw: SwUpdate,
     private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,
@@ -50,7 +52,7 @@ export class SupportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.currentUser = this.sessionService.getCurrentUser();
+    this.currentUser = this.userService.getCurrentUser();
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
     this.initLastSync();

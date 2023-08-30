@@ -1,6 +1,5 @@
 import { Inject, Injectable } from "@angular/core";
 import { DatabaseRule } from "../permission-types";
-import { SessionService } from "../../session/session-service/session.service";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
@@ -10,6 +9,7 @@ import { EntityAbility } from "../ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
 import { firstValueFrom } from "rxjs";
+import { UserService } from "../../user/user.service";
 
 /**
  * This service checks whether the relevant rules for the current user changed.
@@ -25,7 +25,7 @@ export class PermissionEnforcerService {
   static readonly LOCALSTORAGE_KEY = "RULES";
 
   constructor(
-    private sessionService: SessionService,
+    private userService: UserService,
     private ability: EntityAbility,
     private entityMapper: EntityMapperService,
     private database: Database,
@@ -58,7 +58,7 @@ export class PermissionEnforcerService {
   }
 
   private getUserStorageKey() {
-    return `${this.sessionService.getCurrentUser().name}-${
+    return `${this.userService.getCurrentUser().name}-${
       PermissionEnforcerService.LOCALSTORAGE_KEY
     }`;
   }

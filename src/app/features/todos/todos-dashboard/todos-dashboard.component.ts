@@ -3,12 +3,12 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
 import { Todo } from "../model/todo";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import moment from "moment";
 import { DashboardListWidgetComponent } from "../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { DatePipe, NgStyle } from "@angular/common";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { UserService } from "../../../core/user/user.service";
 
 @DynamicComponent("TodosDashboard")
 @Component({
@@ -32,13 +32,13 @@ export class TodosDashboardComponent {
 
   constructor(
     private formDialog: FormDialogService,
-    private sessionService: SessionService,
+    private userService: UserService,
   ) {}
 
   filterEntries = (todo: Todo) => {
     return (
       !todo.completed &&
-      todo.assignedTo.includes(this.sessionService.getCurrentUser().name) &&
+      todo.assignedTo.includes(this.userService.getCurrentUser().name) &&
       moment(todo.startDate).isSameOrBefore(moment(), "days")
     );
   };

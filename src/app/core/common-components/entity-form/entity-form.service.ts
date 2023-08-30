@@ -12,12 +12,12 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
-import { SessionService } from "../../session/session-service/session.service";
 import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
+import { UserService } from "../../user/user.service";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -40,7 +40,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
-    private session: SessionService,
+    private userService: UserService,
     router: Router,
   ) {
     router.events
@@ -154,7 +154,7 @@ export class EntityFormService {
         newVal = new Date();
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.session.getCurrentUser().name;
+        newVal = this.userService.getCurrentUser().name;
         break;
       default:
         newVal = schema.defaultValue;
