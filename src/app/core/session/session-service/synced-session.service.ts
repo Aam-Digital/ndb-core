@@ -57,7 +57,7 @@ export class SyncedSessionService extends SessionService {
    * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
-    this.authService
+    return this.authService
       .autoLogin()
       .then((user) => this.handleSuccessfulLogin(user))
       .catch(() => undefined);
