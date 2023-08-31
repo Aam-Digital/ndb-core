@@ -135,7 +135,7 @@ export class RemoteSession extends SessionService {
     this._liveSyncHandle
       .on("paused", () => {
         // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
-        if (this.loginStateSubject.value === LoginState.LOGGED_IN) {
+        if (this.isLoggedIn()) {
           this.syncStateSubject.next(SyncState.COMPLETED);
           // We might end up here after a failed sync that is not due to offline errors.
           // It shouldn't happen too often, as we have an initial non-live sync to catch those situations, but we can't find that out here
@@ -165,6 +165,10 @@ export class RemoteSession extends SessionService {
         this.liveSync();
       }
     };
+  }
+
+  isLoggedIn(): boolean {
+    return this.loginStateSubject.value === LoginState.LOGGED_IN;
   }
 
   /**

@@ -7,7 +7,6 @@ import { ConfigService } from "./core/config/config.service";
 import { RouterService } from "./core/config/dynamic-routing/router.service";
 import { EntityConfigService } from "./core/entity/entity-config.service";
 import { Router } from "@angular/router";
-import { SessionService } from "./core/session/session-service/session.service";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
@@ -65,7 +64,7 @@ export const appInitializers = {
     RouterService,
     EntityConfigService,
     Router,
-    SessionService,
+    UserService,
     AnalyticsService,
     LoginStateSubject,
   ],
