@@ -59,11 +59,6 @@ import { KeycloakAngularModule } from "keycloak-angular";
         ? injector.get(KeycloakAuthService)
         : injector.get(CouchdbAuthService);
     }),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
     LoginStateSubject,
     SyncStateSubject,
   ],

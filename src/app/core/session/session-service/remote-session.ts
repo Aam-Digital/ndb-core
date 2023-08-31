@@ -95,14 +95,12 @@ export class RemoteSession extends SessionService {
   }
 
   private syncDatabases() {
-    console.log("syncing");
     // Call live syn even when initial sync fails
     return this.sync()
       .catch((err) => this.loggingService.error(`Sync failed: ${err}`))
       .finally(() => this.liveSyncDeferred());
   }
   public sync(): Promise<any> {
-    console.log("normal sync");
     this.syncStateSubject.next(SyncState.STARTED);
     return this.localDB
       .getPouchDB()
@@ -110,7 +108,6 @@ export class RemoteSession extends SessionService {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       })
       .then(() => {
-        console.log("sync done");
         this.syncStateSubject.next(SyncState.COMPLETED);
       })
       .catch((err) => {
@@ -123,7 +120,6 @@ export class RemoteSession extends SessionService {
    * Start live sync in background.
    */
   public liveSync() {
-    console.log("live sync");
     this.cancelLiveSync(); // cancel any liveSync that may have been alive before
     this.syncStateSubject.next(SyncState.STARTED);
     this._liveSyncHandle = this.localDB

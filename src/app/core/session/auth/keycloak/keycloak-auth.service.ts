@@ -46,6 +46,7 @@ export class KeycloakAuthService extends AuthService {
 
   autoLogin(): Promise<AuthUser> {
     return this.keycloakReady
+      .then(() => this.keycloak.updateToken())
       .then(() => this.keycloak.getToken())
       .then((token) => this.processToken(token));
   }
