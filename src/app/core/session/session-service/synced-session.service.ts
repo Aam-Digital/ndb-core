@@ -15,17 +15,14 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Inject, Injectable } from "@angular/core";
+import { Injectable } from "@angular/core";
 
 import { SessionService } from "./session.service";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
-import { LoginState } from "../session-states/login-state.enum";
 import { Database } from "../../database/database";
 import { SyncState } from "../session-states/sync-state.enum";
-import { LoggingService } from "../../logging/logging.service";
 import { filter } from "rxjs/operators";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 
@@ -41,11 +38,9 @@ export class SyncedSessionService extends SessionService {
   static readonly LAST_SYNC_KEY = "LAST_SYNC";
 
   constructor(
-    private loggingService: LoggingService,
     private localSession: LocalSession,
     private remoteSession: RemoteSession,
     private authService: AuthService,
-    @Inject(LOCATION_TOKEN) private location: Location,
   ) {
     super();
     this.syncState
@@ -71,8 +66,6 @@ export class SyncedSessionService extends SessionService {
 
   async handleSuccessfulLogin(userObject: AuthUser) {
     await this.localSession.handleSuccessfulLogin(userObject);
-    // The app is ready to be used once the local session is logged in
-    this.loginState.next(LoginState.LOGGED_IN);
     await this.remoteSession.handleSuccessfulLogin(userObject);
     this.updateLocalUser();
   }
@@ -89,7 +82,7 @@ export class SyncedSessionService extends SessionService {
    * @returns promise resolving with the local LoginState
    */
   public async login() {
-    this.remoteSession.login();
+    throw Error();
   }
   private updateLocalUser() {
     // Update local user object
@@ -100,12 +93,12 @@ export class SyncedSessionService extends SessionService {
   }
 
   public getCurrentUser(): AuthUser {
-    return this.localSession.getCurrentUser();
+    throw Error();
   }
 
   public checkPassword(username: string, password: string): boolean {
     // This only checks the password against locally saved users
-    return this.localSession.checkPassword(username, password);
+    throw Error();
   }
 
   /**
@@ -113,7 +106,7 @@ export class SyncedSessionService extends SessionService {
    * als see {@link SessionService}
    */
   public getDatabase(): Database {
-    return this.localSession.getDatabase();
+    throw Error();
   }
 
   /**
@@ -121,9 +114,6 @@ export class SyncedSessionService extends SessionService {
    * also see {@link SessionService}
    */
   public async logout() {
-    this.localSession.logout();
-    await this.remoteSession.logout();
-    this.location.reload();
-    this.loginState.next(LoginState.LOGGED_OUT);
+    throw Error();
   }
 }
