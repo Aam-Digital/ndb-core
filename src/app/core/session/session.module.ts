@@ -65,6 +65,7 @@ import { KeycloakAngularModule } from "keycloak-angular";
 })
 export class SessionModule {
   constructor(syncedSession: SyncedSessionService) {
+    // TODO maybe move to app initializer
     syncedSession.checkForValidSession();
   }
 }

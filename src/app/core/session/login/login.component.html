@@ -37,6 +37,7 @@
     </p>
     <p>
       <button
+        *ngIf="offlineLoginAvailable"
         mat-button
         type="button"
         (click)="useOffline()"

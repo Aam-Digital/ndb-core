@@ -25,6 +25,7 @@ import { filter } from "rxjs/operators";
 import { LocalSession } from "../session-service/local-session";
 import { RemoteSession } from "../session-service/remote-session";
 import { LoginStateSubject } from "../session-type";
+import { NgIf } from "@angular/common";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -34,10 +35,11 @@ import { LoginStateSubject } from "../session-type";
   selector: "app-login",
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
-  imports: [MatCardModule, MatButtonModule],
+  imports: [MatCardModule, MatButtonModule, NgIf],
   standalone: true,
 })
 export class LoginComponent {
+  offlineLoginAvailable = false;
   constructor(
     private remoteSession: RemoteSession,
     private router: Router,
@@ -51,6 +53,7 @@ export class LoginComponent {
         filter((state) => state === LoginState.LOGGED_IN),
       )
       .subscribe(() => this.routeAfterLogin());
+    this.offlineLoginAvailable = this.localSession.canLoginOffline();
   }
 
   private routeAfterLogin() {

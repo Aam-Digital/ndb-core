@@ -54,6 +54,10 @@ export class LocalSession extends SessionService {
     }
   }
 
+  canLoginOffline(): boolean {
+    return !!localStorage.getItem(LocalSession.LAST_LOGGED_IN_KEY);
+  }
+
   private getStoredUser(username: string): LocalUser {
     const stored = window.localStorage.getItem(username);
     return JSON.parse(stored);
