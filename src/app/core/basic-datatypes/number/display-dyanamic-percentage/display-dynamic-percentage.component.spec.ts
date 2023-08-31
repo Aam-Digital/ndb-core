@@ -1,6 +1,6 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { DisplayPercentageComponent } from "./display-dynamic-percentage.component";
+import { DisplayDynamicPercentageComponent } from "./display-dynamic-percentage.component";
 
 describe("DisplayDynamicPercentageComponent", () => {
   let component: DisplayDynamicPercentageComponent;

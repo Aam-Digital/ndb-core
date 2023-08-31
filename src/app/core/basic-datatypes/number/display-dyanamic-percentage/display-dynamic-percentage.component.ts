@@ -1,6 +1,6 @@
 import { Component, OnInit } from "@angular/core";
-import { ViewDirective } from "../view.directive";
-import { DynamicComponent } from "../../../../view/dynamic-components/dynamic-component.decorator";
+import { ViewDirective } from "app/core/entity/default-datatype/view.directive";
+import { DynamicComponent } from "app/core/config/dynamic-components/dynamic-component.decorator";
 import { DisplayPercentageComponent } from "../display-percentage/display-percentage.component";
 
 @DynamicComponent("DisplayDynamicPercentage")

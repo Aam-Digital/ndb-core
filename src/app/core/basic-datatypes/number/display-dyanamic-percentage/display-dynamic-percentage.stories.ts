@@ -1,21 +1,20 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
-import { StorybookBaseModule } from "../../../../../utils/storybook-base.module";
+import { Meta, StoryFn, applicationConfig } from "@storybook/angular";
+import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { DisplayDynamicPercentageComponent } from "./display-dynamic-percentage.component";
+import { importProvidersFrom } from "@angular/core";
 
 export default {
   title: "Core/Entities/Display Properties/DisplayDynamicPercentage",
   component: DisplayDynamicPercentageComponent,
   decorators: [
-    moduleMetadata({
-      imports: [StorybookBaseModule, DisplayDynamicPercentageComponent],
-      providers: [],
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
     }),
   ],
 } as Meta;
 
-const Template: Story<DisplayDynamicPercentageComponent> = (
-  args: DisplayDynamicPercentageComponent
+const Template: StoryFn<DisplayDynamicPercentageComponent> = (
+  args: DisplayDynamicPercentageComponent,
 ) => ({
   props: args,
 });

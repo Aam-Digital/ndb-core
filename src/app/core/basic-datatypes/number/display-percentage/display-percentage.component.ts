@@ -1,7 +1,7 @@
 import { Component, HostBinding, OnInit } from "@angular/core";
-import { CommonModule } from "@angular/common";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { CommonModule } from "@angular/common";
 
 @DynamicComponent("DisplayPercentage")
 @Component({
@@ -37,7 +37,7 @@ export class DisplayPercentageComponent
   ngOnInit() {
     this.decimalPipe =
       "1." +
-      (this.config.decimalPlaces
+      (this.config && this.config.decimalPlaces
         ? this.config.decimalPlaces + "-" + this.config.decimalPlaces
         : "0-0");
     this.style = {
