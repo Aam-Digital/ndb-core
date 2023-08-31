@@ -51,7 +51,6 @@ export class SyncedSessionService extends SessionService {
           new Date().toISOString(),
         ),
       );
-    this.checkForValidSession();
   }
 
   /**

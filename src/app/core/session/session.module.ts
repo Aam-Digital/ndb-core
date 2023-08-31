@@ -16,7 +16,6 @@
  */
 
 import { Injector, NgModule } from "@angular/core";
-import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { SyncedSessionService } from "./session-service/synced-session.service";
 import { LocalSession } from "./session-service/local-session";
 import { RemoteSession } from "./session-service/remote-session";
@@ -31,7 +30,6 @@ import { AuthService } from "./auth/auth.service";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
 import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
 import { AuthProvider } from "./auth/auth-provider";
-import { AuthInterceptor } from "./auth/auth.interceptor";
 import { serviceProvider } from "../../utils/utils";
 import { KeycloakAngularModule } from "keycloak-angular";
 
@@ -70,4 +68,8 @@ import { KeycloakAngularModule } from "keycloak-angular";
     SyncStateSubject,
   ],
 })
-export class SessionModule {}
+export class SessionModule {
+  constructor(syncedSession: SyncedSessionService) {
+    syncedSession.checkForValidSession();
+  }
+}
