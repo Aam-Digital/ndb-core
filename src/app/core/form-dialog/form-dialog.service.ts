@@ -6,12 +6,12 @@ import {
 } from "@angular/material/dialog";
 import { ComponentType } from "@angular/cdk/overlay";
 import { Entity } from "../entity/model/entity";
-import { RowDetailsComponent } from "../entity-components/entity-subrecord/row-details/row-details.component";
-import { FormFieldConfig } from "../entity-components/entity-form/entity-form/FormConfig";
+import { RowDetailsComponent } from "../common-components/entity-subrecord/row-details/row-details.component";
+import { FormFieldConfig } from "../common-components/entity-form/entity-form/FormConfig";
 import {
   ColumnConfig,
   toFormFieldConfig,
-} from "../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+} from "../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 @Injectable({ providedIn: "root" })
@@ -24,7 +24,7 @@ export class FormDialogService {
 
   constructor(
     private dialog: MatDialog,
-    private schemaService: EntitySchemaService
+    private schemaService: EntitySchemaService,
   ) {}
 
   /**
@@ -36,7 +36,7 @@ export class FormDialogService {
   openFormPopup<E extends Entity, T = RowDetailsComponent>(
     entity: E,
     columnsOverall: ColumnConfig[],
-    component: ComponentType<T> = RowDetailsComponent as ComponentType<T>
+    component: ComponentType<T> = RowDetailsComponent as ComponentType<T>,
   ): MatDialogRef<T> {
     if (!columnsOverall) {
       columnsOverall = FormDialogService.getSchemaFieldsForDetailsView(entity);
@@ -44,7 +44,7 @@ export class FormDialogService {
 
     const columns: FormFieldConfig[] = this.inferFormFieldColumns(
       columnsOverall,
-      entity
+      entity,
     ).filter((col) => !col.hideFromForm);
 
     const columnsToDisplay = columns
@@ -63,7 +63,7 @@ export class FormDialogService {
 
   private inferFormFieldColumns(
     columnsOverall: ColumnConfig[],
-    entity: Entity
+    entity: Entity,
   ) {
     const columns = columnsOverall.map(toFormFieldConfig);
 
@@ -71,7 +71,7 @@ export class FormDialogService {
       if (!c.edit) {
         c.edit = this.schemaService.getComponent(
           entity.getSchema().get(c.id),
-          "edit"
+          "edit",
         );
       }
     }
@@ -96,7 +96,7 @@ export class FormDialogService {
       const excludedFields = Array.from(Entity.schema.keys());
 
       formFields = Array.from(entity.getSchema().keys()).filter(
-        (k: string) => !excludedFields.includes(k)
+        (k: string) => !excludedFields.includes(k),
       );
     }
 

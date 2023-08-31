@@ -37,13 +37,13 @@ import { NgTemplateOutlet } from "@angular/common";
         "void",
         style({
           transform: "scale(0)",
-        })
+        }),
       ),
       state(
         "*",
         style({
           transform: "scale(1)",
-        })
+        }),
       ),
       transition(":enter", [animate("100ms")]),
     ]),

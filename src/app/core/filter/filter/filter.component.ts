@@ -6,16 +6,16 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { FilterConfig } from "../../entity-components/entity-list/EntityListConfig";
+import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FilterGeneratorService } from "../../entity-components/entity-list/filter-generator.service";
+import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
 import { ActivatedRoute, Params, Router } from "@angular/router";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { ListFilterComponent } from "../list-filter/list-filter.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
-import { DateRangeFilterComponent } from "../date-range-filter/date-range-filter.component";
+import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-filter/date-range-filter.component";
 import { Filter } from "../filters/filters";
 
 /**
@@ -73,7 +73,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   constructor(
     private filterGenerator: FilterGeneratorService,
     private router: Router,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -82,7 +82,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
         this.filterConfig,
         this.entityType,
         this.entities,
-        this.onlyShowRelevantFilterOptions
+        this.onlyShowRelevantFilterOptions,
       );
       this.loadUrlParams();
       this.applyFilterSelections();
@@ -101,7 +101,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     const previousFilter = JSON.stringify(this.filterObj);
     const newFilter = this.filterSelections.reduce(
       (obj, filter) => Object.assign(obj, filter.getFilter()),
-      {} as DataFilter<T>
+      {} as DataFilter<T>,
     );
 
     if (previousFilter === JSON.stringify(newFilter)) {

@@ -7,15 +7,12 @@ import { AsyncPipe } from "@angular/common";
 @Component({
   selector: "app-progress",
   templateUrl: "./progress.component.html",
-  imports: [
-    MatProgressBarModule,
-    AsyncPipe
-  ],
-  standalone: true
+  imports: [MatProgressBarModule, AsyncPipe],
+  standalone: true,
 })
 export class ProgressComponent {
   constructor(
     @Inject(MAT_SNACK_BAR_DATA)
-    public config: { message: string; progress: Observable<number> }
+    public config: { message: string; progress: Observable<number> },
   ) {}
 }

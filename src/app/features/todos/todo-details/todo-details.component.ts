@@ -12,17 +12,17 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { DetailsComponentData } from "../../../core/entity-components/entity-subrecord/row-details/row-details.component";
+import { DetailsComponentData } from "../../../core/common-components/entity-subrecord/row-details/row-details.component";
 import { TodoService } from "../todo.service";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import {
   EntityForm,
   EntityFormService,
-} from "../../../core/entity-components/entity-form/entity-form.service";
+} from "../../../core/common-components/entity-form/entity-form.service";
 import { NgIf } from "@angular/common";
 import { TodoCompletionComponent } from "../todo-completion/todo-completion/todo-completion.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
-import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
+import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 
 @Component({
@@ -51,7 +51,7 @@ export class TodoDetailsComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) data: DetailsComponentData,
     private dialogRef: MatDialogRef<any>,
     private todoService: TodoService,
-    private entityFormService: EntityFormService
+    private entityFormService: EntityFormService,
   ) {
     this.entity = data.entity as Todo;
     this.formColumns = [data.columns];
@@ -60,7 +60,7 @@ export class TodoDetailsComponent implements OnInit {
   ngOnInit(): void {
     this.form = this.entityFormService.createFormGroup(
       [].concat(...this.formColumns),
-      this.entity
+      this.entity,
     );
   }
 

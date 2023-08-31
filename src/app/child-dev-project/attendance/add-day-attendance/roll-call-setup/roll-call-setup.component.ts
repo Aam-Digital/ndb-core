@@ -7,7 +7,7 @@ import {
 } from "@angular/core";
 import { AttendanceService } from "../../attendance.service";
 import { Note } from "../../../notes/model/note";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { SessionService } from "../../../../core/session/session-service/session.service";
 import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
@@ -16,8 +16,8 @@ import { AlertService } from "../../../../core/alerts/alert.service";
 import { AlertDisplay } from "../../../../core/alerts/alert-display";
 import { FormsModule, NgModel } from "@angular/forms";
 import { FilterService } from "../../../../core/filter/filter.service";
-import { DataFilter } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FilterConfig } from "../../../../core/entity-components/entity-list/EntityListConfig";
+import { DataFilter } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FilterConfig } from "../../../../core/entity-list/EntityListConfig";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -79,7 +79,7 @@ export class RollCallSetupComponent implements OnInit {
     private sessionService: SessionService,
     private formDialog: FormDialogService,
     private alertService: AlertService,
-    private filerService: FilterService
+    private filerService: FilterService,
   ) {}
 
   async ngOnInit() {
@@ -105,11 +105,11 @@ export class RollCallSetupComponent implements OnInit {
       this.visibleActivities = this.allActivities;
     } else {
       this.visibleActivities = this.allActivities.filter((a) =>
-        a.isAssignedTo(this.sessionService.getCurrentUser().name)
+        a.isAssignedTo(this.sessionService.getCurrentUser().name),
       );
       if (this.visibleActivities.length === 0) {
         this.visibleActivities = this.allActivities.filter(
-          (a) => a.assignedTo.length === 0
+          (a) => a.assignedTo.length === 0,
         );
       }
       if (this.visibleActivities.length === 0) {
@@ -120,11 +120,11 @@ export class RollCallSetupComponent implements OnInit {
 
     const newEvents = await Promise.all(
       this.visibleActivities.map((activity) =>
-        this.createEventForActivity(activity)
-      )
+        this.createEventForActivity(activity),
+      ),
     );
     this.existingEvents = this.existingEvents.concat(
-      ...newEvents.filter((e) => !!e)
+      ...newEvents.filter((e) => !!e),
     );
   }
 
@@ -145,7 +145,7 @@ export class RollCallSetupComponent implements OnInit {
   }
 
   private async createEventForActivity(
-    activity: RecurringActivity
+    activity: RecurringActivity,
   ): Promise<NoteForActivitySetup> {
     if (this.existingEvents.find((e) => e.relatesTo === activity.getId(true))) {
       return undefined;
@@ -153,7 +153,7 @@ export class RollCallSetupComponent implements OnInit {
 
     const event = (await this.attendanceService.createEventForActivity(
       activity,
-      this.date
+      this.date,
     )) as NoteForActivitySetup;
     event.authors = [this.sessionService.getCurrentUser().name];
     event.isNewFromActivity = true;
@@ -165,7 +165,7 @@ export class RollCallSetupComponent implements OnInit {
       let score = 0;
 
       const activityAssignedUsers = this.allActivities.find(
-        (a) => a.getId(true) === event.relatesTo
+        (a) => a.getId(true) === event.relatesTo,
       )?.assignedTo;
       // use parent activities' assigned users and only fall back to event if necessary
       const assignedUsers = activityAssignedUsers ?? event.authors;
@@ -183,7 +183,7 @@ export class RollCallSetupComponent implements OnInit {
     };
 
     this.existingEvents.sort(
-      (a, b) => calculateEventPriority(b) - calculateEventPriority(a)
+      (a, b) => calculateEventPriority(b) - calculateEventPriority(a),
     );
   }
 
@@ -212,7 +212,7 @@ export class RollCallSetupComponent implements OnInit {
     } else {
       this.alertService.addWarning(
         $localize`:Alert when selected date is invalid:Invalid Date`,
-        AlertDisplay.TEMPORARY
+        AlertDisplay.TEMPORARY,
       );
     }
   }

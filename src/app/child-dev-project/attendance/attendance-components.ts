@@ -5,14 +5,14 @@ export const attendanceComponents: ComponentTuple[] = [
     "AttendanceManager",
     () =>
       import("./attendance-manager/attendance-manager.component").then(
-        (c) => c.AttendanceManagerComponent
+        (c) => c.AttendanceManagerComponent,
       ),
   ],
   [
     "AddDayAttendance",
     () =>
       import("./add-day-attendance/add-day-attendance.component").then(
-        (c) => c.AddDayAttendanceComponent
+        (c) => c.AddDayAttendanceComponent,
       ),
   ],
   [
@@ -33,7 +33,14 @@ export const attendanceComponents: ComponentTuple[] = [
     "EditAttendance",
     () =>
       import("./edit-attendance/edit-attendance.component").then(
-        (c) => c.EditAttendanceComponent
+        (c) => c.EditAttendanceComponent,
       ),
+  ],
+  [
+    "ActivitiesOverview",
+    () =>
+      import(
+        "../attendance/activities-overview/activities-overview.component"
+      ).then((c) => c.ActivitiesOverviewComponent),
   ],
 ];

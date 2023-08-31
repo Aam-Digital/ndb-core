@@ -1,18 +1,18 @@
 import { Component, ViewChild } from "@angular/core";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../../notes/model/note";
-import { ConfirmationDialogService } from "../../../core/confirmation-dialog/confirmation-dialog.service";
-import { ConfirmationDialogButton } from "../../../core/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogButton } from "../../../core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { RollCallComponent } from "./roll-call/roll-call.component";
 import { ActivatedRoute } from "@angular/router";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RollCallSetupComponent } from "./roll-call-setup/roll-call-setup.component";
-import { ViewTitleComponent } from "../../../core/entity-components/entity-utils/view-title/view-title.component";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 
 /**
  * additional config specifically for AddDayAttendanceComponent
@@ -76,7 +76,7 @@ export class AddDayAttendanceComponent {
   constructor(
     private entityMapper: EntityMapperService,
     private route: ActivatedRoute,
-    private confirmationDialog: ConfirmationDialogService
+    private confirmationDialog: ConfirmationDialogService,
   ) {
     this.route.data.subscribe((data: RouteData<AddDayAttendanceConfig>) => {
       this.config = data.config;
@@ -94,7 +94,7 @@ export class AddDayAttendanceComponent {
         $localize`:Exit from the current screen:Exit`,
         $localize`Do you want to save your progress before going back?`,
         this.buttons,
-        true
+        true,
       );
     } else {
       this.finishRollCallState();

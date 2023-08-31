@@ -1,8 +1,8 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { School } from "../model/school";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("SchoolBlock")
 @Component({

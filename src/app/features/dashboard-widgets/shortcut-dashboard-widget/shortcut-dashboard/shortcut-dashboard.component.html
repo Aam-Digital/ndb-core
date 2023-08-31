@@ -1,0 +1,36 @@
+<app-dashboard-list-widget
+  icon="external-link-alt"
+  theme="general"
+  subtitle="Quick actions"
+  i18n-subtitle="
+    Title of dashboard widget that shows a list of certain actions a user can
+    click on
+  "
+  [entries]="shortcuts"
+>
+  <div class="table-container">
+    <table mat-table aria-label="Quick actions">
+      <!-- Table header only for assistive technologies like screen readers -->
+      <tr hidden>
+        <th scope="col">Icon</th>
+        <th scope="col">Label</th>
+      </tr>
+      <ng-container matColumnDef="icon">
+        <td *matCellDef="let row">
+          <app-fa-dynamic-icon [icon]="row.icon"></app-fa-dynamic-icon>
+        </td>
+      </ng-container>
+
+      <ng-container matColumnDef="label">
+        <td *matCellDef="let row">{{ row.label }}</td>
+      </ng-container>
+
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['icon', 'label']"
+        class="pointer"
+        [routerLink]="row.link"
+      ></tr>
+    </table>
+  </div>
+</app-dashboard-list-widget>

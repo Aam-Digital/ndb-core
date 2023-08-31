@@ -43,7 +43,7 @@ export class User extends Entity {
       // Throwing error if trying to change existing username
       const label = User.schema.get("name").label;
       throw new Error(
-        $localize`:Error message when trying to change the username|e.g. username cannot be changed after initialization:${label} cannot be changed after initialization`
+        $localize`:Error message when trying to change the username|e.g. username cannot be changed after initialization:${label} cannot be changed after initialization`,
       );
     }
 

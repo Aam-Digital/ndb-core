@@ -1,0 +1,28 @@
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+  <app-basic-autocomplete
+    #autocomplete
+    [formControl]="form"
+    [multi]="multi"
+    [options]="options"
+    [optionToString]="enumValueToString"
+    [createOption]="createNewOption"
+  ></app-basic-autocomplete>
+  <fa-icon
+    *ngIf="form.enabled && !!createNewOption"
+    icon="wrench"
+    class="caret-suffix"
+    matSuffix
+    (click)="openSettings($event)"
+  ></fa-icon>
+  <fa-icon
+    *ngIf="form.enabled"
+    icon="caret-down"
+    class="caret-suffix"
+    (click)="autocomplete.showAutocomplete()"
+    matSuffix
+  ></fa-icon>
+  <mat-error *ngIf="form.errors">
+    <app-error-hint [form]="form"></app-error-hint>
+  </mat-error>
+</mat-form-field>

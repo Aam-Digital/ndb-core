@@ -4,7 +4,7 @@ import { SearchService } from "./search.service";
 import { DatabaseTestingModule } from "../../../utils/database-testing.module";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Entity } from "../../entity/model/entity";
@@ -33,7 +33,7 @@ describe("SearchService", () => {
   async function runSearchTest(
     searchTerm: string,
     expectedResults: Entity[],
-    entitiesInDb?: Entity[]
+    entitiesInDb?: Entity[],
   ) {
     if (entitiesInDb) {
       await TestBed.inject(EntityMapperService).saveAll(entitiesInDb);

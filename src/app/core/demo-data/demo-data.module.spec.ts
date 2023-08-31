@@ -1,6 +1,6 @@
-import { fakeAsync, flush, TestBed } from "@angular/core/testing";
+import { fakeAsync, flush, TestBed, tick } from "@angular/core/testing";
 import { DemoDataModule } from "./demo-data.module";
-import { EntityMapperService } from "../entity/entity-mapper.service";
+import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { PouchDatabase } from "../database/pouch-database";
 import { LocalSession } from "../session/session-service/local-session";
 import { Database } from "../database/database";
@@ -25,9 +25,9 @@ describe("DemoDataModule", () => {
     TestBed.inject(DemoDataModule).publishDemoData();
     expect(mockEntityMapper.saveAll).not.toHaveBeenCalled();
 
-    TestBed.inject(DemoDataModule);
-    flush();
+    tick();
 
     expect(mockEntityMapper.saveAll).toHaveBeenCalled();
+    flush();
   }));
 });

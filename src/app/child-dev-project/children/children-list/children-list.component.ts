@@ -2,10 +2,10 @@ import { Component, OnInit } from "@angular/core";
 import { Child } from "../model/child";
 import { ActivatedRoute } from "@angular/router";
 import { ChildrenService } from "../children.service";
-import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
-import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 
 @RouteTarget("ChildrenList")
 @Component({
@@ -29,12 +29,12 @@ export class ChildrenListComponent implements OnInit {
 
   constructor(
     private childrenService: ChildrenService,
-    private route: ActivatedRoute
+    private route: ActivatedRoute,
   ) {}
 
   async ngOnInit() {
     this.route.data.subscribe(
-      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config)
+      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config),
     );
     this.childrenList = await this.childrenService.getChildren();
     this.isLoading = false;

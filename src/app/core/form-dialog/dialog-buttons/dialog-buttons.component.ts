@@ -6,19 +6,19 @@ import { MatDialogModule, MatDialogRef } from "@angular/material/dialog";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { Entity } from "../../entity/model/entity";
 import { FormGroup } from "@angular/forms";
-import { InvalidFormFieldError } from "../../entity-components/entity-form/invalid-form-field.error";
+import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
 import {
   EntityRemoveService,
   RemoveResult,
 } from "../../entity/entity-remove.service";
-import { EntityFormService } from "../../entity-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { AlertService } from "../../alerts/alert.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router, RouterLink } from "@angular/router";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
-import { UnsavedChangesService } from "../../entity-components/entity-details/form/unsaved-changes.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 @Component({
   selector: "app-dialog-buttons",
@@ -49,7 +49,7 @@ export class DialogButtonsComponent implements OnInit {
     private router: Router,
     private ability: EntityAbility,
     private confirmation: ConfirmationDialogService,
-    private unsavedChanges: UnsavedChangesService
+    private unsavedChanges: UnsavedChangesService,
   ) {
     this.dialog.disableClose = true;
     this.dialog.backdropClick().subscribe(() =>
@@ -57,7 +57,7 @@ export class DialogButtonsComponent implements OnInit {
         if (confirmed) {
           this.dialog.close();
         }
-      })
+      }),
     );
     // This happens before the `canDeactivate` check and therefore does not warn when leaving
     this.dialog

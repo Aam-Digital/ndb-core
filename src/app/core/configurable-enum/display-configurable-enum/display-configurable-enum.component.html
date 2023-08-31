@@ -1,8 +1,0 @@
-<ng-container *ngFor="let val of iterableValue; let i = index">
-    <span
-      [style.background-color]="val.color"
-      [ngClass]="{ colored: val.color }"
-    >{{ val.label }}</span
-    >
-  <ng-container *ngIf="i !== iterableValue.length - 1">,&nbsp;</ng-container>
-</ng-container>

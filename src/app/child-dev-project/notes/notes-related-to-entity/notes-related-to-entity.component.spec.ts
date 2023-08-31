@@ -4,6 +4,7 @@ import {
   fakeAsync,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
 import { ChildrenService } from "../../children/children.service";
 import { Note } from "../model/note";
@@ -14,6 +15,8 @@ import { School } from "../../schools/model/school";
 import { User } from "../../../core/user/user";
 import moment from "moment";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
+import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
+import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -21,14 +24,14 @@ describe("NotesRelatedToEntityComponent", () => {
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockChildrenService = jasmine.createSpyObj(["getNotesRelatedTo"]);
     mockChildrenService.getNotesRelatedTo.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [NotesRelatedToEntityComponent, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
-  });
+  }));
 
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
@@ -78,9 +81,50 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = entity;
     component.ngOnInit();
     note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId(true)]);
+    expect(note.relatedEntities).toContain(entity.getId(true));
     expect(note.children).toEqual(["someChild"]);
     expect(note.schools).toEqual(["someSchool"]);
+  });
+
+  it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {
+    @DatabaseEntity("EntityWithRelations")
+    class EntityWithRelations extends Entity {
+      static ENTITY_TYPE = "EntityWithRelations";
+
+      @DatabaseField({
+        dataType: "entity-array",
+        additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
+      })
+      links;
+
+      @DatabaseField({
+        dataType: "entity",
+        additional: Child.ENTITY_TYPE,
+      })
+      childrenLink;
+    }
+    const customEntity = new EntityWithRelations();
+    customEntity.links = [
+      "Child:1",
+      "School:not-a-type-for-note.relatedEntities",
+    ];
+    customEntity.childrenLink = "child-without-prefix";
+
+    Note.schema.get("relatedEntities").additional = [
+      Child.ENTITY_TYPE,
+      EntityWithRelations.ENTITY_TYPE,
+    ];
+    component.entity = customEntity;
+    component.ngOnInit();
+
+    const newNote = component.generateNewRecordFactory()();
+
+    expect(newNote.relatedEntities).toContain(customEntity.getId(true));
+    expect(newNote.relatedEntities).toContain(customEntity.links[0]);
+    expect(newNote.relatedEntities).not.toContain(customEntity.links[1]);
+    expect(newNote.relatedEntities).toContain(
+      Entity.createPrefixedId(Child.ENTITY_TYPE, customEntity.childrenLink),
+    );
   });
 
   it("should sort notes by date", fakeAsync(() => {
@@ -97,7 +141,7 @@ describe("NotesRelatedToEntityComponent", () => {
     tick();
 
     expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
-      component.entity.getId(true)
+      component.entity.getId(true),
     );
     expect(component.records).toEqual([n1, n2, n3]);
   }));

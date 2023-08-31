@@ -25,15 +25,18 @@
 
 .sep {
   font-weight: 900;
-  color: mat.get-color-from-palette(mat.$light-theme-foreground-palette, hint-text);
+  color: mat.get-color-from-palette(
+    mat.$light-theme-foreground-palette,
+    hint-text
+  );
 
   // Add a whitespace before the separator
   &::before {
-    content: " "
+    content: " ";
   }
 
   // Add a whitespace before the separator
   &::after {
-    content: " "
+    content: " ";
   }
 }

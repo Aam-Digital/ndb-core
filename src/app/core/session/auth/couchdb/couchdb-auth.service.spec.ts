@@ -7,10 +7,8 @@ import {
   HttpStatusCode,
 } from "@angular/common/http";
 import { of, throwError } from "rxjs";
-import {
-  TEST_PASSWORD,
-  TEST_USER,
-} from "../../../../utils/mocked-testing.module";
+
+import { TEST_PASSWORD, TEST_USER } from "../../../../utils/mock-local-session";
 
 describe("CouchdbAuthService", () => {
   let service: CouchdbAuthService;
@@ -28,7 +26,7 @@ describe("CouchdbAuthService", () => {
           () =>
             new HttpErrorResponse({
               status: HttpStatusCode.Unauthorized,
-            })
+            }),
         );
       }
     });
@@ -85,7 +83,7 @@ describe("CouchdbAuthService", () => {
     mockHttpClient.get.and.returnValue(throwError(() => new Error()));
 
     return expectAsync(
-      service.changePassword("username", "wrongPW", "")
+      service.changePassword("username", "wrongPW", ""),
     ).toBeRejected();
   });
 
@@ -94,7 +92,7 @@ describe("CouchdbAuthService", () => {
     mockHttpClient.put.and.returnValue(throwError(() => new Error()));
 
     await expectAsync(
-      service.changePassword("username", "testPW", "")
+      service.changePassword("username", "testPW", ""),
     ).toBeRejected();
     expect(mockHttpClient.get).toHaveBeenCalled();
     expect(mockHttpClient.put).toHaveBeenCalled();
@@ -105,7 +103,7 @@ describe("CouchdbAuthService", () => {
     mockHttpClient.put.and.returnValues(of({}));
 
     return expectAsync(
-      service.changePassword("username", "testPW", "newPW")
+      service.changePassword("username", "testPW", "newPW"),
     ).not.toBeRejected();
   });
 });

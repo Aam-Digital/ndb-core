@@ -5,7 +5,7 @@ export const matchingEntitiesComponents: ComponentTuple[] = [
     "MatchingEntities",
     () =>
       import("./matching-entities/matching-entities.component").then(
-        (c) => c.MatchingEntitiesComponent
+        (c) => c.MatchingEntitiesComponent,
       ),
   ],
 ];

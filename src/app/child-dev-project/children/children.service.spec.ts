@@ -1,5 +1,5 @@
 import { ChildrenService } from "./children.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { Child } from "./model/child";
 import { School } from "../schools/model/school";
@@ -26,7 +26,7 @@ describe("ChildrenService", () => {
     generateChildEntities().forEach((c) => entityMapper.save(c));
     generateSchoolEntities().forEach((s) => entityMapper.save(s));
     generateChildSchoolRelationEntities().forEach((cs) =>
-      entityMapper.save(cs)
+      entityMapper.save(cs),
     );
 
     service = TestBed.inject<ChildrenService>(ChildrenService);
@@ -76,10 +76,10 @@ describe("ChildrenService", () => {
 
     const c0 = allChildren[0].getId();
     await entityMapper.save(
-      Note.create(moment().subtract(5, "days").toDate(), "n0-1", [c0])
+      Note.create(moment().subtract(5, "days").toDate(), "n0-1", [c0]),
     );
     await entityMapper.save(
-      Note.create(moment().subtract(8, "days").toDate(), "n0-2", [c0])
+      Note.create(moment().subtract(8, "days").toDate(), "n0-2", [c0]),
     );
 
     const c1 = allChildren[1].getId();
@@ -97,12 +97,12 @@ describe("ChildrenService", () => {
 
     const c0 = allChildren[0].getId();
     await entityMapper.save(
-      Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0])
+      Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0]),
     );
 
     const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
       Child.ENTITY_TYPE,
-      49
+      49,
     );
 
     expect(recentNotesMap.get(c0)).toBePositiveInfinity();
@@ -122,7 +122,7 @@ describe("ChildrenService", () => {
     await entityMapper.saveAll([n1, n2]);
 
     const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
-      School.ENTITY_TYPE
+      School.ENTITY_TYPE,
     );
 
     expect(recentNotesMap.get(s1.getId())).toBe(2);
@@ -180,7 +180,7 @@ describe("ChildrenService", () => {
 
     expect(relations).toHaveSize(2);
     expect(relations[0].start.getTime()).toBeGreaterThanOrEqual(
-      relations[1].start.getTime()
+      relations[1].start.getTime(),
     );
   });
 
@@ -217,14 +217,14 @@ describe("ChildrenService", () => {
     let relations = await service.queryActiveRelationsOf(
       "school",
       "1",
-      new Date("2010-01-01")
+      new Date("2010-01-01"),
     );
     expect(relations).toHaveSize(1);
 
     relations = await service.queryActiveRelationsOf(
       "school",
       "1",
-      new Date("2016-10-01")
+      new Date("2016-10-01"),
     );
     expect(relations).toHaveSize(2);
   });

@@ -7,7 +7,7 @@ import {
 
 import { EditLocationComponent } from "./edit-location.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { setupEditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component.spec";
+import { setupEditComponent } from "../../../core/entity/default-datatype/edit-component.spec";
 import { GeoResult, GeoService } from "../geo.service";
 import { of, Subject } from "rxjs";
 import { HarnessLoader, TestElement } from "@angular/cdk/testing";
@@ -177,7 +177,7 @@ describe("EditLocationComponent", () => {
   async function expectLookup(
     searchTerm: string,
     lookupCalled: boolean,
-    input: TestElement
+    input: TestElement,
   ) {
     await input.clear();
     await input.sendKeys(searchTerm);

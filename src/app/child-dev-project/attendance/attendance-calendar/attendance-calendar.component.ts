@@ -14,7 +14,7 @@ import {
 } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
 import { EventAttendance } from "../model/event-attendance";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import {
@@ -76,7 +76,7 @@ export class AttendanceCalendarComponent implements OnChanges {
     private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
     private analyticsService: AnalyticsService,
-    private attendanceService: AttendanceService
+    private attendanceService: AttendanceService,
   ) {
     this.entityMapper
       .receiveUpdates(EventNote)
@@ -96,7 +96,7 @@ export class AttendanceCalendarComponent implements OnChanges {
     if (this.selectedDate) {
       classes["attendance-calendar-date-selected"] = cellMoment.isSame(
         this.selectedDate,
-        "day"
+        "day",
       );
     }
 
@@ -162,22 +162,22 @@ export class AttendanceCalendarComponent implements OnChanges {
     } else {
       this.selectedDate = moment(newDate);
       this.selectedEvent = this.records.find((e) =>
-        this.selectedDate.isSame(e.date, "day")
+        this.selectedDate.isSame(e.date, "day"),
       );
       if (this.selectedEvent && this.highlightForChild) {
         this.selectedEvent.addChild(this.highlightForChild); // ensure child is part of the event
         this.selectedEventAttendance = this.selectedEvent.getAttendance(
-          this.highlightForChild
+          this.highlightForChild,
         );
       }
       // clone attendance information to allow detecting and reverting changes
       this.selectedEventAttendanceOriginal = Object.assign(
         {},
-        this.selectedEventAttendanceOriginal
+        this.selectedEventAttendanceOriginal,
       );
       if (this.selectedEvent) {
         this.selectedEventStats = calculateAverageAttendance(
-          this.selectedEvent
+          this.selectedEvent,
         );
       }
 

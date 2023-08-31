@@ -12,7 +12,7 @@ import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 import { centersUnique } from "../../child-dev-project/children/demo-data-generators/fixtures/centers";
 import { genders } from "../../child-dev-project/children/model/genders";
-import { mockEntityMapper } from "../../core/entity/mock-entity-mapper-service";
+import { mockEntityMapper } from "../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { entityRegistry } from "../../core/entity/database-entity.decorator";
 
 describe("DataAggregationService", () => {
@@ -45,7 +45,7 @@ describe("DataAggregationService", () => {
     mockQueryService.queryData.and.returnValues(
       baseData,
       [new School()],
-      [new School(), new School()]
+      [new School(), new School()],
     );
 
     const report = await service.calculateReport([childDisaggregation]);
@@ -673,7 +673,7 @@ describe("DataAggregationService", () => {
       entityMapper,
       null,
       null,
-      entityRegistry
+      entityRegistry,
     );
     service = new DataAggregationService(queryService);
 

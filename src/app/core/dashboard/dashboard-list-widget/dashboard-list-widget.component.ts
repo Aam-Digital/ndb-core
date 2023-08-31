@@ -16,7 +16,7 @@ import {
 import { MatTable, MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { BehaviorSubject } from "rxjs";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { filter, map } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
@@ -100,7 +100,7 @@ export class DashboardListWidgetComponent<E>
       .pipe(
         filter((d) => !!d),
         map((d) => (this.dataMapper ? this.dataMapper(d) : d)),
-        untilDestroyed(this)
+        untilDestroyed(this),
       )
       .subscribe((newData) => {
         this.dataSource.data = newData;
@@ -118,7 +118,7 @@ export class DashboardListWidgetComponent<E>
       .receiveUpdates(this.entityType)
       .pipe(untilDestroyed(this))
       .subscribe((update) =>
-        this.data.next(applyUpdate(this.data.value as Entity[], update) as E[])
+        this.data.next(applyUpdate(this.data.value as Entity[], update) as E[]),
       );
   }
 

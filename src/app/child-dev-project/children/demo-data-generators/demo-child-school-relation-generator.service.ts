@@ -29,7 +29,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
 
   constructor(
     private demoChildren: DemoChildGenerator,
-    private demoSchools: DemoSchoolGenerator
+    private demoSchools: DemoSchoolGenerator,
   ) {
     super();
   }
@@ -45,7 +45,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
   }
 
   private generateChildSchoolRecordsForChild(
-    child: Child
+    child: Child,
   ): ChildSchoolRelation[] {
     const data: ChildSchoolRelation[] = [];
 
@@ -64,8 +64,8 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
           child,
           firstYear + offset,
           offset + 1,
-          currentSchool
-        )
+          currentSchool,
+        ),
       );
 
       offset++;
@@ -82,7 +82,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     child: Child,
     year,
     schoolClass: number,
-    school: School
+    school: School,
   ): ChildSchoolRelation {
     const schoolRelation = new ChildSchoolRelation();
     schoolRelation.childId = child.getId();
@@ -90,7 +90,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     schoolRelation.end = new Date(year + "-12-31");
     schoolRelation.schoolClass = String(schoolClass);
     schoolRelation.schoolId = school.getId();
-    schoolRelation.result = faker.datatype.number(100);
+    schoolRelation.result = faker.number.int(100);
     return schoolRelation;
   }
 
@@ -103,7 +103,7 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
       return faker.helpers.arrayElement(this.demoSchools.entities);
     }
 
-    if (faker.datatype.number(100) > 75) {
+    if (faker.number.int(100) > 75) {
       return faker.helpers.arrayElement(this.demoSchools.entities);
     } else {
       return currentSchool;

@@ -6,7 +6,7 @@ import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
-import { AppSettings } from "../app-config/app-settings";
+import { AppSettings } from "../app-settings";
 import { PouchDatabase } from "../database/pouch-database";
 import { Subject } from "rxjs";
 import { LoginState } from "../session/session-states/login-state.enum";
@@ -35,7 +35,7 @@ describe("DemoDataInitializerService", () => {
     loginState = new Subject();
     mockSessionService = jasmine.createSpyObj(
       ["login", "saveUser", "getCurrentUser"],
-      { loginState: loginState }
+      { loginState: loginState },
     );
 
     TestBed.configureTestingModule({
@@ -75,11 +75,11 @@ describe("DemoDataInitializerService", () => {
 
     expect(mockSessionService.saveUser).toHaveBeenCalledWith(
       normalUser,
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
     expect(mockSessionService.saveUser).toHaveBeenCalledWith(
       adminUser,
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
   });
 
@@ -89,7 +89,7 @@ describe("DemoDataInitializerService", () => {
     expect(mockSessionService.login).toHaveBeenCalled();
     expect(mockSessionService.login).toHaveBeenCalledWith(
       DemoUserGeneratorService.DEFAULT_USERNAME,
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
     expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
 
@@ -104,7 +104,7 @@ describe("DemoDataInitializerService", () => {
     service.run();
 
     expect(mockDialog.open).toHaveBeenCalledWith(
-      DemoDataGeneratingProgressDialogComponent
+      DemoDataGeneratingProgressDialogComponent,
     );
     expect(closeSpy).not.toHaveBeenCalled();
 

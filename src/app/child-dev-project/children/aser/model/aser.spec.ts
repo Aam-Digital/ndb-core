@@ -17,7 +17,7 @@
 
 import { Aser } from "./aser";
 import { mathLevels, readingLevels } from "./skill-levels";
-import { WarningLevel } from "../../../../core/entity/model/warning-level";
+import { WarningLevel } from "../../../warning-level";
 import { testEntitySubclass } from "../../../../core/entity/model/entity.spec";
 
 describe("Aser", () => {

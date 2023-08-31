@@ -4,7 +4,7 @@ import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import * as Sentry from "@sentry/browser";
-import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 import { environment } from "../../../../environments/environment";
@@ -14,7 +14,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
 import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { BackupService } from "../../admin/services/backup.service";
+import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { AuthService } from "../../session/auth/auth.service";
 
@@ -46,7 +46,7 @@ export class SupportComponent implements OnInit {
     private backupService: BackupService,
     private downloadService: DownloadService,
     @Inject(WINDOW_TOKEN) private window: Window,
-    @Inject(LOCATION_TOKEN) private location: Location
+    @Inject(LOCATION_TOKEN) private location: Location,
   ) {}
 
   ngOnInit() {
@@ -102,7 +102,7 @@ export class SupportComponent implements OnInit {
     }
     this.window.navigator.serviceWorker.ready
       .then(() =>
-        firstValueFrom(this.http.get("/ngsw/state", { responseType: "text" }))
+        firstValueFrom(this.http.get("/ngsw/state", { responseType: "text" })),
       )
       .then((res) => (this.swLog = res));
   }
@@ -113,7 +113,7 @@ export class SupportComponent implements OnInit {
       .info()
       .then(
         (res) =>
-          (this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`)
+          (this.dbInfo = `${res.doc_count} (update sequence ${res.update_seq})`),
       );
   }
 
@@ -148,7 +148,7 @@ export class SupportComponent implements OnInit {
   async resetApplication() {
     const choice = await this.confirmationDialog.getConfirmation(
       "Reset Application",
-      "Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again."
+      "Are you sure you want to reset the application? This will delete all application data from your device and you will have to synchronize again.",
     );
     if (!choice) {
       return;
@@ -168,7 +168,7 @@ export class SupportComponent implements OnInit {
     await this.downloadService.triggerDownload(
       backup,
       "json",
-      "aamdigital_data_" + new Date().toISOString()
+      "aamdigital_data_" + new Date().toISOString(),
     );
   }
 }

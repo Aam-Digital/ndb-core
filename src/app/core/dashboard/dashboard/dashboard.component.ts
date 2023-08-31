@@ -17,11 +17,11 @@
 
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
-import { DynamicComponentConfig } from "../../view/dynamic-components/dynamic-component-config.interface";
-import { RouteData } from "../../view/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { RouteData } from "../../config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
 import { NgFor } from "@angular/common";
-import { DynamicComponentDirective } from "../../view/dynamic-components/dynamic-component.directive";
+import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 
 @RouteTarget("Dashboard")
 @Component({
@@ -43,7 +43,7 @@ export class DashboardComponent implements OnInit {
     this.activatedRoute.data.subscribe(
       (data: RouteData<{ widgets: DynamicComponentConfig[] }>) => {
         this.widgets = data.config.widgets;
-      }
+      },
     );
   }
 }

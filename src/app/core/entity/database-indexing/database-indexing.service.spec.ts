@@ -17,7 +17,6 @@
 
 import { DatabaseIndexingService } from "./database-indexing.service";
 import { Database } from "../../database/database";
-import { EntitySchemaService } from "../schema/entity-schema.service";
 import { expectObservable } from "../../../utils/test-utils/observable-utils";
 import { fakeAsync, tick } from "@angular/core/testing";
 import { firstValueFrom } from "rxjs";
@@ -30,7 +29,7 @@ describe("DatabaseIndexingService", () => {
 
   beforeEach(() => {
     mockDb = jasmine.createSpyObj("mockDb", ["saveDatabaseIndex", "query"]);
-    service = new DatabaseIndexingService(mockDb, new EntitySchemaService());
+    service = new DatabaseIndexingService(mockDb, null);
   });
 
   it("should pass through any query to the database", async () => {
@@ -72,7 +71,7 @@ describe("DatabaseIndexingService", () => {
       views: {},
     };
     mockDb.saveDatabaseIndex.and.callFake(
-      () => new Promise((resolve) => setTimeout(resolve, 1))
+      () => new Promise((resolve) => setTimeout(resolve, 1)),
     );
 
     // initially no registered indices
@@ -109,7 +108,7 @@ describe("DatabaseIndexingService", () => {
     };
     const testErr = { msg: "error" };
     mockDb.saveDatabaseIndex.and.callFake(
-      () => new Promise((_, reject) => setTimeout(() => reject(testErr), 1))
+      () => new Promise((_, reject) => setTimeout(() => reject(testErr), 1)),
     );
 
     // calling `createIndex` triggers a pending index state immediately
@@ -172,7 +171,7 @@ describe("DatabaseIndexingService", () => {
           }`,
           },
         },
-      })
+      }),
     );
   });
 
@@ -182,13 +181,13 @@ describe("DatabaseIndexingService", () => {
 
     const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
     expect(
-      cleanedUpStringify(actualCreatedDesignDoc.views.by_category.map)
+      cleanedUpStringify(actualCreatedDesignDoc.views.by_category.map),
     ).toEqual(
       cleanedUpStringify(`(doc) => {
             if (!doc._id.startsWith("Note")) return;
 
             emit(doc.category);
-          }`)
+          }`),
     );
   });
 
@@ -198,12 +197,12 @@ describe("DatabaseIndexingService", () => {
       "testIndex",
       Todo,
       "relatedEntities",
-      "deadline"
+      "deadline",
     );
 
     const actualCreatedDesignDoc = call.calls.argsFor(0)[0];
     expect(
-      cleanedUpStringify(actualCreatedDesignDoc.views.by_relatedEntities.map)
+      cleanedUpStringify(actualCreatedDesignDoc.views.by_relatedEntities.map),
     ).toEqual(
       cleanedUpStringify(`(doc) => {
             if (!doc._id.startsWith("Todo")) return;
@@ -212,7 +211,7 @@ describe("DatabaseIndexingService", () => {
             doc.relatedEntities.forEach((relatedEntity) => {
               emit([relatedEntity, doc.deadline]);
             });
-          }`)
+          }`),
     );
   });
 });

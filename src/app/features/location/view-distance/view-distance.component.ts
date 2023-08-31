@@ -1,12 +1,12 @@
 import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
-import { ViewDirective } from "../../../core/entity-components/entity-utils/view-components/view.directive";
+import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { Entity } from "../../../core/entity/model/entity";
 import { Coordinates } from "../coordinates";
 import { getKmDistance } from "../map-utils";
 import { Observable } from "rxjs";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { ReadonlyFunctionComponent } from "../../../core/entity-components/entity-utils/view-components/readonly-function/readonly-function.component";
+import { ReadonlyFunctionComponent } from "../../../core/common-components/display-readonly-function/readonly-function.component";
 
 /**
  * Config for displaying the distance between two entities

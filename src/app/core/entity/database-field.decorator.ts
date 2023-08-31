@@ -13,7 +13,11 @@ export function DatabaseField(propertySchema: EntitySchemaField = {}) {
     // Retrieve datatype from TypeScript type definition
     if (propertySchema.dataType === undefined) {
       const type = Reflect.getMetadata("design:type", target, propertyName);
-      propertySchema.dataType = type.DATA_TYPE ?? type.name.toLowerCase();
+      const typeName = type.DATA_TYPE ?? type.name.toLowerCase();
+      // 'object' type is ignored
+      if (typeName !== "object") {
+        propertySchema.dataType = typeName;
+      }
     }
     addPropertySchema(target, propertyName, propertySchema);
   };
@@ -22,7 +26,7 @@ export function DatabaseField(propertySchema: EntitySchemaField = {}) {
 export function addPropertySchema(
   target,
   propertyName: string,
-  propertySchema: EntitySchemaField
+  propertySchema: EntitySchemaField,
 ) {
   target[propertyName] = undefined; // This ensures that the field is not read only
 

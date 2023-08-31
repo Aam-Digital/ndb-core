@@ -1,7 +1,7 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { DataTransformationService } from "./data-transformation.service";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -23,7 +23,7 @@ describe("DataTransformationService", () => {
     });
 
     service = TestBed.inject<DataTransformationService>(
-      DataTransformationService
+      DataTransformationService,
     );
     entityMapper = TestBed.inject(EntityMapperService);
   }));
@@ -47,7 +47,7 @@ describe("DataTransformationService", () => {
 
     const result = await service.transformData(
       [testObject1, testObject2],
-      [{ label: "test_name", query: ".name" }]
+      [{ label: "test_name", query: ".name" }],
     );
 
     expect(result).toEqual([{ test_name: "foo" }, { test_name: "bar" }]);
@@ -71,7 +71,7 @@ describe("DataTransformationService", () => {
     ];
     const result1 = await service.transformData(
       [school1, school2, school3],
-      exportConfig
+      exportConfig,
     );
     expect(result1).toEqual([
       { school_name: "School with student", child_name: "John" },
@@ -138,7 +138,7 @@ describe("DataTransformationService", () => {
     const note = await createNoteInDB(
       "Note 1",
       [child1, child2, child3],
-      ["PRESENT", "ABSENT"]
+      ["PRESENT", "ABSENT"],
     );
 
     const exportConfig: ExportColumnConfig[] = [
@@ -174,7 +174,7 @@ describe("DataTransformationService", () => {
     const note = await createNoteInDB(
       "Note",
       [childWithoutSchool, childWithSchool],
-      ["PRESENT", "ABSENT"]
+      ["PRESENT", "ABSENT"],
     );
     note.schools = [school.getId()];
     await entityMapper.save(note);
@@ -270,7 +270,7 @@ describe("DataTransformationService", () => {
           subQueries: [{ query: "subject" }],
         },
       ],
-      moment().subtract(5, "days").toDate()
+      moment().subtract(5, "days").toDate(),
     );
 
     expect(result.map((x) => x.subject)).toEqual(["yesterday", "today"]);
@@ -285,7 +285,7 @@ describe("DataTransformationService", () => {
     result = await service.transformData(
       [child],
       query,
-      moment().subtract(5, "days").toDate()
+      moment().subtract(5, "days").toDate(),
     );
 
     expect(result).toEqual([
@@ -298,7 +298,7 @@ describe("DataTransformationService", () => {
       [child],
       query,
       moment().subtract(1, "weeks").subtract(1, "day").toDate(),
-      moment().subtract(1, "day").toDate()
+      moment().subtract(1, "day").toDate(),
     );
 
     expect(result).toEqual([
@@ -325,14 +325,14 @@ describe("DataTransformationService", () => {
       jasmine.arrayWithExactContents([
         { subject: "first", Children: 2 },
         { subject: "second", Children: 1 },
-      ])
+      ]),
     );
   });
 
   it("should allow to group results", async () => {
-    createSchoolInDB("sameName");
-    createSchoolInDB("sameName");
-    createSchoolInDB("otherName");
+    await createSchoolInDB("sameName");
+    await createSchoolInDB("sameName");
+    await createSchoolInDB("otherName");
 
     const result = await service.queryAndTransformData([
       {
@@ -346,7 +346,37 @@ describe("DataTransformationService", () => {
       jasmine.arrayWithExactContents([
         { Name: "sameName", Amount: 2 },
         { Name: "otherName", Amount: 1 },
-      ])
+      ]),
+    );
+  });
+
+  it("should allow results for top level (un-nested) queries", async () => {
+    await createChildInDB("A");
+    await createChildInDB("A");
+    await createChildInDB("B");
+
+    const result = await service.queryAndTransformData([
+      {
+        query: `:setString(Total)`,
+        label: "Group",
+      },
+      {
+        query: `${Child.ENTITY_TYPE}:toArray:count`,
+        label: "Count",
+      },
+      {
+        query: `${Child.ENTITY_TYPE}:toArray`,
+        groupBy: { label: "Group", property: "name" },
+        subQueries: [{ query: ":count", label: "Count" }],
+      },
+    ]);
+
+    expect(result).toEqual(
+      jasmine.arrayWithExactContents([
+        { Group: "Total", Count: 3 },
+        { Group: "A", Count: 2 },
+        { Group: "B", Count: 1 },
+      ]),
     );
   });
 
@@ -360,7 +390,7 @@ describe("DataTransformationService", () => {
   async function createNoteInDB(
     subject: string,
     children: Child[] = [],
-    attendanceStatus: string[] = []
+    attendanceStatus: string[] = [],
   ): Promise<Note> {
     const note = new Note();
     note.subject = subject;
@@ -377,7 +407,7 @@ describe("DataTransformationService", () => {
 
   async function createSchoolInDB(
     schoolName: string,
-    students: Child[] = []
+    students: Child[] = [],
   ): Promise<School> {
     const school = new School();
     school.name = schoolName;
@@ -397,7 +427,7 @@ describe("DataTransformationService", () => {
   async function createActivityInDB(
     activityTitle: string,
     participants: Child[] = [],
-    groups: School[] = []
+    groups: School[] = [],
   ): Promise<RecurringActivity> {
     const activity = new RecurringActivity();
     activity.title = activityTitle;

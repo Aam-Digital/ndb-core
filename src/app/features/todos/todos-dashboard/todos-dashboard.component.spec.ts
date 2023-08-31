@@ -1,11 +1,10 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { TodosDashboardComponent } from "./todos-dashboard.component";
 import { Todo } from "../model/todo";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { TodoCompletion } from "../model/todo-completion";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import moment from "moment";
 
@@ -19,8 +18,8 @@ describe("TodosDashboardComponent", () => {
   ];
   let testUser: string;
 
-  beforeEach(async () => {
-    await TestBed.configureTestingModule({
+  beforeEach(waitForAsync(() => {
+    TestBed.configureTestingModule({
       imports: [
         TodosDashboardComponent,
         MockedTestingModule.withState(LoginState.LOGGED_IN, mockEntities),
@@ -34,12 +33,11 @@ describe("TodosDashboardComponent", () => {
         },
       ],
     }).compileComponents();
-
-    testUser =
-      TestBed.inject<SessionService>(SessionService).getCurrentUser().name;
-  });
+  }));
 
   beforeEach(async () => {
+    testUser =
+      TestBed.inject<SessionService>(SessionService).getCurrentUser().name;
     fixture = TestBed.createComponent(TodosDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
@@ -49,7 +47,13 @@ describe("TodosDashboardComponent", () => {
   it("should not show completed todos", () => {
     const inputData = [
       Todo.create({ assignedTo: [testUser] }),
-      Todo.create({ completed: new TodoCompletion(), assignedTo: [testUser] }),
+      Todo.create({
+        completed: {
+          completedBy: testUser,
+          completedAt: new Date("2023-01-31"),
+        },
+        assignedTo: [testUser],
+      }),
       Todo.create({ assignedTo: [testUser] }),
     ];
     const mappedData = component.dataMapper(inputData);

@@ -1,6 +1,6 @@
-import { Component } from "@angular/core";
-import { EditComponent } from "../../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { Component, OnInit } from "@angular/core";
+import { EditComponent } from "../../../../core/entity/default-datatype/edit-component";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { generateLabelFromInterval, TimeInterval } from "../time-interval";
 import { MatDialog } from "@angular/material/dialog";
 import { CustomIntervalComponent } from "../custom-interval/custom-interval.component";
@@ -10,7 +10,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSelectModule } from "@angular/material/select";
 import { NgForOf, NgIf } from "@angular/common";
-import { ErrorHintComponent } from "../../../../core/entity-components/entity-utils/error-hint/error-hint.component";
+import { ErrorHintComponent } from "../../../../core/common-components/error-hint/error-hint.component";
 
 /**
  * Form field to edit a time interval for repetitions.
@@ -33,7 +33,10 @@ import { ErrorHintComponent } from "../../../../core/entity-components/entity-ut
     ErrorHintComponent,
   ],
 })
-export class EditRecurringIntervalComponent extends EditComponent<any> {
+export class EditRecurringIntervalComponent
+  extends EditComponent<any>
+  implements OnInit
+{
   predefinedIntervals: { label: string; interval: TimeInterval }[] = [
     {
       label: $localize`:default interval select option:weekly`,
@@ -91,7 +94,7 @@ export class EditRecurringIntervalComponent extends EditComponent<any> {
     }
 
     const selectedOptionValue = this.predefinedIntervals.find((o) =>
-      this.compareOptionFun(interval, o.interval)
+      this.compareOptionFun(interval, o.interval),
     )?.interval;
     if (!selectedOptionValue) {
       this.predefinedIntervals.push({

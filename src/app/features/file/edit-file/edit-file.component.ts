@@ -1,11 +1,11 @@
-import { Component, ElementRef, ViewChild } from "@angular/core";
-import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
+import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { FileService } from "../file.service";
 import { distinctUntilChanged, filter } from "rxjs/operators";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { NgClass, NgIf } from "@angular/common";
 import { MatInputModule } from "@angular/material/input";
@@ -13,7 +13,7 @@ import { ReactiveFormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ErrorHintComponent } from "../../../core/entity-components/entity-utils/error-hint/error-hint.component";
+import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
 
 /**
  * This component should be used as a `editComponent` when a property should store files.
@@ -37,7 +37,7 @@ import { ErrorHintComponent } from "../../../core/entity-components/entity-utils
   ],
   standalone: true,
 })
-export class EditFileComponent extends EditComponent<string> {
+export class EditFileComponent extends EditComponent<string> implements OnInit {
   @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
   private selectedFile: File;
   private removeClicked = false;
@@ -47,7 +47,7 @@ export class EditFileComponent extends EditComponent<string> {
     protected fileService: FileService,
     private alertService: AlertService,
     private logger: LoggingService,
-    private entityMapper: EntityMapperService
+    private entityMapper: EntityMapperService,
   ) {
     super();
   }
@@ -58,7 +58,7 @@ export class EditFileComponent extends EditComponent<string> {
     this.formControl.statusChanges
       .pipe(
         distinctUntilChanged(),
-        filter((change) => change === "DISABLED")
+        filter((change) => change === "DISABLED"),
       )
       .subscribe(() => {
         if (
@@ -127,7 +127,7 @@ export class EditFileComponent extends EditComponent<string> {
       .removeFile(this.entity, this.formControlName)
       .subscribe(() => {
         this.alertService.addInfo(
-          $localize`:Message for user:File "${this.initialValue}" deleted`
+          $localize`:Message for user:File "${this.initialValue}" deleted`,
         );
         this.initialValue = undefined;
         this.removeClicked = false;

@@ -38,10 +38,10 @@ export class DemoSchoolGenerator extends DemoDataGenerator<School> {
         $localize`:Language of a school:English`,
         $localize`:Language of a school:Bengali`,
       ]);
-      const schoolNameWithType = $localize`:School demo name order for connecting the school name and (High) School|e.g. Example School:${faker.name.firstName()} ${faker.helpers.arrayElement(
-        [this.normalSchool, this.highSchool]
+      const schoolNameWithType = $localize`:School demo name order for connecting the school name and (High) School|e.g. Example School:${faker.person.firstName()} ${faker.helpers.arrayElement(
+        [this.normalSchool, this.highSchool],
       )}`;
-      const schoolNameWithLanguage = $localize`${faker.name.firstName()} ${
+      const schoolNameWithLanguage = $localize`${faker.person.firstName()} ${
         school["language"]
       } Language`;
       school.name = faker.helpers.arrayElement([

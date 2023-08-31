@@ -56,7 +56,14 @@
                   "maximumWarning": "6kb"
                 }
               ],
-              "optimization": true,
+              "optimization": {
+                "scripts": true,
+                "styles": {
+                  "minify": true,
+                  "inlineCritical": false
+                },
+                "fonts": true
+              },
               "outputHashing": "all",
               "namedChunks": false,
               "extractLicenses": true,
@@ -137,7 +144,8 @@
           "builder": "@storybook/angular:build-storybook",
           "options": {
             "browserTarget": "ndb-core:build",
-            "compodoc": false
+            "compodoc": false,
+            "enableProdMode": false
           }
         },
         "lint": {

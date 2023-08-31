@@ -1,0 +1,6 @@
+@use "src/styles/variables/ndb-light-theme" as theme;
+@use "@angular/material" as mat;
+
+em {
+  color: mat.get-color-from-palette(theme.$primary);
+}

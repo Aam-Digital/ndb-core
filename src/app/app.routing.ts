@@ -16,8 +16,8 @@
  */
 
 import { Routes } from "@angular/router";
-import { ApplicationLoadingComponent } from "./core/view/dynamic-routing/empty/application-loading.component";
-import { NotFoundComponent } from "./core/view/dynamic-routing/not-found/not-found.component";
+import { ApplicationLoadingComponent } from "./core/config/dynamic-routing/empty/application-loading.component";
+import { NotFoundComponent } from "./core/config/dynamic-routing/not-found/not-found.component";
 import { UserAccountComponent } from "./core/user/user-account/user-account.component";
 import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
@@ -41,8 +41,8 @@ export const allRoutes: Routes = [
   {
     path: "coming-soon/:feature",
     loadComponent: () =>
-      import("./core/coming-soon/coming-soon/coming-soon.component").then(
-        (c) => c.ComingSoonComponent
+      import("./features/coming-soon/coming-soon/coming-soon.component").then(
+        (c) => c.ComingSoonComponent,
       ),
     canActivate: [AuthGuard],
   },
@@ -57,11 +57,12 @@ export const allRoutes: Routes = [
     path: "public-form/:id",
     loadComponent: () =>
       import("./features/public-form/public-form.component").then(
-        (c) => c.PublicFormComponent
+        (c) => c.PublicFormComponent,
       ),
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
+
   {
     path: "**",
     pathMatch: "full",

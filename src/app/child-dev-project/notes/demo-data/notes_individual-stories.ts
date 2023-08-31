@@ -1,5 +1,5 @@
-import { warningLevels } from "../../warning-levels";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
+import { warningLevels } from "../../warning-level";
 
 export const noteIndividualStories = [
   {

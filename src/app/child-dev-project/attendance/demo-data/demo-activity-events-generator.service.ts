@@ -24,7 +24,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
    */
   static generateEventForActivity(
     activity: RecurringActivity,
-    date: Date
+    date: Date,
   ): EventNote {
     const eventNote = EventNote.create(date, activity.title);
     eventNote.authors = activity.assignedTo;
@@ -35,7 +35,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
       eventNote.addChild(participantId);
       const eventAtt = eventNote.getAttendance(participantId);
       eventAtt.status = faker.helpers.arrayElement(
-        defaultAttendanceStatusTypes
+        defaultAttendanceStatusTypes,
       );
 
       if (eventAtt.status.countAs === AttendanceLogicalStatus.ABSENT) {
@@ -57,7 +57,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
   static provider(
     config: DemoEventsConfig = {
       forNLastYears: 2,
-    }
+    },
   ) {
     return [
       {
@@ -70,7 +70,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
 
   constructor(
     private config: DemoEventsConfig,
-    private demoActivities: DemoActivityGeneratorService
+    private demoActivities: DemoActivityGeneratorService,
   ) {
     super();
   }
@@ -92,8 +92,8 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
         data.push(
           DemoActivityEventsGeneratorService.generateEventForActivity(
             activity,
-            date.toDate()
-          )
+            date.toDate(),
+          ),
         );
       }
     }

@@ -81,8 +81,8 @@ describe("AccountPageComponent", () => {
     const errorMessage = "Save email error message";
     mockAuthService.setEmail.and.returnValue(
       throwError(
-        () => new HttpErrorResponse({ error: { message: errorMessage } })
-      )
+        () => new HttpErrorResponse({ error: { message: errorMessage } }),
+      ),
     );
     component.email.setValue("valid@email.com");
 

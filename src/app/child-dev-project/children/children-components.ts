@@ -5,7 +5,7 @@ export const childrenComponents: ComponentTuple[] = [
     "ChildrenList",
     () =>
       import("./children-list/children-list.component").then(
-        (c) => c.ChildrenListComponent
+        (c) => c.ChildrenListComponent,
       ),
   ],
 
@@ -27,35 +27,21 @@ export const childrenComponents: ComponentTuple[] = [
     "Aser",
     () =>
       import("./aser/aser-component/aser.component").then(
-        (c) => c.AserComponent
+        (c) => c.AserComponent,
       ),
   ],
   [
     "ChildBlock",
     () =>
       import("./child-block/child-block.component").then(
-        (c) => c.ChildBlockComponent
+        (c) => c.ChildBlockComponent,
       ),
-  ],
-  [
-    "EntityCountDashboard",
-    () =>
-      import(
-        "./dashboard-widgets/entity-count-dashboard/entity-count-dashboard.component"
-      ).then((c) => c.EntityCountDashboardComponent),
-  ],
-  [
-    "ChildrenCountDashboard",
-    () =>
-      import(
-        "./dashboard-widgets/entity-count-dashboard/entity-count-dashboard.component"
-      ).then((c) => c.EntityCountDashboardComponent),
   ],
   [
     "ChildrenBmiDashboard",
     () =>
       import(
-        "./dashboard-widgets/children-bmi-dashboard/children-bmi-dashboard.component"
+        "./health-checkup/children-bmi-dashboard/children-bmi-dashboard.component"
       ).then((c) => c.ChildrenBmiDashboardComponent),
   ],
   [
@@ -68,8 +54,8 @@ export const childrenComponents: ComponentTuple[] = [
   [
     "BmiBlock",
     () =>
-      import("./children-list/bmi-block/bmi-block.component").then(
-        (c) => c.BmiBlockComponent
+      import("./health-checkup/bmi-block/bmi-block.component").then(
+        (c) => c.BmiBlockComponent,
       ),
   ],
   [
@@ -78,12 +64,5 @@ export const childrenComponents: ComponentTuple[] = [
       import(
         "./health-checkup/health-checkup-component/health-checkup.component"
       ).then((c) => c.HealthCheckupComponent),
-  ],
-  [
-    "BirthdayDashboard",
-    () =>
-      import(
-        "./dashboard-widgets/birthday-dashboard/birthday-dashboard.component"
-      ).then((c) => c.BirthdayDashboardComponent),
   ],
 ];

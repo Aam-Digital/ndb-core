@@ -3,8 +3,7 @@
 [![Code Climate](https://codeclimate.com/github/Aam-Digital/ndb-core/badges/gpa.svg)](https://codeclimate.com/github/Aam-Digital/ndb-core)
 [![Test Coverage](https://api.codeclimate.com/v1/badges/4e4a7a6301064019b2c9/test_coverage)](https://codeclimate.com/github/Aam-Digital/ndb-core/test_coverage)
 [![E2E Tests](https://img.shields.io/endpoint?url=https://dashboard.cypress.io/badge/simple/2petka/master&style=flat&logo=cypress)](https://dashboard.cypress.io/projects/2petka/runs)
-[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-22-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
-[![Doc CoverageDocs](https://aam-digital.github.io/ndb-core/documentation/images/coverage-badge-documentation.svg)](https://aam-digital.github.io/ndb-core/documentation/modules.html)
+[![Guides](https://img.shields.io/badge/Tutorial%20%26%20Guides-available-blue)](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 [![Known Vulnerabilities](https://snyk.io/test/github/Aam-Digital/ndb-core/badge.svg)](https://snyk.io/test/github/Aam-Digital/ndb-core)
 
 # Aam Digital
@@ -38,8 +37,7 @@ The overall architecture and tech stack including backend services looks like th
 1. This project depends on [npm (NodeJS)](https://www.npmjs.org/) to setup its dependencies. Please make sure you have npm installed.
 2. `git clone` this repository to get all the code with its configuration and requirements.
 3. `npm install` the dependencies (external libraries and packages) 
-4. create a config file `assets/config.json` by copying the default config `assets/config.default.json` that is part of the repository.
-5. `npm run start` to run your local dev server and get started.
+4. `npm run start` to run your local dev server and get started.
 
 ## Documentation
 Our detailed [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)

@@ -1,79 +1,55 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { PermissionEnforcerService } from "./permission-enforcer.service";
-import { DatabaseRule, DatabaseRules } from "../permission-types";
-import { SessionService } from "../../session/session-service/session.service";
-import { TEST_USER } from "../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { DatabaseRule } from "../permission-types";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../database/database";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { AbilityService } from "../ability/ability.service";
-import { SyncedSessionService } from "../../session/session-service/synced-session.service";
-import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
-import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { of, Subject } from "rxjs";
-import { EntityAbility } from "../ability/entity-ability";
+import { Subject } from "rxjs";
 import { Config } from "../../config/config";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "../../entity/database-entity.decorator";
 import { UpdatedEntity } from "../../entity/model/entity-update";
-import { ConfigService } from "../../config/config.service";
+import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { TEST_USER } from "../../../utils/mock-local-session";
+import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;
-  let mockSession: jasmine.SpyObj<SyncedSessionService>;
   const userRules: DatabaseRule[] = [
     { subject: "all", action: "manage" },
     { subject: "Child", action: "read", inverted: true },
   ];
-  let mockDatabase: jasmine.SpyObj<Database>;
-  let mockLocation: jasmine.SpyObj<Location>;
-  let mockAnalytics: jasmine.SpyObj<AnalyticsService>;
+  let entityUpdates: Subject<UpdatedEntity<Config>>;
   let entityMapper: EntityMapperService;
-  const entityUpdates = new Subject<UpdatedEntity<Config<DatabaseRules>>>();
+  let mockLocation: jasmine.SpyObj<Location>;
+  let destroySpy: jasmine.Spy;
+  let trackSpy: jasmine.Spy;
 
-  beforeEach(fakeAsync(() => {
-    mockSession = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSession.getCurrentUser.and.returnValue({
-      name: TEST_USER,
-      roles: ["user_app"],
-    });
-    mockDatabase = jasmine.createSpyObj(["destroy"]);
+  beforeEach(waitForAsync(() => {
+    entityUpdates = new Subject();
     mockLocation = jasmine.createSpyObj(["reload"]);
-    mockAnalytics = jasmine.createSpyObj(["eventTrack"]);
+    entityMapper = mockEntityMapper();
 
     TestBed.configureTestingModule({
+      imports: [MockedTestingModule.withState()],
       providers: [
-        PermissionEnforcerService,
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
-        EntitySchemaService,
-        EntityAbility,
-        { provide: Database, useValue: mockDatabase },
-        { provide: SessionService, useValue: mockSession },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
-        { provide: AnalyticsService, useValue: mockAnalytics },
-        { provide: EntityRegistry, useValue: entityRegistry },
-        AbilityService,
-        {
-          provide: ConfigService,
-          useValue: { configUpdates: of(new Config()) },
-        },
+        { provide: EntityMapperService, useValue: entityMapper },
       ],
     });
-    entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     service = TestBed.inject(PermissionEnforcerService);
     TestBed.inject(AbilityService).initializeRules();
+    destroySpy = spyOn(TestBed.inject(Database), "destroy");
+    trackSpy = spyOn(TestBed.inject(AnalyticsService), "eventTrack");
   }));
 
   afterEach(() => {
     window.localStorage.removeItem(
-      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
     );
   });
 
@@ -81,14 +57,15 @@ describe("PermissionEnforcerService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should write the users relevant permissions to local storage", async () => {
-    await service.enforcePermissionsOnLocalData(userRules);
+  it("should write the users relevant permissions to local storage", fakeAsync(() => {
+    service.enforcePermissionsOnLocalData(userRules);
+    tick();
 
     const storedRules = window.localStorage.getItem(
-      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY
+      TEST_USER + "-" + PermissionEnforcerService.LOCALSTORAGE_KEY,
     );
     expect(JSON.parse(storedRules)).toEqual(userRules);
-  });
+  }));
 
   it("should reset page if entity with write restriction exists (inverted)", fakeAsync(() => {
     entityMapper.save(new Child());
@@ -97,7 +74,7 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
 
-    expect(mockDatabase.destroy).toHaveBeenCalled();
+    expect(destroySpy).toHaveBeenCalled();
     expect(mockLocation.reload).toHaveBeenCalled();
   }));
 
@@ -108,7 +85,7 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer([{ subject: "School", action: "manage" }]);
     tick();
 
-    expect(mockDatabase.destroy).toHaveBeenCalled();
+    expect(destroySpy).toHaveBeenCalled();
     expect(mockLocation.reload).toHaveBeenCalled();
   }));
 
@@ -127,7 +104,7 @@ describe("PermissionEnforcerService", () => {
     ]);
     tick();
 
-    expect(mockDatabase.destroy).toHaveBeenCalled();
+    expect(destroySpy).toHaveBeenCalled();
     expect(mockLocation.reload).toHaveBeenCalled();
   }));
 
@@ -143,7 +120,7 @@ describe("PermissionEnforcerService", () => {
     ]);
     tick();
 
-    expect(mockDatabase.destroy).not.toHaveBeenCalled();
+    expect(destroySpy).not.toHaveBeenCalled();
     expect(mockLocation.reload).not.toHaveBeenCalled();
   }));
 
@@ -157,7 +134,7 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
 
-    expect(mockDatabase.destroy).not.toHaveBeenCalled();
+    expect(destroySpy).not.toHaveBeenCalled();
     expect(mockLocation.reload).not.toHaveBeenCalled();
   }));
 
@@ -168,7 +145,7 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
 
-    expect(mockDatabase.destroy).not.toHaveBeenCalled();
+    expect(destroySpy).not.toHaveBeenCalled();
     expect(mockLocation.reload).not.toHaveBeenCalled();
 
     const extendedRules = userRules.concat({
@@ -180,7 +157,7 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer(extendedRules);
     tick();
 
-    expect(mockDatabase.destroy).toHaveBeenCalled();
+    expect(destroySpy).toHaveBeenCalled();
     expect(mockLocation.reload).toHaveBeenCalled();
   }));
 
@@ -193,7 +170,7 @@ describe("PermissionEnforcerService", () => {
     ]);
     tick();
 
-    expect(mockDatabase.destroy).toHaveBeenCalled();
+    expect(destroySpy).toHaveBeenCalled();
     expect(mockLocation.reload).toHaveBeenCalled();
   }));
 
@@ -204,11 +181,11 @@ describe("PermissionEnforcerService", () => {
     updateRulesAndTriggerEnforcer(userRules);
     tick();
 
-    expect(mockAnalytics.eventTrack).toHaveBeenCalledWith(
+    expect(trackSpy).toHaveBeenCalledWith(
       "destroying local db due to lost permissions",
       {
         category: "Migration",
-      }
+      },
     );
   }));
 
@@ -221,14 +198,13 @@ describe("PermissionEnforcerService", () => {
     tick();
 
     const storedRules = localStorage.getItem(
-      `${TEST_USER}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`
+      `${TEST_USER}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`,
     );
     expect(JSON.parse(storedRules)).toEqual(rules);
   }));
 
   function updateRulesAndTriggerEnforcer(rules: DatabaseRule[]) {
-    const role = mockSession.getCurrentUser().roles[0];
-    const config = new Config(Config.PERMISSION_KEY, { [role]: rules });
+    const config = new Config(Config.PERMISSION_KEY, { ["user_app"]: rules });
     entityUpdates.next({ entity: config, type: "update" });
   }
 });

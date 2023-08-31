@@ -1,4 +1,4 @@
-import { faker as originalFaker } from "@faker-js/faker/locale/en_IND";
+import { fakerEN_IN as originalFaker } from "@faker-js/faker";
 import { GeoResult } from "../../features/location/geo.service";
 /**
  * Extension of faker.js implementing additional data generation methods.
@@ -10,7 +10,7 @@ class CustomFaker {
    */
   constructor(
     // @ts-ignore
-    private baseFaker: Faker.FakerStatic
+    private baseFaker: Faker.FakerStatic,
   ) {
     // make baseFaker methods available from instances of this class
     Object.assign(this, baseFaker);
@@ -27,7 +27,7 @@ class CustomFaker {
     latest.setFullYear(currentYear - minAge);
     const earliest = new Date();
     earliest.setFullYear(currentYear - maxAge);
-    return this.baseFaker.date.between(earliest, latest);
+    return this.baseFaker.date.between({ from: earliest, to: latest });
   }
 
   /**
@@ -46,13 +46,13 @@ class CustomFaker {
   }
 
   geoAddress(): GeoResult {
-    const coordinates = faker.address.nearbyGPSCoordinate([
-      52.4790412, 13.4319106,
-    ]);
+    const coordinates = faker.location.nearbyGPSCoordinate({
+      origin: [52.4790412, 13.4319106],
+    });
     return {
-      lat: Number.parseFloat(coordinates[0]),
-      lon: Number.parseFloat(coordinates[1]),
-      display_name: faker.address.streetAddress(true),
+      lat: Number.parseFloat(coordinates[0].toString()),
+      lon: Number.parseFloat(coordinates[1].toString()),
+      display_name: faker.location.streetAddress(true),
     } as GeoResult;
   }
 }

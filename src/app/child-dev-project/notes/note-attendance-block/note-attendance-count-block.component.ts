@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { AttendanceLogicalStatus } from "../../attendance/model/attendance-status";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 
 /**
  * Displays the amount of children with a given attendance status at a given note.
@@ -27,7 +27,7 @@ export class NoteAttendanceCountBlockComponent implements OnInit {
 
   ngOnInit() {
     this.participantsWithStatus = this.entity.countWithStatus(
-      this.config.status
+      this.config.status,
     );
   }
 }

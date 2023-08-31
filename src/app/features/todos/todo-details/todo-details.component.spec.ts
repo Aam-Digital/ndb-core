@@ -7,7 +7,7 @@ import { Todo } from "../model/todo";
 import { TodoService } from "../todo.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { NEVER } from "rxjs";
 
 describe("TodoDetailsComponent", () => {
@@ -60,7 +60,7 @@ describe("TodoDetailsComponent", () => {
     await component.completeTodo();
 
     const savedEntity = await TestBed.inject<EntityMapperService>(
-      EntityMapperService
+      EntityMapperService,
     ).load(Todo, component.entity.getId(true));
     expect(savedEntity.subject).toBe("123");
     expect(savedEntity.completed).toBeTruthy();

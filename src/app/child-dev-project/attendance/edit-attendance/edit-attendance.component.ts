@@ -1,13 +1,13 @@
-import { Component, Input } from "@angular/core";
-import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
-import { EditEntityArrayComponent } from "../../../core/entity-components/entity-select/edit-entity-array/edit-entity-array.component";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { Component, Input, OnInit } from "@angular/core";
+import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
+import { EditEntityArrayComponent } from "../../../core/basic-datatypes/entity-array/edit-entity-array/edit-entity-array.component";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { startWith } from "rxjs/operators";
 import { FormControl } from "@angular/forms";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { NgForOf, NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DisplayEntityComponent } from "../../../core/entity-components/entity-select/display-entity/display-entity.component";
+import { DisplayEntityComponent } from "../../../core/basic-datatypes/entity/display-entity/display-entity.component";
 import { MatButtonModule } from "@angular/material/button";
 import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -38,7 +38,10 @@ import { MatCardModule } from "@angular/material/card";
   templateUrl: "./edit-attendance.component.html",
   styleUrls: ["./edit-attendance.component.scss"],
 })
-export class EditAttendanceComponent extends EditComponent<string[]> {
+export class EditAttendanceComponent
+  extends EditComponent<string[]>
+  implements OnInit
+{
   showAttendance = false;
   mobile = false;
   @Input() entity: Note;
@@ -55,14 +58,14 @@ export class EditAttendanceComponent extends EditComponent<string[]> {
   ngOnInit() {
     super.ngOnInit();
     const category = this.parent.get(
-      "category"
+      "category",
     ) as FormControl<InteractionType>;
     if (category) {
       category.valueChanges.pipe(startWith(category.value)).subscribe((val) => {
         this.showAttendance = !!val?.isMeeting;
         if (this.showAttendance) {
           this.attendanceForm = new FormControl(
-            this.entity.copy()["childrenAttendance"]
+            this.entity.copy()["childrenAttendance"],
           );
           this.parent.addControl("childrenAttendance", this.attendanceForm);
         } else {
@@ -88,6 +91,11 @@ export class EditAttendanceComponent extends EditComponent<string[]> {
     children.splice(index, 1);
     this.attendanceForm.value.delete(id);
     this.formControl.setValue([...children]);
+    this.formControl.markAsDirty();
+  }
+
+  updateAttendanceValue(childId, property: "status" | "remarks", newValue) {
+    this.getAttendance(childId)[property] = newValue;
     this.formControl.markAsDirty();
   }
 }

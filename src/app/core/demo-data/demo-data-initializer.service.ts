@@ -5,7 +5,7 @@ import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { LoggingService } from "../logging/logging.service";
-import { AppSettings } from "../app-config/app-settings";
+import { AppSettings } from "../app-settings";
 import { LoginState } from "../session/session-states/login-state.enum";
 import PouchDB from "pouchdb-browser";
 import { SessionType } from "../session/session-type";
@@ -32,26 +32,26 @@ export class DemoDataInitializerService {
     private localSession: LocalSession,
     private dialog: MatDialog,
     private loggingService: LoggingService,
-    private database: Database
+    private database: Database,
   ) {}
 
   async run() {
     const dialogRef = this.dialog.open(
-      DemoDataGeneratingProgressDialogComponent
+      DemoDataGeneratingProgressDialogComponent,
     );
 
     if (this.database instanceof PouchDatabase) {
       this.pouchDatabase = this.database;
     } else {
       this.loggingService.warn(
-        "Cannot create demo data with session: " + environment.session_type
+        "Cannot create demo data with session: " + environment.session_type,
       );
     }
     this.registerDemoUsers();
 
     await this.localSession.login(
       DemoUserGeneratorService.DEFAULT_USERNAME,
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
 
     await this.demoDataService.publishDemoData();
@@ -84,7 +84,7 @@ export class DemoDataInitializerService {
         name: DemoUserGeneratorService.DEFAULT_USERNAME,
         roles: ["user_app"],
       },
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
     this.localSession.saveUser(
       {
@@ -95,7 +95,7 @@ export class DemoDataInitializerService {
           KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
         ],
       },
-      DemoUserGeneratorService.DEFAULT_PASSWORD
+      DemoUserGeneratorService.DEFAULT_PASSWORD,
     );
   }
 

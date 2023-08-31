@@ -1,0 +1,49 @@
+@use "src/styles/variables/sizes";
+
+.entry-wrapper {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr) 64px;
+  grid-template-rows: repeat(2, 1fr);
+  grid-gap: sizes.$small;
+  grid-template-areas:
+    "header header trash"
+    "current target trash";
+  padding: 12px;
+}
+
+.entry-wrapper:not(:last-child) {
+  margin-bottom: sizes.$large;
+}
+
+.entry-wrapper:last-child {
+  margin-bottom: sizes.$regular;
+}
+
+.title-field {
+  input {
+    font-size: 32px;
+  }
+  width: 90%;
+  min-width: 0;
+}
+
+.header-field {
+  grid-area: header;
+  min-width: 0;
+}
+
+.current-field {
+  grid-area: current;
+  min-width: 0;
+}
+
+.target-field {
+  grid-area: target;
+  min-width: 0;
+}
+
+.dialog-content {
+  @media (max-height: 800px) {
+    height: 40vh;
+  }
+}

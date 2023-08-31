@@ -1,0 +1,51 @@
+<app-dashboard-widget
+  icon="birthday-cake"
+  theme="child"
+  [title]="dataSource.data.length"
+  subtitle="Upcoming Birthdays"
+  i18n-subtitle="Subtitle of the birthday widget"
+  [loading]="isLoading"
+>
+  <app-widget-content>
+    <div *ngIf="dataSource.data.length === 0 && !isLoading" class="headline">
+      <span i18n="Fallback text if not birtdays are in the specified period">
+        no birthdays in the next {{ threshold - 1 }} days
+      </span>
+    </div>
+    <div *ngIf="dataSource.data.length > 0" class="table-wrapper">
+      <table mat-table [dataSource]="dataSource">
+        <tr hidden="true">
+          <th scope="col">Name</th>
+          <th scope="col">DateOfBirth</th>
+          <th scope="col">AfterBirthdayAge</th>
+        </tr>
+        <ng-container matColumnDef="entity">
+          <td *matCellDef="let entity">
+            <app-display-entity
+              [entityToDisplay]="entity.entity"
+            ></app-display-entity>
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="dateOfBirth">
+          <td *matCellDef="let entity">
+            {{ entity.birthday | date: "E dd.MM" }}
+          </td>
+        </ng-container>
+        <ng-container matColumnDef="newAge">
+          <td *matCellDef="let entity" i18n>{{ entity.newAge }} yrs</td>
+        </ng-container>
+        <tr
+          mat-row
+          *matRowDef="let row; columns: ['entity', 'dateOfBirth', 'newAge']"
+        ></tr>
+      </table>
+    </div>
+    <mat-paginator
+      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
+      [pageSizeOptions]="[5]"
+      hidePageSize
+      #paginator
+    >
+    </mat-paginator>
+  </app-widget-content>
+</app-dashboard-widget>

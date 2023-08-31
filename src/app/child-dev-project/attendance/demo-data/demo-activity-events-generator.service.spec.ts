@@ -18,7 +18,7 @@ describe("DemoActivityEventsGenerator", () => {
 
     service = new DemoActivityEventsGeneratorService(
       { forNLastYears: 2 },
-      mockActivityGenerator
+      mockActivityGenerator,
     );
   });
 

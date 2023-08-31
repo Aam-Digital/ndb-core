@@ -1,21 +1,15 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
-import { RouterTestingModule } from "@angular/router/testing";
-import { MatNativeDateModule } from "@angular/material/core";
+import { Meta, moduleMetadata, StoryFn } from "@storybook/angular";
 import { AttendanceStatusSelectComponent } from "./attendance-status-select.component";
-import { ConfigurableEnumService } from "../../../core/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumService } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
 export default {
   title: "Features/Attendance/Components/AttendanceStatusSelect",
   component: AttendanceStatusSelectComponent,
   decorators: [
     moduleMetadata({
-      imports: [
-        AttendanceStatusSelectComponent,
-        RouterTestingModule,
-        MatNativeDateModule,
-      ],
+      imports: [BrowserAnimationsModule],
       providers: [
         {
           provide: ConfigurableEnumService,
@@ -31,8 +25,8 @@ export default {
   },
 } as Meta;
 
-const Template: Story<AttendanceStatusSelectComponent> = (
-  args: AttendanceStatusSelectComponent
+const Template: StoryFn<AttendanceStatusSelectComponent> = (
+  args: AttendanceStatusSelectComponent,
 ) => ({
   props: args,
 });

@@ -1,11 +1,11 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { AbilityService } from "./ability.service";
 import { Subject } from "rxjs";
 import { SessionService } from "../../session/session-service/session.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
@@ -15,17 +15,14 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { UpdatedEntity } from "../../entity/model/entity-update";
-import { AuthUser } from "../../session/session-service/auth-user";
+import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { TEST_USER } from "../../../utils/mock-local-session";
 
 describe("AbilityService", () => {
   let service: AbilityService;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
   let ability: EntityAbility;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let entityUpdates: Subject<UpdatedEntity<Config<DatabaseRules>>>;
-  let mockPermissionEnforcer: jasmine.SpyObj<PermissionEnforcerService>;
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-  const user: AuthUser = { name: "testUser", roles: ["user_app"] };
+  let entityMapper: jasmine.SpyObj<EntityMapperService>;
   const rules: DatabaseRules = {
     user_app: [
       { subject: "Child", action: "read" },
@@ -34,33 +31,18 @@ describe("AbilityService", () => {
     admin_app: [{ subject: "all", action: "manage" }],
   };
 
-  beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["load", "receiveUpdates"]);
-    mockEntityMapper.load.and.rejectWith();
+  beforeEach(waitForAsync(() => {
     entityUpdates = new Subject();
-    mockEntityMapper.receiveUpdates.and.returnValue(entityUpdates);
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
-    mockSessionService.getCurrentUser.and.returnValue(user);
-    mockPermissionEnforcer = jasmine.createSpyObj([
-      "enforcePermissionsOnLocalData",
-    ]);
-    mockLoggingService = jasmine.createSpyObj(["warn"]);
-
+    entityMapper = mockEntityMapper() as any;
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    spyOn(entityMapper, "load").and.callThrough();
     TestBed.configureTestingModule({
       imports: [MockedTestingModule.withState()],
-      providers: [
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: EntityMapperService, useValue: mockEntityMapper },
-        {
-          provide: PermissionEnforcerService,
-          useValue: mockPermissionEnforcer,
-        },
-        { provide: LoggingService, useValue: mockLoggingService },
-      ],
+      providers: [{ provide: EntityMapperService, useValue: entityMapper }],
     });
     service = TestBed.inject(AbilityService);
     ability = TestBed.inject(EntityAbility);
-  });
+  }));
 
   afterEach(() => {
     entityUpdates.complete();
@@ -71,16 +53,16 @@ describe("AbilityService", () => {
   });
 
   it("should fetch the rules object from the database", () => {
-    expect(mockEntityMapper.load).toHaveBeenCalledWith(
+    expect(entityMapper.load).toHaveBeenCalledWith(
       Config,
-      Config.PERMISSION_KEY
+      Config.PERMISSION_KEY,
     );
   });
 
   it("should update the rules when a change is published", () => {
-    mockEntityMapper.load.and.rejectWith("no initial config");
+    entityMapper.load.and.rejectWith("no initial config");
 
-    expect(mockEntityMapper.load).toHaveBeenCalled();
+    expect(entityMapper.load).toHaveBeenCalled();
     // Default rule
     expect(ability.rules).toEqual([{ action: "manage", subject: "all" }]);
 
@@ -89,7 +71,7 @@ describe("AbilityService", () => {
       type: "update",
     });
 
-    expect(ability.rules).toEqual(rules[user.roles[0]]);
+    expect(ability.rules).toEqual(rules["user_app"]);
   });
 
   it("should update the ability with the received rules for the logged in user", () => {
@@ -104,7 +86,7 @@ describe("AbilityService", () => {
 
   it("should update the ability with rules for all roles the logged in user has", () => {
     spyOn(ability, "update");
-    mockSessionService.getCurrentUser.and.returnValue({
+    spyOn(TestBed.inject(SessionService), "getCurrentUser").and.returnValue({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
@@ -115,7 +97,7 @@ describe("AbilityService", () => {
     });
 
     expect(ability.update).toHaveBeenCalledWith(
-      rules.user_app.concat(rules.admin_app)
+      rules.user_app.concat(rules.admin_app),
     );
   });
 
@@ -134,7 +116,7 @@ describe("AbilityService", () => {
     expect(ability.can("manage", new Note())).toBeFalse();
     expect(ability.can("create", new Note())).toBeFalse();
 
-    mockSessionService.getCurrentUser.and.returnValue({
+    spyOn(TestBed.inject(SessionService), "getCurrentUser").and.returnValue({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
@@ -181,14 +163,16 @@ describe("AbilityService", () => {
   });
 
   it("should call the ability enforcer after updating the rules", () => {
+    const enforceSpy = spyOn(
+      TestBed.inject(PermissionEnforcerService),
+      "enforcePermissionsOnLocalData",
+    );
     entityUpdates.next({
       entity: new Config(Config.PERMISSION_KEY, rules),
       type: "update",
     });
 
-    expect(
-      mockPermissionEnforcer.enforcePermissionsOnLocalData
-    ).toHaveBeenCalled();
+    expect(enforceSpy).toHaveBeenCalled();
   });
 
   it("should allow to access user properties in the rules", () => {
@@ -204,7 +188,7 @@ describe("AbilityService", () => {
     entityUpdates.next({ entity: config, type: "update" });
 
     const userEntity = new User();
-    userEntity.name = user.name;
+    userEntity.name = TEST_USER;
     expect(ability.can("manage", userEntity)).toBeTrue();
     const anotherUser = new User();
     anotherUser.name = "another user";
@@ -213,7 +197,7 @@ describe("AbilityService", () => {
 
   it("should allow to check conditions with complex data types", fakeAsync(() => {
     const classInteraction = defaultInteractionTypes.find(
-      (type) => type.id === "SCHOOL_CLASS"
+      (type) => type.id === "SCHOOL_CLASS",
     );
     const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
       user_app: [
@@ -234,16 +218,17 @@ describe("AbilityService", () => {
   }));
 
   it("should log a warning if no rules are found for a user", () => {
-    mockSessionService.getCurrentUser.and.returnValue({
+    spyOn(TestBed.inject(SessionService), "getCurrentUser").and.returnValue({
       name: "new-user",
       roles: ["invalid_role"],
     });
+    const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
     entityUpdates.next({
       entity: new Config(Config.PERMISSION_KEY, rules),
       type: "update",
     });
 
-    expect(mockLoggingService.warn).toHaveBeenCalled();
+    expect(warnSpy).toHaveBeenCalled();
   });
 
   it("should prepend default rules to all users", () => {
@@ -253,14 +238,14 @@ describe("AbilityService", () => {
     ];
     const config = new Config<DatabaseRules>(
       Config.PERMISSION_KEY,
-      Object.assign({ default: defaultRules } as DatabaseRules, rules)
+      Object.assign({ default: defaultRules } as DatabaseRules, rules),
     );
 
     entityUpdates.next({ entity: config, type: "update" });
 
     expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
 
-    mockSessionService.getCurrentUser.and.returnValue({
+    spyOn(TestBed.inject(SessionService), "getCurrentUser").and.returnValue({
       name: "admin",
       roles: ["user_app", "admin_app"],
     });
@@ -268,7 +253,7 @@ describe("AbilityService", () => {
     config._rev = "update";
     entityUpdates.next({ entity: config, type: "update" });
     expect(ability.rules).toEqual(
-      defaultRules.concat(...rules.user_app, ...rules.admin_app)
+      defaultRules.concat(...rules.user_app, ...rules.admin_app),
     );
   });
 });

@@ -1,14 +1,14 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceCalendarComponent } from "./attendance-calendar.component";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { generateEventWithAttendance } from "../model/activity-attendance";
 import { SimpleChange } from "@angular/core";
 import moment from "moment";
 import { Note } from "../../notes/model/note";
 import { Child } from "../../children/model/child";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
-import { mockEntityMapper } from "../../../core/entity/mock-entity-mapper-service";
+import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EventNote } from "../model/event-note";
 import { AttendanceService } from "../attendance.service";
 import { AnalyticsService } from "../../../core/analytics/analytics.service";
@@ -70,10 +70,10 @@ describe("AttendanceCalendarComponent", () => {
     });
 
     expect(
-      moment(component.minDate).isSame(moment("2020-01-01"), "day")
+      moment(component.minDate).isSame(moment("2020-01-01"), "day"),
     ).toBeTrue();
     expect(
-      moment(component.maxDate).isSame(moment("2020-01-31"), "day")
+      moment(component.maxDate).isSame(moment("2020-01-31"), "day"),
     ).toBeTrue();
   });
 
@@ -87,10 +87,10 @@ describe("AttendanceCalendarComponent", () => {
     note.addChild(absentChild.getId());
     note.addChild(childWithoutAttendance.getId());
     const presentAttendance = defaultAttendanceStatusTypes.find(
-      (it) => it.id === "PRESENT"
+      (it) => it.id === "PRESENT",
     );
     const absentAttendance = defaultAttendanceStatusTypes.find(
-      (it) => it.id === "ABSENT"
+      (it) => it.id === "ABSENT",
     );
     note.getAttendance(attendedChild.getId()).status = presentAttendance;
     note.getAttendance(absentChild.getId()).status = absentAttendance;

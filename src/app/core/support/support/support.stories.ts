@@ -1,24 +1,20 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { SupportComponent } from "./support.component";
 import { SwUpdate } from "@angular/service-worker";
-import { Database } from "../../database/database";
-import { HttpClientTestingModule } from "@angular/common/http/testing";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
-import { mockEntityMapper } from "../../entity/mock-entity-mapper-service";
-import { UpdateManagerService } from "../../latest-changes/update-manager.service";
+import { UpdateManagerService } from "../../ui/latest-changes/update-manager.service";
+import { importProvidersFrom } from "@angular/core";
+import { PouchDatabase } from "../../database/pouch-database";
 
 // TODO: fix layout of SupportComponent buttons on mobile
 
 export default {
-  title: "Core/Support",
+  title: "Core/> App Layout/Support",
   component: SupportComponent,
   decorators: [
-    moduleMetadata({
-      imports: [SupportComponent, StorybookBaseModule, HttpClientTestingModule],
+    applicationConfig({
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        importProvidersFrom(StorybookBaseModule.withData()),
         {
           provide: UpdateManagerService,
           useValue: {
@@ -29,7 +25,7 @@ export default {
         },
         { provide: SwUpdate, useValue: { isEnabled: true } },
         {
-          provide: Database,
+          provide: PouchDatabase,
           useValue: {
             getPouchDB: () => ({
               info: async () => ({ doc_count: 2, update_seq: 33 }),
@@ -41,7 +37,7 @@ export default {
   ],
 } as Meta;
 
-const Template: Story<SupportComponent> = (args: SupportComponent) => ({
+const Template: StoryFn<SupportComponent> = (args: SupportComponent) => ({
   component: SupportComponent,
   props: args,
 });

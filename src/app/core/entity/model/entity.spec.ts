@@ -18,19 +18,19 @@
 import { Entity, EntityConstructor } from "./entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
-import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum-datatype";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { createTestingConfigurableEnumService } from "../../configurable-enum/configurable-enum-testing";
-import { fakeAsync, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed, waitForAsync } from "@angular/core/testing";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("Entity", () => {
   let entitySchemaService: EntitySchemaService;
 
-  beforeEach(() => {
-    entitySchemaService = new EntitySchemaService();
-  });
-
   testEntitySubclass("Entity", Entity, { _id: "someId", _rev: "some_rev" });
+
+  beforeEach(() => {
+    // TestBed.configureTestingModule done in testEntitySubclass() already
+    entitySchemaService = TestBed.inject(EntitySchemaService);
+  });
 
   it("rawData() returns only data matching the schema", function () {
     @DatabaseEntity("TestWithIgnoredFieldEntity")
@@ -119,11 +119,29 @@ describe("Entity", () => {
   });
 });
 
+/**
+ *
+ * @param entityType
+ * @param entityClass
+ * @param expectedDatabaseFormat
+ * @param skipTestbedConfiguration do not run TestBed.configureTestingModule because it has been run in the parent test file already
+ */
 export function testEntitySubclass(
   entityType: string,
   entityClass: EntityConstructor,
-  expectedDatabaseFormat: any
+  expectedDatabaseFormat: any,
+  skipTestbedConfiguration = false,
 ) {
+  let schemaService: EntitySchemaService;
+  beforeEach(waitForAsync(() => {
+    if (!skipTestbedConfiguration) {
+      TestBed.configureTestingModule({
+        imports: [MockedTestingModule.withState()],
+      });
+    }
+    schemaService = TestBed.inject(EntitySchemaService);
+  }));
+
   it("should be a valid entity subclass", () => {
     const id = "test1";
     const entity = new entityClass(id);
@@ -141,16 +159,11 @@ export function testEntitySubclass(
   });
 
   it("should only load and store properties defined in the schema", fakeAsync(() => {
-    const schemaService = new EntitySchemaService();
-    schemaService.registerSchemaDatatype(
-      new ConfigurableEnumDatatype(createTestingConfigurableEnumService())
-    );
-    tick();
     const entity = new entityClass();
 
     schemaService.loadDataIntoEntity(
       entity,
-      JSON.parse(JSON.stringify(expectedDatabaseFormat))
+      JSON.parse(JSON.stringify(expectedDatabaseFormat)),
     );
     const rawData = schemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData).toEqual(expectedDatabaseFormat);

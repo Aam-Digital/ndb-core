@@ -2,7 +2,7 @@ import { Component, Input } from "@angular/core";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { NgIf } from "@angular/common";
 import { MatProgressSpinnerModule } from "@angular/material/progress-spinner";
-import { FaDynamicIconComponent } from "../../view/fa-dynamic-icon/fa-dynamic-icon.component";
+import { FaDynamicIconComponent } from "../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 export type DashboardTheme =
@@ -21,9 +21,9 @@ export type DashboardTheme =
     NgIf,
     MatProgressSpinnerModule,
     FaDynamicIconComponent,
-    MatTooltipModule
+    MatTooltipModule,
   ],
-  standalone: true
+  standalone: true,
 })
 export class DashboardWidgetComponent {
   @Input() subtitle: string;

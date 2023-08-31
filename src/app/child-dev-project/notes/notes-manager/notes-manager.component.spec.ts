@@ -8,8 +8,9 @@ import {
   flush,
   TestBed,
   tick,
+  waitForAsync,
 } from "@angular/core/testing";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, of, Subject } from "rxjs";
@@ -18,12 +19,12 @@ import { NoteDetailsComponent } from "../note-details/note-details.component";
 import {
   ConfigurableEnumFilterConfig,
   EntityListConfig,
-} from "../../../core/entity-components/entity-list/EntityListConfig";
+} from "../../../core/entity-list/EntityListConfig";
 import { InteractionType } from "../model/interaction-type.interface";
 import { EventNote } from "../../attendance/model/event-note";
 import { UpdatedEntity } from "../../../core/entity/model/entity-update";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { Ordering } from "../../../core/configurable-enum/configurable-enum-ordering";
+import { Ordering } from "../../../core/basic-datatypes/configurable-enum/configurable-enum-ordering";
 
 describe("NotesManagerComponent", () => {
   let component: NotesManagerComponent;
@@ -34,7 +35,7 @@ describe("NotesManagerComponent", () => {
   let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
-    ["openFormPopup"]
+    ["openFormPopup"],
   );
 
   const routeData: EntityListConfig = {
@@ -84,7 +85,7 @@ describe("NotesManagerComponent", () => {
     },
   ]);
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     mockNoteObservable = new Subject<UpdatedEntity<Note>>();
     mockEventNoteObservable = new Subject<UpdatedEntity<EventNote>>();
 
@@ -100,9 +101,9 @@ describe("NotesManagerComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.callFake((entityType) =>
       (entityType as any) === Note
         ? (mockNoteObservable as any)
-        : (mockEventNoteObservable as any)
+        : (mockEventNoteObservable as any),
     );
-  });
+  }));
 
   beforeEach(async () => {
     fixture = TestBed.createComponent(NotesManagerComponent);
@@ -132,7 +133,7 @@ describe("NotesManagerComponent", () => {
     expect(dialogMock.openFormPopup).toHaveBeenCalledWith(
       note,
       [],
-      NoteDetailsComponent
+      NoteDetailsComponent,
     );
   });
 
@@ -193,7 +194,7 @@ describe("NotesManagerComponent", () => {
     routeMock.data.next({
       config: Object.assign(
         { includeEventNotes: true } as NotesManagerConfig,
-        routeData
+        routeData,
       ),
     });
 

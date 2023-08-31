@@ -14,7 +14,7 @@ import {
 } from "../../model/attendance-status";
 import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
@@ -32,7 +32,7 @@ import {
   HammerModule,
 } from "@angular/platform-browser";
 import Hammer from "hammerjs";
-import { ConfigurableEnumService } from "../../../../core/configurable-enum/configurable-enum.service";
+import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
 
 // Only allow horizontal swiping
 @Injectable()
@@ -119,7 +119,7 @@ export class RollCallComponent implements OnChanges {
     private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -159,7 +159,7 @@ export class RollCallComponent implements OnChanges {
 
   private loadAttendanceStatusTypes() {
     this.availableStatus = this.enumService.getEnumValues<AttendanceStatusType>(
-      ATTENDANCE_STATUS_CONFIG_ID
+      ATTENDANCE_STATUS_CONFIG_ID,
     );
   }
 
@@ -174,7 +174,7 @@ export class RollCallComponent implements OnChanges {
           "Could not find child " +
             childId +
             " for event " +
-            this.eventEntity.getId()
+            this.eventEntity.getId(),
         );
         this.eventEntity.removeChild(childId);
         continue;
@@ -209,7 +209,7 @@ export class RollCallComponent implements OnChanges {
     } else {
       this.currentChild = this.children[this.currentIndex];
       this.currentAttendance = this.eventEntity.getAttendance(
-        this.currentChild.getId()
+        this.currentChild.getId(),
       );
     }
   }

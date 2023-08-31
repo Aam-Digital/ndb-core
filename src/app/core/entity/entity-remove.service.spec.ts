@@ -1,13 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 import { EntityRemoveService, RemoveResult } from "./entity-remove.service";
-import { EntityMapperService } from "./entity-mapper.service";
+import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import {
   MatSnackBar,
   MatSnackBarDismiss,
   MatSnackBarRef,
   TextOnlySnackBar,
 } from "@angular/material/snack-bar";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
+import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
 import { NEVER, Observable } from "rxjs";
 import { toArray } from "rxjs/operators";
@@ -66,7 +66,7 @@ describe("EntityRemoveService", () => {
     mockSnackBarRef.onAction.and.returnValues(NEVER);
     // mock that dialog is dismissed immediately
     const afterDismissed = new Observable<MatSnackBarDismiss>((subscriber) =>
-      subscriber.next({} as MatSnackBarDismiss)
+      subscriber.next({} as MatSnackBarDismiss),
     );
     mockSnackBarRef.afterDismissed.and.returnValue(afterDismissed);
     service
@@ -87,7 +87,7 @@ describe("EntityRemoveService", () => {
   it("emits twice when an entity was deleted and the user pressed undo", (done) => {
     // Mock a snackbar where 'undo' is immediately pressed
     const onSnackbarAction = new Observable<void>((subscriber) =>
-      subscriber.next()
+      subscriber.next(),
     );
     mockSnackBarRef.onAction.and.returnValue(onSnackbarAction);
     mockSnackBarRef.afterDismissed.and.returnValue(NEVER);

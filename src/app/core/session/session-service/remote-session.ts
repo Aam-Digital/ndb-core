@@ -21,7 +21,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
 import PouchDB from "pouchdb-browser";
-import { AppSettings } from "app/core/app-config/app-settings";
+import { AppSettings } from "../../app-settings";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 
@@ -42,7 +42,7 @@ export class RemoteSession extends SessionService {
    */
   constructor(
     private loggingService: LoggingService,
-    private authService: AuthService
+    private authService: AuthService,
   ) {
     super();
     this.database = new PouchDatabase(this.loggingService);
@@ -63,6 +63,7 @@ export class RemoteSession extends SessionService {
       if (httpError?.status === HttpStatusCode.Unauthorized) {
         this.loginState.next(LoginState.LOGIN_FAILED);
       } else {
+        this.loggingService.error(error);
         this.loginState.next(LoginState.UNAVAILABLE);
       }
     }
@@ -86,10 +87,10 @@ export class RemoteSession extends SessionService {
                   // return initial response if request failed again
                   .then((newRes) => (newRes.ok ? newRes : initialRes))
                   .catch(() => initialRes)
-              : initialRes
+              : initialRes,
           );
         }
-      }
+      },
     );
     this.currentDBUser = userObject;
     this.loginState.next(LoginState.LOGGED_IN);

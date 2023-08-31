@@ -1,5 +1,5 @@
 import { Entity, EntityConstructor } from "./model/entity";
-import { Registry } from "../registry/dynamic-registry";
+import { Registry } from "../config/registry/dynamic-registry";
 
 export class EntityRegistry extends Registry<EntityConstructor> {}
 
@@ -7,7 +7,7 @@ export const entityRegistry = new EntityRegistry((key, constructor) => {
   if (!(new constructor() instanceof Entity)) {
     throw Error(
       `Tried to register an entity-type that is not a subclass of Entity\n` +
-        `type: ${key}; constructor: ${constructor}`
+        `type: ${key}; constructor: ${constructor}`,
     );
   }
 });
@@ -28,7 +28,7 @@ export function DatabaseEntity(entityType: string) {
     // append parent schema definitions
     const parentConstructor = Object.getPrototypeOf(constructor);
     parentConstructor.schema.forEach((value, key) =>
-      constructor.schema.set(key, value)
+      constructor.schema.set(key, value),
     );
   };
 }

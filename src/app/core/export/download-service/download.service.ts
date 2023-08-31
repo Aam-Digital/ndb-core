@@ -3,7 +3,7 @@ import { ExportColumnConfig } from "../data-transformation-service/export-column
 import { ExportDataFormat } from "../export-data-directive/export-data.directive";
 import { LoggingService } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
-import { transformToReadableFormat } from "../../entity-components/entity-subrecord/entity-subrecord/value-accessor";
+import { transformToReadableFormat } from "../../common-components/entity-subrecord/entity-subrecord/value-accessor";
 import { Papa } from "ngx-papaparse";
 
 /**
@@ -20,7 +20,7 @@ export class DownloadService {
   constructor(
     private dataTransformationService: DataTransformationService,
     private papa: Papa,
-    private loggingService: LoggingService
+    private loggingService: LoggingService,
   ) {}
 
   /**
@@ -34,12 +34,12 @@ export class DownloadService {
     data: any,
     format: ExportDataFormat,
     filename: string,
-    exportConfig?: ExportColumnConfig[]
+    exportConfig?: ExportColumnConfig[],
   ) {
     const blobData = await this.getFormattedBlobData(
       data,
       format,
-      exportConfig
+      exportConfig,
     );
     const filenameWithExtension = filename + "." + format.toLowerCase();
     const link = this.createDownloadLink(blobData, filenameWithExtension);
@@ -49,14 +49,14 @@ export class DownloadService {
   private async getFormattedBlobData(
     data: any,
     format: ExportDataFormat,
-    exportConfig?: ExportColumnConfig[]
+    exportConfig?: ExportColumnConfig[],
   ): Promise<Blob> {
     let result = "";
 
     if (exportConfig) {
       data = await this.dataTransformationService.transformData(
         data,
-        exportConfig
+        exportConfig,
       );
     }
 

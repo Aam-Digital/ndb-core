@@ -5,11 +5,11 @@ import { SessionType } from "../session-type";
 import { LoggingService } from "../../logging/logging.service";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { LoginState } from "../session-states/login-state.enum";
-import { TEST_PASSWORD, TEST_USER } from "../../../utils/mocked-testing.module";
 import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 import PouchDB from "pouchdb-browser";
+import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 
 export function mockAuth(user: AuthUser) {
   return (u: string, p: string) => {
@@ -19,7 +19,7 @@ export function mockAuth(user: AuthUser) {
       return Promise.reject(
         new HttpErrorResponse({
           status: HttpStatusCode.Unauthorized,
-        })
+        }),
       );
     }
   };
@@ -54,7 +54,7 @@ describe("RemoteSessionService", () => {
 
   it("should be unavailable if requests fails with error other than 401", async () => {
     mockAuthService.authenticate.and.rejectWith(
-      new HttpErrorResponse({ status: 501 })
+      new HttpErrorResponse({ status: 501 }),
     );
 
     await service.login(TEST_USER, TEST_PASSWORD);
@@ -69,7 +69,7 @@ describe("RemoteSessionService", () => {
         status: HttpStatusCode.Unauthorized,
         ok: false,
       } as Response),
-      Promise.resolve({ status: HttpStatusCode.Ok, ok: true } as Response)
+      Promise.resolve({ status: HttpStatusCode.Ok, ok: true } as Response),
     );
     let calls = 0;
     mockAuthService.addAuthHeader.and.callFake((headers) => {

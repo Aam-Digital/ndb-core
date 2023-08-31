@@ -47,7 +47,7 @@ export class ExportDataDirective {
       this.data,
       this.format,
       this.filename,
-      this.exportConfig
+      this.exportConfig,
     );
   }
 }

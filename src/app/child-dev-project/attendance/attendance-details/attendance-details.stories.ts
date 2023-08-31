@@ -1,5 +1,9 @@
-import { Meta, Story } from "@storybook/angular/types-6-0";
-import { moduleMetadata } from "@storybook/angular";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { RecurringActivity } from "../model/recurring-activity";
 import {
   ActivityAttendance,
@@ -8,8 +12,8 @@ import {
 import { AttendanceLogicalStatus } from "../model/attendance-status";
 import { AttendanceDetailsComponent } from "./attendance-details.component";
 import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { importProvidersFrom } from "@angular/core";
 
 const demoActivity = RecurringActivity.create("Coaching Batch C");
 const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
@@ -19,28 +23,28 @@ const activityAttendance = ActivityAttendance.create(new Date("2020-01-01"), [
       ["2", AttendanceLogicalStatus.PRESENT],
       ["3", AttendanceLogicalStatus.ABSENT],
     ],
-    new Date("2020-01-01")
+    new Date("2020-01-01"),
   ),
   generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.PRESENT],
       ["2", AttendanceLogicalStatus.ABSENT],
     ],
-    new Date("2020-01-02")
+    new Date("2020-01-02"),
   ),
   generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.ABSENT],
       ["2", AttendanceLogicalStatus.ABSENT],
     ],
-    new Date("2020-01-03")
+    new Date("2020-01-03"),
   ),
   generateEventWithAttendance(
     [
       ["1", AttendanceLogicalStatus.PRESENT],
       ["2", AttendanceLogicalStatus.ABSENT],
     ],
-    new Date("2020-01-04")
+    new Date("2020-01-04"),
   ),
 ]);
 activityAttendance.events.forEach((e) => (e.subject = demoActivity.title));
@@ -51,19 +55,17 @@ export default {
   title: "Features/Attendance/Views/AttendanceDetails",
   component: AttendanceDetailsComponent,
   decorators: [
+    applicationConfig({
+      providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
     moduleMetadata({
-      imports: [
-        AttendanceDetailsComponent,
-        StorybookBaseModule,
-        MockedTestingModule.withState(),
-      ],
       providers: [{ provide: MAT_DIALOG_DATA, useValue: {} }],
     }),
   ],
 } as Meta;
 
-const Template: Story<AttendanceDetailsComponent> = (
-  args: AttendanceDetailsComponent
+const Template: StoryFn<AttendanceDetailsComponent> = (
+  args: AttendanceDetailsComponent,
 ) => ({
   component: AttendanceDetailsComponent,
   props: args,
@@ -76,7 +78,7 @@ Primary.args = {
 
 const activityAttendanceIndividual = Object.assign(
   new ActivityAttendance(),
-  activityAttendance
+  activityAttendance,
 );
 export const ForIndividualChild = Template.bind({});
 ForIndividualChild.args = {

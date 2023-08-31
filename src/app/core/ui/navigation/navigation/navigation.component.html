@@ -1,0 +1,38 @@
+<!--
+  ~     This file is part of ndb-core.
+  ~
+  ~     ndb-core is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     ndb-core is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
+  -->
+
+<mat-nav-list>
+  <ng-container *ngFor="let item of menuItems">
+    <mat-list-item
+      angulartics2On="click"
+      angularticsCategory="Navigation"
+      angularticsAction="app_navigation_link_click"
+      [angularticsLabel]="item.label"
+      [routerLink]="[item.link]"
+      [class.matched-background]="item.link === activeLink"
+    >
+      <a class="flex-row gap-small">
+        <app-fa-dynamic-icon
+          class="nav-icon"
+          [icon]="item.icon"
+        ></app-fa-dynamic-icon>
+        <div>{{ item.label }}</div>
+      </a>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </ng-container>
+</mat-nav-list>

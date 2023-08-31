@@ -4,7 +4,7 @@ import { ActivityAttendance } from "../../../attendance/model/activity-attendanc
 import { AttendanceService } from "../../../attendance/attendance.service";
 import moment from "moment";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import {
   ScreenWidthObserver,
   ScreenSize,
@@ -23,7 +23,7 @@ import { AttendanceBlockComponent } from "../../../attendance/attendance-block/a
   selector: "app-recent-attendance-blocks",
   template: `
     <app-attendance-block
-      *ngFor="let att of attendanceList | slice : 0 : maxAttendanceBlocks"
+      *ngFor="let att of attendanceList | slice: 0 : maxAttendanceBlocks"
       [attendanceData]="att"
       [forChild]="entity.getId()"
     ></app-attendance-block>
@@ -40,7 +40,7 @@ export class RecentAttendanceBlocksComponent implements OnInit {
 
   constructor(
     private attendanceService: AttendanceService,
-    private screenWidthObserver: ScreenWidthObserver
+    private screenWidthObserver: ScreenWidthObserver,
   ) {
     this.screenWidthObserver
       .shared()
@@ -71,11 +71,11 @@ export class RecentAttendanceBlocksComponent implements OnInit {
 
   async ngOnInit() {
     let activities = await this.attendanceService.getActivitiesForChild(
-      this.entity.getId()
+      this.entity.getId(),
     );
     if (this.config.filterByActivityType) {
       activities = activities.filter(
-        (a) => a.type.id === this.config.filterByActivityType
+        (a) => a.type.id === this.config.filterByActivityType,
       );
     }
 
@@ -83,7 +83,7 @@ export class RecentAttendanceBlocksComponent implements OnInit {
     const activityRecords =
       await this.attendanceService.getAllActivityAttendancesForPeriod(
         moment().startOf("month").toDate(),
-        moment().endOf("month").toDate()
+        moment().endOf("month").toDate(),
       );
 
     for (const record of activityRecords) {

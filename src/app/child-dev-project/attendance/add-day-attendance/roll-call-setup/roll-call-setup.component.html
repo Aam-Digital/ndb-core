@@ -5,7 +5,7 @@
         Event-Record label|Record an event for a particular date that is to be
         inputted
       "
-    >Date
+      >Date
     </mat-label>
     <input
       matInput
@@ -36,7 +36,6 @@
   ></app-filter>
 </div>
 
-
 <div *ngIf="isLoading" class="process-spinner">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
@@ -61,14 +60,10 @@
     angularticsAction="show_more"
     class="padding-right-small"
   >
-    <span
-      *ngIf="showingAll"
-      i18n="Show less entries of a list">
+    <span *ngIf="showingAll" i18n="Show less entries of a list">
       Show less
     </span>
-    <span
-      *ngIf="!showingAll"
-      i18n="Show more entries of a list">
+    <span *ngIf="!showingAll" i18n="Show more entries of a list">
       Show more
     </span>
   </button>

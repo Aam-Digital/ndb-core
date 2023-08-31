@@ -4,6 +4,6 @@ import { Component } from "@angular/core";
   selector: "app-widget-content",
   template: `<ng-content></ng-content>`,
   styleUrls: ["widget-content.component.scss"],
-  standalone: true
+  standalone: true,
 })
 export class WidgetContentComponent {}

@@ -25,7 +25,7 @@ import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
 import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import { AppSettings } from "./app/core/app-config/app-settings";
+import { AppSettings } from "./app/core/app-settings";
 import { LoggingService } from "./app/core/logging/logging.service";
 import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
 
@@ -66,7 +66,7 @@ async function initLanguage(locale: string): Promise<void> {
       // parse translation at runtime if JSON file is not available
       fetch("/assets/locale/messages." + locale + ".xlf")
         .then((r) => r.text())
-        .then((t) => parseXliffToJson(t))
+        .then((t) => parseXliffToJson(t)),
     );
 
   loadTranslations(json);

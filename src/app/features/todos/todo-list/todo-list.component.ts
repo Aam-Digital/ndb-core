@@ -5,14 +5,14 @@ import { RouteTarget } from "../../../app.routing";
 import {
   EntityListConfig,
   PrebuiltFilterConfig,
-} from "../../../core/entity-components/entity-list/EntityListConfig";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+} from "../../../core/entity-list/EntityListConfig";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
-import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 
 @RouteTarget("TodoList")
@@ -40,12 +40,12 @@ export class TodoListComponent implements OnInit {
     private route: ActivatedRoute,
     private sessionService: SessionService,
     private formDialog: FormDialogService,
-    private logger: LoggingService
+    private logger: LoggingService,
   ) {}
 
   ngOnInit() {
     this.route.data.subscribe((data: RouteData<EntityListConfig>) =>
-      this.init(data.config)
+      this.init(data.config),
     );
   }
 
@@ -62,19 +62,19 @@ export class TodoListComponent implements OnInit {
     this.setFilterDefaultToCurrentUser();
 
     for (const prebuiltFilter of this.listConfig.filters.filter(
-      (filter) => filter.type === "prebuilt"
+      (filter) => filter.type === "prebuilt",
     )) {
       switch (prebuiltFilter.id) {
         case "due-status": {
           this.buildFilterDueStatus(
-            prebuiltFilter as PrebuiltFilterConfig<Todo>
+            prebuiltFilter as PrebuiltFilterConfig<Todo>,
           );
           break;
         }
         default: {
           this.logger.warn(
             "[TodoList] No filter options available for prebuilt filter: " +
-              prebuiltFilter.id
+              prebuiltFilter.id,
           );
           prebuiltFilter["options"] = [];
         }
@@ -84,7 +84,7 @@ export class TodoListComponent implements OnInit {
 
   private setFilterDefaultToCurrentUser() {
     const assignedToFilter = this.listConfig.filters.find(
-      (c) => c.id === "assignedTo"
+      (c) => c.id === "assignedTo",
     );
     if (assignedToFilter && !assignedToFilter.default) {
       assignedToFilter.default = this.sessionService.getCurrentUser().name;

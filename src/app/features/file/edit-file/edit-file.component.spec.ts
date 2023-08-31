@@ -9,7 +9,7 @@ import { Entity } from "app/core/entity/model/entity";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FileService } from "../file.service";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 
 describe("EditFileComponent", () => {
   let component: EditFileComponent;
@@ -110,7 +110,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       file,
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
   });
 
@@ -149,7 +149,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
   });
 
@@ -194,7 +194,7 @@ describe("EditFileComponent", () => {
     expect(component.formControl).toHaveValue(null);
     expect(mockFileService.removeFile).toHaveBeenCalledWith(
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
     expect(mockAlertService.addInfo).toHaveBeenCalled();
   });
@@ -214,7 +214,7 @@ describe("EditFileComponent", () => {
     expect(mockFileService.uploadFile).toHaveBeenCalledWith(
       otherFile,
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
   });
 
@@ -247,7 +247,7 @@ describe("EditFileComponent", () => {
 
     expect(mockFileService.showFile).toHaveBeenCalledWith(
       component.entity,
-      component.formControlName
+      component.formControlName,
     );
   });
 

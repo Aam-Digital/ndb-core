@@ -23,7 +23,7 @@ export class EntityConfigService {
 
   constructor(
     private configService: ConfigService,
-    private entities: EntityRegistry
+    private entities: EntityRegistry,
   ) {}
 
   /**
@@ -66,7 +66,7 @@ export class EntityConfigService {
    */
   public addConfigAttributes<T extends Entity>(
     entityType: EntityConstructor,
-    configAttributes?: EntityConfig
+    configAttributes?: EntityConfig,
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
     if (entityConfig?.attributes) {
@@ -74,8 +74,8 @@ export class EntityConfigService {
         addPropertySchema(
           entityType.prototype,
           attribute.name,
-          attribute.schema
-        )
+          attribute.schema,
+        ),
       );
     }
     entityType.toStringAttributes =
@@ -85,6 +85,8 @@ export class EntityConfigService {
     entityType.icon = (entityConfig.icon as IconName) ?? entityType.icon;
     entityType.color = entityConfig.color ?? entityType.color;
     entityType.route = entityConfig.route ?? entityType.route;
+
+    entityType._isCustomizedType = true;
   }
 
   /**

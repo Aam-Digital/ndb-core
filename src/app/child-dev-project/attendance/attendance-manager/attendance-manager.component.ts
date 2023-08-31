@@ -1,10 +1,10 @@
 import { Component } from "@angular/core";
-import { ComingSoonDialogService } from "../../../core/coming-soon/coming-soon-dialog.service";
+import { ComingSoonDialogService } from "../../../features/coming-soon/coming-soon-dialog.service";
 import { RouteTarget } from "../../../app.routing";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
-import { ViewTitleComponent } from "../../../core/entity-components/entity-utils/view-title/view-title.component";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 
 @RouteTarget("AttendanceManager")
 @Component({

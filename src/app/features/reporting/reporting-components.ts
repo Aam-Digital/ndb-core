@@ -5,7 +5,7 @@ export const reportingComponents: ComponentTuple[] = [
     "Reporting",
     () =>
       import("./reporting/reporting.component").then(
-        (c) => c.ReportingComponent
+        (c) => c.ReportingComponent,
       ),
   ],
 ];

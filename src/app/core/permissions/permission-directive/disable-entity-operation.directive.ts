@@ -40,7 +40,7 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
     private templateRef: TemplateRef<HTMLButtonElement>,
     private viewContainerRef: ViewContainerRef,
     private ability: EntityAbility,
-    private abilityService: AbilityService
+    private abilityService: AbilityService,
   ) {
     this.abilityService.abilityUpdated
       .pipe(untilDestroyed(this))
@@ -49,7 +49,7 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
 
   ngOnInit() {
     this.wrapperComponent = this.viewContainerRef.createComponent(
-      DisabledWrapperComponent
+      DisabledWrapperComponent,
     );
     this.wrapperComponent.instance.template = this.templateRef;
     this.wrapperComponent.instance.text = this.text;
@@ -69,7 +69,7 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
       // Update the disabled property whenever the input values change
       this.wrapperComponent.instance.elementDisabled = this.ability.cannot(
         this.arguments.operation,
-        this.arguments.entity
+        this.arguments.entity,
       );
       this.wrapperComponent.instance.ngAfterViewInit();
     }

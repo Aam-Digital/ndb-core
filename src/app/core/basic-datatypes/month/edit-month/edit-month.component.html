@@ -1,0 +1,21 @@
+<mat-form-field>
+  <mat-label>{{ label }}</mat-label>
+  <input
+    matInput
+    [formControl]="formControl"
+    [matDatepicker]="datepickerComp"
+  />
+  <mat-datepicker-toggle
+    matIconSuffix
+    [for]="datepickerComp"
+  ></mat-datepicker-toggle>
+  <mat-datepicker
+    #datepickerComp
+    startView="multi-year"
+    (monthSelected)="setMonthAndYear($event, datepickerComp)"
+    panelClass="month-picker"
+  ></mat-datepicker>
+  <mat-error>
+    <app-error-hint [form]="formControl"></app-error-hint>
+  </mat-error>
+</mat-form-field>

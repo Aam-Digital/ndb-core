@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { Child } from "./model/child";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../notes/model/note";
 import { Aser } from "./aser/model/aser";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
@@ -16,7 +16,7 @@ import { groupBy } from "../../utils/utils";
 export class ChildrenService {
   constructor(
     private entityMapper: EntityMapperService,
-    private dbIndexing: DatabaseIndexingService
+    private dbIndexing: DatabaseIndexingService,
   ) {
     this.createDatabaseIndices();
   }
@@ -54,7 +54,7 @@ export class ChildrenService {
 
   private extendChildWithSchoolInfo(
     child: Child,
-    relations: ChildSchoolRelation[]
+    relations: ChildSchoolRelation[],
   ) {
     const active = relations.filter((r) => r.isActive);
     child.schoolId = active.map((r) => r.schoolId);
@@ -92,23 +92,23 @@ export class ChildrenService {
         startkey,
         endkey: [prefix],
         descending: true,
-      }
+      },
     );
   }
 
   queryActiveRelationsOf(
     queryType: "child" | "school",
     id: string,
-    date = new Date()
+    date = new Date(),
   ): Promise<ChildSchoolRelation[]> {
     return this.queryRelationsOf(queryType, id).then((relations) =>
-      relations.filter((rel) => rel.isActiveAt(date))
+      relations.filter((rel) => rel.isActiveAt(date)),
     );
   }
 
   queryRelationsOf(
     queryType: "child" | "school",
-    id: string
+    id: string,
   ): Promise<ChildSchoolRelation[]> {
     const type = queryType === "child" ? Child.ENTITY_TYPE : School.ENTITY_TYPE;
     const prefixed = Entity.createPrefixedId(type, id);
@@ -125,7 +125,7 @@ export class ChildrenService {
       legacyLinkedNotes = await this.dbIndexing.queryIndexDocs(
         Note,
         `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
-        Entity.extractEntityIdFromId(entityId)
+        Entity.extractEntityIdFromId(entityId),
       );
     }
 
@@ -133,13 +133,13 @@ export class ChildrenService {
       Note,
       `notes_related_index/note_by_relatedEntities`,
       [entityId],
-      [entityId]
+      [entityId],
     );
 
     return [...legacyLinkedNotes, ...explicitlyLinkedNotes].filter(
       // remove duplicates
       (element, index, array) =>
-        array.findIndex((e) => e._id === element._id) === index
+        array.findIndex((e) => e._id === element._id) === index,
     );
   }
 
@@ -167,7 +167,7 @@ export class ChildrenService {
    */
   public async getDaysSinceLastNoteOfEachEntity(
     entityType = Child.ENTITY_TYPE,
-    forLastNDays: number = 30
+    forLastNDays: number = 30,
   ): Promise<Map<string, number>> {
     const startDay = moment().subtract(forLastNDays, "days");
 
@@ -204,13 +204,13 @@ export class ChildrenService {
    */
   public async getNotesInTimespan(
     startDay: Date | Moment,
-    endDay: Date | Moment = moment()
+    endDay: Date | Moment = moment(),
   ): Promise<Note[]> {
     return this.dbIndexing.queryIndexDocsRange(
       Note,
       "notes_index/note_child_by_date",
       moment(startDay).format("YYYY-MM-DD"),
-      moment(endDay).format("YYYY-MM-DD")
+      moment(endDay).format("YYYY-MM-DD"),
     );
   }
 
@@ -234,7 +234,7 @@ export class ChildrenService {
     // creating a by_... view for each of the following properties
     ["children", "schools", "authors"].forEach(
       (prop) =>
-        (designDoc.views[`by_${prop}`] = this.createNotesByFunction(prop))
+        (designDoc.views[`by_${prop}`] = this.createNotesByFunction(prop)),
     );
 
     await this.dbIndexing.createIndex(designDoc);

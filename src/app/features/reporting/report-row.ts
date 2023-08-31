@@ -9,7 +9,7 @@ export interface GroupByDescription {
 }
 
 export function getGroupingInformationString(
-  groupedBy: GroupByDescription[]
+  groupedBy: GroupByDescription[],
 ): string {
   if (groupedBy.length === 0) {
     return "";

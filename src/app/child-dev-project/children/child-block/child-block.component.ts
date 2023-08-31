@@ -7,13 +7,13 @@ import {
 } from "@angular/core";
 import { ChildrenService } from "../children.service";
 import { Child } from "../model/child";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
 import { TemplateTooltipDirective } from "../../../core/common-components/template-tooltip/template-tooltip.directive";
 import { ChildBlockTooltipComponent } from "./child-block-tooltip/child-block-tooltip.component";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../../../features/file/file.service";
-import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
+import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("ChildBlock")
 @Component({
@@ -43,7 +43,7 @@ export class ChildBlockComponent implements OnChanges {
 
   constructor(
     private fileService: FileService,
-    @Optional() private childrenService: ChildrenService
+    @Optional() private childrenService: ChildrenService,
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {

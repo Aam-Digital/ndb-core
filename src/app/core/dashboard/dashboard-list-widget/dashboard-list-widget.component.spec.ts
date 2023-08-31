@@ -6,7 +6,7 @@ import {
 } from "@angular/core/testing";
 
 import { DashboardListWidgetComponent } from "./dashboard-list-widget.component";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Component } from "@angular/core";
 import { By } from "@angular/platform-browser";
 import { Note } from "../../../child-dev-project/notes/model/note";
@@ -48,9 +48,7 @@ describe("DashboardListWidgetComponent", () => {
   beforeEach(async () => {
     mockEntityMapper = jasmine.createSpyObj(["loadType", "receiveUpdates"]);
     mockEntityUpdates = new Subject<UpdatedEntity<Note>>();
-    mockEntityMapper.receiveUpdates.and.returnValue(
-      mockEntityUpdates.asObservable()
-    );
+    mockEntityMapper.receiveUpdates.and.returnValue(mockEntityUpdates);
 
     await TestBed.configureTestingModule({
       imports: [DashboardWidgetTestComponent],
@@ -60,7 +58,7 @@ describe("DashboardListWidgetComponent", () => {
     fixture = TestBed.createComponent(DashboardWidgetTestComponent);
     parentComponent = fixture.componentInstance;
     component = fixture.debugElement.query(
-      By.directive(DashboardListWidgetComponent)
+      By.directive(DashboardListWidgetComponent),
     ).componentInstance;
     fixture.detectChanges();
   });

@@ -18,7 +18,10 @@
 import { v4 as uuid } from "uuid";
 import { EntitySchema } from "../schema/entity-schema";
 import { DatabaseField } from "../database-field.decorator";
-import { getWarningLevelColor, WarningLevel } from "./warning-level";
+import {
+  getWarningLevelColor,
+  WarningLevel,
+} from "../../../child-dev-project/warning-level";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { UpdateMetadata } from "./update-metadata";
 
@@ -29,7 +32,7 @@ import { UpdateMetadata } from "./update-metadata";
  * For example usage check the {@link EntityMapperService}.
  */
 export type EntityConstructor<T extends Entity = Entity> = (new (
-  id?: string
+  id?: string,
 ) => T) &
   typeof Entity;
 
@@ -61,6 +64,11 @@ export class Entity {
    * see {@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
    */
   static schema: EntitySchema;
+
+  /**
+   * True if this type's schema has been customized dynamically from the config.
+   */
+  static _isCustomizedType?: boolean;
 
   /**
    * Defining which attribute values of an entity should be shown in the `.toString()` method.

@@ -87,7 +87,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
     private overlay: Overlay,
     private overlayPositionBuilder: OverlayPositionBuilder,
     private element: ElementRef<HTMLElement>,
-    private zone: NgZone
+    private zone: NgZone,
   ) {}
 
   ngOnInit(): void {
@@ -108,10 +108,10 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
     this.overlayRef = this.overlay.create({ positionStrategy });
     this.zone.runOutsideAngular(() => {
       this.element.nativeElement.addEventListener("mouseenter", () =>
-        this.show()
+        this.show(),
       );
       this.element.nativeElement.addEventListener("mouseleave", (ev) =>
-        this.hide(ev.relatedTarget as HTMLElement)
+        this.hide(ev.relatedTarget as HTMLElement),
       );
     });
   }
@@ -141,7 +141,7 @@ export class TemplateTooltipDirective implements OnInit, OnDestroy {
       if (!this.overlayRef.hasAttached()) {
         this.zone.run(() => {
           const tooltipRef = this.overlayRef.attach(
-            new ComponentPortal(TemplateTooltipComponent)
+            new ComponentPortal(TemplateTooltipComponent),
           );
           tooltipRef.instance.contentTemplate = this.contentTemplate;
           tooltipRef.instance.hide

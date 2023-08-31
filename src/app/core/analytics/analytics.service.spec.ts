@@ -19,7 +19,7 @@ describe("AnalyticsService", () => {
     mockConfigService = jasmine.createSpyObj(
       "mockConfigService",
       ["getConfig"],
-      { configUpdates: configUpdates }
+      { configUpdates: configUpdates },
     );
     mockMatomo = jasmine.createSpyObj("mockMatomo", [
       "setUsername",

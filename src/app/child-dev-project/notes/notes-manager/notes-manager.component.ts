@@ -2,18 +2,18 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { EntityListComponent } from "../../../core/entity-components/entity-list/entity-list.component";
+import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
-import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
-import { WarningLevel } from "../../../core/entity/model/warning-level";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { WarningLevel } from "../../warning-level";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { merge } from "rxjs";
 import { RouteTarget } from "../../../app.routing";
 import moment from "moment";
@@ -22,7 +22,7 @@ import { NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
-import { FaDynamicIconComponent } from "../../../core/view/fa-dynamic-icon/fa-dynamic-icon.component";
+import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -95,7 +95,7 @@ export class NotesManagerComponent implements OnInit {
     private sessionService: SessionService,
     private entityMapperService: EntityMapperService,
     private route: ActivatedRoute,
-    private log: LoggingService
+    private log: LoggingService,
   ) {}
 
   async ngOnInit() {
@@ -107,7 +107,7 @@ export class NotesManagerComponent implements OnInit {
         this.includeEventNotes = data.config.includeEventNotes;
         this.showEventNotesToggle = data.config.showEventNotesToggle;
         this.notes = await this.loadEntities();
-      }
+      },
     );
 
     this.subscribeEntityUpdates();
@@ -126,7 +126,7 @@ export class NotesManagerComponent implements OnInit {
   private subscribeEntityUpdates() {
     merge(
       this.entityMapperService.receiveUpdates(Note),
-      this.entityMapperService.receiveUpdates(EventNote)
+      this.entityMapperService.receiveUpdates(EventNote),
     )
       .pipe(untilDestroyed(this))
       .subscribe((updatedNote) => {
@@ -149,7 +149,7 @@ export class NotesManagerComponent implements OnInit {
 
   private addPrebuiltFilters() {
     for (const prebuiltFilter of this.config.filters.filter(
-      (filter) => filter.type === "prebuilt"
+      (filter) => filter.type === "prebuilt",
     )) {
       switch (prebuiltFilter.id) {
         case "status": {
@@ -165,7 +165,7 @@ export class NotesManagerComponent implements OnInit {
         default: {
           this.log.warn(
             "[NoteManagerComponent] No filter options available for prebuilt filter: " +
-              prebuiltFilter.id
+              prebuiltFilter.id,
           );
           prebuiltFilter["options"] = [];
         }

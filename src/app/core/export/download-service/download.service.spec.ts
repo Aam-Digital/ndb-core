@@ -5,7 +5,7 @@ import { DownloadService } from "./download.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
-import { ConfigurableEnumValue } from "../../configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
 
 describe("DownloadService", () => {

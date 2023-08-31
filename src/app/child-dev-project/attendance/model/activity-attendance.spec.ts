@@ -168,7 +168,7 @@ describe("ActivityAttendance", () => {
     ]);
 
     const StatusLate: AttendanceStatusType = defaultAttendanceStatusTypes.find(
-      (t) => t.id === "LATE"
+      (t) => t.id === "LATE",
     );
     record.events[0].getAttendance("1").status = StatusLate;
     record.recalculateStats();
@@ -178,7 +178,7 @@ describe("ActivityAttendance", () => {
     expect(typeCount1["ABSENT"]).toBe(1);
     expect(typeCount1["PRESENT"]).toBe(1);
     expect(
-      record.individualStatusTypeCounts.get("2")[StatusLate.id]
+      record.individualStatusTypeCounts.get("2")[StatusLate.id],
     ).toBeUndefined();
   });
 

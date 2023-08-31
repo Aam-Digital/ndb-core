@@ -22,7 +22,7 @@ export class DataAggregationService {
   public async calculateReport(
     aggregations: Aggregation[],
     from?: Date,
-    to?: Date
+    to?: Date,
   ): Promise<ReportRow[]> {
     this.fromDate = from;
     this.toDate = to;
@@ -30,7 +30,7 @@ export class DataAggregationService {
     await this.queryService.cacheRequiredData(
       fullQuery,
       this.fromDate,
-      this.toDate
+      this.toDate,
     );
     return this.calculateAggregations(aggregations);
   }
@@ -38,14 +38,14 @@ export class DataAggregationService {
   private concatQueries(config: Aggregation) {
     return (config.aggregations ?? []).reduce(
       (query, c) => query + this.concatQueries(c),
-      config.query
+      config.query,
     );
   }
 
   private calculateAggregations(
     aggregations: Aggregation[] = [],
     data?: any[],
-    additionalValues: GroupByDescription[] = []
+    additionalValues: GroupByDescription[] = [],
   ): ReportRow[] {
     const resultRows: ReportRow[] = [];
     let currentSubRows = resultRows;
@@ -54,7 +54,7 @@ export class DataAggregationService {
         aggregation.query,
         this.fromDate,
         this.toDate,
-        data
+        data,
       );
 
       if (aggregation.label) {
@@ -74,8 +74,8 @@ export class DataAggregationService {
           ...this.calculateAggregations(
             aggregation.aggregations,
             queryResult,
-            additionalValues
-          )
+            additionalValues,
+          ),
         );
       }
       if (aggregation.groupBy) {
@@ -85,8 +85,8 @@ export class DataAggregationService {
             aggregation.aggregations,
             aggregation.label,
             queryResult,
-            additionalValues
-          )
+            additionalValues,
+          ),
         );
       }
     }
@@ -98,7 +98,7 @@ export class DataAggregationService {
     aggregations: any[],
     label: string,
     data: any[],
-    additionalValues: GroupByDescription[]
+    additionalValues: GroupByDescription[],
   ): ReportRow[] {
     const resultRows: ReportRow[] = [];
     for (let i = properties.length; i > 0; i--) {
@@ -119,7 +119,7 @@ export class DataAggregationService {
           subRows: [],
         };
         newRow.subRows.push(
-          ...this.calculateAggregations(aggregations, entries, groupingValues)
+          ...this.calculateAggregations(aggregations, entries, groupingValues),
         );
         newRow.subRows.push(
           ...this.calculateGroupBy(
@@ -127,8 +127,8 @@ export class DataAggregationService {
             aggregations,
             label,
             entries,
-            groupingValues
-          )
+            groupingValues,
+          ),
         );
         resultRows.push(newRow);
       }
