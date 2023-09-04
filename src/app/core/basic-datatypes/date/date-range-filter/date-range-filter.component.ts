@@ -31,7 +31,10 @@ export class DateRangeFilterComponent<T extends Entity> {
 
   private initDates() {
     const range = this.dateFilter.getDateRange();
-    if (range.start !== this.fromDate && range.end !== this.toDate) {
+    if (
+      (range.start !== this.fromDate || range.start === undefined) &&
+      (range.end !== this.toDate || range.end === undefined)
+    ) {
       this.fromDate = range.start;
       this.toDate = range.end;
       this.selectedOptionChange.emit(this.dateFilter.selectedOption);
@@ -39,10 +42,10 @@ export class DateRangeFilterComponent<T extends Entity> {
   }
 
   dateChangedManually() {
-    if (isValidDate(this.fromDate) && isValidDate(this.toDate)) {
-      this.dateFilter.selectedOption =
-        dateToString(this.fromDate) + "_" + dateToString(this.toDate);
-    }
+    this.dateFilter.selectedOption =
+      (isValidDate(this.fromDate) ? dateToString(this.fromDate) : "") +
+      "_" +
+      (isValidDate(this.toDate) ? dateToString(this.toDate) : "");
     this.selectedOptionChange.emit(this.dateFilter.selectedOption);
   }
 
