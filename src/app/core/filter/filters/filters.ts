@@ -73,7 +73,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
 
   getFilter(): DataFilter<T> {
     const range = this.getDateRange();
-    let filterObject: { $gte?: string; $lte?: string } = {};
+    const filterObject: { $gte?: string; $lte?: string } = {};
     if (range.start) {
       filterObject.$gte = moment(range.start).format("YYYY-MM-DD");
     }

@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import {
-  DateRangeFilterPanelComponent,
   calculateDateRange,
+  DateRangeFilterPanelComponent,
   defaultDateFilters,
 } from "./date-range-filter-panel.component";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -114,7 +114,7 @@ describe("DateRangeFilterPanelComponent", () => {
     }
   });
 
-  it("should return '_ as filter.selectedOption when 'all' option has been chosen", async () => {
+  it("should return '_' as filter.selectedOption when 'all' option has been chosen", async () => {
     component.selectRangeAndClose("all");
     expect(dateFilter.selectedOption).toEqual("_");
   });
