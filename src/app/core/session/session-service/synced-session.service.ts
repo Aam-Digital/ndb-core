@@ -17,14 +17,13 @@
 
 import { Injectable } from "@angular/core";
 
-import { SessionService } from "./session.service";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
-import { Database } from "../../database/database";
 import { SyncState } from "../session-states/sync-state.enum";
 import { filter } from "rxjs/operators";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
+import { SyncStateSubject } from "../session-type";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -34,15 +33,15 @@ import { AuthUser } from "./auth-user";
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
  */
 @Injectable()
-export class SyncedSessionService extends SessionService {
+export class SyncedSessionService {
   static readonly LAST_SYNC_KEY = "LAST_SYNC";
 
   constructor(
     private localSession: LocalSession,
     private remoteSession: RemoteSession,
     private authService: AuthService,
+    private syncState: SyncStateSubject,
   ) {
-    super();
     this.syncState
       .pipe(filter((state) => state === SyncState.COMPLETED))
       .subscribe(() =>
@@ -97,22 +96,6 @@ export class SyncedSessionService extends SessionService {
 
   public checkPassword(username: string, password: string): boolean {
     // This only checks the password against locally saved users
-    throw Error();
-  }
-
-  /**
-   * Get the local database instance that should be used for regular data access.
-   * als see {@link SessionService}
-   */
-  public getDatabase(): Database {
-    throw Error();
-  }
-
-  /**
-   * Logout and stop any existing sync.
-   * also see {@link SessionService}
-   */
-  public async logout() {
     throw Error();
   }
 }

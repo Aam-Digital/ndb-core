@@ -23,7 +23,6 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
-import { PasswordFormComponent } from "../../session/auth/couchdb/password-form/password-form.component";
 import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
 import { UserService } from "../user.service";
 
@@ -40,7 +39,6 @@ import { UserService } from "../user.service";
     MatFormFieldModule,
     MatTooltipModule,
     MatInputModule,
-    PasswordFormComponent,
     AccountPageComponent,
   ],
   standalone: true,

@@ -19,12 +19,7 @@ import { Injector, NgModule } from "@angular/core";
 import { SyncedSessionService } from "./session-service/synced-session.service";
 import { LocalSession } from "./session-service/local-session";
 import { RemoteSession } from "./session-service/remote-session";
-import { SessionService } from "./session-service/session.service";
-import {
-  LoginStateSubject,
-  SessionType,
-  SyncStateSubject,
-} from "./session-type";
+import { LoginStateSubject, SyncStateSubject } from "./session-type";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "./auth/auth.service";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
@@ -47,11 +42,6 @@ import { KeycloakAngularModule } from "keycloak-angular";
     SyncedSessionService,
     LocalSession,
     RemoteSession,
-    serviceProvider(SessionService, (injector: Injector) => {
-      return environment.session_type === SessionType.synced
-        ? injector.get(SyncedSessionService)
-        : injector.get(LocalSession);
-    }),
     KeycloakAuthService,
     CouchdbAuthService,
     serviceProvider(AuthService, (injector: Injector) => {

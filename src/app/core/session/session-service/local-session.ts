@@ -17,7 +17,6 @@
 import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
 import { LocalUser, passwordEqualsEncrypted } from "./local-user";
-import { SessionService } from "./session.service";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppSettings } from "../../app-settings";
 import { LoginStateSubject, SessionType } from "../session-type";
@@ -31,7 +30,7 @@ import { AuthUser } from "./auth-user";
  * - Create local PouchDB according to session type and logged in user
  */
 @Injectable()
-export class LocalSession extends SessionService {
+export class LocalSession {
   static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
   private currentDBUser: AuthUser;
   private static LAST_LOGGED_IN_KEY = "LAST_USER";
@@ -39,9 +38,7 @@ export class LocalSession extends SessionService {
   constructor(
     private database: PouchDatabase,
     private loginStateSubject: LoginStateSubject,
-  ) {
-    super();
-  }
+  ) {}
 
   /**
    * Get a login at the local session by fetching the user from the local storage and validating the password.

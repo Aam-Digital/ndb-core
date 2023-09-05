@@ -16,7 +16,6 @@
  */
 import { Injectable } from "@angular/core";
 import { HttpStatusCode } from "@angular/common/http";
-import { SessionService } from "./session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { PouchDatabase } from "../../database/pouch-database";
 import { LoggingService } from "../../logging/logging.service";
@@ -35,7 +34,7 @@ import { SyncState } from "../session-states/sync-state.enum";
  * - provide "am I online"-info
  */
 @Injectable()
-export class RemoteSession extends SessionService {
+export class RemoteSession {
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
@@ -53,7 +52,6 @@ export class RemoteSession extends SessionService {
     private syncStateSubject: SyncStateSubject,
     database: Database,
   ) {
-    super();
     this.remoteDB = new PouchDatabase(this.loggingService);
     if (database instanceof PouchDatabase) {
       this.localDB = database;
