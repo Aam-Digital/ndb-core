@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import {
-  DateRangeFilterPanelComponent,
   calculateDateRange,
+  DateRangeFilterPanelComponent,
   defaultDateFilters,
 } from "./date-range-filter-panel.component";
 import { MatNativeDateModule } from "@angular/material/core";
@@ -103,6 +103,20 @@ describe("DateRangeFilterPanelComponent", () => {
         await expectAsync(cells[i].isInComparisonRange()).toBeResolvedTo(true);
       }
     }
+  });
+
+  it("should highlight the whole month when hovering over the 'all' option ", async () => {
+    const calendar = await loader.getHarness(MatCalendarHarness);
+    const cells = await calendar.getCells();
+    component.preselectAllRange();
+    for (let cell of cells) {
+      await expectAsync(cell.isInComparisonRange()).toBeResolvedTo(true);
+    }
+  });
+
+  it("should return '_' as filter.selectedOption when 'all' option has been chosen", async () => {
+    component.selectRangeAndClose("all");
+    expect(dateFilter.selectedOption).toEqual("_");
   });
 
   it("should correctly calculate date ranges based on the config", () => {
