@@ -19,11 +19,9 @@ import { Injectable } from "@angular/core";
 
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
-import { SyncState } from "../session-states/sync-state.enum";
-import { filter } from "rxjs/operators";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
-import { SyncStateSubject } from "../session-type";
+import { SyncService } from "../../database/sync.service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -34,23 +32,12 @@ import { SyncStateSubject } from "../session-type";
  */
 @Injectable()
 export class SyncedSessionService {
-  static readonly LAST_SYNC_KEY = "LAST_SYNC";
-
   constructor(
     private localSession: LocalSession,
     private remoteSession: RemoteSession,
     private authService: AuthService,
-    private syncState: SyncStateSubject,
-  ) {
-    this.syncState
-      .pipe(filter((state) => state === SyncState.COMPLETED))
-      .subscribe(() =>
-        localStorage.setItem(
-          SyncedSessionService.LAST_SYNC_KEY,
-          new Date().toISOString(),
-        ),
-      );
-  }
+    private syncService: SyncService,
+  ) {}
 
   /**
    * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
@@ -66,6 +53,7 @@ export class SyncedSessionService {
     await this.localSession.handleSuccessfulLogin(userObject);
     await this.remoteSession.handleSuccessfulLogin(userObject);
     this.updateLocalUser();
+    await this.syncService.startSync();
   }
 
   private updateLocalUser() {
