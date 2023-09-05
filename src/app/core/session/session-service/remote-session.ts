@@ -204,13 +204,4 @@ export class RemoteSession {
   getCurrentUser(): AuthUser {
     return this.currentDBUser;
   }
-
-  checkPassword(username: string, password: string): boolean {
-    // Cannot be checked against CouchDB due to cookie-auth
-    throw Error("Can't check password in remote session");
-  }
-
-  getDatabase(): PouchDatabase {
-    return this.remoteDB;
-  }
 }

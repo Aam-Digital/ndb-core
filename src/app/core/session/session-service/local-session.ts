@@ -16,7 +16,7 @@
  */
 import { Injectable } from "@angular/core";
 import { LoginState } from "../session-states/login-state.enum";
-import { LocalUser, passwordEqualsEncrypted } from "./local-user";
+import { LocalUser } from "./local-user";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppSettings } from "../../app-settings";
 import { LoginStateSubject, SessionType } from "../session-type";
@@ -116,33 +116,10 @@ export class LocalSession {
   }
 
   /**
-   * Removes the user from the local storage.
-   * Method never fails, even if the user was not stored before
-   * @param username
-   */
-  public removeUser(username: string) {
-    window.localStorage.removeItem(username);
-    window.localStorage.removeItem(username.trim().toLowerCase());
-  }
-
-  public checkPassword(username: string, password: string): boolean {
-    const user = this.getStoredUser(username);
-    return user && passwordEqualsEncrypted(password, user.encryptedPassword);
-  }
-
-  public getCurrentUser(): AuthUser {
-    return this.currentDBUser;
-  }
-
-  /**
    * Resets the login state and current user (leaving it in local storage to allow later local login)
    */
   public logout() {
     this.currentDBUser = undefined;
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
-  }
-
-  getDatabase(): PouchDatabase {
-    return this.database;
   }
 }

@@ -68,34 +68,11 @@ export class SyncedSessionService {
     this.updateLocalUser();
   }
 
-  /**
-   * Perform a login. The result will only be the login at the local DB, as we might be offline.
-   * Calling this function will trigger a login in the background.
-   * - If it is successful, a sync is performed in the background
-   * - If it fails due to wrong credentials, yet the local login was successful somehow, we fail local login after the fact
-   *
-   * If the localSession is empty, the local login waits for the result of the sync triggered by the remote login (see local-session.ts).
-   * If the remote login fails for some reason, this sync will never be performed, which is why it must be failed manually here
-   * to abort the local login and prevent a deadlock.
-   * @returns promise resolving with the local LoginState
-   */
-  public async login() {
-    throw Error();
-  }
   private updateLocalUser() {
     // Update local user object
     const remoteUser = this.remoteSession.getCurrentUser();
     if (remoteUser) {
       this.localSession.saveUser(remoteUser);
     }
-  }
-
-  public getCurrentUser(): AuthUser {
-    throw Error();
-  }
-
-  public checkPassword(username: string, password: string): boolean {
-    // This only checks the password against locally saved users
-    throw Error();
   }
 }
