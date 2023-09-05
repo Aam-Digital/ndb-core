@@ -19,7 +19,6 @@ export class SiteSettingsService extends LatestEntity<SiteSettings> {
 
   siteName = this.getPropertyObservable("siteName");
   language = this.getPropertyObservable("language");
-  displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
   constructor(
     private title: Title,
     private fileService: FileService,
