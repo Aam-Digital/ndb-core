@@ -5,7 +5,6 @@ import { SwUpdate } from "@angular/service-worker";
 import * as Sentry from "@sentry/browser";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
-import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "../../session/session-service/auth-user";
 import { firstValueFrom } from "rxjs";
@@ -18,6 +17,7 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { AuthService } from "../../session/auth/auth.service";
 import { UserService } from "../../user/user.service";
 import { SyncStateSubject } from "../../session/session-type";
+import { SyncService } from "../../database/sync.service";
 
 @Component({
   selector: "app-support",
@@ -76,8 +76,7 @@ export class SupportComponent implements OnInit {
   }
 
   private initLastSync() {
-    this.lastSync =
-      localStorage.getItem(SyncedSessionService.LAST_SYNC_KEY) || "never";
+    this.lastSync = localStorage.getItem(SyncService.LAST_SYNC_KEY) || "never";
   }
 
   private initLastRemoteLogin() {

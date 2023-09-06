@@ -15,11 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 import { Injectable } from "@angular/core";
-import { LoginState } from "../session-states/login-state.enum";
 import { LocalUser } from "./local-user";
 import { PouchDatabase } from "../../database/pouch-database";
 import { AppSettings } from "../../app-settings";
-import { LoginStateSubject, SessionType } from "../session-type";
+import { SessionType } from "../session-type";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "./auth-user";
 
@@ -32,23 +31,20 @@ import { AuthUser } from "./auth-user";
 @Injectable()
 export class LocalSession {
   static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
-  private currentDBUser: AuthUser;
   private static LAST_LOGGED_IN_KEY = "LAST_USER";
 
-  constructor(
-    private database: PouchDatabase,
-    private loginStateSubject: LoginStateSubject,
-  ) {}
+  constructor(private database: PouchDatabase) {}
 
   /**
    * Get a login at the local session by fetching the user from the local storage and validating the password.
    * Returns a Promise resolving with the loginState.
    */
-  public async login() {
+  public async login(): Promise<AuthUser> {
     const user = this.getStoredUser(LocalSession.LAST_LOGGED_IN_KEY);
     if (user) {
       await this.handleSuccessfulLogin(user);
     }
+    return user;
   }
 
   canLoginOffline(): boolean {
@@ -61,13 +57,11 @@ export class LocalSession {
   }
 
   public async handleSuccessfulLogin(userObject: AuthUser) {
-    this.currentDBUser = userObject;
-    await this.initializeDatabaseForCurrentUser();
-    this.loginStateSubject.next(LoginState.LOGGED_IN);
+    await this.initializeDatabaseForCurrentUser(userObject);
   }
 
-  private async initializeDatabaseForCurrentUser() {
-    const userDBName = `${this.currentDBUser.name}-${AppSettings.DB_NAME}`;
+  private async initializeDatabaseForCurrentUser(user: AuthUser) {
+    const userDBName = `${user.name}-${AppSettings.DB_NAME}`;
     // Work on a temporary database before initializing the real one
     const tmpDB = new PouchDatabase(undefined);
     this.initDatabase(userDBName, tmpDB);
@@ -81,13 +75,10 @@ export class LocalSession {
     const dbFallback = window.localStorage.getItem(
       LocalSession.DEPRECATED_DB_KEY,
     );
-    const dbAvailable = !dbFallback || dbFallback === this.currentDBUser.name;
+    const dbAvailable = !dbFallback || dbFallback === user.name;
     if (dbAvailable && !(await tmpDB.isEmpty())) {
       // Old database is available and can be used by the current user
-      window.localStorage.setItem(
-        LocalSession.DEPRECATED_DB_KEY,
-        this.currentDBUser.name,
-      );
+      window.localStorage.setItem(LocalSession.DEPRECATED_DB_KEY, user.name);
       this.initDatabase(AppSettings.DB_NAME);
       return;
     }
@@ -108,18 +99,10 @@ export class LocalSession {
    * Saves a user to the local storage
    * @param user a object holding the username and the roles of the user
    */
-  public saveUser(user: AuthUser) {
+  saveUser(user: AuthUser) {
     window.localStorage.setItem(
       LocalSession.LAST_LOGGED_IN_KEY,
       JSON.stringify(user),
     );
-  }
-
-  /**
-   * Resets the login state and current user (leaving it in local storage to allow later local login)
-   */
-  public logout() {
-    this.currentDBUser = undefined;
-    this.loginStateSubject.next(LoginState.LOGGED_OUT);
   }
 }

@@ -18,10 +18,13 @@
 import { Injectable } from "@angular/core";
 
 import { LocalSession } from "./local-session";
-import { RemoteSession } from "./remote-session";
 import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 import { SyncService } from "../../database/sync.service";
+import { UserService } from "../../user/user.service";
+import { LoginStateSubject } from "../session-type";
+import { LoginState } from "../session-states/login-state.enum";
+import { Router } from "@angular/router";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -32,12 +35,40 @@ import { SyncService } from "../../database/sync.service";
  */
 @Injectable()
 export class SyncedSessionService {
+  private remoteLoggedIn = false;
   constructor(
     private localSession: LocalSession,
-    private remoteSession: RemoteSession,
     private authService: AuthService,
     private syncService: SyncService,
+    private userService: UserService,
+    private loginStateSubject: LoginStateSubject,
+    private router: Router,
   ) {}
+
+  remoteLogin() {
+    this.authService.authenticate();
+  }
+
+  async offlineLogin() {
+    this.userService.user = await this.localSession.login();
+    this.loginStateSubject.next(LoginState.LOGGED_IN);
+  }
+
+  canLoginOffline(): boolean {
+    return this.localSession.canLoginOffline();
+  }
+
+  logout() {
+    if (this.remoteLoggedIn) {
+      this.authService.logout();
+    } else {
+      this.userService.user = undefined;
+      this.loginStateSubject.next(LoginState.LOGGED_OUT);
+      this.router.navigate(["/login"], {
+        queryParams: { redirect_uri: this.router.routerState.snapshot.url },
+      });
+    }
+  }
 
   /**
    * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
@@ -45,22 +76,16 @@ export class SyncedSessionService {
   checkForValidSession() {
     return this.authService
       .autoLogin()
-      .then((user) => this.handleSuccessfulLogin(user))
+      .then((user) => this.handleRemoteLogin(user))
       .catch(() => undefined);
   }
 
-  async handleSuccessfulLogin(userObject: AuthUser) {
-    await this.localSession.handleSuccessfulLogin(userObject);
-    await this.remoteSession.handleSuccessfulLogin(userObject);
-    this.updateLocalUser();
-    await this.syncService.startSync();
-  }
-
-  private updateLocalUser() {
-    // Update local user object
-    const remoteUser = this.remoteSession.getCurrentUser();
-    if (remoteUser) {
-      this.localSession.saveUser(remoteUser);
-    }
+  async handleRemoteLogin(user: AuthUser) {
+    this.remoteLoggedIn = true;
+    await this.localSession.handleSuccessfulLogin(user);
+    this.userService.user = user;
+    this.localSession.saveUser(user);
+    this.loginStateSubject.next(LoginState.LOGGED_IN);
+    return this.syncService.startSync();
   }
 }

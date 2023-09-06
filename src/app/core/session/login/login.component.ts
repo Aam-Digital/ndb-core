@@ -22,10 +22,9 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
 import { filter } from "rxjs/operators";
-import { LocalSession } from "../session-service/local-session";
-import { RemoteSession } from "../session-service/remote-session";
 import { LoginStateSubject } from "../session-type";
 import { NgIf } from "@angular/common";
+import { SyncedSessionService } from "../session-service/synced-session.service";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -41,10 +40,9 @@ import { NgIf } from "@angular/common";
 export class LoginComponent {
   offlineLoginAvailable = false;
   constructor(
-    private remoteSession: RemoteSession,
     private router: Router,
     private route: ActivatedRoute,
-    private localSession: LocalSession,
+    private syncedSession: SyncedSessionService,
     private loginState: LoginStateSubject,
   ) {
     this.loginState
@@ -53,7 +51,7 @@ export class LoginComponent {
         filter((state) => state === LoginState.LOGGED_IN),
       )
       .subscribe(() => this.routeAfterLogin());
-    this.offlineLoginAvailable = this.localSession.canLoginOffline();
+    this.offlineLoginAvailable = this.syncedSession.canLoginOffline();
   }
 
   private routeAfterLogin() {
@@ -65,10 +63,10 @@ export class LoginComponent {
    * Do a login with the SessionService.
    */
   login() {
-    this.remoteSession.login();
+    this.syncedSession.remoteLogin();
   }
 
   useOffline() {
-    this.localSession.login();
+    this.syncedSession.offlineLogin();
   }
 }

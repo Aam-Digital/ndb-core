@@ -18,7 +18,6 @@
 import { Injector, NgModule } from "@angular/core";
 import { SyncedSessionService } from "./session-service/synced-session.service";
 import { LocalSession } from "./session-service/local-session";
-import { RemoteSession } from "./session-service/remote-session";
 import { LoginStateSubject, SyncStateSubject } from "./session-type";
 import { environment } from "../../../environments/environment";
 import { AuthService } from "./auth/auth.service";
@@ -41,7 +40,6 @@ import { KeycloakAngularModule } from "keycloak-angular";
   providers: [
     SyncedSessionService,
     LocalSession,
-    RemoteSession,
     KeycloakAuthService,
     CouchdbAuthService,
     serviceProvider(AuthService, (injector: Injector) => {

@@ -1,9 +1,10 @@
 import { Injectable } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
-import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
+import { SyncedSessionService } from "../session/session-service/synced-session.service";
+import { LocalSession } from "../session/session-service/local-session";
 
 /**
  * This service handles everything related to the demo-mode
@@ -17,6 +18,7 @@ export class DemoDataInitializerService {
   constructor(
     private demoDataService: DemoDataService,
     private localSession: LocalSession,
+    private syncedSession: SyncedSessionService,
     private dialog: MatDialog,
   ) {}
 
@@ -26,7 +28,7 @@ export class DemoDataInitializerService {
     );
 
     this.registerDemoUsers();
-    await this.localSession.login();
+    await this.syncedSession.offlineLogin();
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();
