@@ -14,10 +14,10 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
-import { AuthService } from "../../session/auth/auth.service";
 import { UserService } from "../../user/user.service";
 import { SyncStateSubject } from "../../session/session-type";
 import { SyncService } from "../../database/sync.service";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 
 @Component({
   selector: "app-support",
@@ -81,7 +81,7 @@ export class SupportComponent implements OnInit {
 
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
-      localStorage.getItem(AuthService.LAST_AUTH_KEY) || "never";
+      localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || "never";
   }
 
   private initStorageInfo() {

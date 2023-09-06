@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AlertService } from "../../../../alerts/alert.service";
@@ -24,25 +23,18 @@ import { MatInputModule } from "@angular/material/input";
 })
 export class AccountPageComponent implements OnInit {
   @Input() disabled: boolean;
-  keycloakAuthService: KeycloakAuthService;
   email = new FormControl("", [Validators.required, Validators.email]);
 
   constructor(
-    authService: AuthService,
+    public authService: KeycloakAuthService,
     private alertService: AlertService,
-  ) {
-    if (authService instanceof KeycloakAuthService) {
-      this.keycloakAuthService = authService;
-    }
-  }
+  ) {}
 
   ngOnInit() {
-    if (this.keycloakAuthService) {
-      this.keycloakAuthService.getUserinfo().subscribe({
-        next: (res) => this.email.setValue(res.email),
-        error: () => this.email.setValue(""),
-      });
-    }
+    this.authService.getUserinfo().subscribe({
+      next: (res) => this.email.setValue(res.email),
+      error: () => this.email.setValue(""),
+    });
   }
 
   setEmail() {
@@ -50,7 +42,7 @@ export class AccountPageComponent implements OnInit {
       return;
     }
 
-    this.keycloakAuthService.setEmail(this.email.value).subscribe({
+    this.authService.setEmail(this.email.value).subscribe({
       next: () =>
         this.alertService.addInfo(
           $localize`Please click the link in the email we sent you to verify your email address.`,

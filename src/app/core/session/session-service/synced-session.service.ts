@@ -18,13 +18,13 @@
 import { Injectable } from "@angular/core";
 
 import { LocalSession } from "./local-session";
-import { AuthService } from "../auth/auth.service";
 import { AuthUser } from "./auth-user";
 import { SyncService } from "../../database/sync.service";
 import { UserService } from "../../user/user.service";
 import { LoginStateSubject } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
+import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -38,7 +38,7 @@ export class SyncedSessionService {
   private remoteLoggedIn = false;
   constructor(
     private localSession: LocalSession,
-    private authService: AuthService,
+    private authService: KeycloakAuthService,
     private syncService: SyncService,
     private userService: UserService,
     private loginStateSubject: LoginStateSubject,

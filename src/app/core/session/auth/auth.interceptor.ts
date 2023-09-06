@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
 import {
-  HttpRequest,
-  HttpHandler,
-  HttpEvent,
-  HttpInterceptor,
   HttpContextToken,
   HttpErrorResponse,
+  HttpEvent,
+  HttpHandler,
+  HttpInterceptor,
+  HttpRequest,
   HttpStatusCode,
 } from "@angular/common/http";
 import { concatMap, from, Observable } from "rxjs";
-import { AuthService } from "./auth.service";
 import { catchError } from "rxjs/operators";
+import { KeycloakAuthService } from "./keycloak/keycloak-auth.service";
 
 /**
  * This context can be used to prevent the Bearer token to be set by this interceptor.
@@ -29,7 +29,7 @@ export const AUTH_ENABLED = new HttpContextToken(() => true);
  */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private authService: AuthService) {}
+  constructor(private authService: KeycloakAuthService) {}
 
   intercept(
     request: HttpRequest<unknown>,

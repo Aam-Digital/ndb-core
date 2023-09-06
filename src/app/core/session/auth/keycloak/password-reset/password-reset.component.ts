@@ -1,5 +1,4 @@
 import { Component } from "@angular/core";
-import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { MatSnackBar } from "@angular/material/snack-bar";
@@ -22,19 +21,14 @@ import { AnalyticsService } from "../../../../analytics/analytics.service";
   standalone: true,
 })
 export class PasswordResetComponent {
-  keycloakAuth: KeycloakAuthService;
   passwordResetActive = false;
   email = new FormControl("", [Validators.required, Validators.email]);
 
   constructor(
-    authService: AuthService,
+    private authService: KeycloakAuthService,
     private snackbar: MatSnackBar,
     private analytics: AnalyticsService,
-  ) {
-    if (authService instanceof KeycloakAuthService) {
-      this.keycloakAuth = authService;
-    }
-  }
+  ) {}
 
   toggleEmailForm() {
     this.passwordResetActive = !this.passwordResetActive;
@@ -46,7 +40,7 @@ export class PasswordResetComponent {
     }
     this.analytics.eventTrack("password_reset", { category: "User" });
 
-    this.keycloakAuth.forgotPassword(this.email.value).subscribe({
+    this.authService.forgotPassword(this.email.value).subscribe({
       next: () => {
         this.snackbar.open(
           `Password reset email sent to ${this.email.value}`,

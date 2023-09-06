@@ -5,11 +5,11 @@ import { LoggingService } from "../logging/logging.service";
 import { AppSettings } from "../app-settings";
 import { HttpStatusCode } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
-import { AuthService } from "../session/auth/auth.service";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { filter } from "rxjs/operators";
+import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 
 @Injectable({
   providedIn: "root",
@@ -25,7 +25,7 @@ export class SyncService {
   constructor(
     database: Database,
     private loggingService: LoggingService,
-    private authService: AuthService,
+    private authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
     private loginStateSubject: LoginStateSubject,
   ) {
@@ -133,7 +133,9 @@ export class SyncService {
     return (info) => {
       if (this.isLoggedIn()) {
         this.syncStateSubject.next(SyncState.FAILED);
-        const lastAuth = localStorage.getItem(AuthService.LAST_AUTH_KEY);
+        const lastAuth = localStorage.getItem(
+          KeycloakAuthService.LAST_AUTH_KEY,
+        );
         this.loggingService.warn(
           `Live sync failed (last auth ${lastAuth}): ${JSON.stringify(info)}`,
         );

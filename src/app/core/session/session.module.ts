@@ -15,16 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injector, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { SyncedSessionService } from "./session-service/synced-session.service";
 import { LocalSession } from "./session-service/local-session";
 import { LoginStateSubject, SyncStateSubject } from "./session-type";
-import { environment } from "../../../environments/environment";
-import { AuthService } from "./auth/auth.service";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
-import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
-import { AuthProvider } from "./auth/auth-provider";
-import { serviceProvider } from "../../utils/utils";
 import { KeycloakAngularModule } from "keycloak-angular";
 
 /**
@@ -41,12 +36,6 @@ import { KeycloakAngularModule } from "keycloak-angular";
     SyncedSessionService,
     LocalSession,
     KeycloakAuthService,
-    CouchdbAuthService,
-    serviceProvider(AuthService, (injector: Injector) => {
-      return environment.authenticator === AuthProvider.Keycloak
-        ? injector.get(KeycloakAuthService)
-        : injector.get(CouchdbAuthService);
-    }),
     LoginStateSubject,
     SyncStateSubject,
   ],

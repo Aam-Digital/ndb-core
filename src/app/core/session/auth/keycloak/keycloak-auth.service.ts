@@ -1,4 +1,3 @@
-import { AuthService } from "../auth.service";
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
@@ -8,7 +7,8 @@ import { AuthUser } from "../../session-service/auth-user";
 import { KeycloakService } from "keycloak-angular";
 
 @Injectable()
-export class KeycloakAuthService extends AuthService {
+export class KeycloakAuthService {
+  static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
   /**
    * Users with this role can create and update other accounts.
    */
@@ -29,9 +29,7 @@ export class KeycloakAuthService extends AuthService {
   constructor(
     private httpClient: HttpClient,
     private keycloak: KeycloakService,
-  ) {
-    super();
-  }
+  ) {}
 
   get realmUrl(): string {
     const k = this.keycloak.getKeycloakInstance();
@@ -139,6 +137,17 @@ export class KeycloakAuthService extends AuthService {
   getRoles(): Observable<Role[]> {
     return this.httpClient.get<Role[]>(
       `${environment.account_url}/account/roles`,
+    );
+  }
+
+  /**
+   * Log timestamp of last successful authentication
+   * @protected
+   */
+  protected logSuccessfulAuth() {
+    localStorage.setItem(
+      KeycloakAuthService.LAST_AUTH_KEY,
+      new Date().toISOString(),
     );
   }
 }
