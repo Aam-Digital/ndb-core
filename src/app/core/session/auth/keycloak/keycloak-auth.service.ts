@@ -32,14 +32,10 @@ export class KeycloakAuthService {
           silentCheckSsoRedirectUri:
             window.location.origin + "/assets/silent-check-sso.html",
         },
+        // GitHub API rejects if non GitHub bearer token is present
         shouldAddToken: ({ url }) => !url.includes("api.github.com"),
       });
     }
-  }
-
-  get realmUrl(): string {
-    const k = this.keycloak.getKeycloakInstance();
-    return `${k.authServerUrl}realms/${k.realm}`;
   }
 
   authenticate() {
@@ -100,24 +96,14 @@ export class KeycloakAuthService {
     });
   }
 
-  getUserinfo(): Observable<any> {
-    return this.httpClient.get(
-      `${this.realmUrl}/protocol/openid-connect/userinfo`,
-    );
+  getUserinfo(): Promise<any> {
+    return this.keycloak.loadUserProfile();
   }
 
   setEmail(email: string): Observable<any> {
     return this.httpClient.put(`${environment.account_url}/account/set-email`, {
       email,
     });
-  }
-
-  forgotPassword(email: string): Observable<any> {
-    const k = this.keycloak.getKeycloakInstance();
-    return this.httpClient.post(
-      `${environment.account_url}/account/forgot-password`,
-      { email, realm: k.realm, client: k.clientId },
-    );
   }
 
   createUser(user: Partial<KeycloakUser>): Observable<any> {
@@ -148,23 +134,13 @@ export class KeycloakAuthService {
 
   /**
    * Log timestamp of last successful authentication
-   * @protected
    */
-  protected logSuccessfulAuth() {
+  logSuccessfulAuth() {
     localStorage.setItem(
       KeycloakAuthService.LAST_AUTH_KEY,
       new Date().toISOString(),
     );
   }
-}
-
-/**
- * Extract of openId-connect response.
- */
-export interface OIDCTokenResponse {
-  access_token: string;
-  refresh_token: string;
-  session_state: string;
 }
 
 /**

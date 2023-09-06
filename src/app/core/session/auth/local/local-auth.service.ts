@@ -16,7 +16,7 @@ export class LocalAuthService {
   }
 
   private getStoredUser(username: string): AuthUser {
-    const stored = window.localStorage.getItem(username);
+    const stored = localStorage.getItem(username);
     if (!stored) {
       throw Error("OFFLINE LOGIN ERROR: No user found locally");
     }
@@ -28,13 +28,13 @@ export class LocalAuthService {
    * @param user a object holding the username and the roles of the user
    */
   saveUser(user: AuthUser) {
-    window.localStorage.setItem(
+    localStorage.setItem(
       LocalAuthService.LAST_LOGGED_IN_KEY,
       JSON.stringify(user),
     );
   }
 
   removeLastUser() {
-    window.localStorage.removeItem(LocalAuthService.LAST_LOGGED_IN_KEY);
+    localStorage.removeItem(LocalAuthService.LAST_LOGGED_IN_KEY);
   }
 }

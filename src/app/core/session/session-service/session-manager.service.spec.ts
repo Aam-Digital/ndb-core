@@ -33,6 +33,7 @@ import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalSession } from "./local-session";
 import { Database } from "../../database/database";
+import { Router } from "@angular/router";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -65,13 +66,18 @@ describe("SessionManagerService", () => {
     loginStateSubject = TestBed.inject(LoginStateSubject);
     userService = TestBed.inject(UserService);
 
-    // Setting up local and remote session to accept TEST_USER and TEST_PASSWORD as valid credentials
     dbUser = { name: TEST_USER, roles: ["user_app"] };
     TestBed.inject(LocalAuthService).saveUser(dbUser);
   }));
 
   afterEach(() => {
     TestBed.inject(LocalAuthService).removeLastUser();
+  });
+
+  it("should trigger remote authentication", () => {
+    service.remoteLogin();
+
+    expect(mockKeycloak.authenticate).toHaveBeenCalled();
   });
 
   it("should update the local user object once authenticated", async () => {
@@ -91,10 +97,36 @@ describe("SessionManagerService", () => {
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
   });
 
-  it("should login, if the session is still valid", async () => {
+  it("should automatically login, if the session is still valid", async () => {
     mockKeycloak.autoLogin.and.resolveTo(dbUser);
+
     await service.checkForValidSession();
+
     expect(loginStateSubject.value).toEqual(LoginState.LOGGED_IN);
     expect(userService.getCurrentUser()).toEqual(dbUser);
+  });
+
+  it("should trigger remote logout if remote login succeeded before", async () => {
+    mockKeycloak.autoLogin.and.resolveTo(dbUser);
+    await service.checkForValidSession();
+
+    service.logout();
+
+    expect(mockKeycloak.logout).toHaveBeenCalled();
+  });
+
+  it("should only reset local state if remote login did happen", async () => {
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    spyOn(TestBed.inject(LocalAuthService), "login").and.returnValue(dbUser);
+    await service.offlineLogin();
+    expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+    expect(userService.getCurrentUser()).toEqual(dbUser);
+
+    service.logout();
+
+    expect(mockKeycloak.logout).not.toHaveBeenCalled();
+    expect(loginStateSubject.value).toBe(LoginState.LOGGED_OUT);
+    expect(userService.getCurrentUser()).toBeUndefined();
+    expect(navigateSpy).toHaveBeenCalled();
   });
 });

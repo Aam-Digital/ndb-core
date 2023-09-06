@@ -31,10 +31,9 @@ export class AccountPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.authService.getUserinfo().subscribe({
-      next: (res) => this.email.setValue(res.email),
-      error: () => this.email.setValue(""),
-    });
+    this.authService
+      .getUserinfo()
+      .then((res) => this.email.setValue(res.email));
   }
 
   setEmail() {
