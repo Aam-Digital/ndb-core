@@ -56,8 +56,8 @@ export class LocalSession {
     return JSON.parse(stored);
   }
 
-  public async handleSuccessfulLogin(userObject: AuthUser) {
-    await this.initializeDatabaseForCurrentUser(userObject);
+  handleSuccessfulLogin(userObject: AuthUser) {
+    return this.initializeDatabaseForCurrentUser(userObject);
   }
 
   private async initializeDatabaseForCurrentUser(user: AuthUser) {

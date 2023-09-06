@@ -23,15 +23,12 @@ export class SyncService {
   private localDB: PouchDB.Database;
 
   constructor(
-    database: Database,
+    private database: Database,
     private loggingService: LoggingService,
     private authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
     private loginStateSubject: LoginStateSubject,
   ) {
-    if (database instanceof PouchDatabase) {
-      this.localDB = database.getPouchDB();
-    }
     this.syncStateSubject
       .pipe(filter((state) => state === SyncState.COMPLETED))
       .subscribe(() =>
@@ -43,16 +40,14 @@ export class SyncService {
   }
 
   startSync() {
-    this.initRemoteDB();
-    return (
-      this.sync()
-        .catch((err) => this.loggingService.error(`Sync failed: ${err}`))
-        // Call live sync even when initial sync fails
-        .finally(() => this.liveSyncDeferred())
-    );
+    this.initDatabases();
+    this.sync()
+      .catch((err) => this.loggingService.error(`Sync failed: ${err}`))
+      // Call live sync even when initial sync fails
+      .finally(() => this.liveSyncDeferred());
   }
 
-  private initRemoteDB() {
+  private initDatabases() {
     const remoteDatabase = new PouchDatabase(this.loggingService);
     remoteDatabase.initRemoteDB(
       `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
@@ -75,6 +70,10 @@ export class SyncService {
         }
       },
     );
+    this.remoteDB = remoteDatabase.getPouchDB();
+    if (this.database instanceof PouchDatabase) {
+      this.localDB = this.database.getPouchDB();
+    }
   }
 
   private sendRequest(url: string, opts) {
@@ -95,6 +94,16 @@ export class SyncService {
         this.syncStateSubject.next(SyncState.FAILED);
         throw err;
       });
+  }
+
+  /**
+   * Schedules liveSync to be started.
+   * This method should be used to start the liveSync after the initial non-live sync,
+   * so the browser makes a round trip to the UI and hides the potentially visible first-sync dialog.
+   * @param timeout ms to wait before starting the liveSync
+   */
+  private liveSyncDeferred(timeout = 1000) {
+    this._liveSyncScheduledHandle = setTimeout(() => this.liveSync(), timeout);
   }
 
   /**
@@ -146,16 +155,6 @@ export class SyncService {
 
   private isLoggedIn(): boolean {
     return this.loginStateSubject.value === LoginState.LOGGED_IN;
-  }
-
-  /**
-   * Schedules liveSync to be started.
-   * This method should be used to start the liveSync after the initial non-live sync,
-   * so the browser makes a round trip to the UI and hides the potentially visible first-sync dialog.
-   * @param timeout ms to wait before starting the liveSync
-   */
-  private liveSyncDeferred(timeout = 1000) {
-    this._liveSyncScheduledHandle = setTimeout(() => this.liveSync(), timeout);
   }
 
   /**

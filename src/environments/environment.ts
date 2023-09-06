@@ -31,8 +31,8 @@ export const environment = {
   repositoryId: "Aam-Digital/ndb-core",
   remoteLoggingDsn: undefined, // only set for production mode in environment.prod.ts
   /** The following settings can be overridden by the `config.json` if present, see {@link AppSettings} */
-  demo_mode: true,
-  session_type: SessionType.mock,
+  demo_mode: false,
+  session_type: SessionType.synced,
   account_url: "https://accounts.aam-digital.net",
   email: undefined,
 };
