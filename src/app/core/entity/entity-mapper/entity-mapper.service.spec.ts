@@ -25,16 +25,16 @@ import {
   EntityRegistry,
 } from "../database-entity.decorator";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { SessionService } from "../../session/session-service/session.service";
 import { CoreModule } from "../../core.module";
 import { Database } from "../../database/database";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { TEST_USER } from "../../../utils/mock-local-session";
+import { UserService } from "../../user/user.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
   let testDatabase: PouchDatabase;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockUserService: jasmine.SpyObj<UserService>;
 
   const existingEntity = {
     _id: "Entity:existing-entity",
@@ -50,7 +50,7 @@ describe("EntityMapperService", () => {
 
   beforeEach(waitForAsync(() => {
     testDatabase = PouchDatabase.create();
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockUserService = jasmine.createSpyObj(["getCurrentUser"]);
 
     TestBed.configureTestingModule({
       imports: [CoreModule],
@@ -58,7 +58,7 @@ describe("EntityMapperService", () => {
         ComponentRegistry,
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: Database, useValue: testDatabase },
-        { provide: SessionService, useValue: mockSessionService },
+        { provide: UserService, useValue: mockUserService },
         EntityMapperService,
       ],
     });
@@ -292,7 +292,7 @@ describe("EntityMapperService", () => {
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
-    mockSessionService.getCurrentUser.and.returnValue({
+    mockUserService.getCurrentUser.and.returnValue({
       name: TEST_USER,
       roles: [],
     });

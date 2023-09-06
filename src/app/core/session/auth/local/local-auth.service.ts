@@ -17,6 +17,9 @@ export class LocalAuthService {
 
   private getStoredUser(username: string): AuthUser {
     const stored = window.localStorage.getItem(username);
+    if (!stored) {
+      throw Error("OFFLINE LOGIN ERROR: No user found locally");
+    }
     return JSON.parse(stored);
   }
 

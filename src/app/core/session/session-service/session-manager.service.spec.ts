@@ -17,7 +17,11 @@
 
 import { SessionManagerService } from "./session-manager.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { LoginStateSubject, SessionType } from "../session-type";
+import {
+  LoginStateSubject,
+  SessionType,
+  SyncStateSubject,
+} from "../session-type";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
@@ -27,6 +31,8 @@ import { UserService } from "../../user/user.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
+import { LocalSession } from "./local-session";
+import { Database } from "../../database/database";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -46,7 +52,11 @@ describe("SessionManagerService", () => {
 
     TestBed.configureTestingModule({
       providers: [
-        PouchDatabase,
+        SessionManagerService,
+        LocalSession,
+        SyncStateSubject,
+        LoginStateSubject,
+        { provide: Database, useClass: PouchDatabase },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
       ],
     });

@@ -20,6 +20,7 @@ import { AppSettings } from "../../app-settings";
 import { SessionType } from "../session-type";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "../auth/auth-user";
+import { Database } from "../../database/database";
 
 /**
  * Responsibilities:
@@ -30,8 +31,13 @@ import { AuthUser } from "../auth/auth-user";
 @Injectable()
 export class LocalSession {
   static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
+  private pouchDatabase: PouchDatabase;
 
-  constructor(private database: PouchDatabase) {}
+  constructor(database: Database) {
+    if (database instanceof PouchDatabase) {
+      this.pouchDatabase = database;
+    }
+  }
 
   async initializeDatabaseForCurrentUser(user: AuthUser) {
     const userDBName = `${user.name}-${AppSettings.DB_NAME}`;
@@ -60,7 +66,7 @@ export class LocalSession {
     this.initDatabase(userDBName);
   }
 
-  private initDatabase(dbName: string, db = this.database) {
+  private initDatabase(dbName: string, db = this.pouchDatabase) {
     if (environment.session_type === SessionType.mock) {
       db.initInMemoryDB(dbName);
     } else {

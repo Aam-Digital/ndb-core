@@ -6,7 +6,6 @@ import {
 } from "@angular/core/testing";
 
 import { AccountPageComponent } from "./account-page.component";
-import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
 import { of, throwError } from "rxjs";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
@@ -24,20 +23,21 @@ describe("AccountPageComponent", () => {
       "changePassword",
       "getUserinfo",
       "setEmail",
+      "autoLogin",
     ]);
     mockAuthService.getUserinfo.and.returnValue(throwError(() => new Error()));
+    mockAuthService.autoLogin.and.rejectWith();
     mockAlerts = jasmine.createSpyObj(["addInfo"]);
     await TestBed.configureTestingModule({
       imports: [AccountPageComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: AuthService, useValue: {} },
+        { provide: KeycloakAuthService, useValue: mockAuthService },
         { provide: AlertService, useValue: mockAlerts },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AccountPageComponent);
     component = fixture.componentInstance;
-    component.keycloakAuthService = mockAuthService;
     fixture.detectChanges();
   });
 

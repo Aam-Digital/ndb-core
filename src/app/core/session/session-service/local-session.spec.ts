@@ -23,6 +23,7 @@ import { environment } from "../../../../environments/environment";
 import { AuthUser } from "../auth/auth-user";
 import { TEST_USER } from "../../../utils/mock-local-session";
 import { TestBed } from "@angular/core/testing";
+import { Database } from "../../database/database";
 
 describe("LocalSessionService", () => {
   const userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
@@ -32,16 +33,17 @@ describe("LocalSessionService", () => {
     roles: ["user_app"],
   };
   let service: LocalSession;
-  let database: jasmine.SpyObj<PouchDatabase>;
+  let initInMemorySpy: jasmine.Spy;
+  let initIndexedSpy: jasmine.Spy;
 
   beforeEach(() => {
     environment.session_type = SessionType.mock;
-    database = jasmine.createSpyObj([
-      "initInMemoryDB",
-      "initIndexedDB",
-      "isEmpty",
-    ]);
-    TestBed.configureTestingModule({});
+    TestBed.configureTestingModule({
+      providers: [LocalSession, { provide: Database, useClass: PouchDatabase }],
+    });
+    const db = TestBed.inject(Database) as PouchDatabase;
+    initInMemorySpy = spyOn(db, "initInMemoryDB");
+    initIndexedSpy = spyOn(db, "initIndexedDB");
     service = TestBed.inject(LocalSession);
   });
 
@@ -59,7 +61,7 @@ describe("LocalSessionService", () => {
   it("should create a pouchdb with the username of the logged in user", async () => {
     await service.initializeDatabaseForCurrentUser(testUser);
 
-    expect(database.initInMemoryDB).toHaveBeenCalledWith(
+    expect(initInMemorySpy).toHaveBeenCalledWith(
       TEST_USER + "-" + AppSettings.DB_NAME,
     );
   });
@@ -69,16 +71,16 @@ describe("LocalSessionService", () => {
       sessionType: SessionType,
       expectedDB: "inMemory" | "indexed",
     ) {
-      database.initInMemoryDB.calls.reset();
-      database.initIndexedDB.calls.reset();
+      initInMemorySpy.calls.reset();
+      initIndexedSpy.calls.reset();
       environment.session_type = sessionType;
       await service.initializeDatabaseForCurrentUser(testUser);
       if (expectedDB === "inMemory") {
-        expect(database.initInMemoryDB).toHaveBeenCalled();
-        expect(database.initIndexedDB).not.toHaveBeenCalled();
+        expect(initInMemorySpy).toHaveBeenCalled();
+        expect(initIndexedSpy).not.toHaveBeenCalled();
       } else {
-        expect(database.initInMemoryDB).not.toHaveBeenCalled();
-        expect(database.initIndexedDB).toHaveBeenCalled();
+        expect(initInMemorySpy).not.toHaveBeenCalled();
+        expect(initIndexedSpy).toHaveBeenCalled();
       }
     }
 
@@ -92,7 +94,7 @@ describe("LocalSessionService", () => {
 
     await service.initializeDatabaseForCurrentUser(testUser);
 
-    expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(userDBName);
+    expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
   });
 
   it("should use and reserve a deprecated db if it exists and current db has no content", async () => {
@@ -100,7 +102,7 @@ describe("LocalSessionService", () => {
 
     await service.initializeDatabaseForCurrentUser(testUser);
 
-    expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(deprecatedDBName);
+    expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
     const dbReservation = window.localStorage.getItem(
       LocalSession.DEPRECATED_DB_KEY,
     );
@@ -112,7 +114,7 @@ describe("LocalSessionService", () => {
 
     await service.initializeDatabaseForCurrentUser(testUser);
 
-    expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(userDBName);
+    expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
   });
 
   it("should use the deprecated database if it is reserved by the current user", async () => {
@@ -120,7 +122,7 @@ describe("LocalSessionService", () => {
 
     await service.initializeDatabaseForCurrentUser(testUser);
 
-    expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(deprecatedDBName);
+    expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
   });
 
   async function defineExistingDatabases(

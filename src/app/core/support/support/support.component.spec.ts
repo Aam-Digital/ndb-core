@@ -7,28 +7,28 @@ import {
 } from "@angular/core/testing";
 
 import { SupportComponent } from "./support.component";
-import { SessionService } from "../../session/session-service/session.service";
-import { BehaviorSubject, of } from "rxjs";
-import { SyncState } from "../../session/session-states/sync-state.enum";
+import { of } from "rxjs";
 import { SwUpdate } from "@angular/service-worker";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
-import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { MatDialogModule } from "@angular/material/dialog";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouch-database";
 import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
-import { AuthService } from "../../session/auth/auth.service";
 import { TEST_USER } from "../../../utils/mock-local-session";
+import { UserService } from "../../user/user.service";
+import { SyncService } from "../../database/sync.service";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { SyncStateSubject } from "../../session/session-type";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
   const testUser = { name: TEST_USER, roles: [] };
-  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let mockUserService: jasmine.SpyObj<UserService>;
   const mockSW = { isEnabled: false };
   let mockDB: jasmine.SpyObj<PouchDatabase>;
   const mockWindow = {
@@ -41,10 +41,8 @@ describe("SupportComponent", () => {
 
   beforeEach(async () => {
     localStorage.clear();
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
-      syncState: new BehaviorSubject(SyncState.UNSYNCED),
-    });
-    mockSessionService.getCurrentUser.and.returnValue(testUser);
+    mockUserService = jasmine.createSpyObj(["getCurrentUser"]);
+    mockUserService.getCurrentUser.and.returnValue(testUser);
     mockDB = jasmine.createSpyObj(["destroy", "getPouchDB"]);
     mockDB.getPouchDB.and.returnValue({
       info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
@@ -58,13 +56,14 @@ describe("SupportComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: SessionService, useValue: mockSessionService },
+        { provide: UserService, useValue: mockUserService },
         { provide: SwUpdate, useValue: mockSW },
         { provide: PouchDatabase, useValue: mockDB },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: BackupService, useValue: null },
         { provide: DownloadService, useValue: null },
+        SyncStateSubject,
       ],
     }).compileComponents();
   });
@@ -91,9 +90,9 @@ describe("SupportComponent", () => {
 
   it("should correctly read sync and remote login status from local storage", async () => {
     const lastSync = new Date("2022-01-01").toISOString();
-    localStorage.setItem(SessionManagerService.LAST_SYNC_KEY, lastSync);
+    localStorage.setItem(SyncService.LAST_SYNC_KEY, lastSync);
     const lastRemoteLogin = new Date("2022-01-02").toISOString();
-    localStorage.setItem(AuthService.LAST_AUTH_KEY, lastRemoteLogin);
+    localStorage.setItem(KeycloakAuthService.LAST_AUTH_KEY, lastRemoteLogin);
 
     await component.ngOnInit();
 

@@ -19,9 +19,9 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { LoginComponent } from "./login.component";
 import { LoginState } from "../session-states/login-state.enum";
-import { BehaviorSubject } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginStateSubject } from "../session-type";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
@@ -29,11 +29,10 @@ describe("LoginComponent", () => {
   let loginState: LoginStateSubject;
 
   beforeEach(waitForAsync(() => {
-    loginState = new BehaviorSubject(LoginState.LOGGED_IN);
     TestBed.configureTestingModule({
-      imports: [LoginComponent],
-      providers: [{ provide: LoginStateSubject, useValue: loginState }],
+      imports: [LoginComponent, MockedTestingModule.withState()],
     }).compileComponents();
+    loginState = TestBed.inject(LoginStateSubject);
   }));
 
   beforeEach(() => {

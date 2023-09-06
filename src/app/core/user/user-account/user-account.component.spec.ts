@@ -18,36 +18,27 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UserAccountComponent } from "./user-account.component";
-import { SessionService } from "../../session/session-service/session.service";
-import { LoggingService } from "../../logging/logging.service";
-import { AuthService } from "../../session/auth/auth.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { NEVER } from "rxjs";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
   let fixture: ComponentFixture<UserAccountComponent>;
 
-  let mockSessionService: jasmine.SpyObj<SessionService>;
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-
   beforeEach(waitForAsync(() => {
-    mockSessionService = jasmine.createSpyObj("sessionService", [
-      "getCurrentUser",
-    ]);
-    mockSessionService.getCurrentUser.and.returnValue({
-      name: "TestUser",
-      roles: [],
-    });
-    mockLoggingService = jasmine.createSpyObj(["error"]);
-
     TestBed.configureTestingModule({
       imports: [UserAccountComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: AuthService, useValue: { changePassword: () => undefined } },
-        { provide: LoggingService, useValue: mockLoggingService },
+        {
+          provide: KeycloakAuthService,
+          useValue: {
+            getUserinfo: () => NEVER,
+            autoLogin: () => Promise.reject(),
+          },
+        },
       ],
-    });
+    }).compileComponents();
   }));
 
   beforeEach(() => {

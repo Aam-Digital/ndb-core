@@ -36,14 +36,6 @@ describe("LocalAuthService", () => {
     expect(service).toBeDefined();
   });
 
-  it("should save user objects to local storage", () => {
-    const storedUser: AuthUser = JSON.parse(
-      window.localStorage.getItem(testUser.name),
-    );
-    expect(storedUser.name).toBe(testUser.name);
-    expect(storedUser.roles).toEqual(testUser.roles);
-  });
-
   it("should login a previously saved user", () => {
     expect(service.login()).toEqual(testUser);
   });

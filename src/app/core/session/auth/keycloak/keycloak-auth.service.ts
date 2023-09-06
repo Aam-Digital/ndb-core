@@ -1,10 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { Observable } from "rxjs";
+import { firstValueFrom, NEVER, Observable } from "rxjs";
 import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
 import { AuthUser } from "../auth-user";
 import { KeycloakService } from "keycloak-angular";
+import { SessionType } from "../../session-type";
 
 @Injectable()
 export class KeycloakAuthService {
@@ -17,20 +18,24 @@ export class KeycloakAuthService {
 
   public accessToken: string;
 
-  private keycloakReady = this.keycloak.init({
-    config: window.location.origin + "/assets/keycloak.json",
-    initOptions: {
-      onLoad: "check-sso",
-      silentCheckSsoRedirectUri:
-        window.location.origin + "/assets/silent-check-sso.html",
-    },
-    shouldAddToken: ({ url }) => !url.includes("api.github.com"),
-  });
+  private keycloakReady: Promise<boolean> = firstValueFrom(NEVER);
 
   constructor(
     private httpClient: HttpClient,
     private keycloak: KeycloakService,
-  ) {}
+  ) {
+    if (environment.session_type === SessionType.synced) {
+      this.keycloakReady = this.keycloak.init({
+        config: window.location.origin + "/assets/keycloak.json",
+        initOptions: {
+          onLoad: "check-sso",
+          silentCheckSsoRedirectUri:
+            window.location.origin + "/assets/silent-check-sso.html",
+        },
+        shouldAddToken: ({ url }) => !url.includes("api.github.com"),
+      });
+    }
+  }
 
   get realmUrl(): string {
     const k = this.keycloak.getKeycloakInstance();

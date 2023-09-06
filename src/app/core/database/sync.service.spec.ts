@@ -3,25 +3,25 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { SyncService } from "./sync.service";
 import { PouchDatabase } from "./pouch-database";
 import { Database } from "./database";
-import { LoginStateSubject } from "../session/session-type";
+import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import { LoginState } from "../session/session-states/login-state.enum";
-import { BehaviorSubject } from "rxjs";
+import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 
 describe("SyncService", () => {
   let service: SyncService;
-  let mockDatabase: jasmine.SpyObj<PouchDatabase>;
-  let loginStateSubject: LoginStateSubject;
+  let loginState: LoginStateSubject;
 
   beforeEach(() => {
-    loginStateSubject = new BehaviorSubject(LoginState.LOGGED_IN);
-    mockDatabase = jasmine.createSpyObj(["getPouchDB"]);
     TestBed.configureTestingModule({
       providers: [
-        { provide: Database, useValue: mockDatabase },
-        { provide: LoginStateSubject, useValue: loginStateSubject },
+        { provide: KeycloakAuthService, useValue: {} },
+        { provide: Database, useClass: PouchDatabase },
+        LoginStateSubject,
+        SyncStateSubject,
       ],
     });
     service = TestBed.inject(SyncService);
+    loginState = TestBed.inject(LoginStateSubject);
   });
 
   it("should be created", () => {
@@ -42,13 +42,19 @@ describe("SyncService", () => {
       },
       cancel: () => undefined,
     };
-    const syncSpy = jasmine.createSpy().and.returnValue(syncHandle);
-    mockDatabase.getPouchDB.and.returnValue({ sync: syncSpy } as any);
+    const syncSpy = jasmine
+      .createSpy()
+      .and.returnValues(Promise.resolve("first"), syncHandle, syncHandle);
+    spyOn(
+      TestBed.inject(Database) as PouchDatabase,
+      "getPouchDB",
+    ).and.returnValue({ sync: syncSpy } as any);
 
     service.startSync();
-    tick();
+    tick(1000);
 
-    // error -> sync should restart
+    // error + logged in -> sync should restart
+    loginState.next(LoginState.LOGGED_IN);
     syncSpy.calls.reset();
     errorCallback();
     expect(syncSpy).toHaveBeenCalled();
@@ -60,7 +66,7 @@ describe("SyncService", () => {
 
     // logout + error -> no restart
     syncSpy.calls.reset();
-    loginStateSubject.next(LoginState.LOGGED_OUT);
+    loginState.next(LoginState.LOGGED_OUT);
     tick();
     errorCallback();
     expect(syncSpy).not.toHaveBeenCalled();

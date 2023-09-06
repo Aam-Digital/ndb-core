@@ -1,9 +1,9 @@
 import { TestBed } from "@angular/core/testing";
 
 import { TodoService } from "./todo.service";
-import { SessionService } from "../../core/session/session-service/session.service";
 import { AlertService } from "../../core/alerts/alert.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { UserService } from "../../core/user/user.service";
 
 describe("TodoService", () => {
   let service: TodoService;
@@ -11,7 +11,7 @@ describe("TodoService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        { provide: SessionService, useValue: null },
+        { provide: UserService, useValue: null },
         { provide: AlertService, useValue: null },
         { provide: EntityMapperService, useValue: null },
       ],
