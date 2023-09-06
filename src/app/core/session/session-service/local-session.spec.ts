@@ -18,43 +18,34 @@
 import { AppSettings } from "../../app-settings";
 import { LocalSession } from "./local-session";
 import { SessionType } from "../session-type";
-import { LocalUser, passwordEqualsEncrypted } from "./local-user";
-import { LoginState } from "../session-states/login-state.enum";
-import { testSessionServiceImplementation } from "./session.service.spec";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "../auth/auth-user";
-import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
+import { TEST_USER } from "../../../utils/mock-local-session";
+import { TestBed } from "@angular/core/testing";
 
 describe("LocalSessionService", () => {
-  let userDBName;
-  let deprecatedDBName;
-  let localSession: LocalSession;
-  let testUser: AuthUser;
+  const userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
+  const deprecatedDBName = AppSettings.DB_NAME;
+  const testUser: AuthUser = {
+    name: TEST_USER,
+    roles: ["user_app"],
+  };
+  let service: LocalSession;
   let database: jasmine.SpyObj<PouchDatabase>;
 
   beforeEach(() => {
     environment.session_type = SessionType.mock;
-    userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
-    deprecatedDBName = AppSettings.DB_NAME;
     database = jasmine.createSpyObj([
       "initInMemoryDB",
       "initIndexedDB",
       "isEmpty",
     ]);
-    localSession = new LocalSession(database);
-  });
-
-  beforeEach(() => {
-    testUser = {
-      name: TEST_USER,
-      roles: ["user_app"],
-    };
-    localSession.saveUser(testUser, TEST_PASSWORD);
+    TestBed.configureTestingModule({});
+    service = TestBed.inject(LocalSession);
   });
 
   afterEach(async () => {
-    localSession.removeUser(TEST_USER);
     window.localStorage.removeItem(LocalSession.DEPRECATED_DB_KEY);
     const tmpDB = new PouchDatabase(undefined);
     await tmpDB.initInMemoryDB(userDBName).destroy();
@@ -62,81 +53,15 @@ describe("LocalSessionService", () => {
   });
 
   it("should be created", () => {
-    expect(localSession).toBeDefined();
-  });
-
-  it("should save user objects to local storage", () => {
-    const storedUser: LocalUser = JSON.parse(
-      window.localStorage.getItem(testUser.name),
-    );
-    expect(storedUser.name).toBe(testUser.name);
-    expect(storedUser.roles).toEqual(testUser.roles);
-    expect(
-      passwordEqualsEncrypted(TEST_PASSWORD, storedUser.encryptedPassword),
-    ).toBeTrue();
-  });
-
-  it("should login a previously saved user with correct password", async () => {
-    expect(localSession.loginState.value).toBe(LoginState.LOGGED_OUT);
-
-    await localSession.login(TEST_USER, TEST_PASSWORD);
-
-    expect(localSession.loginState.value).toBe(LoginState.LOGGED_IN);
-  });
-
-  it("should be case-insensitive and ignore spaces in username", async () => {
-    expect(localSession.loginState.value).toBe(LoginState.LOGGED_OUT);
-    const user: AuthUser = {
-      name: "UserName",
-      roles: [],
-    };
-    localSession.saveUser(user, TEST_PASSWORD);
-
-    await localSession.login(" Username ", TEST_PASSWORD);
-
-    expect(localSession.loginState.value).toBe(LoginState.LOGGED_IN);
-    expect(localSession.getCurrentUser().name).toBe("UserName");
-
-    localSession.removeUser("username");
-  });
-
-  it("should fail login with correct username but wrong password", async () => {
-    await localSession.login(TEST_USER, "wrong password");
-
-    expect(localSession.loginState.value).toBe(LoginState.LOGIN_FAILED);
-  });
-
-  it("should fail login with wrong username", async () => {
-    await localSession.login("wrongUsername", TEST_PASSWORD);
-
-    expect(localSession.loginState.value).toBe(LoginState.UNAVAILABLE);
-  });
-
-  it("should assign current user after successful login", async () => {
-    await localSession.login(TEST_USER, TEST_PASSWORD);
-
-    const currentUser = localSession.getCurrentUser();
-
-    expect(currentUser.name).toBe(TEST_USER);
-    expect(currentUser.roles).toEqual(testUser.roles);
-  });
-
-  it("should fail login after a user is removed", async () => {
-    localSession.removeUser(TEST_USER);
-
-    await localSession.login(TEST_USER, TEST_PASSWORD);
-
-    expect(localSession.loginState.value).toBe(LoginState.UNAVAILABLE);
-    expect(localSession.getCurrentUser()).toBeUndefined();
+    expect(service).toBeTruthy();
   });
 
   it("should create a pouchdb with the username of the logged in user", async () => {
-    await localSession.login(TEST_USER, TEST_PASSWORD);
+    await service.initializeDatabaseForCurrentUser(testUser);
 
     expect(database.initInMemoryDB).toHaveBeenCalledWith(
       TEST_USER + "-" + AppSettings.DB_NAME,
     );
-    expect(localSession.getDatabase()).toBe(database);
   });
 
   it("should create the database according to the session type in the AppSettings", async () => {
@@ -147,7 +72,7 @@ describe("LocalSessionService", () => {
       database.initInMemoryDB.calls.reset();
       database.initIndexedDB.calls.reset();
       environment.session_type = sessionType;
-      await localSession.login(TEST_USER, TEST_PASSWORD);
+      await service.initializeDatabaseForCurrentUser(testUser);
       if (expectedDB === "inMemory") {
         expect(database.initInMemoryDB).toHaveBeenCalled();
         expect(database.initIndexedDB).not.toHaveBeenCalled();
@@ -165,7 +90,7 @@ describe("LocalSessionService", () => {
   it("should use current user db if database has content", async () => {
     await defineExistingDatabases(true, false);
 
-    await localSession.login(TEST_USER, TEST_PASSWORD);
+    await service.initializeDatabaseForCurrentUser(testUser);
 
     expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(userDBName);
   });
@@ -173,7 +98,7 @@ describe("LocalSessionService", () => {
   it("should use and reserve a deprecated db if it exists and current db has no content", async () => {
     await defineExistingDatabases(false, true);
 
-    await localSession.login(TEST_USER, TEST_PASSWORD);
+    await service.initializeDatabaseForCurrentUser(testUser);
 
     expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(deprecatedDBName);
     const dbReservation = window.localStorage.getItem(
@@ -185,7 +110,7 @@ describe("LocalSessionService", () => {
   it("should open a new database if deprecated db is already in use", async () => {
     await defineExistingDatabases(false, true, "other-user");
 
-    await localSession.login(TEST_USER, TEST_PASSWORD);
+    await service.initializeDatabaseForCurrentUser(testUser);
 
     expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(userDBName);
   });
@@ -193,7 +118,7 @@ describe("LocalSessionService", () => {
   it("should use the deprecated database if it is reserved by the current user", async () => {
     await defineExistingDatabases(false, true, TEST_USER);
 
-    await localSession.login(TEST_USER, TEST_PASSWORD);
+    await service.initializeDatabaseForCurrentUser(testUser);
 
     expect(database.initInMemoryDB).toHaveBeenCalledOnceWith(deprecatedDBName);
   });
@@ -214,6 +139,4 @@ describe("LocalSessionService", () => {
       await tmpDB.initInMemoryDB(deprecatedDBName).put({ _id: "someDoc" });
     }
   }
-
-  testSessionServiceImplementation(() => Promise.resolve(localSession));
 });

@@ -51,8 +51,8 @@ export class SessionManagerService {
     this.remoteAuthService.authenticate();
   }
 
-  async offlineLogin() {
-    this.userService.user = await this.localAuthService.login();
+  offlineLogin() {
+    this.userService.user = this.localAuthService.login();
     this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 

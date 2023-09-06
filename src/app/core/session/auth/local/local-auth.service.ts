@@ -7,7 +7,7 @@ import { AuthUser } from "../auth-user";
 export class LocalAuthService {
   private static LAST_LOGGED_IN_KEY = "LAST_USER";
 
-  async login(): Promise<AuthUser> {
+  login(): AuthUser {
     return this.getStoredUser(LocalAuthService.LAST_LOGGED_IN_KEY);
   }
 
@@ -29,5 +29,9 @@ export class LocalAuthService {
       LocalAuthService.LAST_LOGGED_IN_KEY,
       JSON.stringify(user),
     );
+  }
+
+  removeLastUser() {
+    window.localStorage.removeItem(LocalAuthService.LAST_LOGGED_IN_KEY);
   }
 }
