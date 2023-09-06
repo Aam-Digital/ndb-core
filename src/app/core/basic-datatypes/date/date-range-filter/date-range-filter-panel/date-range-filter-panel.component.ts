@@ -62,7 +62,10 @@ export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   ],
 })
 export class DateRangeFilterPanelComponent {
-  selectedRangeValue = this.filter.getDateRange();
+  selectedRangeValue: DateRange<Date> = new DateRange(
+    this.filter.getDateRange().start ?? new Date("1900-01-01"),
+    this.filter.getDateRange().end ?? new Date("2999-12-31"),
+  );
   selectedOption = this.filter.getSelectedOption();
   comparisonRange: DateRange<Date> = new DateRange(null, null);
 
@@ -75,12 +78,23 @@ export class DateRangeFilterPanelComponent {
     this.comparisonRange = calculateDateRange(dateRangeOption);
   }
 
+  preselectAllRange(): void {
+    this.comparisonRange = new DateRange(
+      new Date("1900-01-01"),
+      new Date("2999-12-31"),
+    );
+  }
+
   unselectRange() {
     this.comparisonRange = new DateRange(null, null);
   }
 
-  selectRangeAndClose(index: number): void {
-    this.filter.selectedOption = index.toString();
+  selectRangeAndClose(index: number | "all"): void {
+    if (typeof index === "number") {
+      this.filter.selectedOption = index.toString();
+    } else {
+      this.filter.selectedOption = "_";
+    }
     this.dialogRef.close();
   }
 
