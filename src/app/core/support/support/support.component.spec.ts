@@ -14,7 +14,7 @@ import { SwUpdate } from "@angular/service-worker";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
-import { SyncedSessionService } from "../../session/session-service/synced-session.service";
+import { SessionManagerService } from "../../session/session-service/session-manager.service";
 import { MatDialogModule } from "@angular/material/dialog";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
@@ -91,7 +91,7 @@ describe("SupportComponent", () => {
 
   it("should correctly read sync and remote login status from local storage", async () => {
     const lastSync = new Date("2022-01-01").toISOString();
-    localStorage.setItem(SyncedSessionService.LAST_SYNC_KEY, lastSync);
+    localStorage.setItem(SessionManagerService.LAST_SYNC_KEY, lastSync);
     const lastRemoteLogin = new Date("2022-01-02").toISOString();
     localStorage.setItem(AuthService.LAST_AUTH_KEY, lastRemoteLogin);
 

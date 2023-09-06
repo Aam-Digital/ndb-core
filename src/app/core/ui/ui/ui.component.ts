@@ -37,7 +37,7 @@ import { AppVersionComponent } from "../latest-changes/app-version/app-version.c
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
 import { LoginStateSubject } from "../../session/session-type";
 import { LoginState } from "../../session/session-states/login-state.enum";
-import { SyncedSessionService } from "../../session/session-service/synced-session.service";
+import { SessionManagerService } from "../../session/session-service/session-manager.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -87,7 +87,7 @@ export class UiComponent {
     private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
     private loginState: LoginStateSubject,
-    private syncedSession: SyncedSessionService,
+    private sessionManager: SessionManagerService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -118,7 +118,7 @@ export class UiComponent {
    * Trigger logout of user.
    */
   async logout() {
-    this.syncedSession.logout();
+    this.sessionManager.logout();
   }
 
   closeSidenavOnMobile() {

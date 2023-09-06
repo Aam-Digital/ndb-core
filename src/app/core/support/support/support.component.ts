@@ -6,7 +6,7 @@ import * as Sentry from "@sentry/browser";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-import { AuthUser } from "../../session/session-service/auth-user";
+import { AuthUser } from "../../session/auth/auth-user";
 import { firstValueFrom } from "rxjs";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";

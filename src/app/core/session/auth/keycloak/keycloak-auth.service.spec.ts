@@ -10,7 +10,7 @@ import {
   HttpErrorResponse,
   HttpStatusCode,
 } from "@angular/common/http";
-import { AuthUser } from "../../session-service/auth-user";
+import { AuthUser } from "../auth-user";
 import { TEST_PASSWORD, TEST_USER } from "../../../../utils/mock-local-session";
 
 function keycloakAuthHttpFake(_url, body) {

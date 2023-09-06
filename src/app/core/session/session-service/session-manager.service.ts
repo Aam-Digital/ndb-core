@@ -18,13 +18,14 @@
 import { Injectable } from "@angular/core";
 
 import { LocalSession } from "./local-session";
-import { AuthUser } from "./auth-user";
+import { AuthUser } from "../auth/auth-user";
 import { SyncService } from "../../database/sync.service";
 import { UserService } from "../../user/user.service";
 import { LoginStateSubject } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
+import { LocalAuthService } from "../auth/local/local-auth.service";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -34,11 +35,12 @@ import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
  */
 @Injectable()
-export class SyncedSessionService {
+export class SessionManagerService {
   private remoteLoggedIn = false;
   constructor(
+    private remoteAuthService: KeycloakAuthService,
+    private localAuthService: LocalAuthService,
     private localSession: LocalSession,
-    private authService: KeycloakAuthService,
     private syncService: SyncService,
     private userService: UserService,
     private loginStateSubject: LoginStateSubject,
@@ -46,21 +48,21 @@ export class SyncedSessionService {
   ) {}
 
   remoteLogin() {
-    this.authService.authenticate();
+    this.remoteAuthService.authenticate();
   }
 
   async offlineLogin() {
-    this.userService.user = await this.localSession.login();
+    this.userService.user = await this.localAuthService.login();
     this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 
   canLoginOffline(): boolean {
-    return this.localSession.canLoginOffline();
+    return this.localAuthService.canLoginOffline();
   }
 
   logout() {
     if (this.remoteLoggedIn) {
-      this.authService.logout();
+      this.remoteAuthService.logout();
     } else {
       this.userService.user = undefined;
       this.loginStateSubject.next(LoginState.LOGGED_OUT);
@@ -74,7 +76,7 @@ export class SyncedSessionService {
    * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
-    return this.authService
+    return this.remoteAuthService
       .autoLogin()
       .then((user) => this.handleRemoteLogin(user))
       .catch(() => undefined);
@@ -82,9 +84,9 @@ export class SyncedSessionService {
 
   async handleRemoteLogin(user: AuthUser) {
     this.remoteLoggedIn = true;
-    await this.localSession.handleSuccessfulLogin(user);
+    await this.localSession.initializeDatabaseForCurrentUser(user);
     this.userService.user = user;
-    this.localSession.saveUser(user);
+    this.localAuthService.saveUser(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
     return this.syncService.startSync();
   }

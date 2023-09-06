@@ -24,7 +24,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { filter } from "rxjs/operators";
 import { LoginStateSubject } from "../session-type";
 import { NgIf } from "@angular/common";
-import { SyncedSessionService } from "../session-service/synced-session.service";
+import { SessionManagerService } from "../session-service/session-manager.service";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -42,7 +42,7 @@ export class LoginComponent {
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private syncedSession: SyncedSessionService,
+    private sessionManager: SessionManagerService,
     private loginState: LoginStateSubject,
   ) {
     this.loginState
@@ -51,7 +51,7 @@ export class LoginComponent {
         filter((state) => state === LoginState.LOGGED_IN),
       )
       .subscribe(() => this.routeAfterLogin());
-    this.offlineLoginAvailable = this.syncedSession.canLoginOffline();
+    this.offlineLoginAvailable = this.sessionManager.canLoginOffline();
   }
 
   private routeAfterLogin() {
@@ -63,10 +63,10 @@ export class LoginComponent {
    * Do a login with the SessionService.
    */
   login() {
-    this.syncedSession.remoteLogin();
+    this.sessionManager.remoteLogin();
   }
 
   useOffline() {
-    this.syncedSession.offlineLogin();
+    this.sessionManager.offlineLogin();
   }
 }

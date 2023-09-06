@@ -13,7 +13,7 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { Database } from "../database/database";
 import { SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
-import { AuthUser } from "../session/session-service/auth-user";
+import { AuthUser } from "../session/auth/auth-user";
 
 describe("DemoDataInitializerService", () => {
   let service: DemoDataInitializerService;

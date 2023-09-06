@@ -4,7 +4,7 @@ import { UserRoleGuard } from "./user-role.guard";
 import { SessionService } from "../../session/session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRouteSnapshot, Router } from "@angular/router";
-import { AuthUser } from "../../session/session-service/auth-user";
+import { AuthUser } from "../../session/auth/auth-user";
 import { ConfigService } from "../../config/config.service";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
 

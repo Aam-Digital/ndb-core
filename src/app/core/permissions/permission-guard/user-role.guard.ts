@@ -5,7 +5,7 @@ import {
   RouteData,
   ViewConfig,
 } from "../../config/dynamic-routing/view-config.interface";
-import { AuthUser } from "../../session/session-service/auth-user";
+import { AuthUser } from "../../session/auth/auth-user";
 import { ConfigService } from "../../config/config.service";
 import { UserService } from "../../user/user.service";
 

@@ -16,7 +16,7 @@
  */
 
 import { APP_INITIALIZER, NgModule } from "@angular/core";
-import { SyncedSessionService } from "./session-service/synced-session.service";
+import { SessionManagerService } from "./session-service/session-manager.service";
 import { LocalSession } from "./session-service/local-session";
 import { LoginStateSubject, SyncStateSubject } from "./session-type";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
@@ -33,16 +33,16 @@ import { KeycloakAngularModule } from "keycloak-angular";
 @NgModule({
   imports: [KeycloakAngularModule],
   providers: [
-    SyncedSessionService,
+    SessionManagerService,
     LocalSession,
     KeycloakAuthService,
     LoginStateSubject,
     SyncStateSubject,
     {
       provide: APP_INITIALIZER,
-      deps: [SyncedSessionService],
-      useFactory: (syncedSession: SyncedSessionService) => () =>
-        syncedSession.checkForValidSession(),
+      deps: [SessionManagerService],
+      useFactory: (sessionManager: SessionManagerService) => () =>
+        sessionManager.checkForValidSession(),
       multi: true,
     },
   ],

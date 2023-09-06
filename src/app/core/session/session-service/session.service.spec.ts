@@ -18,7 +18,7 @@
 import { LoginState } from "../session-states/login-state.enum";
 import { SessionService } from "./session.service";
 import { SyncState } from "../session-states/sync-state.enum";
-import { AuthUser } from "./auth-user";
+import { AuthUser } from "../auth/auth-user";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 
 /**

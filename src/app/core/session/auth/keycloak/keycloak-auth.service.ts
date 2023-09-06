@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
-import { AuthUser } from "../../session-service/auth-user";
+import { AuthUser } from "../auth-user";
 import { KeycloakService } from "keycloak-angular";
 
 @Injectable()
@@ -24,6 +24,7 @@ export class KeycloakAuthService {
       silentCheckSsoRedirectUri:
         window.location.origin + "/assets/silent-check-sso.html",
     },
+    shouldAddToken: ({ url }) => !url.includes("api.github.com"),
   });
 
   constructor(

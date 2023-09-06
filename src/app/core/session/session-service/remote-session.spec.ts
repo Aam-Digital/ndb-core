@@ -7,7 +7,7 @@ import { testSessionServiceImplementation } from "./session.service.spec";
 import { LoginState } from "../session-states/login-state.enum";
 import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
-import { AuthUser } from "./auth-user";
+import { AuthUser } from "../auth/auth-user";
 import PouchDB from "pouchdb-browser";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 

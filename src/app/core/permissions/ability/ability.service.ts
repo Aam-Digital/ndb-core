@@ -8,7 +8,7 @@ import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
-import { AuthUser } from "../../session/session-service/auth-user";
+import { AuthUser } from "../../session/auth/auth-user";
 import { UserService } from "../../user/user.service";
 
 /**

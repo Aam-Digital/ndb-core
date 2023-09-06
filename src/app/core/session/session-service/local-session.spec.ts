@@ -23,7 +23,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { testSessionServiceImplementation } from "./session.service.spec";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
-import { AuthUser } from "./auth-user";
+import { AuthUser } from "../auth/auth-user";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 
 describe("LocalSessionService", () => {

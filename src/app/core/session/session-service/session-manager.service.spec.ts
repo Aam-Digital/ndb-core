@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { SyncedSessionService } from "./synced-session.service";
+import { SessionManagerService } from "./session-manager.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { LocalSession } from "./local-session";
 import { RemoteSession } from "./remote-session";
@@ -35,12 +35,12 @@ import { SessionModule } from "../session.module";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { environment } from "../../../../environments/environment";
 import { AuthService } from "../auth/auth.service";
-import { AuthUser } from "./auth-user";
+import { AuthUser } from "../auth/auth-user";
 import { mockAuth } from "./remote-session.spec";
 import { TEST_PASSWORD, TEST_USER } from "../../../utils/mock-local-session";
 
-describe("SyncedSessionService", () => {
-  let sessionService: SyncedSessionService;
+describe("SessionManagerService", () => {
+  let sessionService: SessionManagerService;
   let localSession: LocalSession;
   let remoteSession: RemoteSession;
   let localLoginSpy: jasmine.Spy<
@@ -73,7 +73,7 @@ describe("SyncedSessionService", () => {
       ],
     });
     environment.session_type = SessionType.mock;
-    sessionService = TestBed.inject(SyncedSessionService);
+    sessionService = TestBed.inject(SessionManagerService);
 
     localSession = TestBed.inject(LocalSession);
     remoteSession = TestBed.inject(RemoteSession);
