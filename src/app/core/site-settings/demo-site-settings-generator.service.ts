@@ -14,7 +14,6 @@ export class DemoSiteSettingsGeneratorService extends DemoDataGenerator<SiteSett
   }
 
   protected generateEntities(): SiteSettings[] {
-    console.log("Generating demo data");
     return [new SiteSettings()];
   }
 }
