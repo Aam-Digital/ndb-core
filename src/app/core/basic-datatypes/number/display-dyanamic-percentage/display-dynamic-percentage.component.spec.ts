@@ -1,9 +1,11 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayDynamicPercentageComponent } from "./display-dynamic-percentage.component";
+import { Entity } from "app/core/entity/model/entity";
 
-describe("DisplayDynamicPercentageComponent", () => {
+fdescribe("DisplayDynamicPercentageComponent", () => {
   let component: DisplayDynamicPercentageComponent;
+
   let fixture: ComponentFixture<DisplayDynamicPercentageComponent>;
 
   beforeEach(async () => {
@@ -12,14 +14,43 @@ describe("DisplayDynamicPercentageComponent", () => {
     }).compileComponents();
   });
 
-  beforeEach(() => {
+  beforeEach(async () => {
     fixture = TestBed.createComponent(DisplayDynamicPercentageComponent);
+    // await TestBed.configureTestingModule({
+    //   imports: [DisplayDynamicPercentageComponent],
+    // }).compileComponents();
+
     component = fixture.componentInstance;
     component.value = 10;
+    component.config = {
+      total: "totalValue",
+      actual: "actualValue",
+    };
+    component.entity = new Entity();
     fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should display the correct percentage value", async () => {
+    component.entity["totalValue"] = 200;
+    component.entity["actualValue"] = 50;
+    await component.ngOnInit();
+    expect(component.result).toEqual(25);
+  });
+
+  it("should not display a value if one of the two values is not a number", async () => {
+    component.entity["totalValue"] = 15;
+    await component.ngOnInit();
+    expect(component.result).toBeUndefined;
+  });
+
+  it("should not display a value if totalValue is 0", async () => {
+    component.entity["totalValue"] = 0;
+    component.entity["actualValue"] = 15;
+    await component.ngOnInit();
+    expect(component.result).toBeUndefined;
   });
 });

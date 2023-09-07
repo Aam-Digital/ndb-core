@@ -75,14 +75,6 @@ export class ActivityAttendanceSectionComponent implements OnInit {
           "1.0-0",
         ),
     },
-    {
-      id: "display-percentage",
-      label: "display-percentage",
-      view: "DisplayPercentage",
-      additional: {
-        value: 5,
-      },
-    },
   ];
 
   constructor(

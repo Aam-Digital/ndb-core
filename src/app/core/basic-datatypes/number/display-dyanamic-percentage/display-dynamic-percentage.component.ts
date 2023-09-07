@@ -21,7 +21,14 @@ export class DisplayDynamicPercentageComponent
   public result: number;
 
   ngOnInit() {
-    this.result =
-      (this.entity[this.config.actual] / this.entity[this.config.total]) * 100;
+    if (
+      Number.isFinite(this.entity[this.config.actual]) &&
+      Number.isFinite(this.entity[this.config.total]) &&
+      this.entity[this.config.total] != 0
+    ) {
+      this.result =
+        (this.entity[this.config.actual] / this.entity[this.config.total]) *
+        100;
+    }
   }
 }
