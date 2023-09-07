@@ -9,6 +9,9 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { LatestEntity } from "../entity/latest-entity";
 import { LoggingService } from "../logging/logging.service";
 
+/**
+ * Access to site settings stored in the database, like styling, site name and logo.
+ */
 @Injectable({
   providedIn: "root",
 })
