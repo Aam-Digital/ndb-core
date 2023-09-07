@@ -5,8 +5,15 @@ import { Entity, EntityConstructor } from "./model/entity";
 import { HttpStatusCode } from "@angular/common/http";
 import { Subject } from "rxjs";
 
-export abstract class LatestEntity<T extends Entity> {
+/**
+ * Implement an Angular Service extending this base class
+ * when you need to work with continuous updates of a specific entity from the database.
+ * (e.g. SiteSettings & SiteSettingsService)
+ */
+export abstract class LatestEntityLoader<T extends Entity> {
+  /** subscribe to this and execute any actions required when the entity changes */
   entityUpdated = new Subject<T>();
+
   protected constructor(
     private entityCtor: EntityConstructor<T>,
     private entityID: string,
@@ -14,6 +21,10 @@ export abstract class LatestEntity<T extends Entity> {
     protected logger: LoggingService,
   ) {}
 
+  /**
+   * Initialize the loader to make the entity available and emit continuous updates
+   * through the `entityUpdated` property
+   */
   startLoading() {
     this.loadOnce();
     this.entityMapper
@@ -22,6 +33,10 @@ export abstract class LatestEntity<T extends Entity> {
       .subscribe(({ entity }) => this.entityUpdated.next(entity));
   }
 
+  /**
+   * Do an initial load of the entity to be available through the `entityUpdated` property
+   * (without watching for continuous updates).
+   */
   loadOnce() {
     return this.entityMapper
       .load(this.entityCtor, this.entityID)

@@ -6,7 +6,7 @@ import { Title } from "@angular/platform-browser";
 import { FileService } from "../../features/file/file.service";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { LatestEntity } from "../entity/latest-entity";
+import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { LoggingService } from "../logging/logging.service";
 
 /**
@@ -15,7 +15,7 @@ import { LoggingService } from "../logging/logging.service";
 @Injectable({
   providedIn: "root",
 })
-export class SiteSettingsService extends LatestEntity<SiteSettings> {
+export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   readonly DEFAULT_FAVICON = "favicon.ico";
 
   siteSettings = this.entityUpdated.pipe(shareReplay(1));
