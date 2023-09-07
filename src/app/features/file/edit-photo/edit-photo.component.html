@@ -1,17 +1,8 @@
-<input
-  type="file"
-  style="display: none"
-  (change)="onFileSelected($event.target['files'][0])"
-  accept="image/*"
-  #fileUpload
-/>
-<img
-  [src]="imgPath"
-  alt="profile photo"
-  class="child-pic"
-  (click)="openPopup()"
-/>
-<div>
+<img [src]="imgPath" alt="Image" class="image" (click)="openPopup()" />
+
+<div class="img-controls">
+  <label class="img-label">{{ label }}</label>
+
   <button
     *ngIf="formControl.value && formControl.enabled"
     type="button"
@@ -32,4 +23,11 @@
   >
     <fa-icon icon="upload"></fa-icon>
   </button>
+  <input
+    type="file"
+    style="display: none"
+    (change)="onFileSelected($event.target['files'][0])"
+    accept="image/*"
+    #fileUpload
+  />
 </div>

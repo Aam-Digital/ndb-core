@@ -109,7 +109,7 @@ export class Child extends Entity {
 
   @DatabaseField({
     dataType: "file",
-    label: $localize`:Label for the filename of a photo of a child:Photo Filename`,
+    label: $localize`:Label for the file field of a photo of a child:Photo`,
     editComponent: "EditPhoto",
   })
   photo: string;
