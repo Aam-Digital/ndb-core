@@ -32,7 +32,12 @@ describe("Schema data type: configurable-enum", () => {
   const TEST_CONFIG: ConfigurableEnumConfig = [
     { id: "NONE", label: "" },
     { id: "TEST_1", label: "Category 1" },
-    { id: "TEST_3", label: "Category 3", color: "#FFFFFF", isMeeting: true },
+    {
+      id: "TEST_3",
+      label: "Category 3",
+      color: "#FFFFFF",
+      isMeeting: true,
+    } as ConfigurableEnumValue,
   ];
 
   @DatabaseEntity("ConfigurableEnumDatatypeTestEntity")
@@ -53,7 +58,11 @@ describe("Schema data type: configurable-enum", () => {
   let enumService: jasmine.SpyObj<ConfigurableEnumService>;
 
   beforeEach(waitForAsync(() => {
-    enumService = jasmine.createSpyObj(["getEnumValues", "preLoadEnums"]);
+    enumService = jasmine.createSpyObj([
+      "getEnumValues",
+      "preLoadEnums",
+      "cacheEnum",
+    ]);
     enumService.getEnumValues.and.returnValue(TEST_CONFIG);
 
     TestBed.configureTestingModule({

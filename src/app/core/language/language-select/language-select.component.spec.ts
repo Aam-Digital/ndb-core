@@ -5,16 +5,18 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "../language-statics";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LanguageService } from "../language.service";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { availableLocales } from "../languages";
 
 describe("LanguageSelectComponent", () => {
   let component: LanguageSelectComponent;
   let fixture: ComponentFixture<LanguageSelectComponent>;
   let mockLocation: jasmine.SpyObj<Location>;
-  let mockTranslationService: jasmine.SpyObj<LanguageService>;
+  let mockLanguageService: jasmine.SpyObj<LanguageService>;
 
   beforeEach(async () => {
     mockLocation = jasmine.createSpyObj("Location", ["reload"]);
-    mockTranslationService = jasmine.createSpyObj("LanguageService", [
+    mockLanguageService = jasmine.createSpyObj("LanguageService", [
       "currentRegionCode",
       "initDefaultLanguage",
     ]);
@@ -22,7 +24,11 @@ describe("LanguageSelectComponent", () => {
       imports: [LanguageSelectComponent, RouterTestingModule],
       providers: [
         { provide: LOCATION_TOKEN, useValue: mockLocation },
-        { provide: LanguageService, useValue: mockTranslationService },
+        { provide: LanguageService, useValue: mockLanguageService },
+        {
+          provide: ConfigurableEnumService,
+          useValue: { getEnumValues: () => availableLocales.values },
+        },
       ],
     }).compileComponents();
   });
