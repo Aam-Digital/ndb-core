@@ -299,7 +299,8 @@ export const defaultJsonConfig = {
           ]
         }
       ]
-    }
+    },
+    "permittedUserRoles": ["admin_app"]
   },
   "view:admin": {
     "component": "Admin",

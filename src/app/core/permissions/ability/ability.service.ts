@@ -9,13 +9,13 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { AuthUser } from "../../session/session-service/auth-user";
-import { LatestEntity } from "../../entity/latest-entity";
+import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
  */
 @Injectable()
-export class AbilityService extends LatestEntity<Config<DatabaseRules>> {
+export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   /**
    * Get notified whenever the permissions of the current user are updated.
    * Use this to re-evaluate the permissions of the currently logged-in user.

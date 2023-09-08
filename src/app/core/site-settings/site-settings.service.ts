@@ -6,14 +6,17 @@ import { Title } from "@angular/platform-browser";
 import { FileService } from "../../features/file/file.service";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { LatestEntity } from "../entity/latest-entity";
+import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { LoggingService } from "../logging/logging.service";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
+/**
+ * Access to site settings stored in the database, like styling, site name and logo.
+ */
 @Injectable({
   providedIn: "root",
 })
-export class SiteSettingsService extends LatestEntity<SiteSettings> {
+export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
   static readonly SETTINGS_STORAGE_KEY = "SITE_SETTINGS";
   readonly DEFAULT_FAVICON = "favicon.ico";
 

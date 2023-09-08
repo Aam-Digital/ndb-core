@@ -116,25 +116,22 @@ describe("SiteSettingsService", () => {
     expect(mockIconEl.href).toBe("favicon.ico");
   }));
 
-  it("should set font family once defined", () => {
+  function expectStyleSetProperty(siteSettingsProperty, cssVariable, value) {
     spyOn(document.documentElement.style, "setProperty");
 
-    entityMapper.add(SiteSettings.create({ font: "comic sans" }));
+    entityMapper.add(SiteSettings.create({ [siteSettingsProperty]: value }));
 
     expect(document.documentElement.style.setProperty).toHaveBeenCalledWith(
-      "--font-family",
-      "comic sans",
+      cssVariable,
+      value,
     );
+  }
+
+  it("should set font family once defined", () => {
+    expectStyleSetProperty("font", "--font-family", "comic sans");
   });
 
   it("should update the color palette if a color is changed", () => {
-    spyOn(document.documentElement.style, "setProperty");
-
-    entityMapper.add(SiteSettings.create({ primary: "#ffffff" }));
-
-    expect(document.documentElement.style.setProperty).toHaveBeenCalledWith(
-      "--primary-50",
-      "#ffffff",
-    );
+    expectStyleSetProperty("primary", "--primary-50", "#ffffff");
   });
 });

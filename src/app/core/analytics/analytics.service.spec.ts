@@ -124,15 +124,11 @@ describe("AnalyticsService", () => {
     ]);
   });
 
-  it("should set the site name as the organisation", () => {
+  it("should set the hostname as the organisation", () => {
     service.init();
-    configUpdates.next(new Config());
-    mockAngulartics.setUserProperties.next["calls"].reset();
-
-    siteNameSubject.next("test site name");
 
     expect(mockAngulartics.setUserProperties.next).toHaveBeenCalledWith({
-      dimension2: "test site name",
+      dimension2: location.hostname,
     });
   });
 });

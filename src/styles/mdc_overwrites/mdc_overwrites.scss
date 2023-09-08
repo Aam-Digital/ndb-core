@@ -1,6 +1,11 @@
 @use "src/styles/variables/ndb-light-theme" as theme;
 @use "@angular/material" as mat;
 
+/*
+ * This file holds the required overwrites for styles broken due to css variables.
+ * more background: https://github.com/angular/components/issues/25981#issuecomment-1515332869
+ */
+
 // Text color for fab buttons otherwise defaults to black
 .mat-mdc-fab.mat-accent, .mat-mdc-mini-fab.mat-accent {
   --mat-mdc-fab-color: #{mat.get-contrast-color-from-palette(theme.$accent, A200)} !important;

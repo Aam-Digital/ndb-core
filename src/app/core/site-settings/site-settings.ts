@@ -29,7 +29,7 @@ export class SiteSettings extends Entity {
     ({ id }) => id === "en-US",
   );
   @DatabaseField({
-    label: $localize`Display langauge select`,
+    label: $localize`Display language select`,
   })
   displayLanguageSelect: boolean = true;
   @DatabaseField({

@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
-import { LatestEntity } from "../entity/latest-entity";
+import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
 
 /**
@@ -10,7 +10,7 @@ import { shareReplay } from "rxjs/operators";
  * that defines how the interface and data models should look.
  */
 @Injectable({ providedIn: "root" })
-export class ConfigService extends LatestEntity<Config> {
+export class ConfigService extends LatestEntityLoader<Config> {
   /**
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
@@ -18,10 +18,7 @@ export class ConfigService extends LatestEntity<Config> {
 
   configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
-  constructor(
-    entityMapper: EntityMapperService,
-    logger: LoggingService,
-  ) {
+  constructor(entityMapper: EntityMapperService, logger: LoggingService) {
     super(Config, Config.CONFIG_KEY, entityMapper, logger);
     super.startLoading();
     this.entityUpdated.subscribe(async (config) => {

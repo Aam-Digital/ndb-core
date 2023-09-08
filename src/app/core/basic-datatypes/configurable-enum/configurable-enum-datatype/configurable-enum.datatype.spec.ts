@@ -14,7 +14,10 @@
  *     You should have received a copy of the GNU General Public License
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
-import { ConfigurableEnumValue } from "../configurable-enum.interface";
+import {
+  ConfigurableEnumConfig,
+  ConfigurableEnumValue,
+} from "../configurable-enum.interface";
 import { Entity } from "../../../entity/model/entity";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../../entity/schema/entity-schema.service";
@@ -24,13 +27,17 @@ import { ConfigurableEnumService } from "../configurable-enum.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
 import { ConfigurableEnumDatatype } from "./configurable-enum.datatype";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { InteractionType } from "../../../../child-dev-project/notes/model/interaction-type.interface";
 
 describe("Schema data type: configurable-enum", () => {
-  const TEST_CONFIG: InteractionType[] = [
+  const TEST_CONFIG: ConfigurableEnumConfig = [
     { id: "NONE", label: "" },
     { id: "TEST_1", label: "Category 1" },
-    { id: "TEST_3", label: "Category 3", color: "#FFFFFF", isMeeting: true },
+    {
+      id: "TEST_3",
+      label: "Category 3",
+      color: "#FFFFFF",
+      isMeeting: true,
+    } as ConfigurableEnumValue,
   ];
 
   @DatabaseEntity("ConfigurableEnumDatatypeTestEntity")
