@@ -8,11 +8,13 @@ import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntity } from "../entity/latest-entity";
 import { LoggingService } from "../logging/logging.service";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 @Injectable({
   providedIn: "root",
 })
 export class SiteSettingsService extends LatestEntity<SiteSettings> {
+  static readonly SETTINGS_STORAGE_KEY = "SITE_SETTINGS";
   readonly DEFAULT_FAVICON = "favicon.ico";
 
   siteSettings = this.entityUpdated.pipe(shareReplay(1));
@@ -22,11 +24,14 @@ export class SiteSettingsService extends LatestEntity<SiteSettings> {
   constructor(
     private title: Title,
     private fileService: FileService,
+    private schemaService: EntitySchemaService,
     entityMapper: EntityMapperService,
     logger: LoggingService,
   ) {
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper, logger);
+    this.loadSettingsFromLocalStorage();
     super.startLoading();
+    this.saveUpdatesInLocalStorage();
 
     this.siteName.subscribe((name) => this.title.setTitle(name));
     this.getPropertyObservable("font").subscribe((font) =>
@@ -37,6 +42,31 @@ export class SiteSettingsService extends LatestEntity<SiteSettings> {
     this.applyColorChanges("primary");
     this.applyColorChanges("secondary");
     this.applyColorChanges("error");
+  }
+
+  private loadSettingsFromLocalStorage() {
+    const stored = localStorage.getItem(
+      SiteSettingsService.SETTINGS_STORAGE_KEY,
+    );
+    if (stored) {
+      const entity: SiteSettings =
+        this.schemaService.transformDatabaseToEntityFormat(
+          JSON.parse(stored),
+          SiteSettings.schema,
+        );
+      this.entityUpdated.next(entity);
+    }
+  }
+
+  private saveUpdatesInLocalStorage() {
+    this.siteSettings.subscribe((settings) => {
+      const dbFormat =
+        this.schemaService.transformEntityToDatabaseFormat(settings);
+      localStorage.setItem(
+        SiteSettingsService.SETTINGS_STORAGE_KEY,
+        JSON.stringify(dbFormat),
+      );
+    });
   }
 
   private applyFaviconChanges() {

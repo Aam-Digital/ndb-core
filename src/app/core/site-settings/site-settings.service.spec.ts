@@ -8,8 +8,11 @@ import {
   MockEntityMapperService,
 } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { SiteSettings } from "./site-settings";
-import { of } from "rxjs";
+import { firstValueFrom, NEVER, of } from "rxjs";
 import { Title } from "@angular/platform-browser";
+import { AppModule } from "../../app.module";
+import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { LoggingService } from "../logging/logging.service";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
@@ -20,6 +23,7 @@ describe("SiteSettingsService", () => {
     entityMapper = mockEntityMapper();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
+      imports: [AppModule],
       providers: [
         { provide: FileService, useValue: mockFileService },
         { provide: EntityMapperService, useValue: entityMapper },
@@ -28,8 +32,34 @@ describe("SiteSettingsService", () => {
     service = TestBed.inject(SiteSettingsService);
   });
 
+  afterEach(() => {
+    localStorage.removeItem(SiteSettingsService.SETTINGS_STORAGE_KEY);
+  });
+
   it("should be created", () => {
     expect(service).toBeTruthy();
+  });
+
+  it("should persist site settings in local storage", (done) => {
+    const siteSettings = new SiteSettings();
+    siteSettings.siteName = "Saved in storage";
+    entityMapper.add(siteSettings);
+
+    spyOn(entityMapper, "load").and.resolveTo(firstValueFrom(NEVER) as any);
+    service = new SiteSettingsService(
+      TestBed.inject(Title),
+      mockFileService,
+      TestBed.inject(EntitySchemaService),
+      entityMapper,
+      TestBed.inject(LoggingService),
+    );
+
+    console.log("Waiting for update");
+    service.siteSettings.subscribe((res) => console.log("res", res));
+    service.siteName.subscribe((name) => {
+      expect(name).toBe("Saved in storage");
+      done();
+    });
   });
 
   it("should only publish changes if property has changed", () => {

@@ -94,7 +94,10 @@ export class EntitySchemaService {
    * @param data The database object that will be transformed to the given entity format
    * @param schema A schema defining the transformation
    */
-  public transformDatabaseToEntityFormat(data: any, schema: EntitySchema) {
+  public transformDatabaseToEntityFormat<T = Entity>(
+    data: any,
+    schema: EntitySchema,
+  ) {
     const transformed = {};
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
@@ -113,7 +116,7 @@ export class EntitySchemaService {
       }
     }
 
-    return transformed;
+    return transformed as T;
   }
 
   /**
