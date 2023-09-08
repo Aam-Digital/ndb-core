@@ -8,11 +8,17 @@ import {
   MockEntityMapperService,
 } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { SiteSettings } from "./site-settings";
-import { firstValueFrom, NEVER, of } from "rxjs";
+import { of } from "rxjs";
 import { Title } from "@angular/platform-browser";
-import { AppModule } from "../../app.module";
+import { availableLocales } from "../language/languages";
+import { CoreModule } from "../core.module";
+import { ComponentRegistry } from "../../dynamic-components";
+import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
+import { EntityAbility } from "../permissions/ability/entity-ability";
+import { FileModule } from "../../features/file/file.module";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { LoggingService } from "../logging/logging.service";
+import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
@@ -23,48 +29,24 @@ describe("SiteSettingsService", () => {
     entityMapper = mockEntityMapper();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
-      imports: [AppModule],
+      imports: [CoreModule, ConfigurableEnumModule, FileModule],
       providers: [
+        ComponentRegistry,
         { provide: FileService, useValue: mockFileService },
         { provide: EntityMapperService, useValue: entityMapper },
+        EntityAbility,
       ],
     });
     service = TestBed.inject(SiteSettingsService);
-  });
-
-  afterEach(() => {
-    localStorage.removeItem(SiteSettingsService.SETTINGS_STORAGE_KEY);
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should persist site settings in local storage", (done) => {
-    const siteSettings = new SiteSettings();
-    siteSettings.siteName = "Saved in storage";
-    entityMapper.add(siteSettings);
-
-    spyOn(entityMapper, "load").and.resolveTo(firstValueFrom(NEVER) as any);
-    service = new SiteSettingsService(
-      TestBed.inject(Title),
-      mockFileService,
-      TestBed.inject(EntitySchemaService),
-      entityMapper,
-      TestBed.inject(LoggingService),
-    );
-
-    console.log("Waiting for update");
-    service.siteSettings.subscribe((res) => console.log("res", res));
-    service.siteName.subscribe((name) => {
-      expect(name).toBe("Saved in storage");
-      done();
-    });
-  });
-
   it("should only publish changes if property has changed", () => {
     const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
-    const settings = SiteSettings.create({ siteName: undefined });
+    const settings = new SiteSettings();
 
     entityMapper.add(settings);
 
@@ -134,4 +116,46 @@ describe("SiteSettingsService", () => {
   it("should update the color palette if a color is changed", () => {
     expectStyleSetProperty("primary", "--primary-50", "#ffffff");
   });
+
+  it("should store any settings update in localStorage", fakeAsync(() => {
+    const localStorageSetItemSpy = spyOn(localStorage, "setItem");
+
+    const settings = SiteSettings.create({
+      siteName: "test",
+      defaultLanguage: availableLocales.values[0],
+    });
+
+    entityMapper.save(settings);
+    tick();
+
+    expect(localStorageSetItemSpy).toHaveBeenCalledWith(
+      service.SITE_SETTINGS_LOCAL_STORAGE_KEY,
+      jasmine.any(String),
+    );
+    expect(localStorageSetItemSpy.calls.mostRecent().args[1]).toMatch(
+      `"siteName":"${settings.siteName}"`,
+    );
+    expect(localStorageSetItemSpy.calls.mostRecent().args[1]).toMatch(
+      `"defaultLanguage":"${settings.defaultLanguage.id}"`,
+    );
+  }));
+
+  it("should init settings from localStorage during startup", fakeAsync(() => {
+    const settings = SiteSettings.create({ siteName: "local storage test" });
+    const localStorageGetItemSpy = spyOn(localStorage, "getItem");
+    localStorageGetItemSpy.and.returnValue(JSON.stringify(settings));
+
+    const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
+
+    service = new SiteSettingsService(
+      TestBed.inject(Title),
+      TestBed.inject(FileService),
+      TestBed.inject(EntitySchemaService),
+      TestBed.inject(ConfigurableEnumService),
+      TestBed.inject(EntityMapperService),
+      TestBed.inject(LoggingService),
+    );
+
+    expect(titleSpy).toHaveBeenCalledWith(settings.siteName);
+  }));
 });

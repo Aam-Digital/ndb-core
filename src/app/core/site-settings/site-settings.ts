@@ -19,19 +19,22 @@ export class SiteSettings extends Entity {
 
   @DatabaseField({ label: $localize`Site name` }) siteName: string =
     "Aam Digital - Demo";
+
   @DatabaseField({
     label: $localize`Default language`,
     description: $localize`This will only be applied once the app is reloaded`,
     dataType: "configurable-enum",
     innerDataType: LOCALE_ENUM_ID,
   })
-  language: ConfigurableEnumValue = availableLocales.values.find(
+  defaultLanguage: ConfigurableEnumValue = availableLocales.values.find(
     ({ id }) => id === "en-US",
   );
+
   @DatabaseField({
     label: $localize`Display language select`,
   })
   displayLanguageSelect: boolean = true;
+
   @DatabaseField({
     label: $localize`Logo`,
     dataType: "file",
@@ -39,6 +42,7 @@ export class SiteSettings extends Entity {
     additional: 300,
   })
   logo: string;
+
   @DatabaseField({
     label: $localize`App favicon`,
     dataType: "file",
@@ -46,6 +50,7 @@ export class SiteSettings extends Entity {
     additional: 256,
   })
   favicon: string;
+
   @DatabaseField({ label: $localize`Primary color` }) primary: string;
   @DatabaseField({ label: $localize`Secondary color` }) secondary: string;
   @DatabaseField({ label: $localize`Error color` }) error: string;

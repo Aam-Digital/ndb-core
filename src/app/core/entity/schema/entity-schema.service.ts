@@ -97,7 +97,7 @@ export class EntitySchemaService {
   public transformDatabaseToEntityFormat<T = Entity>(
     data: any,
     schema: EntitySchema,
-  ) {
+  ): T {
     const transformed = {};
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);

@@ -8,7 +8,7 @@ import { Subject } from "rxjs";
 import { SiteSettingsService } from "../site-settings/site-settings.service";
 import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/configurable-enum.interface";
 
-describe("TranslationServiceService", () => {
+describe("LanguageService", () => {
   let service: LanguageService;
   let reloadSpy: jasmine.Spy;
   let languageSubject: Subject<ConfigurableEnumValue>;
@@ -26,7 +26,7 @@ describe("TranslationServiceService", () => {
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         {
           provide: SiteSettingsService,
-          useValue: { language: languageSubject },
+          useValue: { defaultLanguage: languageSubject },
         },
       ],
     });

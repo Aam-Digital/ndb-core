@@ -291,7 +291,7 @@ export const defaultJsonConfig = {
               "config": {
                 "cols": [
                   ["logo", "favicon"],
-                  ["siteName", "language", "displayLanguageSelect"],
+                  ["siteName", "defaultLanguage", "displayLanguageSelect"],
                   ["primary", "secondary", "error", "font"],
                 ]
               }

@@ -22,7 +22,7 @@ export class LanguageService {
     );
 
     if (!languageSelected) {
-      this.siteSettings.language.subscribe(({ id }) => {
+      this.siteSettings.defaultLanguage.subscribe(({ id }) => {
         if (id !== this.baseLocale) {
           // Reload app with default language from config
           this.window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, id);

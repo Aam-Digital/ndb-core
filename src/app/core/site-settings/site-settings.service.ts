@@ -1,14 +1,17 @@
 import { Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
 import { delay, firstValueFrom, Observable, skipWhile } from "rxjs";
-import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
+import { distinctUntilChanged, map, shareReplay, tap } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
 import { FileService } from "../../features/file/file.service";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { LoggingService } from "../logging/logging.service";
+import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import { availableLocales } from "../language/languages";
+import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 
 /**
  * Access to site settings stored in the database, like styling, site name and logo.
@@ -17,62 +20,101 @@ import { EntitySchemaService } from "../entity/schema/entity-schema.service";
   providedIn: "root",
 })
 export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
-  static readonly SETTINGS_STORAGE_KEY = "SITE_SETTINGS";
   readonly DEFAULT_FAVICON = "favicon.ico";
+  readonly SITE_SETTINGS_LOCAL_STORAGE_KEY = Entity.createPrefixedId(
+    SiteSettings.ENTITY_TYPE,
+    SiteSettings.ENTITY_ID,
+  );
 
   siteSettings = this.entityUpdated.pipe(shareReplay(1));
 
   siteName = this.getPropertyObservable("siteName");
-  language = this.getPropertyObservable("language");
+  defaultLanguage = this.getPropertyObservable("defaultLanguage");
+  displayLanguageSelect = this.getPropertyObservable("displayLanguageSelect");
+
   constructor(
     private title: Title,
     private fileService: FileService,
     private schemaService: EntitySchemaService,
+    private enumService: ConfigurableEnumService,
     entityMapper: EntityMapperService,
     logger: LoggingService,
   ) {
     super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper, logger);
-    this.loadSettingsFromLocalStorage();
-    super.startLoading();
-    this.saveUpdatesInLocalStorage();
+
+    this.initAvailableLocales();
 
     this.siteName.subscribe((name) => this.title.setTitle(name));
-    this.getPropertyObservable("font").subscribe((font) =>
-      document.documentElement.style.setProperty("--font-family", font),
-    );
+    this.subscribeFontChanges();
+    this.subscribeFaviconChanges();
+    this.subscribeColorChanges("primary");
+    this.subscribeColorChanges("secondary");
+    this.subscribeColorChanges("error");
 
-    this.applyFaviconChanges();
-    this.applyColorChanges("primary");
-    this.applyColorChanges("secondary");
-    this.applyColorChanges("error");
+    this.initFromLocalStorage();
+    this.cacheInLocalStorage();
+
+    super.startLoading();
   }
 
-  private loadSettingsFromLocalStorage() {
-    const stored = localStorage.getItem(
-      SiteSettingsService.SETTINGS_STORAGE_KEY,
-    );
-    if (stored) {
-      const entity: SiteSettings =
-        this.schemaService.transformDatabaseToEntityFormat(
-          JSON.parse(stored),
-          SiteSettings.schema,
-        );
-      this.entityUpdated.next(entity);
+  /**
+   * Making locales enum available at runtime
+   * so that UI can show dropdown options
+   * @private
+   */
+  private initAvailableLocales() {
+    this.enumService["cacheEnum"](availableLocales);
+  }
+
+  /**
+   * Do an initial loading of settings from localStorage, if available.
+   * @private
+   */
+  private initFromLocalStorage() {
+    let localStorageSettings: SiteSettings;
+
+    try {
+      const stored = localStorage.getItem(this.SITE_SETTINGS_LOCAL_STORAGE_KEY);
+      if (stored) {
+        localStorageSettings =
+          this.schemaService.transformDatabaseToEntityFormat(
+            JSON.parse(stored),
+            SiteSettings.schema,
+          );
+      }
+    } catch (e) {
+      this.logger.debug(
+        "SiteSettingsService: could not parse settings from localStorage: " + e,
+      );
+    }
+
+    if (localStorageSettings) {
+      this.entityUpdated.next(localStorageSettings);
     }
   }
 
-  private saveUpdatesInLocalStorage() {
-    this.siteSettings.subscribe((settings) => {
+  /**
+   * Store the latest SiteSettings in localStorage to be available before login also.
+   * @private
+   */
+  private cacheInLocalStorage() {
+    this.entityUpdated.subscribe((settings) => {
       const dbFormat =
         this.schemaService.transformEntityToDatabaseFormat(settings);
       localStorage.setItem(
-        SiteSettingsService.SETTINGS_STORAGE_KEY,
+        this.SITE_SETTINGS_LOCAL_STORAGE_KEY,
         JSON.stringify(dbFormat),
       );
     });
   }
 
-  private applyFaviconChanges() {
+  private subscribeFontChanges() {
+    this.getPropertyObservable("font").subscribe((font) =>
+      document.documentElement.style.setProperty("--font-family", font),
+    );
+  }
+
+  private subscribeFaviconChanges() {
     this.getPropertyObservable("favicon")
       .pipe(delay(0))
       .subscribe(async (icon) => {
@@ -89,7 +131,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
       });
   }
 
-  private applyColorChanges(property: "primary" | "secondary" | "error") {
+  private subscribeColorChanges(property: "primary" | "secondary" | "error") {
     this.getPropertyObservable(property).subscribe((color) => {
       if (color) {
         const palette = materialColours(color);
@@ -111,6 +153,11 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     property: P,
   ): Observable<SiteSettings[P]> {
     return this.siteSettings.pipe(
+      tap((x) => {
+        if (property === "primary") {
+          console.log("update SiteSettings - " + property, x.primary);
+        }
+      }),
       skipWhile((v) => !v[property]),
       map((s) => s[property]),
       distinctUntilChanged(),
