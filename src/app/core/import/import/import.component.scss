@@ -35,7 +35,7 @@ mat-stepper {
   position: sticky;
   top: 0;
   z-index: 100;
-  background-color: #fff3e0;
+  background-color: colors.$background;
 
   padding-top: sizes.$x-small;
   padding-bottom: sizes.$regular;

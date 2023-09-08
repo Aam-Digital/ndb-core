@@ -21,7 +21,6 @@ import { Title } from "@angular/platform-browser";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
 import { ConfigService } from "../../config/config.service";
-import { UiConfig } from "../ui-config";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { NgIf } from "@angular/common";
@@ -36,6 +35,9 @@ import { NavigationComponent } from "../navigation/navigation/navigation.compone
 import { PwaInstallComponent } from "../../pwa-install/pwa-install.component";
 import { AppVersionComponent } from "../latest-changes/app-version/app-version.component";
 import { PrimaryActionComponent } from "../primary-action/primary-action.component";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
+import { DisplayImgComponent } from "../../../features/file/display-img/display-img.component";
+import { SiteSettings } from "../../site-settings/site-settings";
 
 /**
  * The main user interface component as root element for the app structure
@@ -62,6 +64,7 @@ import { PrimaryActionComponent } from "../primary-action/primary-action.compone
     AppVersionComponent,
     RouterOutlet,
     PrimaryActionComponent,
+    DisplayImgComponent,
   ],
   standalone: true,
 })
@@ -70,14 +73,8 @@ export class UiComponent {
   sideNavMode: MatDrawerMode;
   /** reference to sideNav component in template, required for toggling the menu on user actions */
   @ViewChild("sideNav") sideNav;
-
-  /** title displayed in the app header bar */
-  title = "Aam Digital";
-
-  /** path to the image of a logo */
-  logo_path: string;
-
-  showLanguageSelect: boolean = false;
+  /** latest version of the site settings*/
+  siteSettings = new SiteSettings();
 
   constructor(
     private _sessionService: SessionService,
@@ -85,6 +82,7 @@ export class UiComponent {
     private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
+    private siteSettingsService: SiteSettingsService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -92,16 +90,9 @@ export class UiComponent {
       .subscribe(
         (isDesktop) => (this.sideNavMode = isDesktop ? "side" : "over"),
       );
-    this.configService.configUpdates
-      .pipe(untilDestroyed(this))
-      .subscribe(() => {
-        const uiConfig =
-          this.configService.getConfig<UiConfig>("appConfig") || {};
-        this.title = uiConfig.site_name || this.title;
-        this.titleService.setTitle(this.title);
-        this.logo_path = uiConfig?.logo_path;
-        this.showLanguageSelect = uiConfig?.displayLanguageSelect === true;
-      });
+    this.siteSettingsService.siteSettings.subscribe(
+      (s) => (this.siteSettings = s),
+    );
   }
 
   /**
