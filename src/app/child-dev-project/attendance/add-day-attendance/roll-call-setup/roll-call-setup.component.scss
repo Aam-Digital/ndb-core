@@ -1,7 +1,6 @@
 @use "src/styles/mixins/grid-layout";
 @use "src/styles/variables/sizes";
-@use "@angular/material" as mat;
-@use "src/styles/variables/ndb-light-theme" as theme;
+@use "src/styles/variables/colors";
 
 .top-control {
   position: sticky;
@@ -19,7 +18,7 @@
   padding-right: sizes.$margin-main-view-right;
   margin-top: - sizes.$margin-main-view-top;
   padding-top: sizes.$margin-main-view-top;
-  background-color: mat.get-color-from-palette(theme.$primary, 50);
+  background-color: colors.$background;
 }
 
 .cards-list {

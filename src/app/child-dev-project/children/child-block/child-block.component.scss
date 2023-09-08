@@ -7,13 +7,7 @@
   object-fit: cover;
   margin-right: 4px;
   vertical-align: middle;
-}
-
-.child-pic-large {
-  width: 80px;
-  height: 80px;
-  border-radius: 50%;
-  object-fit: cover;
+  overflow: hidden;
 }
 
 .inactive {

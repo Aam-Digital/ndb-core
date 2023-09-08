@@ -24,7 +24,7 @@ import { ImagePopupComponent } from "./image-popup/image-popup.component";
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
   private readonly defaultImage = "assets/child.png";
-  private readonly compression = 480;
+  private compression = 480;
   private initialImg: SafeUrl = this.defaultImage;
   imgPath: SafeUrl = this.initialImg;
 
@@ -51,6 +51,7 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
 
   ngOnInit() {
     super.ngOnInit();
+    this.compression = this.additional ?? this.compression;
     if (this.formControl.value) {
       this.fileService
         .loadFile(this.entity, this.formControlName)

@@ -4,11 +4,11 @@
 
 <mat-menu #menu>
   <a
-    *ngFor="let lang of translationService.availableLocales"
-    (click)="changeLocale(lang.locale)"
+    *appConfigurableEnum="let lang of localeEnumId"
+    (click)="changeLocale(lang.id)"
     mat-menu-item
   >
-    <span [class]="'flag-clip fi fi-' + lang.regionCode"></span>
-    <span>{{ lang.regionCode }}</span>
+    <span [class]="'flag-clip fi fi-' + lang.label"></span>
+    <span>{{ lang.label }}</span>
   </a>
 </mat-menu>

@@ -3,5 +3,5 @@
 
 // Include non-theme styles for core.
 @include mat.core();
+@include mat.typography-hierarchy(ndb-theme.$typography);
 @include mat.all-component-themes(ndb-theme.$theme);
-@include mat.all-component-typographies();

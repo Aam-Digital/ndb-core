@@ -55,6 +55,11 @@ export const defaultJsonConfig = {
         "link": "/admin"
       },
       {
+        "name": $localize`:Menu item:Site settings`,
+        "icon": "wrench",
+        "link": "/site-settings/global"
+      },
+      {
         "name": $localize`:Menu item:Import`,
         "icon": "file-import",
         "link": "/import"
@@ -272,6 +277,30 @@ export const defaultJsonConfig = {
         }
       }
     ]
+  },
+  "view:site-settings/:id": {
+    "component": "EntityDetails",
+    "config": {
+      "entity": "SiteSettings",
+      "panels": [
+        {
+          "title": $localize`Site Settings`,
+          "components": [
+            {
+              "component": "Form",
+              "config": {
+                "cols": [
+                  ["logo", "favicon"],
+                  ["siteName", "defaultLanguage", "displayLanguageSelect"],
+                  ["primary", "secondary", "error", "font"],
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    "permittedUserRoles": ["admin_app"]
   },
   "view:admin": {
     "component": "Admin",

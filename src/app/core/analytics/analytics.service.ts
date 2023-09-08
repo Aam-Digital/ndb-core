@@ -7,7 +7,6 @@ import {
 } from "./usage-analytics-config";
 import { Angulartics2, Angulartics2Matomo } from "angulartics2";
 import md5 from "md5";
-import { UiConfig } from "../ui/ui-config";
 
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
@@ -48,6 +47,7 @@ export class AnalyticsService {
     window["_paq"].push(["trackPageView"]);
     window["_paq"].push(["enableLinkTracking"]);
     this.setVersion();
+    this.setOrganization(location.hostname);
     this.setUser(undefined);
     this.configService.configUpdates.subscribe(() => this.setConfigValues());
   }
@@ -96,11 +96,6 @@ export class AnalyticsService {
     }
     if (site_id) {
       window["_paq"].push(["setSiteId", site_id]);
-    }
-    const { site_name } =
-      this.configService.getConfig<UiConfig>("appConfig") || {};
-    if (site_name) {
-      this.setOrganization(site_name);
     }
   }
 
