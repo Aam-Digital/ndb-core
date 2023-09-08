@@ -24,7 +24,7 @@ const Template: StoryFn<DisplayEntityComponent> = (
 });
 
 const testChild = new Child();
-testChild.name = "Test NameXXX";
+testChild.name = "Test Name";
 testChild.projectNumber = "10";
 export const ChildComponent = Template.bind({});
 ChildComponent.args = {
