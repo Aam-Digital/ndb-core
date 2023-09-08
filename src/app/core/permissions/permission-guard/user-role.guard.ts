@@ -45,13 +45,23 @@ export class UserRoleGuard implements CanActivate {
   }
 
   public checkRoutePermissions(path: string) {
+    // removing leading slash
     path = path.replace(/^\//, "");
-    const userRoles = this.configService.getConfig<ViewConfig>(
+
+    let viewConfig = this.configService.getConfig<ViewConfig>(
       PREFIX_VIEW_CONFIG + path,
-    )?.permittedUserRoles;
+    );
+    if (!viewConfig) {
+      // search for details route ("path/:id" for any id)
+      const detailsPath = path.replace(/\/[^\/]*$/, "/:id");
+      viewConfig = this.configService.getConfig<ViewConfig>(
+        PREFIX_VIEW_CONFIG + detailsPath,
+      );
+    }
+
     return this.canActivate({
       routeConfig: { path: path },
-      data: { permittedUserRoles: userRoles },
+      data: { permittedUserRoles: viewConfig?.permittedUserRoles },
     } as any);
   }
 }

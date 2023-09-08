@@ -15,6 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 @use "@angular/material" as mat;
+@use "src/styles/variables/ndb-light-theme" as theme;
 
 $err-palette: mat.define-palette(mat.$red-palette);
 $warn-palette: mat.define-palette(mat.$orange-palette);
@@ -26,6 +27,7 @@ $error: mat.get-color-from-palette($err-palette);
 
 $muted: rgba(0, 0, 0, 0.54);
 $disabled: rgba(0, 0, 0, 0.38);
+$background: mat.get-color-from-palette(theme.$primary, 50);
 
 /*
  * Quantized warning-levels. Each level represents a color from green (all is OK)

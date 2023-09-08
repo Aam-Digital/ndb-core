@@ -86,20 +86,25 @@ describe("UserRoleGuard", () => {
   it("should check permissions of a given route (checkRoutePermissions)", () => {
     mockConfigService.getConfig.and.callFake((id) => {
       switch (id) {
-        case PREFIX_VIEW_CONFIG + "free":
-          return {} as any;
         case PREFIX_VIEW_CONFIG + "restricted":
+          return { permittedUserRoles: ["admin"] } as any;
+        case PREFIX_VIEW_CONFIG + "pathA":
+          return {} as any;
+        case PREFIX_VIEW_CONFIG + "pathA/:id":
+          // details view restricted
           return { permittedUserRoles: ["admin"] } as any;
       }
     });
 
     mockSessionService.getCurrentUser.and.returnValue(normalUser);
-    expect(guard.checkRoutePermissions("free")).toBeTrue();
-    expect(guard.checkRoutePermissions("/free")).toBeTrue();
     expect(guard.checkRoutePermissions("restricted")).toBeFalse();
+    expect(guard.checkRoutePermissions("pathA")).toBeTrue();
+    expect(guard.checkRoutePermissions("/pathA")).toBeTrue();
+    expect(guard.checkRoutePermissions("pathA/1")).toBeFalse();
 
     mockSessionService.getCurrentUser.and.returnValue(adminUser);
-    expect(guard.checkRoutePermissions("free")).toBeTrue();
     expect(guard.checkRoutePermissions("restricted")).toBeTrue();
+    expect(guard.checkRoutePermissions("pathA")).toBeTrue();
+    expect(guard.checkRoutePermissions("pathA/1")).toBeTrue();
   });
 });

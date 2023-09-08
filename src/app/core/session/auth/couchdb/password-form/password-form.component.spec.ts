@@ -11,6 +11,7 @@ import { MockedTestingModule } from "../../../../../utils/mocked-testing.module"
 import { SessionService } from "../../../session-service/session.service";
 import { CouchdbAuthService } from "../couchdb-auth.service";
 import { AuthService } from "../../auth.service";
+import { NEVER } from "rxjs";
 
 describe("PasswordFormComponent", () => {
   let component: PasswordFormComponent;
@@ -19,7 +20,10 @@ describe("PasswordFormComponent", () => {
   let mockCouchDBAuth: jasmine.SpyObj<CouchdbAuthService>;
 
   beforeEach(async () => {
-    mockSessionService = jasmine.createSpyObj(["login", "checkPassword"]);
+    mockSessionService = jasmine.createSpyObj(["login", "checkPassword"], {
+      syncState: NEVER,
+      loginState: NEVER,
+    });
     mockCouchDBAuth = jasmine.createSpyObj(["changePassword"]);
 
     await TestBed.configureTestingModule({
