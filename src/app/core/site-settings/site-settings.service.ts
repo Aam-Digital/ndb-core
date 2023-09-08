@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { SiteSettings } from "./site-settings";
 import { delay, firstValueFrom, Observable, skipWhile } from "rxjs";
-import { distinctUntilChanged, map, shareReplay, tap } from "rxjs/operators";
+import { distinctUntilChanged, map, shareReplay } from "rxjs/operators";
 import { Title } from "@angular/platform-browser";
 import { FileService } from "../../features/file/file.service";
 import materialColours from "@aytek/material-color-picker";
@@ -153,11 +153,6 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     property: P,
   ): Observable<SiteSettings[P]> {
     return this.siteSettings.pipe(
-      tap((x) => {
-        if (property === "primary") {
-          console.log("update SiteSettings - " + property, x.primary);
-        }
-      }),
       skipWhile((v) => !v[property]),
       map((s) => s[property]),
       distinctUntilChanged(),
