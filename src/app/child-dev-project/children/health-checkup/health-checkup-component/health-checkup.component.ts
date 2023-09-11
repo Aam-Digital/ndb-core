@@ -32,16 +32,6 @@ export class HealthCheckupComponent implements OnInit {
         tooltip: $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
         additional: (entity: HealthCheck) => this.getBMI(entity),
       },
-      {
-        id: "display-percentage",
-        label: "display-percentage",
-        view: "DisplayDynamicPercentage",
-        additional: {
-          actual: "weight",
-          total: "height",
-          decimalPlaces: 0,
-        },
-      },
     ],
   };
   @Input() entity: Child;
