@@ -76,11 +76,10 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     try {
       const stored = localStorage.getItem(this.SITE_SETTINGS_LOCAL_STORAGE_KEY);
       if (stored) {
-        localStorageSettings =
-          this.schemaService.transformDatabaseToEntityFormat(
-            JSON.parse(stored),
-            SiteSettings.schema,
-          );
+        localStorageSettings = this.schemaService.loadDataIntoEntity(
+          new SiteSettings(),
+          JSON.parse(stored),
+        );
       }
     } catch (e) {
       this.logger.debug(
