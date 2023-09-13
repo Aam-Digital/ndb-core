@@ -43,7 +43,16 @@
     (optionSelected)="selectEntity($event.option.value)"
     autoActiveFirstOption
   >
+    <mat-checkbox
+      labelPosition="before"
+      (change)="toggleIncludeInactive()"
+      [checked]="includeInactive"
+      i18n="Label for checkbox|e.g. include inactive children"
+    >
+      Include Inactive {{ label }}
+    </mat-checkbox>
     <ng-content select="mat-option"></ng-content>
+
     <mat-option *ngFor="let res of filteredEntities" [value]="res">
       <app-display-entity
         [entityToDisplay]="res"

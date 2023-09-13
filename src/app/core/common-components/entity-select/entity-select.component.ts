@@ -26,6 +26,7 @@ import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-ent
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 
 @Component({
   selector: "app-entity-select",
@@ -42,6 +43,7 @@ import { MatInputModule } from "@angular/material/input";
     FontAwesomeModule,
     MatTooltipModule,
     MatInputModule,
+    MatCheckboxModule,
   ],
   standalone: true,
 })
@@ -57,6 +59,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * TODO: make ids including prefix the default everywhere and remove this option (see #1526)
    */
   @Input() withPrefix: boolean = false;
+
+  includeInactive: boolean = false;
 
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
@@ -260,6 +264,19 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
     return filteredEntities;
   }
+
+  toggleIncludeInactive() {
+    this.includeInactive = !this.includeInactive;
+    // This needs to be set so that the filtering will start immediately
+    const filterInactive = this.includeInactive
+      ? (_) => true
+      : (e) => e.isActive;
+    this.filteredEntities = this.filteredEntities.filter((e) =>
+      filterInactive(e),
+    );
+  }
+
+  // filterInactive: (Entity) => boolean = (e: Entity) => e.isActive;
 
   /**
    * removes a given entity from the records (if it exists) and emits changes

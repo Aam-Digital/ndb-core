@@ -87,7 +87,7 @@ import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birt
 import { ConfigSetupModule } from "./features/config-setup/config-setup.module";
 import { MarkdownPageModule } from "./features/markdown-page/markdown-page.module";
 import { AdminModule } from "./features/admin/admin.module";
-
+import { MatCheckboxModule } from "@angular/material/checkbox";
 /**
  * Main entry point of the application.
  * Imports required modules and does basic setup.
@@ -139,6 +139,7 @@ import { AdminModule } from "./features/admin/admin.module";
     // Global Angular Material modules
     MatSnackBarModule,
     MatDialogModule,
+    MatCheckboxModule,
   ],
   providers: [
     { provide: ErrorHandler, useClass: LoggingErrorHandler },
