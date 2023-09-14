@@ -10,6 +10,7 @@ const centerEnum = Object.assign(new ConfigurableEnum("center"), {
 const mockEnumService = {
   getEnum: () => ({ values: centersUnique }),
   preLoadEnums: () => undefined,
+  cacheEnum: () => undefined,
 };
 
 const formFieldStory = generateFormFieldStory(
