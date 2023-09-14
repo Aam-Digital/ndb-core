@@ -81,7 +81,7 @@ export class KeycloakAuthService extends AuthService {
         .pipe(
           catchError((err) => {
             // treat all invalid grants as unauthorized
-            if (err.error.error === "invalid_grant") {
+            if (err?.error?.error === "invalid_grant") {
               const status = HttpStatusCode.Unauthorized;
               throw new HttpErrorResponse({ status });
             } else {
