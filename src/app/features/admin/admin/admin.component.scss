@@ -1,4 +1,4 @@
-@use "@angular/material" as mat;
+@use "src/styles/variables/colors";
 
 .admin-table {
   border-collapse: collapse;
@@ -9,7 +9,7 @@
     text-align: left;
     vertical-align: bottom;
     font-weight: 400;
-    color: mat.get-color-from-palette(mat.$grey-palette, 700);
+    color: colors.$muted-background;
     text-transform: uppercase;
   }
 
@@ -19,7 +19,7 @@
   }
 
   > tbody > tr {
-    border-top: 1px solid mat.get-color-from-palette(mat.$grey-palette, 400);
+    border-top: 1px solid colors.$disabled;
   }
 }
 

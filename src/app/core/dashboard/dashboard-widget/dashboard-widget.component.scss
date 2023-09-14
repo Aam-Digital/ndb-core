@@ -1,4 +1,4 @@
-@use "@angular/material" as mat;
+@use "@angular/material/core/style/elevation" as mat-elevation;
 
 $widget-header-height: 64px;
 $widget-content-height: 320px;
@@ -105,5 +105,5 @@ $themes: (
   border-radius: $border-radius-card;
   // necessary for the border-radius to apply
   overflow: auto;
-  @include mat.elevation(3);
+  @include mat-elevation.elevation(3);
 }

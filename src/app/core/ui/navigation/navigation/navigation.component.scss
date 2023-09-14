@@ -16,8 +16,8 @@
  */
 
 @use "src/styles/variables/sizes";
-@use "src/styles/variables/ndb-light-theme" as theme;
-@use "@angular/material" as mat;
+@use "src/styles/variables/colors";
+
 
 /**
  * ensures that all icons have the same width
@@ -27,5 +27,5 @@
 }
 
 .matched-background {
-  background-color: mat.get-color-from-palette(theme.$primary, 50) !important;
+  background-color: colors.$background !important;
 }
