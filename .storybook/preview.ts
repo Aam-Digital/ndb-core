@@ -13,7 +13,7 @@ environment.production = false;
 environment.session_type = SessionType.mock;
 environment.demo_mode = false;
 
-export const preview: Preview = {
+const preview: Preview = {
   parameters: {
     actions: { argTypesRegex: "^on[A-Z].*" },
     options: {
@@ -24,3 +24,5 @@ export const preview: Preview = {
     },
   },
 };
+
+export default preview;
