@@ -4,7 +4,7 @@ import { generateFormFieldStory } from "../../../entity/default-datatype/edit-co
 const formFieldStory = generateFormFieldStory("EditLongText", "abcde\nxyz");
 
 export default {
-  title: "Core/Entities/Edit Properties/EditLongText",
+  title: "Core/Entities/Properties/string/EditLongText",
   ...formFieldStory.meta,
 };
 const Template: StoryFn = (args) => ({

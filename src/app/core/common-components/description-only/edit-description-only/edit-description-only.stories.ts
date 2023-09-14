@@ -8,7 +8,7 @@ const formFieldStory = generateFormFieldStory(
 );
 
 export default {
-  title: "Core/Entities/Edit Properties/EditDescriptionOnly",
+  title: "Core/Entities/Properties/EditDescriptionOnly",
   ...formFieldStory.meta,
 };
 const Template: StoryFn = (args) => ({

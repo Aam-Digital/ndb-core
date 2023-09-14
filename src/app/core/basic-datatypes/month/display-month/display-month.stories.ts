@@ -4,7 +4,7 @@ import { DisplayMonthComponent } from "./display-month.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayMonth",
+  title: "Core/Entities/Properties/date/DisplayMonth",
   component: DisplayMonthComponent,
   decorators: [
     applicationConfig({

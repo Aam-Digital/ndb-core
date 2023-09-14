@@ -22,7 +22,7 @@ const formFieldStory = generateFormFieldStory(
 );
 
 export default {
-  title: "Core/Entities/Edit Properties/EditConfigurableEnum",
+  title: "Core/Entities/Properties/configurable-enum/EditConfigurableEnum",
   ...formFieldStory.meta,
 };
 const Template: StoryFn = (args) => ({

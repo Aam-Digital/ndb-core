@@ -4,7 +4,7 @@ import { DisplayDateComponent } from "./display-date.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayDate",
+  title: "Core/Entities/Properties/date/DisplayDate",
   component: DisplayDateComponent,
   decorators: [
     applicationConfig({
