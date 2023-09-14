@@ -21,7 +21,7 @@ child5.name = "Fifth Name";
 child5.projectNumber = "5";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayEntityArray",
+  title: "Core/Entities/Properties/entity-array/DisplayEntityArray",
   component: DisplayEntityArrayComponent,
   decorators: [
     applicationConfig({

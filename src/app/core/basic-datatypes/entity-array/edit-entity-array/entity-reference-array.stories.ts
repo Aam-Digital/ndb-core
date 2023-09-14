@@ -17,7 +17,7 @@ const user2 = new User("2");
 user2.name = "other entity";
 
 export default {
-  title: "Core/Entities/Edit Properties/Entity Reference Array",
+  title: "Core/Entities/Properties/entity-array/Entity Reference Array",
   component: FormComponent,
   decorators: [
     applicationConfig({

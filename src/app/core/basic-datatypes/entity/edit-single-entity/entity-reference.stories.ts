@@ -20,7 +20,7 @@ const child1 = new Child("1");
 child1.name = "test child";
 
 export default {
-  title: "Core/Entities/Edit Properties/Entity Reference",
+  title: "Core/Entities/Properties/entity/Entity Reference",
   component: FormComponent,
   decorators: [
     applicationConfig({
