@@ -64,7 +64,7 @@ RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
 
 ### PROD image
 
-FROM nginx:1.25.1-alpine
+FROM nginx:1.25.2-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container
