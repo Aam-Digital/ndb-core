@@ -20,7 +20,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { UserAccountComponent } from "./user-account.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
-import { NEVER } from "rxjs";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -33,7 +32,7 @@ describe("UserAccountComponent", () => {
         {
           provide: KeycloakAuthService,
           useValue: {
-            getUserinfo: () => NEVER,
+            getUserinfo: () => Promise.reject(),
             autoLogin: () => Promise.reject(),
           },
         },

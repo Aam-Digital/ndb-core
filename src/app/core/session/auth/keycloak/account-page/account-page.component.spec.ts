@@ -25,7 +25,7 @@ describe("AccountPageComponent", () => {
       "setEmail",
       "autoLogin",
     ]);
-    mockAuthService.getUserinfo.and.returnValue(throwError(() => new Error()));
+    mockAuthService.getUserinfo.and.rejectWith();
     mockAuthService.autoLogin.and.rejectWith();
     mockAlerts = jasmine.createSpyObj(["addInfo"]);
     await TestBed.configureTestingModule({
@@ -47,7 +47,7 @@ describe("AccountPageComponent", () => {
 
   it("should show the email if its already set", fakeAsync(() => {
     const email = "mail@exmaple.com";
-    mockAuthService.getUserinfo.and.returnValue(of({ email }));
+    mockAuthService.getUserinfo.and.resolveTo({ email });
 
     component.ngOnInit();
     tick();

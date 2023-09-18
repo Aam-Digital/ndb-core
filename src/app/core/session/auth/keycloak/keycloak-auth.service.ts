@@ -96,7 +96,7 @@ export class KeycloakAuthService {
     });
   }
 
-  getUserinfo(): Promise<any> {
+  getUserinfo() {
     return this.keycloak.loadUserProfile();
   }
 

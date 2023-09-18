@@ -33,7 +33,8 @@ export class AccountPageComponent implements OnInit {
   ngOnInit() {
     this.authService
       .getUserinfo()
-      .then((res) => this.email.setValue(res.email));
+      .then((res) => this.email.setValue(res.email))
+      .catch((err) => console.debug("user profile not available", err));
   }
 
   setEmail() {
