@@ -11,7 +11,7 @@ import { CommonModule } from "@angular/common";
   imports: [CommonModule],
 })
 export class DisplayPercentageComponent
-  extends ViewDirective<number>
+  extends ViewDirective<number, { decimalPlaces?: number }>
   implements OnInit
 {
   @HostBinding("style") style = {};
