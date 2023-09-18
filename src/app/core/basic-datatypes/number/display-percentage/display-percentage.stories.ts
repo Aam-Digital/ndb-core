@@ -9,7 +9,7 @@ import { DisplayPercentageComponent } from "./display-percentage.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayPercentage",
+  title: "Core/Entities/Properties/number/DisplayPercentage",
   component: DisplayPercentageComponent,
   decorators: [
     applicationConfig({

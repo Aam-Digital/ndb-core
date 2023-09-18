@@ -1,10 +1,9 @@
-@use "@angular/material" as mat;
 @use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
 
-$tech-details: mat.get-color-from-palette(mat.$grey-palette, 600);
-$table-odd-color: mat.get-color-from-palette(mat.$grey-palette, 50);
-$table-even-color: mat.get-color-from-palette(mat.$grey-palette, 100);
-$table-border-color: mat.get-color-from-palette(mat.$grey-palette, 300);
+$table-odd-color: colors.$grey-light;
+$table-even-color: colors.$grey-medium;
+$table-border-color: colors.$border-color;
 
 $table-border: 1px solid $table-border-color;
 
@@ -55,12 +54,12 @@ $table-padding: $table-padding-vertical $table-padding-horizontal;
 }
 
 .tech-details {
-  color: $tech-details;
+  color: colors.$hint-text;
 }
 
 .mat-expansion-panel {
   background-color: transparent;
-  border: 1px $tech-details solid;
+  border: 1px colors.$hint-text solid;
   margin-bottom: sizes.$large;
 }
 

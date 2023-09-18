@@ -1,8 +1,5 @@
-@use "@angular/material" as mat;
+@use "src/styles/variables/colors";
 
 .error-code {
-  color: mat.get-color-from-palette(
-    mat.$light-theme-foreground-palette,
-    secondary-text
-  );
+  color: colors.$text-secondary;
 }

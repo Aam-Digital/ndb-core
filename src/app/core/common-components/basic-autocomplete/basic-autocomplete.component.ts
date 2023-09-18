@@ -235,6 +235,7 @@ export class BasicAutocompleteComponent<O, V = O>
       this.showAutocomplete();
     } else {
       this.value = option.asValue;
+      this.blur();
     }
   }
 

@@ -5,7 +5,7 @@ import { DateWithAge } from "../../../../child-dev-project/children/model/dateWi
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayAge",
+  title: "Core/Entities/Properties/date/DisplayAge",
   component: DisplayAgeComponent,
   decorators: [
     applicationConfig({

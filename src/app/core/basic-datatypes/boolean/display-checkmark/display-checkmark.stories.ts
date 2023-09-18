@@ -4,7 +4,7 @@ import { DisplayCheckmarkComponent } from "./display-checkmark.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayCheckmark",
+  title: "Core/Entities/Properties/boolean/DisplayCheckmark",
   component: DisplayCheckmarkComponent,
   decorators: [
     applicationConfig({

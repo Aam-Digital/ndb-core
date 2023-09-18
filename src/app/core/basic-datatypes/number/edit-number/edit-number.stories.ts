@@ -4,7 +4,7 @@ import { generateFormFieldStory } from "../../../entity/default-datatype/edit-co
 const formFieldStory = generateFormFieldStory("EditNumber", 123);
 
 export default {
-  title: "Core/Entities/Edit Properties/EditNumber",
+  title: "Core/Entities/Properties/number/EditNumber",
   ...formFieldStory.meta,
 };
 const Template: StoryFn = (args) => ({
