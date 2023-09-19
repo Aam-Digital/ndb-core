@@ -3,6 +3,7 @@ import { DemoDataModule } from "./demo-data.module";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { MockedTestingModule } from "../../utils/mocked-testing.module";
 import { Database } from "../database/database";
+import { PouchDatabase } from "../database/pouch-database";
 
 describe("DemoDataModule", () => {
   beforeEach(() => {
@@ -11,7 +12,7 @@ describe("DemoDataModule", () => {
       providers: [
         {
           provide: Database,
-          useValue: { isEmpty: () => Promise.resolve(true) },
+          useClass: PouchDatabase,
         },
       ],
     }).compileComponents();

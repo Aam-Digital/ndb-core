@@ -28,7 +28,7 @@ export class DemoDataInitializerService {
     );
 
     this.registerDemoUsers();
-    this.sessionManager.offlineLogin();
+    await this.sessionManager.offlineLogin();
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();

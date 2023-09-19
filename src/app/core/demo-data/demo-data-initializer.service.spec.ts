@@ -54,8 +54,8 @@ describe("DemoDataInitializerService", () => {
     expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(normalUser);
   });
 
-  it("it should publish the demo data after logging in the default user", () => {
-    service.run();
+  it("it should publish the demo data after logging in the default user", async () => {
+    await service.run();
 
     expect(sessionManager.offlineLogin).toHaveBeenCalled();
     expect(mockDemoDataService.publishDemoData).toHaveBeenCalled();

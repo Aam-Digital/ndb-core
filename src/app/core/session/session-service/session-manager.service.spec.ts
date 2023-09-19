@@ -17,7 +17,11 @@
 
 import { SessionManagerService } from "./session-manager.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { LoginStateSubject, SessionType, SyncStateSubject, } from "../session-type";
+import {
+  LoginStateSubject,
+  SessionType,
+  SyncStateSubject,
+} from "../session-type";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
@@ -57,17 +61,18 @@ describe("SessionManagerService", () => {
         { provide: KeycloakAuthService, useValue: mockKeycloak },
       ],
     });
-    environment.session_type = SessionType.mock;
     service = TestBed.inject(SessionManagerService);
     loginStateSubject = TestBed.inject(LoginStateSubject);
     userService = TestBed.inject(UserService);
 
     dbUser = { name: TEST_USER, roles: ["user_app"] };
     TestBed.inject(LocalAuthService).saveUser(dbUser);
+    environment.session_type = SessionType.synced;
   }));
 
   afterEach(() => {
     TestBed.inject(LocalAuthService).removeLastUser();
+    environment.session_type = SessionType.mock;
   });
 
   it("should trigger remote authentication", () => {
@@ -111,10 +116,10 @@ describe("SessionManagerService", () => {
     expect(mockKeycloak.logout).toHaveBeenCalled();
   });
 
-  it("should only reset local state if remote login did happen", () => {
+  it("should only reset local state if remote login did not happen", async () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     spyOn(TestBed.inject(LocalAuthService), "login").and.returnValue(dbUser);
-    service.offlineLogin();
+    await service.offlineLogin();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
     expect(userService.getCurrentUser()).toEqual(dbUser);
 
