@@ -7,12 +7,6 @@ import { EducationalMaterial } from "../../child-dev-project/children/educationa
 
 // prettier-ignore
 export const defaultJsonConfig = {
-  "appConfig": {
-    "default_language": "en-US",
-    "displayLanguageSelect": true,
-    "logo_path": null,
-    "site_name": $localize`:Page title:Aam Digital - DEMO (automatically generated data)`,
-  },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
     "site_id": "8",
