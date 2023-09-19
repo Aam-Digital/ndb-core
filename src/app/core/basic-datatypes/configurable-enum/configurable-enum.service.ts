@@ -7,7 +7,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 @Injectable({ providedIn: "root" })
 export class ConfigurableEnumService {
-  private enums: Map<string, ConfigurableEnum>;
+  private enums = new Map<string, ConfigurableEnum>();
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -20,7 +20,6 @@ export class ConfigurableEnumService {
 
   async preLoadEnums() {
     const allEnums = await this.entityMapper.loadType(ConfigurableEnum);
-    this.enums = new Map();
     allEnums.forEach((entity) => this.cacheEnum(entity));
   }
 

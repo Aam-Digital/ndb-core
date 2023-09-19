@@ -6,6 +6,7 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { SyncStateSubject } from "../../core/session/session-type";
 
 /**
  * A mock implementation of the file service which only stores the file temporarily in the browser.
@@ -20,9 +21,10 @@ export class MockFileService extends FileService {
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
     logger: LoggingService,
+    syncState: SyncStateSubject,
     private sanitizer: DomSanitizer,
   ) {
-    super(entityMapper, entities, logger);
+    super(entityMapper, entities, logger, syncState);
   }
 
   removeFile(entity: Entity, property: string): Observable<any> {

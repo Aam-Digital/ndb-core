@@ -54,16 +54,12 @@ describe("DemoDataInitializerService", () => {
     expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(normalUser);
   });
 
-  it("it should publish the demo data after logging in the default user", fakeAsync(() => {
+  it("it should publish the demo data after logging in the default user", () => {
     service.run();
 
     expect(sessionManager.offlineLogin).toHaveBeenCalled();
-    expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
-
-    tick();
-
     expect(mockDemoDataService.publishDemoData).toHaveBeenCalled();
-  }));
+  });
 
   it("should show a dialog while generating demo data", fakeAsync(() => {
     const closeSpy = jasmine.createSpy();

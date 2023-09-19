@@ -32,8 +32,8 @@ describe("UserAccountComponent", () => {
         {
           provide: KeycloakAuthService,
           useValue: {
-            getUserinfo: () => Promise.reject(),
-            autoLogin: () => Promise.reject(),
+            getUserinfo: () => Promise.reject(new Error()),
+            autoLogin: () => Promise.reject(new Error()),
           },
         },
       ],

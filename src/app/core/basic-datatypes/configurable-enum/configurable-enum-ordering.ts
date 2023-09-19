@@ -19,7 +19,7 @@ export namespace Ordering {
    * of 'greater' or 'less' than is dependent on the concrete enum.
    */
   export interface HasOrdinal {
-    _ordinal: number;
+    _ordinal?: number;
   }
 
   export function hasOrdinalValue(value: any): value is HasOrdinal {

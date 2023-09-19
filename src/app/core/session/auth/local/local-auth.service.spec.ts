@@ -1,22 +1,12 @@
 import { LocalAuthService } from "./local-auth.service";
 import { AuthUser } from "../auth-user";
-import { PouchDatabase } from "../../../database/pouch-database";
-import { environment } from "../../../../../environments/environment";
-import { SessionType } from "../../session-type";
 import { TEST_USER } from "../../../../utils/mock-local-session";
 
 describe("LocalAuthService", () => {
   let service: LocalAuthService;
   let testUser: AuthUser;
-  let database: jasmine.SpyObj<PouchDatabase>;
 
   beforeEach(() => {
-    environment.session_type = SessionType.mock;
-    database = jasmine.createSpyObj([
-      "initInMemoryDB",
-      "initIndexedDB",
-      "isEmpty",
-    ]);
     service = new LocalAuthService();
   });
 

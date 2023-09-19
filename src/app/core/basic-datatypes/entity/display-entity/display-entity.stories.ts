@@ -7,7 +7,7 @@ import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayEntity",
+  title: "Core/Entities/Properties/entity/DisplayEntity",
   component: DisplayEntityComponent,
   decorators: [
     applicationConfig({

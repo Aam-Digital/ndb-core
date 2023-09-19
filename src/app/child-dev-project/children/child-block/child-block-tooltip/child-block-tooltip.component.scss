@@ -1,12 +1,9 @@
-@use "@angular/material" as mat;
 
 .child-pic {
   width: 80px;
   height: 80px;
   border-radius: 100vmax;
   object-fit: cover;
-  border: 3px solid mat.get-color-from-palette(mat.$grey-palette, 500);
-  @include mat.elevation(2);
 }
 
 :host {

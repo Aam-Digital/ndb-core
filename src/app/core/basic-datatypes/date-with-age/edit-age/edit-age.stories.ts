@@ -8,7 +8,7 @@ const formFieldStory = generateFormFieldStory(
 );
 
 export default {
-  title: "Core/Entities/Edit Properties/EditAge",
+  title: "Core/Entities/Properties/date/EditAge",
   ...formFieldStory.meta,
 };
 const Template: StoryFn = (args) => ({

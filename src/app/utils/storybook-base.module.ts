@@ -64,11 +64,6 @@ export const entityFormStorybookDefaultParameters = {
         indicesRegistered: EMPTY,
       },
     },
-    { provide: ConfigService, useValue: createTestingConfigService() },
-    {
-      provide: ConfigurableEnumService,
-      useValue: createTestingConfigurableEnumService(),
-    },
     { provide: EntityMapperService, useValue: mockEntityMapper() },
   ],
 })

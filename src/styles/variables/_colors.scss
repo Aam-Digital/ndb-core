@@ -15,6 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 @use "@angular/material" as mat;
+@use "src/styles/variables/ndb-light-theme" as theme;
 
 $err-palette: mat.define-palette(mat.$red-palette);
 $warn-palette: mat.define-palette(mat.$orange-palette);
@@ -24,8 +25,34 @@ $success: mat.get-color-from-palette($success-palette);
 $warn: mat.get-color-from-palette($warn-palette);
 $error: mat.get-color-from-palette($err-palette);
 
+$primary: mat.get-color-from-palette(theme.$primary);
+$accent: mat.get-color-from-palette(theme.$accent);
+
+$grey-transparent: mat.get-color-from-palette(
+    mat.$grey-palette,
+  $hue: 400,
+  $opacity: 0.1
+);
+$grey-light: mat.get-color-from-palette(mat.$grey-palette, 50);
+$grey-medium: mat.get-color-from-palette(mat.$grey-palette, 100);
+$grey-darker: mat.get-color-from-palette(mat.$grey-palette, 300);
+
 $muted: rgba(0, 0, 0, 0.54);
+$muted-background: mat.get-color-from-palette(mat.$grey-palette);
 $disabled: rgba(0, 0, 0, 0.38);
+$disabled-transparent: $grey-transparent;
+$border-color: $grey-darker;
+
+$background: mat.get-color-from-palette(theme.$primary, 50);
+$background-neutral: mat.get-color-from-palette(mat.$light-theme-background-palette, card);
+
+/** especially for labels in disabled forms (which is our default view) */
+$text: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text);
+$text-secondary: mat.get-color-from-palette(mat.$grey-palette, 800);
+$hint-text: mat.get-color-from-palette(
+    mat.$light-theme-foreground-palette,
+    hint-text
+);
 
 /*
  * Quantized warning-levels. Each level represents a color from green (all is OK)
@@ -67,5 +94,3 @@ $attendance-levels: (
   // Absent
   U: #dddddd // Unknown,
 );
-
-$text-secondary: mat.get-color-from-palette(mat.$grey-palette, 800);

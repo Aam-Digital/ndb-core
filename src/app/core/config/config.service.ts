@@ -1,45 +1,29 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { Config } from "./config";
-import { Observable, ReplaySubject } from "rxjs";
-import { filter } from "rxjs/operators";
+import { LoggingService } from "../logging/logging.service";
+import { LatestEntityLoader } from "../entity/latest-entity-loader";
+import { shareReplay } from "rxjs/operators";
 
 /**
  * Access dynamic app configuration retrieved from the database
  * that defines how the interface and data models should look.
  */
 @Injectable({ providedIn: "root" })
-export class ConfigService {
+export class ConfigService extends LatestEntityLoader<Config> {
   /**
    * Subscribe to receive the current config and get notified whenever the config is updated.
    */
-  private _configUpdates = new ReplaySubject<Config>(1);
   private currentConfig: Config;
 
-  get configUpdates(): Observable<Config> {
-    return this._configUpdates.asObservable();
-  }
+  configUpdates = this.entityUpdated.pipe(shareReplay(1));
 
-  constructor(private entityMapper: EntityMapperService) {
-    this.loadConfig();
-    this.entityMapper
-      .receiveUpdates(Config)
-      .pipe(filter(({ entity }) => entity.getId() === Config.CONFIG_KEY))
-      .subscribe(({ entity }) => this.updateConfigIfChanged(entity));
-  }
-
-  async loadConfig(): Promise<void> {
-    return this.entityMapper
-      .load(Config, Config.CONFIG_KEY)
-      .then((config) => this.updateConfigIfChanged(config))
-      .catch(() => {});
-  }
-
-  private updateConfigIfChanged(config: Config) {
-    if (!this.currentConfig || config._rev !== this.currentConfig?._rev) {
+  constructor(entityMapper: EntityMapperService, logger: LoggingService) {
+    super(Config, Config.CONFIG_KEY, entityMapper, logger);
+    super.startLoading();
+    this.entityUpdated.subscribe(async (config) => {
       this.currentConfig = config;
-      this._configUpdates.next(config);
-    }
+    });
   }
 
   public saveConfig(config: any): Promise<void> {

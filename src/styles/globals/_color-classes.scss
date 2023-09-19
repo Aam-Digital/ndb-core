@@ -1,19 +1,17 @@
 @use "../variables/colors";
-@use "../variables/ndb-light-theme" as theme;
-@use "@angular/material" as mat;
 
 /** Color-utility classes **/
 
 .background-muted {
-  background-color: mat.get-color-from-palette(mat.$grey-palette);
+  background-color: colors.$muted-background;
 }
 
 .background-accent {
-  background-color: mat.get-color-from-palette(theme.$accent);
+  background-color: colors.$accent;
 }
 
 .color-accent {
-  color: mat.get-color-from-palette(theme.$accent);
+  color: colors.$accent;
 }
 
 .background-changelog-bugfix {
@@ -25,7 +23,7 @@
 }
 
 .background-changelog-unknown {
-  background-color: mat.get-color-from-palette(mat.$grey-palette);
+  background-color: colors.$muted-background;
 }
 
 .background-error {

@@ -17,11 +17,7 @@
 
 import { SessionManagerService } from "./session-manager.service";
 import { LoginState } from "../session-states/login-state.enum";
-import {
-  LoginStateSubject,
-  SessionType,
-  SyncStateSubject,
-} from "../session-type";
+import { LoginStateSubject, SessionType, SyncStateSubject, } from "../session-type";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
@@ -115,10 +111,10 @@ describe("SessionManagerService", () => {
     expect(mockKeycloak.logout).toHaveBeenCalled();
   });
 
-  it("should only reset local state if remote login did happen", async () => {
+  it("should only reset local state if remote login did happen", () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     spyOn(TestBed.inject(LocalAuthService), "login").and.returnValue(dbUser);
-    await service.offlineLogin();
+    service.offlineLogin();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
     expect(userService.getCurrentUser()).toEqual(dbUser);
 
