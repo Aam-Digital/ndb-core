@@ -7,13 +7,15 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { BooleanFilterConfig } from "../../entity-list/EntityListConfig";
+import { Entity } from "../../entity/model/entity";
+import { FilterService } from "../filter.service";
 
 describe("FilterComponent", () => {
   let component: FilterComponent;
   let fixture: ComponentFixture<FilterComponent>;
   let loader: HarnessLoader;
+  let filterService: FilterService;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -24,6 +26,8 @@ describe("FilterComponent", () => {
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
+
+    filterService = TestBed.inject(FilterService);
   });
 
   it("should create", () => {
@@ -58,19 +62,29 @@ describe("FilterComponent", () => {
   });
 
   it("should support a boolean filter", async () => {
-    const child1 = new Child("dropoutId");
-    child1.status = "Dropout";
-    const child2 = new Child("activeId");
-    component.entities = [child1, child2];
-    component.entityType = Child;
+    class EntityWithBooleanFlag extends Entity {
+      value: boolean;
+
+      static create(value: boolean) {
+        const e = new EntityWithBooleanFlag();
+        e.value = value;
+        return e;
+      }
+    }
+
+    const recordFalse = EntityWithBooleanFlag.create(false);
+    const recordTrue = EntityWithBooleanFlag.create(true);
+    const recordUndefined = new EntityWithBooleanFlag();
+    component.entities = [recordFalse, recordTrue, recordUndefined];
+    component.entityType = EntityWithBooleanFlag;
     component.filterConfig = [
       {
-        id: "isActive",
+        id: "value",
         type: "boolean",
         default: "true",
-        true: "Currently active children",
-        false: "Currently inactive children",
-        all: "All children",
+        true: "is true",
+        false: "is not true",
+        all: "All",
       } as BooleanFilterConfig,
     ];
 
@@ -78,18 +92,27 @@ describe("FilterComponent", () => {
 
     const selection = await loader.getHarness(MatSelectHarness);
     let selected = await selection.getValueText();
-    expect(selected).toBe("Currently active children");
-    expect(component.filterObj).toEqual({ isActive: true } as any);
+    expect(selected).toBe("is true");
+    testFilter(component.filterObj, component.entities, [recordTrue]);
 
     await selection.open();
     const options = await selection.getOptions();
     const falseOption = options[2];
     const label = await falseOption.getText();
-    expect(label).toBe("Currently inactive children");
+    expect(label).toBe("is not true");
 
     await falseOption.click();
     selected = await selection.getValueText();
-    expect(selected).toBe("Currently inactive children");
-    expect(component.filterObj).toEqual({ isActive: false } as any);
+    expect(selected).toBe("is not true");
+    testFilter(component.filterObj, component.entities, [
+      recordFalse,
+      recordUndefined,
+    ]);
   });
+
+  function testFilter(filterObj, entities, expectedFilteredResult) {
+    const filterPred = filterService.getFilterPredicate(filterObj);
+    const filtered = entities.filter(filterPred);
+    expect(filtered).toEqual(expectedFilteredResult);
+  }
 });
