@@ -202,7 +202,7 @@ export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
           key: "false",
           label:
             config.false ?? $localize`:Filter label default boolean true:No`,
-          filter: { [config.id]: false },
+          filter: { $or: [{ [config.id]: false }, { [config.id]: undefined }] },
         },
       ],
       label,
