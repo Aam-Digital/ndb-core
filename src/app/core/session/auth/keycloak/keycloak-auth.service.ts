@@ -74,7 +74,6 @@ export class KeycloakAuthService {
       if (headers.set && typeof headers.set === "function") {
         // PouchDB headers are set as a map
         headers.set("Authorization", "Bearer " + this.accessToken);
-        console.log("setting", headers);
       } else {
         // Interceptor headers are set as a simple object
         headers["Authorization"] = "Bearer " + this.accessToken;

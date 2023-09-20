@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { APP_INITIALIZER, NgModule } from "@angular/core";
+import { NgModule } from "@angular/core";
 import { SessionManagerService } from "./session-service/session-manager.service";
 import { LocalSession } from "./session-service/local-session";
 import { LoginStateSubject, SyncStateSubject } from "./session-type";
@@ -38,13 +38,10 @@ import { KeycloakAngularModule } from "keycloak-angular";
     KeycloakAuthService,
     LoginStateSubject,
     SyncStateSubject,
-    {
-      provide: APP_INITIALIZER,
-      deps: [SessionManagerService],
-      useFactory: (sessionManager: SessionManagerService) => () =>
-        sessionManager.checkForValidSession(),
-      multi: true,
-    },
   ],
 })
-export class SessionModule {}
+export class SessionModule {
+  constructor(sessionManager: SessionManagerService) {
+    sessionManager.checkForValidSession();
+  }
+}
