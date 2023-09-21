@@ -13,6 +13,7 @@ export class KeycloakAuthService {
    */
   static readonly ACCOUNT_MANAGER_ROLE = "account_manager";
   static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
+  private keycloakInitialised = false;
   accessToken: string;
 
   constructor(
@@ -21,19 +22,23 @@ export class KeycloakAuthService {
   ) {}
 
   async autoLogin(): Promise<AuthUser> {
-    const loggedIn = await this.keycloak.init({
-      config: window.location.origin + "/assets/keycloak.json",
-      initOptions: {
-        onLoad: "check-sso",
-        silentCheckSsoRedirectUri:
-          window.location.origin + "/assets/silent-check-sso.html",
-      },
-      // GitHub API rejects if non GitHub bearer token is present
-      shouldAddToken: ({ url }) => !url.includes("api.github.com"),
-    });
-    if (!loggedIn) {
-      await this.keycloak.login({ redirectUri: location.href });
+    if (!this.keycloakInitialised) {
+      this.keycloakInitialised = true;
+      const loggedIn = await this.keycloak.init({
+        config: window.location.origin + "/assets/keycloak.json",
+        initOptions: {
+          onLoad: "check-sso",
+          silentCheckSsoRedirectUri:
+            window.location.origin + "/assets/silent-check-sso.html",
+        },
+        // GitHub API rejects if non GitHub bearer token is present
+        shouldAddToken: ({ url }) => !url.includes("api.github.com"),
+      });
+      if (!loggedIn) {
+        await this.keycloak.login({ redirectUri: location.href });
+      }
     }
+
     return this.keycloak
       .updateToken()
       .then(() => this.keycloak.getToken())
