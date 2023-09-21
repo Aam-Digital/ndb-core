@@ -8,7 +8,7 @@ import { DashboardListWidgetComponent } from "../../../core/dashboard/dashboard-
 import { DatePipe, NgStyle } from "@angular/common";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { UserService } from "../../../core/user/user.service";
+import { UserSubject } from "../../../core/user/user";
 
 @DynamicComponent("TodosDashboard")
 @Component({
@@ -32,13 +32,13 @@ export class TodosDashboardComponent {
 
   constructor(
     private formDialog: FormDialogService,
-    private userService: UserService,
+    private userSubject: UserSubject,
   ) {}
 
   filterEntries = (todo: Todo) => {
     return (
       !todo.completed &&
-      todo.assignedTo.includes(this.userService.getCurrentUser().name) &&
+      todo.assignedTo.includes(this.userSubject.value.name) &&
       moment(todo.startDate).isSameOrBefore(moment(), "days")
     );
   };

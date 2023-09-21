@@ -13,7 +13,7 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
-import { UserService } from "../../../core/user/user.service";
+import { UserSubject } from "../../../core/user/user";
 
 @RouteTarget("TodoList")
 @Component({
@@ -38,7 +38,7 @@ export class TodoListComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private userService: UserService,
+    private userSubject: UserSubject,
     private formDialog: FormDialogService,
     private logger: LoggingService,
   ) {}
@@ -87,7 +87,7 @@ export class TodoListComponent implements OnInit {
       (c) => c.id === "assignedTo",
     );
     if (assignedToFilter && !assignedToFilter.default) {
-      assignedToFilter.default = this.userService.getCurrentUser().name;
+      assignedToFilter.default = this.userSubject.value.name;
     }
   }
 

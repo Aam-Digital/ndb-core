@@ -11,7 +11,7 @@ import {
   KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
-import { User } from "../user";
+import { User, UserSubject } from "../user";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { AppSettings } from "../../app-settings";
@@ -22,7 +22,6 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { UserService } from "../user.service";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")
@@ -56,15 +55,13 @@ export class UserSecurityComponent implements OnInit {
 
   constructor(
     private authService: KeycloakAuthService,
-    userService: UserService,
+    userSubject: UserSubject,
     private fb: FormBuilder,
     private alertService: AlertService,
     private http: HttpClient,
   ) {
     if (
-      userService
-        .getCurrentUser()
-        .roles.includes(KeycloakAuthService.ACCOUNT_MANAGER_ROLE)
+      userSubject.value.roles.includes(KeycloakAuthService.ACCOUNT_MANAGER_ROLE)
     ) {
       this.userIsPermitted = true;
     }

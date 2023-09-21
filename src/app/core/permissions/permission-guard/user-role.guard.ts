@@ -7,7 +7,7 @@ import {
 } from "../../config/dynamic-routing/view-config.interface";
 import { AuthUser } from "../../session/auth/auth-user";
 import { ConfigService } from "../../config/config.service";
-import { UserService } from "../../user/user.service";
+import { UserSubject } from "../../user/user";
 
 /**
  * A guard that checks the roles of the current user against the permissions which are saved in the route data.
@@ -15,14 +15,14 @@ import { UserService } from "../../user/user.service";
 @Injectable()
 export class UserRoleGuard implements CanActivate {
   constructor(
-    private userService: UserService,
+    private userSubject: UserSubject,
     private router: Router,
     private configService: ConfigService,
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const routeData: RouteData = route.data;
-    const user = this.userService.getCurrentUser();
+    const user = this.userSubject.value;
     if (this.canAccessRoute(routeData?.permittedUserRoles, user)) {
       return true;
     } else {

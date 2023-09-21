@@ -20,12 +20,12 @@ import { Injectable } from "@angular/core";
 import { LocalSession } from "./local-session";
 import { AuthUser } from "../auth/auth-user";
 import { SyncService } from "../../database/sync.service";
-import { UserService } from "../../user/user.service";
 import { LoginStateSubject } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
+import { UserSubject } from "../../user/user";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -42,14 +42,14 @@ export class SessionManagerService {
     private localAuthService: LocalAuthService,
     private localSession: LocalSession,
     private syncService: SyncService,
-    private userService: UserService,
+    private userSubject: UserSubject,
     private loginStateSubject: LoginStateSubject,
     private router: Router,
   ) {}
 
   async offlineLogin(user: AuthUser) {
     await this.localSession.initializeDatabaseForCurrentUser(user);
-    this.userService.user = user;
+    this.userSubject.next(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 
@@ -61,7 +61,7 @@ export class SessionManagerService {
     if (this.remoteLoggedIn) {
       this.remoteAuthService.logout();
     } else {
-      this.userService.user = undefined;
+      this.userSubject.next(undefined);
       this.loginStateSubject.next(LoginState.LOGGED_OUT);
       this.router.navigate(["/login"], {
         queryParams: { redirect_uri: this.router.routerState.snapshot.url },
@@ -85,7 +85,7 @@ export class SessionManagerService {
 
   private async handleRemoteLogin(user: AuthUser) {
     this.remoteLoggedIn = true;
-    this.userService.user = user;
+    this.userSubject.next(user);
     await this.localSession.initializeDatabaseForCurrentUser(user);
     this.syncService.startSync();
     this.loginStateSubject.next(LoginState.LOGGED_IN);

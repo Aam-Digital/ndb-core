@@ -14,10 +14,9 @@ import {
   KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
-import { of, throwError } from "rxjs";
-import { User } from "../user";
+import { BehaviorSubject, of, throwError } from "rxjs";
+import { User, UserSubject } from "../user";
 import { AppSettings } from "../../app-settings";
-import { UserService } from "../user.service";
 
 describe("UserSecurityComponent", () => {
   let component: UserSecurityComponent;
@@ -48,18 +47,19 @@ describe("UserSecurityComponent", () => {
     mockHttp.get.and.returnValue(of([assignedRole, notAssignedRole]));
     mockHttp.put.and.returnValue(of({}));
     mockHttp.post.and.returnValue(of({}));
-    const userService = jasmine.createSpyObj<UserService>(["getCurrentUser"]);
-    userService.getCurrentUser.and.returnValue({
-      name: user.name,
-      roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
-    });
 
     await TestBed.configureTestingModule({
       imports: [UserSecurityComponent, MockedTestingModule],
       providers: [
         { provide: KeycloakAuthService, useClass: KeycloakAuthService },
         { provide: HttpClient, useValue: mockHttp },
-        { provide: UserService, useValue: userService },
+        {
+          provide: UserSubject,
+          useValue: new BehaviorSubject({
+            name: user.name,
+            roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
+          }),
+        },
       ],
     }).compileComponents();
 

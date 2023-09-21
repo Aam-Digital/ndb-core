@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../dynamic-components";
 import { coreComponents } from "./core-components";
-import { User } from "./user/user";
+import { User, UserSubject } from "./user/user";
 import { Config } from "./config/config";
 import { StringDatatype } from "./basic-datatypes/string/string.datatype";
 import { DefaultDatatype } from "./entity/default-datatype/default.datatype";
@@ -24,6 +24,7 @@ import { TimePeriod } from "./entity-details/related-time-period-entities/time-p
  */
 @NgModule({
   providers: [
+    UserSubject,
     // base dataTypes
     { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
     { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },

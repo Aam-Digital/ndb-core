@@ -14,10 +14,10 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
-import { UserService } from "../../user/user.service";
 import { SyncStateSubject } from "../../session/session-type";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { UserSubject } from "../../user/user";
 
 @Component({
   selector: "app-support",
@@ -40,7 +40,7 @@ export class SupportComponent implements OnInit {
 
   constructor(
     private syncState: SyncStateSubject,
-    private userService: UserService,
+    private userSubject: UserSubject,
     private sw: SwUpdate,
     private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,
@@ -52,7 +52,7 @@ export class SupportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.currentUser = this.userService.getCurrentUser();
+    this.currentUser = this.userSubject.value;
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
     this.initLastSync();

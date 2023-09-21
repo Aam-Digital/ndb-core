@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { UserService } from "../../user/user.service";
 import { shareReplay } from "rxjs/operators";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -10,6 +9,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { AuthUser } from "../../session/auth/auth-user";
+import { UserSubject } from "../../user/user";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -24,7 +24,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
   constructor(
     private ability: EntityAbility,
-    private userService: UserService,
+    private userSubject: UserSubject,
     private permissionEnforcer: PermissionEnforcerService,
     entityMapper: EntityMapperService,
     logger: LoggingService,
@@ -45,7 +45,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     const userRules = this.getRulesForUser(rules);
     if (userRules.length === 0) {
       // No rules or only default rules defined
-      const user = this.userService.getCurrentUser();
+      const user = this.userSubject.value;
       this.logger.warn(
         `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
@@ -55,7 +55,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
-    const currentUser = this.userService.getCurrentUser();
+    const currentUser = this.userSubject.value;
     if (!currentUser) {
       return rules.public ?? [];
     }

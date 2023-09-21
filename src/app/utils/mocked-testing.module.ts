@@ -20,7 +20,6 @@ import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-en
 import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
 import { TEST_USER } from "./mock-local-session";
-import { UserService } from "../core/user/user.service";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -78,12 +77,6 @@ export class MockedTestingModule {
         {
           provide: ConfigurableEnumService,
           useValue: createTestingConfigurableEnumService(),
-        },
-        {
-          provide: UserService,
-          useValue: {
-            getCurrentUser: () => ({ name: TEST_USER, roles: ["user_app"] }),
-          },
         },
       ],
     };

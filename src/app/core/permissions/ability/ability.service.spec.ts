@@ -6,7 +6,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
-import { User } from "../../user/user";
+import { User, UserSubject } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
@@ -16,7 +16,6 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../../utils/mock-local-session";
-import { UserService } from "../../user/user.service";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -86,7 +85,7 @@ describe("AbilityService", () => {
 
   it("should update the ability with rules for all roles the logged in user has", () => {
     spyOn(ability, "update");
-    spyOn(TestBed.inject(UserService), "getCurrentUser").and.returnValue({
+    TestBed.inject(UserSubject).next({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
@@ -116,7 +115,7 @@ describe("AbilityService", () => {
     expect(ability.can("manage", new Note())).toBeFalse();
     expect(ability.can("create", new Note())).toBeFalse();
 
-    spyOn(TestBed.inject(UserService), "getCurrentUser").and.returnValue({
+    TestBed.inject(UserSubject).next({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
@@ -218,7 +217,7 @@ describe("AbilityService", () => {
   }));
 
   it("should log a warning if no rules are found for a user", () => {
-    spyOn(TestBed.inject(UserService), "getCurrentUser").and.returnValue({
+    TestBed.inject(UserSubject).next({
       name: "new-user",
       roles: ["invalid_role"],
     });
@@ -245,7 +244,7 @@ describe("AbilityService", () => {
 
     expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
 
-    spyOn(TestBed.inject(UserService), "getCurrentUser").and.returnValue({
+    TestBed.inject(UserSubject).next({
       name: "admin",
       roles: ["user_app", "admin_app"],
     });
