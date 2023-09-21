@@ -44,11 +44,7 @@ describe("SessionManagerService", () => {
   let dbUser: AuthUser;
 
   beforeEach(waitForAsync(() => {
-    mockKeycloak = jasmine.createSpyObj([
-      "authenticate",
-      "autoLogin",
-      "logout",
-    ]);
+    mockKeycloak = jasmine.createSpyObj(["autoLogin", "logout"]);
     mockKeycloak.autoLogin.and.rejectWith();
 
     TestBed.configureTestingModule({
@@ -73,12 +69,6 @@ describe("SessionManagerService", () => {
   afterEach(() => {
     TestBed.inject(LocalAuthService).removeLastUser();
     environment.session_type = SessionType.mock;
-  });
-
-  it("should trigger remote authentication", () => {
-    service.remoteLogin();
-
-    expect(mockKeycloak.authenticate).toHaveBeenCalled();
   });
 
   it("should update the local user object once authenticated", async () => {

@@ -43,10 +43,6 @@ describe("KeycloakAuthService", () => {
     service["keycloakReady"] = Promise.resolve(true);
   });
 
-  afterEach(() =>
-    window.localStorage.removeItem(KeycloakAuthService.REFRESH_TOKEN_KEY),
-  );
-
   it("should be created", () => {
     expect(service).toBeTruthy();
   });

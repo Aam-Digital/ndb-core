@@ -1,52 +1,41 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
-import { firstValueFrom, NEVER, Observable } from "rxjs";
+import { Observable } from "rxjs";
 import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
 import { AuthUser } from "../auth-user";
 import { KeycloakService } from "keycloak-angular";
-import { SessionType } from "../../session-type";
 
 @Injectable()
 export class KeycloakAuthService {
-  static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
   /**
    * Users with this role can create and update other accounts.
    */
   static readonly ACCOUNT_MANAGER_ROLE = "account_manager";
-  static readonly REFRESH_TOKEN_KEY = "REFRESH_TOKEN";
-
-  public accessToken: string;
-
-  private keycloakReady: Promise<boolean> = firstValueFrom(NEVER);
+  static readonly LAST_AUTH_KEY = "LAST_REMOTE_LOGIN";
+  accessToken: string;
 
   constructor(
     private httpClient: HttpClient,
     private keycloak: KeycloakService,
-  ) {
-    if (environment.session_type === SessionType.synced) {
-      this.keycloakReady = this.keycloak.init({
-        config: window.location.origin + "/assets/keycloak.json",
-        initOptions: {
-          onLoad: "check-sso",
-          silentCheckSsoRedirectUri:
-            window.location.origin + "/assets/silent-check-sso.html",
-        },
-        // GitHub API rejects if non GitHub bearer token is present
-        shouldAddToken: ({ url }) => !url.includes("api.github.com"),
-      });
-    }
-  }
+  ) {}
 
-  authenticate() {
-    this.keycloak.login({
-      redirectUri: location.href,
+  async autoLogin(): Promise<AuthUser> {
+    const loggedIn = await this.keycloak.init({
+      config: window.location.origin + "/assets/keycloak.json",
+      initOptions: {
+        onLoad: "check-sso",
+        silentCheckSsoRedirectUri:
+          window.location.origin + "/assets/silent-check-sso.html",
+      },
+      // GitHub API rejects if non GitHub bearer token is present
+      shouldAddToken: ({ url }) => !url.includes("api.github.com"),
     });
-  }
-
-  autoLogin(): Promise<AuthUser> {
-    return this.keycloakReady
-      .then(() => this.keycloak.updateToken())
+    if (!loggedIn) {
+      await this.keycloak.login({ redirectUri: location.href });
+    }
+    return this.keycloak
+      .updateToken()
       .then(() => this.keycloak.getToken())
       .then((token) => this.processToken(token));
   }

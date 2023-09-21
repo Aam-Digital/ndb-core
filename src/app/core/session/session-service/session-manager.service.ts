@@ -21,12 +21,11 @@ import { LocalSession } from "./local-session";
 import { AuthUser } from "../auth/auth-user";
 import { SyncService } from "../../database/sync.service";
 import { UserService } from "../../user/user.service";
-import { LoginStateSubject, SessionType } from "../session-type";
+import { LoginStateSubject } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { environment } from "../../../../environments/environment";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -47,10 +46,6 @@ export class SessionManagerService {
     private loginStateSubject: LoginStateSubject,
     private router: Router,
   ) {}
-
-  remoteLogin() {
-    this.remoteAuthService.authenticate();
-  }
 
   offlineLogin() {
     const user = this.localAuthService.login();
@@ -77,16 +72,11 @@ export class SessionManagerService {
    * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
-    // TODO maybe also in offline case?
-    if (environment.session_type === SessionType.synced) {
-      return this.remoteAuthService
-        .autoLogin()
-        .then((user) => this.initialiseUser(user))
-        .then(() => this.handleRemoteLogin())
-        .catch(() => undefined);
-    } else {
-      return Promise.resolve();
-    }
+    return this.remoteAuthService
+      .autoLogin()
+      .then((user) => this.initialiseUser(user))
+      .then(() => this.handleRemoteLogin())
+      .catch((err) => console.log("Login error", err));
   }
 
   private async initialiseUser(user: AuthUser) {
