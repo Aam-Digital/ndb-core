@@ -6,7 +6,7 @@ import { CommonModule } from "@angular/common";
 @DynamicComponent("DisplayPercentage")
 @Component({
   selector: "app-display-percentage",
-  template: "{{ value ? (value | number : decimalPlaces) + '%' : '-' }}",
+  template: "{{ value ? (value | number : numberFormat) + '%' : '-' }}",
   standalone: true,
   imports: [CommonModule],
 })
@@ -15,7 +15,7 @@ export class DisplayPercentageComponent
   implements OnInit
 {
   @HostBinding("style") style = {};
-  decimalPlaces: string;
+  numberFormat: string;
 
   /**
    * returns a css-compatible color value from green to red using the given
@@ -35,7 +35,7 @@ export class DisplayPercentageComponent
   }
 
   ngOnInit() {
-    this.decimalPlaces =
+    this.numberFormat =
       "1." +
       (this.config && this.config.decimalPlaces
         ? this.config.decimalPlaces + "-" + this.config.decimalPlaces
