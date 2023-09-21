@@ -23,7 +23,7 @@ import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-log
 import { Injectable } from "@angular/core";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
-import { AppSettings } from "../app-config/app-settings";
+import { AppSettings } from "../app-settings";
 import { HttpStatusCode } from "@angular/common/http";
 
 /**

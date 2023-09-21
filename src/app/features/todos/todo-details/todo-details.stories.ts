@@ -2,7 +2,7 @@ import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { TodoDetailsComponent } from "./todo-details.component";
 import { Todo } from "../model/todo";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { importProvidersFrom } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { NEVER } from "rxjs";

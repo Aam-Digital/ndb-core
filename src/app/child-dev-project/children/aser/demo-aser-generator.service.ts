@@ -5,7 +5,7 @@ import { Child } from "../model/child";
 import { faker } from "../../../core/demo-data/faker";
 import { Aser } from "./model/aser";
 import { mathLevels, readingLevels } from "./model/skill-levels";
-import { WarningLevel } from "../../../core/entity/model/warning-level";
+import { WarningLevel } from "../../warning-level";
 
 /**
  * Generate ASER results every 12 months for each Child until passing.

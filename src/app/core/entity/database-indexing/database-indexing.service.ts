@@ -18,11 +18,11 @@
 import { Injectable } from "@angular/core";
 import { Database, QueryOptions } from "../../database/database";
 import { BehaviorSubject, firstValueFrom, Observable } from "rxjs";
-import { BackgroundProcessState } from "../../sync-status/background-process-state.interface";
+import { BackgroundProcessState } from "../../ui/sync-status/background-process-state.interface";
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { first } from "rxjs/operators";
-import { isArrayProperty } from "../../entity-components/entity-utils/entity-utils";
+import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.

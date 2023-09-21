@@ -6,7 +6,7 @@ import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRouteSnapshot, Router } from "@angular/router";
 import { AuthUser } from "../../session/session-service/auth-user";
 import { ConfigService } from "../../config/config.service";
-import { PREFIX_VIEW_CONFIG } from "../../view/dynamic-routing/view-config.interface";
+import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;
@@ -86,20 +86,25 @@ describe("UserRoleGuard", () => {
   it("should check permissions of a given route (checkRoutePermissions)", () => {
     mockConfigService.getConfig.and.callFake((id) => {
       switch (id) {
-        case PREFIX_VIEW_CONFIG + "free":
-          return {} as any;
         case PREFIX_VIEW_CONFIG + "restricted":
+          return { permittedUserRoles: ["admin"] } as any;
+        case PREFIX_VIEW_CONFIG + "pathA":
+          return {} as any;
+        case PREFIX_VIEW_CONFIG + "pathA/:id":
+          // details view restricted
           return { permittedUserRoles: ["admin"] } as any;
       }
     });
 
     mockSessionService.getCurrentUser.and.returnValue(normalUser);
-    expect(guard.checkRoutePermissions("free")).toBeTrue();
-    expect(guard.checkRoutePermissions("/free")).toBeTrue();
     expect(guard.checkRoutePermissions("restricted")).toBeFalse();
+    expect(guard.checkRoutePermissions("pathA")).toBeTrue();
+    expect(guard.checkRoutePermissions("/pathA")).toBeTrue();
+    expect(guard.checkRoutePermissions("pathA/1")).toBeFalse();
 
     mockSessionService.getCurrentUser.and.returnValue(adminUser);
-    expect(guard.checkRoutePermissions("free")).toBeTrue();
     expect(guard.checkRoutePermissions("restricted")).toBeTrue();
+    expect(guard.checkRoutePermissions("pathA")).toBeTrue();
+    expect(guard.checkRoutePermissions("pathA/1")).toBeTrue();
   });
 });

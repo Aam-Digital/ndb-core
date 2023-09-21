@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use "@angular/material" as mat;
+@use "@angular/material/core/style/elevation" as mat-elevation;
 @use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
 @use "src/styles/variables/breakpoints";
-@use "src/styles/variables/ndb-light-theme" as theme;
 
 /*
  * outermost elements; make them as tall as possible.
@@ -39,7 +39,7 @@ body {
   position: relative;
   z-index: 2;
   justify-content: space-between;
-  @include mat.elevation(2);
+  @include mat-elevation.elevation(2);
 }
 
 .search-field {
@@ -59,7 +59,7 @@ body {
 /**  App content  **/
 
 :host {
-  background-color: mat.get-color-from-palette(theme.$primary, 50);
+  background-color: colors.$background;
   display: grid;
   grid-template-columns: 1fr;
   grid-template-rows: auto 1fr;

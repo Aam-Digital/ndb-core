@@ -7,7 +7,7 @@ import {
   HttpStatusCode,
 } from "@angular/common/http";
 import { firstValueFrom } from "rxjs";
-import { AppSettings } from "../../../app-config/app-settings";
+import { AppSettings } from "../../../app-settings";
 import { AuthUser } from "../../session-service/auth-user";
 import { tap } from "rxjs/operators";
 

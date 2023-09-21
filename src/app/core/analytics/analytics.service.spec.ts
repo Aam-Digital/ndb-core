@@ -1,12 +1,17 @@
 import { TestBed } from "@angular/core/testing";
 
 import { AnalyticsService } from "./analytics.service";
-import { Angulartics2Matomo, Angulartics2Module } from "angulartics2";
+import {
+  Angulartics2,
+  Angulartics2Matomo,
+  Angulartics2Module,
+} from "angulartics2";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ConfigService } from "../config/config.service";
 import { UsageAnalyticsConfig } from "./usage-analytics-config";
 import { Subject } from "rxjs";
 import { Config } from "../config/config";
+import { SiteSettingsService } from "../site-settings/site-settings.service";
 
 describe("AnalyticsService", () => {
   let service: AnalyticsService;
@@ -14,6 +19,8 @@ describe("AnalyticsService", () => {
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   const configUpdates = new Subject();
   let mockMatomo: jasmine.SpyObj<Angulartics2Matomo>;
+  let mockAngulartics: jasmine.SpyObj<Angulartics2>;
+  let siteNameSubject = new Subject();
 
   beforeEach(() => {
     mockConfigService = jasmine.createSpyObj(
@@ -25,6 +32,9 @@ describe("AnalyticsService", () => {
       "setUsername",
       "startTracking",
     ]);
+    mockAngulartics = jasmine.createSpyObj([], {
+      setUserProperties: { next: jasmine.createSpy() },
+    });
 
     TestBed.configureTestingModule({
       imports: [Angulartics2Module.forRoot(), RouterTestingModule],
@@ -32,6 +42,11 @@ describe("AnalyticsService", () => {
         AnalyticsService,
         { provide: ConfigService, useValue: mockConfigService },
         { provide: Angulartics2Matomo, useValue: mockMatomo },
+        { provide: Angulartics2, useValue: mockAngulartics },
+        {
+          provide: SiteSettingsService,
+          useValue: { siteName: siteNameSubject },
+        },
       ],
     });
     service = TestBed.inject(AnalyticsService);
@@ -107,5 +122,13 @@ describe("AnalyticsService", () => {
       "setTrackerUrl",
       testAnalyticsConfig2.url + "matomo.php",
     ]);
+  });
+
+  it("should set the hostname as the organisation", () => {
+    service.init();
+
+    expect(mockAngulartics.setUserProperties.next).toHaveBeenCalledWith({
+      dimension2: location.hostname,
+    });
   });
 });

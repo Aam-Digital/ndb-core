@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { SessionService } from "../../core/session/session-service/session.service";
 import { AlertService } from "../../core/alerts/alert.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Todo } from "./model/todo";
 import moment from "moment/moment";
 

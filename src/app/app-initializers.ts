@@ -4,7 +4,7 @@ import {
   ɵcreateInjector as createInjector,
 } from "@angular/core";
 import { ConfigService } from "./core/config/config.service";
-import { RouterService } from "./core/view/dynamic-routing/router.service";
+import { RouterService } from "./core/config/dynamic-routing/router.service";
 import { EntityConfigService } from "./core/entity/entity-config.service";
 import { Router } from "@angular/router";
 import { SessionService } from "./core/session/session-service/session.service";

@@ -1,0 +1,30 @@
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
+@use "@angular/material/core/style/elevation" as mat-elevation;
+
+.table-action-button {
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  margin: sizes.$small;
+  color: colors.$accent;
+}
+
+.mat-column-actions {
+  width: 1px;
+  white-space: nowrap;
+  text-align: center;
+}
+
+.table-row:hover {
+  background: #f5f5f5;
+}
+
+.process-spinner {
+  display: flex;
+  justify-content: center;
+}
+
+:host {
+  @include mat-elevation.elevation(1);
+  display: block;
+}

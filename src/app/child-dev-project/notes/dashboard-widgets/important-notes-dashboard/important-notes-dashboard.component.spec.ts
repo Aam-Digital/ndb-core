@@ -11,9 +11,9 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
 import { Note } from "../../model/note";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
-import { warningLevels } from "../../../warning-levels";
 import { of } from "rxjs";
 import { map } from "rxjs/operators";
+import { warningLevels } from "../../../warning-level";
 
 describe("ImportantNotesDashboardComponent", () => {
   let component: ImportantNotesDashboardComponent;

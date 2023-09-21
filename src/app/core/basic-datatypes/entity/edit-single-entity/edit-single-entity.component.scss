@@ -1,0 +1,17 @@
+@use "src/styles/variables/sizes";
+
+
+$block-padding: 7px;
+$block-corner-radius: 5px;
+$block-border: 1px solid lightgray;
+
+.block-wrapper {
+  padding: $block-padding;
+  border-radius: $block-corner-radius;
+  border: $block-border;
+}
+
+.caret-suffix {
+  cursor: pointer;
+  padding: 0 sizes.$small;
+}

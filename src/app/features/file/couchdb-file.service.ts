@@ -7,7 +7,7 @@ import {
   HttpResponse,
   HttpStatusCode,
 } from "@angular/common/http";
-import { AppSettings } from "../../core/app-config/app-settings";
+import { AppSettings } from "../../core/app-settings";
 import {
   catchError,
   concatMap,
@@ -21,7 +21,7 @@ import { Observable, of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { FileService } from "./file.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
@@ -29,6 +29,7 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { SessionService } from "../../core/session/session-service/session.service";
 
 /**
  * Stores the files in the CouchDB.
@@ -50,8 +51,9 @@ export class CouchdbFileService extends FileService {
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
     logger: LoggingService,
+    session: SessionService,
   ) {
-    super(entityMapper, entities, logger);
+    super(entityMapper, entities, logger, session);
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
@@ -68,12 +70,11 @@ export class CouchdbFileService extends FileService {
   }
 
   private runFileUpload(file: File, entity: Entity, property: string) {
-    const blob = new Blob([file]);
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
     return this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
-        this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, blob, {
-          headers: { "Content-Type": file.type, "ngsw-bypass": "" },
+        this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, file, {
+          headers: { "ngsw-bypass": "" },
           reportProgress: true,
           observe: "events",
         }),

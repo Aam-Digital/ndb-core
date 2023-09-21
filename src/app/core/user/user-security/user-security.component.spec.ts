@@ -15,9 +15,9 @@ import {
   KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
-import { of, throwError } from "rxjs";
+import { NEVER, of, throwError } from "rxjs";
 import { User } from "../user";
-import { AppSettings } from "../../app-config/app-settings";
+import { AppSettings } from "../../app-settings";
 import { SessionService } from "../../session/session-service/session.service";
 
 describe("UserSecurityComponent", () => {
@@ -50,7 +50,10 @@ describe("UserSecurityComponent", () => {
     mockHttp.get.and.returnValue(of([assignedRole, notAssignedRole]));
     mockHttp.put.and.returnValue(of({}));
     mockHttp.post.and.returnValue(of({}));
-    mockSession = jasmine.createSpyObj(["getCurrentUser"]);
+    mockSession = jasmine.createSpyObj(["getCurrentUser"], {
+      syncState: NEVER,
+      loginState: NEVER,
+    });
     mockSession.getCurrentUser.and.returnValue({
       name: user.name,
       roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],

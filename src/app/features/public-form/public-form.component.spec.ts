@@ -14,9 +14,9 @@ import { ActivatedRoute } from "@angular/router";
 import { Child } from "../../child-dev-project/children/model/child";
 import { genders } from "../../child-dev-project/children/model/genders";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { EntityFormService } from "../../core/entity-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<Child>;
@@ -109,6 +109,6 @@ describe("PublicFormComponent", () => {
   function initComponent() {
     TestBed.inject(EntityMapperService).save(testFormConfig);
     const configService = TestBed.inject(ConfigService);
-    configService["_configUpdates"].next(configService["currentConfig"]);
+    configService.entityUpdated.next(configService["currentConfig"]);
   }
 });

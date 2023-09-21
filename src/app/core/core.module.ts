@@ -3,21 +3,22 @@ import { ComponentRegistry } from "../dynamic-components";
 import { coreComponents } from "./core-components";
 import { User } from "./user/user";
 import { Config } from "./config/config";
-import { StringDatatype } from "./entity/schema-datatypes/string.datatype";
-import { DefaultDatatype } from "./entity/schema/default.datatype";
-import { SchemaEmbedDatatype } from "./entity/schema-datatypes/schema-embed.datatype";
-import { ArrayDatatype } from "./entity/schema-datatypes/array.datatype";
-import { MapDatatype } from "./entity/schema-datatypes/map.datatype";
-import { MonthDatatype } from "./entity/schema-datatypes/month.datatype";
-import { BooleanDatatype } from "./entity/schema-datatypes/boolean.datatype";
-import { DateDatatype } from "./entity/schema-datatypes/date.datatype";
-import { DateOnlyDatatype } from "./entity/schema-datatypes/date-only.datatype";
-import { DateWithAgeDatatype } from "./entity/schema-datatypes/date-with-age.datatype";
-import { EntityDatatype } from "./entity/schema-datatypes/entity.datatype";
-import { EntityArrayDatatype } from "./entity/schema-datatypes/entity-array.datatype";
-import { NumberDatatype } from "./entity/schema-datatypes/number.datatype";
+import { StringDatatype } from "./basic-datatypes/string/string.datatype";
+import { DefaultDatatype } from "./entity/default-datatype/default.datatype";
+import { SchemaEmbedDatatype } from "./basic-datatypes/schema-embed/schema-embed.datatype";
+import { ArrayDatatype } from "./basic-datatypes/array/array.datatype";
+import { MapDatatype } from "./basic-datatypes/map/map.datatype";
+import { MonthDatatype } from "./basic-datatypes/month/month.datatype";
+import { BooleanDatatype } from "./basic-datatypes/boolean/boolean.datatype";
+import { DateDatatype } from "./basic-datatypes/date/date.datatype";
+import { DateOnlyDatatype } from "./basic-datatypes/date-only/date-only.datatype";
+import { DateWithAgeDatatype } from "./basic-datatypes/date-with-age/date-with-age.datatype";
+import { EntityDatatype } from "./basic-datatypes/entity/entity.datatype";
+import { EntityArrayDatatype } from "./basic-datatypes/entity-array/entity-array.datatype";
+import { NumberDatatype } from "./basic-datatypes/number/number.datatype";
 import { Entity } from "./entity/model/entity";
-import { TimePeriod } from "./entity-components/related-time-period-entities/time-period";
+import { TimePeriod } from "./entity-details/related-time-period-entities/time-period";
+import { CommonModule } from "@angular/common";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -38,6 +39,7 @@ import { TimePeriod } from "./entity-components/related-time-period-entities/tim
     { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
     { provide: DefaultDatatype, useClass: EntityArrayDatatype, multi: true },
   ],
+  imports: [CommonModule],
 })
 export class CoreModule {
   static databaseEntities = [Entity, User, Config, TimePeriod];

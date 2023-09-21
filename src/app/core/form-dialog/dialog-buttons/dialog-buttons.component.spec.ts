@@ -7,7 +7,7 @@ import {
 } from "@angular/core/testing";
 
 import { DialogButtonsComponent } from "./dialog-buttons.component";
-import { EntityFormService } from "../../entity-components/entity-form/entity-form.service";
+import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { Entity } from "../../entity/model/entity";
 import { MatDialogRef } from "@angular/material/dialog";
 import { AlertService } from "../../alerts/alert.service";
@@ -20,7 +20,7 @@ import {
   RemoveResult,
 } from "../../entity/entity-remove.service";
 import { firstValueFrom, of, Subject } from "rxjs";
-import { UnsavedChangesService } from "../../entity-components/entity-details/form/unsaved-changes.service";
+import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 describe("DialogButtonsComponent", () => {
   let component: DialogButtonsComponent;

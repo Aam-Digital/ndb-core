@@ -1,6 +1,6 @@
-@use "@angular/material" as mat;
 @use "sass:map";
 @use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
 
 .summary-title {
   margin-bottom: 0.25em;
@@ -8,10 +8,7 @@
 }
 
 .summary-period {
-  color: mat.get-color-from-palette(
-    mat.$light-theme-foreground-palette,
-    hint-text
-  );
+  color: colors.$hint-text;
   font-size: 110%;
 }
 
@@ -20,11 +17,7 @@
 }
 
 .summary-row {
-  background-color: mat.get-color-from-palette(
-    mat.$light-theme-background-palette,
-    background,
-    50%
-  );
+  background-color: colors.$grey-transparent;
 }
 
 .summary-cell {

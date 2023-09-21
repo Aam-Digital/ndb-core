@@ -10,18 +10,19 @@ import {
 import { MatchingEntitiesComponent } from "./matching-entities.component";
 import { MatchingEntitiesConfig } from "./matching-entities-config";
 import { Entity } from "../../../core/entity/model/entity";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { BehaviorSubject, NEVER, Subject } from "rxjs";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { School } from "../../../child-dev-project/schools/model/school";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { Note } from "../../../child-dev-project/notes/model/note";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -33,9 +34,9 @@ describe("MatchingEntitiesComponent", () => {
   let testConfig: MatchingEntitiesConfig = {
     columns: [],
     onMatch: {
-      newEntityMatchPropertyLeft: "",
-      newEntityMatchPropertyRight: "",
-      newEntityType: "",
+      newEntityMatchPropertyLeft: "schoolId",
+      newEntityMatchPropertyRight: "childId",
+      newEntityType: ChildSchoolRelation.ENTITY_TYPE,
     },
     matchActionLabel: "match test",
     rightSide: { entityType: "Child" },
@@ -103,23 +104,25 @@ describe("MatchingEntitiesComponent", () => {
     const testEntity = new Entity("1");
     component.entity = testEntity;
     component.rightSide = { entityType: "Child" };
+    component.onMatch = testConfig.onMatch;
     fixture.detectChanges();
     tick();
 
-    expect(component.sideDetails[0].selected).toEqual(testEntity);
+    expect(component.sideDetails[0].selected).toEqual([testEntity]);
 
     component.leftSide = { entityType: "Child" };
     component.rightSide = {};
     component.ngOnInit();
     tick();
 
-    expect(component.sideDetails[1].selected).toEqual(testEntity);
+    expect(component.sideDetails[1].selected).toEqual([testEntity]);
   }));
 
   it("should init details for template including available entities table and its columns", fakeAsync(() => {
     const testEntity = new Entity();
     component.entity = testEntity;
     component.rightSide = { entityType: "Child" };
+    component.onMatch = testConfig.onMatch;
     component.columns = [
       ["_id", "name"],
       ["_rev", "phone"],
@@ -133,7 +136,7 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(component.sideDetails.length).toBe(2);
 
-    expect(component.sideDetails[0].selected).toEqual(testEntity);
+    expect(component.sideDetails[0].selected).toEqual([testEntity]);
     expect(component.sideDetails[0].entityType).toEqual(
       testEntity.getConstructor(),
     );
@@ -147,7 +150,50 @@ describe("MatchingEntitiesComponent", () => {
     expect(component.sideDetails[1].columns).toEqual(["name", "phone"]);
   }));
 
-  it("should save a new entity to represent a confirmed matching", fakeAsync(() => {
+  it("should select only one entity at a time in single select mode", fakeAsync(() => {
+    const matchedEntity = Child.create("matched child");
+    const otherMatchedEntity = Child.create("second matched child");
+
+    Object.assign(component, testConfig);
+    component.onMatch = {
+      newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+      newEntityMatchPropertyRight: "childId",
+      newEntityMatchPropertyLeft: "schoolId",
+    };
+    fixture.detectChanges();
+    tick();
+    const testedSide = component.sideDetails[1];
+
+    testedSide.selectMatch(matchedEntity);
+    expect(testedSide.selected).toEqual([matchedEntity]);
+
+    testedSide.selectMatch(otherMatchedEntity);
+    expect(testedSide.selected).toEqual([otherMatchedEntity]);
+  }));
+
+  it("should select multiple entities in multiSelect mode", fakeAsync(() => {
+    const matchedEntity = Child.create("matched child");
+    const otherMatchedEntity = Child.create("second matched child");
+
+    Object.assign(component, testConfig);
+    component.onMatch = {
+      newEntityType: Note.ENTITY_TYPE,
+      newEntityMatchPropertyRight: "children",
+      newEntityMatchPropertyLeft: "schools",
+    };
+    fixture.detectChanges();
+    tick();
+    const testedSide = component.sideDetails[1];
+
+    testedSide.selectMatch(matchedEntity);
+    testedSide.selectMatch(otherMatchedEntity);
+    expect(testedSide.selected).toEqual([matchedEntity, otherMatchedEntity]);
+
+    testedSide.selectMatch(matchedEntity); // deselect by second click
+    expect(testedSide.selected).toEqual([otherMatchedEntity]);
+  }));
+
+  it("should create a new entity onMatch, with single entity property", fakeAsync(() => {
     const testEntity = new Entity();
     const matchedEntity = Child.create("matched child");
     component.entity = testEntity;
@@ -162,8 +208,8 @@ describe("MatchingEntitiesComponent", () => {
 
     fixture.detectChanges();
     tick();
-    component.sideDetails[0].selectMatch(testEntity);
-    component.sideDetails[1].selectMatch(matchedEntity);
+    component.sideDetails[0].selected = [testEntity];
+    component.sideDetails[1].selected = [matchedEntity];
 
     component.createMatch();
     tick();
@@ -179,11 +225,48 @@ describe("MatchingEntitiesComponent", () => {
     expect(saveSpy).toHaveBeenCalledWith(jasmine.any(ChildSchoolRelation));
   }));
 
+  it("should create a new entity onMatch, with multiSelect entity-array property", fakeAsync(() => {
+    const testEntity = new Entity();
+    const child1 = Child.create("matched child 1");
+    const child2 = Child.create("matched child 2");
+
+    Object.assign(component, testConfig);
+    component.onMatch = {
+      newEntityType: Note.ENTITY_TYPE,
+      newEntityMatchPropertyRight: "children",
+      newEntityMatchPropertyLeft: "schools",
+    };
+    component.entity = testEntity;
+    component.columns = [["_id", "name"]];
+    const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
+    fixture.detectChanges();
+    tick();
+
+    component.sideDetails[0].selected = [testEntity];
+    component.sideDetails[1].selected = [child1, child2];
+
+    component.createMatch();
+    tick();
+
+    expect(saveSpy).toHaveBeenCalledWith(
+      jasmine.objectContaining({
+        schools: [testEntity.getId(false)],
+        children: [child1.getId(false), child2.getId(false)],
+        name:
+          "Note " +
+          testEntity.toString() +
+          " - matched child 1, matched child 2",
+      } as Partial<ChildSchoolRelation>),
+    );
+    expect(saveSpy).toHaveBeenCalledWith(jasmine.any(Note));
+  }));
+
   it("should create distance column and publish updates", fakeAsync(() => {
     Child.schema.set("address", { dataType: "location" });
     component.entity = new Child();
     component.columns = [[undefined, "distance"]];
     component.leftSide = { entityType: Child };
+    component.onMatch = testConfig.onMatch;
 
     fixture.detectChanges();
     tick();
@@ -214,26 +297,26 @@ describe("MatchingEntitiesComponent", () => {
     Child.schema.delete("address");
   }));
 
-  it("should select a entity if it has been selected in the map", fakeAsync(() => {
+  it("should select an entity if it has been selected in the map", fakeAsync(() => {
     component.entity = new Entity();
     component.rightSide = { entityType: "Child" };
+    component.onMatch = testConfig.onMatch;
     fixture.detectChanges();
     tick();
 
     const child = new Child();
     component.entityInMapClicked(child);
 
-    expect(component.sideDetails[1].selected).toBe(child);
+    expect(component.sideDetails[1].selected).toEqual([child]);
   }));
 
   it("should not change the provided config object directly", fakeAsync(() => {
-    component.entity = new Entity();
     Object.assign(component, testConfig);
     fixture.detectChanges();
     tick();
     const selectedChild = new Child();
     component.sideDetails[1].selectMatch(selectedChild);
-    expect(component.sideDetails[1].selected).toEqual(selectedChild);
+    expect(component.sideDetails[1].selected).toEqual([selectedChild]);
 
     const newFixture = TestBed.createComponent(MatchingEntitiesComponent);
     const newComponent = newFixture.componentInstance;
@@ -242,10 +325,11 @@ describe("MatchingEntitiesComponent", () => {
     newFixture.detectChanges();
     tick();
 
-    expect(newComponent.sideDetails[1].selected).not.toEqual(selectedChild);
+    expect(newComponent.sideDetails[1].selected).not.toEqual([selectedChild]);
   }));
 
   it("should update the distance calculation when the selected map properties change", fakeAsync(() => {
+    Object.assign(component, testConfig);
     Child.schema.set("address", { dataType: "location" });
     Child.schema.set("otherAddress", { dataType: "location" });
     School.schema.set("address", { dataType: "location" });
@@ -342,6 +426,7 @@ describe("MatchingEntitiesComponent", () => {
       entityType: "School",
       columns: ["_id"],
     };
+    component.onMatch = testConfig.onMatch;
     fixture.detectChanges();
     tick();
 
@@ -371,6 +456,7 @@ describe("MatchingEntitiesComponent", () => {
     component.mapVisible = false;
     component.entity = new Child();
     component.leftSide = { entityType: Child };
+    component.onMatch = testConfig.onMatch;
 
     fixture.detectChanges();
     tick();
@@ -395,6 +481,7 @@ describe("MatchingEntitiesComponent", () => {
       ],
       rightSide: { entityType: "School", columns: ["name", "distance"] },
       leftSide: { entityType: "Child", columns: ["name", "distance"] },
+      onMatch: testConfig.onMatch,
     };
     Child.schema.set("address", { dataType: "location" });
     School.schema.set("address", { dataType: "location" });
@@ -409,6 +496,31 @@ describe("MatchingEntitiesComponent", () => {
 
     Child.schema.delete("address");
     School.schema.delete("address");
+  }));
+
+  it("should infer multiSelect mode from onMatch's entity schema", fakeAsync(() => {
+    Object.assign(component, testConfig);
+    component.onMatch = {
+      newEntityType: ChildSchoolRelation.ENTITY_TYPE,
+      newEntityMatchPropertyLeft: "childId",
+      newEntityMatchPropertyRight: "schoolId",
+    };
+    component.ngOnInit();
+    tick();
+
+    expect(component.sideDetails[0].multiSelect).toBeFalse();
+    expect(component.sideDetails[1].multiSelect).toBeFalse();
+
+    component.onMatch = {
+      newEntityType: Note.ENTITY_TYPE,
+      newEntityMatchPropertyLeft: "children",
+      newEntityMatchPropertyRight: "schools",
+    };
+    component.ngOnInit();
+    tick();
+
+    expect(component.sideDetails[0].multiSelect).toBeTrue();
+    expect(component.sideDetails[1].multiSelect).toBeTrue();
   }));
 });
 

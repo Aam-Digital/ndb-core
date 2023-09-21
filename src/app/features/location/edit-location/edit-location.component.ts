@@ -1,6 +1,6 @@
 import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
-import { DynamicComponent } from "../../../core/view/dynamic-components/dynamic-component.decorator";
-import { EditComponent } from "../../../core/entity-components/entity-utils/dynamic-form-components/edit-component";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { BehaviorSubject, concatMap, of, Subject } from "rxjs";
 import { catchError, debounceTime, filter, map, tap } from "rxjs/operators";
 import { MatDialog } from "@angular/material/dialog";
@@ -17,7 +17,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ErrorHintComponent } from "../../../core/entity-components/entity-utils/error-hint/error-hint.component";
+import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
 
 @DynamicComponent("EditLocation")
 @Component({

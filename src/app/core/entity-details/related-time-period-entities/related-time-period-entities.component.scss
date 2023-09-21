@@ -1,0 +1,7 @@
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
+
+.hint-badge {
+  background-color: colors.$primary;
+  margin-bottom: sizes.$regular;
+}

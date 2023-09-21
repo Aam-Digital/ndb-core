@@ -7,15 +7,13 @@ import {
 } from "@angular/core/testing";
 
 import { RollCallSetupComponent } from "./roll-call-setup.component";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { RecurringActivity } from "../../model/recurring-activity";
 import { ChildrenService } from "../../../children/children.service";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
-import {
-  MockedTestingModule,
-  TEST_USER,
-} from "../../../../utils/mocked-testing.module";
+import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { TEST_USER } from "../../../../utils/mock-local-session";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import moment from "moment";
 import { RecurringActivity } from "./model/recurring-activity";
 import { ActivityAttendance } from "./model/activity-attendance";

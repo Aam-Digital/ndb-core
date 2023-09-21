@@ -18,7 +18,7 @@
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { ConfigurableEnumValue } from "../../../core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 import { DateWithAge } from "./dateWithAge";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 
@@ -109,7 +109,7 @@ export class Child extends Entity {
 
   @DatabaseField({
     dataType: "file",
-    label: $localize`:Label for the filename of a photo of a child:Photo Filename`,
+    label: $localize`:Label for the file field of a photo of a child:Photo`,
     editComponent: "EditPhoto",
   })
   photo: string;

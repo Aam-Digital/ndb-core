@@ -20,7 +20,7 @@ import {
   ReportConfig,
   ReportingComponentConfig,
 } from "./reporting-component-config";
-import { RouteData } from "../../../core/view/dynamic-routing/view-config.interface";
+import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";

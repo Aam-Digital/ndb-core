@@ -14,7 +14,7 @@ import {
 } from "@angular/material/datepicker";
 import moment, { Moment } from "moment";
 import { EventAttendance } from "../model/event-attendance";
-import { EntityMapperService } from "../../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import {

@@ -1,0 +1,25 @@
+:host {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.image {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  cursor: pointer;
+  background: lightgrey;
+  display: block;
+}
+
+.img-controls {
+  display: flex;
+  align-items: end;
+  height: 48px;
+}
+.img-label {
+  margin: auto;
+  color: rgba(0, 0, 0, 0.6);
+}

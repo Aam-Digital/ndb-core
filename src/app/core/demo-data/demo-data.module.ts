@@ -31,17 +31,19 @@ import { DemoNoteGeneratorService } from "../../child-dev-project/notes/demo-dat
 import { DemoAserGeneratorService } from "../../child-dev-project/children/aser/demo-aser-generator.service";
 import { DemoEducationalMaterialGeneratorService } from "../../child-dev-project/children/educational-material/demo-educational-material-generator.service";
 import { DemoHealthCheckGeneratorService } from "../../child-dev-project/children/health-checkup/demo-data/demo-health-check-generator.service";
-import { DemoProgressDashboardWidgetGeneratorService } from "../../features/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
+import { DemoProgressDashboardWidgetGeneratorService } from "../../features/dashboard-widgets/progress-dashboard-widget/demo-progress-dashboard-widget-generator.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
 import { DemoHistoricalDataGenerator } from "../../features/historical-data/demo-historical-data-generator";
 import { DemoPermissionGeneratorService } from "../permissions/demo-permission-generator.service";
 import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-generator.service";
-import { DemoConfigurableEnumGeneratorService } from "../configurable-enum/demo-configurable-enum-generator.service";
+import { DemoConfigurableEnumGeneratorService } from "../basic-datatypes/configurable-enum/demo-configurable-enum-generator.service";
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
+import { DemoSiteSettingsGeneratorService } from "../site-settings/demo-site-settings-generator.service";
 
 const demoDataGeneratorProviders = [
   ...DemoConfigGeneratorService.provider(),
   ...DemoPermissionGeneratorService.provider(),
+  ...DemoSiteSettingsGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
   ...DemoConfigurableEnumGeneratorService.provider(),

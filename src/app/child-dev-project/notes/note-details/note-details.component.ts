@@ -9,7 +9,7 @@ import {
 import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
-import { EntityListConfig } from "../../../core/entity-components/entity-list/EntityListConfig";
+import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { DatePipe } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
@@ -19,10 +19,10 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
   EntityForm,
   EntityFormService,
-} from "../../../core/entity-components/entity-form/entity-form.service";
-import { toFormFieldConfig } from "../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { EntityFormComponent } from "../../../core/entity-components/entity-form/entity-form/entity-form.component";
-import { DynamicComponentDirective } from "../../../core/view/dynamic-components/dynamic-component.directive";
+} from "../../../core/common-components/entity-form/entity-form.service";
+import { toFormFieldConfig } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
+import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";

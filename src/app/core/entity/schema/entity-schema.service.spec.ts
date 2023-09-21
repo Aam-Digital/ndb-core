@@ -20,12 +20,12 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { Injector } from "@angular/core";
-import { DefaultDatatype } from "./default.datatype";
-import { DateOnlyDatatype } from "../schema-datatypes/date-only.datatype";
+import { DefaultDatatype } from "../default-datatype/default.datatype";
+import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
 import { EntitySchemaField } from "./entity-schema-field";
-import { ConfigurableEnumDatatype } from "../../configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityDatatype } from "../schema-datatypes/entity.datatype";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 
 describe("EntitySchemaService", () => {
   let service: EntitySchemaService;

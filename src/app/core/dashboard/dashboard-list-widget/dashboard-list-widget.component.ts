@@ -16,7 +16,7 @@ import {
 import { MatTable, MatTableDataSource } from "@angular/material/table";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { BehaviorSubject } from "rxjs";
-import { EntityMapperService } from "../../entity/entity-mapper.service";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { filter, map } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";

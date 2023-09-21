@@ -1,0 +1,21 @@
+.container {
+  display: flex;
+}
+
+.calendar {
+  width: 60%;
+}
+
+.panel {
+  width: 40%;
+  margin: auto;
+}
+
+.button {
+  display: block;
+  text-align: left;
+}
+
+.selected-option {
+  font-weight: bold;
+}

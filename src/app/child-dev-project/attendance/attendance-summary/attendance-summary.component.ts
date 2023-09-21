@@ -1,8 +1,8 @@
 import { Component, Input } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
-import { FormFieldConfig } from "../../../core/entity-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { DatePipe, NgForOf, NgIf } from "@angular/common";
-import { DynamicComponentDirective } from "../../../core/view/dynamic-components/dynamic-component.directive";
+import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
 
 @Component({
   selector: "app-attendance-summary",

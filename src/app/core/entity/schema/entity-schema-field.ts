@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { FormValidatorConfig } from "../../entity-components/entity-form/dynamic-form-validators/form-validator-config";
+import { FormValidatorConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 
 /**
  * Interface for additional configuration about a DatabaseField schema.

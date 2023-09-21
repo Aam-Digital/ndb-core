@@ -2,7 +2,7 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceManagerComponent } from "./attendance-manager.component";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ComingSoonDialogService } from "../../../core/coming-soon/coming-soon-dialog.service";
+import { ComingSoonDialogService } from "../../../features/coming-soon/coming-soon-dialog.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("AttendanceManagerComponent", () => {

@@ -15,16 +15,16 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ConfigurableEnumValue } from "app/core/configurable-enum/configurable-enum.interface";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import {
   BooleanFilterConfig,
   DateRangeFilterConfigOption,
-} from "app/core/entity-components/entity-list/EntityListConfig";
-import { DataFilter } from "../../entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+} from "../../entity-list/EntityListConfig";
+import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../../entity/model/entity";
 import { DateRange } from "@angular/material/datepicker";
 import { isValidDate } from "../../../utils/utils";
-import { calculateDateRange } from "../date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import moment from "moment/moment";
 
 export abstract class Filter<T extends Entity> {
@@ -63,23 +63,29 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     if (dates?.length == 2) {
       const firstDate = new Date(dates[0]);
       const secondDate = new Date(dates[1]);
-      if (isValidDate(firstDate) && isValidDate(secondDate)) {
-        return new DateRange(firstDate, secondDate);
-      }
+      return new DateRange(
+        isValidDate(firstDate) ? firstDate : undefined,
+        isValidDate(secondDate) ? secondDate : undefined,
+      );
     }
     return new DateRange(undefined, undefined);
   }
 
   getFilter(): DataFilter<T> {
     const range = this.getDateRange();
-    if (range.start && range.end) {
+    const filterObject: { $gte?: string; $lte?: string } = {};
+    if (range.start) {
+      filterObject.$gte = moment(range.start).format("YYYY-MM-DD");
+    }
+    if (range.end) {
+      filterObject.$lte = moment(range.end).format("YYYY-MM-DD");
+    }
+    if (filterObject.$gte || filterObject.$lte) {
       return {
-        [this.name]: {
-          $gte: moment(range.start).format("YYYY-MM-DD"),
-          $lte: moment(range.end).format("YYYY-MM-DD"),
-        },
+        [this.name]: filterObject,
       } as DataFilter<T>;
     }
+    return {} as DataFilter<T>;
   }
 
   getSelectedOption() {
@@ -196,7 +202,7 @@ export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
           key: "false",
           label:
             config.false ?? $localize`:Filter label default boolean true:No`,
-          filter: { [config.id]: false },
+          filter: { $or: [{ [config.id]: false }, { [config.id]: undefined }] },
         },
       ],
       label,

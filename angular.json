@@ -144,7 +144,8 @@
           "builder": "@storybook/angular:build-storybook",
           "options": {
             "browserTarget": "ndb-core:build",
-            "compodoc": false
+            "compodoc": false,
+            "enableProdMode": false
           }
         },
         "lint": {

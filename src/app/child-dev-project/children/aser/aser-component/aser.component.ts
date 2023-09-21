@@ -2,9 +2,9 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Aser } from "../model/aser";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
-import { DynamicComponent } from "../../../../core/view/dynamic-components/dynamic-component.decorator";
-import { EntitySubrecordComponent } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { ColumnConfig } from "../../../../core/entity-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { ColumnConfig } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { NgIf } from "@angular/common";
 
 @DynamicComponent("Aser")

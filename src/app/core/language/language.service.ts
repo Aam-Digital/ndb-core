@@ -1,33 +1,19 @@
 import { Inject, Injectable, LOCALE_ID } from "@angular/core";
 import { LANGUAGE_LOCAL_STORAGE_KEY } from "./language-statics";
-import { UiConfig } from "../ui/ui-config";
-import { ConfigService } from "../config/config.service";
 import { WINDOW_TOKEN } from "../../utils/di-tokens";
+import { SiteSettingsService } from "../site-settings/site-settings.service";
 
 /**
- * Service that contains
- * <li>The currently selected language
- * <li>All available languages
+ * Service that provides the currently active locale and applies a newly selected one.
  */
 @Injectable({
   providedIn: "root",
 })
 export class LanguageService {
-  /**
-   * A readonly array of all locales available
-   * TODO: Hardcoded
-   */
-  readonly availableLocales: { locale: string; regionCode: string }[] = [
-    { locale: "de", regionCode: "de" },
-    { locale: "en-US", regionCode: "us" },
-    { locale: "fr", regionCode: "fr" },
-    { locale: "it", regionCode: "it" },
-  ];
-
   constructor(
     @Inject(LOCALE_ID) private baseLocale: string,
     @Inject(WINDOW_TOKEN) private window: Window,
-    private configService: ConfigService,
+    private siteSettings: SiteSettingsService,
   ) {}
 
   initDefaultLanguage(): void {
@@ -36,15 +22,10 @@ export class LanguageService {
     );
 
     if (!languageSelected) {
-      this.configService.configUpdates.subscribe(() => {
-        const { default_language } =
-          this.configService.getConfig<UiConfig>("appConfig") ?? {};
-        if (default_language && default_language !== this.baseLocale) {
+      this.siteSettings.defaultLanguage.subscribe(({ id }) => {
+        if (id !== this.baseLocale) {
           // Reload app with default language from config
-          this.window.localStorage.setItem(
-            LANGUAGE_LOCAL_STORAGE_KEY,
-            default_language,
-          );
+          this.window.localStorage.setItem(LANGUAGE_LOCAL_STORAGE_KEY, id);
           this.window.location.reload();
         }
       });

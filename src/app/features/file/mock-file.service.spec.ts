@@ -1,13 +1,15 @@
 import { TestBed } from "@angular/core/testing";
 
 import { MockFileService } from "./mock-file.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../core/entity/model/entity";
-import { firstValueFrom, NEVER } from "rxjs";
+import { firstValueFrom, NEVER, of } from "rxjs";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../core/entity/database-entity.decorator";
+import { SessionService } from "../../core/session/session-service/session.service";
+import { SyncState } from "../../core/session/session-states/sync-state.enum";
 
 describe("MockFileService", () => {
   let service: MockFileService;
@@ -21,6 +23,10 @@ describe("MockFileService", () => {
           useValue: { receiveUpdates: () => NEVER },
         },
         { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: SessionService,
+          useValue: { syncState: of(SyncState.COMPLETED) },
+        },
       ],
     });
     service = TestBed.inject(MockFileService);

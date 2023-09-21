@@ -29,7 +29,7 @@ import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AuthService } from "../auth/auth.service";
-import { Subject } from "rxjs";
+import { NEVER, Subject } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
@@ -45,6 +45,7 @@ describe("LoginComponent", () => {
   beforeEach(waitForAsync(() => {
     mockSessionService = jasmine.createSpyObj(["login", "getCurrentUser"], {
       loginState,
+      syncState: NEVER,
     });
     mockSessionService.getCurrentUser.and.returnValue({ name: "", roles: [] });
     TestBed.configureTestingModule({

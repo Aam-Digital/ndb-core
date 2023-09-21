@@ -4,8 +4,8 @@ import { EducationalMaterialComponent } from "./educational-material.component";
 import { Child } from "../../model/child";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EducationalMaterial } from "../model/educational-material";
-import { ConfigurableEnumValue } from "../../../../core/configurable-enum/configurable-enum.interface";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper.service";
+import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../../core/entity/model/entity-update";
 

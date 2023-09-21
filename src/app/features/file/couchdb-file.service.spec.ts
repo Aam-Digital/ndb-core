@@ -19,15 +19,17 @@ import {
 } from "rxjs";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { UpdatedEntity } from "../../core/entity/model/entity-update";
 import {
   entityRegistry,
   EntityRegistry,
 } from "../../core/entity/database-entity.decorator";
-import { AppSettings } from "../../core/app-config/app-settings";
+import { AppSettings } from "../../core/app-settings";
 import { FileDatatype } from "./file.datatype";
+import { SessionService } from "../../core/session/session-service/session.service";
+import { SyncState } from "../../core/session/session-states/sync-state.enum";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -58,6 +60,10 @@ describe("CouchdbFileService", () => {
           useValue: { receiveUpdates: () => updates },
         },
         { provide: EntityRegistry, useValue: entityRegistry },
+        {
+          provide: SessionService,
+          useValue: { syncState: of(SyncState.COMPLETED) },
+        },
       ],
     });
     service = TestBed.inject(CouchdbFileService);

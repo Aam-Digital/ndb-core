@@ -1,7 +1,7 @@
 import { TestBed, waitForAsync } from "@angular/core/testing";
 
 import { AttendanceService } from "./attendance.service";
-import { EntityMapperService } from "../../core/entity/entity-mapper.service";
+import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Database } from "../../core/database/database";
 import { RecurringActivity } from "./model/recurring-activity";
 import moment from "moment";

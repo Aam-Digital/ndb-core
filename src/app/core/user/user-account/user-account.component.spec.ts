@@ -22,6 +22,7 @@ import { SessionService } from "../../session/session-service/session.service";
 import { LoggingService } from "../../logging/logging.service";
 import { AuthService } from "../../session/auth/auth.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { NEVER } from "rxjs";
 
 describe("UserAccountComponent", () => {
   let component: UserAccountComponent;
@@ -31,9 +32,11 @@ describe("UserAccountComponent", () => {
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(waitForAsync(() => {
-    mockSessionService = jasmine.createSpyObj("sessionService", [
-      "getCurrentUser",
-    ]);
+    mockSessionService = jasmine.createSpyObj(
+      "sessionService",
+      ["getCurrentUser"],
+      { syncState: NEVER, loginState: NEVER },
+    );
     mockSessionService.getCurrentUser.and.returnValue({
       name: "TestUser",
       roles: [],

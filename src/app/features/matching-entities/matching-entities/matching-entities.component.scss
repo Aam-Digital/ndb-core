@@ -1,6 +1,4 @@
 @use "src/styles/mixins/grid-layout";
-@use "src/styles/variables/ndb-light-theme" as theme;
-@use "@angular/material" as mat;
 @use "src/styles/variables/sizes";
 
 .overall-layout {
@@ -21,16 +19,16 @@
 }
 
 .comparison-header {
-  font-weight: bold;
   font-size: medium;
+}
+.comparison-header-type {
+  font-weight: bold;
 }
 .selection-header {
   font-weight: 500;
   font-size: medium;
-  font-family: Roboto, sans-serif;
 }
 
-.entity-fixed {
-  background-color: mat.get-color-from-palette(theme.$accent, 0.1);
-  padding: 0 sizes.$regular 0 sizes.$regular;
+.highlighted-name {
+  text-decoration: underline;
 }
