@@ -29,7 +29,7 @@
     </div>
     <p>
       <button
-        *ngIf="offlineLoginAvailable"
+        *ngIf="offlineUsers.length > 0"
         mat-raised-button
         type="button"
         (click)="useOffline()"

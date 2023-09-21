@@ -47,13 +47,14 @@ export class SessionManagerService {
     private router: Router,
   ) {}
 
-  offlineLogin() {
-    const user = this.localAuthService.login();
-    return this.initialiseUser(user);
+  async offlineLogin(user: AuthUser) {
+    await this.localSession.initializeDatabaseForCurrentUser(user);
+    this.userService.user = user;
+    this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 
-  canLoginOffline(): boolean {
-    return this.localAuthService.canLoginOffline();
+  getOfflineUsers(): AuthUser[] {
+    return this.localAuthService.getStoredUsers();
   }
 
   logout() {
@@ -75,23 +76,19 @@ export class SessionManagerService {
     this.loginStateSubject.next(LoginState.IN_PROGRESS);
     return this.remoteAuthService
       .autoLogin()
-      .then((user) => this.initialiseUser(user))
-      .then(() => this.handleRemoteLogin())
+      .then((user) => this.handleRemoteLogin(user))
       .catch((err) => {
         this.loginStateSubject.next(LoginState.LOGIN_FAILED);
         throw err;
       });
   }
 
-  private async initialiseUser(user: AuthUser) {
-    await this.localSession.initializeDatabaseForCurrentUser(user);
-    this.userService.user = user;
-    this.localAuthService.saveUser(user);
-    this.loginStateSubject.next(LoginState.LOGGED_IN);
-  }
-
-  private handleRemoteLogin() {
+  private async handleRemoteLogin(user: AuthUser) {
     this.remoteLoggedIn = true;
-    return this.syncService.startSync();
+    this.userService.user = user;
+    await this.localSession.initializeDatabaseForCurrentUser(user);
+    this.syncService.startSync();
+    this.loginStateSubject.next(LoginState.LOGGED_IN);
+    this.localAuthService.saveUser(user);
   }
 }

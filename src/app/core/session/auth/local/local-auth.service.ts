@@ -5,22 +5,12 @@ import { AuthUser } from "../auth-user";
   providedIn: "root",
 })
 export class LocalAuthService {
-  private static LAST_LOGGED_IN_KEY = "LAST_USER";
+  private readonly STORED_USER_PREFIX = "USER-";
 
-  login(): AuthUser {
-    return this.getStoredUser(LocalAuthService.LAST_LOGGED_IN_KEY);
-  }
-
-  canLoginOffline(): boolean {
-    return !!localStorage.getItem(LocalAuthService.LAST_LOGGED_IN_KEY);
-  }
-
-  private getStoredUser(username: string): AuthUser {
-    const stored = localStorage.getItem(username);
-    if (!stored) {
-      throw Error("OFFLINE LOGIN ERROR: No user found locally");
-    }
-    return JSON.parse(stored);
+  getStoredUsers(): AuthUser[] {
+    return Object.entries(localStorage)
+      .filter(([key]) => key.startsWith(this.STORED_USER_PREFIX))
+      .map(([_, user]) => JSON.parse(user));
   }
 
   /**
@@ -29,12 +19,8 @@ export class LocalAuthService {
    */
   saveUser(user: AuthUser) {
     localStorage.setItem(
-      LocalAuthService.LAST_LOGGED_IN_KEY,
+      this.STORED_USER_PREFIX + user.name,
       JSON.stringify(user),
     );
-  }
-
-  removeLastUser() {
-    localStorage.removeItem(LocalAuthService.LAST_LOGGED_IN_KEY);
   }
 }

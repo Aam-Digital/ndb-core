@@ -1,0 +1,11 @@
+<mat-dialog-content>
+    <mat-radio-group [(ngModel)]="selected" class="flex-column">
+        <mat-radio-button
+            *ngFor="let user of users"
+            [value]="user"
+        >{{ user.name }}</mat-radio-button>
+    </mat-radio-group>
+</mat-dialog-content>
+<mat-dialog-actions style="justify-content: center">
+    <button mat-raised-button [matDialogClose]="selected">Login</button>
+</mat-dialog-actions>

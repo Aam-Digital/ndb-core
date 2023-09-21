@@ -25,6 +25,9 @@ import { LoginStateSubject } from "../session-type";
 import { NgIf } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { AuthUser } from "../auth/auth-user";
+import { MatDialog } from "@angular/material/dialog";
+import { UserSelectComponent } from "./user-select/user-select.component";
 
 /**
  * Form to allow users to enter their credentials and log in.
@@ -38,13 +41,14 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
   standalone: true,
 })
 export class LoginComponent {
-  offlineLoginAvailable = false;
+  offlineUsers: AuthUser[] = [];
   loginInProgress = false;
   constructor(
     private router: Router,
     private route: ActivatedRoute,
     private sessionManager: SessionManagerService,
     public loginState: LoginStateSubject,
+    private dialog: MatDialog,
   ) {
     this.loginState.pipe(untilDestroyed(this)).subscribe((state) => {
       this.loginInProgress = state === LoginState.IN_PROGRESS;
@@ -53,7 +57,7 @@ export class LoginComponent {
       }
     });
     // TODO Should we only show this after a short delay when online?
-    this.offlineLoginAvailable = this.sessionManager.canLoginOffline();
+    this.offlineUsers = this.sessionManager.getOfflineUsers();
   }
 
   private routeAfterLogin() {
@@ -62,6 +66,13 @@ export class LoginComponent {
   }
 
   useOffline() {
-    this.sessionManager.offlineLogin();
+    this.dialog
+      .open(UserSelectComponent, { data: this.offlineUsers })
+      .afterClosed()
+      .subscribe((user) => {
+        if (user) {
+          this.sessionManager.offlineLogin(user);
+        }
+      });
   }
 }
