@@ -19,6 +19,7 @@ export class SyncService {
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
   private _liveSyncHandle: any;
   private _liveSyncScheduledHandle: any;
+  private remoteDatabase = new PouchDatabase(this.loggingService);
   private remoteDB: PouchDB.Database;
   private localDB: PouchDB.Database;
 
@@ -48,8 +49,7 @@ export class SyncService {
   }
 
   private initDatabases() {
-    const remoteDatabase = new PouchDatabase(this.loggingService);
-    remoteDatabase.initRemoteDB(
+    this.remoteDatabase.initRemoteDB(
       `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
       (url, opts: any) => {
         if (typeof url === "string") {
@@ -70,7 +70,7 @@ export class SyncService {
         }
       },
     );
-    this.remoteDB = remoteDatabase.getPouchDB();
+    this.remoteDB = this.remoteDatabase.getPouchDB();
     if (this.database instanceof PouchDatabase) {
       this.localDB = this.database.getPouchDB();
     }
