@@ -23,26 +23,19 @@
     <mat-card-title i18n="Sign in title">Welcome</mat-card-title>
   </mat-card-header>
   <mat-card-content>
-    <p>
-      <button
-        mat-raised-button
-        type="button"
-        (click)="login()"
-        i18n="Login button"
-        color="primary"
-        style="width: 100%; margin-top: 20px;"
-      >
-        Please login
-      </button>
-    </p>
+    <div *ngIf="loginInProgress">
+      <em>Login in progress...</em>
+      <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+    </div>
     <p>
       <button
         *ngIf="offlineLoginAvailable"
-        mat-button
+        mat-raised-button
         type="button"
         (click)="useOffline()"
         i18n="Login button"
         style="width: 100%; margin-top: 20px;"
+        color="accent"
       >
         Use offline
       </button>

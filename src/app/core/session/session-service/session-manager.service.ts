@@ -72,11 +72,15 @@ export class SessionManagerService {
    * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
    */
   checkForValidSession() {
+    this.loginStateSubject.next(LoginState.IN_PROGRESS);
     return this.remoteAuthService
       .autoLogin()
       .then((user) => this.initialiseUser(user))
       .then(() => this.handleRemoteLogin())
-      .catch((err) => console.log("Login error", err));
+      .catch((err) => {
+        this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+        throw err;
+      });
   }
 
   private async initialiseUser(user: AuthUser) {
