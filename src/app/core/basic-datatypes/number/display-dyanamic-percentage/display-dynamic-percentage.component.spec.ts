@@ -32,20 +32,17 @@ describe("DisplayDynamicPercentageComponent", () => {
   it("should display the correct percentage value", () => {
     component.entity["totalValue"] = 200;
     component.entity["actualValue"] = 50;
-    component.ngOnInit();
-    expect(component.result).toEqual(25);
+    expect(component.calculateValue()).toEqual(25);
   });
 
   it("should not display a value if one of the two values is not a number", () => {
     component.entity["totalValue"] = 15;
-    component.ngOnInit();
-    expect(component.result).toBe(undefined);
+    expect(component.calculateValue()).toBe(undefined);
   });
 
   it("should not display a value if totalValue is 0", () => {
     component.entity["totalValue"] = 0;
     component.entity["actualValue"] = 15;
-    component.ngOnInit();
-    expect(component.result).toBe(undefined);
+    expect(component.calculateValue()).toBe(undefined);
   });
 });
