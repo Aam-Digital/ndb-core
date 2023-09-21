@@ -46,6 +46,16 @@ export class TimePeriod extends Entity {
 
   assertValid() {
     super.assertValid();
+
+    this.checkValidDateRange();
+  }
+
+  private checkValidDateRange() {
+    if (!this.end) {
+      // without end date, any range is valid
+      return;
+    }
+
     const startLabel = this.getSchema().get("start").label;
     const endLabel = this.getSchema().get("end").label;
     if (this.end && !this.start) {
