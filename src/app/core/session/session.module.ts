@@ -17,7 +17,6 @@
 
 import { NgModule } from "@angular/core";
 import { SessionManagerService } from "./session-service/session-manager.service";
-import { LocalSession } from "./session-service/local-session";
 import {
   LoginStateSubject,
   SessionType,
@@ -39,7 +38,6 @@ import { environment } from "../../../environments/environment";
   imports: [KeycloakAngularModule],
   providers: [
     SessionManagerService,
-    LocalSession,
     KeycloakAuthService,
     LoginStateSubject,
     SyncStateSubject,

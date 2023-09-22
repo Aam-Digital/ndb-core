@@ -17,15 +17,18 @@
 
 import { Injectable } from "@angular/core";
 
-import { LocalSession } from "./local-session";
 import { AuthUser } from "../auth/auth-user";
 import { SyncService } from "../../database/sync.service";
-import { LoginStateSubject } from "../session-type";
+import { LoginStateSubject, SessionType } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
 import { UserSubject } from "../../user/user";
+import { AppSettings } from "../../app-settings";
+import { PouchDatabase } from "../../database/pouch-database";
+import { environment } from "../../../../environments/environment";
+import { Database } from "../../database/database";
 
 /**
  * A synced session creates and manages a LocalSession and a RemoteSession
@@ -36,19 +39,25 @@ import { UserSubject } from "../../user/user";
  */
 @Injectable()
 export class SessionManagerService {
+  static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
+  private pouchDatabase: PouchDatabase;
   private remoteLoggedIn = false;
   constructor(
     private remoteAuthService: KeycloakAuthService,
     private localAuthService: LocalAuthService,
-    private localSession: LocalSession,
     private syncService: SyncService,
     private userSubject: UserSubject,
     private loginStateSubject: LoginStateSubject,
     private router: Router,
-  ) {}
+    private database: Database,
+  ) {
+    if (database instanceof PouchDatabase) {
+      this.pouchDatabase = database;
+    }
+  }
 
   async offlineLogin(user: AuthUser) {
-    await this.localSession.initializeDatabaseForCurrentUser(user);
+    await this.initializeDatabaseForCurrentUser(user);
     this.userSubject.next(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
@@ -86,9 +95,47 @@ export class SessionManagerService {
   private async handleRemoteLogin(user: AuthUser) {
     this.remoteLoggedIn = true;
     this.userSubject.next(user);
-    await this.localSession.initializeDatabaseForCurrentUser(user);
+    await this.initializeDatabaseForCurrentUser(user);
     this.syncService.startSync();
     this.loginStateSubject.next(LoginState.LOGGED_IN);
     this.localAuthService.saveUser(user);
+  }
+
+  private async initializeDatabaseForCurrentUser(user: AuthUser) {
+    const userDBName = `${user.name}-${AppSettings.DB_NAME}`;
+    // Work on a temporary database before initializing the real one
+    const tmpDB = new PouchDatabase(undefined);
+    this.initDatabase(userDBName, tmpDB);
+    if (!(await tmpDB.isEmpty())) {
+      // Current user has own database, we are done here
+      this.initDatabase(userDBName);
+      return;
+    }
+
+    this.initDatabase(AppSettings.DB_NAME, tmpDB);
+    const dbFallback = window.localStorage.getItem(
+      SessionManagerService.DEPRECATED_DB_KEY,
+    );
+    const dbAvailable = !dbFallback || dbFallback === user.name;
+    if (dbAvailable && !(await tmpDB.isEmpty())) {
+      // Old database is available and can be used by the current user
+      window.localStorage.setItem(
+        SessionManagerService.DEPRECATED_DB_KEY,
+        user.name,
+      );
+      this.initDatabase(AppSettings.DB_NAME);
+      return;
+    }
+
+    // Create a new database for the current user
+    this.initDatabase(userDBName);
+  }
+
+  private initDatabase(dbName: string, db = this.pouchDatabase) {
+    if (environment.session_type === SessionType.mock) {
+      db.initInMemoryDB(dbName);
+    } else {
+      db.initIndexedDB(dbName);
+    }
   }
 }

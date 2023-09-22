@@ -30,27 +30,35 @@ import { TEST_USER } from "../../../utils/mock-local-session";
 import { LocalAuthService } from "../auth/local/local-auth.service";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
-import { LocalSession } from "./local-session";
 import { Database } from "../../database/database";
 import { Router } from "@angular/router";
 import { UserSubject } from "../../user/user";
+import { AppSettings } from "../../app-settings";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
   let loginStateSubject: LoginStateSubject;
   let userSubject: UserSubject;
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
-
   let dbUser: AuthUser;
+  const userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
+  const deprecatedDBName = AppSettings.DB_NAME;
+  let initInMemorySpy: jasmine.Spy;
+  let initIndexedSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
-    mockKeycloak = jasmine.createSpyObj(["autoLogin", "logout"]);
+    dbUser = { name: TEST_USER, roles: ["user_app"] };
+    mockKeycloak = jasmine.createSpyObj([
+      "autoLogin",
+      "logout",
+      "addAuthHeader",
+    ]);
     mockKeycloak.autoLogin.and.rejectWith();
+    mockKeycloak.autoLogin.and.resolveTo(dbUser);
 
     TestBed.configureTestingModule({
       providers: [
         SessionManagerService,
-        LocalSession,
         SyncStateSubject,
         LoginStateSubject,
         UserSubject,
@@ -62,14 +70,19 @@ describe("SessionManagerService", () => {
     loginStateSubject = TestBed.inject(LoginStateSubject);
     userSubject = TestBed.inject(UserSubject);
 
-    dbUser = { name: TEST_USER, roles: ["user_app"] };
+    const db = TestBed.inject(Database) as PouchDatabase;
+    initInMemorySpy = spyOn(db, "initInMemoryDB").and.callThrough();
+    initIndexedSpy = spyOn(db, "initIndexedDB").and.callThrough();
     TestBed.inject(LocalAuthService).saveUser(dbUser);
-    environment.session_type = SessionType.synced;
+    environment.session_type = SessionType.mock;
   }));
 
-  afterEach(() => {
+  afterEach(async () => {
     localStorage.clear();
-    environment.session_type = SessionType.mock;
+    window.localStorage.removeItem(SessionManagerService.DEPRECATED_DB_KEY);
+    const tmpDB = new PouchDatabase(undefined);
+    await tmpDB.initInMemoryDB(userDBName).destroy();
+    await tmpDB.initInMemoryDB(deprecatedDBName).destroy();
   });
 
   it("should update the local user object once authenticated", async () => {
@@ -90,8 +103,6 @@ describe("SessionManagerService", () => {
   });
 
   it("should automatically login, if the session is still valid", async () => {
-    mockKeycloak.autoLogin.and.resolveTo(dbUser);
-
     await service.checkForValidSession();
 
     expect(loginStateSubject.value).toEqual(LoginState.LOGGED_IN);
@@ -99,7 +110,6 @@ describe("SessionManagerService", () => {
   });
 
   it("should trigger remote logout if remote login succeeded before", async () => {
-    mockKeycloak.autoLogin.and.resolveTo(dbUser);
     await service.checkForValidSession();
 
     service.logout();
@@ -120,4 +130,91 @@ describe("SessionManagerService", () => {
     expect(userSubject.value).toBeUndefined();
     expect(navigateSpy).toHaveBeenCalled();
   });
+
+  it("should create a pouchdb with the username of the logged in user", async () => {
+    await service.checkForValidSession();
+
+    expect(initInMemorySpy).toHaveBeenCalledWith(
+      TEST_USER + "-" + AppSettings.DB_NAME,
+    );
+  });
+
+  it("should create the database according to the session type in the AppSettings", async () => {
+    async function testDatabaseCreation(
+      sessionType: SessionType,
+      expectedDB: "inMemory" | "indexed",
+    ) {
+      initInMemorySpy.calls.reset();
+      initIndexedSpy.calls.reset();
+      environment.session_type = sessionType;
+      await service.checkForValidSession();
+      if (expectedDB === "inMemory") {
+        expect(initInMemorySpy).toHaveBeenCalled();
+        expect(initIndexedSpy).not.toHaveBeenCalled();
+      } else {
+        expect(initInMemorySpy).not.toHaveBeenCalled();
+        expect(initIndexedSpy).toHaveBeenCalled();
+      }
+    }
+
+    await testDatabaseCreation(SessionType.mock, "inMemory");
+    await testDatabaseCreation(SessionType.local, "indexed");
+    await testDatabaseCreation(SessionType.synced, "indexed");
+  });
+
+  it("should use current user db if database has content", async () => {
+    await defineExistingDatabases(true, false);
+
+    await service.checkForValidSession();
+
+    expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
+  });
+
+  it("should use and reserve a deprecated db if it exists and current db has no content", async () => {
+    await defineExistingDatabases(false, true);
+
+    await service.checkForValidSession();
+
+    expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
+    const dbReservation = window.localStorage.getItem(
+      SessionManagerService.DEPRECATED_DB_KEY,
+    );
+    expect(dbReservation).toBe(TEST_USER);
+  });
+
+  it("should open a new database if deprecated db is already in use", async () => {
+    await defineExistingDatabases(false, true, "other-user");
+
+    await service.checkForValidSession();
+
+    expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
+  });
+
+  it("should use the deprecated database if it is reserved by the current user", async () => {
+    await defineExistingDatabases(false, true, TEST_USER);
+
+    await service.checkForValidSession();
+
+    expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
+  });
+
+  async function defineExistingDatabases(
+    initUserDB: boolean,
+    initDeprecatedDB: boolean,
+    reserved?: string,
+  ) {
+    if (reserved) {
+      window.localStorage.setItem(
+        SessionManagerService.DEPRECATED_DB_KEY,
+        reserved,
+      );
+    }
+    const tmpDB = new PouchDatabase(undefined);
+    if (initUserDB) {
+      await tmpDB.initInMemoryDB(userDBName).put({ _id: "someDoc" });
+    }
+    if (initDeprecatedDB) {
+      await tmpDB.initInMemoryDB(deprecatedDBName).put({ _id: "someDoc" });
+    }
+  }
 });
