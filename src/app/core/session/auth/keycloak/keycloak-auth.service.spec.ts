@@ -29,7 +29,12 @@ describe("KeycloakAuthService", () => {
 
   beforeEach(() => {
     mockHttpClient = jasmine.createSpyObj(["post"]);
-    mockKeycloak = jasmine.createSpyObj(["updateToken", "getToken", "login"]);
+    mockKeycloak = jasmine.createSpyObj([
+      "updateToken",
+      "getToken",
+      "login",
+      "init",
+    ]);
     mockKeycloak.updateToken.and.resolveTo();
     mockKeycloak.getToken.and.resolveTo(keycloakToken);
     TestBed.configureTestingModule({

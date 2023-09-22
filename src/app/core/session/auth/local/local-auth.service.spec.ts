@@ -10,28 +10,19 @@ describe("LocalAuthService", () => {
     service = new LocalAuthService();
   });
 
-  beforeEach(() => {
+  it("should be created", () => {
+    expect(service).toBeDefined();
+  });
+
+  it("should return saved users", () => {
     testUser = {
       name: TEST_USER,
       roles: ["user_app"],
     };
     service.saveUser(testUser);
-  });
 
-  afterEach(() => {
-    service.removeLastUser();
-  });
+    expect(service.getStoredUsers()).toEqual([testUser]);
 
-  it("should be created", () => {
-    expect(service).toBeDefined();
-  });
-
-  it("should login a previously saved user", () => {
-    expect(service.login()).toEqual(testUser);
-  });
-
-  it("should fail login after a user is removed", async () => {
-    service.removeLastUser();
-    expect(() => service.login()).toThrowError();
+    localStorage.clear();
   });
 });

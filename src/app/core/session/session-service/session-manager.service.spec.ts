@@ -27,18 +27,18 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { AuthUser } from "../auth/auth-user";
 import { TEST_USER } from "../../../utils/mock-local-session";
-import { UserService } from "../../user/user.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalSession } from "./local-session";
 import { Database } from "../../database/database";
 import { Router } from "@angular/router";
+import { UserSubject } from "../../user/user";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
   let loginStateSubject: LoginStateSubject;
-  let userService: UserService;
+  let userSubject: UserSubject;
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
 
   let dbUser: AuthUser;
@@ -53,13 +53,14 @@ describe("SessionManagerService", () => {
         LocalSession,
         SyncStateSubject,
         LoginStateSubject,
+        UserSubject,
         { provide: Database, useClass: PouchDatabase },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
       ],
     });
     service = TestBed.inject(SessionManagerService);
     loginStateSubject = TestBed.inject(LoginStateSubject);
-    userService = TestBed.inject(UserService);
+    userSubject = TestBed.inject(UserSubject);
 
     dbUser = { name: TEST_USER, roles: ["user_app"] };
     TestBed.inject(LocalAuthService).saveUser(dbUser);
@@ -67,7 +68,7 @@ describe("SessionManagerService", () => {
   }));
 
   afterEach(() => {
-    TestBed.inject(LocalAuthService).removeLastUser();
+    localStorage.clear();
     environment.session_type = SessionType.mock;
   });
 
@@ -83,7 +84,7 @@ describe("SessionManagerService", () => {
     await service.checkForValidSession();
 
     expect(saveUserSpy).toHaveBeenCalledWith(updatedUser);
-    expect(userService.getCurrentUser()).toEqual(updatedUser);
+    expect(userSubject.value).toEqual(updatedUser);
     expect(syncSpy).toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
   });
@@ -94,7 +95,7 @@ describe("SessionManagerService", () => {
     await service.checkForValidSession();
 
     expect(loginStateSubject.value).toEqual(LoginState.LOGGED_IN);
-    expect(userService.getCurrentUser()).toEqual(dbUser);
+    expect(userSubject.value).toEqual(dbUser);
   });
 
   it("should trigger remote logout if remote login succeeded before", async () => {
@@ -108,16 +109,15 @@ describe("SessionManagerService", () => {
 
   it("should only reset local state if remote login did not happen", async () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
-    spyOn(TestBed.inject(LocalAuthService), "login").and.returnValue(dbUser);
-    await service.offlineLogin();
+    await service.offlineLogin(dbUser);
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
-    expect(userService.getCurrentUser()).toEqual(dbUser);
+    expect(userSubject.value).toEqual(dbUser);
 
     service.logout();
 
     expect(mockKeycloak.logout).not.toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_OUT);
-    expect(userService.getCurrentUser()).toBeUndefined();
+    expect(userSubject.value).toBeUndefined();
     expect(navigateSpy).toHaveBeenCalled();
   });
 });

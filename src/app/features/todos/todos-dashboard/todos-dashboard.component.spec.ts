@@ -6,7 +6,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import moment from "moment";
-import { UserService } from "../../../core/user/user.service";
+import { UserSubject } from "../../../core/user/user";
 
 describe("TodosDashboardComponent", () => {
   let component: TodosDashboardComponent;
@@ -36,7 +36,7 @@ describe("TodosDashboardComponent", () => {
   }));
 
   beforeEach(async () => {
-    testUser = TestBed.inject(UserService).getCurrentUser().name;
+    testUser = TestBed.inject(UserSubject).value.name;
     fixture = TestBed.createComponent(TodosDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
