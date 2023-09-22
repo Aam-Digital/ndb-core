@@ -94,7 +94,7 @@ describe("SyncService", () => {
     mockAuthService.addAuthHeader.and.callFake((headers) => {
       headers.Authorization = calls++ === 1 ? "valid" : "invalid";
     });
-    mockAuthService.autoLogin.and.resolveTo();
+    mockAuthService.login.and.resolveTo();
     const initSpy = spyOn(service["remoteDatabase"], "initRemoteDB");
     await service.startSync();
     // taking fetch function from init call
@@ -107,7 +107,7 @@ describe("SyncService", () => {
     expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
     expect(PouchDB.fetch).toHaveBeenCalledWith(url, opts);
     expect(opts.headers).toEqual({ Authorization: "valid" });
-    expect(mockAuthService.autoLogin).toHaveBeenCalled();
+    expect(mockAuthService.login).toHaveBeenCalled();
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
 
     // prevent live sync call

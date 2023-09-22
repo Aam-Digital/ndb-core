@@ -6,6 +6,9 @@ import { environment } from "../../../../../environments/environment";
 import { AuthUser } from "../auth-user";
 import { KeycloakService } from "keycloak-angular";
 
+/**
+ * Handles the remote session with keycloak
+ */
 @Injectable()
 export class KeycloakAuthService {
   /**
@@ -21,7 +24,10 @@ export class KeycloakAuthService {
     private keycloak: KeycloakService,
   ) {}
 
-  async autoLogin(): Promise<AuthUser> {
+  /**
+   * Check for a existing session or forward to the login page.
+   */
+  async login(): Promise<AuthUser> {
     if (!this.keycloakInitialised) {
       this.keycloakInitialised = true;
       const loggedIn = await this.keycloak.init({
@@ -35,6 +41,7 @@ export class KeycloakAuthService {
         shouldAddToken: ({ url }) => !url.includes("api.github.com"),
       });
       if (!loggedIn) {
+        // Forward to the keycloak login page.
         await this.keycloak.login({ redirectUri: location.href });
       }
     }
@@ -63,6 +70,10 @@ export class KeycloakAuthService {
     };
   }
 
+  /**
+   * Add the Bearer auth header to a existing header object.
+   * @param headers
+   */
   addAuthHeader(headers: any) {
     if (this.accessToken) {
       if (headers.set && typeof headers.set === "function") {
@@ -75,6 +86,9 @@ export class KeycloakAuthService {
     }
   }
 
+  /**
+   * Forward to the keycloak logout endpoint to clear the session.
+   */
   async logout() {
     return this.keycloak.logout(location.href);
   }

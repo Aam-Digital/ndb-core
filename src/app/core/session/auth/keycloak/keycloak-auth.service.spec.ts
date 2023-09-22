@@ -53,7 +53,7 @@ describe("KeycloakAuthService", () => {
   });
 
   it("should return user object after successful login check", () => {
-    return expectAsync(service.autoLogin()).toBeResolvedTo({
+    return expectAsync(service.login()).toBeResolvedTo({
       name: "test",
       roles: ["user_app"],
     });
@@ -63,7 +63,7 @@ describe("KeycloakAuthService", () => {
     const tokenWithoutUser =
       "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpcjdiVjZoOVkxazBzTGh2aFRxWThlMzgzV3NMY0V3cmFsaC1TM2NJUTVjIn0.eyJleHAiOjE2OTE1Njc4NzcsImlhdCI6MTY5MTU2NzU3NywianRpIjoiNzNiNGUzODEtMzk4My00ZjI1LWE1ZGYtOTRlOTYxYmU3MjgwIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay5hYW0tZGlnaXRhbC5uZXQvcmVhbG1zL2RldiIsInN1YiI6IjI0YWM1Yzg5LTU3OGMtNDdmOC1hYmQ5LTE1ZjRhNmQ4M2JiNSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFwcCIsInNlc3Npb25fc3RhdGUiOiIwYjVhNGQ0OS0wOTFhLTQzOGYtOTEwNi1mNmZjYmQyMDM1Y2EiLCJzY29wZSI6ImVtYWlsIiwic2lkIjoiMGI1YTRkNDktMDkxYS00MzhmLTkxMDYtZjZmY2JkMjAzNWNhIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJfY291Y2hkYi5yb2xlcyI6WyJkZWZhdWx0LXJvbGVzLWRldiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJ1c2VyX2FwcCJdfQ.EvF1wc32KwdDCUGboviRYGqKv2C3yK5B1WL_hCm-IGg58DoE_XGOchVVfbFrtphXD3yQa8uAaY58jWb6SeZQt0P92qtn5ulZOqcs3q2gQfrvxkxafMWffpCsxusVLBuGJ4B4EgoRGp_puQJIJE4p5KBwcA_u0PznFDFyLzPD18AYXevGWKLP5L8Zfgitf3Lby5AtCoOKHM7u6F_hDGSvLw-YlHEZBupqJzbpsjOs2UF1_woChMm2vbllZgIaUu9bbobcWi1mZSfNP3r9Ojk2t0NauOiKXDqtG5XyBLYMTC6wZXxsoCPGhOAwDr9LffkLDl-zvZ-0f_ujTpU8M2jzsg";
     mockKeycloak.getToken.and.resolveTo(tokenWithoutUser);
-    return expectAsync(service.autoLogin()).toBeRejected();
+    return expectAsync(service.login()).toBeRejected();
   });
 
   it("should call keycloak for a password reset", () => {
@@ -75,7 +75,7 @@ describe("KeycloakAuthService", () => {
   });
 
   it("should add the Bearer token to a request", async () => {
-    await service.autoLogin();
+    await service.login();
 
     const mapHeaders = new Map();
     service.addAuthHeader(mapHeaders);

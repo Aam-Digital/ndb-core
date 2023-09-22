@@ -53,8 +53,8 @@ describe("SessionManagerService", () => {
       "logout",
       "addAuthHeader",
     ]);
-    mockKeycloak.autoLogin.and.rejectWith();
-    mockKeycloak.autoLogin.and.resolveTo(dbUser);
+    mockKeycloak.login.and.rejectWith();
+    mockKeycloak.login.and.resolveTo(dbUser);
 
     TestBed.configureTestingModule({
       providers: [
@@ -90,11 +90,11 @@ describe("SessionManagerService", () => {
       name: TEST_USER,
       roles: dbUser.roles.concat("admin"),
     };
-    mockKeycloak.autoLogin.and.resolveTo(updatedUser);
+    mockKeycloak.login.and.resolveTo(updatedUser);
     const saveUserSpy = spyOn(TestBed.inject(LocalAuthService), "saveUser");
     const syncSpy = spyOn(TestBed.inject(SyncService), "startSync");
 
-    await service.checkForValidSession();
+    await service.remoteLogin();
 
     expect(saveUserSpy).toHaveBeenCalledWith(updatedUser);
     expect(userSubject.value).toEqual(updatedUser);
@@ -103,14 +103,14 @@ describe("SessionManagerService", () => {
   });
 
   it("should automatically login, if the session is still valid", async () => {
-    await service.checkForValidSession();
+    await service.remoteLogin();
 
     expect(loginStateSubject.value).toEqual(LoginState.LOGGED_IN);
     expect(userSubject.value).toEqual(dbUser);
   });
 
   it("should trigger remote logout if remote login succeeded before", async () => {
-    await service.checkForValidSession();
+    await service.remoteLogin();
 
     service.logout();
 
@@ -132,7 +132,7 @@ describe("SessionManagerService", () => {
   });
 
   it("should create a pouchdb with the username of the logged in user", async () => {
-    await service.checkForValidSession();
+    await service.remoteLogin();
 
     expect(initInMemorySpy).toHaveBeenCalledWith(
       TEST_USER + "-" + AppSettings.DB_NAME,
@@ -147,7 +147,7 @@ describe("SessionManagerService", () => {
       initInMemorySpy.calls.reset();
       initIndexedSpy.calls.reset();
       environment.session_type = sessionType;
-      await service.checkForValidSession();
+      await service.remoteLogin();
       if (expectedDB === "inMemory") {
         expect(initInMemorySpy).toHaveBeenCalled();
         expect(initIndexedSpy).not.toHaveBeenCalled();
@@ -165,7 +165,7 @@ describe("SessionManagerService", () => {
   it("should use current user db if database has content", async () => {
     await defineExistingDatabases(true, false);
 
-    await service.checkForValidSession();
+    await service.remoteLogin();
 
     expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
   });
@@ -173,7 +173,7 @@ describe("SessionManagerService", () => {
   it("should use and reserve a deprecated db if it exists and current db has no content", async () => {
     await defineExistingDatabases(false, true);
 
-    await service.checkForValidSession();
+    await service.remoteLogin();
 
     expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
     const dbReservation = window.localStorage.getItem(
@@ -185,7 +185,7 @@ describe("SessionManagerService", () => {
   it("should open a new database if deprecated db is already in use", async () => {
     await defineExistingDatabases(false, true, "other-user");
 
-    await service.checkForValidSession();
+    await service.remoteLogin();
 
     expect(initInMemorySpy).toHaveBeenCalledOnceWith(userDBName);
   });
@@ -193,7 +193,7 @@ describe("SessionManagerService", () => {
   it("should use the deprecated database if it is reserved by the current user", async () => {
     await defineExistingDatabases(false, true, TEST_USER);
 
-    await service.checkForValidSession();
+    await service.remoteLogin();
 
     expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
   });

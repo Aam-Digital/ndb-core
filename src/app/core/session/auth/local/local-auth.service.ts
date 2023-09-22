@@ -1,12 +1,18 @@
 import { Injectable } from "@angular/core";
 import { AuthUser } from "../auth-user";
 
+/**
+ * Manages the offline login.
+ */
 @Injectable({
   providedIn: "root",
 })
 export class LocalAuthService {
   private readonly STORED_USER_PREFIX = "USER-";
 
+  /**
+   * Get a list of users stored in the local storage.
+   */
   getStoredUsers(): AuthUser[] {
     return Object.entries(localStorage)
       .filter(([key]) => key.startsWith(this.STORED_USER_PREFIX))

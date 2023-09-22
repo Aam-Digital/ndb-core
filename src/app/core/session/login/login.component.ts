@@ -30,7 +30,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { UserSelectComponent } from "./user-select/user-select.component";
 
 /**
- * Form to allow users to enter their credentials and log in.
+ * Allows the user to login online or offline depending on the connection status
  */
 @UntilDestroy()
 @Component({

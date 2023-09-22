@@ -26,7 +26,7 @@ describe("AccountPageComponent", () => {
       "autoLogin",
     ]);
     mockAuthService.getUserinfo.and.rejectWith();
-    mockAuthService.autoLogin.and.rejectWith();
+    mockAuthService.login.and.rejectWith();
     mockAlerts = jasmine.createSpyObj(["addInfo"]);
     await TestBed.configureTestingModule({
       imports: [AccountPageComponent, MockedTestingModule.withState()],

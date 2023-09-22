@@ -31,11 +31,9 @@ import { environment } from "../../../../environments/environment";
 import { Database } from "../../database/database";
 
 /**
- * A synced session creates and manages a LocalSession and a RemoteSession
- * and handles the setup of synchronisation.
- *
- * also see
- * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
+ * This service handles the user session.
+ * This includes a online and offline login and logout.
+ * After a successful login, the database for the current user is initialised.
  */
 @Injectable()
 export class SessionManagerService {
@@ -56,19 +54,47 @@ export class SessionManagerService {
     }
   }
 
+  /**
+   * Login for a remote session and start the sync.
+   * After a user has logged in once online, this user can later also use the app offline.
+   * Should only be called if there is a internet connection
+   */
+  remoteLogin() {
+    this.loginStateSubject.next(LoginState.IN_PROGRESS);
+    return this.remoteAuthService
+      .login()
+      .then((user) => this.handleRemoteLogin(user))
+      .catch((err) => {
+        this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+        throw err;
+      });
+  }
+
+  /**
+   * Login a offline session without sync.
+   * @param user
+   */
   async offlineLogin(user: AuthUser) {
     await this.initializeDatabaseForCurrentUser(user);
     this.userSubject.next(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 
+  /**
+   * Get a list of all users that can login offline
+   */
   getOfflineUsers(): AuthUser[] {
     return this.localAuthService.getStoredUsers();
   }
 
-  logout() {
+  /**
+   * If online, clear the remote session.
+   * If offline, reset the state and forward to login page.
+   */
+  async logout() {
     if (this.remoteLoggedIn) {
-      this.remoteAuthService.logout();
+      // This will forward to the keycloak logout page
+      await this.remoteAuthService.logout();
     } else {
       this.userSubject.next(undefined);
       this.loginStateSubject.next(LoginState.LOGGED_OUT);
@@ -76,20 +102,6 @@ export class SessionManagerService {
         queryParams: { redirect_uri: this.router.routerState.snapshot.url },
       });
     }
-  }
-
-  /**
-   * Do log in automatically if there is still a valid CouchDB cookie from last login with username and password
-   */
-  checkForValidSession() {
-    this.loginStateSubject.next(LoginState.IN_PROGRESS);
-    return this.remoteAuthService
-      .autoLogin()
-      .then((user) => this.handleRemoteLogin(user))
-      .catch((err) => {
-        this.loginStateSubject.next(LoginState.LOGIN_FAILED);
-        throw err;
-      });
   }
 
   private async handleRemoteLogin(user: AuthUser) {

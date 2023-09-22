@@ -11,6 +11,9 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { filter } from "rxjs/operators";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 
+/**
+ * This service initializes the remote DB and manages the sync between the local and remote DB.
+ */
 @Injectable({
   providedIn: "root",
 })
@@ -40,6 +43,9 @@ export class SyncService {
       );
   }
 
+  /**
+   * Initializes the remote DB and starts the sync
+   */
   startSync() {
     this.initDatabases();
     this.sync()
@@ -48,6 +54,10 @@ export class SyncService {
       .finally(() => this.liveSyncDeferred());
   }
 
+  /**
+   * Create the remote DB and configure it to use correct cookies.
+   * @private
+   */
   private initDatabases() {
     this.remoteDatabase.initRemoteDB(
       `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
@@ -60,7 +70,7 @@ export class SyncService {
             // retry login if request failed with unauthorized
             initialRes.status === HttpStatusCode.Unauthorized
               ? this.authService
-                  .autoLogin()
+                  .login()
                   .then(() => this.sendRequest(remoteUrl, opts))
                   // return initial response if request failed again
                   .then((newRes) => (newRes.ok ? newRes : initialRes))
