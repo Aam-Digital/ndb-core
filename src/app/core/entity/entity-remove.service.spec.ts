@@ -1,5 +1,5 @@
-import { TestBed } from "@angular/core/testing";
-import { EntityRemoveService, RemoveResult } from "./entity-remove.service";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { EntityRemoveService } from "./entity-remove.service";
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import {
   MatSnackBar,
@@ -9,8 +9,8 @@ import {
 } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
-import { NEVER, Observable } from "rxjs";
-import { toArray } from "rxjs/operators";
+import { NEVER, Observable, Subject } from "rxjs";
+import { Router } from "@angular/router";
 
 describe("EntityRemoveService", () => {
   let service: EntityRemoveService;
@@ -18,6 +18,7 @@ describe("EntityRemoveService", () => {
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let mockSnackBarRef: jasmine.SpyObj<MatSnackBarRef<TextOnlySnackBar>>;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockRouter;
 
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
@@ -31,37 +32,30 @@ describe("EntityRemoveService", () => {
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: MatSnackBar, useValue: snackBarSpy },
+        Router,
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,
         },
       ],
     });
+    mockRouter = TestBed.inject(Router);
+    spyOn(mockRouter, "navigate");
+
     service = TestBed.inject(EntityRemoveService);
   });
 
-  it("should be created", () => {
-    expect(service).toBeTruthy();
-  });
-
-  it("emits once and closes when the user has cancelled", (done) => {
+  it("should return false when user cancels confirmation", async () => {
     mockConfirmationDialog.getConfirmation.and.resolveTo(false);
-    service
-      .remove(new Entity())
-      .pipe(toArray())
-      .subscribe({
-        next: (next) => {
-          expect(next).toEqual([RemoveResult.CANCELLED]);
-        },
-        complete: () => {
-          expect(snackBarSpy.open).not.toHaveBeenCalled();
-          expect(mockEntityMapper.remove).not.toHaveBeenCalled();
-          done();
-        },
-      });
+
+    const result = await service.remove(new Entity());
+
+    expect(result).toBe(false);
+    expect(snackBarSpy.open).not.toHaveBeenCalled();
+    expect(mockEntityMapper.remove).not.toHaveBeenCalled();
   });
 
-  it("deletes the entity and finishes if the action is never undone", (done) => {
+  it("should delete entity, show snackbar confirmation and navigate back", async () => {
     // onAction is never called
     mockSnackBarRef.onAction.and.returnValues(NEVER);
     // mock that dialog is dismissed immediately
@@ -69,42 +63,35 @@ describe("EntityRemoveService", () => {
       subscriber.next({} as MatSnackBarDismiss),
     );
     mockSnackBarRef.afterDismissed.and.returnValue(afterDismissed);
-    service
-      .remove(new Entity())
-      .pipe(toArray())
-      .subscribe({
-        next: (next) => {
-          expect(next).toEqual([RemoveResult.REMOVED]);
-        },
-        complete: () => {
-          expect(snackBarSpy.open).toHaveBeenCalled();
-          expect(mockEntityMapper.remove).toHaveBeenCalled();
-          done();
-        },
-      });
+
+    const result = await service.remove(new Entity(), true);
+
+    expect(result).toBe(true);
+    expect(snackBarSpy.open).toHaveBeenCalled();
+    expect(mockEntityMapper.remove).toHaveBeenCalled();
+    expect(mockRouter.navigate).toHaveBeenCalled();
   });
 
-  it("emits twice when an entity was deleted and the user pressed undo", (done) => {
-    // Mock a snackbar where 'undo' is immediately pressed
-    const onSnackbarAction = new Observable<void>((subscriber) =>
-      subscriber.next(),
-    );
-    mockSnackBarRef.onAction.and.returnValue(onSnackbarAction);
-    mockSnackBarRef.afterDismissed.and.returnValue(NEVER);
-    mockEntityMapper.save.and.resolveTo();
+  it("should re-save entity and navigate back to entity on undo", fakeAsync(() => {
     const entity = new Entity();
-    service
-      .remove(entity)
-      .pipe(toArray())
-      .subscribe({
-        next: (next) => {
-          expect(next).toEqual([RemoveResult.REMOVED, RemoveResult.UNDONE]);
-        },
-        complete: () => {
-          expect(mockEntityMapper.remove).toHaveBeenCalled();
-          expect(mockEntityMapper.save).toHaveBeenCalledWith(entity, true);
-          done();
-        },
-      });
-  });
+
+    // Mock a snackbar where 'undo' is immediately pressed
+    const onSnackbarAction = new Subject<void>();
+    mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
+    mockSnackBarRef.afterDismissed.and.returnValue(NEVER);
+
+    mockEntityMapper.save.and.resolveTo();
+
+    service.remove(entity, true);
+    tick();
+
+    mockRouter.navigate.calls.reset();
+    onSnackbarAction.next();
+    onSnackbarAction.complete();
+    tick();
+
+    expect(mockEntityMapper.remove).toHaveBeenCalled();
+    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity, true);
+    expect(mockRouter.navigate).toHaveBeenCalled();
+  }));
 });

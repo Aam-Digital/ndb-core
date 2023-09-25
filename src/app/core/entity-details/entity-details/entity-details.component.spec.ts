@@ -12,10 +12,7 @@ import { EntityDetailsConfig, PanelConfig } from "../EntityDetailsConfig";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../entity/entity-remove.service";
+import { EntityRemoveService } from "../../entity/entity-remove.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 
@@ -127,32 +124,6 @@ describe("EntityDetailsComponent", () => {
     expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
     expect(component.entity).toBe(testChild);
     expect(component.isLoading).toBeFalse();
-  }));
-
-  it("should navigate back when deleting an entity", fakeAsync(() => {
-    const mockRemoveResult = of(RemoveResult.REMOVED);
-    mockEntityRemoveService.remove.and.returnValue(mockRemoveResult);
-    component.entity = new Child("Test-Child");
-    // @ts-ignore
-    const routerNavigateSpy = spyOn(component.router, "navigate");
-
-    component.removeEntity();
-    tick();
-
-    expect(routerNavigateSpy).toHaveBeenCalled();
-  }));
-
-  it("should route back when deleting is undone", fakeAsync(() => {
-    const mockResult = of(RemoveResult.REMOVED, RemoveResult.UNDONE);
-    mockEntityRemoveService.remove.and.returnValue(mockResult);
-    component.entity = new Child("Test-Child");
-    const router = fixture.debugElement.injector.get(Router);
-    spyOn(router, "navigate");
-
-    component.removeEntity();
-    tick();
-
-    expect(router.navigate).toHaveBeenCalled();
   }));
 
   it("should call router when user is not permitted to create entities", () => {

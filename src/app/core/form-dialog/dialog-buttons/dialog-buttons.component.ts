@@ -7,10 +7,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 import { Entity } from "../../entity/model/entity";
 import { FormGroup } from "@angular/forms";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../entity/entity-remove.service";
+import { EntityRemoveService } from "../../entity/entity-remove.service";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { AlertService } from "../../alerts/alert.service";
 import { MatMenuModule } from "@angular/material/menu";
@@ -100,11 +97,10 @@ export class DialogButtonsComponent implements OnInit {
       });
   }
 
-  delete() {
-    this.entityRemoveService.remove(this.entity).subscribe((result) => {
-      if (result === RemoveResult.REMOVED) {
-        this.dialog.close();
-      }
-    });
+  async delete() {
+    const result = await this.entityRemoveService.remove(this.entity);
+    if (result) {
+      this.dialog.close();
+    }
   }
 }

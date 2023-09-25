@@ -8,13 +8,9 @@ import {
 } from "../EntityDetailsConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { getUrlWithoutParams } from "../../../utils/utils";
 import { RouteData } from "../../config/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../entity/entity-remove.service";
+import { EntityRemoveService } from "../../entity/entity-remove.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -75,7 +71,7 @@ export class EntityDetailsComponent {
     private route: ActivatedRoute,
     private router: Router,
     private analyticsService: AnalyticsService,
-    private entityRemoveService: EntityRemoveService,
+    public entityRemoveService: EntityRemoveService,
     private ability: EntityAbility,
     private entities: EntityRegistry,
     private logger: LoggingService,
@@ -150,20 +146,6 @@ export class EntityDetailsComponent {
       panelConfig.config = c.config;
     }
     return panelConfig;
-  }
-
-  removeEntity() {
-    const currentUrl = getUrlWithoutParams(this.router);
-    const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
-    this.entityRemoveService.remove(this.entity).subscribe(async (result) => {
-      switch (result) {
-        case RemoveResult.REMOVED:
-          await this.router.navigate([parentUrl]);
-          break;
-        case RemoveResult.UNDONE:
-          await this.router.navigate([currentUrl]);
-      }
-    });
   }
 
   trackTabChanged(index: number) {
