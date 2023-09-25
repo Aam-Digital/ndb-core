@@ -37,7 +37,8 @@ import { Database } from "../../database/database";
  */
 @Injectable()
 export class SessionManagerService {
-  static readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
+  readonly DEPRECATED_DB_KEY = "RESERVED_FOR";
+  readonly RESET_REMOTE_SESSION_KEY = "RESET_REMOTE";
   private pouchDatabase: PouchDatabase;
   private remoteLoggedIn = false;
   constructor(
@@ -93,15 +94,18 @@ export class SessionManagerService {
    */
   async logout() {
     if (this.remoteLoggedIn) {
-      // This will forward to the keycloak logout page
-      await this.remoteAuthService.logout();
-    } else {
-      this.userSubject.next(undefined);
-      this.loginStateSubject.next(LoginState.LOGGED_OUT);
-      this.router.navigate(["/login"], {
-        queryParams: { redirect_uri: this.router.routerState.snapshot.url },
-      });
+      if (navigator.onLine) {
+        // This will forward to the keycloak logout page
+        await this.remoteAuthService.logout();
+      } else {
+        localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, "1");
+      }
     }
+    this.userSubject.next(undefined);
+    this.loginStateSubject.next(LoginState.LOGGED_OUT);
+    this.router.navigate(["/login"], {
+      queryParams: { redirect_uri: this.router.routerState.snapshot.url },
+    });
   }
 
   private async handleRemoteLogin(user: AuthUser) {
@@ -125,16 +129,11 @@ export class SessionManagerService {
     }
 
     this.initDatabase(AppSettings.DB_NAME, tmpDB);
-    const dbFallback = window.localStorage.getItem(
-      SessionManagerService.DEPRECATED_DB_KEY,
-    );
+    const dbFallback = window.localStorage.getItem(this.DEPRECATED_DB_KEY);
     const dbAvailable = !dbFallback || dbFallback === user.name;
     if (dbAvailable && !(await tmpDB.isEmpty())) {
       // Old database is available and can be used by the current user
-      window.localStorage.setItem(
-        SessionManagerService.DEPRECATED_DB_KEY,
-        user.name,
-      );
+      window.localStorage.setItem(this.DEPRECATED_DB_KEY, user.name);
       this.initDatabase(AppSettings.DB_NAME);
       return;
     }

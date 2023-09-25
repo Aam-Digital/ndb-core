@@ -79,7 +79,7 @@ describe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    window.localStorage.removeItem(SessionManagerService.DEPRECATED_DB_KEY);
+    window.localStorage.removeItem(service.DEPRECATED_DB_KEY);
     const tmpDB = new PouchDatabase(undefined);
     await tmpDB.initInMemoryDB(userDBName).destroy();
     await tmpDB.initInMemoryDB(deprecatedDBName).destroy();
@@ -131,6 +131,10 @@ describe("SessionManagerService", () => {
     expect(navigateSpy).toHaveBeenCalled();
   });
 
+  it("should store information if remote session needs to be reset", () => {
+    navigator.onLine = false;
+  });
+
   it("should create a pouchdb with the username of the logged in user", async () => {
     await service.remoteLogin();
 
@@ -177,7 +181,7 @@ describe("SessionManagerService", () => {
 
     expect(initInMemorySpy).toHaveBeenCalledOnceWith(deprecatedDBName);
     const dbReservation = window.localStorage.getItem(
-      SessionManagerService.DEPRECATED_DB_KEY,
+      service.DEPRECATED_DB_KEY,
     );
     expect(dbReservation).toBe(TEST_USER);
   });
@@ -204,10 +208,7 @@ describe("SessionManagerService", () => {
     reserved?: string,
   ) {
     if (reserved) {
-      window.localStorage.setItem(
-        SessionManagerService.DEPRECATED_DB_KEY,
-        reserved,
-      );
+      window.localStorage.setItem(service.DEPRECATED_DB_KEY, reserved);
     }
     const tmpDB = new PouchDatabase(undefined);
     if (initUserDB) {
