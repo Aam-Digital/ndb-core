@@ -132,4 +132,22 @@ export class EntityRemoveService {
       }
     });
   }
+
+  /**
+   * Anonymize the given entity,
+   * removing properties that are not explicitly configured in the schema to be retained.
+   *
+   * This triggers UX interactions like confirmation request dialog and snackbar message as well.
+   *
+   * @param entity
+   */
+  async anonymize<E extends Entity>(entity: E) {
+    for (const [key, schema] of entity.getSchema().entries()) {
+      if (schema.anonymize !== "retain") {
+        delete entity[key];
+      }
+    }
+
+    await this.entityMapper.save(entity);
+  }
 }

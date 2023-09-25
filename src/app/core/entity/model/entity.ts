@@ -173,14 +173,15 @@ export class Entity {
    * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`
    * @example "Entity:123"
    */
-  @DatabaseField() private _id: string;
+  @DatabaseField({ anonymize: "retain" }) private _id: string;
 
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
-  @DatabaseField() _rev: string;
+  @DatabaseField({ anonymize: "retain" }) _rev: string;
 
   @DatabaseField({
     dataType: "schema-embed",
     additional: UpdateMetadata,
+    // TODO: anonymize retain?
   })
   created: UpdateMetadata;
 
