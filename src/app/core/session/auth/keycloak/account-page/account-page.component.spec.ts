@@ -55,6 +55,14 @@ describe("AccountPageComponent", () => {
     expect(component.email.value).toBe(email);
   }));
 
+  it("should disabled the email form if the disabled flag is set", () => {
+    component.disabled = true;
+
+    component.ngOnInit();
+
+    expect(component.email.disabled).toBe(true);
+  });
+
   it("should not save email if form is invalid", () => {
     component.email.setValue("invalid-email");
     expect(component.email).not.toBeValidForm();

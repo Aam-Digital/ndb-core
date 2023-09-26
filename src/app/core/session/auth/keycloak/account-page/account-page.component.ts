@@ -31,6 +31,9 @@ export class AccountPageComponent implements OnInit {
   ) {}
 
   ngOnInit() {
+    if (this.disabled) {
+      this.email.disable();
+    }
     this.authService
       .getUserinfo()
       .then((res) => this.email.setValue(res.email))
@@ -42,6 +45,7 @@ export class AccountPageComponent implements OnInit {
       return;
     }
 
+    // TODO can we use keycloak for this?
     this.authService.setEmail(this.email.value).subscribe({
       next: () =>
         this.alertService.addInfo(
