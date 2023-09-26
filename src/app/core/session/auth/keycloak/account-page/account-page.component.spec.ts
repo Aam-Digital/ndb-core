@@ -23,7 +23,7 @@ describe("AccountPageComponent", () => {
       "changePassword",
       "getUserinfo",
       "setEmail",
-      "autoLogin",
+      "login",
     ]);
     mockAuthService.getUserinfo.and.rejectWith();
     mockAuthService.login.and.rejectWith();

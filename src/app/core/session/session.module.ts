@@ -46,7 +46,12 @@ import { environment } from "../../../environments/environment";
 export class SessionModule {
   constructor(sessionManager: SessionManagerService) {
     if (navigator.onLine && environment.session_type === SessionType.synced) {
-      sessionManager.remoteLogin();
+      this.initialiseRemoteSession(sessionManager);
     }
+  }
+
+  private async initialiseRemoteSession(sessionManager: SessionManagerService) {
+    await sessionManager.clearRemoteSessionIfNecessary();
+    await sessionManager.remoteLogin();
   }
 }

@@ -34,12 +34,14 @@ import { Database } from "../../database/database";
 import { Router } from "@angular/router";
 import { UserSubject } from "../../user/user";
 import { AppSettings } from "../../app-settings";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
   let loginStateSubject: LoginStateSubject;
   let userSubject: UserSubject;
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
+  let mockNavigator: { onLine: boolean };
   let dbUser: AuthUser;
   const userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
   const deprecatedDBName = AppSettings.DB_NAME;
@@ -48,13 +50,9 @@ describe("SessionManagerService", () => {
 
   beforeEach(waitForAsync(() => {
     dbUser = { name: TEST_USER, roles: ["user_app"] };
-    mockKeycloak = jasmine.createSpyObj([
-      "autoLogin",
-      "logout",
-      "addAuthHeader",
-    ]);
-    mockKeycloak.login.and.rejectWith();
+    mockKeycloak = jasmine.createSpyObj(["login", "logout", "addAuthHeader"]);
     mockKeycloak.login.and.resolveTo(dbUser);
+    mockNavigator = { onLine: true };
 
     TestBed.configureTestingModule({
       providers: [
@@ -64,6 +62,14 @@ describe("SessionManagerService", () => {
         UserSubject,
         { provide: Database, useClass: PouchDatabase },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
+        { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
+        {
+          provide: Router,
+          useValue: {
+            navigate: () => Promise.resolve(),
+            routerState: { snapshot: {} },
+          },
+        },
       ],
     });
     service = TestBed.inject(SessionManagerService);
@@ -79,7 +85,6 @@ describe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    window.localStorage.removeItem(service.DEPRECATED_DB_KEY);
     const tmpDB = new PouchDatabase(undefined);
     await tmpDB.initInMemoryDB(userDBName).destroy();
     await tmpDB.initInMemoryDB(deprecatedDBName).destroy();
@@ -131,8 +136,23 @@ describe("SessionManagerService", () => {
     expect(navigateSpy).toHaveBeenCalled();
   });
 
-  it("should store information if remote session needs to be reset", () => {
-    navigator.onLine = false;
+  it("should store information if remote session needs to be reset", async () => {
+    await service.remoteLogin();
+    mockNavigator.onLine = false;
+
+    await service.logout();
+
+    expect(
+      localStorage.getItem(service.RESET_REMOTE_SESSION_KEY),
+    ).toBeDefined();
+  });
+
+  it("should trigger a remote logout if reset flag has been set", async () => {
+    localStorage.setItem(service.RESET_REMOTE_SESSION_KEY, "true");
+
+    service.clearRemoteSessionIfNecessary();
+
+    expect(mockKeycloak.logout).toHaveBeenCalled();
   });
 
   it("should create a pouchdb with the username of the logged in user", async () => {

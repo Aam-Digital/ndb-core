@@ -60,6 +60,7 @@ describe("DemoDataInitializerService", () => {
   });
 
   afterEach(async () => {
+    localStorage.clear();
     const tmpDB = new PouchDatabase(undefined);
     await tmpDB.initInMemoryDB(demoUserDBName).destroy();
     await tmpDB.initInMemoryDB(adminDBName).destroy();

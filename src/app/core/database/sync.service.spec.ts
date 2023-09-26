@@ -15,7 +15,7 @@ describe("SyncService", () => {
   let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
 
   beforeEach(() => {
-    mockAuthService = jasmine.createSpyObj(["autoLogin", "addAuthHeader"]);
+    mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
     TestBed.configureTestingModule({
       providers: [
         { provide: KeycloakAuthService, useValue: mockAuthService },

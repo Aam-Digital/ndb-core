@@ -63,7 +63,11 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "./core/entity/database-entity.decorator";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "./utils/di-tokens";
+import {
+  LOCATION_TOKEN,
+  NAVIGATOR_TOKEN,
+  WINDOW_TOKEN,
+} from "./utils/di-tokens";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { NotesModule } from "./child-dev-project/notes/notes.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
@@ -147,6 +151,7 @@ import { LoginStateSubject } from "./core/session/session-type";
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: WINDOW_TOKEN, useValue: window },
     { provide: LOCATION_TOKEN, useValue: window.location },
+    { provide: NAVIGATOR_TOKEN, useValue: navigator },
     {
       provide: LOCALE_ID,
       useValue:

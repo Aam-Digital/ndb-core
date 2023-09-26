@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 
 import { AuthUser } from "../auth/auth-user";
 import { SyncService } from "../../database/sync.service";
@@ -29,6 +29,7 @@ import { AppSettings } from "../../app-settings";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { Database } from "../../database/database";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
 /**
  * This service handles the user session.
@@ -49,6 +50,7 @@ export class SessionManagerService {
     private loginStateSubject: LoginStateSubject,
     private router: Router,
     private database: Database,
+    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
   ) {
     if (database instanceof PouchDatabase) {
       this.pouchDatabase = database;
@@ -94,7 +96,7 @@ export class SessionManagerService {
    */
   async logout() {
     if (this.remoteLoggedIn) {
-      if (navigator.onLine) {
+      if (this.navigator.onLine) {
         // This will forward to the keycloak logout page
         await this.remoteAuthService.logout();
       } else {
@@ -103,9 +105,16 @@ export class SessionManagerService {
     }
     this.userSubject.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
-    this.router.navigate(["/login"], {
+    return this.router.navigate(["/login"], {
       queryParams: { redirect_uri: this.router.routerState.snapshot.url },
     });
+  }
+
+  clearRemoteSessionIfNecessary() {
+    if (localStorage.getItem(this.RESET_REMOTE_SESSION_KEY)) {
+      localStorage.removeItem(this.RESET_REMOTE_SESSION_KEY);
+      return this.remoteAuthService.logout();
+    }
   }
 
   private async handleRemoteLogin(user: AuthUser) {
