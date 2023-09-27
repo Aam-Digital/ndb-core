@@ -75,4 +75,8 @@ export class LoginComponent {
         }
       });
   }
+
+  tryLogin() {
+    return this.sessionManager.remoteLogin();
+  }
 }

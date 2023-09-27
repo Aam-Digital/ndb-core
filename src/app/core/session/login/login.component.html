@@ -29,6 +29,18 @@
     </div>
     <p>
       <button
+        *ngIf="!loginInProgress"
+        mat-stroked-button
+        type="button"
+        (click)="tryLogin()"
+        i18n="Login button"
+        style="width: 100%; margin-top: 20px;"
+      >
+        Retry remote login
+      </button>
+    </p>
+    <p>
+      <button
         *ngIf="offlineUsers.length > 0"
         mat-raised-button
         type="button"
