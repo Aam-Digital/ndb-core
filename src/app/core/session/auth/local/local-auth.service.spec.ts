@@ -15,6 +15,7 @@ describe("LocalAuthService", () => {
   });
 
   it("should return saved users", () => {
+    localStorage.clear();
     testUser = {
       name: TEST_USER,
       roles: ["user_app"],
