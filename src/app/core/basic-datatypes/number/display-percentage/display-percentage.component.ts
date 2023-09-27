@@ -1,18 +1,21 @@
 import { Component, HostBinding, OnInit } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { CommonModule } from "@angular/common";
 
 @DynamicComponent("DisplayPercentage")
 @Component({
   selector: "app-display-percentage",
-  template: "{{ value ? value + '%' : '-' }}",
+  template: "{{ value ? (value | number : numberFormat) + '%' : '-' }}",
   standalone: true,
+  imports: [CommonModule],
 })
 export class DisplayPercentageComponent
-  extends ViewDirective<number>
+  extends ViewDirective<number, { decimalPlaces?: number }>
   implements OnInit
 {
   @HostBinding("style") style = {};
+  numberFormat: string;
 
   /**
    * returns a css-compatible color value from green to red using the given
@@ -32,6 +35,11 @@ export class DisplayPercentageComponent
   }
 
   ngOnInit() {
+    this.numberFormat =
+      "1." +
+      (this.config && this.config.decimalPlaces
+        ? this.config.decimalPlaces + "-" + this.config.decimalPlaces
+        : "0-0");
     this.style = {
       "background-color": DisplayPercentageComponent.fromPercent(this.value),
       "border-radius": "5%",

@@ -18,6 +18,7 @@ import { EntityArrayDatatype } from "./basic-datatypes/entity-array/entity-array
 import { NumberDatatype } from "./basic-datatypes/number/number.datatype";
 import { Entity } from "./entity/model/entity";
 import { TimePeriod } from "./entity-details/related-time-period-entities/time-period";
+import { CommonModule } from "@angular/common";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -39,6 +40,7 @@ import { TimePeriod } from "./entity-details/related-time-period-entities/time-p
     { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
     { provide: DefaultDatatype, useClass: EntityArrayDatatype, multi: true },
   ],
+  imports: [CommonModule],
 })
 export class CoreModule {
   static databaseEntities = [Entity, User, Config, TimePeriod];
