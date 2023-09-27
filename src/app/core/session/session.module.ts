@@ -51,7 +51,7 @@ export class SessionModule {
   }
 
   private async initialiseRemoteSession(sessionManager: SessionManagerService) {
-    await sessionManager.clearRemoteSessionIfNecessary();
     await sessionManager.remoteLogin();
+    await sessionManager.clearRemoteSessionIfNecessary();
   }
 }
