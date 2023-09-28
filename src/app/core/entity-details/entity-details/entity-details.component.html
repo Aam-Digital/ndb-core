@@ -41,7 +41,7 @@
 <mat-menu #additional>
   <button
     mat-menu-item
-    (click)="removeEntity()"
+    (click)="entityRemoveService.remove(entity, true)"
     *appDisabledEntityOperation="{
       entity: entity,
       operation: 'delete'

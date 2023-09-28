@@ -110,7 +110,7 @@
                 entity: rec.record,
                 operation: 'delete'
               }"
-              (click)="delete(rec)"
+              (click)="entityRemoveService.remove(rec.record)"
               angulartics2On="click"
               [angularticsCategory]="rec?.record?.getType()"
               angularticsAction="subrecord_inlineedit_delete"
