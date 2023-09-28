@@ -3,29 +3,8 @@ import { ConfirmationDialogService } from "../common-components/confirmation-dia
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Entity } from "./model/entity";
-import { race } from "rxjs";
-import { map } from "rxjs/operators";
 import { getUrlWithoutParams } from "../../utils/utils";
 import { Router } from "@angular/router";
-
-/**
- * All possible results when removing an entity
- */
-export enum RemoveResult {
-  /**
-   * The user cancelled the action
-   */
-  CANCELLED,
-  /**
-   * The entity was successfully removed
-   */
-  REMOVED,
-  /**
-   * The user has undone the action and the entity
-   * now exists again
-   */
-  UNDONE,
-}
 
 /**
  * Additional options that can be (partly) specified
@@ -79,7 +58,7 @@ export class EntityRemoveService {
 
     await this.entityMapper.remove(entity);
 
-    let currentUrl;
+    let currentUrl: string;
     if (navigate) {
       currentUrl = getUrlWithoutParams(this.router);
       const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
@@ -120,15 +99,10 @@ export class EntityRemoveService {
         duration: 8000,
       },
     );
-    race(
-      snackBarRef.onAction().pipe(map(() => true)),
-      snackBarRef.afterDismissed().pipe(map(() => false)),
-    ).subscribe(async (next) => {
-      if (next) {
-        await this.entityMapper.save(entity, true);
-        if (currentUrl) {
-          await this.router.navigate([currentUrl]);
-        }
+    snackBarRef.onAction().subscribe(async () => {
+      await this.entityMapper.save(entity, true);
+      if (currentUrl) {
+        await this.router.navigate([currentUrl]);
       }
     });
   }

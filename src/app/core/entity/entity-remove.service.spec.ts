@@ -3,13 +3,12 @@ import { EntityRemoveService } from "./entity-remove.service";
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import {
   MatSnackBar,
-  MatSnackBarDismiss,
   MatSnackBarRef,
   TextOnlySnackBar,
 } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
-import { NEVER, Observable, Subject } from "rxjs";
+import { NEVER, Subject } from "rxjs";
 import { Router } from "@angular/router";
 
 describe("EntityRemoveService", () => {
@@ -23,7 +22,7 @@ describe("EntityRemoveService", () => {
   beforeEach(() => {
     mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
     snackBarSpy = jasmine.createSpyObj(["open"]);
-    mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
+    mockSnackBarRef = jasmine.createSpyObj(["onAction"]);
     mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
     mockConfirmationDialog.getConfirmation.and.resolveTo(true);
     snackBarSpy.open.and.returnValue(mockSnackBarRef);
@@ -58,11 +57,6 @@ describe("EntityRemoveService", () => {
   it("should delete entity, show snackbar confirmation and navigate back", async () => {
     // onAction is never called
     mockSnackBarRef.onAction.and.returnValues(NEVER);
-    // mock that dialog is dismissed immediately
-    const afterDismissed = new Observable<MatSnackBarDismiss>((subscriber) =>
-      subscriber.next({} as MatSnackBarDismiss),
-    );
-    mockSnackBarRef.afterDismissed.and.returnValue(afterDismissed);
 
     const result = await service.remove(new Entity(), true);
 
@@ -78,7 +72,6 @@ describe("EntityRemoveService", () => {
     // Mock a snackbar where 'undo' is immediately pressed
     const onSnackbarAction = new Subject<void>();
     mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
-    mockSnackBarRef.afterDismissed.and.returnValue(NEVER);
 
     mockEntityMapper.save.and.resolveTo();
 
