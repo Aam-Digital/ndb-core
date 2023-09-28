@@ -61,7 +61,9 @@ export class UserSecurityComponent implements OnInit {
     private http: HttpClient,
   ) {
     if (
-      userSubject.value.roles.includes(KeycloakAuthService.ACCOUNT_MANAGER_ROLE)
+      userSubject.value?.roles.includes(
+        KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
+      )
     ) {
       this.userIsPermitted = true;
     }
