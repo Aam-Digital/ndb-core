@@ -28,3 +28,13 @@ Primary.args = {
     decimalPlaces: 3,
   },
 };
+
+export const Zero = Template.bind({});
+Zero.args = {
+  entity: { allDays: 110, presentDays: 0 },
+  config: {
+    actual: "presentDays",
+    total: "allDays",
+    decimalPlaces: 3,
+  },
+};
