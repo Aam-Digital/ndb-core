@@ -5,7 +5,7 @@ import { DynamicComponent } from "../../../config/dynamic-components/dynamic-com
 @DynamicComponent("DisplayUnit")
 @Component({
   selector: "app-display-unit",
-  template: '{{ value ? value + " " + config : "" }}',
+  template: '{{ value !== undefined ? value + " " + config : "" }}',
   standalone: true,
 })
 export class DisplayUnitComponent extends ViewDirective<string, string> {}
