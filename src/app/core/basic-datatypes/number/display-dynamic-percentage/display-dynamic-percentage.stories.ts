@@ -1,10 +1,10 @@
-import { Meta, StoryFn, applicationConfig } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { DisplayDynamicPercentageComponent } from "./display-dynamic-percentage.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayDynamicPercentage",
+  title: "Core/Entities/Properties/number/DisplayDynamicPercentage",
   component: DisplayDynamicPercentageComponent,
   decorators: [
     applicationConfig({
