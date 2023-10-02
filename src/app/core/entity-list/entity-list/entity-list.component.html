@@ -128,6 +128,7 @@
     [isLoading]="isLoading"
     [filter]="filterObj"
     [defaultSort]="listConfig?.defaultSort"
+    (sendDataBack)="receiveDataFromSubrecord($event)"
     [showInactive]="showInactive"
   ></app-entity-subrecord>
 </ng-template>

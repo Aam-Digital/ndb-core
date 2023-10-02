@@ -86,6 +86,7 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit
 {
   @Input() allEntities: T[];
+  @Input() subrecordData: any; 
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
 
@@ -300,5 +301,10 @@ export class EntityListComponent<T extends Entity>
       this.router.navigate(["new"], { relativeTo: this.activatedRoute });
     }
     this.addNewClick.emit();
+  }
+
+  receiveDataFromSubrecord(filterData: any[]) {
+    // Handle the data received from EntitySubrecordComponent
+    console.log('Received data from EntitySubrecordComponent:', filterData);
   }
 }

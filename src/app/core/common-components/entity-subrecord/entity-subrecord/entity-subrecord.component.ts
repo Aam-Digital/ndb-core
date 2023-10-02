@@ -94,7 +94,7 @@ export interface TableRow<T extends Entity> {
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
-
+  @Output() sendDataBack: EventEmitter<any[]> = new EventEmitter<any[]>()
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
   @Input() showInactive = false;
@@ -192,6 +192,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
+      this.sendRecordsBack(this.recordsDataSource.data)
+      
   }
 
   private entityConstructorIsAvailable(): boolean {
@@ -265,7 +267,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("records")) {
       this.sortDefault();
     }
-
+  
     this.listenToEntityUpdates();
   }
 
@@ -281,6 +283,11 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         this.loggingService.warn(`Error creating form definitions: ${err}`);
       }
     }
+  }
+
+   sendRecordsBack( filterData: any) {
+    console.log("data",filterData)
+    this.sendDataBack.emit(filterData);
   }
 
   private sortDefault() {
