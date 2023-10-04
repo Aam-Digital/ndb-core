@@ -25,6 +25,12 @@ Basic.args = {
   config: "kg",
 };
 
+export const Zero = Template.bind({});
+Zero.args = {
+  value: 0,
+  config: "kg",
+};
+
 export const WithoutValue = Template.bind({});
 WithoutValue.args = {
   value: undefined,
