@@ -11,14 +11,13 @@ import { SiteSettings } from "./site-settings";
 import { of } from "rxjs";
 import { Title } from "@angular/platform-browser";
 import { availableLocales } from "../language/languages";
-import { CoreModule } from "../core.module";
-import { ComponentRegistry } from "../../dynamic-components";
-import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { FileModule } from "../../features/file/file.module";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { LoggingService } from "../logging/logging.service";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { CoreTestingModule } from "../../utils/core-testing.module";
+import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
@@ -29,9 +28,8 @@ describe("SiteSettingsService", () => {
     entityMapper = mockEntityMapper();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
-      imports: [CoreModule, ConfigurableEnumModule, FileModule],
+      imports: [CoreTestingModule, ConfigurableEnumModule, FileModule],
       providers: [
-        ComponentRegistry,
         { provide: FileService, useValue: mockFileService },
         { provide: EntityMapperService, useValue: entityMapper },
         EntityAbility,
@@ -47,6 +45,7 @@ describe("SiteSettingsService", () => {
   it("should only publish changes if property has changed", () => {
     const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
     const settings = new SiteSettings();
+    titleSpy.calls.reset();
 
     entityMapper.add(settings);
 

@@ -181,13 +181,14 @@ export class Entity {
   @DatabaseField({
     dataType: "schema-embed",
     additional: UpdateMetadata,
-    // TODO: anonymize retain?
+    anonymize: "retain",
   })
   created: UpdateMetadata;
 
   @DatabaseField({
     dataType: "schema-embed",
     additional: UpdateMetadata,
+    anonymize: "retain",
   })
   updated: UpdateMetadata;
 
@@ -196,6 +197,12 @@ export class Entity {
     description: $localize`:Description of checkbox:Ticking this box will archive the record. No data will be lost but the record will be hidden.`,
   })
   inactive: boolean;
+
+  /**
+   * Whether this entity has been anonymized and therefore cannot be re-activated.
+   */
+  @DatabaseField()
+  anonymized: boolean;
 
   /** whether this entity object is newly created and not yet saved to database */
   get isNew(): boolean {

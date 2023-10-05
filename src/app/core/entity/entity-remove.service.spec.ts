@@ -17,8 +17,9 @@ import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { CoreModule } from "../core.module";
 import { ComponentRegistry } from "../../dynamic-components";
+import { UpdateMetadata } from "./model/update-metadata";
 
-fdescribe("EntityRemoveService", () => {
+describe("EntityRemoveService", () => {
   let service: EntityRemoveService;
   let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
@@ -114,8 +115,12 @@ fdescribe("EntityRemoveService", () => {
     @DatabaseField({ anonymize: "retain" })
     retainedField: string;
 
-    @DatabaseField({ anonymize: "retain-anonymized", dataType: "date-only" })
-    retainAnonymizedDate: Date;
+    @DatabaseField({
+      anonymize: "retain-anonymized",
+      dataType: "array",
+      innerDataType: "date-only",
+    })
+    retainAnonymizedDates: Date[];
 
     @DatabaseField({ anonymize: "retain-anonymized", dataType: "entity-array" })
     referencesToRetainAnonymized: string[];
@@ -129,6 +134,7 @@ fdescribe("EntityRemoveService", () => {
     entity: AnonymizableEntity,
     entitiesBefore: any[],
     expectedEntitiesAfter: any[],
+    checkAllBaseProperties: boolean = false,
   ) {
     const entityMapper = mockEntityMapper(entitiesBefore);
 
@@ -138,6 +144,14 @@ fdescribe("EntityRemoveService", () => {
     await service.anonymize(entity);
 
     const actualEntitiesAfter = entityMapper.getAllData();
+
+    if (!checkAllBaseProperties) {
+      actualEntitiesAfter.forEach((e) => {
+        delete e.inactive;
+        delete e.anonymized;
+      });
+    }
+
     expectEntitiesToMatch(actualEntitiesAfter, expectedEntitiesAfter, true);
   }
 
@@ -160,42 +174,90 @@ fdescribe("EntityRemoveService", () => {
     await testAnonymization(entity, [entity], [AnonymizableEntity.create({})]);
   });
 
-  it("should anonymize and remove day and month from anonymized date", async () => {
-    const entity = new AnonymizableEntity();
-    entity.retainAnonymizedDate = new Date("2023-09-25");
+  it("should anonymize and retain created and updated", async () => {
+    const entityProperties = {
+      created: new UpdateMetadata("CREATOR", new Date("2020-01-01")),
+      updated: new UpdateMetadata("UPDATER", new Date("2020-01-02")),
+    };
+    const entity = AnonymizableEntity.create({
+      defaultField: "test",
+      ...entityProperties,
+    });
 
     await testAnonymization(
       entity,
       [entity],
       [
         AnonymizableEntity.create({
-          retainAnonymizedDate: new Date("2023-01-01"),
+          inactive: true,
+          anonymized: true,
+          ...entityProperties,
+        }),
+      ],
+      true,
+    );
+  });
+
+  it("should mark anonymized entities as inactive", async () => {
+    const entity = new AnonymizableEntity();
+    entity.defaultField = "test";
+
+    await testAnonymization(
+      entity,
+      [entity],
+      [AnonymizableEntity.create({ inactive: true, anonymized: true })],
+      true,
+    );
+  });
+
+  it("should anonymize array values recursively and use datatype implementation for 'retain-anonymized", async () => {
+    const entity = new AnonymizableEntity();
+    entity.retainAnonymizedDates = [
+      new Date("2023-09-25"),
+      new Date("2023-10-04"),
+    ];
+
+    await testAnonymization(
+      entity,
+      [entity],
+      [
+        AnonymizableEntity.create({
+          retainAnonymizedDates: [
+            new Date("2023-07-01"),
+            new Date("2023-07-01"),
+          ],
         }),
       ],
     );
   });
 
   //
-  // Anonymizing related entities
+  // Anonymizing referenced & related entities
   //
 
-  it("should anonymize and trigger a cascading anonymization for 'retain-anonymized' entity references", async () => {
+  // for direct references (e.g. x.referencesToRetainAnonymized --> recursively calls anonymize on referenced entities)
+  //    see EntityDatatype & EntityArrayDatatype for unit tests
+
+  xit("should anonymize cascadingly entities that reference the entity being anonymized", async () => {
+    // TODO: cascading anonymization - see https://github.com/Aam-Digital/ndb-core/issues/220
+
+    const entity = new AnonymizableEntity();
+    entity.retainedField = "entity being anonymized";
+
     const ref1 = new AnonymizableEntity("ref-1");
     ref1.defaultField = "test-1";
     ref1.retainedField = "test-1";
-    const ref2 = new AnonymizableEntity("ref-2");
-    ref2.defaultField = "test-2";
-    ref2.retainedField = "test-2";
-    const entity = new AnonymizableEntity();
-    entity.referencesToRetainAnonymized = [ref1.getId(), ref2.getId()];
+    ref1.referencesToRetainAnonymized = [entity.getId()];
 
     await testAnonymization(
       entity,
-      [entity, ref1, ref2],
+      [entity, ref1],
       [
         entity,
-        AnonymizableEntity.create({ retainedField: "test-1" }),
-        AnonymizableEntity.create({ retainedField: "test-2" }),
+        AnonymizableEntity.create({
+          retainedField: "test-1",
+          referencesToRetainAnonymized: [entity.getId()],
+        }),
       ],
     );
   });

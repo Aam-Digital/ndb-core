@@ -5,6 +5,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { Entity } from "./model/entity";
 import { getUrlWithoutParams } from "../../utils/utils";
 import { Router } from "@angular/router";
+import { EntitySchemaService } from "./schema/entity-schema.service";
 
 /**
  * Additional options that can be (partly) specified
@@ -29,6 +30,7 @@ export class EntityRemoveService {
     private entityMapper: EntityMapperService,
     private snackBar: MatSnackBar,
     private router: Router,
+    private schemaService: EntitySchemaService,
   ) {}
 
   /**
@@ -117,11 +119,35 @@ export class EntityRemoveService {
    */
   async anonymize<E extends Entity>(entity: E) {
     for (const [key, schema] of entity.getSchema().entries()) {
-      if (schema.anonymize !== "retain") {
-        delete entity[key];
+      if (entity[key] === undefined) {
+        continue;
+      }
+
+      switch (schema.anonymize) {
+        case "retain":
+          break;
+        case "retain-anonymized":
+          await this.anonymizeProperty(entity, key);
+          break;
+        default:
+          delete entity[key];
       }
     }
 
+    entity.anonymized = true;
+    entity.inactive = true;
     await this.entityMapper.save(entity);
+  }
+
+  private async anonymizeProperty(entity: Entity, key: string) {
+    const dataType = this.schemaService.getDatatypeOrDefault(
+      entity.getSchema().get(key).dataType,
+    );
+
+    entity[key] = await dataType.anonymize(
+      entity[key],
+      entity.getSchema().get(key),
+      entity,
+    );
   }
 }
