@@ -44,12 +44,12 @@
     autoActiveFirstOption
   >
     <mat-checkbox
-      labelPosition="before"
+      labelPosition="after"
       (change)="toggleIncludeInactive()"
       [checked]="includeInactive"
       i18n="Label for checkbox|e.g. include inactive children"
     >
-      Include Inactive {{ label }}
+      Include inactive {{ label }}
     </mat-checkbox>
     <ng-content select="mat-option"></ng-content>
 

@@ -61,6 +61,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @Input() withPrefix: boolean = false;
 
   includeInactive: boolean = false;
+  filterValue: string;
 
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
@@ -209,6 +210,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
 
     this.allEntities = entities;
+
     this.loading.next(false);
     this.formControl.setValue(null);
   }
@@ -254,9 +256,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   private filter(value?: string): E[] {
     let filteredEntities: E[] = this.allEntities.filter(
-      (e) => this.additionalFilter(e) && !this.isSelected(e),
+      (e) =>
+        this.additionalFilter(e) &&
+        !this.isSelected(e) &&
+        (this.includeInactive ? true : e.isActive),
     );
     if (value) {
+      this.filterValue = value;
       const filterValue = value.toLowerCase();
       filteredEntities = filteredEntities.filter((entity) =>
         this.accessor(entity).toLowerCase().includes(filterValue),
@@ -267,16 +273,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   toggleIncludeInactive() {
     this.includeInactive = !this.includeInactive;
-    // This needs to be set so that the filtering will start immediately
-    const filterInactive = this.includeInactive
-      ? (_) => true
-      : (e) => e.isActive;
-    this.filteredEntities = this.filteredEntities.filter((e) =>
-      filterInactive(e),
-    );
+    this.filteredEntities = this.filter(this.filterValue);
   }
-
-  // filterInactive: (Entity) => boolean = (e: Entity) => e.isActive;
 
   /**
    * removes a given entity from the records (if it exists) and emits changes
