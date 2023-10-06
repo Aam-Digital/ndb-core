@@ -7,15 +7,14 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 import { Entity } from "../../entity/model/entity";
 import { FormGroup } from "@angular/forms";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
-import { EntityRemoveService } from "../../entity/entity-remove.service";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { AlertService } from "../../alerts/alert.service";
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Router, RouterLink } from "@angular/router";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
+import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 
 @Component({
   selector: "app-dialog-buttons",
@@ -29,6 +28,7 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
     MatMenuModule,
     FontAwesomeModule,
     RouterLink,
+    EntityActionsMenuComponent,
   ],
   templateUrl: "./dialog-buttons.component.html",
   styleUrls: ["./dialog-buttons.component.scss"],
@@ -42,10 +42,8 @@ export class DialogButtonsComponent implements OnInit {
     private entityFormService: EntityFormService,
     private dialog: MatDialogRef<any>,
     private alertService: AlertService,
-    private entityRemoveService: EntityRemoveService,
     private router: Router,
     private ability: EntityAbility,
-    private confirmation: ConfirmationDialogService,
     private unsavedChanges: UnsavedChangesService,
   ) {
     this.dialog.disableClose = true;
@@ -97,9 +95,8 @@ export class DialogButtonsComponent implements OnInit {
       });
   }
 
-  async delete() {
-    const result = await this.entityRemoveService.remove(this.entity);
-    if (result) {
+  onAction(action: string) {
+    if (action === "delete") {
       this.dialog.close();
     }
   }

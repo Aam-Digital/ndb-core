@@ -150,4 +150,13 @@ export class EntityRemoveService {
       entity,
     );
   }
+
+  /**
+   * Mark the given entity as inactive.
+   * @param entity
+   */
+  async archive<E extends Entity>(entity: E) {
+    entity.inactive = true;
+    await this.entityMapper.save(entity);
+  }
 }
