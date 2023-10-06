@@ -22,12 +22,15 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
 import { LoginStateSubject } from "../session-type";
-import { NgIf } from "@angular/common";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { AuthUser } from "../auth/auth-user";
 import { MatDialog } from "@angular/material/dialog";
-import { UserSelectComponent } from "./user-select/user-select.component";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatListModule } from "@angular/material/list";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -37,17 +40,29 @@ import { UserSelectComponent } from "./user-select/user-select.component";
   selector: "app-login",
   templateUrl: "./login.component.html",
   styleUrls: ["./login.component.scss"],
-  imports: [MatCardModule, MatButtonModule, NgIf, MatProgressBarModule],
+  imports: [
+    MatCardModule,
+    MatButtonModule,
+    NgIf,
+    MatProgressBarModule,
+    AsyncPipe,
+    MatTooltipModule,
+    MatListModule,
+    NgForOf,
+    FontAwesomeModule,
+  ],
   standalone: true,
 })
 export class LoginComponent {
   offlineUsers: AuthUser[] = [];
   loginInProgress = false;
+
   constructor(
     private router: Router,
     private route: ActivatedRoute,
-    private sessionManager: SessionManagerService,
+    public sessionManager: SessionManagerService,
     public loginState: LoginStateSubject,
+    public siteSettingsService: SiteSettingsService,
     private dialog: MatDialog,
   ) {
     this.loginState.pipe(untilDestroyed(this)).subscribe((state) => {
@@ -63,17 +78,6 @@ export class LoginComponent {
   private routeAfterLogin() {
     const redirectUri = this.route.snapshot.queryParams["redirect_uri"] || "";
     this.router.navigateByUrl(decodeURIComponent(redirectUri));
-  }
-
-  useOffline() {
-    this.dialog
-      .open(UserSelectComponent, { data: this.offlineUsers })
-      .afterClosed()
-      .subscribe((user) => {
-        if (user) {
-          this.sessionManager.offlineLogin(user);
-        }
-      });
   }
 
   tryLogin() {
