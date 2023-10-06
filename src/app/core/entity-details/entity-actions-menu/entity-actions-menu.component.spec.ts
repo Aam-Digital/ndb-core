@@ -33,7 +33,7 @@ describe("EntityActionsMenuComponent", () => {
   });
 
   it("should emit actionTriggered Output upon action", fakeAsync(() => {
-    mockEntityRemoveService.remove.and.resolveTo(true);
+    mockEntityRemoveService.delete.and.resolveTo(true);
 
     let actionEvent;
     component.actionTriggered.subscribe((x) => (actionEvent = x));

@@ -58,7 +58,7 @@ describe("EntityRemoveService", () => {
   it("should return false when user cancels confirmation", async () => {
     mockConfirmationDialog.getConfirmation.and.resolveTo(false);
 
-    const result = await service.remove(new Entity());
+    const result = await service.delete(new Entity());
 
     expect(result).toBe(false);
     expect(snackBarSpy.open).not.toHaveBeenCalled();
@@ -74,7 +74,7 @@ describe("EntityRemoveService", () => {
     );
     mockSnackBarRef.afterDismissed.and.returnValue(afterDismissed);
 
-    const result = await service.remove(new Entity(), true);
+    const result = await service.delete(new Entity(), true);
 
     expect(result).toBe(true);
     expect(snackBarSpy.open).toHaveBeenCalled();
@@ -92,7 +92,7 @@ describe("EntityRemoveService", () => {
 
     mockedEntityMapper.save.and.resolveTo();
 
-    service.remove(entity, true);
+    service.delete(entity, true);
     tick();
 
     mockRouter.navigate.calls.reset();

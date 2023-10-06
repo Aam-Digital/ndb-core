@@ -19,6 +19,13 @@ import { EntityAction } from "../../permissions/permission-types";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 export type EntityMenuAction = "archive" | "anonymize" | "delete";
+type EntityMenuActionItem = {
+  action: EntityMenuAction;
+  permission?: EntityAction;
+  icon: IconProp;
+  label: string;
+  tooltip?: string;
+};
 
 @Component({
   selector: "app-entity-actions-menu",
@@ -39,18 +46,20 @@ export type EntityMenuAction = "archive" | "anonymize" | "delete";
 export class EntityActionsMenuComponent implements OnChanges {
   @Input() entity: Entity;
 
+  /**
+   * whether the "delete" action will trigger a navigation back to the parent list.
+   * This is useful when the entity is deleted from a fullscreen detail view but not for an overlay.
+   */
+  @Input() navigateOnDelete: boolean = false;
+
   @Output() actionTriggered = new EventEmitter<EntityMenuAction>();
 
   /**
-   * The default actions being displayed as menu items.
+   * The actions being displayed as menu items.
    */
-  actions: {
-    action: EntityMenuAction;
-    permission?: EntityAction;
-    icon: IconProp;
-    label: string;
-    tooltip?: string;
-  }[] = [
+  actions: EntityMenuActionItem[];
+
+  readonly defaultActions: EntityMenuActionItem[] = [
     {
       action: "archive",
       permission: "update",
@@ -83,7 +92,7 @@ export class EntityActionsMenuComponent implements OnChanges {
   }
 
   private filterAvailableActions() {
-    this.actions = this.actions.filter((action) => {
+    this.actions = this.defaultActions.filter((action) => {
       if (this.entity?.anonymized) {
         return action.action !== "anonymize" && action.action !== "archive";
       }
@@ -95,7 +104,10 @@ export class EntityActionsMenuComponent implements OnChanges {
   }
 
   async executeAction(action: EntityMenuAction) {
-    const result = await this.entityRemoveService[action](this.entity);
+    const result = await this.entityRemoveService[action](
+      this.entity,
+      this.navigateOnDelete,
+    );
     if (result) {
       this.actionTriggered.emit(action);
     }

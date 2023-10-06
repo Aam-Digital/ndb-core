@@ -28,7 +28,10 @@
     Adding new {{ this.entityConstructor?.label }}
   </app-view-title>
 
-  <app-entity-actions-menu [entity]="entity"></app-entity-actions-menu>
+  <app-entity-actions-menu
+    [entity]="entity"
+    [navigateOnDelete]="true"
+  ></app-entity-actions-menu>
 </div>
 
 <mat-tab-group
