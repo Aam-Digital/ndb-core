@@ -714,6 +714,15 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "EducationalMaterial"
             }
+          ],
+          "summary": [
+            {
+              "Total": $localize `:Total item Count:Total`
+            },
+
+            {
+              "Average": $localize `:Average Per Item:Average`
+            }
           ]
         },
         {

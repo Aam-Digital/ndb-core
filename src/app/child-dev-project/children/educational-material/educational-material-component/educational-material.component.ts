@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { NgFor, NgIf, } from "@angular/common";
 import { EducationalMaterial } from "../model/educational-material";
 import { Child } from "../../model/child";
 import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
@@ -8,6 +9,9 @@ import { applyUpdate } from "../../../../core/entity/model/entity-update";
 import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntityListConfig } from "app/core/entity-list/EntityListConfig";
+import { ActivatedRoute } from "@angular/router";
+import { RouteData } from "app/core/config/dynamic-routing/view-config.interface";
 
 /**
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c
@@ -18,13 +22,16 @@ import { EntitySubrecordComponent } from "../../../../core/common-components/ent
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
-  imports: [EntitySubrecordComponent],
+  imports: [EntitySubrecordComponent,NgIf,NgFor],
   standalone: true,
 })
 export class EducationalMaterialComponent implements OnInit {
   @Input() entity: Child;
   records: EducationalMaterial[] = [];
   summary = "";
+  avgSummary = "";
+  summaryTitle: { [key: string]: string }[] 
+  listConfig: EntityListConfig;
 
   @Input() config: { columns: FormFieldConfig[] } = {
     columns: [
@@ -35,7 +42,8 @@ export class EducationalMaterialComponent implements OnInit {
     ],
   };
 
-  constructor(private entityMapper: EntityMapperService) {
+  constructor(private entityMapper: EntityMapperService,
+    private route: ActivatedRoute ) {
     this.entityMapper
       .receiveUpdates(EducationalMaterial)
       .pipe(
@@ -65,6 +73,7 @@ export class EducationalMaterialComponent implements OnInit {
       (mat) => mat.child === this.entity.getId(),
     );
     this.updateSummary();
+    
   }
 
   newRecordFactory = () => {
@@ -83,15 +92,49 @@ export class EducationalMaterialComponent implements OnInit {
    * human-readable format
    */
   updateSummary() {
-    const summary = new Map<string, number>();
-    this.records.forEach((m) => {
-      const previousValue = summary.has(m.materialType.label)
-        ? summary.get(m.materialType.label)
-        : 0;
-      summary.set(m.materialType.label, previousValue + m.materialAmount);
-    });
-    this.summary = [...summary]
-      .map(([key, value]) => key + ": " + value)
-      .join(", ");
+    const summary = new Map<string, { count: number; sum: number }>();
+    const average = new Map<string, number>();
+  
+    // Initialize summary and average maps in a single loop
+    for (const m of this.records) {
+      if (m.materialType) {
+        const label = m.materialType.label;
+        const amount = m.materialAmount;
+  
+        if (!summary.has(label)) {
+          summary.set(label, { count: 0, sum: 0 });
+        }
+  
+        const labelData = summary.get(label);
+        labelData.count++;
+        labelData.sum += amount;
+      }
+    }
+  
+    // Calculate averages and build summary strings
+    const summaryArray: string[] = [];
+    const avgSummaryArray: string[] = [];
+  
+    for (const [label, labelData] of summary.entries()) {
+      const avg = labelData.sum / labelData.count;
+      average.set(label, avg);
+  
+      summaryArray.push(`${label}: ${labelData.sum}`);
+      avgSummaryArray.push(`${label}: ${avg}`);
+    }
+  
+    this.summary = summaryArray.join(", ");
+    this.avgSummary = avgSummaryArray.join(", ");
+    this.getSummaryList();
+  }
+  
+  
+  getSummaryList(){
+    this.route.data.subscribe(
+      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config),
+    );
+   this.summaryTitle =  this.listConfig['panels']
+   .find((panel: { title: string })=> panel.title === "Educational Materials").summary;
+ 
   }
 }
