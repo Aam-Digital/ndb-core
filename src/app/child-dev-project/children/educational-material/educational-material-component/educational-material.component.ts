@@ -22,7 +22,11 @@ import { RouteData } from "app/core/config/dynamic-routing/view-config.interface
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
-  imports: [EntitySubrecordComponent,NgIf,NgFor],
+  imports: [
+    EntitySubrecordComponent,
+    NgIf,
+    NgFor
+  ],
   standalone: true,
 })
 export class EducationalMaterialComponent implements OnInit {
@@ -110,7 +114,7 @@ export class EducationalMaterialComponent implements OnInit {
         labelData.sum += amount;
       }
     }
-    
+
     const summaryArray: string[] = [];
     const avgSummaryArray: string[] = [];
   
