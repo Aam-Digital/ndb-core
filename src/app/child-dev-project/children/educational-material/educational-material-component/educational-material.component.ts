@@ -110,8 +110,7 @@ export class EducationalMaterialComponent implements OnInit {
         labelData.sum += amount;
       }
     }
-  
-    // Calculate averages and build summary strings
+    
     const summaryArray: string[] = [];
     const avgSummaryArray: string[] = [];
   
