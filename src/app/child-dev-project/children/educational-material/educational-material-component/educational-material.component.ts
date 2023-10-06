@@ -98,7 +98,7 @@ export class EducationalMaterialComponent implements OnInit {
   updateSummary() {
     const summary = new Map<string, { count: number; sum: number }>();
     const average = new Map<string, number>();
-  
+    
     // Initialize summary and average maps in a single loop
     for (const m of this.records) {
       if (m.materialType) {
@@ -119,9 +119,9 @@ export class EducationalMaterialComponent implements OnInit {
     const avgSummaryArray: string[] = [];
   
     for (const [label, labelData] of summary.entries()) {
-      const avg = labelData.sum / labelData.count;
+      const avg = parseFloat((labelData.sum / labelData.count).toPrecision(2));
       average.set(label, avg);
-  
+      
       summaryArray.push(`${label}: ${labelData.sum}`);
       avgSummaryArray.push(`${label}: ${avg}`);
     }
