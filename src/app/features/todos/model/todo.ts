@@ -113,6 +113,7 @@ export class Todo extends Entity {
   completed?: TodoCompletion;
 
   get isActive(): boolean {
+    // TODO: isActive of completed task vs. "archived" record?!
     return !this.completed;
   }
 

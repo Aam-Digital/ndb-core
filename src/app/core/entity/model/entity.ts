@@ -223,17 +223,20 @@ export class Entity {
   }
 
   /**
-   * Check, if this entity is considered active.
-   * This is either taken from the property "inactive" (configured) or "active" (not configured).
+   * Check, if this entity is considered active or archived.
+   *
+   * This is taken from the property "inactive".
    * If the property doesn't exist, the default is `true`.
-   * Subclasses may overwrite this functionality.
+   *
+   * Some subclasses overwrite this functionality, but this logic is considered deprecated (!) now
+   * and implementations have to make sure that "inactive" property takes precedence!
    */
   get isActive(): boolean {
-    if (this["active"] !== undefined) {
-      return this["active"];
-    }
     if (this.inactive !== undefined) {
       return !this.inactive;
+    }
+    if (this["active"] !== undefined) {
+      return this["active"];
     }
     return true;
   }

@@ -123,6 +123,11 @@ export class Child extends Entity {
   phone: string;
 
   get isActive(): boolean {
+    if (this.inactive !== undefined) {
+      // explicit property set through UI has to take precedence
+      return super.isActive;
+    }
+
     return (
       this.status !== "Dropout" &&
       !this["dropoutDate"] &&
