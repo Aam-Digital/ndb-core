@@ -28,6 +28,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 import { LoggingService } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
+import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -56,6 +57,7 @@ import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-action
     DynamicComponentDirective,
     DisableEntityOperationDirective,
     EntityActionsMenuComponent,
+    EntityArchivedInfoComponent,
   ],
 })
 export class EntityDetailsComponent {

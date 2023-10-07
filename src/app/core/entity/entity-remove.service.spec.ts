@@ -9,7 +9,7 @@ import {
 } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
-import { NEVER, Observable, Subject } from "rxjs";
+import { NEVER, Observable, of, Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { DatabaseEntity } from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
@@ -31,6 +31,7 @@ describe("EntityRemoveService", () => {
     mockedEntityMapper = jasmine.createSpyObj(["remove", "save"]);
     snackBarSpy = jasmine.createSpyObj(["open"]);
     mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
+    mockSnackBarRef.onAction.and.returnValue(of());
     mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
     mockConfirmationDialog.getConfirmation.and.resolveTo(true);
     snackBarSpy.open.and.returnValue(mockSnackBarRef);
@@ -104,6 +105,28 @@ describe("EntityRemoveService", () => {
     expect(mockedEntityMapper.save).toHaveBeenCalledWith(entity, true);
     expect(mockRouter.navigate).toHaveBeenCalled();
   }));
+
+  it("should archive and save entity", async () => {
+    const entity = new Entity();
+
+    await service.archive(entity);
+
+    expect(entity.isActive).toBeFalse();
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(entity);
+  });
+
+  it("should archiveUndo and save entity", async () => {
+    const entity = new Entity();
+
+    await service.archive(entity);
+    expect(entity.isActive).toBeFalse();
+    mockedEntityMapper.save.calls.reset();
+
+    await service.archiveUndo(entity);
+
+    expect(entity.isActive).toBeTrue();
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(entity);
+  });
 
   /*
    * ANONYMIZATION

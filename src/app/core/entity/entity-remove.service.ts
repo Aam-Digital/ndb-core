@@ -89,6 +89,7 @@ export class EntityRemoveService {
       return false;
     }
 
+    const originalEntity = entity.copy();
     await this.entityMapper.remove(entity);
 
     let currentUrl: string;
@@ -99,7 +100,7 @@ export class EntityRemoveService {
     }
 
     this.showSnackbarConfirmation(
-      entity,
+      originalEntity,
       $localize`:Entity action confirmation message verb:Deleted`,
       currentUrl,
     );
@@ -129,6 +130,18 @@ export class EntityRemoveService {
       return false;
     }
 
+    const originalEntity = entity.copy();
+    await this.anonymizeEntity(entity);
+    await this.entityMapper.save(entity);
+
+    this.showSnackbarConfirmation(
+      originalEntity,
+      $localize`:Entity action confirmation message verb:Anonymized`,
+    );
+    return true;
+  }
+
+  private async anonymizeEntity(entity: Entity) {
     for (const [key, schema] of entity.getSchema().entries()) {
       if (entity[key] === undefined) {
         continue;
@@ -147,13 +160,6 @@ export class EntityRemoveService {
 
     entity.anonymized = true;
     entity.inactive = true;
-    await this.entityMapper.save(entity);
-
-    this.showSnackbarConfirmation(
-      entity,
-      $localize`:Entity action confirmation message verb:Anonymized`,
-    );
-    return true;
   }
 
   private async anonymizeProperty(entity: Entity, key: string) {
@@ -173,12 +179,28 @@ export class EntityRemoveService {
    * @param entity
    */
   async archive<E extends Entity>(entity: E) {
+    const originalEntity = entity.copy();
     entity.inactive = true;
     await this.entityMapper.save(entity);
 
     this.showSnackbarConfirmation(
-      entity,
+      originalEntity,
       $localize`:Entity action confirmation message verb:Archived`,
+    );
+    return true;
+  }
+  /**
+   * Undo the archive action on the given entity.
+   * @param entity
+   */
+  async archiveUndo<E extends Entity>(entity: E) {
+    const originalEntity = entity.copy();
+    entity.inactive = false;
+    await this.entityMapper.save(entity);
+
+    this.showSnackbarConfirmation(
+      originalEntity,
+      $localize`:Entity action confirmation message verb:Reactivated`,
     );
     return true;
   }

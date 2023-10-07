@@ -1,0 +1,17 @@
+@use "src/styles/variables/colors";
+
+.card {
+  background-color: colors.$grey-transparent;
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+}
+
+.card-icon {
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  margin: 0;
+}

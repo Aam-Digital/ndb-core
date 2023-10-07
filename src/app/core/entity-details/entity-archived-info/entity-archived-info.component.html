@@ -1,0 +1,34 @@
+<mat-card appearance="outlined" class="card" *ngIf="entity && !entity.isActive">
+  <mat-card-header class="card-header">
+    <div mat-card-avatar class="card-icon">
+      <fa-icon icon="info-circle" size="lg"></fa-icon>
+    </div>
+    <mat-card-title *ngIf="!entity.anonymized" i18n>Archived</mat-card-title>
+    <mat-card-title *ngIf="entity.anonymized" i18n
+      >Anonymized & Archived</mat-card-title
+    >
+  </mat-card-header>
+
+  <mat-card-content>
+    <p *ngIf="entity.anonymized" i18n>
+      This record has been anonymized. Details containing personal information
+      have been deleted and cannot be restored. For statistical reporting, this
+      basic record has been kept.
+    </p>
+
+    <p i18n>
+      This record is archived and will be be hidden from lists and select
+      options by default.
+    </p>
+  </mat-card-content>
+
+  <mat-card-actions *ngIf="!entity.anonymized">
+    <button
+      mat-stroked-button
+      color="accent"
+      (click)="entityRemoveService.archiveUndo(entity)"
+    >
+      Reactivate
+    </button>
+  </mat-card-actions>
+</mat-card>

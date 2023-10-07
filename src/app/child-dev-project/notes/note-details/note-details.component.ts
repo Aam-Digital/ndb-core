@@ -26,6 +26,7 @@ import { DynamicComponentDirective } from "../../../core/config/dynamic-componen
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
+import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -46,6 +47,7 @@ import { DialogCloseComponent } from "../../../core/common-components/dialog-clo
     DialogButtonsComponent,
     MatMenuModule,
     DialogCloseComponent,
+    EntityArchivedInfoComponent,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
