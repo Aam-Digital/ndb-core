@@ -42,37 +42,42 @@ describe("SiteSettingsService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should only publish changes if property has changed", () => {
+  it("should only publish changes if property has changed", fakeAsync(() => {
     const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
     const settings = new SiteSettings();
     titleSpy.calls.reset();
 
     entityMapper.add(settings);
+    tick();
 
     expect(titleSpy).not.toHaveBeenCalled();
 
     settings.displayLanguageSelect = false;
     entityMapper.add(settings);
+    tick();
 
     expect(titleSpy).not.toHaveBeenCalled();
 
     settings.siteName = "New name";
     entityMapper.add(settings);
+    tick();
 
     expect(titleSpy).toHaveBeenCalled();
 
     titleSpy.calls.reset();
     settings.displayLanguageSelect = true;
     entityMapper.add(settings);
+    tick();
 
     expect(titleSpy).not.toHaveBeenCalled();
 
     settings.displayLanguageSelect = false;
     settings.siteName = "Another new name";
     entityMapper.add(settings);
+    tick();
 
     expect(titleSpy).toHaveBeenCalled();
-  });
+  }));
 
   it("should reset favicon when deleted", fakeAsync(() => {
     const siteSettings = SiteSettings.create({ favicon: "some.icon" });
