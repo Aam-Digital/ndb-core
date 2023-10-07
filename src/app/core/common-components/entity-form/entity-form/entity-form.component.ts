@@ -85,6 +85,7 @@ export class EntityFormComponent<T extends Entity = Entity>
     }
     if (changes.form && this.form) {
       this.initialFormValues = this.form.getRawValue();
+      this.disableForLockedEntity();
     }
   }
 
@@ -103,6 +104,7 @@ export class EntityFormComponent<T extends Entity = Entity>
       Object.assign(this.initialFormValues, entity);
       this.form.patchValue(entity as any);
       Object.assign(this.entity, entity as any);
+      this.disableForLockedEntity();
     }
   }
 
@@ -146,5 +148,15 @@ export class EntityFormComponent<T extends Entity = Entity>
       entityValue === formValue ||
       JSON.stringify(entityValue) === JSON.stringify(formValue)
     );
+  }
+
+  /**
+   * Disable the form for certain states of the entity, like it being already anonymized.
+   * @private
+   */
+  private disableForLockedEntity() {
+    if (this.entity?.anonymized) {
+      this.form.disable();
+    }
   }
 }

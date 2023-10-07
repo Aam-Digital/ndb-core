@@ -13,10 +13,10 @@ describe("EntityActionsMenuComponent", () => {
   let component: EntityActionsMenuComponent;
   let fixture: ComponentFixture<EntityActionsMenuComponent>;
 
-  let mockEntityRemoveService: jasmine.SpyObj<EntityRemoveService> =
-    jasmine.createSpyObj(["remove"]);
+  let mockEntityRemoveService: jasmine.SpyObj<EntityRemoveService>;
 
   beforeEach(() => {
+    mockEntityRemoveService = jasmine.createSpyObj(["delete"]);
     TestBed.configureTestingModule({
       imports: [EntityActionsMenuComponent, MockedTestingModule],
       providers: [
