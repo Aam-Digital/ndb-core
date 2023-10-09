@@ -99,7 +99,6 @@ export class EducationalMaterialComponent implements OnInit {
     const summary = new Map<string, { count: number; sum: number }>();
     const average = new Map<string, number>();
     
-    // Initialize summary and average maps in a single loop
     for (const m of this.records) {
       if (m.materialType) {
         const label = m.materialType.label;
@@ -117,11 +116,10 @@ export class EducationalMaterialComponent implements OnInit {
 
     const summaryArray: string[] = [];
     const avgSummaryArray: string[] = [];
-  
+
     for (const [label, labelData] of summary.entries()) {
       const avg = parseFloat((labelData.sum / labelData.count).toPrecision(2));
       average.set(label, avg);
-      
       summaryArray.push(`${label}: ${labelData.sum}`);
       avgSummaryArray.push(`${label}: ${avg}`);
     }
@@ -131,13 +129,12 @@ export class EducationalMaterialComponent implements OnInit {
     this.getSummaryList();
   }
   
-  
-  getSummaryList(){
+  getSummaryList() {
     this.route.data.subscribe(
       (data: RouteData<EntityListConfig>) => (this.listConfig = data.config),
     );
-   this.summaryTitle =  this.listConfig['panels']
-   .find((panel: { title: string })=> panel.title === "Educational Materials").summary;
- 
+
+    this.summaryTitle =  this.listConfig['panels']
+      .find((panel: { title: string })=> panel.title === "Educational Materials").summary;
   }
 }

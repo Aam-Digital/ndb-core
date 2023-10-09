@@ -9,7 +9,6 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper/entit
 import { of, Subject } from "rxjs";
 import { UpdatedEntity } from "../../../../core/entity/model/entity-update";
 import { ActivatedRoute } from "@angular/router";
-import { RouteData } from "app/core/config/dynamic-routing/view-config.interface";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
@@ -123,6 +122,7 @@ describe("EducationalMaterialComponent", () => {
     const newRecord = component.newRecordFactory();
     expect(newRecord.child).toBe(child.getId());
   });
+
   it("produces an empty summary when there are no records", () => {
     component.records = [];
     component.updateSummary();
@@ -131,25 +131,6 @@ describe("EducationalMaterialComponent", () => {
 
   it("should set summaryTitle based on panel title", () => {
     setRecordsAndGenerateSummary([{ Total: "Total" }, { Average: "Average" }])
-
-    const routeData: RouteData = {
-      config: {
-        panels: [
-          {
-            title: "Educational Materials",
-            summary: [
-              {
-                Total: "Total",
-              },
-              {
-                Average: "Average",
-              },
-            ],
-          },
-        ],
-      },
-    };
-
     component.getSummaryList();
     expect(component.summaryTitle).toEqual([{ Total: "Total" }, { Average: "Average" }]);
   });
