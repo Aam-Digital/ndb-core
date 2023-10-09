@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { NgFor, NgIf, } from "@angular/common";
+import { NgFor, NgIf } from "@angular/common";
 import { EducationalMaterial } from "../model/educational-material";
 import { Child } from "../../model/child";
 import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
