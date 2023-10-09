@@ -77,7 +77,6 @@ export class EducationalMaterialComponent implements OnInit {
       (mat) => mat.child === this.entity.getId(),
     );
     this.updateSummary();
-    
   }
 
   newRecordFactory = () => {
@@ -98,43 +97,46 @@ export class EducationalMaterialComponent implements OnInit {
   updateSummary() {
     const summary = new Map<string, { count: number; sum: number }>();
     const average = new Map<string, number>();
-    
-    for (const m of this.records) {
-      if (m.materialType) {
-        const label = m.materialType.label;
-        const amount = m.materialAmount;
-  
+
+    this.records.forEach((m) => {
+      const { materialType, materialAmount } = m;
+
+      if (materialType.label) {
+        const label = materialType.label;
+
         if (!summary.has(label)) {
           summary.set(label, { count: 0, sum: 0 });
         }
-  
+
         const labelData = summary.get(label);
         labelData.count++;
-        labelData.sum += amount;
+        labelData.sum += materialAmount;
       }
-    }
+    });
 
-    const summaryArray: string[] = [];
-    const avgSummaryArray: string[] = [];
+    const summaryArray: string[] = Array.from(summary.entries()).map(
+      ([label, labelData]) => `${label}: ${labelData.sum}`
+    );
 
-    for (const [label, labelData] of summary.entries()) {
-      const avg = parseFloat((labelData.sum / labelData.count).toPrecision(2));
-      average.set(label, avg);
-      summaryArray.push(`${label}: ${labelData.sum}`);
-      avgSummaryArray.push(`${label}: ${avg}`);
-    }
-  
+    const avgSummaryArray: string[] = Array.from(summary.entries()).map(
+      ([label, labelData]) => {
+        const avg = parseFloat((labelData.sum / labelData.count).toFixed(2));
+        average.set(label, avg);
+        return `${label}: ${avg}`;
+      }
+    );
+
     this.summary = summaryArray.join(", ");
     this.avgSummary = avgSummaryArray.join(", ");
     this.getSummaryList();
   }
-  
-  getSummaryList() {
-    this.route.data.subscribe(
-      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config),
-    );
 
-    this.summaryTitle =  this.listConfig['panels']
-      .find((panel: { title: string })=> panel.title === "Educational Materials").summary;
+  getSummaryList() {
+    this.route.data.subscribe((data: RouteData<EntityListConfig>) => {
+      this.listConfig = data.config;
+
+      this.summaryTitle = this.listConfig['panels']
+        .find((panel: { title: string })=> panel.title === "Educational Materials").summary;
+    });
   }
 }
