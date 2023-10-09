@@ -100,31 +100,21 @@ export class EducationalMaterialComponent implements OnInit {
 
     this.records.forEach((m) => {
       const { materialType, materialAmount } = m;
+      const label = materialType?.label;
 
-      if (materialType.label) {
-        const label = materialType.label;
-
-        if (!summary.has(label)) {
-          summary.set(label, { count: 0, sum: 0 });
-        }
-
-        const labelData = summary.get(label);
-        labelData.count++;
-        labelData.sum += materialAmount;
+      if (label) {
+        summary.set(label, (summary.get(label) || { count: 0, sum: 0 }));
+        summary.get(label)!.count++;
+        summary.get(label)!.sum += materialAmount;
       }
     });
 
-    const summaryArray: string[] = Array.from(summary.entries()).map(
-      ([label, labelData]) => `${label}: ${labelData.sum}`
-    );
-
-    const avgSummaryArray: string[] = Array.from(summary.entries()).map(
-      ([label, labelData]) => {
-        const avg = parseFloat((labelData.sum / labelData.count).toFixed(2));
-        average.set(label, avg);
-        return `${label}: ${avg}`;
-      }
-    );
+    const summaryArray = Array.from(summary.entries(), ([label, { sum }]) => `${label}: ${sum}`);
+    const avgSummaryArray = Array.from(summary.entries(), ([label, { count, sum }]) => {
+      const avg = parseFloat((sum / count).toFixed(2));
+      average.set(label, avg);
+      return `${label}: ${avg}`;
+    });
 
     this.summary = summaryArray.join(", ");
     this.avgSummary = avgSummaryArray.join(", ");
