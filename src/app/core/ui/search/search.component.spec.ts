@@ -10,7 +10,6 @@ import { SearchComponent } from "./search.component";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
 import { Subscription } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { SwUpdate } from "@angular/service-worker";
 
 describe("SearchComponent", () => {
   SearchComponent.INPUT_DEBOUNCE_TIME_MS = 4;
@@ -33,7 +32,6 @@ describe("SearchComponent", () => {
       imports: [SearchComponent, MockedTestingModule.withState()],
       providers: [
         { provide: DatabaseIndexingService, useValue: mockIndexService },
-        { provide: SwUpdate, useValue: {} },
       ],
     }).compileComponents();
   }));
