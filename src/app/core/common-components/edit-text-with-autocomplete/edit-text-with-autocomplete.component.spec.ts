@@ -13,8 +13,10 @@ describe("EditTextWithAutocompleteComponent", () => {
   let component: EditTextWithAutocompleteComponent;
   let fixture: ComponentFixture<EditTextWithAutocompleteComponent>;
   let loadTypeSpy: jasmine.Spy;
+  let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
 
   beforeEach(waitForAsync(() => {
+    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
     TestBed.configureTestingModule({
       imports: [
         EditTextWithAutocompleteComponent,
@@ -23,7 +25,7 @@ describe("EditTextWithAutocompleteComponent", () => {
       providers: [
         {
           provide: ConfirmationDialogService,
-          useValue: new ConfirmationDialogService(null),
+          useValue: mockConfirmationDialog,
         },
       ],
     }).compileComponents();
@@ -149,11 +151,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     rA1.assignedTo = ["user1", "user2"];
     rA1.linkedGroups = ["group1", "group2"];
     loadTypeSpy.and.resolveTo([rA1, rA2]);
-    const confirmationDialogueSpy: jasmine.Spy = spyOn(
-      TestBed.inject(ConfirmationDialogService),
-      "getConfirmation",
-    );
-    confirmationDialogueSpy.and.resolveTo(true);
+    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
 
     await component.ngOnInit();
     component.formControl.setValue("test1");
