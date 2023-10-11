@@ -29,10 +29,10 @@ import { ActivatedRoute } from "@angular/router";
   standalone: true,
 })
 export class EducationalMaterialComponent implements OnInit {
-  @Input() summary: any[];
+  @Input() summaries: any[];
   @Input() entity: Child;
   records: EducationalMaterial[] = [];
-  totalSummary = "";
+  summary = "";
   avgSummary = "";
   listConfig: EntityListConfig;
 
@@ -115,7 +115,7 @@ export class EducationalMaterialComponent implements OnInit {
       return `${label}: ${avg}`;
     });
 
-    this.totalSummary = summaryArray.join(", ");
+    this.summary = summaryArray.join(", ");
     this.avgSummary = avgSummaryArray.join(", ");
   }
 }

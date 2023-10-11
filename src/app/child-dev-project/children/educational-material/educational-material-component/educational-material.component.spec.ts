@@ -6,9 +6,8 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EducationalMaterial } from "../model/educational-material";
 import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { of, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../../../core/entity/model/entity-update";
-import { ActivatedRoute } from "@angular/router";
 
 describe("EducationalMaterialComponent", () => {
   let component: EducationalMaterialComponent;
@@ -27,33 +26,7 @@ describe("EducationalMaterialComponent", () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [EducationalMaterialComponent, MockedTestingModule.withState()],
-      providers: [
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            data: of({
-              config: {
-                entity: "Child",
-                panels: [
-                  {
-                    title: "Educational Materials",
-                    summary: [
-                      {
-                        Total: "Total",
-                      },
-                      {
-                        Average: "Average",
-                      },
-                    ],
-                  },
-                ],
-              },
-            }),
-          },
-        },
-      ],
     }).compileComponents();
-
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(updates);
   }));
@@ -121,18 +94,6 @@ describe("EducationalMaterialComponent", () => {
   it("associates a new record with the current child", () => {
     const newRecord = component.newRecordFactory();
     expect(newRecord.child).toBe(child.getId());
-  });
-
-  it("produces an empty summary when there are no records", () => {
-    component.records = [];
-    component.updateSummary();
-    expect(component.summary).toHaveSize(0);
-  });
-
-  it("should set summaryTitle based on panel title", () => {
-    setRecordsAndGenerateSummary([{ Total: "Total" }, { Average: "Average" }])
-    component.getSummaryList();
-    expect(component.summaryTitle).toEqual([{ Total: "Total" }, { Average: "Average" }]);
   });
 
   it("should update the summary when entity updates are received", async () => {

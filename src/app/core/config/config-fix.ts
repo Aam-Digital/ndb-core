@@ -714,7 +714,7 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "EducationalMaterial",
               "config": {
-               "summary": [
+               "summaries": [
                 {
                    "type": "boolean",
                    total: true, average: true 
