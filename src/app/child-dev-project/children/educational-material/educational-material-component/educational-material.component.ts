@@ -9,8 +9,6 @@ import { applyUpdate } from "../../../../core/entity/model/entity-update";
 import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { EntityListConfig } from "app/core/entity-list/EntityListConfig";
-import { ActivatedRoute } from "@angular/router";
 
 /**
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c
@@ -34,7 +32,6 @@ export class EducationalMaterialComponent implements OnInit {
   records: EducationalMaterial[] = [];
   summary = "";
   avgSummary = "";
-  listConfig: EntityListConfig;
 
   @Input() config: { columns: FormFieldConfig[] } = {
     columns: [
@@ -45,8 +42,7 @@ export class EducationalMaterialComponent implements OnInit {
     ],
   };
 
-  constructor(private entityMapper: EntityMapperService,
-    private route: ActivatedRoute ) {
+  constructor(private entityMapper: EntityMapperService) {
     this.entityMapper
       .receiveUpdates(EducationalMaterial)
       .pipe(

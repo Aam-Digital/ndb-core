@@ -721,7 +721,7 @@ export const defaultJsonConfig = {
                 }
                ]
               }
-            },    
+            }    
           ]
         },
         {
