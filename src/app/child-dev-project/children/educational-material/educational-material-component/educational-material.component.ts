@@ -11,7 +11,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { EntityListConfig } from "app/core/entity-list/EntityListConfig";
 import { ActivatedRoute } from "@angular/router";
-import { RouteData } from "app/core/config/dynamic-routing/view-config.interface";
 
 /**
  * Displays educational materials of a child, such as a pencil, rulers, e.t.c
@@ -30,11 +29,11 @@ import { RouteData } from "app/core/config/dynamic-routing/view-config.interface
   standalone: true,
 })
 export class EducationalMaterialComponent implements OnInit {
+  @Input() summary: any[];
   @Input() entity: Child;
   records: EducationalMaterial[] = [];
-  summary = "";
+  totalSummary = "";
   avgSummary = "";
-  summaryTitle: { [key: string]: string }[] 
   listConfig: EntityListConfig;
 
   @Input() config: { columns: FormFieldConfig[] } = {
@@ -116,17 +115,7 @@ export class EducationalMaterialComponent implements OnInit {
       return `${label}: ${avg}`;
     });
 
-    this.summary = summaryArray.join(", ");
+    this.totalSummary = summaryArray.join(", ");
     this.avgSummary = avgSummaryArray.join(", ");
-    this.getSummaryList();
-  }
-
-  getSummaryList() {
-    this.route.data.subscribe((data: RouteData<EntityListConfig>) => {
-      this.listConfig = data.config;
-
-      this.summaryTitle = this.listConfig['panels']
-        .find((panel: { title: string })=> panel.title === "Educational Materials").summary;
-    });
   }
 }
