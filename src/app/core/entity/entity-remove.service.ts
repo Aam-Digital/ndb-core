@@ -6,6 +6,9 @@ import { Entity } from "./model/entity";
 import { getUrlWithoutParams } from "../../utils/utils";
 import { Router } from "@angular/router";
 import { EntitySchemaService } from "./schema/entity-schema.service";
+import { FileDatatype } from "../../features/file/file.datatype";
+import { FileService } from "../../features/file/file.service";
+import { firstValueFrom } from "rxjs";
 
 /**
  * Additional options that can be (partly) specified
@@ -31,6 +34,7 @@ export class EntityRemoveService {
     private snackBar: MatSnackBar,
     private router: Router,
     private schemaService: EntitySchemaService,
+    private fileService: FileService,
   ) {}
 
   private showSnackbarConfirmation(
@@ -154,7 +158,7 @@ export class EntityRemoveService {
           await this.anonymizeProperty(entity, key);
           break;
         default:
-          delete entity[key];
+          await this.removeProperty(entity, key);
       }
     }
 
@@ -203,5 +207,16 @@ export class EntityRemoveService {
       $localize`:Entity action confirmation message verb:Reactivated`,
     );
     return true;
+  }
+
+  private async removeProperty(entity: Entity, key: string) {
+    if (
+      entity.getSchema().get(key).dataType === FileDatatype.dataType &&
+      entity[key]
+    ) {
+      await firstValueFrom(this.fileService.removeFile(entity, key));
+    }
+
+    delete entity[key];
   }
 }

@@ -15,9 +15,11 @@ import { DatabaseEntity } from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
 import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
-import { CoreModule } from "../core.module";
-import { ComponentRegistry } from "../../dynamic-components";
 import { UpdateMetadata } from "./model/update-metadata";
+import { FileService } from "../../features/file/file.service";
+import { CoreTestingModule } from "../../utils/core-testing.module";
+import { DefaultDatatype } from "./default-datatype/default.datatype";
+import { FileDatatype } from "../../features/file/file.datatype";
 
 describe("EntityRemoveService", () => {
   let service: EntityRemoveService;
@@ -25,6 +27,7 @@ describe("EntityRemoveService", () => {
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let mockSnackBarRef: jasmine.SpyObj<MatSnackBarRef<TextOnlySnackBar>>;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockFileService: jasmine.SpyObj<FileService>;
   let mockRouter;
 
   beforeEach(() => {
@@ -36,10 +39,13 @@ describe("EntityRemoveService", () => {
     mockConfirmationDialog.getConfirmation.and.resolveTo(true);
     snackBarSpy.open.and.returnValue(mockSnackBarRef);
     mockedEntityMapper.remove.and.resolveTo();
+    mockFileService = jasmine.createSpyObj(["removeFile"]);
+    mockFileService.removeFile.and.returnValue(of(null));
 
     TestBed.configureTestingModule({
-      imports: [CoreModule],
+      imports: [CoreTestingModule],
       providers: [
+        EntityRemoveService,
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MatSnackBar, useValue: snackBarSpy },
         Router,
@@ -47,7 +53,8 @@ describe("EntityRemoveService", () => {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,
         },
-        ComponentRegistry,
+        { provide: FileService, useValue: mockFileService },
+        { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
       ],
     });
     mockRouter = TestBed.inject(Router);
@@ -144,6 +151,8 @@ describe("EntityRemoveService", () => {
       innerDataType: "date-only",
     })
     retainAnonymizedDates: Date[];
+
+    @DatabaseField({ dataType: "file" }) file: string;
 
     @DatabaseField({ anonymize: "retain-anonymized", dataType: "entity-array" })
     referencesToRetainAnonymized: string[];
@@ -252,6 +261,14 @@ describe("EntityRemoveService", () => {
         }),
       ],
     );
+  });
+
+  it("should anonymize file values, actively deleting file attachments", async () => {
+    const entity = new AnonymizableEntity();
+    entity.file = "test-file.txt";
+
+    await testAnonymization(entity, [entity], [AnonymizableEntity.create({})]);
+    expect(mockFileService.removeFile).toHaveBeenCalled();
   });
 
   //
