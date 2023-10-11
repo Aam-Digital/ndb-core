@@ -3,11 +3,11 @@ import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { DataFilter } from "../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../entity/model/entity";
 import {
-  createFactory,
-  allParsingInstructions,
   allInterpreters,
-  Filter,
+  allParsingInstructions,
   compare,
+  createFactory,
+  Filter,
 } from "@ucast/mongo2js";
 import moment from "moment";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
@@ -68,10 +68,10 @@ export class FilterService {
       [key, value] = this.transformNestedKey(key, value);
     }
     const property = schema.get(key);
-    if (property.dataType === "configurable-enum") {
+    if (property?.dataType === "configurable-enum") {
       value = this.parseConfigurableEnumValue(property, value);
     }
-    if (property.dataType.includes("date")) {
+    if (property?.dataType.includes("date")) {
       value = new Date(value);
     }
     newEntity[key] = value;

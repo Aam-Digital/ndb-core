@@ -50,6 +50,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -87,6 +88,7 @@ export interface TableRow<T extends Entity> {
     DisableEntityOperationDirective,
     Angulartics2Module,
     ListPaginatorComponent,
+    MatSlideToggleModule,
   ],
   standalone: true,
 })
@@ -94,6 +96,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
+
+  @Input() showInactive = false;
+  @Output() showInactiveChange = new EventEmitter<boolean>();
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
@@ -180,6 +185,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   private initDataSource() {
+    this.filter = this.filter ?? ({} as DataFilter<T>);
+    this.filterActiveInactive();
+    this.predicate = this.filterService.getFilterPredicate(this.filter);
+
     this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
@@ -229,7 +238,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       }
     }
     if (changes.hasOwnProperty("filter") && this.filter) {
-      this.predicate = this.filterService.getFilterPredicate(this.filter);
       reinitDataSource = true;
     }
     if (changes.hasOwnProperty("columns")) {
@@ -467,5 +475,22 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       return true;
     }
     return this.screenWidthObserver.currentScreenSize() >= numericValue;
+  }
+
+  filterActiveInactive() {
+    if (this.showInactive) {
+      // @ts-ignore type has issues with getters
+      delete this.filter.isActive;
+    } else {
+      this.filter["isActive"] = true;
+    }
+  }
+
+  setActiveInactiveFilter(newValue: boolean) {
+    if (newValue !== this.showInactive) {
+      this.showInactive = newValue;
+      this.showInactiveChange.emit(newValue);
+    }
+    this.initDataSource();
   }
 }

@@ -1,8 +1,14 @@
 <div *ngIf="isLoading" class="process-spinner">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
+
 <div [hidden]="isLoading">
-  <table mat-table [dataSource]="recordsDataSource" matSort class="full-width">
+  <table
+    mat-table
+    [dataSource]="recordsDataSource"
+    matSort
+    class="full-width table"
+  >
     <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
       <th
         mat-header-cell
@@ -130,8 +136,20 @@
       class="table-row"
     ></tr>
   </table>
+
   <app-list-paginator
+    class="table-footer"
     [dataSource]="recordsDataSource"
     [idForSavingPagination]="idForSavingPagination"
   ></app-list-paginator>
+
+  <div class="table-footer filter-inactive-toggle">
+    <mat-slide-toggle
+      [checked]="showInactive"
+      (change)="setActiveInactiveFilter($event.checked)"
+      i18n="slider|also show entries that are archived"
+    >
+      Include archived records
+    </mat-slide-toggle>
+  </div>
 </div>

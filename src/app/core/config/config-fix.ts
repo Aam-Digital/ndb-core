@@ -563,15 +563,6 @@ export const defaultJsonConfig = {
       },
       "filters": [
         {
-          "id": "isActive",
-          "type": "boolean",
-          "default": "true",
-          "label": $localize`Children`,
-          "true": $localize`:Active children filter label - true case:Active`,
-          "false": $localize`:Active children filter label - false case:Inactive`,
-          "all": $localize`:Active children unselect option:All`
-        },
-        {
           "id": "center"
         },
         {
@@ -760,17 +751,6 @@ export const defaultJsonConfig = {
         "title",
         "type",
         "assignedTo"
-      ],
-      "filters": [
-        {
-          "id": "isActive",
-          "type": "boolean",
-          "default": "true",
-          "label": $localize`Status`,
-          "true": $localize`:Active records filter label - true case:Active`,
-          "false": $localize`:Active records filter label - false case:Inactive`,
-          "all": $localize`:Active records unselect option:All`
-        },
       ],
       "exportConfig": [
         { "label": "Title", "query": "title" },
