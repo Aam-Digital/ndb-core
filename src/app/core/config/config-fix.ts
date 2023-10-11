@@ -716,8 +716,8 @@ export const defaultJsonConfig = {
               "config": {
                "summaries": [
                 {
-                   "type": "boolean",
-                   total: true, average: true 
+                  total: true,
+                  average: true,
                 }
                ]
               }

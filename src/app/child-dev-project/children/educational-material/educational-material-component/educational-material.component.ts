@@ -27,8 +27,8 @@ import { EntitySubrecordComponent } from "../../../../core/common-components/ent
   standalone: true,
 })
 export class EducationalMaterialComponent implements OnInit {
-  @Input() summaries: any[];
   @Input() entity: Child;
+  @Input() summaries: any[];
   records: EducationalMaterial[] = [];
   summary = "";
   avgSummary = "";
@@ -103,15 +103,19 @@ export class EducationalMaterialComponent implements OnInit {
         summary.get(label)!.sum += materialAmount;
       }
     });
-
-    const summaryArray = Array.from(summary.entries(), ([label, { sum }]) => `${label}: ${sum}`);
-    const avgSummaryArray = Array.from(summary.entries(), ([label, { count, sum }]) => {
-      const avg = parseFloat((sum / count).toFixed(2));
-      average.set(label, avg);
-      return `${label}: ${avg}`;
-    });
-
-    this.summary = summaryArray.join(", ");
-    this.avgSummary = avgSummaryArray.join(", ");
+    
+    if(this.summaries[0]?.total=== true) {
+      const summaryArray = Array.from(summary.entries(), ([label, { sum }]) => `${label}: ${sum}`);
+      this.summary = summaryArray.join(", ");
+    }
+   
+    if(this.summaries[0]?.average=== true) {
+      const avgSummaryArray = Array.from(summary.entries(), ([label, { count, sum }]) => {
+        const avg = parseFloat((sum / count).toFixed(2));
+        average.set(label, avg);
+        return `${label}: ${avg}`;
+      });
+      this.avgSummary = avgSummaryArray.join(", ");
+    }
   }
 }

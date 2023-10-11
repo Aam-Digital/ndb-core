@@ -6,12 +6,10 @@
 </app-entity-subrecord>
 
 <div class="margin-top-large">
-  <ng-container *ngFor="let item of summaries">
-    <ng-container *ngIf="item.total">
-      <strong>Total:</strong> {{ summary }} <br>
-    </ng-container>
-    <ng-container *ngIf="item.average">
-      <strong>Average:</strong> {{ avgSummary }} <br>
-    </ng-container>
+  <ng-container *ngIf="summary">
+    <strong>Total:</strong> {{ summary }} <br>
+  </ng-container>
+  <ng-container *ngIf="avgSummary">
+    <strong>Average:</strong> {{ avgSummary }} <br>
   </ng-container>
 </div>
