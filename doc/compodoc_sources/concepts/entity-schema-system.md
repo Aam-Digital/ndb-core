@@ -1,8 +1,14 @@
-# Entity Schema 
+# Entities & Entity Schema 
 -----
-The Entity Schema defines details of the properties of an entity type.
-(An "entity" is an object of a certain type that users work with and save to the database, like "Child" or "School")
+For us, an "Entity" is an object in the database (and a representation of something in the user's real world, e.g. a "Child" or "School").
+Entities are at the core of the Aam Digital platform and the primary way to customize the system is to adapt and add new entity types.
 
+The Entity Schema defines the data structure as well as how it is displayed in the UI.
+Entity instances also have some generic functionality inherited from the `Entity` base class.
+
+
+## Entity Schema
+The Entity Schema defines details of the properties of an entity type.
 We define an entity type and its schema in code through a plain TypeScript class and some custom annotations.
 Read more on the background and practical considerations in [How to create a new Entity Type](../how-to-guides/create-a-new-entity-type.html).
 
@@ -45,9 +51,28 @@ providing these through Angular dependency injection using `multi: true`.
 
 Also see: [How to create a new Datatype](../how-to-guides/create-a-new-datatype.html).
 
-## Schema options
+### Schema options
 
 The schema definitions contains information regarding the schema transformation as well as how a property can be displayed.
 The [EntitySchemaField](../../interfaces/EntitySchemaField.html) interface shows all configuration options.
 If the `editComponent` and the `viewComponent` are not set, the default components of this property's datatype will be used.
 The `description` field allows adding further explanation which will be displayed as a tooltip.
+
+
+## Generic Entity functionalities
+
+### Metadata (created, updated)
+Each record automatically holds basic data of timestamp and user who created and last updated the record.
+(see `Entity` class)
+
+### Archive / Anonymize
+Any entity can be archived (i.e. marked as inactive and hidden from UI by default) or anonymized (i.e. discarding most data and keeping a few selected properties for statistical reports).
+This is often preferable to deleting a record completely. Deleting data also affects statistical reports, even for previous time periods.
+By anonymizing records, all personal identifiable data can be removed and the remaining stub record can be stored indefinitely, as it is not subject to data protection regulations like GDPR anymore.
+
+Anonymization is configured as part of the entity schema.
+Data of fields that are not explicitly marked to be retained during anonymization is always deleted (anonymization by default).
+
+To keep some data even after the user "anonymized" a record, configure the `anonymize` property of the `@DatabaseField` decorator:
+- `anonymize: "retain"` will keep this field unchanged and prevent it from being deleted
+- `anonymize: "retain-anonymized"` will trigger a special "partial" deletion that depends on the dataType (e.g. date types will be changed to 1st July of the given year, thereby largely removing details but keeping data to calculate a rough age)
