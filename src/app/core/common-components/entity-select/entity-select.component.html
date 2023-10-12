@@ -51,8 +51,8 @@
     >
       Include inactive {{ label }}
     </mat-checkbox>
-    <ng-content select="mat-option"></ng-content>
-
+    <mat-option *ngIf="filteredEntities.length < 1 && (includeInactive || getNumberOfInactive() === 0)" [disabled]="true">None.</mat-option>
+    <mat-option *ngIf="filteredEntities.length < 1 && !includeInactive && getNumberOfInactive() > 0" [disabled]="true"> None. But {{ getNumberOfInactive() }} inactive {{ label }}. Also include inactive?</mat-option>
     <mat-option *ngFor="let res of filteredEntities" [value]="res">
       <app-display-entity
         [entityToDisplay]="res"

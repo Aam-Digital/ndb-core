@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { COMMA, ENTER } from "@angular/cdk/keycodes";
+import { COMMA, E, ENTER } from "@angular/cdk/keycodes";
 import { Entity } from "../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
@@ -220,11 +220,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity the entity to select
    */
   selectEntity(entity: E) {
-    this.selectedEntities.push(entity);
-    this.emitChange();
-    this.inputField.nativeElement.value = "";
-    this.formControl.setValue(null);
-    setTimeout(() => this.autocomplete.openPanel());
+    if (entity) {
+      this.selectedEntities.push(entity);
+      this.emitChange();
+      this.inputField.nativeElement.value = "";
+      this.formControl.setValue(null);
+      setTimeout(() => this.autocomplete.openPanel());
+    }
   }
 
   /**
@@ -274,6 +276,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   toggleIncludeInactive() {
     this.includeInactive = !this.includeInactive;
     this.filteredEntities = this.filter(this.filterValue);
+  }
+
+  getNumberOfInactive() {
+    this.includeInactive = true;
+    let numberOfInactive = this.filter(this.filterValue).length;
+    this.includeInactive = false;
+    return numberOfInactive;
   }
 
   /**
