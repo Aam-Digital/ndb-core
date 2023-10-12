@@ -26,6 +26,7 @@ describe("SiteSettingsService", () => {
   let mockFileService: jasmine.SpyObj<FileService>;
 
   beforeEach(() => {
+    localStorage.clear();
     entityMapper = mockEntityMapper();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
@@ -44,14 +45,15 @@ describe("SiteSettingsService", () => {
     expect(service).toBeTruthy();
   });
 
-  xit("should only publish changes if property has changed", () => {
+  it("should only publish changes if property has changed", () => {
     const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
     const settings = new SiteSettings();
 
     entityMapper.add(settings);
 
-    expect(titleSpy).not.toHaveBeenCalled();
+    expect(titleSpy).toHaveBeenCalled();
 
+    titleSpy.calls.reset();
     settings.displayLanguageSelect = false;
     entityMapper.add(settings);
 
