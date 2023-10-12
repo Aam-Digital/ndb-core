@@ -1,4 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
+import { NgFor, NgIf } from "@angular/common";
 import { EducationalMaterial } from "../model/educational-material";
 import { Child } from "../../model/child";
 import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
@@ -18,13 +19,19 @@ import { EntitySubrecordComponent } from "../../../../core/common-components/ent
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
-  imports: [EntitySubrecordComponent],
+  imports: [
+    EntitySubrecordComponent,
+    NgIf,
+    NgFor
+  ],
   standalone: true,
 })
 export class EducationalMaterialComponent implements OnInit {
   @Input() entity: Child;
+  @Input() summaries: { total?: boolean; average?: boolean } = { total: true };
   records: EducationalMaterial[] = [];
   summary = "";
+  avgSummary = "";
 
   @Input() config: { columns: FormFieldConfig[] } = {
     columns: [
@@ -83,15 +90,32 @@ export class EducationalMaterialComponent implements OnInit {
    * human-readable format
    */
   updateSummary() {
-    const summary = new Map<string, number>();
+    const summary = new Map<string, { count: number; sum: number }>();
+    const average = new Map<string, number>();
+
     this.records.forEach((m) => {
-      const previousValue = summary.has(m.materialType.label)
-        ? summary.get(m.materialType.label)
-        : 0;
-      summary.set(m.materialType.label, previousValue + m.materialAmount);
+      const { materialType, materialAmount } = m;
+      const label = materialType?.label;
+
+      if (label) {
+        summary.set(label, (summary.get(label) || { count: 0, sum: 0 }));
+        summary.get(label)!.count++;
+        summary.get(label)!.sum += materialAmount;
+      }
     });
-    this.summary = [...summary]
-      .map(([key, value]) => key + ": " + value)
-      .join(", ");
+    
+    if(this.summaries.total) {
+      const summaryArray = Array.from(summary.entries(), ([label, { sum }]) => `${label}: ${sum}`);
+      this.summary = summaryArray.join(", ");
+    }
+   
+    if(this.summaries.average) {
+      const avgSummaryArray = Array.from(summary.entries(), ([label, { count, sum }]) => {
+        const avg = parseFloat((sum / count).toFixed(2));
+        average.set(label, avg);
+        return `${label}: ${avg}`;
+      });
+      this.avgSummary = avgSummaryArray.join(", ");
+    }
   }
 }

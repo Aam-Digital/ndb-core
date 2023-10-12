@@ -18,8 +18,7 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { UiComponent } from "./ui.component";
-import { SwUpdate } from "@angular/service-worker";
-import { EMPTY, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { ConfigService } from "../../config/config.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DatabaseIndexingService } from "../../entity/database-indexing/database-indexing.service";
@@ -30,7 +29,6 @@ describe("UiComponent", () => {
   let fixture: ComponentFixture<UiComponent>;
 
   beforeEach(waitForAsync(() => {
-    const mockSwUpdate = { available: EMPTY, checkForUpdate: () => {} };
     const mockIndexingService = jasmine.createSpyObj<DatabaseIndexingService>(
       ["createIndex"],
       {
@@ -43,7 +41,6 @@ describe("UiComponent", () => {
       imports: [UiComponent, MockedTestingModule.withState()],
       providers: [
         UserRoleGuard,
-        { provide: SwUpdate, useValue: mockSwUpdate },
         {
           provide: DatabaseIndexingService,
           useValue: mockIndexingService,

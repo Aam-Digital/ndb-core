@@ -706,8 +706,14 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "EducationalMaterial"
-            }
+              "component": "EducationalMaterial",
+              "config": {
+               "summaries": {
+                  total: true,
+                  average: true,
+                }
+              }
+            }    
           ]
         },
         {
