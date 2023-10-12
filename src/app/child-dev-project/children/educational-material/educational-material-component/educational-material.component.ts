@@ -28,7 +28,7 @@ import { EntitySubrecordComponent } from "../../../../core/common-components/ent
 })
 export class EducationalMaterialComponent implements OnInit {
   @Input() entity: Child;
-  @Input() summaries: any[];
+  @Input() summaries: any;
   records: EducationalMaterial[] = [];
   summary = "";
   avgSummary = "";
@@ -104,12 +104,12 @@ export class EducationalMaterialComponent implements OnInit {
       }
     });
     
-    if(this.summaries[0]?.total=== true) {
+    if(this.summaries.total) {
       const summaryArray = Array.from(summary.entries(), ([label, { sum }]) => `${label}: ${sum}`);
       this.summary = summaryArray.join(", ");
     }
    
-    if(this.summaries[0]?.average=== true) {
+    if(this.summaries.average) {
       const avgSummaryArray = Array.from(summary.entries(), ([label, { count, sum }]) => {
         const avg = parseFloat((sum / count).toFixed(2));
         average.set(label, avg);

@@ -714,12 +714,10 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "EducationalMaterial",
               "config": {
-               "summaries": [
-                {
+               "summaries": {
                   total: true,
                   average: true,
                 }
-               ]
               }
             }    
           ]

@@ -35,7 +35,7 @@ describe("EducationalMaterialComponent", () => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);
     component = fixture.componentInstance;
     component.entity = child;
-    component.summaries =[{total: true, average: true}];
+    component.summaries = {total: true, average: true};
     fixture.detectChanges();
   });
 
@@ -84,11 +84,11 @@ describe("EducationalMaterialComponent", () => {
   });
 
   it("produces summary of all records when average is false and total is true", () => {
+    component.summaries =  { total: true, average: false }
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
       { materialType: PENCIL, materialAmount: 3 },
-      component.summaries =[{total: true, average: false}],
     );
 
     expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
@@ -96,11 +96,11 @@ describe("EducationalMaterialComponent", () => {
   });
 
   it("produces summary of all records when average is true and total is false", () => {
+    component.summaries = { total: false, average: true };
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
       { materialType: PENCIL, materialAmount: 3 },
-      component.summaries =[{total: false, average: true}],
     );
 
     expect(component.summary).toEqual(``);
@@ -108,23 +108,23 @@ describe("EducationalMaterialComponent", () => {
   });
 
   it("does not produces summary of all records when both average and total are false", () => {
+    component.summaries = { total: false, average: false };
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
       { materialType: PENCIL, materialAmount: 3 },
-      component.summaries =[{total: false, average: false}],
     );
-
+    
     expect(component.summary).toEqual(``);
     expect(component.avgSummary).toEqual(``);
   });
 
   it("produces summary of all records when both average and total are true", () => {
+    component.summaries = { total: true, average: true };
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
       { materialType: PENCIL, materialAmount: 3 },
-      component.summaries =[{total: true, average: true}],
     );
 
     expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
