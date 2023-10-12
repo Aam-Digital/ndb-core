@@ -28,7 +28,7 @@ import { EntitySubrecordComponent } from "../../../../core/common-components/ent
 })
 export class EducationalMaterialComponent implements OnInit {
   @Input() entity: Child;
-  @Input() summaries: {total: boolean; average: boolean};
+  @Input() summaries: { total?: boolean; average?: boolean } = { total: true };
   records: EducationalMaterial[] = [];
   summary = "";
   avgSummary = "";
