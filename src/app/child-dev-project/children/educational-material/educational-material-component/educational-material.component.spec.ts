@@ -107,7 +107,7 @@ describe("EducationalMaterialComponent", () => {
     expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
   });
 
-  it("produces summary of all records when both average and total are false", () => {
+  it("does not produces summary of all records when both average and total are false", () => {
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
