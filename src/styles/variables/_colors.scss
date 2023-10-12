@@ -43,7 +43,11 @@ $disabled: rgba(0, 0, 0, 0.38);
 $disabled-transparent: $grey-transparent;
 $border-color: $grey-darker;
 
-$background: mat.get-color-from-palette(theme.$primary, 50);
+/** background for the main view */
+$background: white;
+/** background for the sidebar */
+$background-secondary: mat.get-color-from-palette(theme.$primary, 50);
+/** light grey color background to highlight special ui elements */
 $background-neutral: mat.get-color-from-palette(mat.$light-theme-background-palette, card);
 
 /** especially for labels in disabled forms (which is our default view) */
