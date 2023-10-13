@@ -35,6 +35,7 @@ describe("EducationalMaterialComponent", () => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);
     component = fixture.componentInstance;
     component.entity = child;
+    component.summaries = {total: true, average: true};
     fixture.detectChanges();
   });
 
@@ -46,6 +47,7 @@ describe("EducationalMaterialComponent", () => {
     component.records = [];
     component.updateSummary();
     expect(component.summary).toHaveSize(0);
+    expect(component.avgSummary).toHaveSize(0);
   });
 
   function setRecordsAndGenerateSummary(
@@ -58,6 +60,7 @@ describe("EducationalMaterialComponent", () => {
   it("produces a singleton summary when there is a single record", () => {
     setRecordsAndGenerateSummary({ materialType: PENCIL, materialAmount: 1 });
     expect(component.summary).toEqual(`${PENCIL.label}: 1`);
+    expect(component.avgSummary).toEqual(`${PENCIL.label}: 1`);
   });
 
   it("produces a summary of all records when they are all different", () => {
@@ -66,6 +69,7 @@ describe("EducationalMaterialComponent", () => {
       { materialType: RULER, materialAmount: 1 },
     );
     expect(component.summary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
+    expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
   });
 
   it("produces a summary of all records when there are duplicates", () => {
@@ -74,7 +78,57 @@ describe("EducationalMaterialComponent", () => {
       { materialType: RULER, materialAmount: 1 },
       { materialType: PENCIL, materialAmount: 3 },
     );
+
     expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
+    expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
+  });
+
+  it("produces summary of all records when average is false and total is true", () => {
+    component.summaries =  { total: true, average: false }
+    setRecordsAndGenerateSummary(
+      { materialType: PENCIL, materialAmount: 1 },
+      { materialType: RULER, materialAmount: 1 },
+      { materialType: PENCIL, materialAmount: 3 },
+    );
+
+    expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
+    expect(component.avgSummary).toEqual(``);
+  });
+
+  it("produces summary of all records when average is true and total is false", () => {
+    component.summaries = { total: false, average: true };
+    setRecordsAndGenerateSummary(
+      { materialType: PENCIL, materialAmount: 1 },
+      { materialType: RULER, materialAmount: 1 },
+      { materialType: PENCIL, materialAmount: 3 },
+    );
+
+    expect(component.summary).toEqual(``);
+    expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
+  });
+
+  it("does not produces summary of all records when both average and total are false", () => {
+    component.summaries = { total: false, average: false };
+    setRecordsAndGenerateSummary(
+      { materialType: PENCIL, materialAmount: 1 },
+      { materialType: RULER, materialAmount: 1 },
+      { materialType: PENCIL, materialAmount: 3 },
+    );
+    
+    expect(component.summary).toEqual(``);
+    expect(component.avgSummary).toEqual(``);
+  });
+
+  it("produces summary of all records when both average and total are true", () => {
+    component.summaries = { total: true, average: true };
+    setRecordsAndGenerateSummary(
+      { materialType: PENCIL, materialAmount: 1 },
+      { materialType: RULER, materialAmount: 1 },
+      { materialType: PENCIL, materialAmount: 3 },
+    );
+
+    expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
+    expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
   });
 
   it("loads all education data associated with a child and updates the summary", async () => {
