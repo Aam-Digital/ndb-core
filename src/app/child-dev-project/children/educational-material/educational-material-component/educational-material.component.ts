@@ -1,88 +1,60 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { NgFor, NgIf } from "@angular/common";
-import { EducationalMaterial } from "../model/educational-material";
-import { Child } from "../../model/child";
-import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { applyUpdate } from "../../../../core/entity/model/entity-update";
-import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { RelatedEntitiesComponent } from "../../../../core/entity-details/related-entities/related-entities.component";
+import { Entity } from "../../../../core/entity/model/entity";
+import { filter } from "rxjs/operators";
+import { applyUpdate } from "../../../../core/entity/model/entity-update";
 
 /**
- * Displays educational materials of a child, such as a pencil, rulers, e.t.c
- * as well as a summary
+ * Load and display a list of entity subrecords (entities related to the current entity details view)
+ * including a summary below the table.
  */
 @DynamicComponent("EducationalMaterial")
 @UntilDestroy()
 @Component({
   selector: "app-educational-material",
   templateUrl: "./educational-material.component.html",
-  imports: [
-    EntitySubrecordComponent,
-    NgIf,
-    NgFor
-  ],
+  imports: [EntitySubrecordComponent, NgIf, NgFor],
   standalone: true,
 })
-export class EducationalMaterialComponent implements OnInit {
-  @Input() entity: Child;
-  @Input() summaries: { total?: boolean; average?: boolean } = { total: true };
-  records: EducationalMaterial[] = [];
+export class EducationalMaterialComponent<E extends Entity = Entity>
+  extends RelatedEntitiesComponent<E>
+  implements OnInit
+{
+  /**
+   * Configuration of what numbers should be summarized below the table.
+   */
+  @Input() summaries?: {
+    countProperty: string;
+    groupBy?: string;
+    total?: boolean;
+    average?: boolean;
+  };
+
   summary = "";
   avgSummary = "";
 
-  @Input() config: { columns: FormFieldConfig[] } = {
-    columns: [
-      { id: "date", visibleFrom: "xs" },
-      { id: "materialType", visibleFrom: "xs" },
-      { id: "materialAmount", visibleFrom: "md" },
-      { id: "description", visibleFrom: "md" },
-    ],
-  };
+  async ngOnInit() {
+    await super.ngOnInit();
+    this.updateSummary();
 
-  constructor(private entityMapper: EntityMapperService) {
     this.entityMapper
-      .receiveUpdates(EducationalMaterial)
+      .receiveUpdates(this.entityCtr)
       .pipe(
         untilDestroyed(this),
         filter(
           ({ entity, type }) =>
-            type === "remove" || entity.child === this.entity.getId(),
+            type === "remove" || entity[this.property] === this.entity.getId(),
         ),
       )
       .subscribe((update) => {
-        this.records = applyUpdate(this.records, update);
+        this.data = applyUpdate(this.data, update);
         this.updateSummary();
       });
   }
-
-  ngOnInit() {
-    return this.loadData();
-  }
-
-  /**
-   * Loads the data for a given child and updates the summary
-   * @param id The id of the child to load the data for
-   */
-  private async loadData() {
-    const allMaterials = await this.entityMapper.loadType(EducationalMaterial);
-    this.records = allMaterials.filter(
-      (mat) => mat.child === this.entity.getId(),
-    );
-    this.updateSummary();
-  }
-
-  newRecordFactory = () => {
-    const newAtt = new EducationalMaterial(Date.now().toString());
-
-    // use last entered date as default, otherwise today's date
-    newAtt.date = this.records.length > 0 ? this.records[0].date : new Date();
-    newAtt.child = this.entity.getId();
-
-    return newAtt;
-  };
 
   /**
    * update the summary or generate a new one.
@@ -90,31 +62,45 @@ export class EducationalMaterialComponent implements OnInit {
    * human-readable format
    */
   updateSummary() {
+    if (!this.summaries) {
+      this.summary = "";
+      this.avgSummary = "";
+      return;
+    }
+
     const summary = new Map<string, { count: number; sum: number }>();
     const average = new Map<string, number>();
 
-    this.records.forEach((m) => {
-      const { materialType, materialAmount } = m;
-      const label = materialType?.label;
-
-      if (label) {
-        summary.set(label, (summary.get(label) || { count: 0, sum: 0 }));
-        summary.get(label)!.count++;
-        summary.get(label)!.sum += materialAmount;
+    this.data.forEach((m) => {
+      const amount = m[this.summaries.countProperty];
+      let groupLabel;
+      if (this.summaries.groupBy) {
+        groupLabel =
+          m[this.summaries.groupBy]?.label ?? m[this.summaries.groupBy];
       }
+
+      summary.set(groupLabel, summary.get(groupLabel) || { count: 0, sum: 0 });
+      summary.get(groupLabel)!.count++;
+      summary.get(groupLabel)!.sum += amount;
     });
-    
-    if(this.summaries.total) {
-      const summaryArray = Array.from(summary.entries(), ([label, { sum }]) => `${label}: ${sum}`);
+
+    if (this.summaries.total) {
+      const summaryArray = Array.from(
+        summary.entries(),
+        ([label, { sum }]) => `${label}: ${sum}`,
+      );
       this.summary = summaryArray.join(", ");
     }
-   
-    if(this.summaries.average) {
-      const avgSummaryArray = Array.from(summary.entries(), ([label, { count, sum }]) => {
-        const avg = parseFloat((sum / count).toFixed(2));
-        average.set(label, avg);
-        return `${label}: ${avg}`;
-      });
+
+    if (this.summaries.average) {
+      const avgSummaryArray = Array.from(
+        summary.entries(),
+        ([label, { count, sum }]) => {
+          const avg = parseFloat((sum / count).toFixed(2));
+          average.set(label, avg);
+          return `${label}: ${avg}`;
+        },
+      );
       this.avgSummary = avgSummaryArray.join(", ");
     }
   }

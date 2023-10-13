@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { EducationalMaterialComponent } from "./educational-material.component";
 import { Child } from "../../model/child";
@@ -35,7 +41,16 @@ describe("EducationalMaterialComponent", () => {
     fixture = TestBed.createComponent(EducationalMaterialComponent);
     component = fixture.componentInstance;
     component.entity = child;
-    component.summaries = {total: true, average: true};
+    component.entityType = EducationalMaterial.ENTITY_TYPE;
+    component.property = "child";
+
+    component.summaries = {
+      countProperty: "materialAmount",
+      groupBy: "materialType",
+      total: true,
+      average: true,
+    };
+
     fixture.detectChanges();
   });
 
@@ -44,7 +59,7 @@ describe("EducationalMaterialComponent", () => {
   });
 
   it("produces an empty summary when there are no records", () => {
-    component.records = [];
+    component.data = [];
     component.updateSummary();
     expect(component.summary).toHaveSize(0);
     expect(component.avgSummary).toHaveSize(0);
@@ -53,7 +68,7 @@ describe("EducationalMaterialComponent", () => {
   function setRecordsAndGenerateSummary(
     ...records: Partial<EducationalMaterial>[]
   ) {
-    component.records = records.map(EducationalMaterial.create);
+    component.data = records.map(EducationalMaterial.create);
     component.updateSummary();
   }
 
@@ -69,7 +84,9 @@ describe("EducationalMaterialComponent", () => {
       { materialType: RULER, materialAmount: 1 },
     );
     expect(component.summary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
-    expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
+    expect(component.avgSummary).toEqual(
+      `${PENCIL.label}: 2, ${RULER.label}: 1`,
+    );
   });
 
   it("produces a summary of all records when there are duplicates", () => {
@@ -80,11 +97,14 @@ describe("EducationalMaterialComponent", () => {
     );
 
     expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
-    expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
+    expect(component.avgSummary).toEqual(
+      `${PENCIL.label}: 2, ${RULER.label}: 1`,
+    );
   });
 
   it("produces summary of all records when average is false and total is true", () => {
-    component.summaries =  { total: true, average: false }
+    component.summaries.total = true;
+    component.summaries.average = false;
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
@@ -96,7 +116,8 @@ describe("EducationalMaterialComponent", () => {
   });
 
   it("produces summary of all records when average is true and total is false", () => {
-    component.summaries = { total: false, average: true };
+    component.summaries.total = false;
+    component.summaries.average = true;
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
@@ -104,23 +125,25 @@ describe("EducationalMaterialComponent", () => {
     );
 
     expect(component.summary).toEqual(``);
-    expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
+    expect(component.avgSummary).toEqual(
+      `${PENCIL.label}: 2, ${RULER.label}: 1`,
+    );
   });
 
   it("does not produces summary of all records when both average and total are false", () => {
-    component.summaries = { total: false, average: false };
+    component.summaries.total = false;
+    component.summaries.average = false;
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
       { materialType: PENCIL, materialAmount: 3 },
     );
-    
+
     expect(component.summary).toEqual(``);
     expect(component.avgSummary).toEqual(``);
   });
 
   it("produces summary of all records when both average and total are true", () => {
-    component.summaries = { total: true, average: true };
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 1 },
       { materialType: RULER, materialAmount: 1 },
@@ -128,7 +151,9 @@ describe("EducationalMaterialComponent", () => {
     );
 
     expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
-    expect(component.avgSummary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
+    expect(component.avgSummary).toEqual(
+      `${PENCIL.label}: 2, ${RULER.label}: 1`,
+    );
   });
 
   it("loads all education data associated with a child and updates the summary", async () => {
@@ -142,37 +167,38 @@ describe("EducationalMaterialComponent", () => {
     component.entity = new Child("22");
     await component.ngOnInit();
     expect(component.summary).toEqual(`${PENCIL.label}: 1, ${RULER.label}: 2`);
-    expect(component.records).toEqual(educationalData);
+    expect(component.data).toEqual(educationalData);
   });
 
-  it("associates a new record with the current child", () => {
-    const newRecord = component.newRecordFactory();
-    expect(newRecord.child).toBe(child.getId());
-  });
+  it("should update the summary when entity updates are received", fakeAsync(() => {
+    component.ngOnInit();
+    tick();
 
-  it("should update the summary when entity updates are received", async () => {
     const update1 = EducationalMaterial.create({
       child: child.getId(),
       materialType: PENCIL,
       materialAmount: 1,
     });
     updates.next({ entity: update1, type: "new" });
+    tick();
 
-    expect(component.records).toEqual([update1]);
+    expect(component.data).toEqual([update1]);
     expect(component.summary).toBe(`${PENCIL.label}: 1`);
 
     const update2 = update1.copy() as EducationalMaterial;
     update2.materialAmount = 2;
     updates.next({ entity: update2, type: "update" });
+    tick();
 
-    expect(component.records).toEqual([update2]);
+    expect(component.data).toEqual([update2]);
     expect(component.summary).toBe(`${PENCIL.label}: 2`);
 
     const unrelatedUpdate = update1.copy() as EducationalMaterial;
     unrelatedUpdate.child = "differentChild";
     updates.next({ entity: unrelatedUpdate, type: "new" });
+    tick();
     // No change
-    expect(component.records).toEqual([update2]);
+    expect(component.data).toEqual([update2]);
     expect(component.summary).toBe(`${PENCIL.label}: 2`);
-  });
+  }));
 });

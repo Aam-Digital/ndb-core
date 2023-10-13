@@ -50,7 +50,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   protected entityCtr: EntityConstructor<E>;
 
   constructor(
-    private entityMapper: EntityMapperService,
+    protected entityMapper: EntityMapperService,
     private entities: EntityRegistry,
   ) {}
 
