@@ -6,18 +6,18 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 
-import { EducationalMaterialComponent } from "./educational-material.component";
-import { Child } from "../../model/child";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { EducationalMaterial } from "../model/educational-material";
-import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
+import { RelatedEntitiesWithSummaryComponent } from "./related-entities-with-summary.component";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { EducationalMaterial } from "../../../child-dev-project/children/educational-material/model/educational-material";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Subject } from "rxjs";
-import { UpdatedEntity } from "../../../../core/entity/model/entity-update";
+import { UpdatedEntity } from "../../entity/model/entity-update";
 
-describe("EducationalMaterialComponent", () => {
-  let component: EducationalMaterialComponent;
-  let fixture: ComponentFixture<EducationalMaterialComponent>;
+describe("RelatedEntitiesWithSummaryComponent", () => {
+  let component: RelatedEntitiesWithSummary;
+  let fixture: ComponentFixture<RelatedEntitiesWithSummary>;
   const updates = new Subject<UpdatedEntity<EducationalMaterial>>();
   const child = new Child("22");
   const PENCIL: ConfigurableEnumValue = {
@@ -31,14 +31,14 @@ describe("EducationalMaterialComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [EducationalMaterialComponent, MockedTestingModule.withState()],
+      imports: [RelatedEntitiesWithSummary, MockedTestingModule.withState()],
     }).compileComponents();
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(updates);
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(EducationalMaterialComponent);
+    fixture = TestBed.createComponent(RelatedEntitiesWithSummary);
     component = fixture.componentInstance;
     component.entity = child;
     component.entityType = EducationalMaterial.ENTITY_TYPE;

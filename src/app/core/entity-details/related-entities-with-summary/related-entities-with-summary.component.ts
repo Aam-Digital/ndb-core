@@ -1,26 +1,26 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { NgFor, NgIf } from "@angular/common";
-import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
+import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { RelatedEntitiesComponent } from "../../../../core/entity-details/related-entities/related-entities.component";
-import { Entity } from "../../../../core/entity/model/entity";
+import { EntitySubrecordComponent } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
+import { Entity } from "../../entity/model/entity";
 import { filter } from "rxjs/operators";
-import { applyUpdate } from "../../../../core/entity/model/entity-update";
+import { applyUpdate } from "../../entity/model/entity-update";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view)
  * including a summary below the table.
  */
-@DynamicComponent("EducationalMaterial")
+@DynamicComponent("RelatedEntitiesWithSummary")
 @UntilDestroy()
 @Component({
-  selector: "app-educational-material",
-  templateUrl: "./educational-material.component.html",
+  selector: "app-related-entities-with-summary",
+  templateUrl: "./related-entities-with-summary.component.html",
   imports: [EntitySubrecordComponent, NgIf, NgFor],
   standalone: true,
 })
-export class EducationalMaterialComponent<E extends Entity = Entity>
+export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   extends RelatedEntitiesComponent<E>
   implements OnInit
 {
