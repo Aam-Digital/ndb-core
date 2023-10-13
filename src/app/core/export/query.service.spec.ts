@@ -497,9 +497,8 @@ describe("QueryService", () => {
 
     const attendanceArrayQuery = `${EventNote.ENTITY_TYPE}:toArray:getAttendanceArray(true)`;
 
-    const attendanceResult: AttendanceInfo = await queryData(
-      attendanceArrayQuery,
-    );
+    const attendanceResult: AttendanceInfo =
+      await queryData(attendanceArrayQuery);
 
     expect(attendanceResult).toContain({
       participant: presentTwiceWithSchool.getId(),
@@ -634,6 +633,30 @@ describe("QueryService", () => {
     const res = service.queryData("a:sum", undefined, undefined, data);
 
     expect(res).toBe(3);
+  });
+
+  it("should calculate the average of values", () => {
+    const data = [
+      { a: 5, b: 2 },
+      { b: "11" },
+      { b: -1 },
+      { b: 100 },
+      { a: "invalid" },
+    ];
+
+    let res = service.queryData("a:avg", undefined, undefined, data);
+    expect(res).toBe("5");
+
+    // Returns valid number if no values are available
+    res = service.queryData("a:avg", undefined, undefined, [{ b: 1 }]);
+    expect(res).toBe("0");
+
+    // Numbers are fixed to provided decimals
+    res = service.queryData("a:avg(2)", undefined, undefined, [
+      { a: 3 },
+      { a: 2 },
+    ]);
+    expect(res).toBe("2.50");
   });
 
   function queryData(query: string, from?: Date, to?: Date, data?: any) {
