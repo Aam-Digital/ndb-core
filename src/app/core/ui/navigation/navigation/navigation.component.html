@@ -24,6 +24,7 @@
       [angularticsLabel]="item.label"
       [routerLink]="[item.link]"
       [class.matched-background]="item.link === activeLink"
+      onclick="this.blur();"
     >
       <a class="flex-row gap-small">
         <app-fa-dynamic-icon

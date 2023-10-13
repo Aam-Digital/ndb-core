@@ -29,7 +29,7 @@ const Template: StoryFn<DisplayPercentageComponent> = (
 
 export const Low = Template.bind({});
 Low.args = {
-  value: 5,
+  value: 0,
 };
 export const Medium = Template.bind({});
 Medium.args = {

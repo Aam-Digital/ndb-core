@@ -31,8 +31,8 @@ export class DynamicComponentDirective implements OnChanges {
     private changeDetector: ChangeDetectorRef,
   ) {}
 
-  async ngOnChanges() {
-    await this.loadDynamicComponent();
+  ngOnChanges() {
+    return this.loadDynamicComponent();
   }
 
   private async loadDynamicComponent() {
@@ -57,7 +57,7 @@ export class DynamicComponentDirective implements OnChanges {
 
   private setInputProperties(proto, component) {
     const inputs = Object.keys(proto.constructor["ɵcmp"].inputs).filter(
-      (input) => this.appDynamicComponent.config?.[input],
+      (input) => this.appDynamicComponent.config?.[input] !== undefined,
     );
     const inputValues = pick(this.appDynamicComponent.config, inputs);
     const initialValues = pick(component, inputs);
