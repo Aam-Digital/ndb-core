@@ -665,7 +665,7 @@
       </trans-unit>
       <trans-unit id="4f5387aaba704a4561aa1211abc1083bf598e062" datatype="html">
         <source> no records without recent report </source>
-        <target state="translated">keine Einträge ohne kürzlichen Bericht</target>
+        <target state="translated">keine Einträge ohne kürzliche Notiz</target>
         <note priority="1" from="description">There are no participants that don't have a recent report to be shown
           here</note>
         <context-group purpose="location">
@@ -675,7 +675,7 @@
       </trans-unit>
       <trans-unit id="cdc1f663699ad1d5dec31bee9abce8dc8e69393f" datatype="html">
         <source> no records with recent report </source>
-        <target state="translated">keine Einträge mit kürzlichem Bericht</target>
+        <target state="translated">keine Einträge mit kürzlicher Notiz</target>
         <note priority="1" from="description">There are no participants that have a recent report to be shown here</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
@@ -684,7 +684,7 @@
       </trans-unit>
       <trans-unit id="8464701253103976828" datatype="html">
         <source><x id="PH" equiv-text="this._entity.labelPlural"/> having no recent reports</source>
-        <target state="translated"><x id="PH" equiv-text="Child.labelPlural"/> ohne kürzlichen Bericht</target>
+        <target state="translated"><x id="PH" equiv-text="Child.labelPlural"/> ohne kürzliche Notiz</target>
         <note priority="1" from="description">Subtitle informing the user that these are the entities without recent reports</note>
         <note priority="1" from="meaning">Subtitle</note>
         <context-group purpose="location">
@@ -694,7 +694,7 @@
       </trans-unit>
       <trans-unit id="1416477962742777056" datatype="html">
         <source><x id="PH" equiv-text="this._entity.labelPlural"/> with recent report</source>
-        <target state="translated"><x id="PH" equiv-text="Child.labelPlural"/> mit neuem Bericht</target>
+        <target state="translated"><x id="PH" equiv-text="Child.labelPlural"/> mit neuer Notiz</target>
         <note priority="1" from="description">Subtitle informing the user that these are the entities with recent reports</note>
         <note priority="1" from="meaning">Subtitle</note>
         <context-group purpose="location">
