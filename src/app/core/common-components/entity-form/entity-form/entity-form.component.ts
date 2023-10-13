@@ -90,14 +90,14 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   private async applyChanges(externallyUpdatedEntity: T) {
     if (this.formIsUpToDate(externallyUpdatedEntity)) {
-      Object.assign(this.entity, externallyUpdatedEntity as any);
+      Object.assign(this.entity, externallyUpdatedEntity);
       return;
     }
 
     const userEditedFields = Object.entries(this.form.getRawValue()).filter(
-      ([key, value]) => this.form.controls[key].dirty,
+      ([key]) => this.form.controls[key].dirty,
     );
-    let userEditsToReapply = userEditedFields.filter(([key, value]) =>
+    let userEditsToReapply = userEditedFields.filter(([key]) =>
       // no conflict with updated values
       this.entityEqualsFormValue(
         externallyUpdatedEntity[key],
@@ -115,7 +115,7 @@ export class EntityFormComponent<T extends Entity = Entity>
     }
 
     // apply update to all pristine (not user-edited) fields and update base entity (to avoid conflicts when saving)
-    Object.assign(this.entity, externallyUpdatedEntity as any);
+    Object.assign(this.entity, externallyUpdatedEntity);
     Object.assign(this.initialFormValues, externallyUpdatedEntity);
     this.form.reset(externallyUpdatedEntity as any);
 
