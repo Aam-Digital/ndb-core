@@ -16,8 +16,8 @@ import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 
 describe("RelatedEntitiesWithSummaryComponent", () => {
-  let component: RelatedEntitiesWithSummary;
-  let fixture: ComponentFixture<RelatedEntitiesWithSummary>;
+  let component: RelatedEntitiesWithSummaryComponent;
+  let fixture: ComponentFixture<RelatedEntitiesWithSummaryComponent>;
   const updates = new Subject<UpdatedEntity<EducationalMaterial>>();
   const child = new Child("22");
   const PENCIL: ConfigurableEnumValue = {
@@ -31,14 +31,17 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [RelatedEntitiesWithSummary, MockedTestingModule.withState()],
+      imports: [
+        RelatedEntitiesWithSummaryComponent,
+        MockedTestingModule.withState(),
+      ],
     }).compileComponents();
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(updates);
   }));
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(RelatedEntitiesWithSummary);
+    fixture = TestBed.createComponent(RelatedEntitiesWithSummaryComponent);
     component = fixture.componentInstance;
     component.entity = child;
     component.entityType = EducationalMaterial.ENTITY_TYPE;

@@ -64,7 +64,12 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     this.entityCtr = this.entities.get(this.entityType) as EntityConstructor<E>;
     this.isArray = isArrayProperty(this.entityCtr, this.property);
 
-    this.data = await this.entityMapper.loadType(this.entityType);
+    this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
+      (e) =>
+        this.isArray
+          ? e[this.property].includes(this.entity.getId())
+          : e[this.property] === this.entity.getId(),
+    );
     this.filter = {
       ...this.filter,
       [this.property]: this.isArray
