@@ -110,7 +110,7 @@ describe("EntityFormComponent", () => {
     );
   });
 
-  it("should set form to empty field for properties removed in updated remote entity", async () => {
+  it("should clear field in form for properties removed in updated remote entity", async () => {
     const originalEntity = { projectNumber: "p1", name: "test" };
     const formValues = { projectNumber: "p2", name: "test" };
     const remoteValues = {
