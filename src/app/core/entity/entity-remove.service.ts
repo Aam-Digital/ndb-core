@@ -42,9 +42,9 @@ export class EntityRemoveService {
     action: string,
     navigateBackToUrl?: string,
   ) {
-    const snackBarTitle = $localize`:Entity action confirmation message:${action} ${
+    const snackBarTitle = $localize`:Entity action confirmation message:${
       entity.getConstructor().label
-    } "${entity.toString()}"`;
+    } "${entity.toString()}" ${action}`;
 
     const snackBarRef = this.snackBar.open(
       snackBarTitle,
