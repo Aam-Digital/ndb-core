@@ -124,13 +124,14 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   });
 
   it("should create a new entity with the start date inferred from previous relations", async () => {
+    const child = new Child();
     const existingRelation = new ChildSchoolRelation();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
+    existingRelation.childId = child.getId(false);
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([existingRelation]);
 
-    const child = new Child();
     component.entity = child;
     await component.ngOnInit();
 

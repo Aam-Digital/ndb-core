@@ -697,14 +697,24 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "EducationalMaterial",
+              "component": "RelatedEntitiesWithSummary",
               "config": {
-               "summaries": {
-                  total: true,
-                  average: true,
+                "entityType": EducationalMaterial.ENTITY_TYPE,
+                "property": "child",
+                "columns": [
+                  { "id": "date", "visibleFrom": "xs" },
+                  { "id": "materialType", "visibleFrom": "xs" },
+                  { "id": "materialAmount", "visibleFrom": "md" },
+                  { "id": "description", "visibleFrom": "md" },
+                ],
+                "summaries": {
+                  "countProperty": "materialAmount",
+                  "groupBy": "materialType",
+                  "total": true,
+                  "average": false
                 }
               }
-            }    
+            }
           ]
         },
         {
