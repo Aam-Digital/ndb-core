@@ -253,7 +253,7 @@ describe("EditFileComponent", () => {
 
   it("should not open a file if no value is set", () => {
     setupComponent();
-    component.fileClicked();
+    component.showFile();
 
     expect(mockFileService.showFile).not.toHaveBeenCalled();
   });

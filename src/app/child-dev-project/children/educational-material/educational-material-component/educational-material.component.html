@@ -5,9 +5,11 @@
 >
 </app-entity-subrecord>
 
-<div
-  class="margin-top-large"
-  i18n="Total amount|Total amount of education material including a summary"
->
-  Total: {{ summary }}
+<div class="margin-top-large">
+  <ng-container *ngIf="summary">
+    <strong i18n>Total:</strong> {{ summary }} <br>
+  </ng-container>
+  <ng-container *ngIf="avgSummary">
+    <strong i18n>Average:</strong> {{ avgSummary }} <br>
+  </ng-container>
 </div>

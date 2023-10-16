@@ -38,7 +38,7 @@ import { ErrorHintComponent } from "../../../core/common-components/error-hint/e
   standalone: true,
 })
 export class EditFileComponent extends EditComponent<string> implements OnInit {
-  @ViewChild("fileUpload") fileInput: ElementRef<HTMLInputElement>;
+  @ViewChild("fileUpload") fileUploadInput: ElementRef<HTMLInputElement>;
   private selectedFile: File;
   private removeClicked = false;
   private initialValue: string;
@@ -76,7 +76,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
 
   async onFileSelected(file: File) {
     // directly reset input so subsequent selections with the same name also trigger the change event
-    this.fileInput.nativeElement.value = "";
+    this.fileUploadInput.nativeElement.value = "";
     this.selectedFile = file;
     this.formControl.setValue(file.name);
   }
@@ -103,13 +103,15 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     return this.entityMapper.save(this.entity);
   }
 
-  formClicked() {
+  formClicked(isInputElement?: boolean) {
     if (this.formControl.disabled) {
-      this.fileClicked();
+      this.showFile();
+    } else if (isInputElement) {
+      this.fileUploadInput.nativeElement.click();
     }
   }
 
-  fileClicked() {
+  showFile() {
     if (this.initialValue && this.formControl.value === this.initialValue) {
       this.fileService.showFile(this.entity, this.formControlName);
     }
