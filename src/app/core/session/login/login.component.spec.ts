@@ -15,13 +15,23 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { LoginComponent } from "./login.component";
 import { LoginState } from "../session-states/login-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginStateSubject } from "../session-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { SessionManagerService } from "../session-service/session-manager.service";
+import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
+import { firstValueFrom, Subject } from "rxjs";
+import { AuthUser } from "../auth/auth-user";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
@@ -55,4 +65,36 @@ describe("LoginComponent", () => {
 
     expect(navigateSpy).toHaveBeenCalledWith("someUrl");
   });
+
+  it("should show offline login if remote login fails", fakeAsync(() => {
+    const sessionManager = TestBed.inject(SessionManagerService);
+    const mockUsers = [{ name: "test", roles: [] }];
+    spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
+    const remoteLoginSubject = new Subject<AuthUser>();
+    spyOn(TestBed.inject(KeycloakAuthService), "login").and.returnValue(
+      firstValueFrom(remoteLoginSubject),
+    );
+
+    sessionManager.remoteLogin().catch(() => undefined);
+    expect(component.offlineUsers).toEqual([]);
+    expect(loginState.value).toBe(LoginState.IN_PROGRESS);
+
+    remoteLoginSubject.error("login error");
+    tick();
+    expect(component.offlineUsers).toEqual(mockUsers);
+  }));
+
+  it("should show offline login after 5 seconds", fakeAsync(() => {
+    const sessionManager = TestBed.inject(SessionManagerService);
+    const mockUsers = [{ name: "test", roles: [] }];
+    spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
+
+    component.offlineUsers = [];
+    component.ngOnInit();
+    loginState.next(LoginState.IN_PROGRESS);
+    expect(component.offlineUsers).toEqual([]);
+
+    tick(5000);
+    expect(component.offlineUsers).toEqual(mockUsers);
+  }));
 });

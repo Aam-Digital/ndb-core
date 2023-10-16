@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
 import { MatButtonModule } from "@angular/material/button";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
@@ -26,11 +26,12 @@ import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { AuthUser } from "../auth/auth-user";
-import { MatDialog } from "@angular/material/dialog";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { waitForChangeTo } from "../session-states/session-utils";
+import { race, timer } from "rxjs";
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -53,7 +54,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
   ],
   standalone: true,
 })
-export class LoginComponent {
+export class LoginComponent implements OnInit {
   offlineUsers: AuthUser[] = [];
   loginInProgress = false;
 
@@ -63,16 +64,21 @@ export class LoginComponent {
     public sessionManager: SessionManagerService,
     public loginState: LoginStateSubject,
     public siteSettingsService: SiteSettingsService,
-    private dialog: MatDialog,
-  ) {
+  ) {}
+
+  ngOnInit() {
     this.loginState.pipe(untilDestroyed(this)).subscribe((state) => {
       this.loginInProgress = state === LoginState.IN_PROGRESS;
       if (state === LoginState.LOGGED_IN) {
         this.routeAfterLogin();
       }
     });
-    // TODO Should we only show this after a short delay when online?
-    this.offlineUsers = this.sessionManager.getOfflineUsers();
+    race(
+      this.loginState.pipe(waitForChangeTo(LoginState.LOGIN_FAILED)),
+      timer(5000),
+    ).subscribe(() => {
+      this.offlineUsers = this.sessionManager.getOfflineUsers();
+    });
   }
 
   private routeAfterLogin() {
