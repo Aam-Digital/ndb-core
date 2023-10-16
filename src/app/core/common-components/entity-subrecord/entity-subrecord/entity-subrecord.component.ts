@@ -237,7 +237,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         }
       }
     }
-    if (changes.hasOwnProperty("filter") && this.filter) {
+    if (
+      (changes.hasOwnProperty("filter") && this.filter) ||
+      changes.hasOwnProperty("showInactive")
+    ) {
       reinitDataSource = true;
     }
     if (changes.hasOwnProperty("columns")) {
