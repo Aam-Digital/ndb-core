@@ -112,7 +112,7 @@ export interface EntitySchemaField {
    *
    * "retain-anonymized" triggers a special dataType action to retain the data partially in a special, anonymized form.
    */
-  anonymize?: "retain" | "retain-anonymized" | undefined;
+  anonymize?: "retain" | "retain-anonymized";
 }
 
 /**
