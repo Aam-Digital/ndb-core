@@ -43,6 +43,8 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
+import { transformToReadableFormat } from "app/core/common-components/entity-subrecord/entity-subrecord/value-accessor";
+
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -108,6 +110,10 @@ export class EntityListComponent<T extends Entity>
 
   filterObj: DataFilter<T>;
   filterString = "";
+
+  allData = [];
+  entitySchema = [];
+  exportEntities = [];
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -178,6 +184,7 @@ export class EntityListComponent<T extends Entity>
     if (!this.allEntities) {
       // if no entities are passed as input, by default load all entities of the type
       await this.loadEntities();
+      this.exportFile()
     }
 
     this.listName =
@@ -215,6 +222,7 @@ export class EntityListComponent<T extends Entity>
     if (changes.hasOwnProperty("listConfig")) {
       await this.buildComponentFromConfig(this.listConfig);
     }
+    this.exportFile()
   }
 
   private addColumnsFromColumnGroups() {
@@ -294,5 +302,31 @@ export class EntityListComponent<T extends Entity>
       this.router.navigate(["new"], { relativeTo: this.activatedRoute });
     }
     this.addNewClick.emit();
+  }
+
+  exportFile() {
+    this.entitySchema = [this.entityConstructor.schema];
+    const columnLabel = {};
+    this.entitySchema[0].forEach((value: { value: string, label: string }, key: string) => {
+        if (value.label) {
+          columnLabel[key] = value.label;
+        }
+    });
+
+    this.allData = this.allEntities.map(transformToReadableFormat);
+
+    this.exportEntities = this.allData.map((item) => {
+        const newItem = [];
+        for (const key in item) {
+          if (columnLabel.hasOwnProperty(key)) {
+            newItem.push(item[key])
+          }
+        }
+        
+        return newItem;
+    });
+
+    this.exportEntities.push(columnLabel);
+
   }
 }

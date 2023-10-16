@@ -5,8 +5,6 @@ import { LoggingService } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { transformToReadableFormat } from "../../common-components/entity-subrecord/entity-subrecord/value-accessor";
 import { Papa } from "ngx-papaparse";
-import { Child } from "app/child-dev-project/children/model/child";
-import { School } from "app/child-dev-project/schools/model/school";
 
 /**
  * This service allows to start a download process from the browser.
@@ -69,7 +67,7 @@ export class DownloadService {
         result = JSON.stringify(data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = await this.createCsv(data,filename);
+        result = await this.createCsv(data, exportConfig);
         return new Blob([result], { type: "text/csv" });
       default:
         this.loggingService.warn(`Not supported format: ${format}`);
@@ -93,43 +91,35 @@ export class DownloadService {
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[],filename: string): Promise<string> {
-   // Collect all properties because papa only uses the properties of the first object  
-    let fields =[]
-    if(filename === "Schools"){
-      fields = [School.schema]
-    }
-   if(filename === "Children"){
-    fields = [Child.schema]
-   }
-    const shemaData = fields[0];
-    let  columnLabel ={}
-    shemaData.forEach((value, key) => {
-      if (value.label) {
-        columnLabel[key] =value.label;
-      }
-    });
-   
-    const keys = new Set<string>();
-     // Add label as a key in json data
-     data = data.map(transformToReadableFormat);
-     const newData = data.map((item) => {
-      const newItem = {};
-      for (const key in item) {
-        if (columnLabel.hasOwnProperty(key)) {
-          newItem[columnLabel[key]] = item[key];
-        }
-      }
-      return newItem;
-    });
-   
-    newData.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
+  async createCsv(data: any[],exportConfig: any): Promise<string> {
+    if(exportConfig){
+      const keys = new Set<string>();
+      data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
+  
+      data = data.map(transformToReadableFormat);
+  
+      return this.papa.unparse(data, {
+        quotes: true,
+        header: true,
+        newline: DownloadService.SEPARATOR_ROW,
+        columns: [...keys],
+      });
+    } 
+    const lastElement = data.pop()
 
-    return this.papa.unparse(newData, {
-      quotes: true,
-      header: true,
-      newline: DownloadService.SEPARATOR_ROW,
-      columns: [...keys],
+    const valuesArray = [];
+
+    for (const key in lastElement) {
+
+      if (Object.hasOwnProperty.call(lastElement, key)) {
+        
+          valuesArray.push(lastElement[key]);
+      }
+    }
+    
+    return this.papa.unparse({
+      fields: valuesArray,
+      data: data
     });
   }
 }

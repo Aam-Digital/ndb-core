@@ -11,6 +11,7 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 describe("DownloadService", () => {
   let service: DownloadService;
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
+  const exportConfig =[]
 
   beforeEach(() => {
     mockDataTransformationService = jasmine.createSpyObj([
@@ -54,7 +55,7 @@ describe("DownloadService", () => {
       { _id: "Test:2", other: 2 },
     ];
 
-    const csvExport = await service.createCsv(docs);
+    const csvExport = await service.createCsv(docs,exportConfig);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(2 + 1); // includes 1 header line
@@ -76,7 +77,7 @@ describe("DownloadService", () => {
       '"_id","_rev","propOne","propTwo"' +
       DownloadService.SEPARATOR_ROW +
       '"TestForCsvEntity:1","2","first","second"';
-    const result = await service.createCsv([test]);
+    const result = await service.createCsv([test],exportConfig);
     expect(result).toEqual(expected);
   });
 
@@ -99,7 +100,7 @@ describe("DownloadService", () => {
     testEntity.dateProperty = new Date(testDate);
     testEntity.boolProperty = true;
 
-    const csvExport = await service.createCsv([testEntity]);
+    const csvExport = await service.createCsv([testEntity],exportConfig);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
@@ -123,7 +124,7 @@ describe("DownloadService", () => {
       },
     ];
 
-    const csv = await service.createCsv(exportData);
+    const csv = await service.createCsv(exportData,exportConfig);
 
     const results = csv.split(DownloadService.SEPARATOR_ROW);
     expect(results).toEqual([
