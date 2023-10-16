@@ -15,7 +15,7 @@ import {
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { BehaviorSubject, of, throwError } from "rxjs";
-import { User, UserSubject } from "../user";
+import { CurrentUserSubject, User } from "../user";
 import { AppSettings } from "../../app-settings";
 
 describe("UserSecurityComponent", () => {
@@ -54,7 +54,7 @@ describe("UserSecurityComponent", () => {
         { provide: KeycloakAuthService, useClass: KeycloakAuthService },
         { provide: HttpClient, useValue: mockHttp },
         {
-          provide: UserSubject,
+          provide: CurrentUserSubject,
           useValue: new BehaviorSubject({
             name: user.name,
             roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],

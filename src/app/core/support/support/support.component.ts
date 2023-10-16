@@ -17,7 +17,7 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { SyncStateSubject } from "../../session/session-type";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
-import { UserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../user/user";
 
 @Component({
   selector: "app-support",
@@ -40,7 +40,7 @@ export class SupportComponent implements OnInit {
 
   constructor(
     private syncState: SyncStateSubject,
-    private userSubject: UserSubject,
+    private userSubject: CurrentUserSubject,
     private sw: SwUpdate,
     private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,

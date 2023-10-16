@@ -26,7 +26,7 @@ import { NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatButtonModule } from "@angular/material/button";
-import { UserSubject } from "../../../../core/user/user";
+import { CurrentUserSubject } from "../../../../core/user/user";
 
 @Component({
   selector: "app-roll-call-setup",
@@ -76,7 +76,7 @@ export class RollCallSetupComponent implements OnInit {
   constructor(
     private entityMapper: EntityMapperService,
     private attendanceService: AttendanceService,
-    private userSubject: UserSubject,
+    private currentUser: CurrentUserSubject,
     private formDialog: FormDialogService,
     private alertService: AlertService,
     private filerService: FilterService,
@@ -105,7 +105,7 @@ export class RollCallSetupComponent implements OnInit {
       this.visibleActivities = this.allActivities;
     } else {
       this.visibleActivities = this.allActivities.filter((a) =>
-        a.isAssignedTo(this.userSubject.value.name),
+        a.isAssignedTo(this.currentUser.value.name),
       );
       if (this.visibleActivities.length === 0) {
         this.visibleActivities = this.allActivities.filter(
@@ -155,7 +155,7 @@ export class RollCallSetupComponent implements OnInit {
       activity,
       this.date,
     )) as NoteForActivitySetup;
-    event.authors = [this.userSubject.value.name];
+    event.authors = [this.currentUser.value.name];
     event.isNewFromActivity = true;
     return event;
   }
@@ -175,7 +175,7 @@ export class RollCallSetupComponent implements OnInit {
         score += 1;
       }
 
-      if (assignedUsers.includes(this.userSubject.value.name)) {
+      if (assignedUsers.includes(this.currentUser.value.name)) {
         score += 2;
       }
 
@@ -189,7 +189,7 @@ export class RollCallSetupComponent implements OnInit {
 
   createOneTimeEvent() {
     const newNote = Note.create(new Date());
-    newNote.authors = [this.userSubject.value.name];
+    newNote.authors = [this.currentUser.value.name];
 
     this.formDialog
       .openFormPopup(newNote, [], NoteDetailsComponent)

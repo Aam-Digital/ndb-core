@@ -9,7 +9,7 @@ import { EntityAbility } from "../ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
 import { firstValueFrom } from "rxjs";
-import { UserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../user/user";
 
 /**
  * This service checks whether the relevant rules for the current user changed.
@@ -25,7 +25,7 @@ export class PermissionEnforcerService {
   static readonly LOCALSTORAGE_KEY = "RULES";
 
   constructor(
-    private userSubject: UserSubject,
+    private currentUser: CurrentUserSubject,
     private ability: EntityAbility,
     private entityMapper: EntityMapperService,
     private database: Database,
@@ -58,7 +58,7 @@ export class PermissionEnforcerService {
   }
 
   private getUserStorageKey() {
-    return `${this.userSubject.value.name}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`;
+    return `${this.currentUser.value.name}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`;
   }
 
   private getSubjectsWithReadRestrictions(

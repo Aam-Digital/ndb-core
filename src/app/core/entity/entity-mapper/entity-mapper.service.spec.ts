@@ -29,7 +29,7 @@ import { CoreModule } from "../../core.module";
 import { Database } from "../../database/database";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { TEST_USER } from "../../../utils/mock-local-session";
-import { UserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../user/user";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -56,7 +56,7 @@ describe("EntityMapperService", () => {
         ComponentRegistry,
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: Database, useValue: testDatabase },
-        UserSubject,
+        CurrentUserSubject,
         EntityMapperService,
       ],
     });
@@ -290,7 +290,7 @@ describe("EntityMapperService", () => {
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
-    TestBed.inject(UserSubject).next({
+    TestBed.inject(CurrentUserSubject).next({
       name: TEST_USER,
       roles: [],
     });

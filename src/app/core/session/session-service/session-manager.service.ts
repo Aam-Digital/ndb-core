@@ -24,7 +24,7 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { UserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
@@ -46,7 +46,7 @@ export class SessionManagerService {
     private remoteAuthService: KeycloakAuthService,
     private localAuthService: LocalAuthService,
     private syncService: SyncService,
-    private userSubject: UserSubject,
+    private currentUser: CurrentUserSubject,
     private loginStateSubject: LoginStateSubject,
     private router: Router,
     private database: Database,
@@ -79,7 +79,7 @@ export class SessionManagerService {
    */
   async offlineLogin(user: AuthUser) {
     await this.initializeDatabaseForCurrentUser(user);
-    this.userSubject.next(user);
+    this.currentUser.next(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 
@@ -103,7 +103,7 @@ export class SessionManagerService {
         localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, "1");
       }
     }
-    this.userSubject.next(undefined);
+    this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;
     return this.router.navigate(["/login"], {
@@ -120,7 +120,7 @@ export class SessionManagerService {
 
   private async handleRemoteLogin(user: AuthUser) {
     this.remoteLoggedIn = true;
-    this.userSubject.next(user);
+    this.currentUser.next(user);
     await this.initializeDatabaseForCurrentUser(user);
     this.syncService.startSync();
     this.loginStateSubject.next(LoginState.LOGGED_IN);

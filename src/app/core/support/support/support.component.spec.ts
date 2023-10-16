@@ -22,7 +22,7 @@ import { TEST_USER } from "../../../utils/mock-local-session";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
-import { UserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../user/user";
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
@@ -53,7 +53,10 @@ describe("SupportComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: UserSubject, useValue: new BehaviorSubject(testUser) },
+        {
+          provide: CurrentUserSubject,
+          useValue: new BehaviorSubject(testUser),
+        },
         { provide: SwUpdate, useValue: mockSW },
         { provide: PouchDatabase, useValue: mockDB },
         { provide: WINDOW_TOKEN, useValue: mockWindow },

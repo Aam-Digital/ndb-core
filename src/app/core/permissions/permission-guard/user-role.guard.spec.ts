@@ -6,11 +6,11 @@ import { ActivatedRouteSnapshot, Router } from "@angular/router";
 import { AuthUser } from "../../session/auth/auth-user";
 import { ConfigService } from "../../config/config.service";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
-import { UserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../user/user";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;
-  let userSubject: UserSubject;
+  let userSubject: CurrentUserSubject;
   const normalUser: AuthUser = { name: "normalUser", roles: ["user_app"] };
   const adminUser: AuthUser = {
     name: "admin",
@@ -24,13 +24,13 @@ describe("UserRoleGuard", () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       providers: [
-        UserSubject,
+        CurrentUserSubject,
         UserRoleGuard,
         { provide: ConfigService, useValue: mockConfigService },
       ],
     });
     guard = TestBed.inject(UserRoleGuard);
-    userSubject = TestBed.inject(UserSubject);
+    userSubject = TestBed.inject(CurrentUserSubject);
   });
 
   it("should be created", () => {

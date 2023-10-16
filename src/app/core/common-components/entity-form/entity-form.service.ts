@@ -17,7 +17,7 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
-import { UserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../user/user";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -40,7 +40,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
-    private userSubject: UserSubject,
+    private currentUser: CurrentUserSubject,
     router: Router,
   ) {
     router.events
@@ -154,7 +154,7 @@ export class EntityFormService {
         newVal = new Date();
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.userSubject.value.name;
+        newVal = this.currentUser.value.name;
         break;
       default:
         newVal = schema.defaultValue;

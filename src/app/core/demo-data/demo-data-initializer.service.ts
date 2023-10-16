@@ -15,7 +15,7 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { AppSettings } from "../app-settings";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
-import { UserSubject } from "../user/user";
+import { CurrentUserSubject } from "../user/user";
 import PouchDB from "pouchdb-browser";
 
 /**
@@ -45,7 +45,7 @@ export class DemoDataInitializerService {
     private loggingService: LoggingService,
     private database: Database,
     private loginState: LoginStateSubject,
-    private userSubject: UserSubject,
+    private currentUser: CurrentUserSubject,
   ) {}
 
   async run() {
@@ -73,7 +73,7 @@ export class DemoDataInitializerService {
     this.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
-        this.userSubject.value.name !==
+        this.currentUser.value.name !==
           DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local

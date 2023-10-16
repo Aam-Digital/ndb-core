@@ -24,7 +24,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
-import { UserSubject } from "../user";
+import { CurrentUserSubject } from "../user";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -50,11 +50,11 @@ export class UserAccountComponent implements OnInit {
   passwordChangeDisabled = false;
   tooltipText;
 
-  constructor(private userSubject: UserSubject) {}
+  constructor(private currentUser: CurrentUserSubject) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();
-    this.username = this.userSubject.value?.name;
+    this.username = this.currentUser.value?.name;
   }
 
   checkIfPasswordChangeAllowed() {

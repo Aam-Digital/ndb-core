@@ -68,7 +68,7 @@ export class User extends Entity {
 }
 
 @Injectable()
-export class UserSubject extends BehaviorSubject<AuthUser> {
+export class CurrentUserSubject extends BehaviorSubject<AuthUser> {
   constructor() {
     super(undefined);
   }

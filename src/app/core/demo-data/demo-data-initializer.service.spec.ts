@@ -13,7 +13,7 @@ import { SessionManagerService } from "../session/session-service/session-manage
 import { PouchDatabase } from "../database/pouch-database";
 import { AppSettings } from "../app-settings";
 import { Database } from "../database/database";
-import { UserSubject } from "../user/user";
+import { CurrentUserSubject } from "../user/user";
 import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("DemoDataInitializerService", () => {
@@ -48,7 +48,7 @@ describe("DemoDataInitializerService", () => {
       providers: [
         DemoDataInitializerService,
         LoginStateSubject,
-        UserSubject,
+        CurrentUserSubject,
         { provide: MatDialog, useValue: mockDialog },
         { provide: Database, useClass: PouchDatabase },
         { provide: DemoDataService, useValue: mockDemoDataService },
@@ -113,7 +113,7 @@ describe("DemoDataInitializerService", () => {
     database.put(userDoc);
     tick();
 
-    TestBed.inject(UserSubject).next({
+    TestBed.inject(CurrentUserSubject).next({
       name: DemoUserGeneratorService.ADMIN_USERNAME,
       roles: [],
     });
@@ -144,7 +144,7 @@ describe("DemoDataInitializerService", () => {
     tick();
 
     const database = TestBed.inject(Database) as PouchDatabase;
-    TestBed.inject(UserSubject).next({
+    TestBed.inject(CurrentUserSubject).next({
       name: DemoUserGeneratorService.ADMIN_USERNAME,
       roles: [],
     });

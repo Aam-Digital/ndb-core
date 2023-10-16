@@ -32,14 +32,14 @@ import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { Database } from "../../database/database";
 import { Router } from "@angular/router";
-import { UserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
   let loginStateSubject: LoginStateSubject;
-  let userSubject: UserSubject;
+  let userSubject: CurrentUserSubject;
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator: { onLine: boolean };
   let dbUser: AuthUser;
@@ -59,7 +59,7 @@ describe("SessionManagerService", () => {
         SessionManagerService,
         SyncStateSubject,
         LoginStateSubject,
-        UserSubject,
+        CurrentUserSubject,
         { provide: Database, useClass: PouchDatabase },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
@@ -74,7 +74,7 @@ describe("SessionManagerService", () => {
     });
     service = TestBed.inject(SessionManagerService);
     loginStateSubject = TestBed.inject(LoginStateSubject);
-    userSubject = TestBed.inject(UserSubject);
+    userSubject = TestBed.inject(CurrentUserSubject);
 
     const db = TestBed.inject(Database) as PouchDatabase;
     initInMemorySpy = spyOn(db, "initInMemoryDB").and.callThrough();
