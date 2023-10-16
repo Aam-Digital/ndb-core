@@ -11,13 +11,13 @@ import { SiteSettings } from "./site-settings";
 import { of } from "rxjs";
 import { Title } from "@angular/platform-browser";
 import { availableLocales } from "../language/languages";
+import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 import { EntityAbility } from "../permissions/ability/entity-ability";
 import { FileModule } from "../../features/file/file.module";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { LoggingService } from "../logging/logging.service";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
-import { ConfigurableEnumModule } from "../basic-datatypes/configurable-enum/configurable-enum.module";
 
 describe("SiteSettingsService", () => {
   let service: SiteSettingsService;
@@ -25,6 +25,7 @@ describe("SiteSettingsService", () => {
   let mockFileService: jasmine.SpyObj<FileService>;
 
   beforeEach(() => {
+    localStorage.clear();
     entityMapper = mockEntityMapper();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
@@ -42,42 +43,37 @@ describe("SiteSettingsService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should only publish changes if property has changed", fakeAsync(() => {
+  it("should only publish changes if property has changed", () => {
     const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
     const settings = new SiteSettings();
-    titleSpy.calls.reset();
 
     entityMapper.add(settings);
-    tick();
 
-    expect(titleSpy).not.toHaveBeenCalled();
+    expect(titleSpy).toHaveBeenCalled();
 
+    titleSpy.calls.reset();
     settings.displayLanguageSelect = false;
     entityMapper.add(settings);
-    tick();
 
     expect(titleSpy).not.toHaveBeenCalled();
 
     settings.siteName = "New name";
     entityMapper.add(settings);
-    tick();
 
     expect(titleSpy).toHaveBeenCalled();
 
     titleSpy.calls.reset();
     settings.displayLanguageSelect = true;
     entityMapper.add(settings);
-    tick();
 
     expect(titleSpy).not.toHaveBeenCalled();
 
     settings.displayLanguageSelect = false;
     settings.siteName = "Another new name";
     entityMapper.add(settings);
-    tick();
 
     expect(titleSpy).toHaveBeenCalled();
-  }));
+  });
 
   it("should reset favicon when deleted", fakeAsync(() => {
     const siteSettings = SiteSettings.create({ favicon: "some.icon" });

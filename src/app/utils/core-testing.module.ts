@@ -27,6 +27,7 @@ import { ComponentRegistry } from "../dynamic-components";
       provide: EntityRemoveService,
       useValue: jasmine.createSpyObj(["anonymize"]),
     },
+    { provide: EntityRemoveService, useValue: null },
     ComponentRegistry,
   ],
 })
