@@ -64,8 +64,8 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
   it("produces an empty summary when there are no records", () => {
     component.data = [];
     component.updateSummary();
-    expect(component.summary).toHaveSize(0);
-    expect(component.avgSummary).toHaveSize(0);
+    expect(component.summarySum).toHaveSize(0);
+    expect(component.summaryAvg).toHaveSize(0);
   });
 
   function setRecordsAndGenerateSummary(
@@ -77,19 +77,32 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
 
   it("produces a singleton summary when there is a single record", () => {
     setRecordsAndGenerateSummary({ materialType: PENCIL, materialAmount: 1 });
-    expect(component.summary).toEqual(`${PENCIL.label}: 1`);
-    expect(component.avgSummary).toEqual(`${PENCIL.label}: 1`);
+    expect(component.summarySum).toEqual(`${PENCIL.label}: 1`);
+    expect(component.summaryAvg).toEqual(`${PENCIL.label}: 1`);
   });
 
   it("produces a summary of all records when they are all different", () => {
     setRecordsAndGenerateSummary(
       { materialType: PENCIL, materialAmount: 2 },
       { materialType: RULER, materialAmount: 1 },
+      { materialAmount: 1 },
     );
-    expect(component.summary).toEqual(`${PENCIL.label}: 2, ${RULER.label}: 1`);
-    expect(component.avgSummary).toEqual(
-      `${PENCIL.label}: 2, ${RULER.label}: 1`,
+    expect(component.summarySum).toEqual(
+      `${PENCIL.label}: 2, ${RULER.label}: 1, undefined: 1`,
     );
+    expect(component.summaryAvg).toEqual(
+      `${PENCIL.label}: 2, ${RULER.label}: 1, undefined: 1`,
+    );
+  });
+
+  it("produces a singly summary without grouping, if `groupBy` is not given (or the group value undefined)", () => {
+    component.data = [{ amount: 1 }, { amount: 5 }] as any[];
+    delete component.summaries.groupBy;
+    component.summaries.countProperty = "amount";
+    component.updateSummary();
+
+    expect(component.summarySum).toEqual(`6`);
+    expect(component.summaryAvg).toEqual(`3`);
   });
 
   it("produces a summary of all records when there are duplicates", () => {
@@ -99,8 +112,10 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { materialType: PENCIL, materialAmount: 3 },
     );
 
-    expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
-    expect(component.avgSummary).toEqual(
+    expect(component.summarySum).toEqual(
+      `${PENCIL.label}: 4, ${RULER.label}: 1`,
+    );
+    expect(component.summaryAvg).toEqual(
       `${PENCIL.label}: 2, ${RULER.label}: 1`,
     );
   });
@@ -114,8 +129,10 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { materialType: PENCIL, materialAmount: 3 },
     );
 
-    expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
-    expect(component.avgSummary).toEqual(``);
+    expect(component.summarySum).toEqual(
+      `${PENCIL.label}: 4, ${RULER.label}: 1`,
+    );
+    expect(component.summaryAvg).toEqual(``);
   });
 
   it("produces summary of all records when average is true and total is false", () => {
@@ -127,8 +144,8 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { materialType: PENCIL, materialAmount: 3 },
     );
 
-    expect(component.summary).toEqual(``);
-    expect(component.avgSummary).toEqual(
+    expect(component.summarySum).toEqual(``);
+    expect(component.summaryAvg).toEqual(
       `${PENCIL.label}: 2, ${RULER.label}: 1`,
     );
   });
@@ -142,8 +159,8 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { materialType: PENCIL, materialAmount: 3 },
     );
 
-    expect(component.summary).toEqual(``);
-    expect(component.avgSummary).toEqual(``);
+    expect(component.summarySum).toEqual(``);
+    expect(component.summaryAvg).toEqual(``);
   });
 
   it("produces summary of all records when both average and total are true", () => {
@@ -153,8 +170,10 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       { materialType: PENCIL, materialAmount: 3 },
     );
 
-    expect(component.summary).toEqual(`${PENCIL.label}: 4, ${RULER.label}: 1`);
-    expect(component.avgSummary).toEqual(
+    expect(component.summarySum).toEqual(
+      `${PENCIL.label}: 4, ${RULER.label}: 1`,
+    );
+    expect(component.summaryAvg).toEqual(
       `${PENCIL.label}: 2, ${RULER.label}: 1`,
     );
   });
@@ -169,7 +188,9 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     );
     component.entity = new Child("22");
     await component.ngOnInit();
-    expect(component.summary).toEqual(`${PENCIL.label}: 1, ${RULER.label}: 2`);
+    expect(component.summarySum).toEqual(
+      `${PENCIL.label}: 1, ${RULER.label}: 2`,
+    );
     expect(component.data).toEqual(educationalData);
   });
 
@@ -186,7 +207,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     tick();
 
     expect(component.data).toEqual([update1]);
-    expect(component.summary).toBe(`${PENCIL.label}: 1`);
+    expect(component.summarySum).toBe(`${PENCIL.label}: 1`);
 
     const update2 = update1.copy() as EducationalMaterial;
     update2.materialAmount = 2;
@@ -194,7 +215,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     tick();
 
     expect(component.data).toEqual([update2]);
-    expect(component.summary).toBe(`${PENCIL.label}: 2`);
+    expect(component.summarySum).toBe(`${PENCIL.label}: 2`);
 
     const unrelatedUpdate = update1.copy() as EducationalMaterial;
     unrelatedUpdate.child = "differentChild";
@@ -202,6 +223,6 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     tick();
     // No change
     expect(component.data).toEqual([update2]);
-    expect(component.summary).toBe(`${PENCIL.label}: 2`);
+    expect(component.summarySum).toBe(`${PENCIL.label}: 2`);
   }));
 });

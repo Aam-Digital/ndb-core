@@ -34,8 +34,8 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
     average?: boolean;
   };
 
-  summary = "";
-  avgSummary = "";
+  summarySum = "";
+  summaryAvg = "";
 
   async ngOnInit() {
     await super.ngOnInit();
@@ -63,8 +63,8 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
    */
   updateSummary() {
     if (!this.summaries) {
-      this.summary = "";
-      this.avgSummary = "";
+      this.summarySum = "";
+      this.summaryAvg = "";
       return;
     }
 
@@ -85,15 +85,15 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
     });
 
     if (this.summaries.total) {
-      const summaryArray = Array.from(
+      const summarySumArray = Array.from(
         summary.entries(),
         ([label, { sum }]) => `${label}: ${sum}`,
       );
-      this.summary = summaryArray.join(", ");
+      this.summarySum = summarySumArray.join(", ");
     }
 
     if (this.summaries.average) {
-      const avgSummaryArray = Array.from(
+      const summaryAvgArray = Array.from(
         summary.entries(),
         ([label, { count, sum }]) => {
           const avg = parseFloat((sum / count).toFixed(2));
@@ -101,7 +101,13 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
           return `${label}: ${avg}`;
         },
       );
-      this.avgSummary = avgSummaryArray.join(", ");
+      this.summaryAvg = summaryAvgArray.join(", ");
+    }
+
+    if (summary.size === 1 && summary.has(undefined)) {
+      // display only single summary without group label (this also applies if no groupBy is given)
+      this.summarySum = this.summarySum.replace("undefined: ", "");
+      this.summaryAvg = this.summaryAvg.replace("undefined: ", "");
     }
   }
 }
