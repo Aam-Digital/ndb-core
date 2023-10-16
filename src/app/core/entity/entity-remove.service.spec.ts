@@ -76,11 +76,7 @@ describe("EntityRemoveService", () => {
   it("should delete entity, show snackbar confirmation and navigate back", async () => {
     // onAction is never called
     mockSnackBarRef.onAction.and.returnValues(NEVER);
-    // mock that dialog is dismissed immediately
-    const afterDismissed = new Observable<MatSnackBarDismiss>((subscriber) =>
-      subscriber.next({} as MatSnackBarDismiss),
-    );
-    mockSnackBarRef.afterDismissed.and.returnValue(afterDismissed);
+    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
 
     const result = await service.delete(new Entity(), true);
 
