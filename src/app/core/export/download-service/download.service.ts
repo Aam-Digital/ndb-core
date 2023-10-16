@@ -37,7 +37,6 @@ export class DownloadService {
     exportConfig?: ExportColumnConfig[],
   ) {
     const blobData = await this.getFormattedBlobData(
-      filename,
       data,
       format,
       exportConfig,
@@ -48,7 +47,6 @@ export class DownloadService {
   }
 
   private async getFormattedBlobData(
-    filename :string,
     data: any,
     format: ExportDataFormat,
     exportConfig?: ExportColumnConfig[],
