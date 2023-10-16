@@ -80,8 +80,8 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
       }
 
       summary.set(groupLabel, summary.get(groupLabel) || { count: 0, sum: 0 });
-      summary.get(groupLabel)!.count++;
-      summary.get(groupLabel)!.sum += amount;
+      summary.get(groupLabel).count++;
+      summary.get(groupLabel).sum += amount;
     });
 
     if (this.summaries.total) {
