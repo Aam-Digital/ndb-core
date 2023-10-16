@@ -3,13 +3,12 @@ import { EntityRemoveService } from "./entity-remove.service";
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import {
   MatSnackBar,
-  MatSnackBarDismiss,
   MatSnackBarRef,
   TextOnlySnackBar,
 } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
-import { NEVER, Observable, of, Subject } from "rxjs";
+import { NEVER, of, Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { DatabaseEntity } from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
@@ -125,7 +124,7 @@ describe("EntityRemoveService", () => {
     expect(entity.isActive).toBeFalse();
     mockedEntityMapper.save.calls.reset();
 
-    await service.archiveUndo(entity);
+    await service.undoArchive(entity);
 
     expect(entity.isActive).toBeTrue();
     expect(mockedEntityMapper.save).toHaveBeenCalledWith(entity);

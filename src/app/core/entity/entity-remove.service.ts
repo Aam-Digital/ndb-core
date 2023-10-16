@@ -197,7 +197,7 @@ export class EntityRemoveService {
    * Undo the archive action on the given entity.
    * @param entity
    */
-  async archiveUndo<E extends Entity>(entity: E) {
+  async undoArchive<E extends Entity>(entity: E) {
     const originalEntity = entity.copy();
     entity.inactive = false;
     await this.entityMapper.save(entity);
