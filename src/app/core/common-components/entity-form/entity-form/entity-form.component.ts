@@ -97,7 +97,7 @@ export class EntityFormComponent<T extends Entity = Entity>
     const userEditedFields = Object.entries(this.form.getRawValue()).filter(
       ([key]) => this.form.controls[key].dirty,
     );
-    let userEditsToReapply = userEditedFields.filter(([key]) =>
+    let userEditsWithoutConflicts = userEditedFields.filter(([key]) =>
       // no conflict with updated values
       this.entityEqualsFormValue(
         externallyUpdatedEntity[key],
@@ -105,13 +105,14 @@ export class EntityFormComponent<T extends Entity = Entity>
       ),
     );
     if (
-      userEditsToReapply.length !== userEditedFields.length &&
+      userEditsWithoutConflicts.length !== userEditedFields.length &&
       !(await this.confirmationDialog.getConfirmation(
         $localize`Load changes?`,
         $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`,
       ))
     ) {
-      userEditsToReapply = userEditedFields;
+      // user "resolved" conflicts by confirming to overwrite
+      userEditsWithoutConflicts = userEditedFields;
     }
 
     // apply update to all pristine (not user-edited) fields and update base entity (to avoid conflicts when saving)
@@ -120,7 +121,7 @@ export class EntityFormComponent<T extends Entity = Entity>
     this.form.reset(externallyUpdatedEntity as any);
 
     // re-apply user-edited fields
-    userEditsToReapply.forEach(([key, value]) => {
+    userEditsWithoutConflicts.forEach(([key, value]) => {
       this.form.get(key).setValue(value);
       this.form.get(key).markAsDirty();
     });
