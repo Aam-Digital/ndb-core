@@ -157,7 +157,7 @@ describe("EntityRemoveService", () => {
     @DatabaseField({ anonymize: "retain-anonymized", dataType: "entity-array" })
     referencesToRetainAnonymized: string[];
 
-    static create(properties: Object) {
+    static create(properties: Partial<AnonymizableEntity>) {
       return Object.assign(new AnonymizableEntity(), properties);
     }
   }
