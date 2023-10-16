@@ -195,7 +195,7 @@ describe("EntityRemoveService", () => {
     );
   });
 
-  it("should anonymize and keep even record without any fields", async () => {
+  it("should anonymize and keep empty record without any fields", async () => {
     const entity = new AnonymizableEntity();
     entity.defaultField = "test";
 
