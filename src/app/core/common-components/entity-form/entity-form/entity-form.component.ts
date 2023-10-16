@@ -88,48 +88,43 @@ export class EntityFormComponent<T extends Entity = Entity>
     }
   }
 
-  private async applyChanges(entity: T) {
-    if (this.formIsUpToDate(entity)) {
-      Object.assign(this.entity, entity as any);
+  private async applyChanges(externallyUpdatedEntity: T) {
+    if (this.formIsUpToDate(externallyUpdatedEntity)) {
+      Object.assign(this.entity, externallyUpdatedEntity);
       return;
     }
+
+    const userEditedFields = Object.entries(this.form.getRawValue()).filter(
+      ([key]) => this.form.controls[key].dirty,
+    );
+    let userEditsWithoutConflicts = userEditedFields.filter(([key]) =>
+      // no conflict with updated values
+      this.entityEqualsFormValue(
+        externallyUpdatedEntity[key],
+        this.initialFormValues[key],
+      ),
+    );
     if (
-      this.changesOnlyAffectPristineFields(entity) ||
-      (await this.confirmationDialog.getConfirmation(
+      userEditsWithoutConflicts.length !== userEditedFields.length &&
+      !(await this.confirmationDialog.getConfirmation(
         $localize`Load changes?`,
         $localize`Local changes are in conflict with updated values synced from the server. Do you want the local changes to be overwritten with the latest values?`,
       ))
     ) {
-      Object.assign(this.initialFormValues, entity);
-      this.form.patchValue(entity as any);
-      Object.assign(this.entity, entity as any);
-    }
-  }
-
-  private changesOnlyAffectPristineFields(updatedEntity: T) {
-    if (this.form.pristine) {
-      return true;
+      // user "resolved" conflicts by confirming to overwrite
+      userEditsWithoutConflicts = userEditedFields;
     }
 
-    const dirtyFields = Object.entries(this.form.controls).filter(
-      ([_, form]) => form.dirty,
-    );
-    for (const [key] of dirtyFields) {
-      if (
-        this.entityEqualsFormValue(
-          updatedEntity[key],
-          this.initialFormValues[key],
-        )
-      ) {
-        // keep our pending form field changes
-        delete updatedEntity[key];
-      } else {
-        // dirty form field has conflicting change
-        return false;
-      }
-    }
+    // apply update to all pristine (not user-edited) fields and update base entity (to avoid conflicts when saving)
+    Object.assign(this.entity, externallyUpdatedEntity);
+    Object.assign(this.initialFormValues, externallyUpdatedEntity);
+    this.form.reset(externallyUpdatedEntity as any);
 
-    return true;
+    // re-apply user-edited fields
+    userEditsWithoutConflicts.forEach(([key, value]) => {
+      this.form.get(key).setValue(value);
+      this.form.get(key).markAsDirty();
+    });
   }
 
   private formIsUpToDate(entity: T): boolean {
