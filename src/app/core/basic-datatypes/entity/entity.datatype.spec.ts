@@ -65,6 +65,5 @@ describe("Schema data type: entity", () => {
 
     expect(anonymizedValue).toEqual(testValue);
     expect(mockRemoveService.anonymize).toHaveBeenCalledWith(referencedEntity);
-    // expect(entityMapper.save).toHaveBeenCalledWith(referencedEntity); --> is called by EntityRemoveService (mocked here)
   });
 });
