@@ -26,7 +26,11 @@ export class TimePeriod extends Entity {
    * Returns true if this relation is currently active
    */
   get isActive(): boolean {
-    // TODO: isActive time period vs. "archived" record?
+    if (this.inactive) {
+      // manual archiving of records takes precendence
+      return false;
+    }
+
     return this.isActiveAt(new Date());
   }
 
