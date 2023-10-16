@@ -69,7 +69,7 @@ export class EntityActionsMenuComponent implements OnChanges {
     },
     {
       action: "anonymize",
-      permission: "update", // TODO: add permission
+      permission: "update",
       icon: "user-secret",
       label: $localize`:entity context menu:Anonymize`,
       tooltip: $localize`:entity context menu tooltip:Remove all personal data and keep an archived basic record for statistical reporting.`,
