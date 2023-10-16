@@ -21,6 +21,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 export type EntityMenuAction = "archive" | "anonymize" | "delete";
 type EntityMenuActionItem = {
   action: EntityMenuAction;
+  execute: (entity: Entity, navigateOnDelete?: boolean) => Promise<boolean>;
   permission?: EntityAction;
   icon: IconProp;
   label: string;
@@ -62,6 +63,7 @@ export class EntityActionsMenuComponent implements OnChanges {
   readonly defaultActions: EntityMenuActionItem[] = [
     {
       action: "archive",
+      execute: (e) => this.entityRemoveService.archive(e),
       permission: "update",
       icon: "box-archive",
       label: $localize`:entity context menu:Archive`,
@@ -69,6 +71,7 @@ export class EntityActionsMenuComponent implements OnChanges {
     },
     {
       action: "anonymize",
+      execute: (e) => this.entityRemoveService.anonymize(e),
       permission: "update",
       icon: "user-secret",
       label: $localize`:entity context menu:Anonymize`,
@@ -76,6 +79,7 @@ export class EntityActionsMenuComponent implements OnChanges {
     },
     {
       action: "delete",
+      execute: (e, nav) => this.entityRemoveService.delete(e, nav),
       permission: "delete",
       icon: "trash",
       label: $localize`:entity context menu:Delete`,
@@ -103,13 +107,10 @@ export class EntityActionsMenuComponent implements OnChanges {
     });
   }
 
-  async executeAction(action: EntityMenuAction) {
-    const result = await this.entityRemoveService[action](
-      this.entity,
-      this.navigateOnDelete,
-    );
+  async executeAction(action: EntityMenuActionItem) {
+    const result = await action.execute(this.entity, this.navigateOnDelete);
     if (result) {
-      this.actionTriggered.emit(action);
+      this.actionTriggered.emit(action.action);
     }
   }
 }

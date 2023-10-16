@@ -38,7 +38,9 @@ describe("EntityActionsMenuComponent", () => {
     let actionEvent;
     component.actionTriggered.subscribe((x) => (actionEvent = x));
 
-    component.executeAction("delete");
+    component.executeAction(
+      component.defaultActions.find((x) => x.action === "delete"),
+    );
     tick();
 
     expect(actionEvent).toBe("delete");

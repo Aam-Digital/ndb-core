@@ -15,7 +15,7 @@
   <ng-container *ngFor="let a of actions">
     <button
       mat-menu-item
-      (click)="executeAction(a.action)"
+      (click)="executeAction(a)"
       *appDisabledEntityOperation="{
         operation: a.permission,
         entity: entity
