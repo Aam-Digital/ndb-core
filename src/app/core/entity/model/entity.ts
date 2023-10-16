@@ -305,6 +305,17 @@ export class Entity {
    * @returns {string} the instance's string representation.
    */
   public toString(): string {
+    if (
+      this.anonymized &&
+      this.getConstructor().toStringAttributes.every(
+        (attr) => this[attr] === undefined,
+      )
+    ) {
+      return $localize`:Entity.toString fallback for anonymized record:[anonymized ${
+        this.getConstructor().label
+      }]`;
+    }
+
     return this.getConstructor()
       .toStringAttributes.map((attr) => this[attr])
       .join(" ");
