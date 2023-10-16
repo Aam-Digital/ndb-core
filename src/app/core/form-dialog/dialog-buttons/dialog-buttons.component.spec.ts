@@ -15,11 +15,8 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Router } from "@angular/router";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FormGroup } from "@angular/forms";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../entity/entity-remove.service";
-import { firstValueFrom, of, Subject } from "rxjs";
+import { EntityRemoveService } from "../../entity/entity-remove.service";
+import { firstValueFrom, Subject } from "rxjs";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 describe("DialogButtonsComponent", () => {
@@ -97,13 +94,17 @@ describe("DialogButtonsComponent", () => {
     expect(component.detailsRoute).toBe(`${Child.route}/${child.getId()}`);
   });
 
-  it("should close the dialog if a entity is deleted", () => {
+  it("should close the dialog if a entity is deleted", async () => {
     const removeSpy = spyOn(TestBed.inject(EntityRemoveService), "remove");
-    removeSpy.and.returnValue(of(RemoveResult.REMOVED));
 
-    component.delete();
-
+    removeSpy.and.resolveTo(true);
+    await component.delete();
     expect(dialogRef.close).toHaveBeenCalled();
+
+    dialogRef.close.calls.reset();
+    removeSpy.and.resolveTo(false);
+    await component.delete();
+    expect(dialogRef.close).not.toHaveBeenCalled();
   });
 
   it("should only close the dialog if user confirms to discard changes", fakeAsync(() => {

@@ -6,7 +6,8 @@ import { CommonModule } from "@angular/common";
 @DynamicComponent("DisplayPercentage")
 @Component({
   selector: "app-display-percentage",
-  template: "{{ value ? (value | number : numberFormat) + '%' : '-' }}",
+  template:
+    "{{ value !== undefined ? (value | number : numberFormat) + '%' : '-' }}",
   standalone: true,
   imports: [CommonModule],
 })

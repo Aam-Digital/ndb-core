@@ -1,10 +1,10 @@
-import { Meta, StoryFn, applicationConfig } from "@storybook/angular";
+import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { StorybookBaseModule } from "app/utils/storybook-base.module";
 import { DisplayDynamicPercentageComponent } from "./display-dynamic-percentage.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayDynamicPercentage",
+  title: "Core/Entities/Properties/number/DisplayDynamicPercentage",
   component: DisplayDynamicPercentageComponent,
   decorators: [
     applicationConfig({
@@ -22,6 +22,16 @@ const Template: StoryFn<DisplayDynamicPercentageComponent> = (
 export const Primary = Template.bind({});
 Primary.args = {
   entity: { allDays: 110, presentDays: 17 },
+  config: {
+    actual: "presentDays",
+    total: "allDays",
+    decimalPlaces: 3,
+  },
+};
+
+export const Zero = Template.bind({});
+Zero.args = {
+  entity: { allDays: 110, presentDays: 0 },
   config: {
     actual: "presentDays",
     total: "allDays",

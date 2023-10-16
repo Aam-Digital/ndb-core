@@ -24,10 +24,7 @@ import {
 } from "../../entity-form/entity-form.service";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../../entity/entity-remove.service";
+import { EntityRemoveService } from "../../../entity/entity-remove.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { tableSort } from "./table-sort";
 import {
@@ -166,7 +163,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private router: Router,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
-    private entityRemoveService: EntityRemoveService,
+    public entityRemoveService: EntityRemoveService,
     private entityMapper: EntityMapperService,
     private filterService: FilterService,
   ) {
@@ -386,28 +383,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   resetChanges(row: TableRow<T>) {
     row.formGroup = null;
-  }
-
-  /**
-   * Delete the given entity from the database (after explicit user confirmation).
-   * @param row The entity to be deleted.
-   */
-  delete(row: TableRow<T>) {
-    this.entityRemoveService
-      .remove(row.record, {
-        deletedEntityInformation: $localize`:Record deleted info:Record deleted`,
-        dialogText: $localize`:Delete confirmation message:Are you sure you want to delete this record?`,
-      })
-      .subscribe((result) => {
-        switch (result) {
-          case RemoveResult.REMOVED:
-            this.removeFromDataTable(row.record);
-            break;
-          case RemoveResult.UNDONE:
-            this.records.unshift(row.record);
-            this.initFormGroups();
-        }
-      });
   }
 
   private removeFromDataTable(deleted: T) {
