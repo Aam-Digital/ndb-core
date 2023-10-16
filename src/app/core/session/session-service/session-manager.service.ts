@@ -77,7 +77,11 @@ export class SessionManagerService {
    * Login a offline session without sync.
    * @param user
    */
-  async offlineLogin(user: AuthUser) {
+  offlineLogin(user: AuthUser) {
+    return this.initializeUser(user);
+  }
+
+  private async initializeUser(user: AuthUser) {
     await this.initializeDatabaseForCurrentUser(user);
     this.currentUser.next(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
@@ -120,10 +124,8 @@ export class SessionManagerService {
 
   private async handleRemoteLogin(user: AuthUser) {
     this.remoteLoggedIn = true;
-    this.currentUser.next(user);
-    await this.initializeDatabaseForCurrentUser(user);
+    await this.initializeUser(user);
     this.syncService.startSync();
-    this.loginStateSubject.next(LoginState.LOGGED_IN);
     this.localAuthService.saveUser(user);
   }
 
