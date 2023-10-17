@@ -32,6 +32,12 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
     chmod +x ./cc-test-reporter &&\
     ./cc-test-reporter before-build ; fi
 
+ARG TZ
+RUN if [ -n "${TZ}" ] ; then \
+    apk --no-cache add tzdata && \
+    cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime && \
+    echo "$TZ" >  /etc/timezone ; fi
+
 # When set to true, chromium is installed an tests are executed
 ARG RUN_TESTS=false
 ARG CHROME_BIN=/usr/bin/chromium-browser

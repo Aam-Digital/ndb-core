@@ -28,6 +28,18 @@ jobs:
             BUILD=${{ false }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
+      - name: Run tests with timezone
+        uses: docker/build-push-action@v3
+        with:
+          context: ./
+          file: ./build/Dockerfile
+          builder: ${{ steps.buildx.outputs.name }}
+          target: builder
+          build-args: |
+            RUN_TESTS=${{ true }}
+            TZ=America/Detroit
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
   deploy-prod-image:
     runs-on: ubuntu-latest
     steps:
