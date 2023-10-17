@@ -32,9 +32,13 @@ export class AttendanceService {
         by_date: {
           map: `(doc) => {
             if (doc._id.startsWith("${EventNote.ENTITY_TYPE}")) {
-              var d = new Date(doc.date || null);
-              var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
-              emit(dString);
+              if (doc.date && doc.date.length === 10) {
+                emit(doc.date);
+              } else {
+                var d = new Date(doc.date || null);
+                var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+                emit(dString);
+              }
             }
           }`,
         },
@@ -42,8 +46,13 @@ export class AttendanceService {
         by_activity: {
           map: `(doc) => {
             if (doc._id.startsWith("${EventNote.ENTITY_TYPE}") && doc.relatesTo) {
-              var d = new Date(doc.date || null);
-              var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
+              var dString;
+              if (doc.date && doc.date.length === 10) {
+                dString = doc.date;
+              } else {            
+                var d = new Date(doc.date || null);
+                dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+              }
               emit(doc.relatesTo + "_" + dString);
             }
           }`,
@@ -93,6 +102,8 @@ export class AttendanceService {
   ): Promise<EventNote[]> {
     const start = moment(startDate);
     const end = moment(endDate);
+    console.log("start", start, start.format("YYYY-MM-DD"));
+    console.log("end", end, end.format("YYYY-MM-DD"));
 
     const eventNotes = this.dbIndexing.queryIndexDocsRange(
       EventNote,
