@@ -111,8 +111,6 @@ export class EntityListComponent<T extends Entity>
   filterObj: DataFilter<T>;
   filterString = "";
 
-  allData = [];
-  entitySchema = [];
   exportEntities = [];
 
   get selectedColumnGroupIndex(): number {
@@ -305,28 +303,21 @@ export class EntityListComponent<T extends Entity>
   }
 
   exportFile() {
-    this.entitySchema = [this.entityConstructor.schema];
+    const entitySchema = [this.entityConstructor.schema];
     const columnLabel = {};
-    this.entitySchema[0].forEach((value: { value: string, label: string }, key: string) => {
-        if (value.label) {
-          columnLabel[key] = value.label;
-        }
+    entitySchema[0].forEach((value: { value: string, label: string }, key: string) => {
+        if (value.label) columnLabel[key] = value.label;
     });
 
     const allData = this.allEntities.map(transformToReadableFormat);
 
     this.exportEntities = allData.map((item) => {
-      const newItem = [];
       for (const key in item) {
-        if (columnLabel.hasOwnProperty(key)) {
-          newItem.push(item[key])
-        }
+        if (!columnLabel.hasOwnProperty(key)) delete item[key];
       }
-      
-      return newItem;
+      return item;
     });
 
     this.exportEntities.push(columnLabel);
-
   }
 }

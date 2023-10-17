@@ -102,19 +102,24 @@ export class DownloadService {
         newline: DownloadService.SEPARATOR_ROW,
         columns: [...keys],
       });
-    } 
-
-    const columnNames = data.pop()
-    const columnHeader = [];
-    for (const key in columnNames) {
-      if (Object.hasOwnProperty.call(columnNames, key)) {
-        columnHeader.push(columnNames[key]);
-      }
     }
+
+    const columnNames = data.pop();
+    const columnKeys = Object.keys(columnNames);
+    const columnLabels:string[] = Object.values(columnNames);
+    const orderedData = [];
+
+    data.forEach((item) => {
+      const orderedItem = [];
+      columnKeys.forEach((key) => {
+        orderedItem.push(item[key]);
+      });
+      orderedData.push(orderedItem);
+    });
     
     return this.papa.unparse({
-      fields: columnHeader,
-      data: data
+      fields: columnLabels,
+      data: orderedData
     });
   }
 }
