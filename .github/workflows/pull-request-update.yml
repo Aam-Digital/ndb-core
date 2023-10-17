@@ -38,6 +38,7 @@ jobs:
           build-args: |
             RUN_TESTS=${{ true }}
             TZ=America/Detroit
+            BUILD=${{ false }}
           cache-from: type=gha
           cache-to: type=gha,mode=max
   deploy-prod-image:
