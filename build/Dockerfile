@@ -3,7 +3,7 @@
 # Run the following commands from the root folder to build, run and kill the application
 # >> docker build -f build/Dockerfile -t aam-digital .
 # >> docker run -p=80:80 aam-digital
-FROM node:16.14.2-alpine3.15 as builder
+FROM node:16.14.2-alpine3.15 AS builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -65,7 +65,7 @@ ARG SENTRY_ORG
 ARG SENTRY_PROJECT
 RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
     npm install -g @sentry/cli &&\
-    sentry-cli --auth-token=$SENTRY_AUTH_TOKEN releases --org=$SENTRY_ORG --project=$SENTRY_PROJECT files ndb-core@$APP_VERSION upload-sourcemaps dist  && \
+    sentry-cli --auth-token="$SENTRY_AUTH_TOKEN" releases --org="$SENTRY_ORG" --project="$SENTRY_PROJECT" files "ndb-core@$APP_VERSION" upload-sourcemaps dist  && \
     rm dist/*.map ; fi
 
 ### PROD image
