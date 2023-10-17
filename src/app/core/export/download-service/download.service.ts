@@ -89,7 +89,7 @@ export class DownloadService {
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[],exportConfig: any): Promise<string> {
+  async createCsv(data: any[], exportConfig: any): Promise<string> {
     if(exportConfig){
       const keys = new Set<string>();
       data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
@@ -103,20 +103,17 @@ export class DownloadService {
         columns: [...keys],
       });
     } 
-    const lastElement = data.pop()
 
-    const valuesArray = [];
-
-    for (const key in lastElement) {
-
-      if (Object.hasOwnProperty.call(lastElement, key)) {
-        
-          valuesArray.push(lastElement[key]);
+    const columnNames = data.pop()
+    const columnHeader = [];
+    for (const key in columnNames) {
+      if (Object.hasOwnProperty.call(columnNames, key)) {
+        columnHeader.push(columnNames[key]);
       }
     }
     
     return this.papa.unparse({
-      fields: valuesArray,
+      fields: columnHeader,
       data: data
     });
   }

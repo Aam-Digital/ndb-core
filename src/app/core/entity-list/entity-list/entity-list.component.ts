@@ -313,17 +313,17 @@ export class EntityListComponent<T extends Entity>
         }
     });
 
-    this.allData = this.allEntities.map(transformToReadableFormat);
+    const allData = this.allEntities.map(transformToReadableFormat);
 
-    this.exportEntities = this.allData.map((item) => {
-        const newItem = [];
-        for (const key in item) {
-          if (columnLabel.hasOwnProperty(key)) {
-            newItem.push(item[key])
-          }
+    this.exportEntities = allData.map((item) => {
+      const newItem = [];
+      for (const key in item) {
+        if (columnLabel.hasOwnProperty(key)) {
+          newItem.push(item[key])
         }
-        
-        return newItem;
+      }
+      
+      return newItem;
     });
 
     this.exportEntities.push(columnLabel);

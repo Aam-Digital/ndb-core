@@ -77,7 +77,7 @@ describe("DownloadService", () => {
       '"_id","_rev","propOne","propTwo"' +
       DownloadService.SEPARATOR_ROW +
       '"TestForCsvEntity:1","2","first","second"';
-    const result = await service.createCsv([test],exportConfig);
+    const result = await service.createCsv([test], exportConfig);
     expect(result).toEqual(expected);
   });
 
@@ -100,7 +100,7 @@ describe("DownloadService", () => {
     testEntity.dateProperty = new Date(testDate);
     testEntity.boolProperty = true;
 
-    const csvExport = await service.createCsv([testEntity],exportConfig);
+    const csvExport = await service.createCsv([testEntity], exportConfig);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
@@ -124,7 +124,7 @@ describe("DownloadService", () => {
       },
     ];
 
-    const csv = await service.createCsv(exportData,exportConfig);
+    const csv = await service.createCsv(exportData, exportConfig);
 
     const results = csv.split(DownloadService.SEPARATOR_ROW);
     expect(results).toEqual([
