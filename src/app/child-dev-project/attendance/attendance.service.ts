@@ -102,8 +102,6 @@ export class AttendanceService {
   ): Promise<EventNote[]> {
     const start = moment(startDate);
     const end = moment(endDate);
-    console.log("start", start, start.format("YYYY-MM-DD"));
-    console.log("end", end, end.format("YYYY-MM-DD"));
 
     const eventNotes = this.dbIndexing.queryIndexDocsRange(
       EventNote,
