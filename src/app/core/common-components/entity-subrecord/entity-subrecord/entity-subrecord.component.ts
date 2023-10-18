@@ -50,6 +50,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
+import { MatCheckboxModule } from '@angular/material/checkbox';
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -87,6 +88,7 @@ export interface TableRow<T extends Entity> {
     DisableEntityOperationDirective,
     Angulartics2Module,
     ListPaginatorComponent,
+    MatCheckboxModule,
   ],
   standalone: true,
 })
@@ -467,5 +469,17 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       return true;
     }
     return this.screenWidthObserver.currentScreenSize() >= numericValue;
+  }
+
+  selectedRows =[]
+  selectRow (event: any, row: any) {
+    if (event.checked) {
+      this.selectedRows.push(row); 
+    } else {
+      const index = this.selectedRows.indexOf(row);
+      if (index > -1) {
+        this.selectedRows.splice(index, 1);
+      }
+    }
   }
 }
