@@ -41,10 +41,10 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    e1_1 = createEvent(new Date("2020-01-01"), activity1.getId(true));
-    e1_2 = createEvent(new Date("2020-01-02"), activity1.getId(true));
-    e1_3 = createEvent(new Date("2020-03-02"), activity1.getId(true));
-    e2_1 = createEvent(new Date("2020-01-01"), activity2.getId(true));
+    e1_1 = createEvent(moment("2020-01-01").toDate(), activity1.getId(true));
+    e1_2 = createEvent(moment("2020-01-02").toDate(), activity1.getId(true));
+    e1_3 = createEvent(moment("2020-03-02").toDate(), activity1.getId(true));
+    e2_1 = createEvent(moment("2020-01-01").toDate(), activity2.getId(true));
 
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
@@ -69,24 +69,32 @@ describe("AttendanceService", () => {
   });
 
   it("gets events for a date", async () => {
-    const actualEvents = await service.getEventsOnDate(new Date("2020-01-01"));
+    const actualEvents = await service.getEventsOnDate(
+      moment("2020-01-01").toDate(),
+    );
     expectEntitiesToMatch(actualEvents, [e1_1, e2_1]);
   });
 
   it("gets events including Notes for a date", async () => {
-    const note1 = Note.create(new Date("2020-01-01"), "manual event note 1");
+    const note1 = Note.create(
+      moment("2020-01-01").toDate(),
+      "manual event note 1",
+    );
     note1.addChild("1");
     note1.addChild("2");
     note1.category = meetingInteractionCategory;
     await entityMapper.save(note1);
 
-    const note2 = Note.create(new Date("2020-01-02"), "manual event note 2");
+    const note2 = Note.create(
+      moment("2020-01-02").toDate(),
+      "manual event note 2",
+    );
     note2.addChild("1");
     note2.category = meetingInteractionCategory;
     await entityMapper.save(note2);
 
     const nonMeetingNote = Note.create(
-      new Date("2020-01-02"),
+      moment("2020-01-02").toDate(),
       "manual event note 3",
     );
     nonMeetingNote.addChild("1");
@@ -94,15 +102,17 @@ describe("AttendanceService", () => {
     await entityMapper.save(nonMeetingNote);
 
     const actualEvents = await service.getEventsOnDate(
-      new Date("2020-01-01"),
-      new Date("2020-01-02"),
+      moment("2020-01-01").toDate(),
+      moment("2020-01-02").toDate(),
     );
 
     expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e2_1, note1, note2]);
   });
 
   it("gets empty array for a date without events", async () => {
-    const actualEvents = await service.getEventsOnDate(new Date("2007-01-01"));
+    const actualEvents = await service.getEventsOnDate(
+      moment("2007-01-01").toDate(),
+    );
     expect(actualEvents).toBeEmpty();
   });
 
@@ -210,7 +220,7 @@ describe("AttendanceService", () => {
     const childSchoolRelation = new ChildSchoolRelation();
     childSchoolRelation.childId = "testChild";
     childSchoolRelation.schoolId = "testSchool";
-    childSchoolRelation.start = new Date("2020-01-01");
+    childSchoolRelation.start = moment("2020-01-01").toDate();
     const testActivity = RecurringActivity.create("new activity");
     testActivity.linkedGroups.push("testSchool");
 
@@ -329,10 +339,10 @@ describe("AttendanceService", () => {
 
   it("should load the events for a date with date-picker format", async () => {
     const datePickerDate = new Date(
-      new Date("2021-04-05").setHours(0, 0, 0, 0),
+      moment("2021-04-05").toDate().setHours(0, 0, 0, 0),
     );
     const sameDayEvent = EventNote.create(
-      new Date("2021-04-05"),
+      moment("2021-04-05").toDate(),
       "Same Day Event",
     );
     sameDayEvent.category = meetingInteractionCategory;
