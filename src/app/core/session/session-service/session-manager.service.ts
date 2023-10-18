@@ -62,15 +62,22 @@ export class SessionManagerService {
    * After a user has logged in once online, this user can later also use the app offline.
    * Should only be called if there is a internet connection
    */
-  remoteLogin() {
+  async remoteLogin() {
     this.loginStateSubject.next(LoginState.IN_PROGRESS);
-    return this.remoteAuthService
-      .login()
-      .then((user) => this.handleRemoteLogin(user))
-      .catch((err) => {
-        this.loginStateSubject.next(LoginState.LOGIN_FAILED);
-        throw err;
-      });
+    if (this.remoteLoginAvailable()) {
+      return this.remoteAuthService
+        .login()
+        .then((user) => this.handleRemoteLogin(user))
+        .catch((err) => {
+          this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+          throw err;
+        });
+    }
+    this.loginStateSubject.next(LoginState.LOGIN_FAILED);
+  }
+
+  remoteLoginAvailable() {
+    return navigator.onLine && environment.session_type === SessionType.synced;
   }
 
   /**

@@ -81,6 +81,7 @@ describe("SessionManagerService", () => {
     initIndexedSpy = spyOn(db, "initIndexedDB").and.callThrough();
     TestBed.inject(LocalAuthService).saveUser(dbUser);
     environment.session_type = SessionType.mock;
+    spyOn(service, "remoteLoginAvailable").and.returnValue(true);
   }));
 
   afterEach(async () => {

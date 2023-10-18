@@ -48,7 +48,6 @@ describe("LoginComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
-    fixture.detectChanges();
   });
 
   it("should be created", () => {
@@ -61,6 +60,7 @@ describe("LoginComponent", () => {
       redirect_uri: "someUrl",
     };
 
+    fixture.detectChanges();
     loginState.next(LoginState.LOGGED_IN);
 
     expect(navigateSpy).toHaveBeenCalledWith("someUrl");
@@ -70,10 +70,13 @@ describe("LoginComponent", () => {
     const sessionManager = TestBed.inject(SessionManagerService);
     const mockUsers = [{ name: "test", roles: [] }];
     spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
+    spyOn(sessionManager, "remoteLoginAvailable").and.returnValue(true);
     const remoteLoginSubject = new Subject<AuthUser>();
     spyOn(TestBed.inject(KeycloakAuthService), "login").and.returnValue(
       firstValueFrom(remoteLoginSubject),
     );
+    loginState.next(LoginState.LOGGED_OUT);
+    fixture.detectChanges();
 
     sessionManager.remoteLogin().catch(() => undefined);
     expect(component.offlineUsers).toEqual([]);
@@ -89,8 +92,9 @@ describe("LoginComponent", () => {
     const mockUsers = [{ name: "test", roles: [] }];
     spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
 
+    loginState.next(LoginState.LOGGED_OUT);
     component.offlineUsers = [];
-    component.ngOnInit();
+    fixture.detectChanges();
     loginState.next(LoginState.IN_PROGRESS);
     expect(component.offlineUsers).toEqual([]);
 

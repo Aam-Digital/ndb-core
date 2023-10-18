@@ -17,14 +17,9 @@
 
 import { NgModule } from "@angular/core";
 import { SessionManagerService } from "./session-service/session-manager.service";
-import {
-  LoginStateSubject,
-  SessionType,
-  SyncStateSubject,
-} from "./session-type";
+import { LoginStateSubject, SyncStateSubject } from "./session-type";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
 import { KeycloakAngularModule } from "keycloak-angular";
-import { environment } from "../../../environments/environment";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -45,9 +40,7 @@ import { environment } from "../../../environments/environment";
 })
 export class SessionModule {
   constructor(sessionManager: SessionManagerService) {
-    if (navigator.onLine && environment.session_type === SessionType.synced) {
-      this.initializeRemoteSession(sessionManager);
-    }
+    this.initializeRemoteSession(sessionManager);
   }
 
   private async initializeRemoteSession(sessionManager: SessionManagerService) {
