@@ -15,11 +15,12 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../model/entity";
+import { Entity, EntityConstructor } from "../model/entity";
 import { Injectable, Injector } from "@angular/core";
 import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
+import { EntityRegistry } from "../database-entity.decorator";
 
 /**
  * Transform between entity instances and database objects
@@ -235,5 +236,32 @@ export class EntitySchemaService {
     return this.getDatatypeOrDefault(
       schemaField.dataType,
     ).transformToObjectFormat(value, schemaField, dataObject);
+  }
+
+  /**
+   * Get all entity types whose schema includes fields referencing the given type.
+   *
+   * e.g. given Child -> [Note, ChildSchoolRelation, ...]
+   * @param type
+   */
+  getEntityTypesReferencingType(type: string): {
+    entityType: EntityConstructor;
+    referencingProperties: string[];
+  }[] {
+    const referencingTypes = [];
+    for (const t of this.injector.get(EntityRegistry).values()) {
+      for (const [key, field] of t.schema.entries()) {
+        if (field.additional === type) {
+          let refType = referencingTypes.find((e) => e.entityType === t);
+          if (!refType) {
+            refType = { entityType: t, referencingProperties: [] };
+            referencingTypes.push(refType);
+          }
+
+          refType.referencingProperties.push(key);
+        }
+      }
+    }
+    return referencingTypes;
   }
 }

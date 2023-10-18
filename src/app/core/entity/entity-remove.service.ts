@@ -3,7 +3,7 @@ import { ConfirmationDialogService } from "../common-components/confirmation-dia
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Entity } from "./model/entity";
-import { getUrlWithoutParams } from "../../utils/utils";
+import { asArray, getUrlWithoutParams } from "../../utils/utils";
 import { Router } from "@angular/router";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { FileDatatype } from "../../features/file/file.datatype";
@@ -93,8 +93,8 @@ export class EntityRemoveService {
       return false;
     }
 
-    const originalEntity = entity.copy();
-    await this.entityMapper.remove(entity);
+    const originalEntity = entity.copy(); // TODO: undo including cascading actions
+    await this.deleteEntity(entity);
 
     let currentUrl: string;
     if (navigate) {
@@ -109,6 +109,78 @@ export class EntityRemoveService {
       currentUrl,
     );
     return true;
+  }
+
+  /**
+   * The actual delete action without user interactions.
+   * @param entity
+   * @private
+   */
+  private async deleteEntity(entity: Entity) {
+    await this.cascadeActionToRelatedEntities(
+      entity,
+      (e) => this.deleteEntity(e),
+      (e, refField, entity) =>
+        this.removeReferenceFromEntity(e, refField, entity),
+    );
+    await this.entityMapper.remove(entity);
+  }
+
+  private async cascadeActionToRelatedEntities(
+    entity: Entity,
+    compositeAction: (
+      relatedEntity: Entity,
+      refField?: string,
+      entity?: Entity,
+    ) => Promise<void>,
+    aggregateAction: (
+      relatedEntity: Entity,
+      refField?: string,
+      entity?: Entity,
+    ) => Promise<void>,
+  ) {
+    const entityTypesWithReferences =
+      this.schemaService.getEntityTypesReferencingType(entity.getType());
+
+    for (const refType of entityTypesWithReferences) {
+      const entities = await this.entityMapper.loadType(refType.entityType);
+
+      for (const refField of refType.referencingProperties) {
+        const affectedEntities = entities.filter(
+          (e) =>
+            asArray(e[refField]).includes(entity.getId()) ||
+            asArray(e[refField]).includes(entity.getId(true)),
+        );
+
+        for (const e of affectedEntities) {
+          if (
+            refField === "refComposite" && // TODO: real check whether composite or aggregate role (!!!)
+            asArray(e[refField]).length === 1
+          ) {
+            // is only composite
+            await compositeAction(e);
+          } else {
+            await aggregateAction(e, refField, entity);
+          }
+        }
+      }
+    }
+  }
+
+  private async removeReferenceFromEntity(
+    relatedEntityWithReference: Entity,
+    refField: string,
+    referencedEntity: Entity,
+  ) {
+    if (Array.isArray(relatedEntityWithReference[refField])) {
+      relatedEntityWithReference[refField] = relatedEntityWithReference[
+        refField
+      ].filter((id) => id !== referencedEntity.getId());
+    } else {
+      delete relatedEntityWithReference[refField];
+    }
+
+    await this.entityMapper.save(relatedEntityWithReference);
   }
 
   /**
@@ -134,7 +206,7 @@ export class EntityRemoveService {
       return false;
     }
 
-    const originalEntity = entity.copy();
+    const originalEntity = entity.copy(); // TODO: undo including cascading actions
     await this.anonymizeEntity(entity);
     await this.entityMapper.save(entity);
 
@@ -145,6 +217,11 @@ export class EntityRemoveService {
     return true;
   }
 
+  /**
+   * The actual anonymize action without user interactions.
+   * @param entity
+   * @private
+   */
   private async anonymizeEntity(entity: Entity) {
     for (const [key, schema] of entity.getSchema().entries()) {
       if (entity[key] === undefined) {
@@ -164,6 +241,16 @@ export class EntityRemoveService {
 
     entity.anonymized = true;
     entity.inactive = true;
+
+    await this.cascadeActionToRelatedEntities(
+      entity,
+      (e) => this.anonymizeEntity(e),
+      async (e) => {
+        /* keep related entity unchanged */
+      },
+    );
+
+    await this.entityMapper.save(entity);
   }
 
   private async anonymizeProperty(entity: Entity, key: string) {

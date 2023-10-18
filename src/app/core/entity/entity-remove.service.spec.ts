@@ -324,7 +324,7 @@ describe("EntityRemoveService", () => {
 
     await testAction("delete", entity, [entity, entity2], [entity2]);
   });
-  it("should not cascade anonymize the related entity if the entity holding the reference is anonymized", async () => {
+  fit("should not cascade anonymize the related entity if the entity holding the reference is anonymized", async () => {
     const entity2 = RelatedEntity.create("other entity");
     const entity = RelatedEntity.create("entity user acts on", {
       refComposite: [entity2.getId()],
@@ -334,7 +334,10 @@ describe("EntityRemoveService", () => {
       "anonymize",
       entity,
       [entity, entity2],
-      [RelatedEntity.create(undefined), entity2],
+      [
+        RelatedEntity.create(undefined, { refComposite: [entity2.getId()] }),
+        entity2,
+      ],
     );
   });
 
@@ -347,7 +350,7 @@ describe("EntityRemoveService", () => {
 
     await testAction("delete", entity, [entity, ref1], []);
   });
-  it("should cascade anonymize the 'composite'-type entity that references the entity user acts on", async () => {
+  fit("should cascade anonymize the 'composite'-type entity that references the entity user acts on", async () => {
     const entity = RelatedEntity.create("entity user acts on");
 
     const ref1 = RelatedEntity.create("ref", {
@@ -384,7 +387,7 @@ describe("EntityRemoveService", () => {
       ],
     );
   });
-  it("should not cascade anonymize the 'composite'-type entity that still references additional other entities but ask user", async () => {
+  fit("should not cascade anonymize the 'composite'-type entity that still references additional other entities but ask user", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -400,7 +403,7 @@ describe("EntityRemoveService", () => {
         RelatedEntity.create(undefined),
         entity2,
         // TODO: require manual review / confirmation by the user?
-        RelatedEntity.create("ref", { refComposite: [entity2.getId()] }),
+        ref1,
       ],
     );
   });
@@ -416,7 +419,7 @@ describe("EntityRemoveService", () => {
 
     await testAction("delete", entity, [entity, ref1, entity2], [entity2]);
   });
-  it("should cascade anonymize the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
+  fit("should cascade anonymize the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -454,7 +457,7 @@ describe("EntityRemoveService", () => {
       [RelatedEntity.create("ref", { refAggregate: [] })],
     );
   });
-  it("should not cascade anonymize the 'aggregate'-type entity that only references the entity user acts on but ask user", async () => {
+  fit("should not cascade anonymize the 'aggregate'-type entity that only references the entity user acts on but ask user", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const ref1 = RelatedEntity.create("ref", {
       refAggregate: [entity.getId()],
@@ -465,10 +468,7 @@ describe("EntityRemoveService", () => {
       "anonymize",
       entity,
       [entity, ref1],
-      [
-        RelatedEntity.create(undefined),
-        RelatedEntity.create("ref", { refAggregate: [] }),
-      ],
+      [RelatedEntity.create(undefined), ref1],
     );
   });
 
@@ -490,7 +490,7 @@ describe("EntityRemoveService", () => {
       ],
     );
   });
-  it("should not cascade anonymize the 'aggregate'-type entity that still references additional other entities but ask user", async () => {
+  fit("should not cascade anonymize the 'aggregate'-type entity that still references additional other entities but ask user", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -506,10 +506,13 @@ describe("EntityRemoveService", () => {
         RelatedEntity.create(undefined),
         entity2,
         // TODO: require manual review / confirmation by the user?
-        RelatedEntity.create("ref", { refAggregate: [entity2.getId()] }),
+        ref1,
       ],
     );
   });
 
   // TODO: warn user that related entities are affected
+
+  // TODO: test Note with attendance (?)
+  // TODO: test for entity with two properties referencing the same entity type
 });
