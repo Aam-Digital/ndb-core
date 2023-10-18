@@ -7,12 +7,6 @@ import { EducationalMaterial } from "../../child-dev-project/children/educationa
 
 // prettier-ignore
 export const defaultJsonConfig = {
-  "appConfig": {
-    "default_language": "en-US",
-    "displayLanguageSelect": true,
-    "logo_path": null,
-    "site_name": $localize`:Page title:Aam Digital - DEMO (automatically generated data)`,
-  },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
     "site_id": "8",
@@ -712,7 +706,23 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "EducationalMaterial"
+              "component": "RelatedEntitiesWithSummary",
+              "config": {
+                "entityType": EducationalMaterial.ENTITY_TYPE,
+                "property": "child",
+                "columns": [
+                  { "id": "date", "visibleFrom": "xs" },
+                  { "id": "materialType", "visibleFrom": "xs" },
+                  { "id": "materialAmount", "visibleFrom": "md" },
+                  { "id": "description", "visibleFrom": "md" },
+                ],
+                "summaries": {
+                  "countProperty": "materialAmount",
+                  "groupBy": "materialType",
+                  "total": true,
+                  "average": false
+                }
+              }
             }
           ]
         },

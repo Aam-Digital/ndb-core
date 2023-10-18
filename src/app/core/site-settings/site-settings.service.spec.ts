@@ -26,6 +26,7 @@ describe("SiteSettingsService", () => {
   let mockFileService: jasmine.SpyObj<FileService>;
 
   beforeEach(() => {
+    localStorage.clear();
     entityMapper = mockEntityMapper();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
     TestBed.configureTestingModule({
@@ -50,8 +51,9 @@ describe("SiteSettingsService", () => {
 
     entityMapper.add(settings);
 
-    expect(titleSpy).not.toHaveBeenCalled();
+    expect(titleSpy).toHaveBeenCalled();
 
+    titleSpy.calls.reset();
     settings.displayLanguageSelect = false;
     entityMapper.add(settings);
 

@@ -1,0 +1,16 @@
+<app-entity-subrecord
+  [records]="data"
+  [filter]="filter"
+  [columns]="columns"
+  [newRecordFactory]="createNewRecordFactory()"
+  [isLoading]="isLoading"
+></app-entity-subrecord>
+
+<div class="margin-top-large">
+  <ng-container *ngIf="summarySum">
+    <strong i18n>Total:</strong> {{ summarySum }} <br />
+  </ng-container>
+  <ng-container *ngIf="summaryAvg">
+    <strong i18n>Average:</strong> {{ summaryAvg }} <br />
+  </ng-container>
+</div>
