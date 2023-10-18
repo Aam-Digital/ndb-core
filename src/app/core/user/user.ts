@@ -67,6 +67,9 @@ export class User extends Entity {
   @DatabaseField() paginatorSettingsPageSize: { [id: string]: number } = {};
 }
 
+/**
+ * Use this provider to access the currently logged-in user object and subscribe to changes of user.
+ */
 @Injectable()
 export class CurrentUserSubject extends BehaviorSubject<AuthUser> {
   constructor() {
