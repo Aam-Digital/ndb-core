@@ -23,7 +23,7 @@ describe("DateRangeFilterPanelComponent", () => {
   beforeEach(async () => {
     dateFilter = new DateFilter("test", "Test", defaultDateFilters);
     dateFilter.selectedOption = "1";
-    jasmine.clock().mockDate(new Date("2023-04-08"));
+    jasmine.clock().mockDate(moment("2023-04-08").toDate());
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule],
       providers: [
@@ -73,8 +73,8 @@ describe("DateRangeFilterPanelComponent", () => {
     await cells[12].select();
 
     const filterRange = dateFilter.getDateRange();
-    expect(filterRange.start).toEqual(new Date("2023-04-08"));
-    expect(filterRange.end).toEqual(new Date("2023-04-13"));
+    expect(filterRange.start).toEqual(moment("2023-04-08").toDate());
+    expect(filterRange.end).toEqual(moment("2023-04-13").toDate());
   });
 
   it("should set the dates selected via the preset options", async () => {

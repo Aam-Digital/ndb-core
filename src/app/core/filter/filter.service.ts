@@ -72,7 +72,7 @@ export class FilterService {
       value = this.parseConfigurableEnumValue(property, value);
     }
     if (property?.dataType.includes("date")) {
-      value = new Date(value);
+      value = moment(value).toDate();
     }
     newEntity[key] = value;
   }
