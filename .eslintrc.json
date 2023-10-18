@@ -52,5 +52,8 @@
   ],
   "extends": [
     "plugin:storybook/recommended"
-  ]
+  ],
+  "rules": {
+    "comma-spacing": ["error", { "before": false, "after": true }]
+  }
 }
