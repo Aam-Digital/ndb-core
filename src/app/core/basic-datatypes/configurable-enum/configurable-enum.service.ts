@@ -9,6 +9,8 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 export class ConfigurableEnumService {
   private enums = new Map<string, ConfigurableEnum>();
 
+  enumEntity: ConfigurableEnum;
+
   constructor(
     private entityMapper: EntityMapperService,
     private ability: EntityAbility,
@@ -46,5 +48,11 @@ export class ConfigurableEnumService {
       this.cacheEnum(newEnum);
     }
     return this.enums.get(entityId);
+  }
+  private addNewOption(name: string) {
+    const option = { id: name, label: name };
+    this.enumEntity.values.push(option);
+    this.entityMapper.save(this.enumEntity);
+    return option;
   }
 }

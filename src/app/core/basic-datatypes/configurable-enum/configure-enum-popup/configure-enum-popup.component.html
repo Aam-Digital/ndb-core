@@ -24,7 +24,22 @@
     </button>
   </mat-form-field>
 </mat-dialog-content>
-
+<div><mat-form-field
+    cdkDrag
+    class="full-width"
+    appearance="fill"
+  >
+    <fa-icon
+      icon="grip-vertical"
+      matIconPrefix
+      class="grab-icon margin-right-small"
+    ></fa-icon>
+    <button mat-icon-button matIconSuffix > <fa-icon icon="trash"></fa-icon>
+    </button>
+  </mat-form-field>
+  <input matInput placeholder="Ex.Howrah"/>
+<button mat-raised-button onclick="Option">Add New Option</button></div>
 <mat-dialog-actions>
-  <button mat-raised-button mat-dialog-close i18n="Close popup">Close</button>
+<button mat-raised-button mat-dialog-close i18n="Close popup">Close</button>
 </mat-dialog-actions>
+
