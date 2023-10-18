@@ -57,5 +57,13 @@ describe("Child", () => {
     const testEntity3 = new Child();
     testEntity3["status"] = "Dropout";
     expect(testEntity3.isActive).withContext("Dropout").toBeFalse();
+
+    // always give "inactive" precedence over other logic (as it is trigger in UI)
+    const testEntityPrec = new Child();
+    testEntityPrec["inactive"] = false;
+    testEntityPrec["status"] = "Dropout";
+    expect(testEntityPrec.isActive)
+      .withContext("inactive taking precedence")
+      .toBeTrue();
   });
 });

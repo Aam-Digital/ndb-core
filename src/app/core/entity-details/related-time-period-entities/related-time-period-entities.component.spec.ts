@@ -144,16 +144,6 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     ).toBeTrue();
   });
 
-  it("should only show active relations by default", async () => {
-    const loadType = spyOn(entityMapper, "loadType");
-    loadType.and.resolveTo([active1, active2, inactive]);
-
-    await component.ngOnInit();
-
-    expect(loadType).toHaveBeenCalledWith("ChildSchoolRelation");
-    expect(getFilteredData(component)).toEqual([active1, active2]);
-  });
-
   it("should show all relations if configured; with active ones being highlighted", async () => {
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([active1, active2, inactive]);

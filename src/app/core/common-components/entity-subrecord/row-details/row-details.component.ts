@@ -14,6 +14,7 @@ import { DynamicComponentDirective } from "../../../config/dynamic-components/dy
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DialogButtonsComponent } from "../../../form-dialog/dialog-buttons/dialog-buttons.component";
+import { EntityArchivedInfoComponent } from "../../../entity-details/entity-archived-info/entity-archived-info.component";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -44,6 +45,7 @@ export interface DetailsComponentData {
     NgIf,
     DynamicComponentDirective,
     DialogButtonsComponent,
+    EntityArchivedInfoComponent,
   ],
   standalone: true,
 })

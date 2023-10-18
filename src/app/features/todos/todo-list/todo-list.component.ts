@@ -25,6 +25,7 @@ import { FilterSelectionOption } from "../../../core/filter/filters/filters";
       clickMode="none"
       (elementClick)="showDetails($event)"
       (addNewClick)="createNew()"
+      [showInactive]="true"
     ></app-entity-list>
   `,
   standalone: true,

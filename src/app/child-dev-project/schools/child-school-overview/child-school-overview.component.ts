@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Child } from "../../children/model/child";
 import { School } from "../model/school";
@@ -41,6 +41,7 @@ export class ChildSchoolOverviewComponent
   implements OnInit
 {
   mode: "child" | "school" = "child";
+  @Input() showInactive = false;
 
   constructor(private childrenService: ChildrenService) {
     super(null, null);
@@ -60,7 +61,7 @@ export class ChildSchoolOverviewComponent
     this.switchRelatedEntityColumnForMode();
 
     await this.loadData();
-    super.filterActiveInactive();
+    super.onIsActiveFilterChange(this.showInactive);
   }
 
   private inferMode(entity: Entity): "child" | "school" {
