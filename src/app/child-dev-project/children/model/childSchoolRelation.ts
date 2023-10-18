@@ -16,6 +16,7 @@ export class ChildSchoolRelation extends TimePeriod {
     validators: {
       required: true,
     },
+    anonymize: "retain",
   })
   childId: string;
 
@@ -26,6 +27,7 @@ export class ChildSchoolRelation extends TimePeriod {
     validators: {
       required: true,
     },
+    anonymize: "retain",
   })
   schoolId: string;
 

@@ -77,11 +77,13 @@ export class Child extends Entity {
     dataType: "configurable-enum",
     innerDataType: "center",
     label: $localize`:Label for the center of a child:Center`,
+    anonymize: "retain",
   })
   center: Center;
 
   @DatabaseField({
     label: $localize`:Label for the admission date of a child:Admission`,
+    anonymize: "retain-anonymized",
   })
   admissionDate: Date;
 
@@ -92,11 +94,13 @@ export class Child extends Entity {
 
   @DatabaseField({
     label: $localize`:Label for the dropout date of a child:Dropout Date`,
+    anonymize: "retain-anonymized",
   })
   dropoutDate: Date;
 
   @DatabaseField({
     label: $localize`:Label for the type of dropout of a child:Dropout Type`,
+    anonymize: "retain",
   })
   dropoutType: string;
 

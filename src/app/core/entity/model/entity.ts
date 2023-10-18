@@ -192,16 +192,13 @@ export class Entity {
   })
   updated: UpdateMetadata;
 
-  @DatabaseField({
-    label: $localize`:Label of checkbox:Inactive`,
-    description: $localize`:Description of checkbox:Ticking this box will archive the record. No data will be lost but the record will be hidden.`,
-  })
+  @DatabaseField({ anonymize: "retain" })
   inactive: boolean;
 
   /**
    * Whether this entity has been anonymized and therefore cannot be re-activated.
    */
-  @DatabaseField()
+  @DatabaseField({ anonymize: "retain" })
   anonymized: boolean;
 
   /** whether this entity object is newly created and not yet saved to database */
