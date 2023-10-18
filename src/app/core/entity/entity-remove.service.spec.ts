@@ -158,8 +158,9 @@ describe("EntityRemoveService", () => {
     }
   }
 
-  async function testAnonymization(
-    entity: AnonymizableEntity,
+  async function testAction(
+    action: "anonymize" | "delete",
+    entity: Entity,
     entitiesBefore: any[],
     expectedEntitiesAfter: any[],
     checkAllBaseProperties: boolean = false,
@@ -169,7 +170,7 @@ describe("EntityRemoveService", () => {
     // @ts-ignore
     service.entityMapper = entityMapper;
 
-    await service.anonymize(entity);
+    await service[action](entity);
 
     const actualEntitiesAfter = entityMapper.getAllData();
 
@@ -188,7 +189,8 @@ describe("EntityRemoveService", () => {
     entity.defaultField = "test";
     entity.retainedField = "test";
 
-    await testAnonymization(
+    await testAction(
+      "anonymize",
       entity,
       [entity],
       [AnonymizableEntity.create({ retainedField: "test" })],
@@ -199,7 +201,12 @@ describe("EntityRemoveService", () => {
     const entity = new AnonymizableEntity();
     entity.defaultField = "test";
 
-    await testAnonymization(entity, [entity], [AnonymizableEntity.create({})]);
+    await testAction(
+      "anonymize",
+      entity,
+      [entity],
+      [AnonymizableEntity.create({})],
+    );
   });
 
   it("should anonymize and retain created and updated", async () => {
@@ -212,7 +219,8 @@ describe("EntityRemoveService", () => {
       ...entityProperties,
     });
 
-    await testAnonymization(
+    await testAction(
+      "anonymize",
       entity,
       [entity],
       [
@@ -230,7 +238,8 @@ describe("EntityRemoveService", () => {
     const entity = new AnonymizableEntity();
     entity.defaultField = "test";
 
-    await testAnonymization(
+    await testAction(
+      "anonymize",
       entity,
       [entity],
       [AnonymizableEntity.create({ inactive: true, anonymized: true })],
@@ -245,7 +254,8 @@ describe("EntityRemoveService", () => {
       moment("2023-10-04").toDate(),
     ];
 
-    await testAnonymization(
+    await testAction(
+      "anonymize",
       entity,
       [entity],
       [
@@ -263,38 +273,243 @@ describe("EntityRemoveService", () => {
     const entity = new AnonymizableEntity();
     entity.file = "test-file.txt";
 
-    await testAnonymization(entity, [entity], [AnonymizableEntity.create({})]);
+    await testAction(
+      "anonymize",
+      entity,
+      [entity],
+      [AnonymizableEntity.create({})],
+    );
     expect(mockFileService.removeFile).toHaveBeenCalled();
   });
 
   //
-  // Anonymizing referenced & related entities
-  //
+  // Deleting/Anonymizing referenced & related entities
+  //    -> https://github.com/Aam-Digital/ndb-core/issues/220#issuecomment-1740656623
+  //    we distinguish different roles / relations between entities:
+  //     ♢ "aggregate" (has-a): both entities have meaning independently
+  //     ♦ "composite" (is-part-of): the entity holding the reference is only meaningful in the context of the referenced
+
+  @DatabaseEntity("RelatedEntity")
+  class RelatedEntity extends Entity {
+    @DatabaseField() name: string;
+
+    @DatabaseField({
+      dataType: "entity-array",
+      additional: "RelatedEntity",
+      anonymize: "retain",
+    })
+    refAggregate: string[];
+
+    @DatabaseField({
+      dataType: "entity-array",
+      additional: "RelatedEntity",
+      anonymize: "retain",
+    })
+    refComposite: string[];
+
+    static create(name: string, properties?: Partial<RelatedEntity>) {
+      return Object.assign(new RelatedEntity(), { name: name, ...properties });
+    }
+  }
 
   // for direct references (e.g. x.referencesToRetainAnonymized --> recursively calls anonymize on referenced entities)
   //    see EntityDatatype & EntityArrayDatatype for unit tests
+  // TODO: should we allow an additional option to delete a direct referenced entity completely during anonymization?
 
-  xit("should anonymize cascadingly entities that reference the entity being anonymized", async () => {
-    // TODO: cascading anonymization - see https://github.com/Aam-Digital/ndb-core/issues/220
+  fit("should not cascade delete the related entity if the entity holding the reference is deleted", async () => {
+    const entity2 = RelatedEntity.create("other entity");
+    const entity = RelatedEntity.create("entity user acts on", {
+      refComposite: [entity2.getId()],
+    });
 
-    const entity = new AnonymizableEntity();
-    entity.retainedField = "entity being anonymized";
+    await testAction("delete", entity, [entity, entity2], [entity2]);
+  });
+  it("should not cascade anonymize the related entity if the entity holding the reference is anonymized", async () => {
+    const entity2 = RelatedEntity.create("other entity");
+    const entity = RelatedEntity.create("entity user acts on", {
+      refComposite: [entity2.getId()],
+    });
 
-    const ref1 = new AnonymizableEntity("ref-1");
-    ref1.defaultField = "test-1";
-    ref1.retainedField = "test-1";
-    ref1.referencesToRetainAnonymized = [entity.getId()];
+    await testAction(
+      "anonymize",
+      entity,
+      [entity, entity2],
+      [RelatedEntity.create(undefined), entity2],
+    );
+  });
 
-    await testAnonymization(
+  fit("should cascade delete the 'composite'-type entity that references the entity user acts on", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+
+    const ref1 = RelatedEntity.create("ref", {
+      refComposite: [entity.getId()],
+    });
+
+    await testAction("delete", entity, [entity, ref1], []);
+  });
+  it("should cascade anonymize the 'composite'-type entity that references the entity user acts on", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+
+    const ref1 = RelatedEntity.create("ref", {
+      refComposite: [entity.getId()],
+    });
+
+    await testAction(
+      "anonymize",
       entity,
       [entity, ref1],
       [
-        entity,
-        AnonymizableEntity.create({
-          retainedField: "test-1",
-          referencesToRetainAnonymized: [entity.getId()],
-        }),
+        RelatedEntity.create(undefined),
+        RelatedEntity.create(undefined, { refComposite: [entity.getId()] }),
       ],
     );
   });
+
+  fit("should not cascade delete the 'composite'-type entity that still references additional other entities but remove id", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+    const entity2 = RelatedEntity.create("other entity");
+
+    const ref1 = RelatedEntity.create("ref", {
+      refComposite: [entity.getId(), entity2.getId()],
+    });
+
+    // TODO: does this case require manual review / confirmation by the user?
+    await testAction(
+      "delete",
+      entity,
+      [entity, entity2, ref1],
+      [
+        entity2,
+        RelatedEntity.create("ref", { refComposite: [entity2.getId()] }),
+      ],
+    );
+  });
+  it("should not cascade anonymize the 'composite'-type entity that still references additional other entities but ask user", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+    const entity2 = RelatedEntity.create("other entity");
+
+    const ref1 = RelatedEntity.create("ref", {
+      refComposite: [entity.getId(), entity2.getId()],
+    });
+
+    await testAction(
+      "anonymize",
+      entity,
+      [entity, entity2, ref1],
+      [
+        RelatedEntity.create(undefined),
+        entity2,
+        // TODO: require manual review / confirmation by the user?
+        RelatedEntity.create("ref", { refComposite: [entity2.getId()] }),
+      ],
+    );
+  });
+
+  fit("should cascade delete the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+    const entity2 = RelatedEntity.create("other entity");
+
+    const ref1 = RelatedEntity.create("ref", {
+      refComposite: [entity.getId()],
+      refAggregate: [entity2.getId()],
+    });
+
+    await testAction("delete", entity, [entity, ref1, entity2], [entity2]);
+  });
+  it("should cascade anonymize the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+    const entity2 = RelatedEntity.create("other entity");
+
+    const ref1 = RelatedEntity.create("ref", {
+      refComposite: [entity.getId()],
+      refAggregate: [entity2.getId()],
+    });
+
+    await testAction(
+      "anonymize",
+      entity,
+      [entity, ref1, entity2],
+      [
+        RelatedEntity.create(undefined),
+        RelatedEntity.create(undefined, {
+          refComposite: [entity.getId()],
+          refAggregate: [entity2.getId()],
+        }),
+        entity2,
+      ],
+    );
+  });
+
+  fit("should not cascade delete the 'aggregate'-type entity that only references the entity user acts on but remove id", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+    const ref1 = RelatedEntity.create("ref", {
+      refAggregate: [entity.getId()],
+    });
+
+    // TODO: does this case require manual review / confirmation by the user?
+    await testAction(
+      "delete",
+      entity,
+      [entity, ref1],
+      [RelatedEntity.create("ref", { refAggregate: [] })],
+    );
+  });
+  it("should not cascade anonymize the 'aggregate'-type entity that only references the entity user acts on but ask user", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+    const ref1 = RelatedEntity.create("ref", {
+      refAggregate: [entity.getId()],
+    });
+
+    // TODO: require manual review / confirmation by the user?
+    await testAction(
+      "anonymize",
+      entity,
+      [entity, ref1],
+      [
+        RelatedEntity.create(undefined),
+        RelatedEntity.create("ref", { refAggregate: [] }),
+      ],
+    );
+  });
+
+  fit("should not cascade delete the 'aggregate'-type entity that still references additional other entities but remove id", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+    const entity2 = RelatedEntity.create("other entity");
+
+    const ref1 = RelatedEntity.create("ref", {
+      refAggregate: [entity.getId(), entity2.getId()],
+    });
+
+    await testAction(
+      "delete",
+      entity,
+      [entity, entity2, ref1],
+      [
+        entity2,
+        RelatedEntity.create("ref", { refAggregate: [entity2.getId()] }),
+      ],
+    );
+  });
+  it("should not cascade anonymize the 'aggregate'-type entity that still references additional other entities but ask user", async () => {
+    const entity = RelatedEntity.create("entity user acts on");
+    const entity2 = RelatedEntity.create("other entity");
+
+    const ref1 = RelatedEntity.create("ref", {
+      refAggregate: [entity.getId(), entity2.getId()],
+    });
+
+    await testAction(
+      "anonymize",
+      entity,
+      [entity, entity2, ref1],
+      [
+        RelatedEntity.create(undefined),
+        entity2,
+        // TODO: require manual review / confirmation by the user?
+        RelatedEntity.create("ref", { refAggregate: [entity2.getId()] }),
+      ],
+    );
+  });
+
+  // TODO: warn user that related entities are affected
 });
