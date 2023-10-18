@@ -30,8 +30,15 @@ export class HealthCheck extends Entity {
     return Object.assign(new HealthCheck(), contents);
   }
 
-  @DatabaseField() child: string;
-  @DatabaseField({ label: $localize`:Label for date of a health check:Date` })
+  @DatabaseField({
+    anonymize: "retain",
+  })
+  child: string;
+
+  @DatabaseField({
+    label: $localize`:Label for date of a health check:Date`,
+    anonymize: "retain-anonymized",
+  })
   date: Date;
 
   /** height measurement in cm **/

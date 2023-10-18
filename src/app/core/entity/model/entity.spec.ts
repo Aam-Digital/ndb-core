@@ -117,6 +117,27 @@ describe("Entity", () => {
     entity._rev = "123";
     expect(entity.isNew).toBeFalse();
   });
+
+  it("should convert toString using toStringAttributes config or special [anonymized] label", () => {
+    @DatabaseEntity("TestEntityForToString")
+    class TestEntity extends Entity {
+      static toStringAttributes = ["firstname", "lastname"];
+      static label = "TestEntity";
+      firstname = "John";
+      lastname = "Doe";
+    }
+
+    const testEntity = new TestEntity();
+
+    expect(testEntity.toString()).toBe("John Doe");
+
+    const anonymizedEntity = new TestEntity();
+    anonymizedEntity.firstname = undefined;
+    delete anonymizedEntity.lastname;
+    anonymizedEntity.anonymized = true;
+
+    expect(anonymizedEntity.toString()).toBe("[anonymized TestEntity]");
+  });
 });
 
 /**

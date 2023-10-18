@@ -7,4 +7,12 @@ describe("Schema data type: date", () => {
     new Date(2023, 10, 25),
     new Date(2023, 10, 25),
   );
+
+  it("should anonymize dates and only retain year", async () => {
+    const datatype = new DateDatatype();
+    const testDate = new Date(2023, 10, 25);
+
+    const actualAnonymized = await datatype.anonymize(testDate);
+    expect(actualAnonymized).toEqual(new Date(2023, 6, 1));
+  });
 });

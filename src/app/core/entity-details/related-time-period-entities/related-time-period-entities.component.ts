@@ -12,7 +12,6 @@ import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { TimePeriod } from "./time-period";
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * Display a list of entity subrecords (entities related to the current entity details view)
@@ -65,25 +64,18 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   hasCurrentlyActiveEntry: boolean;
 
   async ngOnInit() {
+    this.onIsActiveFilterChange(this.showInactive);
     await super.initData();
-
-    this.filterActiveInactive();
   }
 
-  filterActiveInactive() {
+  onIsActiveFilterChange(newValue: boolean) {
     this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
 
-    const filters = this.filter ?? {};
     if (this.showInactive) {
       this.backgroundColorFn = (r: E) => r.getColor();
-      // @ts-ignore type has issues with getters
-      delete filters.isActive;
     } else {
       this.backgroundColorFn = undefined; // Do not highlight active ones when only active are shown
-      filters["isActive"] = true;
     }
-    // recreate to trigger change detection and update displayed data
-    this.filter = { ...filters } as DataFilter<E>;
   }
 
   generateNewRecordFactory() {

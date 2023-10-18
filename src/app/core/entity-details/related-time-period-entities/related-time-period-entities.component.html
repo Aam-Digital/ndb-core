@@ -18,20 +18,7 @@
   [newRecordFactory]="generateNewRecordFactory()"
   [getBackgroundColor]="backgroundColorFn"
   [clickMode]="clickMode"
+  [(showInactive)]="showInactive"
+  (showInactiveChange)="onIsActiveFilterChange($event)"
 >
 </app-entity-subrecord>
-
-<div class="margin-top-regular">
-  <mat-slide-toggle
-    [(ngModel)]="showInactive"
-    (change)="filterActiveInactive()"
-    i18n-matTooltip="
-      Show ended tooltip|Tooltip that will appear when hovered over the
-      show-ended button
-    "
-    matTooltip="Show entries where the end date is in the past"
-    i18n="slider|also show entries that are inactive"
-  >
-    Include inactive past records
-  </mat-slide-toggle>
-</div>

@@ -12,7 +12,12 @@ export class HistoricalEntityData extends Entity {
   @DatabaseField({
     label: $localize`:Label for date of historical data:Date`,
     defaultValue: PLACEHOLDERS.NOW,
+    anonymize: "retain-anonymized",
   })
   date: Date;
-  @DatabaseField() relatedEntity: string;
+
+  @DatabaseField({
+    anonymize: "retain",
+  })
+  relatedEntity: string;
 }

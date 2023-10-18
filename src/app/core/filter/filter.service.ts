@@ -68,10 +68,10 @@ export class FilterService {
       [key, value] = this.transformNestedKey(key, value);
     }
     const property = schema.get(key);
-    if (property.dataType === "configurable-enum") {
+    if (property?.dataType === "configurable-enum") {
       value = this.parseConfigurableEnumValue(property, value);
     }
-    if (property.dataType.includes("date")) {
+    if (property?.dataType.includes("date")) {
       value = moment(value).toDate();
     }
     newEntity[key] = value;
