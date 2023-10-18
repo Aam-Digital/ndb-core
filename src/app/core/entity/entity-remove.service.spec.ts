@@ -19,6 +19,7 @@ import { FileService } from "../../features/file/file.service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { DefaultDatatype } from "./default-datatype/default.datatype";
 import { FileDatatype } from "../../features/file/file.datatype";
+import moment from "moment";
 
 describe("EntityRemoveService", () => {
   let service: EntityRemoveService;
@@ -240,8 +241,8 @@ describe("EntityRemoveService", () => {
   it("should anonymize array values recursively and use datatype implementation for 'retain-anonymized", async () => {
     const entity = new AnonymizableEntity();
     entity.retainAnonymizedDates = [
-      new Date("2023-09-25"),
-      new Date("2023-10-04"),
+      moment("2023-09-25").toDate(),
+      moment("2023-10-04").toDate(),
     ];
 
     await testAnonymization(
@@ -250,8 +251,8 @@ describe("EntityRemoveService", () => {
       [
         AnonymizableEntity.create({
           retainAnonymizedDates: [
-            new Date("2023-07-01"),
-            new Date("2023-07-01"),
+            moment("2023-07-01").toDate(),
+            moment("2023-07-01").toDate(),
           ],
         }),
       ],
