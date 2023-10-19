@@ -40,6 +40,7 @@ export class EntityRemoveService {
   private showSnackbarConfirmation(
     entity: Entity,
     action: string,
+    previousEntitiesForUndo: Entity[],
     navigateBackToUrl?: string,
   ) {
     const snackBarTitle = $localize`:Entity action confirmation message:${
@@ -56,7 +57,7 @@ export class EntityRemoveService {
 
     // Undo Action
     snackBarRef.onAction().subscribe(async () => {
-      await this.entityMapper.save(entity, true);
+      await this.entityMapper.saveAll(previousEntitiesForUndo, true);
       if (navigateBackToUrl) {
         await this.router.navigate([navigateBackToUrl]);
       }
@@ -93,8 +94,7 @@ export class EntityRemoveService {
       return false;
     }
 
-    const originalEntity = entity.copy(); // TODO: undo including cascading actions
-    await this.deleteEntity(entity);
+    const affectedEntitiesBeforeAction = await this.deleteEntity(entity);
 
     let currentUrl: string;
     if (navigate) {
@@ -104,8 +104,9 @@ export class EntityRemoveService {
     }
 
     this.showSnackbarConfirmation(
-      originalEntity,
+      affectedEntitiesBeforeAction[0],
       $localize`:Entity action confirmation message verb:Deleted`,
+      affectedEntitiesBeforeAction,
       currentUrl,
     );
     return true;
@@ -113,32 +114,54 @@ export class EntityRemoveService {
 
   /**
    * The actual delete action without user interactions.
+   *
+   * Returns an array of all affected entities (including the given entity) in their state before the action
+   * to support an undo action.
+   *
    * @param entity
    * @private
    */
   private async deleteEntity(entity: Entity) {
-    await this.cascadeActionToRelatedEntities(
-      entity,
-      (e) => this.deleteEntity(e),
-      (e, refField, entity) =>
-        this.removeReferenceFromEntity(e, refField, entity),
-    );
+    const affectedEntitiesBeforeAction =
+      await this.cascadeActionToRelatedEntities(
+        entity,
+        (e) => this.deleteEntity(e),
+        (e, refField, entity) =>
+          this.removeReferenceFromEntity(e, refField, entity),
+      );
+
+    const originalEntity = entity.copy();
     await this.entityMapper.remove(entity);
+
+    return [originalEntity, ...affectedEntitiesBeforeAction];
   }
 
+  /**
+   * Recursively call the given actions on all related entities that contain a reference to the given entity.
+   *
+   * Returns an array of all affected related entities (excluding the given entity) in their state before the action
+   * to support an undo action.
+   *
+   * @param entity
+   * @param compositeAction
+   * @param aggregateAction
+   * @private
+   */
   private async cascadeActionToRelatedEntities(
     entity: Entity,
     compositeAction: (
       relatedEntity: Entity,
       refField?: string,
       entity?: Entity,
-    ) => Promise<void>,
+    ) => Promise<Entity[]>,
     aggregateAction: (
       relatedEntity: Entity,
       refField?: string,
       entity?: Entity,
-    ) => Promise<void>,
-  ) {
+    ) => Promise<Entity[]>,
+  ): Promise<Entity[]> {
+    const originalAffectedEntitiesForUndo: Entity[] = [];
+
     const entityTypesWithReferences =
       this.schemaService.getEntityTypesReferencingType(entity.getType());
 
@@ -158,20 +181,45 @@ export class EntityRemoveService {
             asArray(e[refField]).length === 1
           ) {
             // is only composite
-            await compositeAction(e);
+            const furtherAffectedEntities = await compositeAction(e);
+            furtherAffectedEntities.forEach((e) =>
+              originalAffectedEntitiesForUndo.push(e.copy()),
+            );
           } else {
-            await aggregateAction(e, refField, entity);
+            const furtherAffectedEntities = await aggregateAction(
+              e,
+              refField,
+              entity,
+            );
+            furtherAffectedEntities.forEach((e) =>
+              originalAffectedEntitiesForUndo.push(e.copy()),
+            );
           }
         }
       }
     }
+
+    return originalAffectedEntitiesForUndo;
   }
 
+  /**
+   * Change and save the entity, removing referenced ids of the given referenced entity.
+   *
+   * Returns an array of the affected entities (which here is only the given entity) in the state before the action
+   * to support an undo action.
+   *
+   * @param relatedEntityWithReference
+   * @param refField
+   * @param referencedEntity
+   * @private
+   */
   private async removeReferenceFromEntity(
     relatedEntityWithReference: Entity,
     refField: string,
     referencedEntity: Entity,
-  ) {
+  ): Promise<Entity[]> {
+    const originalEntity = relatedEntityWithReference.copy();
+
     if (Array.isArray(relatedEntityWithReference[refField])) {
       relatedEntityWithReference[refField] = relatedEntityWithReference[
         refField
@@ -181,6 +229,7 @@ export class EntityRemoveService {
     }
 
     await this.entityMapper.save(relatedEntityWithReference);
+    return [originalEntity];
   }
 
   /**
@@ -206,13 +255,12 @@ export class EntityRemoveService {
       return false;
     }
 
-    const originalEntity = entity.copy(); // TODO: undo including cascading actions
-    await this.anonymizeEntity(entity);
-    await this.entityMapper.save(entity);
+    const affectedEntitiesBeforeAction = await this.anonymizeEntity(entity);
 
     this.showSnackbarConfirmation(
-      originalEntity,
+      affectedEntitiesBeforeAction[0],
       $localize`:Entity action confirmation message verb:Anonymized`,
+      affectedEntitiesBeforeAction,
     );
     return true;
   }
@@ -223,6 +271,8 @@ export class EntityRemoveService {
    * @private
    */
   private async anonymizeEntity(entity: Entity) {
+    const originalEntity = entity.copy();
+
     for (const [key, schema] of entity.getSchema().entries()) {
       if (entity[key] === undefined) {
         continue;
@@ -242,15 +292,16 @@ export class EntityRemoveService {
     entity.anonymized = true;
     entity.inactive = true;
 
-    await this.cascadeActionToRelatedEntities(
-      entity,
-      (e) => this.anonymizeEntity(e),
-      async (e) => {
-        /* keep related entity unchanged */
-      },
-    );
-
     await this.entityMapper.save(entity);
+
+    const affectedEntitiesBeforeAction =
+      await this.cascadeActionToRelatedEntities(
+        entity,
+        (e) => this.anonymizeEntity(e),
+        async (e) => [],
+      );
+
+    return [originalEntity, ...affectedEntitiesBeforeAction];
   }
 
   private async anonymizeProperty(entity: Entity, key: string) {
@@ -277,6 +328,7 @@ export class EntityRemoveService {
     this.showSnackbarConfirmation(
       originalEntity,
       $localize`:Entity action confirmation message verb:Archived`,
+      [originalEntity],
     );
     return true;
   }
@@ -292,6 +344,7 @@ export class EntityRemoveService {
     this.showSnackbarConfirmation(
       originalEntity,
       $localize`:Entity action confirmation message verb:Reactivated`,
+      [originalEntity],
     );
     return true;
   }

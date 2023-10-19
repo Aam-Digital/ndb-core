@@ -12,7 +12,10 @@ import { NEVER, of, Subject } from "rxjs";
 import { Router } from "@angular/router";
 import { DatabaseEntity } from "./database-entity.decorator";
 import { DatabaseField } from "./database-field.decorator";
-import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "./entity-mapper/mock-entity-mapper-service";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { UpdateMetadata } from "./model/update-metadata";
 import { FileService } from "../../features/file/file.service";
@@ -510,6 +513,35 @@ describe("EntityRemoveService", () => {
       ],
     );
   });
+
+  fit("should undo delete for all cascadingly affected entities", fakeAsync(() => {
+    const onSnackbarAction = new Subject<void>();
+    mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
+
+    const entity = RelatedEntity.create("entity user acts on");
+    const ref1 = RelatedEntity.create("ref-1", {
+      refComposite: [entity.getId()],
+    });
+    const ref2 = RelatedEntity.create("ref-2", {
+      refAggregate: [entity.getId()],
+    });
+
+    testAction(
+      "delete",
+      entity.copy(),
+      [entity.copy(), ref1.copy(), ref2.copy()],
+      [RelatedEntity.create("ref-2", { refAggregate: [] })],
+    );
+    tick();
+
+    onSnackbarAction.next();
+    onSnackbarAction.complete();
+    tick();
+
+    const actualEntitiesAfterUndo = // @ts-ignore
+    (service.entityMapper as MockEntityMapperService).getAllData();
+    expectEntitiesToMatch(actualEntitiesAfterUndo, [entity, ref1, ref2], true);
+  }));
 
   // TODO: warn user that related entities are affected
 
