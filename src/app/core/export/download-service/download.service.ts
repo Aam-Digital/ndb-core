@@ -100,7 +100,7 @@ export class DownloadService {
 
     data = data.map(transformToReadableFormat);
    
-    if(!entityConstructor){
+    if (!entityConstructor) {
       return this.papa.unparse(data, {
         quotes: true,
         header: true,
