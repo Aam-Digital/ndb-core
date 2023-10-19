@@ -90,29 +90,24 @@ describe("DownloadService", () => {
 
     @DatabaseEntity("TestEntity")
     class TestEntity extends Entity {
-      @DatabaseField() enumProperty: ConfigurableEnumValue;
-      @DatabaseField() dateProperty: Date;
-      @DatabaseField() boolProperty: boolean;
+      @DatabaseField({ "label": "test enum" }) enumProperty: ConfigurableEnumValue;
+      @DatabaseField({ "label": "test date" }) dateProperty: Date;
+      @DatabaseField({ "label": "test boolean" }) boolProperty: boolean;
     }
-
     const testEntity = new TestEntity();
     testEntity.enumProperty = testEnumValue;
     testEntity.dateProperty = new Date(testDate);
     testEntity.boolProperty = true;
 
-    const objectToArray = [
-      testEntity.enumProperty.label,
-      testEntity.dateProperty.toISOString(),
-      testEntity.boolProperty.toString(),
-      ];
-      
     const csvExport = await service.createCsv([testEntity]);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
-    expect(objectToArray).toContain(testEnumValue.label);
-    expect(objectToArray).toContain(new Date(testDate).toISOString());
-    expect(objectToArray).toContain('true');
+    const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
+    expect(columnValues).toHaveSize(3 + 1); // Properties + _id
+    expect(columnValues).toContain['"' + testEnumValue.label + '"'];
+    expect(columnValues).toContain['"' + testDate + '"'];
+    expect(columnValues).toContain['"true"'];
   });
 
   it("should export a date as YYYY-MM-dd only", async () => {
