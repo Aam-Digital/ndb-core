@@ -279,9 +279,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   getNumberOfInactive() {
+    const previousState = this.includeInactive;
     this.includeInactive = true;
     let numberOfInactive = this.filter(this.filterValue).length;
-    this.includeInactive = false;
+    this.includeInactive = previousState;
     return numberOfInactive;
   }
 
