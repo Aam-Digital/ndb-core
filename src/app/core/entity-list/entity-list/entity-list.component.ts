@@ -44,7 +44,6 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 
-
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
  * The filter and grouping settings are written into the URL params to allow going back to the previous view.
