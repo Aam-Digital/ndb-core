@@ -45,11 +45,11 @@ export const childrenComponents: ComponentTuple[] = [
       ).then((c) => c.ChildrenBmiDashboardComponent),
   ],
   [
-    "EducationalMaterial",
+    "RelatedEntitiesWithSummary",
     () =>
       import(
-        "./educational-material/educational-material-component/educational-material.component"
-      ).then((c) => c.EducationalMaterialComponent),
+        "../../core/entity-details/related-entities-with-summary/related-entities-with-summary.component"
+      ).then((c) => c.RelatedEntitiesWithSummaryComponent),
   ],
   [
     "BmiBlock",

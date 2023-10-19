@@ -19,17 +19,12 @@ import { EntityMapperService } from "./entity-mapper.service";
 import { Entity } from "../model/entity";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
-import {
-  DatabaseEntity,
-  entityRegistry,
-  EntityRegistry,
-} from "../database-entity.decorator";
+import { DatabaseEntity } from "../database-entity.decorator";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { CoreModule } from "../../core.module";
 import { Database } from "../../database/database";
-import { ComponentRegistry } from "../../../dynamic-components";
 import { TEST_USER } from "../../../utils/mock-local-session";
 import { CurrentUserSubject } from "../../user/user";
+import { CoreTestingModule } from "../../../utils/core-testing.module";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -51,10 +46,8 @@ describe("EntityMapperService", () => {
     testDatabase = PouchDatabase.create();
 
     TestBed.configureTestingModule({
-      imports: [CoreModule],
+      imports: [CoreTestingModule],
       providers: [
-        ComponentRegistry,
-        { provide: EntityRegistry, useValue: entityRegistry },
         { provide: Database, useValue: testDatabase },
         CurrentUserSubject,
         EntityMapperService,

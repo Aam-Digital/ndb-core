@@ -124,13 +124,14 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   });
 
   it("should create a new entity with the start date inferred from previous relations", async () => {
+    const child = new Child();
     const existingRelation = new ChildSchoolRelation();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
+    existingRelation.childId = child.getId(false);
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([existingRelation]);
 
-    const child = new Child();
     component.entity = child;
     await component.ngOnInit();
 
@@ -141,16 +142,6 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
         .add(1, "day")
         .isSame(newRelation.start, "day"),
     ).toBeTrue();
-  });
-
-  it("should only show active relations by default", async () => {
-    const loadType = spyOn(entityMapper, "loadType");
-    loadType.and.resolveTo([active1, active2, inactive]);
-
-    await component.ngOnInit();
-
-    expect(loadType).toHaveBeenCalledWith("ChildSchoolRelation");
-    expect(getFilteredData(component)).toEqual([active1, active2]);
   });
 
   it("should show all relations if configured; with active ones being highlighted", async () => {

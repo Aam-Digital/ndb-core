@@ -79,6 +79,10 @@ body {
   }
 }
 
+.sidenav-menu {
+  background-color: colors.$background-secondary;
+}
+
 /**  Main content  **/
 
 mat-sidenav-container {

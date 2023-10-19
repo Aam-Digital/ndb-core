@@ -269,6 +269,22 @@ describe("ChildrenService", () => {
     res = await service.getNotesRelatedTo(s1.getId(true));
     expect(res).toEqual([n1]);
   });
+
+  it("should return the correct notes in a timespan", async () => {
+    const n1 = Note.create(moment("2023-01-01").toDate());
+    const n2 = Note.create(moment("2023-01-02").toDate());
+    const n3 = Note.create(moment("2023-01-03").toDate());
+    const n4 = Note.create(moment("2023-01-03").toDate());
+    const n5 = Note.create(moment("2023-01-04").toDate());
+    await entityMapper.saveAll([n1, n2, n3, n4, n5]);
+
+    const res = await service.getNotesInTimespan(
+      moment("2023-01-02"),
+      moment("2023-01-03"),
+    );
+
+    expect(res).toEqual(jasmine.arrayWithExactContents([n2, n3, n4]));
+  });
 });
 
 function generateChildEntities(): Child[] {

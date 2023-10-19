@@ -25,6 +25,7 @@ import { CurrentUserSubject } from "../../../core/user/user";
       clickMode="none"
       (elementClick)="showDetails($event)"
       (addNewClick)="createNew()"
+      [showInactive]="true"
     ></app-entity-list>
   `,
   standalone: true,

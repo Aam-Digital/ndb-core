@@ -110,6 +110,24 @@ describe("EntityFormComponent", () => {
     );
   });
 
+  it("should clear field in form for properties removed in updated remote entity", async () => {
+    const originalEntity = { projectNumber: "p1", name: "test" };
+    const formValues = { projectNumber: "p2", name: "test" };
+    const remoteValues = {
+      _rev: "new rev",
+    };
+    await expectApplyChangesPopup(
+      "no",
+      originalEntity,
+      formValues,
+      remoteValues,
+      {
+        projectNumber: "p2",
+        _rev: "new rev",
+      },
+    );
+  });
+
   it("should not show popup if date was saved as day-only", async () => {
     const form = { dateOfBirth: new DateWithAge() };
     const dateOnly = new DateWithAge();
