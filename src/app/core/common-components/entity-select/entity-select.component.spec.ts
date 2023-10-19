@@ -12,10 +12,15 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../session/session-states/login-state.enum";
+import { HarnessLoader } from "@angular/cdk/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
+import { MatOptionHarness } from "@angular/material/core/testing";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
+  let loader: HarnessLoader;
 
   const testUsers: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
     const user = new User();
@@ -40,6 +45,7 @@ describe("EntitySelectComponent", () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySelectComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -180,6 +186,80 @@ describe("EntitySelectComponent", () => {
     component.formControl.setValue("z");
     expect(component.filteredEntities.length).toEqual(0);
     tick();
+  }));
+
+  it("shows inactive entites according to the includeInactive state", fakeAsync(() => {
+    testUsers[0].isActive = false;
+    testUsers[2].isActive = false;
+    component.allEntities = testUsers;
+    component.loading.next(false);
+
+    component.formControl.setValue(null);
+    expect(component.filteredEntities.length).toEqual(2);
+
+    component.toggleIncludeInactive();
+    expect(component.filteredEntities.length).toEqual(4);
+
+    testUsers[2].isActive = true;
+    component.toggleIncludeInactive();
+    expect(component.filteredEntities.length).toEqual(3);
+  }));
+
+  fit("shows the inactive checkbox and message appropriately", fakeAsync(async () => {
+    const testEntities = [
+      "Aaa",
+      "Aab",
+      "Aac",
+      "Baa",
+      "Bab",
+      "Bac",
+      "Caa",
+      "Cab",
+    ].map((s) => {
+      const user = new User();
+      user.name = s;
+      return user;
+    });
+    testEntities[6].isActive = false;
+    testEntities[7].isActive = false;
+    component.allEntities = testEntities;
+    component.loading.next(false);
+    const autocomplete = await loader.getHarness(MatAutocompleteHarness);
+
+    autocomplete.enterText("X");
+    tick();
+    console.log(
+      "Peter options",
+      await autocomplete.getValue(),
+      ": ",
+      (await autocomplete.getOptions()).length,
+      ((await autocomplete.getOptions())[0] as MatOptionHarness)
+        ._locatorFactory,
+    );
+    // component.toggleIncludeInactive();
+    autocomplete.clear();
+    autocomplete.getValue();
+    autocomplete.enterText("Aa");
+    tick();
+    console.log(
+      "Peter options",
+      await autocomplete.getValue(),
+      ": ",
+      (await autocomplete.getOptions()).length,
+    );
+    autocomplete.clear();
+    autocomplete.enterText("Ca");
+    tick();
+    console.log(
+      "Peter options",
+      await autocomplete.getValue(),
+      ": ",
+      (await autocomplete.getOptions()).length,
+    );
+
+    //
+    // expect(component.filteredEntities.length).toEqual(4);
+    // tick();
   }));
 
   it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
