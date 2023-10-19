@@ -410,4 +410,17 @@ describe("EntitySubrecordComponent", () => {
 
     expect(component.recordsDataSource.data).toEqual([]);
   }));
+
+  it("should only show active relations by default", async () => {
+    const active1 = new Entity();
+    active1.inactive = false;
+    const inactive = new Entity();
+    inactive.inactive = true;
+
+    component.records = [active1, inactive];
+
+    component.ngOnChanges({ records: undefined, filter: undefined });
+
+    expect(component.recordsDataSource.data).toEqual([{ record: active1 }]);
+  });
 });

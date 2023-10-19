@@ -20,7 +20,7 @@
     Cancel
   </button>
 
-  <ng-container *ngIf="form?.disabled">
+  <ng-container *ngIf="form?.disabled && !entity?.anonymized">
     <button
       mat-raised-button
       (click)="form.enable()"
