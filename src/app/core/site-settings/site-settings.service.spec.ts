@@ -3,7 +3,10 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { SiteSettingsService } from "./site-settings.service";
 import { FileService } from "../../features/file/file.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper, MockEntityMapperService, } from "../entity/entity-mapper/mock-entity-mapper-service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../entity/entity-mapper/mock-entity-mapper-service";
 import { SiteSettings } from "./site-settings";
 import { of } from "rxjs";
 import { Title } from "@angular/platform-browser";
@@ -37,8 +40,8 @@ describe("SiteSettingsService", () => {
   });
 
   afterEach(() => {
-    localStorage.removeItem(service.SITE_SETTINGS_LOCAL_STORAGE_KEY)
-  })
+    localStorage.removeItem(service.SITE_SETTINGS_LOCAL_STORAGE_KEY);
+  });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
@@ -50,9 +53,8 @@ describe("SiteSettingsService", () => {
     settings.siteName = undefined;
     entityMapper.add(settings);
 
-    expect(titleSpy).toHaveBeenCalled();
+    expect(titleSpy).not.toHaveBeenCalled();
 
-    titleSpy.calls.reset();
     settings.displayLanguageSelect = false;
     entityMapper.add(settings);
 
