@@ -474,7 +474,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   selectedRows =[]
-  selectRow (event: any, row: any) {
+  selectRow (event: any, row:T[]) {
     if (event.checked) {
       this.selectedRows.push(row); 
     } else {
