@@ -108,12 +108,12 @@ export class DownloadService {
         columns: [...keys],
       });
     }
-    
-    const result =this.exportFile(data, entityConstructor);
+
+    const result = this.exportFile(data, entityConstructor);
     return result;
   }
 
-  exportFile(data: any[],entityConstructor: { schema: any; }) {
+  exportFile(data: any[], entityConstructor: { schema: any; }) {
     const entitySchema = [entityConstructor.schema];
     const columnLabel = {};
 
