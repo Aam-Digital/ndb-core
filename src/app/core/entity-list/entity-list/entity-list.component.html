@@ -169,7 +169,7 @@
 
   <button
     mat-menu-item
-    [appExportData]="listConfig?.exportConfig ? allEntities : exportEntities"
+    [appExportData]="allEntities"
     format="csv"
     [exportConfig]="listConfig?.exportConfig"
     [filename]="listName.replace(' ', '')"

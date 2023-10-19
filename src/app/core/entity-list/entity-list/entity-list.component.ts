@@ -111,8 +111,6 @@ export class EntityListComponent<T extends Entity>
   filterObj: DataFilter<T>;
   filterString = "";
 
-  exportEntities = [];
-
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
   }
@@ -182,7 +180,6 @@ export class EntityListComponent<T extends Entity>
     if (!this.allEntities) {
       // if no entities are passed as input, by default load all entities of the type
       await this.loadEntities();
-      this.exportFile()
     }
 
     this.listName =
@@ -220,7 +217,6 @@ export class EntityListComponent<T extends Entity>
     if (changes.hasOwnProperty("listConfig")) {
       await this.buildComponentFromConfig(this.listConfig);
     }
-    this.exportFile()
   }
 
   private addColumnsFromColumnGroups() {
@@ -300,24 +296,5 @@ export class EntityListComponent<T extends Entity>
       this.router.navigate(["new"], { relativeTo: this.activatedRoute });
     }
     this.addNewClick.emit();
-  }
-
-  exportFile() {
-    const entitySchema = [this.entityConstructor.schema];
-    const columnLabel = {};
-    entitySchema[0].forEach((value: { value: string, label: string }, key: string) => {
-        if (value.label) columnLabel[key] = value.label;
-    });
-
-    const allData = this.allEntities.map(transformToReadableFormat);
-
-    this.exportEntities = allData.map((item) => {
-      for (const key in item) {
-        if (!columnLabel.hasOwnProperty(key)) delete item[key];
-      }
-      return item;
-    });
-
-    this.exportEntities.push(columnLabel);
   }
 }

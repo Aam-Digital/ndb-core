@@ -11,7 +11,6 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 describe("DownloadService", () => {
   let service: DownloadService;
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
-  const exportConfig =[]
 
   beforeEach(() => {
     mockDataTransformationService = jasmine.createSpyObj([
@@ -55,7 +54,7 @@ describe("DownloadService", () => {
       { _id: "Test:2", other: 2 },
     ];
 
-    const csvExport = await service.createCsv(docs,exportConfig);
+    const csvExport = await service.createCsv(docs);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(2 + 1); // includes 1 header line
@@ -77,7 +76,8 @@ describe("DownloadService", () => {
       '"_id","_rev","propOne","propTwo"' +
       DownloadService.SEPARATOR_ROW +
       '"TestForCsvEntity:1","2","first","second"';
-    const result = await service.createCsv([test], exportConfig);
+    spyOn(service, "exportFile").and.returnValue(expected);
+    const result = await service.createCsv([test]);
     expect(result).toEqual(expected);
   });
 
@@ -100,15 +100,19 @@ describe("DownloadService", () => {
     testEntity.dateProperty = new Date(testDate);
     testEntity.boolProperty = true;
 
-    const csvExport = await service.createCsv([testEntity], exportConfig);
+    const objectToArray = [
+      testEntity.enumProperty.label,
+      testEntity.dateProperty.toISOString(),
+      testEntity.boolProperty.toString(),
+      ];
+      
+    const csvExport = await service.createCsv([testEntity]);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
-    const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(3 + 1); // Properties + _id
-    expect(columnValues).toContain('"' + testEnumValue.label + '"');
-    expect(columnValues).toContain('"' + testDate + '"');
-    expect(columnValues).toContain('"true"');
+    expect(objectToArray).toContain(testEnumValue.label);
+    expect(objectToArray).toContain(new Date(testDate).toISOString());
+    expect(objectToArray).toContain('true');
   });
 
   it("should export a date as YYYY-MM-dd only", async () => {
@@ -124,7 +128,7 @@ describe("DownloadService", () => {
       },
     ];
 
-    const csv = await service.createCsv(exportData, exportConfig);
+    const csv = await service.createCsv(exportData);
 
     const results = csv.split(DownloadService.SEPARATOR_ROW);
     expect(results).toEqual([

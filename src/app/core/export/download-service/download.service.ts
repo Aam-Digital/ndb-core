@@ -65,7 +65,7 @@ export class DownloadService {
         result = JSON.stringify(data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
-        result = await this.createCsv(data, exportConfig);
+        result = await this.createCsv(data);
         return new Blob([result], { type: "text/csv" });
       default:
         this.loggingService.warn(`Not supported format: ${format}`);
@@ -89,13 +89,18 @@ export class DownloadService {
    * @param data an array of elements
    * @returns string a valid CSV string of the input data
    */
-  async createCsv(data: any[], exportConfig: any): Promise<string> {
-    if(exportConfig){
-      const keys = new Set<string>();
-      data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
-  
-      data = data.map(transformToReadableFormat);
-  
+  async createCsv(data: any[]): Promise<string> {
+    let entityConstructor: any;
+
+    if (data.length > 0 && typeof data[0]?.getConstructor === 'function') {
+        entityConstructor = data[0].getConstructor();
+    }
+    const keys = new Set<string>();
+    data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
+
+    data = data.map(transformToReadableFormat);
+   
+    if(!entityConstructor){
       return this.papa.unparse(data, {
         quotes: true,
         header: true,
@@ -103,20 +108,38 @@ export class DownloadService {
         columns: [...keys],
       });
     }
+    
+    const result =this.exportFile(data, entityConstructor);
+    return result;
+  }
 
-    const columnNames = data.pop();
-    const columnKeys = Object.keys(columnNames);
-    const columnLabels:string[] = Object.values(columnNames);
+  exportFile(data: any[],entityConstructor: { schema: any; }) {
+    const entitySchema = [entityConstructor.schema];
+    const columnLabel = {};
+
+    entitySchema[0].forEach((value: { value: string, label: string }, key: string) => {
+        if (value.label) columnLabel[key] = value.label;
+    });
+
+    const exportEntities = data.map((item) => {
+      for (const key in item) {
+        if (!columnLabel.hasOwnProperty(key)) delete item[key];
+      }
+      return item;
+    });
+
+    const columnKeys = Object.keys(columnLabel);
+    const columnLabels:string[] = Object.values(columnLabel);
     const orderedData = [];
 
-    data.forEach((item) => {
+    exportEntities.forEach((item) => {
       const orderedItem = [];
       columnKeys.forEach((key) => {
         orderedItem.push(item[key]);
       });
       orderedData.push(orderedItem);
     });
-    
+
     return this.papa.unparse({
       fields: columnLabels,
       data: orderedData
