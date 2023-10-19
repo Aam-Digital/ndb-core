@@ -43,6 +43,7 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
+import { DuplicateRecordsDirective } from "app/core/duplicate-records/duplicates-data-directive/duplicate-records.directive";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -78,6 +79,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
     ExportDataDirective,
     DisableEntityOperationDirective,
     RouterLink,
+   DuplicateRecordsDirective,
   ],
   standalone: true,
 })
@@ -92,6 +94,7 @@ export class EntityListComponent<T extends Entity>
   @Input() isLoading: boolean;
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
+  @Input() duplicatesdata : T[];
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
@@ -294,5 +297,9 @@ export class EntityListComponent<T extends Entity>
       this.router.navigate(["new"], { relativeTo: this.activatedRoute });
     }
     this.addNewClick.emit();
+  }
+
+  getDatafromsubRecord(data: any) {
+    this.duplicatesdata = data
   }
 }

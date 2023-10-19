@@ -96,6 +96,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
+  
+  @Output() sendBackData: EventEmitter<any[]> = new EventEmitter<any[]>
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
@@ -481,5 +483,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         this.selectedRows.splice(index, 1);
       }
     }
+    this.sendBackData.emit(this.selectedRows)
   }
 }
