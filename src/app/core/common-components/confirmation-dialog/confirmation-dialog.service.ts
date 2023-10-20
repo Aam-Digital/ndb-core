@@ -1,11 +1,10 @@
-import { Injectable } from "@angular/core";
+import { Injectable, NgZone } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import {
   ConfirmationDialogButton,
   ConfirmationDialogComponent,
   YesNoButtons,
 } from "./confirmation-dialog/confirmation-dialog.component";
-import { map } from "rxjs/operators";
 import { firstValueFrom } from "rxjs";
 
 /**
@@ -25,7 +24,10 @@ import { firstValueFrom } from "rxjs";
  */
 @Injectable({ providedIn: "root" })
 export class ConfirmationDialogService {
-  constructor(private dialog: MatDialog) {}
+  constructor(
+    private dialog: MatDialog,
+    private ngZone: NgZone,
+  ) {}
 
   /**
    * Open a dialog with the given configuration.
@@ -42,18 +44,17 @@ export class ConfirmationDialogService {
     buttons: ConfirmationDialogButton[] = YesNoButtons,
     closeButton = true,
   ): Promise<boolean> {
-    return firstValueFrom(
-      this.dialog
-        .open(ConfirmationDialogComponent, {
-          data: {
-            title: title,
-            text: text,
-            buttons: buttons,
-            closeButton: closeButton,
-          },
-        })
-        .afterClosed(),
-    );
+    const dialogRef = this.ngZone.run(() => {
+      return this.dialog.open(ConfirmationDialogComponent, {
+        data: {
+          title: title,
+          text: text,
+          buttons: buttons,
+          closeButton: closeButton,
+        },
+      });
+    });
+    return firstValueFrom(dialogRef.afterClosed());
   }
 
   getDiscardConfirmation() {

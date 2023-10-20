@@ -7,7 +7,7 @@ import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
-import { Inactive } from "app/child-dev-project/children/child-block/child-block.stories";
+import moment from "moment";
 
 describe("DownloadService", () => {
   let service: DownloadService;
@@ -98,7 +98,7 @@ describe("DownloadService", () => {
 
     const testEntity = new TestEntity();
     testEntity.enumProperty = testEnumValue;
-    testEntity.dateProperty = new Date(testDate);
+    testEntity.dateProperty = moment(testDate).toDate();
     testEntity.boolProperty = true;
 
     const csvExport = await service.createCsv([testEntity]);
@@ -121,7 +121,7 @@ describe("DownloadService", () => {
 
   it("should export a date as YYYY-MM-dd only", async () => {
     const dateString = "2021-01-01";
-    const dateObject = new Date(dateString);
+    const dateObject = moment(dateString).toDate();
     dateObject.setHours(10, 11, 12);
 
     const exportData = [

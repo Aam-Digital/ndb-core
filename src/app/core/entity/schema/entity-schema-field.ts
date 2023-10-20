@@ -104,6 +104,15 @@ export interface EntitySchemaField {
 
   /** whether to show this field in the default details view */
   showInDetailsView?: boolean;
+
+  /**
+   * whether the field will be retained when the entity is "anonymized".
+   *
+   * By default, fields are removed (data minimization by default).
+   *
+   * "retain-anonymized" triggers a special dataType action to retain the data partially in a special, anonymized form.
+   */
+  anonymize?: "retain" | "retain-anonymized";
 }
 
 /**

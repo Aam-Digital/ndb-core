@@ -30,7 +30,7 @@ describe("RelatedEntitiesComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load the entities which are linked with the passed one", async () => {
+  it("should load only the entities which are linked with the passed one", async () => {
     const c1 = new Child();
     const c2 = new Child();
     const r1 = new ChildSchoolRelation();
@@ -52,7 +52,7 @@ describe("RelatedEntitiesComponent", () => {
     await component.ngOnInit();
 
     expect(component.columns).toBe(columns);
-    expect(component.data).toEqual([r1, r2, r3]);
+    expect(component.data).toEqual([r1, r2]);
     expect(component.filter).toEqual({ ...filter, childId: c1.getId() });
   });
 

@@ -6,7 +6,7 @@
   ></app-dialog-close>
 </h1>
 <div mat-dialog-content>
-  <p>{{ data.text }}</p>
+  <p *ngFor="let para of data.text?.split('\n')">{{ para }}</p>
 </div>
 
 <div mat-dialog-actions>
