@@ -97,13 +97,16 @@ export class EntityActionsMenuComponent implements OnChanges {
 
   private filterAvailableActions() {
     this.actions = this.defaultActions.filter((action) => {
-      if (this.entity?.anonymized) {
-        return action.action !== "anonymize" && action.action !== "archive";
+      switch (action.action) {
+        case "archive":
+          return this.entity?.isActive && !this.entity?.anonymized;
+        case "anonymize":
+          return (
+            !this.entity?.anonymized && this.entity?.getConstructor().hasPII
+          );
+        default:
+          return true;
       }
-      if (!this.entity?.isActive) {
-        return action.action !== "archive";
-      }
-      return true;
     });
   }
 

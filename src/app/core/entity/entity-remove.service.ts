@@ -272,6 +272,12 @@ export class EntityRemoveService {
    * @private
    */
   private async anonymizeEntity(entity: Entity) {
+    if (!entity.getConstructor().hasPII) {
+      // entity types that are generally without PII by default retain all fields
+      // this should only be called through a cascade action anyway
+      return [];
+    }
+
     const originalEntity = entity.copy();
 
     for (const [key, schema] of entity.getSchema().entries()) {

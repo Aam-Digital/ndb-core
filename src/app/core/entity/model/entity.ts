@@ -169,6 +169,15 @@ export class Entity {
   }
 
   /**
+   * whether this entity type can contain "personally identifiable information" (PII)
+   * and therefore should follow strict data protection requirements
+   * and offer a function to anonymize records.
+   *
+   * Default, we always take a "privacy-first" approach - assuming that the entity type can contain PII.
+   */
+  static hasPII: boolean = true;
+
+  /**
    * Internal database id.
    * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`
    * @example "Entity:123"

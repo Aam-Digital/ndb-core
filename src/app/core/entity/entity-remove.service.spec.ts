@@ -285,6 +285,23 @@ describe("EntityRemoveService", () => {
     expect(mockFileService.removeFile).toHaveBeenCalled();
   });
 
+  fit("should not anonymize fields if Entity type is set to not have PII", async () => {
+    AnonymizableEntity.hasPII = false;
+    const entity = new AnonymizableEntity();
+    entity.defaultField = "test";
+
+    await testAction(
+      // @ts-ignore calling private method to simulate this being called through cascade action
+      "anonymizeEntity",
+      entity,
+      [entity],
+      [AnonymizableEntity.create({ defaultField: "test" })],
+    );
+
+    // reset actual state
+    AnonymizableEntity.hasPII = false;
+  });
+
   //
   // Deleting/Anonymizing referenced & related entities
   //    -> https://github.com/Aam-Digital/ndb-core/issues/220#issuecomment-1740656623

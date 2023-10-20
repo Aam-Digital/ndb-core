@@ -34,6 +34,7 @@ export class RecurringActivity extends Entity {
   static labelPlural = $localize`:label (plural) for entity:Recurring Activities`;
   static color = "#00838F";
   static route = "attendance/recurring-activity";
+  static hasPII = false;
 
   static create(title: string = ""): RecurringActivity {
     const instance = new RecurringActivity();
@@ -55,7 +56,6 @@ export class RecurringActivity extends Entity {
     validators: {
       required: true,
     },
-    anonymize: "retain",
   })
   title: string = "";
 
@@ -68,7 +68,6 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for the interaction type of a recurring activity:Type`,
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
-    anonymize: "retain",
   })
   type: InteractionType;
 
@@ -77,7 +76,6 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for the participants of a recurring activity:Participants`,
     dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
-    anonymize: "retain",
   })
   participants: string[] = [];
 
@@ -86,7 +84,6 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for the linked schools of a recurring activity:Groups`,
     dataType: "entity-array",
     additional: School.ENTITY_TYPE,
-    anonymize: "retain",
   })
   linkedGroups: string[] = [];
 
@@ -95,7 +92,6 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for excluded participants of a recurring activity:Excluded Participants`,
     dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
-    anonymize: "retain",
   })
   excludedParticipants: string[] = [];
 
@@ -104,7 +100,6 @@ export class RecurringActivity extends Entity {
     label: $localize`:Label for the assigned user(s) of a recurring activity:Assigned user(s)`,
     dataType: "entity-array",
     additional: User.ENTITY_TYPE,
-    anonymize: "retain",
   })
   assignedTo: string[] = [];
 
