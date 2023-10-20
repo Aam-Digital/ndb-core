@@ -177,7 +177,8 @@ export class EntityRemoveService {
 
         for (const e of affectedEntities) {
           if (
-            refField === "refComposite" && // TODO: real check whether composite or aggregate role (!!!)
+            refType.entityType.schema.get(refField).entityReferenceRole ===
+              "composite" &&
             asArray(e[refField]).length === 1
           ) {
             // is only composite

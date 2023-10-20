@@ -13,6 +13,7 @@ export class ChildSchoolRelation extends TimePeriod {
     label: $localize`:Label for the child of a relation:Child`,
     dataType: "entity",
     additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
     validators: {
       required: true,
     },
@@ -24,6 +25,7 @@ export class ChildSchoolRelation extends TimePeriod {
     label: $localize`:Label for the school of a relation:School`,
     dataType: "entity",
     additional: School.ENTITY_TYPE,
+    entityReferenceRole: "aggregate",
     validators: {
       required: true,
     },

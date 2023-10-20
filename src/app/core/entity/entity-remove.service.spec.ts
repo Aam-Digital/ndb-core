@@ -300,6 +300,7 @@ describe("EntityRemoveService", () => {
       dataType: "entity-array",
       additional: "RelatedEntity",
       anonymize: "retain",
+      entityReferenceRole: "aggregate",
     })
     refAggregate: string[];
 
@@ -307,6 +308,7 @@ describe("EntityRemoveService", () => {
       dataType: "entity-array",
       additional: "RelatedEntity",
       anonymize: "retain",
+      entityReferenceRole: "composite",
     })
     refComposite: string[];
 
@@ -539,11 +541,9 @@ describe("EntityRemoveService", () => {
     tick();
 
     const actualEntitiesAfterUndo = // @ts-ignore
-    (service.entityMapper as MockEntityMapperService).getAllData();
+      (service.entityMapper as MockEntityMapperService).getAllData();
     expectEntitiesToMatch(actualEntitiesAfterUndo, [entity, ref1, ref2], true);
   }));
-
-  // TODO: warn user that related entities are affected
 
   // TODO: test Note with attendance (?)
   // TODO: test for entity with two properties referencing the same entity type

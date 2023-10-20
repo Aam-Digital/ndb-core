@@ -16,6 +16,7 @@
  */
 
 import { FormValidatorConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-reference-role";
 
 /**
  * Interface for additional configuration about a DatabaseField schema.
@@ -65,6 +66,14 @@ export interface EntitySchemaField {
    * that are not part of the core datatypes and therefore not included in this core interface.
    */
   additional?: any;
+
+  /**
+   * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.
+   *
+   * You can pass any kind of value here to allow complex custom datytypes' transformations
+   * that are not part of the core datatypes and therefore not included in this core interface.
+   */
+  entityReferenceRole?: EntityReferenceRole;
 
   /**
    * (Optional) Define using which component this property should be displayed in lists and forms.
