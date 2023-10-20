@@ -7,6 +7,7 @@ import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
+import { Inactive } from "app/child-dev-project/children/child-block/child-block.stories";
 
 describe("DownloadService", () => {
   let service: DownloadService;
@@ -105,7 +106,7 @@ describe("DownloadService", () => {
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
-    if (! testEntity){
+    if (! testEntity) {
       expect(columnValues).toHaveSize(3 + 1); // Properties + _id
       expect(columnValues).toContain('"' + testEnumValue.label + '"');
       expect(columnValues).toContain('"' + testDate + '"');
