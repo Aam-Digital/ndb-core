@@ -94,6 +94,7 @@ describe("DownloadService", () => {
       @DatabaseField({ "label": "test date" }) dateProperty: Date;
       @DatabaseField({ "label": "test boolean" }) boolProperty: boolean;
     }
+
     const testEntity = new TestEntity();
     testEntity.enumProperty = testEnumValue;
     testEntity.dateProperty = new Date(testDate);
@@ -105,9 +106,9 @@ describe("DownloadService", () => {
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
     expect(columnValues).toHaveSize(3 + 1); // Properties + _id
-    expect(columnValues).toContain('"' + testEnumValue.label + '"');
-    expect(columnValues).toContain('"' + testDate + '"');
-    expect(columnValues).toContain('"true"');
+    expect(columnValues).toContain['"' + testEnumValue.label + '"'];
+    expect(columnValues).toContain['"' + testDate + '"'];
+    expect(columnValues).toContain['"true"'];
   });
 
   it("should export a date as YYYY-MM-dd only", async () => {
