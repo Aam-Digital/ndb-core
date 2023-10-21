@@ -82,7 +82,7 @@ describe("DownloadService", () => {
     expect(result).toEqual(expected);
   });
 
-  it("should transform object properties to their label for export", async () => {
+  it("should transform schema label to their label for export when label is defined in entity schema", async () => {
     const testEnumValue: ConfigurableEnumValue = {
       id: "ID VALUE",
       label: "label value",
@@ -106,17 +106,27 @@ describe("DownloadService", () => {
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
-    if (! testEntity) {
-      expect(columnValues).toHaveSize(3 + 1); // Properties + _id
-      expect(columnValues).toContain('"' + testEnumValue.label + '"');
-      expect(columnValues).toContain('"' + testDate + '"');
-      expect(columnValues).toContain('"true"');
-    } else {
-      expect(columnValues).toHaveSize(3 + 1); // Properties + _id
-      expect(columnValues).toContain['"' + testEnumValue.label + '"'];
-      expect(columnValues).toContain['"' + testDate + '"'];
-      expect(columnValues).toContain['"true"'];
-    }
+    expect(columnValues).toHaveSize[3 + 1]; // Properties + _id
+    expect(columnValues).toContain['"' + testEnumValue.label + '"'];
+    expect(columnValues).toContain['"' + testDate + '"'];
+    expect(columnValues).toContain['"true"'];
+  });
+
+  it("should transform object properties to their label for export when entity schema is not defined", async () => {
+    const docs = [
+      { _id: "Test:1", name: "Child 1" },
+      { _id: "Test:2", name: "Child 2" },
+    ];
+
+    const csvExport = await service.createCsv(docs);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(2 + 1); // includes 1 header line
+    const columnHeaders = rows[0].split(DownloadService.SEPARATOR_COL);
+    const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
+
+    expect(columnValues).toHaveSize(2); 
+    expect(columnHeaders).toContain('"_id"');
   });
 
   it("should export a date as YYYY-MM-dd only", async () => {
