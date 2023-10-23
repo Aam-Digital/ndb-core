@@ -56,6 +56,7 @@ import { race, timer } from "rxjs";
 })
 export class LoginComponent implements OnInit {
   offlineUsers: AuthUser[] = [];
+  enableOfflineLogin = false;
   loginInProgress = false;
 
   constructor(
@@ -73,11 +74,13 @@ export class LoginComponent implements OnInit {
         this.routeAfterLogin();
       }
     });
+
+    this.offlineUsers = this.sessionManager.getOfflineUsers();
     race(
       this.loginState.pipe(waitForChangeTo(LoginState.LOGIN_FAILED)),
-      timer(5000),
+      timer(10000),
     ).subscribe(() => {
-      this.offlineUsers = this.sessionManager.getOfflineUsers();
+      this.enableOfflineLogin = true;
     });
   }
 
