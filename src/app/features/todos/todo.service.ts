@@ -19,7 +19,7 @@ export class TodoService {
     const nextTodo = await this.createNextRepetition(todo);
 
     todo.completed = {
-      completedBy: this.sessionService.getCurrentUser().name,
+      completedBy: this.sessionService.getCurrentUser().name, // TODO
       completedAt: new Date(),
       nextRepetition: nextTodo?.getId(true),
     };

@@ -7,6 +7,7 @@ import {
 } from "./usage-analytics-config";
 import { Angulartics2, Angulartics2Matomo } from "angulartics2";
 import md5 from "md5";
+import { AuthUser } from "../session/session-service/auth-user";
 
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
@@ -28,11 +29,17 @@ export class AnalyticsService {
   /**
    * Sets a unique user hash which is always for the same user but does not expose the username.
    * This improves the logging behavior.
-   * @param username actual username
+   * @param user The user auth object
    */
-  public setUser(username: string): void {
+  public setUser(user?: AuthUser): void {
+    if (user?.incognito) {
+      // disable tracking (https://www.jsdocs.io/package/angulartics2#Angulartics2Settings.developerMode)
+      this.angulartics2.settings.developerMode = true;
+      return;
+    }
+
     const baseUrl = location.host;
-    this.angulartics2Matomo.setUsername(md5(`${baseUrl}${username ?? ""}`));
+    this.angulartics2Matomo.setUsername(md5(`${baseUrl}${user?.name ?? ""}`));
   }
 
   /**

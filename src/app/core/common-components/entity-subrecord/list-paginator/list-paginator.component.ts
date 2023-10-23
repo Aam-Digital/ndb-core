@@ -1,10 +1,10 @@
 import {
   Component,
-  ViewChild,
   Input,
   OnChanges,
-  SimpleChanges,
   OnInit,
+  SimpleChanges,
+  ViewChild,
 } from "@angular/core";
 import {
   MatPaginator,
@@ -84,6 +84,11 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
   private async ensureUserIsLoaded(): Promise<boolean> {
     if (!this.user) {
       const currentUser = this.sessionService.getCurrentUser();
+
+      if (!currentUser?.name || currentUser.incognito) {
+        return false;
+      }
+
       this.user = await this.entityMapperService
         .load(User, currentUser.name)
         .catch(() => undefined);

@@ -151,6 +151,14 @@ export class LocalSession extends SessionService {
   }
 
   public getCurrentUser(): AuthUser {
+    // TODO: set a "NullObject" here?
+    const incognitoUser: AuthUser = {
+      name: undefined,
+      roles: this.currentDBUser.roles,
+      incognito: true,
+      //_incognitoName: this.currentDBUser.name,
+    };
+
     return this.currentDBUser;
   }
 

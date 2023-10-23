@@ -108,6 +108,7 @@ export class KeycloakAuthService extends AuthService {
     return {
       name: parsedToken.username,
       roles: parsedToken["_couchdb.roles"],
+      incognito: true, // TODO: parsedToken.incognito (how to get another keycloak attribute into the token?)
     };
   }
 

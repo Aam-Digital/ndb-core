@@ -37,8 +37,8 @@ export const appInitializers = {
       // update the user context for remote error logging and tracking and load config initially
       sessionService.loginState.subscribe((newState) => {
         if (newState === LoginState.LOGGED_IN) {
-          const username = sessionService.getCurrentUser().name;
-          LoggingService.setLoggingContextUser(username);
+          const username = sessionService.getCurrentUser();
+          LoggingService.setLoggingContextUser(username.name);
           analyticsService.setUser(username);
         } else {
           LoggingService.setLoggingContextUser(undefined);

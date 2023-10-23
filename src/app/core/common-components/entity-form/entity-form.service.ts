@@ -154,13 +154,14 @@ export class EntityFormService {
         newVal = new Date();
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.session.getCurrentUser().name;
+        const user = this.session.getCurrentUser();
+        newVal = !user.incognito ? user.name : undefined; // TODO - can we use this in general to avoid setting incognito user refs?
         break;
       default:
         newVal = schema.defaultValue;
     }
     if (isArrayDataType(schema.dataType)) {
-      newVal = [newVal];
+      newVal = newVal === undefined ? [] : [newVal];
     }
     return newVal;
   }

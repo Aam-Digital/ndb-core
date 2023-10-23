@@ -58,6 +58,7 @@ export class PermissionEnforcerService {
   }
 
   private getUserStorageKey() {
+    // TODO: is this okay if name undefined?
     return `${this.sessionService.getCurrentUser().name}-${
       PermissionEnforcerService.LOCALSTORAGE_KEY
     }`;

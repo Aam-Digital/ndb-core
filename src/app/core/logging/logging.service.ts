@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
-import { environment } from "../../../environments/environment";
 import { BrowserOptions, SeverityLevel } from "@sentry/browser";
+import { environment } from "../../../environments/environment";
 
 /* eslint-disable no-console */
 
@@ -53,6 +53,8 @@ export class LoggingService {
    * @param username
    */
   static setLoggingContextUser(username: string) {
+    // TODO: disable remote logging for "incognito" user or not?
+
     Sentry.setUser({ username: username });
   }
 
