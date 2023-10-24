@@ -118,7 +118,7 @@ export class DownloadService {
     const entitySchema = entityConstructor.schema;
     const columnLabel = new Map<string, EntitySchemaField>();
     
-    entitySchema.forEach((value: { value: string, label: string }, key: string) => {
+    entitySchema.forEach((key: string, value: {label: string }) => {
       if (value.label) columnLabel[key] = value.label;
     });
   
