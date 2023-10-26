@@ -6,14 +6,14 @@ import { DuplicateRecordsService } from '../duplicate-records.service';
   standalone: true,
 })
 
-
 export class DuplicateRecordsDirective {
   @Input("appDuplicateRecords") data: any = [];
+  @Input("angularticsCategory") entityType: string = ''; // Input for entityType
+
   constructor( private duplicaterecords: DuplicateRecordsService) {}
  
   @HostListener("click")
   click(){
-    return this.duplicaterecords.getDataforDuplicate(this.data);
+    return this.duplicaterecords.getDataforDuplicate(this.data, this.entityType);
   }
-
 }
