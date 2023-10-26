@@ -10,6 +10,7 @@ const centerEnum = Object.assign(new ConfigurableEnum("center"), {
 const mockEnumService = {
   getEnum: () => ({ values: centersUnique }),
   preLoadEnums: () => undefined,
+  cacheEnum: () => undefined,
 };
 
 const formFieldStory = generateFormFieldStory(
@@ -21,7 +22,7 @@ const formFieldStory = generateFormFieldStory(
 );
 
 export default {
-  title: "Core/Entities/Edit Properties/EditConfigurableEnum",
+  title: "Core/Entities/Properties/configurable-enum/EditConfigurableEnum",
   ...formFieldStory.meta,
 };
 const Template: StoryFn = (args) => ({

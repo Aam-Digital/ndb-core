@@ -124,12 +124,12 @@ export class EntitySchemaService {
    * @param entity An entity instance whose properties will be overwritten with the transformed data
    * @param data The database object that will be transformed and assigned to the entity
    */
-  public loadDataIntoEntity(entity: Entity, data: any) {
+  public loadDataIntoEntity<E extends Entity>(entity: E, data: any): E {
     const transformed = this.transformDatabaseToEntityFormat(
       data,
       (<typeof Entity>entity.constructor).schema,
     );
-    Object.assign(entity, transformed);
+    return Object.assign(entity, transformed);
   }
 
   /**

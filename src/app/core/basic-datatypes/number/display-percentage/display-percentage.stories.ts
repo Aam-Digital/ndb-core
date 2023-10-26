@@ -1,14 +1,22 @@
-import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { DisplayPercentageComponent } from "./display-percentage.component";
+import {
+  applicationConfig,
+  Meta,
+  moduleMetadata,
+  StoryFn,
+} from "@storybook/angular";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
+import { DisplayPercentageComponent } from "./display-percentage.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayPercentage",
+  title: "Core/Entities/Properties/number/DisplayPercentage",
   component: DisplayPercentageComponent,
   decorators: [
     applicationConfig({
       providers: [importProvidersFrom(StorybookBaseModule)],
+    }),
+    moduleMetadata({
+      imports: [DisplayPercentageComponent],
     }),
   ],
 } as Meta;

@@ -4,7 +4,7 @@ import { DisplayUnitComponent } from "./display-unit.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayUnit",
+  title: "Core/Entities/Properties/number/DisplayUnit",
   component: DisplayUnitComponent,
   decorators: [
     applicationConfig({

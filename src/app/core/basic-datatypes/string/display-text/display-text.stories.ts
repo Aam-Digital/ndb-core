@@ -4,7 +4,7 @@ import { DisplayTextComponent } from "./display-text.component";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Display Properties/DisplayText",
+  title: "Core/Entities/Properties/string/DisplayText",
   component: DisplayTextComponent,
   decorators: [
     applicationConfig({

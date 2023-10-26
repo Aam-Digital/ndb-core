@@ -73,10 +73,17 @@ describe("TimePeriod Entity", () => {
     expect(() => relation.assertValid()).toThrowError();
   });
 
-  it("does pass validation when the start date is before the end date", () => {
+  it("should pass validation when the start date is before the end date", () => {
     const relation = new TimePeriod();
     relation.start = moment().subtract(1, "day").toDate();
     relation.end = new Date();
+    expect(() => relation.assertValid()).not.toThrowError();
+  });
+
+  it("should pass validation when the start date is in future and no end date is defined", () => {
+    const relation = new TimePeriod();
+    relation.start = moment().add(1, "day").toDate();
+    relation.end = undefined;
     expect(() => relation.assertValid()).not.toThrowError();
   });
 });
