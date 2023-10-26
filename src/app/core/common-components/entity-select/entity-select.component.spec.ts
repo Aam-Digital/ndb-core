@@ -17,7 +17,7 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
 
-fdescribe("EntitySelectComponent", () => {
+describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let loader: HarnessLoader;
