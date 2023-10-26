@@ -1,5 +1,5 @@
 import { Component } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
   EntityDetailsConfig,
   Panel,
@@ -58,6 +58,7 @@ import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-arch
     DisableEntityOperationDirective,
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
+    RouterLink,
   ],
 })
 export class EntityDetailsComponent {

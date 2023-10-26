@@ -1,0 +1,35 @@
+<div class="grid-layout">
+  <!-- FIELD GROUPS -->
+  <div
+    *ngFor="let col of fullConfig.columns; let i = index"
+    class="entity-form-cell"
+  >
+    <h2 *ngIf="fullConfig.columnHeaders?.[i]">
+      {{ fullConfig.columnHeaders[i] }}
+    </h2>
+
+    <!-- FIELD [start] -->
+    <div
+      *ngFor="let row of col"
+      class="admin-form-field"
+      (click)="openFieldConfig(row)"
+    >
+      <div [class.field-with-tooltip-suffix]="row.tooltip">
+        <ng-container
+          [appDynamicComponent]="{
+            component: row.edit,
+            config: {
+              formFieldConfig: row,
+              propertySchema: entityType.schema.get(row.id),
+              formControl: dummyForm.get(row.id),
+              entity: dummyEntity
+            }
+          }"
+        >
+        </ng-container>
+      </div>
+      <app-help-button [text]="row.tooltip"></app-help-button>
+    </div>
+    <!-- FIELD [end]-->
+  </div>
+</div>

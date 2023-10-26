@@ -28,10 +28,20 @@
     Adding new {{ this.entityConstructor?.label }}
   </app-view-title>
 
-  <app-entity-actions-menu
-    [entity]="entity"
-    [navigateOnDelete]="true"
-  ></app-entity-actions-menu>
+  <app-entity-actions-menu [entity]="entity" [navigateOnDelete]="true">
+    <button
+      mat-menu-item
+      [routerLink]="['/admin-ui/entity', entity?.getType()]"
+    >
+      <!-- TODO: permissions -->
+      <!-- TODO: access to admin ui for entities not using entity-details (e.g. note, todo, etc.) -->
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        icon="tools"
+      ></fa-icon>
+      <span i18n>Edit Data Structure</span>
+    </button>
+  </app-entity-actions-menu>
 </div>
 
 <app-entity-archived-info [entity]="entity"></app-entity-archived-info>

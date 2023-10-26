@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { getParentUrl } from "../../../utils/utils";
 import { Router } from "@angular/router";
 import { Location, NgIf } from "@angular/common";
@@ -11,10 +10,11 @@ import {
   EntityFormService,
 } from "../../common-components/entity-form/entity-form.service";
 import { AlertService } from "../../alerts/alert.service";
-import { toFormFieldConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
+import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -33,16 +33,14 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
   ],
   standalone: true,
 })
-export class FormComponent<E extends Entity> implements OnInit {
+export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() entity: E;
   @Input() creatingNew = false;
   @Input() headers: string[] = [];
 
-  @Input() set cols(value: FormFieldConfig[][]) {
-    this._cols = value.map((row) => row.map(toFormFieldConfig));
-  }
+  @Input() cols: ColumnConfig[][];
+  columns: FormFieldConfig[][] = [];
 
-  _cols: FormFieldConfig[][] = [];
   form: EntityForm<E>;
 
   constructor(
@@ -53,8 +51,14 @@ export class FormComponent<E extends Entity> implements OnInit {
   ) {}
 
   ngOnInit() {
+    this.columns = this.cols.map((fields) =>
+      this.entityFormService.extendFormFieldConfig(
+        fields,
+        this.entity.getConstructor(),
+      ),
+    );
     this.form = this.entityFormService.createFormGroup(
-      [].concat(...this._cols),
+      [].concat(...this.columns),
       this.entity,
     );
     if (!this.creatingNew) {
@@ -87,4 +91,12 @@ export class FormComponent<E extends Entity> implements OnInit {
     this.entityFormService.resetForm(this.form, this.entity);
     this.form.disable();
   }
+}
+
+/**
+ * The (possibly abbreviated) configuration for a "FormComponent", as it is stored in the config file.
+ */
+export interface FormConfig {
+  cols: ColumnConfig[][];
+  headers: string[];
 }

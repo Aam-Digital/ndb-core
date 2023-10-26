@@ -60,6 +60,11 @@ export const allRoutes: Routes = [
         (c) => c.PublicFormComponent,
       ),
   },
+  {
+    path: "admin-ui",
+    loadChildren: () =>
+      import("./core/config-ui/config-ui.module").then((m) => m.ConfigUiModule),
+  },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },
 

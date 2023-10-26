@@ -1,0 +1,11 @@
+@use "src/styles/variables/colors";
+@use "src/styles/variables/sizes";
+
+.admin-form-field:hover {
+  background-color: colors.$grey-transparent;
+}
+.admin-form-field {
+   padding: sizes.$small;
+ }
+
+:host ::ng-deep input[disabled] { pointer-events: none }

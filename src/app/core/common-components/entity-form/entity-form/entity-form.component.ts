@@ -45,7 +45,7 @@ import { HelpButtonComponent } from "../../help-button/help-button.component";
   standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>
-  implements OnChanges
+  implements OnChanges, EntityFormConfig
 {
   /**
    * The entity which should be displayed and edited
@@ -153,4 +153,9 @@ export class EntityFormComponent<T extends Entity = Entity>
       this.form.disable();
     }
   }
+}
+
+export interface EntityFormConfig {
+  columns: FormFieldConfig[][];
+  columnHeaders?: (string | null)[];
 }

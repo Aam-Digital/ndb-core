@@ -18,6 +18,10 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
+import {
+  ColumnConfig,
+  toFormFieldConfig,
+} from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -60,11 +64,12 @@ export class EntityFormService {
    * @param forTable
    */
   public extendFormFieldConfig(
-    formFields: FormFieldConfig[],
+    formFields: ColumnConfig[],
     entityType: EntityConstructor,
     forTable = false,
-  ) {
-    formFields.forEach((formField) => {
+  ): FormFieldConfig[] {
+    const fullFields: FormFieldConfig[] = formFields.map(toFormFieldConfig);
+    fullFields.forEach((formField) => {
       try {
         this.addFormFields(formField, entityType, forTable);
       } catch (err) {
@@ -73,6 +78,7 @@ export class EntityFormService {
         );
       }
     });
+    return fullFields;
   }
 
   private addFormFields(
@@ -115,7 +121,11 @@ export class EntityFormService {
     entity: T,
     forTable = false,
   ): EntityForm<T> {
-    this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
+    formFields = this.extendFormFieldConfig(
+      formFields,
+      entity.getConstructor(),
+      forTable,
+    );
     const formConfig = {};
     const entitySchema = entity.getSchema();
     const copy = entity.copy();

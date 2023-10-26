@@ -1,0 +1,38 @@
+<div class="flex-row justify-space-between">
+  <app-view-title class="admin-ui-title">
+    Editing data structure for "{{ entityType | entityTypeLabel }}" records
+  </app-view-title>
+</div>
+
+<mat-tab-group [preserveContent]="true">
+  <mat-tab *ngFor="let panelConfig of configDetailsView?.panels">
+    <ng-template mat-tab-label>
+      <span>
+        {{ panelConfig.title }}
+      </span>
+    </ng-template>
+
+    <ng-template matTabContent>
+      <div
+        *ngFor="let componentConfig of panelConfig.components; let j = index"
+        class="padding-top-large"
+      >
+        <h3 *ngIf="componentConfig.title && componentConfig.title !== ''">
+          {{ componentConfig.title }}
+        </h3>
+
+        <app-config-entity-form
+          *ngIf="componentConfig.component === 'Form'; else otherComponent"
+          [config]="componentConfig.config"
+          [entityType]="entityConstructor"
+        >
+        </app-config-entity-form>
+        <ng-template #otherComponent>
+          other component: {{ componentConfig.component }}
+        </ng-template>
+
+        <br *ngIf="j < panelConfig.components.length - 1" />
+      </div>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>
