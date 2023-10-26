@@ -159,7 +159,7 @@ export const coreComponents: ComponentTuple[] = [
     "DisplayDynamicPercentage",
     () =>
       import(
-        "./basic-datatypes/number/display-dyanamic-percentage/display-dynamic-percentage.component"
+        "./basic-datatypes/number/display-dynamic-percentage/display-dynamic-percentage.component"
       ).then((c) => c.DisplayDynamicPercentageComponent),
   ],
   [
@@ -224,5 +224,12 @@ export const coreComponents: ComponentTuple[] = [
       import(
         "./entity-details/related-time-period-entities/related-time-period-entities.component"
       ).then((c) => c.RelatedTimePeriodEntitiesComponent),
+  ],
+  [
+    "RelatedEntitiesWithSummary",
+    () =>
+      import(
+        "./entity-details/related-entities-with-summary/related-entities-with-summary.component"
+      ).then((c) => c.RelatedEntitiesWithSummaryComponent),
   ],
 ];

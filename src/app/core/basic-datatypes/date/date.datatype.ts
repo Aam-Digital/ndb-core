@@ -71,4 +71,10 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
       return undefined;
     }
   }
+
+  async anonymize(value: Date): Promise<Date> {
+    // normalize to 01.06. of the year, which has less statistical distortion than 01.01.
+    // (roughly half the dates before anonymization will be earlier and half will be later)
+    return new Date(value.getFullYear(), 6, 1);
+  }
 }

@@ -63,4 +63,12 @@ export class EntityArrayDatatype extends ArrayDatatype<string, string> {
       return value;
     }*/
   }
+
+  async anonymize(value, schema: EntitySchemaField, parent) {
+    return super.anonymize(
+      value,
+      { ...schema, innerDataType: EntityDatatype.dataType },
+      parent,
+    );
+  }
 }

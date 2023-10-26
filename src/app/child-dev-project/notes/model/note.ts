@@ -77,6 +77,7 @@ export class Note extends Entity {
     dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
     editComponent: "EditAttendance",
+    anonymize: "retain",
   })
   children: string[] = [];
 
@@ -85,28 +86,37 @@ export class Note extends Entity {
    *
    * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    */
-  @DatabaseField({ innerDataType: "schema-embed", additional: EventAttendance })
+  @DatabaseField({
+    innerDataType: "schema-embed",
+    additional: EventAttendance,
+    anonymize: "retain",
+  })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
 
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
     dataType: "date-only",
     defaultValue: PLACEHOLDERS.NOW,
+    anonymize: "retain",
   })
   date: Date;
+
   @DatabaseField({ label: $localize`:Label for the subject of a note:Subject` })
   subject: string;
+
   @DatabaseField({
     label: $localize`:Label for the actual notes of a note:Notes`,
     editComponent: "EditLongText",
   })
   text: string;
+
   /** IDs of users that authored this note */
   @DatabaseField({
     label: $localize`:Label for the social worker(s) who created the note:SW`,
     dataType: "entity-array",
     additional: User.ENTITY_TYPE,
     defaultValue: PLACEHOLDERS.CURRENT_USER,
+    anonymize: "retain",
   })
   authors: string[] = [];
 
@@ -114,13 +124,17 @@ export class Note extends Entity {
     label: $localize`:Label for the category of a note:Category`,
     dataType: "configurable-enum",
     innerDataType: INTERACTION_TYPE_CONFIG_ID,
+    anonymize: "retain",
   })
   category: InteractionType;
 
   /**
    * id referencing a different entity (e.g. a recurring activity) this note is related to
    */
-  @DatabaseField() relatesTo: string;
+  @DatabaseField({
+    anonymize: "retain",
+  })
+  relatesTo: string;
 
   /**
    * other records (e.g. a recurring activity, group membership, ...) to which this note is related in some way,
@@ -134,6 +148,7 @@ export class Note extends Entity {
     editComponent: "EditEntityArray",
     // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
     additional: undefined,
+    anonymize: "retain",
   })
   relatedEntities: string[] = [];
 
@@ -144,6 +159,7 @@ export class Note extends Entity {
     label: $localize`:label for the linked schools:Groups`,
     dataType: "entity-array",
     additional: School.ENTITY_TYPE,
+    anonymize: "retain",
   })
   schools: string[] = [];
 
@@ -151,6 +167,7 @@ export class Note extends Entity {
     label: $localize`:Status of a note:Status`,
     dataType: "configurable-enum",
     innerDataType: "warning-levels",
+    anonymize: "retain",
   })
   warningLevel: Ordering.EnumValue;
 

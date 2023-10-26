@@ -88,8 +88,14 @@ export class EntityListComponent<T extends Entity>
   @Input() allEntities: T[];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
+
   @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
+
+  /** initial / default state whether to include archived records in the list */
+  @Input() showInactive: boolean;
+
   @Input() isLoading: boolean;
+
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 

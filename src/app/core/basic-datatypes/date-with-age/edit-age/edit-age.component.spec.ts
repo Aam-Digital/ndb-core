@@ -2,11 +2,11 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { EditAgeComponent } from "./edit-age.component";
 import { setupEditComponent } from "../../../entity/default-datatype/edit-component.spec";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatDatepickerInputHarness } from "@angular/material/datepicker/testing";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { DateWithAge } from "../dateWithAge";
 
 describe("EditAgeComponent", () => {
   let component: EditAgeComponent;

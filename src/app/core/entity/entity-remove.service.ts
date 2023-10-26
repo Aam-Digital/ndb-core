@@ -3,27 +3,12 @@ import { ConfirmationDialogService } from "../common-components/confirmation-dia
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { Entity } from "./model/entity";
-import { Observable, race, Subject } from "rxjs";
-import { map } from "rxjs/operators";
-
-/**
- * All possible results when removing an entity
- */
-export enum RemoveResult {
-  /**
-   * The user cancelled the action
-   */
-  CANCELLED,
-  /**
-   * The entity was successfully removed
-   */
-  REMOVED,
-  /**
-   * The user has undone the action and the entity
-   * now exists again
-   */
-  UNDONE,
-}
+import { getUrlWithoutParams } from "../../utils/utils";
+import { Router } from "@angular/router";
+import { EntitySchemaService } from "./schema/entity-schema.service";
+import { FileDatatype } from "../../features/file/file.datatype";
+import { FileService } from "../../features/file/file.service";
+import { firstValueFrom } from "rxjs";
 
 /**
  * Additional options that can be (partly) specified
@@ -36,14 +21,8 @@ export interface RemoveEntityTextOptions {
 }
 
 /**
- * A service that can be used to safely remove an entity
- * which includes:
- * <ul>
- *  <li> Displaying a confirmation dialog and asking the user whether or not he
- *  wants to delete the entity
- *  <li> Removing the entity in the `EntityMapperService` (if he chose so)
- *  <li> Opening a snack bar to allow the user to undo the action
- * </ul>
+ * A service that can triggers a user flow to safely remove an entity,
+ * including a confirmation dialog.
  */
 @Injectable({
   providedIn: "root",
@@ -53,90 +32,191 @@ export class EntityRemoveService {
     private confirmationDialog: ConfirmationDialogService,
     private entityMapper: EntityMapperService,
     private snackBar: MatSnackBar,
+    private router: Router,
+    private schemaService: EntitySchemaService,
+    private fileService: FileService,
   ) {}
 
-  /**
-   * Removes the entity after displaying a confirmation dialog.
-   * The returned observable will emit once or twice, depending on how the
-   * user chose.
-   * <ul>
-   *  <li> When the user chose 'no', the subject will emit once with
-   *  {@link RemoveResult.CANCELLED CANCELLED}.
-   *  <li> When the user chose 'yes', the subject will emit with the result
-   *  {@link RemoveResult.REMOVED REMOVED}. If the user doesn't undo, the subject will complete
-   *  once the snack bar has disappeared. If the user chose undo, the subject will
-   *  emit with the result {@link RemoveResult.UNDONE UNDONE}.
-   * </ul>
-   * <br>
-   * This method takes care of saving the entity as if one were to call the resp. methods
-   * of the `EntityMapperService`. It also restores the entity when the user chose to
-   * undo. All of the aforementioned results will only be called if the actions have already
-   * been taken.
-   * <br>
-   * You do not need to unsubscribe from this method as the observable will be closed on all
-   * possible paths.
-   * @param entity The entity to remove
-   * @param textOptions Options that you can specify to override the default options.
-   * You can only specify some of the options, the options that you don't specify will then be
-   * the default ones.
-   */
-  remove<E extends Entity>(
-    entity: E,
-    textOptions?: RemoveEntityTextOptions,
-  ): Observable<RemoveResult> {
-    const subject = new Subject<RemoveResult>();
-    const dialogTitle =
-      textOptions?.dialogTitle || $localize`:Delete confirmation title:Delete?`;
-    const dialogText =
-      textOptions?.dialogText ||
-      $localize`:Delete confirmation text:Are you sure you want to delete this ${entity.getType()}?`;
-    this.confirmationDialog
-      .getConfirmation(dialogTitle, dialogText)
-      .then((confirmed) => {
-        if (confirmed) {
-          const snackBarTitle =
-            textOptions?.deletedEntityInformation ||
-            $localize`:Deleted Entity information:Deleted Entity ${entity.toString()}`;
-          this.removeEntityAndOpenSnackBar(entity, snackBarTitle, subject);
-        } else {
-          subject.next(RemoveResult.CANCELLED);
-          subject.complete();
-        }
-      });
-    return subject.asObservable();
-  }
-
-  /**
-   * Decoupled from the main method for readability
-   * @param entity The entity to remove
-   * @param snackBarTitle The title of the snack-bar
-   * @param resultSender The sender that informs when the user
-   * has clicked 'undo' and that completes once no undo is possible
-   * @private
-   */
-  private async removeEntityAndOpenSnackBar(
+  private showSnackbarConfirmation(
     entity: Entity,
-    snackBarTitle: string,
-    resultSender: Subject<RemoveResult>,
+    action: string,
+    navigateBackToUrl?: string,
   ) {
-    await this.entityMapper.remove(entity);
-    resultSender.next(RemoveResult.REMOVED);
+    const snackBarTitle = $localize`:Entity action confirmation message:${
+      entity.getConstructor().label
+    } "${entity.toString()}" ${action}`;
+
     const snackBarRef = this.snackBar.open(
       snackBarTitle,
-      $localize`:Undo deleting an entity:Undo`,
+      $localize`:Undo an entity action:Undo`,
       {
         duration: 8000,
       },
     );
-    race(
-      snackBarRef.onAction().pipe(map(() => true)),
-      snackBarRef.afterDismissed().pipe(map(() => false)),
-    ).subscribe(async (next) => {
-      if (next) {
-        await this.entityMapper.save(entity, true);
-        resultSender.next(RemoveResult.UNDONE);
+
+    // Undo Action
+    snackBarRef.onAction().subscribe(async () => {
+      await this.entityMapper.save(entity, true);
+      if (navigateBackToUrl) {
+        await this.router.navigate([navigateBackToUrl]);
       }
-      resultSender.complete();
     });
+  }
+
+  /**
+   * Shows a confirmation dialog to the user
+   * and removes the entity if the user confirms.
+   *
+   * This also triggers a toast message, enabling the user to undo the action.
+   *
+   * @param entity The entity to remove
+   * @param textOptions Options that you can specify to override the default options.
+   * You can only specify some of the options, the options that you don't specify will then be
+   * the default ones.
+   * @param navigate whether upon delete the app will navigate back
+   */
+  async delete<E extends Entity>(
+    entity: E,
+    navigate: boolean = false,
+  ): Promise<boolean> {
+    if (
+      !(await this.confirmationDialog.getConfirmation(
+        $localize`:Delete confirmation title:Delete?`,
+        $localize`:Delete confirmation dialog:
+        This will remove the data permanently as if it never existed. This cannot be undone. Statistical reports (also for past time periods) will change and not include this record anymore.\n
+        If you have not just created this record accidentally, deleting this is probably not what you want to do. If the record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.\n
+        Are you sure you want to delete this ${
+          entity.getConstructor().label
+        } record?`,
+      ))
+    ) {
+      return false;
+    }
+
+    const originalEntity = entity.copy();
+    await this.entityMapper.remove(entity);
+
+    let currentUrl: string;
+    if (navigate) {
+      currentUrl = getUrlWithoutParams(this.router);
+      const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
+      await this.router.navigate([parentUrl]);
+    }
+
+    this.showSnackbarConfirmation(
+      originalEntity,
+      $localize`:Entity action confirmation message verb:Deleted`,
+      currentUrl,
+    );
+    return true;
+  }
+
+  /**
+   * Anonymize the given entity,
+   * removing properties that are not explicitly configured in the schema to be retained.
+   *
+   * This triggers UX interactions like confirmation request dialog and snackbar message as well.
+   *
+   * @param entity
+   */
+  async anonymize<E extends Entity>(entity: E) {
+    if (
+      !(await this.confirmationDialog.getConfirmation(
+        $localize`:Anonymize confirmation dialog:Anonymize?`,
+        $localize`:Anonymize confirmation dialog:
+        This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.\n
+        If this ${
+          entity.getConstructor().label
+        } has only become inactive and you want to keep all details about the record, consider to use "archive" instead.\n
+        Are you sure you want to anonymize this record?`,
+      ))
+    ) {
+      return false;
+    }
+
+    const originalEntity = entity.copy();
+    await this.anonymizeEntity(entity);
+    await this.entityMapper.save(entity);
+
+    this.showSnackbarConfirmation(
+      originalEntity,
+      $localize`:Entity action confirmation message verb:Anonymized`,
+    );
+    return true;
+  }
+
+  private async anonymizeEntity(entity: Entity) {
+    for (const [key, schema] of entity.getSchema().entries()) {
+      if (entity[key] === undefined) {
+        continue;
+      }
+
+      switch (schema.anonymize) {
+        case "retain":
+          break;
+        case "retain-anonymized":
+          await this.anonymizeProperty(entity, key);
+          break;
+        default:
+          await this.removeProperty(entity, key);
+      }
+    }
+
+    entity.anonymized = true;
+    entity.inactive = true;
+  }
+
+  private async anonymizeProperty(entity: Entity, key: string) {
+    const dataType = this.schemaService.getDatatypeOrDefault(
+      entity.getSchema().get(key).dataType,
+    );
+
+    entity[key] = await dataType.anonymize(
+      entity[key],
+      entity.getSchema().get(key),
+      entity,
+    );
+  }
+
+  /**
+   * Mark the given entity as inactive.
+   * @param entity
+   */
+  async archive<E extends Entity>(entity: E) {
+    const originalEntity = entity.copy();
+    entity.inactive = true;
+    await this.entityMapper.save(entity);
+
+    this.showSnackbarConfirmation(
+      originalEntity,
+      $localize`:Entity action confirmation message verb:Archived`,
+    );
+    return true;
+  }
+  /**
+   * Undo the archive action on the given entity.
+   * @param entity
+   */
+  async undoArchive<E extends Entity>(entity: E) {
+    const originalEntity = entity.copy();
+    entity.inactive = false;
+    await this.entityMapper.save(entity);
+
+    this.showSnackbarConfirmation(
+      originalEntity,
+      $localize`:Entity action confirmation message verb:Reactivated`,
+    );
+    return true;
+  }
+
+  private async removeProperty(entity: Entity, key: string) {
+    if (
+      entity.getSchema().get(key).dataType === FileDatatype.dataType &&
+      entity[key]
+    ) {
+      await firstValueFrom(this.fileService.removeFile(entity, key));
+    }
+
+    delete entity[key];
   }
 }

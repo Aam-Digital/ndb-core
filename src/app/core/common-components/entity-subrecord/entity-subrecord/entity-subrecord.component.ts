@@ -24,10 +24,7 @@ import {
 } from "../../entity-form/entity-form.service";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../../entity/entity-remove.service";
+import { EntityRemoveService } from "../../../entity/entity-remove.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { tableSort } from "./table-sort";
 import {
@@ -53,6 +50,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -90,6 +88,7 @@ export interface TableRow<T extends Entity> {
     DisableEntityOperationDirective,
     Angulartics2Module,
     ListPaginatorComponent,
+    MatSlideToggleModule,
   ],
   standalone: true,
 })
@@ -97,6 +96,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
+
+  @Input() showInactive = false;
+  @Output() showInactiveChange = new EventEmitter<boolean>();
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
@@ -166,7 +168,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private router: Router,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
-    private entityRemoveService: EntityRemoveService,
+    public entityRemoveService: EntityRemoveService,
     private entityMapper: EntityMapperService,
     private filterService: FilterService,
   ) {
@@ -183,6 +185,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   private initDataSource() {
+    this.filter = this.filter ?? ({} as DataFilter<T>);
+    this.filterActiveInactive();
+    this.predicate = this.filterService.getFilterPredicate(this.filter);
+
     this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
@@ -231,8 +237,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         }
       }
     }
-    if (changes.hasOwnProperty("filter") && this.filter) {
-      this.predicate = this.filterService.getFilterPredicate(this.filter);
+    if (
+      (changes.hasOwnProperty("filter") && this.filter) ||
+      changes.hasOwnProperty("showInactive")
+    ) {
       reinitDataSource = true;
     }
     if (changes.hasOwnProperty("columns")) {
@@ -388,28 +396,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     row.formGroup = null;
   }
 
-  /**
-   * Delete the given entity from the database (after explicit user confirmation).
-   * @param row The entity to be deleted.
-   */
-  delete(row: TableRow<T>) {
-    this.entityRemoveService
-      .remove(row.record, {
-        deletedEntityInformation: $localize`:Record deleted info:Record deleted`,
-        dialogText: $localize`:Delete confirmation message:Are you sure you want to delete this record?`,
-      })
-      .subscribe((result) => {
-        switch (result) {
-          case RemoveResult.REMOVED:
-            this.removeFromDataTable(row.record);
-            break;
-          case RemoveResult.UNDONE:
-            this.records.unshift(row.record);
-            this.initFormGroups();
-        }
-      });
-  }
-
   private removeFromDataTable(deleted: T) {
     // use setter so datasource is also updated
     this.records = this.records.filter(
@@ -492,5 +478,22 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       return true;
     }
     return this.screenWidthObserver.currentScreenSize() >= numericValue;
+  }
+
+  filterActiveInactive() {
+    if (this.showInactive) {
+      // @ts-ignore type has issues with getters
+      delete this.filter.isActive;
+    } else {
+      this.filter["isActive"] = true;
+    }
+  }
+
+  setActiveInactiveFilter(newValue: boolean) {
+    if (newValue !== this.showInactive) {
+      this.showInactive = newValue;
+      this.showInactiveChange.emit(newValue);
+    }
+    this.initDataSource();
   }
 }

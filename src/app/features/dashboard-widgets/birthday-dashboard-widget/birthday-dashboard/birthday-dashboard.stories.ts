@@ -3,8 +3,8 @@ import { BirthdayDashboardComponent } from "./birthday-dashboard.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import moment from "moment";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { importProvidersFrom } from "@angular/core";
+import { DateWithAge } from "app/core/basic-datatypes/date-with-age/dateWithAge";
 
 const child1 = Child.create("First Child");
 child1.dateOfBirth = new DateWithAge(

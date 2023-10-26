@@ -8,13 +8,8 @@ import {
 } from "../EntityDetailsConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { getUrlWithoutParams } from "../../../utils/utils";
 import { RouteData } from "../../config/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../entity/entity-remove.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -32,6 +27,8 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { LoggingService } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../form/unsaved-changes.service";
+import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
+import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -59,6 +56,8 @@ import { UnsavedChangesService } from "../form/unsaved-changes.service";
     ViewTitleComponent,
     DynamicComponentDirective,
     DisableEntityOperationDirective,
+    EntityActionsMenuComponent,
+    EntityArchivedInfoComponent,
   ],
 })
 export class EntityDetailsComponent {
@@ -75,7 +74,6 @@ export class EntityDetailsComponent {
     private route: ActivatedRoute,
     private router: Router,
     private analyticsService: AnalyticsService,
-    private entityRemoveService: EntityRemoveService,
     private ability: EntityAbility,
     private entities: EntityRegistry,
     private logger: LoggingService,
@@ -150,20 +148,6 @@ export class EntityDetailsComponent {
       panelConfig.config = c.config;
     }
     return panelConfig;
-  }
-
-  removeEntity() {
-    const currentUrl = getUrlWithoutParams(this.router);
-    const parentUrl = currentUrl.substring(0, currentUrl.lastIndexOf("/"));
-    this.entityRemoveService.remove(this.entity).subscribe(async (result) => {
-      switch (result) {
-        case RemoveResult.REMOVED:
-          await this.router.navigate([parentUrl]);
-          break;
-        case RemoveResult.UNDONE:
-          await this.router.navigate([currentUrl]);
-      }
-    });
   }
 
   trackTabChanged(index: number) {

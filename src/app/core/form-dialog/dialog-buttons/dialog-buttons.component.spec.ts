@@ -15,11 +15,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Router } from "@angular/router";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FormGroup } from "@angular/forms";
-import {
-  EntityRemoveService,
-  RemoveResult,
-} from "../../entity/entity-remove.service";
-import { firstValueFrom, of, Subject } from "rxjs";
+import { firstValueFrom, Subject } from "rxjs";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 describe("DialogButtonsComponent", () => {
@@ -97,12 +93,11 @@ describe("DialogButtonsComponent", () => {
     expect(component.detailsRoute).toBe(`${Child.route}/${child.getId()}`);
   });
 
-  it("should close the dialog if a entity is deleted", () => {
-    const removeSpy = spyOn(TestBed.inject(EntityRemoveService), "remove");
-    removeSpy.and.returnValue(of(RemoveResult.REMOVED));
+  it("should close the dialog if a entity is deleted", async () => {
+    component.onAction("some other action");
+    expect(dialogRef.close).not.toHaveBeenCalled();
 
-    component.delete();
-
+    component.onAction("delete");
     expect(dialogRef.close).toHaveBeenCalled();
   });
 

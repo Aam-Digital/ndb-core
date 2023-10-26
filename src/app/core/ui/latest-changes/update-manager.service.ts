@@ -43,6 +43,10 @@ export class UpdateManagerService {
     private latestChangesDialogService: LatestChangesDialogService,
     @Inject(LOCATION_TOKEN) private location: Location,
   ) {
+    this.updates.unrecoverable.subscribe((err) => {
+      this.logger.error("App is in unrecoverable state: " + err.reason);
+      this.location.reload();
+    });
     const currentVersion = window.localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY,
     );

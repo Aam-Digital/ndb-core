@@ -7,12 +7,6 @@ import { EducationalMaterial } from "../../child-dev-project/children/educationa
 
 // prettier-ignore
 export const defaultJsonConfig = {
-  "appConfig": {
-    "default_language": "en-US",
-    "displayLanguageSelect": true,
-    "logo_path": null,
-    "site_name": $localize`:Page title:Aam Digital - DEMO (automatically generated data)`,
-  },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
     "site_id": "8",
@@ -563,15 +557,6 @@ export const defaultJsonConfig = {
       },
       "filters": [
         {
-          "id": "isActive",
-          "type": "boolean",
-          "default": "true",
-          "label": $localize`Children`,
-          "true": $localize`:Active children filter label - true case:Active`,
-          "false": $localize`:Active children filter label - false case:Inactive`,
-          "all": $localize`:Active children unselect option:All`
-        },
-        {
           "id": "center"
         },
         {
@@ -712,7 +697,23 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "EducationalMaterial"
+              "component": "RelatedEntitiesWithSummary",
+              "config": {
+                "entityType": EducationalMaterial.ENTITY_TYPE,
+                "property": "child",
+                "columns": [
+                  { "id": "date", "visibleFrom": "xs" },
+                  { "id": "materialType", "visibleFrom": "xs" },
+                  { "id": "materialAmount", "visibleFrom": "md" },
+                  { "id": "description", "visibleFrom": "md" },
+                ],
+                "summaries": {
+                  "countProperty": "materialAmount",
+                  "groupBy": "materialType",
+                  "total": true,
+                  "average": false
+                }
+              }
             }
           ]
         },
@@ -760,17 +761,6 @@ export const defaultJsonConfig = {
         "title",
         "type",
         "assignedTo"
-      ],
-      "filters": [
-        {
-          "id": "isActive",
-          "type": "boolean",
-          "default": "true",
-          "label": $localize`Status`,
-          "true": $localize`:Active records filter label - true case:Active`,
-          "false": $localize`:Active records filter label - false case:Inactive`,
-          "all": $localize`:Active records unselect option:All`
-        },
       ],
       "exportConfig": [
         { "label": "Title", "query": "title" },
