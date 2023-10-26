@@ -1,6 +1,5 @@
 import {
   ComponentFixture,
-  discardPeriodicTasks,
   fakeAsync,
   TestBed,
   tick,
@@ -244,7 +243,7 @@ describe("EntitySelectComponent", () => {
     expect(options.length).toEqual(1);
     expect((await options[0].getText())).toContain("2");
 
-    discardPeriodicTasks();
+    tick();
   }));
 
   it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
