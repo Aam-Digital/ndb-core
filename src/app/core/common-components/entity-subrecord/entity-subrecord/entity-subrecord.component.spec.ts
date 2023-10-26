@@ -27,8 +27,8 @@ import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
+import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;

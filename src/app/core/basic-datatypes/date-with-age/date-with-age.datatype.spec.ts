@@ -1,7 +1,7 @@
 import { DateWithAgeDatatype } from "./date-with-age.datatype";
-import { DateWithAge } from "../../../child-dev-project/children/model/dateWithAge";
 import { testDatatype } from "../../entity/schema/entity-schema.service.spec";
 import moment from "moment";
+import { DateWithAge } from "./dateWithAge";
 
 describe("Schema data type: date-with-age", () => {
   testDatatype(

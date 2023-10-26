@@ -19,8 +19,8 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
-import { DateWithAge } from "./dateWithAge";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { DateWithAge } from "../../../core/basic-datatypes/date-with-age/dateWithAge";
 
 export type Center = ConfigurableEnumValue;
 

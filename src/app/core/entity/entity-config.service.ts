@@ -1,9 +1,5 @@
 import { Injectable } from "@angular/core";
-import {
-  Entity,
-  ENTITY_CONFIG_PREFIX,
-  EntityConstructor,
-} from "./model/entity";
+import { Entity, EntityConstructor } from "./model/entity";
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
@@ -35,8 +31,10 @@ export class EntityConfigService {
   setupEntitiesFromConfig() {
     for (const config of this.configService.getAllConfigs<
       EntityConfig & { _id: string }
-    >(ENTITY_CONFIG_PREFIX)) {
-      const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
+    >(EntityConfigService.PREFIX_ENTITY_CONFIG)) {
+      const id = config._id.substring(
+        EntityConfigService.PREFIX_ENTITY_CONFIG.length,
+      );
       if (!this.entities.has(id)) {
         this.createNewEntity(id, config.extends);
       }
