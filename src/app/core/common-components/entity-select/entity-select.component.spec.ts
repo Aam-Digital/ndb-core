@@ -1,5 +1,6 @@
 import {
   ComponentFixture,
+  discardPeriodicTasks,
   fakeAsync,
   TestBed,
   tick,
@@ -15,9 +16,8 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
-import { MatOptionHarness } from "@angular/material/core/testing";
 
-describe("EntitySelectComponent", () => {
+fdescribe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let loader: HarnessLoader;
@@ -205,7 +205,7 @@ describe("EntitySelectComponent", () => {
     expect(component.filteredEntities.length).toEqual(3);
   }));
 
-  fit("shows the inactive checkbox and message appropriately", fakeAsync(async () => {
+  it("shows the inactive checkbox and message appropriately", fakeAsync(async () => {
     const testEntities = [
       "Aaa",
       "Aab",
@@ -222,44 +222,29 @@ describe("EntitySelectComponent", () => {
     });
     testEntities[6].isActive = false;
     testEntities[7].isActive = false;
+   
     component.allEntities = testEntities;
     component.loading.next(false);
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
+    let options; 
 
     autocomplete.enterText("X");
-    tick();
-    console.log(
-      "Peter options",
-      await autocomplete.getValue(),
-      ": ",
-      (await autocomplete.getOptions()).length,
-      ((await autocomplete.getOptions())[0] as MatOptionHarness)
-        ._locatorFactory,
-    );
-    // component.toggleIncludeInactive();
-    autocomplete.clear();
-    autocomplete.getValue();
+    options = await autocomplete.getOptions();
+    expect(options.length).toEqual(1);
+    expect((await options[0].getText())).toEqual("None.");
+
+       autocomplete.clear();
     autocomplete.enterText("Aa");
-    tick();
-    console.log(
-      "Peter options",
-      await autocomplete.getValue(),
-      ": ",
-      (await autocomplete.getOptions()).length,
-    );
+    options = await autocomplete.getOptions();
+    expect(options.length).toEqual(4);
+
     autocomplete.clear();
     autocomplete.enterText("Ca");
-    tick();
-    console.log(
-      "Peter options",
-      await autocomplete.getValue(),
-      ": ",
-      (await autocomplete.getOptions()).length,
-    );
+    options = await autocomplete.getOptions();
+    expect(options.length).toEqual(1);
+    expect((await options[0].getText())).toContain("2");
 
-    //
-    // expect(component.filteredEntities.length).toEqual(4);
-    // tick();
+    discardPeriodicTasks();
   }));
 
   it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
