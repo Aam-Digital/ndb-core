@@ -9,7 +9,6 @@ describe("Scenario: Recording attendance of a child - E2E test", function () {
   });
 
   it("AND I set the attendance of the specific child to 'present'", function () {
-    cy.contains("button", "Show more").click({ scrollBehavior: "center" });
     cy.contains("mat-card", "School Class")
       .eq(0)
       .click({ scrollBehavior: "center" });
@@ -30,7 +29,7 @@ describe("Scenario: Recording attendance of a child - E2E test", function () {
     cy.get(".mat-calendar-body-active").should(
       "have.css",
       "background-color",
-      "rgb(200, 230, 201)"
+      "rgb(200, 230, 201)",
     );
   });
 });
