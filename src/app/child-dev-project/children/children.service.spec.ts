@@ -11,7 +11,7 @@ import { genders } from "./model/genders";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
-import { DateWithAge } from "./model/dateWithAge";
+import { DateWithAge } from "../../core/basic-datatypes/date-with-age/dateWithAge";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
