@@ -5,7 +5,6 @@ import { LoggingService } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { transformToReadableFormat } from "../../common-components/entity-subrecord/entity-subrecord/value-accessor";
 import { Papa } from "ngx-papaparse";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
 /**
  * This service allows to start a download process from the browser.
@@ -116,21 +115,25 @@ export class DownloadService {
 
   exportFile(data: any[], entityConstructor: { schema: any; }) {
     const entitySchema = entityConstructor.schema;
-    const columnLabel = new Map<string, EntitySchemaField>();
-    
-    entitySchema.forEach((value: { label: string }, key: string) => {
-      if (value.label) columnLabel[key] = value.label;
+    const columnLabels = new Map();
+    entitySchema.forEach((value: { hasOwnProperty: (arg0: string) => any; label: string; }, key: string ) => {
+      if (value.hasOwnProperty('label') && value.label) {
+        columnLabels[key] = value.label;
+      }
     });
   
     const exportEntities = data.map((item) => {
+      let newItem = {};
       for (const key in item) {
-        if (!columnLabel.hasOwnProperty(key)) delete item[key];
+        if (columnLabels.hasOwnProperty(key)) {
+          newItem[key] = item[key];
+        }
       }
-      return item;
+      return newItem;
     });
 
-    const columnKeys = Object.keys(columnLabel);
-    const columnLabels:string[] = Object.values(columnLabel);
+    const columnKeys = Object.keys(columnLabels);
+    const labels:string[] = Object.values(columnLabels);
     const orderedData = [];
 
     exportEntities.forEach((item) => {
@@ -142,7 +145,7 @@ export class DownloadService {
     });
 
     return this.papa.unparse({
-      fields: columnLabels,
+      fields: labels,
       data: orderedData
     });
   }

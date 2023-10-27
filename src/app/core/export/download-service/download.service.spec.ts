@@ -112,7 +112,7 @@ describe("DownloadService", () => {
     expect(columnValues).toContain['"true"'];
   });
 
-  it("should transform object properties to their label for export when entity schema is not defined", async () => {
+  it("should transform schema label to their label for export when label is defined in entity schema", async () => {
     const docs = [
       { _id: "Test:1", name: "Child 1" },
       { _id: "Test:2", name: "Child 2" },
@@ -126,7 +126,35 @@ describe("DownloadService", () => {
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
 
     expect(columnValues).toHaveSize(2); 
+    expect(columnHeaders).toHaveSize(2);
     expect(columnHeaders).toContain('"_id"');
+  });
+
+  it("should only export columns that have labels defined in entity schema", async () => {
+    const testString: string = "Test 1"
+    const testDate = "2020-01-30";
+
+    @DatabaseEntity("LabelTestEntity")
+    class LabelTestEntity extends Entity {
+      @DatabaseField({ "label": "test string" }) stringProperty: string;
+      @DatabaseField({ "label": "test date" }) dateProperty: Date;
+      @DatabaseField() boolProperty: boolean;
+    }
+
+    const labelTestEntity = new LabelTestEntity();
+    labelTestEntity.stringProperty = testString;
+    labelTestEntity.dateProperty = moment(testDate).toDate();
+    labelTestEntity.boolProperty = true;
+
+    const csvExport = await service.createCsv([labelTestEntity]);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+
+    const columnNames = rows[0].split(DownloadService.SEPARATOR_COL);
+    expect(columnNames).toHaveSize[2];
+    expect(columnNames).toContain['test string'];
+    expect(columnNames).toContain['test date'];
   });
 
   it("should export a date as YYYY-MM-dd only", async () => {
