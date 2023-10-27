@@ -28,6 +28,8 @@ An example config for the above:
   "component": "MySubView",
   "config": { "showDescription": true } 
 }
+```
+
 Use the `ComponentRegistry` to register your component,
 e.g. in its Module:
 ```javascript
