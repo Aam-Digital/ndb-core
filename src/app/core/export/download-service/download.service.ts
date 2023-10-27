@@ -5,6 +5,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { transformToReadableFormat } from "../../common-components/entity-subrecord/entity-subrecord/value-accessor";
 import { Papa } from "ngx-papaparse";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
 /**
  * This service allows to start a download process from the browser.
@@ -115,38 +116,36 @@ export class DownloadService {
 
   exportFile(data: any[], entityConstructor: { schema: any; }) {
     const entitySchema = entityConstructor.schema;
-    const columnLabels = new Map();
-    entitySchema.forEach((value: { hasOwnProperty: (arg0: string) => any; label: string; }, key: string ) => {
-      if (value.hasOwnProperty('label') && value.label) {
-        columnLabels[key] = value.label;
-      }
+    const columnLabels = new Map<string, EntitySchemaField>();
+    
+    entitySchema.forEach((value: { label: EntitySchemaField; }, key: string) => {
+      if (value.label) columnLabels.set(key, value.label);
     });
   
     const exportEntities = data.map((item) => {
       let newItem = {};
       for (const key in item) {
-        if (columnLabels.hasOwnProperty(key)) {
+        if (columnLabels.has(key)) {
           newItem[key] = item[key];
         }
       }
       return newItem;
     });
 
-    const columnKeys = Object.keys(columnLabels);
-    const labels:string[] = Object.values(columnLabels);
-    const orderedData = [];
-
+    const columnKeys: string[] = Array.from(columnLabels.keys());
+    const labels:any[] = Array.from(columnLabels.values());
+    const orderedData: any[] = [];
     exportEntities.forEach((item) => {
-      const orderedItem = [];
+      const orderedItem: any[] = [];
       columnKeys.forEach((key) => {
         orderedItem.push(item[key]);
       });
       orderedData.push(orderedItem);
     });
-
+    
     return this.papa.unparse({
       fields: labels,
-      data: orderedData
+      data: orderedData,
     });
   }
 }
