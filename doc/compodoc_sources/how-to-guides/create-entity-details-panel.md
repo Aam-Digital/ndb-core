@@ -1,4 +1,4 @@
-# How to create an Entity Details Panel
+# How to create an Entity Details Panel Component
 Aam Digital as a platform takes care of loading the relevant entity and configs for an "Entity Details View",
 which displays the information about a single entity (e.g. one specific student).
 The `EntityDetailsComponent` handles this initialization from the route.
