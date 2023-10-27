@@ -2,8 +2,8 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { DisplayAgeComponent } from "./display-age.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import moment from "moment";
+import { DateWithAge } from "../dateWithAge";
 
 describe("DisplayAgeComponent", () => {
   let component: DisplayAgeComponent;
