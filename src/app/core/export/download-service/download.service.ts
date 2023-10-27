@@ -133,16 +133,11 @@ export class DownloadService {
     });
 
     const columnKeys: string[] = Array.from(columnLabels.keys());
-    const labels:any[] = Array.from(columnLabels.values());
-    const orderedData: any[] = [];
-    exportEntities.forEach((item) => {
-      const orderedItem: any[] = [];
-      columnKeys.forEach((key) => {
-        orderedItem.push(item[key]);
-      });
-      orderedData.push(orderedItem);
-    });
-    
+    const labels: any[] = Array.from(columnLabels.values());
+    const orderedData: any[] = exportEntities.map(item =>
+        columnKeys.map(key => item[key])
+    );
+     
     return this.papa.unparse({
       fields: labels,
       data: orderedData,
