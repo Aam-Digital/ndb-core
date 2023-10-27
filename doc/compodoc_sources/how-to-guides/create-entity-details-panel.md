@@ -23,7 +23,7 @@ These values are automatically set to whatever value is specified in the config 
 4. Register the new component in its parent module, so that it can be loaded under its name through the config.
 
 An example config for the above:
-```
+```json
 {
   "component": "MySubView",
   "config": { "showDescription": true } 
