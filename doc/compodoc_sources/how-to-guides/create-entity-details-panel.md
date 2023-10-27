@@ -33,7 +33,7 @@ An example config for the above:
 ### Registering the new Sub-Component for use in config
 Use the `ComponentRegistry` to register your component,
 e.g. in its Module:
-```
+```javascript
 export class MyModule {
   constructor(components: ComponentRegistry) {
     components.addAll([
