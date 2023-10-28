@@ -69,7 +69,7 @@ export class EntityFormService {
     forTable = false,
   ): FormFieldConfig[] {
     const fullFields: FormFieldConfig[] = formFields.map(toFormFieldConfig);
-    fullFields.forEach((formField) => {
+    for (const formField of fullFields) {
       try {
         this.addFormFields(formField, entityType, forTable);
       } catch (err) {
@@ -77,7 +77,7 @@ export class EntityFormService {
           `Could not create form config for ${formField.id}: ${err}`,
         );
       }
-    });
+    }
     return fullFields;
   }
 

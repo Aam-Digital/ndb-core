@@ -1,1 +1,124 @@
-<p>config-field works!</p>
+<h2 mat-dialog-title i18n>Configure Field "{{ schemaFieldConfig.label }}"</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <p i18n>
+    The field settings here apply to the record type overall and affect both the
+    field here in the current view as well as all other forms and lists where
+    this field is displayed.
+  </p>
+
+  <form [formGroup]="form">
+    <mat-tab-group>
+      <mat-tab label="Basics" i18n-label>
+        <div class="grid-layout margin-top-regular">
+          <div class="entity-form-cell">
+            <mat-form-field>
+              <mat-label>Label</mat-label>
+              <input formControlName="label" matInput />
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Label (short)</mat-label>
+              <input formControlName="labelShort" matInput />
+              <mat-slide-toggle
+                [checked]="useShortLabel"
+                (change)="updateShortLabelToggle($event.checked)"
+                matSuffix
+                matTooltip="Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited."
+                i18n-matTooltip
+              ></mat-slide-toggle>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label
+                matTooltip="The description provides additional explation or context about this field. It is usually displayed as a help icon with tooltip."
+                i18n-matTooltip
+              >
+                Description <fa-icon icon="question-circle"></fa-icon>
+              </mat-label>
+              <textarea
+                formControlName="description"
+                matInput
+                rows="3"
+              ></textarea>
+            </mat-form-field>
+          </div>
+
+          <div class="entity-form-cell">
+            <mat-form-field>
+              <mat-label
+                matTooltip="The internal ID of the field is used at a technical level in the database. The ID cannot be changed after the field has been created."
+                i18n-matTooltip
+              >
+                Field ID (readonly)
+                <fa-icon icon="question-circle"></fa-icon>
+              </mat-label>
+              <input formControlName="id" matInput #formId />
+              <fa-icon *ngIf="formId.disabled" icon="lock" matSuffix></fa-icon>
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Type</mat-label>
+              <app-basic-autocomplete
+                formControlName="dataType"
+                [options]="dataTypes"
+                [optionToString]="objectToLabel"
+                [valueMapper]="objectToValue"
+              ></app-basic-autocomplete>
+            </mat-form-field>
+
+            <mat-form-field
+              [style.visibility]="formAdditionalOptions ? 'visible' : 'hidden'"
+            >
+              <mat-label>Type Details</mat-label>
+              <app-basic-autocomplete
+                formControlName="additional"
+                [options]="formAdditionalOptions"
+              ></app-basic-autocomplete>
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-tab>
+
+      <!--
+        ADVANCED SETTINGS
+      -->
+      <mat-tab
+        label="Advanced Options & Validation [COMING SOON]"
+        i18n-label
+        [disabled]="true"
+      >
+        <div class="grid-layout margin-top-regular">
+          <div class="entity-form-cell">
+            <mat-form-field>
+              <mat-label>Default Value</mat-label>
+              <input formControlName="defaultValue" matInput />
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Anonymize</mat-label>
+              <input formControlName="anonymize" matInput />
+            </mat-form-field>
+
+            <mat-form-field>
+              <mat-label>Searchable</mat-label>
+              <input formControlName="searchable" matInput />
+            </mat-form-field>
+          </div>
+
+          <div class="entity-form-cell">
+            <mat-form-field>
+              <mat-label>Field Validation</mat-label>
+              <input formControlName="validators" matInput />
+            </mat-form-field>
+          </div>
+        </div>
+      </mat-tab>
+    </mat-tab-group>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button mat-dialog-close>Cancel</button>
+</mat-dialog-actions>
