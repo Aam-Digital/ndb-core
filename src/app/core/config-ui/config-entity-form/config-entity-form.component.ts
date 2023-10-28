@@ -54,8 +54,8 @@ export class ConfigEntityFormComponent implements OnChanges {
   openFieldConfig(field: FormFieldConfig) {
     this.matDialog.open(ConfigFieldComponent, {
       width: "99%",
-      height: "90vh",
-      data: { fieldConfig: field, entityType: this.entityType },
+      maxHeight: "90vh",
+      data: { formFieldConfig: field, entityType: this.entityType },
     });
   }
 }

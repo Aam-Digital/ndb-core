@@ -1,5 +1,4 @@
-import { Component, Input } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, Input, OnChanges } from "@angular/core";
 import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -8,27 +7,27 @@ import {
   PREFIX_VIEW_CONFIG,
   ViewConfig,
 } from "../../config/dynamic-routing/view-config.interface";
+import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("ConfigEntity")
 @Component({
   selector: "app-config-entity",
   templateUrl: "./config-entity.component.html",
   styleUrls: ["./config-entity.component.scss"],
 })
-export class ConfigEntityComponent {
+export class ConfigEntityComponent implements OnChanges {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
 
   configDetailsView: EntityDetailsConfig;
 
   constructor(
-    route: ActivatedRoute,
     private entities: EntityRegistry,
     private configService: ConfigService,
-  ) {
-    route.paramMap.subscribe((params) => {
-      this.entityType = params.get("entityType");
-      this.init();
-    });
+  ) {}
+
+  ngOnChanges(): void {
+    this.init();
   }
 
   private init() {

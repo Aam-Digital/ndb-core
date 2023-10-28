@@ -8,11 +8,16 @@ import { EntityTypeLabelPipe } from "../common-components/entity-type-label/enti
 import { ConfigEntityFormComponent } from "./config-entity-form/config-entity-form.component";
 import { HelpButtonComponent } from "../common-components/help-button/help-button.component";
 import { DynamicComponentDirective } from "../config/dynamic-components/dynamic-component.directive";
+import { RoutedViewComponent } from "../ui/routed-view/routed-view.component";
+import { ComponentRegistry } from "../../dynamic-components";
 
 const routes: Routes = [
   {
     path: "entity/:entityType",
-    component: ConfigEntityComponent,
+    component: RoutedViewComponent,
+    data: {
+      component: "ConfigEntity",
+    },
   },
 ];
 
@@ -30,7 +35,19 @@ const routes: Routes = [
     HelpButtonComponent,
     DynamicComponentDirective,
   ],
-  exports: [RouterModule],
+  exports: [RouterModule, ConfigEntityComponent],
   declarations: [ConfigEntityComponent, ConfigEntityFormComponent],
 })
-export class ConfigUiModule {}
+export class ConfigUiModule {
+  constructor(components: ComponentRegistry) {
+    components.addAll([
+      [
+        "ConfigEntity",
+        () =>
+          import("./config-entity/config-entity.component").then(
+            (c) => c.ConfigEntityComponent,
+          ),
+      ],
+    ]);
+  }
+}

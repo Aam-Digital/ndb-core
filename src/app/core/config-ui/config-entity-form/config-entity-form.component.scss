@@ -5,7 +5,10 @@
   background-color: colors.$grey-transparent;
 }
 .admin-form-field {
-   padding: sizes.$small;
+  padding: sizes.$small;
+  margin: sizes.$small;
+  border: dotted 1px colors.$accent;
+  border-radius: sizes.$x-small;
  }
 
 :host ::ng-deep input[disabled] { pointer-events: none }
