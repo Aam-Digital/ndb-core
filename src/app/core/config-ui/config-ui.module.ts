@@ -10,6 +10,17 @@ import { HelpButtonComponent } from "../common-components/help-button/help-butto
 import { DynamicComponentDirective } from "../config/dynamic-components/dynamic-component.directive";
 import { RoutedViewComponent } from "../ui/routed-view/routed-view.component";
 import { ComponentRegistry } from "../../dynamic-components";
+import {
+  CdkDrag,
+  CdkDragHandle,
+  CdkDropList,
+  CdkDropListGroup,
+} from "@angular/cdk/drag-drop";
+import { FormsModule } from "@angular/forms";
+import { MatInputModule } from "@angular/material/input";
+import { MatButtonModule } from "@angular/material/button";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 const routes: Routes = [
   {
@@ -34,6 +45,15 @@ const routes: Routes = [
     MatTabsModule,
     HelpButtonComponent,
     DynamicComponentDirective,
+    CdkDrag,
+    CdkDropList,
+    CdkDropListGroup,
+    FormsModule,
+    MatInputModule,
+    MatButtonModule,
+    FontAwesomeModule,
+    MatTooltipModule,
+    CdkDragHandle,
   ],
   exports: [RouterModule, ConfigEntityComponent],
   declarations: [ConfigEntityComponent, ConfigEntityFormComponent],

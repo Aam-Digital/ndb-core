@@ -1,35 +1,79 @@
-<div class="grid-layout">
+<div class="grid-layout" cdkDropListGroup>
   <!-- FIELD GROUPS -->
   <div
-    *ngFor="let col of fullConfig.columns; let i = index"
-    class="entity-form-cell"
+    *ngFor="let group of fieldGroups; let i = index"
+    class="entity-form-cell admin-form-column"
   >
-    <h2 *ngIf="fullConfig.columnHeaders?.[i]">
-      {{ fullConfig.columnHeaders[i] }}
-    </h2>
+    <!-- GROUP HEADER -->
+    <div class="flex-row align-baseline">
+      <mat-form-field floatLabel="always">
+        <mat-label>Group Title</mat-label>
+        <input
+          matInput
+          [(ngModel)]="group.header"
+          placeholder="hidden (no title)"
+        />
+      </mat-form-field>
 
-    <!-- FIELD [start] -->
-    <div
-      *ngFor="let row of col"
-      class="admin-form-field"
-      (click)="openFieldConfig(row)"
-    >
-      <div [class.field-with-tooltip-suffix]="row.tooltip">
-        <ng-container
-          [appDynamicComponent]="{
-            component: row.edit,
-            config: {
-              formFieldConfig: row,
-              propertySchema: entityType.schema.get(row.id),
-              formControl: dummyForm.get(row.id),
-              entity: dummyEntity
-            }
-          }"
-        >
-        </ng-container>
-      </div>
-      <app-help-button [text]="row.tooltip"></app-help-button>
+      <button
+        (click)="removeGroup(i)"
+        mat-icon-button
+        matTooltip="Remove this group and all its fields"
+        i18n-matTooltip
+        class="group-remove-button"
+      >
+        <fa-icon icon="times"></fa-icon>
+      </button>
     </div>
-    <!-- FIELD [end]-->
+
+    <div
+      cdkDropList
+      [cdkDropListData]="group.fields"
+      (cdkDropListDropped)="drop($event)"
+      class="fields-group-list"
+    >
+      <!-- FIELD [start] -->
+      <div
+        *ngFor="let f of group.fields"
+        class="admin-form-field flex-row align-center"
+        cdkDrag
+        cdkDragBoundary=".grid-layout"
+      >
+        <fa-icon
+          icon="grip-vertical"
+          size="xl"
+          class="drag-handle"
+          cdkDragHandle
+        ></fa-icon>
+
+        <div (click)="openFieldConfig(f)" style="cursor: pointer">
+          <ng-container
+            [appDynamicComponent]="{
+              component: f.edit,
+              config: {
+                formFieldConfig: f,
+                propertySchema: entityType.schema.get(f.id),
+                formControl: dummyForm.get(f.id),
+                entity: dummyEntity
+              }
+            }"
+          >
+          </ng-container>
+        </div>
+        <app-help-button [text]="f.tooltip"></app-help-button>
+      </div>
+      <!-- FIELD [end]-->
+    </div>
+  </div>
+
+  <!-- DROP AREA: NEW FIELD GROUP -->
+  <div class="entity-form-cell admin-form-column">
+    <div
+      cdkDropList
+      (cdkDropListDropped)="dropNewGroup($event)"
+      class="fields-group-list drop-create-area"
+    >
+      drop here to create new field group
+    </div>
   </div>
 </div>
