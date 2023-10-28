@@ -17,7 +17,7 @@
 
 <div class="flex-row justify-space-between">
   <app-view-title *ngIf="!creatingNew">
-    {{ entity?.toString() }}
+    {{ record?.toString() }}
   </app-view-title>
   <app-view-title
     *ngIf="creatingNew"
@@ -28,10 +28,10 @@
     Adding new {{ this.entityConstructor?.label }}
   </app-view-title>
 
-  <app-entity-actions-menu [entity]="entity" [navigateOnDelete]="true">
+  <app-entity-actions-menu [entity]="record" [navigateOnDelete]="true">
     <button
       mat-menu-item
-      [routerLink]="['/admin-ui/entity', entity?.getType()]"
+      [routerLink]="['/admin-ui/entity', record?.getType()]"
     >
       <!-- TODO: permissions -->
       <!-- TODO: access to admin ui for entities not using entity-details (e.g. note, todo, etc.) -->
@@ -44,7 +44,7 @@
   </app-entity-actions-menu>
 </div>
 
-<app-entity-archived-info [entity]="entity"></app-entity-archived-info>
+<app-entity-archived-info [entity]="record"></app-entity-archived-info>
 
 <mat-tab-group
   (selectedIndexChange)="trackTabChanged($event)"
@@ -52,7 +52,7 @@
   [preserveContent]="true"
 >
   <mat-tab
-    *ngFor="let panelConfig of panels"
+    *ngFor="let panelConfig of panelsComponents"
     [disabled]="creatingNew || unsavedChanges.pending"
   >
     <ng-template mat-tab-label>
@@ -79,7 +79,10 @@
         <h3 *ngIf="componentConfig.title && componentConfig.title !== ''">
           {{ componentConfig.title }}
         </h3>
-        <ng-template [appDynamicComponent]="componentConfig"></ng-template>
+        <ng-template
+          [appDynamicComponent]="componentConfig"
+          *ngIf="componentConfig.config.entity"
+        ></ng-template>
         <br *ngIf="j < panelConfig.components.length - 1" />
       </div>
     </ng-template>

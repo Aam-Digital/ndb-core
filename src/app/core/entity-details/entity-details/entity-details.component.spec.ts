@@ -6,8 +6,7 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { EntityDetailsComponent } from "./entity-details.component";
-import { Observable, of, Subscriber } from "rxjs";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Router } from "@angular/router";
 import { EntityDetailsConfig, PanelConfig } from "../EntityDetailsConfig";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
@@ -15,12 +14,11 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityRemoveService } from "../../entity/entity-remove.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { SimpleChange } from "@angular/core";
 
 describe("EntityDetailsComponent", () => {
   let component: EntityDetailsComponent;
   let fixture: ComponentFixture<EntityDetailsComponent>;
-
-  let routeObserver: Subscriber<any>;
 
   const routeConfig: EntityDetailsConfig = {
     entity: "Child",
@@ -44,18 +42,6 @@ describe("EntityDetailsComponent", () => {
       },
     ],
   };
-  const mockedRoute = {
-    paramMap: new Observable((observer) => {
-      routeObserver = observer;
-      observer.next({ get: () => "new" });
-    }),
-    data: of({ config: routeConfig }),
-    snapshot: {
-      queryParamMap: {
-        get: () => "",
-      },
-    },
-  };
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
   let mockEntityRemoveService: jasmine.SpyObj<EntityRemoveService>;
@@ -74,7 +60,6 @@ describe("EntityDetailsComponent", () => {
     TestBed.configureTestingModule({
       imports: [EntityDetailsComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: ActivatedRoute, useValue: mockedRoute },
         { provide: ChildrenService, useValue: mockChildrenService },
         { provide: EntityRemoveService, useValue: mockEntityRemoveService },
         { provide: EntityAbility, useValue: mockAbility },
@@ -85,6 +70,12 @@ describe("EntityDetailsComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EntityDetailsComponent);
     component = fixture.componentInstance;
+
+    Object.assign(component, routeConfig);
+    component.ngOnChanges(
+      simpleChangesFor(component, ...Object.keys(routeConfig)),
+    );
+
     fixture.detectChanges();
   });
 
@@ -97,10 +88,11 @@ describe("EntityDetailsComponent", () => {
     TestBed.inject(EntityMapperService).save(testChild);
     tick();
     component.creatingNew = false;
-    routeObserver.next({ get: () => testChild.getId() });
+    component.id = testChild.getId();
+    component.ngOnChanges(simpleChangesFor(component, "id"));
     tick();
 
-    component.panels.forEach((p) =>
+    component.panelsComponents.forEach((p) =>
       p.components.forEach((c) => {
         const panelConfig = c.config as PanelConfig;
         expect(panelConfig.entity).toEqual(testChild);
@@ -117,12 +109,13 @@ describe("EntityDetailsComponent", () => {
     tick();
     spyOn(entityMapper, "load").and.callThrough();
 
-    routeObserver.next({ get: () => testChild.getId() });
+    component.id = testChild.getId();
+    component.ngOnChanges(simpleChangesFor(component, "id"));
     expect(component.isLoading).toBeTrue();
     tick();
 
     expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
-    expect(component.entity).toBe(testChild);
+    expect(component.record).toBe(testChild);
     expect(component.isLoading).toBeFalse();
   }));
 
@@ -130,7 +123,16 @@ describe("EntityDetailsComponent", () => {
     mockAbility.cannot.and.returnValue(true);
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
-    routeObserver.next({ get: () => "new" });
+    component.id = "new";
+    component.ngOnChanges(simpleChangesFor(component, "id"));
     expect(router.navigate).toHaveBeenCalled();
   });
 });
+
+function simpleChangesFor(component, ...properties: string[]) {
+  const changes = {};
+  for (const p of properties) {
+    changes[p] = new SimpleChange(null, component[p], true);
+  }
+  return changes;
+}

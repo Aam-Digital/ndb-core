@@ -5,7 +5,6 @@ import {
   MatDatepickerInputEvent,
   MatDatepickerModule,
 } from "@angular/material/datepicker";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -13,6 +12,7 @@ import { ErrorHintComponent } from "../../../common-components/error-hint/error-
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { DateWithAge } from "../dateWithAge";
 
 @DynamicComponent("EditAge")
 @Component({
