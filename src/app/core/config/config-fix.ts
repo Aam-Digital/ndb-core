@@ -1043,7 +1043,7 @@ export const defaultJsonConfig = {
         "name": "isMotivatedDuringClass",
         "schema": {
           "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
+          "additional": "rating-answer",
           "label": $localize`:Label for a child attribute:Motivated`,
           description: $localize`:Description for a child attribute:The child is motivated during the class.`
         }
@@ -1052,7 +1052,7 @@ export const defaultJsonConfig = {
         "name": "isParticipatingInClass",
         "schema": {
           "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
+          "additional": "rating-answer",
           "label": $localize`:Label for a child attribute:Participating`,
           description: $localize`:Description for a child attribute:The child is actively participating in the class.`
         }
@@ -1061,7 +1061,7 @@ export const defaultJsonConfig = {
         "name": "isInteractingWithOthers",
         "schema": {
           "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
+          "additional": "rating-answer",
           "label": $localize`:Label for a child attribute:Interacting`,
           description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
         }
@@ -1070,7 +1070,7 @@ export const defaultJsonConfig = {
         "name": "doesHomework",
         "schema": {
           "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
+          "additional": "rating-answer",
           "label": $localize`:Label for a child attribute:Homework`,
           description: $localize`:Description for a child attribute:The child does its homework.`
         }
@@ -1079,7 +1079,7 @@ export const defaultJsonConfig = {
         "name": "asksQuestions",
         "schema": {
           "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
+          "additional": "rating-answer",
           "label": $localize`:Label for a child attribute:Asking Questions`,
           description: $localize`:Description for a child attribute:The child is asking questions during the class.`
         }

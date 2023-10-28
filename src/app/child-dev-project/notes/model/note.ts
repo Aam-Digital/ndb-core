@@ -123,7 +123,7 @@ export class Note extends Entity {
   @DatabaseField({
     label: $localize`:Label for the category of a note:Category`,
     dataType: "configurable-enum",
-    innerDataType: INTERACTION_TYPE_CONFIG_ID,
+    additional: INTERACTION_TYPE_CONFIG_ID,
     anonymize: "retain",
   })
   category: InteractionType;
@@ -166,7 +166,7 @@ export class Note extends Entity {
   @DatabaseField({
     label: $localize`:Status of a note:Status`,
     dataType: "configurable-enum",
-    innerDataType: "warning-levels",
+    additional: "warning-levels",
     anonymize: "retain",
   })
   warningLevel: Ordering.EnumValue;
