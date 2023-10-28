@@ -93,7 +93,7 @@ describe("FilterGeneratorService", () => {
     const schemaAdditional = {
       id: "otherEnum",
       dataType: schema.dataType,
-      additional: schema.innerDataType,
+      additional: schema.additional,
     };
     Note.schema.set("otherEnum", schemaAdditional);
 
@@ -113,7 +113,7 @@ describe("FilterGeneratorService", () => {
       id: "otherEnum",
       dataType: "array",
       innerDataType: schema.dataType,
-      additional: schema.innerDataType,
+      additional: schema.additional,
     };
     Note.schema.set("otherEnum", schemaArray);
 

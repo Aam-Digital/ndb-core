@@ -66,7 +66,8 @@ export class RecurringActivity extends Entity {
   @DatabaseField({
     label: $localize`:Label for the interaction type of a recurring activity:Type`,
     dataType: "configurable-enum",
-    innerDataType: INTERACTION_TYPE_CONFIG_ID,
+    additional: INTERACTION_TYPE_CONFIG_ID,
+    anonymize: "retain",
   })
   type: InteractionType;
 
