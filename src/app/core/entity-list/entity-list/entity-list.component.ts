@@ -302,4 +302,7 @@ export class EntityListComponent<T extends Entity>
   getDatafromsubRecord(data: any) {
     this.duplicatesdata = data
   }
+  clearDuplicatesData() {
+    this.duplicatesdata = null; 
+  }
 }

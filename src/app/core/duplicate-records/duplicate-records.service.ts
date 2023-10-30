@@ -9,14 +9,16 @@ import { Entity } from '../entity/model/entity';
 })
 
 export class DuplicateRecordsService {
+  get: jasmine.Spy<jasmine.Func>;
   constructor(
     private entitymapperservice: EntityMapperService,
     private entityTypes: EntityRegistry,
     private entityService: EntitySchemaService,
   ) {}
   async getDataforDuplicate(data: any, schemaName: string) {
-   const transformedData = this.transformData(data, schemaName)
-   this.entitymapperservice.saveAll(transformedData);
+   const duplicateData = this.transformData(data, schemaName)
+   console.log("duplicate",duplicateData)
+   this.entitymapperservice.saveAll(duplicateData);
   }
 
   transformData(originalData: any, schemaName: string): any {
@@ -33,12 +35,15 @@ export class DuplicateRecordsService {
   
     data.forEach((item)=> {
       const entity = new entityConstructor();
-      item.name = `Copy of ${item.name}`;
       for (const key of keys) {
+        if (key === 'name' || key === 'title' || key === 'subject') {
+          item[key] = `Copy of ${item[key]}`;
+        }
        entity[key] = item[key];
       }
       copyData.push(entity);
     })
+
     return copyData ;
   }
 }

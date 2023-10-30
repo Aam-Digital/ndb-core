@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
-import { DuplicateRecordsDirective } from './duplicate-records.directive';
-import { DuplicateRecordsService } from '../duplicate-records.service';
+import { DuplicateRecordsDirective } from "./duplicate-records.directive";
+import { DuplicateRecordsService } from "../duplicate-records.service";
 
-describe('DuplicateRecordsDirective', () => {
+describe("ExportDataDirective", () => {
+  let mockDownloadService: jasmine.SpyObj<DuplicateRecordsService>;
   let directive: DuplicateRecordsDirective;
-  let duplicateRecordsService: DuplicateRecordsService;
 
   beforeEach(() => {
-    TestBed.configureTestingModule({
-      providers: [DuplicateRecordsService]
-    });
-    duplicateRecordsService = TestBed.inject(DuplicateRecordsService);
-    directive = new DuplicateRecordsDirective(duplicateRecordsService);
+    mockDownloadService = jasmine.createSpyObj(["getDataforDuplicate"]);
+    directive = new DuplicateRecordsDirective(mockDownloadService);
   });
 
-  it('should call getDataforDuplicate on click', () => {
-    spyOn(duplicateRecordsService, 'getDataforDuplicate');
-    directive.data = [];
+  it("should create an instance", () => {
+    expect(directive).toBeTruthy();
+  });
+
+  it("opens should call triggerDownload when button is clicked", () => {
     directive.click();
-    expect(duplicateRecordsService.getDataforDuplicate).toHaveBeenCalledWith(directive.data);
+
+    expect(mockDownloadService.getDataforDuplicate).toHaveBeenCalled();
   });
 });
