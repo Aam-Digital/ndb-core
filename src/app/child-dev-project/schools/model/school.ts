@@ -5,11 +5,12 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 
 @DatabaseEntity("School")
 export class School extends Entity {
-  static toStringAttributes = ["name"];
-  static icon: IconName = "university";
-  static label = $localize`:label for entity:School`;
-  static labelPlural = $localize`:label (plural) for entity:Schools`;
-  static color = "#9E9D24";
+  static override toStringAttributes = ["name"];
+  static override icon: IconName = "university";
+  static override label = $localize`:label for entity:School`;
+  static override labelPlural = $localize`:label (plural) for entity:Schools`;
+  static override color = "#9E9D24";
+  static override hasPII = true;
 
   static getBlockComponent(): string {
     return "SchoolBlock";

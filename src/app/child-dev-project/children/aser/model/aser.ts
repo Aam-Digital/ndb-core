@@ -25,6 +25,8 @@ import { PLACEHOLDERS } from "../../../../core/entity/schema/entity-schema-field
 
 @DatabaseEntity("Aser")
 export class Aser extends Entity {
+  static override hasPII = true;
+
   @DatabaseField() child: string; // id of Child entity
   @DatabaseField({
     label: $localize`:Label for date of the ASER results:Date`,

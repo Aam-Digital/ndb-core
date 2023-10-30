@@ -24,7 +24,7 @@ import { DefaultDatatype } from "./default-datatype/default.datatype";
 import { FileDatatype } from "../../features/file/file.datatype";
 import moment from "moment";
 
-describe("EntityRemoveService", () => {
+fdescribe("EntityRemoveService", () => {
   let service: EntityRemoveService;
   let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
@@ -34,7 +34,7 @@ describe("EntityRemoveService", () => {
   let mockRouter;
 
   beforeEach(() => {
-    mockedEntityMapper = jasmine.createSpyObj(["remove", "save"]);
+    mockedEntityMapper = jasmine.createSpyObj(["remove", "save", "saveAll"]);
     snackBarSpy = jasmine.createSpyObj(["open"]);
     mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
     mockSnackBarRef.onAction.and.returnValue(of());
@@ -108,7 +108,7 @@ describe("EntityRemoveService", () => {
     tick();
 
     expect(mockedEntityMapper.remove).toHaveBeenCalled();
-    expect(mockedEntityMapper.save).toHaveBeenCalledWith(entity, true);
+    expect(mockedEntityMapper.saveAll).toHaveBeenCalledWith([entity], true);
     expect(mockRouter.navigate).toHaveBeenCalled();
   }));
 
@@ -139,6 +139,8 @@ describe("EntityRemoveService", () => {
    */
   @DatabaseEntity("AnonymizableEntity")
   class AnonymizableEntity extends Entity {
+    static override hasPII = true;
+
     @DatabaseField() defaultField: string;
 
     @DatabaseField({ anonymize: "retain" })
@@ -285,7 +287,7 @@ describe("EntityRemoveService", () => {
     expect(mockFileService.removeFile).toHaveBeenCalled();
   });
 
-  fit("should not anonymize fields if Entity type is set to not have PII", async () => {
+  it("should not anonymize fields if Entity type is set to not have PII", async () => {
     AnonymizableEntity.hasPII = false;
     const entity = new AnonymizableEntity();
     entity.defaultField = "test";
@@ -299,7 +301,7 @@ describe("EntityRemoveService", () => {
     );
 
     // reset actual state
-    AnonymizableEntity.hasPII = false;
+    AnonymizableEntity.hasPII = true;
   });
 
   //
@@ -311,6 +313,8 @@ describe("EntityRemoveService", () => {
 
   @DatabaseEntity("RelatedEntity")
   class RelatedEntity extends Entity {
+    static override hasPII = true;
+
     @DatabaseField() name: string;
 
     @DatabaseField({
@@ -337,7 +341,7 @@ describe("EntityRemoveService", () => {
   // for direct references (e.g. x.referencesToRetainAnonymized --> recursively calls anonymize on referenced entities)
   //    see EntityDatatype & EntityArrayDatatype for unit tests
 
-  fit("should not cascade delete the related entity if the entity holding the reference is deleted", async () => {
+  it("should not cascade delete the related entity if the entity holding the reference is deleted", async () => {
     const entity2 = RelatedEntity.create("other entity");
     const entity = RelatedEntity.create("entity user acts on", {
       refComposite: [entity2.getId()],
@@ -345,7 +349,7 @@ describe("EntityRemoveService", () => {
 
     await testAction("delete", entity, [entity, entity2], [entity2]);
   });
-  fit("should not cascade anonymize the related entity if the entity holding the reference is anonymized", async () => {
+  it("should not cascade anonymize the related entity if the entity holding the reference is anonymized", async () => {
     const entity2 = RelatedEntity.create("other entity");
     const entity = RelatedEntity.create("entity user acts on", {
       refComposite: [entity2.getId()],
@@ -362,7 +366,7 @@ describe("EntityRemoveService", () => {
     );
   });
 
-  fit("should cascade delete the 'composite'-type entity that references the entity user acts on", async () => {
+  it("should cascade delete the 'composite'-type entity that references the entity user acts on", async () => {
     const entity = RelatedEntity.create("entity user acts on");
 
     const ref1 = RelatedEntity.create("ref", {
@@ -371,7 +375,7 @@ describe("EntityRemoveService", () => {
 
     await testAction("delete", entity, [entity, ref1], []);
   });
-  fit("should cascade anonymize the 'composite'-type entity that references the entity user acts on", async () => {
+  it("should cascade anonymize the 'composite'-type entity that references the entity user acts on", async () => {
     const entity = RelatedEntity.create("entity user acts on");
 
     const ref1 = RelatedEntity.create("ref", {
@@ -389,7 +393,7 @@ describe("EntityRemoveService", () => {
     );
   });
 
-  fit("should not cascade delete the 'composite'-type entity that still references additional other entities but remove id", async () => {
+  it("should not cascade delete the 'composite'-type entity that still references additional other entities but remove id", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -408,7 +412,7 @@ describe("EntityRemoveService", () => {
       ],
     );
   });
-  fit("should not cascade anonymize the 'composite'-type entity that still references additional other entities but ask user", async () => {
+  it("should not cascade anonymize the 'composite'-type entity that still references additional other entities but ask user", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -429,7 +433,7 @@ describe("EntityRemoveService", () => {
     );
   });
 
-  fit("should cascade delete the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
+  it("should cascade delete the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -440,7 +444,7 @@ describe("EntityRemoveService", () => {
 
     await testAction("delete", entity, [entity, ref1, entity2], [entity2]);
   });
-  fit("should cascade anonymize the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
+  it("should cascade anonymize the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -464,7 +468,7 @@ describe("EntityRemoveService", () => {
     );
   });
 
-  fit("should not cascade delete the 'aggregate'-type entity that only references the entity user acts on but remove id", async () => {
+  it("should not cascade delete the 'aggregate'-type entity that only references the entity user acts on but remove id", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const ref1 = RelatedEntity.create("ref", {
       refAggregate: [entity.getId()],
@@ -478,7 +482,7 @@ describe("EntityRemoveService", () => {
       [RelatedEntity.create("ref", { refAggregate: [] })],
     );
   });
-  fit("should not cascade anonymize the 'aggregate'-type entity that only references the entity user acts on but ask user", async () => {
+  it("should not cascade anonymize the 'aggregate'-type entity that only references the entity user acts on but ask user", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const ref1 = RelatedEntity.create("ref", {
       refAggregate: [entity.getId()],
@@ -493,7 +497,7 @@ describe("EntityRemoveService", () => {
     );
   });
 
-  fit("should not cascade delete the 'aggregate'-type entity that still references additional other entities but remove id", async () => {
+  it("should not cascade delete the 'aggregate'-type entity that still references additional other entities but remove id", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -511,7 +515,7 @@ describe("EntityRemoveService", () => {
       ],
     );
   });
-  fit("should not cascade anonymize the 'aggregate'-type entity that still references additional other entities but ask user", async () => {
+  it("should not cascade anonymize the 'aggregate'-type entity that still references additional other entities but ask user", async () => {
     const entity = RelatedEntity.create("entity user acts on");
     const entity2 = RelatedEntity.create("other entity");
 
@@ -532,7 +536,7 @@ describe("EntityRemoveService", () => {
     );
   });
 
-  fit("should undo delete for all cascadingly affected entities", fakeAsync(() => {
+  it("should undo delete for all cascadingly affected entities", fakeAsync(() => {
     const onSnackbarAction = new Subject<void>();
     mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
 

@@ -5,8 +5,8 @@ import { Entity } from "../../entity/model/entity";
 describe("EntityTypeLabelPipe", () => {
   class TestEntity extends Entity {
     static ENTITY_TYPE = "TestEntity";
-    static label = "test record";
-    static labelPlural = "test records";
+    static override label = "test record";
+    static override labelPlural = "test records";
   }
 
   let pipe: EntityTypeLabelPipe;

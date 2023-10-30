@@ -26,11 +26,12 @@ export type Center = ConfigurableEnumValue;
 
 @DatabaseEntity("Child")
 export class Child extends Entity {
-  static toStringAttributes = ["name"];
-  static icon: IconName = "child";
-  static label = $localize`:label for entity:Participant`;
-  static labelPlural = $localize`:label (plural) for entity:Participants`;
-  static color = "#1565C0";
+  static override toStringAttributes = ["name"];
+  static override icon: IconName = "child";
+  static override label = $localize`:label for entity:Participant`;
+  static override labelPlural = $localize`:label (plural) for entity:Participants`;
+  static override color = "#1565C0";
+  static override hasPII = true;
 
   static create(name: string): Child {
     const instance = new Child();

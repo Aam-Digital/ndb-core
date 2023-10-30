@@ -121,8 +121,8 @@ describe("Entity", () => {
   it("should convert toString using toStringAttributes config or special [anonymized] label", () => {
     @DatabaseEntity("TestEntityForToString")
     class TestEntity extends Entity {
-      static toStringAttributes = ["firstname", "lastname"];
-      static label = "TestEntity";
+      static override toStringAttributes = ["firstname", "lastname"];
+      static override label = "TestEntity";
       firstname = "John";
       lastname = "Doe";
     }
