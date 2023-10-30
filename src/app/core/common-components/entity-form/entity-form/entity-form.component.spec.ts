@@ -6,7 +6,7 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form.service";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
+import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent<Child>;

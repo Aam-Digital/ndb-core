@@ -3,9 +3,9 @@ import { HistoricalEntityData } from "./model/historical-entity-data";
 import { Injectable } from "@angular/core";
 import { DemoChildGenerator } from "../../child-dev-project/children/demo-data-generators/demo-child-generator.service";
 import { faker } from "../../core/demo-data/faker";
-import { ENTITY_CONFIG_PREFIX } from "../../core/entity/model/entity";
 import { DemoConfigGeneratorService } from "../../core/config/demo-config-generator.service";
 import { ratingAnswers } from "./model/rating-answers";
+import { EntityConfigService } from "../../core/entity/entity-config.service";
 
 export class DemoHistoricalDataConfig {
   minCountAttributes: number;
@@ -35,7 +35,8 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
   protected generateEntities(): HistoricalEntityData[] {
     const config = this.configGenerator.entities[0];
     const attributes: any[] = config.data[
-      ENTITY_CONFIG_PREFIX + HistoricalEntityData.ENTITY_TYPE
+      EntityConfigService.PREFIX_ENTITY_CONFIG +
+        HistoricalEntityData.ENTITY_TYPE
     ].attributes.map((attr) => attr.name);
     const entities: HistoricalEntityData[] = [];
     for (const child of this.childrenGenerator.entities) {
