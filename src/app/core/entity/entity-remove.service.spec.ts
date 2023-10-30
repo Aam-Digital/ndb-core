@@ -336,7 +336,6 @@ describe("EntityRemoveService", () => {
 
   // for direct references (e.g. x.referencesToRetainAnonymized --> recursively calls anonymize on referenced entities)
   //    see EntityDatatype & EntityArrayDatatype for unit tests
-  // TODO: should we allow an additional option to delete a direct referenced entity completely during anonymization?
 
   fit("should not cascade delete the related entity if the entity holding the reference is deleted", async () => {
     const entity2 = RelatedEntity.create("other entity");
