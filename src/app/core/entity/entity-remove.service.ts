@@ -183,18 +183,14 @@ export class EntityRemoveService {
           ) {
             // is only composite
             const furtherAffectedEntities = await compositeAction(e);
-            furtherAffectedEntities.forEach((e) =>
-              originalAffectedEntitiesForUndo.push(e.copy()),
-            );
+            originalAffectedEntitiesForUndo.push(...furtherAffectedEntities);
           } else {
             const furtherAffectedEntities = await aggregateAction(
               e,
               refField,
               entity,
             );
-            furtherAffectedEntities.forEach((e) =>
-              originalAffectedEntitiesForUndo.push(e.copy()),
-            );
+            originalAffectedEntitiesForUndo.push(...furtherAffectedEntities);
           }
         }
       }
