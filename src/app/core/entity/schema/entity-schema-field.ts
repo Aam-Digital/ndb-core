@@ -68,10 +68,13 @@ export interface EntitySchemaField {
   additional?: any;
 
   /**
-   * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.
-   *
-   * You can pass any kind of value here to allow complex custom datytypes' transformations
-   * that are not part of the core datatypes and therefore not included in this core interface.
+   * (Optional) If the dataType of this field references another entity,
+   *    define the role of this relationship for the entity containing this field.
+   * 
+   * i.e. how "important" is the entity this field is referencing?
+   * Does this the entity containing this field (not the referenced entity) still have meaning after the referenced entity has been deleted?
+   * 
+   * see options of the `EntityReferenceRole` type
    */
   entityReferenceRole?: EntityReferenceRole;
 
