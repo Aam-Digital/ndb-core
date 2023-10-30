@@ -36,9 +36,9 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Note")
 export class Note extends Entity {
-  static override toStringAttributes = ["subject"];
-  static override label = $localize`:label for entity:Note`;
-  static override labelPlural = $localize`:label (plural) for entity:Notes`;
+  static toStringAttributes = ["subject"];
+  static label = $localize`:label for entity:Note`;
+  static labelPlural = $localize`:label (plural) for entity:Notes`;
   static override hasPII = true;
 
   static create(

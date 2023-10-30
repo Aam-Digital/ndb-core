@@ -11,7 +11,7 @@ import { ConfigurableEnumValue } from "../basic-datatypes/configurable-enum/conf
 @DatabaseEntity("SiteSettings")
 export class SiteSettings extends Entity {
   static ENTITY_ID = "global";
-  static override label = $localize`Site settings`;
+  static label = $localize`Site settings`;
 
   static create(value: Partial<SiteSettings>): SiteSettings {
     return Object.assign(new SiteSettings(), value);

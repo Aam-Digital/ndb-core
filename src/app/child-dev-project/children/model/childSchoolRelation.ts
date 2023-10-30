@@ -9,6 +9,8 @@ import { TimePeriod } from "../../../core/entity-details/related-time-period-ent
  */
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends TimePeriod {
+  static override hasPII = true;
+
   @DatabaseField({
     label: $localize`:Label for the child of a relation:Child`,
     dataType: "entity",

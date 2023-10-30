@@ -28,10 +28,10 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
  */
 @DatabaseEntity("User")
 export class User extends Entity {
-  static override toStringAttributes = ["name"];
-  static override icon: IconName = "user";
-  static override label = $localize`:label for entity:User`;
-  static override labelPlural = $localize`:label (plural) for entity:Users`;
+  static toStringAttributes = ["name"];
+  static icon: IconName = "user";
+  static label = $localize`:label for entity:User`;
+  static labelPlural = $localize`:label (plural) for entity:Users`;
   static override hasPII = true;
 
   /** username used for login and identification */

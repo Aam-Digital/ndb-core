@@ -184,7 +184,7 @@ describe("EntitySelectComponent", () => {
 
   it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
     class Person extends Entity {
-      static override toStringAttributes = ["firstname", "lastname"];
+      static toStringAttributes = ["firstname", "lastname"];
 
       firstname: string;
       lastname: string;

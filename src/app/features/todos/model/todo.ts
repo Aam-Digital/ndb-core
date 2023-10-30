@@ -29,9 +29,9 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("Todo")
 export class Todo extends Entity {
-  static override label = $localize`:label for entity:Task`;
-  static override labelPlural = $localize`:label (plural) for entity:Tasks`;
-  static override toStringAttributes = ["subject"];
+  static label = $localize`:label for entity:Task`;
+  static labelPlural = $localize`:label (plural) for entity:Tasks`;
+  static toStringAttributes = ["subject"];
   static override hasPII = true;
 
   static create(properties: Partial<Todo>): Todo {
