@@ -115,6 +115,7 @@ export class EntityListComponent<T extends Entity>
 
   filterObj: DataFilter<T>;
   filterString = "";
+  filteredData = [] ;
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -267,6 +268,8 @@ export class EntityListComponent<T extends Entity>
     this.analyticsService.eventTrack("list_filter_freetext", {
       category: this.entityConstructor?.ENTITY_TYPE,
     });
+
+    this.receiveDataFromSubrecord(this.entityTable.recordsDataSource.filteredData);
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -304,7 +307,9 @@ export class EntityListComponent<T extends Entity>
   }
 
   receiveDataFromSubrecord(filterData: any[]) {
-    // Handle the data received from EntitySubrecordComponent
-    console.log('Received data from EntitySubrecordComponent:', filterData);
+    this.filteredData = [];
+    filterData.map((item) => {
+      this.filteredData.push(item.record);
+    });
   }
 }

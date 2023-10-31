@@ -286,7 +286,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
    sendRecordsBack( filterData: any) {
-    console.log("data",filterData)
     this.sendDataBack.emit(filterData);
   }
 
