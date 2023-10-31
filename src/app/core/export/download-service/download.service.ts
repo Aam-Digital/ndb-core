@@ -93,14 +93,14 @@ export class DownloadService {
   async createCsv(data: any[]): Promise<string> {
     let entityConstructor: any;
 
-    if (data.length > 0 && typeof data[0]?.getConstructor === 'function') {
-        entityConstructor = data[0].getConstructor();
+    if (data.length > 0 && typeof data[0]?.getConstructor === "function") {
+      entityConstructor = data[0].getConstructor();
     }
     const keys = new Set<string>();
     data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
 
     data = data.map(transformToReadableFormat);
-   
+
     if (!entityConstructor) {
       return this.papa.unparse(data, {
         quotes: true,
@@ -114,14 +114,14 @@ export class DownloadService {
     return result;
   }
 
-  exportFile(data: any[], entityConstructor: { schema: any; }) {
+  exportFile(data: any[], entityConstructor: { schema: any }) {
     const entitySchema = entityConstructor.schema;
     const columnLabels = new Map<string, EntitySchemaField>();
-    
-    entitySchema.forEach((value: { label: EntitySchemaField; }, key: string) => {
+
+    entitySchema.forEach((value: { label: EntitySchemaField }, key: string) => {
       if (value.label) columnLabels.set(key, value.label);
     });
-  
+
     const exportEntities = data.map((item) => {
       let newItem = {};
       for (const key in item) {
@@ -134,13 +134,19 @@ export class DownloadService {
 
     const columnKeys: string[] = Array.from(columnLabels.keys());
     const labels: any[] = Array.from(columnLabels.values());
-    const orderedData: any[] = exportEntities.map(item =>
-        columnKeys.map(key => item[key])
+    const orderedData: any[] = exportEntities.map((item) =>
+      columnKeys.map((key) => item[key]),
     );
-     
-    return this.papa.unparse({
-      fields: labels,
-      data: orderedData,
-    });
+
+    return this.papa.unparse(
+      {
+        fields: labels,
+        data: orderedData,
+      },
+      {
+        quotes: true,
+        newline: DownloadService.SEPARATOR_ROW,
+      },
+    );
   }
 }
