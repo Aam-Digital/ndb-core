@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { EntityRemoveService } from "../../entity/entity-remove.service";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { Entity } from "../../entity/model/entity";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -87,7 +87,7 @@ export class EntityActionsMenuComponent implements OnChanges {
     },
   ];
 
-  constructor(private entityRemoveService: EntityRemoveService) {}
+  constructor(private entityRemoveService: EntityActionsService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entity) {

@@ -12,7 +12,7 @@ import { EntityDetailsConfig, PanelConfig } from "../EntityDetailsConfig";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityRemoveService } from "../../entity/entity-remove.service";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 
@@ -58,7 +58,7 @@ describe("EntityDetailsComponent", () => {
   };
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-  let mockEntityRemoveService: jasmine.SpyObj<EntityRemoveService>;
+  let mockEntityRemoveService: jasmine.SpyObj<EntityActionsService>;
   let mockAbility: jasmine.SpyObj<EntityAbility>;
 
   beforeEach(waitForAsync(() => {
@@ -76,7 +76,7 @@ describe("EntityDetailsComponent", () => {
       providers: [
         { provide: ActivatedRoute, useValue: mockedRoute },
         { provide: ChildrenService, useValue: mockChildrenService },
-        { provide: EntityRemoveService, useValue: mockEntityRemoveService },
+        { provide: EntityActionsService, useValue: mockEntityRemoveService },
         { provide: EntityAbility, useValue: mockAbility },
       ],
     }).compileComponents();
