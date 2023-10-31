@@ -225,4 +225,11 @@ export const coreComponents: ComponentTuple[] = [
         "./entity-details/related-time-period-entities/related-time-period-entities.component"
       ).then((c) => c.RelatedTimePeriodEntitiesComponent),
   ],
+  [
+    "RelatedEntitiesWithSummary",
+    () =>
+      import(
+        "./entity-details/related-entities-with-summary/related-entities-with-summary.component"
+      ).then((c) => c.RelatedEntitiesWithSummaryComponent),
+  ],
 ];
