@@ -1,11 +1,12 @@
 import { TestBed } from '@angular/core/testing';
 import { DuplicateRecordsService } from './duplicate-records.service';
 import { EntityMapperService } from '../entity/entity-mapper/entity-mapper.service';
-import { EntityRegistry } from '../entity/database-entity.decorator';
+import { DatabaseEntity, EntityRegistry } from '../entity/database-entity.decorator';
 import { EntitySchemaService } from '../entity/schema/entity-schema.service';
 import { Database } from '../database/database'; 
 import { SessionService } from '../session/session-service/session.service';
 import { Entity } from '../entity/model/entity';
+import { DatabaseField } from '../entity/database-field.decorator';
 
 describe('DuplicateRecordsService', () => {
   let service: DuplicateRecordsService;
@@ -38,36 +39,32 @@ describe('DuplicateRecordsService', () => {
     expect(service).toBeTruthy();
   });
 
-  it('should duplicate and save data', async () => {
-    const schemaName = 'your_schema_name'; // Replace with your actual schema name
+  it('should duplicate record and save data', async () => {
+    @DatabaseEntity("DuplicateTestEntity")
+    class DuplicateTestEntity extends Entity {
+      @DatabaseField() string: String;
+      @DatabaseField() boolProperty: boolean;
+    }
+
+    const duplicateTestEntity = new DuplicateTestEntity();
+    duplicateTestEntity.string = "TestName"
+    duplicateTestEntity.boolProperty = true;
+
+    const schemaName =DuplicateTestEntity.ENTITY_TYPE; 
+   
     const originalData = [
       {
-        record: new Entity(/* Add entity properties here */),
-      },
-      // Add more data as needed
+        record: duplicateTestEntity
+      }
     ];
-
+    
     const transformDataSpy = spyOn(service, 'transformData').and.callThrough();
     const saveAllSpy = spyOn(entityMapperService, 'saveAll');
 
+    const data = transformDataSpy(originalData, schemaName)
+ 
     await service.getDataforDuplicate(originalData, schemaName);
-
     expect(transformDataSpy).toHaveBeenCalledWith(originalData, schemaName);
-    // expect(saveAllSpy).toHaveBeenCalledWith();
-  });
-
-  it('should transform data correctly', () => {
-    const schemaName = 'your_schema_name'; // Replace with your actual schema name
-    const originalData = [
-      {
-        record: new Entity(/* Add entity properties here */),
-      },
-      // Add more data as needed
-    ];
-
-    const transformedData = service.transformData(originalData, schemaName);
-
-    // Add your expectations for the transformed data here
-    // For example, expect transformedData to have the correct format.
+    expect(saveAllSpy).toHaveBeenCalledWith([duplicateTestEntity]);
   });
 });
