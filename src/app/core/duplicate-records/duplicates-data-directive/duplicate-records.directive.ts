@@ -8,7 +8,7 @@ import { DuplicateRecordsService } from '../duplicate-records.service';
 
 export class DuplicateRecordsDirective {
   @Input("appDuplicateRecords") data: any = [];
-  @Input("angularticsCategory") entityType: string = ''; // Input for entityType
+  @Input() entityType: string = ''; 
 
   constructor( private duplicaterecords: DuplicateRecordsService) {}
  

@@ -17,7 +17,6 @@ export class DuplicateRecordsService {
   ) {}
   async getDataforDuplicate(data: any, schemaName: string) {
    const duplicateData = this.transformData(data, schemaName)
-   console.log("duplicate",duplicateData)
    this.entitymapperservice.saveAll(duplicateData);
   }
 

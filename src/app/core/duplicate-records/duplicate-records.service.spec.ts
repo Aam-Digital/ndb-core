@@ -13,7 +13,7 @@ describe('DuplicateRecordsService', () => {
   let entityMapperService: EntityMapperService;
   let entityTypes: EntityRegistry;
   let entitySchemaService: EntitySchemaService;
-  let database: Database; // declare the database service
+  let database: Database; 
   let sessionService: SessionService;
 
   beforeEach(() => {
@@ -65,6 +65,6 @@ describe('DuplicateRecordsService', () => {
  
     await service.getDataforDuplicate(originalData, schemaName);
     expect(transformDataSpy).toHaveBeenCalledWith(originalData, schemaName);
-    expect(saveAllSpy).toHaveBeenCalledWith([duplicateTestEntity]);
+    expect(saveAllSpy).toHaveBeenCalledWith(data);
   });
 });

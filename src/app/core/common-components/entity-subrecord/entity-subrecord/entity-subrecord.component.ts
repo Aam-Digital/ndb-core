@@ -473,7 +473,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     return this.screenWidthObserver.currentScreenSize() >= numericValue;
   }
 
-  selectedRows =[]
+  selectedRows = []
   selectRow (event: any, row:T[]) {
     if (event.checked) {
       this.selectedRows.push(row); 
