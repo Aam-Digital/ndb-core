@@ -8,16 +8,18 @@ import { Entity } from '../entity/model/entity';
   providedIn: 'root'
 })
 
-export class DuplicateRecordsService {
+export class DuplicateRecordService {
   get: jasmine.Spy<jasmine.Func>;
   constructor(
     private entitymapperservice: EntityMapperService,
     private entityTypes: EntityRegistry,
     private entityService: EntitySchemaService,
   ) {}
-  async getDataforDuplicate(data: any, schemaName: string) {
-   const duplicateData = this.transformData(data, schemaName)
-   this.entitymapperservice.saveAll(duplicateData);
+
+  async duplicateRecord(data: any, schemaName: string) {
+   const duplicateData = this.transformData(data, schemaName);
+   const results = await this.entitymapperservice.saveAll(duplicateData);
+   return results;
   }
 
   transformData(originalData: any, schemaName: string): any {

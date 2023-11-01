@@ -1,5 +1,5 @@
 import { Directive, HostListener, Input } from "@angular/core";
-import { DuplicateRecordsService } from '../duplicate-records.service';
+import { DuplicateRecordService } from '../duplicate-records.service';
 
 @Directive({
   selector: '[appDuplicateRecords]',
@@ -10,10 +10,10 @@ export class DuplicateRecordsDirective {
   @Input("appDuplicateRecords") data: any = [];
   @Input() entityType: string = ''; 
 
-  constructor( private duplicaterecords: DuplicateRecordsService) {}
- 
+  constructor( private duplicateRecordService: DuplicateRecordService) {}
+  
   @HostListener("click")
   click(){
-    return this.duplicaterecords.getDataforDuplicate(this.data, this.entityType);
+    return this.duplicateRecordService.duplicateRecord(this.data, this.entityType);
   }
 }

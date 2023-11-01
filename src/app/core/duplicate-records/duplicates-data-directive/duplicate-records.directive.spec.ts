@@ -1,12 +1,12 @@
 import { DuplicateRecordsDirective } from "./duplicate-records.directive";
-import { DuplicateRecordsService } from "../duplicate-records.service";
+import { DuplicateRecordService } from "../duplicate-records.service";
 
 describe("ExportDataDirective", () => {
-  let mockDuplicateRecord: jasmine.SpyObj<DuplicateRecordsService>;
+  let mockDuplicateRecord: jasmine.SpyObj<DuplicateRecordService>;
   let directive: DuplicateRecordsDirective;
 
   beforeEach(() => {
-    mockDuplicateRecord = jasmine.createSpyObj(["getDataforDuplicate"]);
+    mockDuplicateRecord = jasmine.createSpyObj(["duplicateRecord"]);
     directive = new DuplicateRecordsDirective(mockDuplicateRecord);
   });
 
@@ -17,6 +17,6 @@ describe("ExportDataDirective", () => {
   it("should call DuplicateRecord when button is clicked", () => {
     directive.click();
 
-    expect(mockDuplicateRecord.getDataforDuplicate).toHaveBeenCalled();
+    expect(mockDuplicateRecord.duplicateRecord).toHaveBeenCalled();
   });
 });
