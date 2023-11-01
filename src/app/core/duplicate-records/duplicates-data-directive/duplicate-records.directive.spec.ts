@@ -1,21 +1,21 @@
 import { DuplicateRecordDirective } from "./duplicate-records.directive";
 import { DuplicateRecordService } from "../duplicate-records.service";
 
-describe("ExportDataDirective", () => {
+describe("DuplicateRecordDirective", () => {
   let mockDuplicateRecord: jasmine.SpyObj<DuplicateRecordService>;
-  let directive: DuplicateRecordDirective;
+  let duplicateRecordDirective: DuplicateRecordDirective;
 
   beforeEach(() => {
     mockDuplicateRecord = jasmine.createSpyObj(["duplicateRecord"]);
-    directive = new DuplicateRecordDirective(mockDuplicateRecord);
+    duplicateRecordDirective = new DuplicateRecordDirective(mockDuplicateRecord);
   });
 
-  it("should create an instance", () => {
-    expect(directive).toBeTruthy();
+  it("should create an instance DuplicateRecordDirective ", () => {
+    expect(duplicateRecordDirective).toBeTruthy();
   });
 
   it("should call DuplicateRecord when button is clicked", () => {
-    directive.click();
+    duplicateRecordDirective.click();
 
     expect(mockDuplicateRecord.duplicateRecord).toHaveBeenCalled();
   });
