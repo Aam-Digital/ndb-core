@@ -28,36 +28,13 @@
     Adding new {{ this.entityConstructor?.label }}
   </app-view-title>
 
-  <button
-    mat-icon-button
-    class="additional-button"
-    color="primary"
-    [matMenuTriggerFor]="additional"
-  >
-    <fa-icon icon="ellipsis-v"></fa-icon>
-  </button>
+  <app-entity-actions-menu
+    [entity]="entity"
+    [navigateOnDelete]="true"
+  ></app-entity-actions-menu>
 </div>
 
-<mat-menu #additional>
-  <button
-    mat-menu-item
-    (click)="entityRemoveService.remove(entity, true)"
-    *appDisabledEntityOperation="{
-      entity: entity,
-      operation: 'delete'
-    }"
-    angulartics2On="click"
-    [angularticsCategory]="config?.entity"
-    angularticsAction="entity_delete"
-  >
-    <fa-icon
-      class="standard-icon-with-text color-accent"
-      aria-label="remove element"
-      icon="trash"
-    ></fa-icon>
-    <span i18n="Generic delete button"> Delete </span>
-  </button>
-</mat-menu>
+<app-entity-archived-info [entity]="entity"></app-entity-archived-info>
 
 <mat-tab-group
   (selectedIndexChange)="trackTabChanged($event)"

@@ -9,6 +9,9 @@ import { DatabaseField } from '../entity/database-field.decorator';
 import { CoreModule } from '../core.module';
 import { ComponentRegistry } from 'app/dynamic-components';
 import { UpdateMetadata } from '../entity/model/update-metadata';
+import { MatDialog } from '@angular/material/dialog';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { FileService } from 'app/features/file/file.service';
 
 describe('DuplicateRecordsService', () => {
   let service: DuplicateRecordService;
@@ -23,6 +26,8 @@ describe('DuplicateRecordsService', () => {
   @DatabaseField() updated: UpdateMetadata;
   @DatabaseField() inactive: boolean;
   }
+
+  const schemaName = DuplicateTestEntity.ENTITY_TYPE;
   
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -33,6 +38,9 @@ describe('DuplicateRecordsService', () => {
         EntityMapperService,
         SessionService,
         { provide: EntityRegistry, useValue: entityRegistry },
+        { provide: MatDialog, useValue: {} },
+        { provide: MatSnackBar, useValue: {} },
+        { provide: FileService, useValue: {} },
         ComponentRegistry,]
     });
     service = TestBed.inject(DuplicateRecordService);
@@ -49,7 +57,6 @@ describe('DuplicateRecordsService', () => {
     duplicateTest.name = "TestName"
     duplicateTest.boolProperty = true;
     
-    const schemaName = DuplicateTestEntity.ENTITY_TYPE;
     const originalData = [
       {
         record: duplicateTest
@@ -64,23 +71,12 @@ describe('DuplicateRecordsService', () => {
     expect(transformedData[0].boolProperty).toBe(true); 
   });
 
-  it('should duplicate record and save data', async () => {
-    @DatabaseEntity("SaveTestEntity")
-    class SaveTestEntity extends Entity {
-    @DatabaseField() name: String;
-    @DatabaseField() boolProperty: boolean;
-    @DatabaseField() created: UpdateMetadata;
-    @DatabaseField() updated: UpdateMetadata;
-    @DatabaseField() inactive: boolean;
-    }
-  
-    const duplicateTestEntity = new SaveTestEntity();
+  it('should save duplicate record', async () => {
+    const duplicateTestEntity = new DuplicateTestEntity();
     duplicateTestEntity.name = "TestName"
     duplicateTestEntity.boolProperty = true;
     duplicateTestEntity.inactive = false;
 
-    const schemaName =DuplicateTestEntity.ENTITY_TYPE; 
-    
     const originalData = [
       {
         record: duplicateTestEntity

@@ -222,9 +222,12 @@ export class ChildrenService {
           map: `(doc) => {
             if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.children) || !doc.date) return;
-            var d = new Date(doc.date || null);
-            var dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
-            emit(dString);
+            if (doc.date.length === 10) {
+              emit(doc.date);
+            } else {            
+              var d = new Date(doc.date || null);
+              emit(d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"));
+            }
           }`,
         },
       },
@@ -246,12 +249,15 @@ export class ChildrenService {
           map: `(doc) => {
             if (!doc._id.startsWith("${Note.ENTITY_TYPE}")) return;
             if (!Array.isArray(doc.relatedEntities)) return;
-
-            var d = new Date(doc.date || null);
-            var dateString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0")
-
+            var dString;
+            if (doc.date && doc.date.length === 10) {
+              dString = doc.date;
+            } else {            
+              var d = new Date(doc.date || null);
+              dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
+            }
             doc.relatedEntities.forEach((relatedEntity) => {
-              emit([relatedEntity, dateString]);
+              emit([relatedEntity, dString]);
             });
           }`,
         },

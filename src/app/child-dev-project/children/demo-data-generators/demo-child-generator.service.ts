@@ -8,7 +8,7 @@ import { faker } from "../../../core/demo-data/faker";
 import { centersWithProbability } from "./fixtures/centers";
 import { genders } from "../model/genders";
 import { calculateAge } from "../../../utils/utils";
-import { DateWithAge } from "../model/dateWithAge";
+import { DateWithAge } from "../../../core/basic-datatypes/date-with-age/dateWithAge";
 
 export class DemoChildConfig {
   count: number;

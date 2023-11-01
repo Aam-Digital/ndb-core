@@ -3,7 +3,7 @@
 # Run the following commands from the root folder to build, run and kill the application
 # >> docker build -f build/Dockerfile -t aam-digital .
 # >> docker run -p=80:80 aam-digital
-FROM node:16.14.2-alpine3.15 as builder
+FROM node:16.14.2-alpine3.15 AS builder
 WORKDIR /app
 
 COPY package*.json ./
@@ -32,6 +32,12 @@ RUN if [ "$UPLOAD_COVERAGE" = true ] ; then \
     chmod +x ./cc-test-reporter &&\
     ./cc-test-reporter before-build ; fi
 
+ARG TZ
+RUN if [ -n "${TZ}" ] ; then \
+    apk --no-cache add tzdata && \
+    cp /usr/share/zoneinfo/Europe/Brussels /etc/localtime && \
+    echo "$TZ" >  /etc/timezone ; fi
+
 # When set to true, chromium is installed an tests are executed
 ARG RUN_TESTS=false
 ARG CHROME_BIN=/usr/bin/chromium-browser
@@ -59,12 +65,12 @@ ARG SENTRY_ORG
 ARG SENTRY_PROJECT
 RUN if [ "$SENTRY_AUTH_TOKEN" != "" ] ; then \
     npm install -g @sentry/cli &&\
-    sentry-cli --auth-token=$SENTRY_AUTH_TOKEN releases --org=$SENTRY_ORG --project=$SENTRY_PROJECT files ndb-core@$APP_VERSION upload-sourcemaps dist  && \
+    sentry-cli --auth-token="$SENTRY_AUTH_TOKEN" releases --org="$SENTRY_ORG" --project="$SENTRY_PROJECT" files "ndb-core@$APP_VERSION" upload-sourcemaps dist  && \
     rm dist/*.map ; fi
 
 ### PROD image
 
-FROM nginx:1.25.2-alpine
+FROM nginx:1.25.3-alpine
 COPY ./build/default.conf /etc/nginx/templates/default.conf
 COPY --from=builder /app/dist/ /usr/share/nginx/html
 # The port on which the app will run in the Docker container

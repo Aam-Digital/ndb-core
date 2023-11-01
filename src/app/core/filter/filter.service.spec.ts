@@ -6,6 +6,7 @@ import { DataFilter } from "../common-components/entity-subrecord/entity-subreco
 import { Note } from "../../child-dev-project/notes/model/note";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
+import moment from "moment";
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -67,11 +68,11 @@ describe("FilterService", () => {
   });
 
   it("should support filtering dates with day granularity", () => {
-    const n1 = Note.create(new Date("2022-01-01"));
-    const n2 = Note.create(new Date("2022-01-02"));
-    const n3 = Note.create(new Date("2022-01-03"));
-    const n4 = Note.create(new Date("2022-01-04"));
-    const n5 = Note.create(new Date("2022-01-05"));
+    const n1 = Note.create(moment("2022-01-01").toDate());
+    const n2 = Note.create(moment("2022-01-02").toDate());
+    const n3 = Note.create(moment("2022-01-03").toDate());
+    const n4 = Note.create(moment("2022-01-04").toDate());
+    const n5 = Note.create(moment("2022-01-05").toDate());
     const notes = [n1, n2, n3, n4, n5];
 
     let predicate = service.getFilterPredicate({

@@ -43,7 +43,7 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { DuplicateRecordsDirective } from "app/core/duplicate-records/duplicates-data-directive/duplicate-records.directive";
+import { DuplicateRecordDirective } from "app/core/duplicate-records/duplicates-data-directive/duplicate-records.directive";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -79,7 +79,7 @@ import { DuplicateRecordsDirective } from "app/core/duplicate-records/duplicates
     ExportDataDirective,
     DisableEntityOperationDirective,
     RouterLink,
-   DuplicateRecordsDirective,
+   DuplicateRecordDirective,
   ],
   standalone: true,
 })
@@ -90,8 +90,14 @@ export class EntityListComponent<T extends Entity>
   @Input() allEntities: T[];
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
+
   @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
+
+  /** initial / default state whether to include archived records in the list */
+  @Input() showInactive: boolean;
+
   @Input() isLoading: boolean;
+
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
   @Input() duplicatesdata : T[];

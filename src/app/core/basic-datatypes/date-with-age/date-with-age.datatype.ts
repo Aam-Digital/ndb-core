@@ -1,6 +1,6 @@
 import { DateOnlyDatatype } from "../date-only/date-only.datatype";
-import { DateWithAge } from "../../../child-dev-project/children/model/dateWithAge";
 import { Injectable } from "@angular/core";
+import { DateWithAge } from "./dateWithAge";
 
 /**
  * Similar to the 'date-only' datatype but it uses the `DateWithAge` class which provides the `age` function.

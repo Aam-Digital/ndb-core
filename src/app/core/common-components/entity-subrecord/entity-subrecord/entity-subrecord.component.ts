@@ -51,6 +51,7 @@ import { DisableEntityOperationDirective } from "../../../permissions/permission
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
 import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -89,6 +90,7 @@ export interface TableRow<T extends Entity> {
     Angulartics2Module,
     ListPaginatorComponent,
     MatCheckboxModule,
+    MatSlideToggleModule,
   ],
   standalone: true,
 })
@@ -98,6 +100,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
   
   @Output() sendBackData: EventEmitter<any[]> = new EventEmitter<any[]>
+
+  @Input() showInactive = false;
+  @Output() showInactiveChange = new EventEmitter<boolean>();
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
@@ -184,6 +189,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   private initDataSource() {
+    this.filter = this.filter ?? ({} as DataFilter<T>);
+    this.filterActiveInactive();
+    this.predicate = this.filterService.getFilterPredicate(this.filter);
+
     this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
@@ -232,8 +241,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         }
       }
     }
-    if (changes.hasOwnProperty("filter") && this.filter) {
-      this.predicate = this.filterService.getFilterPredicate(this.filter);
+    if (
+      (changes.hasOwnProperty("filter") && this.filter) ||
+      changes.hasOwnProperty("showInactive")
+    ) {
       reinitDataSource = true;
     }
     if (changes.hasOwnProperty("columns")) {
@@ -484,5 +495,22 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       }
     }
     this.sendBackData.emit(this.selectedRows)
+  }
+
+  filterActiveInactive() {
+    if (this.showInactive) {
+      // @ts-ignore type has issues with getters
+      delete this.filter.isActive;
+    } else {
+      this.filter["isActive"] = true;
+    }
+  }
+
+  setActiveInactiveFilter(newValue: boolean) {
+    if (newValue !== this.showInactive) {
+      this.showInactive = newValue;
+      this.showInactiveChange.emit(newValue);
+    }
+    this.initDataSource();
   }
 }

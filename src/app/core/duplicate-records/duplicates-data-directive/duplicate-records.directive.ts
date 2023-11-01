@@ -6,7 +6,7 @@ import { DuplicateRecordService } from '../duplicate-records.service';
   standalone: true,
 })
 
-export class DuplicateRecordsDirective {
+export class DuplicateRecordDirective {
   @Input("appDuplicateRecords") data: any = [];
   @Input() entityType: string = ''; 
 
