@@ -79,7 +79,7 @@ import { DuplicateRecordDirective } from "app/core/duplicate-records/duplicates-
     ExportDataDirective,
     DisableEntityOperationDirective,
     RouterLink,
-   DuplicateRecordDirective,
+    DuplicateRecordDirective,
   ],
   standalone: true,
 })
@@ -315,7 +315,7 @@ export class EntityListComponent<T extends Entity>
       }
     }
   }
-  
+
   clearSelectedRows() {
     this.selectedRows = []; 
   }
