@@ -1,5 +1,6 @@
 import {
   AfterViewInit,
+  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -55,6 +56,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
  */
 @RouteTarget("EntityList")
 @Component({
+  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
@@ -86,7 +88,6 @@ export class EntityListComponent<T extends Entity>
   implements OnChanges, AfterViewInit
 {
   @Input() allEntities: T[];
-  @Input() subrecordData: any; 
   @Input() listConfig: EntityListConfig;
   @Input() entityConstructor: EntityConstructor<T>;
 
@@ -269,7 +270,7 @@ export class EntityListComponent<T extends Entity>
       category: this.entityConstructor?.ENTITY_TYPE,
     });
 
-    this.receiveDataFromSubrecord(this.entityTable.recordsDataSource.filteredData);
+    this.getFilteredData(this.entityTable.recordsDataSource.filteredData);
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -306,7 +307,7 @@ export class EntityListComponent<T extends Entity>
     this.addNewClick.emit();
   }
 
-  receiveDataFromSubrecord(filterData: any[]) {
+  getFilteredData(filterData: any[]) {
     this.filteredData = [];
     filterData.map((item) => {
       this.filteredData.push(item.record);

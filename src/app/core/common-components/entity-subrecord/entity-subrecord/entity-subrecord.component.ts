@@ -94,7 +94,7 @@ export interface TableRow<T extends Entity> {
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
-  @Output() sendDataBack: EventEmitter<any[]> = new EventEmitter<any[]>()
+  @Output() filteredData: EventEmitter<any[]> = new EventEmitter<any[]>()
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
   @Input() showInactive = false;
@@ -192,7 +192,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
-      this.sendRecordsBack(this.recordsDataSource.data)
+      this.setFilteredData(this.recordsDataSource.data)
       
   }
 
@@ -285,8 +285,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     }
   }
 
-   sendRecordsBack( filterData: any) {
-    this.sendDataBack.emit(filterData);
+   setFilteredData( filterData: any) {
+    this.filteredData.emit(filterData);
   }
 
   private sortDefault() {
