@@ -193,8 +193,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       .filter(this.predicate)
       .map((record) => ({ record }));
 
-    this.setFilteredData(this.recordsDataSource.data)
-      
+    this.setFilteredData(this.recordsDataSource.data);
   }
 
   private entityConstructorIsAvailable(): boolean {
