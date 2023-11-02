@@ -74,6 +74,25 @@ fdescribe("EntityAnonymizeService", () => {
     static create(properties: Partial<AnonymizableEntity>) {
       return Object.assign(new AnonymizableEntity(), properties);
     }
+
+    static expectAnonymized(
+      entityId: string,
+      expectedEntity: AnonymizableEntity,
+      checkAllBaseProperties = false,
+    ) {
+      const actualResult = entityMapper
+        .get(expectedEntity.getType(), entityId)
+        .copy();
+
+      if (!checkAllBaseProperties) {
+        delete actualResult.inactive;
+        delete actualResult.anonymized;
+      }
+
+      expect(comparableEntityData(actualResult)).toEqual(
+        comparableEntityData(expectedEntity),
+      );
+    }
   }
 
   it("should anonymize and only keep properties marked to be retained", async () => {
@@ -82,9 +101,9 @@ fdescribe("EntityAnonymizeService", () => {
     entity.retainedField = "test";
 
     await service.anonymizeEntity(entity);
-    const actualResult = entityMapper.get(entity.getType(), entity.getId());
 
-    expect(actualResult).toEqual(
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
       AnonymizableEntity.create({ retainedField: "test" }),
     );
   });
@@ -94,9 +113,11 @@ fdescribe("EntityAnonymizeService", () => {
     entity.defaultField = "test";
 
     await service.anonymizeEntity(entity);
-    const actualResult = entityMapper.get(entity.getType(), entity.getId());
 
-    expect(actualResult).toEqual(AnonymizableEntity.create({}));
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
+      AnonymizableEntity.create({}),
+    );
   });
 
   it("should anonymize and retain created and updated", async () => {
@@ -110,9 +131,9 @@ fdescribe("EntityAnonymizeService", () => {
     });
 
     await service.anonymizeEntity(entity);
-    const actualResult = entityMapper.get(entity.getType(), entity.getId());
 
-    expect(actualResult).toEqual(
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
       AnonymizableEntity.create({
         inactive: true,
         anonymized: true,
@@ -126,9 +147,9 @@ fdescribe("EntityAnonymizeService", () => {
     entity.defaultField = "test";
 
     await service.anonymizeEntity(entity);
-    const actualResult = entityMapper.get(entity.getType(), entity.getId());
 
-    expect(actualResult).toEqual(
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
       AnonymizableEntity.create({ inactive: true, anonymized: true }),
     );
   });
@@ -141,9 +162,9 @@ fdescribe("EntityAnonymizeService", () => {
     ];
 
     await service.anonymizeEntity(entity);
-    const actualResult = entityMapper.get(entity.getType(), entity.getId());
 
-    expect(actualResult).toEqual(
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
       AnonymizableEntity.create({
         retainAnonymizedDates: [
           moment("2023-07-01").toDate(),
@@ -158,9 +179,11 @@ fdescribe("EntityAnonymizeService", () => {
     entity.file = "test-file.txt";
 
     await service.anonymizeEntity(entity);
-    const actualResult = entityMapper.get(entity.getType(), entity.getId());
 
-    expect(actualResult).toEqual(AnonymizableEntity.create({}));
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
+      AnonymizableEntity.create({}),
+    );
     expect(mockFileService.removeFile).toHaveBeenCalled();
   });
 
@@ -170,10 +193,11 @@ fdescribe("EntityAnonymizeService", () => {
     entity.defaultField = "test";
 
     await service.anonymizeEntity(entity);
-    const actualResult = entityMapper.get(entity.getType(), entity.getId());
 
-    expect(actualResult).toEqual(
+    AnonymizableEntity.expectAnonymized(
+      entity.getId(),
       AnonymizableEntity.create({ defaultField: "test" }),
+      true,
     );
 
     // reset actual state
