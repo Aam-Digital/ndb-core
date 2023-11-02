@@ -88,6 +88,5 @@ describe('DuplicateRecordsService', () => {
     await service.duplicateRecord(originalData, schemaName);
     expect(transformDataSpy).toHaveBeenCalledWith(originalData, schemaName);
     expect(saveAllSpy).toHaveBeenCalled();
-
   });
 });

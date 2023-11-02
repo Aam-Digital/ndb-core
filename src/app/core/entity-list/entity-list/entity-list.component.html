@@ -128,7 +128,7 @@
     [isLoading]="isLoading"
     [filter]="filterObj"
     [defaultSort]="listConfig?.defaultSort"
-    (sendBackData)="getDatafromsubRecord($event)"
+    (selectedData)="setSelectedRows($event)"
     [showInactive]="showInactive"
   ></app-entity-subrecord>
 </ng-template>
@@ -204,9 +204,9 @@
   </button>
   <button
     mat-menu-item
-    [appDuplicateRecords]="duplicatesdata"
+    [appDuplicateRecords]="selectedRows"
     angulartics2On="click"
-    (click)="clearDuplicatesData()"
+    (click)="clearSelectedRows()"
     [entityType]="entityConstructor?.ENTITY_TYPE"
     angularticsAction="duplicates records"
   >

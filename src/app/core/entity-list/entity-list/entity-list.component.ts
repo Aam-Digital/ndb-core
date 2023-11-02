@@ -100,7 +100,7 @@ export class EntityListComponent<T extends Entity>
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
-  @Input() duplicatesdata : T[];
+  @Input() selectedRows : T[] = [];
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
@@ -305,10 +305,18 @@ export class EntityListComponent<T extends Entity>
     this.addNewClick.emit();
   }
 
-  getDatafromsubRecord(data: any) {
-    this.duplicatesdata = data
+  setSelectedRows(data: any) {
+    if (data.event.checked) {
+      this.selectedRows.push(data.row); 
+    } else {
+      const index = this.selectedRows.indexOf(data.row);
+      if (index > -1) {
+        this.selectedRows.splice(index, 1);
+      }
+    }
   }
-  clearDuplicatesData() {
-    this.duplicatesdata = null; 
+  
+  clearSelectedRows() {
+    this.selectedRows = []; 
   }
 }
