@@ -267,7 +267,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("records")) {
       this.sortDefault();
     }
-  
     this.listenToEntityUpdates();
   }
 
