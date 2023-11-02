@@ -192,7 +192,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
-      this.setFilteredData(this.recordsDataSource.data)
+
+    this.setFilteredData(this.recordsDataSource.data)
       
   }
 
@@ -267,6 +268,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("records")) {
       this.sortDefault();
     }
+
     this.listenToEntityUpdates();
   }
 
@@ -284,7 +286,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     }
   }
 
-   setFilteredData( filterData: any) {
+  setFilteredData( filterData: any) {
     this.filteredData.emit(filterData);
   }
 

@@ -269,6 +269,7 @@ export class EntityListComponent<T extends Entity>
     this.analyticsService.eventTrack("list_filter_freetext", {
       category: this.entityConstructor?.ENTITY_TYPE,
     });
+    
     this.getFilteredData(this.entityTable.recordsDataSource.filteredData);
   }
 
