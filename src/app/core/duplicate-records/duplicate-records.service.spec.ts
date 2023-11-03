@@ -20,11 +20,11 @@ describe('DuplicateRecordsService', () => {
 
   @DatabaseEntity("DuplicateTestEntity")
   class DuplicateTestEntity extends Entity {
-  @DatabaseField() name: String;
-  @DatabaseField() boolProperty: boolean;
-  @DatabaseField() created: UpdateMetadata;
-  @DatabaseField() updated: UpdateMetadata;
-  @DatabaseField() inactive: boolean;
+    @DatabaseField() name: String;
+    @DatabaseField() boolProperty: boolean;
+    @DatabaseField() created: UpdateMetadata;
+    @DatabaseField() updated: UpdateMetadata;
+    @DatabaseField() inactive: boolean;
   }
 
   const schemaName = DuplicateTestEntity.ENTITY_TYPE;
@@ -58,8 +58,8 @@ describe('DuplicateRecordsService', () => {
     duplicateTest.boolProperty = true;
     
     const originalData = [duplicateTest];
+    const transformedData = service.clone(originalData, schemaName);
 
-    const transformedData = service.transformData(originalData, schemaName);
     expect(transformedData[0]).toBeInstanceOf(Entity);
     expect(transformedData[0]._id).toBeDefined(); 
     expect(transformedData[0]._id).not.toBe(duplicateTest['_id']); 
@@ -74,11 +74,12 @@ describe('DuplicateRecordsService', () => {
     duplicateTestEntity.inactive = false;
 
     const originalData = [duplicateTestEntity];
-    
-    const transformDataSpy = spyOn(service, 'transformData').and.callThrough();
+    const cloneSpy = spyOn(service, 'clone').and.callThrough();
     const saveAllSpy = spyOn(entityMapperService, 'saveAll');
+
     await service.duplicateRecord(originalData, schemaName);
-    expect(transformDataSpy).toHaveBeenCalledWith(originalData, schemaName);
+
+    expect(cloneSpy).toHaveBeenCalledWith(originalData, schemaName);
     expect(saveAllSpy).toHaveBeenCalled();
   });
 });

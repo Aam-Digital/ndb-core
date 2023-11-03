@@ -17,12 +17,12 @@ export class DuplicateRecordService {
   ) {}
 
   async duplicateRecord(sourceData: Entity[], schemaName: string)  {
-    const cloneData = this.transformData(sourceData, schemaName);
-    return await this.entitymapperservice.saveAll(cloneData);
+    const duplicateData = this.clone(sourceData, schemaName);
+    return await this.entitymapperservice.saveAll(duplicateData);
   }
 
-  transformData(sourceData: Entity[], schemaName: string): any {
-    const cloneData = [];
+  clone(sourceData: Entity[], schemaName: string): any {
+    const duplicateData = [];
     const entityConstructor = this.entityTypes.get(schemaName);
     const keys = [...entityConstructor.schema.keys()].filter(key => key !== '_id' && key !== '_rev');
 
@@ -36,8 +36,8 @@ export class DuplicateRecordService {
         }
        entity[key] = entityformat[key];
       }
-      cloneData.push(entity);
+      duplicateData.push(entity);
     })
-    return cloneData;
+    return duplicateData;
   }
 }
