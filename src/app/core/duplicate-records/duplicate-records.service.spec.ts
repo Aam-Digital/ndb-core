@@ -57,11 +57,7 @@ describe('DuplicateRecordsService', () => {
     duplicateTest.name = "TestName"
     duplicateTest.boolProperty = true;
     
-    const originalData = [
-      {
-        record: duplicateTest
-      }
-    ];
+    const originalData = [duplicateTest];
 
     const transformedData = service.transformData(originalData, schemaName);
     expect(transformedData[0]).toBeInstanceOf(Entity);
@@ -77,12 +73,8 @@ describe('DuplicateRecordsService', () => {
     duplicateTestEntity.boolProperty = true;
     duplicateTestEntity.inactive = false;
 
-    const originalData = [
-      {
-        record: duplicateTestEntity
-      }
-    ];
-  
+    const originalData = [duplicateTestEntity];
+    
     const transformDataSpy = spyOn(service, 'transformData').and.callThrough();
     const saveAllSpy = spyOn(entityMapperService, 'saveAll');
     await service.duplicateRecord(originalData, schemaName);

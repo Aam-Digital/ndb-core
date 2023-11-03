@@ -1140,9 +1140,5 @@ export const defaultJsonConfig = {
         }
       ]
     }
-  },
-  
-  "flashMessage": {
-    "message": "Please select the row(s) you want to duplicate." 
   }
 };

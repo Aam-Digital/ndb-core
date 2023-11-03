@@ -43,7 +43,8 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { DuplicateRecordDirective } from "app/core/duplicate-records/duplicates-data-directive/duplicate-records.directive";
+import { DuplicateRecordService } from "app/core/duplicate-records/duplicate-records.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -59,6 +60,7 @@ import { DuplicateRecordDirective } from "app/core/duplicate-records/duplicates-
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
+  providers: [DuplicateRecordService],
   imports: [
     NgIf,
     NgStyle,
@@ -79,7 +81,7 @@ import { DuplicateRecordDirective } from "app/core/duplicate-records/duplicates-
     ExportDataDirective,
     DisableEntityOperationDirective,
     RouterLink,
-    DuplicateRecordDirective,
+    MatTooltipModule,
   ],
   standalone: true,
 })
@@ -150,6 +152,7 @@ export class EntityListComponent<T extends Entity>
     private entityMapperService: EntityMapperService,
     private entities: EntityRegistry,
     private dialog: MatDialog,
+    private  duplicateRecord: DuplicateRecordService,
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
@@ -307,16 +310,17 @@ export class EntityListComponent<T extends Entity>
 
   setSelectedRows(data: any) {
     if (data.event.checked) {
-      this.selectedRows.push(data.row); 
+      this.selectedRows.push(data.row.record); 
     } else {
-      const index = this.selectedRows.indexOf(data.row);
+      const index = this.selectedRows.indexOf(data.row.record);
       if (index > -1) {
         this.selectedRows.splice(index, 1);
       }
     }
   }
 
-  clearSelectedRows() {
+  duplicateRecords() {
+    this.duplicateRecord.duplicateRecord(this.selectedRows, this.entityConstructor?.ENTITY_TYPE);
     this.selectedRows = []; 
   }
 }
