@@ -44,7 +44,6 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { AlertService } from "app/core/alerts/alert.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
