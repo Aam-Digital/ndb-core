@@ -94,7 +94,7 @@ export interface TableRow<T extends Entity> {
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
-  @Output() filteredData: EventEmitter<any[]> = new EventEmitter<any[]>()
+  @Output() filteredData: EventEmitter<TableRow<T>[]>= new EventEmitter<TableRow<T>[]>()
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
   @Input() showInactive = false;
@@ -193,7 +193,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       .filter(this.predicate)
       .map((record) => ({ record }));
 
-    this.setFilteredData(this.recordsDataSource.data);
+    this.filteredData.emit(this.recordsDataSource.data);
   }
 
   private entityConstructorIsAvailable(): boolean {
@@ -283,10 +283,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         this.loggingService.warn(`Error creating form definitions: ${err}`);
       }
     }
-  }
-
-  setFilteredData( filterData: any) {
-    this.filteredData.emit(filterData);
   }
 
   private sortDefault() {
