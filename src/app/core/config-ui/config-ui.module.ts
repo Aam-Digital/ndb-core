@@ -21,6 +21,7 @@ import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatSidenavModule } from "@angular/material/sidenav";
 
 const routes: Routes = [
   {
@@ -54,6 +55,7 @@ const routes: Routes = [
     FontAwesomeModule,
     MatTooltipModule,
     CdkDragHandle,
+    MatSidenavModule,
   ],
   exports: [RouterModule, ConfigEntityComponent],
   declarations: [ConfigEntityComponent, ConfigEntityFormComponent],

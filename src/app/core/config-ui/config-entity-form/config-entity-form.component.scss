@@ -20,17 +20,23 @@
 
 :host ::ng-deep input[disabled] { pointer-events: none }
 
+.toolbar {
+  width: 300px;
+  padding: sizes.$small;
+}
 
+.drop-list {
+  min-height: 60px;
+  height: 99%;
+}
 .fields-group-list {
   border: dashed 1px #ccc;
-  min-height: 60px;
-  height: 100%;
   border-radius: 4px;
   overflow: hidden;
   display: block;
 }
 
-.drop-create-area {
+.drop-area-hint {
   text-align: center;
   padding: sizes.$small;
   color: colors.$hint-text
@@ -54,13 +60,14 @@
 }
 
 .cdk-drag-placeholder {
-  opacity: 0;
+  opacity: 0.4;
+  border-color: green;
 }
 
 .cdk-drag-animating {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }
 
-.fields-group-list.cdk-drop-list-dragging .admin-form-field:not(.cdk-drag-placeholder) {
+.drop-list.cdk-drop-list-dragging .admin-form-field:not(.cdk-drag-placeholder) {
   transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
 }

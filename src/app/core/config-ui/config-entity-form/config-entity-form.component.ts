@@ -27,6 +27,7 @@ export class ConfigEntityFormComponent implements OnChanges {
 
   dummyEntity: Entity;
   dummyForm: FormGroup;
+  availableFields: any[] = [{ id: null, label: "Create New Field" }];
 
   constructor(
     private entityFormService: EntityFormService,
@@ -59,7 +60,7 @@ export class ConfigEntityFormComponent implements OnChanges {
     this.dummyForm.disable();
   }
 
-  openFieldConfig(field: FormFieldConfig) {
+  openFieldConfig(field: FormFieldConfig | {}) {
     this.matDialog.open(ConfigFieldComponent, {
       width: "99%",
       maxHeight: "90vh",
@@ -68,6 +69,14 @@ export class ConfigEntityFormComponent implements OnChanges {
   }
 
   drop(event: CdkDragDrop<any, any>) {
+    const item = event.previousContainer.data[event.previousIndex];
+    if (item.id === null) {
+      const newField = {};
+      event.container.data.splice(event.currentIndex, 0, newField);
+      this.openFieldConfig(newField);
+      return;
+    }
+
     if (event.previousContainer === event.container) {
       moveItemInArray(
         event.container.data,
@@ -82,8 +91,6 @@ export class ConfigEntityFormComponent implements OnChanges {
         event.currentIndex,
       );
     }
-
-    console.log(this.fieldGroups);
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
