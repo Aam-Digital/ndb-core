@@ -207,7 +207,7 @@
     mat-menu-item
     (click)="duplicateRecords()"
     [disabled]="selectedRows.length === 0"
-    [matTooltip]="selectedRows.length === 0 ? 'Please select rows' : ''" i18n-matTooltip
+    matTooltip="Please select rows" [matTooltipDisabled]="selectedRows.length > 0" i18n-matTooltip
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
