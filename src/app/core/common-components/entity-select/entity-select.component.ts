@@ -138,13 +138,16 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * Setting the disabled state of the input element
    * @param disabled whether the input element should be disabled
    */
+  private _disabled = false;
+
   @Input() set disabled(disabled: boolean) {
-    if (disabled) {
-      this.formControl.disable();
-    } else {
-      this.formControl.enable();
-    }
+    this._disabled = disabled;
   }
+  
+  get isDisabled(): boolean {
+    return this._disabled;
+  }
+  
 
   /**
    * true when this is loading and false when it's ready.

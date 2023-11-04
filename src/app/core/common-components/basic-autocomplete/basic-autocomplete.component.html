@@ -10,15 +10,17 @@
 />
 
 <!--Display-->
-<input
-  [hidden]="focused"
-  [disabled]="_disabled"
-  matInput
-  style="text-overflow: ellipsis"
-  (focusin)="showAutocomplete()"
-  (focusout)="showAutocomplete()"
-  [value]="displayText"
-/>
+<mat-chip-row aria-label="Fish selection">
+  <input
+    [hidden]="focused"
+    [disabled]="_disabled"
+    matInput
+    style="text-overflow: ellipsis"
+    (focusin)="showAutocomplete()"
+    (focusout)="showAutocomplete()"
+    [value]="displayText"
+  />
+</mat-chip-row>
 
 <mat-autocomplete
   [disableRipple]="true"
@@ -31,15 +33,17 @@
     *ngFor="let item of autocompleteSuggestedOptions | async"
     [value]="item"
   >
-    <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-    <ng-container *ngIf="!templateRef; else useTemplate">{{
-      item.asString
-    }}</ng-container>
-    <ng-template
-      #useTemplate
-      [ngTemplateOutlet]="templateRef"
-      [ngTemplateOutletContext]="{ $implicit: item.initial }"
-    ></ng-template>
+    <mat-chip-row aria-label="Fish selection">
+      <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+       <ng-container *ngIf="!templateRef; else useTemplate">{{
+        item.asString
+      }}</ng-container>
+      <ng-template
+        #useTemplate
+        [ngTemplateOutlet]="templateRef"
+        [ngTemplateOutletContext]="{ $implicit: item.initial }"
+      ></ng-template>
+    </mat-chip-row>
   </mat-option>
   <mat-option
     *ngIf="createOption && showAddOption && inputElement.value"

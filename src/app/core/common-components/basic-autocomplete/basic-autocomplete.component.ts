@@ -36,7 +36,7 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import { concat, of } from "rxjs";
-
+import { MatChipsModule } from '@angular/material/chips';
 interface SelectableOption<O, V> {
   initial: O;
   asString: string;
@@ -62,6 +62,7 @@ interface SelectableOption<O, V> {
     NgIf,
     AsyncPipe,
     NgTemplateOutlet,
+    MatChipsModule ,
   ],
 })
 export class BasicAutocompleteComponent<O, V = O>
