@@ -99,7 +99,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   @Input() showInactive = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
-  
+
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
     if (columns) {

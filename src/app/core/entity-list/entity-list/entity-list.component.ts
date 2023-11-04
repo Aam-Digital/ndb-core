@@ -305,5 +305,4 @@ export class EntityListComponent<T extends Entity>
     }
     this.addNewClick.emit();
   }
-
 }
