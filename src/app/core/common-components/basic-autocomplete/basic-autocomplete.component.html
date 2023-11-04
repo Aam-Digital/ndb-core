@@ -10,7 +10,7 @@
 />
 
 <!--Display-->
-<mat-chip-row aria-label="Fish selection">
+<mat-chip-row>
   <input
     [hidden]="focused"
     [disabled]="_disabled"
@@ -33,7 +33,7 @@
     *ngFor="let item of autocompleteSuggestedOptions | async"
     [value]="item"
   >
-    <mat-chip-row aria-label="Fish selection">
+    <mat-chip-row>
       <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
        <ng-container *ngIf="!templateRef; else useTemplate">{{
         item.asString
