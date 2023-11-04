@@ -16,22 +16,23 @@ export class DuplicateRecordService {
     private entityService: EntitySchemaService,
   ) {}
 
-  async duplicateRecord(sourceData: Entity[], schemaName: string)  {
-    const duplicateData = this.clone(sourceData, schemaName);
+  async duplicateRecord(sourceData: Entity[])  {
+    const duplicateData = this.clone(sourceData);
     return await this.entitymapperservice.saveAll(duplicateData);
   }
 
-  clone(sourceData: Entity[], schemaName: string): any {
+  clone(sourceData: Entity[]): any {
     const duplicateData = [];
-    const entityConstructor = this.entityTypes.get(schemaName);
+    const entityConstructor = sourceData[0].getConstructor();
     const keys = [...entityConstructor.schema.keys()].filter(key => key !== '_id' && key !== '_rev');
 
     sourceData.map((item: Entity)=> {
       const dbEntity = this.entityService.transformEntityToDatabaseFormat(item);
       const entityformat = this.entityService.transformDatabaseToEntityFormat(dbEntity, entityConstructor.schema);
       const entity = new entityConstructor();
+      const attribute = entityConstructor.toStringAttributes[0];
       for (const key of keys) {
-        if (key === 'name' || key === 'title' || key === 'subject') {
+        if (attribute === key) {
           entityformat[key] = `Copy of ${entityformat[key]}`;
         }
        entity[key] = entityformat[key];

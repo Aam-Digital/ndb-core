@@ -14,7 +14,7 @@
         Select
       </th>
       <td mat-cell *matCellDef="let row">
-        <mat-checkbox (click)="$event.stopPropagation()" (change)="selectRow($event, row)"></mat-checkbox>
+        <mat-checkbox (change)="selectRow(row)"></mat-checkbox>
       </td>
     </ng-container>
 

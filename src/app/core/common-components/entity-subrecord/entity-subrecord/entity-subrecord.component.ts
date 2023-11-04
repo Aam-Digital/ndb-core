@@ -99,7 +99,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
   
-  @Output() selectedRecords: EventEmitter<{ event: any, row: T[] }> = new EventEmitter<{ event: any, row: T[] }>
+  @Output() selectedRecords: EventEmitter<T[] > = new EventEmitter<T[]>
 
   @Input() showInactive = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
@@ -484,12 +484,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     return this.screenWidthObserver.currentScreenSize() >= numericValue;
   }
 
-  selectRow (event: any, row: T[]) {
-    const data = {
-      event: event,
-      row: row,
-    };
-    this.selectedRecords.emit(data);
+  selectRow (row: T[]) {
+    this.selectedRecords.emit(row);
   }
 
   filterActiveInactive() {

@@ -20,14 +20,13 @@ describe('DuplicateRecordsService', () => {
 
   @DatabaseEntity("DuplicateTestEntity")
   class DuplicateTestEntity extends Entity {
+    static toStringAttributes = ["name"];
     @DatabaseField() name: String;
     @DatabaseField() boolProperty: boolean;
     @DatabaseField() created: UpdateMetadata;
     @DatabaseField() updated: UpdateMetadata;
     @DatabaseField() inactive: boolean;
   }
-
-  const schemaName = DuplicateTestEntity.ENTITY_TYPE;
   
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -58,7 +57,7 @@ describe('DuplicateRecordsService', () => {
     duplicateTest.boolProperty = true;
     
     const originalData = [duplicateTest];
-    const transformedData = service.clone(originalData, schemaName);
+    const transformedData = service.clone(originalData);
 
     expect(transformedData[0]).toBeInstanceOf(Entity);
     expect(transformedData[0]._id).toBeDefined(); 
@@ -77,9 +76,9 @@ describe('DuplicateRecordsService', () => {
     const cloneSpy = spyOn(service, 'clone').and.callThrough();
     const saveAllSpy = spyOn(entityMapperService, 'saveAll');
 
-    await service.duplicateRecord(originalData, schemaName);
+    await service.duplicateRecord(originalData);
 
-    expect(cloneSpy).toHaveBeenCalledWith(originalData, schemaName);
+    expect(cloneSpy).toHaveBeenCalledWith(originalData);
     expect(saveAllSpy).toHaveBeenCalled();
   });
 });

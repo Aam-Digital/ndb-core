@@ -309,18 +309,16 @@ export class EntityListComponent<T extends Entity>
   }
 
   setSelectedRows(data: any) {
-    if (data.event.checked) {
-      this.selectedRows.push(data.row.record); 
+    const index = this.selectedRows.findIndex((item) => item === data.record);
+    if (index > -1) {
+      this.selectedRows.splice(index, 1);
     } else {
-      const index = this.selectedRows.indexOf(data.row.record);
-      if (index > -1) {
-        this.selectedRows.splice(index, 1);
-      }
+      this.selectedRows.push(data.record);
     }
   }
 
   duplicateRecords() {
-    this.duplicateRecord.duplicateRecord(this.selectedRows, this.entityConstructor?.ENTITY_TYPE);
+    this.duplicateRecord.duplicateRecord(this.selectedRows);
     this.selectedRows = []; 
   }
 }
