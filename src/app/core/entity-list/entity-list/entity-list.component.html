@@ -128,8 +128,9 @@
     [isLoading]="isLoading"
     [filter]="filterObj"
     [defaultSort]="listConfig?.defaultSort"
-    (filteredData)="getFilteredData($event)"
     [showInactive]="showInactive"
+    [filterData]="filterData"
+    (setfilteredData)="filteredData = $event"
   ></app-entity-subrecord>
 </ng-template>
 

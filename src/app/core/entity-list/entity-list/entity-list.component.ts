@@ -98,6 +98,7 @@ export class EntityListComponent<T extends Entity>
 
   @Input() isLoading: boolean;
 
+  @Output() filterData: any[];
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
@@ -265,12 +266,10 @@ export class EntityListComponent<T extends Entity>
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityTable.recordsDataSource.filter = filterValue;
-
+    this.filterData = this.entityTable.recordsDataSource.filteredData;
     this.analyticsService.eventTrack("list_filter_freetext", {
       category: this.entityConstructor?.ENTITY_TYPE,
     });
-    
-    this.getFilteredData(this.entityTable.recordsDataSource.filteredData);
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
@@ -307,10 +306,4 @@ export class EntityListComponent<T extends Entity>
     this.addNewClick.emit();
   }
 
-  getFilteredData(filterData: any[]) {
-    this.filteredData = [];
-    filterData.map((item) => {
-      this.filteredData.push(item.record);
-    });
-  }
 }

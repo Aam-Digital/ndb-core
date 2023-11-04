@@ -94,12 +94,12 @@ export interface TableRow<T extends Entity> {
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
-  @Output() filteredData: EventEmitter<TableRow<T>[]>= new EventEmitter<TableRow<T>[]>()
+  @Output() setfilteredData: EventEmitter<TableRow<T>[]>= new EventEmitter<TableRow<T>[]>()
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
   @Input() showInactive = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
-
+  
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
     if (columns) {
@@ -111,10 +111,11 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
+  filteredData = [] ;
 
   /** data to be displayed, can also be used as two-way-binding */
   @Input() records: T[] = [];
-
+  @Input() filterData: T[]
   /**
    * factory method to create a new instance of the displayed Entity type
    * used when the user adds a new entity to the list.
@@ -192,8 +193,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
-
-    this.filteredData.emit(this.recordsDataSource.data);
   }
 
   private entityConstructorIsAvailable(): boolean {
@@ -268,6 +267,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.sortDefault();
     }
 
+    this.getFilteredData(this.recordsDataSource.filteredData)
     this.listenToEntityUpdates();
   }
 
@@ -497,5 +497,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.showInactiveChange.emit(newValue);
     }
     this.initDataSource();
+  }
+
+  async getFilteredData(filterData: any[]) { 
+    this.filteredData = [];
+    filterData.map((item) => {
+      this.filteredData.push(item.record);
+    });
+    this.setfilteredData.emit(this.filteredData)
   }
 }
