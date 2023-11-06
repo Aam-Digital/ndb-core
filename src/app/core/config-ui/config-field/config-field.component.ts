@@ -25,9 +25,6 @@ import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enu
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
-import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
-import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
-import { MapDatatype } from "../../basic-datatypes/map/map.datatype";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
@@ -148,17 +145,11 @@ export class ConfigFieldComponent {
 
   private initAvailableDatatypes(dataTypes: DefaultDatatype[]) {
     this.dataTypes = dataTypes
-      .filter(
-        (d) =>
-          d.dataType !== ArrayDatatype.dataType &&
-          d.dataType !== SchemaEmbedDatatype.dataType &&
-          d.dataType !== MapDatatype.dataType,
-      )
+      .filter((d) => d.label !== DefaultDatatype.label) // hide "internal" technical dataTypes that did not define a human-readable label
       .map((d) => ({
-        label: d.dataType,
+        label: d.label,
         value: d.dataType,
       }));
-    // TODO: human-readable names for data types
   }
   objectToLabel = (v: { label: string }) => v?.label;
   objectToValue = (v: { value: string }) => v?.value;

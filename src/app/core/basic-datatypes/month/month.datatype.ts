@@ -29,7 +29,8 @@ import { DateOnlyDatatype } from "../date-only/date-only.datatype";
  */
 @Injectable()
 export class MonthDatatype extends DateOnlyDatatype {
-  static dataType = "month";
+  static override dataType = "month";
+  static override label: string = $localize`:datatype-label:month (date without day of month)`;
 
   viewComponent = "DisplayMonth";
   editComponent = "EditMonth";

@@ -35,7 +35,8 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
   Date,
   DBFormat
 > {
-  static dataType = "date";
+  static override dataType = "date";
+  static override label: string = $localize`:datatype-label:date (with time)`;
 
   viewComponent = "DisplayDate";
   editComponent = "EditDate";

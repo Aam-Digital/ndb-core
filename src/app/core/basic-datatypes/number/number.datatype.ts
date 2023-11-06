@@ -32,7 +32,9 @@ import { Injectable } from "@angular/core";
  */
 @Injectable()
 export class NumberDatatype extends DefaultDatatype<number, number> {
-  static dataType = "number";
+  static override dataType = "number";
+  static override label: string = $localize`:datatype-label:number`;
+
   viewComponent = "DisplayText";
   editComponent = "EditNumber";
 

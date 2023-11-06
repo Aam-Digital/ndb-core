@@ -30,7 +30,8 @@ import { DateDatatype } from "../date/date.datatype";
  */
 @Injectable()
 export class DateOnlyDatatype extends DateDatatype<string> {
-  static dataType = "date-only";
+  static override dataType = "date-only";
+  static override label: string = $localize`:datatype-label:date`;
 
   transformToDatabaseFormat(value: Date) {
     if (!(value instanceof Date)) {

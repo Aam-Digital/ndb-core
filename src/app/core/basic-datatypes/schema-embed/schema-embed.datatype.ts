@@ -38,7 +38,7 @@ import { Injectable } from "@angular/core";
  */
 @Injectable()
 export class SchemaEmbedDatatype extends DefaultDatatype {
-  static dataType = "schema-embed";
+  static override dataType = "schema-embed";
 
   constructor(private schemaService: EntitySchemaService) {
     super();

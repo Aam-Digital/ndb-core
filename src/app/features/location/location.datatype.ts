@@ -1,12 +1,13 @@
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
 import { Injectable } from "@angular/core";
-import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 import { GeoResult, GeoService } from "./geo.service";
 import { lastValueFrom } from "rxjs";
 
 @Injectable()
 export class LocationDatatype extends DefaultDatatype<GeoResult, GeoResult> {
-  static dataType = "location";
+  static override dataType = "location";
+  static override label: string = $localize`:datatype-label:location (address + map)`;
+
   editComponent = "EditLocation";
   viewComponent = "ViewLocation";
 
