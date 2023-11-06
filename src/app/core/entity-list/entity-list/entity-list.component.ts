@@ -117,7 +117,7 @@ export class EntityListComponent<T extends Entity>
 
   filterObj: DataFilter<T>;
   filterString = "";
-  filteredData = [] ;
+  filteredData = [];
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
