@@ -129,6 +129,7 @@
     [filter]="filterObj"
     [defaultSort]="listConfig?.defaultSort"
     [showInactive]="showInactive"
+    (filteredRecordsChange)="filteredData = $event"
   ></app-entity-subrecord>
 </ng-template>
 
@@ -183,7 +184,25 @@
       aria-label="download csv"
       icon="download"
     ></fa-icon>
-    <span i18n="Download list contents as CSV"> Download CSV </span>
+    <span i18n="Download list contents as CSV"> Download all data (.csv) </span>
+  </button>
+
+  <button
+    mat-menu-item
+    [appExportData]="filteredData"
+    format="csv"
+    [exportConfig]="listConfig?.exportConfig"
+    [filename]="listName.replace(' ', '')"
+    angulartics2On="click"
+    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    angularticsAction="list_csv_export"
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="download csv"
+      icon="download"
+    ></fa-icon>
+    <span i18n="Download list contents as CSV"> Download current (.csv) </span>
   </button>
 
   <button
