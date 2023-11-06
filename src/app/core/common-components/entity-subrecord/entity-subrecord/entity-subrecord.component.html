@@ -9,6 +9,16 @@
     matSort
     class="full-width table"
   >
+    <ng-container matColumnDef="select">
+      <th mat-header-cell *matHeaderCellDef style="width: 0"></th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox
+          (change)="selectRow(row, $event)"
+          [checked]="selectedRecords.includes(row.record)"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
     <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
       <th
         mat-header-cell
@@ -127,11 +137,13 @@
         </div>
       </td>
     </ng-container>
-
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="columnsToDisplay.concat('select')"
+    ></tr>
     <tr
       mat-row
-      *matRowDef="let row; columns: columnsToDisplay"
+      *matRowDef="let row; columns: columnsToDisplay.concat('select')"
       [style.background-color]="getBackgroundColor?.(row.record)"
       class="table-row"
     ></tr>
