@@ -23,7 +23,7 @@ import {
 } from "./entity-actions-test-utils";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 
-fdescribe("EntityAnonymizeService", () => {
+describe("EntityAnonymizeService", () => {
   let service: EntityAnonymizeService;
   let entityMapper: MockEntityMapperService;
   let mockFileService: jasmine.SpyObj<FileService>;
@@ -89,8 +89,8 @@ fdescribe("EntityAnonymizeService", () => {
         delete actualResult.anonymized;
       }
 
-      expect(comparableEntityData(actualResult)).toEqual(
-        comparableEntityData(expectedEntity),
+      expect(comparableEntityData(actualResult, true)).toEqual(
+        comparableEntityData(expectedEntity, true),
       );
     }
   }
@@ -139,6 +139,7 @@ fdescribe("EntityAnonymizeService", () => {
         anonymized: true,
         ...entityProperties,
       }),
+      true,
     );
   });
 
@@ -151,6 +152,7 @@ fdescribe("EntityAnonymizeService", () => {
     AnonymizableEntity.expectAnonymized(
       entity.getId(),
       AnonymizableEntity.create({ inactive: true, anonymized: true }),
+      true,
     );
   });
 
@@ -190,6 +192,8 @@ fdescribe("EntityAnonymizeService", () => {
   it("should not anonymize fields if Entity type is set to not have PII", async () => {
     AnonymizableEntity.hasPII = false;
     const entity = new AnonymizableEntity();
+    // EntityMapper.save is not called in anonymizeEntity => not found error if missing
+    entityMapper.add(entity);
     entity.defaultField = "test";
 
     await service.anonymizeEntity(entity);
@@ -224,6 +228,8 @@ fdescribe("EntityAnonymizeService", () => {
       // copy over properties that are marked as `anonymize: "retain"`
       expectedAnonymizedEntity.refAggregate = anonEntity.refAggregate;
       expectedAnonymizedEntity.refComposite = anonEntity.refComposite;
+      expectedAnonymizedEntity.inactive = true;
+      expectedAnonymizedEntity.anonymized = true;
 
       expect(comparableEntityData(actualEntity)).toEqual(
         comparableEntityData(expectedAnonymizedEntity),
