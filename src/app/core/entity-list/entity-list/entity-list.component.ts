@@ -114,6 +114,7 @@ export class EntityListComponent<T extends Entity>
 
   filterObj: DataFilter<T>;
   filterString = "";
+  filteredData = [];
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -259,10 +260,13 @@ export class EntityListComponent<T extends Entity>
   }
 
   applyFilter(filterValue: string) {
+    // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityTable.recordsDataSource.filter = filterValue;
-
+    this.filteredData = this.entityTable.recordsDataSource.filteredData.map(
+      (x) => x.record,
+    );
     this.analyticsService.eventTrack("list_filter_freetext", {
       category: this.entityConstructor?.ENTITY_TYPE,
     });
