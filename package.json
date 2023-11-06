@@ -102,6 +102,8 @@
     "babel-loader": "^9.1.3",
     "cypress": "13.1.0",
     "eslint": "^8.47.0",
+    "eslint-config-prettier": "^9.0.0",
+    "eslint-plugin-prettier": "^5.0.1",
     "eslint-plugin-storybook": "^0.6.13",
     "jasmine-core": "^5.1.0",
     "jasmine-spec-reporter": "^7.0.0",

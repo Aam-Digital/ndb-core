@@ -13,8 +13,14 @@
   >
     <fa-icon icon="xmark"></fa-icon>
   </button>
-  <button *ngIf="formControl.enabled" type="button" mat-icon-button (click)="fileUpload.click()"
-          i18n-matTooltip="Tooltip upload file button" matTooltip="Upload file">
+  <button
+    *ngIf="formControl.enabled"
+    type="button"
+    mat-icon-button
+    (click)="fileUpload.click()"
+    i18n-matTooltip="Tooltip upload file button"
+    matTooltip="Upload file"
+  >
     <fa-icon icon="upload"></fa-icon>
   </button>
   <input
