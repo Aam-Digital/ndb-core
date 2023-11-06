@@ -43,6 +43,8 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
+import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -58,6 +60,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
+  providers: [DuplicateRecordService],
   imports: [
     NgIf,
     NgStyle,
@@ -78,6 +81,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
     ExportDataDirective,
     DisableEntityOperationDirective,
     RouterLink,
+    MatTooltipModule,
   ],
   standalone: true,
 })
@@ -98,6 +102,7 @@ export class EntityListComponent<T extends Entity>
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
+  selectedRows: T[] = [];
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
@@ -148,6 +153,7 @@ export class EntityListComponent<T extends Entity>
     private entityMapperService: EntityMapperService,
     private entities: EntityRegistry,
     private dialog: MatDialog,
+    private duplicateRecord: DuplicateRecordService,
   ) {
     // TODO: refactor the EntityListComponent to make use of RoutedViewComponent and not load the route data itself
     if (this.activatedRoute.component === EntityListComponent) {
@@ -305,5 +311,10 @@ export class EntityListComponent<T extends Entity>
       this.router.navigate(["new"], { relativeTo: this.activatedRoute });
     }
     this.addNewClick.emit();
+  }
+
+  duplicateRecords() {
+    this.duplicateRecord.duplicateRecord(this.selectedRows);
+    this.selectedRows = [];
   }
 }
