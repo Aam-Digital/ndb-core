@@ -129,8 +129,7 @@
     [filter]="filterObj"
     [defaultSort]="listConfig?.defaultSort"
     [showInactive]="showInactive"
-    [filterData]="filterData"
-    (setfilteredData)="filteredData = $event"
+    (filteredRecordsChange)="filteredData = $event"
   ></app-entity-subrecord>
 </ng-template>
 

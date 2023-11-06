@@ -98,7 +98,6 @@ export class EntityListComponent<T extends Entity>
 
   @Input() isLoading: boolean;
 
-  @Output() filterData: any[];
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
 
@@ -263,10 +262,13 @@ export class EntityListComponent<T extends Entity>
   }
 
   applyFilter(filterValue: string) {
+    // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityTable.recordsDataSource.filter = filterValue;
-    this.filterData = this.entityTable.recordsDataSource.filteredData;
+    this.filteredData = this.entityTable.recordsDataSource.filteredData.map(
+      (x) => x.record,
+    );
     this.analyticsService.eventTrack("list_filter_freetext", {
       category: this.entityConstructor?.ENTITY_TYPE,
     });

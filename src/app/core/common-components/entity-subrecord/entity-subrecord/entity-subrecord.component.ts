@@ -94,9 +94,6 @@ export interface TableRow<T extends Entity> {
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
-  @Output() setfilteredData: EventEmitter<TableRow<T>[]> = new EventEmitter<
-    TableRow<T>[]
-  >();
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
   @Input() showInactive = false;
@@ -113,11 +110,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   _columns: FormFieldConfig[] = [];
   filteredColumns: FormFieldConfig[] = [];
-  filteredData = [];
 
   /** data to be displayed, can also be used as two-way-binding */
   @Input() records: T[] = [];
-  @Input() filterData: T[];
+
+  /** output the currently displayed records, whenever filters for the user change */
+  @Output() filteredRecordsChange = new EventEmitter<T[]>();
+
   /**
    * factory method to create a new instance of the displayed Entity type
    * used when the user adds a new entity to the list.
@@ -269,7 +268,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.sortDefault();
     }
 
-    this.getFilteredData(this.recordsDataSource.filteredData);
+    this.filteredRecordsChange.emit(
+      this.recordsDataSource.filteredData.map((item) => item.record),
+    );
     this.listenToEntityUpdates();
   }
 
@@ -499,13 +500,5 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.showInactiveChange.emit(newValue);
     }
     this.initDataSource();
-  }
-
-  async getFilteredData(filterData: any[]) {
-    this.filteredData = [];
-    filterData.map((item) => {
-      this.filteredData.push(item.record);
-    });
-    this.setfilteredData.emit(this.filteredData);
   }
 }
