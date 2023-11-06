@@ -99,7 +99,6 @@ export interface TableRow<T extends Entity> {
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
-
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
   /** outputs an event containing an array of currently selected records (checkmarked by the user) */
@@ -123,6 +122,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   /** data to be displayed, can also be used as two-way-binding */
   @Input() records: T[] = [];
+
+  /** output the currently displayed records, whenever filters for the user change */
+  @Output() filteredRecordsChange = new EventEmitter<T[]>();
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -275,6 +277,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.sortDefault();
     }
 
+    this.filteredRecordsChange.emit(
+      this.recordsDataSource.filteredData.map((item) => item.record),
+    );
     this.listenToEntityUpdates();
   }
 
