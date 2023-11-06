@@ -43,7 +43,7 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { DuplicateRecordService } from "app/core/duplicate-records/duplicate-records.service";
+import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
