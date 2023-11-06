@@ -43,6 +43,8 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { ExportDataDirective } from "../../export/export-data-directive/export-data.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
+import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -58,6 +60,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
+  providers: [DuplicateRecordService],
   imports: [
     NgIf,
     NgStyle,
@@ -78,6 +81,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
     ExportDataDirective,
     DisableEntityOperationDirective,
     RouterLink,
+    MatTooltipModule,
   ],
   standalone: true,
 })
@@ -98,6 +102,7 @@ export class EntityListComponent<T extends Entity>
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
+  selectedRows: T[] = [];
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
@@ -114,6 +119,7 @@ export class EntityListComponent<T extends Entity>
 
   filterObj: DataFilter<T>;
   filterString = "";
+  filteredData = [];
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -147,6 +153,7 @@ export class EntityListComponent<T extends Entity>
     private entityMapperService: EntityMapperService,
     private entities: EntityRegistry,
     private dialog: MatDialog,
+    private duplicateRecord: DuplicateRecordService,
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
@@ -259,10 +266,13 @@ export class EntityListComponent<T extends Entity>
   }
 
   applyFilter(filterValue: string) {
+    // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
     filterValue = filterValue.trim();
     filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
     this.entityTable.recordsDataSource.filter = filterValue;
-
+    this.filteredData = this.entityTable.recordsDataSource.filteredData.map(
+      (x) => x.record,
+    );
     this.analyticsService.eventTrack("list_filter_freetext", {
       category: this.entityConstructor?.ENTITY_TYPE,
     });
@@ -300,5 +310,10 @@ export class EntityListComponent<T extends Entity>
       this.router.navigate(["new"], { relativeTo: this.activatedRoute });
     }
     this.addNewClick.emit();
+  }
+
+  duplicateRecords() {
+    this.duplicateRecord.duplicateRecord(this.selectedRows);
+    this.selectedRows = [];
   }
 }

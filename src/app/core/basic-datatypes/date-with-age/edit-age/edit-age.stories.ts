@@ -1,6 +1,6 @@
 import { generateFormFieldStory } from "../../../entity/default-datatype/edit-component-story-utils";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { StoryFn } from "@storybook/angular";
+import { DateWithAge } from "../dateWithAge";
 
 const formFieldStory = generateFormFieldStory(
   "EditAge",

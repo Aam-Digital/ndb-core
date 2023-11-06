@@ -45,7 +45,7 @@
     "@sentry/browser": "^7.64.0",
     "angulartics2": "^12.2.1",
     "assert": "^2.0.0",
-    "crypto-es": "^2.0.4",
+    "crypto-es": "^2.1.0",
     "deep-object-diff": "^1.1.9",
     "flag-icons": "^6.10.0",
     "hammerjs": "^2.0.8",

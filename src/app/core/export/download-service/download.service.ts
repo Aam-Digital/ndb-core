@@ -5,6 +5,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { transformToReadableFormat } from "../../common-components/entity-subrecord/entity-subrecord/value-accessor";
 import { Papa } from "ngx-papaparse";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
 /**
  * This service allows to start a download process from the browser.
@@ -90,17 +91,62 @@ export class DownloadService {
    * @returns string a valid CSV string of the input data
    */
   async createCsv(data: any[]): Promise<string> {
-    // Collect all properties because papa only uses the properties of the first object
+    let entityConstructor: any;
+
+    if (data.length > 0 && typeof data[0]?.getConstructor === "function") {
+      entityConstructor = data[0].getConstructor();
+    }
     const keys = new Set<string>();
     data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
 
     data = data.map(transformToReadableFormat);
 
-    return this.papa.unparse(data, {
-      quotes: true,
-      header: true,
-      newline: DownloadService.SEPARATOR_ROW,
-      columns: [...keys],
+    if (!entityConstructor) {
+      return this.papa.unparse(data, {
+        quotes: true,
+        header: true,
+        newline: DownloadService.SEPARATOR_ROW,
+        columns: [...keys],
+      });
+    }
+
+    const result = this.exportFile(data, entityConstructor);
+    return result;
+  }
+
+  exportFile(data: any[], entityConstructor: { schema: any }) {
+    const entitySchema = entityConstructor.schema;
+    const columnLabels = new Map<string, EntitySchemaField>();
+
+    entitySchema.forEach((value: { label: EntitySchemaField }, key: string) => {
+      if (value.label) columnLabels.set(key, value.label);
     });
+
+    const exportEntities = data.map((item) => {
+      let newItem = {};
+      for (const key in item) {
+        if (columnLabels.has(key)) {
+          newItem[key] = item[key];
+        }
+      }
+      return newItem;
+    });
+
+    const columnKeys: string[] = Array.from(columnLabels.keys());
+    const labels: any[] = Array.from(columnLabels.values());
+    const orderedData: any[] = exportEntities.map((item) =>
+      columnKeys.map((key) => item[key]),
+    );
+
+    return this.papa.unparse(
+      {
+        fields: labels,
+        data: orderedData,
+      },
+      {
+        quotes: true,
+        newline: DownloadService.SEPARATOR_ROW,
+      },
+    );
   }
 }
