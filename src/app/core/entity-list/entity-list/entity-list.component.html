@@ -128,7 +128,7 @@
     [isLoading]="isLoading"
     [filter]="filterObj"
     [defaultSort]="listConfig?.defaultSort"
-    (selectedRecords)="setSelectedRows($event)"
+    (selectedRecordsChange)="selectedRows = $event"
     [showInactive]="showInactive"
   ></app-entity-subrecord>
 </ng-template>
@@ -202,12 +202,14 @@
     ></fa-icon>
     <span i18n> Import from file </span>
   </button>
-  
+
   <button
     mat-menu-item
     (click)="duplicateRecords()"
     [disabled]="selectedRows.length === 0"
-    matTooltip="Please select rows" [matTooltipDisabled]="selectedRows.length > 0" i18n-matTooltip
+    matTooltip="Please select rows"
+    [matTooltipDisabled]="selectedRows.length > 0"
+    i18n-matTooltip
   >
     <fa-icon
       class="color-accent standard-icon-with-text"

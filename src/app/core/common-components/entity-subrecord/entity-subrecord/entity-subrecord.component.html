@@ -10,11 +10,9 @@
     class="full-width table"
   >
     <ng-container matColumnDef="select">
-      <th mat-header-cell *matHeaderCellDef>
-        Select
-      </th>
+      <th mat-header-cell *matHeaderCellDef>Select</th>
       <td mat-cell *matCellDef="let row">
-        <mat-checkbox (change)="selectRow(row)"></mat-checkbox>
+        <mat-checkbox (change)="selectRow(row, $event)"></mat-checkbox>
       </td>
     </ng-container>
 
@@ -136,7 +134,10 @@
         </div>
       </td>
     </ng-container>
-    <tr mat-header-row *matHeaderRowDef="columnsToDisplay.concat('select')"></tr>
+    <tr
+      mat-header-row
+      *matHeaderRowDef="columnsToDisplay.concat('select')"
+    ></tr>
     <tr
       mat-row
       *matRowDef="let row; columns: columnsToDisplay.concat('select')"

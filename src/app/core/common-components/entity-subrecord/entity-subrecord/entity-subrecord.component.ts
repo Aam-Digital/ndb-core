@@ -50,7 +50,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
-import { MatCheckboxModule } from '@angular/material/checkbox';
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 export interface TableRow<T extends Entity> {
@@ -98,9 +101,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
-  
+
   /** outputs an event containing an array of currently selected records (checkmarked by the user) */
-  @Output() selectedRecords: EventEmitter<T[] > = new EventEmitter<T[]>
+  @Output() selectedRecordsChange: EventEmitter<T[]> = new EventEmitter<T[]>();
+  selectedRecords: T[] = [];
 
   @Input() showInactive = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
@@ -485,8 +489,17 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     return this.screenWidthObserver.currentScreenSize() >= numericValue;
   }
 
-  selectRow (row: T[]) {
-    this.selectedRecords.emit(row);
+  selectRow(row: TableRow<T>, event: MatCheckboxChange) {
+    if (event.checked) {
+      this.selectedRecords.push(row.record);
+    } else {
+      const index = this.selectedRecords.indexOf(row.record);
+      if (index > -1) {
+        this.selectedRecords.splice(index, 1);
+      }
+    }
+
+    this.selectedRecordsChange.emit(this.selectedRecords);
   }
 
   filterActiveInactive() {

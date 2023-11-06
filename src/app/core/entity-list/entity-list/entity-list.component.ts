@@ -102,7 +102,7 @@ export class EntityListComponent<T extends Entity>
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
-  @Input() selectedRows : T[] = [];
+  selectedRows: T[] = [];
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
@@ -152,7 +152,7 @@ export class EntityListComponent<T extends Entity>
     private entityMapperService: EntityMapperService,
     private entities: EntityRegistry,
     private dialog: MatDialog,
-    private  duplicateRecord: DuplicateRecordService,
+    private duplicateRecord: DuplicateRecordService,
   ) {
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
@@ -308,17 +308,8 @@ export class EntityListComponent<T extends Entity>
     this.addNewClick.emit();
   }
 
-  setSelectedRows(data: any) {
-    const index = this.selectedRows.findIndex((item) => item === data.record);
-    if (index > -1) {
-      this.selectedRows.splice(index, 1);
-    } else {
-      this.selectedRows.push(data.record);
-    }
-  }
-
   duplicateRecords() {
     this.duplicateRecord.duplicateRecord(this.selectedRows);
-    this.selectedRows = []; 
+    this.selectedRows = [];
   }
 }
