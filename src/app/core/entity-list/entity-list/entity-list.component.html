@@ -128,6 +128,7 @@
     [isLoading]="isLoading"
     [filter]="filterObj"
     [defaultSort]="listConfig?.defaultSort"
+    [(selectedRecords)]="selectedRows"
     [showInactive]="showInactive"
     (filteredRecordsChange)="filteredData = $event"
   ></app-entity-subrecord>
@@ -219,6 +220,22 @@
       icon="file-import"
     ></fa-icon>
     <span i18n> Import from file </span>
+  </button>
+
+  <button
+    mat-menu-item
+    (click)="duplicateRecords()"
+    [disabled]="selectedRows.length === 0"
+    matTooltip="Please select rows"
+    [matTooltipDisabled]="selectedRows.length > 0"
+    i18n-matTooltip
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="duplicates record"
+      icon="copy"
+    ></fa-icon>
+    <span i18n> Duplicate selected records </span>
   </button>
 
   <ng-content select="[mat-menu-item]"></ng-content>
