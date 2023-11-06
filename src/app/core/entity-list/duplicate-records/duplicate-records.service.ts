@@ -34,9 +34,9 @@ export class DuplicateRecordService {
         entityConstructor.schema,
       );
       const entity = new entityConstructor();
-      const attribute = entityConstructor.toStringAttributes[0];
+      const nameAttribute = entityConstructor.toStringAttributes[0];
       for (const key of keys) {
-        if (attribute === key) {
+        if (nameAttribute === key && nameAttribute !== "entityId") {
           entityformat[key] = `Copy of ${entityformat[key]}`;
         }
         entity[key] = entityformat[key];
