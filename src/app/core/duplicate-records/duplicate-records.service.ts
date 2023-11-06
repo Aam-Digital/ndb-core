@@ -23,10 +23,10 @@ export class DuplicateRecordService {
 
   clone(sourceData: Entity[]): any {
     const duplicateData = [];
-    const entityConstructor = sourceData[0].getConstructor();
-    const keys = [...entityConstructor.schema.keys()].filter(key => key !== '_id' && key !== '_rev');
 
     sourceData.map((item: Entity)=> {
+      const entityConstructor = item.getConstructor();
+      const keys = [...entityConstructor.schema.keys()].filter(key => key !== '_id' && key !== '_rev');
       const dbEntity = this.entityService.transformEntityToDatabaseFormat(item);
       const entityformat = this.entityService.transformDatabaseToEntityFormat(dbEntity, entityConstructor.schema);
       const entity = new entityConstructor();
