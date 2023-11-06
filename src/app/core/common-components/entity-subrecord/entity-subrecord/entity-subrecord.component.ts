@@ -99,6 +99,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
   
+  /** outputs an event containing an array of currently selected records (checkmarked by the user) */
   @Output() selectedRecords: EventEmitter<T[] > = new EventEmitter<T[]>
 
   @Input() showInactive = false;
