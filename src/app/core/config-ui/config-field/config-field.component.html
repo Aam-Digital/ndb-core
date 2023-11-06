@@ -74,7 +74,9 @@
               <mat-label>Type Details</mat-label>
               <app-basic-autocomplete
                 formControlName="additional"
-                [options]="formAdditionalOptions"
+                [options]="formAdditionalOptions ?? []"
+                [optionToString]="objectToLabel"
+                [valueMapper]="objectToValue"
               ></app-basic-autocomplete>
             </mat-form-field>
           </div>

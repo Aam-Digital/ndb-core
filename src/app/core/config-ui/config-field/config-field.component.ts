@@ -28,6 +28,7 @@ import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum
 import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
 import { SchemaEmbedDatatype } from "../../basic-datatypes/schema-embed/schema-embed.datatype";
 import { MapDatatype } from "../../basic-datatypes/map/map.datatype";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -67,8 +68,8 @@ export class ConfigFieldComponent {
   formLabelShort: FormControl;
   useShortLabel: boolean;
   formAdditional: FormControl;
-  formAdditionalOptions: any[] = null;
-  dataTypes = [];
+  formAdditionalOptions: { label: string; value: any }[] = null;
+  dataTypes: { label: string; value: any }[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -79,6 +80,7 @@ export class ConfigFieldComponent {
     private fb: FormBuilder,
     @Inject(DefaultDatatype) dataTypes: DefaultDatatype[],
     private configurableEnumService: ConfigurableEnumService,
+    private entityRegistry: EntityRegistry,
   ) {
     this.entityType = data.entityType;
     this.formFieldConfig = data.formFieldConfig;
@@ -165,15 +167,19 @@ export class ConfigFieldComponent {
     if (dataType === ConfigurableEnumDatatype.dataType) {
       this.formAdditionalOptions = this.configurableEnumService
         .listEnums()
-        .map((x) => Entity.extractEntityIdFromId(x));
+        .map((x) => ({
+          label: Entity.extractEntityIdFromId(x),
+          value: Entity.extractEntityIdFromId(x),
+        }));
       // TODO allow new enum creation
       // TODO preview the options within the selected enum (and allow to edit the enum options?)
     } else if (
       dataType === EntityDatatype.dataType ||
       dataType === EntityArrayDatatype.dataType
     ) {
-      // TODO reuse and generalize ImportEntityTypeComponent.loadEntityTypes()
-      this.formAdditionalOptions = [];
+      this.formAdditionalOptions = this.entityRegistry
+        .getEntityTypes(true)
+        .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
     } else {
       this.form.get("additional").setValue(null);
       this.formAdditionalOptions = null;

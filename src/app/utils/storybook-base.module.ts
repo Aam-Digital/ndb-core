@@ -23,6 +23,7 @@ import {
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 import { createLocalSession, TEST_USER } from "./mock-local-session";
+import { EntityConfigService } from "../core/entity/entity-config.service";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
@@ -78,10 +79,15 @@ export class StorybookBaseModule {
     StorybookBaseModule.initData = data;
     return StorybookBaseModule;
   }
-  constructor(icons: FaIconLibrary, entityMapper: EntityMapperService) {
+  constructor(
+    icons: FaIconLibrary,
+    entityMapper: EntityMapperService,
+    entityConfigService: EntityConfigService,
+  ) {
     (entityMapper as MockEntityMapperService).addAll(
       StorybookBaseModule.initData,
     );
     icons.addIconPacks(fas, far);
+    entityConfigService.setupEntitiesFromConfig();
   }
 }
