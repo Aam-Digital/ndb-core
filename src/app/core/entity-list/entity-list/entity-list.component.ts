@@ -1,6 +1,5 @@
 import {
   AfterViewInit,
-  ChangeDetectionStrategy,
   Component,
   EventEmitter,
   Input,
@@ -58,7 +57,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
  */
 @RouteTarget("EntityList")
 @Component({
-  changeDetection: ChangeDetectionStrategy.OnPush,
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
