@@ -128,7 +128,7 @@
     [isLoading]="isLoading"
     [filter]="filterObj"
     [defaultSort]="listConfig?.defaultSort"
-    (selectedRecordsChange)="selectedRows = $event"
+    [(selectedRecords)]="selectedRows"
     [showInactive]="showInactive"
     (filteredRecordsChange)="filteredData = $event"
   ></app-entity-subrecord>

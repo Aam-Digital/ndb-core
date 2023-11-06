@@ -103,7 +103,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   /** outputs an event containing an array of currently selected records (checkmarked by the user) */
   @Output() selectedRecordsChange: EventEmitter<T[]> = new EventEmitter<T[]>();
-  selectedRecords: T[] = [];
+  @Input() selectedRecords: T[] = [];
 
   @Input() showInactive = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
