@@ -90,9 +90,8 @@ export class FilterGeneratorService {
         this.entities.has(schema.additional)
       ) {
         const entityType = filterConfig.type || schema.additional;
-        const filterEntities = await this.entityMapperService.loadType(
-          entityType,
-        );
+        const filterEntities =
+          await this.entityMapperService.loadType(entityType);
         filter = new EntityFilter(
           filterConfig.id,
           filterConfig.label || schema.label,
