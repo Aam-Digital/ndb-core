@@ -75,8 +75,6 @@ export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
   record: Entity;
 
   @Input() panels: Panel[] = [];
-  /** the actual, fully resolved panel configs */
-  panelsComponents: Panel[] = [];
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -120,7 +118,7 @@ export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
   }
 
   private initPanels() {
-    this.panelsComponents = this.panels.map((p) => ({
+    this.panels = this.panels.map((p) => ({
       title: p.title,
       components: p.components.map((c) => ({
         title: c.title,

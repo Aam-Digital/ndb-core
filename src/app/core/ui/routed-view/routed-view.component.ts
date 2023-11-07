@@ -40,8 +40,6 @@ export class RoutedViewComponent<T = any> {
         }
         this.config = { ...config };
       });
-
-      // TODO: should we also assigned queryParams from the url to input properties?
     });
   }
 }
