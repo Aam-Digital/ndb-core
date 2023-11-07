@@ -42,6 +42,7 @@ export class ChildSchoolRelation extends TimePeriod {
     dataType: "date-only",
     label: $localize`:Label for the start date of a relation:Start date`,
     description: $localize`:Description of the start date of a relation:The date a child joins a school`,
+    anonymize: "retain",
   })
   start: Date;
 
@@ -49,6 +50,7 @@ export class ChildSchoolRelation extends TimePeriod {
     dataType: "date-only",
     label: $localize`:Label for the end date of a relation:End date`,
     description: $localize`:Description of the end date of a relation:The date of a child leaving the school`,
+    anonymize: "retain",
   })
   end: Date;
 
