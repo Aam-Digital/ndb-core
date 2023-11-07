@@ -71,7 +71,11 @@ export class EntityFormService {
     const fullFields: FormFieldConfig[] = formFields.map(toFormFieldConfig);
     for (const formField of fullFields) {
       try {
-        this.addFormFields(formField, entityType, forTable);
+        this.addSchemaToFormField(
+          formField,
+          entityType.schema.get(formField.id),
+          forTable,
+        );
       } catch (err) {
         throw new Error(
           `Could not create form config for ${formField.id}: ${err}`,
@@ -81,32 +85,33 @@ export class EntityFormService {
     return fullFields;
   }
 
-  private addFormFields(
+  addSchemaToFormField(
     formField: FormFieldConfig,
-    entityType: EntityConstructor,
+    schemaField: EntitySchemaField,
     forTable: boolean,
-  ) {
-    const propertySchema = entityType.schema.get(formField.id);
+  ): FormFieldConfig {
     formField.edit =
       formField.edit ||
-      this.entitySchemaService.getComponent(propertySchema, "edit");
+      this.entitySchemaService.getComponent(schemaField, "edit");
     formField.view =
       formField.view ||
-      this.entitySchemaService.getComponent(propertySchema, "view");
-    formField.tooltip = formField.tooltip || propertySchema?.description;
-    formField.additional = formField.additional || propertySchema?.additional;
+      this.entitySchemaService.getComponent(schemaField, "view");
+    formField.tooltip = formField.tooltip || schemaField?.description;
+    formField.additional = formField.additional || schemaField?.additional;
     if (forTable) {
       formField.forTable = true;
       formField.label =
-        formField.label || propertySchema.labelShort || propertySchema.label;
+        formField.label || schemaField.labelShort || schemaField.label;
     } else {
       formField.forTable = false;
       formField.label =
-        formField.label || propertySchema.label || propertySchema.labelShort;
+        formField.label || schemaField.label || schemaField.labelShort;
     }
-    if (propertySchema?.validators) {
-      formField.validators = propertySchema?.validators;
+    if (schemaField?.validators) {
+      formField.validators = schemaField?.validators;
     }
+
+    return formField;
   }
 
   /**

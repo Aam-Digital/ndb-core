@@ -47,7 +47,10 @@
             cdkDragHandle
           ></fa-icon>
 
-          <div (click)="openFieldConfig(f)" style="cursor: pointer">
+          <div
+            (click)="openFieldConfig(f, group.fields)"
+            style="cursor: pointer"
+          >
             <ng-container
               [appDynamicComponent]="{
                 component: f.edit,

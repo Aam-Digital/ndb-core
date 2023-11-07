@@ -11,6 +11,7 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
+import { EntitySchema } from "../../entity/schema/entity-schema";
 
 @Component({
   selector: "app-config-entity-form",
@@ -22,6 +23,8 @@ import {
 })
 export class ConfigEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
+  entitySchema: EntitySchema;
+
   @Input() config: FormConfig;
   fieldGroups: { header?: string; fields: FormFieldConfig[] }[]; // TODO: maybe change the config itself to reflect this structure?
 
@@ -37,6 +40,9 @@ export class ConfigEntityFormComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
       this.prepareConfig(this.config);
+    }
+    if (changes.entityType) {
+      this.entitySchema = this.entityType?.schema;
     }
   }
 
@@ -60,20 +66,40 @@ export class ConfigEntityFormComponent implements OnChanges {
     this.dummyForm.disable();
   }
 
-  openFieldConfig(field: FormFieldConfig | {}) {
-    this.matDialog.open(ConfigFieldComponent, {
-      width: "99%",
-      maxHeight: "90vh",
-      data: { formFieldConfig: field, entityType: this.entityType },
-    });
+  openFieldConfig(field: FormFieldConfig, fieldsArray: any[]) {
+    const schemaField = {
+      ...this.entitySchema.get(field.id),
+      id: field.id, // TODO: include id in EntitySchemaField and align FormFieldConfig completely for direct override?
+    };
+
+    this.matDialog
+      .open(ConfigFieldComponent, {
+        width: "99%",
+        maxHeight: "90vh",
+        data: { entitySchemaField: schemaField },
+      })
+      .afterClosed()
+      .subscribe((updatedFieldSchema) => {
+        if (!updatedFieldSchema) {
+          return;
+        }
+
+        updatedFieldSchema = this.entityFormService.addSchemaToFormField(
+          { id: field.id },
+          updatedFieldSchema,
+          false,
+        );
+        this.entitySchema.set(field.id, updatedFieldSchema);
+        fieldsArray.splice(fieldsArray.indexOf(field), 1, updatedFieldSchema);
+      });
   }
 
   drop(event: CdkDragDrop<any, any>) {
     const item = event.previousContainer.data[event.previousIndex];
     if (item.id === null) {
-      const newField = {};
+      const newField = { id: null };
       event.container.data.splice(event.currentIndex, 0, newField);
-      this.openFieldConfig(newField);
+      this.openFieldConfig(newField, event.container.data);
       return;
     }
 

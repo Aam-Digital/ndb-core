@@ -1,7 +1,10 @@
 import { Component, Inject, Input } from "@angular/core";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import { Entity } from "../../entity/model/entity";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { MatInputModule } from "@angular/material/input";
@@ -55,11 +58,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
   ],
 })
 export class ConfigFieldComponent {
-  @Input() entityType: EntityConstructor;
-  @Input() formFieldConfig: FormFieldConfig;
-  field: string;
-
-  schemaFieldConfig: EntitySchemaField & { id?: string }; // TODO: add id / key to EntitySchemaField for easier handling?
+  @Input() entitySchemaField: EntitySchemaField & { id?: string }; // TODO: add id / key to EntitySchemaField for easier handling?
 
   form: FormGroup;
   formLabelShort: FormControl;
@@ -71,51 +70,48 @@ export class ConfigFieldComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
-      entityType: EntityConstructor;
-      formFieldConfig: FormFieldConfig;
+      entitySchemaField: EntitySchemaField;
     },
+    private dialogRef: MatDialogRef<any>,
     private fb: FormBuilder,
     @Inject(DefaultDatatype) dataTypes: DefaultDatatype[],
     private configurableEnumService: ConfigurableEnumService,
     private entityRegistry: EntityRegistry,
   ) {
-    this.entityType = data.entityType;
-    this.formFieldConfig = data.formFieldConfig;
-    // TODO: merge formField and schemaField config interfaces to be exactly matching, simply enabling direct overwrites?
-    this.schemaFieldConfig = {
-      ...this.entityType.schema.get(this.formFieldConfig.id),
-      id: this.formFieldConfig.id,
-    };
+    this.entitySchemaField = data.entitySchemaField;
 
     this.initSettings();
     this.initAvailableDatatypes(dataTypes);
   }
 
   private initSettings() {
-    this.formLabelShort = this.fb.control(this.schemaFieldConfig.labelShort);
-    this.formAdditional = this.fb.control(this.schemaFieldConfig.additional);
+    this.formLabelShort = this.fb.control(this.entitySchemaField.labelShort);
+    this.formAdditional = this.fb.control(this.entitySchemaField.additional);
 
     this.form = this.fb.group({
-      label: [this.schemaFieldConfig.label],
+      label: [this.entitySchemaField.label],
       labelShort: this.formLabelShort,
-      description: [this.schemaFieldConfig.description],
+      description: [this.entitySchemaField.description],
 
-      id: this.fb.control({ value: this.schemaFieldConfig.id, disabled: true }),
-      dataType: [this.schemaFieldConfig.dataType],
-      additional: [this.schemaFieldConfig.additional],
+      id: this.fb.control({
+        value: this.entitySchemaField.id,
+        disabled: this.entitySchemaField.id !== null, // disabled if not newly created field
+      }),
+      dataType: [this.entitySchemaField.dataType],
+      additional: [this.entitySchemaField.additional],
 
       // TODO: remove "innerDataType" completely - the UI can only support very specific multi-valued types anyway
       // TODO add a datatype "alias" for enum-array
-      innerDataType: [this.schemaFieldConfig.innerDataType],
+      innerDataType: [this.entitySchemaField.innerDataType],
 
-      defaultValue: [this.schemaFieldConfig.defaultValue],
-      searchable: [this.schemaFieldConfig.searchable],
-      anonymize: [this.schemaFieldConfig.anonymize],
+      defaultValue: [this.entitySchemaField.defaultValue],
+      searchable: [this.entitySchemaField.searchable],
+      anonymize: [this.entitySchemaField.anonymize],
       //viewComponent: [],
       //editComponent: [],
       //showInDetailsView: [],
       //generateIndex: [],
-      validators: [this.schemaFieldConfig.validators],
+      validators: [this.entitySchemaField.validators],
     });
 
     this.updateShortLabelToggle(!!this.formLabelShort.value);
@@ -179,5 +175,15 @@ export class ConfigFieldComponent {
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
 
     // TODO: this mapping of having an "additional" schema should probably become part of Datatype classes
+  }
+
+  save() {
+    const updatedEntitySchema = Object.assign(
+      {},
+      this.entitySchemaField,
+      this.form.getRawValue(),
+    );
+
+    this.dialogRef.close(updatedEntitySchema);
   }
 }

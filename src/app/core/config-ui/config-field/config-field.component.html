@@ -1,4 +1,4 @@
-<h2 mat-dialog-title i18n>Configure Field "{{ schemaFieldConfig.label }}"</h2>
+<h2 mat-dialog-title i18n>Configure Field "{{ entitySchemaField.label }}"</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
@@ -122,5 +122,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
+  <button mat-button (click)="save()">Save</button>
   <button mat-button mat-dialog-close>Cancel</button>
 </mat-dialog-actions>
