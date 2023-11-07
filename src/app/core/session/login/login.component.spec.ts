@@ -26,12 +26,13 @@ import {
 import { LoginComponent } from "./login.component";
 import { LoginState } from "../session-states/login-state.enum";
 import { ActivatedRoute, Router } from "@angular/router";
-import { LoginStateSubject } from "../session-type";
+import { LoginStateSubject, SessionType } from "../session-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { firstValueFrom, Subject } from "rxjs";
 import { AuthUser } from "../auth/auth-user";
+import { environment } from "../../../../environments/environment";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
@@ -43,11 +44,16 @@ describe("LoginComponent", () => {
       imports: [LoginComponent, MockedTestingModule.withState()],
     }).compileComponents();
     loginState = TestBed.inject(LoginStateSubject);
+    environment.session_type = SessionType.synced;
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
     component = fixture.componentInstance;
+  });
+
+  afterEach(() => {
+    environment.session_type = SessionType.mock;
   });
 
   it("should be created", () => {
