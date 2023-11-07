@@ -192,7 +192,7 @@ describe("EntityAnonymizeService", () => {
   it("should not anonymize fields if Entity type is set to not have PII", async () => {
     AnonymizableEntity.hasPII = false;
     const entity = new AnonymizableEntity();
-    // EntityMapper.save is not called in anonymizeEntity => not found error if missing
+    // make sure the original entity is available initially (we expect it to remain unchanged)
     entityMapper.add(entity);
     entity.defaultField = "test";
 
