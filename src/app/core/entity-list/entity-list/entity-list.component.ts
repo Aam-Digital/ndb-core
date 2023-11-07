@@ -155,6 +155,7 @@ export class EntityListComponent<T extends Entity>
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
   ) {
+    // TODO: refactor the EntityListComponent to make use of RoutedViewComponent and not load the route data itself
     if (this.activatedRoute.component === EntityListComponent) {
       // the component is used for a route and not inside a template
       this.activatedRoute.data.subscribe((data: RouteData<EntityListConfig>) =>

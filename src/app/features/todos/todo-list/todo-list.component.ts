@@ -46,6 +46,7 @@ export class TodoListComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe((data: RouteData<EntityListConfig>) =>
+      // TODO replace this use of route and rely on the RoutedViewComponent instead
       this.init(data.config),
     );
   }

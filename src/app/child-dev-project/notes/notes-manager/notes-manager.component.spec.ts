@@ -1,7 +1,4 @@
-import {
-  NotesManagerComponent,
-  NotesManagerConfig,
-} from "./notes-manager.component";
+import { NotesManagerComponent } from "./notes-manager.component";
 import {
   ComponentFixture,
   fakeAsync,
@@ -191,11 +188,9 @@ describe("NotesManagerComponent", () => {
     entityMapper.save(eventNote);
     tick();
 
+    component.includeEventNotes = true;
     routeMock.data.next({
-      config: Object.assign(
-        { includeEventNotes: true } as NotesManagerConfig,
-        routeData,
-      ),
+      config: routeData,
     });
 
     flush();

@@ -17,7 +17,7 @@
 
 <div class="flex-row justify-space-between">
   <app-view-title *ngIf="!creatingNew">
-    {{ entity?.toString() }}
+    {{ record?.toString() }}
   </app-view-title>
   <app-view-title
     *ngIf="creatingNew"
@@ -29,12 +29,12 @@
   </app-view-title>
 
   <app-entity-actions-menu
-    [entity]="entity"
+    [entity]="record"
     [navigateOnDelete]="true"
   ></app-entity-actions-menu>
 </div>
 
-<app-entity-archived-info [entity]="entity"></app-entity-archived-info>
+<app-entity-archived-info [entity]="record"></app-entity-archived-info>
 
 <mat-tab-group
   (selectedIndexChange)="trackTabChanged($event)"
@@ -69,7 +69,10 @@
         <h3 *ngIf="componentConfig.title && componentConfig.title !== ''">
           {{ componentConfig.title }}
         </h3>
-        <ng-template [appDynamicComponent]="componentConfig"></ng-template>
+        <ng-template
+          [appDynamicComponent]="componentConfig"
+          *ngIf="componentConfig.config.entity"
+        ></ng-template>
         <br *ngIf="j < panelConfig.components.length - 1" />
       </div>
     </ng-template>

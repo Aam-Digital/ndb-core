@@ -99,11 +99,9 @@ export class NotesManagerComponent implements OnInit {
   async ngOnInit() {
     this.route.data.subscribe(
       async (data: RouteData<EntityListConfig & NotesManagerConfig>) => {
+        // TODO replace this use of route and rely on the RoutedViewComponent instead
         this.config = data.config;
         this.addPrebuiltFilters();
-
-        this.includeEventNotes = data.config.includeEventNotes;
-        this.showEventNotesToggle = data.config.showEventNotesToggle;
         this.notes = await this.loadEntities();
       },
     );

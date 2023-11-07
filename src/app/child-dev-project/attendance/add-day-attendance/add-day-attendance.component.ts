@@ -1,11 +1,9 @@
-import { Component, ViewChild } from "@angular/core";
+import { Component, Input, ViewChild } from "@angular/core";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../../notes/model/note";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { ConfirmationDialogButton } from "../../../core/common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 import { RollCallComponent } from "./roll-call/roll-call.component";
-import { ActivatedRoute } from "@angular/router";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -13,14 +11,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { RollCallSetupComponent } from "./roll-call-setup/roll-call-setup.component";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
-
-/**
- * additional config specifically for AddDayAttendanceComponent
- */
-export interface AddDayAttendanceConfig {
-  /** (optional) property name of the participant entities by which they are sorted for the roll call */
-  sortParticipantsBy?: string;
-}
 
 @RouteTarget("AddDayAttendance")
 @Component({
@@ -39,7 +29,8 @@ export interface AddDayAttendanceConfig {
   standalone: true,
 })
 export class AddDayAttendanceComponent {
-  config?: AddDayAttendanceConfig;
+  /** (optional) property name of the participant entities by which they are sorted for the roll call */
+  @Input() sortParticipantsBy: string;
 
   currentStage = 0;
 
@@ -75,13 +66,8 @@ export class AddDayAttendanceComponent {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private route: ActivatedRoute,
     private confirmationDialog: ConfirmationDialogService,
-  ) {
-    this.route.data.subscribe((data: RouteData<AddDayAttendanceConfig>) => {
-      this.config = data.config;
-    });
-  }
+  ) {}
 
   finishBasicInformationStage(event: Note) {
     this.event = event;
