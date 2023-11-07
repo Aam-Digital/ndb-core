@@ -89,10 +89,9 @@ describe("EntityActionsService", () => {
       anotherAffectedEntity,
     ]);
 
-    // Mock a snackbar where 'undo' is immediately pressed
+    // Mock a snackbar where 'undo' is pressed
     const onSnackbarAction = new Subject<void>();
     mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
-    mockSnackBarRef.afterDismissed.and.returnValue(NEVER);
 
     mockedEntityMapper.save.and.resolveTo();
 
