@@ -15,8 +15,8 @@ import { MockEntityMapperService } from "../entity-mapper/mock-entity-mapper-ser
       ♢ "aggregate" (has-a): both entities have meaning independently
       ♦ "composite" (is-part-of): the entity holding the reference is only meaningful in the context of the referenced
   */
-@DatabaseEntity("EntityWithRelations")
-export class EntityWithRelations extends Entity {
+@DatabaseEntity("EntityWithAnonRelations")
+export class EntityWithAnonRelations extends Entity {
   static override hasPII = true;
 
   @DatabaseField() name: string;
@@ -37,8 +37,8 @@ export class EntityWithRelations extends Entity {
   })
   refComposite: string[];
 
-  static create(name: string, properties?: Partial<EntityWithRelations>) {
-    return Object.assign(new EntityWithRelations(), {
+  static create(name: string, properties?: Partial<EntityWithAnonRelations>) {
+    return Object.assign(new EntityWithAnonRelations(), {
       name: name,
       ...properties,
     });
@@ -46,15 +46,15 @@ export class EntityWithRelations extends Entity {
 }
 
 export function expectAllUnchangedExcept(
-  changedEntities: EntityWithRelations[],
+  changedEntities: EntityWithAnonRelations[],
   entityMapper: MockEntityMapperService,
 ) {
-  const isExpectedUnchanged = (entity: EntityWithRelations) => {
+  const isExpectedUnchanged = (entity: EntityWithAnonRelations) => {
     !changedEntities.some((c) => entity.getId() === c.getId());
   };
 
   const actualEntitiesAfter =
-    entityMapper.getAllData() as EntityWithRelations[];
+    entityMapper.getAllData() as EntityWithAnonRelations[];
 
   expectEntitiesToMatch(
     actualEntitiesAfter.filter(isExpectedUnchanged),
@@ -75,7 +75,7 @@ export function expectDeleted(
 }
 
 export function expectUpdated(
-  updatedEntities: EntityWithRelations[],
+  updatedEntities: EntityWithAnonRelations[],
   entityMapper: MockEntityMapperService,
 ) {
   const actualEntitiesAfter = entityMapper.getAllData();
@@ -90,25 +90,27 @@ export function expectUpdated(
   }
 }
 
-const WithoutRelations = EntityWithRelations.create("entity without relations");
+const WithoutRelations = EntityWithAnonRelations.create(
+  "entity without relations",
+);
 
-const ReferencedAsComposite = EntityWithRelations.create(
+const ReferencedAsComposite = EntityWithAnonRelations.create(
   "entity referenced as composite",
 );
-const ReferencingSingleComposite = EntityWithRelations.create(
+const ReferencingSingleComposite = EntityWithAnonRelations.create(
   "entity having a composite reference",
   {
     refComposite: [ReferencedAsComposite.getId()],
   },
 );
 
-const ReferencedAsOneOfMultipleComposites1 = EntityWithRelations.create(
+const ReferencedAsOneOfMultipleComposites1 = EntityWithAnonRelations.create(
   "entity referenced as one composite (1)",
 );
-const ReferencedAsOneOfMultipleComposites2 = EntityWithRelations.create(
+const ReferencedAsOneOfMultipleComposites2 = EntityWithAnonRelations.create(
   "entity referenced as one composite (2)",
 );
-const ReferencingTwoComposites = EntityWithRelations.create(
+const ReferencingTwoComposites = EntityWithAnonRelations.create(
   "entity referencing two entities as composites",
   {
     refComposite: [
@@ -119,14 +121,14 @@ const ReferencingTwoComposites = EntityWithRelations.create(
 );
 
 const ReferencingCompositeAndAggregate_refComposite =
-  EntityWithRelations.create(
+  EntityWithAnonRelations.create(
     "referenced as composite from composite+aggregate referencing entity",
   );
 const ReferencingCompositeAndAggregate_refAggregate =
-  EntityWithRelations.create(
+  EntityWithAnonRelations.create(
     "referenced as aggregate from composite+aggregate referencing entity",
   );
-const ReferencingCompositeAndAggregate = EntityWithRelations.create(
+const ReferencingCompositeAndAggregate = EntityWithAnonRelations.create(
   "having both a composite and a aggregate reference",
   {
     refComposite: [ReferencingCompositeAndAggregate_refComposite.getId()],
@@ -134,23 +136,23 @@ const ReferencingCompositeAndAggregate = EntityWithRelations.create(
   },
 );
 
-const ReferencingAggregate_ref = EntityWithRelations.create(
+const ReferencingAggregate_ref = EntityWithAnonRelations.create(
   "entity referenced as aggregate",
 );
-const ReferencingAggregate = EntityWithRelations.create(
+const ReferencingAggregate = EntityWithAnonRelations.create(
   "entity having an aggregate reference",
   {
     refAggregate: [ReferencingAggregate_ref.getId()],
   },
 );
 
-const ReferencingTwoAggregates_ref1 = EntityWithRelations.create(
+const ReferencingTwoAggregates_ref1 = EntityWithAnonRelations.create(
   "entity referenced as one aggregate (1)",
 );
-const ReferencingTwoAggregates_ref2 = EntityWithRelations.create(
+const ReferencingTwoAggregates_ref2 = EntityWithAnonRelations.create(
   "entity referenced as one aggregate (2)",
 );
-const ReferencingTwoAggregates = EntityWithRelations.create(
+const ReferencingTwoAggregates = EntityWithAnonRelations.create(
   "entity referencing two entities as aggregates",
   {
     refAggregate: [
@@ -177,7 +179,7 @@ export const ENTITIES = {
   ReferencingTwoAggregates,
 };
 
-export const allEntities: EntityWithRelations[] = [
+export const allEntities: EntityWithAnonRelations[] = [
   ENTITIES.WithoutRelations,
   ENTITIES.ReferencedAsComposite,
   ENTITIES.ReferencingSingleComposite,

@@ -9,11 +9,11 @@ import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import {
   allEntities,
   ENTITIES,
-  EntityWithRelations,
+  EntityWithAnonRelations,
   expectAllUnchangedExcept,
   expectDeleted,
   expectUpdated,
-} from "./entity-actions-test-utils";
+} from "./cascading-entity-action.spec";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
@@ -34,9 +34,9 @@ describe("EntityDeleteService", () => {
   });
 
   function removeReference(
-    entity: EntityWithRelations,
+    entity: EntityWithAnonRelations,
     property: "refAggregate" | "refComposite",
-    referencedEntity: EntityWithRelations,
+    referencedEntity: EntityWithAnonRelations,
   ) {
     const result = entity.copy();
     result[property] = result[property].filter(

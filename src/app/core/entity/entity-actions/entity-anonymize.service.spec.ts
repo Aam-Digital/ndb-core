@@ -18,9 +18,9 @@ import moment from "moment";
 import {
   allEntities,
   ENTITIES,
-  EntityWithRelations,
+  EntityWithAnonRelations,
   expectAllUnchangedExcept,
-} from "./entity-actions-test-utils";
+} from "./cascading-entity-action.spec";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 
 describe("EntityAnonymizeService", () => {
@@ -212,7 +212,7 @@ describe("EntityAnonymizeService", () => {
     CASCADING ANONYMIZATION
    */
   function expectAnonymized(
-    expectedToGetAnonymized: EntityWithRelations[],
+    expectedToGetAnonymized: EntityWithAnonRelations[],
     entityMapper: MockEntityMapperService,
   ) {
     const actualEntitiesAfter = entityMapper.getAllData();
@@ -222,7 +222,7 @@ describe("EntityAnonymizeService", () => {
         (e) => e.getId() === anonEntity.getId(),
       );
 
-      const expectedAnonymizedEntity = new EntityWithRelations(
+      const expectedAnonymizedEntity = new EntityWithAnonRelations(
         anonEntity.getId(),
       );
       // copy over properties that are marked as `anonymize: "retain"`

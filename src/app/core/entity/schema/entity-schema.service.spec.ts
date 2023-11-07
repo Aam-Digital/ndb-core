@@ -157,12 +157,13 @@ describe("EntitySchemaService", () => {
       refSchool: string;
     }
 
-    const entities = TestBed.inject(EntityRegistry);
-    entities.clear();
+    const entities = new EntityRegistry();
     entities.addAll([
       [ReferencingEntity.ENTITY_TYPE, ReferencingEntity],
       [Entity.ENTITY_TYPE, Entity],
     ]);
+    const injector = TestBed.inject(Injector);
+    spyOn(injector, "get").and.returnValue(entities);
 
     const result = service.getEntityTypesReferencingType("Child");
 
