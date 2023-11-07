@@ -70,10 +70,10 @@ export interface EntitySchemaField {
   /**
    * (Optional) If the dataType of this field references another entity,
    *    define the role of this relationship for the entity containing this field.
-   * 
+   *
    * i.e. how "important" is the entity this field is referencing?
    * Does this the entity containing this field (not the referenced entity) still have meaning after the referenced entity has been deleted?
-   * 
+   *
    * see options of the `EntityReferenceRole` type
    */
   entityReferenceRole?: EntityReferenceRole;
