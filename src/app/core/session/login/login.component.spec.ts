@@ -79,11 +79,12 @@ describe("LoginComponent", () => {
     fixture.detectChanges();
 
     sessionManager.remoteLogin().catch(() => undefined);
-    expect(component.offlineUsers).toEqual([]);
+    expect(component.enableOfflineLogin).toBeFalse();
     expect(loginState.value).toBe(LoginState.IN_PROGRESS);
 
     remoteLoginSubject.error("login error");
     tick();
+    expect(component.enableOfflineLogin).toBeTrue();
     expect(component.offlineUsers).toEqual(mockUsers);
   }));
 
@@ -93,12 +94,12 @@ describe("LoginComponent", () => {
     spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
 
     loginState.next(LoginState.LOGGED_OUT);
-    component.offlineUsers = [];
     fixture.detectChanges();
     loginState.next(LoginState.IN_PROGRESS);
-    expect(component.offlineUsers).toEqual([]);
+    expect(component.enableOfflineLogin).toBeFalse();
 
-    tick(5000);
+    tick(10000);
+    expect(component.enableOfflineLogin).toBeTrue();
     expect(component.offlineUsers).toEqual(mockUsers);
   }));
 });

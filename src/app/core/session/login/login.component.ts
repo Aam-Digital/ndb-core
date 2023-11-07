@@ -21,7 +21,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { ActivatedRoute, Router } from "@angular/router";
 import { LoginState } from "../session-states/login-state.enum";
-import { LoginStateSubject } from "../session-type";
+import { LoginStateSubject, SessionType } from "../session-type";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -32,6 +32,7 @@ import { MatListModule } from "@angular/material/list";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { waitForChangeTo } from "../session-states/session-utils";
 import { race, timer } from "rxjs";
+import { environment } from "../../../../environments/environment";
 
 /**
  * Allows the user to login online or offline depending on the connection status
@@ -56,7 +57,7 @@ import { race, timer } from "rxjs";
 })
 export class LoginComponent implements OnInit {
   offlineUsers: AuthUser[] = [];
-  enableOfflineLogin = false;
+  enableOfflineLogin = environment.session_type !== SessionType.synced;
   loginInProgress = false;
 
   constructor(
