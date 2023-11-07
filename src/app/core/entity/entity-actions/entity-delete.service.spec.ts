@@ -15,8 +15,10 @@ import {
   expectUpdated,
 } from "./cascading-entity-action.spec";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
+import { Note } from "../../../child-dev-project/notes/model/note";
+import { Child } from "../../../child-dev-project/children/model/child";
 
-fdescribe("EntityDeleteService", () => {
+describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
   let entityMapper: MockEntityMapperService;
 
@@ -167,6 +169,37 @@ fdescribe("EntityDeleteService", () => {
     );
   });
 
-  // TODO: test Note with attendance (?)
-  // TODO: test for entity with two properties referencing the same entity type
+  it("should remove multiple ref ids from related note", async () => {
+    const schemaField = Note.schema.get("relatedEntities");
+    const originalSchemaAdditional = schemaField.additional;
+    schemaField.additional = [Child.ENTITY_TYPE];
+
+    const primary = new Child();
+    const note = new Note();
+    note.subject = "test";
+    note.children = [primary.getId(), "some-other"];
+    note.relatedEntities = [primary.getId(true)];
+    const originalNote = note.copy();
+    await entityMapper.save(primary);
+    await entityMapper.save(note);
+
+    const result = await service.deleteEntity(primary);
+
+    const actualNote = entityMapper.get(
+      Note.ENTITY_TYPE,
+      note.getId(true),
+    ) as Note;
+
+    expect(actualNote.relatedEntities).toEqual([]);
+    expect(actualNote.children).toEqual(["some-other"]);
+
+    expect(result.originalEntitiesBeforeChange.length).toBe(2);
+    expectEntitiesToMatch(result.originalEntitiesBeforeChange, [
+      primary,
+      originalNote,
+    ]);
+
+    // restore original schema
+    schemaField.additional = originalSchemaAdditional;
+  });
 });

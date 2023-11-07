@@ -23,16 +23,20 @@ export class CascadingActionResult {
 
   mergeResults(otherResult: CascadingActionResult) {
     this.originalEntitiesBeforeChange = [
-      ...this.originalEntitiesBeforeChange.filter(
-        (e) => !otherResult.originalEntitiesBeforeChange.includes(e),
+      ...this.originalEntitiesBeforeChange,
+      ...otherResult.originalEntitiesBeforeChange.filter(
+        (e) =>
+          !this.originalEntitiesBeforeChange.some(
+            (x) => x.getId() === e.getId(),
+          ),
       ),
-      ...otherResult.originalEntitiesBeforeChange,
     ];
     this.potentiallyRetainingPII = [
-      ...this.potentiallyRetainingPII.filter(
-        (e) => !otherResult.potentiallyRetainingPII.includes(e),
+      ...this.potentiallyRetainingPII,
+      ...otherResult.potentiallyRetainingPII.filter(
+        (e) =>
+          !this.potentiallyRetainingPII.some((x) => x.getId() === e.getId()),
       ),
-      ...otherResult.potentiallyRetainingPII,
     ];
 
     return this;

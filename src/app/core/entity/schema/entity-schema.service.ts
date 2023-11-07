@@ -21,6 +21,7 @@ import { EntitySchema } from "./entity-schema";
 import { EntitySchemaField } from "./entity-schema-field";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
 import { EntityRegistry } from "../database-entity.decorator";
+import { asArray } from "../../../utils/utils";
 
 /**
  * Transform between entity instances and database objects
@@ -251,7 +252,7 @@ export class EntitySchemaService {
     const referencingTypes = [];
     for (const t of this.injector.get(EntityRegistry).values()) {
       for (const [key, field] of t.schema.entries()) {
-        if (field.additional === type) {
+        if (asArray(field.additional).includes(type)) {
           let refType = referencingTypes.find((e) => e.entityType === t);
           if (!refType) {
             refType = { entityType: t, referencingProperties: [] };

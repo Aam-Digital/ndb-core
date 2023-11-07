@@ -155,6 +155,12 @@ describe("EntitySchemaService", () => {
         additional: "School",
       })
       refSchool: string;
+
+      @DatabaseField({
+        dataType: "entity-array",
+        additional: ["Child", "School"],
+      })
+      multiTypeRef: string[];
     }
 
     const entities = new EntityRegistry();
@@ -170,7 +176,7 @@ describe("EntitySchemaService", () => {
     expect(result).toEqual([
       {
         entityType: ReferencingEntity,
-        referencingProperties: ["refChildren", "refChild"],
+        referencingProperties: ["refChildren", "refChild", "multiTypeRef"],
       },
     ]);
   });
