@@ -12,14 +12,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { RollCallSetupComponent } from "./roll-call-setup/roll-call-setup.component";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 
-/**
- * additional config specifically for AddDayAttendanceComponent
- */
-export interface AddDayAttendanceConfig {
-  /** (optional) property name of the participant entities by which they are sorted for the roll call */
-  sortParticipantsBy?: string;
-}
-
 @RouteTarget("AddDayAttendance")
 @Component({
   selector: "app-add-day-attendance",
@@ -36,8 +28,9 @@ export interface AddDayAttendanceConfig {
   ],
   standalone: true,
 })
-export class AddDayAttendanceComponent implements AddDayAttendanceConfig {
-  @Input() sortParticipantsBy: any;
+export class AddDayAttendanceComponent {
+  /** (optional) property name of the participant entities by which they are sorted for the roll call */
+  @Input() sortParticipantsBy: string;
 
   currentStage = 0;
 
