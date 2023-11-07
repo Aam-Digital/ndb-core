@@ -2,7 +2,10 @@ import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { Entity } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { CascadingEntityAction } from "./cascading-entity-action";
+import {
+  CascadingActionResult,
+  CascadingEntityAction,
+} from "./cascading-entity-action";
 
 /**
  * Safely delete an entity including handling references with related entities.
@@ -28,19 +31,20 @@ export class EntityDeleteService extends CascadingEntityAction {
    * @param entity
    * @private
    */
-  async deleteEntity(entity: Entity) {
-    const affectedEntitiesBeforeAction =
-      await this.cascadeActionToRelatedEntities(
-        entity,
-        (e) => this.deleteEntity(e),
-        (e, refField, entity) =>
-          this.removeReferenceFromEntity(e, refField, entity),
-      );
+  async deleteEntity(entity: Entity): Promise<CascadingActionResult> {
+    const cascadeResult = await this.cascadeActionToRelatedEntities(
+      entity,
+      (e) => this.deleteEntity(e),
+      (e, refField, entity) =>
+        this.removeReferenceFromEntity(e, refField, entity),
+    );
 
     const originalEntity = entity.copy();
     await this.entityMapper.remove(entity);
 
-    return [originalEntity, ...affectedEntitiesBeforeAction];
+    return new CascadingActionResult([originalEntity]).mergeResults(
+      cascadeResult,
+    );
   }
 
   /**
@@ -58,7 +62,7 @@ export class EntityDeleteService extends CascadingEntityAction {
     relatedEntityWithReference: Entity,
     refField: string,
     referencedEntity: Entity,
-  ): Promise<Entity[]> {
+  ): Promise<CascadingActionResult> {
     const originalEntity = relatedEntityWithReference.copy();
 
     if (Array.isArray(relatedEntityWithReference[refField])) {
@@ -70,6 +74,12 @@ export class EntityDeleteService extends CascadingEntityAction {
     }
 
     await this.entityMapper.save(relatedEntityWithReference);
-    return [originalEntity];
+
+    return new CascadingActionResult(
+      [originalEntity],
+      relatedEntityWithReference.getConstructor().hasPII
+        ? [relatedEntityWithReference]
+        : [],
+    );
   }
 }

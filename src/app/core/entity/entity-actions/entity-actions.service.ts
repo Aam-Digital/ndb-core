@@ -7,6 +7,7 @@ import { Router } from "@angular/router";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
+import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -79,8 +80,17 @@ export class EntityActionsService {
       return false;
     }
 
-    const affectedEntitiesBeforeAction =
-      await this.entityDelete.deleteEntity(entity);
+    const result = await this.entityDelete.deleteEntity(entity);
+
+    if (result.potentiallyRetainingPII.length > 0) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:post-delete related PII warning title:Related records may still contain personal data`,
+        $localize`:post-delete related PII warning dialog:
+        Some related records (e.g. notes) may still contain personal data in their text.
+        If you want to ensure all personal information (PII) has been delete, please review these records.`,
+        OkButton,
+      );
+    }
 
     let currentUrl: string;
     if (navigate) {
@@ -90,9 +100,9 @@ export class EntityActionsService {
     }
 
     this.showSnackbarConfirmation(
-      affectedEntitiesBeforeAction[0],
+      result.originalEntitiesBeforeChange[0],
       $localize`:Entity action confirmation message verb:Deleted`,
-      affectedEntitiesBeforeAction,
+      result.originalEntitiesBeforeChange,
       currentUrl,
     );
     return true;
@@ -121,13 +131,26 @@ export class EntityActionsService {
       return false;
     }
 
-    const affectedEntitiesBeforeAction =
-      await this.entityAnonymize.anonymizeEntity(entity);
+    const result = await this.entityAnonymize.anonymizeEntity(entity);
+
+    if (result.potentiallyRetainingPII.length > 0) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:post-anonymize related PII warning title:Related records may still contain personal data`,
+        $localize`:post-anonymize related PII warning dialog:
+        Some related records (e.g. notes) may still contain personal data in their text.
+        If such records have been linked only to this ${
+          entity.getConstructor().label
+        }, we have automatically also anonymized them for you.
+        However, there have been some records that are related to multiple other records.
+        These are still unchanged, so that you will not lose relevant data. Please review the linked records manually to ensure all sensitive information has been removed (e.g. by editing a note's text).`,
+        OkButton,
+      );
+    }
 
     this.showSnackbarConfirmation(
-      affectedEntitiesBeforeAction[0],
+      result.originalEntitiesBeforeChange[0],
       $localize`:Entity action confirmation message verb:Anonymized`,
-      affectedEntitiesBeforeAction,
+      result.originalEntitiesBeforeChange,
     );
     return true;
   }

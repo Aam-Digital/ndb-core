@@ -13,6 +13,7 @@ import { Router } from "@angular/router";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
+import { CascadingActionResult } from "./cascading-entity-action";
 
 describe("EntityActionsService", () => {
   let service: EntityActionsService;
@@ -29,7 +30,9 @@ describe("EntityActionsService", () => {
     primaryEntity = new Entity();
 
     mockedEntityDeleteService = jasmine.createSpyObj(["deleteEntity"]);
-    mockedEntityDeleteService.deleteEntity.and.resolveTo([primaryEntity]);
+    mockedEntityDeleteService.deleteEntity.and.resolveTo(
+      new CascadingActionResult([primaryEntity]),
+    );
     mockedEntityMapper = jasmine.createSpyObj(["save", "saveAll"]);
     snackBarSpy = jasmine.createSpyObj(["open"]);
     mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
@@ -84,10 +87,9 @@ describe("EntityActionsService", () => {
 
   it("should re-save all affected entities and navigate back to entity on undo", fakeAsync(() => {
     const anotherAffectedEntity = new Entity();
-    mockedEntityDeleteService.deleteEntity.and.resolveTo([
-      primaryEntity,
-      anotherAffectedEntity,
-    ]);
+    mockedEntityDeleteService.deleteEntity.and.resolveTo(
+      new CascadingActionResult([primaryEntity, anotherAffectedEntity]),
+    );
 
     // Mock a snackbar where 'undo' is pressed
     const onSnackbarAction = new Subject<void>();

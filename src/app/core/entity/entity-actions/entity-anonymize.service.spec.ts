@@ -8,7 +8,10 @@ import {
   mockEntityMapper,
   MockEntityMapperService,
 } from "../entity-mapper/mock-entity-mapper-service";
-import { comparableEntityData } from "../../../utils/expect-entity-data.spec";
+import {
+  comparableEntityData,
+  expectEntitiesToMatch,
+} from "../../../utils/expect-entity-data.spec";
 import { UpdateMetadata } from "../model/update-metadata";
 import { FileService } from "../../../features/file/file.service";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
@@ -258,7 +261,7 @@ describe("EntityAnonymizeService", () => {
   });
 
   it("should not cascade anonymize the 'composite'-type entity that still references additional other entities but ask user", async () => {
-    await service.anonymizeEntity(
+    const result = await service.anonymizeEntity(
       ENTITIES.ReferencedAsOneOfMultipleComposites1,
     );
 
@@ -266,6 +269,10 @@ describe("EntityAnonymizeService", () => {
       [ENTITIES.ReferencedAsOneOfMultipleComposites1],
       entityMapper,
     );
+    // warn user that there may be personal details in referencing entity which have not been deleted
+    expectEntitiesToMatch(result.potentiallyRetainingPII, [
+      ENTITIES.ReferencingTwoComposites,
+    ]);
   });
 
   it("should cascade anonymize the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
@@ -283,17 +290,26 @@ describe("EntityAnonymizeService", () => {
   });
 
   it("should not cascade anonymize the 'aggregate'-type entity that only references the entity user acts on but ask user", async () => {
-    await service.anonymizeEntity(ENTITIES.ReferencingAggregate_ref);
+    const result = await service.anonymizeEntity(
+      ENTITIES.ReferencingAggregate_ref,
+    );
 
     expectAnonymized([ENTITIES.ReferencingAggregate_ref], entityMapper);
+    // warn user that there may be personal details in referencing entity which have not been deleted
+    expectEntitiesToMatch(result.potentiallyRetainingPII, [
+      ENTITIES.ReferencingAggregate,
+    ]);
   });
 
   it("should not cascade anonymize the 'aggregate'-type entity that still references additional other entities but ask user", async () => {
-    await service.anonymizeEntity(ENTITIES.ReferencingTwoAggregates_ref1);
+    const result = await service.anonymizeEntity(
+      ENTITIES.ReferencingTwoAggregates_ref1,
+    );
 
     expectAnonymized([ENTITIES.ReferencingTwoAggregates_ref1], entityMapper);
+    // warn user that there may be personal details in referencing entity which have not been deleted
+    expectEntitiesToMatch(result.potentiallyRetainingPII, [
+      ENTITIES.ReferencingTwoAggregates,
+    ]);
   });
-
-  // TODO: test Note with attendance (?)
-  // TODO: test for entity with two properties referencing the same entity type
 });

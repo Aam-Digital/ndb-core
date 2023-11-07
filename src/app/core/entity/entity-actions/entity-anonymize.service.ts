@@ -1,7 +1,10 @@
 import { Injectable } from "@angular/core";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../schema/entity-schema.service";
-import { CascadingEntityAction } from "./cascading-entity-action";
+import {
+  CascadingActionResult,
+  CascadingEntityAction,
+} from "./cascading-entity-action";
 import { firstValueFrom } from "rxjs";
 import { FileDatatype } from "../../../features/file/file.datatype";
 import { FileService } from "../../../features/file/file.service";
@@ -28,11 +31,11 @@ export class EntityAnonymizeService extends CascadingEntityAction {
    * @param entity
    * @private
    */
-  async anonymizeEntity(entity: Entity) {
+  async anonymizeEntity(entity: Entity): Promise<CascadingActionResult> {
     if (!entity.getConstructor().hasPII) {
       // entity types that are generally without PII by default retain all fields
       // this should only be called through a cascade action anyway
-      return [];
+      return new CascadingActionResult();
     }
 
     const originalEntity = entity.copy();
@@ -58,14 +61,15 @@ export class EntityAnonymizeService extends CascadingEntityAction {
 
     await this.entityMapper.save(entity);
 
-    const affectedEntitiesBeforeAction =
-      await this.cascadeActionToRelatedEntities(
-        entity,
-        (e) => this.anonymizeEntity(e),
-        async (e) => [],
-      );
+    const cascadeResult = await this.cascadeActionToRelatedEntities(
+      entity,
+      (e) => this.anonymizeEntity(e),
+      (e) => this.keepEntityUnchanged(e),
+    );
 
-    return [originalEntity, ...affectedEntitiesBeforeAction];
+    return new CascadingActionResult([originalEntity]).mergeResults(
+      cascadeResult,
+    );
   }
 
   private async anonymizeProperty(entity: Entity, key: string) {
@@ -89,5 +93,9 @@ export class EntityAnonymizeService extends CascadingEntityAction {
     }
 
     delete entity[key];
+  }
+
+  private async keepEntityUnchanged(e: Entity): Promise<CascadingActionResult> {
+    return new CascadingActionResult([], e.getConstructor().hasPII ? [e] : []);
   }
 }

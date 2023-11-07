@@ -14,8 +14,9 @@ import {
   expectDeleted,
   expectUpdated,
 } from "./cascading-entity-action.spec";
+import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 
-describe("EntityDeleteService", () => {
+fdescribe("EntityDeleteService", () => {
   let service: EntityDeleteService;
   let entityMapper: MockEntityMapperService;
 
@@ -73,22 +74,20 @@ describe("EntityDeleteService", () => {
   });
 
   it("should not cascade delete the 'composite'-type entity that still references additional other entities but remove id", async () => {
-    await service.deleteEntity(ENTITIES.ReferencedAsOneOfMultipleComposites1);
+    const result = await service.deleteEntity(
+      ENTITIES.ReferencedAsOneOfMultipleComposites1,
+    );
 
+    const expectedUpdatedRelEntity = removeReference(
+      ENTITIES.ReferencingTwoComposites,
+      "refComposite",
+      ENTITIES.ReferencedAsOneOfMultipleComposites1,
+    );
     expectDeleted(
       [ENTITIES.ReferencedAsOneOfMultipleComposites1],
       entityMapper,
     );
-    expectUpdated(
-      [
-        removeReference(
-          ENTITIES.ReferencingTwoComposites,
-          "refComposite",
-          ENTITIES.ReferencedAsOneOfMultipleComposites1,
-        ),
-      ],
-      entityMapper,
-    );
+    expectUpdated([expectedUpdatedRelEntity], entityMapper);
     expectAllUnchangedExcept(
       [
         ENTITIES.ReferencedAsOneOfMultipleComposites1,
@@ -96,8 +95,10 @@ describe("EntityDeleteService", () => {
       ],
       entityMapper,
     );
-
-    // TODO: warn user that there may be personal details in referencing entity which have not been deleted
+    // warn user that there may be personal details in referencing entity which have not been deleted
+    expectEntitiesToMatch(result.potentiallyRetainingPII, [
+      expectedUpdatedRelEntity,
+    ]);
   });
 
   it("should cascade delete the 'composite'-type entity that references the entity user acts on even when another property holds other id (e.g. ChildSchoolRelation)", async () => {
@@ -122,25 +123,25 @@ describe("EntityDeleteService", () => {
   });
 
   it("should not cascade delete the 'aggregate'-type entity that only references the entity user acts on but remove id", async () => {
-    await service.deleteEntity(ENTITIES.ReferencingAggregate_ref);
-
-    expectDeleted([ENTITIES.ReferencingAggregate_ref], entityMapper);
-    expectUpdated(
-      [
-        removeReference(
-          ENTITIES.ReferencingAggregate,
-          "refAggregate",
-          ENTITIES.ReferencingAggregate_ref,
-        ),
-      ],
-      entityMapper,
+    const result = await service.deleteEntity(
+      ENTITIES.ReferencingAggregate_ref,
     );
+
+    const expectedUpdatedRelEntity = removeReference(
+      ENTITIES.ReferencingAggregate,
+      "refAggregate",
+      ENTITIES.ReferencingAggregate_ref,
+    );
+    expectDeleted([ENTITIES.ReferencingAggregate_ref], entityMapper);
+    expectUpdated([expectedUpdatedRelEntity], entityMapper);
     expectAllUnchangedExcept(
       [ENTITIES.ReferencingAggregate_ref, ENTITIES.ReferencingAggregate],
       entityMapper,
     );
-
-    // TODO: warn user that there may be personal details in referencing entity which have not been deleted
+    // warn user that there may be personal details in referencing entity which have not been deleted
+    expectEntitiesToMatch(result.potentiallyRetainingPII, [
+      expectedUpdatedRelEntity,
+    ]);
   });
 
   it("should not cascade delete the 'aggregate'-type entity that still references additional other entities but remove id", async () => {

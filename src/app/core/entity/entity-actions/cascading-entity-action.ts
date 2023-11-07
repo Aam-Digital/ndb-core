@@ -3,6 +3,42 @@ import { asArray } from "../../../utils/utils";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 
+export class CascadingActionResult {
+  /**
+   * entities that have been updated in the process, in their original state
+   * (can be used for undo action)
+   */
+  originalEntitiesBeforeChange: Entity[];
+
+  /**
+   * entities that may still contain PII related to the primary entity that could not be automatically removed
+   * (may need manual review by the user)
+   */
+  potentiallyRetainingPII: Entity[];
+
+  constructor(changedEntities?: Entity[], potentiallyRetainingPII?: Entity[]) {
+    this.originalEntitiesBeforeChange = changedEntities ?? [];
+    this.potentiallyRetainingPII = potentiallyRetainingPII ?? [];
+  }
+
+  mergeResults(otherResult: CascadingActionResult) {
+    this.originalEntitiesBeforeChange = [
+      ...this.originalEntitiesBeforeChange.filter(
+        (e) => !otherResult.originalEntitiesBeforeChange.includes(e),
+      ),
+      ...otherResult.originalEntitiesBeforeChange,
+    ];
+    this.potentiallyRetainingPII = [
+      ...this.potentiallyRetainingPII.filter(
+        (e) => !otherResult.potentiallyRetainingPII.includes(e),
+      ),
+      ...otherResult.potentiallyRetainingPII,
+    ];
+
+    return this;
+  }
+}
+
 /**
  * extend this class to implement services that perform actions on an entity
  * that require recursive actions to related entities as well.
@@ -30,14 +66,14 @@ export abstract class CascadingEntityAction {
       relatedEntity: Entity,
       refField?: string,
       entity?: Entity,
-    ) => Promise<Entity[]>,
+    ) => Promise<CascadingActionResult>,
     aggregateAction: (
       relatedEntity: Entity,
       refField?: string,
       entity?: Entity,
-    ) => Promise<Entity[]>,
-  ): Promise<Entity[]> {
-    const originalAffectedEntitiesForUndo: Entity[] = [];
+    ) => Promise<CascadingActionResult>,
+  ): Promise<CascadingActionResult> {
+    const cascadeActionResult = new CascadingActionResult();
 
     const entityTypesWithReferences =
       this.schemaService.getEntityTypesReferencingType(entity.getType());
@@ -59,20 +95,16 @@ export abstract class CascadingEntityAction {
             asArray(e[refField]).length === 1
           ) {
             // is only composite
-            const furtherAffectedEntities = await compositeAction(e);
-            originalAffectedEntitiesForUndo.push(...furtherAffectedEntities);
+            const result = await compositeAction(e);
+            cascadeActionResult.mergeResults(result);
           } else {
-            const furtherAffectedEntities = await aggregateAction(
-              e,
-              refField,
-              entity,
-            );
-            originalAffectedEntitiesForUndo.push(...furtherAffectedEntities);
+            const result = await aggregateAction(e, refField, entity);
+            cascadeActionResult.mergeResults(result);
           }
         }
       }
     }
 
-    return originalAffectedEntitiesForUndo;
+    return cascadeActionResult;
   }
 }
