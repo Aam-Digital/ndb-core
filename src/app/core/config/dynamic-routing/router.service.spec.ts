@@ -10,9 +10,9 @@ import { ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { ApplicationLoadingComponent } from "./empty/application-loading.component";
 import { NotFoundComponent } from "./not-found/not-found.component";
-import { componentRegistry } from "../../../dynamic-components";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AuthGuard } from "../../session/auth.guard";
+import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
 
 class TestComponent extends Component {}
 
@@ -63,24 +63,24 @@ describe("RouterService", () => {
     const expectedRoutes = [
       {
         path: "child",
-        loadComponent: componentRegistry.get("ChildrenList"),
-        data: {},
+        component: RoutedViewComponent,
+        data: { component: "ChildrenList" },
         canDeactivate: [jasmine.any(Function)],
         canActivate: [AuthGuard],
       },
       {
         path: "child/:id",
-        loadComponent: componentRegistry.get("EntityDetails"),
-        data: { config: testViewConfig },
+        component: RoutedViewComponent,
+        data: { component: "EntityDetails", config: testViewConfig },
         canDeactivate: [jasmine.any(Function)],
         canActivate: [AuthGuard],
       },
       {
         path: "list",
-        loadComponent: componentRegistry.get("EntityList"),
+        component: RoutedViewComponent,
+        data: { component: "EntityList", permittedUserRoles: ["user_app"] },
         canActivate: [AuthGuard, UserRoleGuard],
         canDeactivate: [jasmine.any(Function)],
-        data: { permittedUserRoles: ["user_app"] },
       },
     ];
 
@@ -144,9 +144,11 @@ describe("RouterService", () => {
 
     const router = TestBed.inject<Router>(Router);
     expect(router.config.find((r) => r.path === "child").data).toEqual({
+      component: "ChildrenList",
       config: { foo: 1 },
     });
     expect(router.config.find((r) => r.path === "child2").data).toEqual({
+      component: "ChildrenList",
       config: { foo: 2 },
     });
   });
@@ -162,10 +164,10 @@ describe("RouterService", () => {
     const expectedRoutes = [
       {
         path: "list",
-        loadComponent: componentRegistry.get("EntityList"),
+        component: RoutedViewComponent,
+        data: { component: "EntityList", permittedUserRoles: ["admin"] },
         canActivate: [AuthGuard, UserRoleGuard],
         canDeactivate: [jasmine.any(Function)],
-        data: { permittedUserRoles: ["admin"] },
       },
     ];
     const router = TestBed.inject<Router>(Router);
@@ -185,15 +187,5 @@ describe("RouterService", () => {
     service.reloadRouting([], [wildcardRoute]);
 
     expect(wildcardRoute).toEqual({ path: "**", component: NotFoundComponent });
-  });
-
-  it("should log a warning if a view config has a component which is not registered", () => {
-    const testViewConfigs: ViewConfig[] = [
-      { _id: "view:child", component: "Support" },
-    ];
-
-    service.reloadRouting(testViewConfigs);
-
-    expect(mockLoggingService.warn).toHaveBeenCalled();
   });
 });

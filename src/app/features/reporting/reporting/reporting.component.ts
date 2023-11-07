@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import {
   Aggregation,
@@ -13,7 +13,6 @@ import {
   ReportingComponentConfig,
 } from "./reporting-component-config";
 import moment from "moment";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../app.routing";
 import { NgIf } from "@angular/common";
@@ -37,8 +36,8 @@ import { DataTransformationService } from "../../../core/export/data-transformat
   ],
   standalone: true,
 })
-export class ReportingComponent implements OnInit {
-  availableReports: ReportConfig[];
+export class ReportingComponent implements ReportingComponentConfig {
+  @Input() reports: ReportConfig[];
   mode: "exporting" | "reporting" = "exporting";
   loading: boolean;
 
@@ -50,14 +49,6 @@ export class ReportingComponent implements OnInit {
     private dataAggregationService: DataAggregationService,
     private dataTransformationService: DataTransformationService,
   ) {}
-
-  ngOnInit() {
-    this.activatedRoute.data.subscribe(
-      (data: RouteData<ReportingComponentConfig>) => {
-        this.availableReports = data.config?.reports;
-      },
-    );
-  }
 
   async calculateResults(
     selectedReport: ReportConfig,
