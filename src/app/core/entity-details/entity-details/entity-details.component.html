@@ -42,7 +42,7 @@
   [preserveContent]="true"
 >
   <mat-tab
-    *ngFor="let panelConfig of panelsComponents"
+    *ngFor="let panelConfig of panels"
     [disabled]="creatingNew || unsavedChanges.pending"
   >
     <ng-template mat-tab-label>

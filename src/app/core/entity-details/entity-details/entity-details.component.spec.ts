@@ -92,7 +92,7 @@ describe("EntityDetailsComponent", () => {
     component.ngOnChanges(simpleChangesFor(component, "id"));
     tick();
 
-    component.panelsComponents.forEach((p) =>
+    component.panels.forEach((p) =>
       p.components.forEach((c) => {
         const panelConfig = c.config as PanelConfig;
         expect(panelConfig.entity).toEqual(testChild);
