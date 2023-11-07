@@ -497,9 +497,8 @@ describe("QueryService", () => {
 
     const attendanceArrayQuery = `${EventNote.ENTITY_TYPE}:toArray:getAttendanceArray(true)`;
 
-    const attendanceResult: AttendanceInfo = await queryData(
-      attendanceArrayQuery,
-    );
+    const attendanceResult: AttendanceInfo =
+      await queryData(attendanceArrayQuery);
 
     expect(attendanceResult).toContain({
       participant: presentTwiceWithSchool.getId(),

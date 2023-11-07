@@ -45,13 +45,6 @@ export const childrenComponents: ComponentTuple[] = [
       ).then((c) => c.ChildrenBmiDashboardComponent),
   ],
   [
-    "RelatedEntitiesWithSummary",
-    () =>
-      import(
-        "../../core/entity-details/related-entities-with-summary/related-entities-with-summary.component"
-      ).then((c) => c.RelatedEntitiesWithSummaryComponent),
-  ],
-  [
     "BmiBlock",
     () =>
       import("./health-checkup/bmi-block/bmi-block.component").then(
