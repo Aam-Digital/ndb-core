@@ -3,8 +3,6 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { EntityDetailsComponent } from "./entity-details.component";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { ActivatedRoute } from "@angular/router";
-import { of } from "rxjs";
 import { EntityDetailsConfig } from "../EntityDetailsConfig";
 
 const demoEntity = Child.create("John Doe");
@@ -41,14 +39,6 @@ export default {
     applicationConfig({
       providers: [
         importProvidersFrom(StorybookBaseModule.withData([demoEntity])),
-        {
-          provide: ActivatedRoute,
-          useValue: {
-            data: of({ config }),
-            paramMap: of(new Map([["id", demoEntity.getId(false)]])),
-            snapshot: { queryParamMap: { get: () => undefined } },
-          },
-        },
       ],
     }),
   ],
@@ -61,4 +51,7 @@ const Template: StoryFn<EntityDetailsComponent> = (
 });
 
 export const Primary = Template.bind({});
-Primary.args = {};
+Primary.args = {
+  id: demoEntity.getId(false),
+  ...config,
+};
