@@ -151,14 +151,8 @@ export class ConfigEntityFormComponent implements OnChanges {
   }
 
   removeGroup(i: number) {
-    this.fieldGroups.splice(i, 1);
-  }
-
-  private async createNewField(fieldGroup: any[], index: number) {
-    const newField = { id: null };
-    await this.openFieldConfig(newField, fieldGroup);
-
-    fieldGroup.splice(index, 0, newField);
+    const [removedFieldGroup] = this.fieldGroups.splice(i, 1);
+    this.availableFields.push(...removedFieldGroup.fields);
   }
 }
 

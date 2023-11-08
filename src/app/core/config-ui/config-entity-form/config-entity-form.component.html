@@ -1,5 +1,5 @@
 <mat-drawer-container cdkDropListGroup>
-  <mat-drawer-content class="grid-layout padding-right-regular">
+  <mat-drawer-content class="admin-grid-layout padding-right-regular">
     <!-- FIELD GROUPS -->
     <div
       *ngFor="let group of fieldGroups; let i = index"
@@ -9,11 +9,7 @@
       <div class="flex-row align-baseline">
         <mat-form-field floatLabel="always">
           <mat-label>Group Title</mat-label>
-          <input
-            matInput
-            [(ngModel)]="group.header"
-            placeholder="hidden (no title)"
-          />
+          <input matInput [(ngModel)]="group.header" placeholder="(no title)" />
         </mat-form-field>
 
         <button
@@ -47,26 +43,33 @@
             cdkDragHandle
           ></fa-icon>
 
-          <div
+          <button
+            mat-stroked-button
+            color="accent"
+            class="field-edit-button"
             (click)="openFieldConfig(f, group.fields)"
-            style="cursor: pointer"
-            class="dummy-form-field"
           >
-            <ng-container
-              *ngIf="f.id"
-              [appDynamicComponent]="{
-                component: f.edit,
-                config: {
-                  formFieldConfig: f,
-                  propertySchema: entityType.schema.get(f.id),
-                  formControl: dummyForm.get(f.id),
-                  entity: dummyEntity
-                }
-              }"
-            >
-            </ng-container>
+            Edit Field
+          </button>
+
+          <div class="dummy-form-field">
+            <div [class.field-with-tooltip-suffix]="f.tooltip">
+              <ng-container
+                *ngIf="f.id"
+                [appDynamicComponent]="{
+                  component: f.edit,
+                  config: {
+                    formFieldConfig: f,
+                    propertySchema: entityType.schema.get(f.id),
+                    formControl: dummyForm.get(f.id),
+                    entity: dummyEntity
+                  }
+                }"
+              >
+              </ng-container>
+            </div>
+            <app-help-button [text]="f.tooltip"></app-help-button>
           </div>
-          <app-help-button [text]="f.tooltip"></app-help-button>
         </div>
         <!-- FIELD [end]-->
       </div>
