@@ -4,6 +4,7 @@ import {
   FormGroupDirective,
   NgControl,
   NgForm,
+  Validators,
 } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
@@ -28,7 +29,16 @@ export abstract class CustomFormControlDirective<T>
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("aria-describedby") userAriaDescribedBy: string;
   @Input() placeholder: string;
-  @Input() required = false;
+
+  @Input()
+  get required() {
+    return this._required;
+  }
+  set required(req: boolean) {
+    this._required = coerceBooleanProperty(req);
+    this.stateChanges.next();
+  }
+  private _required = false;
 
   abstract inputElement: { _elementRef: ElementRef<HTMLElement> };
   stateChanges = new Subject<void>();
@@ -137,6 +147,14 @@ export abstract class CustomFormControlDirective<T>
 
     if (newState !== oldState) {
       this.errorState = newState;
+      this.stateChanges.next();
+    }
+
+    if (control.hasValidator(Validators.required)) {
+      this.required = true;
+      this.stateChanges.next();
+    } else if (this.required) {
+      this.required = false;
       this.stateChanges.next();
     }
   }
