@@ -12,6 +12,9 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import { EntitySchema } from "../../entity/schema/entity-schema";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+
+type EntitySchemaField_withId = EntitySchemaField & { id: string };
 
 @Component({
   selector: "app-config-entity-form",
@@ -26,7 +29,7 @@ export class ConfigEntityFormComponent implements OnChanges {
   entitySchema: EntitySchema;
 
   @Input() config: FormConfig;
-  fieldGroups: { header?: string; fields: FormFieldConfig[] }[]; // TODO: maybe change the config itself to reflect this structure?
+  fieldGroups: FieldGroup[]; // TODO: maybe change the config itself to reflect this structure?
 
   dummyEntity: Entity;
   dummyForm: FormGroup;
@@ -79,19 +82,39 @@ export class ConfigEntityFormComponent implements OnChanges {
         data: { entitySchemaField: schemaField },
       })
       .afterClosed()
-      .subscribe((updatedFieldSchema) => {
+      .subscribe((updatedFieldSchema: EntitySchemaField_withId) => {
         if (!updatedFieldSchema) {
           return;
         }
 
-        updatedFieldSchema = this.entityFormService.addSchemaToFormField(
-          { id: field.id },
-          updatedFieldSchema,
-          false,
-        );
-        this.entitySchema.set(field.id, updatedFieldSchema);
-        fieldsArray.splice(fieldsArray.indexOf(field), 1, updatedFieldSchema);
+        const updatedFormField = this.saveSchemaField(updatedFieldSchema);
+        fieldsArray.splice(fieldsArray.indexOf(field), 1, updatedFormField);
       });
+  }
+
+  private saveSchemaField(
+    schemaField: EntitySchemaField_withId,
+  ): FormFieldConfig {
+    this.entitySchema.set(schemaField.id, schemaField);
+
+    const updatedFormField = this.entityFormService.addSchemaToFormField(
+      { id: schemaField.id },
+      schemaField,
+      false,
+    );
+    if (!this.dummyForm.get(schemaField.id)) {
+      const newFormGroup = this.entityFormService.createFormGroup(
+        [updatedFormField],
+        this.dummyEntity,
+      );
+      this.dummyForm.addControl(
+        schemaField.id,
+        newFormGroup.get(schemaField.id),
+      );
+      this.dummyForm.disable();
+    }
+
+    return updatedFormField;
   }
 
   drop(event: CdkDragDrop<any, any>) {
@@ -129,4 +152,16 @@ export class ConfigEntityFormComponent implements OnChanges {
   removeGroup(i: number) {
     this.fieldGroups.splice(i, 1);
   }
+
+  private async createNewField(fieldGroup: any[], index: number) {
+    const newField = { id: null };
+    await this.openFieldConfig(newField, fieldGroup);
+
+    fieldGroup.splice(index, 0, newField);
+  }
+}
+
+export interface FieldGroup {
+  header?: string;
+  fields: FormFieldConfig[];
 }

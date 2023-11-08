@@ -64,8 +64,8 @@ export class ConfigFieldComponent {
   formLabelShort: FormControl;
   useShortLabel: boolean;
   formAdditional: FormControl;
-  formAdditionalOptions: { label: string; value: any }[] = null;
-  dataTypes: { label: string; value: any }[] = [];
+  formAdditionalOptions: SimpleDropdownValue[] = null;
+  dataTypes: SimpleDropdownValue[] = [];
 
   constructor(
     @Inject(MAT_DIALOG_DATA)
@@ -74,14 +74,14 @@ export class ConfigFieldComponent {
     },
     private dialogRef: MatDialogRef<any>,
     private fb: FormBuilder,
-    @Inject(DefaultDatatype) dataTypes: DefaultDatatype[],
+    @Inject(DefaultDatatype) allDataTypes: DefaultDatatype[],
     private configurableEnumService: ConfigurableEnumService,
     private entityRegistry: EntityRegistry,
   ) {
     this.entitySchemaField = data.entitySchemaField;
 
     this.initSettings();
-    this.initAvailableDatatypes(dataTypes);
+    this.initAvailableDatatypes(allDataTypes);
   }
 
   private initSettings() {
@@ -147,8 +147,8 @@ export class ConfigFieldComponent {
         value: d.dataType,
       }));
   }
-  objectToLabel = (v: { label: string }) => v?.label;
-  objectToValue = (v: { value: string }) => v?.value;
+  objectToLabel = (v: SimpleDropdownValue) => v?.label;
+  objectToValue = (v: SimpleDropdownValue) => v?.value;
 
   private updateDataTypeAdditional(dataType: string) {
     if (dataType === ConfigurableEnumDatatype.dataType) {
@@ -187,3 +187,5 @@ export class ConfigFieldComponent {
     this.dialogRef.close(updatedEntitySchema);
   }
 }
+
+type SimpleDropdownValue = { label: string; value: string };

@@ -1,8 +1,9 @@
 @use "src/styles/mixins/grid-layout";
+@use "src/styles/variables/sizes";
 
 .grid-layout {
   @include grid-layout.adaptive(
-    $min-block-width: 250px,
+    $min-block-width: sizes.$form-group-min-width,
     $max-screen-width: 414px
   );
 }

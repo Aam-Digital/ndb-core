@@ -50,8 +50,10 @@
           <div
             (click)="openFieldConfig(f, group.fields)"
             style="cursor: pointer"
+            class="dummy-form-field"
           >
             <ng-container
+              *ngIf="f.id"
               [appDynamicComponent]="{
                 component: f.edit,
                 config: {

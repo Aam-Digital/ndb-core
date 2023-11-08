@@ -18,7 +18,10 @@
   text-align: center;
 }
 
-:host ::ng-deep input[disabled] { pointer-events: none }
+.dummy-form-field ::ng-deep input, .dummy-form-field ::ng-deep button { pointer-events: none }
+.dummy-form-field ::ng-deep mat-form-field {
+  max-width: calc(#{sizes.$form-group-min-width} - 2*2*#{sizes.$small});
+}
 
 .toolbar {
   width: 300px;
