@@ -1,4 +1,10 @@
-import { Component, Inject, Input } from "@angular/core";
+import {
+  Component,
+  Inject,
+  Input,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
@@ -15,6 +21,7 @@ import {
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
+  Validators,
 } from "@angular/forms";
 import { NgIf } from "@angular/common";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
@@ -57,14 +64,14 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
     BasicAutocompleteComponent,
   ],
 })
-export class ConfigFieldComponent {
+export class ConfigFieldComponent implements OnChanges {
   @Input() entitySchemaField: EntitySchemaField & { id?: string }; // TODO: add id / key to EntitySchemaField for easier handling?
 
   form: FormGroup;
   formLabelShort: FormControl;
   useShortLabel: boolean;
   formAdditional: FormControl;
-  formAdditionalOptions: SimpleDropdownValue[] = null;
+  typeAdditionalOptions: SimpleDropdownValue[];
   dataTypes: SimpleDropdownValue[] = [];
 
   constructor(
@@ -84,21 +91,30 @@ export class ConfigFieldComponent {
     this.initAvailableDatatypes(allDataTypes);
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.entitySchemaField) {
+      this.initSettings();
+    }
+  }
+
   private initSettings() {
     this.formLabelShort = this.fb.control(this.entitySchemaField.labelShort);
     this.formAdditional = this.fb.control(this.entitySchemaField.additional);
 
     this.form = this.fb.group({
-      label: [this.entitySchemaField.label],
+      label: [this.entitySchemaField.label, Validators.required],
       labelShort: this.formLabelShort,
       description: [this.entitySchemaField.description],
 
-      id: this.fb.control({
-        value: this.entitySchemaField.id,
-        disabled: this.entitySchemaField.id !== null, // disabled if not newly created field
-      }),
-      dataType: [this.entitySchemaField.dataType],
-      additional: [this.entitySchemaField.additional],
+      id: this.fb.control(
+        {
+          value: this.entitySchemaField.id,
+          disabled: this.entitySchemaField.id !== null, // disabled if not newly created field
+        },
+        [Validators.required],
+      ),
+      dataType: [this.entitySchemaField.dataType, Validators.required],
+      additional: this.formAdditional,
 
       // TODO: remove "innerDataType" completely - the UI can only support very specific multi-valued types anyway
       // TODO add a datatype "alias" for enum-array
@@ -125,7 +141,7 @@ export class ConfigFieldComponent {
     this.useShortLabel = useShortLabel;
 
     if (!this.useShortLabel) {
-      this.formLabelShort.setValue(null);
+      this.formLabelShort.setValue(undefined);
       this.formLabelShort.disable();
     }
 
@@ -152,24 +168,27 @@ export class ConfigFieldComponent {
 
   private updateDataTypeAdditional(dataType: string) {
     if (dataType === ConfigurableEnumDatatype.dataType) {
-      this.formAdditionalOptions = this.configurableEnumService
+      this.typeAdditionalOptions = this.configurableEnumService
         .listEnums()
         .map((x) => ({
           label: Entity.extractEntityIdFromId(x),
           value: Entity.extractEntityIdFromId(x),
         }));
+      this.formAdditional.addValidators(Validators.required);
       // TODO allow new enum creation
       // TODO preview the options within the selected enum (and allow to edit the enum options?)
     } else if (
       dataType === EntityDatatype.dataType ||
       dataType === EntityArrayDatatype.dataType
     ) {
-      this.formAdditionalOptions = this.entityRegistry
+      this.typeAdditionalOptions = this.entityRegistry
         .getEntityTypes(true)
         .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
+      this.formAdditional.addValidators(Validators.required);
     } else {
-      this.form.get("additional").setValue(null);
-      this.formAdditionalOptions = null;
+      this.formAdditional.setValue(undefined);
+      this.formAdditional.removeValidators(Validators.required);
+      this.typeAdditionalOptions = undefined;
     }
 
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
@@ -178,6 +197,11 @@ export class ConfigFieldComponent {
   }
 
   save() {
+    this.form.markAllAsTouched();
+    if (this.form.invalid) {
+      return;
+    }
+
     const updatedEntitySchema = Object.assign(
       {},
       this.entitySchemaField,

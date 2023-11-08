@@ -14,7 +14,8 @@ import {
 import { EntitySchema } from "../../entity/schema/entity-schema";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
-type EntitySchemaField_withId = EntitySchemaField & { id: string };
+// TODO: adapt EntitySchemaField interface?
+export type EntitySchemaField_withId = EntitySchemaField & { id: string };
 
 @Component({
   selector: "app-config-entity-form",

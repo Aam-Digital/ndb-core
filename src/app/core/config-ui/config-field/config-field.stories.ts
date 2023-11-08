@@ -7,20 +7,8 @@ import {
 import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { ConfigFieldComponent } from "./config-field.component";
-import { Child } from "../../../child-dev-project/children/model/child";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
-
-const sampleFieldConfig: FormFieldConfig = {
-  id: "name",
-  edit: "EditText",
-  view: "DisplayText",
-  forTable: false,
-  label: "Name",
-  validators: {
-    required: true,
-  },
-};
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
+import { EntitySchemaField_withId } from "../config-entity-form/config-entity-form.component";
 
 export default {
   title: "Core/Admin UI/Config Field",
@@ -35,10 +23,10 @@ export default {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            entityType: Child,
-            formFieldConfig: sampleFieldConfig,
+            entitySchemaField: { id: null },
           },
         },
+        { provide: MatDialogRef, useValue: null },
       ],
     }),
   ],
@@ -49,5 +37,17 @@ const Template: StoryFn<ConfigFieldComponent> = (args) => ({
   props: args,
 });
 
-export const Primary = Template.bind({});
-Primary.args = {};
+export const EditExisting = Template.bind({});
+EditExisting.args = {
+  entitySchemaField: {
+    id: "name",
+    dataType: "string",
+    label: "Firstname",
+    description: "abc",
+  } as EntitySchemaField_withId,
+};
+
+export const CreateNew = Template.bind({});
+CreateNew.args = {
+  entitySchemaField: { id: null } as EntitySchemaField_withId,
+};
