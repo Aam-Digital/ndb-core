@@ -38,7 +38,7 @@
     [value]="item"
   >
     <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-      <ng-container *ngIf="!templateRef; else useTemplate">{{
+    <ng-container *ngIf="!templateRef; else useTemplate">{{
       item.asString
     }}</ng-container>
     <ng-template
