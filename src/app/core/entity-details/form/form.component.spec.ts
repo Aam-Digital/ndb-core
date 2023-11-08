@@ -119,7 +119,7 @@ describe("FormComponent", () => {
 
     component.ngOnInit();
 
-    expect(component._cols).toEqual([
+    expect(component.columns).toEqual([
       [
         {
           id: "fieldWithDefinition",
