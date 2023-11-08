@@ -150,12 +150,14 @@ export abstract class CustomFormControlDirective<T>
       this.stateChanges.next();
     }
 
-    if (control.hasValidator(Validators.required)) {
-      this.required = true;
-      this.stateChanges.next();
-    } else if (this.required) {
-      this.required = false;
-      this.stateChanges.next();
+    if (control) {
+      if (control.hasValidator(Validators.required)) {
+        this.required = true;
+        this.stateChanges.next();
+      } else if (this.required) {
+        this.required = false;
+        this.stateChanges.next();
+      }
     }
   }
 }
