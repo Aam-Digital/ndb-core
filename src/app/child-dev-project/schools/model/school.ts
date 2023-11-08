@@ -10,7 +10,6 @@ export class School extends Entity {
   static label = $localize`:label for entity:School`;
   static labelPlural = $localize`:label (plural) for entity:Schools`;
   static color = "#9E9D24";
-  static override hasPII = false;
 
   static getBlockComponent(): string {
     return "SchoolBlock";
