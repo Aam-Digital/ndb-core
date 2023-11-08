@@ -92,7 +92,7 @@ export class EntityListComponent<T extends Entity>
 {
   @Input() allEntities: T[];
 
-  /** @deprecated this is only retained or compatibility with ChildrenList, preferably use individual @Input properties */
+  /** @deprecated this is often used when this has a wrapper component (e.g. ChildrenList), preferably use individual @Input properties */
   @Input() listConfig: EntityListConfig;
 
   @Input() entity: string;
