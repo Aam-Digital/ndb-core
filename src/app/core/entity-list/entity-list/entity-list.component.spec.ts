@@ -117,7 +117,7 @@ describe("EntityListComponent", () => {
     initComponentInputs();
     tick();
 
-    expect(component.columnGroups).toEqual(testConfig.columnGroups.groups);
+    expect(component.groups).toEqual(testConfig.columnGroups.groups);
     const defaultGroup = testConfig.columnGroups.groups.findIndex(
       (g) => g.name === testConfig.columnGroups.default,
     );
@@ -184,23 +184,22 @@ describe("EntityListComponent", () => {
 
   it("should automatically initialize values if directly referenced from config", fakeAsync(() => {
     mockActivatedRoute.component = EntityListComponent;
-    const config = {
-      entity: "Child",
-      title: "Some title",
-      columns: ["name", "gender"],
-    };
     const entityMapper = TestBed.inject(EntityMapperService);
     const children = [new Child(), new Child()];
     spyOn(entityMapper, "loadType").and.resolveTo(children);
 
     createComponent();
-    routeData.next({ config });
+    component.listConfig = {
+      entity: "Child",
+      title: "Some title",
+      columns: ["name", "gender"],
+    };
+    component.ngOnChanges({ listConfig: undefined });
     tick();
 
     expect(component.entityConstructor).toBe(Child);
-    expect(component.listConfig).toEqual(config);
     expect(component.allEntities).toEqual(children);
-    expect(component.listName).toBe("Some title");
+    expect(component.title).toBe("Some title");
 
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     component.addNew();

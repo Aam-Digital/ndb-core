@@ -21,7 +21,6 @@ import { EntitySubrecordComponent } from "../../common-components/entity-subreco
 import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { RouteTarget } from "../../../app.routing";
-import { RouteData } from "../../config/dynamic-routing/view-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
@@ -45,6 +44,8 @@ import { ExportDataDirective } from "../../export/export-data-directive/export-d
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { DuplicateRecordService } from "../duplicate-records/duplicate-records.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { Sort } from "@angular/material/sort";
+import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -91,7 +92,10 @@ export class EntityListComponent<T extends Entity>
 {
   @Input() allEntities: T[];
   @Input() listConfig: EntityListConfig;
+  @Input() entity: string;
   @Input() entityConstructor: EntityConstructor<T>;
+  @Input() defaultSort: Sort;
+  @Input() exportConfig: ExportColumnConfig[];
 
   @Input() clickMode: "navigate" | "popup" | "none" = "navigate";
 
@@ -108,12 +112,13 @@ export class EntityListComponent<T extends Entity>
 
   isDesktop: boolean;
 
-  listName = "";
-  columns: (FormFieldConfig | string)[] = [];
-  columnGroups: GroupConfig[] = [];
+  @Input() title = "";
+  @Input() columns: (FormFieldConfig | string)[] = [];
+  @Input() columnGroups: ColumnGroupsConfig;
+  groups: GroupConfig[] = [];
   defaultColumnGroup = "";
   mobileColumnGroup = "";
-  filtersConfig: FilterConfig[] = [];
+  @Input() filters: FilterConfig[] = [];
 
   columnsToDisplay: string[] = [];
 
@@ -127,7 +132,7 @@ export class EntityListComponent<T extends Entity>
 
   set selectedColumnGroupIndex(newValue: number) {
     this.selectedColumnGroupIndex_ = newValue;
-    this.columnsToDisplay = this.columnGroups[newValue].columns;
+    this.columnsToDisplay = this.groups[newValue].columns;
   }
 
   selectedColumnGroupIndex_: number = 0;
@@ -139,7 +144,7 @@ export class EntityListComponent<T extends Entity>
    * tabs with zero top-padding in this case
    */
   get offsetFilterStyle(): object {
-    const bottomMargin = this.columnGroups.length > 1 ? 29 : 14;
+    const bottomMargin = this.groups.length > 1 ? 29 : 14;
     return {
       "margin-bottom": `${bottomMargin}px`,
     };
@@ -155,14 +160,6 @@ export class EntityListComponent<T extends Entity>
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
   ) {
-    // TODO: refactor the EntityListComponent to make use of RoutedViewComponent and not load the route data itself
-    if (this.activatedRoute.component === EntityListComponent) {
-      // the component is used for a route and not inside a template
-      this.activatedRoute.data.subscribe((data: RouteData<EntityListConfig>) =>
-        this.buildComponentFromConfig(data.config),
-      );
-    }
-
     this.screenWidthObserver
       .platform()
       .pipe(untilDestroyed(this))
@@ -180,12 +177,22 @@ export class EntityListComponent<T extends Entity>
       });
   }
 
-  private async buildComponentFromConfig(newConfig: EntityListConfig) {
-    this.listConfig = newConfig;
+  ngOnChanges(changes: SimpleChanges) {
+    if (changes.hasOwnProperty("listConfig")) {
+      Object.assign(this, this.listConfig);
+    }
+    return this.buildComponentFromConfig();
+  }
 
-    if (this.listConfig?.entity) {
+  ngAfterViewInit() {
+    this.entityTable.recordsDataSource.filterPredicate = (data, filter) =>
+      entityFilterPredicate(data.record, filter);
+  }
+
+  private async buildComponentFromConfig() {
+    if (this.entity) {
       this.entityConstructor = this.entities.get(
-        this.listConfig.entity,
+        this.entity,
       ) as EntityConstructor<T>;
     }
 
@@ -194,14 +201,10 @@ export class EntityListComponent<T extends Entity>
       await this.loadEntities();
     }
 
-    this.listName =
-      this.listConfig.title ||
-      this.listName ||
-      this.entityConstructor?.labelPlural;
+    this.title = this.title || this.entityConstructor?.labelPlural;
 
     this.addColumnsFromColumnGroups();
-    this.initColumnGroups(this.listConfig.columnGroups);
-    this.filtersConfig = this.listConfig.filters ?? this.filtersConfig ?? [];
+    this.initColumnGroups(this.columnGroups);
 
     this.displayColumnGroupByName(
       this.screenWidthObserver.isDesktop()
@@ -220,20 +223,8 @@ export class EntityListComponent<T extends Entity>
     this.isLoading = false;
   }
 
-  ngAfterViewInit() {
-    this.entityTable.recordsDataSource.filterPredicate = (data, filter) =>
-      entityFilterPredicate(data.record, filter);
-  }
-
-  async ngOnChanges(changes: SimpleChanges): Promise<void> {
-    if (changes.hasOwnProperty("listConfig")) {
-      await this.buildComponentFromConfig(this.listConfig);
-    }
-  }
-
   private addColumnsFromColumnGroups() {
-    this.columns = this.listConfig.columns || [];
-    this.listConfig.columnGroups?.groups?.forEach((group) =>
+    this.columnGroups?.groups?.forEach((group) =>
       group.columns
         .filter(
           (columnId) =>
@@ -250,12 +241,12 @@ export class EntityListComponent<T extends Entity>
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
     if (columnGroup && columnGroup.groups.length > 0) {
-      this.columnGroups = columnGroup.groups;
+      this.groups = columnGroup.groups;
       this.defaultColumnGroup =
         columnGroup.default || columnGroup.groups[0].name;
       this.mobileColumnGroup = columnGroup.mobile || columnGroup.groups[0].name;
     } else {
-      this.columnGroups = [
+      this.groups = [
         {
           name: "default",
           columns: this.columns.map((c) => (typeof c === "string" ? c : c.id)),
@@ -288,7 +279,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   private getSelectedColumnIndexByName(columnGroupName: string) {
-    return this.columnGroups.findIndex((c) => c.name === columnGroupName);
+    return this.groups.findIndex((c) => c.name === columnGroupName);
   }
 
   /**
@@ -297,7 +288,7 @@ export class EntityListComponent<T extends Entity>
   openFilterOverlay() {
     this.dialog.open(FilterOverlayComponent, {
       data: {
-        filterConfig: this.filtersConfig,
+        filterConfig: this.filters,
         entityType: this.entityConstructor,
         entities: this.allEntities,
         useUrlQueryParams: true,
