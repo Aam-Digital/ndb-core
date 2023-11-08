@@ -85,6 +85,11 @@ export class ConfigEntityFormComponent implements OnChanges {
       .afterClosed()
       .subscribe((updatedFieldSchema: EntitySchemaField_withId) => {
         if (!updatedFieldSchema) {
+          // canceled
+          if (!field.id) {
+            // remove newly created field that was canceled
+            fieldsArray.splice(fieldsArray.indexOf(field), 1);
+          }
           return;
         }
 
@@ -121,6 +126,11 @@ export class ConfigEntityFormComponent implements OnChanges {
   drop(event: CdkDragDrop<any, any>) {
     const item = event.previousContainer.data[event.previousIndex];
     if (item.id === null) {
+      if (event.container.data === this.availableFields) {
+        // don't add new field to the disabled fields
+        return;
+      }
+
       const newField = { id: null };
       event.container.data.splice(event.currentIndex, 0, newField);
       this.openFieldConfig(newField, event.container.data);
@@ -140,6 +150,14 @@ export class ConfigEntityFormComponent implements OnChanges {
         event.previousIndex,
         event.currentIndex,
       );
+    }
+
+    if (
+      event.container.data === this.availableFields &&
+      event.currentIndex === 0
+    ) {
+      // ensure "create new field" is always first
+      moveItemInArray(event.container.data, event.currentIndex, 1);
     }
   }
 

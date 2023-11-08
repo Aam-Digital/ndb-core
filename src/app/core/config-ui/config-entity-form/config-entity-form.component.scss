@@ -1,11 +1,16 @@
 @use "src/styles/variables/colors";
 @use "src/styles/variables/sizes";
 @use "src/styles/mixins/grid-layout";
+@use "@angular/material/core/style/elevation" as mat-elevation;
 
 $toolbar-width: 300px;
 .toolbar {
   width: $toolbar-width;
   padding: sizes.$small;
+
+  @include mat-elevation.elevation(4);
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
 }
 
 .admin-grid-layout {
@@ -42,6 +47,12 @@ $toolbar-width: 300px;
   background-color: colors.$grey-transparent;
 }
 
+.admin-form-field-new, .admin-form-field-new:hover {
+  border-color: green;
+  background-color: rgba(0, 255, 0, 0.05);
+  font-style: italic;
+}
+
 .drag-handle {
   color: colors.$accent;
   cursor: move;
@@ -66,6 +77,9 @@ $toolbar-width: 300px;
 }
 .admin-form-field:hover .field-edit-button {
   visibility: visible;
+}
+.field-edit-button-small {
+  left: unset;
 }
 
 .dummy-form-field { width: 100% }

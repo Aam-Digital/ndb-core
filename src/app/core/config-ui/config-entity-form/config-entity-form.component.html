@@ -1,5 +1,6 @@
-<mat-drawer-container cdkDropListGroup>
-  <mat-drawer-content class="admin-grid-layout padding-right-regular">
+<div cdkDropListGroup class="overall-container flex-row">
+  <!-- FORM PREVIEW -->
+  <div class="flex-grow admin-grid-layout padding-right-regular">
     <!-- FIELD GROUPS -->
     <div
       *ngFor="let group of fieldGroups; let i = index"
@@ -34,7 +35,7 @@
           *ngFor="let f of group.fields"
           class="admin-form-field flex-row align-center"
           cdkDrag
-          cdkDragBoundary="mat-drawer-container"
+          cdkDragBoundary=".overall-container"
         >
           <fa-icon
             icon="grip-vertical"
@@ -83,13 +84,18 @@
         class="fields-group-list drop-list drop-area-hint"
       >
         drop here to create new field group
+        <fa-icon
+          icon="question-circle"
+          matTooltip="You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users."
+          i18n-matTooltip
+        ></fa-icon>
       </div>
     </div>
-  </mat-drawer-content>
+  </div>
 
-  <mat-drawer mode="side" position="end" class="toolbar" opened>
-    <!-- TOOLBAR -->
-    <div
+  <!-- TOOLBAR -->
+  <mat-card class="toolbar">
+    <mat-card-content
       cdkDropList
       (cdkDropListDropped)="drop($event)"
       [cdkDropListData]="availableFields"
@@ -98,11 +104,17 @@
       <div class="drop-area-hint">
         <em>hidden fields</em><br />
         drag & drop to / from here
+        <fa-icon
+          icon="question-circle"
+          matTooltip="You can remove fields from the form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to reactivate it."
+          i18n-matTooltip
+        ></fa-icon>
       </div>
 
       <div
         *ngFor="let f of availableFields"
         class="admin-form-field flex-row align-center"
+        [class.admin-form-field-new]="!f.id"
         cdkDrag
         cdkDragBoundary="mat-drawer-container"
       >
@@ -113,8 +125,19 @@
           cdkDragHandle
         ></fa-icon>
 
-        <div>{{ f.label }}</div>
+        <div>
+          {{ f.label }}
+          <button
+            *ngIf="f.id"
+            mat-stroked-button
+            color="accent"
+            class="field-edit-button field-edit-button-small"
+            (click)="openFieldConfig(f, availableFields)"
+          >
+            Edit
+          </button>
+        </div>
       </div>
-    </div>
-  </mat-drawer>
-</mat-drawer-container>
+    </mat-card-content>
+  </mat-card>
+</div>
