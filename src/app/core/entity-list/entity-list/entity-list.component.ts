@@ -88,10 +88,13 @@ import { ExportColumnConfig } from "../../export/data-transformation-service/exp
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>
-  implements OnChanges, AfterViewInit
+  implements EntityListConfig, OnChanges, AfterViewInit
 {
   @Input() allEntities: T[];
+
+  /** @deprecated this is only retained or compatibility with ChildrenList, preferably use individual @Input properties */
   @Input() listConfig: EntityListConfig;
+
   @Input() entity: string;
   @Input() entityConstructor: EntityConstructor<T>;
   @Input() defaultSort: Sort;
