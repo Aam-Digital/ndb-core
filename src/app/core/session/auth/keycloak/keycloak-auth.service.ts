@@ -104,8 +104,10 @@ export class KeycloakAuthService {
     });
   }
 
-  getUserinfo() {
-    return this.keycloak.loadUserProfile();
+  getUserinfo(): Promise<KeycloakUser> {
+    return this.keycloak
+      .getKeycloakInstance()
+      .loadUserInfo() as Promise<KeycloakUser>;
   }
 
   setEmail(email: string): Observable<any> {
