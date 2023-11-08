@@ -4,7 +4,7 @@
 
   <div class="flex-row justify-space-between" [ngStyle]="offsetFilterStyle">
     <app-view-title>
-      {{ listName }}
+      {{ title }}
     </app-view-title>
 
     <div class="flex-row gap-regular">
@@ -15,9 +15,7 @@
         (click)="addNew()"
         angulartics2On="click"
         angularticsCategory="UserAction"
-        [angularticsAction]="
-          listName.toLowerCase().replace(' ', '_') + '_add_new'
-        "
+        [angularticsAction]="title.toLowerCase().replace(' ', '_') + '_add_new'"
         [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
         angularticsAction="list_add_entity"
         *appDisabledEntityOperation="{
@@ -46,7 +44,7 @@
     <app-filter
       *ngIf="!isLoading"
       class="flex-row gap-regular flex-wrap"
-      [filterConfig]="filtersConfig"
+      [filterConfig]="filters"
       [entityType]="entityConstructor"
       [entities]="allEntities"
       [useUrlQueryParams]="true"
@@ -55,13 +53,13 @@
   </div>
 
   <div class="mat-elevation-z1">
-    <div *ngIf="columnGroups.length > 1">
+    <div *ngIf="groups.length > 1">
       <mat-tab-group
         [(selectedIndex)]="selectedColumnGroupIndex"
         appTabStateMemo
       >
         <mat-tab
-          *ngFor="let item of columnGroups"
+          *ngFor="let item of groups"
           [label]="item.name"
           angulartics2On="click"
           [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
@@ -76,7 +74,7 @@
 
 <!-- Mobile Version -->
 <div *ngIf="!isDesktop">
-  <h2>{{ listName }}</h2>
+  <h2>{{ title }}</h2>
 
   <div class="flex-row">
     <div *ngTemplateOutlet="filterDialog"></div>
@@ -127,7 +125,7 @@
     [columnsToDisplay]="columnsToDisplay"
     [isLoading]="isLoading"
     [filter]="filterObj"
-    [defaultSort]="listConfig?.defaultSort"
+    [defaultSort]="defaultSort"
     [(selectedRecords)]="selectedRows"
     [showInactive]="showInactive"
     (filteredRecordsChange)="filteredData = $event"
@@ -141,9 +139,7 @@
       (click)="addNew()"
       angulartics2On="click"
       angularticsCategory="UserAction"
-      [angularticsAction]="
-        listName.toLowerCase().replace(' ', '_') + '_add_new'
-      "
+      [angularticsAction]="title.toLowerCase().replace(' ', '_') + '_add_new'"
       *appDisabledEntityOperation="{
         entity: entityConstructor,
         operation: 'create'
@@ -174,8 +170,8 @@
     mat-menu-item
     [appExportData]="allEntities"
     format="csv"
-    [exportConfig]="listConfig?.exportConfig"
-    [filename]="listName.replace(' ', '')"
+    [exportConfig]="exportConfig"
+    [filename]="title.replace(' ', '')"
     angulartics2On="click"
     [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
     angularticsAction="list_csv_export"
@@ -192,8 +188,8 @@
     mat-menu-item
     [appExportData]="filteredData"
     format="csv"
-    [exportConfig]="listConfig?.exportConfig"
-    [filename]="listName.replace(' ', '')"
+    [exportConfig]="exportConfig"
+    [filename]="title.replace(' ', '')"
     angulartics2On="click"
     [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
     angularticsAction="list_csv_export"
