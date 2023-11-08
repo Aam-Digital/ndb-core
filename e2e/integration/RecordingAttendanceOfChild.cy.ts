@@ -1,4 +1,4 @@
-xdescribe("Scenario: Recording attendance of a child - E2E test", function () {
+describe("Scenario: Recording attendance of a child - E2E test", function () {
   before("GIVEN A specific child is attending a specific class", function () {
     cy.visit("");
     cy.get(`[ng-reflect-angulartics-label="Attendance"]`).click();
