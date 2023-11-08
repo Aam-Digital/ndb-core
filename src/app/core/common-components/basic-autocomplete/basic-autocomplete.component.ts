@@ -62,7 +62,7 @@ interface SelectableOption<O, V> {
     NgIf,
     AsyncPipe,
     NgTemplateOutlet,
-    MatChipsModule ,
+    MatChipsModule,
   ],
 })
 export class BasicAutocompleteComponent<O, V = O>
@@ -81,6 +81,8 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() createOption: (input: string) => O;
   @Input() hideOption: (option: O) => boolean = () => false;
   @Input() multi?: boolean;
+  
+  isChipHidden: boolean = false;
 
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
@@ -170,6 +172,7 @@ export class BasicAutocompleteComponent<O, V = O>
       ).select();
     });
     this.focus();
+    this.isChipHidden = false;
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
@@ -257,6 +260,7 @@ export class BasicAutocompleteComponent<O, V = O>
         this.select(undefined);
       }
       this.blur();
+      this.isChipHidden = true; 
     }
   }
 

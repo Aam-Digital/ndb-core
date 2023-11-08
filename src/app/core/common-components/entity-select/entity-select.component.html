@@ -21,11 +21,12 @@
         *ngFor="let entity of selectedEntities"
         (removed)="unselectEntity(entity)"
         class="chip"
+        (click)="navigateToEntity(entity)"
       >
         <app-display-entity
           class="display-entity"
           [entityToDisplay]="entity"
-          [linkDisabled]="!isDisabled"
+          [linkDisabled]="isDisabled"
         ></app-display-entity>
         <button matChipRemove *ngIf="removable && !isDisabled">
           <fa-icon

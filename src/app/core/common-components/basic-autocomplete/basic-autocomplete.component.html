@@ -10,17 +10,21 @@
 />
 
 <!--Display-->
-<mat-chip-row>
-  <input
+<!-- background colore is working with inline styling only for some reason  -->
+<mat-chip
+  *ngIf="displayText && isChipHidden"
+  style="background-color: transparent;"
+  class="chip">
+    <input
     [hidden]="focused"
     [disabled]="_disabled"
     matInput
-    style="text-overflow: ellipsis"
+    [style]="{textOverflow: 'ellipsis', width: (displayText ? displayText.length : 'auto') + 'ch'}"
     (focusin)="showAutocomplete()"
     (focusout)="showAutocomplete()"
     [value]="displayText"
   />
-</mat-chip-row>
+</mat-chip>
 
 <mat-autocomplete
   [disableRipple]="true"
@@ -33,17 +37,15 @@
     *ngFor="let item of autocompleteSuggestedOptions | async"
     [value]="item"
   >
-    <mat-chip-row>
-      <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-       <ng-container *ngIf="!templateRef; else useTemplate">{{
-        item.asString
-      }}</ng-container>
-      <ng-template
-        #useTemplate
-        [ngTemplateOutlet]="templateRef"
-        [ngTemplateOutletContext]="{ $implicit: item.initial }"
-      ></ng-template>
-    </mat-chip-row>
+    <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+      <ng-container *ngIf="!templateRef; else useTemplate">{{
+      item.asString
+    }}</ng-container>
+    <ng-template
+      #useTemplate
+      [ngTemplateOutlet]="templateRef"
+      [ngTemplateOutletContext]="{ $implicit: item.initial }"
+    ></ng-template>
   </mat-option>
   <mat-option
     *ngIf="createOption && showAddOption && inputElement.value"

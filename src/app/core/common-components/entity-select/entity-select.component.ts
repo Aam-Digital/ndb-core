@@ -26,6 +26,7 @@ import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-ent
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
+import { Router } from "@angular/router";
 
 @Component({
   selector: "app-entity-select",
@@ -165,7 +166,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(private entityMapperService: EntityMapperService,
+              private router: Router) {
     this.formControl.valueChanges
       .pipe(
         untilDestroyed(this),
@@ -290,5 +292,15 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     return this.selectedEntities.some(
       (e) => e.getId(true) === entity.getId(true),
     );
+  }
+  
+  navigateToEntity(entity: Entity) {
+    const entityId = entity.getId();
+    if (entityId) {
+      this.router.navigate([
+        entity.getConstructor().route, 
+        entityId,
+      ]);
+    }
   }
 }
