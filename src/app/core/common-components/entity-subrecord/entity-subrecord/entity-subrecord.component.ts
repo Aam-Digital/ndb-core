@@ -50,6 +50,10 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 
 export interface TableRow<T extends Entity> {
@@ -88,14 +92,18 @@ export interface TableRow<T extends Entity> {
     DisableEntityOperationDirective,
     Angulartics2Module,
     ListPaginatorComponent,
+    MatCheckboxModule,
     MatSlideToggleModule,
   ],
   standalone: true,
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
-
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
+
+  /** outputs an event containing an array of currently selected records (checkmarked by the user) */
+  @Output() selectedRecordsChange: EventEmitter<T[]> = new EventEmitter<T[]>();
+  @Input() selectedRecords: T[] = [];
 
   @Input() showInactive = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
@@ -114,6 +122,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   /** data to be displayed, can also be used as two-way-binding */
   @Input() records: T[] = [];
+
+  /** output the currently displayed records, whenever filters for the user change */
+  @Output() filteredRecordsChange = new EventEmitter<T[]>(true);
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -266,6 +277,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.sortDefault();
     }
 
+    this.filteredRecordsChange.emit(
+      this.recordsDataSource.filteredData.map((item) => item.record),
+    );
     this.listenToEntityUpdates();
   }
 
@@ -478,6 +492,19 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       return true;
     }
     return this.screenWidthObserver.currentScreenSize() >= numericValue;
+  }
+
+  selectRow(row: TableRow<T>, event: MatCheckboxChange) {
+    if (event.checked) {
+      this.selectedRecords.push(row.record);
+    } else {
+      const index = this.selectedRecords.indexOf(row.record);
+      if (index > -1) {
+        this.selectedRecords.splice(index, 1);
+      }
+    }
+
+    this.selectedRecordsChange.emit(this.selectedRecords);
   }
 
   filterActiveInactive() {

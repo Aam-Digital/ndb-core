@@ -4,7 +4,7 @@
 
   <div class="flex-row justify-space-between" [ngStyle]="offsetFilterStyle">
     <app-view-title>
-      {{ listName }}
+      {{ title }}
     </app-view-title>
 
     <div class="flex-row gap-regular">
@@ -15,9 +15,7 @@
         (click)="addNew()"
         angulartics2On="click"
         angularticsCategory="UserAction"
-        [angularticsAction]="
-          listName.toLowerCase().replace(' ', '_') + '_add_new'
-        "
+        [angularticsAction]="title.toLowerCase().replace(' ', '_') + '_add_new'"
         [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
         angularticsAction="list_add_entity"
         *appDisabledEntityOperation="{
@@ -46,7 +44,7 @@
     <app-filter
       *ngIf="!isLoading"
       class="flex-row gap-regular flex-wrap"
-      [filterConfig]="filtersConfig"
+      [filterConfig]="filters"
       [entityType]="entityConstructor"
       [entities]="allEntities"
       [useUrlQueryParams]="true"
@@ -55,13 +53,13 @@
   </div>
 
   <div class="mat-elevation-z1">
-    <div *ngIf="columnGroups.length > 1">
+    <div *ngIf="groups.length > 1">
       <mat-tab-group
         [(selectedIndex)]="selectedColumnGroupIndex"
         appTabStateMemo
       >
         <mat-tab
-          *ngFor="let item of columnGroups"
+          *ngFor="let item of groups"
           [label]="item.name"
           angulartics2On="click"
           [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
@@ -76,7 +74,7 @@
 
 <!-- Mobile Version -->
 <div *ngIf="!isDesktop">
-  <h2>{{ listName }}</h2>
+  <h2>{{ title }}</h2>
 
   <div class="flex-row">
     <div *ngTemplateOutlet="filterDialog"></div>
@@ -127,8 +125,10 @@
     [columnsToDisplay]="columnsToDisplay"
     [isLoading]="isLoading"
     [filter]="filterObj"
-    [defaultSort]="listConfig?.defaultSort"
+    [defaultSort]="defaultSort"
+    [(selectedRecords)]="selectedRows"
     [showInactive]="showInactive"
+    (filteredRecordsChange)="filteredData = $event"
   ></app-entity-subrecord>
 </ng-template>
 
@@ -139,9 +139,7 @@
       (click)="addNew()"
       angulartics2On="click"
       angularticsCategory="UserAction"
-      [angularticsAction]="
-        listName.toLowerCase().replace(' ', '_') + '_add_new'
-      "
+      [angularticsAction]="title.toLowerCase().replace(' ', '_') + '_add_new'"
       *appDisabledEntityOperation="{
         entity: entityConstructor,
         operation: 'create'
@@ -172,8 +170,8 @@
     mat-menu-item
     [appExportData]="allEntities"
     format="csv"
-    [exportConfig]="listConfig?.exportConfig"
-    [filename]="listName.replace(' ', '')"
+    [exportConfig]="exportConfig"
+    [filename]="title.replace(' ', '')"
     angulartics2On="click"
     [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
     angularticsAction="list_csv_export"
@@ -183,7 +181,25 @@
       aria-label="download csv"
       icon="download"
     ></fa-icon>
-    <span i18n="Download list contents as CSV"> Download CSV </span>
+    <span i18n="Download list contents as CSV"> Download all data (.csv) </span>
+  </button>
+
+  <button
+    mat-menu-item
+    [appExportData]="filteredData"
+    format="csv"
+    [exportConfig]="exportConfig"
+    [filename]="title.replace(' ', '')"
+    angulartics2On="click"
+    [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
+    angularticsAction="list_csv_export"
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="download csv"
+      icon="download"
+    ></fa-icon>
+    <span i18n="Download list contents as CSV"> Download current (.csv) </span>
   </button>
 
   <button
@@ -200,6 +216,22 @@
       icon="file-import"
     ></fa-icon>
     <span i18n> Import from file </span>
+  </button>
+
+  <button
+    mat-menu-item
+    (click)="duplicateRecords()"
+    [disabled]="selectedRows.length === 0"
+    matTooltip="Please select rows"
+    [matTooltipDisabled]="selectedRows.length > 0"
+    i18n-matTooltip
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="duplicates record"
+      icon="copy"
+    ></fa-icon>
+    <span i18n> Duplicate selected records </span>
   </button>
 
   <ng-content select="[mat-menu-item]"></ng-content>

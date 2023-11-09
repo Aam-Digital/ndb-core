@@ -35,7 +35,9 @@ The config service provides a behavior subject which will notify all subscribers
 This can be used for core tasks like setting up the routes or creating the navigation bar.
 
 Top-level "view" components (i.e. components that are used to define a whole page, not just some building block for a part or section)
-receive their config data through the standard Angular router and can access it by injecting `ActivatedRoute`.
+receive their config data automatically assigned as `@Input()` properties mapped from config object property name to an identical component class property.
+This is handled by the `RoutedViewComponent` internally.
+(If needed for special cases, you can also access it through the standard Angular router and can access it by injecting `ActivatedRoute`.)
 
 
 ### Storing config in DB

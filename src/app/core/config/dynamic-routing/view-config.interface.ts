@@ -44,10 +44,13 @@ export const PREFIX_VIEW_CONFIG = "view:";
  * It contains static data which are used to build components and manage permissions.
  * The generic type defines the interface for the component specific configuration.
  *
- * It can be accessed through the activated route:
- * ```
- * constructor(private route: ActivatedRoute) {
- *   this.route.data.subscribe(routeData: RouteData<SomeInterface> => { ...what to do with the data })'
+ * The properties given in the `config` object here are automatically assigned to the component as `@Input()` properties.
+ * e.g. for an RouteData `{ config: { "entityType: "Child", "filtered": true } }`
+ * your component `MyViewComponent` will receive the values mapped to its properties:
+ * ```javascript
+ * class MyViewComponent {
+ *   @Input() entityType: string;
+ *   @Input() filtered: boolean;
  * }
  * ```
  */
