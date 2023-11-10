@@ -227,9 +227,11 @@ export class PouchDatabase extends Database {
       if (result.status === 409) {
         results[i] = await this.resolveConflict(
           objects.find((obj) => obj._id === result.id),
-          false,
+          forceOverwrite,
           result,
-        ).catch((e) => e);
+        ).catch((e) => {
+          throw new DatabaseException(e);
+        });
       }
     }
     return results;
