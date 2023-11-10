@@ -151,12 +151,8 @@ export abstract class CustomFormControlDirective<T>
     }
 
     if (control) {
-      if (control.hasValidator(Validators.required)) {
-        this.required = true;
-        this.stateChanges.next();
-      } else if (this.required) {
-        this.required = false;
-        this.stateChanges.next();
+      if (this.required !== coerceBooleanProperty(control.hasValidator(Validators.required))) {
+        this.required = control.hasValidator(Validators.required);
       }
     }
   }
