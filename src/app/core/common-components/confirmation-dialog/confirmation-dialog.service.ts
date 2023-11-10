@@ -6,6 +6,7 @@ import {
   YesNoButtons,
 } from "./confirmation-dialog/confirmation-dialog.component";
 import { firstValueFrom } from "rxjs";
+import { ProgressDialogComponent } from "./progress-dialog/progress-dialog.component";
 
 /**
  * Inject this service instead of MatDialog if you need a simple, configurable confirmation dialog box
@@ -62,5 +63,18 @@ export class ConfirmationDialogService {
       $localize`:Discard changes header:Discard Changes?`,
       $localize`:Discard changes message:You have unsaved changes. Do you really want to leave this page? All unsaved changes will be lost.`,
     );
+  }
+
+  /**
+   * Show an (indeterminate) progress bar modal that cannot be closed by the user.
+   * Use the returned dialogRef to close the dialog once your processing is completed.
+   * @param message
+   */
+  showProgressDialog(message: string) {
+    return this.dialog.open(ProgressDialogComponent, {
+      data: { message },
+      minWidth: "50vh",
+      disableClose: true,
+    });
   }
 }

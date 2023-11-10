@@ -46,7 +46,12 @@ export class EntityActionsService {
 
     // Undo Action
     snackBarRef.onAction().subscribe(async () => {
+      const undoProgressRef = this.confirmationDialog.showProgressDialog(
+        $localize`:Undo entity action progress dialog: Reverting changes ...`,
+      );
       await this.entityMapper.saveAll(previousEntitiesForUndo, true);
+      undoProgressRef.close();
+
       if (navigateBackToUrl) {
         await this.router.navigate([navigateBackToUrl]);
       }
@@ -80,7 +85,11 @@ export class EntityActionsService {
       return false;
     }
 
+    const progressDialogRef = this.confirmationDialog.showProgressDialog(
+      $localize`:Entity action progress dialog:Processing ...`,
+    );
     const result = await this.entityDelete.deleteEntity(entity);
+    progressDialogRef.close();
 
     if (result.potentiallyRetainingPII.length > 0) {
       await this.confirmationDialog.getConfirmation(
@@ -131,7 +140,11 @@ export class EntityActionsService {
       return false;
     }
 
+    const progressDialogRef = this.confirmationDialog.showProgressDialog(
+      $localize`:Entity action progress dialog:Processing ...`,
+    );
     const result = await this.entityAnonymize.anonymizeEntity(entity);
+    progressDialogRef.close();
 
     if (result.potentiallyRetainingPII.length > 0) {
       await this.confirmationDialog.getConfirmation(
