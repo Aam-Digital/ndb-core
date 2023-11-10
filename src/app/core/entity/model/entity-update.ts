@@ -28,23 +28,34 @@ export interface UpdatedEntity<T extends Entity> {
  * @param next An entity that should be updated as well as the type of update. This, as well as the entity
  * may be undefined or null. In this event, the entities-array is returned as is.
  * @param entities The entities to update, must be defined
+ * @param addIfMissing (Optional) whether to add an entity that comes through an update event but is not part of the array yet (default is to ignore)
  * @return An array of the given entities with the update applied
  */
 export function applyUpdate<T extends Entity>(
   entities: T[],
   next: UpdatedEntity<T>,
+  addIfMissing: boolean = false,
 ): T[] {
   if (!next || !next.entity || !entities) {
     return entities;
   }
-  switch (next.type) {
-    case "new":
-      return [next.entity].concat(entities);
-    case "update":
-      return entities.map((e) =>
-        e.getId() === next.entity.getId() ? next.entity : e,
-      );
-    case "remove":
-      return entities.filter((e) => e.getId() !== next.entity.getId());
+
+  if (
+    next.type === "new" ||
+    (addIfMissing &&
+      next.type === "update" &&
+      !entities.find((e) => e.getId() === next.entity.getId()))
+  ) {
+    return [next.entity].concat(entities);
+  }
+
+  if (next.type === "update") {
+    return entities.map((e) =>
+      e.getId() === next.entity.getId() ? next.entity : e,
+    );
+  }
+
+  if (next.type === "remove") {
+    return entities.filter((e) => e.getId() !== next.entity.getId());
   }
 }
