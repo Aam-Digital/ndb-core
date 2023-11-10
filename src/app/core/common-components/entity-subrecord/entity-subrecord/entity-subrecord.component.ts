@@ -124,7 +124,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() records: T[] = [];
 
   /** output the currently displayed records, whenever filters for the user change */
-  @Output() filteredRecordsChange = new EventEmitter<T[]>();
+  @Output() filteredRecordsChange = new EventEmitter<T[]>(true);
 
   /**
    * factory method to create a new instance of the displayed Entity type

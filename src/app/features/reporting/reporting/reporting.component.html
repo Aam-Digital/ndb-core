@@ -9,7 +9,7 @@
 </app-view-title>
 
 <app-select-report
-  [reports]="availableReports"
+  [reports]="reports"
   [loading]="loading"
   [exportableData]="exportableData"
   (calculateClick)="calculateResults($event.report, $event.from, $event.to)"
