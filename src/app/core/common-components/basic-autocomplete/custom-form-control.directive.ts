@@ -133,30 +133,40 @@ export abstract class CustomFormControlDirective<T>
     this.disabled = isDisabled;
   }
 
+  ngDoCheck() {
+    const control = this.ngControl
+      ? (this.ngControl.control as AbstractControl)
+      : null;
+
+    this.checkUpdateErrorState(control);
+    this.checkUpdateRequired(control);
+  }
+
   /**
    * Updates the error state based on the form control
    * Taken from {@link https://github.com/angular/components/blob/a1d5614f18066c0c2dc2580c7b5099e8f68a8e74/src/material/core/common-behaviors/error-state.ts#L59}
    */
-  ngDoCheck() {
+  private checkUpdateErrorState(control: AbstractControl | null) {
     const oldState = this.errorState;
     const parent = this.parentFormGroup || this.parentForm;
-    const control = this.ngControl
-      ? (this.ngControl.control as AbstractControl)
-      : null;
     const newState = this.errorStateMatcher.isErrorState(control, parent);
 
     if (newState !== oldState) {
       this.errorState = newState;
       this.stateChanges.next();
     }
+  }
 
-    if (control) {
-      if (
-        this.required !==
-        coerceBooleanProperty(control.hasValidator(Validators.required))
-      ) {
-        this.required = control.hasValidator(Validators.required);
-      }
+  private checkUpdateRequired(control: AbstractControl | null) {
+    if (!control) {
+      return;
+    }
+
+    if (
+      this.required !==
+      coerceBooleanProperty(control.hasValidator(Validators.required))
+    ) {
+      this.required = control.hasValidator(Validators.required);
     }
   }
 }
