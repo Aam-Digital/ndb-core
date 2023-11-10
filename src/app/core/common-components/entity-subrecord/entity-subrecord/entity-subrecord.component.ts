@@ -55,6 +55,7 @@ import {
   MatCheckboxModule,
 } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { applyUpdate } from "../../../entity/model/entity-update";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -349,19 +350,12 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.updateSubscription = this.entityMapper
         .receiveUpdates(this.getEntityConstructor())
         .pipe(untilDestroyed(this))
-        .subscribe(({ entity, type }) => {
-          if (type === "new") {
-            this.addToTable(entity);
-          } else if (type === "remove") {
-            this.removeFromDataTable(entity);
-          } else if (
-            type === "update" &&
-            !this.records.find((rec) => rec.getId() === entity.getId())
-          ) {
-            this.addToTable(entity);
-          }
+        .subscribe((next) => {
+          this.records = applyUpdate(this.records, next, true);
 
-          if (!this.predicate(entity)) {
+          if (this.predicate(next.entity)) {
+            this.initDataSource();
+          } else {
             // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
             setTimeout(() => this.initDataSource(), 5000);
           }
@@ -408,20 +402,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   resetChanges(row: TableRow<T>) {
     row.formGroup = null;
-  }
-
-  private removeFromDataTable(deleted: T) {
-    // use setter so datasource is also updated
-    this.records = this.records.filter(
-      (rec) => rec.getId() !== deleted.getId(),
-    );
-    this.initDataSource();
-  }
-
-  private addToTable(record: T) {
-    // use setter so datasource is also updated
-    this.records = [record].concat(this.records);
-    this.initDataSource();
   }
 
   /**
