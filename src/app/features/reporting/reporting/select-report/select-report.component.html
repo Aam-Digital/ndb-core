@@ -46,6 +46,7 @@
 
   <div>
     <button
+      #calculateButton
       mat-stroked-button
       color="accent"
       class="primary-button"
@@ -62,9 +63,13 @@
       angularticsCategory="Reporting"
       angularticsAction="calculate"
       [angularticsLabel]="selectedReport?.title"
+      matTooltip="Please select a report and a date range"
+      i18n-matTooltip
+      [matTooltipDisabled]="!calculateButton.disabled"
     >
       Calculate
     </button>
+
     <button
       mat-stroked-button
       color="accent"
