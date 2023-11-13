@@ -192,32 +192,44 @@ export class ConfigFieldComponent implements OnChanges {
 
   private updateDataTypeAdditional(dataType: string) {
     if (dataType === ConfigurableEnumDatatype.dataType) {
-      this.typeAdditionalOptions = this.configurableEnumService
-        .listEnums()
-        .map((x) => ({
-          label: Entity.extractEntityIdFromId(x),
-          value: Entity.extractEntityIdFromId(x),
-        }));
-      this.formAdditional.addValidators(Validators.required);
-      // TODO allow new enum creation
-      // TODO preview the options within the selected enum (and allow to edit the enum options?)
+      this.initAdditionalForEnum();
     } else if (
       dataType === EntityDatatype.dataType ||
       dataType === EntityArrayDatatype.dataType
     ) {
-      this.typeAdditionalOptions = this.entityRegistry
-        .getEntityTypes(true)
-        .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
-      this.formAdditional.addValidators(Validators.required);
+      this.initAdditionalForEntityRef();
     } else {
-      this.formAdditional.removeValidators(Validators.required);
-      this.formAdditional.setValue(undefined);
-      this.typeAdditionalOptions = undefined;
+      this.resetAdditional();
     }
 
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
 
     // TODO: this mapping of having an "additional" schema should probably become part of Datatype classes
+  }
+
+  private initAdditionalForEnum() {
+    this.typeAdditionalOptions = this.configurableEnumService
+      .listEnums()
+      .map((x) => ({
+        label: Entity.extractEntityIdFromId(x),
+        value: Entity.extractEntityIdFromId(x),
+      }));
+    this.formAdditional.addValidators(Validators.required);
+    // TODO allow new enum creation
+    // TODO preview the options within the selected enum (and allow to edit the enum options?)
+  }
+
+  private initAdditionalForEntityRef() {
+    this.typeAdditionalOptions = this.entityRegistry
+      .getEntityTypes(true)
+      .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
+    this.formAdditional.addValidators(Validators.required);
+  }
+
+  private resetAdditional() {
+    this.formAdditional.removeValidators(Validators.required);
+    this.formAdditional.setValue(undefined);
+    this.typeAdditionalOptions = undefined;
   }
 
   save() {
