@@ -167,8 +167,11 @@ export class ConfigFieldComponent implements OnChanges {
   }
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
+  createNewAdditionalOption: (input: string) => SimpleDropdownValue;
 
   private updateDataTypeAdditional(dataType: string) {
+    this.resetAdditional();
+
     if (dataType === ConfigurableEnumDatatype.dataType) {
       this.initAdditionalForEnum();
     } else if (
@@ -176,8 +179,6 @@ export class ConfigFieldComponent implements OnChanges {
       dataType === EntityArrayDatatype.dataType
     ) {
       this.initAdditionalForEntityRef();
-    } else {
-      this.resetAdditional();
     }
 
     // hasInnerType: [ArrayDatatype.dataType].includes(d.dataType),
@@ -193,7 +194,35 @@ export class ConfigFieldComponent implements OnChanges {
         value: Entity.extractEntityIdFromId(x),
       }));
     this.formAdditional.addValidators(Validators.required);
-    // TODO allow new enum creation
+
+    this.createNewAdditionalOption = (text) => {
+      const newOption = {
+        value: text,
+        label: $localize`[new options set]: "${text}"`,
+        isNew: true,
+      };
+
+      setTimeout(() => {
+        // only offer one newly created configurable-enum id
+        this.typeAdditionalOptions = [
+          newOption,
+          ...this.typeAdditionalOptions,
+        ].filter(
+          (o: SimpleDropdownValue & { isNew: boolean }) =>
+            !o.isNew || o === newOption,
+        );
+        this.formAdditional.setValue(newOption.value);
+      });
+
+      return newOption;
+    };
+    if (this.form.get("label").value) {
+      this.createNewAdditionalOption(this.form.get("label").value);
+    }
+    this.form
+      .get("label")
+      .valueChanges.subscribe((v) => this.createNewAdditionalOption(v));
+
     // TODO preview the options within the selected enum (and allow to edit the enum options?)
   }
 
@@ -208,6 +237,7 @@ export class ConfigFieldComponent implements OnChanges {
     this.formAdditional.removeValidators(Validators.required);
     this.formAdditional.setValue(undefined);
     this.typeAdditionalOptions = undefined;
+    this.createNewAdditionalOption = undefined;
   }
 
   save() {
