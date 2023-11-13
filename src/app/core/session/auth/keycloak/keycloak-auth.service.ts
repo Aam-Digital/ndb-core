@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable, LOCALE_ID } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { parseJwt } from "../../../../utils/utils";
@@ -22,6 +22,7 @@ export class KeycloakAuthService {
   constructor(
     private httpClient: HttpClient,
     private keycloak: KeycloakService,
+    @Inject(LOCALE_ID) private locale: string,
   ) {}
 
   /**
@@ -111,19 +112,24 @@ export class KeycloakAuthService {
   }
 
   setEmail(email: string): Observable<any> {
-    return this.httpClient.put(`${environment.account_url}/account/set-email`, {
-      email,
-    });
+    return this.httpClient.put(
+      `${environment.account_url}/account/set-email`,
+      { email },
+      { headers: { "Accept-Language": this.locale } },
+    );
   }
 
   createUser(user: Partial<KeycloakUser>): Observable<any> {
-    return this.httpClient.post(`${environment.account_url}/account`, user);
+    return this.httpClient.post(`${environment.account_url}/account`, user, {
+      headers: { "Accept-Language": this.locale },
+    });
   }
 
   updateUser(userId: string, user: Partial<KeycloakUser>): Observable<any> {
     return this.httpClient.put(
       `${environment.account_url}/account/${userId}`,
       user,
+      { headers: { "Accept-Language": this.locale } },
     );
   }
 
