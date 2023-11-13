@@ -186,8 +186,8 @@ export class ConfigFieldComponent implements OnChanges {
         .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
       this.formAdditional.addValidators(Validators.required);
     } else {
-      this.formAdditional.setValue(undefined);
       this.formAdditional.removeValidators(Validators.required);
+      this.formAdditional.setValue(undefined);
       this.typeAdditionalOptions = undefined;
     }
 
