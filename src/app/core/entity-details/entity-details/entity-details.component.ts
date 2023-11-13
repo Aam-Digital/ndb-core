@@ -97,8 +97,8 @@ export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
     if (changes.id) {
       this.loadEntity(this.id);
       this.subscribeToEntityChanges();
-    }
-    if (changes.panels) {
+    } else if (changes.panels) {
+      // `initPanels()` is already called inside `loadEntity()`
       this.initPanels();
     }
   }
