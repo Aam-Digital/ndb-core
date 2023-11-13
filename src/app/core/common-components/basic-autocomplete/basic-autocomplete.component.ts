@@ -82,7 +82,7 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() hideOption: (option: O) => boolean = () => false;
   @Input() multi?: boolean;
   
-  isChipHidden: boolean = false;
+  isChipHidden: boolean = true;
 
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(

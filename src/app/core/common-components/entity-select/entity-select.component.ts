@@ -27,6 +27,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { Router } from "@angular/router";
+import { CommonModule } from '@angular/common';
+import { Directive, HostListener } from '@angular/core';
 
 @Component({
   selector: "app-entity-select",
@@ -43,6 +45,7 @@ import { Router } from "@angular/router";
     FontAwesomeModule,
     MatTooltipModule,
     MatInputModule,
+    CommonModule,
   ],
   standalone: true,
 })
@@ -57,6 +60,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    *
    * TODO: make ids including prefix the default everywhere and remove this option (see #1526)
    */
+
+  // @Input('appClickableChip') entity: any; 
   @Input() withPrefix: boolean = false;
 
   /**
@@ -139,17 +144,15 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * Setting the disabled state of the input element
    * @param disabled whether the input element should be disabled
    */
-  private _disabled = false;
 
   @Input() set disabled(disabled: boolean) {
-    this._disabled = disabled;
+    if (disabled) {
+      this.formControl.disable();
+    } else {
+      this.formControl.enable();
+    }
   }
   
-  get isDisabled(): boolean {
-    return this._disabled;
-  }
-  
-
   /**
    * true when this is loading and false when it's ready.
    * This subject's state reflects the actual loading resp. the 'readiness'-
@@ -294,13 +297,4 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     );
   }
   
-  navigateToEntity(entity: Entity) {
-    const entityId = entity.getId();
-    if (entityId) {
-      this.router.navigate([
-        entity.getConstructor().route, 
-        entityId,
-      ]);
-    }
-  }
 }

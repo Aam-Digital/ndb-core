@@ -4,7 +4,7 @@
   <input
     #inputField
     matInput
-    [hidden]="isDisabled" 
+    [hidden]="!formControl.enabled" 
     [placeholder]="inputPlaceholder"
     [formControl]="formControl"
     [matAutocomplete]="autoSuggestions"
@@ -16,19 +16,18 @@
   <mat-chip-grid #chipList>
     <ng-container *ngIf="showEntities">
       <mat-chip-row
-        [editable]="selectable && isDisabled"
-        [removable]="removable"
+        [editable]="selectable && formControl.enabled"
+        [removable]="removable && formControl.enabled"
         *ngFor="let entity of selectedEntities"
         (removed)="unselectEntity(entity)"
         class="chip"
-        (click)="navigateToEntity(entity)"
       >
         <app-display-entity
           class="display-entity"
           [entityToDisplay]="entity"
-          [linkDisabled]="isDisabled"
+          [linkDisabled]="formControl.enabled"
         ></app-display-entity>
-        <button matChipRemove *ngIf="removable && !isDisabled">
+        <button matChipRemove *ngIf="removable && formControl.enabled">
           <fa-icon
             i18n-matTooltip="tooltip for remove icon-button"
             matTooltip="remove"

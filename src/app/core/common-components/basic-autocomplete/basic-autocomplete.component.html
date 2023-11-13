@@ -19,7 +19,7 @@
     [hidden]="focused"
     [disabled]="_disabled"
     matInput
-    [style]="{textOverflow: 'ellipsis', width: (displayText ? displayText.length : 'auto') + 'ch'}"
+    [style]="{flex:1 ,textOverflow: 'ellipsis', width: (displayText ? displayText.length : 'auto') + 'ch'}"
     (focusin)="showAutocomplete()"
     (focusout)="showAutocomplete()"
     [value]="displayText"
