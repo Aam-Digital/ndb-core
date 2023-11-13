@@ -80,7 +80,10 @@ export class ConfigEntityFormComponent implements OnChanges {
       .open(ConfigFieldComponent, {
         width: "99%",
         maxHeight: "90vh",
-        data: { entitySchemaField: schemaField },
+        data: {
+          entitySchemaField: schemaField,
+          entitySchema: this.entitySchema,
+        },
       })
       .afterClosed()
       .subscribe((updatedFieldSchema: EntitySchemaField_withId) => {

@@ -31,11 +31,13 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label
-                matTooltip="The description provides additional explation or context about this field. It is usually displayed as a help icon with tooltip."
-                i18n-matTooltip
-              >
-                Description <fa-icon icon="question-circle"></fa-icon>
+              <mat-label i18n>
+                Description
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="The description provides additional explation or context about this field. It is usually displayed as a help icon with tooltip."
+                  i18n-matTooltip
+                ></fa-icon>
               </mat-label>
               <textarea
                 formControlName="description"
@@ -47,15 +49,19 @@
 
           <div class="entity-form-cell">
             <mat-form-field>
-              <mat-label
-                matTooltip="The internal ID of the field is used at a technical level in the database. The ID cannot be changed after the field has been created."
-                i18n-matTooltip
-              >
+              <mat-label i18n>
                 Field ID (readonly)
-                <fa-icon icon="question-circle"></fa-icon>
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="The internal ID of the field is used at a technical level in the database. The ID cannot be changed after the field has been created."
+                  i18n-matTooltip
+                ></fa-icon>
               </mat-label>
-              <input formControlName="id" matInput #formId />
+              <input formControlName="id" matInput />
               <fa-icon *ngIf="formId.disabled" icon="lock" matSuffix></fa-icon>
+              <mat-error *ngIf="formId.hasError('uniqueId')">
+                {{ formId.getError("uniqueId") }}
+              </mat-error>
             </mat-form-field>
 
             <mat-form-field>

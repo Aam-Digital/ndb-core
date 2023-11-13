@@ -36,6 +36,8 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { EntitySchema } from "../../entity/schema/entity-schema";
+import { uniqueIdValidator } from "../../common-components/entity-form/unique-id-validator";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -66,8 +68,10 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 })
 export class ConfigFieldComponent implements OnChanges {
   @Input() entitySchemaField: EntitySchemaField & { id?: string }; // TODO: add id / key to EntitySchemaField for easier handling?
+  @Input() entitySchema: EntitySchema;
 
   form: FormGroup;
+  formId: FormControl;
   formLabelShort: FormControl;
   useShortLabel: boolean;
   formAdditional: FormControl;
@@ -78,6 +82,7 @@ export class ConfigFieldComponent implements OnChanges {
     @Inject(MAT_DIALOG_DATA)
     data: {
       entitySchemaField: EntitySchemaField;
+      entitySchema: EntitySchema;
     },
     private dialogRef: MatDialogRef<any>,
     private fb: FormBuilder,
@@ -86,6 +91,7 @@ export class ConfigFieldComponent implements OnChanges {
     private entityRegistry: EntityRegistry,
   ) {
     this.entitySchemaField = data.entitySchemaField;
+    this.entitySchema = data.entitySchema;
 
     this.initSettings();
     this.initAvailableDatatypes(allDataTypes);
@@ -98,6 +104,10 @@ export class ConfigFieldComponent implements OnChanges {
   }
 
   private initSettings() {
+    this.formId = this.fb.control(this.entitySchemaField.id, [
+      Validators.required,
+      uniqueIdValidator(Array.from(this.entitySchema.keys())),
+    ]);
     this.formLabelShort = this.fb.control(this.entitySchemaField.labelShort);
     this.formAdditional = this.fb.control(this.entitySchemaField.additional);
 
@@ -106,13 +116,7 @@ export class ConfigFieldComponent implements OnChanges {
       labelShort: this.formLabelShort,
       description: [this.entitySchemaField.description],
 
-      id: this.fb.control(
-        {
-          value: this.entitySchemaField.id,
-          disabled: this.entitySchemaField.id !== null, // disabled if not newly created field
-        },
-        [Validators.required],
-      ),
+      id: this.formId,
       dataType: [this.entitySchemaField.dataType, Validators.required],
       additional: this.formAdditional,
 
@@ -135,6 +139,26 @@ export class ConfigFieldComponent implements OnChanges {
     this.form
       .get("dataType")
       .valueChanges.subscribe((v) => this.updateDataTypeAdditional(v));
+    this.updateForNewOrExistingField();
+  }
+
+  private updateForNewOrExistingField() {
+    if (!!this.entitySchemaField.id) {
+      // existing fields' id is readonly
+      this.formId.disable();
+    } else {
+      const autoGenerateSubscr = this.form
+        .get("label")
+        .valueChanges.subscribe((v) => this.autoGenerateId(v));
+      // stop updating id when user manually edits
+      this.formId.valueChanges.subscribe(() =>
+        autoGenerateSubscr.unsubscribe(),
+      );
+    }
+  }
+  private autoGenerateId(updatedLabel: string) {
+    const generatedId = generateSimplifiedId(updatedLabel);
+    this.formId.setValue(generatedId, { emitEvent: false });
   }
 
   updateShortLabelToggle(useShortLabel: boolean) {
@@ -213,3 +237,12 @@ export class ConfigFieldComponent implements OnChanges {
 }
 
 type SimpleDropdownValue = { label: string; value: string };
+
+export function generateSimplifiedId(label: string) {
+  return label
+    .replace(/[^a-z0-9_]/g, "_")
+    .replace(/\s/g, "_")
+    .replace(/_+/g, "_")
+    .replace(/^_*/, "")
+    .replace(/_*$/, "");
+}
