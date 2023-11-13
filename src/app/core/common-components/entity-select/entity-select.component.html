@@ -4,7 +4,7 @@
   <input
     #inputField
     matInput
-    [hidden]="!formControl.enabled" 
+    [hidden]="!formControl.enabled"
     [placeholder]="inputPlaceholder"
     [formControl]="formControl"
     [matAutocomplete]="autoSuggestions"
@@ -45,16 +45,10 @@
   >
     <ng-content select="mat-option"></ng-content>
     <mat-option *ngFor="let res of filteredEntities" [value]="res">
-      <mat-chip-set #chipList>
-        <mat-chip-row
-         class="chip"
-        >
-          <app-display-entity
-            [entityToDisplay]="res"
-            [linkDisabled]="true"
-          ></app-display-entity>
-        </mat-chip-row>
-      </mat-chip-set>
+      <app-display-entity
+        [entityToDisplay]="res"
+        [linkDisabled]="true"
+      ></app-display-entity>
     </mat-option>
   </mat-autocomplete>
 </mat-form-field>

@@ -26,9 +26,6 @@ import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-ent
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
-import { Router } from "@angular/router";
-import { CommonModule } from '@angular/common';
-import { Directive, HostListener } from '@angular/core';
 
 @Component({
   selector: "app-entity-select",
@@ -45,7 +42,6 @@ import { Directive, HostListener } from '@angular/core';
     FontAwesomeModule,
     MatTooltipModule,
     MatInputModule,
-    CommonModule,
   ],
   standalone: true,
 })
@@ -144,7 +140,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * Setting the disabled state of the input element
    * @param disabled whether the input element should be disabled
    */
-
   @Input() set disabled(disabled: boolean) {
     if (disabled) {
       this.formControl.disable();
@@ -152,7 +147,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       this.formControl.enable();
     }
   }
-  
   /**
    * true when this is loading and false when it's ready.
    * This subject's state reflects the actual loading resp. the 'readiness'-
@@ -169,8 +163,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
-  constructor(private entityMapperService: EntityMapperService,
-              private router: Router) {
+  constructor(private entityMapperService: EntityMapperService) {
     this.formControl.valueChanges
       .pipe(
         untilDestroyed(this),
@@ -296,5 +289,4 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       (e) => e.getId(true) === entity.getId(true),
     );
   }
-  
 }
