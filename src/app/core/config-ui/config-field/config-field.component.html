@@ -15,19 +15,23 @@
           <div class="entity-form-cell">
             <mat-form-field>
               <mat-label>Label</mat-label>
-              <input formControlName="label" matInput />
+              <input formControlName="label" matInput #formLabel />
             </mat-form-field>
 
-            <mat-form-field>
-              <mat-label>Label (short)</mat-label>
-              <input formControlName="labelShort" matInput />
-              <mat-slide-toggle
-                [checked]="useShortLabel"
-                (change)="updateShortLabelToggle($event.checked)"
-                matSuffix
-                matTooltip="Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited."
-                i18n-matTooltip
-              ></mat-slide-toggle>
+            <mat-form-field floatLabel="always">
+              <mat-label>
+                Label (short)
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <input
+                formControlName="labelShort"
+                matInput
+                [placeholder]="formLabel.value"
+              />
             </mat-form-field>
 
             <mat-form-field>

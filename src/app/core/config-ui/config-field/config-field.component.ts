@@ -72,8 +72,6 @@ export class ConfigFieldComponent implements OnChanges {
 
   form: FormGroup;
   formId: FormControl;
-  formLabelShort: FormControl;
-  useShortLabel: boolean;
   formAdditional: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[];
   dataTypes: SimpleDropdownValue[] = [];
@@ -108,12 +106,11 @@ export class ConfigFieldComponent implements OnChanges {
       Validators.required,
       uniqueIdValidator(Array.from(this.entitySchema.keys())),
     ]);
-    this.formLabelShort = this.fb.control(this.entitySchemaField.labelShort);
     this.formAdditional = this.fb.control(this.entitySchemaField.additional);
 
     this.form = this.fb.group({
       label: [this.entitySchemaField.label, Validators.required],
-      labelShort: this.formLabelShort,
+      labelShort: [this.entitySchemaField.labelShort],
       description: [this.entitySchemaField.description],
 
       id: this.formId,
@@ -134,7 +131,6 @@ export class ConfigFieldComponent implements OnChanges {
       validators: [this.entitySchemaField.validators],
     });
 
-    this.updateShortLabelToggle(!!this.formLabelShort.value);
     this.updateDataTypeAdditional(this.form.get("dataType").value);
     this.form
       .get("dataType")
@@ -159,24 +155,6 @@ export class ConfigFieldComponent implements OnChanges {
   private autoGenerateId(updatedLabel: string) {
     const generatedId = generateSimplifiedId(updatedLabel);
     this.formId.setValue(generatedId, { emitEvent: false });
-  }
-
-  updateShortLabelToggle(useShortLabel: boolean) {
-    this.useShortLabel = useShortLabel;
-
-    if (!this.useShortLabel) {
-      this.formLabelShort.setValue(undefined);
-      this.formLabelShort.disable();
-    }
-
-    if (
-      this.useShortLabel &&
-      this.formLabelShort.disabled &&
-      this.form.enabled
-    ) {
-      this.formLabelShort.setValue(this.form.get("label").value);
-      this.formLabelShort.enable();
-    }
   }
 
   private initAvailableDatatypes(dataTypes: DefaultDatatype[]) {
