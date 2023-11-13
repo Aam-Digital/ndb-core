@@ -145,7 +145,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       this.formControl.enable();
     }
   }
-  
+
   /**
    * true when this is loading and false when it's ready.
    * This subject's state reflects the actual loading resp. the 'readiness'-
