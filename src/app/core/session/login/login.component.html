@@ -34,7 +34,7 @@
         i18n-matTooltip="online login tooltip"
       >
         <div *ngIf="loginInProgress">
-          <em>Checking online login ...</em>
+          <em i18n="login progess bar title">Checking online login ...</em>
           <mat-progress-bar
             mode="indeterminate"
             class="login-check-progressbar"
@@ -75,7 +75,9 @@
           <h3 mat-card-title class="offline-title" i18n="offline section title">
             Offline Login
           </h3>
-          <mat-card-subtitle>Log in as user ...</mat-card-subtitle>
+          <mat-card-subtitle i18n="Select user for offline login title"
+            >Log in as user ...</mat-card-subtitle
+          >
         </mat-card-header>
 
         <mat-card-content>
