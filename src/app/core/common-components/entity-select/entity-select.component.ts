@@ -56,8 +56,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    *
    * TODO: make ids including prefix the default everywhere and remove this option (see #1526)
    */
-
-  // @Input('appClickableChip') entity: any; 
   @Input() withPrefix: boolean = false;
 
   /**
@@ -147,6 +145,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       this.formControl.enable();
     }
   }
+  
   /**
    * true when this is loading and false when it's ready.
    * This subject's state reflects the actual loading resp. the 'readiness'-
