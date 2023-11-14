@@ -657,6 +657,10 @@ describe("QueryService", () => {
       { a: 2 },
     ]);
     expect(res).toBe("2.50");
+
+    // Handles 0 correctly
+    res = service.queryData("a:avg", undefined, undefined, [{ a: 0 }]);
+    expect(res).toBe("0");
   });
 
   function queryData(query: string, from?: Date, to?: Date, data?: any) {
