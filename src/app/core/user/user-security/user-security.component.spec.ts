@@ -97,7 +97,6 @@ describe("UserSecurityComponent", () => {
     expect(mockHttp.put).toHaveBeenCalledWith(
       jasmine.stringMatching(/\/account\/userId$/),
       { email: "other@email.com" },
-      jasmine.anything(),
     );
     flush();
   }));
@@ -121,7 +120,6 @@ describe("UserSecurityComponent", () => {
         roles: [assignedRole],
         enabled: true,
       },
-      jasmine.anything(),
     );
     flush();
   }));

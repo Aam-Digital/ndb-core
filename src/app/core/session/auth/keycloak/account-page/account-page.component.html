@@ -10,7 +10,7 @@
   Change Password
 </button>
 
-<form style="margin-top: 20px">
+<form style="margin-top: 20px" onSubmit="return false">
   <mat-form-field>
     <input
       [formControl]="email"
@@ -36,7 +36,6 @@
       (click)="setEmail()"
       i18n="Button which updates the user's email"
       style="margin-top: 5px"
-      type="button"
       [disabled]="email.disabled"
     >
       Update email
