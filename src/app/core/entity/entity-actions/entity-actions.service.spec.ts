@@ -34,12 +34,20 @@ describe("EntityActionsService", () => {
       new CascadingActionResult([primaryEntity]),
     );
     mockedEntityMapper = jasmine.createSpyObj(["save", "saveAll"]);
+
     snackBarSpy = jasmine.createSpyObj(["open"]);
     mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
     mockSnackBarRef.onAction.and.returnValue(of());
-    mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
-    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
     snackBarSpy.open.and.returnValue(mockSnackBarRef);
+
+    mockConfirmationDialog = jasmine.createSpyObj([
+      "getConfirmation",
+      "showProgressDialog",
+    ]);
+    mockConfirmationDialog.getConfirmation.and.resolveTo(true);
+    mockConfirmationDialog.showProgressDialog.and.returnValue(
+      jasmine.createSpyObj(["close"]),
+    );
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
