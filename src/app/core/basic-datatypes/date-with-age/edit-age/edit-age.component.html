@@ -1,5 +1,10 @@
 <div [formGroup]="parent">
-  <mat-form-field style="width: 70%">
+  <mat-form-field
+    style="width: 70%"
+    *ngIf="
+      !(entity.anonymized && propertySchema.anonymize === 'retain-anonymized')
+    "
+  >
     <mat-label>{{ label }}</mat-label>
     <input
       matInput
@@ -16,6 +21,7 @@
       <app-error-hint [form]="formControl"></app-error-hint>
     </mat-error>
   </mat-form-field>
+
   <mat-form-field style="width: 30%">
     <mat-label i18n="Placeholder for the input that displays the age"
       >Age</mat-label

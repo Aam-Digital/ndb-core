@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
+import { DateWithAge } from "../dateWithAge";
 
 /**
  * A component which displays the age of an entity with a DateOfBirth property.

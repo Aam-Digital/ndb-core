@@ -4,7 +4,6 @@ import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
-import { SessionService } from "../../../core/session/session-service/session.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
@@ -92,7 +91,6 @@ export class NotesManagerComponent implements OnInit {
 
   constructor(
     private formDialog: FormDialogService,
-    private sessionService: SessionService,
     private entityMapperService: EntityMapperService,
     private route: ActivatedRoute,
     private log: LoggingService,
@@ -101,11 +99,9 @@ export class NotesManagerComponent implements OnInit {
   async ngOnInit() {
     this.route.data.subscribe(
       async (data: RouteData<EntityListConfig & NotesManagerConfig>) => {
+        // TODO replace this use of route and rely on the RoutedViewComponent instead
         this.config = data.config;
         this.addPrebuiltFilters();
-
-        this.includeEventNotes = data.config.includeEventNotes;
-        this.showEventNotesToggle = data.config.showEventNotesToggle;
         this.notes = await this.loadEntities();
       },
     );

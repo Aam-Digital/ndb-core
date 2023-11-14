@@ -8,34 +8,53 @@ import {
 } from "@angular/material/snack-bar";
 import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
 import { Entity } from "./model/entity";
-import { NEVER, Subject } from "rxjs";
+import { NEVER, of, Subject } from "rxjs";
 import { Router } from "@angular/router";
+import { DatabaseEntity } from "./database-entity.decorator";
+import { DatabaseField } from "./database-field.decorator";
+import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
+import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
+import { UpdateMetadata } from "./model/update-metadata";
+import { FileService } from "../../features/file/file.service";
+import { CoreTestingModule } from "../../utils/core-testing.module";
+import { DefaultDatatype } from "./default-datatype/default.datatype";
+import { FileDatatype } from "../../features/file/file.datatype";
+import moment from "moment";
 
 describe("EntityRemoveService", () => {
   let service: EntityRemoveService;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
   let mockSnackBarRef: jasmine.SpyObj<MatSnackBarRef<TextOnlySnackBar>>;
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
+  let mockFileService: jasmine.SpyObj<FileService>;
   let mockRouter;
 
   beforeEach(() => {
-    mockEntityMapper = jasmine.createSpyObj(["remove", "save"]);
+    mockedEntityMapper = jasmine.createSpyObj(["remove", "save"]);
     snackBarSpy = jasmine.createSpyObj(["open"]);
-    mockSnackBarRef = jasmine.createSpyObj(["onAction"]);
+    mockSnackBarRef = jasmine.createSpyObj(["onAction", "afterDismissed"]);
+    mockSnackBarRef.onAction.and.returnValue(of());
     mockConfirmationDialog = jasmine.createSpyObj(["getConfirmation"]);
     mockConfirmationDialog.getConfirmation.and.resolveTo(true);
     snackBarSpy.open.and.returnValue(mockSnackBarRef);
-    mockEntityMapper.remove.and.resolveTo();
+    mockedEntityMapper.remove.and.resolveTo();
+    mockFileService = jasmine.createSpyObj(["removeFile"]);
+    mockFileService.removeFile.and.returnValue(of(null));
+
     TestBed.configureTestingModule({
+      imports: [CoreTestingModule],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        EntityRemoveService,
+        { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MatSnackBar, useValue: snackBarSpy },
         Router,
         {
           provide: ConfirmationDialogService,
           useValue: mockConfirmationDialog,
         },
+        { provide: FileService, useValue: mockFileService },
+        { provide: DefaultDatatype, useClass: FileDatatype, multi: true },
       ],
     });
     mockRouter = TestBed.inject(Router);
@@ -47,22 +66,23 @@ describe("EntityRemoveService", () => {
   it("should return false when user cancels confirmation", async () => {
     mockConfirmationDialog.getConfirmation.and.resolveTo(false);
 
-    const result = await service.remove(new Entity());
+    const result = await service.delete(new Entity());
 
     expect(result).toBe(false);
     expect(snackBarSpy.open).not.toHaveBeenCalled();
-    expect(mockEntityMapper.remove).not.toHaveBeenCalled();
+    expect(mockedEntityMapper.remove).not.toHaveBeenCalled();
   });
 
   it("should delete entity, show snackbar confirmation and navigate back", async () => {
     // onAction is never called
     mockSnackBarRef.onAction.and.returnValues(NEVER);
+    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
 
-    const result = await service.remove(new Entity(), true);
+    const result = await service.delete(new Entity(), true);
 
     expect(result).toBe(true);
     expect(snackBarSpy.open).toHaveBeenCalled();
-    expect(mockEntityMapper.remove).toHaveBeenCalled();
+    expect(mockedEntityMapper.remove).toHaveBeenCalled();
     expect(mockRouter.navigate).toHaveBeenCalled();
   });
 
@@ -72,10 +92,11 @@ describe("EntityRemoveService", () => {
     // Mock a snackbar where 'undo' is immediately pressed
     const onSnackbarAction = new Subject<void>();
     mockSnackBarRef.onAction.and.returnValue(onSnackbarAction.asObservable());
+    mockSnackBarRef.afterDismissed.and.returnValue(NEVER);
 
-    mockEntityMapper.save.and.resolveTo();
+    mockedEntityMapper.save.and.resolveTo();
 
-    service.remove(entity, true);
+    service.delete(entity, true);
     tick();
 
     mockRouter.navigate.calls.reset();
@@ -83,8 +104,197 @@ describe("EntityRemoveService", () => {
     onSnackbarAction.complete();
     tick();
 
-    expect(mockEntityMapper.remove).toHaveBeenCalled();
-    expect(mockEntityMapper.save).toHaveBeenCalledWith(entity, true);
+    expect(mockedEntityMapper.remove).toHaveBeenCalled();
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(entity, true);
     expect(mockRouter.navigate).toHaveBeenCalled();
   }));
+
+  it("should archive and save entity", async () => {
+    const entity = new Entity();
+
+    await service.archive(entity);
+
+    expect(entity.isActive).toBeFalse();
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(entity);
+  });
+
+  it("should archiveUndo and save entity", async () => {
+    const entity = new Entity();
+
+    await service.archive(entity);
+    expect(entity.isActive).toBeFalse();
+    mockedEntityMapper.save.calls.reset();
+
+    await service.undoArchive(entity);
+
+    expect(entity.isActive).toBeTrue();
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(entity);
+  });
+
+  /*
+   * ANONYMIZATION
+   */
+  @DatabaseEntity("AnonymizableEntity")
+  class AnonymizableEntity extends Entity {
+    @DatabaseField() defaultField: string;
+
+    @DatabaseField({ anonymize: "retain" })
+    retainedField: string;
+
+    @DatabaseField({
+      anonymize: "retain-anonymized",
+      dataType: "array",
+      innerDataType: "date-only",
+    })
+    retainAnonymizedDates: Date[];
+
+    @DatabaseField({ dataType: "file" }) file: string;
+
+    @DatabaseField({ anonymize: "retain-anonymized", dataType: "entity-array" })
+    referencesToRetainAnonymized: string[];
+
+    static create(properties: Partial<AnonymizableEntity>) {
+      return Object.assign(new AnonymizableEntity(), properties);
+    }
+  }
+
+  async function testAnonymization(
+    entity: AnonymizableEntity,
+    entitiesBefore: any[],
+    expectedEntitiesAfter: any[],
+    checkAllBaseProperties: boolean = false,
+  ) {
+    const entityMapper = mockEntityMapper(entitiesBefore);
+
+    // @ts-ignore
+    service.entityMapper = entityMapper;
+
+    await service.anonymize(entity);
+
+    const actualEntitiesAfter = entityMapper.getAllData();
+
+    if (!checkAllBaseProperties) {
+      actualEntitiesAfter.forEach((e) => {
+        delete e.inactive;
+        delete e.anonymized;
+      });
+    }
+
+    expectEntitiesToMatch(actualEntitiesAfter, expectedEntitiesAfter, true);
+  }
+
+  it("should anonymize and only keep properties marked to be retained", async () => {
+    const entity = new AnonymizableEntity();
+    entity.defaultField = "test";
+    entity.retainedField = "test";
+
+    await testAnonymization(
+      entity,
+      [entity],
+      [AnonymizableEntity.create({ retainedField: "test" })],
+    );
+  });
+
+  it("should anonymize and keep empty record without any fields", async () => {
+    const entity = new AnonymizableEntity();
+    entity.defaultField = "test";
+
+    await testAnonymization(entity, [entity], [AnonymizableEntity.create({})]);
+  });
+
+  it("should anonymize and retain created and updated", async () => {
+    const entityProperties = {
+      created: new UpdateMetadata("CREATOR", new Date("2020-01-01")),
+      updated: new UpdateMetadata("UPDATER", new Date("2020-01-02")),
+    };
+    const entity = AnonymizableEntity.create({
+      defaultField: "test",
+      ...entityProperties,
+    });
+
+    await testAnonymization(
+      entity,
+      [entity],
+      [
+        AnonymizableEntity.create({
+          inactive: true,
+          anonymized: true,
+          ...entityProperties,
+        }),
+      ],
+      true,
+    );
+  });
+
+  it("should mark anonymized entities as inactive", async () => {
+    const entity = new AnonymizableEntity();
+    entity.defaultField = "test";
+
+    await testAnonymization(
+      entity,
+      [entity],
+      [AnonymizableEntity.create({ inactive: true, anonymized: true })],
+      true,
+    );
+  });
+
+  it("should anonymize array values recursively and use datatype implementation for 'retain-anonymized", async () => {
+    const entity = new AnonymizableEntity();
+    entity.retainAnonymizedDates = [
+      moment("2023-09-25").toDate(),
+      moment("2023-10-04").toDate(),
+    ];
+
+    await testAnonymization(
+      entity,
+      [entity],
+      [
+        AnonymizableEntity.create({
+          retainAnonymizedDates: [
+            moment("2023-07-01").toDate(),
+            moment("2023-07-01").toDate(),
+          ],
+        }),
+      ],
+    );
+  });
+
+  it("should anonymize file values, actively deleting file attachments", async () => {
+    const entity = new AnonymizableEntity();
+    entity.file = "test-file.txt";
+
+    await testAnonymization(entity, [entity], [AnonymizableEntity.create({})]);
+    expect(mockFileService.removeFile).toHaveBeenCalled();
+  });
+
+  //
+  // Anonymizing referenced & related entities
+  //
+
+  // for direct references (e.g. x.referencesToRetainAnonymized --> recursively calls anonymize on referenced entities)
+  //    see EntityDatatype & EntityArrayDatatype for unit tests
+
+  xit("should anonymize cascadingly entities that reference the entity being anonymized", async () => {
+    // TODO: cascading anonymization - see https://github.com/Aam-Digital/ndb-core/issues/220
+
+    const entity = new AnonymizableEntity();
+    entity.retainedField = "entity being anonymized";
+
+    const ref1 = new AnonymizableEntity("ref-1");
+    ref1.defaultField = "test-1";
+    ref1.retainedField = "test-1";
+    ref1.referencesToRetainAnonymized = [entity.getId()];
+
+    await testAnonymization(
+      entity,
+      [entity, ref1],
+      [
+        entity,
+        AnonymizableEntity.create({
+          retainedField: "test-1",
+          referencesToRetainAnonymized: [entity.getId()],
+        }),
+      ],
+    );
+  });
 });

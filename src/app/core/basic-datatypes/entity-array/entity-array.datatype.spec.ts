@@ -17,26 +17,38 @@
 
 import { testDatatype } from "../../entity/schema/entity-schema.service.spec";
 import { EntityArrayDatatype } from "./entity-array.datatype";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityDatatype } from "../entity/entity.datatype";
 
 describe("Schema data type: entity-array", () => {
-  const mockEntitySchemaService: EntitySchemaService = {
-    getDatatypeOrDefault: () => new EntityDatatype(undefined),
+  const mockEntityDatatype = new EntityDatatype(null, null);
+  const mockEntitySchemaService = {
+    getDatatypeOrDefault: () => mockEntityDatatype,
   } as any;
-  testDatatype(
-    new EntityArrayDatatype(mockEntitySchemaService),
-    ["1", "User:5"],
-    ["1", "User:5"],
-    "User",
-  );
+  const datatype = new EntityArrayDatatype(mockEntitySchemaService);
+
+  testDatatype(datatype, ["1", "User:5"], ["1", "User:5"], "User");
 
   testDatatype(
-    new EntityArrayDatatype(mockEntitySchemaService),
+    datatype,
     ["User:1", "Child:1"],
     ["User:1", "Child:1"],
     ["User", "Child", "School"],
   );
+
+  it("should anonymize entities recursively", async () => {
+    const testValue = ["Entity:ref-1", "Entity:ref-2"];
+    spyOn(mockEntityDatatype, "anonymize").and.callFake(async (x) => x);
+
+    const anonymizedValue = await datatype.anonymize(testValue, null, null);
+
+    expect(anonymizedValue).toEqual(testValue);
+    expect(mockEntityDatatype.anonymize).toHaveBeenCalledTimes(2);
+    expect(mockEntityDatatype.anonymize).toHaveBeenCalledWith(
+      "Entity:ref-1",
+      jasmine.objectContaining({ dataType: "entity" }),
+      null,
+    );
+  });
 
   xit("adds prefix to ids when a definite entity type is given in schema", () => {
     // TODO discuss whether we want to switch to prefixed ids always (also see #1526)

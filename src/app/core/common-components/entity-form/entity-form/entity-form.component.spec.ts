@@ -6,7 +6,7 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form.service";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
+import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent<Child>;
@@ -105,6 +105,24 @@ describe("EntityFormComponent", () => {
       {
         projectNumber: "p2",
         name: "changed",
+        _rev: "new rev",
+      },
+    );
+  });
+
+  it("should clear field in form for properties removed in updated remote entity", async () => {
+    const originalEntity = { projectNumber: "p1", name: "test" };
+    const formValues = { projectNumber: "p2", name: "test" };
+    const remoteValues = {
+      _rev: "new rev",
+    };
+    await expectApplyChangesPopup(
+      "no",
+      originalEntity,
+      formValues,
+      remoteValues,
+      {
+        projectNumber: "p2",
         _rev: "new rev",
       },
     );
