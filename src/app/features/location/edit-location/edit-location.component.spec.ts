@@ -111,7 +111,7 @@ describe("EditLocationComponent", () => {
 
     await clearButton.click();
 
-    expect(component.formControl.value).toBeNull();
+    expect(component.formControl.value).toBeUndefined();
     await expectAsync(input.getValue()).toBeResolvedTo("");
   });
 
