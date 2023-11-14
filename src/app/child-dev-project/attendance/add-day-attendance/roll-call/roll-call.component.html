@@ -5,7 +5,7 @@
     [value]="(currentIndex / children.length) * 100"
   ></mat-progress-bar>
 
-  <div class="progress-nav">
+  <div class="progress-nav flex-row">
     <div style="margin-left: -10px">
       <button
         mat-icon-button
@@ -25,12 +25,12 @@
       </button>
     </div>
     <div
-      class="progress-label"
+      class="progress-label flex-grow"
       [style.visibility]="currentIndex < children.length ? 'visible' : 'hidden'"
     >
       {{ currentIndex + 1 }} / {{ children.length }}
     </div>
-    <div style="margin-right: -10px">
+    <div>
       <button
         mat-icon-button
         (click)="goToNext()"
@@ -46,6 +46,19 @@
         class="button-skip"
       >
         <fa-icon icon="angle-double-right"></fa-icon>
+      </button>
+    </div>
+
+    <div *ngIf="inactiveParticipants?.length > 0" style="margin-right: -10px">
+      <button
+        mat-icon-button
+        (click)="includeInactive()"
+        [disabled]="isFinished"
+        color="warn"
+        matTooltip="Excluded some archived participants. Click to include."
+        i18n-matTooltip
+      >
+        <fa-icon icon="warning"></fa-icon>
       </button>
     </div>
   </div>
