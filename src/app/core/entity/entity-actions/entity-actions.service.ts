@@ -94,9 +94,7 @@ export class EntityActionsService {
     if (result.potentiallyRetainingPII.length > 0) {
       await this.confirmationDialog.getConfirmation(
         $localize`:post-delete related PII warning title:Related records may still contain personal data`,
-        $localize`:post-delete related PII warning dialog:
-        Some related records (e.g. notes) may still contain personal data in their text.
-        If you want to ensure all personal information (PII) has been delete, please review these records.`,
+        $localize`:post-delete related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. If you want to ensure all personal information (PII) has been delete, please review these records.`,
         OkButton,
       );
     }
@@ -149,13 +147,10 @@ export class EntityActionsService {
     if (result.potentiallyRetainingPII.length > 0) {
       await this.confirmationDialog.getConfirmation(
         $localize`:post-anonymize related PII warning title:Related records may still contain personal data`,
-        $localize`:post-anonymize related PII warning dialog:
-        Some related records (e.g. notes) may still contain personal data in their text.
-        If such records have been linked only to this ${
+        $localize`:post-anonymize related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically anonymized all records that are linked to ONLY this ${
           entity.getConstructor().label
-        }, we have automatically also anonymized them for you.
-        However, there have been some records that are related to multiple other records.
-        These are still unchanged, so that you will not lose relevant data. Please review the linked records manually to ensure all sensitive information has been removed (e.g. by editing a note's text).`,
+        }.
+        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review the them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note's text).`,
         OkButton,
       );
     }
