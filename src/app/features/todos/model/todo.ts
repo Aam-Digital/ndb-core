@@ -90,6 +90,7 @@ export class Todo extends Entity {
       School.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
     ],
+    entityReferenceRole: "composite",
     showInDetailsView: true,
     anonymize: "retain",
   })
