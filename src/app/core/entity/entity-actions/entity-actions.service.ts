@@ -94,7 +94,10 @@ export class EntityActionsService {
     if (result.potentiallyRetainingPII.length > 0) {
       await this.confirmationDialog.getConfirmation(
         $localize`:post-delete related PII warning title:Related records may still contain personal data`,
-        $localize`:post-delete related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. If you want to ensure all personal information (PII) has been delete, please review these records.`,
+        $localize`:post-delete related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically deleted all records that are linked to ONLY this ${
+          entity.getConstructor().label
+        }.
+        However, there are some records that are linked to multiple records. We have not deleted these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed, if required (e.g. by looking through the linked notes and editing a note's text).`,
         OkButton,
       );
     }
@@ -150,7 +153,7 @@ export class EntityActionsService {
         $localize`:post-anonymize related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically anonymized all records that are linked to ONLY this ${
           entity.getConstructor().label
         }.
-        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review the them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note's text).`,
+        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note's text).`,
         OkButton,
       );
     }
