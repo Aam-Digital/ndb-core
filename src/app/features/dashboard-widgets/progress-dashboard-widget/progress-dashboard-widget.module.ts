@@ -1,6 +1,6 @@
-import {NgModule} from "@angular/core";
-import {ComponentRegistry} from "../../../dynamic-components";
-import {ProgressDashboardConfig} from "./progress-dashboard/progress-dashboard-config";
+import { NgModule } from "@angular/core";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { ProgressDashboardConfig } from "./progress-dashboard/progress-dashboard-config";
 
 @NgModule({})
 export class ProgressDashboardWidgetModule {

@@ -15,10 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, Input, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
-import { MarkdownPageConfig } from "../MarkdownPageConfig";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { Component, Input } from "@angular/core";
 import { RouteTarget } from "../../../app.routing";
 import { MarkdownPageModule } from "../markdown-page.module";
 
@@ -32,16 +29,7 @@ import { MarkdownPageModule } from "../markdown-page.module";
   imports: [MarkdownPageModule],
   standalone: true,
 })
-export class MarkdownPageComponent implements OnInit {
+export class MarkdownPageComponent {
   /** filepath to be loaded as markdown */
   @Input() markdownFile: string;
-
-  constructor(private route: ActivatedRoute) {}
-
-  ngOnInit() {
-    this.route.data.subscribe(
-      (data: RouteData<MarkdownPageConfig>) =>
-        (this.markdownFile = data.config.markdownFile),
-    );
-  }
 }

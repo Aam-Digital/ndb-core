@@ -25,6 +25,7 @@ import { FilterSelectionOption } from "../../../core/filter/filters/filters";
       clickMode="none"
       (elementClick)="showDetails($event)"
       (addNewClick)="createNew()"
+      [showInactive]="true"
     ></app-entity-list>
   `,
   standalone: true,
@@ -45,6 +46,7 @@ export class TodoListComponent implements OnInit {
 
   ngOnInit() {
     this.route.data.subscribe((data: RouteData<EntityListConfig>) =>
+      // TODO replace this use of route and rely on the RoutedViewComponent instead
       this.init(data.config),
     );
   }

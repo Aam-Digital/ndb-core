@@ -19,6 +19,7 @@ The following aspects are specifically designed to be extended:
   - defining a screen completely, including data loaded, etc. and hook it into the platforms navigation and overall layout
 - **Sub-Views**
   - defining a screen to display custom details for the entity currently loaded in the active route. The core platform takes care of passing the current entity and config details to the view as inputs.
+  - *also see [How to create an Entity Details Panel](../how-to-guides/create-an-entity-details-panel.html)*
 - **Dashboard Widgets**
   - filling the given card template with custom data and visualization 
 - **Filters**

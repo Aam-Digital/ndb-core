@@ -7,6 +7,7 @@ import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
+import moment from "moment";
 
 describe("DownloadService", () => {
   let service: DownloadService;
@@ -48,6 +49,7 @@ describe("DownloadService", () => {
     // reset createElement otherwise results in: 'an Error was thrown after all'
     document.createElement = oldCreateElement;
   });
+
   it("should contain a column for every property", async () => {
     const docs = [
       { _id: "Test:1", test: 1 },
@@ -76,11 +78,12 @@ describe("DownloadService", () => {
       '"_id","_rev","propOne","propTwo"' +
       DownloadService.SEPARATOR_ROW +
       '"TestForCsvEntity:1","2","first","second"';
+    spyOn(service, "exportFile").and.returnValue(expected);
     const result = await service.createCsv([test]);
     expect(result).toEqual(expected);
   });
 
-  it("should transform object properties to their label for export", async () => {
+  it("should transform object values to their label for export when available (e.g. configurable-enum)", async () => {
     const testEnumValue: ConfigurableEnumValue = {
       id: "ID VALUE",
       label: "label value",
@@ -89,14 +92,15 @@ describe("DownloadService", () => {
 
     @DatabaseEntity("TestEntity")
     class TestEntity extends Entity {
-      @DatabaseField() enumProperty: ConfigurableEnumValue;
-      @DatabaseField() dateProperty: Date;
-      @DatabaseField() boolProperty: boolean;
+      @DatabaseField({ label: "test enum" })
+      enumProperty: ConfigurableEnumValue;
+      @DatabaseField({ label: "test date" }) dateProperty: Date;
+      @DatabaseField({ label: "test boolean" }) boolProperty: boolean;
     }
 
     const testEntity = new TestEntity();
     testEntity.enumProperty = testEnumValue;
-    testEntity.dateProperty = new Date(testDate);
+    testEntity.dateProperty = moment(testDate).toDate();
     testEntity.boolProperty = true;
 
     const csvExport = await service.createCsv([testEntity]);
@@ -104,15 +108,68 @@ describe("DownloadService", () => {
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(3 + 1); // Properties + _id
+    expect(columnValues).toHaveSize(3); // Properties (_id is filter out by default)
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
     expect(columnValues).toContain('"' + testDate + '"');
     expect(columnValues).toContain('"true"');
   });
 
+  it("should export all properties using object keys as headers, if no schema is available", async () => {
+    const docs = [
+      { _id: "Test:1", name: "Child 1" },
+      { _id: "Test:2", name: "Child 2" },
+    ];
+
+    const csvExport = await service.createCsv(docs);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(2 + 1); // includes 1 header line
+    const columnHeaders = rows[0].split(DownloadService.SEPARATOR_COL);
+    const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
+
+    expect(columnValues).toHaveSize(2);
+    expect(columnHeaders).toHaveSize(2);
+    expect(columnHeaders).toContain('"_id"');
+  });
+
+  it("should only export columns that have labels defined in entity schema and use the schema labels as export headers", async () => {
+    const testString: string = "Test 1";
+
+    @DatabaseEntity("LabelTestEntity")
+    class LabelTestEntity extends Entity {
+      @DatabaseField({ label: "test string" }) stringProperty: string;
+      @DatabaseField({ label: "test date" }) otherProperty: string;
+      @DatabaseField() boolProperty: boolean;
+    }
+
+    const labelTestEntity = new LabelTestEntity();
+    labelTestEntity.stringProperty = testString;
+    labelTestEntity.otherProperty = "x";
+    labelTestEntity.boolProperty = true;
+
+    const incompleteTestEntity = new LabelTestEntity();
+    incompleteTestEntity.otherProperty = "second row";
+
+    const csvExport = await service.createCsv([
+      labelTestEntity,
+      incompleteTestEntity,
+    ]);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 2); // includes 1 header line
+
+    const columnHeaders = rows[0].split(DownloadService.SEPARATOR_COL);
+    expect(columnHeaders).toHaveSize(2);
+    expect(columnHeaders).toContain('"test string"');
+    expect(columnHeaders).toContain('"test date"');
+
+    const entity2Values = rows.find((r) => r.includes("second row"));
+    expect(entity2Values).toEqual(',"second row"'); // first column empty!
+  });
+
   it("should export a date as YYYY-MM-dd only", async () => {
     const dateString = "2021-01-01";
-    const dateObject = new Date(dateString);
+    const dateObject = moment(dateString).toDate();
     dateObject.setHours(10, 11, 12);
 
     const exportData = [

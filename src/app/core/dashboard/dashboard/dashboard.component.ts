@@ -15,10 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component, Input } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { RouteData } from "../../config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../app.routing";
 import { NgFor } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
@@ -34,16 +32,10 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
   imports: [NgFor, DynamicComponentDirective],
   standalone: true,
 })
-export class DashboardComponent implements OnInit {
-  widgets: DynamicComponentConfig[] = [];
+export class DashboardComponent implements DashboardConfig {
+  @Input() widgets: DynamicComponentConfig[] = [];
+}
 
-  constructor(private activatedRoute: ActivatedRoute) {}
-
-  ngOnInit() {
-    this.activatedRoute.data.subscribe(
-      (data: RouteData<{ widgets: DynamicComponentConfig[] }>) => {
-        this.widgets = data.config.widgets;
-      },
-    );
-  }
+export interface DashboardConfig {
+  widgets: DynamicComponentConfig[];
 }

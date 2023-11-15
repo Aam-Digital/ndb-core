@@ -17,11 +17,6 @@ export interface EntityListConfig {
   entity?: string;
 
   /**
-   * Placeholder string in the filter input
-   */
-  filterPlaceholder?: string;
-
-  /**
    * The columns to be displayed in the table
    */
   columns: (FormFieldConfig | string)[];

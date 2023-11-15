@@ -2,16 +2,12 @@ import { inject, Injectable } from "@angular/core";
 import { Route, Router } from "@angular/router";
 import { ConfigService } from "../config.service";
 import { LoggingService } from "../../logging/logging.service";
-import {
-  PREFIX_VIEW_CONFIG,
-  RouteData,
-  ViewConfig,
-} from "./view-config.interface";
+import { PREFIX_VIEW_CONFIG, ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { NotFoundComponent } from "./not-found/not-found.component";
-import { ComponentRegistry } from "../../../dynamic-components";
 import { AuthGuard } from "../../session/auth.guard";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
+import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -27,7 +23,6 @@ export class RouterService {
     private configService: ConfigService,
     private router: Router,
     private loggingService: LoggingService,
-    private components: ComponentRegistry,
   ) {}
 
   /**
@@ -82,14 +77,15 @@ export class RouterService {
       return this.generateRouteFromConfig(view, route);
     } else {
       return this.generateRouteFromConfig(view, {
-        loadComponent: this.components.get(view.component),
         path,
+        component: RoutedViewComponent,
+        data: { component: view.component },
       });
     }
   }
 
   private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
-    const routeData: RouteData = {};
+    route.data = route.data ?? {};
     route.canActivate = [AuthGuard];
     route.canDeactivate = [
       () => inject(UnsavedChangesService).checkUnsavedChanges(),
@@ -97,14 +93,13 @@ export class RouterService {
 
     if (view.permittedUserRoles) {
       route.canActivate.push(UserRoleGuard);
-      routeData.permittedUserRoles = view.permittedUserRoles;
+      route.data.permittedUserRoles = view.permittedUserRoles;
     }
 
     if (view.config) {
-      routeData.config = view.config;
+      route.data.config = view.config;
     }
 
-    route.data = routeData;
     return route;
   }
 }

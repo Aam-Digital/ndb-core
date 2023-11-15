@@ -2,10 +2,6 @@ import { TestBed } from "@angular/core/testing";
 
 import { ImportService } from "./import.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
 import { ColumnMapping } from "./column-mapping";
@@ -18,27 +14,19 @@ import moment from "moment";
 import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { CoreModule } from "../core.module";
-import { ComponentRegistry } from "../../dynamic-components";
 import { EntityArrayDatatype } from "../basic-datatypes/entity-array/entity-array.datatype";
+import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
+import { CoreTestingModule } from "../../utils/core-testing.module";
 
 describe("ImportService", () => {
   let service: ImportService;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [CoreModule],
+      imports: [CoreTestingModule],
       providers: [
         ImportService,
-        { provide: EntityRegistry, useValue: entityRegistry },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
-        {
-          provide: ConfigurableEnumService,
-          useValue: new ConfigurableEnumService(mockEntityMapper(), null),
-        },
-        ComponentRegistry,
       ],
     });
     service = TestBed.inject(ImportService);

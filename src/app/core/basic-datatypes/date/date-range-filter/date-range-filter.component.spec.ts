@@ -6,6 +6,7 @@ import { MatNativeDateModule } from "@angular/material/core";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { DateFilter } from "../../../filter/filters/filters";
 import { defaultDateFilters } from "./date-range-filter-panel/date-range-filter-panel.component";
+import moment from "moment";
 
 describe("DateRangeFilterComponent", () => {
   let component: DateRangeFilterComponent<any>;
@@ -33,7 +34,7 @@ describe("DateRangeFilterComponent", () => {
     component.filterConfig = dateFilter;
     expect(component.dateFilter.getFilter()).toEqual({});
 
-    jasmine.clock().mockDate(new Date("2023-05-18"));
+    jasmine.clock().mockDate(moment("2023-05-18").toDate());
     dateFilter.selectedOption = "0";
     component.filterConfig = dateFilter;
     let expectedDataFilter = {
@@ -101,8 +102,8 @@ describe("DateRangeFilterComponent", () => {
 
   it("should set the correct date filter when changing the date range manually", () => {
     component.filterConfig = new DateFilter("test", "test", []);
-    component.fromDate = new Date("2021-10-28");
-    component.toDate = new Date("2024-02-12");
+    component.fromDate = moment("2021-10-28").toDate();
+    component.toDate = moment("2024-02-12").toDate();
 
     component.dateChangedManually();
 

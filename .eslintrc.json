@@ -50,7 +50,12 @@
       }
     }
   ],
+  "rules": {
+      "prettier/prettier": "error"
+  },
+  "plugins": ["prettier"],
   "extends": [
-    "plugin:storybook/recommended"
+    "plugin:storybook/recommended",
+    "prettier"
   ]
 }

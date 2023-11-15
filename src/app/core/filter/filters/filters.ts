@@ -61,8 +61,8 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     }
     const dates = this.selectedOption?.split("_");
     if (dates?.length == 2) {
-      const firstDate = new Date(dates[0]);
-      const secondDate = new Date(dates[1]);
+      const firstDate = moment(dates[0]).toDate();
+      const secondDate = moment(dates[1]).toDate();
       return new DateRange(
         isValidDate(firstDate) ? firstDate : undefined,
         isValidDate(secondDate) ? secondDate : undefined,
