@@ -4,6 +4,7 @@ import {
   FormGroupDirective,
   NgControl,
   NgForm,
+  Validators,
 } from "@angular/forms";
 import { MatFormFieldControl } from "@angular/material/form-field";
 import {
@@ -28,7 +29,16 @@ export abstract class CustomFormControlDirective<T>
   // eslint-disable-next-line @angular-eslint/no-input-rename
   @Input("aria-describedby") userAriaDescribedBy: string;
   @Input() placeholder: string;
-  @Input() required = false;
+
+  @Input()
+  get required() {
+    return this._required;
+  }
+  set required(req: boolean) {
+    this._required = coerceBooleanProperty(req);
+    this.stateChanges.next();
+  }
+  private _required = false;
 
   abstract inputElement: { _elementRef: ElementRef<HTMLElement> };
   stateChanges = new Subject<void>();
@@ -123,21 +133,40 @@ export abstract class CustomFormControlDirective<T>
     this.disabled = isDisabled;
   }
 
+  ngDoCheck() {
+    const control = this.ngControl
+      ? (this.ngControl.control as AbstractControl)
+      : null;
+
+    this.checkUpdateErrorState(control);
+    this.checkUpdateRequired(control);
+  }
+
   /**
    * Updates the error state based on the form control
    * Taken from {@link https://github.com/angular/components/blob/a1d5614f18066c0c2dc2580c7b5099e8f68a8e74/src/material/core/common-behaviors/error-state.ts#L59}
    */
-  ngDoCheck() {
+  private checkUpdateErrorState(control: AbstractControl | null) {
     const oldState = this.errorState;
     const parent = this.parentFormGroup || this.parentForm;
-    const control = this.ngControl
-      ? (this.ngControl.control as AbstractControl)
-      : null;
     const newState = this.errorStateMatcher.isErrorState(control, parent);
 
     if (newState !== oldState) {
       this.errorState = newState;
       this.stateChanges.next();
+    }
+  }
+
+  private checkUpdateRequired(control: AbstractControl | null) {
+    if (!control) {
+      return;
+    }
+
+    if (
+      this.required !==
+      coerceBooleanProperty(control.hasValidator(Validators.required))
+    ) {
+      this.required = control.hasValidator(Validators.required);
     }
   }
 }
