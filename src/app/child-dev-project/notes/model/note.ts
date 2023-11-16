@@ -130,6 +130,12 @@ export class Note extends Entity {
   })
   category: InteractionType;
 
+  @DatabaseField({
+    label: $localize`Attachment`,
+    dataType: "file",
+  })
+  attachment: string;
+
   /**
    * id referencing a different entity (e.g. a recurring activity) this note is related to
    */
