@@ -227,6 +227,7 @@ export class EntityListComponent<T extends Entity>
   }
 
   private addColumnsFromColumnGroups() {
+    const missingColumns: string[] = [];
     this.columnGroups?.groups?.forEach((group) =>
       group.columns
         .filter(
@@ -238,8 +239,11 @@ export class EntityListComponent<T extends Entity>
                 : column.id === columnId,
             ),
         )
-        .forEach((column) => this.columns.push(column)),
+        .forEach((column) => missingColumns.push(column)),
     );
+    if (missingColumns.length > 0) {
+      this.columns = this.columns.concat(missingColumns);
+    }
   }
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
