@@ -6,7 +6,7 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { EntityRemoveService } from "../../entity/entity-remove.service";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { Entity } from "../../entity/model/entity";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -87,7 +87,7 @@ export class EntityActionsMenuComponent implements OnChanges {
     },
   ];
 
-  constructor(private entityRemoveService: EntityRemoveService) {}
+  constructor(private entityRemoveService: EntityActionsService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entity) {
@@ -97,13 +97,16 @@ export class EntityActionsMenuComponent implements OnChanges {
 
   private filterAvailableActions() {
     this.actions = this.defaultActions.filter((action) => {
-      if (this.entity?.anonymized) {
-        return action.action !== "anonymize" && action.action !== "archive";
+      switch (action.action) {
+        case "archive":
+          return this.entity?.isActive && !this.entity?.anonymized;
+        case "anonymize":
+          return (
+            !this.entity?.anonymized && this.entity?.getConstructor().hasPII
+          );
+        default:
+          return true;
       }
-      if (!this.entity?.isActive) {
-        return action.action !== "archive";
-      }
-      return true;
     });
   }
 

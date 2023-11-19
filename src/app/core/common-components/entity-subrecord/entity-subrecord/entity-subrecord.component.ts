@@ -24,7 +24,7 @@ import {
 } from "../../entity-form/entity-form.service";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import { EntityRemoveService } from "../../../entity/entity-remove.service";
+import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { tableSort } from "./table-sort";
 import {
@@ -186,7 +186,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private router: Router,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
-    public entityRemoveService: EntityRemoveService,
+    public entityRemoveService: EntityActionsService,
     private entityMapper: EntityMapperService,
     private filterService: FilterService,
   ) {

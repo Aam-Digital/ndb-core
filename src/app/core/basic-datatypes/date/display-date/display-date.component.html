@@ -1,0 +1,14 @@
+<ng-container
+  *ngIf="!(displayAsAnonymized || isPartiallyAnonymized); else anonymized"
+>
+  {{ value | date: config }}
+</ng-container>
+
+<ng-template #anonymized>
+  {{ value | date: "YYYY" }}
+  <fa-icon
+    icon="warning"
+    matTooltip="This data has been partially anonymized."
+    i18n-matTooltip
+  ></fa-icon>
+</ng-template>

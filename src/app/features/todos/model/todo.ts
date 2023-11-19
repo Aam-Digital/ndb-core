@@ -32,6 +32,7 @@ export class Todo extends Entity {
   static label = $localize`:label for entity:Task`;
   static labelPlural = $localize`:label (plural) for entity:Tasks`;
   static toStringAttributes = ["subject"];
+  static override hasPII = true;
 
   static create(properties: Partial<Todo>): Todo {
     const instance = new Todo();
@@ -89,6 +90,7 @@ export class Todo extends Entity {
       School.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
     ],
+    entityReferenceRole: "composite",
     showInDetailsView: true,
     anonymize: "retain",
   })
