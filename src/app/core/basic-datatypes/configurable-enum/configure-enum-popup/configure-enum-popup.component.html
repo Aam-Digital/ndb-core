@@ -2,6 +2,7 @@
   Edit dropdown options
 </h1>
 <app-dialog-close mat-dialog-close></app-dialog-close>
+
 <mat-dialog-content
   style="max-width: 400px; padding-top: 5px"
   cdkDropList
@@ -18,25 +19,26 @@
       matIconPrefix
       class="grab-icon margin-right-small"
     ></fa-icon>
+
     <input matInput [(ngModel)]="v.label" />
+
     <button mat-icon-button matIconSuffix (click)="delete(v, i)">
       <fa-icon icon="trash"></fa-icon>
     </button>
   </mat-form-field>
+
+  <mat-form-field class="full-width"> 
+    <mat-label>Add new option</mat-label>
+
+    <input matInput />
+
+    <button mat-icon-button color="accent" matIconSuffix onclick="Option">
+      <fa-icon icon="square-plus"></fa-icon>
+    </button>
+  </mat-form-field>
 </mat-dialog-content>
 
-
-<div>
-  
-  <mat-form-field> 
-    <mat-label>Input</mat-label>
-    <input matInput placeholder="Ex.Howrah"/>
-  </mat-form-field>
-
-  <button mat-raised-button onclick="Option">Add New Option</button>
-</div>
-
 <mat-dialog-actions>
-<button mat-raised-button mat-dialog-close i18n="Close popup">Close</button>
+  <button mat-raised-button mat-dialog-close i18n="Close popup">Close</button>
 </mat-dialog-actions>
 
