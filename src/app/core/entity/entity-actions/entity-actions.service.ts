@@ -1,45 +1,35 @@
 import { Injectable } from "@angular/core";
-import { ConfirmationDialogService } from "../common-components/confirmation-dialog/confirmation-dialog.service";
-import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
+import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
+import { Entity } from "../model/entity";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { Entity } from "./model/entity";
-import { getUrlWithoutParams } from "../../utils/utils";
 import { Router } from "@angular/router";
-import { EntitySchemaService } from "./schema/entity-schema.service";
-import { FileDatatype } from "../../features/file/file.datatype";
-import { FileService } from "../../features/file/file.service";
-import { firstValueFrom } from "rxjs";
+import { getUrlWithoutParams } from "../../../utils/utils";
+import { EntityDeleteService } from "./entity-delete.service";
+import { EntityAnonymizeService } from "./entity-anonymize.service";
+import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 /**
- * Additional options that can be (partly) specified
- * for the several titles
- */
-export interface RemoveEntityTextOptions {
-  dialogTitle?: string;
-  dialogText?: string;
-  deletedEntityInformation?: string;
-}
-
-/**
- * A service that can triggers a user flow to safely remove an entity,
+ * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
  * including a confirmation dialog.
  */
 @Injectable({
   providedIn: "root",
 })
-export class EntityRemoveService {
+export class EntityActionsService {
   constructor(
     private confirmationDialog: ConfirmationDialogService,
-    private entityMapper: EntityMapperService,
     private snackBar: MatSnackBar,
     private router: Router,
-    private schemaService: EntitySchemaService,
-    private fileService: FileService,
+    private entityMapper: EntityMapperService,
+    private entityDelete: EntityDeleteService,
+    private entityAnonymize: EntityAnonymizeService,
   ) {}
 
   private showSnackbarConfirmation(
     entity: Entity,
     action: string,
+    previousEntitiesForUndo: Entity[],
     navigateBackToUrl?: string,
   ) {
     const snackBarTitle = $localize`:Entity action confirmation message:${
@@ -56,7 +46,12 @@ export class EntityRemoveService {
 
     // Undo Action
     snackBarRef.onAction().subscribe(async () => {
-      await this.entityMapper.save(entity, true);
+      const undoProgressRef = this.confirmationDialog.showProgressDialog(
+        $localize`:Undo entity action progress dialog: Reverting changes ...`,
+      );
+      await this.entityMapper.saveAll(previousEntitiesForUndo, true);
+      undoProgressRef.close();
+
       if (navigateBackToUrl) {
         await this.router.navigate([navigateBackToUrl]);
       }
@@ -70,9 +65,6 @@ export class EntityRemoveService {
    * This also triggers a toast message, enabling the user to undo the action.
    *
    * @param entity The entity to remove
-   * @param textOptions Options that you can specify to override the default options.
-   * You can only specify some of the options, the options that you don't specify will then be
-   * the default ones.
    * @param navigate whether upon delete the app will navigate back
    */
   async delete<E extends Entity>(
@@ -93,8 +85,22 @@ export class EntityRemoveService {
       return false;
     }
 
-    const originalEntity = entity.copy();
-    await this.entityMapper.remove(entity);
+    const progressDialogRef = this.confirmationDialog.showProgressDialog(
+      $localize`:Entity action progress dialog:Processing ...`,
+    );
+    const result = await this.entityDelete.deleteEntity(entity);
+    progressDialogRef.close();
+
+    if (result.potentiallyRetainingPII.length > 0) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:post-delete related PII warning title:Related records may still contain personal data`,
+        $localize`:post-delete related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically deleted all records that are linked to ONLY this ${
+          entity.getConstructor().label
+        }.
+        However, there are some records that are linked to multiple records. We have not deleted these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed, if required (e.g. by looking through the linked notes and editing a note's text).`,
+        OkButton,
+      );
+    }
 
     let currentUrl: string;
     if (navigate) {
@@ -104,8 +110,9 @@ export class EntityRemoveService {
     }
 
     this.showSnackbarConfirmation(
-      originalEntity,
+      result.originalEntitiesBeforeChange[0],
       $localize`:Entity action confirmation message verb:Deleted`,
+      result.originalEntitiesBeforeChange,
       currentUrl,
     );
     return true;
@@ -134,48 +141,29 @@ export class EntityRemoveService {
       return false;
     }
 
-    const originalEntity = entity.copy();
-    await this.anonymizeEntity(entity);
-    await this.entityMapper.save(entity);
-
-    this.showSnackbarConfirmation(
-      originalEntity,
-      $localize`:Entity action confirmation message verb:Anonymized`,
+    const progressDialogRef = this.confirmationDialog.showProgressDialog(
+      $localize`:Entity action progress dialog:Processing ...`,
     );
-    return true;
-  }
+    const result = await this.entityAnonymize.anonymizeEntity(entity);
+    progressDialogRef.close();
 
-  private async anonymizeEntity(entity: Entity) {
-    for (const [key, schema] of entity.getSchema().entries()) {
-      if (entity[key] === undefined) {
-        continue;
-      }
-
-      switch (schema.anonymize) {
-        case "retain":
-          break;
-        case "retain-anonymized":
-          await this.anonymizeProperty(entity, key);
-          break;
-        default:
-          await this.removeProperty(entity, key);
-      }
+    if (result.potentiallyRetainingPII.length > 0) {
+      await this.confirmationDialog.getConfirmation(
+        $localize`:post-anonymize related PII warning title:Related records may still contain personal data`,
+        $localize`:post-anonymize related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically anonymized all records that are linked to ONLY this ${
+          entity.getConstructor().label
+        }.
+        However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note's text).`,
+        OkButton,
+      );
     }
 
-    entity.anonymized = true;
-    entity.inactive = true;
-  }
-
-  private async anonymizeProperty(entity: Entity, key: string) {
-    const dataType = this.schemaService.getDatatypeOrDefault(
-      entity.getSchema().get(key).dataType,
+    this.showSnackbarConfirmation(
+      result.originalEntitiesBeforeChange[0],
+      $localize`:Entity action confirmation message verb:Anonymized`,
+      result.originalEntitiesBeforeChange,
     );
-
-    entity[key] = await dataType.anonymize(
-      entity[key],
-      entity.getSchema().get(key),
-      entity,
-    );
+    return true;
   }
 
   /**
@@ -190,6 +178,7 @@ export class EntityRemoveService {
     this.showSnackbarConfirmation(
       originalEntity,
       $localize`:Entity action confirmation message verb:Archived`,
+      [originalEntity],
     );
     return true;
   }
@@ -205,18 +194,8 @@ export class EntityRemoveService {
     this.showSnackbarConfirmation(
       originalEntity,
       $localize`:Entity action confirmation message verb:Reactivated`,
+      [originalEntity],
     );
     return true;
-  }
-
-  private async removeProperty(entity: Entity, key: string) {
-    if (
-      entity.getSchema().get(key).dataType === FileDatatype.dataType &&
-      entity[key]
-    ) {
-      await firstValueFrom(this.fileService.removeFile(entity, key));
-    }
-
-    delete entity[key];
   }
 }

@@ -211,7 +211,8 @@ export class PouchDatabase extends Database {
    * Save an array of documents to the database
    * @param objects the documents to be saved
    * @param forceOverwrite whether conflicting versions should be overwritten
-   * @returns array holding `{ ok: true, ... }` or `{ error: true, ... }` depending on whether the document could be saved
+   * @returns array with the result for each object to be saved, if any item fails to be saved, this returns a rejected Promise.
+   *          The save can partially fail and return a mix of success and error states in the array (e.g. `[{ ok: true, ... }, { error: true, ... }]`)
    */
   async putAll(objects: any[], forceOverwrite = false): Promise<any> {
     if (forceOverwrite) {
@@ -227,10 +228,16 @@ export class PouchDatabase extends Database {
       if (result.status === 409) {
         results[i] = await this.resolveConflict(
           objects.find((obj) => obj._id === result.id),
-          false,
+          forceOverwrite,
           result,
-        ).catch((e) => e);
+        ).catch((e) => {
+          return new DatabaseException(e);
+        });
       }
+    }
+
+    if (results.some((r) => r instanceof Error)) {
+      return Promise.reject(results);
     }
     return results;
   }

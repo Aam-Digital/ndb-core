@@ -20,7 +20,7 @@ import { EntityDatatype } from "./entity.datatype";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
-import { EntityRemoveService } from "../../entity/entity-remove.service";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 
 describe("Schema data type: entity", () => {
   testDatatype(new EntityDatatype(null, null), "1", "1", "User");
@@ -50,7 +50,7 @@ describe("Schema data type: entity", () => {
 
     const entityMapper = mockEntityMapper([referencedEntity]);
     spyOn(entityMapper, "save");
-    const mockRemoveService: jasmine.SpyObj<EntityRemoveService> =
+    const mockRemoveService: jasmine.SpyObj<EntityActionsService> =
       jasmine.createSpyObj("EntityRemoveService", ["anonymize"]);
     const dataType = new EntityDatatype(entityMapper, mockRemoveService);
 

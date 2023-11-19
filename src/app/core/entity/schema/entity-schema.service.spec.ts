@@ -26,6 +26,7 @@ import { EntitySchemaField } from "./entity-schema-field";
 import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { DatabaseEntity, EntityRegistry } from "../database-entity.decorator";
 
 describe("EntitySchemaService", () => {
   let service: EntitySchemaService;
@@ -132,6 +133,52 @@ describe("EntitySchemaService", () => {
     expect(service.getInnermostDatatype(entityArraySchema)).toBeInstanceOf(
       EntityDatatype,
     );
+  });
+
+  it("should getEntityTypesReferencingType with all entity types having schema fields referencing the given type", () => {
+    @DatabaseEntity("ReferencingEntity")
+    class ReferencingEntity extends Entity {
+      @DatabaseField({
+        dataType: "entity-array",
+        additional: "Child",
+      })
+      refChildren: string[];
+
+      @DatabaseField({
+        dataType: "entity",
+        additional: "Child",
+      })
+      refChild: string;
+
+      @DatabaseField({
+        dataType: "entity",
+        additional: "School",
+      })
+      refSchool: string;
+
+      @DatabaseField({
+        dataType: "entity-array",
+        additional: ["Child", "School"],
+      })
+      multiTypeRef: string[];
+    }
+
+    const entities = new EntityRegistry();
+    entities.addAll([
+      [ReferencingEntity.ENTITY_TYPE, ReferencingEntity],
+      [Entity.ENTITY_TYPE, Entity],
+    ]);
+    const injector = TestBed.inject(Injector);
+    spyOn(injector, "get").and.returnValue(entities);
+
+    const result = service.getEntityTypesReferencingType("Child");
+
+    expect(result).toEqual([
+      {
+        entityType: ReferencingEntity,
+        referencingProperties: ["refChildren", "refChild", "multiTypeRef"],
+      },
+    ]);
   });
 });
 

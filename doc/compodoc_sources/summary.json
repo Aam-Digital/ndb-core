@@ -38,8 +38,18 @@
         "file": "concepts/extendability.md"
       },
       {
-        "title": "Entity Schema",
-        "file": "concepts/entity-schema-system.md"
+        "title": "Entity System",
+        "file": "concepts/entities.md",
+        "children": [
+          {
+            "title": "Entity Schema",
+            "file": "concepts/entity-schema-system.md"
+          },
+          {
+            "title": "Archiving, Anonymizing and Deleting Entities",
+            "file": "concepts/entity-anonymization.md"
+          }
+        ]
       },
       {
         "title": "Configuration",
