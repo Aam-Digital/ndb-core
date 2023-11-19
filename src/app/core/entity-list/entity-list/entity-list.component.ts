@@ -228,13 +228,14 @@ export class EntityListComponent<T extends Entity>
 
   private addColumnsFromColumnGroups() {
     const allColumns = [...this.columns];
-    for (const column of this.columnGroups?.groups.reduce(
+    const groupColumns = (this.columnGroups?.groups ?? []).reduce(
       (accumulatedColumns: string[], currentGroup) => [
         ...accumulatedColumns,
         ...currentGroup.columns,
       ],
       [],
-    )) {
+    );
+    for (const column of groupColumns) {
       if (
         !allColumns.some((existingColumn) =>
           // Check if the column is already defined as object or string
