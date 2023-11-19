@@ -479,7 +479,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     }
 
     if (this.editable) {
-      columns.unshift("action");
+      columns.unshift("actions");
     }
     if (this.selectable) {
       // only show selection checkboxes if Output is used in parent
