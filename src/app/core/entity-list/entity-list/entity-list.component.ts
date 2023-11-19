@@ -109,7 +109,7 @@ export class EntityListComponent<T extends Entity>
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
-  selectedRows: T[] = [];
+  selectedRows: T[];
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
@@ -309,6 +309,6 @@ export class EntityListComponent<T extends Entity>
 
   duplicateRecords() {
     this.duplicateRecord.duplicateRecord(this.selectedRows);
-    this.selectedRows = [];
+    this.selectedRows = undefined;
   }
 }
