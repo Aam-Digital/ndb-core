@@ -229,9 +229,9 @@ export class EntityListComponent<T extends Entity>
   private addColumnsFromColumnGroups() {
     const allColumns = [...this.columns];
     for (const column of this.columnGroups?.groups.reduce(
-      (accumulatedValues: string[], currentValue) => [
-        ...accumulatedValues,
-        ...currentValue.columns,
+      (accumulatedColumns: string[], currentGroup) => [
+        ...accumulatedColumns,
+        ...currentGroup.columns,
       ],
       [],
     )) {
