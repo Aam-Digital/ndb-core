@@ -105,7 +105,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   formClicked(isInputElement?: boolean) {
-    if (this.formControl.disabled) {
+    if (this.initialValue && this.formControl.value === this.initialValue) {
       this.showFile();
     } else if (isInputElement) {
       this.fileUploadInput.nativeElement.click();
