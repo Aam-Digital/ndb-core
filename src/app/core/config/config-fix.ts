@@ -258,20 +258,6 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "appConfig:note-details": {
-    "topForm": ["date", "warningLevel", "category", "authors", "attachment"]
-  },
-  "entity:Note": {
-    "attributes": [
-      {
-        "name": "attachment",
-        "schema": {
-          "label": $localize`Attachment`,
-          "dataType": "file"
-        }
-      }
-    ]
-  },
   "view:site-settings/:id": {
     "component": "EntityDetails",
     "config": {

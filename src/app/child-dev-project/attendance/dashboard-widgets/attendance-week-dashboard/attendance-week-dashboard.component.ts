@@ -103,7 +103,7 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
     const previousMonday = new Date(
       today.getFullYear(),
       today.getMonth(),
-      today.getDate() - today.getDay() - 6 + this.daysOffset,
+      today.getDate() - (6 - today.getDay() + 7) + this.daysOffset,
     );
     const previousSaturday = new Date(
       previousMonday.getFullYear(),
