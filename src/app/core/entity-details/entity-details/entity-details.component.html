@@ -17,7 +17,7 @@
 
 <div class="flex-row justify-space-between">
   <app-view-title *ngIf="!creatingNew">
-    {{ entity?.toString() }}
+    {{ record?.toString() }}
   </app-view-title>
   <app-view-title
     *ngIf="creatingNew"
@@ -28,36 +28,13 @@
     Adding new {{ this.entityConstructor?.label }}
   </app-view-title>
 
-  <button
-    mat-icon-button
-    class="additional-button"
-    color="primary"
-    [matMenuTriggerFor]="additional"
-  >
-    <fa-icon icon="ellipsis-v"></fa-icon>
-  </button>
+  <app-entity-actions-menu
+    [entity]="record"
+    [navigateOnDelete]="true"
+  ></app-entity-actions-menu>
 </div>
 
-<mat-menu #additional>
-  <button
-    mat-menu-item
-    (click)="entityRemoveService.remove(entity, true)"
-    *appDisabledEntityOperation="{
-      entity: entity,
-      operation: 'delete'
-    }"
-    angulartics2On="click"
-    [angularticsCategory]="config?.entity"
-    angularticsAction="entity_delete"
-  >
-    <fa-icon
-      class="standard-icon-with-text color-accent"
-      aria-label="remove element"
-      icon="trash"
-    ></fa-icon>
-    <span i18n="Generic delete button"> Delete </span>
-  </button>
-</mat-menu>
+<app-entity-archived-info [entity]="record"></app-entity-archived-info>
 
 <mat-tab-group
   (selectedIndexChange)="trackTabChanged($event)"
@@ -92,7 +69,10 @@
         <h3 *ngIf="componentConfig.title && componentConfig.title !== ''">
           {{ componentConfig.title }}
         </h3>
-        <ng-template [appDynamicComponent]="componentConfig"></ng-template>
+        <ng-template
+          [appDynamicComponent]="componentConfig"
+          *ngIf="componentConfig.config.entity"
+        ></ng-template>
         <br *ngIf="j < panelConfig.components.length - 1" />
       </div>
     </ng-template>

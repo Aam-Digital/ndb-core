@@ -7,12 +7,6 @@ import { EducationalMaterial } from "../../child-dev-project/children/educationa
 
 // prettier-ignore
 export const defaultJsonConfig = {
-  "appConfig": {
-    "default_language": "en-US",
-    "displayLanguageSelect": true,
-    "logo_path": null,
-    "site_name": $localize`:Page title:Aam Digital - DEMO (automatically generated data)`,
-  },
   "appConfig:usage-analytics": {
     "url": "https://matomo.aam-digital.org",
     "site_id": "8",
@@ -563,15 +557,6 @@ export const defaultJsonConfig = {
       },
       "filters": [
         {
-          "id": "isActive",
-          "type": "boolean",
-          "default": "true",
-          "label": $localize`Children`,
-          "true": $localize`:Active children filter label - true case:Active`,
-          "false": $localize`:Active children filter label - false case:Inactive`,
-          "all": $localize`:Active children unselect option:All`
-        },
-        {
           "id": "center"
         },
         {
@@ -579,6 +564,13 @@ export const defaultJsonConfig = {
           "type": "School",
           "label": $localize`:Label of schools filter:School`
         }
+      ],
+      "exportConfig": [
+        { "label": "Name", "query": "name" },
+        { "label": "Gender", "query": "gender" },
+        { "label": "Date of Birth", "query": "dateOfBirth" },
+        { "label": "School", "query": ".schoolId:toEntities(School).name" },
+        { "label": "more fields can be configured - or all data exported", "query": "projectNumber" }
       ]
     }
   },
@@ -712,7 +704,23 @@ export const defaultJsonConfig = {
           "components": [
             {
               "title": "",
-              "component": "EducationalMaterial"
+              "component": "RelatedEntitiesWithSummary",
+              "config": {
+                "entityType": EducationalMaterial.ENTITY_TYPE,
+                "property": "child",
+                "columns": [
+                  { "id": "date", "visibleFrom": "xs" },
+                  { "id": "materialType", "visibleFrom": "xs" },
+                  { "id": "materialAmount", "visibleFrom": "md" },
+                  { "id": "description", "visibleFrom": "md" },
+                ],
+                "summaries": {
+                  "countProperty": "materialAmount",
+                  "groupBy": "materialType",
+                  "total": true,
+                  "average": false
+                }
+              }
             }
           ]
         },
@@ -760,17 +768,6 @@ export const defaultJsonConfig = {
         "title",
         "type",
         "assignedTo"
-      ],
-      "filters": [
-        {
-          "id": "isActive",
-          "type": "boolean",
-          "default": "true",
-          "label": $localize`Status`,
-          "true": $localize`:Active records filter label - true case:Active`,
-          "false": $localize`:Active records filter label - false case:Inactive`,
-          "all": $localize`:Active records unselect option:All`
-        },
       ],
       "exportConfig": [
         { "label": "Title", "query": "title" },
@@ -898,6 +895,19 @@ export const defaultJsonConfig = {
                     {
                       "label": $localize`:Name of a column of a report:Name`,
                       "query": `.participant:toEntities(Child).name`
+                    },
+                    {
+                      "query": ".participant:toEntities(Child):getRelated(ChildSchoolRelation, childId)[*isActive=true]",
+                      "subQueries": [
+                        {
+                          "label": "Class",
+                          "query": ".schoolClass"
+                        },
+                        {
+                          "label": "School",
+                          "query": ".schoolId:toEntities(School).name"
+                        },
+                      ]
                     },
                     {
                       "label": $localize`:Name of a column of a report:Total`,

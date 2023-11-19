@@ -33,32 +33,6 @@
   Go to details
 </button>
 
-<button
-  *ngIf="!entity.isNew"
-  mat-icon-button
-  [matMenuTriggerFor]="additional"
-  style="margin-top: -8px; margin-bottom: -8px"
->
-  <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
-</button>
-<mat-menu #additional>
-  <button
-    mat-menu-item
-    (click)="delete()"
-    *appDisabledEntityOperation="{
-      operation: 'delete',
-      entity: entity
-    }"
-    angulartics2On="click"
-    [angularticsCategory]="entity?.getType()"
-    angularticsAction="form_popup_delete"
-  >
-    <fa-icon
-      class="standard-icon-with-text color-accent"
-      aria-label="remove element"
-      icon="trash"
-    ></fa-icon>
-    <span i18n="Generic delete button"> Delete </span>
-  </button>
+<app-entity-actions-menu [entity]="entity" (actionTriggered)="onAction($event)">
   <ng-content></ng-content>
-</mat-menu>
+</app-entity-actions-menu>

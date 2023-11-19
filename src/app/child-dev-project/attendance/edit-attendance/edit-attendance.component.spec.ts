@@ -85,9 +85,10 @@ describe("EditAttendanceComponent", () => {
     categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
     fixture.detectChanges();
 
-    const inputElements = await TestbedHarnessEnvironment.loader(
-      fixture,
-    ).getAllHarnesses(MatInputHarness);
+    const inputElements =
+      await TestbedHarnessEnvironment.loader(fixture).getAllHarnesses(
+        MatInputHarness,
+      );
     const firstRemarkInput = inputElements[1];
     await firstRemarkInput.setValue("new remarks");
 

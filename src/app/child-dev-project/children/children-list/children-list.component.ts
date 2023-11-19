@@ -34,6 +34,8 @@ export class ChildrenListComponent implements OnInit {
 
   async ngOnInit() {
     this.route.data.subscribe(
+      // TODO replace this use of route and rely on the RoutedViewComponent instead
+      // see  that flattens the config option, assigning individual properties as inputs however, so we can't easily pass on
       (data: RouteData<EntityListConfig>) => (this.listConfig = data.config),
     );
     this.childrenList = await this.childrenService.getChildren();

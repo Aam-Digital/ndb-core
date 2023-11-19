@@ -11,7 +11,6 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { ConfigService } from "../../../../core/config/config.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import {
@@ -19,6 +18,7 @@ import {
   MockEntityMapperService,
 } from "../../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
+import { DateWithAge } from "../../../../core/basic-datatypes/date-with-age/dateWithAge";
 
 describe("BirthdayDashboardComponent", () => {
   let component: BirthdayDashboardComponent;

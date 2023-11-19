@@ -1,5 +1,5 @@
-import { Component } from "@angular/core";
-import { ActivatedRoute, Router } from "@angular/router";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import { Router } from "@angular/router";
 import {
   EntityDetailsConfig,
   Panel,
@@ -8,9 +8,7 @@ import {
 } from "../EntityDetailsConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { RouteData } from "../../config/dynamic-routing/view-config.interface";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { EntityRemoveService } from "../../entity/entity-remove.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -28,6 +26,8 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { LoggingService } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../form/unsaved-changes.service";
+import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
+import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -55,67 +55,69 @@ import { UnsavedChangesService } from "../form/unsaved-changes.service";
     ViewTitleComponent,
     DynamicComponentDirective,
     DisableEntityOperationDirective,
+    EntityActionsMenuComponent,
+    EntityArchivedInfoComponent,
   ],
 })
-export class EntityDetailsComponent {
-  entity: Entity;
+export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
   creatingNew = false;
   isLoading = true;
 
-  panels: Panel[] = [];
-  config: EntityDetailsConfig;
+  /** @deprecated use "entityType" instead, this remains for config backwards compatibility */
+  @Input() set entity(v: string) {
+    this.entityType = v;
+  }
+  @Input() entityType: string;
   entityConstructor: EntityConstructor;
+
+  @Input() id: string;
+  record: Entity;
+
+  @Input() panels: Panel[] = [];
 
   constructor(
     private entityMapperService: EntityMapperService,
-    private route: ActivatedRoute,
     private router: Router,
     private analyticsService: AnalyticsService,
-    public entityRemoveService: EntityRemoveService,
     private ability: EntityAbility,
     private entities: EntityRegistry,
     private logger: LoggingService,
     public unsavedChanges: UnsavedChangesService,
-  ) {
-    this.route.data.subscribe((data: RouteData<EntityDetailsConfig>) => {
-      this.config = data.config;
-      this.entityConstructor = this.entities.get(this.config.entity);
-      this.setInitialPanelsConfig();
-      this.route.paramMap.subscribe((params) =>
-        this.loadEntity(params.get("id")),
-      );
-    });
+  ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.entity || changes.entityType) {
+      this.entityConstructor = this.entities.get(this.entityType);
+    }
+    if (changes.id) {
+      this.loadEntity(this.id);
+      // `initPanels()` is already called inside `loadEntity()`
+    } else if (changes.panels) {
+      this.initPanels();
+    }
   }
 
-  private loadEntity(id: string) {
+  private async loadEntity(id: string) {
     if (id === "new") {
       if (this.ability.cannot("create", this.entityConstructor)) {
         this.router.navigate([""]);
         return;
       }
-      this.entity = new this.entityConstructor();
+      this.record = new this.entityConstructor();
       this.creatingNew = true;
-      this.setFullPanelsConfig();
     } else {
       this.creatingNew = false;
-      this.entityMapperService
-        .load(this.entityConstructor, id)
-        .then((entity) => {
-          this.entity = entity;
-          this.setFullPanelsConfig();
-        });
+      this.record = await this.entityMapperService.load(
+        this.entityConstructor,
+        id,
+      );
     }
+    this.initPanels();
+    this.isLoading = false;
   }
 
-  private setInitialPanelsConfig() {
-    this.panels = this.config.panels.map((p) => ({
-      title: p.title,
-      components: [],
-    }));
-  }
-
-  private setFullPanelsConfig() {
-    this.panels = this.config.panels.map((p) => ({
+  private initPanels() {
+    this.panels = this.panels.map((p) => ({
       title: p.title,
       components: p.components.map((c) => ({
         title: c.title,
@@ -123,12 +125,11 @@ export class EntityDetailsComponent {
         config: this.getPanelConfig(c),
       })),
     }));
-    this.isLoading = false;
   }
 
   private getPanelConfig(c: PanelComponent): PanelConfig {
     let panelConfig: PanelConfig = {
-      entity: this.entity,
+      entity: this.record,
       creatingNew: this.creatingNew,
     };
     if (typeof c.config === "object" && !Array.isArray(c.config)) {
@@ -150,8 +151,8 @@ export class EntityDetailsComponent {
 
   trackTabChanged(index: number) {
     this.analyticsService.eventTrack("details_tab_changed", {
-      category: this.config?.entity,
-      label: this.config.panels[index].title,
+      category: this.entityType,
+      label: this.panels[index].title,
     });
   }
 }

@@ -38,30 +38,42 @@
   </div>
 
   <!--top right icons and search-->
-  <div class="flex-row align-center flex-grow-1-3 justify-content-end gap-small">
-    <app-search class="hide-mobile full-width" *ngIf="isLoggedIn()"></app-search>
+  <div
+    class="flex-row align-center flex-grow-1-3 justify-content-end gap-small"
+  >
+    <app-search
+      class="hide-mobile full-width"
+      *ngIf="isLoggedIn()"
+    ></app-search>
 
     <app-sync-status></app-sync-status>
 
-    <app-language-select *ngIf="siteSettings.displayLanguageSelect"></app-language-select>
+    <app-language-select
+      *ngIf="siteSettings.displayLanguageSelect"
+    ></app-language-select>
   </div>
 </mat-toolbar>
 
 <!-- MAIN NAVIGATION + CONTENT -->
-<mat-sidenav-container
-  (backdropClick)="closeSidenavOnMobile()"
-  autosize
->
+<mat-sidenav-container (backdropClick)="closeSidenavOnMobile()" autosize>
   <mat-sidenav
     #sideNav
     *ngIf="isLoggedIn()"
     [autoFocus]="false"
     [mode]="sideNavMode"
     [opened]="sideNavMode === 'side'"
+    class="sidenav-menu"
     disableClose
   >
-    <div class="flex-column justify-space-between full-height overflow-y-hidden">
-      <app-display-img *ngIf="siteSettings.logo" [entity]="siteSettings" imgProperty="logo" class="site-logo"></app-display-img>
+    <div
+      class="flex-column justify-space-between full-height overflow-y-hidden"
+    >
+      <app-display-img
+        *ngIf="siteSettings.logo"
+        [entity]="siteSettings"
+        imgProperty="logo"
+        class="site-logo"
+      ></app-display-img>
       <app-navigation
         class="overflow-auto-y"
         (click)="closeSidenavOnMobile()"
@@ -84,14 +96,24 @@
             Profile
           </button>
 
-          <button mat-button (click)="logout()" i18n="Sign out of the app" class="footer-cell width-1-2">
+          <button
+            mat-button
+            (click)="logout()"
+            i18n="Sign out of the app"
+            class="footer-cell width-1-2"
+          >
             <fa-icon icon="sign-out-alt"></fa-icon>
             Sign out
           </button>
         </div>
 
         <div class="flex-row">
-          <button mat-icon-button class="footer-cell" routerLink="/support" (click)="closeSidenavOnMobile()">
+          <button
+            mat-icon-button
+            class="footer-cell"
+            routerLink="/support"
+            (click)="closeSidenavOnMobile()"
+          >
             <fa-icon icon="info-circle" class="info-icon"></fa-icon>
           </button>
           <button

@@ -1,27 +1,36 @@
 import { UpdateManagerService } from "./update-manager.service";
 import { discardPeriodicTasks, fakeAsync, tick } from "@angular/core/testing";
 import { ApplicationRef } from "@angular/core";
-import { SwUpdate, VersionEvent } from "@angular/service-worker";
+import {
+  SwUpdate,
+  UnrecoverableStateEvent,
+  VersionEvent,
+} from "@angular/service-worker";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("UpdateManagerService", () => {
   let service: UpdateManagerService;
-  let location: jasmine.SpyObj<Location>;
+  let mockLocation: jasmine.SpyObj<Location>;
   let swUpdate: jasmine.SpyObj<SwUpdate>;
   let updateSubject: Subject<Partial<VersionEvent>>;
+  let unrecoverableSubject: Subject<UnrecoverableStateEvent>;
   let snackBar: jasmine.SpyObj<MatSnackBar>;
   let snackBarAction: Subject<void>;
   let appRef: jasmine.SpyObj<ApplicationRef>;
   let stableSubject: Subject<boolean>;
   let latestChangesDialog: jasmine.SpyObj<LatestChangesDialogService>;
+  let mockLogger: jasmine.SpyObj<LoggingService>;
 
   beforeEach(() => {
-    location = jasmine.createSpyObj(["reload"]);
+    mockLocation = jasmine.createSpyObj(["reload"]);
     updateSubject = new Subject();
+    unrecoverableSubject = new Subject();
     swUpdate = jasmine.createSpyObj(["checkForUpdate"], {
       versionUpdates: updateSubject,
+      unrecoverable: unrecoverableSubject,
       isEnabled: true,
     });
     swUpdate.checkForUpdate.and.resolveTo();
@@ -33,6 +42,7 @@ describe("UpdateManagerService", () => {
     stableSubject = new Subject<boolean>();
     appRef = jasmine.createSpyObj([], { isStable: stableSubject });
     latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
+    mockLogger = jasmine.createSpyObj(["error"]);
 
     service = createService();
   });
@@ -53,7 +63,7 @@ describe("UpdateManagerService", () => {
     snackBarAction.next(undefined);
     tick();
 
-    expect(location.reload).toHaveBeenCalled();
+    expect(mockLocation.reload).toHaveBeenCalled();
   }));
 
   it("should reload the page during construction if noted in the local storage", () => {
@@ -65,7 +75,7 @@ describe("UpdateManagerService", () => {
 
     createService();
 
-    expect(location.reload).toHaveBeenCalled();
+    expect(mockLocation.reload).toHaveBeenCalled();
     expect(
       window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY),
     ).toBe(version);
@@ -147,14 +157,26 @@ describe("UpdateManagerService", () => {
     expect(latestChangesDialog.showLatestChangesIfUpdated).toHaveBeenCalled();
   });
 
+  it("should reload app if an unrecoverable state is detected", () => {
+    unrecoverableSubject.next({
+      reason: "ERROR REASON",
+      type: "UNRECOVERABLE_STATE",
+    });
+
+    expect(mockLogger.error).toHaveBeenCalledWith(
+      jasmine.stringContaining("ERROR REASON"),
+    );
+    expect(mockLocation.reload).toHaveBeenCalled();
+  });
+
   function createService() {
     return new UpdateManagerService(
       appRef,
       swUpdate,
       snackBar,
-      undefined,
+      mockLogger,
       latestChangesDialog,
-      location,
+      mockLocation,
     );
   }
 });

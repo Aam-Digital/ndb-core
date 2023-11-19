@@ -1,0 +1,39 @@
+<button
+  *ngIf="!entity?.isNew"
+  mat-icon-button
+  color="primary"
+  style="margin-top: -8px; margin-bottom: -8px"
+  [matMenuTriggerFor]="additional"
+>
+  <fa-icon icon="ellipsis-v" class="standard-icon"></fa-icon>
+</button>
+
+<!-- context menu -->
+<mat-menu #additional>
+  <!-- standard actions -->
+
+  <ng-container *ngFor="let a of actions">
+    <button
+      mat-menu-item
+      (click)="executeAction(a)"
+      *appDisabledEntityOperation="{
+        operation: a.permission,
+        entity: entity
+      }"
+      angulartics2On="click"
+      [angularticsCategory]="entity?.getType()"
+      [angularticsAction]="'entity_' + a.action"
+      [matTooltip]="a.tooltip"
+      matTooltipPosition="before"
+    >
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        [icon]="a.icon"
+      ></fa-icon>
+      <span>{{ a.label }}</span>
+    </button>
+  </ng-container>
+
+  <!-- additional actions -->
+  <ng-content></ng-content>
+</mat-menu>

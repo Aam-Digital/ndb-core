@@ -20,6 +20,7 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import moment from "moment";
 
 describe("Schema data type: map", () => {
   class TestEntity extends Entity {
@@ -39,8 +40,8 @@ describe("Schema data type: map", () => {
   it("converts contained dates to month for saving", () => {
     const id = "test1";
     const entity = new TestEntity(id);
-    entity.dateMap.set("a", new Date("2020-01-01"));
-    entity.dateMap.set("b", new Date("1999-01-25"));
+    entity.dateMap.set("a", moment("2020-01-01").toDate());
+    entity.dateMap.set("b", moment("1999-01-25").toDate());
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 

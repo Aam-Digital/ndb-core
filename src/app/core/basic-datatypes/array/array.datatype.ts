@@ -97,6 +97,25 @@ export class ArrayDatatype<
       ),
     );
   }
+
+  async anonymize(
+    value: EntityType[],
+    schemaField: EntitySchemaField,
+    parent,
+  ): Promise<any[]> {
+    const arrayElementDatatype: DefaultDatatype =
+      this.schemaService.getDatatypeOrDefault(schemaField.innerDataType);
+
+    const mappedPromises = value.map(async (el) =>
+      arrayElementDatatype.anonymize(
+        el,
+        generateSubSchemaField(schemaField),
+        parent,
+      ),
+    );
+
+    return Promise.all(mappedPromises);
+  }
 }
 
 /**

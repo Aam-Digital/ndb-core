@@ -17,6 +17,7 @@ import { Angulartics2Module } from "angulartics2";
 import { ExportDataDirective } from "../../../../core/export/export-data-directive/export-data.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
   selector: "app-select-report",
@@ -34,6 +35,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
     ExportDataDirective,
     FontAwesomeModule,
     MatProgressBarModule,
+    MatTooltipModule,
   ],
   standalone: true,
 })

@@ -20,6 +20,7 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import moment from "moment";
 
 describe("Schema data type: schema-embed", () => {
   class InnerClass {
@@ -55,7 +56,7 @@ describe("Schema data type: schema-embed", () => {
 
   it("applies inner schema transformation for database format", () => {
     const entity = new TestEntity();
-    entity.embedded.value = new Date("2020-01-01");
+    entity.embedded.value = moment("2020-01-01").toDate();
 
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
     expect(rawData.embedded.value).toEqual("2020-01");
