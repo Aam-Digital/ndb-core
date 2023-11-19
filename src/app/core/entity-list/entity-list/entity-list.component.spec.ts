@@ -109,7 +109,13 @@ describe("EntityListComponent", () => {
     createComponent();
     initComponentInputs();
     tick();
-    expect(component.columns).toEqual(testConfig.columns);
+    expect(component.columns).toEqual([
+      ...testConfig.columns,
+      "projectNumber",
+      "name",
+      "gender",
+      "religion",
+    ]);
   }));
 
   it("should create column groups from config and set correct one", fakeAsync(() => {

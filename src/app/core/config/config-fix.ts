@@ -258,20 +258,6 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "appConfig:note-details": {
-    "topForm": ["date", "warningLevel", "category", "authors", "attachment"]
-  },
-  "entity:Note": {
-    "attributes": [
-      {
-        "name": "attachment",
-        "schema": {
-          "label": $localize`Attachment`,
-          "dataType": "file"
-        }
-      }
-    ]
-  },
   "view:site-settings/:id": {
     "component": "EntityDetails",
     "config": {
@@ -564,6 +550,13 @@ export const defaultJsonConfig = {
           "type": "School",
           "label": $localize`:Label of schools filter:School`
         }
+      ],
+      "exportConfig": [
+        { "label": "Name", "query": "name" },
+        { "label": "Gender", "query": "gender" },
+        { "label": "Date of Birth", "query": "dateOfBirth" },
+        { "label": "School", "query": ".schoolId:toEntities(School).name" },
+        { "label": "more fields can be configured - or all data exported", "query": "projectNumber" }
       ]
     }
   },
@@ -888,6 +881,19 @@ export const defaultJsonConfig = {
                     {
                       "label": $localize`:Name of a column of a report:Name`,
                       "query": `.participant:toEntities(Child).name`
+                    },
+                    {
+                      "query": ".participant:toEntities(Child):getRelated(ChildSchoolRelation, childId)[*isActive=true]",
+                      "subQueries": [
+                        {
+                          "label": "Class",
+                          "query": ".schoolClass"
+                        },
+                        {
+                          "label": "School",
+                          "query": ".schoolId:toEntities(School).name"
+                        },
+                      ]
                     },
                     {
                       "label": $localize`:Name of a column of a report:Total`,
