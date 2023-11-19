@@ -227,22 +227,28 @@ export class EntityListComponent<T extends Entity>
   }
 
   private addColumnsFromColumnGroups() {
-    const missingColumns: string[] = [];
-    this.columnGroups?.groups?.forEach((group) =>
-      group.columns
-        .filter(
-          (columnId) =>
-            !this.columns.some((column) =>
-              // Check if the column is already defined as object or string
-              typeof column === "string"
-                ? column === columnId
-                : column.id === columnId,
-            ),
+    const allColumns = [...this.columns];
+    for (const column of this.columnGroups?.groups.reduce(
+      (accumulatedValues: string[], currentValue) => [
+        ...accumulatedValues,
+        ...currentValue.columns,
+      ],
+      [],
+    )) {
+      if (
+        !allColumns.some((existingColumn) =>
+          // Check if the column is already defined as object or string
+          typeof existingColumn === "string"
+            ? existingColumn === column
+            : existingColumn.id === column,
         )
-        .forEach((column) => missingColumns.push(column)),
-    );
-    if (missingColumns.length > 0) {
-      this.columns = this.columns.concat(missingColumns);
+      ) {
+        allColumns.push(column);
+      }
+    }
+
+    if (allColumns.length !== this.columns.length) {
+      this.columns = [...allColumns];
     }
   }
 
