@@ -28,10 +28,15 @@
   </mat-form-field>
 
   <!-- CREATING NEW OPTION -->
-  <mat-form-field class="full-width"> 
-    <mat-label>Add new option</mat-label>
+  <mat-form-field class="full-width">
+    <mat-label i18n>Add new option</mat-label>
     <input matInput [(ngModel)]="newOptionInput" />
-    <button mat-icon-button color="accent" matIconSuffix (click)="createNewOption()">
+    <button
+      mat-icon-button
+      color="accent"
+      matIconSuffix
+      (click)="createNewOption()"
+    >
       <fa-icon icon="square-plus"></fa-icon>
     </button>
   </mat-form-field>
@@ -40,4 +45,3 @@
 <mat-dialog-actions>
   <button mat-raised-button mat-dialog-close i18n="Close popup">Close</button>
 </mat-dialog-actions>
-
