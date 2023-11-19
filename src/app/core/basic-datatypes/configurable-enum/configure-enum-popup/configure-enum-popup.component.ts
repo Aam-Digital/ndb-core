@@ -130,6 +130,7 @@ export class ConfigureEnumPopupComponent {
   }
 
   createNewOption() {
-    console.log(this.newOptionInput)
+    this.enumEntity.values.push({ id: this.newOptionInput, label: this.newOptionInput });
+    this.newOptionInput = "";
   }
 }
