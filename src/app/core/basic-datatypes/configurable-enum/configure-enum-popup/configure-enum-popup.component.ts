@@ -43,6 +43,8 @@ import { Entity } from "../../../entity/model/entity";
   standalone: true,
 })
 export class ConfigureEnumPopupComponent {
+  newOptionInput: string;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
     private dialog: MatDialogRef<ConfigureEnumPopupComponent>,
@@ -125,4 +127,13 @@ export class ConfigureEnumPopupComponent {
       ),
     );
   }
+
+  createNewOption() {
+    this.enumEntity.values.push({
+      id: this.newOptionInput,
+      label: this.newOptionInput,
+    });
+    this.newOptionInput = "";
+  }
+  mynewFun() {}
 }
