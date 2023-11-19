@@ -27,12 +27,11 @@
     </button>
   </mat-form-field>
 
+  <!-- CREATING NEW OPTION -->
   <mat-form-field class="full-width"> 
     <mat-label>Add new option</mat-label>
-
-    <input matInput />
-
-    <button mat-icon-button color="accent" matIconSuffix onclick="Option">
+    <input matInput [(ngModel)]="newOptionInput" />
+    <button mat-icon-button color="accent" matIconSuffix (click)="createNewOption()">
       <fa-icon icon="square-plus"></fa-icon>
     </button>
   </mat-form-field>

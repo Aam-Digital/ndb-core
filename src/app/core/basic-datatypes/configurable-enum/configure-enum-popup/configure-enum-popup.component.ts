@@ -43,6 +43,9 @@ import { Entity } from "../../../entity/model/entity";
   standalone: true,
 })
 export class ConfigureEnumPopupComponent {
+
+  newOptionInput: string;
+
   constructor(
     @Inject(MAT_DIALOG_DATA) public enumEntity: ConfigurableEnum,
     private dialog: MatDialogRef<ConfigureEnumPopupComponent>,
@@ -124,5 +127,9 @@ export class ConfigureEnumPopupComponent {
           entity[prop]?.map?.((v) => v.id).includes(value.id),
       ),
     );
+  }
+
+  createNewOption() {
+    console.log(this.newOptionInput)
   }
 }
