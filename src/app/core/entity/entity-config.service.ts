@@ -76,6 +76,7 @@ export class EntityConfigService {
         ),
       );
     }
+    // TODO: shall we just assign all properties that are present in the config object?
     entityType.toStringAttributes =
       entityConfig.toStringAttributes ?? entityType.toStringAttributes;
     entityType.label = entityConfig.label ?? entityType.label;
@@ -83,6 +84,7 @@ export class EntityConfigService {
     entityType.icon = (entityConfig.icon as IconName) ?? entityType.icon;
     entityType.color = entityConfig.color ?? entityType.color;
     entityType.route = entityConfig.route ?? entityType.route;
+    entityType.hasPII = entityConfig.hasPII ?? entityType.hasPII;
 
     entityType._isCustomizedType = true;
   }
@@ -156,4 +158,9 @@ export interface EntityConfig {
    * when a new entity is created, all properties from this class will also be available
    */
   extends?: string;
+
+  /**
+   * whether the type can contain personally identifiable information (PII)
+   */
+  hasPII?: boolean;
 }

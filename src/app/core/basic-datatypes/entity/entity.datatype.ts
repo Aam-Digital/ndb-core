@@ -20,7 +20,7 @@ import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ColumnMapping } from "../../import/column-mapping";
-import { EntityRemoveService } from "../../entity/entity-remove.service";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity
@@ -42,7 +42,7 @@ export class EntityDatatype extends StringDatatype {
 
   constructor(
     private entityMapper: EntityMapperService,
-    private removeService: EntityRemoveService,
+    private removeService: EntityActionsService,
   ) {
     super();
   }

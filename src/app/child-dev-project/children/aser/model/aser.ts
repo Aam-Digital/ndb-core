@@ -22,15 +22,26 @@ import { SkillLevel } from "./skill-levels";
 import { WarningLevel } from "../../../warning-level";
 import { ConfigurableEnumDatatype } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { PLACEHOLDERS } from "../../../../core/entity/schema/entity-schema-field";
+import { Child } from "../../model/child";
 
 @DatabaseEntity("Aser")
 export class Aser extends Entity {
-  @DatabaseField() child: string; // id of Child entity
+  static override hasPII = true;
+
+  @DatabaseField({
+    dataType: "entity",
+    additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
+  })
+  child: string;
+
   @DatabaseField({
     label: $localize`:Label for date of the ASER results:Date`,
     defaultValue: PLACEHOLDERS.NOW,
+    anonymize: "retain-anonymized",
   })
   date: Date;
+
   @DatabaseField({
     label: $localize`:Label of the Hindi ASER result:Hindi`,
     dataType: "configurable-enum",
@@ -55,6 +66,7 @@ export class Aser extends Entity {
     additional: "math-levels",
   })
   math: SkillLevel;
+
   @DatabaseField({
     label: $localize`:Label for the remarks of a ASER result:Remarks`,
   })
