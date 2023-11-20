@@ -154,7 +154,9 @@ export class SupportComponent implements OnInit {
       return;
     }
 
-    await this.database.destroy();
+    const dbs = await this.window.indexedDB.databases();
+    await Promise.all(dbs.map(({ name }) => this.destroyDatabase(name)));
+
     const registrations =
       await this.window.navigator.serviceWorker.getRegistrations();
     const unregisterPromises = registrations.map((reg) => reg.unregister());
@@ -170,5 +172,13 @@ export class SupportComponent implements OnInit {
       "json",
       "aamdigital_data_" + new Date().toISOString(),
     );
+  }
+
+  private destroyDatabase(name: string) {
+    return new Promise((resolve, reject) => {
+      const del = this.window.indexedDB.deleteDatabase(name);
+      del.onsuccess = resolve;
+      del.onerror = reject;
+    });
   }
 }
