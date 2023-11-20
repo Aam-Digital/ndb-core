@@ -99,22 +99,16 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
   }
 
   private async loadAttendanceOfAbsentees() {
-    const today = new Date();
-    const previousMonday = new Date(
-      today.getFullYear(),
-      today.getMonth(),
-      today.getDate() - (6 - today.getDay() + 7) + this.daysOffset,
-    );
-    const previousSaturday = new Date(
-      previousMonday.getFullYear(),
-      previousMonday.getMonth(),
-      previousMonday.getDate() + 5,
-    );
+    const previousMonday = moment()
+      .startOf("isoWeek")
+      .subtract(1, "week")
+      .add(this.daysOffset, "days");
+    const previousSaturday = moment(previousMonday).add(5, "days");
 
     const activityAttendances =
       await this.attendanceService.getAllActivityAttendancesForPeriod(
-        previousMonday,
-        previousSaturday,
+        previousMonday.toDate(),
+        previousSaturday.toDate(),
       );
     const lowAttendanceCases = new Set<string>();
     const records: AttendanceWeekRow[] = [];
