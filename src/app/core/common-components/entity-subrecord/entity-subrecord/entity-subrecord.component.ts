@@ -102,9 +102,15 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
 
-  /** outputs an event containing an array of currently selected records (checkmarked by the user) */
+  /**
+   * outputs an event containing an array of currently selected records (checkmarked by the user)
+   *
+   * Checkboxes to select rows are only displayed if you set "selectable" also.
+   */
   @Output() selectedRecordsChange: EventEmitter<T[]> = new EventEmitter<T[]>();
   @Input() selectedRecords: T[] = [];
+  readonly COLUMN_ROW_SELECT = "_selectRows";
+  @Input() selectable: boolean = false;
 
   @Input() showInactive = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
@@ -263,6 +269,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
+      resetupTable = true;
+    }
+    if (
+      changes.hasOwnProperty("editable") ||
+      changes.hasOwnProperty("selectable")
+    ) {
+      resetupTable = true;
     }
 
     if (reinitDataSource) {
@@ -288,7 +301,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (this.entityConstructorIsAvailable()) {
       try {
         this.entityFormService.extendFormFieldConfig(
-          this._columns,
+          this.filteredColumns,
           this.getEntityConstructor(),
           true,
         );
@@ -301,7 +314,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private sortDefault() {
     if (
       this.records.length === 0 ||
-      this._columns.length === 0 ||
+      this.filteredColumns.length === 0 ||
       this.sort.active
     ) {
       // do not overwrite existing sort
@@ -327,11 +340,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   private inferDefaultSort(): Sort {
     // initial sorting by first column, ensure that not the 'action' column is used
-    const sortBy =
-      this.columnsToDisplay[0] === "actions"
-        ? this.columnsToDisplay[1]
-        : this.columnsToDisplay[0];
-    const sortByColumn = this._columns.find((c) => c.id === sortBy);
+    const sortBy = this.columnsToDisplay.filter(
+      (c) => c !== "actions" && c !== this.COLUMN_ROW_SELECT,
+    )[0];
+    const sortByColumn = this.filteredColumns.find((c) => c.id === sortBy);
 
     let sortDirection: SortDirection = "asc";
     if (
@@ -367,7 +379,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (this.screenWidthObserver.isDesktop()) {
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
-          this._columns,
+          this.filteredColumns,
           row.record,
           true,
         );
@@ -448,12 +460,32 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * resets columnsToDisplay depending on current screensize
    */
   private setupTable() {
-    if (this._columns !== undefined && this.screenWidth !== undefined) {
-      this.columnsToDisplay = this._columns
-        .filter((col) => this.isVisible(col))
-        .map((col) => col.id);
-      this.columnsToDisplay.unshift("actions");
+    let columns =
+      this.columnsToDisplay?.filter((c) =>
+        this.filteredColumns.some((column) => column.id === c),
+      ) ?? [];
+
+    if (
+      !(columns.length > 0) &&
+      this.filteredColumns !== undefined &&
+      this.screenWidth !== undefined
+    ) {
+      columns = [
+        ...this._columns
+          .filter((col) => this.isVisible(col))
+          .map((col) => col.id),
+      ];
     }
+
+    if (this.editable) {
+      columns.unshift("actions");
+    }
+    if (this.selectable) {
+      // only show selection checkboxes if Output is used in parent
+      columns.unshift(this.COLUMN_ROW_SELECT);
+    }
+
+    this.columnsToDisplay = [...columns];
   }
 
   /**
