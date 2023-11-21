@@ -32,6 +32,7 @@ export class LanguageSelectComponent {
    * The region code of the currently selected language/region
    */
   siteRegionCode = this.translationService.currentRegionCode();
+language: any;
 
   constructor(
     private translationService: LanguageService,
