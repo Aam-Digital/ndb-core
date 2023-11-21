@@ -105,19 +105,19 @@ describe("AttendanceWeekDashboardComponent", () => {
     // default case: last week monday till saturday
 
     // on Monday, that's the first day of the current period
-    MockDate.set(new Date("2023-11-20"));
+    MockDate.set(moment("2023-11-20").toDate());
     const mondayLastWeek = moment("2023-11-13");
     const saturdayLastWeek = moment("2023-11-18");
     expectTimePeriodCalled(mondayLastWeek, saturdayLastWeek);
 
     // on Sunday, that's the still the last day of the currently ending period
-    MockDate.set(new Date("2023-11-26"));
+    MockDate.set(moment("2023-11-26").toDate());
     const mondayLastWeek2 = moment("2023-11-13");
     const saturdayLastWeek2 = moment("2023-11-18");
     expectTimePeriodCalled(mondayLastWeek2, saturdayLastWeek2);
 
     // with offset: this week monday till saturday
-    MockDate.set(new Date("2023-11-20"));
+    MockDate.set(moment("2023-11-20").toDate());
     const mondayThisWeek = moment("2023-11-20");
     const saturdayThisWeek = moment("2023-11-25");
     component.daysOffset = 7;
