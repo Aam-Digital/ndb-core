@@ -1,7 +1,12 @@
-<div class="flex-row justify-space-between">
+<div class="flex-row flex-wrap justify-space-between">
   <app-view-title class="admin-ui-title">
     Editing data structure for "{{ entityType | entityTypeLabel }}" records
   </app-view-title>
+
+  <div class="flex-row gap-small save-buttons">
+    <button mat-raised-button color="accent" (click)="save()">Save</button>
+    <button mat-stroked-button (click)="cancel()">Cancel</button>
+  </div>
 </div>
 
 <mat-tab-group [preserveContent]="true">
@@ -25,8 +30,10 @@
           *ngIf="componentConfig.component === 'Form'; else otherComponent"
           [config]="componentConfig.config"
           [entityType]="entityConstructor"
+          (entitySchemaFieldChange)="schemaFieldChanges.push($event)"
         >
         </app-config-entity-form>
+
         <ng-template #otherComponent>
           other component: {{ componentConfig.component }}
         </ng-template>

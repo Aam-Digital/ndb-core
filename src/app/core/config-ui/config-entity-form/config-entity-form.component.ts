@@ -1,4 +1,11 @@
-import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FormConfig } from "../../entity-details/form/form.component";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
@@ -11,7 +18,6 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import { EntitySchema } from "../../entity/schema/entity-schema";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 // TODO: adapt EntitySchemaField interface?
@@ -27,10 +33,12 @@ export type EntitySchemaField_withId = EntitySchemaField & { id: string };
 })
 export class ConfigEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
-  entitySchema: EntitySchema;
 
   @Input() config: FormConfig;
   fieldGroups: FieldGroup[]; // TODO: maybe change the config itself to reflect this structure?
+
+  @Output() entitySchemaFieldChange =
+    new EventEmitter<EntitySchemaField_withId>();
 
   dummyEntity: Entity;
   dummyForm: FormGroup;
@@ -45,9 +53,6 @@ export class ConfigEntityFormComponent implements OnChanges {
     if (changes.config) {
       this.prepareConfig(this.config);
     }
-    if (changes.entityType) {
-      this.entitySchema = this.entityType?.schema;
-    }
   }
 
   private prepareConfig(config: FormConfig) {
@@ -55,6 +60,10 @@ export class ConfigEntityFormComponent implements OnChanges {
     for (let i = 0; i < config.cols.length; i++) {
       this.fieldGroups.push({
         header: config.headers?.[i],
+        // TODO: DISCUSS config approach
+        //    extend + merge all configs completely in config service?
+        //  OR
+        //    keep in most simple format until lowest level (e.g. extend only in abstract EditComponent)
         fields: this.entityFormService.extendFormFieldConfig(
           config.cols[i],
           this.entityType,
@@ -72,7 +81,7 @@ export class ConfigEntityFormComponent implements OnChanges {
 
   openFieldConfig(field: FormFieldConfig, fieldsArray: any[]) {
     const schemaField = {
-      ...this.entitySchema.get(field.id),
+      ...this.entityType.schema.get(field.id),
       id: field.id, // TODO: include id in EntitySchemaField and align FormFieldConfig completely for direct override?
     };
 
@@ -82,7 +91,7 @@ export class ConfigEntityFormComponent implements OnChanges {
         maxHeight: "90vh",
         data: {
           entitySchemaField: schemaField,
-          entitySchema: this.entitySchema,
+          entitySchema: this.entityType.schema,
         },
       })
       .afterClosed()
@@ -104,7 +113,8 @@ export class ConfigEntityFormComponent implements OnChanges {
   private saveSchemaField(
     schemaField: EntitySchemaField_withId,
   ): FormFieldConfig {
-    this.entitySchema.set(schemaField.id, schemaField);
+    this.entityType.schema.set(schemaField.id, schemaField);
+    this.entitySchemaFieldChange.emit(schemaField);
 
     const updatedFormField = this.entityFormService.addSchemaToFormField(
       { id: schemaField.id },
