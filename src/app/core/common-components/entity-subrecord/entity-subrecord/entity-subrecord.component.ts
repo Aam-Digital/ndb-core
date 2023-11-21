@@ -301,7 +301,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (this.entityConstructorIsAvailable()) {
       try {
         this.entityFormService.extendFormFieldConfig(
-          this._columns,
+          this.filteredColumns,
           this.getEntityConstructor(),
           true,
         );
@@ -314,7 +314,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private sortDefault() {
     if (
       this.records.length === 0 ||
-      this._columns.length === 0 ||
+      this.filteredColumns.length === 0 ||
       this.sort.active
     ) {
       // do not overwrite existing sort
@@ -343,7 +343,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     const sortBy = this.columnsToDisplay.filter(
       (c) => c !== "actions" && c !== this.COLUMN_ROW_SELECT,
     )[0];
-    const sortByColumn = this._columns.find((c) => c.id === sortBy);
+    const sortByColumn = this.filteredColumns.find((c) => c.id === sortBy);
 
     let sortDirection: SortDirection = "asc";
     if (
@@ -379,7 +379,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (this.screenWidthObserver.isDesktop()) {
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
-          this._columns,
+          this.filteredColumns,
           row.record,
           true,
         );
@@ -460,11 +460,14 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * resets columnsToDisplay depending on current screensize
    */
   private setupTable() {
-    let columns = [];
+    let columns =
+      this.columnsToDisplay?.filter((c) =>
+        this.filteredColumns.some((column) => column.id === c),
+      ) ?? [];
 
     if (
-      !(this.columnsToDisplay?.length > 0) &&
-      this._columns !== undefined &&
+      !(columns.length > 0) &&
+      this.filteredColumns !== undefined &&
       this.screenWidth !== undefined
     ) {
       columns = [
@@ -472,10 +475,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
           .filter((col) => this.isVisible(col))
           .map((col) => col.id),
       ];
-    } else {
-      columns = this.columnsToDisplay.filter((c) =>
-        this._columns.some((column) => column.id === c),
-      );
     }
 
     if (this.editable) {
