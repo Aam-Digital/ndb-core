@@ -1,5 +1,5 @@
 <button mat-icon-button [matMenuTriggerFor]="menu">
-  <fa-icon icon="language"></fa-icon>
+  <fa-icon icon="language" style="color:aliceblue"></fa-icon>
 </button>
 
 <mat-menu #menu>
@@ -8,7 +8,7 @@
     (click)="changeLocale(lang.id)"
     mat-menu-item
   >
-    <span [class]="lang.label"></span>
+    <span [class]="'fa-solid fa-user' + lang.label"></span>
     <span>{{ lang.label }}</span>
   </a>
 </mat-menu>

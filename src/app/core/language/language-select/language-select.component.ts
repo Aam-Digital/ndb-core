@@ -36,6 +36,7 @@ export class LanguageSelectComponent {
   siteRegionCode = this.translationService.currentRegionCode();
 language: any;
 
+
   constructor(
     private translationService: LanguageService,
     @Inject(LOCATION_TOKEN) private location: Location,
