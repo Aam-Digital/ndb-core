@@ -108,6 +108,11 @@ export class SupportComponent implements OnInit {
   }
 
   private initDbInfo() {
+    if (!this.database || !this.database.getPouchDB()) {
+      this.dbInfo = "db not initialized";
+      return;
+    }
+
     return this.database
       .getPouchDB()
       .info()
