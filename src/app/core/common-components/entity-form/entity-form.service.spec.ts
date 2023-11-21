@@ -173,7 +173,7 @@ describe("EntityFormService", () => {
 
     schema.defaultValue = PLACEHOLDERS.NOW;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue(new Date());
+    expect(form.get("test").value).toEqual(new Date());
 
     schema.defaultValue = PLACEHOLDERS.CURRENT_USER;
     form = service.createFormGroup([{ id: "test" }], new Entity());
