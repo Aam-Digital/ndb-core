@@ -10,6 +10,7 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import { AttendanceService } from "../../attendance.service";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment from "moment";
+import * as MockDate from "mockdate";
 
 describe("AttendanceWeekDashboardComponent", () => {
   let component: AttendanceWeekDashboardComponent;
@@ -90,28 +91,38 @@ describe("AttendanceWeekDashboardComponent", () => {
     ]);
   });
 
+  function expectTimePeriodCalled(from: moment.Moment, to: moment.Moment) {
+    mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
+
+    component.ngOnInit();
+
+    expect(
+      mockAttendanceService.getAllActivityAttendancesForPeriod,
+    ).toHaveBeenCalledWith(from.toDate(), to.toDate());
+  }
+
   it("should correctly use the offset", () => {
     // default case: last week monday till saturday
-    const mondayLastWeek = moment().startOf("isoWeek").subtract(7, "days");
-    const saturdayLastWeek = mondayLastWeek.clone().add("5", "days");
-    mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
 
-    component.ngOnInit();
+    // on Monday, that's the first day of the current period
+    MockDate.set(new Date("2023-11-20"));
+    const mondayLastWeek = moment("2023-11-13");
+    const saturdayLastWeek = moment("2023-11-18");
+    expectTimePeriodCalled(mondayLastWeek, saturdayLastWeek);
 
-    expect(
-      mockAttendanceService.getAllActivityAttendancesForPeriod,
-    ).toHaveBeenCalledWith(mondayLastWeek.toDate(), saturdayLastWeek.toDate());
+    // on Sunday, that's the still the last day of the currently ending period
+    MockDate.set(new Date("2023-11-26"));
+    const mondayLastWeek2 = moment("2023-11-13");
+    const saturdayLastWeek2 = moment("2023-11-18");
+    expectTimePeriodCalled(mondayLastWeek2, saturdayLastWeek2);
 
     // with offset: this week monday till saturday
-    const mondayThisWeek = moment().startOf("isoWeek");
-    const saturdayThisWeek = mondayThisWeek.clone().add(5, "days");
-    mockAttendanceService.getAllActivityAttendancesForPeriod.calls.reset();
-
+    MockDate.set(new Date("2023-11-20"));
+    const mondayThisWeek = moment("2023-11-20");
+    const saturdayThisWeek = moment("2023-11-25");
     component.daysOffset = 7;
-    component.ngOnInit();
+    expectTimePeriodCalled(mondayThisWeek, saturdayThisWeek);
 
-    expect(
-      mockAttendanceService.getAllActivityAttendancesForPeriod,
-    ).toHaveBeenCalledWith(mondayThisWeek.toDate(), saturdayThisWeek.toDate());
+    MockDate.reset();
   });
 });
