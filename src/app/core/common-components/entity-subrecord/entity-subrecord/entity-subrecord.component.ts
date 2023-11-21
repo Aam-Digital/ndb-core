@@ -24,7 +24,7 @@ import {
 } from "../../entity-form/entity-form.service";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
-import { EntityRemoveService } from "../../../entity/entity-remove.service";
+import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { tableSort } from "./table-sort";
 import {
@@ -50,6 +50,12 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from "@angular/material/checkbox";
+import { MatSlideToggleModule } from "@angular/material/slide-toggle";
+import { applyUpdate } from "../../../entity/model/entity-update";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -87,13 +93,27 @@ export interface TableRow<T extends Entity> {
     DisableEntityOperationDirective,
     Angulartics2Module,
     ListPaginatorComponent,
+    MatCheckboxModule,
+    MatSlideToggleModule,
   ],
   standalone: true,
 })
 export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() isLoading: boolean;
-
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
+
+  /**
+   * outputs an event containing an array of currently selected records (checkmarked by the user)
+   *
+   * Checkboxes to select rows are only displayed if you set "selectable" also.
+   */
+  @Output() selectedRecordsChange: EventEmitter<T[]> = new EventEmitter<T[]>();
+  @Input() selectedRecords: T[] = [];
+  readonly COLUMN_ROW_SELECT = "_selectRows";
+  @Input() selectable: boolean = false;
+
+  @Input() showInactive = false;
+  @Output() showInactiveChange = new EventEmitter<boolean>();
 
   /** configuration what kind of columns to be generated for the table */
   @Input() set columns(columns: ColumnConfig[]) {
@@ -109,6 +129,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   /** data to be displayed, can also be used as two-way-binding */
   @Input() records: T[] = [];
+
+  /** output the currently displayed records, whenever filters for the user change */
+  @Output() filteredRecordsChange = new EventEmitter<T[]>(true);
 
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -163,7 +186,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private router: Router,
     private analyticsService: AnalyticsService,
     private loggingService: LoggingService,
-    public entityRemoveService: EntityRemoveService,
+    public entityRemoveService: EntityActionsService,
     private entityMapper: EntityMapperService,
     private filterService: FilterService,
   ) {
@@ -180,6 +203,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Input() getBackgroundColor?: (rec: T) => string = (rec: T) => rec.getColor();
 
   private initDataSource() {
+    this.filter = this.filter ?? ({} as DataFilter<T>);
+    this.filterActiveInactive();
+    this.predicate = this.filterService.getFilterPredicate(this.filter);
+
     this.recordsDataSource.data = this.records
       .filter(this.predicate)
       .map((record) => ({ record }));
@@ -228,8 +255,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         }
       }
     }
-    if (changes.hasOwnProperty("filter") && this.filter) {
-      this.predicate = this.filterService.getFilterPredicate(this.filter);
+    if (
+      (changes.hasOwnProperty("filter") && this.filter) ||
+      changes.hasOwnProperty("showInactive")
+    ) {
       reinitDataSource = true;
     }
     if (changes.hasOwnProperty("columns")) {
@@ -240,6 +269,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     }
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
+      resetupTable = true;
+    }
+    if (
+      changes.hasOwnProperty("editable") ||
+      changes.hasOwnProperty("selectable")
+    ) {
+      resetupTable = true;
     }
 
     if (reinitDataSource) {
@@ -255,6 +291,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.sortDefault();
     }
 
+    this.filteredRecordsChange.emit(
+      this.recordsDataSource.filteredData.map((item) => item.record),
+    );
     this.listenToEntityUpdates();
   }
 
@@ -262,7 +301,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (this.entityConstructorIsAvailable()) {
       try {
         this.entityFormService.extendFormFieldConfig(
-          this._columns,
+          this.filteredColumns,
           this.getEntityConstructor(),
           true,
         );
@@ -275,7 +314,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private sortDefault() {
     if (
       this.records.length === 0 ||
-      this._columns.length === 0 ||
+      this.filteredColumns.length === 0 ||
       this.sort.active
     ) {
       // do not overwrite existing sort
@@ -301,11 +340,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
   private inferDefaultSort(): Sort {
     // initial sorting by first column, ensure that not the 'action' column is used
-    const sortBy =
-      this.columnsToDisplay[0] === "actions"
-        ? this.columnsToDisplay[1]
-        : this.columnsToDisplay[0];
-    const sortByColumn = this._columns.find((c) => c.id === sortBy);
+    const sortBy = this.columnsToDisplay.filter(
+      (c) => c !== "actions" && c !== this.COLUMN_ROW_SELECT,
+    )[0];
+    const sortByColumn = this.filteredColumns.find((c) => c.id === sortBy);
 
     let sortDirection: SortDirection = "asc";
     if (
@@ -324,19 +362,12 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.updateSubscription = this.entityMapper
         .receiveUpdates(this.getEntityConstructor())
         .pipe(untilDestroyed(this))
-        .subscribe(({ entity, type }) => {
-          if (type === "new") {
-            this.addToTable(entity);
-          } else if (type === "remove") {
-            this.removeFromDataTable(entity);
-          } else if (
-            type === "update" &&
-            !this.records.find((rec) => rec.getId() === entity.getId())
-          ) {
-            this.addToTable(entity);
-          }
+        .subscribe((next) => {
+          this.records = applyUpdate(this.records, next, true);
 
-          if (!this.predicate(entity)) {
+          if (this.predicate(next.entity)) {
+            this.initDataSource();
+          } else {
             // hide after a short delay to give a signal in the UI why records disappear by showing the changed values first
             setTimeout(() => this.initDataSource(), 5000);
           }
@@ -348,7 +379,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (this.screenWidthObserver.isDesktop()) {
       if (!row.formGroup) {
         row.formGroup = this.entityFormService.createFormGroup(
-          this._columns,
+          this.filteredColumns,
           row.record,
           true,
         );
@@ -383,20 +414,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   resetChanges(row: TableRow<T>) {
     row.formGroup = null;
-  }
-
-  private removeFromDataTable(deleted: T) {
-    // use setter so datasource is also updated
-    this.records = this.records.filter(
-      (rec) => rec.getId() !== deleted.getId(),
-    );
-    this.initDataSource();
-  }
-
-  private addToTable(record: T) {
-    // use setter so datasource is also updated
-    this.records = [record].concat(this.records);
-    this.initDataSource();
   }
 
   /**
@@ -443,12 +460,32 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    * resets columnsToDisplay depending on current screensize
    */
   private setupTable() {
-    if (this._columns !== undefined && this.screenWidth !== undefined) {
-      this.columnsToDisplay = this._columns
-        .filter((col) => this.isVisible(col))
-        .map((col) => col.id);
-      this.columnsToDisplay.unshift("actions");
+    let columns =
+      this.columnsToDisplay?.filter((c) =>
+        this.filteredColumns.some((column) => column.id === c),
+      ) ?? [];
+
+    if (
+      !(columns.length > 0) &&
+      this.filteredColumns !== undefined &&
+      this.screenWidth !== undefined
+    ) {
+      columns = [
+        ...this._columns
+          .filter((col) => this.isVisible(col))
+          .map((col) => col.id),
+      ];
     }
+
+    if (this.editable) {
+      columns.unshift("actions");
+    }
+    if (this.selectable) {
+      // only show selection checkboxes if Output is used in parent
+      columns.unshift(this.COLUMN_ROW_SELECT);
+    }
+
+    this.columnsToDisplay = [...columns];
   }
 
   /**
@@ -467,5 +504,35 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       return true;
     }
     return this.screenWidthObserver.currentScreenSize() >= numericValue;
+  }
+
+  selectRow(row: TableRow<T>, event: MatCheckboxChange) {
+    if (event.checked) {
+      this.selectedRecords.push(row.record);
+    } else {
+      const index = this.selectedRecords.indexOf(row.record);
+      if (index > -1) {
+        this.selectedRecords.splice(index, 1);
+      }
+    }
+
+    this.selectedRecordsChange.emit(this.selectedRecords);
+  }
+
+  filterActiveInactive() {
+    if (this.showInactive) {
+      // @ts-ignore type has issues with getters
+      delete this.filter.isActive;
+    } else {
+      this.filter["isActive"] = true;
+    }
+  }
+
+  setActiveInactiveFilter(newValue: boolean) {
+    if (newValue !== this.showInactive) {
+      this.showInactive = newValue;
+      this.showInactiveChange.emit(newValue);
+    }
+    this.initDataSource();
   }
 }

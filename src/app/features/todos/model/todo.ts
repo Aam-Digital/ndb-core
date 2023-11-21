@@ -32,6 +32,7 @@ export class Todo extends Entity {
   static label = $localize`:label for entity:Task`;
   static labelPlural = $localize`:label (plural) for entity:Tasks`;
   static toStringAttributes = ["subject"];
+  static override hasPII = true;
 
   static create(properties: Partial<Todo>): Todo {
     const instance = new Todo();
@@ -46,6 +47,7 @@ export class Todo extends Entity {
     dataType: "date-only",
     label: $localize`:Label:Deadline`,
     showInDetailsView: true,
+    anonymize: "retain",
   })
   deadline: Date;
 
@@ -54,6 +56,7 @@ export class Todo extends Entity {
     label: $localize`:Label:Start date`,
     description: $localize`:Description:When you are planning to start work so that you keep enough time before the actual hard deadline.`,
     showInDetailsView: true,
+    anonymize: "retain",
   })
   startDate: Date;
 
@@ -70,6 +73,7 @@ export class Todo extends Entity {
     additional: User.ENTITY_TYPE,
     showInDetailsView: true,
     defaultValue: PLACEHOLDERS.CURRENT_USER,
+    anonymize: "retain",
   })
   assignedTo: string[] = [];
 
@@ -86,7 +90,9 @@ export class Todo extends Entity {
       School.ENTITY_TYPE,
       RecurringActivity.ENTITY_TYPE,
     ],
+    entityReferenceRole: "composite",
     showInDetailsView: true,
+    anonymize: "retain",
   })
   relatedEntities: string[] = [];
 
@@ -103,16 +109,23 @@ export class Todo extends Entity {
       },
     ] as { label: string; interval: TimeInterval }[],
     showInDetailsView: true,
+    anonymize: "retain",
   })
   repetitionInterval: TimeInterval;
 
   @DatabaseField({
     label: $localize`:label for Todo entity property:completed`,
     viewComponent: "DisplayTodoCompletion",
+    anonymize: "retain",
   })
   completed?: TodoCompletion;
 
   get isActive(): boolean {
+    if (this.inactive) {
+      // manual archiving of records takes precendence
+      return false;
+    }
+
     return !this.completed;
   }
 

@@ -1,4 +1,6 @@
 @use "../../../../styles/variables/breakpoints";
+@use "src/styles/variables/sizes";
+@use "src/styles/variables/colors";
 
 /**
  * Aligns the baseline of the filter-field with the baseline
@@ -15,4 +17,13 @@
 .standard-add-button {
   background-color: white !important;
   height: 100%;
+}
+
+.bulk-action-button {
+  position: fixed;
+  right: sizes.$large;
+  z-index: 999;
+
+  padding: sizes.$regular;
+  background-color: colors.$background;
 }

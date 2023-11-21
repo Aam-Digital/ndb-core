@@ -2,10 +2,6 @@ import { TestBed } from "@angular/core/testing";
 
 import { ImportService } from "./import.service";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
-import {
-  EntityRegistry,
-  entityRegistry,
-} from "../entity/database-entity.decorator";
 import { Entity } from "../entity/model/entity";
 import { ImportMetadata, ImportSettings } from "./import-metadata";
 import { ColumnMapping } from "./column-mapping";
@@ -13,32 +9,25 @@ import {
   expectEntitiesToBeInDatabase,
   expectEntitiesToMatch,
 } from "../../utils/expect-entity-data.spec";
-import { HealthCheck } from "../../child-dev-project/children/health-checkup/model/health-check";
 import moment from "moment";
 import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
-import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { CoreModule } from "../core.module";
-import { ComponentRegistry } from "../../dynamic-components";
 import { EntityArrayDatatype } from "../basic-datatypes/entity-array/entity-array.datatype";
+import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
+import { CoreTestingModule } from "../../utils/core-testing.module";
+import { EntityRegistry } from "../entity/database-entity.decorator";
+import { DatabaseField } from "../entity/database-field.decorator";
 
 describe("ImportService", () => {
   let service: ImportService;
 
   beforeEach(async () => {
     TestBed.configureTestingModule({
-      imports: [CoreModule],
+      imports: [CoreTestingModule],
       providers: [
         ImportService,
-        { provide: EntityRegistry, useValue: entityRegistry },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
-        {
-          provide: ConfigurableEnumService,
-          useValue: new ConfigurableEnumService(mockEntityMapper(), null),
-        },
-        ComponentRegistry,
       ],
     });
     service = TestBed.inject(ImportService);
@@ -67,49 +56,61 @@ describe("ImportService", () => {
   });
 
   it("should transform raw data to mapped entities", async () => {
-    HealthCheck.schema.set("entityArray", {
-      dataType: EntityArrayDatatype.dataType,
-      additional: "Child",
-    });
+    class ImportTestTarget extends Entity {
+      @DatabaseField() name: string;
+      @DatabaseField() counter: number;
+      @DatabaseField() date: Date;
+      @DatabaseField({
+        dataType: EntityArrayDatatype.dataType,
+        additional: "Child",
+      })
+      entityRefs: string[];
+    }
+    spyOn(TestBed.inject(EntityRegistry), "get").and.callFake(
+      (entityType: string) =>
+        entityType === "ImportTestTarget" ? ImportTestTarget : Child,
+    );
+
     const child = Child.create("Child Name");
     await TestBed.inject(EntityMapperService).save(child);
+
     const rawData: any[] = [
-      { x: "John", y: "111" },
-      { x: "Jane" },
-      { x: "broken date", y: "foo" }, // date column; ("y") ignored
-      { x: "with broken mapping column", brokenMapping: "foo" }, // column mapped to non-existing property ignored
-      { x: "", onlyUnmappedColumn: "1" }, // only empty or unmapped columns => row skipped
-      { x: "with zero", y: "0" }, // 0 value mapped
-      { x: "custom mapping fn", z: "30.01.2023" },
-      { x: "entity array", childName: child.name },
+      { rawName: "John", rawCounter: "111" },
+      { rawName: "Jane" },
+      { rawName: "broken date", rawCounter: "foo" }, // number column; ("rawCounter") ignored
+      { rawName: "with broken mapping column", brokenMapping: "foo" }, // column mapped to non-existing property ignored
+      { rawName: "", onlyUnmappedColumn: "1" }, // only empty or unmapped columns => row skipped
+      { rawName: "with zero", rawCounter: "0" }, // 0 value mapped
+      { rawName: "custom mapping fn", rawDate: "30.01.2023" },
+      { rawName: "entity array", rawRefName: child.name },
     ];
     const columnMapping: ColumnMapping[] = [
-      { column: "x", propertyName: "child" },
-      { column: "y", propertyName: "height" },
-      { column: "z", propertyName: "date", additional: "DD.MM.YYYY" },
+      { column: "rawName", propertyName: "name" },
+      { column: "rawCounter", propertyName: "counter" },
+      { column: "rawDate", propertyName: "date", additional: "DD.MM.YYYY" },
       { column: "brokenMapping", propertyName: "brokenMapping" },
-      { column: "childName", propertyName: "entityArray", additional: "name" },
+      { column: "rawRefName", propertyName: "entityRefs", additional: "name" },
     ];
 
     const parsedEntities = await service.transformRawDataToEntities(
       rawData,
-      HealthCheck.ENTITY_TYPE,
+      "ImportTestTarget",
       columnMapping,
     );
 
     let expectedEntities: any[] = [
-      { child: "John", height: 111 },
-      { child: "Jane" },
-      { child: "broken date" },
-      { child: "with broken mapping column" },
-      { child: "with zero", height: 0 },
-      { child: "custom mapping fn", date: moment("2023-01-30").toDate() },
-      { child: "entity array", entityArray: [child.getId()] },
+      { name: "John", counter: 111 },
+      { name: "Jane" },
+      { name: "broken date" },
+      { name: "with broken mapping column" },
+      { name: "with zero", counter: 0 },
+      { name: "custom mapping fn", date: moment("2023-01-30").toDate() },
+      { name: "entity array", entityRefs: [child.getId()] },
     ];
 
     expectEntitiesToMatch(
       parsedEntities,
-      expectedEntities.map((e) => Object.assign(new HealthCheck(), e)),
+      expectedEntities.map((e) => Object.assign(new ImportTestTarget(), e)),
       true,
     );
   });

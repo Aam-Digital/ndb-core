@@ -2,6 +2,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
+import { Child } from "../../../child-dev-project/children/model/child";
 
 /**
  * A general class that represents data that is collected for a entity over time.
@@ -9,10 +10,20 @@ import { PLACEHOLDERS } from "../../../core/entity/schema/entity-schema-field";
  */
 @DatabaseEntity("HistoricalEntityData")
 export class HistoricalEntityData extends Entity {
+  static override hasPII = true;
+
   @DatabaseField({
     label: $localize`:Label for date of historical data:Date`,
     defaultValue: PLACEHOLDERS.NOW,
+    anonymize: "retain-anonymized",
   })
   date: Date;
-  @DatabaseField() relatedEntity: string;
+
+  @DatabaseField({
+    dataType: "entity",
+    additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
+    anonymize: "retain",
+  })
+  relatedEntity: string;
 }

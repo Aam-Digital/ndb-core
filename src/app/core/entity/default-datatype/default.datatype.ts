@@ -114,4 +114,16 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
     return undefined;
   }
+
+  /**
+   * (Partially) anonymize to "retain-anonymized" for reporting purposes without personal identifiable information.
+   * @param value The original value to be anonymized
+   */
+  async anonymize(
+    value: EntityType,
+    schemaField: EntitySchemaField,
+    parent: any,
+  ): Promise<any> {
+    return undefined;
+  }
 }

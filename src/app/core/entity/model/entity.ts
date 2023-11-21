@@ -36,8 +36,6 @@ export type EntityConstructor<T extends Entity = Entity> = (new (
 ) => T) &
   typeof Entity;
 
-export const ENTITY_CONFIG_PREFIX = "entity:";
-
 /**
  * "Entity" is a base class for all domain model classes.
  * It implements the basic general properties and methods that are required for all Entity types
@@ -169,32 +167,44 @@ export class Entity {
   }
 
   /**
+   * whether this entity type can contain "personally identifiable information" (PII)
+   * and therefore should follow strict data protection requirements
+   * and offer a function to anonymize records.
+   */
+  static hasPII: boolean = false;
+
+  /**
    * Internal database id.
    * This is usually combined from the ENTITY_TYPE as a prefix with the entityId field `EntityType:entityId`
    * @example "Entity:123"
    */
-  @DatabaseField() private _id: string;
+  @DatabaseField({ anonymize: "retain" }) private _id: string;
 
   /** internal database doc revision, used to detect conflicts by PouchDB/CouchDB */
-  @DatabaseField() _rev: string;
+  @DatabaseField({ anonymize: "retain" }) _rev: string;
 
   @DatabaseField({
     dataType: "schema-embed",
     additional: UpdateMetadata,
+    anonymize: "retain",
   })
   created: UpdateMetadata;
 
   @DatabaseField({
     dataType: "schema-embed",
     additional: UpdateMetadata,
+    anonymize: "retain",
   })
   updated: UpdateMetadata;
 
-  @DatabaseField({
-    label: $localize`:Label of checkbox:Inactive`,
-    description: $localize`:Description of checkbox:Ticking this box will archive the record. No data will be lost but the record will be hidden.`,
-  })
+  @DatabaseField({ anonymize: "retain" })
   inactive: boolean;
+
+  /**
+   * Whether this entity has been anonymized and therefore cannot be re-activated.
+   */
+  @DatabaseField({ anonymize: "retain" })
+  anonymized: boolean;
 
   /** whether this entity object is newly created and not yet saved to database */
   get isNew(): boolean {
@@ -215,17 +225,20 @@ export class Entity {
   }
 
   /**
-   * Check, if this entity is considered active.
-   * This is either taken from the property "inactive" (configured) or "active" (not configured).
+   * Check, if this entity is considered active or archived.
+   *
+   * This is taken from the property "inactive".
    * If the property doesn't exist, the default is `true`.
-   * Subclasses may overwrite this functionality.
+   *
+   * Some subclasses overwrite this functionality, but this logic is considered deprecated (!) now
+   * and implementations have to make sure that "inactive" property takes precedence!
    */
   get isActive(): boolean {
-    if (this["active"] !== undefined) {
-      return this["active"];
-    }
     if (this.inactive !== undefined) {
       return !this.inactive;
+    }
+    if (this["active"] !== undefined) {
+      return this["active"];
     }
     return true;
   }
@@ -294,6 +307,17 @@ export class Entity {
    * @returns {string} the instance's string representation.
    */
   public toString(): string {
+    if (
+      this.anonymized &&
+      this.getConstructor().toStringAttributes.every(
+        (attr) => this[attr] === undefined,
+      )
+    ) {
+      return $localize`:Entity.toString fallback for anonymized record:[anonymized ${
+        this.getConstructor().label
+      }]`;
+    }
+
     return this.getConstructor()
       .toStringAttributes.map((attr) => this[attr])
       .join(" ");

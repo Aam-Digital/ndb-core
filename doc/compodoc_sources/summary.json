@@ -38,8 +38,18 @@
         "file": "concepts/extendability.md"
       },
       {
-        "title": "Entity Schema",
-        "file": "concepts/entity-schema-system.md"
+        "title": "Entity System",
+        "file": "concepts/entities.md",
+        "children": [
+          {
+            "title": "Entity Schema",
+            "file": "concepts/entity-schema-system.md"
+          },
+          {
+            "title": "Archiving, Anonymizing and Deleting Entities",
+            "file": "concepts/entity-anonymization.md"
+          }
+        ]
       },
       {
         "title": "Configuration",
@@ -76,6 +86,28 @@
     "file": "how-to-guides/_index.md",
     "children": [
       {
+        "title":  "Development Processes",
+        "file": "how-to-guides/contribute-code.md",
+        "children": [
+          {
+            "title": "Write Automated Unit Tests",
+            "file": "how-to-guides/write-unit-tests.md"
+          },
+          {
+            "title": "Write E2E Tests",
+            "file": "how-to-guides/write-e2e-tests.md"
+          },
+          {
+            "title": "Document Code",
+            "file": "how-to-guides/write-documentation.md"
+          },
+          {
+            "title": "Review a Pull Request",
+            "file": "how-to-guides/review-pull-request.md"
+          }
+        ]
+      },
+      {
         "title": "Configure and Customize a System",
         "file": "how-to-guides/configure-custom-system.md"
       },
@@ -84,12 +116,12 @@
         "file": "how-to-guides/navigate-code-structure.md"
       },
       {
-        "title": "Contribute Code to the Project",
-        "file": "how-to-guides/contribute-code.md"
-      },
-      {
         "title": "Create a New Entity Type",
         "file": "how-to-guides/create-new-entity-type.md"
+      },
+      {
+        "title": "Create an Entity Details Panel",
+        "file": "how-to-guides/create-entity-details-panel.md"
       },
       {
         "title": "Create a New Datatype",
@@ -116,18 +148,6 @@
         "file": "how-to-guides/log-errors.md"
       },
       {
-        "title": "Write Automated Unit Tests",
-        "file": "how-to-guides/write-unit-tests.md"
-      },
-      {
-        "title": "Write E2E Tests",
-        "file": "how-to-guides/write-e2e-tests.md"
-      },
-      {
-        "title": "Document Code",
-        "file": "how-to-guides/write-documentation.md"
-      },
-      {
         "title": "Use Queries and Indices",
         "file": "how-to-guides/use-queries-and-indices.md"
       },
@@ -136,24 +156,22 @@
         "file": "how-to-guides/generate-demo-data.md"
       },
       {
-        "title": "Review a Pull Request",
-        "file": "how-to-guides/review-pull-request.md"
-      },
-      {
         "title": "Format Data Export",
         "file": "how-to-guides/exports.md"
       },
       {
-        "title": "Build Localizable Components",
-        "file": "how-to-guides/build-localizable-components.md"
-      },
-      {
-        "title": "Work with XLF",
-        "file": "how-to-guides/work-with-xlf.md"
-      },
-      {
-        "title": "Add Another Language",
-        "file": "how-to-guides/add-another-language.md"
+        "title": "Build localizable (translatable) UI",
+        "file": "how-to-guides/build-localizable-components.md",
+        "children": [
+          {
+            "title": "Work with XLF",
+            "file": "how-to-guides/work-with-xlf.md"
+          },
+          {
+            "title": "Add Another Language",
+            "file": "how-to-guides/add-another-language.md"
+          }
+        ]
       }
     ]
   },

@@ -1,9 +1,5 @@
 import { Injectable } from "@angular/core";
-import {
-  Entity,
-  ENTITY_CONFIG_PREFIX,
-  EntityConstructor,
-} from "./model/entity";
+import { Entity, EntityConstructor } from "./model/entity";
 import { ConfigService } from "../config/config.service";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
@@ -35,8 +31,10 @@ export class EntityConfigService {
   setupEntitiesFromConfig() {
     for (const config of this.configService.getAllConfigs<
       EntityConfig & { _id: string }
-    >(ENTITY_CONFIG_PREFIX)) {
-      const id = config._id.substring(ENTITY_CONFIG_PREFIX.length);
+    >(EntityConfigService.PREFIX_ENTITY_CONFIG)) {
+      const id = config._id.substring(
+        EntityConfigService.PREFIX_ENTITY_CONFIG.length,
+      );
       if (!this.entities.has(id)) {
         this.createNewEntity(id, config.extends);
       }
@@ -78,6 +76,7 @@ export class EntityConfigService {
         ),
       );
     }
+    // TODO: shall we just assign all properties that are present in the config object?
     entityType.toStringAttributes =
       entityConfig.toStringAttributes ?? entityType.toStringAttributes;
     entityType.label = entityConfig.label ?? entityType.label;
@@ -85,6 +84,7 @@ export class EntityConfigService {
     entityType.icon = (entityConfig.icon as IconName) ?? entityType.icon;
     entityType.color = entityConfig.color ?? entityType.color;
     entityType.route = entityConfig.route ?? entityType.route;
+    entityType.hasPII = entityConfig.hasPII ?? entityType.hasPII;
 
     entityType._isCustomizedType = true;
   }
@@ -158,4 +158,9 @@ export interface EntityConfig {
    * when a new entity is created, all properties from this class will also be available
    */
   extends?: string;
+
+  /**
+   * whether the type can contain personally identifiable information (PII)
+   */
+  hasPII?: boolean;
 }

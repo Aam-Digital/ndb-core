@@ -19,6 +19,8 @@ import {
   MAT_MOMENT_DATE_ADAPTER_OPTIONS,
   MomentDateAdapter,
 } from "@angular/material-moment-adapter";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 export const MY_FORMATS = {
   parse: {
@@ -42,6 +44,8 @@ export const MY_FORMATS = {
     MatDatepickerModule,
     ReactiveFormsModule,
     ErrorHintComponent,
+    FontAwesomeModule,
+    MatTooltipModule,
   ],
   templateUrl: "./edit-month.component.html",
   styleUrls: ["./edit-month.component.scss"],
@@ -57,8 +61,8 @@ export const MY_FORMATS = {
 })
 export class EditMonthComponent extends EditComponent<Date> {
   setMonthAndYear(date: Moment, datepicker: MatDatepicker<Moment>) {
-    this.formControl.setValue(date.toDate());
     this.formControl.markAsDirty();
+    this.formControl.setValue(date.toDate());
     datepicker.close();
   }
 }

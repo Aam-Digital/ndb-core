@@ -55,6 +55,9 @@ export abstract class EditComponent<T> implements OnInit {
    */
   additional?: any;
 
+  /** indicating that the value is not in its original state, so that components can explain this to the user */
+  isPartiallyAnonymized: boolean;
+
   ngOnInit() {
     if (!this.formFieldConfig?.forTable) {
       this.label = this.formFieldConfig?.label ?? this.propertySchema?.label;
@@ -67,5 +70,12 @@ export abstract class EditComponent<T> implements OnInit {
     this.formControlName = this.formFieldConfig?.id;
     // This type casts are needed as the normal types throw errors in the templates
     this.parent = this.formControl.parent as FormGroup;
+  }
+
+  ngOnChanges() {
+    this.isPartiallyAnonymized =
+      this.entity?.anonymized &&
+      this.entity?.getSchema()?.get(this.formFieldConfig?.id)?.anonymize ===
+        "retain-anonymized";
   }
 }

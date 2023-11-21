@@ -20,6 +20,7 @@ import { StringDatatype } from "../string/string.datatype";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ColumnMapping } from "../../import/column-mapping";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 
 /**
  * Datatype for the EntitySchemaService to handle a single reference to another entity
@@ -37,7 +38,10 @@ export class EntityDatatype extends StringDatatype {
   viewComponent = "DisplayEntity";
   importConfigComponent = "EntityImportConfig";
 
-  constructor(private entityMapper: EntityMapperService) {
+  constructor(
+    private entityMapper: EntityMapperService,
+    private removeService: EntityActionsService,
+  ) {
     super();
   }
 
@@ -56,5 +60,30 @@ export class EntityDatatype extends StringDatatype {
 
   importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
     return col.additional ? undefined : "?";
+  }
+
+  /**
+   * Recursively calls anonymize on the referenced entity and saves it.
+   * @param value
+   * @param schemaField
+   * @param parent
+   */
+  async anonymize(
+    value,
+    schemaField: EntitySchemaField,
+    parent,
+  ): Promise<string> {
+    const referencedEntity = await this.entityMapper.load(
+      schemaField.additional,
+      value,
+    );
+
+    if (!referencedEntity) {
+      // TODO: remove broken references?
+      return value;
+    }
+
+    await this.removeService.anonymize(referencedEntity);
+    return value;
   }
 }

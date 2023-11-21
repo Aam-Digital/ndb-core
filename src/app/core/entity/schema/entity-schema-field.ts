@@ -16,6 +16,7 @@
  */
 
 import { FormValidatorConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-reference-role";
 
 /**
  * Interface for additional configuration about a DatabaseField schema.
@@ -67,6 +68,17 @@ export interface EntitySchemaField {
   additional?: any;
 
   /**
+   * (Optional) If the dataType of this field references another entity,
+   *    define the role of this relationship for the entity containing this field.
+   *
+   * i.e. how "important" is the entity this field is referencing?
+   * Does this the entity containing this field (not the referenced entity) still have meaning after the referenced entity has been deleted?
+   *
+   * see options of the `EntityReferenceRole` type
+   */
+  entityReferenceRole?: EntityReferenceRole;
+
+  /**
    * (Optional) Define using which component this property should be displayed in lists and forms.
    *
    * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`
@@ -104,6 +116,15 @@ export interface EntitySchemaField {
 
   /** whether to show this field in the default details view */
   showInDetailsView?: boolean;
+
+  /**
+   * whether the field will be retained when the entity is "anonymized".
+   *
+   * By default, fields are removed (data minimization by default).
+   *
+   * "retain-anonymized" triggers a special dataType action to retain the data partially in a special, anonymized form.
+   */
+  anonymize?: "retain" | "retain-anonymized";
 }
 
 /**

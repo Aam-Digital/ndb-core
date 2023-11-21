@@ -157,4 +157,18 @@ export class MockEntityMapperService extends EntityMapperService {
     }
     return this.observables.get(name);
   }
+
+  /**
+   * Get a flat array of all entities in the database overall
+   * for testing and debugging.
+   */
+  public getAllData() {
+    const allData: Entity[] = [];
+    for (const type of this.data.values()) {
+      for (const entity of type.values()) {
+        allData.push(entity);
+      }
+    }
+    return allData;
+  }
 }

@@ -19,8 +19,8 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
-import { DateWithAge } from "./dateWithAge";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { DateWithAge } from "../../../core/basic-datatypes/date-with-age/dateWithAge";
 
 export type Center = ConfigurableEnumValue;
 
@@ -31,6 +31,7 @@ export class Child extends Entity {
   static label = $localize`:label for entity:Participant`;
   static labelPlural = $localize`:label (plural) for entity:Participants`;
   static color = "#1565C0";
+  static override hasPII = true;
 
   static create(name: string): Child {
     const instance = new Child();
@@ -54,12 +55,14 @@ export class Child extends Entity {
     label: $localize`:Label for the project number of a child:Project Number`,
     labelShort: $localize`:Short label for the project number:PN`,
     searchable: true,
+    anonymize: "retain",
   })
   projectNumber: string;
 
   @DatabaseField({
     label: $localize`:Label for the date of birth of a child:Date of birth`,
     labelShort: $localize`:Short label for the date of birth:DoB`,
+    anonymize: "retain-anonymized",
   })
   dateOfBirth: DateWithAge;
 
@@ -67,6 +70,7 @@ export class Child extends Entity {
     dataType: "configurable-enum",
     label: $localize`:Label for the gender of a child:Gender`,
     innerDataType: "genders",
+    anonymize: "retain",
   })
   gender: ConfigurableEnumValue;
 
@@ -74,11 +78,13 @@ export class Child extends Entity {
     dataType: "configurable-enum",
     innerDataType: "center",
     label: $localize`:Label for the center of a child:Center`,
+    anonymize: "retain",
   })
   center: Center;
 
   @DatabaseField({
     label: $localize`:Label for the admission date of a child:Admission`,
+    anonymize: "retain-anonymized",
   })
   admissionDate: Date;
 
@@ -89,11 +95,13 @@ export class Child extends Entity {
 
   @DatabaseField({
     label: $localize`:Label for the dropout date of a child:Dropout Date`,
+    anonymize: "retain-anonymized",
   })
   dropoutDate: Date;
 
   @DatabaseField({
     label: $localize`:Label for the type of dropout of a child:Dropout Type`,
+    anonymize: "retain",
   })
   dropoutType: string;
 
@@ -120,6 +128,11 @@ export class Child extends Entity {
   phone: string;
 
   get isActive(): boolean {
+    if (this.inactive !== undefined) {
+      // explicit property set through UI has to take precedence
+      return super.isActive;
+    }
+
     return (
       this.status !== "Dropout" &&
       !this["dropoutDate"] &&

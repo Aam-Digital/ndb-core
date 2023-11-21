@@ -258,20 +258,6 @@ export const defaultJsonConfig = {
       ]
     }
   },
-  "appConfig:note-details": {
-    "topForm": ["date", "warningLevel", "category", "authors", "attachment"]
-  },
-  "entity:Note": {
-    "attributes": [
-      {
-        "name": "attachment",
-        "schema": {
-          "label": $localize`Attachment`,
-          "dataType": "file"
-        }
-      }
-    ]
-  },
   "view:site-settings/:id": {
     "component": "EntityDetails",
     "config": {
@@ -557,15 +543,6 @@ export const defaultJsonConfig = {
       },
       "filters": [
         {
-          "id": "isActive",
-          "type": "boolean",
-          "default": "true",
-          "label": $localize`Children`,
-          "true": $localize`:Active children filter label - true case:Active`,
-          "false": $localize`:Active children filter label - false case:Inactive`,
-          "all": $localize`:Active children unselect option:All`
-        },
-        {
           "id": "center"
         },
         {
@@ -573,6 +550,13 @@ export const defaultJsonConfig = {
           "type": "School",
           "label": $localize`:Label of schools filter:School`
         }
+      ],
+      "exportConfig": [
+        { "label": "Name", "query": "name" },
+        { "label": "Gender", "query": "gender" },
+        { "label": "Date of Birth", "query": "dateOfBirth" },
+        { "label": "School", "query": ".schoolId:toEntities(School).name" },
+        { "label": "more fields can be configured - or all data exported", "query": "projectNumber" }
       ]
     }
   },
@@ -771,17 +755,6 @@ export const defaultJsonConfig = {
         "type",
         "assignedTo"
       ],
-      "filters": [
-        {
-          "id": "isActive",
-          "type": "boolean",
-          "default": "true",
-          "label": $localize`Status`,
-          "true": $localize`:Active records filter label - true case:Active`,
-          "false": $localize`:Active records filter label - false case:Inactive`,
-          "all": $localize`:Active records unselect option:All`
-        },
-      ],
       "exportConfig": [
         { "label": "Title", "query": "title" },
         { "label": "Type", "query": "type" },
@@ -908,6 +881,19 @@ export const defaultJsonConfig = {
                     {
                       "label": $localize`:Name of a column of a report:Name`,
                       "query": `.participant:toEntities(Child).name`
+                    },
+                    {
+                      "query": ".participant:toEntities(Child):getRelated(ChildSchoolRelation, childId)[*isActive=true]",
+                      "subQueries": [
+                        {
+                          "label": "Class",
+                          "query": ".schoolClass"
+                        },
+                        {
+                          "label": "School",
+                          "query": ".schoolId:toEntities(School).name"
+                        },
+                      ]
                     },
                     {
                       "label": $localize`:Name of a column of a report:Total`,

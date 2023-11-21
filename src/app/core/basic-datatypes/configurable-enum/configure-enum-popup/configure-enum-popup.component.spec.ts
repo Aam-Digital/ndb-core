@@ -17,6 +17,7 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../../../entity/database-entity.decorator";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("ConfigureEnumPopupComponent", () => {
   let component: ConfigureEnumPopupComponent;
@@ -26,7 +27,11 @@ describe("ConfigureEnumPopupComponent", () => {
   beforeEach(async () => {
     entityMapper = mockEntityMapper();
     await TestBed.configureTestingModule({
-      imports: [ConfigureEnumPopupComponent, FontAwesomeTestingModule],
+      imports: [
+        ConfigureEnumPopupComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: new ConfigurableEnum() },
         { provide: MatDialogRef, useValue: { afterClosed: () => EMPTY } },

@@ -1,8 +1,24 @@
 <div *ngIf="isLoading" class="process-spinner">
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </div>
+
 <div [hidden]="isLoading">
-  <table mat-table [dataSource]="recordsDataSource" matSort class="full-width">
+  <table
+    mat-table
+    [dataSource]="recordsDataSource"
+    matSort
+    class="full-width table"
+  >
+    <ng-container [matColumnDef]="COLUMN_ROW_SELECT">
+      <th mat-header-cell *matHeaderCellDef style="width: 0"></th>
+      <td mat-cell *matCellDef="let row">
+        <mat-checkbox
+          (change)="selectRow(row, $event)"
+          [checked]="selectedRecords?.includes(row.record)"
+        ></mat-checkbox>
+      </td>
+    </ng-container>
+
     <ng-container *ngFor="let col of filteredColumns" [matColumnDef]="col.id">
       <th
         mat-header-cell
@@ -110,7 +126,7 @@
                 entity: rec.record,
                 operation: 'delete'
               }"
-              (click)="entityRemoveService.remove(rec.record)"
+              (click)="entityRemoveService.delete(rec.record)"
               angulartics2On="click"
               [angularticsCategory]="rec?.record?.getType()"
               angularticsAction="subrecord_inlineedit_delete"
@@ -121,7 +137,6 @@
         </div>
       </td>
     </ng-container>
-
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr
       mat-row
@@ -130,8 +145,20 @@
       class="table-row"
     ></tr>
   </table>
+
   <app-list-paginator
+    class="table-footer"
     [dataSource]="recordsDataSource"
     [idForSavingPagination]="idForSavingPagination"
   ></app-list-paginator>
+
+  <div class="table-footer filter-inactive-toggle">
+    <mat-slide-toggle
+      [checked]="showInactive"
+      (change)="setActiveInactiveFilter($event.checked)"
+      i18n="slider|also show entries that are archived"
+    >
+      Include archived records
+    </mat-slide-toggle>
+  </div>
 </div>

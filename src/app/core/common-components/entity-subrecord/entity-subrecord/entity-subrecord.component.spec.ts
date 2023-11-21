@@ -27,8 +27,8 @@ import { UpdatedEntity } from "../../../entity/model/entity-update";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
-import { DateWithAge } from "../../../../child-dev-project/children/model/dateWithAge";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
+import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -410,4 +410,17 @@ describe("EntitySubrecordComponent", () => {
 
     expect(component.recordsDataSource.data).toEqual([]);
   }));
+
+  it("should only show active relations by default", async () => {
+    const active1 = new Entity();
+    active1.inactive = false;
+    const inactive = new Entity();
+    inactive.inactive = true;
+
+    component.records = [active1, inactive];
+
+    component.ngOnChanges({ records: undefined, filter: undefined });
+
+    expect(component.recordsDataSource.data).toEqual([{ record: active1 }]);
+  });
 });

@@ -1,8 +1,6 @@
 # Entity Schema 
 -----
 The Entity Schema defines details of the properties of an entity type.
-(An "entity" is an object of a certain type that users work with and save to the database, like "Child" or "School")
-
 We define an entity type and its schema in code through a plain TypeScript class and some custom annotations.
 Read more on the background and practical considerations in [How to create a new Entity Type](../how-to-guides/create-a-new-entity-type.html).
 
@@ -45,9 +43,16 @@ providing these through Angular dependency injection using `multi: true`.
 
 Also see: [How to create a new Datatype](../how-to-guides/create-a-new-datatype.html).
 
-## Schema options
+### Schema options
 
 The schema definitions contains information regarding the schema transformation as well as how a property can be displayed.
 The [EntitySchemaField](../../interfaces/EntitySchemaField.html) interface shows all configuration options.
 If the `editComponent` and the `viewComponent` are not set, the default components of this property's datatype will be used.
 The `description` field allows adding further explanation which will be displayed as a tooltip.
+
+
+## Generic Entity functionalities
+
+### Metadata (created, updated)
+Each record automatically holds basic data of timestamp and user who created and last updated the record.
+(see `Entity` class)
