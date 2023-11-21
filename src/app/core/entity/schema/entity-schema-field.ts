@@ -16,6 +16,7 @@
  */
 
 import { FormValidatorConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-reference-role";
 
 /**
  * Interface for additional configuration about a DatabaseField schema.
@@ -65,6 +66,17 @@ export interface EntitySchemaField {
    * that are not part of the core datatypes and therefore not included in this core interface.
    */
   additional?: any;
+
+  /**
+   * (Optional) If the dataType of this field references another entity,
+   *    define the role of this relationship for the entity containing this field.
+   *
+   * i.e. how "important" is the entity this field is referencing?
+   * Does this the entity containing this field (not the referenced entity) still have meaning after the referenced entity has been deleted?
+   *
+   * see options of the `EntityReferenceRole` type
+   */
+  entityReferenceRole?: EntityReferenceRole;
 
   /**
    * (Optional) Define using which component this property should be displayed in lists and forms.

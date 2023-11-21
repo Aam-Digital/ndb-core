@@ -6,6 +6,9 @@ import { MatInputModule } from "@angular/material/input";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { NgIf } from "@angular/common";
 
 @DynamicComponent("EditDate")
 @Component({
@@ -17,6 +20,9 @@ import { ErrorHintComponent } from "../../../common-components/error-hint/error-
     ReactiveFormsModule,
     MatDatepickerModule,
     ErrorHintComponent,
+    FontAwesomeModule,
+    MatTooltipModule,
+    NgIf,
   ],
   standalone: true,
 })

@@ -109,7 +109,7 @@ export class EntityListComponent<T extends Entity>
 
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
-  selectedRows: T[] = [];
+  selectedRows: T[];
 
   @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
@@ -227,19 +227,30 @@ export class EntityListComponent<T extends Entity>
   }
 
   private addColumnsFromColumnGroups() {
-    this.columnGroups?.groups?.forEach((group) =>
-      group.columns
-        .filter(
-          (columnId) =>
-            !this.columns.some((column) =>
-              // Check if the column is already defined as object or string
-              typeof column === "string"
-                ? column === columnId
-                : column.id === columnId,
-            ),
-        )
-        .forEach((column) => this.columns.push(column)),
+    const allColumns = [...this.columns];
+    const groupColumns = (this.columnGroups?.groups ?? []).reduce(
+      (accumulatedColumns: string[], currentGroup) => [
+        ...accumulatedColumns,
+        ...currentGroup.columns,
+      ],
+      [],
     );
+    for (const column of groupColumns) {
+      if (
+        !allColumns.some((existingColumn) =>
+          // Check if the column is already defined as object or string
+          typeof existingColumn === "string"
+            ? existingColumn === column
+            : existingColumn.id === column,
+        )
+      ) {
+        allColumns.push(column);
+      }
+    }
+
+    if (allColumns.length !== this.columns.length) {
+      this.columns = [...allColumns];
+    }
   }
 
   private initColumnGroups(columnGroup?: ColumnGroupsConfig) {
@@ -309,6 +320,6 @@ export class EntityListComponent<T extends Entity>
 
   duplicateRecords() {
     this.duplicateRecord.duplicateRecord(this.selectedRows);
-    this.selectedRows = [];
+    this.selectedRows = undefined;
   }
 }

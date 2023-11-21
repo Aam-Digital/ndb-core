@@ -259,7 +259,11 @@ describe("PouchDatabase tests", () => {
       },
     ];
 
-    const results = await database.putAll(dataWithConflicts);
+    await expectAsync(database.putAll(dataWithConflicts)).toBeRejectedWith([
+      conflictError,
+      jasmine.objectContaining({ id: "4", ok: true }),
+      jasmine.objectContaining({ id: "5", ok: true }),
+    ]);
     expect(resolveConflictSpy.calls.allArgs()).toEqual([
       [
         {
@@ -270,11 +274,6 @@ describe("PouchDatabase tests", () => {
         false,
         jasmine.objectContaining({ status: 409 }),
       ],
-    ]);
-    expect(results).toEqual([
-      conflictError,
-      jasmine.objectContaining({ id: "4", ok: true }),
-      jasmine.objectContaining({ id: "5", ok: true }),
     ]);
   });
 

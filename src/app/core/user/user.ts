@@ -32,6 +32,7 @@ export class User extends Entity {
   static icon: IconName = "user";
   static label = $localize`:label for entity:User`;
   static labelPlural = $localize`:label (plural) for entity:Users`;
+  static override hasPII = true;
 
   /** username used for login and identification */
   @DatabaseField({

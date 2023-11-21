@@ -8,6 +8,8 @@
     </app-view-title>
 
     <div class="flex-row gap-regular">
+      <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+
       <button
         mat-stroked-button
         color="accent"
@@ -84,6 +86,8 @@
     </button>
   </div>
 
+  <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+
   <ng-container *ngTemplateOutlet="subrecord"></ng-container>
 </div>
 
@@ -127,6 +131,7 @@
     [filter]="filterObj"
     [defaultSort]="defaultSort"
     [(selectedRecords)]="selectedRows"
+    [selectable]="!!selectedRows"
     [showInactive]="showInactive"
     (filteredRecordsChange)="filteredData = $event"
   ></app-entity-subrecord>
@@ -220,19 +225,41 @@
 
   <button
     mat-menu-item
-    (click)="duplicateRecords()"
-    [disabled]="selectedRows.length === 0"
-    matTooltip="Please select rows"
-    [matTooltipDisabled]="selectedRows.length > 0"
+    (click)="selectedRows = []"
+    matTooltip="Select multiple records for bulk actions like duplicating or deleting"
     i18n-matTooltip
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
-      aria-label="duplicates record"
-      icon="copy"
+      aria-label="bulk actions"
+      icon="list-check"
     ></fa-icon>
-    <span i18n> Duplicate selected records </span>
+    <span i18n> Bulk Actions </span>
   </button>
 
   <ng-content select="[mat-menu-item]"></ng-content>
 </mat-menu>
+
+<ng-template #bulkActions>
+  <div *ngIf="!!selectedRows" class="bulk-action-button">
+    <div>Actions on selected records:</div>
+
+    <div class="flex-row gap-small bulk-action-button">
+      <button
+        mat-raised-button
+        (click)="duplicateRecords()"
+        [disabled]="selectedRows.length === 0"
+        matTooltip="Select rows to clone"
+        i18n-matTooltip
+        color="accent"
+        i18n="bulk action button"
+      >
+        Duplicate
+      </button>
+
+      <button mat-raised-button (click)="selectedRows = undefined" i18n>
+        Cancel
+      </button>
+    </div>
+  </div>
+</ng-template>

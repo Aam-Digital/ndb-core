@@ -58,9 +58,9 @@ export class NoteDetailsComponent implements OnInit {
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  topForm = ["date", "warningLevel", "category", "authors"].map((field) => [
-    toFormFieldConfig(field),
-  ]);
+  topForm = ["date", "warningLevel", "category", "authors", "attachment"].map(
+    (field) => [toFormFieldConfig(field)],
+  );
   middleForm = ["subject", "text"].map(toFormFieldConfig);
   bottomForm = ["children", "schools"].map(toFormFieldConfig);
   form: EntityForm<Note>;

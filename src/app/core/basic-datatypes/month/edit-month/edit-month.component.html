@@ -5,6 +5,15 @@
     [formControl]="formControl"
     [matDatepicker]="datepickerComp"
   />
+
+  <fa-icon
+    *ngIf="isPartiallyAnonymized"
+    matIconSuffix
+    icon="warning"
+    matTooltip="This data has been partially anonymized."
+    i18n-matTooltip
+  ></fa-icon>
+
   <mat-datepicker-toggle
     matIconSuffix
     [for]="datepickerComp"
