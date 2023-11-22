@@ -90,12 +90,13 @@ export class EditAttendanceComponent
     const index = children.indexOf(id);
     children.splice(index, 1);
     this.attendanceForm.value.delete(id);
-    this.formControl.setValue([...children]);
     this.formControl.markAsDirty();
+    this.formControl.setValue([...children]);
   }
 
   updateAttendanceValue(childId, property: "status" | "remarks", newValue) {
-    this.getAttendance(childId)[property] = newValue;
     this.formControl.markAsDirty();
+    this.getAttendance(childId)[property] = newValue;
+    this.attendanceForm.setValue(this.attendanceForm.value);
   }
 }

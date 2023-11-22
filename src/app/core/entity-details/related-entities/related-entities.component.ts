@@ -44,6 +44,8 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   @Input() filter?: DataFilter<E>;
 
+  @Input() showInactive: boolean;
+
   data: E[] = [];
   isLoading = false;
   private isArray = false;
@@ -76,6 +78,10 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
         ? { $elemMatch: { $eq: this.entity.getId() } }
         : this.entity.getId(),
     };
+
+    if (this.showInactive === undefined) {
+      this.showInactive = this.entity.anonymized;
+    }
 
     this.isLoading = false;
   }

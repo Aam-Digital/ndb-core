@@ -81,7 +81,8 @@ export class EditLocationComponent
     );
   }
 
-  selectLocation(selected: GeoResult) {
+  selectLocation(selected?: GeoResult) {
+    this.formControl.markAsDirty();
     this.formControl.setValue(selected);
     this.filteredOptions.next([]);
   }
@@ -92,7 +93,7 @@ export class EditLocationComponent
   }
 
   clearInput() {
-    this.formControl.setValue(null);
+    this.selectLocation();
   }
 
   private getGeoLookupResult(searchTerm) {
@@ -122,7 +123,7 @@ export class EditLocationComponent
       ref
         .afterClosed()
         .pipe(concatMap(() => this.lookupCoordinates(marked.value[0])))
-        .subscribe((res) => this.formControl.setValue(res));
+        .subscribe((res) => this.selectLocation(res));
     }
   }
 

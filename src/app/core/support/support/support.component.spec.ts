@@ -24,6 +24,13 @@ import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.s
 import { SyncStateSubject } from "../../session/session-type";
 import { CurrentUserSubject } from "../../user/user";
 
+class MockDeleteRequest {
+  onsuccess: () => {};
+  constructor() {
+    setTimeout(() => this.onsuccess());
+  }
+}
+
 describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
@@ -34,6 +41,12 @@ describe("SupportComponent", () => {
     navigator: {
       userAgent: "mock user agent",
       serviceWorker: { getRegistrations: () => [], ready: Promise.resolve() },
+    },
+    indexedDB: {
+      databases: jasmine.createSpy(),
+      deleteDatabase: jasmine
+        .createSpy()
+        .and.callFake(() => new MockDeleteRequest()),
     },
   };
   let mockLocation: any;
@@ -111,13 +124,18 @@ describe("SupportComponent", () => {
     mockWindow.navigator.serviceWorker.getRegistrations = () => [
       { unregister: unregisterSpy },
     ];
+    mockWindow.indexedDB.databases.and.resolveTo([
+      { name: "db1" },
+      { name: "db2" },
+    ]);
 
     await component.resetApplication();
 
-    expect(mockDB.destroy).toHaveBeenCalled();
     expect(unregisterSpy).toHaveBeenCalled();
     expect(localStorage.getItem("someItem")).toBeNull();
     expect(mockLocation.pathname).toBe("");
+    expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith("db1");
+    expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith("db2");
   });
 
   it("should display the service worker logs after they are available", fakeAsync(() => {

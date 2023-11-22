@@ -78,6 +78,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     // directly reset input so subsequent selections with the same name also trigger the change event
     this.fileUploadInput.nativeElement.value = "";
     this.selectedFile = file;
+    this.formControl.markAsDirty();
     this.formControl.setValue(file.name);
   }
 
@@ -104,7 +105,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   formClicked(isInputElement?: boolean) {
-    if (this.formControl.disabled) {
+    if (this.initialValue && this.formControl.value === this.initialValue) {
       this.showFile();
     } else if (isInputElement) {
       this.fileUploadInput.nativeElement.click();
@@ -118,6 +119,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   delete() {
+    this.formControl.markAsDirty();
     this.formControl.setValue(null);
     this.selectedFile = undefined;
     // remove is only necessary if an initial value was set

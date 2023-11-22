@@ -7,8 +7,8 @@ import {
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
-import { EntityRemoveService } from "../core/entity/entity-remove.service";
 import { ComponentRegistry } from "../dynamic-components";
+import { EntityActionsService } from "../core/entity/entity-actions/entity-actions.service";
 
 /**
  * A basic module that can be imported in unit tests to provide default datatypes.
@@ -24,10 +24,9 @@ import { ComponentRegistry } from "../dynamic-components";
       useValue: new ConfigurableEnumService(mockEntityMapper(), null),
     },
     {
-      provide: EntityRemoveService,
+      provide: EntityActionsService,
       useValue: jasmine.createSpyObj(["anonymize"]),
     },
-    { provide: EntityRemoveService, useValue: null },
     ComponentRegistry,
   ],
 })

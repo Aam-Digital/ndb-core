@@ -19,6 +19,7 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import { WarningLevel } from "../../../warning-level";
+import { Child } from "../../model/child";
 
 /**
  * Model Class for the Health Checks that are taken for a Child.
@@ -26,11 +27,16 @@ import { WarningLevel } from "../../../warning-level";
  */
 @DatabaseEntity("HealthCheck")
 export class HealthCheck extends Entity {
+  static override hasPII = true;
+
   static create(contents: Partial<HealthCheck>) {
     return Object.assign(new HealthCheck(), contents);
   }
 
   @DatabaseField({
+    dataType: "entity",
+    additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
     anonymize: "retain",
   })
   child: string;

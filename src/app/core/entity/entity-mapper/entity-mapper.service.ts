@@ -155,13 +155,18 @@ export class EntityMapperService {
    * This method should be chosen whenever a bigger number of entities needs to be
    * saved
    * @param entities The entities to save
+   * @param forceUpdate Optional flag whether any conflicting version in the database will be quietly overwritten.
+   *          if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.
    */
-  public async saveAll(entities: Entity[]): Promise<any[]> {
+  public async saveAll(
+    entities: Entity[],
+    forceUpdate: boolean = false,
+  ): Promise<any[]> {
     entities.forEach((e) => this.setEntityMetadata(e));
     const rawData = entities.map((e) =>
       this.entitySchemaService.transformEntityToDatabaseFormat(e),
     );
-    const results = await this._db.putAll(rawData);
+    const results = await this._db.putAll(rawData, forceUpdate);
     results.forEach((res, idx) => {
       if (res.ok) {
         const entity = entities[idx];

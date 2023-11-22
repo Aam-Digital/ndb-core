@@ -39,6 +39,7 @@ export class Note extends Entity {
   static toStringAttributes = ["subject"];
   static label = $localize`:label for entity:Note`;
   static labelPlural = $localize`:label (plural) for entity:Notes`;
+  static override hasPII = true;
 
   static create(
     date: Date,
@@ -76,6 +77,7 @@ export class Note extends Entity {
     label: $localize`:Label for the children of a note:Children`,
     dataType: "entity-array",
     additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
     editComponent: "EditAttendance",
     anonymize: "retain",
   })
@@ -128,6 +130,12 @@ export class Note extends Entity {
   })
   category: InteractionType;
 
+  @DatabaseField({
+    label: $localize`Attachment`,
+    dataType: "file",
+  })
+  attachment: string;
+
   /**
    * id referencing a different entity (e.g. a recurring activity) this note is related to
    */
@@ -159,6 +167,7 @@ export class Note extends Entity {
     label: $localize`:label for the linked schools:Groups`,
     dataType: "entity-array",
     additional: School.ENTITY_TYPE,
+    entityReferenceRole: "composite",
     anonymize: "retain",
   })
   schools: string[] = [];
