@@ -8,6 +8,7 @@ import { ConfigurableEnumService } from "../configurable-enum/configurable-enum.
 
 describe("Schema data type: array", () => {
   const schema: EntitySchemaField = {
+    id: null,
     dataType: "array",
     innerDataType: "configurable-enum",
     additional: "test",

@@ -55,7 +55,11 @@ describe("Schema data type: entity", () => {
     const dataType = new EntityDatatype(entityMapper, mockRemoveService);
 
     const testValue = referencedEntity.getId();
-    const testSchemaField = { additional: "Child", dataType: "entity" };
+    const testSchemaField = {
+      id: null,
+      additional: "Child",
+      dataType: "entity",
+    };
 
     const anonymizedValue = await dataType.anonymize(
       testValue,

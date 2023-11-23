@@ -11,11 +11,9 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import { Location } from "@angular/common";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Config } from "../../config/config";
-import {
-  EntityConfig,
-  EntityConfigService,
-} from "../../entity/entity-config.service";
-import { EntitySchemaField_withId } from "../config-entity-form/config-entity-form.component";
+import { EntityConfigService } from "../../entity/entity-config.service";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { EntityConfig } from "../../entity/entity-config";
 
 @DynamicComponent("ConfigEntity")
 @Component({
@@ -28,7 +26,7 @@ export class ConfigEntityComponent implements OnChanges {
   entityConstructor: EntityConstructor;
 
   configDetailsView: EntityDetailsConfig;
-  schemaFieldChanges: EntitySchemaField_withId[] = [];
+  schemaFieldChanges: EntitySchemaField[] = [];
 
   get DETAILS_VIEW_ID() {
     return (
@@ -83,7 +81,7 @@ export class ConfigEntityComponent implements OnChanges {
     ).attributes;
     console.log("pre", JSON.stringify(entityAttr));
     for (const newField of this.schemaFieldChanges) {
-      entityAttr.push({ name: newField.id, schema: newField });
+      entityAttr.push(newField);
       // TODO: more rigorously filter attributes that are equal to default class definition, so they can still be updated through code updates?
     }
     console.log("post", JSON.stringify(entityAttr));

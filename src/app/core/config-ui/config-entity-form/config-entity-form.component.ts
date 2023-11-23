@@ -20,9 +20,6 @@ import {
 } from "@angular/cdk/drag-drop";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
-// TODO: adapt EntitySchemaField interface?
-export type EntitySchemaField_withId = EntitySchemaField & { id: string };
-
 @Component({
   selector: "app-config-entity-form",
   templateUrl: "./config-entity-form.component.html",
@@ -37,8 +34,7 @@ export class ConfigEntityFormComponent implements OnChanges {
   @Input() config: FormConfig;
   fieldGroups: FieldGroup[]; // TODO: maybe change the config itself to reflect this structure?
 
-  @Output() entitySchemaFieldChange =
-    new EventEmitter<EntitySchemaField_withId>();
+  @Output() entitySchemaFieldChange = new EventEmitter<EntitySchemaField>();
 
   dummyEntity: Entity;
   dummyForm: FormGroup;
@@ -95,7 +91,7 @@ export class ConfigEntityFormComponent implements OnChanges {
         },
       })
       .afterClosed()
-      .subscribe((updatedFieldSchema: EntitySchemaField_withId) => {
+      .subscribe((updatedFieldSchema: EntitySchemaField) => {
         if (!updatedFieldSchema) {
           // canceled
           if (!field.id) {
@@ -110,9 +106,7 @@ export class ConfigEntityFormComponent implements OnChanges {
       });
   }
 
-  private saveSchemaField(
-    schemaField: EntitySchemaField_withId,
-  ): FormFieldConfig {
+  private saveSchemaField(schemaField: EntitySchemaField): FormFieldConfig {
     this.entityType.schema.set(schemaField.id, schemaField);
     this.entitySchemaFieldChange.emit(schemaField);
 

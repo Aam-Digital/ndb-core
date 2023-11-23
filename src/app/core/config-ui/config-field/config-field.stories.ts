@@ -8,7 +8,7 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { ConfigFieldComponent } from "./config-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { EntitySchemaField_withId } from "../config-entity-form/config-entity-form.component";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 export default {
   title: "Core/Admin UI/Config Field",
@@ -44,10 +44,10 @@ EditExisting.args = {
     dataType: "string",
     label: "Firstname",
     description: "abc",
-  } as EntitySchemaField_withId,
+  } as EntitySchemaField,
 };
 
 export const CreateNew = Template.bind({});
 CreateNew.args = {
-  entitySchemaField: { id: null } as EntitySchemaField_withId,
+  entitySchemaField: { id: null } as EntitySchemaField,
 };

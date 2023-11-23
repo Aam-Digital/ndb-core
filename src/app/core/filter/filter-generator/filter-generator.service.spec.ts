@@ -91,6 +91,7 @@ describe("FilterGeneratorService", () => {
 
     // enum name in additional field
     const schemaAdditional = {
+      id: "otherEnum",
       dataType: schema.dataType,
       additional: schema.innerDataType,
     };
@@ -109,6 +110,7 @@ describe("FilterGeneratorService", () => {
 
     // enum as array
     const schemaArray = {
+      id: "otherEnum",
       dataType: "array",
       innerDataType: schema.dataType,
       additional: schema.innerDataType,

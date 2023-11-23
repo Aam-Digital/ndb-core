@@ -10,7 +10,7 @@ import {
 } from "./config-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
-import { EntitySchemaField_withId } from "../config-entity-form/config-entity-form.component";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { SimpleChange } from "@angular/core";
@@ -19,7 +19,7 @@ describe("ConfigFieldComponent", () => {
   let component: ConfigFieldComponent;
   let fixture: ComponentFixture<ConfigFieldComponent>;
 
-  let testSchemaField: EntitySchemaField_withId;
+  let testSchemaField: EntitySchemaField;
 
   beforeEach(() => {
     testSchemaField = {
