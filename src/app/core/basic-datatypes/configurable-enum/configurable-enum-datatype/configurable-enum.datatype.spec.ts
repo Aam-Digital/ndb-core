@@ -145,6 +145,7 @@ describe("Schema data type: configurable-enum", () => {
     const actualMapped = dataType.importMapFunction(
       input,
       {
+        id: null,
         dataType: "configurable-enum",
         additional: "genders",
       },

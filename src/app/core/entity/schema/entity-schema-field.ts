@@ -27,6 +27,13 @@ import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-referen
  */
 export interface EntitySchemaField {
   /**
+   * The key (property name) on the entity object for this field.
+   *
+   * Do not change after initial field creation!
+   */
+  readonly id: string;
+
+  /**
    * The datatype of this field. This will trigger to matching datatype transformer when saving/loading the entity.
    *
    * If you don't set this explicitly, the dataType is inferred from the TypeScript type of the property that is annotated.

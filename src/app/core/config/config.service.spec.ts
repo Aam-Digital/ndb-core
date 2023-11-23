@@ -4,6 +4,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
+import { EntityConfig } from "../entity/entity-config";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -97,5 +98,44 @@ describe("ConfigService", () => {
     tick();
     const result = service.exportConfig();
     expect(result).toEqual(expected);
+  }));
+
+  it("should migrate entity attributes config to flattened format with id", fakeAsync(() => {
+    const testConfigId = "entity:Test";
+    const config = new Config();
+    config.data = {
+      [testConfigId]: {
+        attributes: [
+          {
+            name: "count",
+            schema: {
+              dataType: "number",
+            },
+          },
+        ],
+      },
+    };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const result = service.getConfig<EntityConfig>("entity:Test");
+
+    expect(result.attributes).toEqual([{ id: "count", dataType: "number" }]);
+  }));
+  it("should not migrate / change entity attributes if already in new format", fakeAsync(() => {
+    const testConfigId = "entity:Test";
+    const entityAttributes = [{ id: "count", dataType: "number" }];
+    const config = new Config();
+    config.data = {
+      [testConfigId]: {
+        attributes: entityAttributes,
+      },
+    };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const result = service.getConfig<EntityConfig>("entity:Test");
+
+    expect(result.attributes).toEqual(entityAttributes);
   }));
 });

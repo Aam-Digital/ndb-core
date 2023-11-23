@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { EntityConfig } from "../../core/entity/entity-config.service";
 import {
   EntityListConfig,
   GroupConfig,
@@ -14,6 +13,8 @@ import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field"
 import { ConfigFieldRaw } from "./config-field.raw";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
 import { defaultJsonConfig } from "../../core/config/config-fix";
+import { EntityConfig } from "../../core/entity/entity-config";
+import { EntityConfigService } from "../../core/entity/entity-config.service";
 
 @Injectable({
   providedIn: "root",
@@ -77,7 +78,8 @@ export class ConfigImportParserService {
       this.initializeDefaultValues(generatedConfig);
     }
 
-    generatedConfig["entity:" + entityName] = entity;
+    generatedConfig[EntityConfigService.PREFIX_ENTITY_CONFIG + entityName] =
+      entity;
 
     // add enum configs
     for (const [key, enumConfig] of this.enumsAvailable) {
@@ -92,12 +94,16 @@ export class ConfigImportParserService {
     return generatedConfig;
   }
 
-  private parseFieldDefinition(fieldDef: ConfigFieldRaw, entityType: string) {
+  private parseFieldDefinition(
+    fieldDef: ConfigFieldRaw,
+    entityType: string,
+  ): EntitySchemaField {
     const fieldId =
       fieldDef.id ??
       ConfigImportParserService.generateIdFromLabel(fieldDef.label);
 
     const schema: EntitySchemaField = {
+      id: fieldId,
       dataType: fieldDef.dataType,
       label: fieldDef.label,
       description: fieldDef.description,
@@ -138,7 +144,7 @@ export class ConfigImportParserService {
     this.generateOrUpdateDetailsViewConfig(fieldDef, entityType, fieldId);
 
     deleteEmptyProperties(schema);
-    return { name: fieldId, schema: schema };
+    return schema;
   }
 
   /**

@@ -4,6 +4,7 @@ import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
+import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -35,7 +36,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   public getConfig<T>(id: string): T {
-    return this.currentConfig.data[id];
+    return this.applyMigrations(id, this.currentConfig.data[id]);
   }
 
   public getAllConfigs<T>(prefix: string): T[] {
@@ -46,6 +47,35 @@ export class ConfigService extends LatestEntityLoader<Config> {
         matchingConfigs.push(this.currentConfig.data[id]);
       }
     }
-    return matchingConfigs;
+    return matchingConfigs.map((c) => this.applyMigrations(prefix, c));
   }
+
+  private applyMigrations(id: string, configData: any) {
+    configData = migrateEntityAttributesWithId(id, configData);
+    return configData;
+  }
+}
+
+/**
+ * Transform legacy "entity:" config format into the flattened structure containing id directly.
+ */
+function migrateEntityAttributesWithId(idOrPrefix: string, configData: any) {
+  if (!idOrPrefix.startsWith("entity")) {
+    return configData;
+  }
+
+  configData.attributes = configData.attributes?.map(
+    (attr): EntitySchemaField => {
+      if (attr.schema) {
+        const legacyAttr: { name: string; schema: EntitySchemaField } = attr;
+        return {
+          id: legacyAttr.name,
+          ...attr.schema,
+        };
+      }
+      return attr;
+    },
+  );
+
+  return configData;
 }

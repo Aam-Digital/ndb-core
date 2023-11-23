@@ -122,6 +122,7 @@ describe("EntitySchemaService", () => {
 
   it("should return correct inner data type", () => {
     const enumArraySchema: EntitySchemaField = {
+      id: null,
       dataType: "array",
       innerDataType: "configurable-enum",
     };
@@ -129,7 +130,10 @@ describe("EntitySchemaService", () => {
       ConfigurableEnumDatatype,
     );
 
-    const entityArraySchema: EntitySchemaField = { dataType: "entity-array" };
+    const entityArraySchema: EntitySchemaField = {
+      id: null,
+      dataType: "entity-array",
+    };
     expect(service.getInnermostDatatype(entityArraySchema)).toBeInstanceOf(
       EntityDatatype,
     );

@@ -165,7 +165,7 @@ describe("EntityFormService", () => {
   });
 
   it("should assign default values", () => {
-    const schema: EntitySchemaField = { defaultValue: 1 };
+    const schema: EntitySchemaField = { id: "test", defaultValue: 1 };
     Entity.schema.set("test", schema);
 
     let form = service.createFormGroup([{ id: "test" }], new Entity());
@@ -191,7 +191,7 @@ describe("EntityFormService", () => {
   });
 
   it("should not assign default values to existing entities", () => {
-    Entity.schema.set("test", { defaultValue: 1 });
+    Entity.schema.set("test", { id: "test", defaultValue: 1 });
 
     const entity = new Entity();
     entity._rev = "1-existing_entity";
@@ -202,7 +202,7 @@ describe("EntityFormService", () => {
   });
 
   it("should not overwrite existing values with default value", () => {
-    Entity.schema.set("test", { defaultValue: 1 });
+    Entity.schema.set("test", { id: "test", defaultValue: 1 });
 
     const entity = new Entity();
     entity["test"] = 2;

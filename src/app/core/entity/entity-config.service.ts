@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "./model/entity";
 import { ConfigService } from "../config/config.service";
-import { EntitySchemaField } from "./schema/entity-schema-field";
 import { addPropertySchema } from "./database-field.decorator";
 import { EntityRegistry } from "./database-entity.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
+import { EntityConfig } from "./entity-config";
 
 /**
  * A service that allows to work with configuration-objects
@@ -15,7 +15,10 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
   providedIn: "root",
 })
 export class EntityConfigService {
+  /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";
+
+  // TODO: merge with EntityRegistry?
 
   constructor(
     private configService: ConfigService,
@@ -67,15 +70,10 @@ export class EntityConfigService {
     configAttributes?: EntityConfig,
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
-    if (entityConfig?.attributes) {
-      entityConfig.attributes.forEach((attribute) =>
-        addPropertySchema(
-          entityType.prototype,
-          attribute.name,
-          attribute.schema,
-        ),
-      );
+    for (const attr of entityConfig?.attributes ?? []) {
+      addPropertySchema(entityType.prototype, attr);
     }
+
     // TODO: shall we just assign all properties that are present in the config object?
     entityType.toStringAttributes =
       entityConfig.toStringAttributes ?? entityType.toStringAttributes;
@@ -99,68 +97,4 @@ export class EntityConfigService {
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig<EntityConfig>(configName);
   }
-}
-
-/**
- * Dynamic configuration for a entity.
- * This allows to change entity metadata based on the configuration.
- */
-export interface EntityConfig {
-  /**
-   * A list of attributes that will be dynamically added/overwritten to the entity.
-   */
-  attributes?: {
-    /**
-     * The name of the attribute (class variable) to be added/overwritten.
-     */
-    name: string;
-
-    /**
-     * The (new) schema configuration for this attribute.
-     */
-    schema: EntitySchemaField;
-  }[];
-
-  /**
-   * A list of attributes which should be shown when calling the `.toString()` method of this entity.
-   * E.g. showing the first and last name of a child.
-   *
-   * (optional) the default is the ID of the entity (`.entityId`)
-   */
-  toStringAttributes?: string[];
-
-  /**
-   * human-readable name/label of the entity in the UI
-   */
-  label?: string;
-
-  /**
-   * human-readable name/label of the entity in the UI when referring to multiple
-   */
-  labelPlural?: string;
-
-  /**
-   * icon used to visualize the entity type
-   */
-  icon?: string;
-
-  /**
-   * color used for to highlight this entity type across the app
-   */
-  color?: string;
-
-  /**
-   * base route of views for this entity type
-   */
-  route?: string;
-
-  /**
-   * when a new entity is created, all properties from this class will also be available
-   */
-  extends?: string;
-
-  /**
-   * whether the type can contain personally identifiable information (PII)
-   */
-  hasPII?: boolean;
 }
