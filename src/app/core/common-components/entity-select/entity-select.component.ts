@@ -161,7 +161,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   inputPlaceholder = this.loadingPlaceholder;
 
   allEntities: E[] = [];
+  relevantEntities: E[] = [];
   filteredEntities: E[] = [];
+  inactiveFilteredEntities: E[] = [];
+
   formControl = new FormControl("");
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
@@ -188,6 +191,9 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("additionalFilter")) {
       // update whenever additional filters are being set
       this.formControl.setValue(this.formControl.value);
+      this.relevantEntities = this.allEntities.filter((e) =>
+        this.additionalFilter(e),
+      );
     }
   }
 
@@ -208,9 +214,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     for (const type of types) {
       entities.push(...(await this.entityMapperService.loadType<E>(type)));
     }
-
     this.allEntities = entities;
-
+    this.allEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
+    this.relevantEntities = this.allEntities.filter((e) =>
+      this.additionalFilter(e),
+    );
     this.loading.next(false);
     this.formControl.setValue(null);
   }
@@ -239,7 +247,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     const value = event.value;
 
     if (value) {
-      const entity = this.allEntities.find(
+      const entity = this.relevantEntities.find(
         (e) => this.accessor(e) === value.trim(),
       );
       if (entity) {
@@ -256,34 +264,31 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * this will return all entities (with the aforementioned additional filters).
    * @param value The value to look for in all entities
    */
-  private filter(value?: string): E[] {
-    let filteredEntities: E[] = this.allEntities.filter(
-      (e) =>
-        this.additionalFilter(e) &&
-        !this.isSelected(e) &&
-        (this.includeInactive ? true : e.isActive),
+  private filter(value: string): E[] {
+    let filteredEntities: E[] = this.relevantEntities.filter(
+      (e) => !this.isSelected(e) && (this.includeInactive ? true : e.isActive),
     );
+    let inactiveFilteredEntities: E[] = this.relevantEntities.filter(
+      (e) => !this.isSelected(e) && !e.isActive,
+    );
+    this.filterValue = value;
+
     if (value) {
-      this.filterValue = value;
       const filterValue = value.toLowerCase();
       filteredEntities = filteredEntities.filter((entity) =>
         this.accessor(entity).toLowerCase().includes(filterValue),
       );
+      inactiveFilteredEntities = inactiveFilteredEntities.filter((entity) =>
+        this.accessor(entity).toLowerCase().includes(filterValue),
+      );
     }
+    this.inactiveFilteredEntities = inactiveFilteredEntities;
     return filteredEntities;
   }
 
   toggleIncludeInactive() {
     this.includeInactive = !this.includeInactive;
     this.filteredEntities = this.filter(this.filterValue);
-  }
-
-  getNumberOfInactive() {
-    const previousState = this.includeInactive;
-    this.includeInactive = true;
-    let numberOfInactive = this.filter(this.filterValue).length;
-    this.includeInactive = previousState;
-    return numberOfInactive;
   }
 
   /**

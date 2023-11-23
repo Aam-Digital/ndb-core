@@ -221,18 +221,18 @@ describe("EntitySelectComponent", () => {
     });
     testEntities[6].isActive = false;
     testEntities[7].isActive = false;
-   
+
     component.allEntities = testEntities;
     component.loading.next(false);
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
-    let options; 
+    let options;
 
     autocomplete.enterText("X");
     options = await autocomplete.getOptions();
     expect(options.length).toEqual(1);
-    expect((await options[0].getText())).toEqual("None.");
+    expect(await options[0].getText()).toEqual("None.");
 
-       autocomplete.clear();
+    autocomplete.clear();
     autocomplete.enterText("Aa");
     options = await autocomplete.getOptions();
     expect(options.length).toEqual(4);
@@ -241,7 +241,7 @@ describe("EntitySelectComponent", () => {
     autocomplete.enterText("Ca");
     options = await autocomplete.getOptions();
     expect(options.length).toEqual(1);
-    expect((await options[0].getText())).toContain("2");
+    expect(await options[0].getText()).toContain("2");
 
     tick();
   }));
@@ -284,8 +284,16 @@ describe("EntitySelectComponent", () => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
     tick();
     fixture.detectChanges();
-    expect(component.allEntities).toEqual([...testUsers, ...testChildren]);
-    expect(component.filteredEntities).toEqual([...testUsers, ...testChildren]);
+    expect(component.allEntities).toEqual(
+      [...testUsers, ...testChildren].sort((a, b) =>
+        a.toString().localeCompare(b.toString()),
+      ),
+    );
+    expect(component.filteredEntities).toEqual(
+      [...testUsers, ...testChildren].sort((a, b) =>
+        a.toString().localeCompare(b.toString()),
+      ),
+    );
   }));
 
   it("should be able to select entities from different types", fakeAsync(() => {
