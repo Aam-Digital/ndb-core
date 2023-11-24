@@ -6,17 +6,16 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
-import { FormFieldConfig } from "./FormConfig";
 import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NgClass, NgForOf, NgIf } from "@angular/common";
-import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { Subscription } from "rxjs";
 import moment from "moment";
-import { HelpButtonComponent } from "../../help-button/help-button.component";
+import { FormFieldComponent } from "../form-field/form-field.component";
+import { ColumnConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -35,24 +34,18 @@ import { HelpButtonComponent } from "../../help-button/help-button.component";
   // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    NgForOf,
-    DynamicComponentDirective,
-    NgIf,
-    NgClass,
-    HelpButtonComponent,
-  ],
+  imports: [NgForOf, NgIf, NgClass, FormFieldComponent],
   standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>
-  implements OnChanges
+  implements OnChanges, EntityFormConfig
 {
   /**
    * The entity which should be displayed and edited
    */
   @Input() entity: T;
 
-  @Input() columns: FormFieldConfig[][];
+  @Input() columns: ColumnConfig[][];
 
   @Input() columnHeaders?: (string | null)[];
 
@@ -153,4 +146,9 @@ export class EntityFormComponent<T extends Entity = Entity>
       this.form.disable();
     }
   }
+}
+
+export interface EntityFormConfig {
+  columns: ColumnConfig[][];
+  columnHeaders?: (string | null)[];
 }

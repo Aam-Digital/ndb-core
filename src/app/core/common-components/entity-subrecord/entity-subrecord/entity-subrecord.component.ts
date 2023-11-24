@@ -300,10 +300,12 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private initFormGroups() {
     if (this.entityConstructorIsAvailable()) {
       try {
-        this.entityFormService.extendFormFieldConfig(
-          this.filteredColumns,
-          this.getEntityConstructor(),
-          true,
+        this.filteredColumns = this.filteredColumns.map((f) =>
+          this.entityFormService.extendFormFieldConfig(
+            f,
+            this.getEntityConstructor(),
+            true,
+          ),
         );
       } catch (err) {
         this.loggingService.warn(`Error creating form definitions: ${err}`);

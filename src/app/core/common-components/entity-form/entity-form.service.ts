@@ -18,6 +18,10 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
+import {
+  ColumnConfig,
+  toFormFieldConfig,
+} from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -60,27 +64,32 @@ export class EntityFormService {
    * @param forTable
    */
   public extendFormFieldConfig(
-    formFields: FormFieldConfig[],
+    formField: ColumnConfig,
     entityType: EntityConstructor,
     forTable = false,
-  ) {
-    formFields.forEach((formField) => {
-      try {
-        this.addFormFields(formField, entityType, forTable);
-      } catch (err) {
-        throw new Error(
-          `Could not create form config for ${formField.id}: ${err}`,
-        );
-      }
-    });
+  ): FormFieldConfig {
+    const fullField: FormFieldConfig = toFormFieldConfig(formField);
+
+    try {
+      this.addSchemaToFormField(
+        fullField,
+        entityType.schema.get(fullField.id),
+        forTable,
+      );
+    } catch (err) {
+      throw new Error(
+        `Could not create form config for ${fullField.id}: ${err}`,
+      );
+    }
+
+    return fullField;
   }
 
-  private addFormFields(
+  private addSchemaToFormField(
     formField: FormFieldConfig,
-    entityType: EntityConstructor,
+    propertySchema: EntitySchemaField,
     forTable: boolean,
   ) {
-    const propertySchema = entityType.schema.get(formField.id);
     formField.edit =
       formField.edit ||
       this.entitySchemaService.getComponent(propertySchema, "edit");
@@ -101,6 +110,8 @@ export class EntityFormService {
     if (propertySchema?.validators) {
       formField.validators = propertySchema?.validators;
     }
+
+    return formField;
   }
 
   /**
@@ -115,7 +126,9 @@ export class EntityFormService {
     entity: T,
     forTable = false,
   ): EntityForm<T> {
-    this.extendFormFieldConfig(formFields, entity.getConstructor(), forTable);
+    formFields = formFields.map((f) =>
+      this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
+    );
     const formConfig = {};
     const entitySchema = entity.getSchema();
     const copy = entity.copy();

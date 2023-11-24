@@ -30,33 +30,19 @@
       class="mat-elevation-z2 flex-column gap-small padding-small margin-bottom-regular"
     >
       <div class="middle-form-field">
-        <ng-container
-          [appDynamicComponent]="{
-            component: middleForm[0].edit,
-            config: {
-              formFieldConfig: middleForm[0],
-              propertySchema: entity.getSchema().get(middleForm[0].id),
-              formControl: form.get(middleForm[0].id),
-              entity: entity
-            }
-          }"
-        >
-        </ng-container>
+        <app-form-field
+          [field]="middleForm[0]"
+          [entity]="entity"
+          [form]="form"
+        ></app-form-field>
       </div>
 
       <div class="textarea middle-form-field">
-        <ng-container
-          [appDynamicComponent]="{
-            component: middleForm[1].edit,
-            config: {
-              formFieldConfig: middleForm[1],
-              propertySchema: entity.getSchema().get(middleForm[1].id),
-              formControl: form.get(middleForm[1].id),
-              entity: entity
-            }
-          }"
-        >
-        </ng-container>
+        <app-form-field
+          [field]="middleForm[1]"
+          [entity]="entity"
+          [form]="form"
+        ></app-form-field>
       </div>
     </div>
 

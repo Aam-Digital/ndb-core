@@ -98,4 +98,69 @@ describe("ConfigService", () => {
     const result = service.exportConfig();
     expect(result).toEqual(expected);
   }));
+
+  it("should migrate Form field group headers into combined format", fakeAsync(() => {
+    const testConfigId = "view:test/:id";
+
+    const form1Config = {
+      cols: [["name"], ["other"]],
+      headers: [null, "2nd group"],
+    };
+    const form2Config = {
+      cols: [["name"], ["other"]],
+    };
+
+    const viewConfig = {
+      component: "EntityDetails",
+      config: {
+        entity: "Entity",
+        panels: [
+          {
+            title: "Tab 1",
+            components: [{ title: "", component: "Form", config: form1Config }],
+          },
+          {
+            title: "Tab 2",
+            components: [
+              { component: "ActivitiesOverview" },
+              { component: "Form", config: form2Config },
+            ],
+          },
+        ],
+      },
+    };
+
+    updateSubject.next({
+      entity: Object.assign(new Config(), {
+        data: { [testConfigId]: viewConfig },
+      }),
+      type: "update",
+    });
+    tick();
+
+    const result: any = service.getConfig(testConfigId);
+
+    const expectedForm1Config = {
+      fieldGroups: [
+        { fields: form1Config.cols[0] },
+        { fields: form1Config.cols[1], header: form1Config.headers[1] },
+      ],
+    };
+    const expectedForm2Config = {
+      fieldGroups: [
+        { fields: form2Config.cols[0] },
+        { fields: form2Config.cols[1] },
+      ],
+    };
+
+    expect(result.config.panels[0].components[0].config).toEqual(
+      expectedForm1Config,
+    );
+    expect(result.config.panels[1].components[1].config).toEqual(
+      expectedForm2Config,
+    );
+    expect(result.config.panels[1].components[0].config).toEqual(
+      viewConfig.config.panels[1].components[0].config,
+    );
+  }));
 });
