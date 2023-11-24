@@ -22,6 +22,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatCardModule } from "@angular/material/card";
+import { FormFieldComponent } from "../common-components/entity-form/form-field/form-field.component";
 
 const routes: Routes = [
   {
@@ -56,6 +57,7 @@ const routes: Routes = [
     MatTooltipModule,
     CdkDragHandle,
     MatCardModule,
+    FormFieldComponent,
   ],
   exports: [RouterModule, ConfigEntityComponent],
   declarations: [ConfigEntityComponent, ConfigEntityFormComponent],

@@ -64,25 +64,25 @@ export class EntityFormService {
    * @param forTable
    */
   public extendFormFieldConfig(
-    formFields: ColumnConfig[],
+    formField: ColumnConfig,
     entityType: EntityConstructor,
     forTable = false,
-  ): FormFieldConfig[] {
-    const fullFields: FormFieldConfig[] = formFields.map(toFormFieldConfig);
-    for (const formField of fullFields) {
-      try {
-        this.addSchemaToFormField(
-          formField,
-          entityType.schema.get(formField.id),
-          forTable,
-        );
-      } catch (err) {
-        throw new Error(
-          `Could not create form config for ${formField.id}: ${err}`,
-        );
-      }
+  ): FormFieldConfig {
+    const fullField: FormFieldConfig = toFormFieldConfig(formField);
+
+    try {
+      this.addSchemaToFormField(
+        fullField,
+        entityType.schema.get(fullField.id),
+        forTable,
+      );
+    } catch (err) {
+      throw new Error(
+        `Could not create form config for ${fullField.id}: ${err}`,
+      );
     }
-    return fullFields;
+
+    return fullField;
   }
 
   addSchemaToFormField(
@@ -126,10 +126,8 @@ export class EntityFormService {
     entity: T,
     forTable = false,
   ): EntityForm<T> {
-    formFields = this.extendFormFieldConfig(
-      formFields,
-      entity.getConstructor(),
-      forTable,
+    formFields = formFields.map((f) =>
+      this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
     );
     const formConfig = {};
     const entitySchema = entity.getSchema();

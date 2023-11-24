@@ -7,7 +7,10 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { FormConfig } from "../../entity-details/form/form.component";
+import {
+  FieldGroup,
+  FormConfig,
+} from "../../entity-details/form/form.component";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
@@ -32,7 +35,7 @@ export class ConfigEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   @Input() config: FormConfig;
-  fieldGroups: FieldGroup[]; // TODO: maybe change the config itself to reflect this structure?
+  fieldGroups: FieldGroup[];
 
   @Output() entitySchemaFieldChange = new EventEmitter<EntitySchemaField>();
 
@@ -52,20 +55,12 @@ export class ConfigEntityFormComponent implements OnChanges {
   }
 
   private prepareConfig(config: FormConfig) {
-    this.fieldGroups = [];
-    for (let i = 0; i < config.cols.length; i++) {
-      this.fieldGroups.push({
-        header: config.headers?.[i],
-        // TODO: DISCUSS config approach
-        //    extend + merge all configs completely in config service?
-        //  OR
-        //    keep in most simple format until lowest level (e.g. extend only in abstract EditComponent)
-        fields: this.entityFormService.extendFormFieldConfig(
-          config.cols[i],
-          this.entityType,
-        ),
-      });
-    }
+    this.fieldGroups = config.fieldGroups;
+    // TODO: can we avoid this and directly use config.fieldGroups? DISCUSS config approach
+    //    extend + merge all configs completely in config service?
+    //  OR
+    //    keep in most simple format until lowest level (e.g. extend only in abstract EditComponent)
+    //fields: this.entityFormService.extendFormFieldConfig( fg.fields, this.entityType),
 
     this.dummyEntity = new this.entityType();
     this.dummyForm = this.entityFormService.createFormGroup(
@@ -179,9 +174,4 @@ export class ConfigEntityFormComponent implements OnChanges {
     const [removedFieldGroup] = this.fieldGroups.splice(i, 1);
     this.availableFields.push(...removedFieldGroup.fields);
   }
-}
-
-export interface FieldGroup {
-  header?: string;
-  fields: FormFieldConfig[];
 }

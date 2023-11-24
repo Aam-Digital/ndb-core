@@ -5,6 +5,7 @@ import { LoggingService } from "../logging/logging.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
+import { FieldGroup } from "../entity-details/form/form.component";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -52,6 +53,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   private applyMigrations(id: string, configData: any) {
     configData = migrateEntityAttributesWithId(id, configData);
+    configData = migrateFormHeadersIntoFieldGroups(id, configData);
     return configData;
   }
 }
@@ -60,11 +62,11 @@ export class ConfigService extends LatestEntityLoader<Config> {
  * Transform legacy "entity:" config format into the flattened structure containing id directly.
  */
 function migrateEntityAttributesWithId(idOrPrefix: string, configData: any) {
-  if (!idOrPrefix.startsWith("entity")) {
+  if (!idOrPrefix.startsWith("entity") || !configData?.attributes) {
     return configData;
   }
 
-  configData.attributes = configData.attributes?.map(
+  configData.attributes = configData.attributes.map(
     (attr): EntitySchemaField => {
       if (attr.schema) {
         const legacyAttr: { name: string; schema: EntitySchemaField } = attr;
@@ -78,4 +80,60 @@ function migrateEntityAttributesWithId(idOrPrefix: string, configData: any) {
   );
 
   return configData;
+}
+
+/**
+ * Transform legacy "view:...Form" config format to have form field group headers with the fields rather than as separate array.
+ */
+function migrateFormHeadersIntoFieldGroups(
+  idOrPrefix: string,
+  configData: any,
+) {
+  if (!idOrPrefix.startsWith("view") || !configData) {
+    return configData;
+  }
+
+  const configString = JSON.stringify(configData);
+  if (!configString.includes('"component":"Form"')) {
+    return configData;
+  }
+
+  function migrateFormConfig(formConfig) {
+    if (!formConfig) {
+      return formConfig;
+    }
+
+    // change .cols and .headers into .fieldGroups
+    const newFormConfig = { ...formConfig };
+    delete newFormConfig.cols;
+    delete newFormConfig.headers;
+
+    newFormConfig.fieldGroups = formConfig.cols?.map(
+      (colGroup) => ({ fields: colGroup }) as FieldGroup,
+    );
+    if (formConfig.headers) {
+      newFormConfig.fieldGroups.forEach((group, i) => {
+        if (formConfig.headers[i]) {
+          group.header = formConfig.headers[i];
+        }
+      });
+    }
+
+    return newFormConfig;
+  }
+
+  const newConfig = JSON.parse(
+    JSON.stringify(configData),
+    (_that, rawValue) => {
+      if (rawValue?.component !== "Form") {
+        // do not transform unless config for `{ component: "Form", config: { ... } }` parts
+        return rawValue;
+      }
+
+      rawValue.config = migrateFormConfig(rawValue.config);
+      return rawValue;
+    },
+  );
+
+  return newConfig;
 }

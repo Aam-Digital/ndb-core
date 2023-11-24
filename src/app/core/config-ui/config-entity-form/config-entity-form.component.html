@@ -54,22 +54,11 @@
           </button>
 
           <div class="dummy-form-field">
-            <div [class.field-with-tooltip-suffix]="f.tooltip">
-              <ng-container
-                *ngIf="f.id"
-                [appDynamicComponent]="{
-                  component: f.edit,
-                  config: {
-                    formFieldConfig: f,
-                    propertySchema: entityType.schema.get(f.id),
-                    formControl: dummyForm.get(f.id),
-                    entity: dummyEntity
-                  }
-                }"
-              >
-              </ng-container>
-            </div>
-            <app-help-button [text]="f.tooltip"></app-help-button>
+            <app-form-field
+              [field]="f"
+              [entity]="dummyEntity"
+              [form]="dummyForm"
+            ></app-form-field>
           </div>
         </div>
         <!-- FIELD [end]-->

@@ -10,7 +10,6 @@ import {
   EntityFormService,
 } from "../../common-components/entity-form/entity-form.service";
 import { AlertService } from "../../alerts/alert.service";
-import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
@@ -36,10 +35,10 @@ import { FormFieldConfig } from "../../common-components/entity-form/entity-form
 export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() entity: E;
   @Input() creatingNew = false;
-  @Input() headers: string[] = [];
 
-  @Input() cols: ColumnConfig[][];
+  @Input() fieldGroups: FieldGroup[];
   columns: FormFieldConfig[][] = [];
+  headers: string[] = [];
 
   form: EntityForm<E>;
 
@@ -51,12 +50,9 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   ) {}
 
   ngOnInit() {
-    this.columns = this.cols.map((fields) =>
-      this.entityFormService.extendFormFieldConfig(
-        fields,
-        this.entity.getConstructor(),
-      ),
-    );
+    // TODO: switch EntityFormComponent to also implement FormConfig with the new FieldGroup interface
+    this.headers = this.fieldGroups.map((group) => group.header);
+    this.columns = this.fieldGroups.map((group) => group.fields);
     this.form = this.entityFormService.createFormGroup(
       [].concat(...this.columns),
       this.entity,
@@ -97,6 +93,13 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
  * The (possibly abbreviated) configuration for a "FormComponent", as it is stored in the config file.
  */
 export interface FormConfig {
-  cols: ColumnConfig[][];
-  headers: string[];
+  fieldGroups: FieldGroup[];
+}
+
+/**
+ * A group of related form fields displayed within a Form component.
+ */
+export interface FieldGroup {
+  header?: string;
+  fields: FormFieldConfig[];
 }
