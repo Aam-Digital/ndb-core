@@ -18,7 +18,7 @@ import { FormFieldComponent } from "../form-field/form-field.component";
 import {
   FieldGroup,
   FormConfig,
-} from "../../../entity-details/form/form.component";
+} from "../../../entity-details/form/form-config";
 
 /**
  * A general purpose form component for displaying and editing entities.

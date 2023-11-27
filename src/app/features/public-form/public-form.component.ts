@@ -16,7 +16,7 @@ import { EntitySchemaService } from "../../core/entity/schema/entity-schema.serv
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { FieldGroup } from "../../core/entity-details/form/form.component";
+import { FieldGroup } from "../../core/entity-details/form/form-config";
 
 @UntilDestroy()
 @Component({

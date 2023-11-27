@@ -23,7 +23,7 @@ import { TodoCompletionComponent } from "../todo-completion/todo-completion/todo
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
-import { FieldGroup } from "../../../core/entity-details/form/form.component";
+import { FieldGroup } from "../../../core/entity-details/form/form-config";
 
 @Component({
   selector: "app-todo-details",

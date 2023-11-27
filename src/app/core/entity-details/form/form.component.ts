@@ -13,7 +13,7 @@ import { AlertService } from "../../alerts/alert.service";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FieldGroup, FormConfig } from "./form-config";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -82,19 +82,4 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     this.entityFormService.resetForm(this.form, this.entity);
     this.form.disable();
   }
-}
-
-/**
- * The (possibly abbreviated) configuration for a "FormComponent", as it is stored in the config file.
- */
-export interface FormConfig {
-  fieldGroups: FieldGroup[];
-}
-
-/**
- * A group of related form fields displayed within a Form component.
- */
-export interface FieldGroup {
-  header?: string;
-  fields: ColumnConfig[];
 }
