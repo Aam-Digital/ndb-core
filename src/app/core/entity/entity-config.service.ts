@@ -70,7 +70,7 @@ export class EntityConfigService {
     configAttributes?: EntityConfig,
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
-    for (const attr of entityConfig?.attributes) {
+    for (const attr of entityConfig?.attributes ?? []) {
       addPropertySchema(entityType.prototype, attr);
     }
 

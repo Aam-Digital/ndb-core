@@ -132,7 +132,7 @@ describe("EntityConfigService", () => {
         _id: "entity:DynamicTest",
         label: "Dynamic Test Entity",
         extends: "Test",
-        attributes: [{ name: "dynamicProperty", schema }],
+        attributes: [schema],
       },
     ]);
 

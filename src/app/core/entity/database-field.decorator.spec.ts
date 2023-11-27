@@ -40,9 +40,12 @@ describe("@DatabaseField Decorator", () => {
   it("results in full schema", async () => {
     expect(TestClass.schema).toEqual(
       new Map([
-        ["fieldUndefined", { dataType: "string" }],
-        ["fieldWithDefault", { dataType: "string" }],
-        ["fieldDate", { dataType: "date", generateIndex: true }],
+        ["fieldUndefined", { id: "fieldUndefined", dataType: "string" }],
+        ["fieldWithDefault", { id: "fieldWithDefault", dataType: "string" }],
+        [
+          "fieldDate",
+          { id: "fieldDate", dataType: "date", generateIndex: true },
+        ],
       ]),
     );
   });
