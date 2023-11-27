@@ -256,4 +256,20 @@ describe("AbilityService", () => {
       defaultRules.concat(...rules.user_app, ...rules.admin_app),
     );
   });
+
+  it("should allow everything if permission doc has been deleted", () => {
+    entityUpdates.next({
+      type: "new",
+      entity: new Config<DatabaseRules>(Config.PERMISSION_KEY, rules),
+    });
+
+    expect(ability.rules).toEqual(rules["user_app"]);
+
+    entityUpdates.next({
+      type: "remove",
+      entity: new Config<DatabaseRules>(Config.PERMISSION_KEY),
+    });
+
+    expect(ability.rules).toEqual([{ subject: "all", action: "manage" }]);
+  });
 });
