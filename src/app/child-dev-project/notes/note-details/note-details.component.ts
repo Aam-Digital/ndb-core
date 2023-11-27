@@ -91,7 +91,7 @@ export class NoteDetailsComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.topFieldsGroups = [{ fields: this.topForm }];
+    this.topFieldsGroups = this.topForm.map((f) => ({ fields: [f] }));
     this.bottomFieldsGroups = [{ fields: this.bottomForm }];
 
     this.form = this.entityFormService.createFormGroup(
