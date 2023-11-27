@@ -7,8 +7,6 @@ import {
 
 import { ReportingComponent } from "./reporting.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { Subject } from "rxjs";
-import { ActivatedRoute } from "@angular/router";
 import {
   Aggregation,
   DataAggregationService,
@@ -16,23 +14,20 @@ import {
 import { MatNativeDateModule } from "@angular/material/core";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { ReportRow } from "../report-row";
-import {
-  ReportConfig,
-  ReportingComponentConfig,
-} from "./reporting-component-config";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { RouterTestingModule } from "@angular/router/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
+import { ReportConfig } from "../report-config";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
-  const mockRouteData = new Subject<RouteData<ReportingComponentConfig>>();
   let mockReportingService: jasmine.SpyObj<DataAggregationService>;
   let mockDataTransformationService: jasmine.SpyObj<DataTransformationService>;
 
-  const testReport: ReportConfig = {
+  const testReport: ReportConfig = Object.assign(new ReportConfig(), {
     title: "test report",
     aggregationDefinitions: [
       {
@@ -42,7 +37,7 @@ describe("ReportingComponent", () => {
         aggregations: [],
       },
     ],
-  };
+  });
 
   beforeEach(async () => {
     mockReportingService = jasmine.createSpyObj(["calculateReport"]);
@@ -59,12 +54,12 @@ describe("ReportingComponent", () => {
         RouterTestingModule,
       ],
       providers: [
-        { provide: ActivatedRoute, useValue: { data: mockRouteData } },
         { provide: DataAggregationService, useValue: mockReportingService },
         {
           provide: DataTransformationService,
           useValue: mockDataTransformationService,
         },
+        { provide: EntityMapperService, useValue: mockEntityMapper() },
       ],
     }).compileComponents();
   });
@@ -73,7 +68,6 @@ describe("ReportingComponent", () => {
     fixture = TestBed.createComponent(ReportingComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-    mockRouteData.next({ config: { reports: [] } });
   });
 
   it("should create", () => {
@@ -208,7 +202,11 @@ describe("ReportingComponent", () => {
     mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
 
     await component.calculateResults(
-      { aggregationDefinitions: [], title: "", mode: "exporting" },
+      Object.assign(new ReportConfig(), {
+        aggregationDefinitions: [],
+        title: "",
+        mode: "exporting",
+      }),
       new Date(),
       new Date(),
     );
