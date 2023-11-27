@@ -25,7 +25,7 @@ describe("FormComponent", () => {
     fixture = TestBed.createComponent(FormComponent<Child>);
     component = fixture.componentInstance;
     component.entity = new Child();
-    component.cols = [[{ id: "name" }]];
+    component.fieldGroups = [{ fields: [{ id: "name" }] }];
     fixture.detectChanges();
   });
 
@@ -37,7 +37,7 @@ describe("FormComponent", () => {
     expect(component.creatingNew).toBeFalse();
 
     component.entity = new Child();
-    component.cols = [];
+    component.fieldGroups = [];
     component.creatingNew = true;
 
     expect(component.creatingNew).toBeTrue();
@@ -103,23 +103,25 @@ describe("FormComponent", () => {
       "PredefinedComponent",
     );
     component.entity = new Test();
-    component.cols = [
-      [
-        {
-          id: "fieldWithDefinition",
-          edit: "EditComponent",
-          view: "DisplayComponent",
-          label: "Field with definition",
-          tooltip: "Custom tooltip",
-          additional: "additional",
-        },
-        { id: "propertyField", label: "Property" },
-      ],
+    component.fieldGroups = [
+      {
+        fields: [
+          {
+            id: "fieldWithDefinition",
+            edit: "EditComponent",
+            view: "DisplayComponent",
+            label: "Field with definition",
+            tooltip: "Custom tooltip",
+            additional: "additional",
+          },
+          { id: "propertyField", label: "Property" },
+        ],
+      },
     ];
 
     component.ngOnInit();
 
-    expect(component._cols).toEqual([
+    expect(component.columns).toEqual([
       [
         {
           id: "fieldWithDefinition",

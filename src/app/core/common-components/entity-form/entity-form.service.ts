@@ -122,17 +122,17 @@ export class EntityFormService {
    * @param forTable
    */
   public createFormGroup<T extends Entity>(
-    formFields: FormFieldConfig[],
+    formFields: ColumnConfig[],
     entity: T,
     forTable = false,
   ): EntityForm<T> {
-    formFields = formFields.map((f) =>
+    const fullFields = formFields.map((f) =>
       this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
     );
     const formConfig = {};
     const entitySchema = entity.getSchema();
     const copy = entity.copy();
-    formFields
+    fullFields
       .filter((formField) => entitySchema.get(formField.id))
       .forEach((formField) => {
         const schema = entitySchema.get(formField.id);
