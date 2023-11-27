@@ -22,7 +22,11 @@
   <div class="flex-column gap-regular">
     <app-entity-archived-info [entity]="entity"></app-entity-archived-info>
 
-    <app-entity-form [columns]="topForm" [entity]="entity" [form]="form">
+    <app-entity-form
+      [fieldGroups]="topFieldsGroups"
+      [entity]="entity"
+      [form]="form"
+    >
     </app-entity-form>
 
     <!-- Primary information of Note -->
@@ -47,7 +51,7 @@
     </div>
 
     <app-entity-form
-      [columns]="[bottomForm]"
+      [fieldGroups]="bottomFieldsGroups"
       [entity]="entity"
       [form]="form"
       style="margin-top: 10px"

@@ -4,7 +4,11 @@
   <div class="flex-column gap-regular">
     <app-entity-archived-info [entity]="data.entity"></app-entity-archived-info>
 
-    <app-entity-form [columns]="columns" [entity]="data.entity" [form]="form">
+    <app-entity-form
+      [fieldGroups]="fieldGroups"
+      [entity]="data.entity"
+      [form]="form"
+    >
     </app-entity-form>
 
     <div *ngFor="let col of viewOnlyColumns">

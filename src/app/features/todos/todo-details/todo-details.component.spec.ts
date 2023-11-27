@@ -52,7 +52,7 @@ describe("TodoDetailsComponent", () => {
 
   it("should save entity with all changes when completing todo", async () => {
     const editedEntityProp = "subject";
-    component.formColumns = [[{ id: editedEntityProp }]];
+    component.formColumns = [{ fields: [editedEntityProp] }];
     component.ngOnInit();
 
     component.form.get(editedEntityProp).setValue("123");

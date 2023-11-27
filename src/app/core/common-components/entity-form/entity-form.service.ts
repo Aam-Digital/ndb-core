@@ -85,30 +85,30 @@ export class EntityFormService {
     return fullField;
   }
 
-  addSchemaToFormField(
+  private addSchemaToFormField(
     formField: FormFieldConfig,
-    schemaField: EntitySchemaField,
+    propertySchema: EntitySchemaField,
     forTable: boolean,
   ): FormFieldConfig {
     formField.edit =
       formField.edit ||
-      this.entitySchemaService.getComponent(schemaField, "edit");
+      this.entitySchemaService.getComponent(propertySchema, "edit");
     formField.view =
       formField.view ||
-      this.entitySchemaService.getComponent(schemaField, "view");
-    formField.tooltip = formField.tooltip || schemaField?.description;
-    formField.additional = formField.additional || schemaField?.additional;
+      this.entitySchemaService.getComponent(propertySchema, "view");
+    formField.tooltip = formField.tooltip || propertySchema?.description;
+    formField.additional = formField.additional || propertySchema?.additional;
     if (forTable) {
       formField.forTable = true;
       formField.label =
-        formField.label || schemaField.labelShort || schemaField.label;
+        formField.label || propertySchema.labelShort || propertySchema.label;
     } else {
       formField.forTable = false;
       formField.label =
-        formField.label || schemaField.label || schemaField.labelShort;
+        formField.label || propertySchema.label || propertySchema.labelShort;
     }
-    if (schemaField?.validators) {
-      formField.validators = schemaField?.validators;
+    if (propertySchema?.validators) {
+      formField.validators = propertySchema?.validators;
     }
 
     return formField;
@@ -122,17 +122,17 @@ export class EntityFormService {
    * @param forTable
    */
   public createFormGroup<T extends Entity>(
-    formFields: FormFieldConfig[],
+    formFields: ColumnConfig[],
     entity: T,
     forTable = false,
   ): EntityForm<T> {
-    formFields = formFields.map((f) =>
+    const fullFields = formFields.map((f) =>
       this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
     );
     const formConfig = {};
     const entitySchema = entity.getSchema();
     const copy = entity.copy();
-    formFields
+    fullFields
       .filter((formField) => entitySchema.get(formField.id))
       .forEach((formField) => {
         const schema = entitySchema.get(formField.id);

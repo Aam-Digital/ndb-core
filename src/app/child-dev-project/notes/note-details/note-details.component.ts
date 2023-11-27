@@ -28,6 +28,7 @@ import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
 import { FormFieldComponent } from "../../../core/common-components/entity-form/form-field/form-field.component";
+import { FieldGroup } from "../../../core/entity-details/form/form-config";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -60,11 +61,12 @@ export class NoteDetailsComponent implements OnInit {
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  topForm = ["date", "warningLevel", "category", "authors", "attachment"].map(
-    (field) => [toFormFieldConfig(field)],
-  );
+  topForm = ["date", "warningLevel", "category", "authors", "attachment"];
   middleForm = ["subject", "text"].map(toFormFieldConfig);
-  bottomForm = ["children", "schools"].map(toFormFieldConfig);
+  bottomForm = ["children", "schools"];
+  topFieldsGroups: FieldGroup[];
+  bottomFieldsGroups: FieldGroup[];
+
   form: EntityForm<Note>;
   tmpEntity: Note;
 
@@ -79,22 +81,21 @@ export class NoteDetailsComponent implements OnInit {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note").config.exportConfig;
+
     const formConfig = this.configService.getConfig<any>(
       "appConfig:note-details",
     );
-    this.topForm =
-      formConfig?.topForm?.map((field) => [toFormFieldConfig(field)]) ??
-      this.topForm;
-    ["middleForm", "bottomForm"].forEach((form) => {
-      this[form] =
-        formConfig?.[form]?.map((field) => toFormFieldConfig(field)) ??
-        this[form];
-    });
+    this.topForm = formConfig?.topForm ?? this.topForm;
+    this.middleForm = formConfig?.middleForm ?? this.middleForm;
+    this.bottomForm = formConfig?.bottomForm ?? this.bottomForm;
   }
 
   ngOnInit() {
+    this.topFieldsGroups = this.topForm.map((f) => ({ fields: [f] }));
+    this.bottomFieldsGroups = [{ fields: this.bottomForm }];
+
     this.form = this.entityFormService.createFormGroup(
-      this.middleForm.concat(...this.topForm, this.bottomForm),
+      [...this.middleForm, ...this.topForm, ...this.bottomForm],
       this.entity,
     );
     // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)

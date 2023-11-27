@@ -19,7 +19,9 @@ import { NgIf } from "@angular/common";
   standalone: true,
   imports: [DynamicComponentDirective, HelpButtonComponent, NgIf],
 })
-export class FormFieldComponent<T extends Entity> implements OnChanges {
+export class FormFieldComponent<T extends Entity = Entity>
+  implements OnChanges
+{
   /** field id or full config */
   @Input() field: ColumnConfig;
   /** full field config extended from schema (used internally and for template) */
