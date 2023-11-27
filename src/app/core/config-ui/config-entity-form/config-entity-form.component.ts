@@ -7,13 +7,8 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import {
-  FieldGroup,
-  FormConfig,
-} from "../../entity-details/form/form.component";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfigFieldComponent } from "../config-field/config-field.component";
 import {
@@ -22,6 +17,8 @@ import {
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FormConfig } from "../../entity-details/form/form-config";
 
 @Component({
   selector: "app-config-entity-form",
@@ -35,7 +32,6 @@ export class ConfigEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   @Input() config: FormConfig;
-  fieldGroups: FieldGroup[];
 
   @Output() entitySchemaFieldChange = new EventEmitter<EntitySchemaField>();
 
@@ -55,25 +51,19 @@ export class ConfigEntityFormComponent implements OnChanges {
   }
 
   private prepareConfig(config: FormConfig) {
-    this.fieldGroups = config.fieldGroups;
-    // TODO: can we avoid this and directly use config.fieldGroups? DISCUSS config approach
-    //    extend + merge all configs completely in config service?
-    //  OR
-    //    keep in most simple format until lowest level (e.g. extend only in abstract EditComponent)
-    //fields: this.entityFormService.extendFormFieldConfig( fg.fields, this.entityType),
-
     this.dummyEntity = new this.entityType();
     this.dummyForm = this.entityFormService.createFormGroup(
-      this.fieldGroups.reduce((p, c) => p.concat(c.fields), []),
+      config.fieldGroups.reduce((p, c) => p.concat(c.fields), []),
       this.dummyEntity,
     );
     this.dummyForm.disable();
   }
 
-  openFieldConfig(field: FormFieldConfig, fieldsArray: any[]) {
+  openFieldConfig(field: ColumnConfig, fieldsArray: any[]) {
+    const fieldId = typeof field === "string" ? field : field?.id;
     const schemaField = {
-      ...this.entityType.schema.get(field.id),
-      id: field.id, // TODO: include id in EntitySchemaField and align FormFieldConfig completely for direct override?
+      ...this.entityType.schema.get(fieldId),
+      id: fieldId,
     };
 
     this.matDialog
@@ -89,7 +79,7 @@ export class ConfigEntityFormComponent implements OnChanges {
       .subscribe((updatedFieldSchema: EntitySchemaField) => {
         if (!updatedFieldSchema) {
           // canceled
-          if (!field.id) {
+          if (!fieldId) {
             // remove newly created field that was canceled
             fieldsArray.splice(fieldsArray.indexOf(field), 1);
           }
@@ -101,18 +91,13 @@ export class ConfigEntityFormComponent implements OnChanges {
       });
   }
 
-  private saveSchemaField(schemaField: EntitySchemaField): FormFieldConfig {
+  private saveSchemaField(schemaField: EntitySchemaField): ColumnConfig {
     this.entityType.schema.set(schemaField.id, schemaField);
     this.entitySchemaFieldChange.emit(schemaField);
 
-    const updatedFormField = this.entityFormService.addSchemaToFormField(
-      { id: schemaField.id },
-      schemaField,
-      false,
-    );
     if (!this.dummyForm.get(schemaField.id)) {
       const newFormGroup = this.entityFormService.createFormGroup(
-        [updatedFormField],
+        [schemaField],
         this.dummyEntity,
       );
       this.dummyForm.addControl(
@@ -122,7 +107,7 @@ export class ConfigEntityFormComponent implements OnChanges {
       this.dummyForm.disable();
     }
 
-    return updatedFormField;
+    return schemaField;
   }
 
   drop(event: CdkDragDrop<any, any>) {
@@ -165,13 +150,13 @@ export class ConfigEntityFormComponent implements OnChanges {
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
     const newCol = { fields: [] };
-    this.fieldGroups.push(newCol);
+    this.config.fieldGroups.push(newCol);
     event.container.data = newCol.fields;
     this.drop(event);
   }
 
   removeGroup(i: number) {
-    const [removedFieldGroup] = this.fieldGroups.splice(i, 1);
+    const [removedFieldGroup] = this.config.fieldGroups.splice(i, 1);
     this.availableFields.push(...removedFieldGroup.fields);
   }
 }

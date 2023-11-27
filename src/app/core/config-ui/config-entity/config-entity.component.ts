@@ -3,10 +3,7 @@ import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
-import {
-  PREFIX_VIEW_CONFIG,
-  ViewConfig,
-} from "../../config/dynamic-routing/view-config.interface";
+import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { Location } from "@angular/common";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -28,14 +25,6 @@ export class ConfigEntityComponent implements OnChanges {
   configDetailsView: EntityDetailsConfig;
   schemaFieldChanges: EntitySchemaField[] = [];
 
-  get DETAILS_VIEW_ID() {
-    return (
-      PREFIX_VIEW_CONFIG +
-      this.entityConstructor.route.replace(/^\//, "") +
-      "/:id"
-    );
-  }
-
   constructor(
     private entities: EntityRegistry,
     private configService: ConfigService,
@@ -51,7 +40,9 @@ export class ConfigEntityComponent implements OnChanges {
     this.entityConstructor = this.entities.get(this.entityType);
 
     const detailsView: ViewConfig<EntityDetailsConfig> =
-      this.configService.getConfig(this.DETAILS_VIEW_ID);
+      this.configService.getConfig(
+        EntityConfigService.getDetailsViewId(this.entityConstructor),
+      );
     if (detailsView.component !== "EntityDetails") {
       // not supported currently
       return;
@@ -72,21 +63,24 @@ export class ConfigEntityComponent implements OnChanges {
     const newConfig = originalConfig.copy();
 
     // TODO: this is not working yet - need two-way binding into config-entity-form component
-    newConfig.data[this.DETAILS_VIEW_ID].config = this.configDetailsView;
+    newConfig.data[
+      EntityConfigService.getDetailsViewId(this.entityConstructor)
+    ].config = this.configDetailsView;
 
     const entityAttr = (
       newConfig.data[
         EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType
       ] as EntityConfig
     ).attributes;
-    console.log("pre", JSON.stringify(entityAttr));
     for (const newField of this.schemaFieldChanges) {
       entityAttr.push(newField);
       // TODO: more rigorously filter attributes that are equal to default class definition, so they can still be updated through code updates?
     }
-    console.log("post", JSON.stringify(entityAttr));
 
     await this.entityMapper.save(newConfig);
     // TODO: snackbar + undo action (this should maybe become a default somewhere in a central service, used a lot)
+    const check = await this.entityMapper.load(Config, Config.CONFIG_KEY);
+
+    this.location.back();
   }
 }

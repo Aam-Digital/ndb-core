@@ -5,6 +5,7 @@ import { addPropertySchema } from "./database-field.decorator";
 import { EntityRegistry } from "./database-entity.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { EntityConfig } from "./entity-config";
+import { PREFIX_VIEW_CONFIG } from "../config/dynamic-routing/view-config.interface";
 
 /**
  * A service that allows to work with configuration-objects
@@ -17,6 +18,12 @@ import { EntityConfig } from "./entity-config";
 export class EntityConfigService {
   /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";
+
+  static getDetailsViewId(entityConstructor: EntityConstructor) {
+    return (
+      PREFIX_VIEW_CONFIG + entityConstructor.route.replace(/^\//, "") + "/:id"
+    );
+  }
 
   // TODO: merge with EntityRegistry?
 
