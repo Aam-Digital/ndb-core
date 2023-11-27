@@ -167,7 +167,6 @@ export abstract class CustomFormControlDirective<T>
       coerceBooleanProperty(control.hasValidator(Validators.required))
     ) {
       this.required = control.hasValidator(Validators.required);
-      this.stateChanges.next();
     }
   }
 }
