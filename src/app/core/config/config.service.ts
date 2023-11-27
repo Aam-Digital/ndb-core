@@ -73,7 +73,7 @@ function migrateFormHeadersIntoFieldGroups(
   }
 
   function migrateFormConfig(formConfig) {
-    if (!formConfig) {
+    if (!formConfig?.cols) {
       return formConfig;
     }
 

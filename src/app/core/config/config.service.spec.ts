@@ -4,6 +4,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
+import { FieldGroup } from "../entity-details/form/form-config";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -109,6 +110,12 @@ describe("ConfigService", () => {
     const form2Config = {
       cols: [["name"], ["other"]],
     };
+    const formNewConfig = {
+      fieldGroups: [
+        { fields: ["name"] } as FieldGroup,
+        { fields: ["name"] } as FieldGroup,
+      ],
+    };
 
     const viewConfig = {
       component: "EntityDetails",
@@ -125,6 +132,10 @@ describe("ConfigService", () => {
               { component: "ActivitiesOverview" },
               { component: "Form", config: form2Config },
             ],
+          },
+          {
+            title: "Tab with new config",
+            components: [{ component: "Form", config: formNewConfig }],
           },
         ],
       },
@@ -162,5 +173,7 @@ describe("ConfigService", () => {
     expect(result.config.panels[1].components[0].config).toEqual(
       viewConfig.config.panels[1].components[0].config,
     );
+    // keep new format unchanged:
+    expect(result.config.panels[2].components[0].config).toEqual(formNewConfig);
   }));
 });
