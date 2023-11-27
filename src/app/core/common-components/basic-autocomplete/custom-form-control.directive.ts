@@ -155,14 +155,6 @@ export abstract class CustomFormControlDirective<T>
       this.errorState = newState;
       this.stateChanges.next();
     }
-
-    if (control.hasValidator(Validators.required)) {
-      this.required = true;
-      this.stateChanges.next();
-    } else if (this.required) {
-      this.required = false;
-      this.stateChanges.next();
-    }
   }
 
   private checkUpdateRequired(control: AbstractControl | null) {
@@ -175,6 +167,7 @@ export abstract class CustomFormControlDirective<T>
       coerceBooleanProperty(control.hasValidator(Validators.required))
     ) {
       this.required = control.hasValidator(Validators.required);
+      this.stateChanges.next();
     }
   }
 }
