@@ -269,10 +269,10 @@ export const defaultJsonConfig = {
             {
               "component": "Form",
               "config": {
-                "cols": [
-                  ["logo", "favicon"],
-                  ["siteName", "defaultLanguage", "displayLanguageSelect"],
-                  ["primary", "secondary", "error", "font"],
+                "fieldGroups": [
+                  { fields: ["logo", "favicon"] },
+                  { fields: ["siteName", "defaultLanguage", "displayLanguageSelect"] },
+                  { fields: ["primary", "secondary", "error", "font"] },
                 ]
               }
             }
