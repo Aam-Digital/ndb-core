@@ -22,6 +22,9 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
 import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { TEST_USER } from "../../../utils/mock-local-session";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -209,5 +212,57 @@ describe("EntityFormService", () => {
     expect(form.get("test")).toHaveValue(2);
 
     Entity.schema.delete("test");
+  });
+
+  it("should add column definitions from property schema", () => {
+    class Test extends Child {
+      @DatabaseField({
+        description: "Property description",
+        additional: "someAdditional",
+      })
+      propertyField: string;
+    }
+
+    spyOn(TestBed.inject(EntitySchemaService), "getComponent").and.returnValue(
+      "PredefinedComponent",
+    );
+    const entity = new Test();
+    const field1 = {
+      id: "fieldWithDefinition",
+      edit: "EditComponent",
+      view: "DisplayComponent",
+      label: "Field with definition",
+      tooltip: "Custom tooltip",
+      additional: "additional",
+    };
+    const field2 = { id: "propertyField", label: "Property" };
+
+    const result1 = service.extendFormFieldConfig(
+      field1,
+      entity.getConstructor(),
+    );
+    const result2 = service.extendFormFieldConfig(
+      field2,
+      entity.getConstructor(),
+    );
+
+    expect(result1).toEqual({
+      id: "fieldWithDefinition",
+      edit: "EditComponent",
+      view: "DisplayComponent",
+      label: "Field with definition",
+      forTable: false,
+      tooltip: "Custom tooltip",
+      additional: "additional",
+    });
+    expect(result2).toEqual({
+      id: "propertyField",
+      edit: "PredefinedComponent",
+      view: "PredefinedComponent",
+      label: "Property",
+      forTable: false,
+      tooltip: "Property description",
+      additional: "someAdditional",
+    });
   });
 });

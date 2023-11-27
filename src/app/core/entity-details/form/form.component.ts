@@ -13,7 +13,7 @@ import { AlertService } from "../../alerts/alert.service";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -37,8 +37,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() creatingNew = false;
 
   @Input() fieldGroups: FieldGroup[];
-  columns: FormFieldConfig[][] = [];
-  headers: string[] = [];
 
   form: EntityForm<E>;
 
@@ -50,11 +48,8 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   ) {}
 
   ngOnInit() {
-    // TODO: switch EntityFormComponent to also implement FormConfig with the new FieldGroup interface
-    this.headers = this.fieldGroups.map((group) => group.header);
-    this.columns = this.fieldGroups.map((group) => group.fields);
     this.form = this.entityFormService.createFormGroup(
-      [].concat(...this.columns),
+      [].concat(...this.fieldGroups.map((group) => group.fields)),
       this.entity,
     );
     if (!this.creatingNew) {
@@ -101,5 +96,5 @@ export interface FormConfig {
  */
 export interface FieldGroup {
   header?: string;
-  fields: FormFieldConfig[];
+  fields: ColumnConfig[];
 }

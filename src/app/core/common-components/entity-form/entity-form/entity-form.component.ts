@@ -15,7 +15,10 @@ import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { Subscription } from "rxjs";
 import moment from "moment";
 import { FormFieldComponent } from "../form-field/form-field.component";
-import { ColumnConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
+import {
+  FieldGroup,
+  FormConfig,
+} from "../../../entity-details/form/form.component";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -38,16 +41,14 @@ import { ColumnConfig } from "../../entity-subrecord/entity-subrecord/entity-sub
   standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>
-  implements OnChanges, EntityFormConfig
+  implements OnChanges, FormConfig
 {
   /**
    * The entity which should be displayed and edited
    */
   @Input() entity: T;
 
-  @Input() columns: ColumnConfig[][];
-
-  @Input() columnHeaders?: (string | null)[];
+  @Input() fieldGroups: FieldGroup[];
 
   @Input() form: EntityForm<T>;
 
@@ -146,9 +147,4 @@ export class EntityFormComponent<T extends Entity = Entity>
       this.form.disable();
     }
   }
-}
-
-export interface EntityFormConfig {
-  columns: ColumnConfig[][];
-  columnHeaders?: (string | null)[];
 }

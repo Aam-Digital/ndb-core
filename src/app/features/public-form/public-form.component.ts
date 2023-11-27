@@ -5,8 +5,6 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { PublicFormConfig } from "./public-form-config";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
-import { toFormFieldConfig } from "../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../../core/common-components/entity-form/entity-form/FormConfig";
 import {
   EntityForm,
   EntityFormService,
@@ -18,6 +16,7 @@ import { EntitySchemaService } from "../../core/entity/schema/entity-schema.serv
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { FieldGroup } from "../../core/entity-details/form/form.component";
 
 @UntilDestroy()
 @Component({
@@ -32,7 +31,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   private prefilled: Partial<E> = {};
   formConfig: PublicFormConfig;
   entity: E;
-  columns: FormFieldConfig[][];
+  fieldGroups: FieldGroup[];
   form: EntityForm<E>;
 
   constructor(
@@ -79,9 +78,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
         this.entityType.schema,
       );
     }
-    this.columns = this.formConfig.columns.map((row) =>
-      row.map(toFormFieldConfig),
-    );
+    this.fieldGroups = this.formConfig.columns.map((row) => ({ fields: row }));
     this.initForm();
   }
 
@@ -91,7 +88,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       this.entity[prop] = value;
     });
     this.form = this.entityFormService.createFormGroup(
-      [].concat(...this.columns),
+      [].concat(...this.fieldGroups.map((group) => group.fields)),
       this.entity,
     );
   }
