@@ -17,17 +17,16 @@
     [formControl]="formControl"
     i18n-placeholder="placeholder for file-input"
     placeholder="No file selected"
-    (click)="formClicked(true)"
     i18n-matTooltip="Tooltip show file"
     matTooltip="Show file"
-    [matTooltipDisabled]="!formControl.value"
+    [matTooltipDisabled]="!(initialValue && formControl.value === initialValue)"
   />
   <button
     *ngIf="formControl.value && formControl.enabled"
     type="button"
     mat-icon-button
     matIconSuffix
-    (click)="delete()"
+    (click)="delete(); $event.stopPropagation()"
     i18n-mattooltip="Tooltip remove file"
     matTooltip="Remove file"
   >
@@ -38,7 +37,7 @@
     type="button"
     mat-icon-button
     matIconSuffix
-    (click)="fileUpload.click()"
+    (click)="fileUpload.click(); $event.stopPropagation()"
     i18n-matTooltip="Tooltip upload file button"
     matTooltip="Upload file"
   >
