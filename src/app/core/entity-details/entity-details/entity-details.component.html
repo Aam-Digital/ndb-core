@@ -80,8 +80,8 @@
           {{ componentConfig.title }}
         </h3>
         <ng-template
+          *ngIf="componentConfig.config?.entity"
           [appDynamicComponent]="componentConfig"
-          *ngIf="componentConfig.config.entity"
         ></ng-template>
         <br *ngIf="j < panelConfig.components.length - 1" />
       </div>
