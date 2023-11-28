@@ -17,7 +17,7 @@
 
 import { NgModule } from "@angular/core";
 import { UpdateManagerService } from "./update-manager.service";
-import { MarkdownModule, MarkedOptions } from "ngx-markdown";
+import { MarkdownModule, MARKED_OPTIONS, MarkedOptions } from "ngx-markdown";
 import { MarkedRendererCustom } from "./changelog/MarkedRendererCustom";
 import { ChangelogComponent } from "./changelog/changelog.component";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -39,7 +39,7 @@ import { MatButtonModule } from "@angular/material/button";
   imports: [
     MarkdownModule.forRoot({
       markedOptions: {
-        provide: MarkedOptions,
+        provide: MARKED_OPTIONS,
         useFactory: markedOptionsFactory,
       },
     }),
@@ -67,7 +67,5 @@ function markedOptionsFactory(): MarkedOptions {
     gfm: true,
     breaks: false,
     pedantic: false,
-    smartLists: true,
-    smartypants: false,
   };
 }
