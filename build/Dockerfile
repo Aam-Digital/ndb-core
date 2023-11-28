@@ -9,7 +9,7 @@ WORKDIR /app
 COPY package*.json ./
 RUN npm ci --no-progress
 
-RUN ng version
+RUN npm run-script ng version
 
 COPY . .
 
