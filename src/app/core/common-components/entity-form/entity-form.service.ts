@@ -82,7 +82,8 @@ export class EntityFormService {
       );
     }
 
-    return fullField;
+    // edit the given formField in place because for some components (i.e. EntitySubrecordComponent) updating existing objects is important
+    return Object.assign(formField, fullField);
   }
 
   private addSchemaToFormField(
@@ -90,6 +91,7 @@ export class EntityFormService {
     propertySchema: EntitySchemaField,
     forTable: boolean,
   ): FormFieldConfig {
+    // formField config has precedence over schema
     const fullField = Object.assign({}, propertySchema, formField);
 
     fullField.editComponent =

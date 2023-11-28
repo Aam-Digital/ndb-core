@@ -10,6 +10,7 @@ import {
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { pick } from "lodash-es";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * Directive to mark a template into which a component that is dynamically injected from config should be loaded
@@ -25,10 +26,14 @@ import { pick } from "lodash-es";
 export class DynamicComponentDirective implements OnChanges {
   @Input() appDynamicComponent: DynamicComponentConfig;
 
+  /** (optional) additional context to help debugging if dynamic component can't be found */
+  @Input() appDynamicComponentContext: any;
+
   constructor(
     public viewContainerRef: ViewContainerRef,
     private components: ComponentRegistry,
     private changeDetector: ChangeDetectorRef,
+    private logger: LoggingService,
   ) {}
 
   ngOnChanges() {
@@ -40,9 +45,20 @@ export class DynamicComponentDirective implements OnChanges {
       return;
     }
 
-    const component = await this.components.get(
-      this.appDynamicComponent.component,
-    )();
+    let component;
+    try {
+      component = await this.components.get(
+        this.appDynamicComponent.component,
+      )();
+    } catch (e) {
+      this.logger.error(
+        `Failed to load dynamic component:\n${JSON.stringify(
+          this.appDynamicComponentContext,
+        )}`,
+      );
+      // abort if component failed to load
+      return;
+    }
 
     this.viewContainerRef.clear();
 
