@@ -8,5 +8,7 @@
 }
 
 .has-remark {
-  background-image: gradient-helpers.top-right-triangle(colors.$muted-background);
+  background-image: gradient-helpers.top-right-triangle(
+    colors.$muted-background
+  );
 }
