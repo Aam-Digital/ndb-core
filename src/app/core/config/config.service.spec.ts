@@ -100,11 +100,10 @@ describe("ConfigService", () => {
     expect(result).toEqual(expected);
   }));
 
-  it("should migrate entity attributes config to flattened format with id", fakeAsync(() => {
-    const testConfigId = "entity:Test";
+  it("should migrate entity attributes config to flattened object format with id", fakeAsync(() => {
     const config = new Config();
     config.data = {
-      [testConfigId]: {
+      "entity:old-format": {
         attributes: [
           {
             name: "count",
@@ -114,28 +113,25 @@ describe("ConfigService", () => {
           },
         ],
       },
-    };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-
-    const result = service.getConfig<EntityConfig>("entity:Test");
-
-    expect(result.attributes).toEqual([{ id: "count", dataType: "number" }]);
-  }));
-  it("should not migrate / change entity attributes if already in new format", fakeAsync(() => {
-    const testConfigId = "entity:Test";
-    const entityAttributes = [{ id: "count", dataType: "number" }];
-    const config = new Config();
-    config.data = {
-      [testConfigId]: {
-        attributes: entityAttributes,
+      "entity:new-format": {
+        attributes: {
+          count: {
+            dataType: "number",
+          },
+        },
       },
     };
     updateSubject.next({ entity: config, type: "update" });
     tick();
 
-    const result = service.getConfig<EntityConfig>("entity:Test");
+    const expectedEntityAttributes = {
+      count: { dataType: "number" },
+    };
 
-    expect(result.attributes).toEqual(entityAttributes);
+    const actualFromOld = service.getConfig<EntityConfig>("entity:old-format");
+    expect(actualFromOld.attributes).toEqual(expectedEntityAttributes);
+
+    const actualFromNew = service.getConfig<EntityConfig>("entity:new-format");
+    expect(actualFromNew.attributes).toEqual(expectedEntityAttributes);
   }));
 });

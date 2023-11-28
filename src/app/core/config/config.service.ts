@@ -65,21 +65,20 @@ export class ConfigService extends LatestEntityLoader<Config> {
  * Transform legacy "entity:" config format into the flattened structure containing id directly.
  */
 function migrateEntityAttributesWithId(idOrPrefix: string, configData: any) {
-  if (!idOrPrefix.startsWith("entity")) {
+  if (
+    !idOrPrefix.startsWith("entity") ||
+    !Array.isArray(configData.attributes)
+  ) {
     return configData;
   }
 
-  configData.attributes = configData.attributes?.map(
-    (attr): EntitySchemaField => {
-      if (attr.schema) {
-        const legacyAttr: { name: string; schema: EntitySchemaField } = attr;
-        return {
-          id: legacyAttr.name,
-          ...attr.schema,
-        };
-      }
-      return attr;
-    },
+  configData.attributes = configData.attributes.reduce(
+    (acc, attr: { name: string; schema: EntitySchemaField }) => ({
+      ...acc,
+      [attr.name]: attr.schema,
+      // id inside the field schema config (FieldConfig) is added by EntityConfigService and does not need migration
+    }),
+    {},
   );
 
   return configData;

@@ -33,6 +33,7 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
   }
 
   protected generateEntities(): HistoricalEntityData[] {
+    return [];
     const config = this.configGenerator.entities[0];
     const attributes: any[] = config.data[
       EntityConfigService.PREFIX_ENTITY_CONFIG +

@@ -134,6 +134,9 @@ export interface EntitySchemaField {
   anonymize?: "retain" | "retain-anonymized";
 }
 
+// TODO: align FormFieldConfig and EntitySchemaField, so that they can directly overwrite each other + allow a simplified config version where id is not explicitly set
+export type FieldConfig = Omit<EntitySchemaField, "id">;
+
 /**
  * Available placeholder variables that can be used to configure a dynamic default value.
  * (e.g. "$now" to set to current date)

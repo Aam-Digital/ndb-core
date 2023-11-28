@@ -66,11 +66,15 @@ export class ConfigImportParserService {
   ): GeneratedConfig {
     this.reset();
 
-    const entity: EntityConfig = {
-      attributes: configRaw
-        .filter((field) => !!field.dataType)
-        .map((field) => this.parseFieldDefinition(field, entityName)),
-    };
+    const entity: EntityConfig = { attributes: {} };
+    for (const f of configRaw) {
+      if (!f?.dataType) {
+        continue;
+      }
+      const field = this.parseFieldDefinition(f, entityName);
+      entity.attributes[field.id] = field;
+      delete entity.attributes[field.id]["id"]; // do not save redundant id
+    }
 
     const generatedConfig: GeneratedConfig = {};
 
