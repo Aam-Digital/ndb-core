@@ -232,7 +232,7 @@ describe("EntityFormService", () => {
       edit: "EditComponent",
       view: "DisplayComponent",
       label: "Field with definition",
-      tooltip: "Custom tooltip",
+      description: "Custom tooltip",
       additional: "additional",
     };
     const field2 = { id: "propertyField", label: "Property" };
@@ -252,16 +252,17 @@ describe("EntityFormService", () => {
       view: "DisplayComponent",
       label: "Field with definition",
       forTable: false,
-      tooltip: "Custom tooltip",
+      description: "Custom tooltip",
       additional: "additional",
     });
     expect(result2).toEqual({
       id: "propertyField",
+      dataType: "string",
       edit: "PredefinedComponent",
       view: "PredefinedComponent",
       label: "Property",
       forTable: false,
-      tooltip: "Property description",
+      description: "Property description",
       additional: "someAdditional",
     });
   });

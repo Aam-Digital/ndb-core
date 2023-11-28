@@ -24,8 +24,8 @@
         mat-header-cell
         mat-sort-header
         *matHeaderCellDef
-        [matTooltip]="col.tooltip"
-        [matTooltipDisabled]="!col.tooltip"
+        [matTooltip]="col.description"
+        [matTooltipDisabled]="!col.description"
         [disabled]="col.noSorting"
       >
         {{ col.label }}

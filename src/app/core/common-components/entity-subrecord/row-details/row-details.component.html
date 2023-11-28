@@ -13,7 +13,7 @@
 
     <div *ngFor="let col of viewOnlyColumns">
       <app-pill
-        [matTooltip]="col.tooltip"
+        [matTooltip]="col.description"
         [style.background-color]="tempEntity.getColor()"
         class="mat-body-strong"
       >

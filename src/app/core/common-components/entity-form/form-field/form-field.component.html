@@ -1,5 +1,5 @@
 <div *ngIf="_field">
-  <div [class.field-with-tooltip-suffix]="_field.tooltip">
+  <div [class.field-with-tooltip-suffix]="_field.description">
     <ng-container
       [appDynamicComponent]="{
         component: _field.edit,
@@ -13,5 +13,5 @@
     >
     </ng-container>
   </div>
-  <app-help-button [text]="_field.tooltip"></app-help-button>
+  <app-help-button [text]="_field.description"></app-help-button>
 </div>

@@ -42,7 +42,7 @@ export function generateFormFieldStory<T>(
     id: "main",
     edit: editComponent,
     label: "test field label",
-    tooltip: withTooltip ? "test tooltip" : undefined,
+    description: withTooltip ? "test tooltip" : undefined,
     ...additionalSchema,
   };
   const otherFieldConf: FormFieldConfig = {

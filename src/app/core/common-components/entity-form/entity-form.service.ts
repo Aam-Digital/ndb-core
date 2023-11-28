@@ -68,10 +68,10 @@ export class EntityFormService {
     entityType: EntityConstructor,
     forTable = false,
   ): FormFieldConfig {
-    const fullField: FormFieldConfig = toFormFieldConfig(formField);
+    let fullField: FormFieldConfig = toFormFieldConfig(formField);
 
     try {
-      this.addSchemaToFormField(
+      fullField = this.addSchemaToFormField(
         fullField,
         entityType.schema.get(fullField.id),
         forTable,
@@ -89,29 +89,27 @@ export class EntityFormService {
     formField: FormFieldConfig,
     propertySchema: EntitySchemaField,
     forTable: boolean,
-  ) {
-    formField.edit =
-      formField.edit ||
+  ): FormFieldConfig {
+    const fullField = Object.assign({}, propertySchema, formField);
+
+    fullField.edit =
+      fullField.edit ||
       this.entitySchemaService.getComponent(propertySchema, "edit");
-    formField.view =
-      formField.view ||
+    fullField.view =
+      fullField.view ||
       this.entitySchemaService.getComponent(propertySchema, "view");
-    formField.tooltip = formField.tooltip || propertySchema?.description;
-    formField.additional = formField.additional || propertySchema?.additional;
+
     if (forTable) {
-      formField.forTable = true;
-      formField.label =
-        formField.label || propertySchema.labelShort || propertySchema.label;
+      fullField.forTable = true;
+      fullField.label =
+        fullField.label || fullField.labelShort || fullField.label;
     } else {
-      formField.forTable = false;
-      formField.label =
-        formField.label || propertySchema.label || propertySchema.labelShort;
-    }
-    if (propertySchema?.validators) {
-      formField.validators = propertySchema?.validators;
+      fullField.forTable = false;
+      fullField.label =
+        fullField.label || fullField.label || fullField.labelShort;
     }
 
-    return formField;
+    return fullField;
   }
 
   /**
@@ -126,38 +124,57 @@ export class EntityFormService {
     entity: T,
     forTable = false,
   ): EntityForm<T> {
-    const fullFields = formFields.map((f) =>
-      this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
-    );
     const formConfig = {};
-    const entitySchema = entity.getSchema();
     const copy = entity.copy();
-    fullFields
-      .filter((formField) => entitySchema.get(formField.id))
-      .forEach((formField) => {
-        const schema = entitySchema.get(formField.id);
-        let val = copy[formField.id];
-        if (
-          entity.isNew &&
-          schema.defaultValue &&
-          (!val || (val as []).length === 0)
-        ) {
-          val = this.getDefaultValue(schema);
-        }
-        formConfig[formField.id] = [val];
-        if (formField.validators) {
-          const validators = this.dynamicValidator.buildValidators(
-            formField.validators,
-          );
-          formConfig[formField.id].push(validators);
-        }
-      });
+    for (const f of formFields) {
+      this.addFormControlConfig(formConfig, f, copy, forTable);
+    }
     const group = this.fb.group<Partial<T>>(formConfig);
+
     const sub = group.valueChanges.subscribe(
       () => (this.unsavedChanges.pending = group.dirty),
     );
     this.subscriptions.push(sub);
+
     return group;
+  }
+
+  /**
+   * Add a property with form control initialization config to the given formConfig object.
+   * @param formConfig
+   * @param fieldConfig
+   * @param entity
+   * @param forTable
+   * @private
+   */
+  private addFormControlConfig(
+    formConfig: Object,
+    fieldConfig: string | FormFieldConfig,
+    entity: Entity,
+    forTable: boolean,
+  ) {
+    const field = this.extendFormFieldConfig(
+      fieldConfig,
+      entity.getConstructor(),
+      forTable,
+    );
+
+    let value = entity[field.id];
+    if (
+      entity.isNew &&
+      field.defaultValue &&
+      (!value || (value as []).length === 0)
+    ) {
+      value = this.getDefaultValue(field);
+    }
+    formConfig[field.id] = [value];
+
+    if (field.validators) {
+      const validators = this.dynamicValidator.buildValidators(
+        field.validators,
+      );
+      formConfig[field.id].push(validators);
+    }
   }
 
   private getDefaultValue<T>(schema: EntitySchemaField) {

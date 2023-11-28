@@ -43,7 +43,7 @@ const fieldConfig: FormFieldConfig = {
   view: "DisplayEntity",
   edit: "EditSingleEntity",
   label: "test related entity label",
-  tooltip: "test tooltip",
+  description: "test tooltip",
 };
 const otherField: FormFieldConfig = {
   id: "x",

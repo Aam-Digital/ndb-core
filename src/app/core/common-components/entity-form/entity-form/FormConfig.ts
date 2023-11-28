@@ -1,11 +1,12 @@
 import { FormValidatorConfig } from "../dynamic-form-validators/form-validator-config";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
 /**
  * The general configuration for fields in tables and forms.
  * This defines which property is displayed and how it should be displayed.
  * Most information does not need to be provided if a property with schema definitions is displayed.
  */
-export interface FormFieldConfig {
+export interface FormFieldConfig extends EntitySchemaField {
   /**
    * The id of the entity which should be accessed
    */
@@ -40,13 +41,6 @@ export interface FormFieldConfig {
    * Default to false
    */
   required?: boolean;
-
-  /**
-   * An additional description which explains this form field.
-   *
-   * If nothing is specified, the property schemas "description" field will be used.
-   */
-  tooltip?: string;
 
   /**
    * When set to true, the sorting of this column will be disabled.
