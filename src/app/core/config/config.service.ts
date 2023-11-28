@@ -23,7 +23,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
     super(Config, Config.CONFIG_KEY, entityMapper, logger);
     super.startLoading();
     this.entityUpdated.subscribe(async (config) => {
-      this.currentConfig = config;
+      this.currentConfig = this.applyMigrations(config);
     });
   }
 
@@ -36,7 +36,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   public getConfig<T>(id: string): T {
-    return this.applyMigrations(id, this.currentConfig.data[id]);
+    return this.currentConfig.data[id];
   }
 
   public getAllConfigs<T>(prefix: string): T[] {
@@ -47,12 +47,17 @@ export class ConfigService extends LatestEntityLoader<Config> {
         matchingConfigs.push(this.currentConfig.data[id]);
       }
     }
-    return matchingConfigs.map((c) => this.applyMigrations(prefix, c));
+    return matchingConfigs;
   }
 
-  private applyMigrations(id: string, configData: any) {
-    configData = migrateEntityAttributesWithId(id, configData);
-    return configData;
+  private applyMigrations(config: Config): Config {
+    for (let [key, conf] of Object.entries(config.data)) {
+      // LIST ALL MIGRATION FUNCTIONS HERE
+      conf = migrateEntityAttributesWithId(key, conf);
+
+      config.data[key] = conf;
+    }
+    return config;
   }
 }
 
