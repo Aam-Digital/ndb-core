@@ -36,7 +36,10 @@ describe("ConfigFieldComponent", () => {
       providers: [
         {
           provide: MAT_DIALOG_DATA,
-          useValue: { entitySchemaField: testSchemaField },
+          useValue: {
+            entitySchemaField: testSchemaField,
+            entitySchema: new Map([["test", testSchemaField]]),
+          },
         },
         { provide: MatDialogRef, useValue: null },
       ],
