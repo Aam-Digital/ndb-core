@@ -41,7 +41,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   @ViewChild("fileUpload") fileUploadInput: ElementRef<HTMLInputElement>;
   private selectedFile: File;
   private removeClicked = false;
-  private initialValue: string;
+  initialValue: string;
 
   constructor(
     protected fileService: FileService,
@@ -104,10 +104,10 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
     return this.entityMapper.save(this.entity);
   }
 
-  formClicked(isInputElement?: boolean) {
+  formClicked() {
     if (this.initialValue && this.formControl.value === this.initialValue) {
       this.showFile();
-    } else if (isInputElement) {
+    } else {
       this.fileUploadInput.nativeElement.click();
     }
   }

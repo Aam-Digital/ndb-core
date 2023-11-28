@@ -42,7 +42,11 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   }
 
   private updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
-    const userRules = this.getRulesForUser(rules);
+    // If rules object is empty, everything is allowed
+    const userRules: DatabaseRule[] = rules
+      ? this.getRulesForUser(rules)
+      : [{ action: "manage", subject: "all" }];
+
     if (userRules.length === 0) {
       // No rules or only default rules defined
       const user = this.currentUser.value;
@@ -50,7 +54,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
         `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
     }
-    this.updateAbilityWithRules(userRules);
+    this.ability.update(userRules);
     return this.permissionEnforcer.enforcePermissionsOnLocalData(userRules);
   }
 
@@ -88,9 +92,5 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
       return value;
     });
-  }
-
-  private updateAbilityWithRules(rules: DatabaseRule[]) {
-    this.ability.update(rules);
   }
 }
