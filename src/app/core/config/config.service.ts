@@ -51,36 +51,45 @@ export class ConfigService extends LatestEntityLoader<Config> {
   }
 
   private applyMigrations(config: Config): Config {
-    for (let [key, conf] of Object.entries(config.data)) {
-      // LIST ALL MIGRATION FUNCTIONS HERE
-      conf = migrateFormHeadersIntoFieldGroups(key, conf);
+    const migrations: ConfigMigration[] = [
+      migrateFormHeadersIntoFieldGroups,
+      migrateFormFieldConfigView2ViewComponent,
+    ];
 
-      config.data[key] = conf;
-    }
-    return config;
+    const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
+      let configPart = rawValue;
+      for (const migration of migrations) {
+        if (migration.filter(_that, configPart)) {
+          configPart = migration.transform(_that, configPart);
+        }
+      }
+      return configPart;
+    });
+
+    return newConfig;
   }
+}
+
+/**
+ * A ConfigMigration is checked during a full JSON.parse using a reviver function.
+ * If the filter returns true, the transform is executed on that config part.
+ * Multiple migrations are chained and can transform the same config part one after the other.
+ */
+interface ConfigMigration {
+  /** filter returning true for a given config part if transform should be executed on it */
+  filter: (key: string, configPart: any) => boolean;
+  transform: (key: string, configPart: any) => any;
 }
 
 /**
  * Transform legacy "view:...Form" config format to have form field group headers with the fields rather than as separate array.
  */
-function migrateFormHeadersIntoFieldGroups(
-  idOrPrefix: string,
-  configData: any,
-) {
-  if (!idOrPrefix.startsWith("view") || !configData) {
-    return configData;
-  }
+const migrateFormHeadersIntoFieldGroups: ConfigMigration = {
+  filter: (key, configPart) =>
+    configPart?.component === "Form" && configPart?.config?.cols,
 
-  const configString = JSON.stringify(configData);
-  if (!configString.includes('"component":"Form"')) {
-    return configData;
-  }
-
-  function migrateFormConfig(formConfig) {
-    if (!formConfig?.cols) {
-      return formConfig;
-    }
+  transform: (key, configPart) => {
+    const formConfig = configPart.config;
 
     // change .cols and .headers into .fieldGroups
     const newFormConfig = { ...formConfig };
@@ -98,18 +107,30 @@ function migrateFormHeadersIntoFieldGroups(
       });
     }
 
-    return newFormConfig;
-  }
+    configPart.config = newFormConfig;
+    return configPart;
+  },
+};
 
-  const newConfig = JSON.parse(configString, (_that, rawValue) => {
-    if (rawValue?.component !== "Form") {
-      // do not transform unless config for `{ component: "Form", config: { ... } }` parts
-      return rawValue;
+const migrateFormFieldConfigView2ViewComponent: ConfigMigration = {
+  filter: (key, configPart) =>
+    key === "columns" || key === "fields" || key === "cols",
+
+  transform: (key, configPart) => {
+    if (Array.isArray(configPart)) {
+      return configPart.map((c) =>
+        migrateFormFieldConfigView2ViewComponent.transform(null, c),
+      );
     }
 
-    rawValue.config = migrateFormConfig(rawValue.config);
-    return rawValue;
-  });
-
-  return newConfig;
-}
+    if (configPart?.view) {
+      configPart.viewComponent = configPart.view;
+      delete configPart.view;
+    }
+    if (configPart?.edit) {
+      configPart.editComponent = configPart.edit;
+      delete configPart.edit;
+    }
+    return configPart;
+  },
+};
