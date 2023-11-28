@@ -71,7 +71,7 @@ export class EntityConfigService {
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
     for (const [key, value] of Object.entries(entityConfig?.attributes ?? {})) {
-      addPropertySchema(entityType.prototype, { id: key, ...value });
+      addPropertySchema(entityType.prototype, key, value);
     }
 
     // TODO: shall we just assign all properties that are present in the config object?

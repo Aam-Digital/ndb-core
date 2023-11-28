@@ -27,13 +27,6 @@ import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-referen
  */
 export interface EntitySchemaField {
   /**
-   * The key (property name) on the entity object for this field.
-   *
-   * Do not change after initial field creation!
-   */
-  readonly id: string;
-
-  /**
    * The datatype of this field. This will trigger to matching datatype transformer when saving/loading the entity.
    *
    * If you don't set this explicitly, the dataType is inferred from the TypeScript type of the property that is annotated.
@@ -133,9 +126,6 @@ export interface EntitySchemaField {
    */
   anonymize?: "retain" | "retain-anonymized";
 }
-
-// TODO: align FormFieldConfig and EntitySchemaField, so that they can directly overwrite each other + allow a simplified config version where id is not explicitly set
-export type FieldConfig = Omit<EntitySchemaField, "id">;
 
 /**
  * Available placeholder variables that can be used to configure a dynamic default value.

@@ -7,7 +7,7 @@ import { ConfigFieldRaw } from "./config-field.raw";
 import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 import { EntityDetailsConfig } from "../../core/entity-details/EntityDetailsConfig";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
-import { FieldConfig } from "../../core/entity/schema/entity-schema-field";
+import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 
 describe("ConfigImportParserService", () => {
   let service: ConfigImportParserService;
@@ -26,7 +26,7 @@ describe("ConfigImportParserService", () => {
 
   function expectToBeParsedIntoEntityConfig(
     inputs: ConfigFieldRaw[],
-    expectedOutputs: { [key: string]: FieldConfig },
+    expectedOutputs: { [key: string]: EntitySchemaField },
   ) {
     const entityName = "test";
     const result = service.parseImportDefinition(inputs, entityName, false);

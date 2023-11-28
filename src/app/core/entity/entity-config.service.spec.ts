@@ -113,7 +113,6 @@ describe("EntityConfigService", () => {
 
   it("should create a new subclass with the schema of the extended", () => {
     const schema: EntitySchemaField = {
-      id: "dynamicProperty",
       dataType: "string",
       label: "Dynamic Property",
     };
@@ -122,8 +121,8 @@ describe("EntityConfigService", () => {
         _id: "entity:DynamicTest",
         label: "Dynamic Test Entity",
         extends: "Test",
-        attributes: [schema],
-      },
+        attributes: { dynamicProperty: schema },
+      } as EntityConfig,
     ]);
 
     service.setupEntitiesFromConfig();

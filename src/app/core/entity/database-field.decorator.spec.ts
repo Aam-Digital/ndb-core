@@ -17,6 +17,7 @@
 
 import { Entity } from "./model/entity";
 import { DatabaseField } from "./database-field.decorator";
+import { EntitySchemaField } from "./schema/entity-schema-field";
 
 class TestClass extends Entity {
   @DatabaseField()
@@ -39,13 +40,10 @@ describe("@DatabaseField Decorator", () => {
 
   it("results in full schema", async () => {
     expect(TestClass.schema).toEqual(
-      new Map([
-        ["fieldUndefined", { id: "fieldUndefined", dataType: "string" }],
-        ["fieldWithDefault", { id: "fieldWithDefault", dataType: "string" }],
-        [
-          "fieldDate",
-          { id: "fieldDate", dataType: "date", generateIndex: true },
-        ],
+      new Map<string, EntitySchemaField>([
+        ["fieldUndefined", { dataType: "string" }],
+        ["fieldWithDefault", { dataType: "string" }],
+        ["fieldDate", { dataType: "date", generateIndex: true }],
       ]),
     );
   });

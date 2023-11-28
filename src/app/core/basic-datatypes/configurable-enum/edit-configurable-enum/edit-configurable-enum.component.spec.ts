@@ -43,11 +43,11 @@ describe("EditConfigurableEnumComponent", () => {
     expect(component.multi).toBeTrue();
   });
 
-  function initWithSchema(schema: Omit<EntitySchemaField, "id">) {
+  function initWithSchema(schema: EntitySchemaField) {
     const fromGroup = new FormGroup({ test: new FormControl() });
     component.formControl = fromGroup.get("test") as FormControl;
     component.formFieldConfig = { id: "test" };
-    component.propertySchema = { id: "test", ...schema };
+    component.propertySchema = schema;
     component.entity = new Entity();
     component.ngOnInit();
   }

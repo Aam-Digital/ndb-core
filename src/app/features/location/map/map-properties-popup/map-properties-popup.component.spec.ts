@@ -22,18 +22,15 @@ describe("MapPropertiesPopupComponent", () => {
 
   beforeEach(async () => {
     Child.schema.set("address", {
-      id: "address",
       label: "Address",
       dataType: "location",
     });
     Child.schema.set("otherAddress", {
-      id: "otherAddress",
       label: "Other address",
       dataType: "location",
     });
     properties[Child.ENTITY_TYPE] = ["address"];
     School.schema.set("address", {
-      id: "address",
       label: "School address",
       dataType: "location",
     });

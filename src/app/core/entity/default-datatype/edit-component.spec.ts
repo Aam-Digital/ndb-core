@@ -16,7 +16,7 @@ export function setupEditComponent<T>(
   fromGroupConfig[propertyName] = formControl;
   const formGroup = new UntypedFormGroup(fromGroupConfig);
   component.formControl = formControl;
-  component.propertySchema = { id: propertyName };
+  component.propertySchema = {};
   component.formFieldConfig = { id: propertyName };
   component.entity = new Entity();
   return formGroup;

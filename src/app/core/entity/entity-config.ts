@@ -1,4 +1,4 @@
-import { FieldConfig } from "./schema/entity-schema-field";
+import { EntitySchemaField } from "./schema/entity-schema-field";
 
 /**
  * Dynamic configuration for a entity.
@@ -8,7 +8,7 @@ export interface EntityConfig {
   /**
    * A list of attributes that will be dynamically added/overwritten to the entity.
    */
-  attributes?: { [key: string]: FieldConfig };
+  attributes?: { [key: string]: EntitySchemaField };
 
   /**
    * A list of attributes which should be shown when calling the `.toString()` method of this entity.

@@ -71,9 +71,8 @@ export class ConfigImportParserService {
       if (!f?.dataType) {
         continue;
       }
-      const field = this.parseFieldDefinition(f, entityName);
-      entity.attributes[field.id] = field;
-      delete entity.attributes[field.id]["id"]; // do not save redundant id
+      const parsedField = this.parseFieldDefinition(f, entityName);
+      entity.attributes[parsedField.id] = parsedField.schema;
     }
 
     const generatedConfig: GeneratedConfig = {};
@@ -101,13 +100,12 @@ export class ConfigImportParserService {
   private parseFieldDefinition(
     fieldDef: ConfigFieldRaw,
     entityType: string,
-  ): EntitySchemaField {
+  ): { id: string; schema: EntitySchemaField } {
     const fieldId =
       fieldDef.id ??
       ConfigImportParserService.generateIdFromLabel(fieldDef.label);
 
     const schema: EntitySchemaField = {
-      id: fieldId,
       dataType: fieldDef.dataType,
       label: fieldDef.label,
       description: fieldDef.description,
@@ -148,7 +146,7 @@ export class ConfigImportParserService {
     this.generateOrUpdateDetailsViewConfig(fieldDef, entityType, fieldId);
 
     deleteEmptyProperties(schema);
-    return schema;
+    return { id: fieldId, schema: schema };
   }
 
   /**
