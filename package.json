@@ -47,7 +47,7 @@
     "assert": "^2.0.0",
     "crypto-es": "^2.1.0",
     "deep-object-diff": "^1.1.9",
-    "flag-icons": "^6.12.0",
+    "flag-icons": "^6.14.0",
     "hammerjs": "^2.0.8",
     "json-query": "^2.2.2",
     "keycloak-js": "^22.0.5",
