@@ -87,10 +87,10 @@
           "options": {},
           "configurations": {
             "production": {
-              "browserTarget": "ndb-core:build:production"
+              "buildTarget": "ndb-core:build:production"
             },
             "development": {
-              "browserTarget": "ndb-core:build:development"
+              "buildTarget": "ndb-core:build:development"
             }
           },
           "defaultConfiguration": "development"
@@ -98,7 +98,7 @@
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
           "options": {
-            "browserTarget": "ndb-core:build"
+            "buildTarget": "ndb-core:build"
           }
         },
         "test": {
