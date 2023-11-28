@@ -4,7 +4,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
-import { FieldGroup } from "../entity-details/form/form-config";
+import { FieldGroup } from "../entity-details/form/field-group";
 
 describe("ConfigService", () => {
   let service: ConfigService;

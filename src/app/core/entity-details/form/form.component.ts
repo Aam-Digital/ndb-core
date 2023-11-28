@@ -13,7 +13,7 @@ import { AlertService } from "../../alerts/alert.service";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { FieldGroup, FormConfig } from "./form-config";
+import { FieldGroup } from "./field-group";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -32,7 +32,7 @@ import { FieldGroup, FormConfig } from "./form-config";
   ],
   standalone: true,
 })
-export class FormComponent<E extends Entity> implements FormConfig, OnInit {
+export class FormComponent<E extends Entity> implements OnInit {
   @Input() entity: E;
   @Input() creatingNew = false;
 

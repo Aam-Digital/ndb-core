@@ -15,10 +15,7 @@ import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { Subscription } from "rxjs";
 import moment from "moment";
 import { FormFieldComponent } from "../form-field/form-field.component";
-import {
-  FieldGroup,
-  FormConfig,
-} from "../../../entity-details/form/form-config";
+import { FieldGroup } from "../../../entity-details/form/field-group";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -41,7 +38,7 @@ import {
   standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>
-  implements OnChanges, FormConfig
+  implements OnChanges
 {
   /**
    * The entity which should be displayed and edited

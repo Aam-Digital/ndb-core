@@ -4,7 +4,7 @@ import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
-import { FieldGroup } from "../entity-details/form/form-config";
+import { FieldGroup } from "../entity-details/form/field-group";
 
 /**
  * Access dynamic app configuration retrieved from the database

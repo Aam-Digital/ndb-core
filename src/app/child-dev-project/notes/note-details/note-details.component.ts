@@ -28,7 +28,7 @@ import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
 import { FormFieldComponent } from "../../../core/common-components/entity-form/form-field/form-field.component";
-import { FieldGroup } from "../../../core/entity-details/form/form-config";
+import { FieldGroup } from "../../../core/entity-details/form/field-group";
 
 /**
  * Component responsible for displaying the Note creation/view window
