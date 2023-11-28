@@ -6,6 +6,9 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
 
 @DatabaseEntity("ReportConfig")
 export class ReportConfig extends Entity {
+  static create(data: Partial<ReportConfig>) {
+    return Object.assign(new ReportConfig(), data);
+  }
   /** human-readable title of the report */
   @DatabaseField() title: string;
 
@@ -18,5 +21,5 @@ export class ReportConfig extends Entity {
   /** the definitions to calculate the report's aggregations */
   @DatabaseField() aggregationDefinitions?:
     | Aggregation[]
-    | ExportColumnConfig[];
+    | ExportColumnConfig[] = [];
 }

@@ -19,9 +19,7 @@ export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportCo
   }
 
   protected generateEntities(): ReportConfig[] {
-    return demoReports.map((report) =>
-      Object.assign(new ReportConfig(), report),
-    );
+    return demoReports.map((report) => ReportConfig.create(report));
   }
 }
 
