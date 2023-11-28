@@ -38,7 +38,8 @@
             ],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "node_modules/"
+                "node_modules/",
+                "src/styles"
               ]
             },
             "vendorChunk": true,
