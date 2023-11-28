@@ -349,8 +349,8 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
 
     let sortDirection: SortDirection = "asc";
     if (
-      sortByColumn?.view === "DisplayDate" ||
-      sortByColumn?.view === "DisplayMonth"
+      sortByColumn?.viewComponent === "DisplayDate" ||
+      sortByColumn?.viewComponent === "DisplayMonth"
     ) {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";

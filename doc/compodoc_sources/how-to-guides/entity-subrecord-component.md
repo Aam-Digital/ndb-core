@@ -60,9 +60,9 @@ which properties of the entities are shown and how they are formatted and edited
 This takes an array of [FormFieldConfiguration](../../interfaces/FormFieldConfig.html)s:
 ```
 columns: FormFieldConfig[] = [
-    { id: 'subject', label: 'Topic', view: 'DisplayText', edit: 'EditText', visibleFrom: 'xs'),
-    { id: 'text', label: 'Notes', view: 'DisplayText', edit: 'EditLongText', visibleFrom: 'md'),
-    { id: 'date', label: 'Date', view: 'DisplayDate', edit: 'EditDate', visibleFrom: 'xs'),
+    { id: 'subject', label: 'Topic', viewComponent: 'DisplayText', editComponent: 'EditText', visibleFrom: 'xs'),
+    { id: 'text', label: 'Notes', viewComponent: 'DisplayText', editComponent: 'EditLongText', visibleFrom: 'md'),
+    { id: 'date', label: 'Date', viewComponent: 'DisplayDate', editComponent: 'EditDate', visibleFrom: 'xs'),
 ];
 ```
 Only the properties that you set here will be displayed to the user.

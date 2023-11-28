@@ -41,6 +41,7 @@ import { LocationProperties } from "../../location/map/map-properties-popup/map-
 import { getLocationProperties } from "../../location/map-utils";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
 import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -358,11 +359,11 @@ export class MatchingEntitiesComponent implements OnInit {
     }
   }
 
-  private getDistanceColumnConfig(side: MatchingSide) {
+  private getDistanceColumnConfig(side: MatchingSide): FormFieldConfig {
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
-      view: "DisplayDistance",
+      viewComponent: "DisplayDistance",
       additional: {
         coordinatesProperties:
           this.displayedProperties[side.entityType.ENTITY_TYPE],

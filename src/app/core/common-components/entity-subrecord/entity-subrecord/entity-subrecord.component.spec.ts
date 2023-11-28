@@ -78,7 +78,7 @@ describe("EntitySubrecordComponent", () => {
       {
         id: "enumValue",
         label: "Test Configurable Enum",
-        view: "DisplayConfigurableEnum",
+        viewComponent: "DisplayConfigurableEnum",
       },
     ];
     component.ngOnChanges({ records: undefined, columns: undefined });

@@ -2,7 +2,7 @@
   <div [class.field-with-tooltip-suffix]="_field.description">
     <ng-container
       [appDynamicComponent]="{
-        component: _field.edit,
+        component: _field.editComponent,
         config: {
           formFieldConfig: _field,
           propertySchema: entity.getSchema().get(_field.id),

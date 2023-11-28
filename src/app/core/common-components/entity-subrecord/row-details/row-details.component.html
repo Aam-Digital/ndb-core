@@ -20,7 +20,7 @@
         <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
         <ng-template
           [appDynamicComponent]="{
-            component: col.view,
+            component: col.viewComponent,
             config: {
               id: col.id,
               entity: tempEntity,

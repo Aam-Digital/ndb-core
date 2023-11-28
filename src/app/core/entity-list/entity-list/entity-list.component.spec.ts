@@ -29,9 +29,9 @@ describe("EntityListComponent", () => {
   const testConfig: EntityListConfig = {
     title: "Children List",
     columns: [
-      { view: "DisplayText", label: "Age", id: "age" },
+      { viewComponent: "DisplayText", label: "Age", id: "age" },
       {
-        view: "RecentAttendanceBlocks",
+        viewComponent: "RecentAttendanceBlocks",
         label: "Attendance (School)",
         id: "school",
         additional: {
@@ -167,7 +167,7 @@ describe("EntityListComponent", () => {
         {
           id: "anotherColumn",
           label: "Predefined Title",
-          view: "DisplayDate",
+          viewComponent: "DisplayDate",
         },
       ],
       columnGroups: {

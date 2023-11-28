@@ -87,9 +87,9 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     component.entity = new Child();
     component.single = true;
     component.columns = [
-      { id: "schoolId", label: "Team", view: "school" },
-      { id: "start", label: "From", view: "date" },
-      { id: "end", label: "To", view: "date" },
+      { id: "schoolId", label: "Team", viewComponent: "school" },
+      { id: "start", label: "From", viewComponent: "date" },
+      { id: "end", label: "To", viewComponent: "date" },
     ];
     await component.ngOnInit();
 
@@ -101,8 +101,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     expect(columnNames).not.toContain("Result");
 
     component._columns.push(
-      { id: "schoolClass", label: "Class", view: "text" },
-      { id: "result", label: "Result", view: "percentageResult" },
+      { id: "schoolClass", label: "Class", viewComponent: "text" },
+      { id: "result", label: "Result", viewComponent: "percentageResult" },
     );
 
     await component.ngOnInit();

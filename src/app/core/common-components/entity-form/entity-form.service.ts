@@ -92,11 +92,11 @@ export class EntityFormService {
   ): FormFieldConfig {
     const fullField = Object.assign({}, propertySchema, formField);
 
-    fullField.edit =
-      fullField.edit ||
+    fullField.editComponent =
+      fullField.editComponent ||
       this.entitySchemaService.getComponent(propertySchema, "edit");
-    fullField.view =
-      fullField.view ||
+    fullField.viewComponent =
+      fullField.viewComponent ||
       this.entitySchemaService.getComponent(propertySchema, "view");
 
     if (forTable) {
