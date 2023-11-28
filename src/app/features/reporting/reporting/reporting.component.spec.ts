@@ -27,7 +27,7 @@ describe("ReportingComponent", () => {
   let mockReportingService: jasmine.SpyObj<DataAggregationService>;
   let mockDataTransformationService: jasmine.SpyObj<DataTransformationService>;
 
-  const testReport: ReportConfig = Object.assign(new ReportConfig(), {
+  const testReport: ReportConfig = ReportConfig.create({
     title: "test report",
     aggregationDefinitions: [
       {
@@ -202,11 +202,7 @@ describe("ReportingComponent", () => {
     mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
 
     await component.calculateResults(
-      Object.assign(new ReportConfig(), {
-        aggregationDefinitions: [],
-        title: "",
-        mode: "exporting",
-      }),
+      ReportConfig.create({ mode: "exporting" }),
       new Date(),
       new Date(),
     );
