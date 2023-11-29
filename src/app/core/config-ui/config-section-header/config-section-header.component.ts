@@ -12,7 +12,9 @@ import { MatInputModule } from "@angular/material/input";
  * Supports two-way binding for the title.
  *
  * add css class "section-container" and import this component's scss in the parent's styleUrl
- * to get visual highlighting on hovering over the remove button.
+ * to get visual highlighting on hovering over the remove button,
+ * or copy the style from there.
+ * LIMITATION: multiple hierarchies each using this have to define seperate container classes, otherwise styles will leak
  */
 @Component({
   selector: "app-config-section-header",

@@ -13,6 +13,7 @@ $toolbar-width: 300px;
   @include mat-elevation.elevation(4);
   border-bottom-left-radius: 0;
   border-top-right-radius: 0;
+  background-color: transparent;
 }
 
 .admin-grid-layout {

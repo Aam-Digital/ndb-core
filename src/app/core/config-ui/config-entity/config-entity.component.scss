@@ -9,11 +9,18 @@
   margin: auto 0;
 }
 
-.section-container {
+.section-wrapper {
   @include mat-elevation.elevation(1);
   margin: sizes.$small;
   padding: sizes.$small;
 }
+// TODO: making direct child of app-config-section-header somehow breaks this
+//  although `:has(> app-config-section-header .group-remove-button` (without :hover) does work ...
+.section-wrapper:has(> app-config-section-header .group-remove-button:hover) {
+  border-color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
 
 .section-add-button {
   padding: sizes.$large;
