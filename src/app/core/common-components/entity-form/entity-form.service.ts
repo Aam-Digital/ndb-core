@@ -12,12 +12,12 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
-import { SessionService } from "../../session/session-service/session.service";
 import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
+import { CurrentUserSubject } from "../../user/user";
 import {
   ColumnConfig,
   toFormFieldConfig,
@@ -44,7 +44,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
-    private session: SessionService,
+    private currentUser: CurrentUserSubject,
     router: Router,
   ) {
     router.events
@@ -186,7 +186,7 @@ export class EntityFormService {
         newVal = new Date();
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.session.getCurrentUser().name;
+        newVal = this.currentUser.value.name;
         break;
       default:
         newVal = schema.defaultValue;

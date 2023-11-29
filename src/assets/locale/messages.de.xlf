@@ -1532,7 +1532,7 @@
         <note from="description" priority="1">The progress, e.g. of a certain activity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2468578017924444574" datatype="html">
@@ -2230,7 +2230,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1868606282505332204" datatype="html">
@@ -5435,7 +5435,7 @@
         <target state="translated">Neuste Änderungen konnten nicht geladen werden: <x id="PH" equiv-text="error"/></target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/latest-changes.service.ts</context>
-          <context context-type="linenumber">124</context>
+          <context context-type="linenumber">122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2896181875024748753" datatype="html">
@@ -5486,85 +5486,12 @@
         <target state="translated">Benutzername</target>
         <note from="description" priority="1">Username placeholder</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
-          <context context-type="linenumber">37</context>
-        </context-group>
-        <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
           <context context-type="linenumber">24</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
           <context context-type="linenumber">93</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
-        <source>Password</source>
-        <target state="translated">Passwort</target>
-        <note priority="1" from="description">password placeholder</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
-          <context context-type="linenumber">52</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="c4552f14d4f1ad139bbd46e8b2b91e0918f3fd5c" datatype="html">
-        <source> Login </source>
-        <target state="translated">Login</target>
-        <note priority="1" from="description">Login button</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
-          <context context-type="linenumber">77</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5554528553553249088" datatype="html">
-        <source>Show password</source>
-        <target state="translated">Passwort anzeigen</target>
-        <note priority="1" from="description">Tooltip text for showing the password</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">66</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="1446670643492611810" datatype="html">
-        <source>Hide password</source>
-        <target state="translated">Passwort verbergen</target>
-        <note priority="1" from="description">Tooltip text for hiding the password</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">67</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="7570355926644650102" datatype="html">
-        <source>Please connect to the internet and try again</source>
-        <target state="translated">Bitte stellen Sie sicher das Sie eine Internetverbindung haben und versuchen Sie es erneut.</target>
-        <note priority="1" from="description">LoginError</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">113</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="9004164764632958228" datatype="html">
-        <source>Username and/or password incorrect</source>
-        <target state="translated">Benutzername und/oder Password inkorrekt</target>
-        <note priority="1" from="description">LoginError</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">118</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5232688824890170292" datatype="html">
-        <source>An unexpected error occurred.
-          Please reload the the page and try again.
-          If you keep seeing this error message, please contact your system administrator.
-        </source>
-        <target state="translated">Ein unerwarteter Fehler ist aufgetreten.
-          Bitte laden Sie die Seite neu und versuchen Sie es erneut.
-          Wenn Sie weiterhin diese Fehlermeldung sehen, kontaktieren Sie bitte Ihren Systemadministrator.
-        </target>
-        <note priority="1" from="description">LoginError</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">127</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5842860125411594339" datatype="html">
@@ -5662,7 +5589,7 @@
         <note priority="1" from="description">Title user feedback dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">148</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7476504920536064818" datatype="html">
@@ -5671,7 +5598,7 @@
         <note priority="1" from="description">Subtitle user feedback dialog</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">149</context>
         </context-group>
       </trans-unit>
       <trans-unit id="94958c60d6520292b68b651644c2cb286a4e6de0" datatype="html">
@@ -5753,7 +5680,11 @@
         </context-group>
       </trans-unit>
       <trans-unit id="f7f6273c8de8f72e8281a280ad556c7b28988fbc" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;user&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Profile </source>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>
+            Profile
+          &lt;/button>
+
+          &lt;button"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/> Profile </source>
         <target state="translated"><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;user&quot; class=&quot;nav-icon&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Profil</target>
         <note priority="1" from="description">Navigate to user profile page</note>
         <context-group purpose="location">
@@ -5762,7 +5693,9 @@
         </context-group>
       </trans-unit>
       <trans-unit id="8bf270adb01cb85e970eb6465bc3167bb04598de" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;sign-out-alt&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Sign out </source>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>
+            Sign out
+          &lt;/button>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/> Sign out </source>
         <target state="translated"><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;sign-out-alt&quot; class=&quot;nav-icon&quot;>"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/> Abmelden</target>
         <note priority="1" from="description">Sign out of the app</note>
         <context-group purpose="location">
@@ -5785,7 +5718,7 @@
         <note priority="1" from="description">Password reset disabled tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4363136589112981005" datatype="html">
@@ -5794,7 +5727,7 @@
         <note priority="1" from="description">Password reset disabled tooltip</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">68</context>
         </context-group>
       </trans-unit>
       <trans-unit id="db255c32eaa1e9090d54f39d80701aefb160c3a3" datatype="html">
@@ -5940,7 +5873,7 @@
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">131</context>
+          <context context-type="linenumber">123</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1879173756828666065" datatype="html">
@@ -5949,7 +5882,7 @@
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">125</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3263679890047861885" datatype="html">
@@ -5958,7 +5891,7 @@
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">158</context>
+          <context context-type="linenumber">150</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8057515795040006849" datatype="html">
@@ -5967,7 +5900,7 @@
         <note priority="1" from="description">Snackbar message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">179</context>
+          <context context-type="linenumber">171</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2392488717875840729" datatype="html">
@@ -5976,7 +5909,7 @@
         <note priority="1" from="description">label for entity</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">36</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5248717555542428023" datatype="html">
@@ -5985,7 +5918,7 @@
         <note priority="1" from="description">Label of username</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7522118423828297518" datatype="html">
@@ -5995,7 +5928,7 @@
         <note priority="1" from="meaning">Error message when trying to change the username</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">50</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f41d09687e68c1e67a40d60e74857bc384fed57f" datatype="html">
@@ -6976,141 +6909,23 @@
           <context context-type="linenumber">41</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1ae3dcf96b494406b6fd6fbd2f15f7259553bf4d" datatype="html">
-        <source>Current Password</source>
-        <target state="translated">Aktuelles Passwort<x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input
-                matInput
-                type=&quot;password&quot;
-                formControlName=&quot;currentPassword&quot;
-              />"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="9e02830ba42ed9d4c0ecd3c7cdaa9fb9650a86a5" datatype="html">
-        <source> Please provide your correct current password for confirmation. </source>
-        <target state="translated">Bitte das korrekte Passwort zur Bestätigung eingeben</target>
-        <note priority="1" from="description">An incorrect password was entered trying to change
-        the password</note>
-        <note priority="1" from="meaning">Password Confirmation</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">15</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="e70e209561583f360b1e9cefd2cbb1fe434b6229" datatype="html">
-        <source>New password</source>
-        <target state="translated">Neues Passwort <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input matInput type=&quot;password&quot; formControlName=&quot;newPassword&quot; />"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="f2415ff4be1ffe9eccdab21194ab1050eb4db871" datatype="html">
-        <source> Please enter a new password. </source>
-        <target state="translated">Bitte ein neues Passwort eingeben.</target>
-        <note priority="1" from="description">Password validation</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">27</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="fc9128b642973e290d74879c3dc6eef397b3b900" datatype="html">
-        <source> Must be at least 8 characters long. </source>
-        <target state="translated">Muss mindestend 8 Zeichen lang sein.</target>
-        <note priority="1" from="description">Password validation</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">30</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="f0c4e96a4e733f5ab8e3f4c15b1f4a711cd36453" datatype="html">
-        <source> Must contain lower case letters, upper case letters, symbols and numbers to be secure. </source>
-        <target state="translated">Muss Kleinbuchstaben, Großbuchstaben, Symbole und Nummern enthalten um sicher zu sein.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">33,36</context>
-        </context-group>
-        <note priority="1" from="description">Illegal password pattern</note>
-      </trans-unit>
-      <trans-unit id="ede41f01c781b168a783cfcefc6fb67d48780d9b" datatype="html">
-        <source>Confirm new password</source>
-        <target state="translated">Neues Passwort bestätigen <x id="TAG_INPUT" ctype="x-input" equiv-text="&lt;input
-                matInput
-                type=&quot;password&quot;
-                formControlName=&quot;confirmPassword&quot;
-              />"/></target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">41</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3316806639934b0749e109177aa165a7240be5b8" datatype="html">
-        <source> Passwords don't match. </source>
-        <target state="translated">Die Passwörter stimmen nicht überein.</target>
-        <note priority="1" from="description">Illegal new password</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">49</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3e9d991fb327d0ee54cc6c7690b2a2016edc23f9" datatype="html">
-        <source> Change Password </source>
+      <trans-unit id="132c4b72d99a70ee1f064216fdb9fefc883b7b57" datatype="html">
+        <source> Change Password
+</source>
         <target state="translated">Passwort ändern</target>
-        <note priority="1" from="description">Change password button</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">62</context>
-        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">10</context>
+          <context context-type="linenumber">9,11</context>
         </context-group>
-      </trans-unit>
-      <trans-unit id="3098158196422063886" datatype="html">
-        <source>Password changed successfully.</source>
-        <target state="translated">Passwort erfolgreich geändert.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.ts</context>
-          <context context-type="linenumber">105</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5834994409892624101" datatype="html">
-        <source>Failed to change password: <x id="PH" equiv-text="err"/>
-Please try again. If the problem persists contact Aam Digital support.</source>
-        <target state="translated">Password konnte nicht geändert werden: <x id="PH" equiv-text="err"/>
-Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, kontaktieren Sie das Support-Team.</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.ts</context>
-          <context context-type="linenumber">109</context>
-        </context-group>
+        <note priority="1" from="description">Button which opens password reset page</note>
       </trans-unit>
       <trans-unit id="7ea7f4d66c1f2646fd50701799835c4389f0d5e5" datatype="html">
         <source>Your email address</source>
         <target state="translated">Email Adresse</target>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
         <note priority="1" from="description">Email address input field</note>
-      </trans-unit>
-      <trans-unit id="43d691786677e566b0cfc59e8393b55ec7a93c63" datatype="html">
-        <source> Please provide a valid email </source>
-        <target state="translated"> Bitte eine gültige Email Adresse eingeben </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">26,28</context>
-        </context-group>
-        <note priority="1" from="description">Error message if email format is invalid</note>
-      </trans-unit>
-      <trans-unit id="8da880fd566b394cb495370f0b5846279a19fe60" datatype="html">
-        <source> Update email </source>
-        <target state="translated"> Email speichern </target>
-        <note priority="1" from="description">Button which updates the user's email</note>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4210747844204240754" datatype="html">
@@ -7118,37 +6933,107 @@ Bitte versuchen Sie es erneut. Wenn das Problem weiterhin besteht, kontaktieren 
         <target state="translated">Bitte klicke auf den Link in der E-Mail, welche wir an die angegebene Adresse gesendet haben um diese zu bestätigen.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="c4bc0188f8686c257ac8253a22e8b44e24517d38" datatype="html">
-        <source> Forgot password?
-</source>
-        <target state="translated"> Passwort vergessen?
-</target>
-        <note priority="1" from="description">Login button</note>
+      <trans-unit id="ff8a4648302a985fefae6e750f72888e5ec0b251" datatype="html">
+        <source> Welcome </source>
+        <target state="translated"> Willkommen </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/password-reset/password-reset.component.html</context>
-          <context context-type="linenumber">8</context>
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">20,22</context>
         </context-group>
+        <note priority="1" from="description">Sign in title</note>
+      </trans-unit>
+      <trans-unit id="143c74ed7f55cd138cdd39cac68cd5dc8542bf20" datatype="html">
+        <source> to your system <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em>"/><x id="INTERPOLATION" equiv-text="eName | async }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/mat-ca"/></source>
+        <target state="translated"> zu ihrer Anwendung <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em>"/><x id="INTERPOLATION" equiv-text="eName | async }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/mat-ca"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">23,26</context>
+        </context-group>
+        <note priority="1" from="description">Sign in subtitle</note>
+      </trans-unit>
+      <trans-unit id="f2a1733d999dfadefc8242af5bbb3b126d878bfd" datatype="html">
+        <source>It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection.</source>
+        <target state="translated">Sie müssen sich einloggen um Ihre Daten mit anderen Nutzer:innen zu synchronisieren. Wir überprüfen, ob Sie noch eingeloggt sind oder leiten Sie zum Anmelde-Fenster weiter. Sie können die Anwendung weiterhin ohne Login nutzen, falls Sie derzeit keine aktive Internetverbindung haben.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <note priority="1" from="description">online login tooltip</note>
+      </trans-unit>
+      <trans-unit id="7787ffdcc7155b9c9dfb13292f8cf69838e4b2db" datatype="html">
+        <source>Checking online login ...</source>
+        <target state="translated">Online Login wird überprüft ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+        <note priority="1" from="description">login progess bar title</note>
+      </trans-unit>
+      <trans-unit id="4727c95c8e5efb65e3fd2bb18c77ac46c133bf54" datatype="html">
+        <source> We couldn't connect to the server currently. You can still use the application offline, if you have logged in on this device previously. </source>
+        <target state="translated"> Die Verbindung mit dem Server ist fehlgeschlagen. Sie können die Anwendung ohne Login nutzen, falls Sie sich zuvor schon einmal auf diesem Gerät angemeldet hatten. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">48,52</context>
+        </context-group>
+        <note priority="1" from="description">online login failed text</note>
+      </trans-unit>
+      <trans-unit id="f360c0ccf6f1d2f7d8b4e6dece1a39afc9d253f0" datatype="html">
+        <source> Retry online login </source>
+        <target state="translated"> Online login erneut versuchen </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">59,61</context>
+        </context-group>
+        <note priority="1" from="description">Login button</note>
+      </trans-unit>
+      <trans-unit id="d7e5c47195c8420dae39b7e10bb8447babe39a57" datatype="html">
+        <source>You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login.</source>
+        <target state="translated">Sie können die komplette Anwendung ohne Internetverbindung nutzen. Dabei werden Ihre Daten aber nicht mit anderen Nutzer:innen synchronisiert. Wenn Sie eine Internetverbindung haben, sollten Sie sich immer Online einloggen.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">72</context>
+        </context-group>
+        <note priority="1" from="description">offline login tooltip</note>
+      </trans-unit>
+      <trans-unit id="9c046bda1345e5d408eb823fa29663f3c71ced54" datatype="html">
+        <source> Offline Login </source>
+        <target state="translated"> Offline nutzen </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">75,77</context>
+        </context-group>
+        <note priority="1" from="description">offline section title</note>
+      </trans-unit>
+      <trans-unit id="2db172959987f1a54c848147f4532bc85b04739d" datatype="html">
+        <source>Log in as user ...</source>
+        <target state="translated">Einloggen als Nutzer:in ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+        <note priority="1" from="description">Select user for offline login title</note>
       </trans-unit>
       <trans-unit id="db919f18450f421432212d8abd668b71e777626d" datatype="html">
         <source> Please provide a valid email </source>
-        <target state="translated"> Please provide a valid email </target>
-        <note priority="1" from="description">Invalid email error message</note>
+        <target state="translated"> Bitte eine gültige Email Adresse angeben </target>
+        <note priority="1" from="description">Error message if email format is invalid</note>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/password-reset/password-reset.component.html</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
+          <context context-type="linenumber">25</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="d78a515f6e0de5a30599b875b68e03a3688be935" datatype="html">
-        <source> Please Sign In</source>
-        <target state="translated">Bitte einloggen</target>
-        <note priority="1" from="description">Sign in title</note>
+      <trans-unit id="bedfc4b5f8700fbc5f78c5ab92018fd64f49fe00" datatype="html">
+        <source> Update email </source>
+        <target state="translated"> Email speichern </target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
+          <context context-type="linenumber">40,42</context>
         </context-group>
+        <note priority="1" from="description">Button which updates the user's email</note>
       </trans-unit>
       <trans-unit id="paginator.zeroRange" datatype="html">
         <source>0 in <x id="PH" equiv-text="length"/></source>

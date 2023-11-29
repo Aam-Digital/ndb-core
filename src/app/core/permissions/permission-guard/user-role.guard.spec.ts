@@ -1,16 +1,16 @@
 import { TestBed } from "@angular/core/testing";
 
 import { UserRoleGuard } from "./user-role.guard";
-import { SessionService } from "../../session/session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRouteSnapshot, Router } from "@angular/router";
-import { AuthUser } from "../../session/session-service/auth-user";
+import { AuthUser } from "../../session/auth/auth-user";
 import { ConfigService } from "../../config/config.service";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
+import { CurrentUserSubject } from "../../user/user";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let userSubject: CurrentUserSubject;
   const normalUser: AuthUser = { name: "normalUser", roles: ["user_app"] };
   const adminUser: AuthUser = {
     name: "admin",
@@ -19,18 +19,18 @@ describe("UserRoleGuard", () => {
   let mockConfigService: jasmine.SpyObj<ConfigService>;
 
   beforeEach(() => {
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       providers: [
-        { provide: SessionService, useValue: mockSessionService },
+        CurrentUserSubject,
         UserRoleGuard,
         { provide: ConfigService, useValue: mockConfigService },
       ],
     });
     guard = TestBed.inject(UserRoleGuard);
+    userSubject = TestBed.inject(CurrentUserSubject);
   });
 
   it("should be created", () => {
@@ -38,7 +38,7 @@ describe("UserRoleGuard", () => {
   });
 
   it("should return true if current user is allowed", () => {
-    mockSessionService.getCurrentUser.and.returnValue(adminUser);
+    userSubject.next(adminUser);
 
     const result = guard.canActivate({
       routeConfig: { path: "url" },
@@ -49,7 +49,7 @@ describe("UserRoleGuard", () => {
   });
 
   it("should return false for a user without permissions", () => {
-    mockSessionService.getCurrentUser.and.returnValue(normalUser);
+    userSubject.next(normalUser);
     const router = TestBed.inject(Router);
     spyOn(router, "navigate");
 
@@ -63,7 +63,7 @@ describe("UserRoleGuard", () => {
   });
 
   it("should navigate to 404 for real navigation requests without permissions", () => {
-    mockSessionService.getCurrentUser.and.returnValue(normalUser);
+    userSubject.next(normalUser);
     const router = TestBed.inject(Router);
     spyOn(router, "navigate");
     const route = new ActivatedRouteSnapshot();
@@ -96,13 +96,16 @@ describe("UserRoleGuard", () => {
       }
     });
 
-    mockSessionService.getCurrentUser.and.returnValue(normalUser);
+    userSubject.next(normalUser);
+    expect(guard.checkRoutePermissions("free")).toBeTrue();
+    expect(guard.checkRoutePermissions("/free")).toBeTrue();
     expect(guard.checkRoutePermissions("restricted")).toBeFalse();
     expect(guard.checkRoutePermissions("pathA")).toBeTrue();
     expect(guard.checkRoutePermissions("/pathA")).toBeTrue();
     expect(guard.checkRoutePermissions("pathA/1")).toBeFalse();
 
-    mockSessionService.getCurrentUser.and.returnValue(adminUser);
+    userSubject.next(adminUser);
+    expect(guard.checkRoutePermissions("free")).toBeTrue();
     expect(guard.checkRoutePermissions("restricted")).toBeTrue();
     expect(guard.checkRoutePermissions("pathA")).toBeTrue();
     expect(guard.checkRoutePermissions("pathA/1")).toBeTrue();

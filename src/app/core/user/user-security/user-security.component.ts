@@ -11,10 +11,8 @@ import {
   KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
-import { AuthService } from "../../session/auth/auth.service";
-import { User } from "../user";
+import { CurrentUserSubject, User } from "../user";
 import { AlertService } from "../../alerts/alert.service";
-import { SessionService } from "../../session/session-service/session.service";
 import { HttpClient } from "@angular/common/http";
 import { AppSettings } from "../../app-settings";
 import { NgForOf, NgIf } from "@angular/common";
@@ -50,23 +48,22 @@ export class UserSecurityComponent implements OnInit {
     email: ["", [Validators.required, Validators.email]],
     roles: new FormControl<Role[]>([]),
   });
-  keycloak: KeycloakAuthService;
   availableRoles: Role[] = [];
   user: KeycloakUser;
   editing = true;
   userIsPermitted = false;
 
   constructor(
-    authService: AuthService,
-    sessionService: SessionService,
+    private authService: KeycloakAuthService,
+    currentUser: CurrentUserSubject,
     private fb: FormBuilder,
     private alertService: AlertService,
     private http: HttpClient,
   ) {
     if (
-      sessionService
-        .getCurrentUser()
-        .roles.includes(KeycloakAuthService.ACCOUNT_MANAGER_ROLE)
+      currentUser.value?.roles.includes(
+        KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
+      )
     ) {
       this.userIsPermitted = true;
     }
@@ -76,14 +73,9 @@ export class UserSecurityComponent implements OnInit {
         this.form.get("email").setValue(next.email.trim());
       }
     });
-    if (authService instanceof KeycloakAuthService) {
-      this.keycloak = authService;
-      this.keycloak
-        .getRoles()
-        .subscribe((roles) => this.initializeRoles(roles));
-    } else {
-      this.form.disable();
-    }
+    this.authService
+      .getRoles()
+      .subscribe((roles) => this.initializeRoles(roles));
   }
 
   private initializeRoles(roles: Role[]) {
@@ -99,8 +91,8 @@ export class UserSecurityComponent implements OnInit {
 
   ngOnInit() {
     this.form.get("username").setValue(this.entity.name);
-    if (this.keycloak) {
-      this.keycloak.getUser(this.entity.name).subscribe({
+    if (this.authService) {
+      this.authService.getUser(this.entity.name).subscribe({
         next: (res) => this.assignUser(res),
         error: () => undefined,
       });
@@ -152,7 +144,7 @@ export class UserSecurityComponent implements OnInit {
     const user = this.getFormValues();
     user.enabled = true;
     if (user) {
-      this.keycloak.createUser(user).subscribe({
+      this.authService.createUser(user).subscribe({
         next: () => {
           this.alertService.addInfo(
             $localize`:Snackbar message:Account created. An email has been sent to ${
@@ -182,7 +174,7 @@ export class UserSecurityComponent implements OnInit {
   }
 
   private updateKeycloakUser(update: Partial<KeycloakUser>, message: string) {
-    this.keycloak.updateUser(this.user.id, update).subscribe({
+    this.authService.updateUser(this.user.id, update).subscribe({
       next: () => {
         this.alertService.addInfo(message);
         Object.assign(this.user, update);

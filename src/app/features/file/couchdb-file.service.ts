@@ -29,7 +29,7 @@ import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { LoggingService } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
-import { SessionService } from "../../core/session/session-service/session.service";
+import { SyncStateSubject } from "../../core/session/session-type";
 
 /**
  * Stores the files in the CouchDB.
@@ -51,9 +51,9 @@ export class CouchdbFileService extends FileService {
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
     logger: LoggingService,
-    session: SessionService,
+    syncState: SyncStateSubject,
   ) {
-    super(entityMapper, entities, logger, session);
+    super(entityMapper, entities, logger, syncState);
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {

@@ -8,7 +8,7 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../../core/entity/database-entity.decorator";
-import { SessionService } from "../../core/session/session-service/session.service";
+import { SyncStateSubject } from "../../core/session/session-type";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
 
 describe("MockFileService", () => {
@@ -24,8 +24,8 @@ describe("MockFileService", () => {
         },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
-          provide: SessionService,
-          useValue: { syncState: of(SyncState.COMPLETED) },
+          provide: SyncStateSubject,
+          useValue: of(SyncState.COMPLETED),
         },
       ],
     });

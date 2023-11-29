@@ -1,4 +1,4 @@
-@use "src/styles/variables/colors";
+@use "variables/colors";
 
 table tr:nth-child(even) {
   background-color: colors.$grey-light;

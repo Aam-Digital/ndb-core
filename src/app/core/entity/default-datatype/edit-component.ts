@@ -2,14 +2,14 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity } from "../model/entity";
-import { Directive, Input, OnInit } from "@angular/core";
+import { Directive, Input, OnChanges, OnInit } from "@angular/core";
 
 /**
  * A simple helper class which sets up all the required information for edit-components.
  * <T> refers to the type of the value which is processed in the component.
  */
 @Directive()
-export abstract class EditComponent<T> implements OnInit {
+export abstract class EditComponent<T> implements OnInit, OnChanges {
   /**
    * The configuration for this form field.
    */

@@ -16,7 +16,7 @@
  */
 
 @use "@angular/material/core/style/elevation" as mat-elevation;
-@use "src/styles/variables/sizes";
+@use "variables/sizes";
 
 .info-field {
   @include mat-elevation.elevation(1);

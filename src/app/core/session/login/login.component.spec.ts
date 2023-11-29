@@ -24,84 +24,41 @@ import {
 } from "@angular/core/testing";
 
 import { LoginComponent } from "./login.component";
-import { LoggingService } from "../../logging/logging.service";
-import { SessionService } from "../session-service/session.service";
 import { LoginState } from "../session-states/login-state.enum";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { AuthService } from "../auth/auth.service";
-import { NEVER, Subject } from "rxjs";
 import { ActivatedRoute, Router } from "@angular/router";
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
-import { HarnessLoader } from "@angular/cdk/testing";
-import { MatInputHarness } from "@angular/material/input/testing";
+import { LoginStateSubject, SessionType } from "../session-type";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { SessionManagerService } from "../session-service/session-manager.service";
+import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
+import { firstValueFrom, Subject } from "rxjs";
+import { AuthUser } from "../auth/auth-user";
+import { environment } from "../../../../environments/environment";
 
 describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
-  let loginState = new Subject();
-  let loader: HarnessLoader;
+  let loginState: LoginStateSubject;
 
   beforeEach(waitForAsync(() => {
-    mockSessionService = jasmine.createSpyObj(["login", "getCurrentUser"], {
-      loginState,
-      syncState: NEVER,
-    });
-    mockSessionService.getCurrentUser.and.returnValue({ name: "", roles: [] });
     TestBed.configureTestingModule({
-      imports: [LoginComponent, MockedTestingModule],
-      providers: [
-        { provide: SessionService, useValue: mockSessionService },
-        { provide: AuthService, useValue: {} },
-      ],
+      imports: [LoginComponent, MockedTestingModule.withState()],
     }).compileComponents();
+    loginState = TestBed.inject(LoginStateSubject);
+    environment.session_type = SessionType.synced;
   }));
 
   beforeEach(() => {
     fixture = TestBed.createComponent(LoginComponent);
-    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
-    fixture.detectChanges();
+  });
+
+  afterEach(() => {
+    environment.session_type = SessionType.mock;
   });
 
   it("should be created", () => {
     expect(component).toBeTruthy();
   });
-
-  it("should show a message when login is unavailable", fakeAsync(() => {
-    expectErrorMessageOnState(LoginState.UNAVAILABLE);
-  }));
-
-  it("should show a message when login fails", fakeAsync(() => {
-    expectErrorMessageOnState(LoginState.LOGIN_FAILED);
-  }));
-
-  it("should show a message and call logging service on unexpected login state", fakeAsync(() => {
-    const loggerSpy = spyOn(TestBed.inject(LoggingService), "error");
-
-    expectErrorMessageOnState(LoginState.LOGGED_OUT);
-    expect(loggerSpy).toHaveBeenCalled();
-  }));
-
-  it("should show a message and call logging service on error", fakeAsync(() => {
-    mockSessionService.login.and.rejectWith();
-    expect(component.errorMessage).toBeFalsy();
-    const loggerSpy = spyOn(TestBed.inject(LoggingService), "error");
-
-    component.login();
-    tick();
-    expect(loggerSpy).toHaveBeenCalled();
-    expect(component.errorMessage).toBeTruthy();
-  }));
-
-  it("should focus the first input element on initialization", fakeAsync(async () => {
-    component.ngAfterViewInit();
-    tick();
-    fixture.detectChanges();
-
-    const firstInputElement = await loader.getHarness(MatInputHarness);
-    await expectAsync(firstInputElement.isFocused()).toBeResolvedTo(true);
-  }));
 
   it("should route to redirect uri once state changes to 'logged-in'", () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigateByUrl");
@@ -109,18 +66,46 @@ describe("LoginComponent", () => {
       redirect_uri: "someUrl",
     };
 
+    fixture.detectChanges();
     loginState.next(LoginState.LOGGED_IN);
 
     expect(navigateSpy).toHaveBeenCalledWith("someUrl");
   });
 
-  function expectErrorMessageOnState(loginState: LoginState) {
-    mockSessionService.login.and.resolveTo(loginState);
-    expect(component.errorMessage).toBeFalsy();
+  it("should show offline login if remote login fails", fakeAsync(() => {
+    const sessionManager = TestBed.inject(SessionManagerService);
+    const mockUsers = [{ name: "test", roles: [] }];
+    spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
+    spyOn(sessionManager, "remoteLoginAvailable").and.returnValue(true);
+    const remoteLoginSubject = new Subject<AuthUser>();
+    spyOn(TestBed.inject(KeycloakAuthService), "login").and.returnValue(
+      firstValueFrom(remoteLoginSubject),
+    );
+    loginState.next(LoginState.LOGGED_OUT);
+    fixture.detectChanges();
 
-    component.login();
+    sessionManager.remoteLogin().catch(() => undefined);
+    expect(component.enableOfflineLogin).toBeFalse();
+    expect(loginState.value).toBe(LoginState.IN_PROGRESS);
+
+    remoteLoginSubject.error("login error");
     tick();
+    expect(component.enableOfflineLogin).toBeTrue();
+    expect(component.offlineUsers).toEqual(mockUsers);
+  }));
 
-    expect(component.errorMessage).toBeTruthy();
-  }
+  it("should show offline login after 5 seconds", fakeAsync(() => {
+    const sessionManager = TestBed.inject(SessionManagerService);
+    const mockUsers = [{ name: "test", roles: [] }];
+    spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
+
+    loginState.next(LoginState.LOGGED_OUT);
+    fixture.detectChanges();
+    loginState.next(LoginState.IN_PROGRESS);
+    expect(component.enableOfflineLogin).toBeFalse();
+
+    tick(10000);
+    expect(component.enableOfflineLogin).toBeTrue();
+    expect(component.offlineUsers).toEqual(mockUsers);
+  }));
 });

@@ -1,14 +1,12 @@
 import { Component, Inject, OnInit } from "@angular/core";
-import { SessionService } from "../../session/session-service/session.service";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import * as Sentry from "@sentry/browser";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
-import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 import { environment } from "../../../../environments/environment";
-import { AuthUser } from "../../session/session-service/auth-user";
+import { AuthUser } from "../../session/auth/auth-user";
 import { firstValueFrom } from "rxjs";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
@@ -16,7 +14,10 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
-import { AuthService } from "../../session/auth/auth.service";
+import { SyncStateSubject } from "../../session/session-type";
+import { SyncService } from "../../database/sync.service";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { CurrentUserSubject } from "../../user/user";
 
 @Component({
   selector: "app-support",
@@ -38,7 +39,8 @@ export class SupportComponent implements OnInit {
   dbInfo: string;
 
   constructor(
-    private sessionService: SessionService,
+    private syncState: SyncStateSubject,
+    private userSubject: CurrentUserSubject,
     private sw: SwUpdate,
     private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,
@@ -50,7 +52,7 @@ export class SupportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.currentUser = this.sessionService.getCurrentUser();
+    this.currentUser = this.userSubject.value;
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
     this.initLastSync();
@@ -61,7 +63,7 @@ export class SupportComponent implements OnInit {
   }
 
   private initCurrentSyncState() {
-    switch (this.sessionService.syncState.value) {
+    switch (this.syncState.value) {
       case SyncState.COMPLETED:
         this.currentSyncState = "synced";
         return;
@@ -74,13 +76,12 @@ export class SupportComponent implements OnInit {
   }
 
   private initLastSync() {
-    this.lastSync =
-      localStorage.getItem(SyncedSessionService.LAST_SYNC_KEY) || "never";
+    this.lastSync = localStorage.getItem(SyncService.LAST_SYNC_KEY) || "never";
   }
 
   private initLastRemoteLogin() {
     this.lastRemoteLogin =
-      localStorage.getItem(AuthService.LAST_AUTH_KEY) || "never";
+      localStorage.getItem(KeycloakAuthService.LAST_AUTH_KEY) || "never";
   }
 
   private initStorageInfo() {

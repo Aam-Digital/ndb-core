@@ -1,18 +1,19 @@
 import { TestBed } from "@angular/core/testing";
 
 import { AuthGuard } from "./auth.guard";
-import { SessionService } from "./session-service/session.service";
 import { RouterTestingModule } from "@angular/router/testing";
+import { LoginStateSubject } from "./session-type";
+import { LoginState } from "./session-states/login-state.enum";
 
 describe("AuthGuard", () => {
-  let mockSession: jasmine.SpyObj<SessionService>;
+  let loginState: LoginStateSubject;
 
   beforeEach(() => {
-    mockSession = jasmine.createSpyObj(["isLoggedIn"]);
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
-      providers: [{ provide: SessionService, useValue: mockSession }],
+      providers: [LoginStateSubject],
     });
+    loginState = TestBed.inject(LoginStateSubject);
   });
 
   it("should be created", () => {
@@ -20,7 +21,7 @@ describe("AuthGuard", () => {
   });
 
   it("should return true if user is logged in", () => {
-    mockSession.isLoggedIn.and.returnValue(true);
+    loginState.next(LoginState.LOGGED_IN);
 
     const res = TestBed.runInInjectionContext(() =>
       AuthGuard(undefined, undefined),
@@ -29,7 +30,7 @@ describe("AuthGuard", () => {
   });
 
   it("should navigate to login page with redirect url if not logged in", () => {
-    mockSession.isLoggedIn.and.returnValue(false);
+    loginState.next(LoginState.LOGGED_OUT);
 
     const res = TestBed.runInInjectionContext(() =>
       AuthGuard(undefined, { url: "/some/url" } as any),
