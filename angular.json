@@ -12,13 +12,13 @@
       },
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
+          "builder": "@angular-devkit/build-angular:application",
           "options": {
             "outputPath": "dist",
             "index": "src/index.html",
-            "main": "src/main.ts",
+            "browser": "src/main.ts",
             "tsConfig": "src/tsconfig.app.json",
-            "polyfills": "src/polyfills.ts",
+            "polyfills": ["src/polyfills.ts"],
             "i18nMissingTranslation": "warning",
             "assets": [
               "src/assets",
@@ -42,12 +42,11 @@
                 "src/styles"
               ]
             },
-            "vendorChunk": true,
             "extractLicenses": false,
-            "buildOptimizer": false,
             "sourceMap": true,
             "optimization": false,
-            "namedChunks": true
+            "namedChunks": true,
+            "outputHashing": "media"
           },
           "configurations": {
             "production": {
@@ -68,16 +67,13 @@
               "outputHashing": "all",
               "namedChunks": false,
               "extractLicenses": true,
-              "vendorChunk": false,
-              "buildOptimizer": true,
               "fileReplacements": [
                 {
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.prod.ts"
                 }
               ],
-              "serviceWorker": true,
-              "ngswConfigPath": "ngsw-config.json"
+              "serviceWorker": "ngsw-config.json"
             },
             "development": {}
           },
