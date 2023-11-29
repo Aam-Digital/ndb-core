@@ -11,6 +11,7 @@ import { ComponentRegistry } from "../dynamic-components";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
+import { EntityConfigService } from "../core/entity/entity-config.service";
 
 /**
  * Utility module that creates a simple environment where a correctly configured database and session is set up.
@@ -35,7 +36,12 @@ import { SwRegistrationOptions } from "@angular/service-worker";
   ],
 })
 export class DatabaseTestingModule {
-  constructor(pouchDatabase: PouchDatabase, components: ComponentRegistry) {
+  constructor(
+    pouchDatabase: PouchDatabase,
+    components: ComponentRegistry,
+    entityConfigService: EntityConfigService,
+  ) {
+    entityConfigService.setupEntitiesFromConfig();
     environment.session_type = SessionType.mock;
     pouchDatabase.initInMemoryDB();
     components.allowDuplicates();
