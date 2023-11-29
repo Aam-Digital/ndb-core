@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router } from "@angular/router";
-import { SessionService } from "../../session/session-service/session.service";
 import {
   PREFIX_VIEW_CONFIG,
   RouteData,
   ViewConfig,
 } from "../../config/dynamic-routing/view-config.interface";
-import { AuthUser } from "../../session/session-service/auth-user";
+import { AuthUser } from "../../session/auth/auth-user";
 import { ConfigService } from "../../config/config.service";
+import { CurrentUserSubject } from "../../user/user";
 
 /**
  * A guard that checks the roles of the current user against the permissions which are saved in the route data.
@@ -15,14 +15,14 @@ import { ConfigService } from "../../config/config.service";
 @Injectable()
 export class UserRoleGuard implements CanActivate {
   constructor(
-    private sessionService: SessionService,
+    private currentUser: CurrentUserSubject,
     private router: Router,
     private configService: ConfigService,
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const routeData: RouteData = route.data;
-    const user = this.sessionService.getCurrentUser();
+    const user = this.currentUser.value;
     if (this.canAccessRoute(routeData?.permittedUserRoles, user)) {
       return true;
     } else {

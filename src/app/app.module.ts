@@ -63,7 +63,11 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "./core/entity/database-entity.decorator";
-import { LOCATION_TOKEN, WINDOW_TOKEN } from "./utils/di-tokens";
+import {
+  LOCATION_TOKEN,
+  NAVIGATOR_TOKEN,
+  WINDOW_TOKEN,
+} from "./utils/di-tokens";
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { NotesModule } from "./child-dev-project/notes/notes.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
@@ -76,7 +80,6 @@ import { RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
 import moment from "moment";
 import { getLocaleFirstDayOfWeek } from "@angular/common";
-import { SessionService } from "./core/session/session-service/session.service";
 import { waitForChangeTo } from "./core/session/session-states/session-utils";
 import { LoginState } from "./core/session/session-states/login-state.enum";
 import { appInitializers } from "./app-initializers";
@@ -87,6 +90,7 @@ import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birt
 import { ConfigSetupModule } from "./features/config-setup/config-setup.module";
 import { MarkdownPageModule } from "./features/markdown-page/markdown-page.module";
 import { AdminModule } from "./features/admin/admin.module";
+import { LoginStateSubject } from "./core/session/session-type";
 
 /**
  * Main entry point of the application.
@@ -147,6 +151,7 @@ import { AdminModule } from "./features/admin/admin.module";
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: WINDOW_TOKEN, useValue: window },
     { provide: LOCATION_TOKEN, useValue: window.location },
+    { provide: NAVIGATOR_TOKEN, useValue: navigator },
     {
       provide: LOCALE_ID,
       useValue:
@@ -161,12 +166,12 @@ import { AdminModule } from "./features/admin/admin.module";
     },
     {
       provide: SwRegistrationOptions,
-      useFactory: (session: SessionService) => ({
+      useFactory: (loginState: LoginStateSubject) => ({
         enabled: environment.production,
         registrationStrategy: () =>
-          session.loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
+          loginState.pipe(waitForChangeTo(LoginState.LOGGED_IN)),
       }),
-      deps: [SessionService],
+      deps: [LoginStateSubject],
     },
     appInitializers,
   ],

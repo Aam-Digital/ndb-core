@@ -2801,7 +2801,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">37</context>
         </context-group>
         <note priority="1" from="description">Menu item</note>
       </trans-unit>
@@ -4594,117 +4594,36 @@
         </context-group>
         <note priority="1" from="description">PWA iOS Install Instructions - Line 3-2</note>
       </trans-unit>
-      <trans-unit id="1ae3dcf96b494406b6fd6fbd2f15f7259553bf4d" datatype="html">
-        <source>Current Password</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">7</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="9e02830ba42ed9d4c0ecd3c7cdaa9fb9650a86a5" datatype="html">
-        <source> Please provide your correct current password for confirmation. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">15,17</context>
-        </context-group>
-        <note priority="1" from="description">An incorrect password was entered trying to change
-        the password</note>
-        <note priority="1" from="meaning">Password Confirmation</note>
-      </trans-unit>
-      <trans-unit id="e70e209561583f360b1e9cefd2cbb1fe434b6229" datatype="html">
-        <source>New password</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">21</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="f2415ff4be1ffe9eccdab21194ab1050eb4db871" datatype="html">
-        <source> Please enter a new password. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">27,29</context>
-        </context-group>
-        <note priority="1" from="description">Password validation</note>
-      </trans-unit>
-      <trans-unit id="fc9128b642973e290d74879c3dc6eef397b3b900" datatype="html">
-        <source> Must be at least 8 characters long. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">30,32</context>
-        </context-group>
-        <note priority="1" from="description">Password validation</note>
-      </trans-unit>
-      <trans-unit id="f0c4e96a4e733f5ab8e3f4c15b1f4a711cd36453" datatype="html">
-        <source> Must contain lower case letters, upper case letters, symbols and numbers to be secure. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">33,36</context>
-        </context-group>
-        <note priority="1" from="description">Illegal password pattern</note>
-      </trans-unit>
-      <trans-unit id="ede41f01c781b168a783cfcefc6fb67d48780d9b" datatype="html">
-        <source>Confirm new password</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">41</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="3316806639934b0749e109177aa165a7240be5b8" datatype="html">
-        <source> Passwords don&apos;t match. </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">49,51</context>
-        </context-group>
-        <note priority="1" from="description">Illegal new password</note>
-      </trans-unit>
-      <trans-unit id="3e9d991fb327d0ee54cc6c7690b2a2016edc23f9" datatype="html">
-        <source> Change Password </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.html</context>
-          <context context-type="linenumber">62,64</context>
-        </context-group>
+      <trans-unit id="132c4b72d99a70ee1f064216fdb9fefc883b7b57" datatype="html">
+        <source> Change Password
+</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">10,12</context>
+          <context context-type="linenumber">9,11</context>
         </context-group>
-        <note priority="1" from="description">Change password button</note>
-      </trans-unit>
-      <trans-unit id="3098158196422063886" datatype="html">
-        <source>Password changed successfully.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.ts</context>
-          <context context-type="linenumber">105</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5834994409892624101" datatype="html">
-        <source>Failed to change password: <x id="PH" equiv-text="err"/>
-Please try again. If the problem persists contact Aam Digital support.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/couchdb/password-form/password-form.component.ts</context>
-          <context context-type="linenumber">109</context>
-        </context-group>
+        <note priority="1" from="description">Button which opens password reset page</note>
       </trans-unit>
       <trans-unit id="7ea7f4d66c1f2646fd50701799835c4389f0d5e5" datatype="html">
         <source>Your email address</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">19</context>
         </context-group>
         <note priority="1" from="description">Email address input field</note>
       </trans-unit>
-      <trans-unit id="43d691786677e566b0cfc59e8393b55ec7a93c63" datatype="html">
+      <trans-unit id="db919f18450f421432212d8abd668b71e777626d" datatype="html">
         <source> Please provide a valid email </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">26,28</context>
+          <context context-type="linenumber">25,27</context>
         </context-group>
         <note priority="1" from="description">Error message if email format is invalid</note>
       </trans-unit>
-      <trans-unit id="8da880fd566b394cb495370f0b5846279a19fe60" datatype="html">
+      <trans-unit id="bedfc4b5f8700fbc5f78c5ab92018fd64f49fe00" datatype="html">
         <source> Update email </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.html</context>
-          <context context-type="linenumber">42,44</context>
+          <context context-type="linenumber">40,42</context>
         </context-group>
         <note priority="1" from="description">Button which updates the user&apos;s email</note>
       </trans-unit>
@@ -4712,108 +4631,80 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Please click the link in the email we sent you to verify your email address.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/auth/keycloak/account-page/account-page.component.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">52</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="c4bc0188f8686c257ac8253a22e8b44e24517d38" datatype="html">
-        <source> Forgot password?
-</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/password-reset/password-reset.component.html</context>
-          <context context-type="linenumber">8,10</context>
-        </context-group>
-        <note priority="1" from="description">Login button</note>
-      </trans-unit>
-      <trans-unit id="db919f18450f421432212d8abd668b71e777626d" datatype="html">
-        <source> Please provide a valid email </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/auth/keycloak/password-reset/password-reset.component.html</context>
-          <context context-type="linenumber">27,29</context>
-        </context-group>
-        <note priority="1" from="description">Invalid email error message</note>
-      </trans-unit>
-      <trans-unit id="d78a515f6e0de5a30599b875b68e03a3688be935" datatype="html">
-        <source> Please Sign In</source>
+      <trans-unit id="ff8a4648302a985fefae6e750f72888e5ec0b251" datatype="html">
+        <source> Welcome </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">20,22</context>
         </context-group>
         <note priority="1" from="description">Sign in title</note>
       </trans-unit>
-      <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
-        <source>Username</source>
+      <trans-unit id="143c74ed7f55cd138cdd39cac68cd5dc8542bf20" datatype="html">
+        <source> to your system <x id="START_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;em&gt;"/><x id="INTERPOLATION" equiv-text="eName | async }}"/><x id="CLOSE_EMPHASISED_TEXT" ctype="x-em" equiv-text="&lt;/mat-ca"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">23,26</context>
+        </context-group>
+        <note priority="1" from="description">Sign in subtitle</note>
+      </trans-unit>
+      <trans-unit id="f2a1733d999dfadefc8242af5bbb3b126d878bfd" datatype="html">
+        <source>It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">33</context>
+        </context-group>
+        <note priority="1" from="description">online login tooltip</note>
+      </trans-unit>
+      <trans-unit id="7787ffdcc7155b9c9dfb13292f8cf69838e4b2db" datatype="html">
+        <source>Checking online login ...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
           <context context-type="linenumber">37</context>
         </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
-          <context context-type="linenumber">24</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">93</context>
-        </context-group>
-        <note priority="1" from="description">Username placeholder</note>
+        <note priority="1" from="description">login progess bar title</note>
       </trans-unit>
-      <trans-unit id="c32ef07f8803a223a83ed17024b38e8d82292407" datatype="html">
-        <source>Password</source>
+      <trans-unit id="4727c95c8e5efb65e3fd2bb18c77ac46c133bf54" datatype="html">
+        <source> We couldn&apos;t connect to the server currently. You can still use the application offline, if you have logged in on this device previously. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">48,52</context>
         </context-group>
-        <note priority="1" from="description">password placeholder</note>
+        <note priority="1" from="description">online login failed text</note>
       </trans-unit>
-      <trans-unit id="c4552f14d4f1ad139bbd46e8b2b91e0918f3fd5c" datatype="html">
-        <source> Login </source>
+      <trans-unit id="f360c0ccf6f1d2f7d8b4e6dece1a39afc9d253f0" datatype="html">
+        <source> Retry online login </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
-          <context context-type="linenumber">77,79</context>
+          <context context-type="linenumber">59,61</context>
         </context-group>
         <note priority="1" from="description">Login button</note>
       </trans-unit>
-      <trans-unit id="5554528553553249088" datatype="html">
-        <source>Show password</source>
+      <trans-unit id="d7e5c47195c8420dae39b7e10bb8447babe39a57" datatype="html">
+        <source>You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login.</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">72</context>
         </context-group>
-        <note priority="1" from="description">Tooltip text for showing the password</note>
+        <note priority="1" from="description">offline login tooltip</note>
       </trans-unit>
-      <trans-unit id="1446670643492611810" datatype="html">
-        <source>Hide password</source>
+      <trans-unit id="9c046bda1345e5d408eb823fa29663f3c71ced54" datatype="html">
+        <source> Offline Login </source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">75,77</context>
         </context-group>
-        <note priority="1" from="description">Tooltip text for hiding the password</note>
+        <note priority="1" from="description">offline section title</note>
       </trans-unit>
-      <trans-unit id="7570355926644650102" datatype="html">
-        <source>Please connect to the internet and try again</source>
+      <trans-unit id="2db172959987f1a54c848147f4532bc85b04739d" datatype="html">
+        <source>Log in as user ...</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">113</context>
+          <context context-type="sourcefile">src/app/core/session/login/login.component.html</context>
+          <context context-type="linenumber">79</context>
         </context-group>
-        <note priority="1" from="description">LoginError</note>
-      </trans-unit>
-      <trans-unit id="9004164764632958228" datatype="html">
-        <source>Username and/or password incorrect</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">118</context>
-        </context-group>
-        <note priority="1" from="description">LoginError</note>
-      </trans-unit>
-      <trans-unit id="5232688824890170292" datatype="html">
-        <source>An unexpected error occurred.
-          Please reload the the page and try again.
-          If you keep seeing this error message, please contact your system administrator.
-        </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/session/login/login.component.ts</context>
-          <context context-type="linenumber">127,130</context>
-        </context-group>
-        <note priority="1" from="description">LoginError</note>
+        <note priority="1" from="description">Select user for offline login title</note>
       </trans-unit>
       <trans-unit id="5842860125411594339" datatype="html">
         <source>Site name</source>
@@ -4897,7 +4788,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Support request</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">142</context>
+          <context context-type="linenumber">148</context>
         </context-group>
         <note priority="1" from="description">Title user feedback dialog</note>
       </trans-unit>
@@ -4905,7 +4796,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Please describe the problem you are facing.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/support/support/support.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">149</context>
         </context-group>
         <note priority="1" from="description">Subtitle user feedback dialog</note>
       </trans-unit>
@@ -4943,7 +4834,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Could not load latest changes: <x id="PH" equiv-text="error"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/latest-changes.service.ts</context>
-          <context context-type="linenumber">124</context>
+          <context context-type="linenumber">122</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2896181875024748753" datatype="html">
@@ -5046,7 +4937,11 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         </context-group>
       </trans-unit>
       <trans-unit id="f7f6273c8de8f72e8281a280ad556c7b28988fbc" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;user&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Profile </source>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;
+            Profile
+          &lt;/button&gt;
+
+          &lt;button"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/> Profile </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
           <context context-type="linenumber">95,97</context>
@@ -5054,7 +4949,9 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <note priority="1" from="description">Navigate to user profile page</note>
       </trans-unit>
       <trans-unit id="8bf270adb01cb85e970eb6465bc3167bb04598de" datatype="html">
-        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon icon=&quot;sign-out-alt&quot;&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Sign out </source>
+        <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;
+            Sign out
+          &lt;/button&gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/> Sign out </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/ui/ui.component.html</context>
           <context context-type="linenumber">105,107</context>
@@ -5069,11 +4966,23 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         </context-group>
         <note priority="1" from="description">User-Account label</note>
       </trans-unit>
+      <trans-unit id="08c74dc9762957593b91f6eb5d65efdfc975bf48" datatype="html">
+        <source>Username</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
+          <context context-type="linenumber">93</context>
+        </context-group>
+        <note priority="1" from="description">Username placeholder</note>
+      </trans-unit>
       <trans-unit id="2219067079229278684" datatype="html">
         <source>Password change is not allowed in demo mode.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">66</context>
         </context-group>
         <note priority="1" from="description">Password reset disabled tooltip</note>
       </trans-unit>
@@ -5081,7 +4990,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Password change is not possible while being offline.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-account/user-account.component.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">68</context>
         </context-group>
         <note priority="1" from="description">Password reset disabled tooltip</note>
       </trans-unit>
@@ -5196,7 +5105,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Account has been disabled, user will not be able to login anymore.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">131</context>
+          <context context-type="linenumber">123</context>
         </context-group>
         <note priority="1" from="description">Snackbar message</note>
       </trans-unit>
@@ -5204,7 +5113,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Account has been activated, user can login again.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">125</context>
         </context-group>
         <note priority="1" from="description">Snackbar message</note>
       </trans-unit>
@@ -5212,7 +5121,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Account created. An email has been sent to <x id="PH" equiv-text="this.form.get(&quot;email&quot;).value"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">158,160</context>
+          <context context-type="linenumber">150,152</context>
         </context-group>
         <note priority="1" from="description">Snackbar message</note>
       </trans-unit>
@@ -5220,7 +5129,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Successfully updated user</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.ts</context>
-          <context context-type="linenumber">179</context>
+          <context context-type="linenumber">171</context>
         </context-group>
         <note priority="1" from="description">Snackbar message</note>
       </trans-unit>
@@ -5228,7 +5137,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>User</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">36</context>
         </context-group>
         <note priority="1" from="description">label for entity</note>
       </trans-unit>
@@ -5236,7 +5145,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Username</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">42</context>
         </context-group>
         <note priority="1" from="description">Label of username</note>
       </trans-unit>
@@ -5244,7 +5153,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source><x id="PH" equiv-text="label"/> cannot be changed after initialization</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">47</context>
+          <context context-type="linenumber">50</context>
         </context-group>
         <note priority="1" from="description">e.g. username cannot be changed after initialization</note>
         <note priority="1" from="meaning">Error message when trying to change the username</note>
@@ -5676,7 +5585,7 @@ Please try again. If the problem persists contact Aam Digital support.</source>
         <source>Progress of X</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">66</context>
         </context-group>
         <note priority="1" from="description">The progress, e.g. of a certain activity</note>
       </trans-unit>

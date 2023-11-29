@@ -15,20 +15,11 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Injector, NgModule } from "@angular/core";
-import { HTTP_INTERCEPTORS } from "@angular/common/http";
-import { SyncedSessionService } from "./session-service/synced-session.service";
-import { LocalSession } from "./session-service/local-session";
-import { RemoteSession } from "./session-service/remote-session";
-import { SessionService } from "./session-service/session.service";
-import { SessionType } from "./session-type";
-import { environment } from "../../../environments/environment";
-import { AuthService } from "./auth/auth.service";
+import { NgModule } from "@angular/core";
+import { SessionManagerService } from "./session-service/session-manager.service";
+import { LoginStateSubject, SyncStateSubject } from "./session-type";
 import { KeycloakAuthService } from "./auth/keycloak/keycloak-auth.service";
-import { CouchdbAuthService } from "./auth/couchdb/couchdb-auth.service";
-import { AuthProvider } from "./auth/auth-provider";
-import { AuthInterceptor } from "./auth/auth.interceptor";
-import { serviceProvider } from "../../utils/utils";
+import { KeycloakAngularModule } from "keycloak-angular";
 
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
@@ -39,27 +30,21 @@ import { serviceProvider } from "../../utils/utils";
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}
  */
 @NgModule({
+  imports: [KeycloakAngularModule],
   providers: [
-    SyncedSessionService,
-    LocalSession,
-    RemoteSession,
-    serviceProvider(SessionService, (injector: Injector) => {
-      return environment.session_type === SessionType.synced
-        ? injector.get(SyncedSessionService)
-        : injector.get(LocalSession);
-    }),
+    SessionManagerService,
     KeycloakAuthService,
-    CouchdbAuthService,
-    serviceProvider(AuthService, (injector: Injector) => {
-      return environment.authenticator === AuthProvider.Keycloak
-        ? injector.get(KeycloakAuthService)
-        : injector.get(CouchdbAuthService);
-    }),
-    {
-      provide: HTTP_INTERCEPTORS,
-      useClass: AuthInterceptor,
-      multi: true,
-    },
+    LoginStateSubject,
+    SyncStateSubject,
   ],
 })
-export class SessionModule {}
+export class SessionModule {
+  constructor(sessionManager: SessionManagerService) {
+    this.initializeRemoteSession(sessionManager);
+  }
+
+  private async initializeRemoteSession(sessionManager: SessionManagerService) {
+    await sessionManager.remoteLogin();
+    await sessionManager.clearRemoteSessionIfNecessary();
+  }
+}

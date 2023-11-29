@@ -1,7 +1,5 @@
 import { NgModule } from "@angular/core";
 import { PouchDatabase } from "../core/database/pouch-database";
-import { SessionService } from "../core/session/session-service/session.service";
-import { LocalSession } from "../core/session/session-service/local-session";
 import { ConfigService } from "../core/config/config.service";
 import { SessionType } from "../core/session/session-type";
 import { environment } from "../../environments/environment";
@@ -26,7 +24,6 @@ import { EntityConfigService } from "../core/entity/entity-config.service";
 @NgModule({
   imports: [AppModule],
   providers: [
-    { provide: SessionService, useClass: LocalSession },
     { provide: ConfigService, useValue: createTestingConfigService() },
     {
       provide: ConfigurableEnumService,

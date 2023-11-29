@@ -15,71 +15,85 @@
   ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
   -->
 
-<mat-card
-  appearance="outlined"
-  class="mat-elevation-z2 full-width border-box-sizing"
->
-  <mat-card-header>
-    <mat-card-title i18n="Sign in title"> Please Sign In</mat-card-title>
+<mat-card appearance="raised" class="full-width border-box-sizing">
+  <mat-card-header class="header">
+    <mat-card-title style="text-align: center" i18n="Sign in title">
+      Welcome
+    </mat-card-title>
+    <mat-card-subtitle i18n="Sign in subtitle">
+      to your system
+      <em>{{ siteSettingsService.siteName | async }}</em>
+    </mat-card-subtitle>
   </mat-card-header>
+
   <mat-card-content>
-    <form>
-      <p class="login-error">
-        {{ errorMessage }}
-      </p>
+    <div class="gap-regular flex-column">
+      <!-- ONLINE -->
+      <div
+        matTooltip="It is necessary to log in to the server so that your data can be synchronized with other team members. We are checking whether you are still logged in or otherwise forward you to provide your credentials. You can still use the application offline, if you currently have no internet connection."
+        i18n-matTooltip="online login tooltip"
+      >
+        <div *ngIf="loginInProgress">
+          <em i18n="login progess bar title">Checking online login ...</em>
+          <mat-progress-bar
+            mode="indeterminate"
+            class="login-check-progressbar"
+          ></mat-progress-bar>
+        </div>
 
-      <p>
-        <mat-form-field class="full-width">
-          <input
-            #usernameInput
-            matInput
-            i18n-placeholder="Username placeholder"
-            placeholder="Username"
-            type="text"
-            [(ngModel)]="username"
-            required
-            name="username"
-            autocomplete="username"
-          />
-          <mat-error>{{ errorMessage }}</mat-error>
-        </mat-form-field>
-      </p>
-      <p>
-        <mat-form-field class="full-width">
-          <input
-            matInput
-            i18n-placeholder="password placeholder"
-            placeholder="Password"
-            [type]="passwordVisible ? 'text' : 'password'"
-            [(ngModel)]="password"
-            required
-            name="password"
-            autocomplete="current-password"
-            (keydown.enter)="login()"
-          />
-          <fa-icon
-            [icon]="passwordVisible ? 'eye-slash' : 'eye'"
-            matIconSuffix
-            [matTooltip]="passwordVisible ? hidePasswordHint : showPasswordHint"
-            (click)="togglePasswordVisible()"
+        <div *ngIf="!loginInProgress">
+          <div
+            i18n="online login failed text"
+            class="online-error margin-bottom-small"
           >
-          </fa-icon>
-        </mat-form-field>
-      </p>
+            We couldn't connect to the server currently. You can still use the
+            application offline, if you have logged in on this device
+            previously.
+          </div>
+          <button
+            mat-stroked-button
+            type="button"
+            (click)="tryLogin()"
+            i18n="Login button"
+            style="width: 100%"
+          >
+            Retry online login
+          </button>
+        </div>
+      </div>
 
-      <p>
-        <button
-          mat-raised-button
-          type="button"
-          [disabled]="loginInProgress"
-          (click)="login()"
-          i18n="Login button"
+      <!-- OFFLINE -->
+      <mat-card
+        *ngIf="offlineUsers.length > 0"
+        class="margin-top-large"
+        appearance="outlined"
+      >
+        <mat-card-header
+          matTooltip="You can use the application completely offline. However, your changes cannot be synchronized with other team members in this mode. When available, you should always use the online login."
+          i18n-matTooltip="offline login tooltip"
         >
-          Login
-        </button>
+          <h3 mat-card-title class="offline-title" i18n="offline section title">
+            Offline Login
+          </h3>
+          <mat-card-subtitle i18n="Select user for offline login title"
+            >Log in as user ...</mat-card-subtitle
+          >
+        </mat-card-header>
 
-        <app-password-reset></app-password-reset>
-      </p>
-    </form>
+        <mat-card-content>
+          <mat-action-list>
+            <button
+              mat-list-item
+              *ngFor="let user of offlineUsers"
+              (click)="sessionManager.offlineLogin(user)"
+              [disabled]="!enableOfflineLogin"
+            >
+              <fa-icon matListItemIcon icon="user"></fa-icon>
+              {{ user.name }}
+            </button>
+          </mat-action-list>
+        </mat-card-content>
+      </mat-card>
+    </div>
   </mat-card-content>
 </mat-card>

@@ -6,8 +6,7 @@ import {
 } from "@angular/core/testing";
 
 import { AccountPageComponent } from "./account-page.component";
-import { AuthService } from "../../auth.service";
-import { KeycloakAuthService } from "../keycloak-auth.service";
+import { KeycloakAuthService, KeycloakUser } from "../keycloak-auth.service";
 import { of, throwError } from "rxjs";
 import { MockedTestingModule } from "../../../../../utils/mocked-testing.module";
 import { HttpErrorResponse } from "@angular/common/http";
@@ -24,20 +23,21 @@ describe("AccountPageComponent", () => {
       "changePassword",
       "getUserinfo",
       "setEmail",
+      "login",
     ]);
-    mockAuthService.getUserinfo.and.returnValue(throwError(() => new Error()));
+    mockAuthService.getUserinfo.and.rejectWith();
+    mockAuthService.login.and.rejectWith();
     mockAlerts = jasmine.createSpyObj(["addInfo"]);
     await TestBed.configureTestingModule({
       imports: [AccountPageComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: AuthService, useValue: {} },
+        { provide: KeycloakAuthService, useValue: mockAuthService },
         { provide: AlertService, useValue: mockAlerts },
       ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(AccountPageComponent);
     component = fixture.componentInstance;
-    component.keycloakAuthService = mockAuthService;
     fixture.detectChanges();
   });
 
@@ -47,13 +47,21 @@ describe("AccountPageComponent", () => {
 
   it("should show the email if its already set", fakeAsync(() => {
     const email = "mail@exmaple.com";
-    mockAuthService.getUserinfo.and.returnValue(of({ email }));
+    mockAuthService.getUserinfo.and.resolveTo({ email } as KeycloakUser);
 
     component.ngOnInit();
     tick();
 
     expect(component.email.value).toBe(email);
   }));
+
+  it("should disabled the email form if the disabled flag is set", () => {
+    component.disabled = true;
+
+    component.ngOnInit();
+
+    expect(component.email.disabled).toBe(true);
+  });
 
   it("should not save email if form is invalid", () => {
     component.email.setValue("invalid-email");
