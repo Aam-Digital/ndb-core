@@ -23,7 +23,7 @@ import {
 } from "./app/core/language/language-statics";
 import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
-import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
+import parseXliffToJson from "./app/utils/parse-xliff-to-js";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppSettings } from "./app/core/app-settings";
 import { LoggingService } from "./app/core/logging/logging.service";
@@ -60,11 +60,11 @@ function bootstrap(): Promise<any> {
 }
 
 async function initLanguage(locale: string): Promise<void> {
-  const json = await fetch("/assets/locale/messages." + locale + ".json")
+  const json = await fetch(`/assets/locale/messages.${locale}.json`)
     .then((r) => r.json())
     .catch(() =>
       // parse translation at runtime if JSON file is not available
-      fetch("/assets/locale/messages." + locale + ".xlf")
+      fetch(`/assets/locale/messages.${locale}.xl"`)
         .then((r) => r.text())
         .then((t) => parseXliffToJson(t)),
     );
@@ -75,7 +75,7 @@ async function initLanguage(locale: string): Promise<void> {
   // Add the required locales to `webpackInclude` to keep the bundle size small
   const localeModule = await import(
     /* webpackInclude: /(fr|de|it)\.mjs/ */
-    `../node_modules/@angular/common/locales/${locale}`
+    `@angular/common/locales/${locale}`
   );
   registerLocaleData(localeModule.default);
 }
