@@ -1,0 +1,15 @@
+<div class="flex-row align-baseline">
+  <mat-form-field floatLabel="always" class="flex-grow">
+    <mat-label>Title</mat-label>
+    <input
+      matInput
+      [ngModel]="title"
+      (ngModelChange)="titleChange.emit($event)"
+      placeholder="(no title)"
+    />
+  </mat-form-field>
+
+  <button (click)="remove.emit()" mat-icon-button class="group-remove-button">
+    <fa-icon icon="times"></fa-icon>
+  </button>
+</div>

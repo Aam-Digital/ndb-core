@@ -1,0 +1,5 @@
+
+.section-container:has(.group-remove-button:hover) {
+  border-color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.1);
+}

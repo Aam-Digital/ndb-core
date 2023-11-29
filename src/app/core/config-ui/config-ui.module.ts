@@ -24,6 +24,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatCardModule } from "@angular/material/card";
 import { FormFieldComponent } from "../common-components/entity-form/form-field/form-field.component";
 import { FormFieldComponentLabel } from "../common-components/entity-form/form-field-label/form-field-component-label.component";
+import { ConfigEntityPanelComponentComponent } from "./config-entity-panel-component/config-entity-panel-component.component";
+import { Angulartics2OnModule } from "angulartics2";
+import { DisableEntityOperationDirective } from "../permissions/permission-directive/disable-entity-operation.directive";
+import { ConfigSectionHeaderComponent } from "./config-section-header/config-section-header.component";
 
 const routes: Routes = [
   {
@@ -60,6 +64,10 @@ const routes: Routes = [
     MatCardModule,
     FormFieldComponent,
     FormFieldComponentLabel,
+    ConfigEntityPanelComponentComponent,
+    Angulartics2OnModule,
+    DisableEntityOperationDirective,
+    ConfigSectionHeaderComponent,
   ],
   exports: [RouterModule, ConfigEntityComponent],
   declarations: [ConfigEntityComponent, ConfigEntityFormComponent],

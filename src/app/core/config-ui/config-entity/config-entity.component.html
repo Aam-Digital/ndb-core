@@ -18,27 +18,46 @@
     </ng-template>
 
     <ng-template matTabContent>
-      <div
-        *ngFor="let componentConfig of panelConfig.components; let j = index"
-        class="padding-top-large"
-      >
-        <h3 *ngIf="componentConfig.title && componentConfig.title !== ''">
-          {{ componentConfig.title }}
-        </h3>
-
-        <app-config-entity-form
-          *ngIf="componentConfig.component === 'Form'; else otherComponent"
-          [config]="componentConfig.config"
-          [entityType]="entityConstructor"
-          (entitySchemaFieldChange)="schemaFieldChanges.push($event)"
+      <div class="flex-column gap-large padding-top-large">
+        <div
+          *ngFor="let componentConfig of panelConfig.components; let j = index"
+          class="section-container"
         >
-        </app-config-entity-form>
+          <app-config-section-header
+            [(title)]="componentConfig.title"
+            (remove)="removeSection(panelConfig, componentConfig)"
+          ></app-config-section-header>
 
-        <ng-template #otherComponent>
-          other component: {{ componentConfig.component }}
-        </ng-template>
+          <app-config-entity-form
+            *ngIf="componentConfig.component === 'Form'; else otherComponent"
+            [config]="componentConfig.config"
+            [entityType]="entityConstructor"
+            (entitySchemaFieldChange)="schemaFieldChanges.push($event)"
+          >
+          </app-config-entity-form>
 
-        <br *ngIf="j < panelConfig.components.length - 1" />
+          <ng-template #otherComponent>
+            <app-config-entity-panel-component
+              [config]="componentConfig"
+              [entityType]="entityConstructor"
+            ></app-config-entity-panel-component>
+          </ng-template>
+        </div>
+
+        <button
+          mat-stroked-button
+          color="accent"
+          class="section-add-button"
+          (click)="addSection(panelConfig)"
+          i18n
+        >
+          <fa-icon
+            aria-label="add element"
+            icon="plus-circle"
+            class="standard-icon-with-text"
+          ></fa-icon>
+          Add Section
+        </button>
       </div>
     </ng-template>
   </mat-tab>

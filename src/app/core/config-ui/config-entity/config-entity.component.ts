@@ -1,5 +1,9 @@
 import { Component, Input, OnChanges } from "@angular/core";
-import { EntityDetailsConfig } from "../../entity-details/EntityDetailsConfig";
+import {
+  EntityDetailsConfig,
+  Panel,
+  PanelComponent,
+} from "../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
@@ -48,6 +52,18 @@ export class ConfigEntityComponent implements OnChanges {
       return;
     }
     this.configDetailsView = detailsView.config;
+  }
+
+  addSection(panel: Panel) {
+    panel.components.push({
+      title: "New Section",
+      component: "NotesRelatedToEntity",
+    });
+  }
+
+  removeSection(panelConfig: Panel, componentConfig: PanelComponent) {
+    const index = panelConfig.components.indexOf(componentConfig);
+    panelConfig.components.splice(index, 1);
   }
 
   cancel() {

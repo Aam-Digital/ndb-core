@@ -7,6 +7,8 @@ $toolbar-width: 300px;
 .toolbar {
   width: $toolbar-width;
   padding: sizes.$small;
+  margin-right: - sizes.$small;
+  margin-bottom: - sizes.$small;
 
   @include mat-elevation.elevation(4);
   border-bottom-left-radius: 0;
@@ -93,10 +95,6 @@ $toolbar-width: 300px;
   text-align: center;
   padding: sizes.$small;
   color: colors.$hint-text
-}
-.admin-form-column:has(.group-remove-button:hover) {
-  border-color: rgb(255, 0, 0);
-  background-color: rgba(255, 0, 0, 0.1);
 }
 
 .admin-form-column {

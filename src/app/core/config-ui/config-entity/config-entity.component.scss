@@ -1,7 +1,21 @@
+@use "@angular/material/core/style/elevation" as mat-elevation;
+@use "variables/sizes";
+
 .admin-ui-title {
   font-style: italic;
 }
 
 .save-buttons {
   margin: auto 0;
+}
+
+.section-container {
+  @include mat-elevation.elevation(1);
+  margin: sizes.$small;
+  padding: sizes.$small;
+}
+
+.section-add-button {
+  padding: sizes.$large;
+  margin: sizes.$small;
 }

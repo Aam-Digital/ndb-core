@@ -31,6 +31,7 @@ interface FormConfig {
   templateUrl: "./config-entity-form.component.html",
   styleUrls: [
     "./config-entity-form.component.scss",
+    "../config-section-header/config-section-header.component.scss",
     "../../common-components/entity-form/entity-form/entity-form.component.scss",
   ],
 })

@@ -4,25 +4,13 @@
     <!-- FIELD GROUPS -->
     <div
       *ngFor="let group of config.fieldGroups; let i = index"
-      class="entity-form-cell admin-form-column"
+      class="entity-form-cell admin-form-column section-container"
     >
       <!-- GROUP HEADER -->
-      <div class="flex-row align-baseline">
-        <mat-form-field floatLabel="always">
-          <mat-label>Group Title</mat-label>
-          <input matInput [(ngModel)]="group.header" placeholder="(no title)" />
-        </mat-form-field>
-
-        <button
-          (click)="removeGroup(i)"
-          mat-icon-button
-          matTooltip="Remove this group and all its fields"
-          i18n-matTooltip
-          class="group-remove-button"
-        >
-          <fa-icon icon="times"></fa-icon>
-        </button>
-      </div>
+      <app-config-section-header
+        [(title)]="group.header"
+        (remove)="removeGroup(i)"
+      ></app-config-section-header>
 
       <div
         cdkDropList
