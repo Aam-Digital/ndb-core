@@ -1,5 +1,5 @@
-@use "src/styles/variables/colors";
-@use "src/styles/functions/gradient-helpers";
+@use "variables/colors";
+@use "functions/gradient-helpers";
 
 .day-cell {
   padding: 0.28em;

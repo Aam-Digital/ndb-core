@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 @use "@angular/material" as mat;
-@use "src/styles/variables/ndb-light-theme" as theme;
+@use "variables/ndb-light-theme" as theme;
 
 $err-palette: mat.define-palette(mat.$red-palette);
 $warn-palette: mat.define-palette(mat.$orange-palette);

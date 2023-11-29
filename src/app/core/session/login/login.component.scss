@@ -15,10 +15,10 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use "src/styles/variables/colors";
-@use "src/styles/variables/sizes";
+@use "variables/colors";
+@use "variables/sizes";
 
-.online-error {
+.login-error {
   color: colors.$error;
   font-size: 90%;
   text-align: justify;

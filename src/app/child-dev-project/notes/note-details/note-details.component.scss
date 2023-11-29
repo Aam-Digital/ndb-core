@@ -1,5 +1,5 @@
-@use "src/styles/variables/sizes";
-@use "src/styles/mixins/grid-layout";
+@use "variables/sizes";
+@use "mixins/grid-layout";
 
 .input-medium {
   width: 100%;
