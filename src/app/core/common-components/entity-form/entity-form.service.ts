@@ -12,12 +12,12 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
-import { SessionService } from "../../session/session-service/session.service";
 import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
+import { CurrentUserSubject } from "../../user/user";
 import {
   ColumnConfig,
   toFormFieldConfig,
@@ -44,7 +44,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
-    private session: SessionService,
+    private currentUser: CurrentUserSubject,
     router: Router,
   ) {
     router.events
@@ -68,10 +68,10 @@ export class EntityFormService {
     entityType: EntityConstructor,
     forTable = false,
   ): FormFieldConfig {
-    const fullField: FormFieldConfig = toFormFieldConfig(formField);
+    let fullField: FormFieldConfig = toFormFieldConfig(formField);
 
     try {
-      this.addSchemaToFormField(
+      fullField = this.addSchemaToFormField(
         fullField,
         entityType.schema.get(fullField.id),
         forTable,
@@ -82,7 +82,8 @@ export class EntityFormService {
       );
     }
 
-    return fullField;
+    // edit the given formField in place because for some components (i.e. EntitySubrecordComponent) updating existing objects is important
+    return Object.assign(formField, fullField);
   }
 
   private addSchemaToFormField(
@@ -90,28 +91,27 @@ export class EntityFormService {
     propertySchema: EntitySchemaField,
     forTable: boolean,
   ): FormFieldConfig {
-    formField.edit =
-      formField.edit ||
+    // formField config has precedence over schema
+    const fullField = Object.assign({}, propertySchema, formField);
+
+    fullField.editComponent =
+      fullField.editComponent ||
       this.entitySchemaService.getComponent(propertySchema, "edit");
-    formField.view =
-      formField.view ||
+    fullField.viewComponent =
+      fullField.viewComponent ||
       this.entitySchemaService.getComponent(propertySchema, "view");
-    formField.tooltip = formField.tooltip || propertySchema?.description;
-    formField.additional = formField.additional || propertySchema?.additional;
+
     if (forTable) {
-      formField.forTable = true;
-      formField.label =
-        formField.label || propertySchema.labelShort || propertySchema.label;
+      fullField.forTable = true;
+      fullField.label =
+        fullField.label || fullField.labelShort || fullField.label;
     } else {
-      formField.forTable = false;
-      formField.label =
-        formField.label || propertySchema.label || propertySchema.labelShort;
-    }
-    if (propertySchema?.validators) {
-      formField.validators = propertySchema?.validators;
+      fullField.forTable = false;
+      fullField.label =
+        fullField.label || fullField.label || fullField.labelShort;
     }
 
-    return formField;
+    return fullField;
   }
 
   /**
@@ -126,38 +126,57 @@ export class EntityFormService {
     entity: T,
     forTable = false,
   ): EntityForm<T> {
-    const fullFields = formFields.map((f) =>
-      this.extendFormFieldConfig(f, entity.getConstructor(), forTable),
-    );
     const formConfig = {};
-    const entitySchema = entity.getSchema();
     const copy = entity.copy();
-    fullFields
-      .filter((formField) => entitySchema.get(formField.id))
-      .forEach((formField) => {
-        const schema = entitySchema.get(formField.id);
-        let val = copy[formField.id];
-        if (
-          entity.isNew &&
-          schema.defaultValue &&
-          (!val || (val as []).length === 0)
-        ) {
-          val = this.getDefaultValue(schema);
-        }
-        formConfig[formField.id] = [val];
-        if (formField.validators) {
-          const validators = this.dynamicValidator.buildValidators(
-            formField.validators,
-          );
-          formConfig[formField.id].push(validators);
-        }
-      });
+    for (const f of formFields) {
+      this.addFormControlConfig(formConfig, f, copy, forTable);
+    }
     const group = this.fb.group<Partial<T>>(formConfig);
+
     const sub = group.valueChanges.subscribe(
       () => (this.unsavedChanges.pending = group.dirty),
     );
     this.subscriptions.push(sub);
+
     return group;
+  }
+
+  /**
+   * Add a property with form control initialization config to the given formConfig object.
+   * @param formConfig
+   * @param fieldConfig
+   * @param entity
+   * @param forTable
+   * @private
+   */
+  private addFormControlConfig(
+    formConfig: Object,
+    fieldConfig: string | FormFieldConfig,
+    entity: Entity,
+    forTable: boolean,
+  ) {
+    const field = this.extendFormFieldConfig(
+      fieldConfig,
+      entity.getConstructor(),
+      forTable,
+    );
+
+    let value = entity[field.id];
+    if (
+      entity.isNew &&
+      field.defaultValue &&
+      (!value || (value as []).length === 0)
+    ) {
+      value = this.getDefaultValue(field);
+    }
+    formConfig[field.id] = [value];
+
+    if (field.validators) {
+      const validators = this.dynamicValidator.buildValidators(
+        field.validators,
+      );
+      formConfig[field.id].push(validators);
+    }
   }
 
   private getDefaultValue<T>(schema: EntitySchemaField) {
@@ -167,7 +186,7 @@ export class EntityFormService {
         newVal = new Date();
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.session.getCurrentUser().name;
+        newVal = this.currentUser.value.name;
         break;
       default:
         newVal = schema.defaultValue;

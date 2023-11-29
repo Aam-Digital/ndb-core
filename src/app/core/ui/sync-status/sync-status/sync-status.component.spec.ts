@@ -19,7 +19,6 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { SyncStatusComponent } from "./sync-status.component";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { SessionService } from "../../../session/session-service/session.service";
 import { SyncState } from "../../../session/session-states/sync-state.enum";
 import { DatabaseIndexingService } from "../../../entity/database-indexing/database-indexing.service";
 import { BehaviorSubject } from "rxjs";
@@ -30,12 +29,13 @@ import {
   entityRegistry,
 } from "../../../entity/database-entity.decorator";
 import { expectObservable } from "../../../../utils/test-utils/observable-utils";
+import { SyncStateSubject } from "../../../session/session-type";
 
 describe("SyncStatusComponent", () => {
   let component: SyncStatusComponent;
   let fixture: ComponentFixture<SyncStatusComponent>;
 
-  let mockSessionService: jasmine.SpyObj<SessionService>;
+  let syncState: SyncStateSubject;
   let mockIndexingService;
 
   const DATABASE_SYNCING_STATE: BackgroundProcessState = {
@@ -48,10 +48,6 @@ describe("SyncStatusComponent", () => {
   };
 
   beforeEach(waitForAsync(() => {
-    mockSessionService = jasmine.createSpyObj(["isLoggedIn"], {
-      syncState: new BehaviorSubject(SyncState.UNSYNCED),
-    });
-    mockSessionService.isLoggedIn.and.returnValue(false);
     mockIndexingService = { indicesRegistered: new BehaviorSubject([]) };
 
     TestBed.configureTestingModule({
@@ -61,11 +57,12 @@ describe("SyncStatusComponent", () => {
         FontAwesomeTestingModule,
       ],
       providers: [
-        { provide: SessionService, useValue: mockSessionService },
+        SyncStateSubject,
         { provide: DatabaseIndexingService, useValue: mockIndexingService },
         { provide: EntityRegistry, useValue: entityRegistry },
       ],
     });
+    syncState = TestBed.inject(SyncStateSubject);
 
     TestBed.compileComponents();
   }));
@@ -81,7 +78,7 @@ describe("SyncStatusComponent", () => {
   });
 
   it("should update backgroundProcesses details on sync", async () => {
-    mockSessionService.syncState.next(SyncState.STARTED);
+    syncState.next(SyncState.STARTED);
     fixture.detectChanges();
     await fixture.whenStable();
 
@@ -89,7 +86,7 @@ describe("SyncStatusComponent", () => {
       DATABASE_SYNCING_STATE,
     ]);
 
-    mockSessionService.syncState.next(SyncState.COMPLETED);
+    syncState.next(SyncState.COMPLETED);
     fixture.detectChanges();
     await fixture.whenStable();
 

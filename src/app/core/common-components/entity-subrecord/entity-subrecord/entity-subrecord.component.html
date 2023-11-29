@@ -24,8 +24,8 @@
         mat-header-cell
         mat-sort-header
         *matHeaderCellDef
-        [matTooltip]="col.tooltip"
-        [matTooltipDisabled]="!col.tooltip"
+        [matTooltip]="col.description"
+        [matTooltipDisabled]="!col.description"
         [disabled]="col.noSorting"
       >
         {{ col.label }}
@@ -37,9 +37,9 @@
         style="cursor: pointer"
       >
         <ng-template
-          *ngIf="!row.formGroup || row.formGroup.disabled || !col.edit"
+          *ngIf="!row.formGroup || row.formGroup.disabled || !col.editComponent"
           [appDynamicComponent]="{
-            component: col.view,
+            component: col.viewComponent,
             config: {
               value: row.record[col.id],
               id: col.id,
@@ -49,9 +49,9 @@
           }"
         ></ng-template>
         <ng-template
-          *ngIf="row.formGroup?.enabled && col.edit"
+          *ngIf="row.formGroup?.enabled && col.editComponent"
           [appDynamicComponent]="{
-            component: col.edit,
+            component: col.editComponent,
             config: {
               formFieldConfig: col,
               propertySchema: row.record.getSchema().get(col.id),

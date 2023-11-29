@@ -58,14 +58,14 @@ describe("EntityPropertyViewComponent", () => {
     component.property = {
       id: "testId",
       label: "Test Label",
-      view: "DisplayText",
+      viewComponent: "DisplayText",
       additional: "Some additional information",
     };
     component.ngOnInit();
 
     expect(component.label).toBe(component.property.label);
     expect(component.propertyName).toBe(component.property.id);
-    expect(component.component).toBe(component.property.view);
+    expect(component.component).toBe(component.property.viewComponent);
     expect(component.additional).toBe(component.property.additional);
   });
 });

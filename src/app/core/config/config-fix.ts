@@ -673,7 +673,7 @@ export const defaultJsonConfig = {
                 "cols": [
                   ["health_bloodGroup"],
                   [
-                    { "id": "_description_health", "edit": "EditDescriptionOnly", "label": $localize`:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines.`},
+                    { "id": "_description_health", "editComponent": "EditDescriptionOnly", "label": $localize`:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines.`},
                     "health_lastDentalCheckup"
                   ]
                 ]

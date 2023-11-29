@@ -25,6 +25,7 @@ import { TEST_USER } from "../../../utils/mock-local-session";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { FormFieldConfig } from "./entity-form/FormConfig";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -227,15 +228,15 @@ describe("EntityFormService", () => {
       "PredefinedComponent",
     );
     const entity = new Test();
-    const field1 = {
+    const field1: FormFieldConfig = {
       id: "fieldWithDefinition",
-      edit: "EditComponent",
-      view: "DisplayComponent",
+      editComponent: "EditComponent",
+      viewComponent: "DisplayComponent",
       label: "Field with definition",
-      tooltip: "Custom tooltip",
+      description: "Custom tooltip",
       additional: "additional",
     };
-    const field2 = { id: "propertyField", label: "Property" };
+    const field2: FormFieldConfig = { id: "propertyField", label: "Property" };
 
     const result1 = service.extendFormFieldConfig(
       field1,
@@ -248,21 +249,22 @@ describe("EntityFormService", () => {
 
     expect(result1).toEqual({
       id: "fieldWithDefinition",
-      edit: "EditComponent",
-      view: "DisplayComponent",
+      editComponent: "EditComponent",
+      viewComponent: "DisplayComponent",
       label: "Field with definition",
       forTable: false,
-      tooltip: "Custom tooltip",
+      description: "Custom tooltip",
       additional: "additional",
-    });
+    } as FormFieldConfig);
     expect(result2).toEqual({
       id: "propertyField",
-      edit: "PredefinedComponent",
-      view: "PredefinedComponent",
+      dataType: "string",
+      editComponent: "PredefinedComponent",
+      viewComponent: "PredefinedComponent",
       label: "Property",
       forTable: false,
-      tooltip: "Property description",
+      description: "Property description",
       additional: "someAdditional",
-    });
+    } as FormFieldConfig);
   });
 });

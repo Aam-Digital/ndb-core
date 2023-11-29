@@ -1,4 +1,4 @@
-@use "src/styles/variables/ndb-light-theme" as theme;
+@use "variables/ndb-light-theme" as theme;
 @use "@angular/material" as mat;
 
 /*
@@ -8,7 +8,7 @@
 
 // Text color for fab buttons otherwise defaults to black
 .mat-mdc-fab.mat-accent, .mat-mdc-mini-fab.mat-accent {
-  --mat-mdc-fab-color: #{mat.get-contrast-color-from-palette(theme.$accent, A200)} !important;
+  --mat-fab-foreground-color: #{mat.get-contrast-color-from-palette(theme.$accent, A200)} !important;
 }
 
 // Text color for buttons with accent color otherwise defaults to black

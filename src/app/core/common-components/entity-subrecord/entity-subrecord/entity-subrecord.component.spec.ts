@@ -19,7 +19,6 @@ import { AlertService } from "../../../alerts/alert.service";
 import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
-import { LoggingService } from "../../../logging/logging.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import moment from "moment";
 import { Subject } from "rxjs";
@@ -79,7 +78,7 @@ describe("EntitySubrecordComponent", () => {
       {
         id: "enumValue",
         label: "Test Configurable Enum",
-        view: "DisplayConfigurableEnum",
+        viewComponent: "DisplayConfigurableEnum",
       },
     ];
     component.ngOnChanges({ records: undefined, columns: undefined });
@@ -182,24 +181,6 @@ describe("EntitySubrecordComponent", () => {
       .map((row) => row.record["name"]);
 
     expect(sortedNames).toEqual(["A", "b", "C"]);
-  });
-
-  it("should log a warning when the column definition can not be initialized", () => {
-    const loggingService = TestBed.inject(LoggingService);
-    spyOn(loggingService, "warn");
-    component.records = [new Child()];
-    component.columns = [
-      {
-        id: "correctColumn",
-        label: "Predefined Title",
-        view: "DisplayDate",
-      },
-      { id: "notExistentColumn" },
-    ];
-
-    component.ngOnChanges({ columns: null });
-
-    expect(loggingService.warn).toHaveBeenCalled();
   });
 
   it("should create a formGroup when editing a row", () => {

@@ -85,6 +85,8 @@ export interface EntitySchemaField {
    */
   entityReferenceRole?: EntityReferenceRole;
 
+  // TODO: possibly remove viewComponent + editComponent from schema and only infer via dataType (or overwrite in FormFieldConfig)
+
   /**
    * (Optional) Define using which component this property should be displayed in lists and forms.
    *

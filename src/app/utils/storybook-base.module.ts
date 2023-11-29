@@ -8,7 +8,6 @@ import { AbilityService } from "../core/permissions/ability/ability.service";
 import { EMPTY, Subject } from "rxjs";
 import { EntityAbility } from "../core/permissions/ability/entity-ability";
 import { defineAbility } from "@casl/ability";
-import { SessionService } from "../core/session/session-service/session.service";
 import { createTestingConfigService } from "../core/config/testing-config-service";
 import { componentRegistry } from "../dynamic-components";
 import { AppModule } from "../app.module";
@@ -22,7 +21,7 @@ import {
 } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
-import { createLocalSession, TEST_USER } from "./mock-local-session";
+import { TEST_USER } from "./mock-local-session";
 import { EntityConfigService } from "../core/entity/entity-config.service";
 
 componentRegistry.allowDuplicates();
@@ -56,10 +55,6 @@ export const entityFormStorybookDefaultParameters = {
     {
       provide: EntityAbility,
       useValue: defineAbility((can) => can("manage", "all")),
-    },
-    {
-      provide: SessionService,
-      useValue: createLocalSession(true),
     },
     {
       provide: DatabaseIndexingService,

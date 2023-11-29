@@ -1,12 +1,10 @@
 import { MarkedRenderer } from "ngx-markdown";
-import { Slugger } from "marked";
 
 export class MarkedRendererCustom extends MarkedRenderer {
   public heading(
     text: string,
     level: 1 | 2 | 3 | 4 | 5 | 6,
     raw: string,
-    slugger: Slugger,
   ): string {
     if (level === 3) {
       switch (text.toLowerCase()) {
@@ -18,7 +16,7 @@ export class MarkedRendererCustom extends MarkedRenderer {
           return `<span class="badge-label background-changelog-unknown">${text}</span>`;
       }
     } else {
-      return super.heading(text, level, raw, slugger);
+      return super.heading(text, level, raw);
     }
   }
 

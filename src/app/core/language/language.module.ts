@@ -1,5 +1,7 @@
 import { NgModule } from "@angular/core";
 import { LanguageService } from "./language.service";
+import { HTTP_INTERCEPTORS } from "@angular/common/http";
+import { AcceptLanguageInterceptor } from "./accept-language.interceptor";
 
 /**
  * Module that aids in the management and choice of translations/languages
@@ -10,7 +12,15 @@ import { LanguageService } from "./language.service";
  * The {@link LanguageSelectComponent} is used to graphically offer a way of changing
  * the current language of the user
  */
-@NgModule({})
+@NgModule({
+  providers: [
+    {
+      provide: HTTP_INTERCEPTORS,
+      useClass: AcceptLanguageInterceptor,
+      multi: true,
+    },
+  ],
+})
 export class LanguageModule {
   constructor(translationService: LanguageService) {
     translationService.initDefaultLanguage();

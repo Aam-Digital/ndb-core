@@ -15,8 +15,8 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use "src/styles/mixins/grid-layout";
-@use "src/styles/variables/sizes";
+@use "mixins/grid-layout";
+@use "variables/sizes";
 
 // The minimum size of a widget for big screens
 // The minimum size on small screens is whatever size is available

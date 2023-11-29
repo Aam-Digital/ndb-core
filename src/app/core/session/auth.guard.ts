@@ -5,13 +5,14 @@ import {
   Router,
   RouterStateSnapshot,
 } from "@angular/router";
-import { SessionService } from "./session-service/session.service";
+import { LoginStateSubject } from "./session-type";
+import { LoginState } from "./session-states/login-state.enum";
 
 export const AuthGuard: CanActivateFn = (
   route: ActivatedRouteSnapshot,
   state: RouterStateSnapshot,
 ) => {
-  if (inject(SessionService).isLoggedIn()) {
+  if (inject(LoginStateSubject).value === LoginState.LOGGED_IN) {
     return true;
   } else {
     return inject(Router).createUrlTree(["/login"], {

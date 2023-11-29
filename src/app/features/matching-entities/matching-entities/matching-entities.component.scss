@@ -1,5 +1,5 @@
-@use "src/styles/mixins/grid-layout";
-@use "src/styles/variables/sizes";
+@use "mixins/grid-layout";
+@use "variables/sizes";
 
 .overall-layout {
   @include grid-layout.adaptive(380px, 100%);

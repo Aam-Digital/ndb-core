@@ -4,6 +4,7 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
 import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { ColumnConfig } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 
 /**
  * @deprecated configure a RelatedEntitiesComponent instead
@@ -23,9 +24,9 @@ export class ActivitiesOverviewComponent
   entityType = RecurringActivity.ENTITY_TYPE;
   property = "linkedGroups";
 
-  titleColumn = {
+  titleColumn: FormFieldConfig = {
     id: "title",
-    edit: "EditTextWithAutocomplete",
+    editComponent: "EditTextWithAutocomplete",
     additional: {
       entityType: "RecurringActivity",
       relevantProperty: "linkedGroups",

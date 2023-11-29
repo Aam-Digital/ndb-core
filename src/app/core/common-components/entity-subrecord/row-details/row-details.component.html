@@ -13,14 +13,14 @@
 
     <div *ngFor="let col of viewOnlyColumns">
       <app-pill
-        [matTooltip]="col.tooltip"
+        [matTooltip]="col.description"
         [style.background-color]="tempEntity.getColor()"
         class="mat-body-strong"
       >
         <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
         <ng-template
           [appDynamicComponent]="{
-            component: col.view,
+            component: col.viewComponent,
             config: {
               id: col.id,
               entity: tempEntity,

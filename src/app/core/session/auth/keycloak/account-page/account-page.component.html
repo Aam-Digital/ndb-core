@@ -1,47 +1,44 @@
-<div *ngIf="keycloakAuthService">
-  <button
-    mat-stroked-button
-    angulartics2On="click"
-    angularticsCategory="User"
-    angularticsAction="password_update"
-    (click)="keycloakAuthService.changePassword()"
-    [disabled]="disabled"
-    i18n="Button which opens password reset page"
-  >
-    Change Password
-  </button>
+<button
+  mat-stroked-button
+  angulartics2On="click"
+  angularticsCategory="User"
+  angularticsAction="password_update"
+  (click)="authService.changePassword()"
+  [disabled]="disabled"
+  i18n="Button which opens password reset page"
+>
+  Change Password
+</button>
 
-  <form style="margin-top: 20px">
-    <mat-form-field>
-      <input
-        [formControl]="email"
-        type="email"
-        i18n-placeholder="Email address input field"
-        placeholder="Your email address"
-        matInput
-      />
-      <mat-error
-        *ngIf="email.errors?.email || email.errors?.required"
-        i18n="Error message if email format is invalid"
-      >
-        Please provide a valid email
-      </mat-error>
-      <mat-error *ngIf="email.errors?.other">{{
-        email.errors.other
-      }}</mat-error>
-    </mat-form-field>
-    <p>
-      <button
-        mat-stroked-button
-        angulartics2On="click"
-        angularticsCategory="User"
-        angularticsAction="email_update"
-        (click)="setEmail()"
-        i18n="Button which updates the user's email"
-        style="margin-top: 5px"
-      >
-        Update email
-      </button>
-    </p>
-  </form>
-</div>
+<form style="margin-top: 20px" onSubmit="return false">
+  <mat-form-field>
+    <input
+      [formControl]="email"
+      type="email"
+      i18n-placeholder="Email address input field"
+      placeholder="Your email address"
+      matInput
+    />
+    <mat-error
+      *ngIf="email.errors?.email || email.errors?.required"
+      i18n="Error message if email format is invalid"
+    >
+      Please provide a valid email
+    </mat-error>
+    <mat-error *ngIf="email.errors?.other">{{ email.errors.other }}</mat-error>
+  </mat-form-field>
+  <p>
+    <button
+      mat-stroked-button
+      angulartics2On="click"
+      angularticsCategory="User"
+      angularticsAction="email_update"
+      (click)="setEmail()"
+      i18n="Button which updates the user's email"
+      style="margin-top: 5px"
+      [disabled]="email.disabled"
+    >
+      Update email
+    </button>
+  </p>
+</form>

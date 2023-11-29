@@ -43,7 +43,7 @@ export class AttendanceDetailsComponent {
     {
       id: "getAttendance",
       label: $localize`:How a child attended, e.g. too late, in time, excused, e.t.c:Attended`,
-      view: "ReadonlyFunction",
+      viewComponent: "ReadonlyFunction",
       additional: (note: Note) => {
         if (this.forChild) {
           return note.getAttendance(this.forChild)?.status?.label || "-";

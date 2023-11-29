@@ -3,24 +3,33 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { DemoDataInitializerService } from "./demo-data-initializer.service";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
-import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
-import { AppSettings } from "../app-settings";
-import { PouchDatabase } from "../database/pouch-database";
-import { Subject } from "rxjs";
-import { LoginState } from "../session/session-states/login-state.enum";
-import { Database } from "../database/database";
-import { SessionType } from "../session/session-type";
+import { LoginStateSubject, SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
-import { AuthUser } from "../session/session-service/auth-user";
+import { AuthUser } from "../session/auth/auth-user";
+import { LocalAuthService } from "../session/auth/local/local-auth.service";
+import { SessionManagerService } from "../session/session-service/session-manager.service";
+import { PouchDatabase } from "../database/pouch-database";
+import { AppSettings } from "../app-settings";
+import { Database } from "../database/database";
+import { CurrentUserSubject } from "../user/user";
+import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("DemoDataInitializerService", () => {
+  const normalUser: AuthUser = {
+    name: DemoUserGeneratorService.DEFAULT_USERNAME,
+    roles: ["user_app"],
+  };
+  const adminUser: AuthUser = {
+    name: DemoUserGeneratorService.ADMIN_USERNAME,
+    roles: ["user_app", "admin_app", "account_manager"],
+  };
   let service: DemoDataInitializerService;
   let mockDemoDataService: jasmine.SpyObj<DemoDataService>;
-  let mockSessionService: jasmine.SpyObj<LocalSession>;
+  let mockLocalAuth: jasmine.SpyObj<LocalAuthService>;
+  let sessionManager: jasmine.SpyObj<SessionManagerService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
-  let loginState: Subject<LoginState>;
   let demoUserDBName: string;
   let adminDBName: string;
 
@@ -32,26 +41,26 @@ describe("DemoDataInitializerService", () => {
     mockDemoDataService.publishDemoData.and.resolveTo();
     mockDialog = jasmine.createSpyObj(["open"]);
     mockDialog.open.and.returnValue({ close: () => {} } as any);
-    loginState = new Subject();
-    mockSessionService = jasmine.createSpyObj(
-      ["login", "saveUser", "getCurrentUser"],
-      { loginState: loginState },
-    );
+    mockLocalAuth = jasmine.createSpyObj(["saveUser"]);
+    sessionManager = jasmine.createSpyObj(["offlineLogin"]);
 
     TestBed.configureTestingModule({
       providers: [
         DemoDataInitializerService,
+        LoginStateSubject,
+        CurrentUserSubject,
         { provide: MatDialog, useValue: mockDialog },
         { provide: Database, useClass: PouchDatabase },
         { provide: DemoDataService, useValue: mockDemoDataService },
-        { provide: LocalSession, useValue: mockSessionService },
+        { provide: LocalAuthService, useValue: mockLocalAuth },
+        { provide: SessionManagerService, useValue: sessionManager },
       ],
     });
     service = TestBed.inject(DemoDataInitializerService);
   });
 
   afterEach(async () => {
-    loginState.complete();
+    localStorage.clear();
     const tmpDB = new PouchDatabase(undefined);
     await tmpDB.initInMemoryDB(demoUserDBName).destroy();
     await tmpDB.initInMemoryDB(adminDBName).destroy();
@@ -64,33 +73,14 @@ describe("DemoDataInitializerService", () => {
   it("should save the default users", () => {
     service.run();
 
-    const normalUser: AuthUser = {
-      name: DemoUserGeneratorService.DEFAULT_USERNAME,
-      roles: ["user_app"],
-    };
-    const adminUser: AuthUser = {
-      name: DemoUserGeneratorService.ADMIN_USERNAME,
-      roles: ["user_app", "admin_app", "account_manager"],
-    };
-
-    expect(mockSessionService.saveUser).toHaveBeenCalledWith(
-      normalUser,
-      DemoUserGeneratorService.DEFAULT_PASSWORD,
-    );
-    expect(mockSessionService.saveUser).toHaveBeenCalledWith(
-      adminUser,
-      DemoUserGeneratorService.DEFAULT_PASSWORD,
-    );
+    expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(normalUser);
+    expect(mockLocalAuth.saveUser).toHaveBeenCalledWith(adminUser);
   });
 
   it("it should publish the demo data after logging in the default user", fakeAsync(() => {
     service.run();
 
-    expect(mockSessionService.login).toHaveBeenCalled();
-    expect(mockSessionService.login).toHaveBeenCalledWith(
-      DemoUserGeneratorService.DEFAULT_USERNAME,
-      DemoUserGeneratorService.DEFAULT_PASSWORD,
-    );
+    expect(sessionManager.offlineLogin).toHaveBeenCalledWith(normalUser);
     expect(mockDemoDataService.publishDemoData).not.toHaveBeenCalled();
 
     tick();
@@ -123,12 +113,12 @@ describe("DemoDataInitializerService", () => {
     database.put(userDoc);
     tick();
 
-    mockSessionService.getCurrentUser.and.returnValue({
+    TestBed.inject(CurrentUserSubject).next({
       name: DemoUserGeneratorService.ADMIN_USERNAME,
       roles: [],
     });
     database.initInMemoryDB(adminDBName);
-    loginState.next(LoginState.LOGGED_IN);
+    TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_IN);
     tick();
 
     expectAsync(database.get(userDoc._id)).toBeResolved();
@@ -154,12 +144,12 @@ describe("DemoDataInitializerService", () => {
     tick();
 
     const database = TestBed.inject(Database) as PouchDatabase;
-    mockSessionService.getCurrentUser.and.returnValue({
+    TestBed.inject(CurrentUserSubject).next({
       name: DemoUserGeneratorService.ADMIN_USERNAME,
       roles: [],
     });
     database.initInMemoryDB(adminDBName);
-    loginState.next(LoginState.LOGGED_IN);
+    TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_IN);
     const adminUserDB = database.getPouchDB();
     tick();
 
@@ -167,9 +157,9 @@ describe("DemoDataInitializerService", () => {
     adminUserDB.put(syncedDoc);
     tick();
 
-    loginState.next(LoginState.LOGGED_OUT);
+    TestBed.inject(LoginStateSubject).next(LoginState.LOGGED_OUT);
 
-    const unsyncedDoc = { _id: "unsncedDoc" };
+    const unsyncedDoc = { _id: "unsyncedDoc" };
     adminUserDB.put(unsyncedDoc);
     tick();
 

@@ -29,10 +29,6 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
    * The entity which is edited.
    */
   @Input() entity: Entity;
-  /**
-   * The tooltip to be displayed.
-   */
-  tooltip: string;
 
   /**
    * The name of the form control.
@@ -61,9 +57,6 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
   ngOnInit() {
     if (!this.formFieldConfig?.forTable) {
       this.label = this.formFieldConfig?.label ?? this.propertySchema?.label;
-    }
-    if (this.formFieldConfig?.forTable) {
-      this.tooltip = undefined;
     }
     this.additional =
       this.formFieldConfig?.additional ?? this.propertySchema?.additional;

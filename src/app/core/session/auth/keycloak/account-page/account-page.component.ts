@@ -1,5 +1,4 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { AuthService } from "../../auth.service";
 import { KeycloakAuthService } from "../keycloak-auth.service";
 import { FormControl, ReactiveFormsModule, Validators } from "@angular/forms";
 import { AlertService } from "../../../../alerts/alert.service";
@@ -24,25 +23,21 @@ import { MatInputModule } from "@angular/material/input";
 })
 export class AccountPageComponent implements OnInit {
   @Input() disabled: boolean;
-  keycloakAuthService: KeycloakAuthService;
   email = new FormControl("", [Validators.required, Validators.email]);
 
   constructor(
-    authService: AuthService,
+    public authService: KeycloakAuthService,
     private alertService: AlertService,
-  ) {
-    if (authService instanceof KeycloakAuthService) {
-      this.keycloakAuthService = authService;
-    }
-  }
+  ) {}
 
   ngOnInit() {
-    if (this.keycloakAuthService) {
-      this.keycloakAuthService.getUserinfo().subscribe({
-        next: (res) => this.email.setValue(res.email),
-        error: () => this.email.setValue(""),
-      });
+    if (this.disabled) {
+      this.email.disable();
     }
+    this.authService
+      .getUserinfo()
+      .then((res) => this.email.setValue(res.email))
+      .catch((err) => console.debug("user profile not available", err));
   }
 
   setEmail() {
@@ -50,7 +45,8 @@ export class AccountPageComponent implements OnInit {
       return;
     }
 
-    this.keycloakAuthService.setEmail(this.email.value).subscribe({
+    // TODO can we use keycloak for this?
+    this.authService.setEmail(this.email.value).subscribe({
       next: () =>
         this.alertService.addInfo(
           $localize`Please click the link in the email we sent you to verify your email address.`,

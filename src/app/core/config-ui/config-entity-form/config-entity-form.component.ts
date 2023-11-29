@@ -18,7 +18,12 @@ import {
 } from "@angular/cdk/drag-drop";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormConfig } from "../../entity-details/form/form-config";
+import { FieldGroup } from "../../entity-details/form/field-group";
+
+// TODO: we wanted to remove the interfaces implemented by components - do we reintroduce them again for the Admin UI?
+interface FormConfig {
+  fieldGroups: FieldGroup[];
+}
 
 @Component({
   selector: "app-config-entity-form",

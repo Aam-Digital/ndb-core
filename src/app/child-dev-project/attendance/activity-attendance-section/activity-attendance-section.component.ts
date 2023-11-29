@@ -45,12 +45,12 @@ export class ActivityAttendanceSectionComponent implements OnInit {
     {
       id: "periodFrom",
       label: $localize`:The month something took place:Month`,
-      view: "DisplayMonth",
+      viewComponent: "DisplayMonth",
     },
     {
       id: "presentEvents",
       label: $localize`:How many children are present at a meeting|Title of table column:Present`,
-      view: "ReadonlyFunction",
+      viewComponent: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
         this.forChild
           ? e.countEventsPresent(this.forChild)
@@ -59,13 +59,13 @@ export class ActivityAttendanceSectionComponent implements OnInit {
     {
       id: "totalEvents",
       label: $localize`:Events of an attendance:Events`,
-      view: "ReadonlyFunction",
+      viewComponent: "ReadonlyFunction",
       additional: (e: ActivityAttendance) => e.countEventsTotal(),
     },
     {
       id: "attendancePercentage",
       label: $localize`:Percentage of people that attended an event:Attended`,
-      view: "ReadonlyFunction",
+      viewComponent: "ReadonlyFunction",
       additional: (e: ActivityAttendance) =>
         formatPercent(
           this.forChild

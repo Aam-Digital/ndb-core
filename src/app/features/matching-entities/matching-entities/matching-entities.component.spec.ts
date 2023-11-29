@@ -275,7 +275,7 @@ describe("MatchingEntitiesComponent", () => {
     expect(distanceColumn).toEqual({
       id: "distance",
       label: "Distance",
-      view: "DisplayDistance",
+      viewComponent: "DisplayDistance",
       additional: {
         coordinatesProperties: ["address"],
         compareCoordinates: jasmine.any(BehaviorSubject),

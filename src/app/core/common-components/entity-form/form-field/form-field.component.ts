@@ -30,6 +30,8 @@ export class FormFieldComponent<T extends Entity = Entity>
   @Input() entity: T;
   @Input() form: EntityForm<T>;
 
+  @Input() mode: "edit" | "view" = "edit";
+
   constructor(private entityFormService: EntityFormService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
