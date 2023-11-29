@@ -15,7 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-@use "src/styles/variables/colors";
+@use "variables/colors";
 
 .login-error {
   color: colors.$error;

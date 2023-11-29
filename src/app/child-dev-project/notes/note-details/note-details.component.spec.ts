@@ -4,10 +4,9 @@ import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { Child } from "../../children/model/child";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { defaultAttendanceStatusTypes } from "../../../core/config/default-config/default-attendance-status-types";
+import { NEVER } from "rxjs";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
-import { EntityConfigService } from "../../../core/entity/entity-config.service";
-import { NEVER } from "rxjs";
 
 function generateTestNote(forChildren: Child[]) {
   const testNote = Note.create(new Date(), "test note");
@@ -52,7 +51,6 @@ describe("NoteDetailsComponent", () => {
   }));
 
   beforeEach(() => {
-    TestBed.inject(EntityConfigService).setupEntitiesFromConfig();
     fixture = TestBed.createComponent(NoteDetailsComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();

@@ -17,7 +17,12 @@
 
 import { NgModule } from "@angular/core";
 import { UpdateManagerService } from "./update-manager.service";
-import { MarkdownModule, MarkedOptions } from "ngx-markdown";
+import {
+  MarkdownModule,
+  MARKED_OPTIONS,
+  MarkedOptions,
+  MarkedRenderer,
+} from "ngx-markdown";
 import { MarkedRendererCustom } from "./changelog/MarkedRendererCustom";
 import { ChangelogComponent } from "./changelog/changelog.component";
 import { MatDialogModule } from "@angular/material/dialog";
@@ -39,7 +44,7 @@ import { MatButtonModule } from "@angular/material/button";
   imports: [
     MarkdownModule.forRoot({
       markedOptions: {
-        provide: MarkedOptions,
+        provide: MARKED_OPTIONS,
         useFactory: markedOptionsFactory,
       },
     }),
@@ -60,14 +65,16 @@ export class LatestChangesModule {
 }
 
 function markedOptionsFactory(): MarkedOptions {
-  const renderer = new MarkedRendererCustom();
+  const customRenderer = new MarkedRendererCustom();
+  const renderer = new MarkedRenderer();
+  // Somehow this needs to be assigned manually or the renderer object will not have the functions
+  renderer.heading = customRenderer.heading;
+  renderer.list = customRenderer.list;
 
   return {
     renderer: renderer,
     gfm: true,
     breaks: false,
     pedantic: false,
-    smartLists: true,
-    smartypants: false,
   };
 }
