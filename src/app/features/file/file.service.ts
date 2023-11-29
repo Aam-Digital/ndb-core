@@ -6,9 +6,9 @@ import { filter } from "rxjs/operators";
 import { LoggingService } from "../../core/logging/logging.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileDatatype } from "./file.datatype";
-import { SessionService } from "../../core/session/session-service/session.service";
 import { waitForChangeTo } from "../../core/session/session-states/session-utils";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
+import { SyncStateSubject } from "../../core/session/session-type";
 
 /**
  * This service allow handles the logic for files/attachments.
@@ -19,10 +19,10 @@ export abstract class FileService {
     private entityMapper: EntityMapperService,
     private entities: EntityRegistry,
     private logger: LoggingService,
-    private session: SessionService,
+    private syncState: SyncStateSubject,
   ) {
     // TODO maybe registration is too late (only when component is rendered)
-    this.session.syncState
+    this.syncState
       // Only start listening to changes once the initial sync has been completed
       .pipe(waitForChangeTo(SyncState.COMPLETED))
       .subscribe(() => this.deleteFilesOfDeletedEntities());

@@ -1,4 +1,4 @@
-@use "src/styles/mixins/grid-layout";
+@use "mixins/grid-layout";
 
 .grid-layout {
   @include grid-layout.adaptive(
