@@ -1,7 +1,7 @@
-@use "src/styles/variables/sizes";
-@use "src/styles/variables/colors";
-@use "src/styles/mixins/grid-layout";
-@use "src/styles/typography/custom-typography";
+@use "variables/sizes";
+@use "variables/colors";
+@use "mixins/grid-layout";
+@use "typography/custom-typography";
 
 .cards-wrapper {
   @include grid-layout.adaptive($min-block-width: 250px);
