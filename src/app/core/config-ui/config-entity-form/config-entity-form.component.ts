@@ -19,6 +19,7 @@ import {
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FieldGroup } from "../../entity-details/form/field-group";
+import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 
 // TODO: we wanted to remove the interfaces implemented by components - do we reintroduce them again for the Admin UI?
 interface FormConfig {
@@ -42,7 +43,12 @@ export class ConfigEntityFormComponent implements OnChanges {
 
   dummyEntity: Entity;
   dummyForm: FormGroup;
-  availableFields: any[] = [{ id: null, label: "Create New Field" }];
+
+  availableFields: ColumnConfig[];
+  readonly createNewFieldPlaceholder: FormFieldConfig = {
+    id: null,
+    label: "Create New Field",
+  };
 
   constructor(
     private entityFormService: EntityFormService,
@@ -51,17 +57,37 @@ export class ConfigEntityFormComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
-      this.prepareConfig(this.config);
+      this.initDummyForm(this.config);
+      this.availableFields = this.initAvailableFields(this.config);
     }
   }
 
-  private prepareConfig(config: FormConfig) {
+  private initDummyForm(config: FormConfig) {
     this.dummyEntity = new this.entityType();
     this.dummyForm = this.entityFormService.createFormGroup(
-      config.fieldGroups.reduce((p, c) => p.concat(c.fields), []),
+      this.getUsedFields(config),
       this.dummyEntity,
     );
     this.dummyForm.disable();
+  }
+
+  private getUsedFields(config: FormConfig): ColumnConfig[] {
+    return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
+  }
+
+  private initAvailableFields(config: FormConfig) {
+    const usedFields = this.getUsedFields(config);
+    const unusedFields = Array.from(this.entityType.schema.entries())
+      .filter(
+        ([key]) =>
+          !usedFields.some(
+            (x) => x === key || (x as FormFieldConfig).id === key,
+          ),
+      )
+      .filter(([key, value]) => value.label) // no technical, internal fields
+      .map(([key]) => key);
+
+    return [this.createNewFieldPlaceholder, ...unusedFields];
   }
 
   openFieldConfig(field: ColumnConfig, fieldsArray: any[]) {

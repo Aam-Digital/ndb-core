@@ -103,7 +103,7 @@
       <div
         *ngFor="let f of availableFields"
         class="admin-form-field flex-row align-center"
-        [class.admin-form-field-new]="!f.id"
+        [class.admin-form-field-new]="f === createNewFieldPlaceholder"
         cdkDrag
         cdkDragBoundary="mat-drawer-container"
       >
@@ -115,9 +115,13 @@
         ></fa-icon>
 
         <div>
-          {{ f.label }}
+          <app-form-field-label
+            [field]="f"
+            [entity]="dummyEntity"
+          ></app-form-field-label>
+
           <button
-            *ngIf="f.id"
+            *ngIf="f !== createNewFieldPlaceholder"
             mat-stroked-button
             color="accent"
             class="field-edit-button field-edit-button-small"

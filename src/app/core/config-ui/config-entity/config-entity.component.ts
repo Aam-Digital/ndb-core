@@ -51,7 +51,7 @@ export class ConfigEntityComponent implements OnChanges {
   }
 
   cancel() {
-    // TODO: reload entity schema from config, because it has been edited in place
+    // TODO: reload entity schema from config (?), because it has been edited in place
     this.location.back();
   }
 
@@ -62,7 +62,6 @@ export class ConfigEntityComponent implements OnChanges {
     );
     const newConfig = originalConfig.copy();
 
-    // TODO: this is not working yet - need two-way binding into config-entity-form component
     newConfig.data[
       EntityConfigService.getDetailsViewId(this.entityConstructor)
     ].config = this.configDetailsView;
@@ -79,7 +78,6 @@ export class ConfigEntityComponent implements OnChanges {
 
     await this.entityMapper.save(newConfig);
     // TODO: snackbar + undo action (this should maybe become a default somewhere in a central service, used a lot)
-    const check = await this.entityMapper.load(Config, Config.CONFIG_KEY);
 
     this.location.back();
   }
