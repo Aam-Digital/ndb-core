@@ -16,14 +16,29 @@
  */
 
 @use "variables/colors";
+@use "variables/sizes";
 
 .login-error {
   color: colors.$error;
-  font-weight: bold;
+  font-size: 90%;
+  text-align: justify;
 }
 
 :host {
   display: block;
   max-width: 400px;
   margin: 0 auto;
+}
+
+.header {
+  justify-content: center;
+  padding-bottom: sizes.$regular;
+}
+
+.offline-title {
+  font-size: 1.1em;
+}
+
+.login-check-progressbar {
+  margin-top: 8px;
 }

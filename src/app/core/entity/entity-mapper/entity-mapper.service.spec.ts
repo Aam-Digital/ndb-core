@@ -21,16 +21,14 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { SessionService } from "../../session/session-service/session.service";
 import { Database } from "../../database/database";
 import { TEST_USER } from "../../../utils/mock-local-session";
-
+import { CurrentUserSubject } from "../../user/user";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
   let testDatabase: PouchDatabase;
-  let mockSessionService: jasmine.SpyObj<SessionService>;
 
   const existingEntity = {
     _id: "Entity:existing-entity",
@@ -46,13 +44,12 @@ describe("EntityMapperService", () => {
 
   beforeEach(waitForAsync(() => {
     testDatabase = PouchDatabase.create();
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"]);
 
     TestBed.configureTestingModule({
       imports: [CoreTestingModule],
       providers: [
         { provide: Database, useValue: testDatabase },
-        { provide: SessionService, useValue: mockSessionService },
+        CurrentUserSubject,
         EntityMapperService,
       ],
     });
@@ -286,7 +283,7 @@ describe("EntityMapperService", () => {
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
-    mockSessionService.getCurrentUser.and.returnValue({
+    TestBed.inject(CurrentUserSubject).next({
       name: TEST_USER,
       roles: [],
     });

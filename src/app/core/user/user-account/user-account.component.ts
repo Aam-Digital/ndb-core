@@ -16,7 +16,6 @@
  */
 
 import { Component, OnInit } from "@angular/core";
-import { SessionService } from "../../session/session-service/session.service";
 import { environment } from "../../../../environments/environment";
 import { SessionType } from "../../session/session-type";
 import { MatTabsModule } from "@angular/material/tabs";
@@ -24,8 +23,8 @@ import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
-import { PasswordFormComponent } from "../../session/auth/couchdb/password-form/password-form.component";
 import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
+import { CurrentUserSubject } from "../user";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -40,7 +39,6 @@ import { AccountPageComponent } from "../../session/auth/keycloak/account-page/a
     MatFormFieldModule,
     MatTooltipModule,
     MatInputModule,
-    PasswordFormComponent,
     AccountPageComponent,
   ],
   standalone: true,
@@ -52,11 +50,11 @@ export class UserAccountComponent implements OnInit {
   passwordChangeDisabled = false;
   tooltipText;
 
-  constructor(private sessionService: SessionService) {}
+  constructor(private currentUser: CurrentUserSubject) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();
-    this.username = this.sessionService.getCurrentUser()?.name;
+    this.username = this.currentUser.value?.name;
   }
 
   checkIfPasswordChangeAllowed() {

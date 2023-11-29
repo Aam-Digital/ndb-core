@@ -39,6 +39,10 @@ describe("SiteSettingsService", () => {
     service = TestBed.inject(SiteSettingsService);
   });
 
+  afterEach(() => {
+    localStorage.removeItem(service.SITE_SETTINGS_LOCAL_STORAGE_KEY);
+  });
+
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
@@ -46,12 +50,11 @@ describe("SiteSettingsService", () => {
   it("should only publish changes if property has changed", () => {
     const titleSpy = spyOn(TestBed.inject(Title), "setTitle");
     const settings = new SiteSettings();
-
+    settings.siteName = undefined;
     entityMapper.add(settings);
 
-    expect(titleSpy).toHaveBeenCalled();
+    expect(titleSpy).not.toHaveBeenCalled();
 
-    titleSpy.calls.reset();
     settings.displayLanguageSelect = false;
     entityMapper.add(settings);
 

@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { SessionService } from "../../session/session-service/session.service";
 import { shareReplay } from "rxjs/operators";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -8,8 +7,9 @@ import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
-import { AuthUser } from "../../session/session-service/auth-user";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
+import { AuthUser } from "../../session/auth/auth-user";
+import { CurrentUserSubject } from "../../user/user";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -24,7 +24,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
   constructor(
     private ability: EntityAbility,
-    private sessionService: SessionService,
+    private currentUser: CurrentUserSubject,
     private permissionEnforcer: PermissionEnforcerService,
     entityMapper: EntityMapperService,
     logger: LoggingService,
@@ -49,7 +49,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
     if (userRules.length === 0) {
       // No rules or only default rules defined
-      const user = this.sessionService.getCurrentUser();
+      const user = this.currentUser.value;
       this.logger.warn(
         `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
@@ -59,7 +59,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
-    const currentUser = this.sessionService.getCurrentUser();
+    const currentUser = this.currentUser.value;
     if (!currentUser) {
       return rules.public ?? [];
     }
