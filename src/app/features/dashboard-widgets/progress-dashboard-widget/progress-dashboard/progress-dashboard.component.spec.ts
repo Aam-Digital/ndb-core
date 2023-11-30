@@ -11,32 +11,27 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper/entit
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { MatDialog } from "@angular/material/dialog";
-import { BehaviorSubject, NEVER, Subject } from "rxjs";
+import { Subject } from "rxjs";
 import { take } from "rxjs/operators";
-import { SessionService } from "../../../../core/session/session-service/session.service";
 import { SyncState } from "../../../../core/session/session-states/sync-state.enum";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { SyncStateSubject } from "../../../../core/session/session-type";
 
 describe("ProgressDashboardComponent", () => {
   let component: ProgressDashboardComponent;
   let fixture: ComponentFixture<ProgressDashboardComponent>;
   let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
   const mockDialog = jasmine.createSpyObj<MatDialog>("matDialog", ["open"]);
-  let mockSession: jasmine.SpyObj<SessionService>;
-  let mockSync: BehaviorSubject<SyncState>;
+  let mockSync: SyncStateSubject;
 
   beforeEach(waitForAsync(() => {
-    mockSync = new BehaviorSubject(SyncState.UNSYNCED);
-    mockSession = jasmine.createSpyObj([], {
-      syncState: mockSync,
-      loginState: NEVER,
-    });
+    mockSync = new SyncStateSubject();
 
     TestBed.configureTestingModule({
       imports: [ProgressDashboardComponent, MockedTestingModule.withState()],
       providers: [
         { provide: MatDialog, useValue: mockDialog },
-        { provide: SessionService, useValue: mockSession },
+        { provide: SyncStateSubject, useValue: mockSync },
         {
           provide: AlertService,
           useValue: jasmine.createSpyObj(["addDebug", "addInfo", "addWarning"]),

@@ -152,7 +152,10 @@ function printArrayDifferences(name: string, a1: Array<any>, a2: Array<any>) {
  * @param obj The object or array of objects to simplify
  * @param withoutId (Optional) set to true to remove _id as well
  */
-function comparableEntityData(obj: any | any[], withoutId: boolean = false) {
+export function comparableEntityData(
+  obj: any | any[],
+  withoutId: boolean = false,
+) {
   if (Array.isArray(obj)) {
     return obj.map((o) => comparableEntityData(o, withoutId));
   } else {

@@ -9,10 +9,13 @@ import { TimePeriod } from "../../../core/entity-details/related-time-period-ent
  */
 @DatabaseEntity("ChildSchoolRelation")
 export class ChildSchoolRelation extends TimePeriod {
+  static override hasPII = true;
+
   @DatabaseField({
     label: $localize`:Label for the child of a relation:Child`,
     dataType: "entity",
     additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
     validators: {
       required: true,
     },
@@ -24,6 +27,7 @@ export class ChildSchoolRelation extends TimePeriod {
     label: $localize`:Label for the school of a relation:School`,
     dataType: "entity",
     additional: School.ENTITY_TYPE,
+    entityReferenceRole: "aggregate",
     validators: {
       required: true,
     },
@@ -38,6 +42,7 @@ export class ChildSchoolRelation extends TimePeriod {
     dataType: "date-only",
     label: $localize`:Label for the start date of a relation:Start date`,
     description: $localize`:Description of the start date of a relation:The date a child joins a school`,
+    anonymize: "retain",
   })
   start: Date;
 
@@ -45,6 +50,7 @@ export class ChildSchoolRelation extends TimePeriod {
     dataType: "date-only",
     label: $localize`:Label for the end date of a relation:End date`,
     description: $localize`:Description of the end date of a relation:The date of a child leaving the school`,
+    anonymize: "retain",
   })
   end: Date;
 

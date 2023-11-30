@@ -7,28 +7,34 @@ import {
 } from "@angular/core/testing";
 
 import { SupportComponent } from "./support.component";
-import { SessionService } from "../../session/session-service/session.service";
 import { BehaviorSubject, of } from "rxjs";
-import { SyncState } from "../../session/session-states/sync-state.enum";
 import { SwUpdate } from "@angular/service-worker";
 import { LOCATION_TOKEN, WINDOW_TOKEN } from "../../../utils/di-tokens";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
-import { SyncedSessionService } from "../../session/session-service/synced-session.service";
 import { MatDialogModule } from "@angular/material/dialog";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouch-database";
 import { BackupService } from "../../../features/admin/services/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
-import { AuthService } from "../../session/auth/auth.service";
 import { TEST_USER } from "../../../utils/mock-local-session";
+import { SyncService } from "../../database/sync.service";
+import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
+import { SyncStateSubject } from "../../session/session-type";
+import { CurrentUserSubject } from "../../user/user";
+
+class MockDeleteRequest {
+  onsuccess: () => {};
+  constructor() {
+    setTimeout(() => this.onsuccess());
+  }
+}
 
 describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
   const testUser = { name: TEST_USER, roles: [] };
-  let mockSessionService: jasmine.SpyObj<SessionService>;
   const mockSW = { isEnabled: false };
   let mockDB: jasmine.SpyObj<PouchDatabase>;
   const mockWindow = {
@@ -36,15 +42,17 @@ describe("SupportComponent", () => {
       userAgent: "mock user agent",
       serviceWorker: { getRegistrations: () => [], ready: Promise.resolve() },
     },
+    indexedDB: {
+      databases: jasmine.createSpy(),
+      deleteDatabase: jasmine
+        .createSpy()
+        .and.callFake(() => new MockDeleteRequest()),
+    },
   };
   let mockLocation: any;
 
   beforeEach(async () => {
     localStorage.clear();
-    mockSessionService = jasmine.createSpyObj(["getCurrentUser"], {
-      syncState: new BehaviorSubject(SyncState.UNSYNCED),
-    });
-    mockSessionService.getCurrentUser.and.returnValue(testUser);
     mockDB = jasmine.createSpyObj(["destroy", "getPouchDB"]);
     mockDB.getPouchDB.and.returnValue({
       info: () => Promise.resolve({ doc_count: 1, update_seq: 2 }),
@@ -58,13 +66,17 @@ describe("SupportComponent", () => {
         NoopAnimationsModule,
       ],
       providers: [
-        { provide: SessionService, useValue: mockSessionService },
+        {
+          provide: CurrentUserSubject,
+          useValue: new BehaviorSubject(testUser),
+        },
         { provide: SwUpdate, useValue: mockSW },
         { provide: PouchDatabase, useValue: mockDB },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: BackupService, useValue: null },
         { provide: DownloadService, useValue: null },
+        SyncStateSubject,
       ],
     }).compileComponents();
   });
@@ -91,9 +103,9 @@ describe("SupportComponent", () => {
 
   it("should correctly read sync and remote login status from local storage", async () => {
     const lastSync = new Date("2022-01-01").toISOString();
-    localStorage.setItem(SyncedSessionService.LAST_SYNC_KEY, lastSync);
+    localStorage.setItem(SyncService.LAST_SYNC_KEY, lastSync);
     const lastRemoteLogin = new Date("2022-01-02").toISOString();
-    localStorage.setItem(AuthService.LAST_AUTH_KEY, lastRemoteLogin);
+    localStorage.setItem(KeycloakAuthService.LAST_AUTH_KEY, lastRemoteLogin);
 
     await component.ngOnInit();
 
@@ -112,13 +124,18 @@ describe("SupportComponent", () => {
     mockWindow.navigator.serviceWorker.getRegistrations = () => [
       { unregister: unregisterSpy },
     ];
+    mockWindow.indexedDB.databases.and.resolveTo([
+      { name: "db1" },
+      { name: "db2" },
+    ]);
 
     await component.resetApplication();
 
-    expect(mockDB.destroy).toHaveBeenCalled();
     expect(unregisterSpy).toHaveBeenCalled();
     expect(localStorage.getItem("someItem")).toBeNull();
     expect(mockLocation.pathname).toBe("");
+    expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith("db1");
+    expect(mockWindow.indexedDB.deleteDatabase).toHaveBeenCalledWith("db2");
   });
 
   it("should display the service worker logs after they are available", fakeAsync(() => {

@@ -8,3 +8,6 @@ export const WINDOW_TOKEN = new InjectionToken<Window>("Window object");
 export const LOCATION_TOKEN = new InjectionToken<Location>(
   "Window location object",
 );
+export const NAVIGATOR_TOKEN = new InjectionToken<Navigator>(
+  "Window navigator object",
+);

@@ -3,13 +3,13 @@
 # Run the following commands from the root folder to build, run and kill the application
 # >> docker build -f build/Dockerfile -t aam-digital .
 # >> docker run -p=80:80 aam-digital
-FROM node:16.14.2-alpine3.15 AS builder
+FROM node:18.16.1-alpine3.18 AS builder
 WORKDIR /app
 
 COPY package*.json ./
 RUN npm ci --no-progress
 
-RUN $(npm bin)/ng version
+RUN npm run-script ng version
 
 COPY . .
 

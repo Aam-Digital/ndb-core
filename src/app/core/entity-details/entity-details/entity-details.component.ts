@@ -28,6 +28,9 @@ import { LoggingService } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
 import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
+import { filter } from "rxjs/operators";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Subscription } from "rxjs";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -36,6 +39,7 @@ import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-arch
  * The subcomponents will be provided with the Entity object and the creating new status, as well as its static config.
  */
 @RouteTarget("EntityDetails")
+@UntilDestroy()
 @Component({
   selector: "app-entity-details",
   templateUrl: "./entity-details.component.html",
@@ -62,6 +66,7 @@ import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-arch
 export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
   creatingNew = false;
   isLoading = true;
+  private changesSubscription: Subscription;
 
   /** @deprecated use "entityType" instead, this remains for config backwards compatibility */
   @Input() set entity(v: string) {
@@ -91,10 +96,23 @@ export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
     }
     if (changes.id) {
       this.loadEntity(this.id);
+      this.subscribeToEntityChanges();
       // `initPanels()` is already called inside `loadEntity()`
     } else if (changes.panels) {
       this.initPanels();
     }
+  }
+
+  private subscribeToEntityChanges() {
+    this.changesSubscription?.unsubscribe();
+    this.changesSubscription = this.entityMapperService
+      .receiveUpdates(this.entityConstructor)
+      .pipe(
+        filter(({ entity }) => entity.getId() === this.id),
+        filter(({ type }) => type !== "remove"),
+        untilDestroyed(this),
+      )
+      .subscribe(({ entity }) => (this.record = entity));
   }
 
   private async loadEntity(id: string) {

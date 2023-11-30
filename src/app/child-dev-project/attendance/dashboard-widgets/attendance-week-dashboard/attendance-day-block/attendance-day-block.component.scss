@@ -1,5 +1,5 @@
-@use "src/styles/variables/colors";
-@use "src/styles/functions/gradient-helpers";
+@use "variables/colors";
+@use "functions/gradient-helpers";
 
 .day-cell {
   padding: 0.28em;
@@ -8,5 +8,7 @@
 }
 
 .has-remark {
-  background-image: gradient-helpers.top-right-triangle(colors.$muted-background);
+  background-image: gradient-helpers.top-right-triangle(
+    colors.$muted-background
+  );
 }

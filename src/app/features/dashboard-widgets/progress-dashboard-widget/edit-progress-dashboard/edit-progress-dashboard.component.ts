@@ -13,7 +13,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
-import { AngularForm } from "@oasisdigital/angular-typed-forms-helpers";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { NgForOf, NgIf } from "@angular/common";
@@ -21,6 +20,7 @@ import { DialogCloseComponent } from "../../../../core/common-components/dialog-
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { TypedForm } from "../../../../core/common-components/entity-form/entity-form.service";
 
 export interface EditProgressDashboardComponentData {
   title: string;
@@ -87,7 +87,7 @@ export class EditProgressDashboardComponent {
   }
 
   currentLessThanTarget(
-    control: AngularForm<ProgressDashboardPart>,
+    control: TypedForm<ProgressDashboardPart>,
   ): ValidationErrors | null {
     const current = control.get("currentValue");
     const target = control.get("targetValue");

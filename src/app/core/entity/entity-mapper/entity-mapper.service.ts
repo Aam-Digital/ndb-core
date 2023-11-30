@@ -24,7 +24,7 @@ import { UpdatedEntity } from "../model/entity-update";
 import { EntityRegistry } from "../database-entity.decorator";
 import { map } from "rxjs/operators";
 import { UpdateMetadata } from "../model/update-metadata";
-import { SessionService } from "../../session/session-service/session.service";
+import { CurrentUserSubject } from "../../user/user";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -41,7 +41,7 @@ export class EntityMapperService {
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
-    private sessionService: SessionService,
+    private currentUser: CurrentUserSubject,
     private registry: EntityRegistry,
   ) {}
 
@@ -155,13 +155,18 @@ export class EntityMapperService {
    * This method should be chosen whenever a bigger number of entities needs to be
    * saved
    * @param entities The entities to save
+   * @param forceUpdate Optional flag whether any conflicting version in the database will be quietly overwritten.
+   *          if a conflict occurs without the forceUpdate flag being set, the save will fail, rejecting the returned promise.
    */
-  public async saveAll(entities: Entity[]): Promise<any[]> {
+  public async saveAll(
+    entities: Entity[],
+    forceUpdate: boolean = false,
+  ): Promise<any[]> {
     entities.forEach((e) => this.setEntityMetadata(e));
     const rawData = entities.map((e) =>
       this.entitySchemaService.transformEntityToDatabaseFormat(e),
     );
-    const results = await this._db.putAll(rawData);
+    const results = await this._db.putAll(rawData, forceUpdate);
     results.forEach((res, idx) => {
       if (res.ok) {
         const entity = entities[idx];
@@ -190,9 +195,7 @@ export class EntityMapperService {
   }
 
   protected setEntityMetadata(entity: Entity) {
-    const newMetadata = new UpdateMetadata(
-      this.sessionService.getCurrentUser()?.name,
-    );
+    const newMetadata = new UpdateMetadata(this.currentUser.value?.name);
     if (entity.isNew) {
       entity.created = newMetadata;
     }

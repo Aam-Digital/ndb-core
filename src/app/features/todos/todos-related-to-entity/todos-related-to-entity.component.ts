@@ -66,7 +66,6 @@ export class TodosRelatedToEntityComponent implements OnInit {
 
   async ngOnInit() {
     this.entries = await this.loadDataFor(this.entity.getId(true));
-    this.toggleInactive();
   }
 
   private async loadDataFor(entityId: string): Promise<Todo[]> {
@@ -96,14 +95,5 @@ export class TodosRelatedToEntityComponent implements OnInit {
 
   showDetails(entity: Todo) {
     this.formDialog.openFormPopup(entity, this.columns, TodoDetailsComponent);
-  }
-
-  toggleInactive() {
-    // TODO: move the toggle into its own component to be used like a filter? this is almost copy & paste from ChildSchoolOverview
-    if (this.includeInactive) {
-      this.filter = {};
-    } else {
-      this.filter = { isActive: true };
-    }
   }
 }

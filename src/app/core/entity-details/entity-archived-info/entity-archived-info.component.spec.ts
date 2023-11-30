@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { EntityArchivedInfoComponent } from "./entity-archived-info.component";
-import { EntityRemoveService } from "../../entity/entity-remove.service";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 
 describe("EntityArchivedInfoComponent", () => {
   let component: EntityArchivedInfoComponent;
@@ -10,7 +10,7 @@ describe("EntityArchivedInfoComponent", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       imports: [EntityArchivedInfoComponent],
-      providers: [{ provide: EntityRemoveService, useValue: null }],
+      providers: [{ provide: EntityActionsService, useValue: null }],
     });
     fixture = TestBed.createComponent(EntityArchivedInfoComponent);
     component = fixture.componentInstance;

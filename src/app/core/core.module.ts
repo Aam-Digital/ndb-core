@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../dynamic-components";
 import { coreComponents } from "./core-components";
-import { User } from "./user/user";
+import { CurrentUserSubject, User } from "./user/user";
 import { Config } from "./config/config";
 import { StringDatatype } from "./basic-datatypes/string/string.datatype";
 import { DefaultDatatype } from "./entity/default-datatype/default.datatype";
@@ -25,6 +25,7 @@ import { CommonModule } from "@angular/common";
  */
 @NgModule({
   providers: [
+    CurrentUserSubject,
     // base dataTypes
     { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
     { provide: DefaultDatatype, useClass: BooleanDatatype, multi: true },

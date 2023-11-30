@@ -33,6 +33,8 @@ import {
 } from "@angular/platform-browser";
 import Hammer from "hammerjs";
 import { ConfigurableEnumService } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { ConfirmationDialogService } from "../../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 
 // Only allow horizontal swiping
 @Injectable()
@@ -69,6 +71,7 @@ class HorizontalHammerConfig extends HammerGestureConfig {
     NgClass,
     RollCallTabComponent,
     HammerModule,
+    MatTooltipModule,
   ],
   providers: [
     {
@@ -114,12 +117,14 @@ export class RollCallComponent implements OnChanges {
   availableStatus: AttendanceStatusType[];
 
   children: Child[] = [];
+  inactiveParticipants: Child[];
 
   constructor(
     private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
     private loggingService: LoggingService,
+    private confirmationDialog: ConfirmationDialogService,
   ) {}
 
   async ngOnChanges(changes: SimpleChanges) {
@@ -165,8 +170,9 @@ export class RollCallComponent implements OnChanges {
 
   private async loadParticipants() {
     this.children = [];
+    this.inactiveParticipants = [];
     for (const childId of this.eventEntity.children) {
-      let child;
+      let child: Child;
       try {
         child = await this.entityMapper.load(Child, childId);
       } catch (e) {
@@ -179,7 +185,12 @@ export class RollCallComponent implements OnChanges {
         this.eventEntity.removeChild(childId);
         continue;
       }
-      this.children.push(child);
+
+      if (child.isActive) {
+        this.children.push(child);
+      } else {
+        this.inactiveParticipants.push(child);
+      }
     }
     this.sortParticipants();
   }
@@ -253,5 +264,16 @@ export class RollCallComponent implements OnChanges {
 
   showDetails() {
     this.formDialog.openFormPopup(this.eventEntity, [], NoteDetailsComponent);
+  }
+
+  async includeInactive() {
+    const confirmation = await this.confirmationDialog.getConfirmation(
+      $localize`Also include archived participants?`,
+      $localize`This event has some participants who are "archived". We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?`,
+    );
+    if (confirmation) {
+      this.children = [...this.children, ...this.inactiveParticipants];
+      this.inactiveParticipants = [];
+    }
   }
 }

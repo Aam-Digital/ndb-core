@@ -1,5 +1,5 @@
-@use "src/styles/variables/sizes";
-@use "src/styles/variables/colors";
+@use "variables/sizes";
+@use "variables/colors";
 @use "sass:color";
 
 .group-select-option {
@@ -39,8 +39,6 @@
 
 .progress-nav {
   margin-top: -4px;
-  display: flex;
-  flex-direction: row;
   justify-content: space-between;
   align-items: center;
 }
