@@ -1,20 +1,43 @@
-import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, } from "@angular/core";
-import { MatSort, MatSortModule, Sort, SortDirection, } from "@angular/material/sort";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+  ViewChild,
+} from "@angular/core";
+import {
+  MatSort,
+  MatSortModule,
+  Sort,
+  SortDirection,
+} from "@angular/material/sort";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import { EntityForm, EntityFormService, } from "../../entity-form/entity-form.service";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../entity-form/entity-form.service";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { tableSort } from "./table-sort";
-import { ScreenSize, ScreenWidthObserver, } from "../../../../utils/media/screen-size-observer.service";
+import {
+  ScreenSize,
+  ScreenWidthObserver,
+} from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
-import { ColumnConfig, DataFilter, toFormFieldConfig, } from "./entity-subrecord-config";
+import {
+  ColumnConfig,
+  DataFilter,
+  toFormFieldConfig,
+} from "./entity-subrecord-config";
 import { FilterService } from "../../../filter/filter.service";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Router } from "@angular/router";
@@ -24,15 +47,17 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import {
-  DisableEntityOperationDirective
-} from "../../../permissions/permission-directive/disable-entity-operation.directive";
+import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
-import { MatCheckboxChange, MatCheckboxModule, } from "@angular/material/checkbox";
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { applyUpdate } from "../../../entity/model/entity-update";
 import { FormFieldComponent } from "../../entity-form/form-field/form-field.component";
+import { FormFieldLabelComponent } from "../../entity-form/form-field-label/form-field-label.component";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -73,6 +98,7 @@ export interface TableRow<T extends Entity> {
     MatCheckboxModule,
     MatSlideToggleModule,
     FormFieldComponent,
+    FormFieldLabelComponent,
   ],
   standalone: true,
 })
@@ -117,7 +143,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   @Input() newRecordFactory: () => T;
 
-  private entityConstructor: EntityConstructor<T>;
+  entityConstructor: EntityConstructor<T>;
 
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
@@ -190,21 +216,15 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       .map((record) => ({ record }));
   }
 
-  private entityConstructorIsAvailable(): boolean {
-    return this.records.length > 0 || !!this.newRecordFactory;
-  }
-
-  getEntityConstructor(): EntityConstructor<T> {
-    if (!this.entityConstructorIsAvailable()) {
-      throw new Error("No constructor is available");
+  initEntityConstructor() {
+    if (!(this.records?.length > 0) && !this.newRecordFactory) {
+      this.entityConstructor = undefined;
+      return;
     }
 
-    if (!this.entityConstructor) {
-      const record =
-        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
-      this.entityConstructor = record.getConstructor();
-    }
-    return this.entityConstructor;
+    const record =
+      this.records?.length > 0 ? this.records[0] : this.newRecordFactory();
+    this.entityConstructor = record.getConstructor();
   }
 
   /**
@@ -215,6 +235,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     let reinitDataSource = false;
     let resetupTable = false;
     let reinitFormGroups = false;
+
+    if (changes.records || changes.newRecordFactory) {
+      this.initEntityConstructor();
+    }
 
     if (changes.hasOwnProperty("records")) {
       if (!this.records) {
@@ -276,18 +300,20 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private initFormGroups() {
-    if (this.entityConstructorIsAvailable()) {
-      try {
-        this.filteredColumns = this.filteredColumns.map((c) =>
-          this.entityFormService.extendFormFieldConfig(
-            c,
-            this.getEntityConstructor(),
-            true,
-          ),
-        );
-      } catch (err) {
-        this.loggingService.warn(`Error creating form definitions: ${err}`);
-      }
+    if (!this.entityConstructor) {
+      return;
+    }
+
+    try {
+      this.filteredColumns = this.filteredColumns.map((c) =>
+        this.entityFormService.extendFormFieldConfig(
+          c,
+          this.entityConstructor,
+          true,
+        ),
+      );
+    } catch (err) {
+      this.loggingService.warn(`Error creating form definitions: ${err}`);
     }
   }
 
@@ -338,9 +364,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private listenToEntityUpdates() {
-    if (!this.updateSubscription && this.entityConstructorIsAvailable()) {
+    if (!this.updateSubscription && this.entityConstructor) {
       this.updateSubscription = this.entityMapper
-        .receiveUpdates(this.getEntityConstructor())
+        .receiveUpdates(this.entityConstructor)
         .pipe(untilDestroyed(this))
         .subscribe((next) => {
           this.records = applyUpdate(this.records, next, true);

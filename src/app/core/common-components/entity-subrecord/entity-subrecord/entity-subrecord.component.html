@@ -24,10 +24,12 @@
         mat-header-cell
         mat-sort-header
         *matHeaderCellDef
-        [matTooltip]="col.description"
         [disabled]="col.noSorting"
       >
-        {{ col.label }}
+        <app-form-field-label
+          [field]="col"
+          [entityType]="entityConstructor"
+        ></app-form-field-label>
       </th>
 
       <td
@@ -40,7 +42,7 @@
           [field]="col"
           [entity]="row.record"
           [form]="row.formGroup"
-          [mode]="row.formGroup?.enabled && col.editComponent ? 'edit' : 'view'"
+          [mode]="row.formGroup?.enabled ? 'edit' : 'view'"
         ></app-form-field>
       </td>
     </ng-container>
@@ -58,7 +60,7 @@
           <button
             mat-icon-button
             *appDisabledEntityOperation="{
-              entity: getEntityConstructor(),
+              entity: entityConstructor,
               operation: 'create'
             }"
             class="table-action-button"

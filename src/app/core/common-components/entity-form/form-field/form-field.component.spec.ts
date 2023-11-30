@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { FormFieldComponent } from "./form-field.component";
 import { EntityFormService } from "../entity-form.service";
 import { Entity } from "../../../entity/model/entity";
+import { ComponentRegistry } from "../../../../dynamic-components";
 
 describe("FormFieldComponent", () => {
   let component: FormFieldComponent;
@@ -17,7 +18,10 @@ describe("FormFieldComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [FormFieldComponent],
-      providers: [{ provide: EntityFormService, useValue: mockFormService }],
+      providers: [
+        { provide: EntityFormService, useValue: mockFormService },
+        ComponentRegistry,
+      ],
     });
     fixture = TestBed.createComponent(FormFieldComponent);
     component = fixture.componentInstance;
