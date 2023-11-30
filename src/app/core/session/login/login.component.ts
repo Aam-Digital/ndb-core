@@ -65,7 +65,11 @@ export class LoginComponent implements OnInit {
     public sessionManager: SessionManagerService,
     public loginState: LoginStateSubject,
     public siteSettingsService: SiteSettingsService,
-  ) {}
+  ) {
+    sessionManager
+      .remoteLogin()
+      .then(() => sessionManager.clearRemoteSessionIfNecessary());
+  }
 
   ngOnInit() {
     this.loginState.pipe(untilDestroyed(this)).subscribe((state) => {
