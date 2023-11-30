@@ -26,9 +26,6 @@ import { LoggingService } from "../../logging/logging.service";
 export class DynamicComponentDirective implements OnChanges {
   @Input() appDynamicComponent: DynamicComponentConfig;
 
-  /** (optional) additional context to help debugging if dynamic component can't be found */
-  @Input() appDynamicComponentContext: any;
-
   constructor(
     public viewContainerRef: ViewContainerRef,
     private components: ComponentRegistry,
@@ -53,7 +50,7 @@ export class DynamicComponentDirective implements OnChanges {
     } catch (e) {
       this.logger.error(
         `Failed to load dynamic component:\n${JSON.stringify(
-          this.appDynamicComponentContext,
+          this.appDynamicComponent,
         )}`,
       );
       // abort if component failed to load
