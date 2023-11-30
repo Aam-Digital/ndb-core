@@ -300,9 +300,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   private initFormGroups() {
     if (this.entityConstructorIsAvailable()) {
       try {
-        this.filteredColumns = this.filteredColumns.map((f) =>
+        this.filteredColumns = this.filteredColumns.map((c) =>
           this.entityFormService.extendFormFieldConfig(
-            f,
+            c,
             this.getEntityConstructor(),
             true,
           ),

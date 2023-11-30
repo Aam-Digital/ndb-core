@@ -20,7 +20,6 @@ import {
   EntityForm,
   EntityFormService,
 } from "../../../core/common-components/entity-form/entity-form.service";
-import { ColumnConfig } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
@@ -62,7 +61,7 @@ export class NoteDetailsComponent implements OnInit {
   exportConfig: ExportColumnConfig[];
 
   topForm = ["date", "warningLevel", "category", "authors", "attachment"];
-  middleForm: ColumnConfig[] = ["subject", "text"];
+  middleForm = ["subject", "text"];
   bottomForm = ["children", "schools"];
   topFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
@@ -95,7 +94,7 @@ export class NoteDetailsComponent implements OnInit {
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 
     this.form = this.entityFormService.createFormGroup(
-      this.middleForm.concat(...this.topForm, ...this.bottomForm),
+      this.middleForm.concat(this.topForm, this.bottomForm),
       this.entity,
     );
     // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
