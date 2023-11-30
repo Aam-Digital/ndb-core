@@ -944,164 +944,108 @@ export const defaultJsonConfig = {
   "entity:Child": {
     "label": $localize`:Label for child:Child`,
     "labelPlural": $localize`:Plural label for child:Children`,
-    "attributes": [
-      {
-        "name": "address",
-        "schema": {
-          "dataType": "location",
-          "label": $localize`:Label for the address of a child:Address`
-        }
+
+    "attributes": {
+      "address": {
+        "dataType": "location",
+        "label": $localize`:Label for the address of a child:Address`
       },
-      {
-        "name": "health_bloodGroup",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label for a child attribute:Blood Group`
-        }
+      "health_bloodGroup": {
+        "dataType": "string",
+        "label": $localize`:Label for a child attribute:Blood Group`
       },
-      {
-        "name": "religion",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label for the religion of a child:Religion`
-        }
+      "religion": {
+        "dataType": "string",
+        "label": $localize`:Label for the religion of a child:Religion`
       },
-      {
-        "name": "motherTongue",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label for the mother tongue of a child:Mother Tongue`,
-          description: $localize`:Tooltip description for the mother tongue of a child:The primary language spoken at home`,
-        }
+      "motherTongue": {
+        "dataType": "string",
+        "label": $localize`:Label for the mother tongue of a child:Mother Tongue`,
+        description: $localize`:Tooltip description for the mother tongue of a child:The primary language spoken at home`,
       },
-      {
-        "name": "health_lastDentalCheckup",
-        "schema": {
-          "dataType": "date",
-          "label": $localize`:Label for a child attribute:Last Dental Check-Up`
-        }
+      "health_lastDentalCheckup": {
+        "dataType": "date",
+        "label": $localize`:Label for a child attribute:Last Dental Check-Up`
       },
-      {
-        "name": "birth_certificate",
-        "schema": {
-          "dataType": "file",
-          "label": $localize`:Label for a child attribute:Birth certificate`
-        }
+      "birth_certificate": {
+        "dataType": "file",
+        "label": $localize`:Label for a child attribute:Birth certificate`
       }
-    ]
+    },
   },
   "entity:School": {
-    "attributes": [
-      {
-        "name": "name",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label for the name of a school:Name`
-        }
+    "attributes": {
+      "name": {
+        "dataType": "string",
+        "label": $localize`:Label for the name of a school:Name`
       },
-      {
-        "name": "privateSchool",
-        "schema": {
-          "dataType": "boolean",
-          "label": $localize`:Label for if a school is a private school:Private School`
-        }
+      "privateSchool": {
+        "dataType": "boolean",
+        "label": $localize`:Label for if a school is a private school:Private School`
       },
-      {
-        "name": "language",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label for the language of a school:Language`
-        }
+      "language": {
+        "dataType": "string",
+        "label": $localize`:Label for the language of a school:Language`
       },
-      {
-        "name": "address",
-        "schema": {
-          "dataType": "location",
-          "label": $localize`:Label for the address of a school:Address`
-        }
+      "address": {
+        "dataType": "location",
+        "label": $localize`:Label for the address of a school:Address`
       },
-      {
-        "name": "phone",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label for the phone number of a school:Phone Number`
-        }
+      "phone": {
+        "dataType": "string",
+        "label": $localize`:Label for the phone number of a school:Phone Number`
       },
-      {
-        "name": "timing",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label for the timing of a school:School Timing`
-        }
+      "timing": {
+        "dataType": "string",
+        "label": $localize`:Label for the timing of a school:School Timing`
       },
-      {
-        "name": "remarks",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label for the remarks for a school:Remarks`
-        }
+      "remarks": {
+        "dataType": "string",
+        "label": $localize`:Label for the remarks for a school:Remarks`
       }
-    ]
+    },
   },
   "entity:HistoricalEntityData": {
-    "attributes": [
-      {
-        "name": "isMotivatedDuringClass",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          "label": $localize`:Label for a child attribute:Motivated`,
-          description: $localize`:Description for a child attribute:The child is motivated during the class.`
-        }
+    "attributes": {
+      "isMotivatedDuringClass": {
+        "dataType": "configurable-enum",
+        "additional": "rating-answer",
+        "label": $localize`:Label for a child attribute:Motivated`,
+        description: $localize`:Description for a child attribute:The child is motivated during the class.`
       },
-      {
-        "name": "isParticipatingInClass",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          "label": $localize`:Label for a child attribute:Participating`,
-          description: $localize`:Description for a child attribute:The child is actively participating in the class.`
-        }
+      "isParticipatingInClass": {
+        "dataType": "configurable-enum",
+        "additional": "rating-answer",
+        "label": $localize`:Label for a child attribute:Participating`,
+        description: $localize`:Description for a child attribute:The child is actively participating in the class.`
       },
-      {
-        "name": "isInteractingWithOthers",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          "label": $localize`:Label for a child attribute:Interacting`,
-          description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
-        }
+      "isInteractingWithOthers": {
+        "dataType": "configurable-enum",
+        "additional": "rating-answer",
+        "label": $localize`:Label for a child attribute:Interacting`,
+        description: $localize`:Description for a child attribute:The child interacts with other students during the class.`
       },
-      {
-        "name": "doesHomework",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          "label": $localize`:Label for a child attribute:Homework`,
-          description: $localize`:Description for a child attribute:The child does its homework.`
-        }
+      "doesHomework": {
+        "dataType": "configurable-enum",
+        "additional": "rating-answer",
+        "label": $localize`:Label for a child attribute:Homework`,
+        description: $localize`:Description for a child attribute:The child does its homework.`
       },
-      {
-        "name": "asksQuestions",
-        "schema": {
-          "dataType": "configurable-enum",
-          "innerDataType": "rating-answer",
-          "label": $localize`:Label for a child attribute:Asking Questions`,
-          description: $localize`:Description for a child attribute:The child is asking questions during the class.`
-        }
+      "asksQuestions": {
+        "dataType": "configurable-enum",
+        "additional": "rating-answer",
+        "label": $localize`:Label for a child attribute:Asking Questions`,
+        description: $localize`:Description for a child attribute:The child is asking questions during the class.`
       },
-    ]
+    }
   },
   "entity:User": {
-    "attributes": [
-      {
-        "name": "phone",
-        "schema": {
-          "dataType": "string",
-          "label": $localize`:Label of user phone:Contact`
-        }
-      },
-    ]
+    "attributes": {
+      "phone": {
+        "dataType": "string",
+        "label": $localize`:Label of user phone:Contact`
+      }
+    },
   },
   "view:matching": {
     "component": "MatchingEntities",
@@ -1130,7 +1074,7 @@ export const defaultJsonConfig = {
   },
 
   "entity:Todo": {
-    "attributes": []
+    "attributes": {}
   },
   "view:todo": {
     "component": "TodoList",

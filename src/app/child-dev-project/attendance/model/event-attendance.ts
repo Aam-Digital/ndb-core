@@ -13,7 +13,7 @@ export class EventAttendance {
   private _status: AttendanceStatusType;
   @DatabaseField({
     dataType: "configurable-enum",
-    innerDataType: ATTENDANCE_STATUS_CONFIG_ID,
+    additional: ATTENDANCE_STATUS_CONFIG_ID,
   })
   get status(): AttendanceStatusType {
     return this._status;

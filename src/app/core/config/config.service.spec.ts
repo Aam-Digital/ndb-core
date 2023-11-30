@@ -4,6 +4,7 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
+import { EntityConfig } from "../entity/entity-config";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -97,5 +98,40 @@ describe("ConfigService", () => {
     tick();
     const result = service.exportConfig();
     expect(result).toEqual(expected);
+  }));
+
+  it("should migrate entity attributes config to flattened object format with id", fakeAsync(() => {
+    const config = new Config();
+    config.data = {
+      "entity:old-format": {
+        attributes: [
+          {
+            name: "count",
+            schema: {
+              dataType: "number",
+            },
+          },
+        ],
+      },
+      "entity:new-format": {
+        attributes: {
+          count: {
+            dataType: "number",
+          },
+        },
+      },
+    };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const expectedEntityAttributes = {
+      count: { dataType: "number" },
+    };
+
+    const actualFromOld = service.getConfig<EntityConfig>("entity:old-format");
+    expect(actualFromOld.attributes).toEqual(expectedEntityAttributes);
+
+    const actualFromNew = service.getConfig<EntityConfig>("entity:new-format");
+    expect(actualFromNew.attributes).toEqual(expectedEntityAttributes);
   }));
 });
