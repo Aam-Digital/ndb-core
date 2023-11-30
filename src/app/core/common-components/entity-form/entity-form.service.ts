@@ -101,6 +101,7 @@ export class EntityFormService {
       fullField.forTable = true;
       fullField.label =
         fullField.label || fullField.labelShort || fullField.label;
+      delete fullField.description;
     } else {
       fullField.forTable = false;
       fullField.label =

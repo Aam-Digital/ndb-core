@@ -33,8 +33,6 @@ export class FormFieldComponent<T extends Entity = Entity>
 
   @Input() mode: "edit" | "view" = "edit";
 
-  tooltip: string;
-
   constructor(private entityFormService: EntityFormService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -53,6 +51,5 @@ export class FormFieldComponent<T extends Entity = Entity>
       this.field,
       this.entity.getConstructor(),
     );
-    this.tooltip = this._field.forTable ? undefined : this._field.description;
   }
 }
