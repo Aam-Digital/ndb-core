@@ -38,11 +38,17 @@ describe("LoginComponent", () => {
   let component: LoginComponent;
   let fixture: ComponentFixture<LoginComponent>;
   let loginState: LoginStateSubject;
+  let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
+  let sessionManager: SessionManagerService;
 
   beforeEach(waitForAsync(() => {
+    mockKeycloak = jasmine.createSpyObj(["login"]);
     TestBed.configureTestingModule({
       imports: [LoginComponent, MockedTestingModule.withState()],
+      providers: [{ provide: KeycloakAuthService, useValue: mockKeycloak }],
     }).compileComponents();
+    sessionManager = TestBed.inject(SessionManagerService);
+    spyOn(sessionManager, "remoteLogin").and.callThrough();
     loginState = TestBed.inject(LoginStateSubject);
     environment.session_type = SessionType.synced;
   }));
@@ -60,6 +66,10 @@ describe("LoginComponent", () => {
     expect(component).toBeTruthy();
   });
 
+  it("should try to login on startup", () => {
+    expect(sessionManager.remoteLogin).toHaveBeenCalled();
+  });
+
   it("should route to redirect uri once state changes to 'logged-in'", () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigateByUrl");
     TestBed.inject(ActivatedRoute).snapshot.queryParams = {
@@ -73,14 +83,11 @@ describe("LoginComponent", () => {
   });
 
   it("should show offline login if remote login fails", fakeAsync(() => {
-    const sessionManager = TestBed.inject(SessionManagerService);
     const mockUsers = [{ name: "test", roles: [] }];
     spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
     spyOn(sessionManager, "remoteLoginAvailable").and.returnValue(true);
     const remoteLoginSubject = new Subject<AuthUser>();
-    spyOn(TestBed.inject(KeycloakAuthService), "login").and.returnValue(
-      firstValueFrom(remoteLoginSubject),
-    );
+    mockKeycloak.login.and.returnValue(firstValueFrom(remoteLoginSubject));
     loginState.next(LoginState.LOGGED_OUT);
     fixture.detectChanges();
 
@@ -95,7 +102,6 @@ describe("LoginComponent", () => {
   }));
 
   it("should show offline login after 5 seconds", fakeAsync(() => {
-    const sessionManager = TestBed.inject(SessionManagerService);
     const mockUsers = [{ name: "test", roles: [] }];
     spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
 
