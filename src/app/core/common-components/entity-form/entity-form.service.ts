@@ -148,7 +148,7 @@ export class EntityFormService {
    */
   private addFormControlConfig(
     formConfig: Object,
-    fieldConfig: string | FormFieldConfig,
+    fieldConfig: ColumnConfig,
     entity: Entity,
     forTable: boolean,
   ) {
