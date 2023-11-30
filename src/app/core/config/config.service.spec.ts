@@ -217,7 +217,7 @@ describe("ConfigService", () => {
     const testConfig1 = "view:test";
     const testConfig2 = "view:test/:id";
 
-    const oldFieldConfig = { id: "name", view: "SomeView" };
+    const oldFieldConfig = { id: "name", view: "SomeView", edit: "SomeEdit" };
 
     const viewConfig1 = {
       component: "EntityDetails",
@@ -268,6 +268,7 @@ describe("ConfigService", () => {
     const expectedFieldConfig = {
       id: "name",
       viewComponent: "SomeView",
+      editComponent: "SomeEdit",
     };
 
     expect(
