@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { EntityConfig, EntityConfigService } from "./entity-config.service";
+import { EntityConfigService } from "./entity-config.service";
 import {
   DatabaseEntity,
   EntityRegistry,
@@ -12,12 +12,14 @@ import { ConfigService } from "../config/config.service";
 import { EntitySchemaService } from "./schema/entity-schema.service";
 import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
+import { EntityConfig } from "./entity-config";
+import { EntitySchemaField } from "./schema/entity-schema-field";
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   const testConfig: EntityConfig = {
-    attributes: [{ name: "testAttribute", schema: { dataType: "string" } }],
+    attributes: { testAttribute: { dataType: "string" } },
   };
 
   beforeEach(() => {
@@ -54,7 +56,7 @@ describe("EntityConfigService", () => {
   });
 
   it("should load a given EntityType", () => {
-    const config: EntityConfig = { attributes: [] };
+    const config: EntityConfig = {};
     mockConfigService.getConfig.and.returnValue(config);
     const result = service.getEntityConfig(Test);
     expect(mockConfigService.getConfig).toHaveBeenCalledWith("entity:Test");
@@ -67,25 +69,11 @@ describe("EntityConfigService", () => {
     const mockEntityConfigs: (EntityConfig & { _id: string })[] = [
       {
         _id: "entity:Test",
-        attributes: [
-          {
-            name: ATTRIBUTE_1_NAME,
-            schema: {
-              dataType: "string",
-            },
-          },
-        ],
+        attributes: { [ATTRIBUTE_1_NAME]: { dataType: "string" } },
       },
       {
         _id: "entity:Test2",
-        attributes: [
-          {
-            name: ATTRIBUTE_2_NAME,
-            schema: {
-              dataType: "number",
-            },
-          },
-        ],
+        attributes: { [ATTRIBUTE_2_NAME]: { dataType: "number" } },
       },
     ];
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
@@ -124,14 +112,17 @@ describe("EntityConfigService", () => {
   });
 
   it("should create a new subclass with the schema of the extended", () => {
-    const schema = { dataType: "string", label: "Dynamic Property" };
+    const schema: EntitySchemaField = {
+      dataType: "string",
+      label: "Dynamic Property",
+    };
     mockConfigService.getAllConfigs.and.returnValue([
       {
         _id: "entity:DynamicTest",
         label: "Dynamic Test Entity",
         extends: "Test",
-        attributes: [{ name: "dynamicProperty", schema }],
-      },
+        attributes: { dynamicProperty: schema },
+      } as EntityConfig,
     ]);
 
     service.setupEntitiesFromConfig();
@@ -141,7 +132,7 @@ describe("EntityConfigService", () => {
     expect([...dynamicEntity.schema.entries()]).toEqual(
       jasmine.arrayContaining([...Test.schema.entries()]),
     );
-    expect(dynamicEntity.schema.get("dynamicProperty")).toBe(schema);
+    expect(dynamicEntity.schema.get("dynamicProperty")).toEqual(schema);
     const dynamicInstance = new dynamicEntity("someId");
     expect(dynamicInstance instanceof Test).toBeTrue();
     expect(dynamicInstance.getId(true)).toBe("DynamicTest:someId");

@@ -47,7 +47,9 @@ describe("CouchdbFileService", () => {
     mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
     dismiss = jasmine.createSpy();
     mockSnackbar.openFromComponent.and.returnValue({ dismiss } as any);
-    Entity.schema.set("testProp", { dataType: FileDatatype.dataType });
+    Entity.schema.set("testProp", {
+      dataType: FileDatatype.dataType,
+    });
 
     TestBed.configureTestingModule({
       providers: [

@@ -4,6 +4,7 @@ import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
+import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { FieldGroup } from "../entity-details/form/field-group";
 
 /**
@@ -52,6 +53,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
 
   private applyMigrations(config: Config): Config {
     const migrations: ConfigMigration[] = [
+      migrateEntityAttributesWithId,
       migrateFormHeadersIntoFieldGroups,
       migrateFormFieldConfigView2ViewComponent,
     ];
@@ -80,6 +82,27 @@ interface ConfigMigration {
   filter: (key: string, configPart: any) => boolean;
   transform: (key: string, configPart: any) => any;
 }
+
+/**
+ * Transform legacy "entity:" config format into the flattened structure containing id directly.
+ */
+const migrateEntityAttributesWithId: ConfigMigration = {
+  filter: (key, configPart) =>
+    key.startsWith("entity") && Array.isArray(configPart.attributes),
+
+  transform: (key, configPart) => {
+    configPart.attributes = configPart.attributes.reduce(
+      (acc, attr: { name: string; schema: EntitySchemaField }) => ({
+        ...acc,
+        [attr.name]: attr.schema,
+        // id inside the field schema config (FieldConfig) is added by EntityConfigService and does not need migration
+      }),
+      {},
+    );
+
+    return configPart;
+  },
+};
 
 /**
  * Transform legacy "view:...Form" config format to have form field group headers with the fields rather than as separate array.
