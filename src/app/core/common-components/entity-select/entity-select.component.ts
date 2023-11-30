@@ -94,8 +94,8 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         filter((isLoading) => !isLoading),
       )
       .subscribe((_) => {
-        this.selectedEntities = this.allEntities.filter((e) =>
-          sel.find((s) => s === e.getId(true) || s === e.getId()),
+        this.selectedEntities = sel.map((id) => 
+          this.allEntities.find((s) => id === s.getId(true) || id === s.getId())
         );
       });
   }

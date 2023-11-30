@@ -57,13 +57,7 @@
       "
       [disabled]="true"
       style="display: none"
-      i18n="
-        Message indicating that there are no matching results, but that a
-        certain number of inactive entities match and pointing out the option of
-        also showing the inactive
-      "
-      >None, but {{ inactiveFilteredEntities.length }} inactive {{ label }}.
-      Also show inactive?</mat-option
+      ></mat-option
     >
     <mat-checkbox
       *ngIf="inactiveFilteredEntities.length > 0"

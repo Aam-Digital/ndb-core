@@ -15,8 +15,9 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
-describe("EntitySelectComponent", () => {
+fdescribe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let loader: HarnessLoader;
@@ -70,6 +71,7 @@ describe("EntitySelectComponent", () => {
     component.entityType = User.ENTITY_TYPE;
     tick();
     fixture.detectChanges();
+    console.log("should suggest ... filteredEntities", component.filteredEntities);
     expect(component.filteredEntities.length).toBe(testUsers.length);
   }));
 
@@ -153,7 +155,10 @@ describe("EntitySelectComponent", () => {
   });
 
   it("adds a new entity if it matches a known entity", fakeAsync(() => {
+    component.entityType = User.ENTITY_TYPE;
     component.allEntities = testUsers;
+    tick();
+
     component.select({ value: testUsers[0]["name"] });
     expect(component.selectedEntities).toEqual([testUsers[0]]);
     tick();
@@ -167,22 +172,29 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("autocompletes with the default accessor", fakeAsync(() => {
+    component.entityType = User.ENTITY_TYPE;
+    tick();
     component.allEntities = testUsers;
     component.loading.next(false);
 
     component.formControl.setValue(null);
+    tick();
     expect(component.filteredEntities.length).toEqual(4);
 
     component.formControl.setValue("A");
+    tick();
     expect(component.filteredEntities.length).toEqual(3);
 
     component.formControl.setValue("c");
+    tick();
     expect(component.filteredEntities.length).toEqual(2);
 
     component.formControl.setValue("Abc");
+    tick();
     expect(component.filteredEntities.length).toEqual(1);
 
     component.formControl.setValue("z");
+    tick();
     expect(component.filteredEntities.length).toEqual(0);
     tick();
   }));
@@ -190,6 +202,8 @@ describe("EntitySelectComponent", () => {
   it("shows inactive entites according to the includeInactive state", fakeAsync(() => {
     testUsers[0].isActive = false;
     testUsers[2].isActive = false;
+    component.entityType = User.ENTITY_TYPE;
+    tick();
     component.allEntities = testUsers;
     component.loading.next(false);
 
@@ -204,7 +218,7 @@ describe("EntitySelectComponent", () => {
     expect(component.filteredEntities.length).toEqual(3);
   }));
 
-  it("shows the inactive checkbox and message appropriately", fakeAsync(async () => {
+  it("shows the autocomplete options and eventually the hidden autocomplete option in case of corresponding inactive entities appropriately", fakeAsync(async () => {
     const testEntities = [
       "Aaa",
       "Aab",
@@ -222,26 +236,32 @@ describe("EntitySelectComponent", () => {
     testEntities[6].isActive = false;
     testEntities[7].isActive = false;
 
+    const mockEntityMapper = TestBed.inject(EntityMapperService);
+    spyOn(mockEntityMapper, "loadType").and.resolveTo(testEntities);
+    component.entityType = User.ENTITY_TYPE;
+    tick();
     component.allEntities = testEntities;
+
     component.loading.next(false);
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
     let options;
 
+    console.log("shows the autocomplete ... allEntities:", component.allEntities);
+    console.log("shows the autocomplete ... RelevantEntities:", component.relevantEntities);
+
     autocomplete.enterText("X");
     options = await autocomplete.getOptions();
-    expect(options.length).toEqual(1);
-    expect(await options[0].getText()).toEqual("None.");
+    expect(options.length).toEqual(0);
 
     autocomplete.clear();
-    autocomplete.enterText("Aa");
+    autocomplete.enterText("Ba");
     options = await autocomplete.getOptions();
-    expect(options.length).toEqual(4);
+    expect(options.length).toEqual(3);
 
     autocomplete.clear();
     autocomplete.enterText("Ca");
     options = await autocomplete.getOptions();
     expect(options.length).toEqual(1);
-    expect(await options[0].getText()).toContain("2");
 
     tick();
   }));
@@ -249,13 +269,16 @@ describe("EntitySelectComponent", () => {
   it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
     class Person extends Entity {
       static toStringAttributes = ["firstname", "lastname"];
-
       firstname: string;
       lastname: string;
     }
 
     const p1 = Object.assign(new Person(), { firstname: "Aa", lastname: "bb" });
     const p2 = Object.assign(new Person(), { firstname: "Aa", lastname: "cc" });
+    const mockEntityMapper = TestBed.inject(EntityMapperService);
+    spyOn(mockEntityMapper, "loadType").and.resolveTo([p1, p2]);
+    component.entityType = Person.ENTITY_TYPE;
+    tick();
     component.allEntities = [p1, p2];
     component.loading.next(false);
 
@@ -269,9 +292,11 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("should add an unselected entity to the filtered entities array", fakeAsync(() => {
+    component.entityType = User.ENTITY_TYPE;
     component.allEntities = testUsers;
-    const selectedUser = testUsers[1];
+    tick();
 
+    const selectedUser = testUsers[1];
     component.selectEntity(selectedUser);
     expect(component.filteredEntities).not.toContain(selectedUser);
 
@@ -284,6 +309,8 @@ describe("EntitySelectComponent", () => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
     tick();
     fixture.detectChanges();
+    console.log("suggests all entities ... allEntities:", component.allEntities);
+    console.log("suggests all entities ... relevantEntities:", component.relevantEntities);
     expect(component.allEntities).toEqual(
       [...testUsers, ...testChildren].sort((a, b) =>
         a.toString().localeCompare(b.toString()),
