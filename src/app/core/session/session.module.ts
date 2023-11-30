@@ -38,13 +38,4 @@ import { KeycloakAngularModule } from "keycloak-angular";
     SyncStateSubject,
   ],
 })
-export class SessionModule {
-  constructor(sessionManager: SessionManagerService) {
-    this.initializeRemoteSession(sessionManager);
-  }
-
-  private async initializeRemoteSession(sessionManager: SessionManagerService) {
-    await sessionManager.remoteLogin();
-    await sessionManager.clearRemoteSessionIfNecessary();
-  }
-}
+export class SessionModule {}
