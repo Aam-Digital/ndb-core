@@ -98,6 +98,7 @@ export class QueryService {
         unique: this.unique,
         count: this.count,
         sum: this.sum,
+        avg: this.avg,
         addPrefix: this.addPrefix,
         toEntities: this.toEntities.bind(this),
         getRelated: this.getRelated.bind(this),
@@ -238,7 +239,7 @@ export class QueryService {
   /**
    * Returns the (integer) sum of the provided array.
    * It can also handle integers in strings, e.g. "3"
-   * @param data and integer array
+   * @param data an integer array
    * @private
    */
   private sum(data: any[]): number {
@@ -246,6 +247,25 @@ export class QueryService {
       const parsed = Number.parseInt(cur);
       return Number.isNaN(parsed) ? res : res + parsed;
     }, 0);
+  }
+
+  /**
+   * Returns the avg of the provided array as string.
+   * It can also handle integers in strings, e.g. "3".
+   * The average is only calculated if the value exists and is a valid number.
+   * @param data an integer array
+   * @param decimals the amount of decimals for the result, default 0
+   * @private
+   */
+  private avg(data: any[], decimals = 0): string {
+    const numbers = data
+      .map((d) => Number.parseInt(d))
+      .filter((i) => !Number.isNaN(i));
+    const result =
+      numbers.length === 0
+        ? 0
+        : numbers.reduce((i, sum) => sum + i, 0) / numbers.length;
+    return result.toFixed(decimals);
   }
 
   /**
