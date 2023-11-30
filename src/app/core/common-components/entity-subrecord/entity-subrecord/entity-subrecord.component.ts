@@ -1,43 +1,20 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-  ViewChild,
-} from "@angular/core";
-import {
-  MatSort,
-  MatSortModule,
-  Sort,
-  SortDirection,
-} from "@angular/material/sort";
+import { Component, EventEmitter, Input, OnChanges, Output, SimpleChanges, ViewChild, } from "@angular/core";
+import { MatSort, MatSortModule, Sort, SortDirection, } from "@angular/material/sort";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { AlertService } from "../../../alerts/alert.service";
 import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
-import {
-  EntityForm,
-  EntityFormService,
-} from "../../entity-form/entity-form.service";
+import { EntityForm, EntityFormService, } from "../../entity-form/entity-form.service";
 import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { tableSort } from "./table-sort";
-import {
-  ScreenSize,
-  ScreenWidthObserver,
-} from "../../../../utils/media/screen-size-observer.service";
+import { ScreenSize, ScreenWidthObserver, } from "../../../../utils/media/screen-size-observer.service";
 import { Subscription } from "rxjs";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
-import {
-  ColumnConfig,
-  DataFilter,
-  toFormFieldConfig,
-} from "./entity-subrecord-config";
+import { ColumnConfig, DataFilter, toFormFieldConfig, } from "./entity-subrecord-config";
 import { FilterService } from "../../../filter/filter.service";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { Router } from "@angular/router";
@@ -47,15 +24,15 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DisableEntityOperationDirective } from "../../../permissions/permission-directive/disable-entity-operation.directive";
+import {
+  DisableEntityOperationDirective
+} from "../../../permissions/permission-directive/disable-entity-operation.directive";
 import { Angulartics2Module } from "angulartics2";
 import { ListPaginatorComponent } from "../list-paginator/list-paginator.component";
-import {
-  MatCheckboxChange,
-  MatCheckboxModule,
-} from "@angular/material/checkbox";
+import { MatCheckboxChange, MatCheckboxModule, } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { applyUpdate } from "../../../entity/model/entity-update";
+import { FormFieldComponent } from "../../entity-form/form-field/form-field.component";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -95,6 +72,7 @@ export interface TableRow<T extends Entity> {
     ListPaginatorComponent,
     MatCheckboxModule,
     MatSlideToggleModule,
+    FormFieldComponent,
   ],
   standalone: true,
 })

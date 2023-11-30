@@ -8,9 +8,10 @@ import { FormFieldConfig } from "../entity-form/FormConfig";
 import { NgIf } from "@angular/common";
 
 /**
- * Generic component to display one form field (editComponent) of an entity.
+ * Generic component to display one entity property field as form field or display only component.
  *
- * Dynamically extends field details from entity schema and loads the relevant, specific EditComponent implementation.
+ * Dynamically extends field details from entity schema and
+ * loads the relevant, specific EditComponent/DisplayComponent implementation.
  */
 @Component({
   selector: "app-form-field",
@@ -32,6 +33,8 @@ export class FormFieldComponent<T extends Entity = Entity>
 
   @Input() mode: "edit" | "view" = "edit";
 
+  tooltip: string;
+
   constructor(private entityFormService: EntityFormService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -50,5 +53,6 @@ export class FormFieldComponent<T extends Entity = Entity>
       this.field,
       this.entity.getConstructor(),
     );
+    this.tooltip = this._field.forTable ? undefined : this._field.description;
   }
 }
