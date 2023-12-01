@@ -1,23 +1,27 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { ConfigEntityPanelComponentComponent } from './config-entity-panel-component.component';
+import { ConfigEntityPanelComponentComponent } from "./config-entity-panel-component.component";
 
-describe('ConfigEntityPanelComponentComponent', () => {
+describe("ConfigEntityPanelComponentComponent", () => {
   let component: ConfigEntityPanelComponentComponent;
   let fixture: ComponentFixture<ConfigEntityPanelComponentComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [ConfigEntityPanelComponentComponent]
-    })
-    .compileComponents();
-    
+      imports: [ConfigEntityPanelComponentComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(ConfigEntityPanelComponentComponent);
     component = fixture.componentInstance;
+
+    component.config = {
+      component: "SomeComponent",
+    };
+
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
