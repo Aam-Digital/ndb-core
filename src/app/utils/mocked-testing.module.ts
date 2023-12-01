@@ -1,13 +1,11 @@
 import { ModuleWithProviders, NgModule } from "@angular/core";
-import { SessionService } from "../core/session/session-service/session.service";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
-import { User } from "../core/user/user";
+import { CurrentUserSubject, User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
-import { Database } from "../core/database/database";
 import { SessionType } from "../core/session/session-type";
 import { Entity } from "../core/entity/model/entity";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
@@ -21,7 +19,8 @@ import { ComponentRegistry } from "../dynamic-components";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
-import { createLocalSession, TEST_USER } from "./mock-local-session";
+import { TEST_USER } from "./mock-local-session";
+import { BehaviorSubject } from "rxjs";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -71,18 +70,22 @@ export class MockedTestingModule {
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([...data]);
-    const session = createLocalSession(loginState === LoginState.LOGGED_IN);
     return {
       ngModule: MockedTestingModule,
       providers: [
-        { provide: SessionService, useValue: session },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
         {
           provide: ConfigurableEnumService,
           useValue: createTestingConfigurableEnumService(),
         },
-        { provide: Database, useValue: session.getDatabase() },
+        {
+          provide: CurrentUserSubject,
+          useValue: new BehaviorSubject({
+            name: TEST_USER,
+            roles: ["user_app"],
+          }),
+        },
       ],
     };
   }

@@ -15,24 +15,26 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { AfterViewInit, Component, ElementRef, ViewChild } from "@angular/core";
-import { SessionService } from "../session-service/session.service";
-import { LoginState } from "../session-states/login-state.enum";
-import { LoggingService } from "../../logging/logging.service";
+import { Component, OnInit } from "@angular/core";
 import { MatCardModule } from "@angular/material/card";
-import { MatFormFieldModule } from "@angular/material/form-field";
-import { MatInputModule } from "@angular/material/input";
-import { FormsModule } from "@angular/forms";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
-import { PasswordResetComponent } from "../auth/keycloak/password-reset/password-reset.component";
-import { ActivatedRoute, Router } from "@angular/router";
-import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { ActivatedRoute, Router } from "@angular/router";
+import { LoginState } from "../session-states/login-state.enum";
+import { LoginStateSubject } from "../session-type";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
+import { SessionManagerService } from "../session-service/session-manager.service";
+import { MatProgressBarModule } from "@angular/material/progress-bar";
+import { AuthUser } from "../auth/auth-user";
+import { SiteSettingsService } from "../../site-settings/site-settings.service";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { MatListModule } from "@angular/material/list";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { waitForChangeTo } from "../session-states/session-utils";
+import { race, timer } from "rxjs";
 
 /**
- * Form to allow users to enter their credentials and log in.
+ * Allows the user to login online or offline depending on the connection status
  */
 @UntilDestroy()
 @Component({
@@ -41,52 +43,49 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
   styleUrls: ["./login.component.scss"],
   imports: [
     MatCardModule,
-    MatFormFieldModule,
-    MatInputModule,
-    FormsModule,
-    FontAwesomeModule,
-    MatTooltipModule,
     MatButtonModule,
-    PasswordResetComponent,
+    NgIf,
+    MatProgressBarModule,
+    AsyncPipe,
+    MatTooltipModule,
+    MatListModule,
+    NgForOf,
+    FontAwesomeModule,
   ],
   standalone: true,
 })
-export class LoginComponent implements AfterViewInit {
-  /** true while a login is started but result is not received yet */
+export class LoginComponent implements OnInit {
+  offlineUsers: AuthUser[] = [];
+  enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
   loginInProgress = false;
 
-  /** username as entered in form */
-  username: string;
-
-  /** password as entered in form */
-  password: string;
-
-  /** whether to show or hide the password */
-  passwordVisible: boolean = false;
-  readonly showPasswordHint = $localize`:Tooltip text for showing the password:Show password`;
-  readonly hidePasswordHint = $localize`:Tooltip text for hiding the password:Hide password`;
-
-  /** errorMessage displayed in form */
-  errorMessage: string;
-
-  @ViewChild("usernameInput") usernameInput: ElementRef;
-
   constructor(
-    private _sessionService: SessionService,
-    private loggingService: LoggingService,
-    private route: ActivatedRoute,
     private router: Router,
+    private route: ActivatedRoute,
+    public sessionManager: SessionManagerService,
+    public loginState: LoginStateSubject,
+    public siteSettingsService: SiteSettingsService,
   ) {
-    this._sessionService.loginState
-      .pipe(
-        untilDestroyed(this),
-        filter((state) => state === LoginState.LOGGED_IN),
-      )
-      .subscribe(() => this.routeAfterLogin());
+    sessionManager
+      .remoteLogin()
+      .then(() => sessionManager.clearRemoteSessionIfNecessary());
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => this.usernameInput?.nativeElement.focus());
+  ngOnInit() {
+    this.loginState.pipe(untilDestroyed(this)).subscribe((state) => {
+      this.loginInProgress = state === LoginState.IN_PROGRESS;
+      if (state === LoginState.LOGGED_IN) {
+        this.routeAfterLogin();
+      }
+    });
+
+    this.offlineUsers = this.sessionManager.getOfflineUsers();
+    race(
+      this.loginState.pipe(waitForChangeTo(LoginState.LOGIN_FAILED)),
+      timer(10000),
+    ).subscribe(() => {
+      this.enableOfflineLogin = true;
+    });
   }
 
   private routeAfterLogin() {
@@ -94,55 +93,7 @@ export class LoginComponent implements AfterViewInit {
     this.router.navigateByUrl(decodeURIComponent(redirectUri));
   }
 
-  /**
-   * Do a login with the SessionService.
-   */
-  login() {
-    this.loginInProgress = true;
-    this.errorMessage = "";
-
-    this._sessionService
-      .login(this.username?.trim(), this.password)
-      .then((loginState) => {
-        switch (loginState) {
-          case LoginState.LOGGED_IN:
-            this.reset();
-            break;
-          case LoginState.UNAVAILABLE:
-            this.onLoginFailure(
-              $localize`:LoginError:Please connect to the internet and try again`,
-            );
-            break;
-          case LoginState.LOGIN_FAILED:
-            this.onLoginFailure(
-              $localize`:LoginError:Username and/or password incorrect`,
-            );
-            break;
-          default:
-            throw new Error(`Unexpected login state: ${loginState}`);
-        }
-      })
-      .catch((reason) => {
-        this.loggingService.error(`Unexpected login error: ${reason}`);
-        this.onLoginFailure($localize`:LoginError:An unexpected error occurred.
-          Please reload the the page and try again.
-          If you keep seeing this error message, please contact your system administrator.
-        `);
-      });
-  }
-
-  private onLoginFailure(reason: string) {
-    this.reset();
-    this.errorMessage = reason;
-  }
-
-  private reset() {
-    this.errorMessage = "";
-    this.password = "";
-    this.loginInProgress = false;
-  }
-
-  togglePasswordVisible() {
-    this.passwordVisible = !this.passwordVisible;
+  tryLogin() {
+    return this.sessionManager.remoteLogin();
   }
 }

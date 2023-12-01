@@ -1,10 +1,14 @@
 import { DateAdapter } from "@angular/material/core";
 import { DateAdapterWithFormatting } from "./date-adapter-with-formatting";
+import { TestBed } from "@angular/core/testing";
 
 describe("DateAdapterWithFormatting", () => {
   let adapter: DateAdapter<Date>;
   beforeEach(() => {
-    adapter = new DateAdapterWithFormatting("en-US");
+    TestBed.configureTestingModule({
+      providers: [DateAdapterWithFormatting],
+    });
+    adapter = TestBed.inject(DateAdapterWithFormatting);
   });
 
   it("should parse en-US dates", () => {

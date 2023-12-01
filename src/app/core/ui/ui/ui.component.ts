@@ -16,7 +16,6 @@
  */
 
 import { Component, ViewChild } from "@angular/core";
-import { SessionService } from "../../session/session-service/session.service";
 import { Title } from "@angular/platform-browser";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
@@ -38,6 +37,9 @@ import { PrimaryActionComponent } from "../primary-action/primary-action.compone
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { DisplayImgComponent } from "../../../features/file/display-img/display-img.component";
 import { SiteSettings } from "../../site-settings/site-settings";
+import { LoginStateSubject } from "../../session/session-type";
+import { LoginState } from "../../session/session-states/login-state.enum";
+import { SessionManagerService } from "../../session/session-service/session-manager.service";
 
 /**
  * The main user interface component as root element for the app structure
@@ -77,12 +79,13 @@ export class UiComponent {
   siteSettings = new SiteSettings();
 
   constructor(
-    private _sessionService: SessionService,
     private titleService: Title,
     private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
     private siteSettingsService: SiteSettingsService,
+    private loginState: LoginStateSubject,
+    private sessionManager: SessionManagerService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -99,17 +102,14 @@ export class UiComponent {
    * Check if user is logged in.
    */
   isLoggedIn(): boolean {
-    return this._sessionService.isLoggedIn();
+    return this.loginState.value === LoginState.LOGGED_IN;
   }
 
   /**
    * Trigger logout of user.
    */
-  logout() {
-    this._sessionService.logout();
-    this.router.navigate(["/login"], {
-      queryParams: { redirect_uri: this.router.routerState.snapshot.url },
-    });
+  async logout() {
+    this.sessionManager.logout();
   }
 
   closeSidenavOnMobile() {

@@ -28,8 +28,8 @@ import {
 } from "../../core/entity/database-entity.decorator";
 import { AppSettings } from "../../core/app-settings";
 import { FileDatatype } from "./file.datatype";
-import { SessionService } from "../../core/session/session-service/session.service";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
+import { SyncStateSubject } from "../../core/session/session-type";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -47,7 +47,9 @@ describe("CouchdbFileService", () => {
     mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
     dismiss = jasmine.createSpy();
     mockSnackbar.openFromComponent.and.returnValue({ dismiss } as any);
-    Entity.schema.set("testProp", { dataType: FileDatatype.dataType });
+    Entity.schema.set("testProp", {
+      dataType: FileDatatype.dataType,
+    });
 
     TestBed.configureTestingModule({
       providers: [
@@ -61,8 +63,8 @@ describe("CouchdbFileService", () => {
         },
         { provide: EntityRegistry, useValue: entityRegistry },
         {
-          provide: SessionService,
-          useValue: { syncState: of(SyncState.COMPLETED) },
+          provide: SyncStateSubject,
+          useValue: of(SyncState.COMPLETED),
         },
       ],
     });

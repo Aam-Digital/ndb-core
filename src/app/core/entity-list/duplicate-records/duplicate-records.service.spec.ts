@@ -7,7 +7,6 @@ import {
   EntityRegistry,
 } from "../../entity/database-entity.decorator";
 import { Database } from "../../database/database";
-import { SessionService } from "../../session/session-service/session.service";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { CoreModule } from "../../core.module";
@@ -38,7 +37,6 @@ describe("DuplicateRecordsService", () => {
         DuplicateRecordService,
         Database,
         EntityMapperService,
-        SessionService,
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: MatDialog, useValue: {} },
         { provide: MatSnackBar, useValue: {} },

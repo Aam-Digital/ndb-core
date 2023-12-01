@@ -1,19 +1,22 @@
 import { Injectable } from "@angular/core";
 import { DemoDataService } from "./demo-data.service";
 import { DemoUserGeneratorService } from "../user/demo-user-generator.service";
-import { LocalSession } from "../session/session-service/local-session";
 import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
+import { SessionManagerService } from "../session/session-service/session-manager.service";
+import { LocalAuthService } from "../session/auth/local/local-auth.service";
+import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
+import { AuthUser } from "../session/auth/auth-user";
 import { LoggingService } from "../logging/logging.service";
-import { AppSettings } from "../app-settings";
-import { LoginState } from "../session/session-states/login-state.enum";
-import PouchDB from "pouchdb-browser";
-import { SessionType } from "../session/session-type";
-import memory from "pouchdb-adapter-memory";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
 import { environment } from "../../../environments/environment";
-import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
+import { LoginState } from "../session/session-states/login-state.enum";
+import { AppSettings } from "../app-settings";
+import { LoginStateSubject, SessionType } from "../session/session-type";
+import memory from "pouchdb-adapter-memory";
+import { CurrentUserSubject } from "../user/user";
+import PouchDB from "pouchdb-browser";
 
 /**
  * This service handles everything related to the demo-mode
@@ -26,20 +29,29 @@ import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.serv
 export class DemoDataInitializerService {
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
   private pouchDatabase: PouchDatabase;
-
+  private readonly normalUser: AuthUser = {
+    name: DemoUserGeneratorService.DEFAULT_USERNAME,
+    roles: ["user_app"],
+  };
+  private readonly adminUser: AuthUser = {
+    name: DemoUserGeneratorService.ADMIN_USERNAME,
+    roles: ["user_app", "admin_app", KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
+  };
   constructor(
     private demoDataService: DemoDataService,
-    private localSession: LocalSession,
+    private localAuthService: LocalAuthService,
+    private sessionManager: SessionManagerService,
     private dialog: MatDialog,
     private loggingService: LoggingService,
     private database: Database,
+    private loginState: LoginStateSubject,
+    private currentUser: CurrentUserSubject,
   ) {}
 
   async run() {
     const dialogRef = this.dialog.open(
       DemoDataGeneratingProgressDialogComponent,
     );
-
     if (this.database instanceof PouchDatabase) {
       this.pouchDatabase = this.database;
     } else {
@@ -47,25 +59,21 @@ export class DemoDataInitializerService {
         "Cannot create demo data with session: " + environment.session_type,
       );
     }
-    this.registerDemoUsers();
 
-    await this.localSession.login(
-      DemoUserGeneratorService.DEFAULT_USERNAME,
-      DemoUserGeneratorService.DEFAULT_PASSWORD,
-    );
-
+    this.localAuthService.saveUser(this.normalUser);
+    this.localAuthService.saveUser(this.adminUser);
+    await this.sessionManager.offlineLogin(this.normalUser);
     await this.demoDataService.publishDemoData();
 
     dialogRef.close();
-
     this.syncDatabaseOnUserChange();
   }
 
   private syncDatabaseOnUserChange() {
-    this.localSession.loginState.subscribe((state) => {
+    this.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
-        this.localSession.getCurrentUser().name !==
+        this.currentUser.value.name !==
           DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local
@@ -76,27 +84,6 @@ export class DemoDataInitializerService {
         this.stopLiveSync();
       }
     });
-  }
-
-  private registerDemoUsers() {
-    this.localSession.saveUser(
-      {
-        name: DemoUserGeneratorService.DEFAULT_USERNAME,
-        roles: ["user_app"],
-      },
-      DemoUserGeneratorService.DEFAULT_PASSWORD,
-    );
-    this.localSession.saveUser(
-      {
-        name: DemoUserGeneratorService.ADMIN_USERNAME,
-        roles: [
-          "user_app",
-          "admin_app",
-          KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
-        ],
-      },
-      DemoUserGeneratorService.DEFAULT_PASSWORD,
-    );
   }
 
   private async syncWithDemoUserDB() {

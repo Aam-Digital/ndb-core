@@ -4,6 +4,7 @@ import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
+import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -22,7 +23,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
     super(Config, Config.CONFIG_KEY, entityMapper, logger);
     super.startLoading();
     this.entityUpdated.subscribe(async (config) => {
-      this.currentConfig = config;
+      this.currentConfig = this.applyMigrations(config);
     });
   }
 
@@ -48,4 +49,37 @@ export class ConfigService extends LatestEntityLoader<Config> {
     }
     return matchingConfigs;
   }
+
+  private applyMigrations(config: Config): Config {
+    for (let [key, conf] of Object.entries(config.data)) {
+      // LIST ALL MIGRATION FUNCTIONS HERE
+      conf = migrateEntityAttributesWithId(key, conf);
+
+      config.data[key] = conf;
+    }
+    return config;
+  }
+}
+
+/**
+ * Transform legacy "entity:" config format into the flattened structure containing id directly.
+ */
+function migrateEntityAttributesWithId(idOrPrefix: string, configData: any) {
+  if (
+    !idOrPrefix.startsWith("entity") ||
+    !Array.isArray(configData.attributes)
+  ) {
+    return configData;
+  }
+
+  configData.attributes = configData.attributes.reduce(
+    (acc, attr: { name: string; schema: EntitySchemaField }) => ({
+      ...acc,
+      [attr.name]: attr.schema,
+      // id inside the field schema config (FieldConfig) is added by EntityConfigService and does not need migration
+    }),
+    {},
+  );
+
+  return configData;
 }

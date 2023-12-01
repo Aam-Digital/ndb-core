@@ -45,25 +45,25 @@ export class Aser extends Entity {
   @DatabaseField({
     label: $localize`:Label of the Hindi ASER result:Hindi`,
     dataType: "configurable-enum",
-    innerDataType: "reading-levels",
+    additional: "reading-levels",
   })
   hindi: SkillLevel;
   @DatabaseField({
     label: $localize`:Label of the Bengali ASER result:Bengali`,
     dataType: "configurable-enum",
-    innerDataType: "reading-levels",
+    additional: "reading-levels",
   })
   bengali: SkillLevel;
   @DatabaseField({
     label: $localize`:Label of the English ASER result:English`,
     dataType: "configurable-enum",
-    innerDataType: "reading-levels",
+    additional: "reading-levels",
   })
   english: SkillLevel;
   @DatabaseField({
     label: $localize`:Label of the Math ASER result:Math`,
     dataType: "configurable-enum",
-    innerDataType: "math-levels",
+    additional: "math-levels",
   })
   math: SkillLevel;
 

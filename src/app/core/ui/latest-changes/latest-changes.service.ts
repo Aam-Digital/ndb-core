@@ -20,9 +20,8 @@ import { Injectable } from "@angular/core";
 import { Observable, throwError } from "rxjs";
 import { Changelog } from "./changelog";
 import { AlertService } from "../../alerts/alert.service";
-import { HttpClient, HttpContext } from "@angular/common/http";
+import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-import { AUTH_ENABLED } from "../../session/auth/auth.interceptor";
 
 /**
  * Manage the changelog information and display it to the user
@@ -111,7 +110,6 @@ export class LatestChangesService {
     return this.http
       .get<Changelog[]>(
         `${LatestChangesService.GITHUB_API}${environment.repositoryId}/releases`,
-        { context: new HttpContext().set(AUTH_ENABLED, false) },
       )
       .pipe(
         map(excludePrereleases),

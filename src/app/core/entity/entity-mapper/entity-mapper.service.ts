@@ -24,7 +24,7 @@ import { UpdatedEntity } from "../model/entity-update";
 import { EntityRegistry } from "../database-entity.decorator";
 import { map } from "rxjs/operators";
 import { UpdateMetadata } from "../model/update-metadata";
-import { SessionService } from "../../session/session-service/session.service";
+import { CurrentUserSubject } from "../../user/user";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -41,7 +41,7 @@ export class EntityMapperService {
   constructor(
     private _db: Database,
     private entitySchemaService: EntitySchemaService,
-    private sessionService: SessionService,
+    private currentUser: CurrentUserSubject,
     private registry: EntityRegistry,
   ) {}
 
@@ -195,9 +195,7 @@ export class EntityMapperService {
   }
 
   protected setEntityMetadata(entity: Entity) {
-    const newMetadata = new UpdateMetadata(
-      this.sessionService.getCurrentUser()?.name,
-    );
+    const newMetadata = new UpdateMetadata(this.currentUser.value?.name);
     if (entity.isNew) {
       entity.created = newMetadata;
     }

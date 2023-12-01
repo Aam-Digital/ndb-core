@@ -1,16 +1,16 @@
 import { Injectable } from "@angular/core";
-import { SessionService } from "../../core/session/session-service/session.service";
 import { AlertService } from "../../core/alerts/alert.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Todo } from "./model/todo";
 import moment from "moment/moment";
+import { CurrentUserSubject } from "../../core/user/user";
 
 @Injectable({
   providedIn: "root",
 })
 export class TodoService {
   constructor(
-    private sessionService: SessionService,
+    private currentUser: CurrentUserSubject,
     private alertService: AlertService,
     private entityMapper: EntityMapperService,
   ) {}
@@ -19,7 +19,7 @@ export class TodoService {
     const nextTodo = await this.createNextRepetition(todo);
 
     todo.completed = {
-      completedBy: this.sessionService.getCurrentUser().name,
+      completedBy: this.currentUser.value.name,
       completedAt: new Date(),
       nextRepetition: nextTodo?.getId(true),
     };
