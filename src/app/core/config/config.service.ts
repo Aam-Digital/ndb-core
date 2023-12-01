@@ -100,7 +100,10 @@ const migrateEntityAttributesWithId: ConfigMigration = (key, configPart) => {
 /**
  * Transform legacy "view:...Form" config format to have form field group headers with the fields rather than as separate array.
  */
-const migrateFormHeadersIntoFieldGroups: ConfigMigration = (key, configPart) => {
+const migrateFormHeadersIntoFieldGroups: ConfigMigration = (
+  key,
+  configPart,
+) => {
   if (!(configPart?.component === "Form" && configPart?.config?.cols)) {
     return configPart;
   }
@@ -108,12 +111,12 @@ const migrateFormHeadersIntoFieldGroups: ConfigMigration = (key, configPart) => 
   const formConfig = configPart.config;
 
   // change .cols and .headers into .fieldGroups
-  const newFormConfig = {...formConfig};
+  const newFormConfig = { ...formConfig };
   delete newFormConfig.cols;
   delete newFormConfig.headers;
 
   newFormConfig.fieldGroups = formConfig.cols?.map(
-    (colGroup) => ({fields: colGroup}) as FieldGroup,
+    (colGroup) => ({ fields: colGroup }) as FieldGroup,
   );
   if (formConfig.headers) {
     newFormConfig.fieldGroups.forEach((group, i) => {
@@ -127,8 +130,14 @@ const migrateFormHeadersIntoFieldGroups: ConfigMigration = (key, configPart) => 
   return configPart;
 };
 
-const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (key, configPart) => {
-  if (!(key === "columns" || key === "fields" || key === "cols") && key !== null) {
+const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (
+    !(key === "columns" || key === "fields" || key === "cols") &&
+    key !== null
+  ) {
     return configPart;
   }
 
