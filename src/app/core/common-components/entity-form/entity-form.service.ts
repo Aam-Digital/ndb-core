@@ -108,7 +108,6 @@ export class EntityFormService {
         fullField.label || fullField.label || fullField.labelShort;
     }
 
-    // edit the given formField in place because for some components (i.e. EntitySubrecordComponent) updating existing objects is important
     return fullField;
   }
 
@@ -126,6 +125,11 @@ export class EntityFormService {
   ): EntityForm<T> {
     const formConfig = {};
     const copy = entity.copy();
+
+    formFields = formFields.filter((f) =>
+      entity.getSchema().has(toFormFieldConfig(f).id),
+    );
+
     for (const f of formFields) {
       this.addFormControlConfig(formConfig, f, copy, forTable);
     }
