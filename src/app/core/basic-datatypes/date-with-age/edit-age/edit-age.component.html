@@ -2,7 +2,7 @@
   <mat-form-field
     style="width: 70%"
     *ngIf="
-      !(entity.anonymized && propertySchema.anonymize === 'retain-anonymized')
+      !(entity.anonymized && formFieldConfig.anonymize === 'retain-anonymized')
     "
   >
     <mat-label>{{ label }}</mat-label>

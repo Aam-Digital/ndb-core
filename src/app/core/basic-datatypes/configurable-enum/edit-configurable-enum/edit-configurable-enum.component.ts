@@ -33,12 +33,10 @@ export class EditConfigurableEnumComponent
 
   ngOnInit() {
     super.ngOnInit();
-    if (this.propertySchema.dataType === ArrayDatatype.dataType) {
+    if (this.formFieldConfig.dataType === ArrayDatatype.dataType) {
       this.multi = true;
     }
     this.enumId =
-      this.formFieldConfig.additional ||
-      this.propertySchema.additional ||
-      this.propertySchema.innerDataType;
+      this.formFieldConfig.additional ?? this.formFieldConfig.innerDataType;
   }
 }

@@ -34,7 +34,6 @@ describe("EditSingleEntityComponent", () => {
     ) as FormControl<string>;
     component.formControlName = "schoolId";
     component.formFieldConfig = { id: "childId" };
-    component.propertySchema = ChildSchoolRelation.schema.get("childId");
     component.entity = new ChildSchoolRelation();
     fixture.detectChanges();
   });
