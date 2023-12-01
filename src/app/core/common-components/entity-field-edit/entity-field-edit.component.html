@@ -1,9 +1,4 @@
-<div
-  *ngIf="
-    _field && mode === 'edit' && _field.editComponent;
-    else displayComponent
-  "
->
+<div *ngIf="_field && _field.editComponent; else displayComponent">
   <div [class.field-with-tooltip-suffix]="_field.description">
     <ng-container
       [appDynamicComponent]="{
@@ -21,16 +16,8 @@
 </div>
 
 <ng-template #displayComponent>
-  <ng-container
-    *ngIf="_field && _field.viewComponent"
-    [appDynamicComponent]="{
-      component: _field.viewComponent,
-      config: {
-        value: entity[_field.id],
-        id: _field.id,
-        entity: entity,
-        config: _field.additional
-      }
-    }"
-  ></ng-container>
+  <app-entity-field-view
+    [field]="_field"
+    [entity]="entity"
+  ></app-entity-field-view>
 </ng-template>

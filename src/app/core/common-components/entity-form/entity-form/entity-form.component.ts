@@ -14,7 +14,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { Subscription } from "rxjs";
 import moment from "moment";
-import { FormFieldComponent } from "../form-field/form-field.component";
+import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../entity-details/form/field-group";
 
 /**
@@ -34,7 +34,7 @@ import { FieldGroup } from "../../../entity-details/form/field-group";
   // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
-  imports: [NgForOf, NgIf, NgClass, FormFieldComponent],
+  imports: [NgForOf, NgIf, NgClass, EntityFieldEditComponent],
   standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>

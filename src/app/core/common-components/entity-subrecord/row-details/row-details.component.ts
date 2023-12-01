@@ -16,7 +16,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DialogButtonsComponent } from "../../../form-dialog/dialog-buttons/dialog-buttons.component";
 import { EntityArchivedInfoComponent } from "../../../entity-details/entity-archived-info/entity-archived-info.component";
 import { FieldGroup } from "../../../entity-details/form/field-group";
-import { FormFieldComponent } from "../../entity-form/form-field/form-field.component";
+import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
+import { EntityFieldViewComponent } from "../../entity-field-view/entity-field-view.component";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -48,7 +49,8 @@ export interface DetailsComponentData {
     DynamicComponentDirective,
     DialogButtonsComponent,
     EntityArchivedInfoComponent,
-    FormFieldComponent,
+    EntityFieldEditComponent,
+    EntityFieldViewComponent,
   ],
   standalone: true,
 })

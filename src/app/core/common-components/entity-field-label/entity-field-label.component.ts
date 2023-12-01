@@ -1,9 +1,9 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { EntityConstructor } from "../../../entity/model/entity";
-import { ColumnConfig } from "../../entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../entity-form/FormConfig";
-import { EntityFormService } from "../entity-form.service";
+import { EntityConstructor } from "../../entity/model/entity";
+import { ColumnConfig } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
+import { EntityFormService } from "../entity-form/entity-form.service";
 import { NgIf } from "@angular/common";
 
 /**
@@ -11,12 +11,12 @@ import { NgIf } from "@angular/common";
  * without having to handle overwriting the field config with potentially missing schema field details.
  */
 @Component({
-  selector: "app-form-field-label",
-  templateUrl: "./form-field-label.component.html",
+  selector: "app-entity-field-label",
+  templateUrl: "./entity-field-label.component.html",
   standalone: true,
   imports: [MatTooltipModule, NgIf],
 })
-export class FormFieldLabelComponent implements OnChanges {
+export class EntityFieldLabelComponent implements OnChanges {
   /** field id or full config */
   @Input() field: ColumnConfig;
   /** full field config extended from schema (used internally and for template) */

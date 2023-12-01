@@ -17,12 +17,11 @@
         [style.background-color]="tempEntity.getColor()"
         class="mat-body-strong"
       >
-        <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
-        <app-form-field
+        <app-entity-field-view
           [field]="col"
           [entity]="tempEntity"
-          mode="view"
-        ></app-form-field>
+          showLabel="inline"
+        ></app-entity-field-view>
       </app-pill>
     </div>
   </div>

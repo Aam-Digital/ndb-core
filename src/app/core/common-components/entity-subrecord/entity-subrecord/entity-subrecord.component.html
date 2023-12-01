@@ -26,10 +26,10 @@
         *matHeaderCellDef
         [disabled]="col.noSorting"
       >
-        <app-form-field-label
+        <app-entity-field-label
           [field]="col"
           [entityType]="entityConstructor"
-        ></app-form-field-label>
+        ></app-entity-field-label>
       </th>
 
       <td
@@ -38,12 +38,19 @@
         (click)="onRowClick(row)"
         style="cursor: pointer"
       >
-        <app-form-field
+        <app-entity-field-edit
+          *ngIf="row.formGroup?.enabled; else viewField"
           [field]="col"
           [entity]="row.record"
           [form]="row.formGroup"
-          [mode]="row.formGroup?.enabled ? 'edit' : 'view'"
-        ></app-form-field>
+        ></app-entity-field-edit>
+
+        <ng-template #viewField>
+          <app-entity-field-view
+            [field]="col"
+            [entity]="row.record"
+          ></app-entity-field-view>
+        </ng-template>
       </td>
     </ng-container>
 

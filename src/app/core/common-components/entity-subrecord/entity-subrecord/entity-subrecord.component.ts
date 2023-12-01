@@ -55,8 +55,9 @@ import {
 } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { applyUpdate } from "../../../entity/model/entity-update";
-import { FormFieldComponent } from "../../entity-form/form-field/form-field.component";
-import { FormFieldLabelComponent } from "../../entity-form/form-field-label/form-field-label.component";
+import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../../entity-field-label/entity-field-label.component";
+import { EntityFieldViewComponent } from "../../entity-field-view/entity-field-view.component";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -96,8 +97,9 @@ export interface TableRow<T extends Entity> {
     ListPaginatorComponent,
     MatCheckboxModule,
     MatSlideToggleModule,
-    FormFieldComponent,
-    FormFieldLabelComponent,
+    EntityFieldEditComponent,
+    EntityFieldLabelComponent,
+    EntityFieldViewComponent,
   ],
   standalone: true,
 })

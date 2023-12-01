@@ -26,7 +26,7 @@ import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
-import { FormFieldComponent } from "../../../core/common-components/entity-form/form-field/form-field.component";
+import { EntityFieldEditComponent } from "../../../core/common-components/entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
 
 /**
@@ -49,7 +49,7 @@ import { FieldGroup } from "../../../core/entity-details/form/field-group";
     MatMenuModule,
     DialogCloseComponent,
     EntityArchivedInfoComponent,
-    FormFieldComponent,
+    EntityFieldEditComponent,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
