@@ -22,8 +22,7 @@ export class EditEntityArrayComponent
   ngOnInit() {
     super.ngOnInit();
 
-    this.entityName =
-      this.formFieldConfig.additional || this.propertySchema.additional;
+    this.entityName = this.formFieldConfig.additional;
 
     this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
   }

@@ -66,11 +66,14 @@ export class ConfigImportParserService {
   ): GeneratedConfig {
     this.reset();
 
-    const entity: EntityConfig = {
-      attributes: configRaw
-        .filter((field) => !!field.dataType)
-        .map((field) => this.parseFieldDefinition(field, entityName)),
-    };
+    const entity: EntityConfig = { attributes: {} };
+    for (const f of configRaw) {
+      if (!f?.dataType) {
+        continue;
+      }
+      const parsedField = this.parseFieldDefinition(f, entityName);
+      entity.attributes[parsedField.id] = parsedField.schema;
+    }
 
     const generatedConfig: GeneratedConfig = {};
 
@@ -97,13 +100,12 @@ export class ConfigImportParserService {
   private parseFieldDefinition(
     fieldDef: ConfigFieldRaw,
     entityType: string,
-  ): EntitySchemaField {
+  ): { id: string; schema: EntitySchemaField } {
     const fieldId =
       fieldDef.id ??
       ConfigImportParserService.generateIdFromLabel(fieldDef.label);
 
     const schema: EntitySchemaField = {
-      id: fieldId,
       dataType: fieldDef.dataType,
       label: fieldDef.label,
       description: fieldDef.description,
@@ -144,7 +146,7 @@ export class ConfigImportParserService {
     this.generateOrUpdateDetailsViewConfig(fieldDef, entityType, fieldId);
 
     deleteEmptyProperties(schema);
-    return schema;
+    return { id: fieldId, schema: schema };
   }
 
   /**

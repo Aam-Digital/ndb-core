@@ -76,7 +76,7 @@ describe("MapComponent", () => {
   });
 
   it("should create markers for entities and emit entity when marker is clicked", (done) => {
-    Child.schema.set("address", { id: "address", dataType: "location" });
+    Child.schema.set("address", { dataType: "location" });
     const child = new Child();
     child["address"] = { lat: 1, lon: 1 };
     component.entities = [child];
@@ -111,11 +111,8 @@ describe("MapComponent", () => {
 
   it("should open a popup that allows to change the properties displayed in the map", () => {
     const emitSpy = spyOn(component.displayedPropertiesChange, "emit");
-    Child.schema.set("address", { id: "address", dataType: "location" });
-    Child.schema.set("otherAddress", {
-      id: "otherAddress",
-      dataType: "location",
-    });
+    Child.schema.set("address", { dataType: "location" });
+    Child.schema.set("otherAddress", { dataType: "location" });
     const child = new Child();
     child["address"] = { lat: 1, lon: 1 };
     child["otherAddress"] = { lat: 1, lon: 2 };

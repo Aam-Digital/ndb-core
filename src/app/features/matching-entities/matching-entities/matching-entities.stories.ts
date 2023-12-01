@@ -10,7 +10,6 @@ import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-fie
 import { importProvidersFrom } from "@angular/core";
 
 const addressSchema: EntitySchemaField = {
-  id: "address",
   label: "Address",
   dataType: "location",
 };

@@ -2,11 +2,11 @@
   <div *ngFor="let group of fieldGroups" class="entity-form-cell">
     <h2 *ngIf="group.header">{{ group.header }}</h2>
     <div *ngFor="let field of group.fields">
-      <app-form-field
+      <app-entity-field-edit
         [field]="field"
         [entity]="entity"
         [form]="form"
-      ></app-form-field>
+      ></app-entity-field-edit>
     </div>
   </div>
 </form>

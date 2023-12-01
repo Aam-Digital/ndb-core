@@ -262,7 +262,7 @@ describe("MatchingEntitiesComponent", () => {
   }));
 
   it("should create distance column and publish updates", fakeAsync(() => {
-    Child.schema.set("address", { id: "address", dataType: "location" });
+    Child.schema.set("address", { dataType: "location" });
     component.entity = new Child();
     component.columns = [[undefined, "distance"]];
     component.leftSide = { entityType: Child };
@@ -330,12 +330,9 @@ describe("MatchingEntitiesComponent", () => {
 
   it("should update the distance calculation when the selected map properties change", fakeAsync(() => {
     Object.assign(component, testConfig);
-    Child.schema.set("address", { id: "address", dataType: "location" });
-    Child.schema.set("otherAddress", {
-      id: "otherAddress",
-      dataType: "location",
-    });
-    School.schema.set("address", { id: "address", dataType: "location" });
+    Child.schema.set("address", { dataType: "location" });
+    Child.schema.set("otherAddress", { dataType: "location" });
+    School.schema.set("address", { dataType: "location" });
     const leftEntity = new Child();
     leftEntity["address"] = { lat: 52, lon: 14 };
     leftEntity["otherAddress"] = { lat: 53, lon: 14 };
@@ -466,7 +463,7 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(component.mapVisible).toBeFalse();
 
-    Child.schema.set("address", { id: "address", dataType: "location" });
+    Child.schema.set("address", { dataType: "location" });
 
     component.ngOnInit();
     tick();
@@ -486,8 +483,8 @@ describe("MatchingEntitiesComponent", () => {
       leftSide: { entityType: "Child", columns: ["name", "distance"] },
       onMatch: testConfig.onMatch,
     };
-    Child.schema.set("address", { id: "address", dataType: "location" });
-    School.schema.set("address", { id: "address", dataType: "location" });
+    Child.schema.set("address", { dataType: "location" });
+    School.schema.set("address", { dataType: "location" });
 
     const configCopy = JSON.parse(JSON.stringify(config));
     routeData.next({ config: configCopy });

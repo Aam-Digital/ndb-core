@@ -4,8 +4,8 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
-import { FieldGroup } from "../entity-details/form/form-config";
 import { EntityConfig } from "../entity/entity-config";
+import { FieldGroup } from "../entity-details/form/field-group";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -101,11 +101,10 @@ describe("ConfigService", () => {
     expect(result).toEqual(expected);
   }));
 
-  it("should migrate entity attributes config to flattened format with id", fakeAsync(() => {
-    const testConfigId = "entity:Test";
+  it("should migrate entity attributes config to flattened object format with id", fakeAsync(() => {
     const config = new Config();
     config.data = {
-      [testConfigId]: {
+      "entity:old-format": {
         attributes: [
           {
             name: "count",
@@ -115,29 +114,26 @@ describe("ConfigService", () => {
           },
         ],
       },
-    };
-    updateSubject.next({ entity: config, type: "update" });
-    tick();
-
-    const result = service.getConfig<EntityConfig>("entity:Test");
-
-    expect(result.attributes).toEqual([{ id: "count", dataType: "number" }]);
-  }));
-  it("should not migrate / change entity attributes if already in new format", fakeAsync(() => {
-    const testConfigId = "entity:Test";
-    const entityAttributes = [{ id: "count", dataType: "number" }];
-    const config = new Config();
-    config.data = {
-      [testConfigId]: {
-        attributes: entityAttributes,
+      "entity:new-format": {
+        attributes: {
+          count: {
+            dataType: "number",
+          },
+        },
       },
     };
     updateSubject.next({ entity: config, type: "update" });
     tick();
 
-    const result = service.getConfig<EntityConfig>("entity:Test");
+    const expectedEntityAttributes = {
+      count: { dataType: "number" },
+    };
 
-    expect(result.attributes).toEqual(entityAttributes);
+    const actualFromOld = service.getConfig<EntityConfig>("entity:old-format");
+    expect(actualFromOld.attributes).toEqual(expectedEntityAttributes);
+
+    const actualFromNew = service.getConfig<EntityConfig>("entity:new-format");
+    expect(actualFromNew.attributes).toEqual(expectedEntityAttributes);
   }));
 
   it("should migrate Form field group headers into combined format", fakeAsync(() => {
@@ -221,7 +217,7 @@ describe("ConfigService", () => {
     const testConfig1 = "view:test";
     const testConfig2 = "view:test/:id";
 
-    const oldFieldConfig = { id: "name", view: "SomeView" };
+    const oldFieldConfig = { id: "name", view: "SomeView", edit: "SomeEdit" };
 
     const viewConfig1 = {
       component: "EntityDetails",
@@ -272,6 +268,7 @@ describe("ConfigService", () => {
     const expectedFieldConfig = {
       id: "name",
       viewComponent: "SomeView",
+      editComponent: "SomeEdit",
     };
 
     expect(

@@ -39,6 +39,11 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntitySchema } from "../../entity/schema/entity-schema";
 import { uniqueIdValidator } from "../../common-components/entity-form/unique-id-validator";
 
+export interface ConfigFieldResult {
+  fieldId: string;
+  schema: EntitySchemaField;
+}
+
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
  */
@@ -67,7 +72,7 @@ import { uniqueIdValidator } from "../../common-components/entity-form/unique-id
   ],
 })
 export class ConfigFieldComponent implements OnChanges {
-  @Input() entitySchemaField: EntitySchemaField & { id?: string }; // TODO: add id / key to EntitySchemaField for easier handling?
+  @Input() entitySchemaFieldWithId: EntitySchemaField & { id?: string }; // TODO: add id / key to EntitySchemaField for easier handling?
   @Input() entitySchema: EntitySchema;
 
   form: FormGroup;
@@ -80,6 +85,7 @@ export class ConfigFieldComponent implements OnChanges {
     @Inject(MAT_DIALOG_DATA)
     data: {
       entitySchemaField: EntitySchemaField;
+      fieldId: string;
       entitySchema: EntitySchema;
     },
     private dialogRef: MatDialogRef<any>,
@@ -88,7 +94,10 @@ export class ConfigFieldComponent implements OnChanges {
     private configurableEnumService: ConfigurableEnumService,
     private entityRegistry: EntityRegistry,
   ) {
-    this.entitySchemaField = data.entitySchemaField;
+    this.entitySchemaFieldWithId = {
+      ...data.entitySchemaField,
+      id: data.fieldId,
+    };
     this.entitySchema = data.entitySchema;
 
     this.initSettings();
@@ -102,33 +111,35 @@ export class ConfigFieldComponent implements OnChanges {
   }
 
   private initSettings() {
-    this.formId = this.fb.control(this.entitySchemaField.id, [
+    this.formId = this.fb.control(this.entitySchemaFieldWithId.id, [
       Validators.required,
       uniqueIdValidator(Array.from(this.entitySchema.keys())),
     ]);
-    this.formAdditional = this.fb.control(this.entitySchemaField.additional);
+    this.formAdditional = this.fb.control(
+      this.entitySchemaFieldWithId.additional,
+    );
 
     this.form = this.fb.group({
-      label: [this.entitySchemaField.label, Validators.required],
-      labelShort: [this.entitySchemaField.labelShort],
-      description: [this.entitySchemaField.description],
+      label: [this.entitySchemaFieldWithId.label, Validators.required],
+      labelShort: [this.entitySchemaFieldWithId.labelShort],
+      description: [this.entitySchemaFieldWithId.description],
 
       id: this.formId,
-      dataType: [this.entitySchemaField.dataType, Validators.required],
+      dataType: [this.entitySchemaFieldWithId.dataType, Validators.required],
       additional: this.formAdditional,
 
       // TODO: remove "innerDataType" completely - the UI can only support very specific multi-valued types anyway
       // TODO add a datatype "alias" for enum-array
-      innerDataType: [this.entitySchemaField.innerDataType],
+      innerDataType: [this.entitySchemaFieldWithId.innerDataType],
 
-      defaultValue: [this.entitySchemaField.defaultValue],
-      searchable: [this.entitySchemaField.searchable],
-      anonymize: [this.entitySchemaField.anonymize],
+      defaultValue: [this.entitySchemaFieldWithId.defaultValue],
+      searchable: [this.entitySchemaFieldWithId.searchable],
+      anonymize: [this.entitySchemaFieldWithId.anonymize],
       //viewComponent: [],
       //editComponent: [],
       //showInDetailsView: [],
       //generateIndex: [],
-      validators: [this.entitySchemaField.validators],
+      validators: [this.entitySchemaFieldWithId.validators],
     });
 
     this.updateDataTypeAdditional(this.form.get("dataType").value);
@@ -139,7 +150,7 @@ export class ConfigFieldComponent implements OnChanges {
   }
 
   private updateForNewOrExistingField() {
-    if (!!this.entitySchemaField.id) {
+    if (!!this.entitySchemaFieldWithId.id) {
       // existing fields' id is readonly
       this.formId.disable();
     } else {
@@ -248,11 +259,16 @@ export class ConfigFieldComponent implements OnChanges {
 
     const updatedEntitySchema = Object.assign(
       {},
-      this.entitySchemaField,
+      this.entitySchemaFieldWithId,
       this.form.getRawValue(),
     );
+    const fieldId = updatedEntitySchema.id;
+    delete updatedEntitySchema.id;
 
-    this.dialogRef.close(updatedEntitySchema);
+    this.dialogRef.close({
+      fieldId: fieldId,
+      schema: updatedEntitySchema,
+    } as ConfigFieldResult);
   }
 }
 

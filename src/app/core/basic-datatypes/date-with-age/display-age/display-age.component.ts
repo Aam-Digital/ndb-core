@@ -11,7 +11,7 @@ import { DateWithAge } from "../dateWithAge";
  * {
  *   "id": "age",
  *   "label": "Age",
- *   "view": "DisplayAge",
+ *   "viewComponent": "DisplayAge",
  *   "config": "dateOfBirth"
  * }
  * ```

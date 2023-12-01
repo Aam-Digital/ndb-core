@@ -37,7 +37,7 @@ export class PermissionEnforcerService {
 
   async enforcePermissionsOnLocalData(userRules: DatabaseRule[]) {
     const userRulesString = JSON.stringify(userRules);
-    if (!this.userRulesChanged(userRulesString)) {
+    if (!this.currentUser.value || !this.userRulesChanged(userRulesString)) {
       return;
     }
     const subjects = this.getSubjectsWithReadRestrictions(userRules);

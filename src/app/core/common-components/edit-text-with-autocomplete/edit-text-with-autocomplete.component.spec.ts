@@ -56,7 +56,6 @@ describe("EditTextWithAutocompleteComponent", () => {
         entityType: "RecurringActivity",
       },
     };
-    component.propertySchema = RecurringActivity.schema.get("title");
     component.entity = new RecurringActivity();
     fixture.detectChanges();
   }));

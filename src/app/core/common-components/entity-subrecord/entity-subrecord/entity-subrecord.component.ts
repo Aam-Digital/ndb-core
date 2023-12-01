@@ -22,7 +22,6 @@ import {
   EntityForm,
   EntityFormService,
 } from "../../entity-form/entity-form.service";
-import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -56,6 +55,9 @@ import {
 } from "@angular/material/checkbox";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { applyUpdate } from "../../../entity/model/entity-update";
+import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../../entity-field-label/entity-field-label.component";
+import { EntityFieldViewComponent } from "../../entity-field-view/entity-field-view.component";
 
 export interface TableRow<T extends Entity> {
   record: T;
@@ -95,6 +97,9 @@ export interface TableRow<T extends Entity> {
     ListPaginatorComponent,
     MatCheckboxModule,
     MatSlideToggleModule,
+    EntityFieldEditComponent,
+    EntityFieldLabelComponent,
+    EntityFieldViewComponent,
   ],
   standalone: true,
 })
@@ -116,15 +121,14 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Output() showInactiveChange = new EventEmitter<boolean>();
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() set columns(columns: ColumnConfig[]) {
-    if (columns) {
-      this._columns = columns.map(toFormFieldConfig);
-      this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
-      this.idForSavingPagination = this._columns.map((col) => col.id).join("");
-    }
-  }
-
+  @Input() columns: ColumnConfig[];
+  /**
+   * columns converted to the full, extended FormFieldConfig
+   */
   _columns: FormFieldConfig[] = [];
+  /**
+   * columns actually displayed in the table (as some may have been passed only for the popup edit form)
+   */
   filteredColumns: FormFieldConfig[] = [];
 
   /** data to be displayed, can also be used as two-way-binding */
@@ -139,7 +143,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
    */
   @Input() newRecordFactory: () => T;
 
-  private entityConstructor: EntityConstructor<T>;
+  entityConstructor: EntityConstructor<T>;
 
   /**
    * Whether the rows of the table are inline editable and new entries can be created through the "+" button.
@@ -185,7 +189,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private formDialog: FormDialogService,
     private router: Router,
     private analyticsService: AnalyticsService,
-    private loggingService: LoggingService,
     public entityRemoveService: EntityActionsService,
     private entityMapper: EntityMapperService,
     private filterService: FilterService,
@@ -212,21 +215,39 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       .map((record) => ({ record }));
   }
 
-  private entityConstructorIsAvailable(): boolean {
-    return this.records.length > 0 || !!this.newRecordFactory;
+  initEntityConstructor() {
+    if (!(this.records?.length > 0) && !this.newRecordFactory) {
+      this.entityConstructor = undefined;
+      return;
+    }
+
+    const record =
+      this.records?.length > 0 ? this.records[0] : this.newRecordFactory();
+    this.entityConstructor = record.getConstructor();
+
+    if (!this.newRecordFactory) {
+      this.newRecordFactory = () => new this.entityConstructor();
+    }
   }
 
-  getEntityConstructor(): EntityConstructor<T> {
-    if (!this.entityConstructorIsAvailable()) {
-      throw new Error("No constructor is available");
+  initColumns() {
+    if (!this.columns) {
+      return;
     }
 
-    if (!this.entityConstructor) {
-      const record =
-        this.records.length > 0 ? this.records[0] : this.newRecordFactory();
-      this.entityConstructor = record.getConstructor();
-    }
-    return this.entityConstructor;
+    this._columns = this.columns.map((col) => {
+      if (this.entityConstructor) {
+        return this.entityFormService.extendFormFieldConfig(
+          col,
+          this.entityConstructor,
+          true,
+        );
+      } else {
+        return toFormFieldConfig(col);
+      }
+    });
+    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
+    this.idForSavingPagination = this._columns.map((col) => col.id).join("");
   }
 
   /**
@@ -236,33 +257,18 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     let reinitDataSource = false;
     let resetupTable = false;
-    let reinitFormGroups = false;
+    let reinitColumns = false;
 
-    if (changes.hasOwnProperty("records")) {
-      if (!this.records) {
-        this.records = [];
-      }
-      reinitDataSource = true;
-
-      if (this.records.length > 0) {
-        if (!this.newRecordFactory) {
-          this.newRecordFactory = () =>
-            new (this.records[0].getConstructor())();
-        }
-        reinitFormGroups = true;
-        if (this.columnsToDisplay.length < 2) {
-          resetupTable = true;
-        }
-      }
-    }
     if (
-      (changes.hasOwnProperty("filter") && this.filter) ||
-      changes.hasOwnProperty("showInactive")
+      changes.hasOwnProperty("records") ||
+      changes.hasOwnProperty("newRecordFactory")
     ) {
-      reinitDataSource = true;
+      this.initEntityConstructor();
+      reinitColumns = true;
     }
-    if (changes.hasOwnProperty("columns")) {
-      reinitFormGroups = true;
+
+    if (changes.hasOwnProperty("columns") || reinitColumns) {
+      this.initColumns();
       if (this.columnsToDisplay.length < 2) {
         resetupTable = true;
       }
@@ -270,6 +276,24 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("columnsToDisplay")) {
       this.mediaSubscription.unsubscribe();
       resetupTable = true;
+    }
+
+    if (changes.hasOwnProperty("records")) {
+      if (!this.records) {
+        this.records = [];
+      }
+      reinitDataSource = true;
+
+      if (this.records.length > 0 && this.columnsToDisplay.length < 2) {
+        resetupTable = true;
+      }
+    }
+
+    if (
+      (changes.hasOwnProperty("filter") && this.filter) ||
+      changes.hasOwnProperty("showInactive")
+    ) {
+      reinitDataSource = true;
     }
     if (
       changes.hasOwnProperty("editable") ||
@@ -281,13 +305,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (reinitDataSource) {
       this.initDataSource();
     }
-    if (reinitFormGroups) {
-      this.initFormGroups();
-    }
     if (resetupTable) {
       this.setupTable();
     }
-    if (changes.hasOwnProperty("records")) {
+    if (changes.hasOwnProperty("records") || reinitColumns) {
       this.sortDefault();
     }
 
@@ -295,22 +316,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.recordsDataSource.filteredData.map((item) => item.record),
     );
     this.listenToEntityUpdates();
-  }
-
-  private initFormGroups() {
-    if (this.entityConstructorIsAvailable()) {
-      try {
-        this.filteredColumns = this.filteredColumns.map((f) =>
-          this.entityFormService.extendFormFieldConfig(
-            f,
-            this.getEntityConstructor(),
-            true,
-          ),
-        );
-      } catch (err) {
-        this.loggingService.warn(`Error creating form definitions: ${err}`);
-      }
-    }
   }
 
   private sortDefault() {
@@ -360,9 +365,9 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   }
 
   private listenToEntityUpdates() {
-    if (!this.updateSubscription && this.entityConstructorIsAvailable()) {
+    if (!this.updateSubscription && this.entityConstructor) {
       this.updateSubscription = this.entityMapper
-        .receiveUpdates(this.getEntityConstructor())
+        .receiveUpdates(this.entityConstructor)
         .pipe(untilDestroyed(this))
         .subscribe((next) => {
           this.records = applyUpdate(this.records, next, true);

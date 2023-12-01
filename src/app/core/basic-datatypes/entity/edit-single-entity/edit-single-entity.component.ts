@@ -40,9 +40,9 @@ export class EditSingleEntityComponent
 
   async ngOnInit() {
     super.ngOnInit();
-    const entityType: string =
-      this.formFieldConfig.additional || this.propertySchema.additional;
-    this.entities = await this.entityMapperService.loadType(entityType);
+    this.entities = await this.entityMapperService.loadType(
+      this.formFieldConfig.additional,
+    );
     this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
   }
 }

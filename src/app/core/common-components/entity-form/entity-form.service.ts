@@ -59,7 +59,7 @@ export class EntityFormService {
 
   /**
    * Uses schema information to fill missing fields in the FormFieldConfig.
-   * @param formFields
+   * @param formField
    * @param entityType
    * @param forTable
    */
@@ -68,10 +68,9 @@ export class EntityFormService {
     entityType: EntityConstructor,
     forTable = false,
   ): FormFieldConfig {
-    let fullField: FormFieldConfig = toFormFieldConfig(formField);
-
+    const fullField = toFormFieldConfig(formField);
     try {
-      fullField = this.addSchemaToFormField(
+      return this.addSchemaToFormField(
         fullField,
         entityType.schema.get(fullField.id),
         forTable,
@@ -81,9 +80,6 @@ export class EntityFormService {
         `Could not create form config for ${fullField.id}: ${err}`,
       );
     }
-
-    // edit the given formField in place because for some components (i.e. EntitySubrecordComponent) updating existing objects is important
-    return Object.assign(formField, fullField);
   }
 
   private addSchemaToFormField(
@@ -105,6 +101,7 @@ export class EntityFormService {
       fullField.forTable = true;
       fullField.label =
         fullField.label || fullField.labelShort || fullField.label;
+      delete fullField.description;
     } else {
       fullField.forTable = false;
       fullField.label =
@@ -128,6 +125,11 @@ export class EntityFormService {
   ): EntityForm<T> {
     const formConfig = {};
     const copy = entity.copy();
+
+    formFields = formFields.filter((f) =>
+      entity.getSchema().has(toFormFieldConfig(f).id),
+    );
+
     for (const f of formFields) {
       this.addFormControlConfig(formConfig, f, copy, forTable);
     }
@@ -151,7 +153,7 @@ export class EntityFormService {
    */
   private addFormControlConfig(
     formConfig: Object,
-    fieldConfig: string | FormFieldConfig,
+    fieldConfig: ColumnConfig,
     entity: Entity,
     forTable: boolean,
   ) {

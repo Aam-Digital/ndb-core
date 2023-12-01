@@ -22,12 +22,12 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatCardModule } from "@angular/material/card";
-import { FormFieldComponent } from "../common-components/entity-form/form-field/form-field.component";
-import { FormFieldComponentLabel } from "../common-components/entity-form/form-field-label/form-field-component-label.component";
 import { ConfigEntityPanelComponentComponent } from "./config-entity-panel-component/config-entity-panel-component.component";
 import { Angulartics2OnModule } from "angulartics2";
 import { DisableEntityOperationDirective } from "../permissions/permission-directive/disable-entity-operation.directive";
 import { ConfigSectionHeaderComponent } from "./config-section-header/config-section-header.component";
+import { EntityFieldEditComponent } from "../common-components/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../common-components/entity-field-label/entity-field-label.component";
 
 const routes: Routes = [
   {
@@ -62,12 +62,12 @@ const routes: Routes = [
     MatTooltipModule,
     CdkDragHandle,
     MatCardModule,
-    FormFieldComponent,
-    FormFieldComponentLabel,
     ConfigEntityPanelComponentComponent,
     Angulartics2OnModule,
     DisableEntityOperationDirective,
     ConfigSectionHeaderComponent,
+    EntityFieldEditComponent,
+    EntityFieldLabelComponent,
   ],
   exports: [RouterModule, ConfigEntityComponent],
   declarations: [ConfigEntityComponent, ConfigEntityFormComponent],

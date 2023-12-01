@@ -19,7 +19,7 @@ describe("EntityConfigService", () => {
   let service: EntityConfigService;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   const testConfig: EntityConfig = {
-    attributes: [{ id: "testAttribute", dataType: "string" }],
+    attributes: { testAttribute: { dataType: "string" } },
   };
 
   beforeEach(() => {
@@ -56,7 +56,7 @@ describe("EntityConfigService", () => {
   });
 
   it("should load a given EntityType", () => {
-    const config: EntityConfig = { attributes: [] };
+    const config: EntityConfig = {};
     mockConfigService.getConfig.and.returnValue(config);
     const result = service.getEntityConfig(Test);
     expect(mockConfigService.getConfig).toHaveBeenCalledWith("entity:Test");
@@ -69,21 +69,11 @@ describe("EntityConfigService", () => {
     const mockEntityConfigs: (EntityConfig & { _id: string })[] = [
       {
         _id: "entity:Test",
-        attributes: [
-          {
-            id: ATTRIBUTE_1_NAME,
-            dataType: "string",
-          },
-        ],
+        attributes: { [ATTRIBUTE_1_NAME]: { dataType: "string" } },
       },
       {
         _id: "entity:Test2",
-        attributes: [
-          {
-            id: ATTRIBUTE_2_NAME,
-            dataType: "number",
-          },
-        ],
+        attributes: { [ATTRIBUTE_2_NAME]: { dataType: "number" } },
       },
     ];
     mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
@@ -123,7 +113,6 @@ describe("EntityConfigService", () => {
 
   it("should create a new subclass with the schema of the extended", () => {
     const schema: EntitySchemaField = {
-      id: "dynamicProperty",
       dataType: "string",
       label: "Dynamic Property",
     };
@@ -132,8 +121,8 @@ describe("EntityConfigService", () => {
         _id: "entity:DynamicTest",
         label: "Dynamic Test Entity",
         extends: "Test",
-        attributes: [schema],
-      },
+        attributes: { dynamicProperty: schema },
+      } as EntityConfig,
     ]);
 
     service.setupEntitiesFromConfig();
@@ -143,7 +132,7 @@ describe("EntityConfigService", () => {
     expect([...dynamicEntity.schema.entries()]).toEqual(
       jasmine.arrayContaining([...Test.schema.entries()]),
     );
-    expect(dynamicEntity.schema.get("dynamicProperty")).toBe(schema);
+    expect(dynamicEntity.schema.get("dynamicProperty")).toEqual(schema);
     const dynamicInstance = new dynamicEntity("someId");
     expect(dynamicInstance instanceof Test).toBeTrue();
     expect(dynamicInstance.getId(true)).toBe("DynamicTest:someId");

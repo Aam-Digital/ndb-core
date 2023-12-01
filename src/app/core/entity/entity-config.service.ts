@@ -1,10 +1,10 @@
 import { Injectable } from "@angular/core";
 import { Entity, EntityConstructor } from "./model/entity";
 import { ConfigService } from "../config/config.service";
-import { addPropertySchema } from "./database-field.decorator";
 import { EntityRegistry } from "./database-entity.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { EntityConfig } from "./entity-config";
+import { addPropertySchema } from "./database-field.decorator";
 import { PREFIX_VIEW_CONFIG } from "../config/dynamic-routing/view-config.interface";
 
 /**
@@ -77,8 +77,8 @@ export class EntityConfigService {
     configAttributes?: EntityConfig,
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
-    for (const attr of entityConfig?.attributes ?? []) {
-      addPropertySchema(entityType.prototype, attr);
+    for (const [key, value] of Object.entries(entityConfig?.attributes ?? {})) {
+      addPropertySchema(entityType.prototype, key, value);
     }
 
     // TODO: shall we just assign all properties that are present in the config object?

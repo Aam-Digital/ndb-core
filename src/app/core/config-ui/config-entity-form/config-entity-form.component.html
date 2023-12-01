@@ -42,11 +42,11 @@
           </button>
 
           <div class="dummy-form-field">
-            <app-form-field
+            <app-entity-field-edit
               [field]="f"
               [entity]="dummyEntity"
               [form]="dummyForm"
-            ></app-form-field>
+            ></app-entity-field-edit>
           </div>
         </div>
         <!-- FIELD [end]-->
@@ -103,10 +103,10 @@
         ></fa-icon>
 
         <div>
-          <app-form-field-label
+          <app-entity-field-label
             [field]="f"
-            [entity]="dummyEntity"
-          ></app-form-field-label>
+            [entityType]="entityType"
+          ></app-entity-field-label>
 
           <button
             *ngIf="f !== createNewFieldPlaceholder"

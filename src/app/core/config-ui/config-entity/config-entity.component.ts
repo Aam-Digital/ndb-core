@@ -88,7 +88,7 @@ export class ConfigEntityComponent implements OnChanges {
       ] as EntityConfig
     ).attributes;
     for (const newField of this.schemaFieldChanges) {
-      entityAttr.push(newField);
+      // TODO entityAttr.push(newField);
       // TODO: more rigorously filter attributes that are equal to default class definition, so they can still be updated through code updates?
     }
 

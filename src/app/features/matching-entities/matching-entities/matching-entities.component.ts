@@ -31,7 +31,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { EntityPropertyViewComponent } from "../../../core/common-components/entity-property-view/entity-property-view.component";
+import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
 import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
@@ -79,7 +79,7 @@ export interface MatchingSide extends MatchingSideConfig {
     MatButtonModule,
     NgForOf,
     EntitySubrecordComponent,
-    EntityPropertyViewComponent,
+    EntityFieldViewComponent,
     MapComponent,
     FilterComponent,
     FlattenArrayPipe,

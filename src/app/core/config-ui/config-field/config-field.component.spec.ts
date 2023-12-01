@@ -19,7 +19,7 @@ describe("ConfigFieldComponent", () => {
   let component: ConfigFieldComponent;
   let fixture: ComponentFixture<ConfigFieldComponent>;
 
-  let testSchemaField: EntitySchemaField;
+  let testSchemaField: EntitySchemaField & { id: string };
 
   beforeEach(() => {
     testSchemaField = {
@@ -62,11 +62,11 @@ describe("ConfigFieldComponent", () => {
     expect(formId.getRawValue()).toBe(testSchemaField.id);
 
     // simulate configuring new field
-    component.entitySchemaField = { id: null };
+    component.entitySchemaFieldWithId = { id: null };
     component.ngOnChanges({
       entitySchemaField: new SimpleChange(
         null,
-        component.entitySchemaField,
+        component.entitySchemaFieldWithId,
         true,
       ),
     });

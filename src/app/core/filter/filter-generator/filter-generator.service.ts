@@ -49,9 +49,7 @@ export class FilterGeneratorService {
   ): Promise<Filter<T>[]> {
     const filters: Filter<T>[] = [];
     for (const filterConfig of filterConfigs) {
-      const schema = entityConstructor.schema.get(filterConfig.id) || {
-        id: filterConfig.id,
-      };
+      const schema = entityConstructor.schema.get(filterConfig.id) || {};
       let filter: Filter<T>;
       const type = filterConfig.type ?? schema.dataType;
       if (

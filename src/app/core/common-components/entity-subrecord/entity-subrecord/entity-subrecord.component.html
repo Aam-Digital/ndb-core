@@ -24,45 +24,39 @@
         mat-header-cell
         mat-sort-header
         *matHeaderCellDef
-        [matTooltip]="col.description"
-        [matTooltipDisabled]="!col.description"
         [disabled]="col.noSorting"
       >
-        {{ col.label }}
+        <app-entity-field-label
+          [field]="col"
+          [entityType]="entityConstructor"
+        ></app-entity-field-label>
       </th>
+
       <td
         mat-cell
         *matCellDef="let row"
         (click)="onRowClick(row)"
         style="cursor: pointer"
       >
-        <ng-template
-          *ngIf="!row.formGroup || row.formGroup.disabled || !col.editComponent"
-          [appDynamicComponent]="{
-            component: col.viewComponent,
-            config: {
-              value: row.record[col.id],
-              id: col.id,
-              entity: row.record,
-              config: col.additional
-            }
-          }"
-        ></ng-template>
-        <ng-template
-          *ngIf="row.formGroup?.enabled && col.editComponent"
-          [appDynamicComponent]="{
-            component: col.editComponent,
-            config: {
-              formFieldConfig: col,
-              propertySchema: row.record.getSchema().get(col.id),
-              formControl: row.formGroup.get(col.id)
-            }
-          }"
-        >
+        <app-entity-field-edit
+          *ngIf="row.formGroup?.enabled; else viewField"
+          [field]="col"
+          [entity]="row.record"
+          [form]="row.formGroup"
+        ></app-entity-field-edit>
+
+        <ng-template #viewField>
+          <app-entity-field-view
+            [field]="col"
+            [entity]="row.record"
+          ></app-entity-field-view>
         </ng-template>
       </td>
     </ng-container>
 
+    <!--
+      INLINE EDIT ACTIONS
+    -->
     <ng-container matColumnDef="actions">
       <th
         mat-header-cell
@@ -73,7 +67,7 @@
           <button
             mat-icon-button
             *appDisabledEntityOperation="{
-              entity: getEntityConstructor(),
+              entity: entityConstructor,
               operation: 'create'
             }"
             class="table-action-button"
@@ -87,6 +81,7 @@
           </button>
         </ng-container>
       </th>
+
       <td mat-cell *matCellDef="let rec" [class.remove-padding-left]="editable">
         <div *ngIf="editable">
           <ng-container *ngIf="!rec.formGroup || rec.formGroup.disabled">
@@ -137,6 +132,7 @@
         </div>
       </td>
     </ng-container>
+
     <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
     <tr
       mat-row

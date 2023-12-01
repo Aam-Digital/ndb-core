@@ -1,12 +1,13 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { FormFieldComponent } from "./form-field.component";
-import { EntityFormService } from "../entity-form.service";
-import { Entity } from "../../../entity/model/entity";
+import { EntityFieldEditComponent } from "./entity-field-edit.component";
+import { EntityFormService } from "../entity-form/entity-form.service";
+import { Entity } from "../../entity/model/entity";
+import { ComponentRegistry } from "../../../dynamic-components";
 
-describe("FormFieldComponent", () => {
-  let component: FormFieldComponent;
-  let fixture: ComponentFixture<FormFieldComponent>;
+describe("EntityFieldEditComponent", () => {
+  let component: EntityFieldEditComponent;
+  let fixture: ComponentFixture<EntityFieldEditComponent>;
 
   let mockFormService: jasmine.SpyObj<EntityFormService>;
   const mockField = { id: "testField" };
@@ -16,10 +17,13 @@ describe("FormFieldComponent", () => {
     mockFormService.extendFormFieldConfig.and.returnValue(mockField);
 
     TestBed.configureTestingModule({
-      imports: [FormFieldComponent],
-      providers: [{ provide: EntityFormService, useValue: mockFormService }],
+      imports: [EntityFieldEditComponent],
+      providers: [
+        { provide: EntityFormService, useValue: mockFormService },
+        ComponentRegistry,
+      ],
     });
-    fixture = TestBed.createComponent(FormFieldComponent);
+    fixture = TestBed.createComponent(EntityFieldEditComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

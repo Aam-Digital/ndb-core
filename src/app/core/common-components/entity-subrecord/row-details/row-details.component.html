@@ -17,17 +17,11 @@
         [style.background-color]="tempEntity.getColor()"
         class="mat-body-strong"
       >
-        <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
-        <ng-template
-          [appDynamicComponent]="{
-            component: col.viewComponent,
-            config: {
-              id: col.id,
-              entity: tempEntity,
-              config: col.additional
-            }
-          }"
-        ></ng-template>
+        <app-entity-field-view
+          [field]="col"
+          [entity]="tempEntity"
+          showLabel="inline"
+        ></app-entity-field-view>
       </app-pill>
     </div>
   </div>

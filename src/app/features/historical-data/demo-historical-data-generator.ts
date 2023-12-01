@@ -6,6 +6,7 @@ import { faker } from "../../core/demo-data/faker";
 import { ratingAnswers } from "./model/rating-answers";
 import { EntityConfigService } from "../../core/entity/entity-config.service";
 import { DemoConfigGeneratorService } from "../../core/config/demo-config-generator.service";
+import { EntityConfig } from "../../core/entity/entity-config";
 
 export class DemoHistoricalDataConfig {
   minCountAttributes: number;
@@ -34,10 +35,14 @@ export class DemoHistoricalDataGenerator extends DemoDataGenerator<HistoricalEnt
 
   protected generateEntities(): HistoricalEntityData[] {
     const config = this.configGenerator.entities[0];
-    const attributes: any[] = config.data[
-      EntityConfigService.PREFIX_ENTITY_CONFIG +
-        HistoricalEntityData.ENTITY_TYPE
-    ].attributes.map((attr) => attr.id);
+    const attributes: any[] = Object.keys(
+      (
+        config.data[
+          EntityConfigService.PREFIX_ENTITY_CONFIG +
+            HistoricalEntityData.ENTITY_TYPE
+        ] as EntityConfig
+      ).attributes,
+    );
 
     const entities: HistoricalEntityData[] = [];
     for (const child of this.childrenGenerator.entities) {

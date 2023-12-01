@@ -10,7 +10,10 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import { ConfigFieldComponent } from "../config-field/config-field.component";
+import {
+  ConfigFieldComponent,
+  ConfigFieldResult,
+} from "../config-field/config-field.component";
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -93,22 +96,18 @@ export class ConfigEntityFormComponent implements OnChanges {
 
   openFieldConfig(field: ColumnConfig, fieldsArray: any[]) {
     const fieldId = typeof field === "string" ? field : field?.id;
-    const schemaField = {
-      ...this.entityType.schema.get(fieldId),
-      id: fieldId,
-    };
-
     this.matDialog
       .open(ConfigFieldComponent, {
         width: "99%",
         maxHeight: "90vh",
         data: {
-          entitySchemaField: schemaField,
+          entitySchemaField: this.entityType.schema.get(fieldId),
+          fieldId: fieldId,
           entitySchema: this.entityType.schema,
         },
       })
       .afterClosed()
-      .subscribe((updatedFieldSchema: EntitySchemaField) => {
+      .subscribe((updatedFieldSchema: ConfigFieldResult) => {
         if (!updatedFieldSchema) {
           // canceled
           if (!fieldId) {
@@ -118,28 +117,31 @@ export class ConfigEntityFormComponent implements OnChanges {
           return;
         }
 
-        const updatedFormField = this.saveSchemaField(updatedFieldSchema);
+        const updatedFormField = this.saveSchemaField(
+          updatedFieldSchema.fieldId,
+          updatedFieldSchema.schema,
+        );
         fieldsArray.splice(fieldsArray.indexOf(field), 1, updatedFormField);
       });
   }
 
-  private saveSchemaField(schemaField: EntitySchemaField): ColumnConfig {
-    this.entityType.schema.set(schemaField.id, schemaField);
+  private saveSchemaField(
+    fieldId: string,
+    schemaField: EntitySchemaField,
+  ): ColumnConfig {
+    this.entityType.schema.set(fieldId, schemaField);
     this.entitySchemaFieldChange.emit(schemaField);
 
-    if (!this.dummyForm.get(schemaField.id)) {
+    if (!this.dummyForm.get(fieldId)) {
       const newFormGroup = this.entityFormService.createFormGroup(
-        [schemaField],
+        [fieldId],
         this.dummyEntity,
       );
-      this.dummyForm.addControl(
-        schemaField.id,
-        newFormGroup.get(schemaField.id),
-      );
+      this.dummyForm.addControl(fieldId, newFormGroup.get(fieldId));
       this.dummyForm.disable();
     }
 
-    return schemaField;
+    return fieldId;
   }
 
   drop(event: CdkDragDrop<any, any>) {
