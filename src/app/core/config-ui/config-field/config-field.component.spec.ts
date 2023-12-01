@@ -19,12 +19,11 @@ describe("ConfigFieldComponent", () => {
   let component: ConfigFieldComponent;
   let fixture: ComponentFixture<ConfigFieldComponent>;
 
-  let testSchemaField: EntitySchemaField & { id: string };
+  let testSchemaField: EntitySchemaField;
+  const testFieldId = "test";
 
   beforeEach(() => {
-    testSchemaField = {
-      id: "test",
-    };
+    testSchemaField = {};
 
     TestBed.configureTestingModule({
       imports: [
@@ -38,7 +37,8 @@ describe("ConfigFieldComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: {
             entitySchemaField: testSchemaField,
-            entitySchema: new Map([["test", testSchemaField]]),
+            fieldId: testFieldId,
+            entitySchema: new Map([[testFieldId, testSchemaField]]),
           },
         },
         { provide: MatDialogRef, useValue: null },
@@ -59,7 +59,7 @@ describe("ConfigFieldComponent", () => {
 
     formLabel.setValue("new label");
     tick();
-    expect(formId.getRawValue()).toBe(testSchemaField.id);
+    expect(formId.getRawValue()).toBe(testFieldId);
 
     // simulate configuring new field
     component.entitySchemaFieldWithId = { id: null };
