@@ -186,6 +186,10 @@ describe("EntitySubrecordComponent", () => {
 
   it("should create a formGroup when editing a row", () => {
     component.columns = ["name", "projectNumber"];
+    assignInputAndTriggerOnChanges(component, {
+      columns: ["name", "projectNumber"],
+    });
+
     const child = new Child();
     child.name = "Child Name";
     child.projectNumber = "01";
@@ -261,13 +265,17 @@ describe("EntitySubrecordComponent", () => {
   it("should create a new entity and open a dialog on default when clicking create", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
+    assignInputAndTriggerOnChanges(component, {
+      newRecordFactory: component.newRecordFactory,
+    });
+
     const dialog = TestBed.inject(FormDialogService);
 
     component.create();
 
     expect(dialog.openFormPopup).toHaveBeenCalledWith(
       child,
-      defaultTestColumns.map((x) => ({ id: x })),
+      defaultTestColumns.map((x) => jasmine.objectContaining({ id: x })),
     );
   });
 

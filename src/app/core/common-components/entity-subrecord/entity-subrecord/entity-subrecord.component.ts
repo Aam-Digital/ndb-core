@@ -22,7 +22,6 @@ import {
   EntityForm,
   EntityFormService,
 } from "../../entity-form/entity-form.service";
-import { LoggingService } from "../../../logging/logging.service";
 import { AnalyticsService } from "../../../analytics/analytics.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -120,21 +119,13 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   @Output() showInactiveChange = new EventEmitter<boolean>();
 
   /** configuration what kind of columns to be generated for the table */
-  @Input() set columns(columns: ColumnConfig[]) {
-    if (columns) {
-      this._columns = columns.map(toFormFieldConfig);
-      this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
-      this.idForSavingPagination = this._columns.map((col) => col.id).join("");
-    }
-  }
+  @Input() columns: ColumnConfig[];
   /**
-   * columns converted to the FormFieldConfig (object with .id)
-   * WARNING: Not extended with full schema field information!
+   * columns converted to the full, extended FormFieldConfig
    */
   _columns: FormFieldConfig[] = [];
   /**
    * columns actually displayed in the table (as some may have been passed only for the popup edit form)
-   * WARNING: Not extended with full schema field information (this will happen in individual components)
    */
   filteredColumns: FormFieldConfig[] = [];
 
@@ -196,7 +187,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     private formDialog: FormDialogService,
     private router: Router,
     private analyticsService: AnalyticsService,
-    private loggingService: LoggingService,
     public entityRemoveService: EntityActionsService,
     private entityMapper: EntityMapperService,
     private filterService: FilterService,
@@ -232,6 +222,30 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     const record =
       this.records?.length > 0 ? this.records[0] : this.newRecordFactory();
     this.entityConstructor = record.getConstructor();
+
+    if (!this.newRecordFactory) {
+      this.newRecordFactory = () => new this.entityConstructor();
+    }
+  }
+
+  initColumns() {
+    if (!this.columns) {
+      return;
+    }
+
+    this._columns = this.columns.map((col) => {
+      if (this.entityConstructor) {
+        return this.entityFormService.extendFormFieldConfig(
+          col,
+          this.entityConstructor,
+          true,
+        );
+      } else {
+        return toFormFieldConfig(col);
+      }
+    });
+    this.filteredColumns = this._columns.filter((col) => !col.hideFromTable);
+    this.idForSavingPagination = this._columns.map((col) => col.id).join("");
   }
 
   /**
@@ -241,12 +255,25 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     let reinitDataSource = false;
     let resetupTable = false;
+    let reinitColumns = false;
 
     if (
       changes.hasOwnProperty("records") ||
       changes.hasOwnProperty("newRecordFactory")
     ) {
       this.initEntityConstructor();
+      reinitColumns = true;
+    }
+
+    if (changes.hasOwnProperty("columns") || reinitColumns) {
+      this.initColumns();
+      if (this.columnsToDisplay.length < 2) {
+        resetupTable = true;
+      }
+    }
+    if (changes.hasOwnProperty("columnsToDisplay")) {
+      this.mediaSubscription.unsubscribe();
+      resetupTable = true;
     }
 
     if (changes.hasOwnProperty("records")) {
@@ -255,30 +282,16 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       }
       reinitDataSource = true;
 
-      if (this.records.length > 0) {
-        if (!this.newRecordFactory) {
-          this.newRecordFactory = () =>
-            new (this.records[0].getConstructor())();
-        }
-        if (this.columnsToDisplay.length < 2) {
-          resetupTable = true;
-        }
+      if (this.records.length > 0 && this.columnsToDisplay.length < 2) {
+        resetupTable = true;
       }
     }
+
     if (
       (changes.hasOwnProperty("filter") && this.filter) ||
       changes.hasOwnProperty("showInactive")
     ) {
       reinitDataSource = true;
-    }
-    if (changes.hasOwnProperty("columns")) {
-      if (this.columnsToDisplay.length < 2) {
-        resetupTable = true;
-      }
-    }
-    if (changes.hasOwnProperty("columnsToDisplay")) {
-      this.mediaSubscription.unsubscribe();
-      resetupTable = true;
     }
     if (
       changes.hasOwnProperty("editable") ||
@@ -293,7 +306,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (resetupTable) {
       this.setupTable();
     }
-    if (changes.hasOwnProperty("records")) {
+    if (changes.hasOwnProperty("records") || reinitColumns) {
       this.sortDefault();
     }
 
