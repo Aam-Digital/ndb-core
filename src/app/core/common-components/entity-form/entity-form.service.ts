@@ -109,7 +109,7 @@ export class EntityFormService {
     }
 
     // edit the given formField in place because for some components (i.e. EntitySubrecordComponent) updating existing objects is important
-    return Object.assign(formField, fullField);
+    return fullField;
   }
 
   /**

@@ -127,8 +127,15 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.idForSavingPagination = this._columns.map((col) => col.id).join("");
     }
   }
-
+  /**
+   * columns converted to the FormFieldConfig (object with .id)
+   * WARNING: Not extended with full schema field information!
+   */
   _columns: FormFieldConfig[] = [];
+  /**
+   * columns actually displayed in the table (as some may have been passed only for the popup edit form)
+   * WARNING: Not extended with full schema field information (this will happen in individual components)
+   */
   filteredColumns: FormFieldConfig[] = [];
 
   /** data to be displayed, can also be used as two-way-binding */
@@ -234,7 +241,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
   ngOnChanges(changes: SimpleChanges) {
     let reinitDataSource = false;
     let resetupTable = false;
-    let reinitFormGroups = false;
 
     if (
       changes.hasOwnProperty("records") ||
@@ -254,7 +260,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
           this.newRecordFactory = () =>
             new (this.records[0].getConstructor())();
         }
-        reinitFormGroups = true;
         if (this.columnsToDisplay.length < 2) {
           resetupTable = true;
         }
@@ -267,7 +272,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       reinitDataSource = true;
     }
     if (changes.hasOwnProperty("columns")) {
-      reinitFormGroups = true;
       if (this.columnsToDisplay.length < 2) {
         resetupTable = true;
       }
@@ -286,9 +290,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     if (reinitDataSource) {
       this.initDataSource();
     }
-    if (reinitFormGroups) {
-      this.initFormGroups();
-    }
     if (resetupTable) {
       this.setupTable();
     }
@@ -300,24 +301,6 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
       this.recordsDataSource.filteredData.map((item) => item.record),
     );
     this.listenToEntityUpdates();
-  }
-
-  private initFormGroups() {
-    if (!this.entityConstructor) {
-      return;
-    }
-
-    try {
-      this.filteredColumns = this.filteredColumns.map((c) =>
-        this.entityFormService.extendFormFieldConfig(
-          c,
-          this.entityConstructor,
-          true,
-        ),
-      );
-    } catch (err) {
-      this.loggingService.warn(`Error creating form definitions: ${err}`);
-    }
   }
 
   private sortDefault() {
