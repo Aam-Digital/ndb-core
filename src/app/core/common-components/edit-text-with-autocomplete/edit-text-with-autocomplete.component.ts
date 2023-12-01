@@ -27,7 +27,7 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
  * ```json
  * {
  *     "id": "title",
- *     "edit": "EditTextWithAutocomplete",
+ *     "editComponent": "EditTextWithAutocomplete",
  *     "additional": {
  *       "entityType": "RecurringActivity",
  *       "relevantProperty": "linkedGroups",
