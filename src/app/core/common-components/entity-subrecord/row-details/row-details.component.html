@@ -18,16 +18,11 @@
         class="mat-body-strong"
       >
         <span *ngIf="col.label">{{ col.label }}:&nbsp;</span>
-        <ng-template
-          [appDynamicComponent]="{
-            component: col.viewComponent,
-            config: {
-              id: col.id,
-              entity: tempEntity,
-              config: col.additional
-            }
-          }"
-        ></ng-template>
+        <app-form-field
+          [field]="col"
+          [entity]="tempEntity"
+          mode="view"
+        ></app-form-field>
       </app-pill>
     </div>
   </div>
