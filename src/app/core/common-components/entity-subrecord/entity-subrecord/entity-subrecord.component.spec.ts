@@ -28,6 +28,7 @@ import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observe
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
+import { assignInputAndTriggerOnChanges } from "../../../../utils/test-utils/mock-ng-on-changes.spec";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -319,17 +320,21 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should correctly determine the entity constructor from factory", () => {
-    expect(() => component.entityConstructor).toThrowError();
+    expect(component.entityConstructor).toBeUndefined();
 
     const newRecordSpy = jasmine.createSpy().and.returnValue(new Child());
-    component.newRecordFactory = newRecordSpy;
+    assignInputAndTriggerOnChanges(component, {
+      newRecordFactory: newRecordSpy,
+    });
     expect(component.entityConstructor).toEqual(Child);
     expect(newRecordSpy).toHaveBeenCalled();
   });
 
   it("should correctly determine the entity constructor from existing record", () => {
-    component.newRecordFactory = undefined;
-    component.records = [new Note()];
+    assignInputAndTriggerOnChanges(component, {
+      newRecordFactory: undefined,
+      records: [new Note()],
+    });
     expect(component.entityConstructor).toEqual(Note);
   });
 

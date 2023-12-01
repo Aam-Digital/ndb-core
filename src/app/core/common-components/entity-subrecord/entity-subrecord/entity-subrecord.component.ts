@@ -236,7 +236,10 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
     let resetupTable = false;
     let reinitFormGroups = false;
 
-    if (changes.records || changes.newRecordFactory) {
+    if (
+      changes.hasOwnProperty("records") ||
+      changes.hasOwnProperty("newRecordFactory")
+    ) {
       this.initEntityConstructor();
     }
 
