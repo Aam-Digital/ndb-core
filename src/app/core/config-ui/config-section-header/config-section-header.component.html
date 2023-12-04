@@ -1,6 +1,6 @@
 <div class="flex-row align-baseline">
   <mat-form-field floatLabel="always" class="flex-grow">
-    <mat-label>Title</mat-label>
+    <mat-label>{{ label }}</mat-label>
     <input
       matInput
       [ngModel]="title"
@@ -9,7 +9,7 @@
     />
   </mat-form-field>
 
-  <button (click)="remove.emit()" mat-icon-button class="group-remove-button">
+  <button (click)="removeSection()" mat-icon-button class="group-remove-button">
     <fa-icon icon="times"></fa-icon>
   </button>
 </div>

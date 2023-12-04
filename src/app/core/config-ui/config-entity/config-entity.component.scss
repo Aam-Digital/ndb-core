@@ -26,3 +26,11 @@
   padding: sizes.$large;
   margin: sizes.$small;
 }
+
+:host ::ng-deep .mat-mdc-tab {
+  // adjust tab header height to properly display mat-form-field for editing tab label
+  height: 60px !important;
+}
+app-config-section-header {
+  margin-bottom: -1em;
+}

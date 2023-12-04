@@ -5,6 +5,7 @@ import { FormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 /**
  * Simple building block for UI Builder for a section title including button to remove the section.
@@ -37,4 +38,27 @@ export class ConfigSectionHeaderComponent {
   @Output() titleChange = new EventEmitter<string>();
 
   @Output() remove = new EventEmitter();
+
+  /** disable the confirmation dialog displayed before a remove output is emitted */
+  @Input() disableConfirmation = false;
+
+  /** overwrite the label (default: "title") displayed for the form field */
+  @Input()
+  label = $localize`:Admin UI - Config Section Header form field label:Title`;
+
+  constructor(private confirmationDialog: ConfirmationDialogService) {}
+
+  async removeSection() {
+    if (this.disableConfirmation) {
+      this.remove.emit();
+    }
+
+    const confirmation = await this.confirmationDialog.getConfirmation(
+      $localize`:Admin UI - Delete Section Confirmation Title:Delete Section?`,
+      $localize`:Admin UI - Delete Section Confirmation Text:Do you really want to delete this section with all its content?`,
+    );
+    if (confirmation) {
+      this.remove.emit();
+    }
+  }
 }

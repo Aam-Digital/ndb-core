@@ -9,12 +9,22 @@
   </div>
 </div>
 
-<mat-tab-group [preserveContent]="true">
-  <mat-tab *ngFor="let panelConfig of configDetailsView?.panels">
+<mat-tab-group [preserveContent]="true" #tabs>
+  <mat-tab
+    *ngFor="let panelConfig of configDetailsView?.panels; index as tabIndex"
+  >
     <ng-template mat-tab-label>
-      <span>
+      <span *ngIf="tabIndex !== tabs.selectedIndex; else tabTitleForm">
         {{ panelConfig.title }}
       </span>
+
+      <ng-template #tabTitleForm>
+        <app-config-section-header
+          [(title)]="panelConfig.title"
+          label=""
+          (remove)="configDetailsView.panels.splice(tabIndex, 1)"
+        ></app-config-section-header
+      ></ng-template>
     </ng-template>
 
     <ng-template matTabContent>
@@ -25,7 +35,7 @@
         >
           <app-config-section-header
             [(title)]="componentConfig.title"
-            (remove)="removeSection(panelConfig, componentConfig)"
+            (remove)="panelConfig.components.splice(j, 1)"
           ></app-config-section-header>
 
           <app-config-entity-form
@@ -59,6 +69,21 @@
           Add Section
         </button>
       </div>
+    </ng-template>
+  </mat-tab>
+
+  <!-- Add new tab -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <button
+        mat-stroked-button
+        color="accent"
+        matTooltip="add a new tab"
+        i18n-matTooltip
+        (click)="createPanel()"
+      >
+        <fa-icon aria-label="add" icon="plus-circle"></fa-icon>
+      </button>
     </ng-template>
   </mat-tab>
 </mat-tab-group>

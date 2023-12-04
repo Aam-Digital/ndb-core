@@ -1,8 +1,7 @@
-import { Component, Input, OnChanges } from "@angular/core";
+import { Component, Input, OnChanges, ViewChild } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
-  PanelComponent,
 } from "../../entity-details/EntityDetailsConfig";
 import { EntityConstructor } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
@@ -15,6 +14,7 @@ import { Config } from "../../config/config";
 import { EntityConfigService } from "../../entity/entity-config.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityConfig } from "../../entity/entity-config";
+import { MatTabGroup } from "@angular/material/tabs";
 
 @DynamicComponent("ConfigEntity")
 @Component({
@@ -28,6 +28,8 @@ export class ConfigEntityComponent implements OnChanges {
 
   configDetailsView: EntityDetailsConfig;
   schemaFieldChanges: EntitySchemaField[] = [];
+
+  @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
   constructor(
     private entities: EntityRegistry,
@@ -61,11 +63,6 @@ export class ConfigEntityComponent implements OnChanges {
     });
   }
 
-  removeSection(panelConfig: Panel, componentConfig: PanelComponent) {
-    const index = panelConfig.components.indexOf(componentConfig);
-    panelConfig.components.splice(index, 1);
-  }
-
   cancel() {
     // TODO: reload entity schema from config (?), because it has been edited in place
     this.location.back();
@@ -96,5 +93,17 @@ export class ConfigEntityComponent implements OnChanges {
     // TODO: snackbar + undo action (this should maybe become a default somewhere in a central service, used a lot)
 
     this.location.back();
+  }
+
+  createPanel() {
+    const newPanel: Panel = { title: "New Tab", components: [] };
+    this.configDetailsView.panels.push(newPanel);
+
+    // wait until view has actually added the new tab before we can auto-select it
+    setTimeout(() => {
+      const newTabIndex = this.configDetailsView.panels.length - 1;
+      this.tabGroup.selectedIndex = newTabIndex;
+      this.tabGroup.focusTab(newTabIndex);
+    });
   }
 }
