@@ -28,8 +28,8 @@ export class HealthCheckupComponent implements OnInit {
       {
         id: "bmi",
         label: $localize`:Table header, Short for Body Mass Index:BMI`,
-        view: "ReadonlyFunction",
-        tooltip: $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
+        viewComponent: "ReadonlyFunction",
+        description: $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
         additional: (entity: HealthCheck) => this.getBMI(entity),
       },
     ],

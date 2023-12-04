@@ -1,22 +1,12 @@
 <form [ngClass]="{ 'grid-layout': gridLayout }">
-  <div *ngFor="let col of columns; let i = index" class="entity-form-cell">
-    <h2 *ngIf="columnHeaders?.[i]">{{ columnHeaders[i] }}</h2>
-    <div *ngFor="let row of col">
-      <div [class.field-with-tooltip-suffix]="row.tooltip">
-        <ng-container
-          [appDynamicComponent]="{
-            component: row.edit,
-            config: {
-              formFieldConfig: row,
-              propertySchema: entity.getSchema().get(row.id),
-              formControl: form.get(row.id),
-              entity: entity
-            }
-          }"
-        >
-        </ng-container>
-      </div>
-      <app-help-button [text]="row.tooltip"></app-help-button>
+  <div *ngFor="let group of fieldGroups" class="entity-form-cell">
+    <h2 *ngIf="group.header">{{ group.header }}</h2>
+    <div *ngFor="let field of group.fields">
+      <app-entity-field-edit
+        [field]="field"
+        [entity]="entity"
+        [form]="form"
+      ></app-entity-field-edit>
     </div>
   </div>
 </form>

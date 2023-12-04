@@ -35,15 +35,15 @@ const Template: StoryFn<FormComponent<any>> = (args: FormComponent<any>) => ({
 
 const fieldConfig: FormFieldConfig = {
   id: "relatedEntities",
-  view: "DisplayEntityArray",
-  edit: "EditEntityArray",
+  viewComponent: "DisplayEntityArray",
+  editComponent: "EditEntityArray",
   label: "test related entities label",
-  tooltip: "test tooltip",
+  description: "test tooltip",
 };
 const otherField: FormFieldConfig = {
   id: "x",
-  view: "DisplayNumber",
-  edit: "EditNumber",
+  viewComponent: "DisplayNumber",
+  editComponent: "EditNumber",
   label: "other label",
 };
 
