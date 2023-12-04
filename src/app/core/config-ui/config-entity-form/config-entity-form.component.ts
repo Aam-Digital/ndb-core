@@ -25,7 +25,7 @@ import { FieldGroup } from "../../entity-details/form/field-group";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 
 // TODO: we wanted to remove the interfaces implemented by components - do we reintroduce them again for the Admin UI?
-interface FormConfig {
+export interface FormConfig {
   fieldGroups: FieldGroup[];
 }
 
