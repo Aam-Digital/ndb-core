@@ -283,7 +283,7 @@ The form component is a flexible component that can be used inside the details c
 It allows to dynamically create a form through configuration.
 The configuration for this component expects a single field, the `"fieldGroups"`.
 
-The fieldGroups should be an array of logically related fields and optionally a header display above the group of fields.
+The fieldGroups should be an array of logically related fields and optionally a header displayed above the group of fields.
 Each field group is rendered next to each other (as columns).
 You can also define only a single field in each fieldGroups entry, to display them next to each other instead of one field taking up full width.
 The definitions for the fields is defined by the [FormFieldConfiguration](../../interfaces/FormFieldConfig.html)
