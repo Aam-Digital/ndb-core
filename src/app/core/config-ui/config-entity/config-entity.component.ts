@@ -12,9 +12,9 @@ import { Location } from "@angular/common";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Config } from "../../config/config";
 import { EntityConfigService } from "../../entity/entity-config.service";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityConfig } from "../../entity/entity-config";
 import { MatTabGroup } from "@angular/material/tabs";
+import { ConfigFieldChange } from "../config-field/config-field.component";
 
 @DynamicComponent("ConfigEntity")
 @Component({
@@ -27,7 +27,7 @@ export class ConfigEntityComponent implements OnChanges {
   entityConstructor: EntityConstructor;
 
   configDetailsView: EntityDetailsConfig;
-  schemaFieldChanges: EntitySchemaField[] = [];
+  schemaFieldChanges: ConfigFieldChange[] = [];
 
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
@@ -53,7 +53,9 @@ export class ConfigEntityComponent implements OnChanges {
       // not supported currently
       return;
     }
-    this.configDetailsView = detailsView.config;
+
+    // work on a deep copy as we are editing in place (for titles, sections, etc.)
+    this.configDetailsView = JSON.parse(JSON.stringify(detailsView.config));
   }
 
   addSection(panel: Panel) {
@@ -79,14 +81,15 @@ export class ConfigEntityComponent implements OnChanges {
       EntityConfigService.getDetailsViewId(this.entityConstructor)
     ].config = this.configDetailsView;
 
-    const entityAttr = (
-      newConfig.data[
-        EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType
-      ] as EntityConfig
-    ).attributes;
-    for (const newField of this.schemaFieldChanges) {
-      // TODO entityAttr.push(newField);
-      // TODO: more rigorously filter attributes that are equal to default class definition, so they can still be updated through code updates?
+    const entitySchemaConfig: EntityConfig = newConfig.data[
+      EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType
+    ] as EntityConfig;
+    for (const [fieldId, field] of this.entityConstructor.schema.entries()) {
+      if (!field._isCustomizedField) {
+        // do not write default fields from the classes into config
+        continue;
+      }
+      entitySchemaConfig.attributes[fieldId] = field;
     }
 
     await this.entityMapper.save(newConfig);

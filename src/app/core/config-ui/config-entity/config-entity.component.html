@@ -42,7 +42,6 @@
             *ngIf="componentConfig.component === 'Form'; else otherComponent"
             [config]="componentConfig.config"
             [entityType]="entityConstructor"
-            (entitySchemaFieldChange)="schemaFieldChanges.push($event)"
           >
           </app-config-entity-form>
 

@@ -1,18 +1,11 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnChanges,
-  Output,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import {
+  ConfigFieldChange,
   ConfigFieldComponent,
-  ConfigFieldResult,
 } from "../config-field/config-field.component";
 import {
   CdkDragDrop,
@@ -42,8 +35,6 @@ export class ConfigEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   @Input() config: FormConfig;
-
-  @Output() entitySchemaFieldChange = new EventEmitter<EntitySchemaField>();
 
   dummyEntity: Entity;
   dummyForm: FormGroup;
@@ -107,7 +98,7 @@ export class ConfigEntityFormComponent implements OnChanges {
         },
       })
       .afterClosed()
-      .subscribe((updatedFieldSchema: ConfigFieldResult) => {
+      .subscribe((updatedFieldSchema: ConfigFieldChange) => {
         if (!updatedFieldSchema) {
           // canceled
           if (!fieldId) {
@@ -129,8 +120,9 @@ export class ConfigEntityFormComponent implements OnChanges {
     fieldId: string,
     schemaField: EntitySchemaField,
   ): ColumnConfig {
+    schemaField._isCustomizedField = true;
+    // we need the up-to-date schema, so we have to edit the entity in-place
     this.entityType.schema.set(fieldId, schemaField);
-    this.entitySchemaFieldChange.emit(schemaField);
 
     if (!this.dummyForm.get(fieldId)) {
       const newFormGroup = this.entityFormService.createFormGroup(

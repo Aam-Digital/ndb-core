@@ -78,6 +78,7 @@ export class EntityConfigService {
   ) {
     const entityConfig = configAttributes || this.getEntityConfig(entityType);
     for (const [key, value] of Object.entries(entityConfig?.attributes ?? {})) {
+      value._isCustomizedField = true;
       addPropertySchema(entityType.prototype, key, value);
     }
 

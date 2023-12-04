@@ -39,7 +39,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntitySchema } from "../../entity/schema/entity-schema";
 import { uniqueIdValidator } from "../../common-components/entity-form/unique-id-validator";
 
-export interface ConfigFieldResult {
+export interface ConfigFieldChange {
   fieldId: string;
   schema: EntitySchemaField;
 }
@@ -268,7 +268,7 @@ export class ConfigFieldComponent implements OnChanges {
     this.dialogRef.close({
       fieldId: fieldId,
       schema: updatedEntitySchema,
-    } as ConfigFieldResult);
+    } as ConfigFieldChange);
   }
 }
 
