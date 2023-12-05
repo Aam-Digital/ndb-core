@@ -52,7 +52,7 @@ export class ConfigEntityFormComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
       this.initDummyForm(this.config);
-      this.availableFields = this.initAvailableFields(this.config);
+      this.initAvailableFields(this.config);
     }
   }
 
@@ -81,7 +81,7 @@ export class ConfigEntityFormComponent implements OnChanges {
       .filter(([key, value]) => value.label) // no technical, internal fields
       .map(([key]) => key);
 
-    return [this.createNewFieldPlaceholder, ...unusedFields];
+    this.availableFields = [this.createNewFieldPlaceholder, ...unusedFields];
   }
 
   openFieldConfig(field: ColumnConfig, fieldsArray: any[]) {
@@ -112,9 +112,9 @@ export class ConfigEntityFormComponent implements OnChanges {
       });
   }
 
-  drop(event: CdkDragDrop<FormFieldConfig[], FormFieldConfig[]>) {
+  drop(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
     const item = event.previousContainer.data[event.previousIndex];
-    if (item.id === null) {
+    if (typeof item === "object" && item.id === null) {
       if (event.container.data === this.availableFields) {
         // don't add new field to the disabled fields
         return;

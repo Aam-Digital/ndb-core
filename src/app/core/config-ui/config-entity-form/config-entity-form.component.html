@@ -20,7 +20,7 @@
       >
         <!-- FIELD [start] -->
         <div
-          *ngFor="let f of group.fields"
+          *ngFor="let field of group.fields"
           class="admin-form-field flex-row align-center"
           cdkDrag
           cdkDragBoundary=".overall-container"
@@ -36,14 +36,14 @@
             mat-stroked-button
             color="accent"
             class="field-edit-button"
-            (click)="openFieldConfig(f, group.fields)"
+            (click)="openFieldConfig(field, group.fields)"
           >
             Edit Field
           </button>
 
           <div class="dummy-form-field">
             <app-entity-field-edit
-              [field]="f"
+              [field]="field"
               [entity]="dummyEntity"
               [form]="dummyForm"
             ></app-entity-field-edit>
@@ -83,15 +83,15 @@
         drag & drop to / from here
         <fa-icon
           icon="question-circle"
-          matTooltip="You can remove fields from the form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to reactivate it."
+          matTooltip="You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it."
           i18n-matTooltip
         ></fa-icon>
       </div>
 
       <div
-        *ngFor="let f of availableFields"
+        *ngFor="let field of availableFields"
         class="admin-form-field flex-row align-center"
-        [class.admin-form-field-new]="f === createNewFieldPlaceholder"
+        [class.admin-form-field-new]="field === createNewFieldPlaceholder"
         cdkDrag
         cdkDragBoundary="mat-drawer-container"
       >
@@ -104,16 +104,16 @@
 
         <div>
           <app-entity-field-label
-            [field]="f"
+            [field]="field"
             [entityType]="entityType"
           ></app-entity-field-label>
 
           <button
-            *ngIf="f !== createNewFieldPlaceholder"
+            *ngIf="field !== createNewFieldPlaceholder"
             mat-stroked-button
             color="accent"
             class="field-edit-button field-edit-button-small"
-            (click)="openFieldConfig(f, availableFields)"
+            (click)="openFieldConfig(field, availableFields)"
           >
             Edit
           </button>

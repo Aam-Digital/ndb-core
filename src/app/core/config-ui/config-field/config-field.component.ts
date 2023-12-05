@@ -72,7 +72,7 @@ export interface ConfigFieldChange {
   ],
 })
 export class ConfigFieldComponent implements OnChanges {
-  @Input() entitySchemaFieldWithId: EntitySchemaField & { id?: string }; // TODO: add id / key to EntitySchemaField for easier handling?
+  @Input() entitySchemaFieldWithId: EntitySchemaField & { id?: string };
   @Input() entitySchema: EntitySchema;
 
   form: FormGroup;
