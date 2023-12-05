@@ -12,7 +12,6 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FieldGroup } from "../../entity-details/form/field-group";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
@@ -108,32 +107,9 @@ export class ConfigEntityFormComponent implements OnChanges {
           return;
         }
 
-        const updatedFormField = this.saveSchemaField(
-          updatedFieldSchema.fieldId,
-          updatedFieldSchema.schema,
-        );
-        fieldsArray.splice(fieldsArray.indexOf(field), 1, updatedFormField);
+        this.entityType.schema.set(fieldId, updatedFieldSchema.schema);
+        this.initDummyForm(this.config);
       });
-  }
-
-  private saveSchemaField(
-    fieldId: string,
-    schemaField: EntitySchemaField,
-  ): ColumnConfig {
-    schemaField._isCustomizedField = true;
-    // we need the up-to-date schema, so we have to edit the entity in-place
-    this.entityType.schema.set(fieldId, schemaField);
-
-    if (!this.dummyForm.get(fieldId)) {
-      const newFormGroup = this.entityFormService.createFormGroup(
-        [fieldId],
-        this.dummyEntity,
-      );
-      this.dummyForm.addControl(fieldId, newFormGroup.get(fieldId));
-      this.dummyForm.disable();
-    }
-
-    return fieldId;
   }
 
   drop(event: CdkDragDrop<any, any>) {

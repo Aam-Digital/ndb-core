@@ -258,7 +258,7 @@ export class ConfigFieldComponent implements OnChanges {
     }
 
     const updatedEntitySchema = Object.assign(
-      {},
+      { _isCustomizedField: true },
       this.entitySchemaFieldWithId,
       this.form.getRawValue(),
     );
