@@ -39,6 +39,7 @@ import { DemoTodoGeneratorService } from "../../features/todos/model/demo-todo-g
 import { DemoConfigurableEnumGeneratorService } from "../basic-datatypes/configurable-enum/demo-configurable-enum-generator.service";
 import { DemoPublicFormGeneratorService } from "../../features/public-form/demo-public-form-generator.service";
 import { DemoSiteSettingsGeneratorService } from "../site-settings/demo-site-settings-generator.service";
+import { DemoReportConfigGeneratorService } from "../../features/reporting/demo-report-config-generator.service";
 
 const demoDataGeneratorProviders = [
   ...DemoConfigGeneratorService.provider(),
@@ -69,6 +70,7 @@ const demoDataGeneratorProviders = [
     maxCountAttributes: 5,
   }),
   ...DemoTodoGeneratorService.provider(),
+  ...DemoReportConfigGeneratorService.provider(),
 ];
 
 /**
