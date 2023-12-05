@@ -7,8 +7,6 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../alerts/alert.service";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
-import { DatabaseField } from "../../entity/database-field.decorator";
-import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 describe("FormComponent", () => {
   let component: FormComponent<Child>;
@@ -25,7 +23,7 @@ describe("FormComponent", () => {
     fixture = TestBed.createComponent(FormComponent<Child>);
     component = fixture.componentInstance;
     component.entity = new Child();
-    component.cols = [[{ id: "name" }]];
+    component.fieldGroups = [{ fields: [{ id: "name" }] }];
     fixture.detectChanges();
   });
 
@@ -37,7 +35,7 @@ describe("FormComponent", () => {
     expect(component.creatingNew).toBeFalse();
 
     component.entity = new Child();
-    component.cols = [];
+    component.fieldGroups = [];
     component.creatingNew = true;
 
     expect(component.creatingNew).toBeTrue();
@@ -88,58 +86,5 @@ describe("FormComponent", () => {
     component.cancelClicked();
 
     expect(component.form.get("name")).toHaveValue(null);
-  });
-
-  it("should add column definitions from property schema", () => {
-    class Test extends Child {
-      @DatabaseField({
-        description: "Property description",
-        additional: "someAdditional",
-      })
-      propertyField: string;
-    }
-
-    spyOn(TestBed.inject(EntitySchemaService), "getComponent").and.returnValue(
-      "PredefinedComponent",
-    );
-    component.entity = new Test();
-    component.cols = [
-      [
-        {
-          id: "fieldWithDefinition",
-          edit: "EditComponent",
-          view: "DisplayComponent",
-          label: "Field with definition",
-          tooltip: "Custom tooltip",
-          additional: "additional",
-        },
-        { id: "propertyField", label: "Property" },
-      ],
-    ];
-
-    component.ngOnInit();
-
-    expect(component._cols).toEqual([
-      [
-        {
-          id: "fieldWithDefinition",
-          edit: "EditComponent",
-          view: "DisplayComponent",
-          label: "Field with definition",
-          forTable: false,
-          tooltip: "Custom tooltip",
-          additional: "additional",
-        },
-        {
-          id: "propertyField",
-          edit: "PredefinedComponent",
-          view: "PredefinedComponent",
-          label: "Property",
-          forTable: false,
-          tooltip: "Property description",
-          additional: "someAdditional",
-        },
-      ],
-    ]);
   });
 });

@@ -268,10 +268,10 @@ export const defaultJsonConfig = {
             {
               "component": "Form",
               "config": {
-                "cols": [
-                  ["logo", "favicon"],
-                  ["siteName", "defaultLanguage", "displayLanguageSelect"],
-                  ["primary", "secondary", "error", "font"],
+                "fieldGroups": [
+                  { fields: ["logo", "favicon"] },
+                  { fields: ["siteName", "defaultLanguage", "displayLanguageSelect"] },
+                  { fields: ["primary", "secondary", "error", "font"] },
                 ]
               }
             }
@@ -316,14 +316,10 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "Form",
               "config": {
-                "cols": [
-                  [
-                    "name",
-                  ],
-                  [
-                    "phone"
-                  ]
-                ]
+                "fieldGroups": [
+                  { "fields": ["name"] },
+                  { "fields": ["phone"] },
+                ],
               }
             }
           ]
@@ -381,22 +377,11 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "Form",
               "config": {
-                "cols": [
-                  [
-                    "name",
-                    "privateSchool"
-                  ],
-                  [
-                    "address",
-                    "phone"
-                  ],
-                  [
-                    "language",
-                    "timing",
-                  ],
-                  [
-                    "remarks"
-                  ]
+                "fieldGroups": [
+                  { "fields": ["name", "privateSchool"] },
+                  { "fields": ["address", "phone"] },
+                  { "fields": ["language", "timing"] },
+                  { "fields": ["remarks"] }
                 ]
               }
             }
@@ -428,30 +413,30 @@ export const defaultJsonConfig = {
     "config": {
       "columns": [
         {
-          "view": "ChildBlock",
+          "viewComponent": "ChildBlock",
           "label": $localize`:Column title for ChildBlockComponents:Name`,
           "id": "name"
         },
         {
-          "view": "DisplayAge",
+          "viewComponent": "DisplayAge",
           "label": $localize`:Column label for age of child:Age`,
           "id": "age",
           "additional": "dateOfBirth"
         },
         {
-          "view": "DisplayText",
+          "viewComponent": "DisplayText",
           "label": $localize`:Column label for class which child attends:Class`,
           "id": "schoolClass"
         },
         {
-          "view": "DisplayEntityArray",
+          "viewComponent": "DisplayEntityArray",
           "label": $localize`:Column label for school which child attends:School`,
           "id": "schoolId",
           "additional": `${School.ENTITY_TYPE}`,
           "noSorting": true
         },
         {
-          "view": "RecentAttendanceBlocks",
+          "viewComponent": "RecentAttendanceBlocks",
           "label": $localize`:Column label for school attendance of child:Attendance (School)`,
           "id": "schoolAttendance",
           "additional": {
@@ -460,7 +445,7 @@ export const defaultJsonConfig = {
           "noSorting": true
         },
         {
-          "view": "RecentAttendanceBlocks",
+          "viewComponent": "RecentAttendanceBlocks",
           "label": $localize`:Column label for coaching attendance of child:Attendance (Coaching)`,
           "id": "coachingAttendance",
           "additional": {
@@ -469,7 +454,7 @@ export const defaultJsonConfig = {
           "noSorting": true
         },
         {
-          "view": "BmiBlock",
+          "viewComponent": "BmiBlock",
           "label": $localize`:Column label for BMI of child:BMI`,
           "id": "health_BMI",
           "noSorting": true
@@ -571,31 +556,20 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "Form",
               "config": {
-                "cols": [
-                  ["photo"],
-                  [
-                    "name",
-                    "projectNumber",
-                    "admissionDate",
-                  ],
-                  [
-                    "dateOfBirth",
-                    "birth_certificate",
-                    "gender",
-                    "motherTongue"
-                  ],
-                  [
-                    "center",
-                    "status",
-                    "address",
-                    "phone"
-                  ]
-                ],
-                "headers": [
-                  null,
-                  $localize`:Header for form section:Personal Information`,
-                  $localize`:Header for form section:Additional`,
-                  $localize`:Header for form section:Scholar activities`,
+                "fieldGroups": [
+                  { "fields": ["photo"] },
+                  {
+                    "fields": ["name", "projectNumber", "admissionDate"],
+                    "header": $localize`:Header for form section:Personal Information`
+                  },
+                  {
+                    "fields": ["dateOfBirth", "birth_certificate", "gender", "motherTongue"],
+                    "header": $localize`:Header for form section:Additional`
+                  },
+                  {
+                    "fields": ["center", "status", "address", "phone"],
+                    "header": $localize`:Header for form section:Scholar activities`
+                  }
                 ]
               }
             }
@@ -669,12 +643,14 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "Form",
               "config": {
-                "cols": [
-                  ["health_bloodGroup"],
-                  [
-                    { "id": "_description_health", "edit": "EditDescriptionOnly", "label": $localize`:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines.`},
-                    "health_lastDentalCheckup"
-                  ]
+                "fieldGroups": [
+                  { "fields": ["health_bloodGroup"] },
+                  {
+                    "fields": [
+                      { "id": "_description_health", "editComponent": "EditDescriptionOnly", "label": $localize`:description section:Health checkups are to be done regularly, at least every 6 months according to the program guidelines.`},
+                      "health_lastDentalCheckup"
+                    ]
+                  }
                 ]
               }
             },
@@ -733,10 +709,10 @@ export const defaultJsonConfig = {
               "title": "",
               "component": "Form",
               "config": {
-                "cols": [
-                  ["dropoutDate"],
-                  ["dropoutType"],
-                  ["dropoutRemarks"]
+                "fieldGroups": [
+                  { "fields": ["dropoutDate"] },
+                  { "fields": ["dropoutType"] },
+                  { "fields": ["dropoutRemarks"] }
                 ]
               }
             }
@@ -772,10 +748,10 @@ export const defaultJsonConfig = {
             {
               "component": "Form",
               "config": {
-                "cols": [
-                  ["title"],
-                  ["type", "inactive"],
-                  ["assignedTo"]
+                "fieldGroups": [
+                  { "fields": ["title"] },
+                  { "fields": ["type", "inactive"] },
+                  { "fields": ["assignedTo"] }
                 ]
               }
             }
@@ -787,11 +763,9 @@ export const defaultJsonConfig = {
             {
               "component": "Form",
               "config": {
-                "cols": [[
-                  "linkedGroups",
-                  "participants",
-                  "excludedParticipants"
-                ]]
+                "fieldGroups": [
+                  { "fields": ["linkedGroups", "participants", "excludedParticipants"] }
+                ]
               }
             }
           ]

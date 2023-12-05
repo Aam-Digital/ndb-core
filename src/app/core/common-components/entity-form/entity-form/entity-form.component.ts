@@ -6,17 +6,16 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
-import { FormFieldConfig } from "./FormConfig";
 import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NgClass, NgForOf, NgIf } from "@angular/common";
-import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { Subscription } from "rxjs";
 import moment from "moment";
-import { HelpButtonComponent } from "../../help-button/help-button.component";
+import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
+import { FieldGroup } from "../../../entity-details/form/field-group";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -35,13 +34,7 @@ import { HelpButtonComponent } from "../../help-button/help-button.component";
   // Use no encapsulation because we want to change the value of children (the mat-form-fields that are
   // dynamically created)
   encapsulation: ViewEncapsulation.None,
-  imports: [
-    NgForOf,
-    DynamicComponentDirective,
-    NgIf,
-    NgClass,
-    HelpButtonComponent,
-  ],
+  imports: [NgForOf, NgIf, NgClass, EntityFieldEditComponent],
   standalone: true,
 })
 export class EntityFormComponent<T extends Entity = Entity>
@@ -52,9 +45,7 @@ export class EntityFormComponent<T extends Entity = Entity>
    */
   @Input() entity: T;
 
-  @Input() columns: FormFieldConfig[][];
-
-  @Input() columnHeaders?: (string | null)[];
+  @Input() fieldGroups: FieldGroup[];
 
   @Input() form: EntityForm<T>;
 

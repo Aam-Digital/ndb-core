@@ -1,11 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Router } from "@angular/router";
-import {
-  EntityDetailsConfig,
-  Panel,
-  PanelComponent,
-  PanelConfig,
-} from "../EntityDetailsConfig";
+import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { AnalyticsService } from "../../analytics/analytics.service";
@@ -63,7 +58,7 @@ import { Subscription } from "rxjs";
     EntityArchivedInfoComponent,
   ],
 })
-export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
+export class EntityDetailsComponent implements OnChanges {
   creatingNew = false;
   isLoading = true;
   private changesSubscription: Subscription;
@@ -78,6 +73,9 @@ export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
   @Input() id: string;
   record: Entity;
 
+  /**
+   * The configuration for the panels on this details page.
+   */
   @Input() panels: Panel[] = [];
 
   constructor(
