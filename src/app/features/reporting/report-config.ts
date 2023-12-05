@@ -13,7 +13,7 @@ export class ReportConfig extends Entity {
   static create(data: Partial<ReportConfig>) {
     return Object.assign(new ReportConfig(), data);
   }
-  
+
   /** human-readable title of the report */
   @DatabaseField() title: string;
 
