@@ -8,7 +8,7 @@ import { DateWithAge } from "./dateWithAge";
 @Injectable()
 export class DateWithAgeDatatype extends DateOnlyDatatype {
   static override dataType = "date-with-age";
-  static override label: string = $localize`:datatype-label:date with age`;
+  static override label: string = $localize`:datatype-label:date of birth (date + age)`;
 
   editComponent = "EditAge";
 
