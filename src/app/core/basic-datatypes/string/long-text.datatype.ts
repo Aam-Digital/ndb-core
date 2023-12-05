@@ -9,5 +9,5 @@ export class LongTextDatatype extends StringDatatype {
   static override dataType = "long-text";
   static override label: string = $localize`:datatype-label:text (long)`;
 
-  editComponent: "EditLongText";
+  override editComponent = "EditLongText";
 }
