@@ -14,7 +14,7 @@ import { Config } from "../../config/config";
 import { EntityConfigService } from "../../entity/entity-config.service";
 import { EntityConfig } from "../../entity/entity-config";
 import { MatTabGroup } from "@angular/material/tabs";
-import { ConfigFieldChange } from "../config-field/config-field.component";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 
 @DynamicComponent("ConfigEntity")
 @Component({
@@ -27,7 +27,6 @@ export class ConfigEntityComponent implements OnChanges {
   entityConstructor: EntityConstructor;
 
   configDetailsView: EntityDetailsConfig;
-  schemaFieldChanges: ConfigFieldChange[] = [];
 
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
 
@@ -36,6 +35,7 @@ export class ConfigEntityComponent implements OnChanges {
     private configService: ConfigService,
     private location: Location,
     private entityMapper: EntityMapperService,
+    private entityActionsService: EntityActionsService,
   ) {}
 
   ngOnChanges(): void {
@@ -93,7 +93,11 @@ export class ConfigEntityComponent implements OnChanges {
     }
 
     await this.entityMapper.save(newConfig);
-    // TODO: snackbar + undo action (this should maybe become a default somewhere in a central service, used a lot)
+    this.entityActionsService.showSnackbarConfirmationWithUndo(
+      newConfig,
+      $localize`:Save config confirmation message:updated`,
+      [originalConfig],
+    );
 
     this.location.back();
   }

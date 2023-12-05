@@ -26,7 +26,7 @@ export class EntityActionsService {
     private entityAnonymize: EntityAnonymizeService,
   ) {}
 
-  private showSnackbarConfirmation(
+  showSnackbarConfirmationWithUndo(
     entity: Entity,
     action: string,
     previousEntitiesForUndo: Entity[],
@@ -109,7 +109,7 @@ export class EntityActionsService {
       await this.router.navigate([parentUrl]);
     }
 
-    this.showSnackbarConfirmation(
+    this.showSnackbarConfirmationWithUndo(
       result.originalEntitiesBeforeChange[0],
       $localize`:Entity action confirmation message verb:Deleted`,
       result.originalEntitiesBeforeChange,
@@ -158,7 +158,7 @@ export class EntityActionsService {
       );
     }
 
-    this.showSnackbarConfirmation(
+    this.showSnackbarConfirmationWithUndo(
       result.originalEntitiesBeforeChange[0],
       $localize`:Entity action confirmation message verb:Anonymized`,
       result.originalEntitiesBeforeChange,
@@ -173,9 +173,10 @@ export class EntityActionsService {
   async archive<E extends Entity>(entity: E) {
     const originalEntity = entity.copy();
     entity.inactive = true;
+
     await this.entityMapper.save(entity);
 
-    this.showSnackbarConfirmation(
+    this.showSnackbarConfirmationWithUndo(
       originalEntity,
       $localize`:Entity action confirmation message verb:Archived`,
       [originalEntity],
@@ -191,7 +192,7 @@ export class EntityActionsService {
     entity.inactive = false;
     await this.entityMapper.save(entity);
 
-    this.showSnackbarConfirmation(
+    this.showSnackbarConfirmationWithUndo(
       originalEntity,
       $localize`:Entity action confirmation message verb:Reactivated`,
       [originalEntity],
