@@ -112,7 +112,7 @@ export class ConfigEntityFormComponent implements OnChanges {
       });
   }
 
-  drop(event: CdkDragDrop<any, any>) {
+  drop(event: CdkDragDrop<FormFieldConfig[], FormFieldConfig[]>) {
     const item = event.previousContainer.data[event.previousIndex];
     if (item.id === null) {
       if (event.container.data === this.availableFields) {
