@@ -6,7 +6,6 @@ import {
   Output,
   SimpleChanges,
 } from "@angular/core";
-import { ReportConfig } from "../reporting-component-config";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -18,6 +17,7 @@ import { ExportDataDirective } from "../../../../core/export/export-data-directi
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { ReportConfig } from "../../report-config";
 
 @Component({
   selector: "app-select-report",
