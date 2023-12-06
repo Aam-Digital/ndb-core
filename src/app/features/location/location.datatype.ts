@@ -15,6 +15,15 @@ export class LocationDatatype extends DefaultDatatype<GeoResult, GeoResult> {
     super();
   }
 
+  transformToObjectFormat(value: GeoResult): GeoResult {
+    if (typeof value !== "object") {
+      // until we have an extended location datatype that includes a custom address addition field, discard invalid values (e.g. in case datatype was changed)
+      return undefined;
+    }
+
+    return value;
+  }
+
   async importMapFunction(val: any): Promise<GeoResult> {
     if (!val) {
       return undefined;

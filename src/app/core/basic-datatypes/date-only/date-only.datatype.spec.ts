@@ -5,7 +5,7 @@ describe("Schema data type: date-only", () => {
   let dataType: DateOnlyDatatype;
 
   beforeEach(waitForAsync(() => {
-    dataType = new DateOnlyDatatype();
+    dataType = new DateOnlyDatatype(null);
   }));
 
   it("should not fail on null values", () => {
