@@ -189,14 +189,17 @@ export function testDatatype(
   objectValue,
   databaseValue,
   additionalSchemaFieldConfig?: any,
+  entitySchemaService?: EntitySchemaService,
 ) {
-  let entitySchemaService: EntitySchemaService;
   let mockInjector: jasmine.SpyObj<Injector>;
 
   beforeEach(waitForAsync(() => {
+    if (entitySchemaService) {
+      return;
+    }
+
     mockInjector = jasmine.createSpyObj(["get"]);
     mockInjector.get.and.returnValue([dataType]);
-
     entitySchemaService = new EntitySchemaService(mockInjector);
   }));
 

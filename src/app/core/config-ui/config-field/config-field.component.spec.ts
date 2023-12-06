@@ -62,11 +62,12 @@ describe("ConfigFieldComponent", () => {
     expect(formId.getRawValue()).toBe(testFieldId);
 
     // simulate configuring new field
-    component.entitySchemaFieldWithId = { id: null };
+    component.entitySchemaField = {};
+    component.fieldId = null;
     component.ngOnChanges({
       entitySchemaField: new SimpleChange(
         null,
-        component.entitySchemaFieldWithId,
+        component.entitySchemaField,
         true,
       ),
     });

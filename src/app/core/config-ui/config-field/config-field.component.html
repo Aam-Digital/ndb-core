@@ -1,6 +1,4 @@
-<h2 mat-dialog-title i18n>
-  Configure Field "{{ entitySchemaFieldWithId.label }}"
-</h2>
+<h2 mat-dialog-title i18n>Configure Field "{{ entitySchemaField.label }}"</h2>
 <app-dialog-close mat-dialog-close></app-dialog-close>
 
 <mat-dialog-content>
@@ -11,7 +9,7 @@
   </p>
 
   <form [formGroup]="form">
-    <mat-tab-group>
+    <mat-tab-group formGroupName="schemaFields">
       <mat-tab label="Basics" i18n-label>
         <div class="grid-layout margin-top-regular">
           <div class="entity-form-cell">
@@ -63,10 +61,14 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-              <input formControlName="id" matInput />
-              <fa-icon *ngIf="formId.disabled" icon="lock" matSuffix></fa-icon>
-              <mat-error *ngIf="formId.hasError('uniqueId')">
-                {{ formId.getError("uniqueId") }}
+              <input [formControl]="fieldIdForm" matInput />
+              <fa-icon
+                *ngIf="fieldIdForm.disabled"
+                icon="lock"
+                matSuffix
+              ></fa-icon>
+              <mat-error *ngIf="fieldIdForm.hasError('uniqueId')">
+                {{ fieldIdForm.getError("uniqueId") }}
               </mat-error>
             </mat-form-field>
 

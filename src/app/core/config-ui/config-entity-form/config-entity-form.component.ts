@@ -3,10 +3,7 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
-import {
-  ConfigFieldChange,
-  ConfigFieldComponent,
-} from "../config-field/config-field.component";
+import { ConfigFieldComponent } from "../config-field/config-field.component";
 import {
   CdkDragDrop,
   moveItemInArray,
@@ -15,6 +12,7 @@ import {
 import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FieldGroup } from "../../entity-details/form/field-group";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { AdminEntityService } from "../admin-entity.service";
 
 // TODO: we wanted to remove the interfaces implemented by components - do we reintroduce them again for the Admin UI?
 export interface FormConfig {
@@ -47,19 +45,24 @@ export class ConfigEntityFormComponent implements OnChanges {
   constructor(
     private entityFormService: EntityFormService,
     private matDialog: MatDialog,
-  ) {}
+    adminEntityService: AdminEntityService,
+  ) {
+    adminEntityService.entitySchemaUpdated.subscribe(() =>
+      this.initDummyForm(),
+    );
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
-      this.initDummyForm(this.config);
-      this.initAvailableFields(this.config);
+      this.initDummyForm();
+      this.initAvailableFields();
     }
   }
 
-  private initDummyForm(config: FormConfig) {
+  private initDummyForm() {
     this.dummyEntity = new this.entityType();
     this.dummyForm = this.entityFormService.createFormGroup(
-      this.getUsedFields(config),
+      this.getUsedFields(this.config),
       this.dummyEntity,
     );
     this.dummyForm.disable();
@@ -69,8 +72,13 @@ export class ConfigEntityFormComponent implements OnChanges {
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
   }
 
-  private initAvailableFields(config: FormConfig) {
-    const usedFields = this.getUsedFields(config);
+  /**
+   * Load any fields from schema that are not already in the form, so that the user can drag them into the form.
+   * @param config
+   * @private
+   */
+  private initAvailableFields() {
+    const usedFields = this.getUsedFields(this.config);
     const unusedFields = Array.from(this.entityType.schema.entries())
       .filter(
         ([key]) =>
@@ -85,30 +93,30 @@ export class ConfigEntityFormComponent implements OnChanges {
   }
 
   openFieldConfig(field: ColumnConfig, fieldsArray: any[]) {
-    const fieldId = typeof field === "string" ? field : field?.id;
+    const fieldIdToEdit = typeof field === "string" ? field : field?.id;
     this.matDialog
       .open(ConfigFieldComponent, {
         width: "99%",
         maxHeight: "90vh",
         data: {
-          entitySchemaField: this.entityType.schema.get(fieldId),
-          fieldId: fieldId,
-          entitySchema: this.entityType.schema,
+          entitySchemaField: this.entityType.schema.get(fieldIdToEdit),
+          fieldId: fieldIdToEdit,
+          entityType: this.entityType,
         },
       })
       .afterClosed()
-      .subscribe((updatedFieldSchema: ConfigFieldChange) => {
-        if (!updatedFieldSchema) {
-          // canceled
-          if (!fieldId) {
-            // remove newly created field that was canceled
-            fieldsArray.splice(fieldsArray.indexOf(field), 1);
-          }
+      .subscribe((newFieldId: string) => {
+        if (fieldIdToEdit) {
+          // edited existing field, no further action required
           return;
         }
 
-        this.entityType.schema.set(fieldId, updatedFieldSchema.schema);
-        this.initDummyForm(this.config);
+        if (newFieldId) {
+          fieldsArray.splice(fieldsArray.indexOf(field), 1, newFieldId);
+        } else {
+          // canceled, remove newly created field that was canceled
+          fieldsArray.splice(fieldsArray.indexOf(field), 1);
+        }
       });
   }
 
@@ -120,9 +128,7 @@ export class ConfigEntityFormComponent implements OnChanges {
         return;
       }
 
-      const newField = { id: null };
-      event.container.data.splice(event.currentIndex, 0, newField);
-      this.openFieldConfig(newField, event.container.data);
+      this.addNewField(event);
       return;
     }
 
@@ -148,6 +154,12 @@ export class ConfigEntityFormComponent implements OnChanges {
       // ensure "create new field" is always first
       moveItemInArray(event.container.data, event.currentIndex, 1);
     }
+  }
+
+  private addNewField(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
+    const newFieldPlaceholder = { id: null }; // will be replaced with the new field id after user saves field config
+    event.container.data.splice(event.currentIndex, 0, newFieldPlaceholder);
+    this.openFieldConfig(newFieldPlaceholder, event.container.data);
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {

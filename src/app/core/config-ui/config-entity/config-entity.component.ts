@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, ViewChild } from "@angular/core";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
@@ -15,6 +15,7 @@ import { EntityConfigService } from "../../entity/entity-config.service";
 import { EntityConfig } from "../../entity/entity-config";
 import { MatTabGroup } from "@angular/material/tabs";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 @DynamicComponent("ConfigEntity")
 @Component({
@@ -22,9 +23,10 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
   templateUrl: "./config-entity.component.html",
   styleUrls: ["./config-entity.component.scss"],
 })
-export class ConfigEntityComponent implements OnChanges {
+export class ConfigEntityComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
+  private originalEntitySchemaFields: [string, EntitySchemaField][];
 
   configDetailsView: EntityDetailsConfig;
 
@@ -38,12 +40,15 @@ export class ConfigEntityComponent implements OnChanges {
     private entityActionsService: EntityActionsService,
   ) {}
 
-  ngOnChanges(): void {
+  ngOnInit(): void {
     this.init();
   }
 
   private init() {
     this.entityConstructor = this.entities.get(this.entityType);
+    this.originalEntitySchemaFields = JSON.parse(
+      JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
+    );
 
     const detailsView: ViewConfig<EntityDetailsConfig> =
       this.configService.getConfig(
@@ -66,7 +71,7 @@ export class ConfigEntityComponent implements OnChanges {
   }
 
   cancel() {
-    // TODO: reload entity schema from config (?), because it has been edited in place
+    this.entityConstructor.schema = new Map(this.originalEntitySchemaFields);
     this.location.back();
   }
 
@@ -81,12 +86,17 @@ export class ConfigEntityComponent implements OnChanges {
       EntityConfigService.getDetailsViewId(this.entityConstructor)
     ].config = this.configDetailsView;
 
+    const entityConfigKey =
+      EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType;
+    if (!newConfig.data[entityConfigKey]) {
+      newConfig.data[entityConfigKey] = { attributes: {} } as EntityConfig;
+    }
     const entitySchemaConfig: EntityConfig = newConfig.data[
-      EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType
+      entityConfigKey
     ] as EntityConfig;
     for (const [fieldId, field] of this.entityConstructor.schema.entries()) {
       if (!field._isCustomizedField) {
-        // do not write default fields from the classes into config
+        // do not write unchanged default fields from the classes into config
         continue;
       }
       entitySchemaConfig.attributes[fieldId] = field;

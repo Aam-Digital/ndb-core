@@ -89,8 +89,7 @@ export class Note extends Entity {
    * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    */
   @DatabaseField({
-    innerDataType: "schema-embed",
-    additional: EventAttendance,
+    innerDataType: EventAttendance.DATA_TYPE,
     anonymize: "retain",
   })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
