@@ -1,7 +1,7 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
-import { FormGroup } from "@angular/forms";
+import { FormControl, FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { ConfigFieldComponent } from "../config-field/config-field.component";
 import {
@@ -9,7 +9,10 @@ import {
   moveItemInArray,
   transferArrayItem,
 } from "@angular/cdk/drag-drop";
-import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import {
+  ColumnConfig,
+  toFormFieldConfig,
+} from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FieldGroup } from "../../entity-details/form/field-group";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { AdminEntityService } from "../admin-entity.service";
@@ -36,7 +39,7 @@ export class ConfigEntityFormComponent implements OnChanges {
   dummyEntity: Entity;
   dummyForm: FormGroup;
 
-  availableFields: ColumnConfig[];
+  availableFields: ColumnConfig[] = [];
   readonly createNewFieldPlaceholder: FormFieldConfig = {
     id: null,
     label: "Create New Field",
@@ -54,15 +57,15 @@ export class ConfigEntityFormComponent implements OnChanges {
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
-      this.initDummyForm();
       this.initAvailableFields();
+      this.initDummyForm();
     }
   }
 
   private initDummyForm() {
     this.dummyEntity = new this.entityType();
     this.dummyForm = this.entityFormService.createFormGroup(
-      this.getUsedFields(this.config),
+      [...this.getUsedFields(this.config), ...this.availableFields],
       this.dummyEntity,
     );
     this.dummyForm.disable();
@@ -92,8 +95,21 @@ export class ConfigEntityFormComponent implements OnChanges {
     this.availableFields = [this.createNewFieldPlaceholder, ...unusedFields];
   }
 
-  openFieldConfig(field: ColumnConfig, fieldsArray: any[]) {
-    const fieldIdToEdit = typeof field === "string" ? field : field?.id;
+  /**
+   * Open the form to edit details of a single field's schema.
+   * Optionally this can add a newly created field to a field group,
+   * if the parameters are not provided only schema is updated.
+   *
+   * @param field field to edit or { id: null } to create a new field
+   * @param addIntoFieldsGroup (optional) the field group into which the field (considered as newly created) should be added
+   * @param addAtIndex (optional) the index at which the field will be added in addIntoFieldsGroup
+   */
+  openFieldConfig(
+    field: ColumnConfig,
+    addIntoFieldsGroup?: any[],
+    addAtIndex?: number,
+  ) {
+    let fieldIdToEdit = toFormFieldConfig(field).id;
     this.matDialog
       .open(ConfigFieldComponent, {
         width: "99%",
@@ -106,29 +122,31 @@ export class ConfigEntityFormComponent implements OnChanges {
       })
       .afterClosed()
       .subscribe((newFieldId: string) => {
-        if (fieldIdToEdit) {
-          // edited existing field, no further action required
+        if (!newFieldId || !addIntoFieldsGroup) {
+          // cancelled popup of edited existing field, no further action required
           return;
         }
 
-        if (newFieldId) {
-          fieldsArray.splice(fieldsArray.indexOf(field), 1, newFieldId);
-        } else {
-          // canceled, remove newly created field that was canceled
-          fieldsArray.splice(fieldsArray.indexOf(field), 1);
-        }
+        // add newly created field
+        this.dummyForm.addControl(newFieldId, new FormControl());
+        this.dummyForm.disable();
+        addIntoFieldsGroup.splice(addAtIndex, 0, newFieldId);
       });
   }
 
   drop(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
     const item = event.previousContainer.data[event.previousIndex];
-    if (typeof item === "object" && item.id === null) {
+    if (item === this.createNewFieldPlaceholder) {
       if (event.container.data === this.availableFields) {
         // don't add new field to the disabled fields
         return;
       }
 
-      this.addNewField(event);
+      this.openFieldConfig(
+        { id: null },
+        event.container.data,
+        event.currentIndex,
+      );
       return;
     }
 
@@ -154,12 +172,6 @@ export class ConfigEntityFormComponent implements OnChanges {
       // ensure "create new field" is always first
       moveItemInArray(event.container.data, event.currentIndex, 1);
     }
-  }
-
-  private addNewField(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
-    const newFieldPlaceholder = { id: null }; // will be replaced with the new field id after user saves field config
-    event.container.data.splice(event.currentIndex, 0, newFieldPlaceholder);
-    this.openFieldConfig(newFieldPlaceholder, event.container.data);
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {

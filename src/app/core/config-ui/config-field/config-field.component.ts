@@ -93,7 +93,7 @@ export class ConfigFieldComponent implements OnChanges {
     private entityRegistry: EntityRegistry,
     private adminEntityService: AdminEntityService,
   ) {
-    this.entitySchemaField = data.entitySchemaField;
+    this.entitySchemaField = data.entitySchemaField ?? {};
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
 
