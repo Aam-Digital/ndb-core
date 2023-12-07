@@ -51,6 +51,7 @@ export class ConfigSectionHeaderComponent {
   async removeSection() {
     if (this.disableConfirmation) {
       this.remove.emit();
+      return;
     }
 
     const confirmation = await this.confirmationDialog.getConfirmation(

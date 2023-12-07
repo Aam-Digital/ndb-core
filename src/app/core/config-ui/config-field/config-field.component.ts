@@ -205,7 +205,6 @@ export class ConfigFieldComponent implements OnChanges {
       .map((x) => ({
         label: Entity.extractEntityIdFromId(x), // TODO: add human-readable label to configurable-enum entities
         value: Entity.extractEntityIdFromId(x),
-        enumEntity: x,
       }));
     this.additionalForm.addValidators(Validators.required);
 
@@ -218,12 +217,12 @@ export class ConfigFieldComponent implements OnChanges {
       this.additionalForm.setValue(this.entitySchemaField.additional);
     } else if (this.schemaFieldsForm.get("label").value) {
       // when switching to enum datatype in the form, if unset generate a suggested enum-id immediately
-      this.createNewAdditionalOption(this.schemaFieldsForm.get("label").value);
+      const newOption = this.createNewAdditionalOption(
+        this.schemaFieldsForm.get("label").value,
+      );
+      this.typeAdditionalOptions.push(newOption);
+      this.additionalForm.setValue(newOption.value);
     }
-
-    this.schemaFieldsForm
-      .get("label")
-      .valueChanges.subscribe((v) => this.createNewAdditionalOption(v));
   }
 
   private initAdditionalForEntityRef() {
@@ -234,7 +233,7 @@ export class ConfigFieldComponent implements OnChanges {
     this.additionalForm.addValidators(Validators.required);
     if (
       this.typeAdditionalOptions.some(
-        (x) => x.value === this.additionalForm.value,
+        (x) => x.value === this.entitySchemaField.additional,
       )
     ) {
       this.additionalForm.setValue(this.entitySchemaField.additional);
@@ -243,7 +242,7 @@ export class ConfigFieldComponent implements OnChanges {
 
   private resetAdditional() {
     this.additionalForm.removeValidators(Validators.required);
-    this.additionalForm.setValue(undefined);
+    this.additionalForm.reset(null);
     this.typeAdditionalOptions = undefined;
     this.createNewAdditionalOption = undefined;
   }
@@ -254,10 +253,16 @@ export class ConfigFieldComponent implements OnChanges {
       return;
     }
 
+    const formValues = this.schemaFieldsForm.getRawValue();
+    for (const key of Object.keys(formValues)) {
+      if (formValues[key] === null) {
+        delete formValues[key];
+      }
+    }
     const updatedEntitySchema = Object.assign(
       { _isCustomizedField: true },
-      this.entitySchemaField,
-      this.schemaFieldsForm.getRawValue(),
+      this.entitySchemaField, // TODO: remove this merge once all schema fields are in the form (then only form values should apply)
+      formValues,
     );
     const fieldId = this.fieldIdForm.getRawValue();
 
