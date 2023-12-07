@@ -4,7 +4,10 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { NumberDatatype } from "../../../core/basic-datatypes/number/number.datatype";
 import { BooleanDatatype } from "../../../core/basic-datatypes/boolean/boolean.datatype";
-import { ReportConfig } from "../report-config";
+import { SqlReport } from "../report-config";
+import { HttpClient } from "@angular/common/http";
+import moment from "moment";
+import { firstValueFrom } from "rxjs";
 
 /**
  * Service that handles management of necessary SQS configurations
@@ -13,10 +16,22 @@ import { ReportConfig } from "../report-config";
   providedIn: "root",
 })
 export class SqlReportService {
-  constructor(private entities: EntityRegistry) {}
+  static QUERY_PROXY = "/query";
+  constructor(
+    private entities: EntityRegistry,
+    private http: HttpClient,
+  ) {}
 
-  query(report: ReportConfig) {
-    return undefined;
+  query(report: SqlReport, from: Date, to: Date) {
+    return firstValueFrom(
+      this.http.post<any[]>(
+        `${SqlReportService.QUERY_PROXY}/app/${report.getId(true)}`,
+        {
+          from: moment(from).format("YYYY-MM-DD"),
+          to: moment(to).format("YYYY-MM-DD"),
+        },
+      ),
+    );
   }
 
   /**

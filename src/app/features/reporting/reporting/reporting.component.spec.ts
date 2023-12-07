@@ -19,7 +19,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
-import { ReportConfig } from "../report-config";
+import { ReportConfig, SqlReport } from "../report-config";
 import { SqlReportService } from "../sql-report/sql-report.service";
 
 describe("ReportingComponent", () => {
@@ -206,7 +206,7 @@ describe("ReportingComponent", () => {
     mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
 
     await component.calculateResults(
-      ReportConfig.create({ mode: "exporting" }),
+      ReportConfig.create({ mode: "exporting", aggregationDefinitions: [] }),
       new Date(),
       new Date(),
     );
@@ -219,10 +219,20 @@ describe("ReportingComponent", () => {
   });
 
   it("should use the sql report service when aggregation has mode 'sql'", async () => {
-    const report = ReportConfig.create({ mode: "sql" });
+    const report = new SqlReport();
+    report.mode = "sql";
 
-    await component.calculateResults(report, new Date(), new Date());
+    await component.calculateResults(
+      report,
+      new Date("2023-01-01"),
+      new Date("2023-12-31"),
+    );
 
-    expect(mockSqlReportService.query).toHaveBeenCalledWith(report);
+    expect(mockSqlReportService.query).toHaveBeenCalledWith(
+      report,
+      new Date("2023-01-01"),
+      // Next day (to date is exclusive
+      new Date("2024-01-01"),
+    );
   });
 });

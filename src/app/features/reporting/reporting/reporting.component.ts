@@ -67,24 +67,29 @@ export class ReportingComponent {
       fromDate,
       dayAfterToDate,
     );
-    this.mode = selectedReport.mode ?? "exporting";
+    this.mode = selectedReport.mode ?? "reporting";
+    this.exportableData =
+      this.mode === "reporting" ? this.flattenReportRows() : this.data;
     this.loading = false;
   }
 
-  private getReportResults(report: ReportType, fromDate: Date, toDate: Date) {
+  private getReportResults(report: ReportType, from: Date, to: Date) {
     switch (report.mode) {
       case "exporting":
         return this.dataTransformationService.queryAndTransformData(
           report.aggregationDefinitions,
-          fromDate,
-          toDate,
+          from,
+          to,
         );
       case "sql":
-        return this.sqlReportService.query(report);
+        // TODO check if/ensure "to" date is also exclusive
+        return this.sqlReportService.query(report, from, to);
       default:
-        return this.dataAggregationService
-          .calculateReport(report.aggregationDefinitions, fromDate, toDate)
-          .then((res) => this.flattenReportRows(res));
+        return this.dataAggregationService.calculateReport(
+          report.aggregationDefinitions,
+          from,
+          to,
+        );
     }
   }
 
