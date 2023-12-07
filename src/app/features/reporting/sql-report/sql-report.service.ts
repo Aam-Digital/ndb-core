@@ -4,6 +4,7 @@ import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { EntitySchemaField } from "../../../core/entity/schema/entity-schema-field";
 import { NumberDatatype } from "../../../core/basic-datatypes/number/number.datatype";
 import { BooleanDatatype } from "../../../core/basic-datatypes/boolean/boolean.datatype";
+import { ReportConfig } from "../report-config";
 
 /**
  * Service that handles management of necessary SQS configurations
@@ -11,8 +12,12 @@ import { BooleanDatatype } from "../../../core/basic-datatypes/boolean/boolean.d
 @Injectable({
   providedIn: "root",
 })
-export class SqlReport {
+export class SqlReportService {
   constructor(private entities: EntityRegistry) {}
+
+  query(report: ReportConfig) {
+    return undefined;
+  }
 
   /**
    * Create a valid SQS schema object for all registered entities

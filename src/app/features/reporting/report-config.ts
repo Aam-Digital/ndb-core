@@ -10,8 +10,8 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
  */
 @DatabaseEntity("ReportConfig")
 export class ReportConfig extends Entity {
-  static create(data: Partial<ReportConfig>) {
-    return Object.assign(new ReportConfig(), data);
+  static create(data: Partial<ReportType>) {
+    return Object.assign(new ReportConfig(), data) as ReportType;
   }
 
   /** human-readable title of the report */
@@ -21,10 +21,26 @@ export class ReportConfig extends Entity {
    * (optional) mode whether the aggregation definitions are of type {@interface Aggregation} or {@interface ExportColumnConfig}
    * Default is "reporting"
    */
-  @DatabaseField() mode?: "reporting" | "exporting";
+  @DatabaseField() mode?: string;
 
   /** the definitions to calculate the report's aggregations */
-  @DatabaseField() aggregationDefinitions?:
-    | Aggregation[]
-    | ExportColumnConfig[] = [];
+  @DatabaseField() aggregationDefinitions?: any[];
 }
+
+export class AggregationReport extends ReportConfig {
+  mode: "reporting";
+  aggregationDefinitions: Aggregation[];
+}
+
+export class ExportingReport extends ReportConfig {
+  mode?: "exporting";
+  aggregationDefinitions: ExportColumnConfig[];
+}
+
+export class SqlReport extends ReportConfig {
+  mode: "sql";
+  // TODO maybe should be string array
+  aggregationDefinitions: string[];
+}
+
+export type ReportType = AggregationReport | ExportingReport | SqlReport;

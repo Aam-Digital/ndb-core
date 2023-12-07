@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { SqlReport } from "./sql-report.service";
+import { SqlReportService } from "./sql-report.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import {
@@ -10,7 +10,7 @@ import {
 import { User } from "../../../core/user/user";
 
 describe("SqlReportService", () => {
-  let service: SqlReport;
+  let service: SqlReportService;
   let mockEntities: EntityRegistry;
 
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe("SqlReportService", () => {
     TestBed.configureTestingModule({
       providers: [{ provide: EntityRegistry, useValue: mockEntities }],
     });
-    service = TestBed.inject(SqlReport);
+    service = TestBed.inject(SqlReportService);
   });
 
   it("should be created", () => {

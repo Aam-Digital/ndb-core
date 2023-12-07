@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
-import { ReportConfig } from "./report-config";
+import { ReportConfig, ReportType } from "./report-config";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
@@ -23,7 +23,7 @@ export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportCo
   }
 }
 
-const demoReports: Partial<ReportConfig>[] = [
+const demoReports: Partial<ReportType>[] = [
   {
     title: $localize`:Name of a report:Basic Report`,
     aggregationDefinitions: [

@@ -20,14 +20,16 @@ import { DataTransformationService } from "../../../core/export/data-transformat
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { ReportConfig } from "../report-config";
+import { SqlReportService } from "../sql-report/sql-report.service";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
   let fixture: ComponentFixture<ReportingComponent>;
   let mockReportingService: jasmine.SpyObj<DataAggregationService>;
   let mockDataTransformationService: jasmine.SpyObj<DataTransformationService>;
+  let mockSqlReportService: jasmine.SpyObj<SqlReportService>;
 
-  const testReport: ReportConfig = ReportConfig.create({
+  const testReport = ReportConfig.create({
     title: "test report",
     aggregationDefinitions: [
       {
@@ -45,6 +47,7 @@ describe("ReportingComponent", () => {
       "queryAndTransformData",
     ]);
     mockReportingService.calculateReport.and.resolveTo([]);
+    mockSqlReportService = jasmine.createSpyObj(["query"]);
     await TestBed.configureTestingModule({
       imports: [
         ReportingComponent,
@@ -59,6 +62,7 @@ describe("ReportingComponent", () => {
           provide: DataTransformationService,
           useValue: mockDataTransformationService,
         },
+        { provide: SqlReportService, useValue: mockSqlReportService },
         { provide: EntityMapperService, useValue: mockEntityMapper() },
       ],
     }).compileComponents();
@@ -212,5 +216,13 @@ describe("ReportingComponent", () => {
     ).toHaveBeenCalledWith([], jasmine.any(Date), jasmine.any(Date));
     expect(component.data).toEqual(data);
     expect(component.mode).toBe("exporting");
+  });
+
+  it("should use the sql report service when aggregation has mode 'sql'", async () => {
+    const report = ReportConfig.create({ mode: "sql" });
+
+    await component.calculateResults(report, new Date(), new Date());
+
+    expect(mockSqlReportService.query).toHaveBeenCalledWith(report);
   });
 });
