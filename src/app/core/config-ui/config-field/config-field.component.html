@@ -83,13 +83,14 @@
               ></app-basic-autocomplete>
             </mat-form-field>
 
+            <!-- "additional" for enum datatype -->
             <mat-form-field
-              [style.visibility]="typeAdditionalOptions ? 'visible' : 'hidden'"
+              *ngIf="
+                typeAdditionalOptions &&
+                formDataType.value === 'configurable-enum'
+              "
             >
-              <mat-label
-                *ngIf="formDataType.value === 'configurable-enum'"
-                i18n
-              >
+              <mat-label i18n>
                 Type Details (dropdown options set)
                 <fa-icon
                   icon="question-circle"
@@ -97,13 +98,31 @@
                   i18n-matTooltip
                 ></fa-icon>
               </mat-label>
-              <mat-label
-                *ngIf="
-                  formDataType.value === 'entity' ||
-                  formDataType.value === 'entity-array'
-                "
-                i18n
-              >
+
+              <app-basic-autocomplete
+                formControlName="additional"
+                [options]="typeAdditionalOptions ?? []"
+                [optionToString]="objectToLabel"
+                [valueMapper]="objectToValue"
+                [createOption]="createNewAdditionalOption"
+              ></app-basic-autocomplete>
+
+              <fa-icon
+                icon="wrench"
+                class="form-field-icon-suffix"
+                matSuffix
+                (click)="openEnumOptions($event)"
+              ></fa-icon>
+            </mat-form-field>
+
+            <!-- "additional" for entity ref datatypes -->
+            <mat-form-field
+              *ngIf="
+                (typeAdditionalOptions && formDataType.value === 'entity') ||
+                formDataType.value === 'entity-array'
+              "
+            >
+              <mat-label i18n>
                 Type Details (target record type)
                 <fa-icon
                   icon="question-circle"

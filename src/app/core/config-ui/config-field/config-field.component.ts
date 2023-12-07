@@ -8,6 +8,7 @@ import {
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
+  MatDialog,
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
@@ -38,6 +39,8 @@ import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { uniqueIdValidator } from "../../common-components/entity-form/unique-id-validator";
 import { AdminEntityService } from "../admin-entity.service";
+import { ConfigureEnumPopupComponent } from "../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
+import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -92,6 +95,7 @@ export class ConfigFieldComponent implements OnChanges {
     private configurableEnumService: ConfigurableEnumService,
     private entityRegistry: EntityRegistry,
     private adminEntityService: AdminEntityService,
+    private dialog: MatDialog,
   ) {
     this.entitySchemaField = data.entitySchemaField ?? {};
     this.fieldId = data.fieldId;
@@ -198,47 +202,42 @@ export class ConfigFieldComponent implements OnChanges {
     this.typeAdditionalOptions = this.configurableEnumService
       .listEnums()
       .map((x) => ({
-        label: Entity.extractEntityIdFromId(x),
+        label: Entity.extractEntityIdFromId(x), // TODO: add human-readable label to configurable-enum entities
         value: Entity.extractEntityIdFromId(x),
+        enumEntity: x,
       }));
     this.additionalForm.addValidators(Validators.required);
 
-    this.createNewAdditionalOption = (text) => {
-      const newOption = {
-        value: text,
-        label: $localize`[new options set]: "${text}"`,
-        isNew: true,
-      };
+    this.createNewAdditionalOption = (text) => ({
+      value: generateSimplifiedId(text),
+      label: text,
+    });
 
-      setTimeout(() => {
-        // only offer one newly created configurable-enum id
-        this.typeAdditionalOptions = [
-          newOption,
-          ...this.typeAdditionalOptions,
-        ].filter(
-          (o: SimpleDropdownValue & { isNew: boolean }) =>
-            !o.isNew || o === newOption,
-        );
-        this.additionalForm.setValue(newOption.value);
-      });
-
-      return newOption;
-    };
-    if (this.form.get("label").value) {
-      this.createNewAdditionalOption(this.form.get("label").value);
+    if (this.entitySchemaField.additional) {
+      this.additionalForm.setValue(this.entitySchemaField.additional);
+    } else if (this.schemaFieldsForm.get("label").value) {
+      // when switching to enum datatype in the form, if unset generate a suggested enum-id immediately
+      this.createNewAdditionalOption(this.schemaFieldsForm.get("label").value);
     }
-    this.form
+
+    this.schemaFieldsForm
       .get("label")
       .valueChanges.subscribe((v) => this.createNewAdditionalOption(v));
-
-    // TODO preview the options within the selected enum (and allow to edit the enum options?)
   }
 
   private initAdditionalForEntityRef() {
     this.typeAdditionalOptions = this.entityRegistry
       .getEntityTypes(true)
       .map((x) => ({ label: x.value.label, value: x.value.ENTITY_TYPE }));
+
     this.additionalForm.addValidators(Validators.required);
+    if (
+      this.typeAdditionalOptions.some(
+        (x) => x.value === this.additionalForm.value,
+      )
+    ) {
+      this.additionalForm.setValue(this.entitySchemaField.additional);
+    }
   }
 
   private resetAdditional() {
@@ -266,9 +265,25 @@ export class ConfigFieldComponent implements OnChanges {
 
     this.dialogRef.close(fieldId);
   }
+
+  openEnumOptions(event: Event) {
+    event.stopPropagation(); // do not open the autocomplete dropdown when clicking the settings icon
+
+    let enumEntity = this.configurableEnumService.getEnum(
+      this.additionalForm.value,
+    );
+    if (!enumEntity) {
+      // if the user makes changes, the dialog component itself is saving the new entity to the database already
+      enumEntity = new ConfigurableEnum(this.additionalForm.value);
+    }
+    this.dialog.open(ConfigureEnumPopupComponent, { data: enumEntity });
+  }
 }
 
-type SimpleDropdownValue = { label: string; value: string };
+interface SimpleDropdownValue {
+  label: string;
+  value: string;
+}
 
 export function generateSimplifiedId(label: string) {
   return label
