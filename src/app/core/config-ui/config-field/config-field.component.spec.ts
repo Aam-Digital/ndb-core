@@ -1,8 +1,5 @@
-import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
-import {
-  ConfigFieldComponent,
-  generateSimplifiedId,
-} from "./config-field.component";
+import { ComponentFixture, TestBed } from "@angular/core/testing";
+import { ConfigFieldComponent } from "./config-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -66,12 +63,4 @@ describe("ConfigFieldComponent", () => {
     await labelInput.setValue("other label");
     await expectAsync(idInput.getValue()).toBeResolvedTo("myId");
   });
-
-  it("should generate simplified ids", fakeAsync(() => {
-    expect(generateSimplifiedId("xxx ")).toBe("xxx");
-    expect(generateSimplifiedId("x ...")).toBe("x");
-    expect(generateSimplifiedId("x.y")).toBe("x_y");
-    expect(generateSimplifiedId("my  label")).toBe("my_label");
-    expect(generateSimplifiedId("my_label")).toBe("my_label");
-  }));
 });

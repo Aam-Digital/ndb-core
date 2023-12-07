@@ -131,25 +131,6 @@ describe("ConfigImportParserService", () => {
     );
   });
 
-  it("should generate sensible ids from labels", () => {
-    const labelIdPairs = [
-      ["name", "name"],
-      ["Name", "name"],
-      ["FirstName", "firstName"],
-      ["name of", "nameOf"],
-      ["test's name", "testsName"],
-      ["name 123", "name123"],
-      ["123 name", "123Name"], // this is possible in JavaScript
-    ];
-
-    for (const testCase of labelIdPairs) {
-      const generatedId = ConfigImportParserService.generateIdFromLabel(
-        testCase[0],
-      );
-      expect(generatedId).toBe(testCase[1]);
-    }
-  });
-
   it("should generate enum from additional column and reuse if already exists", () => {
     const parsedConfig = expectToBeParsedIntoEntityConfig(
       [

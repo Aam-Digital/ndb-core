@@ -41,6 +41,7 @@ import { uniqueIdValidator } from "../../common-components/entity-form/unique-id
 import { AdminEntityService } from "../admin-entity.service";
 import { ConfigureEnumPopupComponent } from "../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
+import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -165,7 +166,7 @@ export class ConfigFieldComponent implements OnChanges {
     }
   }
   private autoGenerateId(updatedLabel: string) {
-    const generatedId = generateSimplifiedId(updatedLabel);
+    const generatedId = generateIdFromLabel(updatedLabel);
     this.fieldIdForm.setValue(generatedId, { emitEvent: false });
   }
 
@@ -209,7 +210,7 @@ export class ConfigFieldComponent implements OnChanges {
     this.additionalForm.addValidators(Validators.required);
 
     this.createNewAdditionalOption = (text) => ({
-      value: generateSimplifiedId(text),
+      value: generateIdFromLabel(text),
       label: text,
     });
 
@@ -283,13 +284,4 @@ export class ConfigFieldComponent implements OnChanges {
 interface SimpleDropdownValue {
   label: string;
   value: string;
-}
-
-export function generateSimplifiedId(label: string) {
-  return label
-    .replace(/[^a-zA-Z0-9_]/g, "_")
-    .replace(/\s/g, "_")
-    .replace(/_+/g, "_")
-    .replace(/^_*/, "")
-    .replace(/_*$/, "");
 }
