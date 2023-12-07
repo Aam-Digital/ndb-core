@@ -32,9 +32,8 @@
     <button
       mat-menu-item
       [routerLink]="['/admin-ui/entity', record?.getType()]"
+      *ngIf="{ entity: 'Config', operation: 'update' } | hasPermission"
     >
-      <!-- TODO: permissions -->
-      <!-- TODO: access to admin ui for entities not using entity-details (e.g. note, todo, etc.) -->
       <fa-icon
         class="standard-icon-with-text color-accent"
         icon="tools"

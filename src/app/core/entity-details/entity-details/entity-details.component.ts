@@ -26,6 +26,7 @@ import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-arch
 import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Subscription } from "rxjs";
+import { HasPermissionPipe } from "../../permissions/has-permission-pipe/has-permission.pipe";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -57,6 +58,7 @@ import { Subscription } from "rxjs";
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
     RouterLink,
+    HasPermissionPipe,
   ],
 })
 export class EntityDetailsComponent implements OnChanges {
