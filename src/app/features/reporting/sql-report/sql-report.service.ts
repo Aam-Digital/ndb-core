@@ -8,6 +8,8 @@ import { SqlReport } from "../report-config";
 import { HttpClient } from "@angular/common/http";
 import moment from "moment";
 import { firstValueFrom } from "rxjs";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { isEqual } from "lodash-es";
 
 /**
  * Service that handles management of necessary SQS configurations
@@ -20,9 +22,11 @@ export class SqlReportService {
   constructor(
     private entities: EntityRegistry,
     private http: HttpClient,
+    private entityMapper: EntityMapperService,
   ) {}
 
-  query(report: SqlReport, from: Date, to: Date) {
+  async query(report: SqlReport, from: Date, to: Date) {
+    await this.updateSchemaIfNecessary();
     return firstValueFrom(
       this.http.post<any[]>(
         `${SqlReportService.QUERY_PROXY}/app/${report.getId(true)}`,
@@ -32,6 +36,20 @@ export class SqlReportService {
         },
       ),
     );
+  }
+
+  private async updateSchemaIfNecessary() {
+    const existing = await this.entityMapper
+      .load(SqsSchema, SqsSchema.SQS_SCHEMA_ID)
+      .catch(() => new SqsSchema());
+
+    const newSchema = this.generateSchema();
+    if (isEqual(newSchema.sql, existing.sql)) {
+      return;
+    }
+
+    existing.sql = newSchema.sql;
+    await this.entityMapper.save(existing);
   }
 
   /**

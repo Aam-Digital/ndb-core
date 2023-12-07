@@ -4,7 +4,7 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
 @DatabaseEntity("_design/sqlite")
 export class SqsSchema extends Entity {
-  private static SQS_SCHEMA_ID = "config";
+  static SQS_SCHEMA_ID = "config";
   static create(tables: SqlTables) {
     const schema = new SqsSchema();
     schema.sql = {
@@ -23,7 +23,7 @@ export class SqsSchema extends Entity {
     super(SqsSchema.SQS_SCHEMA_ID);
   }
 
-  @DatabaseField() language: string = "sqlite";
+  @DatabaseField() language: "sqlite" = "sqlite";
   @DatabaseField() sql: {
     // SQL table definitions
     tables: SqlTables;
