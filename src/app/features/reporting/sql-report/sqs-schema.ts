@@ -2,6 +2,10 @@ import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 
+/**
+ * SQS schema object.
+ * For more information, see the SQS docs.
+ */
 @DatabaseEntity("_design/sqlite")
 export class SqsSchema extends Entity {
   static SQS_SCHEMA_ID = "config";

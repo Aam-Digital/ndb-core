@@ -14,6 +14,7 @@ import { SqlReport } from "../report-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { SqsSchema } from "./sqs-schema";
+import moment from "moment";
 
 describe("SqlReportService", () => {
   let service: SqlReportService;
@@ -44,7 +45,11 @@ describe("SqlReportService", () => {
     mockHttpClient.post.and.returnValue(of(result));
     const report = new SqlReport();
 
-    await service.query(report, new Date("2023-01-01"), new Date("2024-01-01"));
+    await service.query(
+      report,
+      moment("2023-01-01").toDate(),
+      moment("2024-01-01").toDate(),
+    );
 
     expect(mockHttpClient.post).toHaveBeenCalledWith(
       `${SqlReportService.QUERY_PROXY}/app/${report.getId(true)}`,

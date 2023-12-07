@@ -82,7 +82,7 @@ export class ReportingComponent {
           to,
         );
       case "sql":
-        // TODO check if/ensure "to" date is also exclusive
+        // TODO check/ensure "to" date is also exclusive
         return this.sqlReportService.query(report, from, to);
       default:
         return this.dataAggregationService.calculateReport(

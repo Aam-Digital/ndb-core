@@ -25,6 +25,12 @@ export class SqlReportService {
     private entityMapper: EntityMapperService,
   ) {}
 
+  /**
+   * Get the combines results of the SQL statements in the report
+   * @param report
+   * @param from
+   * @param to
+   */
   async query(report: SqlReport, from: Date, to: Date) {
     await this.updateSchemaIfNecessary();
     return firstValueFrom(
@@ -38,6 +44,10 @@ export class SqlReportService {
     );
   }
 
+  /**
+   * Update SQS schema if entities have changed
+   * @private
+   */
   private async updateSchemaIfNecessary() {
     const existing = await this.entityMapper
       .load(SqsSchema, SqsSchema.SQS_SCHEMA_ID)

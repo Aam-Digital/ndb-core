@@ -77,7 +77,7 @@ COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
-# The url to the CouchDB database
+# The url to the query backend, see https://github.com/Aam-Digital/query-backend
 ENV QUERY_URL="http://localhost:3000"
 # The url to a nominatim instance, see https://nominatim.org/
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"

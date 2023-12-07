@@ -18,7 +18,7 @@ export class ReportConfig extends Entity {
   @DatabaseField() title: string;
 
   /**
-   * (optional) mode whether the aggregation definitions are of type {@interface Aggregation} or {@interface ExportColumnConfig}
+   * (optional) mode of export.
    * Default is "reporting"
    */
   @DatabaseField() mode?: string;
@@ -27,19 +27,38 @@ export class ReportConfig extends Entity {
   @DatabaseField() aggregationDefinitions?: any[];
 }
 
+/**
+ * Reports handles by the {@class DataAggregationService}
+ */
 export class AggregationReport extends ReportConfig {
   mode: "reporting";
   aggregationDefinitions: Aggregation[];
 }
 
+/**
+ * Reports handles by the {@class DataTransformationService}
+ */
 export class ExportingReport extends ReportConfig {
+  /**
+   * If no mode is set, it will default to 'exporting'
+   */
   mode?: "exporting";
   aggregationDefinitions: ExportColumnConfig[];
 }
 
+/**
+ * Reports handles by the {@class SqlReportService}
+ */
 export class SqlReport extends ReportConfig {
   mode: "sql";
+  /**
+   * Array of valid SQL SELECT statements
+   */
   aggregationDefinitions: string[];
 }
 
+/**
+ * Union type to enable type safety for report configs.
+ * Use this instead of the {@class ReportConfig}
+ */
 export type ReportType = AggregationReport | ExportingReport | SqlReport;

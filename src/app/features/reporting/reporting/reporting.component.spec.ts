@@ -198,7 +198,7 @@ describe("ReportingComponent", () => {
     ]);
   }));
 
-  it("should use the export service when aggregation has mode 'exporting'", async () => {
+  it("should use the export service when report has mode 'exporting'", async () => {
     const data = [
       { First: 1, Second: 2 },
       { First: 3, Second: 4 },
@@ -218,7 +218,7 @@ describe("ReportingComponent", () => {
     expect(component.mode).toBe("exporting");
   });
 
-  it("should use the sql report service when aggregation has mode 'sql'", async () => {
+  it("should use the sql report service when report has mode 'sql'", async () => {
     const report = new SqlReport();
     report.mode = "sql";
 
