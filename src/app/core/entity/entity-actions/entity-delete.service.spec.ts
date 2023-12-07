@@ -17,6 +17,8 @@ import {
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { Child } from "../../../child-dev-project/children/model/child";
+import { DefaultDatatype } from "../default-datatype/default.datatype";
+import { EventAttendanceDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
 
 describe("EntityDeleteService", () => {
   let service: EntityDeleteService;
@@ -30,6 +32,11 @@ describe("EntityDeleteService", () => {
       providers: [
         EntityDeleteService,
         { provide: EntityMapperService, useValue: entityMapper },
+        {
+          provide: DefaultDatatype,
+          useClass: EventAttendanceDatatype,
+          multi: true,
+        },
       ],
     });
 

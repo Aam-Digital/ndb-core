@@ -33,8 +33,6 @@ import { EntityConstructor } from "../../entity/model/entity";
  * implement this as its own datatype for a specific class functioning as "embedded" schema.
  */
 export abstract class SchemaEmbedDatatype extends DefaultDatatype {
-  static override dataType = "schema-embed";
-
   abstract embeddedType: EntityConstructor;
 
   constructor(private schemaService: EntitySchemaService) {

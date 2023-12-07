@@ -5,7 +5,7 @@ import { DateWithAge } from "./dateWithAge";
 
 describe("Schema data type: date-with-age", () => {
   testDatatype(
-    new DateWithAgeDatatype(),
+    new DateWithAgeDatatype(null),
     new DateWithAge(moment("2022-02-01").toDate()),
     "2022-02-01",
   );
