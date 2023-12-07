@@ -56,11 +56,11 @@ describe("ConfigFieldComponent", () => {
 
     // Initially ID is automatically generated from label
     await labelInput.setValue("new label");
-    await expectAsync(idInput.getValue()).toBeResolvedTo("new_label");
+    await expectAsync(idInput.getValue()).toBeResolvedTo("newLabel");
 
     // manual edit of ID field stops auto generation of ID
-    await idInput.setValue("myId");
+    await idInput.setValue("my_id");
     await labelInput.setValue("other label");
-    await expectAsync(idInput.getValue()).toBeResolvedTo("myId");
+    await expectAsync(idInput.getValue()).toBeResolvedTo("my_id");
   });
 });
