@@ -11,7 +11,7 @@ import { BooleanDatatype } from "../../../core/basic-datatypes/boolean/boolean.d
 @Injectable({
   providedIn: "root",
 })
-export class SchemaGeneratorService {
+export class SqlReport {
   constructor(private entities: EntityRegistry) {}
 
   /**

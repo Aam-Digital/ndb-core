@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 
-import { SchemaGeneratorService } from "./schema-generator.service";
+import { SqlReport } from "./sql-report.service";
 import { Entity } from "../../../core/entity/model/entity";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import {
@@ -9,8 +9,8 @@ import {
 } from "../../../core/entity/database-entity.decorator";
 import { User } from "../../../core/user/user";
 
-describe("SchemaGeneratorService", () => {
-  let service: SchemaGeneratorService;
+describe("SqlReportService", () => {
+  let service: SqlReport;
   let mockEntities: EntityRegistry;
 
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe("SchemaGeneratorService", () => {
     TestBed.configureTestingModule({
       providers: [{ provide: EntityRegistry, useValue: mockEntities }],
     });
-    service = TestBed.inject(SchemaGeneratorService);
+    service = TestBed.inject(SqlReport);
   });
 
   it("should be created", () => {
