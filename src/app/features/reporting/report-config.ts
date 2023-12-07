@@ -24,7 +24,7 @@ export class ReportConfig extends Entity {
   @DatabaseField() mode?: string;
 
   /** the definitions to calculate the report's aggregations */
-  @DatabaseField() aggregationDefinitions?: any;
+  @DatabaseField() aggregationDefinitions?: any[];
 }
 
 export class AggregationReport extends ReportConfig {
@@ -39,8 +39,7 @@ export class ExportingReport extends ReportConfig {
 
 export class SqlReport extends ReportConfig {
   mode: "sql";
-  // TODO maybe should be string array
-  aggregationDefinitions: string;
+  aggregationDefinitions: string[];
 }
 
 export type ReportType = AggregationReport | ExportingReport | SqlReport;
