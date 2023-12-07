@@ -1,30 +1,24 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
 import {
   ConfigFieldComponent,
   generateSimplifiedId,
 } from "./config-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { SimpleChange } from "@angular/core";
+import { HarnessLoader } from "@angular/cdk/testing";
+import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { MatFormFieldHarness } from "@angular/material/form-field/testing";
+import { MatInputHarness } from "@angular/material/input/testing";
+import { Entity } from "../../entity/model/entity";
 
 describe("ConfigFieldComponent", () => {
   let component: ConfigFieldComponent;
   let fixture: ComponentFixture<ConfigFieldComponent>;
-
-  let testSchemaField: EntitySchemaField;
-  const testFieldId = "test";
+  let loader: HarnessLoader;
 
   beforeEach(() => {
-    testSchemaField = {};
-
     TestBed.configureTestingModule({
       imports: [
         ConfigFieldComponent,
@@ -36,15 +30,15 @@ describe("ConfigFieldComponent", () => {
         {
           provide: MAT_DIALOG_DATA,
           useValue: {
-            entitySchemaField: testSchemaField,
-            fieldId: testFieldId,
-            entitySchema: new Map([[testFieldId, testSchemaField]]),
+            entitySchemaField: {},
+            entityType: Entity,
           },
         },
         { provide: MatDialogRef, useValue: null },
       ],
     });
     fixture = TestBed.createComponent(ConfigFieldComponent);
+    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
@@ -53,35 +47,25 @@ describe("ConfigFieldComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should generate id (if new field) from label", fakeAsync(() => {
-    const formId = component.form.get("id");
-    const formLabel = component.form.get("label");
+  it("should generate id (if new field) from label", async () => {
+    const labelInput = await loader
+      .getHarness(MatFormFieldHarness.with({ floatingLabelText: "Label" }))
+      .then((field) => field.getControl(MatInputHarness));
+    const idInput = await loader
+      .getHarness(
+        MatFormFieldHarness.with({ floatingLabelText: "Field ID (readonly)" }),
+      )
+      .then((field) => field.getControl(MatInputHarness));
 
-    formLabel.setValue("new label");
-    tick();
-    expect(formId.getRawValue()).toBe(testFieldId);
+    // Initially ID is automatically generated from label
+    await labelInput.setValue("new label");
+    await expectAsync(idInput.getValue()).toBeResolvedTo("new_label");
 
-    // simulate configuring new field
-    component.entitySchemaField = {};
-    component.fieldId = null;
-    component.ngOnChanges({
-      entitySchemaField: new SimpleChange(
-        null,
-        component.entitySchemaField,
-        true,
-      ),
-    });
-
-    formLabel.setValue("new label", { emitEvents: true });
-    tick();
-    expect(formId.getRawValue()).toBe("new_label");
-
-    // manual edit id field stops auto generation of id
-    formId.setValue("myId");
-    formLabel.setValue("other label");
-    tick();
-    expect(formId.getRawValue()).toBe("myId");
-  }));
+    // manual edit of ID field stops auto generation of ID
+    await idInput.setValue("myId");
+    await labelInput.setValue("other label");
+    await expectAsync(idInput.getValue()).toBeResolvedTo("myId");
+  });
 
   it("should generate simplified ids", fakeAsync(() => {
     expect(generateSimplifiedId("xxx ")).toBe("xxx");

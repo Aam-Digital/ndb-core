@@ -35,7 +35,7 @@ export class DateOnlyDatatype extends DateDatatype<string> {
   static override dataType = "date-only";
   static override label: string = $localize`:datatype-label:date`;
 
-  constructor(loggingService: LoggingService) {
+  constructor(loggingService?: LoggingService) {
     super(loggingService);
   }
 
