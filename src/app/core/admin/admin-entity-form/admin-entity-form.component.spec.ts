@@ -5,10 +5,7 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import {
-  AdminEntityFormComponent,
-  FormConfig,
-} from "./admin-entity-form.component";
+import { AdminEntityFormComponent } from "./admin-entity-form.component";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
@@ -20,6 +17,7 @@ import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { of } from "rxjs";
 import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { AdminModule } from "../admin.module";
+import { FormConfig } from "../../entity-details/form/form.component";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;

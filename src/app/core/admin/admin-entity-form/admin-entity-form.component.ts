@@ -14,7 +14,6 @@ import {
   ColumnConfig,
   toFormFieldConfig,
 } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FieldGroup } from "../../entity-details/form/field-group";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { AdminEntityService } from "../admin-entity.service";
 import { lastValueFrom } from "rxjs";
@@ -27,11 +26,7 @@ import { EntityFieldLabelComponent } from "../../common-components/entity-field-
 import { EntityFieldEditComponent } from "../../common-components/entity-field-edit/entity-field-edit.component";
 import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-
-// TODO: we wanted to remove the interfaces implemented by components - do we reintroduce them again for the Admin UI?
-export interface FormConfig {
-  fieldGroups: FieldGroup[];
-}
+import { FormConfig } from "../../entity-details/form/form.component";
 
 @UntilDestroy()
 @Component({
@@ -87,14 +82,14 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   private initForm() {
+    this.initAvailableFields();
+
     this.dummyEntity = new this.entityType();
     this.dummyForm = this.entityFormService.createFormGroup(
       [...this.getUsedFields(this.config), ...this.availableFields],
       this.dummyEntity,
     );
     this.dummyForm.disable();
-
-    this.initAvailableFields();
   }
 
   private getUsedFields(config: FormConfig): ColumnConfig[] {

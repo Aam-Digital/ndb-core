@@ -152,6 +152,7 @@ export class AdminEntityComponent implements OnInit {
     panel.components.push({
       title: "New Section",
       component: "Form", // TODO: make this configurable
+      config: { fieldGroups: [] },
     });
   }
 }

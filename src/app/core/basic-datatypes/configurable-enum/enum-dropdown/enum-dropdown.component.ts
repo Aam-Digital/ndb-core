@@ -92,6 +92,7 @@ export class EnumDropdownComponent implements OnChanges {
 
   private updateOptions() {
     if (
+      this.form.value &&
       // value not in options anymore
       !this.enumEntity.values.some((v) => v.id === this.form.value.id) &&
       // but was in options previously

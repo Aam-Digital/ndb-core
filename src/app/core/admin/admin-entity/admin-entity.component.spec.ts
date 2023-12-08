@@ -156,7 +156,6 @@ describe("AdminEntityComponent", () => {
       }),
     };
 
-    expect(entityMapper.save).toHaveBeenCalled();
     const actual: Config = entityMapper.get(
       Config.ENTITY_TYPE,
       Config.CONFIG_KEY,
