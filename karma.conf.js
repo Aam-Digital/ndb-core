@@ -54,13 +54,7 @@ module.exports = function (config) {
     colors: true,
     logLevel: config.LOG_INFO,
     autoWatch: true,
-    customLaunchers: {
-      ChromeCustom: {
-        base: "Chrome",
-        flags: ["--no-first-run"],
-      },
-    },
-    browsers: ["ChromeCustom"],
+    browsers: ["Chrome"],
     singleRun: false,
     retryLimit: 10,
   });
