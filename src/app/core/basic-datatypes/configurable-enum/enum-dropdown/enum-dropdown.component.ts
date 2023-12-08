@@ -13,6 +13,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { ConfigureEnumPopupComponent } from "../configure-enum-popup/configure-enum-popup.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -28,6 +29,7 @@ import { ErrorHintComponent } from "../../../common-components/error-hint/error-
     BasicAutocompleteComponent,
     FontAwesomeModule,
     ErrorHintComponent,
+    MatButtonModule,
   ],
 })
 export class EnumDropdownComponent implements OnChanges {
@@ -84,6 +86,7 @@ export class EnumDropdownComponent implements OnChanges {
 
   openSettings(event: Event) {
     event.stopPropagation();
+
     this.dialog
       .open(ConfigureEnumPopupComponent, { data: this.enumEntity })
       .afterClosed()

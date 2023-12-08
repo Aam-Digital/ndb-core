@@ -8,20 +8,23 @@
     [optionToString]="enumValueToString"
     [createOption]="createNewOption"
   ></app-basic-autocomplete>
-  <fa-icon
-    *ngIf="form.enabled && !!createNewOption"
-    icon="wrench"
-    class="caret-suffix"
-    matSuffix
-    (click)="openSettings($event)"
-  ></fa-icon>
+
   <fa-icon
     *ngIf="form.enabled"
     icon="caret-down"
     class="form-field-icon-suffix"
     (click)="autocomplete.showAutocomplete()"
-    matSuffix
+    matIconSuffix
   ></fa-icon>
+
+  <fa-icon
+    *ngIf="form.enabled && !!createNewOption && canEdit"
+    class="form-field-icon-suffix"
+    matIconSuffix
+    (click)="openSettings($event)"
+    icon="wrench"
+  ></fa-icon>
+
   <mat-error *ngIf="form.errors">
     <app-error-hint [form]="form"></app-error-hint>
   </mat-error>

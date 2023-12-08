@@ -107,12 +107,13 @@
                 [createOption]="createNewAdditionalOption"
               ></app-basic-autocomplete>
 
-              <fa-icon
-                icon="wrench"
-                class="form-field-icon-suffix"
+              <button
+                mat-icon-button
                 matSuffix
                 (click)="openEnumOptions($event)"
-              ></fa-icon>
+              >
+                <fa-icon icon="wrench"></fa-icon>
+              </button>
             </mat-form-field>
 
             <!-- "additional" for entity ref datatypes -->
