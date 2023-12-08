@@ -184,6 +184,9 @@ export class AdminEntityFormComponent implements OnChanges {
     this.dummyForm.addControl(newFieldId, new FormControl());
     this.dummyForm.disable();
     event.container.data.splice(event.currentIndex, 0, newFieldId);
+
+    // the schema update has added the new field to the available fields already, remove it from there
+    this.availableFields.splice(this.availableFields.indexOf(newFieldId), 1);
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
