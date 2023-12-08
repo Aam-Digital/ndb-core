@@ -70,11 +70,7 @@ export class AdminComponent implements OnInit {
 
   async downloadConfigClick() {
     const configString = this.configService.exportConfig();
-    await this.downloadService.triggerDownload(
-      configString,
-      "json",
-      "config.json",
-    );
+    await this.downloadService.triggerDownload(configString, "json", "config");
   }
 
   async uploadConfigFile(inputEvent: Event) {
