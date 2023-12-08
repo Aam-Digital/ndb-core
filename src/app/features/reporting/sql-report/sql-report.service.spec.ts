@@ -119,5 +119,7 @@ describe("SqlReportService", () => {
     SchemaTest.schema.set("test", { dataType: "string" });
     await service.query(new SqlReport(), new Date(), new Date());
     expect(saveSpy).toHaveBeenCalledWith(jasmine.any(SqsSchema));
+
+    SchemaTest.schema.delete("test");
   });
 });
