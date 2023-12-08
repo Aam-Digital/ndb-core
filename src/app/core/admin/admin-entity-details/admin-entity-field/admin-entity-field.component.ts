@@ -42,6 +42,8 @@ import { AdminEntityService } from "../../admin-entity.service";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
+import { merge } from "rxjs";
+import { filter } from "rxjs/operators";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -144,6 +146,13 @@ export class AdminEntityFieldComponent implements OnChanges {
       schemaFields: this.schemaFieldsForm,
     });
 
+    this.schemaFieldsForm
+      .get("labelShort")
+      .valueChanges.pipe(filter((v) => v === ""))
+      .subscribe((v) => {
+        // labelShort should never be empty string, in that case it has to be removed so that label works as fallback
+        this.schemaFieldsForm.get("labelShort").setValue(null);
+      });
     this.updateDataTypeAdditional(this.schemaFieldsForm.get("dataType").value);
     this.schemaFieldsForm
       .get("dataType")
@@ -156,17 +165,22 @@ export class AdminEntityFieldComponent implements OnChanges {
       // existing fields' id is readonly
       this.fieldIdForm.disable();
     } else {
-      const autoGenerateSubscr = this.schemaFieldsForm
-        .get("label")
-        .valueChanges.subscribe((v) => this.autoGenerateId(v));
+      const autoGenerateSubscr = merge(
+        this.schemaFieldsForm.get("label").valueChanges,
+        this.schemaFieldsForm.get("labelShort").valueChanges,
+      ).subscribe(() => this.autoGenerateId());
       // stop updating id when user manually edits
       this.fieldIdForm.valueChanges.subscribe(() =>
         autoGenerateSubscr.unsubscribe(),
       );
     }
   }
-  private autoGenerateId(updatedLabel: string) {
-    const generatedId = generateIdFromLabel(updatedLabel);
+  private autoGenerateId() {
+    // prefer labelShort if it exists, as this makes less verbose IDs
+    const label =
+      this.schemaFieldsForm.get("labelShort").value ??
+      this.schemaFieldsForm.get("label").value;
+    const generatedId = generateIdFromLabel(label);
     this.fieldIdForm.setValue(generatedId, { emitEvent: false });
   }
 
