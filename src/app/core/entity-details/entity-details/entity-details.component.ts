@@ -15,7 +15,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { NgForOf, NgIf } from "@angular/common";
+import { CommonModule, NgForOf, NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
@@ -26,7 +26,7 @@ import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-arch
 import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Subscription } from "rxjs";
-import { HasPermissionPipe } from "../../permissions/has-permission-pipe/has-permission.pipe";
+import { AbilityModule } from "@casl/angular";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -58,7 +58,8 @@ import { HasPermissionPipe } from "../../permissions/has-permission-pipe/has-per
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
     RouterLink,
-    HasPermissionPipe,
+    AbilityModule,
+    CommonModule,
   ],
 })
 export class EntityDetailsComponent implements OnChanges {

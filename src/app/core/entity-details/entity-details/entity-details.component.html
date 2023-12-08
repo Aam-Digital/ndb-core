@@ -32,7 +32,7 @@
     <button
       mat-menu-item
       [routerLink]="['/admin/entity', record?.getType(), 'details']"
-      *ngIf="{ entity: 'Config', operation: 'update' } | hasPermission"
+      *ngIf="'update' | ablePure: 'Config' | async"
     >
       <fa-icon
         class="standard-icon-with-text color-accent"
