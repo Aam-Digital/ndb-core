@@ -117,35 +117,30 @@ export class ConfigEntityFormComponent implements OnChanges {
   }
 
   drop(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
+    const prevFieldsArray = event.previousContainer.data;
+    const newFieldsArray = event.container.data;
+
     if (
-      event.previousContainer.data[event.previousIndex] ===
-      this.createNewFieldPlaceholder
+      prevFieldsArray[event.previousIndex] === this.createNewFieldPlaceholder
     ) {
       this.dropNewField(event);
       return;
     }
 
     if (event.previousContainer === event.container) {
-      moveItemInArray(
-        event.container.data,
-        event.previousIndex,
-        event.currentIndex,
-      );
+      moveItemInArray(newFieldsArray, event.previousIndex, event.currentIndex);
     } else {
       transferArrayItem(
-        event.previousContainer.data,
-        event.container.data,
+        prevFieldsArray,
+        newFieldsArray,
         event.previousIndex,
         event.currentIndex,
       );
     }
 
-    if (
-      event.container.data === this.availableFields &&
-      event.currentIndex === 0
-    ) {
+    if (newFieldsArray === this.availableFields && event.currentIndex === 0) {
       // ensure "create new field" is always first
-      moveItemInArray(event.container.data, event.currentIndex, 1);
+      moveItemInArray(newFieldsArray, event.currentIndex, 1);
     }
   }
 

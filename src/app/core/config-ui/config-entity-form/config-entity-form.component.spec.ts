@@ -28,14 +28,16 @@ describe("ConfigEntityFormComponent", () => {
   let mockFormService: jasmine.SpyObj<EntityFormService>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
 
-  const testConfig: FormConfig = {
-    fieldGroups: [
-      { header: "Group 1", fields: ["subject", "date"] },
-      { fields: ["category"] },
-    ],
-  };
+  let testConfig: FormConfig;
 
   beforeEach(() => {
+    testConfig = {
+      fieldGroups: [
+        { header: "Group 1", fields: ["subject", "date"] },
+        { fields: ["category"] },
+      ],
+    };
+
     mockFormService = jasmine.createSpyObj("EntityFormService", [
       "createFormGroup",
     ]);
