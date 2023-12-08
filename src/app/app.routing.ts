@@ -61,9 +61,10 @@ export const allRoutes: Routes = [
       ),
   },
   {
-    path: "admin-ui",
+    path: "admin",
     loadChildren: () =>
-      import("./core/config-ui/config-ui.module").then((m) => m.ConfigUiModule),
+      import("./core/admin/admin.module").then((m) => m.AdminModule),
+    // TODO: only permit for `"permittedUserRoles": ["admin_app"]`
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },

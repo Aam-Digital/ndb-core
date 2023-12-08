@@ -36,7 +36,7 @@ export class DemoDataServiceConfig {
   /**
    * Providers for DemoDataGenerator service implementations to be registered for data generation.
    *
-   * This may also include providers for services a DemoDataGenerator depends on.
+   * This may also include providers for backup a DemoDataGenerator depends on.
    */
   dataGeneratorProviders: (ValueProvider | ClassProvider | FactoryProvider)[] =
     [];
@@ -51,7 +51,7 @@ export class DemoDataServiceConfig {
  */
 @Injectable()
 export class DemoDataService {
-  /** All registered demo data generator services */
+  /** All registered demo data generator backup */
   readonly dataGenerators: DemoDataGenerator<any>[] = [];
 
   constructor(

@@ -16,7 +16,7 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouch-database";
-import { BackupService } from "../../../features/admin/services/backup.service";
+import { BackupService } from "../../admin/backup/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { TEST_USER } from "../../../utils/mock-local-session";
 import { SyncService } from "../../database/sync.service";

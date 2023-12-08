@@ -1,0 +1,88 @@
+<div class="flex-row flex-wrap justify-space-between">
+  <app-view-title class="admin-ui-title">
+    Editing details page for "{{ entityType | entityTypeLabel }}" records
+  </app-view-title>
+
+  <div class="flex-row gap-small save-buttons">
+    <button mat-raised-button color="accent" (click)="save()">Save</button>
+    <button mat-stroked-button (click)="cancel()">Cancel</button>
+  </div>
+</div>
+
+<mat-tab-group [preserveContent]="true" #tabs>
+  <mat-tab
+    *ngFor="let panelConfig of configDetailsView?.panels; index as tabIndex"
+  >
+    <ng-template mat-tab-label>
+      <span *ngIf="tabIndex !== tabs.selectedIndex; else tabTitleForm">
+        {{ panelConfig.title }}
+      </span>
+
+      <ng-template #tabTitleForm>
+        <app-admin-section-header
+          [(title)]="panelConfig.title"
+          label=""
+          (remove)="configDetailsView.panels.splice(tabIndex, 1)"
+        ></app-admin-section-header
+      ></ng-template>
+    </ng-template>
+
+    <ng-template matTabContent>
+      <div class="flex-column gap-large padding-top-large">
+        <div
+          *ngFor="let componentConfig of panelConfig.components; let j = index"
+          class="section-wrapper"
+        >
+          <app-admin-section-header
+            [(title)]="componentConfig.title"
+            (remove)="panelConfig.components.splice(j, 1)"
+          ></app-admin-section-header>
+
+          <app-admin-entity-form
+            *ngIf="componentConfig.component === 'Form'; else otherComponent"
+            [config]="componentConfig.config"
+            [entityType]="entityConstructor"
+          >
+          </app-admin-entity-form>
+
+          <ng-template #otherComponent>
+            <app-admin-entity-panel-component
+              [config]="componentConfig"
+              [entityType]="entityConstructor"
+            ></app-admin-entity-panel-component>
+          </ng-template>
+        </div>
+
+        <button
+          mat-stroked-button
+          color="accent"
+          class="section-add-button"
+          (click)="addSection(panelConfig)"
+          i18n
+        >
+          <fa-icon
+            aria-label="add element"
+            icon="plus-circle"
+            class="standard-icon-with-text"
+          ></fa-icon>
+          Add Section
+        </button>
+      </div>
+    </ng-template>
+  </mat-tab>
+
+  <!-- Add new tab -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <button
+        mat-stroked-button
+        color="accent"
+        matTooltip="add a new tab"
+        i18n-matTooltip
+        (click)="createPanel()"
+      >
+        <fa-icon aria-label="add" icon="plus-circle"></fa-icon>
+      </button>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

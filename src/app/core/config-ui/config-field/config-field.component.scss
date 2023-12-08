@@ -1,8 +1,0 @@
-@use "mixins/grid-layout";
-
-.grid-layout {
-  @include grid-layout.adaptive(
-    $min-block-width: 250px,
-    $max-screen-width: 414px
-  );
-}
