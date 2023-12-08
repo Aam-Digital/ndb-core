@@ -148,7 +148,7 @@ export class AdminEntityComponent implements OnInit {
     });
   }
 
-  addSection(panel: Panel) {
+  addComponent(panel: Panel) {
     panel.components.push({
       title: "New Section",
       component: "Form", // TODO: make this configurable

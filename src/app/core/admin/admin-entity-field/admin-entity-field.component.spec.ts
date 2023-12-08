@@ -158,7 +158,7 @@ describe("AdminEntityFieldComponent", () => {
     dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
     tick();
     expect(component.additionalForm.value).toBe(
-      generateIdFromLabel("testLabel"),
+      generateIdFromLabel("test label"),
     );
   }));
 

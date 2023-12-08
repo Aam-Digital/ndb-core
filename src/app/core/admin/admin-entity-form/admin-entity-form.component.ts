@@ -26,12 +26,14 @@ import { MatCardModule } from "@angular/material/card";
 import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
 import { EntityFieldEditComponent } from "../../common-components/entity-field-edit/entity-field-edit.component";
 import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 // TODO: we wanted to remove the interfaces implemented by components - do we reintroduce them again for the Admin UI?
 export interface FormConfig {
   fieldGroups: FieldGroup[];
 }
 
+@UntilDestroy()
 @Component({
   selector: "app-admin-entity-form",
   templateUrl: "./admin-entity-form.component.html",
@@ -73,25 +75,26 @@ export class AdminEntityFormComponent implements OnChanges {
     private matDialog: MatDialog,
     adminEntityService: AdminEntityService,
   ) {
-    adminEntityService.entitySchemaUpdated.subscribe(() =>
-      this.initDummyForm(),
-    );
+    adminEntityService.entitySchemaUpdated
+      .pipe(untilDestroyed(this))
+      .subscribe(() => this.initForm());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
-      this.initAvailableFields();
-      this.initDummyForm();
+      this.initForm();
     }
   }
 
-  private initDummyForm() {
+  private initForm() {
     this.dummyEntity = new this.entityType();
     this.dummyForm = this.entityFormService.createFormGroup(
       [...this.getUsedFields(this.config), ...this.availableFields],
       this.dummyEntity,
     );
     this.dummyForm.disable();
+
+    this.initAvailableFields();
   }
 
   private getUsedFields(config: FormConfig): ColumnConfig[] {
@@ -130,7 +133,6 @@ export class AdminEntityFormComponent implements OnChanges {
       width: "99%",
       maxHeight: "90vh",
       data: {
-        entitySchemaField: this.entityType.schema.get(fieldIdToEdit),
         fieldId: fieldIdToEdit,
         entityType: this.entityType,
       },
@@ -175,7 +177,7 @@ export class AdminEntityFormComponent implements OnChanges {
     event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
   ) {
     if (event.container.data === this.availableFields) {
-      // don't add new field to the disabled fields
+      // don't add new field to the available fields that are not in the form yet
       return;
     }
 

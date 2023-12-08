@@ -8,7 +8,10 @@ import {
 import { AdminEntityComponent } from "./admin-entity.component";
 import { ConfigService } from "../../config/config.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { Config } from "../../config/config";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { CoreModule } from "../../core.module";
@@ -31,6 +34,7 @@ describe("AdminEntityComponent", () => {
   let fixture: ComponentFixture<AdminEntityComponent>;
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
+  let entityMapper: MockEntityMapperService;
 
   let config;
   let viewConfig: EntityDetailsConfig;
@@ -58,6 +62,8 @@ describe("AdminEntityComponent", () => {
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue(config[viewConfigId]);
 
+    entityMapper = mockEntityMapper([new Config(Config.CONFIG_KEY, config)]);
+
     TestBed.configureTestingModule({
       imports: [
         AdminEntityComponent,
@@ -71,7 +77,7 @@ describe("AdminEntityComponent", () => {
       providers: [
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper([new Config(Config.CONFIG_KEY, config)]),
+          useValue: entityMapper,
         },
         {
           provide: ConfigService,
@@ -104,7 +110,7 @@ describe("AdminEntityComponent", () => {
   });
 
   it("should add new section (component in panel) to config", () => {
-    component.addSection(component.configDetailsView.panels[0]);
+    component.addComponent(component.configDetailsView.panels[0]);
 
     expect(component.configDetailsView.panels[0].components.length).toBe(1);
   });
@@ -125,9 +131,6 @@ describe("AdminEntityComponent", () => {
   });
 
   it("should save schema and view config", fakeAsync(() => {
-    const entityMapper = TestBed.inject(EntityMapperService);
-    const saveSpy = spyOn(entityMapper, "save");
-
     const newSchemaField: EntitySchemaField = {
       _isCustomizedField: true,
       label: "New field",
@@ -153,16 +156,16 @@ describe("AdminEntityComponent", () => {
       }),
     };
 
-    expect(saveSpy).toHaveBeenCalled();
-    const actualSaved: Config = saveSpy.calls.mostRecent().args[0] as Config;
-    expect(actualSaved.getId(true)).toBe(
-      Entity.createPrefixedId(Config.ENTITY_TYPE, Config.CONFIG_KEY),
-    );
-    expect(actualSaved.data[viewConfigId]).toEqual({
+    expect(entityMapper.save).toHaveBeenCalled();
+    const actual: Config = entityMapper.get(
+      Config.ENTITY_TYPE,
+      Config.CONFIG_KEY,
+    ) as Config;
+    expect(actual.data[viewConfigId]).toEqual({
       component: "EntityDetails",
       config: expectedViewConfig,
     });
-    expect(actualSaved.data[entityConfigId]).toEqual(expectedEntityConfig);
+    expect(actual.data[entityConfigId]).toEqual(expectedEntityConfig);
 
     AdminTestEntity.schema.delete("testField");
   }));

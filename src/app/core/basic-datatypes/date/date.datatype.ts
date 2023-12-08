@@ -42,7 +42,7 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
   viewComponent = "DisplayDate";
   editComponent = "EditDate";
 
-  constructor(protected loggingService: LoggingService) {
+  constructor(protected loggingService?: LoggingService) {
     super();
   }
 
@@ -50,11 +50,7 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
     return value as any;
   }
 
-  transformToObjectFormat(
-    value,
-    schemaField?: EntitySchemaField,
-    parent?: any,
-  ) {
+  transformToObjectFormat(value, schemaField: EntitySchemaField, parent: any) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       this.loggingService.warn(

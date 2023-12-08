@@ -3,13 +3,13 @@ import { DateDatatype } from "./date.datatype";
 
 describe("Schema data type: date", () => {
   testDatatype(
-    new DateDatatype(null),
+    new DateDatatype(),
     new Date(2023, 10, 25),
     new Date(2023, 10, 25),
   );
 
   it("should anonymize dates and only retain year", async () => {
-    const datatype = new DateDatatype(null);
+    const datatype = new DateDatatype();
     const testDate = new Date(2023, 10, 25);
 
     const actualAnonymized = await datatype.anonymize(testDate);

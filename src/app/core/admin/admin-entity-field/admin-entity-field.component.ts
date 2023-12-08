@@ -71,9 +71,10 @@ import { generateIdFromLabel } from "../../../utils/generate-id-from-label/gener
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
-  @Input() entitySchemaField: EntitySchemaField;
   @Input() fieldId: string;
   @Input() entityType: EntityConstructor;
+
+  entitySchemaField: EntitySchemaField;
 
   form: FormGroup;
   fieldIdForm: FormControl;
@@ -86,7 +87,6 @@ export class AdminEntityFieldComponent implements OnChanges {
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
-      entitySchemaField: EntitySchemaField;
       fieldId: string;
       entityType: EntityConstructor;
     },
@@ -98,9 +98,9 @@ export class AdminEntityFieldComponent implements OnChanges {
     private adminEntityService: AdminEntityService,
     private dialog: MatDialog,
   ) {
-    this.entitySchemaField = data.entitySchemaField ?? {};
     this.fieldId = data.fieldId;
     this.entityType = data.entityType;
+    this.entitySchemaField = this.entityType.schema.get(this.fieldId) ?? {};
 
     this.initSettings();
     this.initAvailableDatatypes(allDataTypes);
@@ -266,8 +266,11 @@ export class AdminEntityFieldComponent implements OnChanges {
     );
     const fieldId = this.fieldIdForm.getRawValue();
 
-    this.entityType.schema.set(fieldId, updatedEntitySchema);
-    this.adminEntityService.entitySchemaUpdated.next();
+    this.adminEntityService.updateSchemaField(
+      this.entityType,
+      fieldId,
+      updatedEntitySchema,
+    );
 
     this.dialogRef.close(fieldId);
   }

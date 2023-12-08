@@ -103,10 +103,10 @@ describe("EntitySchemaService", () => {
     const propertySchema = TestEntity.schema.get("dates");
 
     const displayComponent = service.getComponent(propertySchema, "view");
-    expect(displayComponent).toBe(new DateOnlyDatatype(null).viewComponent);
+    expect(displayComponent).toBe(new DateOnlyDatatype().viewComponent);
 
     const editComponent = service.getComponent(propertySchema, "edit");
-    expect(editComponent).toBe(new DateOnlyDatatype(null).editComponent);
+    expect(editComponent).toBe(new DateOnlyDatatype().editComponent);
   });
 
   it("should return the default datatype no type is specified", () => {
