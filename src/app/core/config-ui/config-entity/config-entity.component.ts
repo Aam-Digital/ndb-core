@@ -63,13 +63,6 @@ export class ConfigEntityComponent implements OnInit {
     this.configDetailsView = JSON.parse(JSON.stringify(detailsView.config));
   }
 
-  addSection(panel: Panel) {
-    panel.components.push({
-      title: "New Section",
-      component: "NotesRelatedToEntity",
-    });
-  }
-
   cancel() {
     this.entityConstructor.schema = new Map(this.originalEntitySchemaFields);
     this.location.back();
@@ -82,25 +75,8 @@ export class ConfigEntityComponent implements OnInit {
     );
     const newConfig = originalConfig.copy();
 
-    newConfig.data[
-      EntityConfigService.getDetailsViewId(this.entityConstructor)
-    ].config = this.configDetailsView;
-
-    const entityConfigKey =
-      EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType;
-    if (!newConfig.data[entityConfigKey]) {
-      newConfig.data[entityConfigKey] = { attributes: {} } as EntityConfig;
-    }
-    const entitySchemaConfig: EntityConfig = newConfig.data[
-      entityConfigKey
-    ] as EntityConfig;
-    for (const [fieldId, field] of this.entityConstructor.schema.entries()) {
-      if (!field._isCustomizedField) {
-        // do not write unchanged default fields from the classes into config
-        continue;
-      }
-      entitySchemaConfig.attributes[fieldId] = field;
-    }
+    this.setViewConfig(newConfig);
+    this.setEntityConfig(newConfig);
 
     await this.entityMapper.save(newConfig);
     this.entityActionsService.showSnackbarConfirmationWithUndo(
@@ -112,6 +88,32 @@ export class ConfigEntityComponent implements OnInit {
     this.location.back();
   }
 
+  private setViewConfig(newConfig: Config) {
+    const viewId = EntityConfigService.getDetailsViewId(this.entityConstructor);
+    newConfig.data[viewId].config = this.configDetailsView;
+  }
+
+  private setEntityConfig(newConfig: Config) {
+    const entityConfigKey =
+      EntityConfigService.PREFIX_ENTITY_CONFIG + this.entityType;
+
+    // init config if not present
+    newConfig.data[entityConfigKey] =
+      newConfig.data[entityConfigKey] ?? ({ attributes: {} } as EntityConfig);
+    newConfig.data[entityConfigKey].attributes =
+      newConfig.data[entityConfigKey].attributes ?? {};
+
+    const entitySchemaConfig: EntityConfig = newConfig.data[entityConfigKey];
+
+    for (const [fieldId, field] of this.entityConstructor.schema.entries()) {
+      if (!field._isCustomizedField) {
+        // do not write unchanged default fields from the classes into config
+        continue;
+      }
+      entitySchemaConfig.attributes[fieldId] = field;
+    }
+  }
+
   createPanel() {
     const newPanel: Panel = { title: "New Tab", components: [] };
     this.configDetailsView.panels.push(newPanel);
@@ -121,6 +123,13 @@ export class ConfigEntityComponent implements OnInit {
       const newTabIndex = this.configDetailsView.panels.length - 1;
       this.tabGroup.selectedIndex = newTabIndex;
       this.tabGroup.focusTab(newTabIndex);
+    });
+  }
+
+  addSection(panel: Panel) {
+    panel.components.push({
+      title: "New Section",
+      component: "Form", // TODO: make this configurable
     });
   }
 }
