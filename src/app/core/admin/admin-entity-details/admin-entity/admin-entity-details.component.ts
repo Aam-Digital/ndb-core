@@ -2,34 +2,34 @@ import { Component, Input, OnInit, ViewChild } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
-} from "../../entity-details/EntityDetailsConfig";
-import { EntityConstructor } from "../../entity/model/entity";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { ConfigService } from "../../config/config.service";
-import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
-import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
+} from "../../../entity-details/EntityDetailsConfig";
+import { EntityConstructor } from "../../../entity/model/entity";
+import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { ConfigService } from "../../../config/config.service";
+import { ViewConfig } from "../../../config/dynamic-routing/view-config.interface";
+import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { Location, NgForOf, NgIf } from "@angular/common";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { Config } from "../../config/config";
-import { EntityConfigService } from "../../entity/entity-config.service";
-import { EntityConfig } from "../../entity/entity-config";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { Config } from "../../../config/config";
+import { EntityConfigService } from "../../../entity/entity-config.service";
+import { EntityConfig } from "../../../entity/entity-config";
 import { MatTabGroup, MatTabsModule } from "@angular/material/tabs";
-import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
-import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
-import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
+import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
+import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
 import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { AdminEntityPanelComponentComponent } from "../admin-entity-panel-component/admin-entity-panel-component.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
-@DynamicComponent("AdminEntity")
+@DynamicComponent("AdminEntityDetails")
 @Component({
-  selector: "app-admin-entity",
-  templateUrl: "./admin-entity.component.html",
-  styleUrls: ["./admin-entity.component.scss"],
+  selector: "app-admin-entity-details",
+  templateUrl: "./admin-entity-details.component.html",
+  styleUrls: ["./admin-entity-details.component.scss"],
   standalone: true,
   imports: [
     MatTabsModule,
@@ -45,7 +45,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     NgIf,
   ],
 })
-export class AdminEntityComponent implements OnInit {
+export class AdminEntityDetailsComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];

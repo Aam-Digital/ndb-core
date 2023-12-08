@@ -1,6 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { Entity, EntityConstructor } from "../../../entity/model/entity";
+import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import { FormControl, FormGroup } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { AdminEntityFieldComponent } from "../admin-entity-field/admin-entity-field.component";
@@ -13,20 +13,20 @@ import {
 import {
   ColumnConfig,
   toFormFieldConfig,
-} from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
-import { AdminEntityService } from "../admin-entity.service";
+} from "../../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { FormFieldConfig } from "../../../common-components/entity-form/entity-form/FormConfig";
+import { AdminEntityService } from "../../admin-entity.service";
 import { lastValueFrom } from "rxjs";
 import { NgForOf, NgIf } from "@angular/common";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatCardModule } from "@angular/material/card";
-import { EntityFieldLabelComponent } from "../../common-components/entity-field-label/entity-field-label.component";
-import { EntityFieldEditComponent } from "../../common-components/entity-field-edit/entity-field-edit.component";
+import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
+import { EntityFieldEditComponent } from "../../../common-components/entity-field-edit/entity-field-edit.component";
 import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { FormConfig } from "../../entity-details/form/form.component";
+import { FormConfig } from "../../../entity-details/form/form.component";
 
 @UntilDestroy()
 @Component({
@@ -35,7 +35,7 @@ import { FormConfig } from "../../entity-details/form/form.component";
   styleUrls: [
     "./admin-entity-form.component.scss",
     "../admin-section-header/admin-section-header.component.scss",
-    "../../common-components/entity-form/entity-form/entity-form.component.scss",
+    "../../../common-components/entity-form/entity-form/entity-form.component.scss",
   ],
   standalone: true,
   imports: [

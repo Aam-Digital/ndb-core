@@ -5,7 +5,7 @@ import {
   OnChanges,
   SimpleChanges,
 } from "@angular/core";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
   MAT_DIALOG_DATA,
   MatDialog,
@@ -13,9 +13,9 @@ import {
   MatDialogRef,
 } from "@angular/material/dialog";
 import { MatButtonModule } from "@angular/material/button";
-import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
+import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatInputModule } from "@angular/material/input";
-import { ErrorHintComponent } from "../../common-components/error-hint/error-hint.component";
+import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import {
   FormBuilder,
   FormControl,
@@ -25,23 +25,23 @@ import {
   Validators,
 } from "@angular/forms";
 import { NgIf } from "@angular/common";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { BasicAutocompleteComponent } from "../../common-components/basic-autocomplete/basic-autocomplete.component";
-import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
-import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
-import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { uniqueIdValidator } from "../../common-components/entity-form/unique-id-validator";
-import { AdminEntityService } from "../admin-entity.service";
-import { ConfigureEnumPopupComponent } from "../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
-import { ConfigurableEnum } from "../../basic-datatypes/configurable-enum/configurable-enum";
-import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
+import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
+import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
+import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
+import { EntityArrayDatatype } from "../../../basic-datatypes/entity-array/entity-array.datatype";
+import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { EntityRegistry } from "../../../entity/database-entity.decorator";
+import { uniqueIdValidator } from "../../../common-components/entity-form/unique-id-validator";
+import { AdminEntityService } from "../../admin-entity.service";
+import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
+import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
+import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -51,7 +51,7 @@ import { generateIdFromLabel } from "../../../utils/generate-id-from-label/gener
   templateUrl: "./admin-entity-field.component.html",
   styleUrls: [
     "./admin-entity-field.component.scss",
-    "../../common-components/entity-form/entity-form/entity-form.component.scss",
+    "../../../common-components/entity-form/entity-form/entity-form.component.scss",
   ],
   standalone: true,
   imports: [

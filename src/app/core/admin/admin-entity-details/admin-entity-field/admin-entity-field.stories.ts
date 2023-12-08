@@ -4,12 +4,12 @@ import {
   moduleMetadata,
   StoryFn,
 } from "@storybook/angular";
-import { StorybookBaseModule } from "../../../utils/storybook-base.module";
+import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { School } from "../../../child-dev-project/schools/model/school";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
+import { School } from "../../../../child-dev-project/schools/model/school";
 
 export default {
   title: "Core/Admin/Entity Field",

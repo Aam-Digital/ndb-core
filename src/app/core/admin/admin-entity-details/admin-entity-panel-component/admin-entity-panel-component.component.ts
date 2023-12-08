@@ -1,7 +1,7 @@
 import { Component, Input } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { PanelComponent } from "../../entity-details/EntityDetailsConfig";
-import { EntityConstructor } from "../../entity/model/entity";
+import { PanelComponent } from "../../../entity-details/EntityDetailsConfig";
+import { EntityConstructor } from "../../../entity/model/entity";
 
 @Component({
   selector: "app-admin-entity-panel-component",

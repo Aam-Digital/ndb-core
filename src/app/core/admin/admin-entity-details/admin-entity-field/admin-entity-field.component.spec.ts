@@ -6,27 +6,27 @@ import {
 } from "@angular/core/testing";
 import { AdminEntityFieldComponent } from "./admin-entity-field.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatFormFieldHarness } from "@angular/material/form-field/testing";
 import { MatInputHarness } from "@angular/material/input/testing";
-import { Entity } from "../../entity/model/entity";
-import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { StringDatatype } from "../../basic-datatypes/string/string.datatype";
-import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
-import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
+import { Entity } from "../../../entity/model/entity";
+import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
+import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
+import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
+import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import {
   DatabaseEntity,
   EntityRegistry,
-} from "../../entity/database-entity.decorator";
+} from "../../../entity/database-entity.decorator";
 import { Validators } from "@angular/forms";
-import { RecurringActivity } from "../../../child-dev-project/attendance/model/recurring-activity";
-import { AdminEntityService } from "../admin-entity.service";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
+import { AdminEntityService } from "../../admin-entity.service";
+import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
 
 describe("AdminEntityFieldComponent", () => {
   let component: AdminEntityFieldComponent;

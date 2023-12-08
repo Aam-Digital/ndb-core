@@ -6,18 +6,18 @@ import {
 } from "@angular/core/testing";
 
 import { AdminEntityFormComponent } from "./admin-entity-form.component";
-import { CoreTestingModule } from "../../../utils/core-testing.module";
-import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
+import { CoreTestingModule } from "../../../../utils/core-testing.module";
+import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
-import { Note } from "../../../child-dev-project/notes/model/note";
+import { Note } from "../../../../child-dev-project/notes/model/note";
 import { FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { of } from "rxjs";
-import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { AdminModule } from "../admin.module";
-import { FormConfig } from "../../entity-details/form/form.component";
+import { ColumnConfig } from "../../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { AdminModule } from "../../admin.module";
+import { FormConfig } from "../../../entity-details/form/form.component";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
