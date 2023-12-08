@@ -10,7 +10,7 @@ import { DatabaseField } from "../../../core/entity/database-field.decorator";
  * TODO overwork this concept to either be a sublass of Entity or not (at the moment it uses a lot of casting, e.g. to be used in the entity subrecord)
  */
 export class EventAttendance {
-  static DATA_TYPE = "event-attendance"; // TODO: implement an event-attendance datatype based upon SchemaEmbedDatatype
+  static DATA_TYPE = "event-attendance";
 
   private _status: AttendanceStatusType;
   @DatabaseField({
