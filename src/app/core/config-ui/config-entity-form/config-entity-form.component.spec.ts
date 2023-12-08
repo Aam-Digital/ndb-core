@@ -1,4 +1,9 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import {
   ConfigEntityFormComponent,
@@ -12,17 +17,21 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { CdkDragDrop } from "@angular/cdk/drag-drop";
+import { of } from "rxjs";
+import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 describe("ConfigEntityFormComponent", () => {
   let component: ConfigEntityFormComponent;
   let fixture: ComponentFixture<ConfigEntityFormComponent>;
 
   let mockFormService: jasmine.SpyObj<EntityFormService>;
+  let mockDialog: jasmine.SpyObj<MatDialog>;
 
   const testConfig: FormConfig = {
     fieldGroups: [
       { header: "Group 1", fields: ["subject", "date"] },
-      { header: "Group 2", fields: ["category"] },
+      { fields: ["category"] },
     ],
   };
 
@@ -31,6 +40,7 @@ describe("ConfigEntityFormComponent", () => {
       "createFormGroup",
     ]);
     mockFormService.createFormGroup.and.returnValue(new FormGroup({}));
+    mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -46,7 +56,7 @@ describe("ConfigEntityFormComponent", () => {
         },
         {
           provide: MatDialog,
-          useValue: jasmine.createSpyObj(["open"]),
+          useValue: mockDialog,
         },
       ],
     });
@@ -57,12 +67,12 @@ describe("ConfigEntityFormComponent", () => {
     component.entityType = Note;
 
     fixture.detectChanges();
+
+    component.ngOnChanges({ config: true as any });
   });
 
   it("should create and init a form", () => {
     expect(component).toBeTruthy();
-
-    component.ngOnChanges({ config: true as any });
 
     expect(component.dummyEntity).toBeTruthy();
     expect(component.dummyForm).toBeTruthy();
@@ -84,13 +94,88 @@ describe("ConfigEntityFormComponent", () => {
     ]);
   });
 
-  it("should add new field in view if field config dialog succeeds", () => {
-    expect(component).toBeTruthy();
-    // TODO
-  });
+  function mockDropNewFieldEvent(
+    targetContainer: ColumnConfig[],
+    previousContainer?: ColumnConfig[],
+    previousIndex?: number,
+  ) {
+    previousContainer = previousContainer ?? component.availableFields;
+    previousIndex = previousIndex ?? 0; // "new field" placeholder is always first
 
-  it("should not add new field in view if field config dialog is cancelled", () => {
-    expect(component).toBeTruthy();
-    // TODO
-  });
+    return {
+      container: { data: targetContainer },
+      currentIndex: 1,
+      previousContainer: { data: previousContainer },
+      previousIndex: previousIndex,
+    } as Partial<CdkDragDrop<ColumnConfig[], ColumnConfig[]>> as CdkDragDrop<
+      ColumnConfig[],
+      ColumnConfig[]
+    >;
+  }
+
+  it("should add new field in view if field config dialog succeeds", fakeAsync(() => {
+    const newFieldId = "test-created-field";
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of(newFieldId),
+    } as any);
+
+    const targetContainer = component.config.fieldGroups[0].fields;
+    component.drop(mockDropNewFieldEvent(targetContainer));
+    tick();
+
+    expect(mockDialog.open).toHaveBeenCalled();
+    expect(targetContainer).toEqual(["subject", newFieldId, "date"]);
+    expect(component.availableFields).toContain(
+      component.createNewFieldPlaceholder,
+    );
+  }));
+
+  it("should not add new field in view if field config dialog is cancelled", fakeAsync(() => {
+    mockDialog.open.and.returnValue({ afterClosed: () => of("") } as any);
+
+    const targetContainer = component.config.fieldGroups[0].fields;
+    component.drop(mockDropNewFieldEvent(targetContainer));
+    tick();
+
+    expect(targetContainer).toEqual(["subject", "date"]);
+    expect(mockDialog.open).toHaveBeenCalled();
+    expect(component.availableFields).toContain(
+      component.createNewFieldPlaceholder,
+    );
+  }));
+
+  it("should not create field (show dialog) if new field is dropped on toolbar (available fields)", fakeAsync(() => {
+    component.drop(mockDropNewFieldEvent(component.availableFields));
+    tick();
+
+    expect(mockDialog.open).not.toHaveBeenCalled();
+  }));
+
+  it("should create a new fieldGroup in config on dropping field in new-group drop area", fakeAsync(() => {
+    const field = component.config.fieldGroups[0].fields[0];
+    const dropEvent = mockDropNewFieldEvent(
+      null,
+      component.config.fieldGroups[0].fields,
+      0,
+    );
+    component.dropNewGroup(dropEvent);
+    tick();
+
+    expect(component.config.fieldGroups[2]).toEqual({ fields: [field] });
+  }));
+
+  it("should move all fields from removed group to availableFields toolbar", fakeAsync(() => {
+    const removedFields = component.config.fieldGroups[0].fields;
+    expect(
+      removedFields.some((x) => component.availableFields.includes(x)),
+    ).not.toBeTrue();
+
+    component.removeGroup(0);
+    tick();
+
+    expect(component.config.fieldGroups).toEqual([{ fields: ["category"] }]);
+    expect(component.availableFields).toEqual(
+      jasmine.arrayContaining(removedFields),
+    );
+  }));
 });

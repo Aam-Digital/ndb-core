@@ -16,6 +16,7 @@ import {
 import { FieldGroup } from "../../entity-details/form/field-group";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { AdminEntityService } from "../admin-entity.service";
+import { lastValueFrom } from "rxjs";
 
 // TODO: we wanted to remove the interfaces implemented by components - do we reintroduce them again for the Admin UI?
 export interface FormConfig {
@@ -97,56 +98,30 @@ export class ConfigEntityFormComponent implements OnChanges {
 
   /**
    * Open the form to edit details of a single field's schema.
-   * Optionally this can add a newly created field to a field group,
-   * if the parameters are not provided only schema is updated.
    *
    * @param field field to edit or { id: null } to create a new field
-   * @param addIntoFieldsGroup (optional) the field group into which the field (considered as newly created) should be added
-   * @param addAtIndex (optional) the index at which the field will be added in addIntoFieldsGroup
+   * @returns the id of the field that was edited or created (which is newly defined in the dialog for new fields)
    */
-  openFieldConfig(
-    field: ColumnConfig,
-    addIntoFieldsGroup?: any[],
-    addAtIndex?: number,
-  ) {
+  async openFieldConfig(field: ColumnConfig): Promise<string> {
     let fieldIdToEdit = toFormFieldConfig(field).id;
-    this.matDialog
-      .open(ConfigFieldComponent, {
-        width: "99%",
-        maxHeight: "90vh",
-        data: {
-          entitySchemaField: this.entityType.schema.get(fieldIdToEdit),
-          fieldId: fieldIdToEdit,
-          entityType: this.entityType,
-        },
-      })
-      .afterClosed()
-      .subscribe((newFieldId: string) => {
-        if (!newFieldId || !addIntoFieldsGroup) {
-          // cancelled popup of edited existing field, no further action required
-          return;
-        }
-
-        // add newly created field
-        this.dummyForm.addControl(newFieldId, new FormControl());
-        this.dummyForm.disable();
-        addIntoFieldsGroup.splice(addAtIndex, 0, newFieldId);
-      });
+    const dialogRef = this.matDialog.open(ConfigFieldComponent, {
+      width: "99%",
+      maxHeight: "90vh",
+      data: {
+        entitySchemaField: this.entityType.schema.get(fieldIdToEdit),
+        fieldId: fieldIdToEdit,
+        entityType: this.entityType,
+      },
+    });
+    return lastValueFrom(dialogRef.afterClosed());
   }
 
   drop(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
-    const item = event.previousContainer.data[event.previousIndex];
-    if (item === this.createNewFieldPlaceholder) {
-      if (event.container.data === this.availableFields) {
-        // don't add new field to the disabled fields
-        return;
-      }
-
-      this.openFieldConfig(
-        { id: null },
-        event.container.data,
-        event.currentIndex,
-      );
+    if (
+      event.previousContainer.data[event.previousIndex] ===
+      this.createNewFieldPlaceholder
+    ) {
+      this.dropNewField(event);
       return;
     }
 
@@ -172,6 +147,29 @@ export class ConfigEntityFormComponent implements OnChanges {
       // ensure "create new field" is always first
       moveItemInArray(event.container.data, event.currentIndex, 1);
     }
+  }
+
+  /**
+   * drop handler specifically for the "create new field" item
+   * @param event
+   * @private
+   */
+  private async dropNewField(
+    event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
+  ) {
+    if (event.container.data === this.availableFields) {
+      // don't add new field to the disabled fields
+      return;
+    }
+
+    const newFieldId = await this.openFieldConfig({ id: null });
+    if (!newFieldId) {
+      return;
+    }
+
+    this.dummyForm.addControl(newFieldId, new FormControl());
+    this.dummyForm.disable();
+    event.container.data.splice(event.currentIndex, 0, newFieldId);
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
