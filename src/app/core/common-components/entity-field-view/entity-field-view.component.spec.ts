@@ -1,13 +1,13 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { EntityPropertyViewComponent } from "./entity-property-view.component";
+import { EntityFieldViewComponent } from "./entity-field-view.component";
 import { ConfigService } from "../../config/config.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { createTestingConfigService } from "../../config/testing-config-service";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 
-describe("EntityPropertyViewComponent", () => {
-  let component: EntityPropertyViewComponent;
-  let fixture: ComponentFixture<EntityPropertyViewComponent>;
+describe("EntityFieldViewComponent", () => {
+  let component: EntityFieldViewComponent;
+  let fixture: ComponentFixture<EntityFieldViewComponent>;
 
   let testEntity: Child;
   const testProperty: string = "dateOfBirth";
@@ -16,17 +16,17 @@ describe("EntityPropertyViewComponent", () => {
     testEntity = Child.create("tester");
 
     await TestBed.configureTestingModule({
-      imports: [EntityPropertyViewComponent, MockedTestingModule],
+      imports: [EntityFieldViewComponent, MockedTestingModule],
       providers: [
         { provide: ConfigService, useValue: createTestingConfigService() },
       ],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(EntityPropertyViewComponent);
+    fixture = TestBed.createComponent(EntityFieldViewComponent);
     component = fixture.componentInstance;
 
     component.entity = testEntity;
-    component.property = testProperty;
+    component.field = { id: testProperty };
 
     fixture.detectChanges();
   });
@@ -36,36 +36,29 @@ describe("EntityPropertyViewComponent", () => {
   });
 
   it("should get component from schema if not given", () => {
-    component.ngOnInit();
+    component.ngOnChanges({ field: true as any });
 
-    expect(component.component).toBe("DisplayDate");
-  });
-
-  it("should use component from input if given", () => {
-    component.component = "DisplayText";
-    component.ngOnInit();
-
-    expect(component.component).toBe("DisplayText");
+    expect(component._field.viewComponent).toBe("DisplayDate");
   });
 
   it("should get label from schema", () => {
-    component.ngOnInit();
+    component.ngOnChanges({ field: true as any });
 
-    expect(component.label).toBe(Child.schema.get(testProperty).label);
+    expect(component._field.label).toBe(Child.schema.get(testProperty).label);
   });
 
   it("should support object as property config", () => {
-    component.property = {
+    const testField = {
       id: "testId",
       label: "Test Label",
-      view: "DisplayText",
+      viewComponent: "DisplayText",
       additional: "Some additional information",
     };
-    component.ngOnInit();
+    component.field = testField;
+    component.ngOnChanges({ field: true as any });
 
-    expect(component.label).toBe(component.property.label);
-    expect(component.propertyName).toBe(component.property.id);
-    expect(component.component).toBe(component.property.view);
-    expect(component.additional).toBe(component.property.additional);
+    expect(component._field.label).toBe(testField.label);
+    expect(component._field.viewComponent).toBe(testField.viewComponent);
+    expect(component._field.additional).toBe(testField.additional);
   });
 });

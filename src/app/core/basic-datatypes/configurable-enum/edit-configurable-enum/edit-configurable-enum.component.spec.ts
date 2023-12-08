@@ -46,8 +46,7 @@ describe("EditConfigurableEnumComponent", () => {
   function initWithSchema(schema: EntitySchemaField) {
     const fromGroup = new FormGroup({ test: new FormControl() });
     component.formControl = fromGroup.get("test") as FormControl;
-    component.formFieldConfig = { id: "test" };
-    component.propertySchema = schema;
+    component.formFieldConfig = { id: "test", ...schema }; // EditComponents are ensure to receive fully extended formFieldConfig
     component.entity = new Entity();
     component.ngOnInit();
   }

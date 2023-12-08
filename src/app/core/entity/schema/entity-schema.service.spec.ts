@@ -129,7 +129,9 @@ describe("EntitySchemaService", () => {
       ConfigurableEnumDatatype,
     );
 
-    const entityArraySchema: EntitySchemaField = { dataType: "entity-array" };
+    const entityArraySchema: EntitySchemaField = {
+      dataType: "entity-array",
+    };
     expect(service.getInnermostDatatype(entityArraySchema)).toBeInstanceOf(
       EntityDatatype,
     );

@@ -21,7 +21,10 @@ describe("MapPropertiesPopupComponent", () => {
   let mockDialogRef: jasmine.SpyObj<MatDialogRef<MapPropertiesPopupComponent>>;
 
   beforeEach(async () => {
-    Child.schema.set("address", { label: "Address", dataType: "location" });
+    Child.schema.set("address", {
+      label: "Address",
+      dataType: "location",
+    });
     Child.schema.set("otherAddress", {
       label: "Other address",
       dataType: "location",

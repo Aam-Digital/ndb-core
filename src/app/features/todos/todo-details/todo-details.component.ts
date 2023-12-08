@@ -14,7 +14,6 @@ import {
 } from "@angular/material/dialog";
 import { DetailsComponentData } from "../../../core/common-components/entity-subrecord/row-details/row-details.component";
 import { TodoService } from "../todo.service";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import {
   EntityForm,
   EntityFormService,
@@ -24,6 +23,7 @@ import { TodoCompletionComponent } from "../todo-completion/todo-completion/todo
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
+import { FieldGroup } from "../../../core/entity-details/form/field-group";
 
 @Component({
   selector: "app-todo-details",
@@ -44,7 +44,7 @@ export class TodoDetailsComponent implements OnInit {
 
   @Output() close = new EventEmitter<Todo>();
 
-  formColumns: FormFieldConfig[][];
+  formColumns: FieldGroup[];
   form: EntityForm<Todo>;
 
   constructor(
@@ -54,12 +54,12 @@ export class TodoDetailsComponent implements OnInit {
     private entityFormService: EntityFormService,
   ) {
     this.entity = data.entity as Todo;
-    this.formColumns = [data.columns];
+    this.formColumns = [{ fields: data.columns }];
   }
 
   ngOnInit(): void {
     this.form = this.entityFormService.createFormGroup(
-      [].concat(...this.formColumns),
+      [].concat(...this.formColumns.map((group) => group.fields)),
       this.entity,
     );
   }

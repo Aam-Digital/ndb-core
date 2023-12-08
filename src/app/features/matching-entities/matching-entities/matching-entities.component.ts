@@ -31,7 +31,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
-import { EntityPropertyViewComponent } from "../../../core/common-components/entity-property-view/entity-property-view.component";
+import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
 import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
@@ -41,6 +41,7 @@ import { LocationProperties } from "../../location/map/map-properties-popup/map-
 import { getLocationProperties } from "../../location/map-utils";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
 import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -78,7 +79,7 @@ export interface MatchingSide extends MatchingSideConfig {
     MatButtonModule,
     NgForOf,
     EntitySubrecordComponent,
-    EntityPropertyViewComponent,
+    EntityFieldViewComponent,
     MapComponent,
     FilterComponent,
     FlattenArrayPipe,
@@ -358,11 +359,11 @@ export class MatchingEntitiesComponent implements OnInit {
     }
   }
 
-  private getDistanceColumnConfig(side: MatchingSide) {
+  private getDistanceColumnConfig(side: MatchingSide): FormFieldConfig {
     return {
       id: "distance",
       label: $localize`:Matching View column name:Distance`,
-      view: "DisplayDistance",
+      viewComponent: "DisplayDistance",
       additional: {
         coordinatesProperties:
           this.displayedProperties[side.entityType.ENTITY_TYPE],

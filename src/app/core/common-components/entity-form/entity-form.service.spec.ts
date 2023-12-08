@@ -22,6 +22,10 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
 import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { TEST_USER } from "../../../utils/mock-local-session";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { FormFieldConfig } from "./entity-form/FormConfig";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -90,7 +94,6 @@ describe("EntityFormService", () => {
 
   it("should create forms with the validators included", () => {
     const formFields = [{ id: "schoolId" }, { id: "result" }];
-    service.extendFormFieldConfig(formFields, ChildSchoolRelation);
     const formGroup = service.createFormGroup(
       formFields,
       new ChildSchoolRelation(),
@@ -210,5 +213,58 @@ describe("EntityFormService", () => {
     expect(form.get("test")).toHaveValue(2);
 
     Entity.schema.delete("test");
+  });
+
+  it("should add column definitions from property schema", () => {
+    class Test extends Child {
+      @DatabaseField({
+        description: "Property description",
+        additional: "someAdditional",
+      })
+      propertyField: string;
+    }
+
+    spyOn(TestBed.inject(EntitySchemaService), "getComponent").and.returnValue(
+      "PredefinedComponent",
+    );
+    const entity = new Test();
+    const field1: FormFieldConfig = {
+      id: "fieldWithDefinition",
+      editComponent: "EditComponent",
+      viewComponent: "DisplayComponent",
+      label: "Field with definition",
+      description: "Custom tooltip",
+      additional: "additional",
+    };
+    const field2: FormFieldConfig = { id: "propertyField", label: "Property" };
+
+    const result1 = service.extendFormFieldConfig(
+      field1,
+      entity.getConstructor(),
+    );
+    const result2 = service.extendFormFieldConfig(
+      field2,
+      entity.getConstructor(),
+    );
+
+    expect(result1).toEqual({
+      id: "fieldWithDefinition",
+      editComponent: "EditComponent",
+      viewComponent: "DisplayComponent",
+      label: "Field with definition",
+      forTable: false,
+      description: "Custom tooltip",
+      additional: "additional",
+    } as FormFieldConfig);
+    expect(result2).toEqual({
+      id: "propertyField",
+      dataType: "string",
+      editComponent: "PredefinedComponent",
+      viewComponent: "PredefinedComponent",
+      label: "Property",
+      forTable: false,
+      description: "Property description",
+      additional: "someAdditional",
+    } as FormFieldConfig);
   });
 });

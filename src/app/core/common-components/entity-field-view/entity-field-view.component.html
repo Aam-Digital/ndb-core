@@ -1,0 +1,19 @@
+<div *ngIf="_field">
+  <div *ngIf="showLabel === 'above'" class="label">
+    {{ _field.label }}
+  </div>
+  <span *ngIf="showLabel === 'inline'">{{ _field.label }}:&nbsp;</span>
+
+  <ng-container
+    *ngIf="_field.viewComponent"
+    [appDynamicComponent]="{
+      component: _field.viewComponent,
+      config: {
+        value: entity[_field.id],
+        id: _field.id,
+        entity: entity,
+        config: _field.additional
+      }
+    }"
+  ></ng-container>
+</div>

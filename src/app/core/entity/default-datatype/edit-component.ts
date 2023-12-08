@@ -1,6 +1,5 @@
 import { FormControl, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
-import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity } from "../model/entity";
 import { Directive, Input, OnChanges, OnInit } from "@angular/core";
 
@@ -16,11 +15,6 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
   @Input() formFieldConfig: FormFieldConfig;
 
   /**
-   * If available, the schema for the property which is displayed in this field.
-   */
-  @Input() propertySchema: EntitySchemaField;
-
-  /**
    * The form control for this field which is part of a form group of the table/form component.
    */
   @Input() formControl: FormControl<T>;
@@ -29,10 +23,6 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
    * The entity which is edited.
    */
   @Input() entity: Entity;
-  /**
-   * The tooltip to be displayed.
-   */
-  tooltip: string;
 
   /**
    * The name of the form control.
@@ -60,13 +50,9 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
 
   ngOnInit() {
     if (!this.formFieldConfig?.forTable) {
-      this.label = this.formFieldConfig?.label ?? this.propertySchema?.label;
+      this.label = this.formFieldConfig?.label;
     }
-    if (this.formFieldConfig?.forTable) {
-      this.tooltip = undefined;
-    }
-    this.additional =
-      this.formFieldConfig?.additional ?? this.propertySchema?.additional;
+    this.additional = this.formFieldConfig?.additional;
     this.formControlName = this.formFieldConfig?.id;
     // This type casts are needed as the normal types throw errors in the templates
     this.parent = this.formControl.parent as FormGroup;
