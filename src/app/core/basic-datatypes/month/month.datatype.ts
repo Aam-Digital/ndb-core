@@ -17,7 +17,6 @@
 
 import { Injectable } from "@angular/core";
 import { DateOnlyDatatype } from "../date-only/date-only.datatype";
-import { LoggingService } from "../../logging/logging.service";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a short string month format ("YYYY-mm").
@@ -35,10 +34,6 @@ export class MonthDatatype extends DateOnlyDatatype {
 
   viewComponent = "DisplayMonth";
   editComponent = "EditMonth";
-
-  constructor(loggingService?: LoggingService) {
-    super(loggingService);
-  }
 
   transformToDatabaseFormat(value) {
     if (!(value instanceof Date)) {

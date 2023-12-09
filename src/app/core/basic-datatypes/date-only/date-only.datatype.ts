@@ -18,7 +18,6 @@
 import { dateToString } from "../../../utils/utils";
 import { Injectable } from "@angular/core";
 import { DateDatatype } from "../date/date.datatype";
-import { LoggingService } from "../../logging/logging.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 /**
@@ -34,10 +33,6 @@ import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 export class DateOnlyDatatype extends DateDatatype<string> {
   static override dataType = "date-only";
   static override label: string = $localize`:datatype-label:date`;
-
-  constructor(loggingService?: LoggingService) {
-    super(loggingService);
-  }
 
   transformToDatabaseFormat(value: Date) {
     if (!(value instanceof Date)) {
