@@ -17,9 +17,9 @@
 
 import { Component, Input } from "@angular/core";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
-import { RouteTarget } from "../../../app.routing";
 import { NgFor } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
+import { RouteTarget } from "../../../route-target";
 
 @RouteTarget("Dashboard")
 @Component({

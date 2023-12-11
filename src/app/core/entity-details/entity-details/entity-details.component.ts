@@ -5,7 +5,6 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
@@ -27,6 +26,7 @@ import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Subscription } from "rxjs";
 import { AbilityModule } from "@casl/angular";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * This component can be used to display an entity in more detail.

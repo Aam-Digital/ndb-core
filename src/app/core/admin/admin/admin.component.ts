@@ -6,7 +6,6 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
-import { RouteTarget } from "../../../app.routing";
 import { Database } from "../../database/database";
 import { ExtendedAlertConfig } from "../../alerts/alert-config";
 import { MatButtonModule } from "@angular/material/button";
@@ -14,6 +13,7 @@ import { RouterLink } from "@angular/router";
 import { DatePipe, NgForOf } from "@angular/common";
 import { DownloadService } from "../../export/download-service/download.service";
 import { MatListModule } from "@angular/material/list";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * Admin GUI giving administrative users different options/actions.

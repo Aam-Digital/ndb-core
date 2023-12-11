@@ -7,7 +7,8 @@ import { DialogCloseComponent } from "../../../core/common-components/dialog-clo
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
-import { RouteTarget } from "../../../app.routing";
+
+import { RouteTarget } from "../../../route-target";
 
 /**
  * Placeholder page to announce that a feature is not available yet.
