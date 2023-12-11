@@ -1,5 +1,6 @@
 import "reflect-metadata";
 import { EntitySchemaField } from "./schema/entity-schema-field";
+import { EntitySchema } from "./schema/entity-schema";
 
 /**
  * Decorator (Annotation `@DatabaseField()`) to mark a property of an Entity that should be persisted in the database.
@@ -29,11 +30,18 @@ export function addPropertySchema(
   propertySchema: EntitySchemaField,
 ) {
   target[propertyName] = undefined; // This ensures that the field is not read only
-
-  if (Object.getOwnPropertyDescriptor(target.constructor, "schema") == null) {
-    target.constructor.schema = new Map<string, EntitySchemaField>();
-  }
-  target.constructor.schema.set(propertyName, propertySchema);
-
+  getEntitySchema(target.constructor).set(propertyName, propertySchema);
   return target;
+}
+
+/**
+ * Returns the schema map of this entity (not the superclass).
+ * Creates and assigns a new one if it doesn't exist yet.
+ * @param ctor
+ */
+export function getEntitySchema(ctor): EntitySchema {
+  if (Object.getOwnPropertyDescriptor(ctor, "schema") == null) {
+    ctor.schema = new Map<string, EntitySchemaField>();
+  }
+  return ctor.schema;
 }
