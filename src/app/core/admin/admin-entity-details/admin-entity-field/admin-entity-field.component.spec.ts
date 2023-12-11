@@ -191,6 +191,7 @@ describe("AdminEntityFieldComponent", () => {
 
     @DatabaseEntity("EntityUpdatedInAdminUI")
     class EntityUpdatedInAdminUI extends Entity {}
+
     component.entityType = EntityUpdatedInAdminUI;
     component.fieldId = "testField";
     component.schemaFieldsForm.get("label").setValue(testFieldData.label);
