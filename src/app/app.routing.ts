@@ -53,12 +53,8 @@ export const allRoutes: Routes = [
   },
   {
     path: "admin",
-    loadChildren: () =>
-      import("./core/admin/admin.module").then((m) => m.AdminModule),
-    canActivate: [UserRoleGuard],
-    data: {
-      permittedUserRoles: ["admin_app"],
-    },
+    // add directly without lazy-loading so that Menu can detect permissions for child routes
+    children: AdminModule.routes,
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },

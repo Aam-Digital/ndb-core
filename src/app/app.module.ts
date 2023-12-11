@@ -88,6 +88,7 @@ import { EntityCountDashboardWidgetModule } from "./features/dashboard-widgets/e
 import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-widget.module";
 import { MarkdownPageModule } from "./features/markdown-page/markdown-page.module";
 import { LoginStateSubject } from "./core/session/session-type";
+import { AdminModule } from "./core/admin/admin.module";
 
 /**
  * Main entry point of the application.
@@ -132,6 +133,7 @@ import { LoginStateSubject } from "./core/session/session-type";
     BirthdayDashboardWidgetModule,
     ReportingModule,
     TodosModule,
+    AdminModule,
     // top level component
     UiComponent,
     // Global Angular Material modules

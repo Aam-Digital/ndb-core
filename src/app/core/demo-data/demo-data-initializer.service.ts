@@ -31,7 +31,7 @@ export class DemoDataInitializerService {
   private pouchDatabase: PouchDatabase;
   private readonly normalUser: AuthUser = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
-    roles: ["user_app", "admin_app"],
+    roles: ["user_app"],
   };
   private readonly adminUser: AuthUser = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,

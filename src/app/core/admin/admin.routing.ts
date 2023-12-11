@@ -3,18 +3,27 @@ import { RoutedViewComponent } from "../ui/routed-view/routed-view.component";
 import { AdminComponent } from "./admin/admin.component";
 import { ConfigImportComponent } from "../../features/config-setup/config-import/config-import.component";
 import { ConflictResolutionListComponent } from "../../features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
+import { UserRoleGuard } from "../permissions/permission-guard/user-role.guard";
+import { EntityPermissionGuard } from "../permissions/permission-guard/entity-permission.guard";
 
-export const routes: Routes = [
+export const adminRoutes: Routes = [
   {
     path: "",
     component: AdminComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
   },
   {
     path: "entity/:entityType/details",
     component: RoutedViewComponent,
     data: {
       component: "AdminEntity",
+      entity: "Config",
+      requiredPermissionOperation: "update",
     },
+    canActivate: [EntityPermissionGuard],
   },
 
   {
@@ -49,14 +58,24 @@ export const routes: Routes = [
           },
         ],
       },
+      requiredPermissionOperation: "update",
     },
+    canActivate: [EntityPermissionGuard],
   },
   {
     path: "config-import",
     component: ConfigImportComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
   },
   {
     path: "conflicts",
     component: ConflictResolutionListComponent,
+    canActivate: [UserRoleGuard],
+    data: {
+      permittedUserRoles: ["admin_app"],
+    },
   },
 ];
