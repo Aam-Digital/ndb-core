@@ -12,7 +12,7 @@ import {
 })
 export class AutoResolutionService {
   /**
-   * @param resolutionStrategies The (multi = true) backup registered as resolution strategies (can be none --> null)
+   * @param resolutionStrategies The (multi = true) services registered as resolution strategies (can be none --> null)
    */
   constructor(
     @Optional()

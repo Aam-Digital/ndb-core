@@ -28,7 +28,7 @@ export const appInitializers = {
       loginState: LoginStateSubject,
     ) =>
     async () => {
-      // Re-trigger backup that depend on the config when something changes
+      // Re-trigger services that depend on the config when something changes
       configService.configUpdates.subscribe(() => {
         routerService.initRouting();
         entityConfigService.setupEntitiesFromConfig();

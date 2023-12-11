@@ -44,7 +44,7 @@ export class CascadingActionResult {
 }
 
 /**
- * extend this class to implement backup that perform actions on an entity
+ * extend this class to implement services that perform actions on an entity
  * that require recursive actions to related entities as well.
  */
 export abstract class CascadingEntityAction {
