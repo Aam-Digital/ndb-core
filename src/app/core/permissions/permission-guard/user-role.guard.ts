@@ -1,5 +1,10 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivate, Router } from "@angular/router";
+import {
+  ActivatedRouteSnapshot,
+  CanActivate,
+  Route,
+  Router,
+} from "@angular/router";
 import {
   PREFIX_VIEW_CONFIG,
   RouteData,
@@ -62,10 +67,47 @@ export class UserRoleGuard implements CanActivate {
     } as any);
   }
 
+  /**
+   * Find the relevant ViewConfig from config or already registered routes
+   * @param path
+   * @private
+   */
   private getRouteConfig(path: string): ViewConfig {
-    return (
-      this.configService.getConfig<ViewConfig>(PREFIX_VIEW_CONFIG + path) ??
-      (this.router.config.find((r) => r.path === path)?.data as ViewConfig)
+    const viewConfig = this.configService.getConfig<ViewConfig>(
+      PREFIX_VIEW_CONFIG + path,
     );
+    if (viewConfig) {
+      return viewConfig;
+    }
+
+    let route = this.getRouteDataFromRouter(path, this.router.config);
+    return route?.data as ViewConfig;
+  }
+
+  /**
+   * Extract the relevant route from Router, to get a merged route that contains the full trail of `permittedRoles`
+   * @param path
+   * @param routes
+   * @private
+   */
+  private getRouteDataFromRouter(path: string, routes: Route[]) {
+    const pathSections = path.split("/");
+    let route = routes.find((r) => r.path === path);
+    if (!route && pathSections.length > 1) {
+      route = routes.find((r) => r.path === pathSections[0]);
+    }
+
+    if (route?.children) {
+      const childRoute = this.getRouteDataFromRouter(
+        pathSections.slice(1).join("/"),
+        route.children,
+      );
+      if (childRoute) {
+        childRoute.data = { ...route.data, ...childRoute?.data };
+        route = childRoute;
+      }
+    }
+
+    return route;
   }
 }

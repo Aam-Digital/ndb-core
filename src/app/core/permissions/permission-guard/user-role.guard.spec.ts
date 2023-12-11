@@ -2,7 +2,7 @@ import { TestBed } from "@angular/core/testing";
 
 import { UserRoleGuard } from "./user-role.guard";
 import { RouterTestingModule } from "@angular/router/testing";
-import { ActivatedRouteSnapshot, Router } from "@angular/router";
+import { ActivatedRouteSnapshot, Route, Router } from "@angular/router";
 import { AuthUser } from "../../session/auth/auth-user";
 import { ConfigService } from "../../config/config.service";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
@@ -109,5 +109,36 @@ describe("UserRoleGuard", () => {
     expect(guard.checkRoutePermissions("restricted")).toBeTrue();
     expect(guard.checkRoutePermissions("pathA")).toBeTrue();
     expect(guard.checkRoutePermissions("pathA/1")).toBeTrue();
+  });
+
+  it("should checkRoutePermissions considering nested child routes", () => {
+    const nestedRoute: Route = {
+      path: "nested",
+      children: [
+        { path: "", data: { permittedUserRoles: ["admin"] } },
+        { path: "X", data: {} },
+      ],
+    };
+    const onParentRoute: Route = {
+      path: "on-parent",
+      children: [{ path: "" }, { path: "X" }],
+      data: { permittedUserRoles: ["admin"] },
+    };
+
+    const router = TestBed.inject(Router);
+    router.config.push(nestedRoute);
+    router.config.push(onParentRoute);
+
+    userSubject.next(normalUser);
+    expect(guard.checkRoutePermissions("nested")).toBeFalse();
+    expect(guard.checkRoutePermissions("nested/X")).toBeTrue();
+    expect(guard.checkRoutePermissions("on-parent")).toBeFalse();
+    expect(guard.checkRoutePermissions("on-parent/X")).toBeFalse();
+
+    userSubject.next(adminUser);
+    expect(guard.checkRoutePermissions("nested")).toBeTrue();
+    expect(guard.checkRoutePermissions("nested/X")).toBeTrue();
+    expect(guard.checkRoutePermissions("on-parent")).toBeTrue();
+    expect(guard.checkRoutePermissions("on-parent/X")).toBeTrue();
   });
 });
