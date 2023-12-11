@@ -54,7 +54,7 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
       this.loggingService.warn(
-        `failed to convert data '${value}' to Date object for ${parent._id}`,
+        `failed to convert data '${value}' to Date object for ${parent?._id}`,
       );
       return undefined;
     }
