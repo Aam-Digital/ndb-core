@@ -31,13 +31,13 @@ describe("EntityPermissionGuard", () => {
     const result = guard.canActivate({
       routeConfig: { path: "url" },
       data: {
-        requiredPermissionOperation: "read",
-        config: { entity: "TestEntity" },
+        requiredPermissionOperation: "update",
+        config: { entityType: "TestEntity" },
       },
-    } as any);
+    } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
 
     expect(result).toBeTrue();
-    expect(mockAbility.can).toHaveBeenCalledWith("read", "TestEntity");
+    expect(mockAbility.can).toHaveBeenCalledWith("update", "TestEntity");
   });
 
   it("should navigate to 404 for real navigation requests without permissions", () => {
@@ -46,7 +46,7 @@ describe("EntityPermissionGuard", () => {
     const route = new ActivatedRouteSnapshot();
     Object.assign(route, {
       routeConfig: { path: "url" },
-      data: { requiredPermissionOperation: "update" },
+      data: { requiredPermissionOperation: "update", entityType: "Child" },
     });
     mockAbility.can.and.returnValue(false);
 
@@ -55,7 +55,18 @@ describe("EntityPermissionGuard", () => {
     expect(router.navigate).toHaveBeenCalledWith(["/404"]);
   });
 
-  it("should return true if no rules are set", () => {
+  it("should check 'read' permissions if only entity and no operation is set", () => {
+    mockAbility.can.and.returnValue(true);
+    const result = guard.canActivate({
+      routeConfig: { path: "default-operation-config" },
+      data: { entity: "Child" },
+    } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
+
+    expect(result).toBeTrue();
+    expect(mockAbility.can).toHaveBeenCalledWith("read", "Child");
+  });
+
+  it("should return true as default if no entity or operation are configured", () => {
     const result = guard.canActivate({
       routeConfig: { path: "no-permission-config" },
     } as any);

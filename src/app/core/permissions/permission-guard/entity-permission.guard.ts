@@ -28,12 +28,15 @@ export class EntityPermissionGuard implements CanActivate {
   }
 
   private canAccessRoute(routeData) {
-    const operation = routeData?.["requiredPermissionOperation"];
+    const operation = routeData?.["requiredPermissionOperation"] ?? "read";
     const primaryEntity =
-      routeData?.["entity"] ?? routeData?.["config"]?.["entity"];
+      routeData?.["entityType"] ??
+      routeData?.["entity"] ??
+      routeData?.["config"]?.["entityType"] ??
+      routeData?.["config"]?.["entity"];
 
-    if (!operation) {
-      // No config set => all users are allowed
+    if (!primaryEntity) {
+      // No relevant config set => all users are allowed
       return true;
     }
 
