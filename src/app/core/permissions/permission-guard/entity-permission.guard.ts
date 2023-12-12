@@ -27,7 +27,7 @@ export class EntityPermissionGuard implements CanActivate {
     }
   }
 
-  private canAccessRoute(routeData) {
+  private canAccessRoute(routeData: RouteData) {
     const operation = routeData?.["requiredPermissionOperation"] ?? "read";
     const primaryEntity =
       routeData?.["entityType"] ??
@@ -41,5 +41,24 @@ export class EntityPermissionGuard implements CanActivate {
     }
 
     return this.ability.can(operation, primaryEntity);
+  }
+
+  public checkRoutePermissions(path: string) {
+    // removing leading slash
+    path = path.replace(/^\//, "");
+
+    function isPathMatch(genericPath: string, path: string) {
+      const routeRegex = genericPath
+        .split("/")
+        // replace params with wildcard regex
+        .map((part) => (part.startsWith(":") ? "[^/]*" : part))
+        .join("/");
+      return path.match("^" + routeRegex + "$");
+    }
+
+    const routeData = this.router.config.find((r) => isPathMatch(r.path, path))
+      ?.data;
+
+    return this.canAccessRoute(routeData);
   }
 }

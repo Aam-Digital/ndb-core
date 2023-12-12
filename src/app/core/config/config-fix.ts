@@ -280,6 +280,7 @@ export const defaultJsonConfig = {
         }
       ]
     },
+    "requiredPermissionOperation": "update",
     "permittedUserRoles": ["admin_app"]
   },
   "view:admin": {

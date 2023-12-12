@@ -74,4 +74,18 @@ describe("EntityPermissionGuard", () => {
     expect(result).toBeTrue();
     expect(mockAbility.can).not.toHaveBeenCalled();
   });
+
+  it("should evaluate correct route permissions on 'pre-check' (checkRoutePermissions)", () => {
+    mockAbility.can.and.returnValue(true);
+
+    TestBed.inject(Router).config.push({
+      path: "check-route/:id",
+      data: { requiredPermissionOperation: "update", entityType: "Child" },
+    });
+
+    const result = guard.checkRoutePermissions("check-route/1");
+
+    expect(result).toBeTrue();
+    expect(mockAbility.can).toHaveBeenCalledWith("update", "Child");
+  });
 });
