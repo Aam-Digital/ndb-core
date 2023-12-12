@@ -30,7 +30,9 @@ export abstract class LatestEntityLoader<T extends Entity> {
     this.entityMapper
       .receiveUpdates(this.entityCtor)
       .pipe(filter(({ entity }) => entity.getId() === this.entityID))
-      .subscribe(({ entity }) => this.entityUpdated.next(entity));
+      .subscribe(({ entity }) => {
+        this.entityUpdated.next(entity);
+      });
     return initialValue;
   }
 
