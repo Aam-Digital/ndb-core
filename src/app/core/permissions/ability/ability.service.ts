@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { shareReplay } from "rxjs/operators";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
@@ -13,15 +12,12 @@ import { CurrentUserSubject } from "../../user/user";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
+ *
+ * To get notified whenever the permissions of the current user are updated, use EntityAbility.on("updated", callback):
+ * https://casl.js.org/v6/en/api/casl-ability#on
  */
 @Injectable()
 export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
-  /**
-   * Get notified whenever the permissions of the current user are updated.
-   * Use this to re-evaluate the permissions of the currently logged-in user.
-   */
-  abilityUpdated = this.entityUpdated.pipe(shareReplay(1));
-
   constructor(
     private ability: EntityAbility,
     private currentUser: CurrentUserSubject,

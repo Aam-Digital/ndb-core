@@ -187,21 +187,6 @@ describe("AbilityService", () => {
     expect(() => ability.can("read", new TestClass() as any)).toThrowError();
   });
 
-  it("should notify when the rules are updated", (done) => {
-    spyOn(ability, "update");
-    service.abilityUpdated.subscribe(() => {
-      expect(ability.update).toHaveBeenCalled();
-      done();
-    });
-
-    entityUpdates.next({
-      entity: new Config(Config.PERMISSION_KEY, rules),
-      type: "update",
-    });
-
-    //TODO: is the current implementation as a replaySubject rather than an explicit triggering after updating the ability really correct?
-  });
-
   it("should call the ability enforcer after updating the rules", fakeAsync(() => {
     service.initializeRules();
     tick();
