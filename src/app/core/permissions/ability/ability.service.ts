@@ -32,10 +32,15 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     super(Config, Config.PERMISSION_KEY, entityMapper, logger);
   }
 
-  initializeRules() {
-    // Initially allow everything until permission document could be fetched
-    this.ability.update([{ action: "manage", subject: "all" }]);
-    super.startLoading();
+  async initializeRules() {
+    const initialPermissions = await super.startLoading();
+    if (initialPermissions) {
+      await this.updateAbilityWithUserRules(initialPermissions.data);
+    } else {
+      // as default fallback if no permission object is defined: allow everything
+      this.ability.update([{ action: "manage", subject: "all" }]);
+    }
+
     this.entityUpdated.subscribe((config) =>
       this.updateAbilityWithUserRules(config.data),
     );
