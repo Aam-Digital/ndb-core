@@ -37,7 +37,8 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
   DBFormat
 > {
   static override dataType = "date";
-  static override label: string = $localize`:datatype-label:date (with time)`;
+  // currently not shown to users in Admin UI, as this is not supported well with timezones and UI
+  // static override label: string = $localize`:datatype-label:date (with time)`;
 
   viewComponent = "DisplayDate";
   editComponent = "EditDate";
