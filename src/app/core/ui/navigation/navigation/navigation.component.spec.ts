@@ -25,6 +25,7 @@ import { Config } from "../../../config/config";
 import { UserRoleGuard } from "../../../permissions/permission-guard/user-role.guard";
 import { Event, NavigationEnd, Router } from "@angular/router";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { EntityPermissionGuard } from "../../../permissions/permission-guard/entity-permission.guard";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -32,7 +33,7 @@ describe("NavigationComponent", () => {
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockConfigUpdated: BehaviorSubject<Config>;
-  let mockUserRoleGuard: jasmine.SpyObj<UserRoleGuard>;
+  let mockGuard: jasmine.SpyObj<UserRoleGuard>;
 
   beforeEach(waitForAsync(() => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);
@@ -41,13 +42,14 @@ describe("NavigationComponent", () => {
     });
     mockConfigService.getConfig.and.returnValue({ items: [] });
     mockConfigService.getAllConfigs.and.returnValue([]);
-    mockUserRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockUserRoleGuard.checkRoutePermissions.and.returnValue(true);
+    mockGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
+    mockGuard.checkRoutePermissions.and.returnValue(true);
 
     TestBed.configureTestingModule({
       imports: [NavigationComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: UserRoleGuard, useValue: mockUserRoleGuard },
+        { provide: UserRoleGuard, useValue: mockGuard },
+        { provide: EntityPermissionGuard, useValue: mockGuard },
         { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compileComponents();
@@ -88,7 +90,7 @@ describe("NavigationComponent", () => {
       ],
     };
     mockConfigService.getConfig.and.returnValue(testConfig);
-    mockUserRoleGuard.checkRoutePermissions.and.callFake((route: string) => {
+    mockGuard.checkRoutePermissions.and.callFake((route: string) => {
       switch (route) {
         case "/dashboard":
           return false;

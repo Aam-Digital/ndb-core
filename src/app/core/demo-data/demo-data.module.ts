@@ -42,8 +42,8 @@ import { DemoSiteSettingsGeneratorService } from "../site-settings/demo-site-set
 import { DemoReportConfigGeneratorService } from "../../features/reporting/demo-report-config-generator.service";
 
 const demoDataGeneratorProviders = [
-  ...DemoConfigGeneratorService.provider(),
   ...DemoPermissionGeneratorService.provider(),
+  ...DemoConfigGeneratorService.provider(),
   ...DemoSiteSettingsGeneratorService.provider(),
   ...DemoPublicFormGeneratorService.provider(),
   ...DemoUserGeneratorService.provider(),
