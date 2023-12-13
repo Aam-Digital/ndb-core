@@ -9,7 +9,6 @@ import {
 } from "../report-row";
 import moment from "moment";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
-import { RouteTarget } from "../../../app.routing";
 import { NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
@@ -18,6 +17,7 @@ import { ObjectTableComponent } from "./object-table/object-table.component";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { ReportConfig } from "../report-config";
+import { RouteTarget } from "../../../route-target";
 
 @RouteTarget("Reporting")
 @Component({

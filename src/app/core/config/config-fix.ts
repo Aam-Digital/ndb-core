@@ -43,16 +43,6 @@ export const defaultJsonConfig = {
         "link": "/todo"
       },
       {
-        "name": $localize`:Menu item:Admin`,
-        "icon": "wrench",
-        "link": "/admin"
-      },
-      {
-        "name": $localize`:Menu item:Site settings`,
-        "icon": "wrench",
-        "link": "/site-settings/global"
-      },
-      {
         "name": $localize`:Menu item:Import`,
         "icon": "file-import",
         "link": "/import"
@@ -68,14 +58,14 @@ export const defaultJsonConfig = {
         "link": "/report"
       },
       {
-        "name": $localize`:Menu item:Database Conflicts`,
-        "icon": "wrench",
-        "link": "/admin/conflicts"
-      },
-      {
         "name": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
+      },
+      {
+        "name": $localize`:Menu item:Admin`,
+        "icon": "wrench",
+        "link": "/admin"
       },
     ]
   },
@@ -257,43 +247,6 @@ export const defaultJsonConfig = {
         },
       ]
     }
-  },
-  "view:site-settings/:id": {
-    "component": "EntityDetails",
-    "config": {
-      "entity": "SiteSettings",
-      "panels": [
-        {
-          "title": $localize`Site Settings`,
-          "components": [
-            {
-              "component": "Form",
-              "config": {
-                "fieldGroups": [
-                  { fields: ["logo", "favicon"] },
-                  { fields: ["siteName", "defaultLanguage", "displayLanguageSelect"] },
-                  { fields: ["primary", "secondary", "error", "font"] },
-                ]
-              }
-            }
-          ]
-        }
-      ]
-    },
-    "requiredPermissionOperation": "update",
-    "permittedUserRoles": ["admin_app"]
-  },
-  "view:admin": {
-    "component": "Admin",
-    "permittedUserRoles": ["admin_app"]
-  },
-  "view:admin/config-import": {
-    "component": "ConfigImport",
-    "permittedUserRoles": ["admin_app"]
-  },
-  "view:admin/conflicts": {
-    "component": "ConflictResolution",
-    "permittedUserRoles": ["admin_app"]
   },
   "view:import": {
     "component": "Import",

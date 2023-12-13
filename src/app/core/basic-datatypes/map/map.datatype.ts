@@ -37,7 +37,7 @@ export class MapDatatype extends DefaultDatatype<
   Map<string, any>,
   [string, any][]
 > {
-  static dataType = "map";
+  static override dataType = "map";
 
   constructor(private schemaService: EntitySchemaService) {
     super();

@@ -1,18 +1,19 @@
 import { Component, OnInit } from "@angular/core";
-import { AlertService } from "../../../core/alerts/alert.service";
-import { BackupService } from "../services/backup.service";
-import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { AlertService } from "../../alerts/alert.service";
+import { BackupService } from "../backup/backup.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
-import { ConfigService } from "../../../core/config/config.service";
+import { ConfigService } from "../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { readFile } from "../../../utils/utils";
-import { RouteTarget } from "../../../app.routing";
-import { Database } from "../../../core/database/database";
-import { ExtendedAlertConfig } from "../../../core/alerts/alert-config";
+import { Database } from "../../database/database";
+import { ExtendedAlertConfig } from "../../alerts/alert-config";
 import { MatButtonModule } from "@angular/material/button";
 import { RouterLink } from "@angular/router";
 import { DatePipe, NgForOf } from "@angular/common";
-import { DownloadService } from "../../../core/export/download-service/download.service";
+import { DownloadService } from "../../export/download-service/download.service";
+import { MatListModule } from "@angular/material/list";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * Admin GUI giving administrative users different options/actions.
@@ -23,7 +24,7 @@ import { DownloadService } from "../../../core/export/download-service/download.
   selector: "app-admin",
   templateUrl: "./admin.component.html",
   styleUrls: ["./admin.component.scss"],
-  imports: [MatButtonModule, RouterLink, NgForOf, DatePipe],
+  imports: [MatButtonModule, RouterLink, NgForOf, DatePipe, MatListModule],
   standalone: true,
 })
 export class AdminComponent implements OnInit {
@@ -69,11 +70,7 @@ export class AdminComponent implements OnInit {
 
   async downloadConfigClick() {
     const configString = this.configService.exportConfig();
-    await this.downloadService.triggerDownload(
-      configString,
-      "json",
-      "config.json",
-    );
+    await this.downloadService.triggerDownload(configString, "json", "config");
   }
 
   async uploadConfigFile(inputEvent: Event) {

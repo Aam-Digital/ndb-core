@@ -20,8 +20,8 @@ import { ImportAdditionalActionsComponent } from "../import-additional-actions/i
 import { MatButtonModule } from "@angular/material/button";
 import { ImportColumnMappingComponent } from "../import-column-mapping/import-column-mapping.component";
 import { ImportReviewDataComponent } from "../import-review-data/import-review-data.component";
-import { RouteTarget } from "../../../app.routing";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * View providing a full UI workflow to import data from an uploaded file.

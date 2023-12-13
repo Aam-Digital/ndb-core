@@ -16,6 +16,8 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { TEST_USER } from "../../../utils/mock-local-session";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { EventAttendanceDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -47,6 +49,11 @@ describe("AbilityService", () => {
             name: TEST_USER,
             roles: ["user_app"],
           }),
+        },
+        {
+          provide: DefaultDatatype,
+          useClass: EventAttendanceDatatype,
+          multi: true,
         },
         {
           provide: PermissionEnforcerService,

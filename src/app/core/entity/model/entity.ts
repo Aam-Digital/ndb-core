@@ -184,15 +184,11 @@ export class Entity {
   @DatabaseField({ anonymize: "retain" }) _rev: string;
 
   @DatabaseField({
-    dataType: "schema-embed",
-    additional: UpdateMetadata,
     anonymize: "retain",
   })
   created: UpdateMetadata;
 
   @DatabaseField({
-    dataType: "schema-embed",
-    additional: UpdateMetadata,
     anonymize: "retain",
   })
   updated: UpdateMetadata;

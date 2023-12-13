@@ -15,14 +15,35 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { TestBed, waitForAsync } from "@angular/core/testing";
-import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import moment from "moment";
+import { SchemaEmbedDatatype } from "./schema-embed.datatype";
+import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { NumberDatatype } from "../number/number.datatype";
+import { MonthDatatype } from "../month/month.datatype";
+import { Injectable } from "@angular/core";
 
 describe("Schema data type: schema-embed", () => {
+  @Injectable()
+  class SchemaEmbedTestDatatype extends SchemaEmbedDatatype {
+    static override dataType = "schema-embed-test";
+    override embeddedType = InnerClass as unknown as EntityConstructor;
+
+    constructor(schemaService: EntitySchemaService) {
+      super(schemaService);
+    }
+  }
+
+  class TestEntity extends Entity {
+    @DatabaseField({
+      dataType: SchemaEmbedTestDatatype.dataType,
+    })
+    embedded = new InnerClass();
+  }
+
   class InnerClass {
     @DatabaseField({ dataType: "month" }) value: Date;
 
@@ -40,16 +61,20 @@ describe("Schema data type: schema-embed", () => {
     }
   }
 
-  class TestEntity extends Entity {
-    @DatabaseField({ dataType: "schema-embed", additional: InnerClass })
-    embedded = new InnerClass();
-  }
-
   let entitySchemaService: EntitySchemaService;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [MockedTestingModule.withState()],
+      providers: [
+        EntitySchemaService,
+        {
+          provide: DefaultDatatype,
+          useClass: SchemaEmbedTestDatatype,
+          multi: true,
+        },
+        { provide: DefaultDatatype, useClass: NumberDatatype, multi: true },
+        { provide: DefaultDatatype, useClass: MonthDatatype, multi: true },
+      ],
     });
     entitySchemaService = TestBed.inject(EntitySchemaService);
   }));

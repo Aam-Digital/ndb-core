@@ -15,6 +15,7 @@ import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interf
 import { defaultJsonConfig } from "../../core/config/config-fix";
 import { EntityConfig } from "../../core/entity/entity-config";
 import { EntityConfigService } from "../../core/entity/entity-config.service";
+import { generateIdFromLabel } from "../../utils/generate-id-from-label/generate-id-from-label";
 
 @Injectable({
   providedIn: "root",
@@ -101,9 +102,7 @@ export class ConfigImportParserService {
     fieldDef: ConfigFieldRaw,
     entityType: string,
   ): { id: string; schema: EntitySchemaField } {
-    const fieldId =
-      fieldDef.id ??
-      ConfigImportParserService.generateIdFromLabel(fieldDef.label);
+    const fieldId = fieldDef.id ?? generateIdFromLabel(fieldDef.label);
 
     const schema: EntitySchemaField = {
       dataType: fieldDef.dataType,
@@ -147,19 +146,6 @@ export class ConfigImportParserService {
 
     deleteEmptyProperties(schema);
     return { id: fieldId, schema: schema };
-  }
-
-  /**
-   * Create a camelCase string out of any given string, so that it can be used as an id.
-   * @param label The input string to be transformed
-   */
-  public static generateIdFromLabel(label: string) {
-    return label
-      .replace(/[^a-zA-Z0-9\s]/g, "")
-      .replace(/(?:^\w|[A-Z]|\b\w)/g, function (word, index) {
-        return index === 0 ? word.toLowerCase() : word.toUpperCase();
-      })
-      .replace(/\s/g, "");
   }
 
   /**

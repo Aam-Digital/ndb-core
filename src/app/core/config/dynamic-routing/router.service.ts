@@ -46,7 +46,8 @@ export class RouterService {
 
     for (const view of viewConfigs) {
       try {
-        routes.push(this.createRoute(view, additionalRoutes));
+        const newRoute = this.createRoute(view, additionalRoutes);
+        routes.push(newRoute);
       } catch (e) {
         this.loggingService.warn(
           `Failed to create route for view ${view._id}: ${e.message}`,
@@ -72,10 +73,10 @@ export class RouterService {
 
   private createRoute(view: ViewConfig, additionalRoutes: Route[]) {
     const path = view._id.substring(PREFIX_VIEW_CONFIG.length);
-    const route = additionalRoutes.find((r) => r.path === path);
+    const existingRoute = additionalRoutes.find((r) => r.path === path);
 
-    if (route) {
-      return this.generateRouteFromConfig(view, route);
+    if (existingRoute) {
+      return this.generateRouteFromConfig(view, existingRoute);
     } else {
       return this.generateRouteFromConfig(view, {
         path,
@@ -86,7 +87,7 @@ export class RouterService {
   }
 
   private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
-    route.data = route.data ?? {};
+    route.data = { ...route?.data }; // data of currently active route is readonly, which can throw errors here
     route.canActivate = [AuthGuard, EntityPermissionGuard];
     route.canDeactivate = [
       () => inject(UnsavedChangesService).checkUnsavedChanges(),

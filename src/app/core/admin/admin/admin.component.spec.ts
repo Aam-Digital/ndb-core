@@ -7,13 +7,13 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { AdminComponent } from "./admin.component";
-import { BackupService } from "../services/backup.service";
-import { ConfigService } from "../../../core/config/config.service";
-import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
-import { SessionType } from "../../../core/session/session-type";
+import { BackupService } from "../backup/backup.service";
+import { ConfigService } from "../../config/config.service";
+import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { SessionType } from "../../session/session-type";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { environment } from "../../../../environments/environment";
-import { DownloadService } from "../../../core/export/download-service/download.service";
+import { DownloadService } from "../../export/download-service/download.service";
 
 describe("AdminComponent", () => {
   let component: AdminComponent;

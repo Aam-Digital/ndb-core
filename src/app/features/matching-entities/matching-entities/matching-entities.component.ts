@@ -19,7 +19,6 @@ import {
   ColumnConfig,
   DataFilter,
 } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { RouteTarget } from "../../../app.routing";
 import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -42,6 +41,7 @@ import { getLocationProperties } from "../../location/map-utils";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
 import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { RouteTarget } from "../../../route-target";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */

@@ -1,7 +1,7 @@
 import { Entity } from "../entity/model/entity";
 
 /**
- * Abstract base class for demo data generator services.
+ * Abstract base class for demo data generator backup.
  *
  * For usage refer to the How-To Guides:
  * - [How to Generate Demo Data]{@link /additional-documentation/how-to-guides/generate-demo-data.html}

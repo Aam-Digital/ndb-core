@@ -1,9 +1,9 @@
 import { Component } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { RouteTarget } from "../../../app.routing";
 import { ActivatedRoute } from "@angular/router";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * Wrapper component for a primary, full page view

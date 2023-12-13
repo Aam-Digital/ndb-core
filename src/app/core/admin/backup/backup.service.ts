@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
-import { Database } from "../../../core/database/database";
-import { User } from "../../../core/user/user";
+import { Database } from "../../database/database";
+import { User } from "../../user/user";
 import { Papa } from "ngx-papaparse";
-import { Config } from "../../../core/config/config";
+import { Config } from "../../config/config";
 
 /**
  * Create and load backups of the database.

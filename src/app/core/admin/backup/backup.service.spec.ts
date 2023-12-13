@@ -1,10 +1,10 @@
 import { TestBed } from "@angular/core/testing";
 
 import { BackupService } from "./backup.service";
-import { Database } from "../../../core/database/database";
-import { PouchDatabase } from "../../../core/database/pouch-database";
-import { DownloadService } from "../../../core/export/download-service/download.service";
-import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
+import { Database } from "../../database/database";
+import { PouchDatabase } from "../../database/pouch-database";
+import { DownloadService } from "../../export/download-service/download.service";
+import { DataTransformationService } from "../../export/data-transformation-service/data-transformation.service";
 
 describe("BackupService", () => {
   let db: PouchDatabase;
