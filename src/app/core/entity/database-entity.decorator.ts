@@ -1,5 +1,6 @@
 import { Entity, EntityConstructor } from "./model/entity";
 import { Registry } from "../config/registry/dynamic-registry";
+import { getEntitySchema } from "./database-field.decorator";
 
 export class EntityRegistry extends Registry<EntityConstructor> {
   /**
@@ -44,8 +45,7 @@ export function DatabaseEntity(entityType: string) {
 
     // append parent schema definitions
     const parentConstructor = Object.getPrototypeOf(constructor);
-    parentConstructor.schema.forEach((value, key) =>
-      constructor.schema.set(key, value),
-    );
+    const schema = getEntitySchema(constructor);
+    parentConstructor.schema.forEach((value, key) => schema.set(key, value));
   };
 }

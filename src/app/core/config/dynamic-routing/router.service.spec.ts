@@ -13,6 +13,7 @@ import { NotFoundComponent } from "./not-found/not-found.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { AuthGuard } from "../../session/auth.guard";
 import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
+import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
 
 class TestComponent extends Component {}
 
@@ -66,20 +67,20 @@ describe("RouterService", () => {
         component: RoutedViewComponent,
         data: { component: "ChildrenList" },
         canDeactivate: [jasmine.any(Function)],
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, EntityPermissionGuard],
       },
       {
         path: "child/:id",
         component: RoutedViewComponent,
         data: { component: "EntityDetails", config: testViewConfig },
         canDeactivate: [jasmine.any(Function)],
-        canActivate: [AuthGuard],
+        canActivate: [AuthGuard, EntityPermissionGuard],
       },
       {
         path: "list",
         component: RoutedViewComponent,
         data: { component: "EntityList", permittedUserRoles: ["user_app"] },
-        canActivate: [AuthGuard, UserRoleGuard],
+        canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
         canDeactivate: [jasmine.any(Function)],
       },
     ];
@@ -108,7 +109,7 @@ describe("RouterService", () => {
       {
         path: "other",
         component: TestComponent,
-        canActivate: [AuthGuard, UserRoleGuard],
+        canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
         canDeactivate: [jasmine.any(Function)],
         data: { permittedUserRoles: ["admin_app"] },
       },
@@ -166,7 +167,7 @@ describe("RouterService", () => {
         path: "list",
         component: RoutedViewComponent,
         data: { component: "EntityList", permittedUserRoles: ["admin"] },
-        canActivate: [AuthGuard, UserRoleGuard],
+        canActivate: [AuthGuard, EntityPermissionGuard, UserRoleGuard],
         canDeactivate: [jasmine.any(Function)],
       },
     ];

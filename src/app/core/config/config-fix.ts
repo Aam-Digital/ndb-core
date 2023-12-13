@@ -164,6 +164,7 @@ export const defaultJsonConfig = {
   "view:note": {
     "component": "NotesManager",
     "config": {
+      "entity": "Note",
       "title": $localize`:Title for notes overview:Notes & Reports`,
       "includeEventNotes": false,
       "showEventNotesToggle": true,
@@ -365,6 +366,7 @@ export const defaultJsonConfig = {
   "view:child": {
     "component": "ChildrenList",
     "config": {
+      "entity": "Child",
       "columns": [
         {
           "viewComponent": "ChildBlock",

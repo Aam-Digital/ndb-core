@@ -8,6 +8,7 @@ import { NotFoundComponent } from "./not-found/not-found.component";
 import { AuthGuard } from "../../session/auth.guard";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { RoutedViewComponent } from "../../ui/routed-view/routed-view.component";
+import { EntityPermissionGuard } from "../../permissions/permission-guard/entity-permission.guard";
 
 /**
  * The RouterService dynamically sets up Angular routing from config loaded through the {@link ConfigService}.
@@ -87,7 +88,7 @@ export class RouterService {
 
   private generateRouteFromConfig(view: ViewConfig, route: Route): Route {
     route.data = { ...route?.data }; // data of currently active route is readonly, which can throw errors here
-    route.canActivate = [AuthGuard];
+    route.canActivate = [AuthGuard, EntityPermissionGuard];
     route.canDeactivate = [
       () => inject(UnsavedChangesService).checkUnsavedChanges(),
     ];

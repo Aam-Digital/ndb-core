@@ -27,16 +27,38 @@ export class EntityPermissionGuard implements CanActivate {
     }
   }
 
-  private canAccessRoute(routeData) {
-    const operation = routeData?.["requiredPermissionOperation"];
+  private canAccessRoute(routeData: RouteData) {
+    const operation = routeData?.["requiredPermissionOperation"] ?? "read";
     const primaryEntity =
-      routeData?.["entity"] ?? routeData?.["config"]?.["entity"];
+      routeData?.["entityType"] ??
+      routeData?.["entity"] ??
+      routeData?.["config"]?.["entityType"] ??
+      routeData?.["config"]?.["entity"];
 
-    if (!operation) {
-      // No config set => all users are allowed
+    if (!primaryEntity) {
+      // No relevant config set => all users are allowed
       return true;
     }
 
     return this.ability.can(operation, primaryEntity);
+  }
+
+  public checkRoutePermissions(path: string) {
+    // removing leading slash
+    path = path.replace(/^\//, "");
+
+    function isPathMatch(genericPath: string, path: string) {
+      const routeRegex = genericPath
+        .split("/")
+        // replace params with wildcard regex
+        .map((part) => (part.startsWith(":") ? "[^/]*" : part))
+        .join("/");
+      return path.match("^" + routeRegex + "$");
+    }
+
+    const routeData = this.router.config.find((r) => isPathMatch(r.path, path))
+      ?.data;
+
+    return this.canAccessRoute(routeData);
   }
 }
