@@ -220,7 +220,6 @@ describe("ReportingComponent", () => {
 
   it("should use the sql report service when report has mode 'sql'", async () => {
     const report = new SqlReport();
-    report.mode = "sql";
 
     await component.calculateResults(
       report,

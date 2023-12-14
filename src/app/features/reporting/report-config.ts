@@ -7,6 +7,9 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
 /**
  * A report can be accessed by users to generate aggregated statistics or customized exports calculated from available data.
  * "read" permission for a ReportConfig entity is also used to control which users can generate the report's results.
+ *
+ * This is the entity class which must be used for loading it in the EntityMapper.
+ * However, for better typing use the {@link ReportType} afterward.
  */
 @DatabaseEntity("ReportConfig")
 export class ReportConfig extends Entity {
@@ -19,6 +22,7 @@ export class ReportConfig extends Entity {
 
   /**
    * (optional) mode of export.
+   * The {@link ReportType} holds the restriction on valid report modes.
    * Default is "reporting"
    */
   @DatabaseField() mode?: string;
@@ -31,7 +35,7 @@ export class ReportConfig extends Entity {
  * Reports handles by the {@class DataAggregationService}
  */
 export class AggregationReport extends ReportConfig {
-  mode: "reporting";
+  mode: "reporting" = "reporting";
   aggregationDefinitions: Aggregation[];
 }
 
@@ -42,7 +46,7 @@ export class ExportingReport extends ReportConfig {
   /**
    * If no mode is set, it will default to 'exporting'
    */
-  mode?: "exporting";
+  mode?: "exporting" = "exporting";
   aggregationDefinitions: ExportColumnConfig[];
 }
 
@@ -50,7 +54,7 @@ export class ExportingReport extends ReportConfig {
  * Reports handles by the {@class SqlReportService}
  */
 export class SqlReport extends ReportConfig {
-  mode: "sql";
+  mode: "sql" = "sql";
   /**
    * Array of valid SQL SELECT statements
    */

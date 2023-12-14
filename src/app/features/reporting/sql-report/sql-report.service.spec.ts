@@ -41,11 +41,11 @@ describe("SqlReportService", () => {
   });
 
   it("should query the external service with the provided report data", async () => {
-    const result = [{ some: "data" }];
-    mockHttpClient.post.and.returnValue(of(result));
+    const mockResult = [{ some: "data" }];
+    mockHttpClient.post.and.returnValue(of(mockResult));
     const report = new SqlReport();
 
-    await service.query(
+    const result = await service.query(
       report,
       moment("2023-01-01").toDate(),
       moment("2024-01-01").toDate(),
@@ -58,6 +58,7 @@ describe("SqlReportService", () => {
         to: "2024-01-01",
       },
     );
+    expect(result).toEqual(mockResult);
   });
 
   it("should generate a valid schema including all properties", () => {
