@@ -245,6 +245,39 @@
     <div>Actions on selected records:</div>
 
     <div class="flex-row gap-small bulk-action-button">
+      <!-- <button
+        mat-raised-button
+        (click)="archiveRecords()"
+        [disabled]="selectedRows.length === 0"
+        matTooltip="Select rows to archive"
+        i18n-matTooltip
+        color="accent"
+        i18n="bulk action button"
+      >
+        Archive
+      </button>
+      <button
+        mat-raised-button
+        (click)="anonymizeRecords()"
+        [disabled]="selectedRows.length === 0"
+        matTooltip="Select rows to anonymize"
+        i18n-matTooltip
+        color="accent"
+        i18n="bulk action button"
+      >
+        Anonymize
+      </button> -->
+      <button
+        mat-raised-button
+        (click)="deleteRecords()"
+        [disabled]="selectedRows.length === 0"
+        matTooltip="Select rows to delete"
+        i18n-matTooltip
+        color="accent"
+        i18n="bulk action button"
+      >
+        Delete
+      </button>
       <button
         mat-raised-button
         (click)="duplicateRecords()"
