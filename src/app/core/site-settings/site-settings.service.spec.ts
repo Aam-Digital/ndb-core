@@ -1,4 +1,4 @@
-import { fakeAsync, TestBed, tick } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick, waitForAsync } from "@angular/core/testing";
 
 import { SiteSettingsService } from "./site-settings.service";
 import { FileService } from "../../features/file/file.service";
@@ -24,7 +24,7 @@ describe("SiteSettingsService", () => {
   let entityMapper: MockEntityMapperService;
   let mockFileService: jasmine.SpyObj<FileService>;
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     localStorage.clear();
     entityMapper = mockEntityMapper();
     mockFileService = jasmine.createSpyObj(["loadFile"]);
@@ -37,7 +37,7 @@ describe("SiteSettingsService", () => {
       ],
     });
     service = TestBed.inject(SiteSettingsService);
-  });
+  }));
 
   afterEach(() => {
     localStorage.removeItem(service.SITE_SETTINGS_LOCAL_STORAGE_KEY);

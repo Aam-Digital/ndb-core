@@ -27,6 +27,7 @@ import { MatListModule } from "@angular/material/list";
 import { NgForOf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { EntityPermissionGuard } from "../../../permissions/permission-guard/entity-permission.guard";
 
 /**
  * Main app menu listing.
@@ -54,9 +55,10 @@ export class NavigationComponent {
   public menuItems: MenuItem[] = [];
 
   constructor(
-    private userRoleGuard: UserRoleGuard,
     private configService: ConfigService,
     private router: Router,
+    private userRoleGuard: UserRoleGuard,
+    private entityPermissionGuard: EntityPermissionGuard,
   ) {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
@@ -116,7 +118,14 @@ export class NavigationComponent {
     const config: NavigationMenuConfig =
       this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
     this.menuItems = config.items
-      .filter(({ link }) => this.userRoleGuard.checkRoutePermissions(link))
+      .filter(({ link }) => this.isAccessibleRouteForUser(link))
       .map(({ name, icon, link }) => new MenuItem(name, icon, link));
+  }
+
+  private isAccessibleRouteForUser(path: string) {
+    return (
+      this.userRoleGuard.checkRoutePermissions(path) &&
+      this.entityPermissionGuard.checkRoutePermissions(path)
+    );
   }
 }

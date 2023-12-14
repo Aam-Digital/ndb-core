@@ -4,8 +4,8 @@ import { ActivatedRoute } from "@angular/router";
 import { ChildrenService } from "../children.service";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
-import { RouteTarget } from "../../../app.routing";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
+import { RouteTarget } from "../../../route-target";
 
 @RouteTarget("ChildrenList")
 @Component({

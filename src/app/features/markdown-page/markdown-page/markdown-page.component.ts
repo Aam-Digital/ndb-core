@@ -16,8 +16,8 @@
  */
 
 import { Component, Input } from "@angular/core";
-import { RouteTarget } from "../../../app.routing";
 import { MarkdownPageModule } from "../markdown-page.module";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * Display markdown formatted page that is dynamically loaded based on the file defined in config.

@@ -20,7 +20,6 @@ import { Entity } from "../model/entity";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Database } from "../../database/database";
 import { TEST_USER } from "../../../utils/mock-local-session";
 import { CurrentUserSubject } from "../../user/user";
@@ -268,17 +267,6 @@ describe("EntityMapperService", () => {
         id: "EntityA:42",
       }),
     ]);
-  });
-
-  it("should include _id field in transformation errors", (done) => {
-    const doc = { _id: "Child:test", dateOfBirth: "invalidDate" };
-    testDatabase
-      .put(doc)
-      .then(() => entityMapper.load(Child, "Child:test"))
-      .catch((err) => {
-        expect(err.message).toContain("Child:test");
-        done();
-      });
   });
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {

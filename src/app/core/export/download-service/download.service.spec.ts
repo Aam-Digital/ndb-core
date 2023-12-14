@@ -90,15 +90,15 @@ describe("DownloadService", () => {
     };
     const testDate = "2020-01-30";
 
-    @DatabaseEntity("TestEntity")
-    class TestEntity extends Entity {
+    @DatabaseEntity("ValuesDownloadTestEntity")
+    class ValuesDownloadTestEntity extends Entity {
       @DatabaseField({ label: "test enum" })
       enumProperty: ConfigurableEnumValue;
       @DatabaseField({ label: "test date" }) dateProperty: Date;
       @DatabaseField({ label: "test boolean" }) boolProperty: boolean;
     }
 
-    const testEntity = new TestEntity();
+    const testEntity = new ValuesDownloadTestEntity();
     testEntity.enumProperty = testEnumValue;
     testEntity.dateProperty = moment(testDate).toDate();
     testEntity.boolProperty = true;
@@ -135,19 +135,19 @@ describe("DownloadService", () => {
   it("should only export columns that have labels defined in entity schema and use the schema labels as export headers", async () => {
     const testString: string = "Test 1";
 
-    @DatabaseEntity("LabelTestEntity")
-    class LabelTestEntity extends Entity {
+    @DatabaseEntity("LabelDownloadTestEntity")
+    class LabelDownloadTestEntity extends Entity {
       @DatabaseField({ label: "test string" }) stringProperty: string;
       @DatabaseField({ label: "test date" }) otherProperty: string;
       @DatabaseField() boolProperty: boolean;
     }
 
-    const labelTestEntity = new LabelTestEntity();
+    const labelTestEntity = new LabelDownloadTestEntity();
     labelTestEntity.stringProperty = testString;
     labelTestEntity.otherProperty = "x";
     labelTestEntity.boolProperty = true;
 
-    const incompleteTestEntity = new LabelTestEntity();
+    const incompleteTestEntity = new LabelDownloadTestEntity();
     incompleteTestEntity.otherProperty = "second row";
 
     const csvExport = await service.createCsv([

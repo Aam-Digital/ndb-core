@@ -12,7 +12,7 @@ import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
 import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { BackupService } from "../../../features/admin/services/backup.service";
+import { BackupService } from "../../admin/backup/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { SyncStateSubject } from "../../session/session-type";
 import { SyncService } from "../../database/sync.service";

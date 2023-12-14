@@ -9,7 +9,8 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype<
   ConfigurableEnumValue,
   string
 > {
-  static dataType = "configurable-enum";
+  static override dataType = "configurable-enum";
+  static override label: string = $localize`:datatype-label:dropdown option`;
 
   public readonly viewComponent = "DisplayConfigurableEnum";
   public readonly editComponent = "EditConfigurableEnum";

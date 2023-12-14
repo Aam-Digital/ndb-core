@@ -4,12 +4,12 @@ import { QueryDataSource } from "../../../core/database/query-data-source";
 import { Entity } from "../../../core/entity/model/entity";
 import { Database } from "../../../core/database/database";
 import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.service";
-import { RouteTarget } from "../../../app.routing";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTableModule } from "@angular/material/table";
 import { MatSortModule } from "@angular/material/sort";
 import { CompareRevComponent } from "../compare-rev/compare-rev.component";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * List all document conflicts and allow the user to expand for details and manual resolution.

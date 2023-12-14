@@ -127,6 +127,14 @@ export interface EntitySchemaField {
    * "retain-anonymized" triggers a special dataType action to retain the data partially in a special, anonymized form.
    */
   anonymize?: "retain" | "retain-anonymized";
+
+  /**
+   * indicates that this field has been created/modified through the config system
+   * and is not matching the original entity class definition.
+   *
+   * Set automatically during config initialization.
+   */
+  _isCustomizedField?: boolean;
 }
 
 /**

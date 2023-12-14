@@ -154,7 +154,7 @@ export function parseJwt(token): {
 
 /**
  * This is a simple shorthand function to create factories for services.
- * The use case is, when multiple services extends the same class and one of these services will be provided.
+ * The use case is, when multiple services extend the same class and one of these services will be provided.
  * @param service the token for which a service is provided
  * @param factory factory which returns a subtype of class
  */

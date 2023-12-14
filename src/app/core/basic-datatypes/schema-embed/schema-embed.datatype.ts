@@ -16,10 +16,8 @@
  */
 
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
-import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityConstructor } from "../../entity/model/entity";
-import { Injectable } from "@angular/core";
 
 /**
  * Datatype for the EntitySchemaService transforming values of complex objects recursively.
@@ -32,27 +30,24 @@ import { Injectable } from "@angular/core";
  *
  * see the unit tests in entity-schema.service.spec.ts for an example
  *
- * Requires the class constructor as extension field in the schema field annotation:
- *
- * `@DatabaseField({ dataType: 'schema-embed', additional: MyClass })`
+ * implement this as its own datatype for a specific class functioning as "embedded" schema.
  */
-@Injectable()
-export class SchemaEmbedDatatype extends DefaultDatatype {
-  static dataType = "schema-embed";
+export abstract class SchemaEmbedDatatype extends DefaultDatatype {
+  abstract embeddedType: EntityConstructor;
 
   constructor(private schemaService: EntitySchemaService) {
     super();
   }
 
-  transformToDatabaseFormat(value: any, schemaField: EntitySchemaField) {
+  transformToDatabaseFormat(value: any) {
     return this.schemaService.transformEntityToDatabaseFormat(
       value,
-      schemaField.additional.schema,
+      this.embeddedType.schema,
     );
   }
 
-  transformToObjectFormat(value: any, schemaField: EntitySchemaField) {
-    const instance = new (schemaField.additional as EntityConstructor<any>)();
+  transformToObjectFormat(value: any) {
+    const instance = new this.embeddedType();
     this.schemaService.loadDataIntoEntity(instance, value);
     return instance;
   }

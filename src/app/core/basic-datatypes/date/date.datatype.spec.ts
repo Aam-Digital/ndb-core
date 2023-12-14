@@ -15,4 +15,17 @@ describe("Schema data type: date", () => {
     const actualAnonymized = await datatype.anonymize(testDate);
     expect(actualAnonymized).toEqual(new Date(2023, 6, 1));
   });
+
+  it("should log warning if transformation fails", () => {
+    const mockLogger = jasmine.createSpyObj("LoggingService", ["warn"]);
+    const datatype = new DateDatatype(mockLogger);
+
+    const result = datatype.transformToObjectFormat("invalidDate", null, {
+      _id: "Child:test",
+      dateOfBirth: "invalidDate",
+    });
+
+    expect(result).toBeUndefined();
+    expect(mockLogger.warn).toHaveBeenCalled();
+  });
 });

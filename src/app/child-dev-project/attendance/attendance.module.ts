@@ -20,8 +20,18 @@ import { ComponentRegistry } from "../../dynamic-components";
 import { attendanceComponents } from "./attendance-components";
 import { RecurringActivity } from "./model/recurring-activity";
 import { EventNote } from "./model/event-note";
+import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
+import { EventAttendanceDatatype } from "./model/event-attendance.datatype";
 
-@NgModule({})
+@NgModule({
+  providers: [
+    {
+      provide: DefaultDatatype,
+      useClass: EventAttendanceDatatype,
+      multi: true,
+    },
+  ],
+})
 export class AttendanceModule {
   static databaseEntities = [RecurringActivity, EventNote];
 

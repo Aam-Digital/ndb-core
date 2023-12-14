@@ -5,7 +5,6 @@ import {
   GroupByDescription,
 } from "../report-row";
 import moment from "moment";
-import { RouteTarget } from "../../../app.routing";
 import { NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
@@ -15,6 +14,7 @@ import { DataTransformationService } from "../../../core/export/data-transformat
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { ReportConfig, ReportType } from "../report-config";
 import { SqlReportService } from "../sql-report/sql-report.service";
+import { RouteTarget } from "../../../route-target";
 
 @RouteTarget("Reporting")
 @Component({

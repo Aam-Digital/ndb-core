@@ -1,7 +1,6 @@
 import { Component, OnInit } from "@angular/core";
 import { ActivatedRoute } from "@angular/router";
 import { Todo } from "../model/todo";
-import { RouteTarget } from "../../../app.routing";
 import {
   EntityListConfig,
   PrebuiltFilterConfig,
@@ -14,6 +13,7 @@ import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 import { CurrentUserSubject } from "../../../core/user/user";
+import { RouteTarget } from "../../../route-target";
 
 @RouteTarget("TodoList")
 @Component({
