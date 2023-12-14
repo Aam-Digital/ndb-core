@@ -20,6 +20,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 import { NgFor } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 @RouteTarget("Dashboard")
 @Component({
@@ -33,7 +34,58 @@ import { RouteTarget } from "../../../route-target";
   standalone: true,
 })
 export class DashboardComponent implements DashboardConfig {
-  @Input() widgets: DynamicComponentConfig[] = [];
+  @Input() set widgets(widgets: DynamicComponentConfig[]) {
+    this._widgets = widgets.filter((widget) => this.userHasAccess(widget));
+  }
+  get widgets(): DynamicComponentConfig[] {
+    return this._widgets;
+  }
+  private _widgets: DynamicComponentConfig[] = [];
+
+  constructor(private ability: EntityAbility) {}
+
+  private userHasAccess(widget: DynamicComponentConfig): boolean {
+    const entity = this.getWidgetEntity(widget);
+    if (entity) {
+      if (Array.isArray(entity)) {
+        return entity.some((e) => this.ability.can("read", e));
+      } else {
+        return this.ability.can("read", entity);
+      }
+    }
+    // No entity relation -> show widget
+    return true;
+  }
+
+  /**
+   * Detect, which entity is required for which widget.
+   *
+   * TODO in the future the widget itself should expose this
+   *
+   * @param widget
+   * @private
+   */
+  private getWidgetEntity(widget: DynamicComponentConfig): string | string[] {
+    switch (widget.component) {
+      case "EntityCountDashboard":
+        return widget.config?.entity || "Child";
+      case "ImportantNotesDashboard":
+      case "NotesDashboard":
+        return "Note";
+      case "AttendanceWeekDashboard":
+        return "EventNote";
+      case "TodosDashboard":
+        return "Todo";
+      case "ProgressDashboard":
+        return "ProgressDashboardConfig";
+      case "BirthdayDashboard":
+        return widget.config?.entities
+          ? Object.keys(widget.config.entities)
+          : "Child";
+      case "ChildrenBmiDashboard":
+        return "HealthCheck";
+    }
+  }
 }
 
 export interface DashboardConfig {
