@@ -53,6 +53,7 @@ export class EntityPermissionGuard implements CanActivate {
     path = path.replace(/^\//, "");
 
     function isPathMatch(genericPath: string, path: string) {
+      // TODO this does not seem to work with children routes (admin module)
       const routeRegex = genericPath
         .split("/")
         // replace params with wildcard regex
