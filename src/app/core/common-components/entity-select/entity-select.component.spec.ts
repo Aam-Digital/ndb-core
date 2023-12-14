@@ -17,20 +17,21 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
-fdescribe("EntitySelectComponent", () => {
+describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
   let loader: HarnessLoader;
-
-  const testUsers: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
-    const user = new User();
-    user.name = s;
-    return user;
-  });
-  const testChildren: Entity[] = [new Child(), new Child()];
-  const otherEntities: Entity[] = [new School()];
+  let testUsers: Entity[];
+  let testChildren: Entity[];
 
   beforeEach(waitForAsync(() => {
+    testUsers = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
+      const user = new User();
+      user.name = s;
+      return user;
+    });
+    testChildren = [new Child(), new Child()];
+    const otherEntities: Entity[] = [new School()];
     TestBed.configureTestingModule({
       imports: [
         EntitySelectComponent,
@@ -71,7 +72,10 @@ fdescribe("EntitySelectComponent", () => {
     component.entityType = User.ENTITY_TYPE;
     tick();
     fixture.detectChanges();
-    console.log("should suggest ... filteredEntities", component.filteredEntities);
+    console.log(
+      "should suggest ... filteredEntities",
+      component.filteredEntities,
+    );
     expect(component.filteredEntities.length).toBe(testUsers.length);
   }));
 
@@ -246,8 +250,14 @@ fdescribe("EntitySelectComponent", () => {
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
     let options;
 
-    console.log("shows the autocomplete ... allEntities:", component.allEntities);
-    console.log("shows the autocomplete ... RelevantEntities:", component.relevantEntities);
+    console.log(
+      "shows the autocomplete ... allEntities:",
+      component.allEntities,
+    );
+    console.log(
+      "shows the autocomplete ... RelevantEntities:",
+      component.relevantEntities,
+    );
 
     autocomplete.enterText("X");
     options = await autocomplete.getOptions();
@@ -309,8 +319,14 @@ fdescribe("EntitySelectComponent", () => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
     tick();
     fixture.detectChanges();
-    console.log("suggests all entities ... allEntities:", component.allEntities);
-    console.log("suggests all entities ... relevantEntities:", component.relevantEntities);
+    console.log(
+      "suggests all entities ... allEntities:",
+      component.allEntities,
+    );
+    console.log(
+      "suggests all entities ... relevantEntities:",
+      component.relevantEntities,
+    );
     expect(component.allEntities).toEqual(
       [...testUsers, ...testChildren].sort((a, b) =>
         a.toString().localeCompare(b.toString()),
