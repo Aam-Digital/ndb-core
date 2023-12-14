@@ -53,6 +53,7 @@ export const allRoutes: Routes = [
   },
   {
     path: "admin",
+    canActivate: [AuthGuard],
     // add directly without lazy-loading so that Menu can detect permissions for child routes
     children: AdminModule.routes,
   },

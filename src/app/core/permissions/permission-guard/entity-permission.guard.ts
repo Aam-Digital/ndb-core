@@ -14,9 +14,9 @@ export class EntityPermissionGuard implements CanActivate {
     private ability: EntityAbility,
   ) {}
 
-  canActivate(route: ActivatedRouteSnapshot): boolean {
+  async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
     const routeData: RouteData = route.data;
-    if (this.canAccessRoute(routeData)) {
+    if (await this.canAccessRoute(routeData)) {
       return true;
     } else {
       if (route instanceof ActivatedRouteSnapshot) {
@@ -27,7 +27,7 @@ export class EntityPermissionGuard implements CanActivate {
     }
   }
 
-  private canAccessRoute(routeData: RouteData) {
+  private async canAccessRoute(routeData: RouteData) {
     const operation = routeData?.["requiredPermissionOperation"] ?? "read";
     const primaryEntity =
       routeData?.["entityType"] ??
@@ -38,6 +38,11 @@ export class EntityPermissionGuard implements CanActivate {
     if (!primaryEntity) {
       // No relevant config set => all users are allowed
       return true;
+    }
+
+    if (this.ability.rules.length === 0) {
+      // wait till rules are initialised
+      await new Promise((res) => this.ability.on("updated", res));
     }
 
     return this.ability.can(operation, primaryEntity);

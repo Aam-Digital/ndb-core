@@ -9,7 +9,7 @@ describe("EntityPermissionGuard", () => {
   let mockAbility: jasmine.SpyObj<EntityAbility>;
 
   beforeEach(() => {
-    mockAbility = jasmine.createSpyObj(["can"]);
+    mockAbility = jasmine.createSpyObj(["can"], { rules: [{}] });
 
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
@@ -25,10 +25,10 @@ describe("EntityPermissionGuard", () => {
     expect(guard).toBeTruthy();
   });
 
-  it("should use ability to check if current user is allowed", () => {
+  it("should use ability to check if current user is allowed", async () => {
     mockAbility.can.and.returnValue(true);
 
-    const result = guard.canActivate({
+    const result = await guard.canActivate({
       routeConfig: { path: "url" },
       data: {
         requiredPermissionOperation: "update",
@@ -40,7 +40,7 @@ describe("EntityPermissionGuard", () => {
     expect(mockAbility.can).toHaveBeenCalledWith("update", "TestEntity");
   });
 
-  it("should navigate to 404 for real navigation requests without permissions", () => {
+  it("should navigate to 404 for real navigation requests without permissions", async () => {
     const router = TestBed.inject(Router);
     spyOn(router, "navigate");
     const route = new ActivatedRouteSnapshot();
@@ -50,14 +50,14 @@ describe("EntityPermissionGuard", () => {
     });
     mockAbility.can.and.returnValue(false);
 
-    guard.canActivate(route);
+    await guard.canActivate(route);
 
     expect(router.navigate).toHaveBeenCalledWith(["/404"]);
   });
 
-  it("should check 'read' permissions if only entity and no operation is set", () => {
+  it("should check 'read' permissions if only entity and no operation is set", async () => {
     mockAbility.can.and.returnValue(true);
-    const result = guard.canActivate({
+    const result = await guard.canActivate({
       routeConfig: { path: "default-operation-config" },
       data: { entity: "Child" },
     } as Partial<ActivatedRouteSnapshot> as ActivatedRouteSnapshot);
@@ -66,8 +66,8 @@ describe("EntityPermissionGuard", () => {
     expect(mockAbility.can).toHaveBeenCalledWith("read", "Child");
   });
 
-  it("should return true as default if no entity or operation are configured", () => {
-    const result = guard.canActivate({
+  it("should return true as default if no entity or operation are configured", async () => {
+    const result = await guard.canActivate({
       routeConfig: { path: "no-permission-config" },
     } as any);
 
@@ -75,7 +75,7 @@ describe("EntityPermissionGuard", () => {
     expect(mockAbility.can).not.toHaveBeenCalled();
   });
 
-  it("should evaluate correct route permissions on 'pre-check' (checkRoutePermissions)", () => {
+  it("should evaluate correct route permissions on 'pre-check' (checkRoutePermissions)", async () => {
     mockAbility.can.and.returnValue(true);
 
     TestBed.inject(Router).config.push({
@@ -83,7 +83,7 @@ describe("EntityPermissionGuard", () => {
       data: { requiredPermissionOperation: "update", entityType: "Child" },
     });
 
-    const result = guard.checkRoutePermissions("check-route/1");
+    const result = await guard.checkRoutePermissions("check-route/1");
 
     expect(result).toBeTrue();
     expect(mockAbility.can).toHaveBeenCalledWith("update", "Child");
