@@ -129,7 +129,9 @@ describe("EntitySchemaService", () => {
       ConfigurableEnumDatatype,
     );
 
-    const entityArraySchema: EntitySchemaField = { dataType: "entity-array" };
+    const entityArraySchema: EntitySchemaField = {
+      dataType: "entity-array",
+    };
     expect(service.getInnermostDatatype(entityArraySchema)).toBeInstanceOf(
       EntityDatatype,
     );
@@ -182,45 +184,65 @@ describe("EntitySchemaService", () => {
   });
 });
 
-export function testDatatype(
-  dataType: DefaultDatatype,
+export function testDatatype<D extends DefaultDatatype>(
+  dataType: D | (new (params: any) => D),
   objectValue,
   databaseValue,
   additionalSchemaFieldConfig?: any,
+  additionalProviders?: any[],
 ) {
   let entitySchemaService: EntitySchemaService;
-  let mockInjector: jasmine.SpyObj<Injector>;
 
-  beforeEach(waitForAsync(() => {
-    mockInjector = jasmine.createSpyObj(["get"]);
-    mockInjector.get.and.returnValue([dataType]);
+  describe("test datatype", () => {
+    beforeEach(waitForAsync(() => {
+      additionalProviders = additionalProviders || [];
+      if (dataType instanceof DefaultDatatype) {
+        additionalProviders.push({
+          provide: DefaultDatatype,
+          useValue: dataType,
+          multi: true,
+        });
+      } else {
+        additionalProviders.push({
+          provide: DefaultDatatype,
+          useClass: dataType,
+          multi: true,
+        });
+      }
 
-    entitySchemaService = new EntitySchemaService(mockInjector);
-  }));
+      TestBed.configureTestingModule({
+        providers: [EntitySchemaService, ...additionalProviders],
+      });
 
-  class TestEntity extends Entity {
-    @DatabaseField({
-      dataType: dataType.dataType,
-      additional: additionalSchemaFieldConfig,
-    })
-    field;
-  }
+      entitySchemaService = TestBed.inject(EntitySchemaService);
+    }));
 
-  it("should convert to database format", () => {
-    const entity = new TestEntity();
-    entity.field = objectValue;
+    class TestEntity extends Entity {
+      @DatabaseField({
+        dataType: (dataType as DefaultDatatype | typeof DefaultDatatype)
+          .dataType,
+        additional: additionalSchemaFieldConfig,
+      })
+      field;
+    }
 
-    const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
-    expect(rawData.field).toEqual(databaseValue);
-  });
+    it("should convert to database format", () => {
+      const entity = new TestEntity();
+      entity.field = objectValue;
 
-  it("should convert from database to entity format", () => {
-    const data = {
-      field: databaseValue,
-    };
-    const loadedEntity = new TestEntity();
-    entitySchemaService.loadDataIntoEntity(loadedEntity, data);
+      const rawData =
+        entitySchemaService.transformEntityToDatabaseFormat(entity);
+      expect(rawData.field).toEqual(databaseValue);
+    });
 
-    expect(loadedEntity.field).toEqual(objectValue);
+    it("should convert from database to entity format", () => {
+      const data = {
+        field: databaseValue,
+      };
+      const loadedEntity = new TestEntity();
+      entitySchemaService.loadDataIntoEntity(loadedEntity, data);
+
+      expect(loadedEntity.field).toEqual(objectValue);
+    });
   });
 }

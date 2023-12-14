@@ -32,7 +32,6 @@ describe("EditAttendanceComponent", () => {
     });
     component.formControl = childrenForm;
     component.formFieldConfig = { id: "children" };
-    component.propertySchema = Note.schema.get("children");
     component.entity = new Note();
     fixture.detectChanges();
   });

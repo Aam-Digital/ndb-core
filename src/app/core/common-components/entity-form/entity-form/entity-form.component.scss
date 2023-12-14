@@ -1,8 +1,9 @@
 @use "mixins/grid-layout";
+@use "variables/sizes";
 
 .grid-layout {
   @include grid-layout.adaptive(
-    $min-block-width: 250px,
+    $min-block-width: sizes.$form-group-min-width,
     $max-screen-width: 414px
   );
 }
@@ -23,9 +24,4 @@
   > app-edit-photo {
     align-self: center;
   }
-}
-
-.field-with-tooltip-suffix {
-  width: calc(100% - 48px);
-  display: inline-block;
 }

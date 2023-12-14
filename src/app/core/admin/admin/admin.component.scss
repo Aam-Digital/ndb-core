@@ -1,0 +1,28 @@
+@use "../../../../styles/variables/colors";
+
+.admin-table {
+  border-collapse: collapse;
+  width: 100%;
+
+  > thead > th {
+    padding: 10px 12px;
+    text-align: left;
+    vertical-align: bottom;
+    font-weight: 400;
+    color: colors.$muted-background;
+    text-transform: uppercase;
+  }
+
+  > tbody > tr > td {
+    padding: 10px 12px;
+    vertical-align: top;
+  }
+
+  > tbody > tr {
+    border-top: 1px solid colors.$disabled;
+  }
+}
+
+.shrink-width {
+  width: 15%;
+}

@@ -1,5 +1,4 @@
 import { Component } from "@angular/core";
-import { RouteTarget } from "../../../app.routing";
 import {
   InputFileComponent,
   ParsedData,
@@ -10,6 +9,7 @@ import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { ClipboardModule } from "@angular/cdk/clipboard";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * UI to upload a config definition and generate a new app `Config` from the imported file.

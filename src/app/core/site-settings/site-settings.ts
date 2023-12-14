@@ -24,7 +24,7 @@ export class SiteSettings extends Entity {
     label: $localize`Default language`,
     description: $localize`This will only be applied once the app is reloaded`,
     dataType: "configurable-enum",
-    innerDataType: LOCALE_ENUM_ID,
+    additional: LOCALE_ENUM_ID,
   })
   defaultLanguage: ConfigurableEnumValue = availableLocales.values.find(
     ({ id }) => id === "en-US",

@@ -1,5 +1,4 @@
-import { Component, Input } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
+import { Component } from "@angular/core";
 import {
   Aggregation,
   DataAggregationService,
@@ -8,19 +7,17 @@ import {
   getGroupingInformationString,
   GroupByDescription,
 } from "../report-row";
-import {
-  ReportConfig,
-  ReportingComponentConfig,
-} from "./reporting-component-config";
 import moment from "moment";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
-import { RouteTarget } from "../../../app.routing";
 import { NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
 import { ReportRowComponent } from "./report-row/report-row.component";
 import { ObjectTableComponent } from "./object-table/object-table.component";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { ReportConfig } from "../report-config";
+import { RouteTarget } from "../../../route-target";
 
 @RouteTarget("Reporting")
 @Component({
@@ -36,8 +33,8 @@ import { DataTransformationService } from "../../../core/export/data-transformat
   ],
   standalone: true,
 })
-export class ReportingComponent implements ReportingComponentConfig {
-  @Input() reports: ReportConfig[];
+export class ReportingComponent {
+  reports: ReportConfig[];
   mode: "exporting" | "reporting" = "exporting";
   loading: boolean;
 
@@ -45,10 +42,14 @@ export class ReportingComponent implements ReportingComponentConfig {
   exportableData: any[];
 
   constructor(
-    private activatedRoute: ActivatedRoute,
     private dataAggregationService: DataAggregationService,
     private dataTransformationService: DataTransformationService,
-  ) {}
+    private entityMapper: EntityMapperService,
+  ) {
+    this.entityMapper
+      .loadType(ReportConfig)
+      .then((res) => (this.reports = res));
+  }
 
   async calculateResults(
     selectedReport: ReportConfig,

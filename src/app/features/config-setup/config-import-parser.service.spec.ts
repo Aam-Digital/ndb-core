@@ -1,13 +1,13 @@
 import { TestBed } from "@angular/core/testing";
 
 import { ConfigImportParserService } from "./config-import-parser.service";
-import { EntityConfig } from "../../core/entity/entity-config.service";
-import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
+import { EntityConfig } from "../../core/entity/entity-config";
 import { ConfigService } from "../../core/config/config.service";
 import { ConfigFieldRaw } from "./config-field.raw";
 import { EntityListConfig } from "../../core/entity-list/EntityListConfig";
 import { EntityDetailsConfig } from "../../core/entity-details/EntityDetailsConfig";
 import { ViewConfig } from "../../core/config/dynamic-routing/view-config.interface";
+import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field";
 
 describe("ConfigImportParserService", () => {
   let service: ConfigImportParserService;
@@ -26,7 +26,7 @@ describe("ConfigImportParserService", () => {
 
   function expectToBeParsedIntoEntityConfig(
     inputs: ConfigFieldRaw[],
-    expectedOutputs: { name: string; schema: EntitySchemaField }[],
+    expectedOutputs: { [key: string]: EntitySchemaField },
   ) {
     const entityName = "test";
     const result = service.parseImportDefinition(inputs, entityName, false);
@@ -77,26 +77,17 @@ describe("ConfigImportParserService", () => {
       description: "some extra explanation",
     };
 
-    expectToBeParsedIntoEntityConfig(
-      [configImport_name, configImport_dob],
-      [
-        {
-          name: configImport_name.id,
-          schema: {
-            dataType: configImport_name.dataType,
-            label: configImport_name.label,
-          },
-        },
-        {
-          name: configImport_dob.id,
-          schema: {
-            dataType: configImport_dob.dataType,
-            label: configImport_dob.label,
-            description: configImport_dob.description,
-          },
-        },
-      ],
-    );
+    expectToBeParsedIntoEntityConfig([configImport_name, configImport_dob], {
+      [configImport_name.id]: {
+        dataType: configImport_name.dataType,
+        label: configImport_name.label,
+      },
+      [configImport_dob.id]: {
+        dataType: configImport_dob.dataType,
+        label: configImport_dob.label,
+        description: configImport_dob.description,
+      },
+    });
   });
 
   it("should skip fields where dataType is not defined", () => {
@@ -113,15 +104,12 @@ describe("ConfigImportParserService", () => {
           dataType: "string",
         },
       ],
-      [
-        {
-          name: "name",
-          schema: {
-            dataType: "string",
-            label: "name",
-          },
+      {
+        name: {
+          dataType: "string",
+          label: "name",
         },
-      ],
+      },
     );
   });
 
@@ -134,35 +122,13 @@ describe("ConfigImportParserService", () => {
           dataType: "string",
         },
       ],
-      [
-        {
-          name: "dateOfBirth",
-          schema: {
-            dataType: "string",
-            label: "date of birth",
-          },
+      {
+        dateOfBirth: {
+          dataType: "string",
+          label: "date of birth",
         },
-      ],
+      },
     );
-  });
-
-  it("should generate sensible ids from labels", () => {
-    const labelIdPairs = [
-      ["name", "name"],
-      ["Name", "name"],
-      ["FirstName", "firstName"],
-      ["name of", "nameOf"],
-      ["test's name", "testsName"],
-      ["name 123", "name123"],
-      ["123 name", "123Name"], // this is possible in JavaScript
-    ];
-
-    for (const testCase of labelIdPairs) {
-      const generatedId = ConfigImportParserService.generateIdFromLabel(
-        testCase[0],
-      );
-      expect(generatedId).toBe(testCase[1]);
-    }
   });
 
   it("should generate enum from additional column and reuse if already exists", () => {
@@ -187,32 +153,23 @@ describe("ConfigImportParserService", () => {
           additional_type_details: null,
         },
       ],
-      [
-        {
-          name: "hometown",
-          schema: {
-            dataType: "configurable-enum",
-            label: "hometown",
-            innerDataType: "hometown",
-          },
+      {
+        hometown: {
+          dataType: "configurable-enum",
+          label: "hometown",
+          innerDataType: "hometown",
         },
-        {
-          name: "city",
-          schema: {
-            dataType: "configurable-enum",
-            label: "city",
-            innerDataType: "hometown", // reuse the previous enum!
-          },
+        city: {
+          dataType: "configurable-enum",
+          label: "city",
+          innerDataType: "hometown", // reuse the previous enum!
         },
-        {
-          name: "missingEnum",
-          schema: {
-            dataType: "configurable-enum",
-            label: "missing",
-            innerDataType: ConfigImportParserService.NOT_CONFIGURED_KEY, // reuse the previous enum!
-          },
+        missingEnum: {
+          dataType: "configurable-enum",
+          label: "missing",
+          innerDataType: ConfigImportParserService.NOT_CONFIGURED_KEY, // reuse the previous enum!
         },
-      ],
+      },
     );
 
     expect(parsedConfig["enum:hometown"]).toEqual([

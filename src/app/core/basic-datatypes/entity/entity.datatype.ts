@@ -33,7 +33,9 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
  */
 @Injectable()
 export class EntityDatatype extends StringDatatype {
-  static dataType = "entity";
+  static override dataType = "entity";
+  static override label: string = $localize`:datatype-label:link to another record`;
+
   editComponent = "EditSingleEntity";
   viewComponent = "DisplayEntity";
   importConfigComponent = "EntityImportConfig";

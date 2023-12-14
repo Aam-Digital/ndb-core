@@ -32,7 +32,8 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
  */
 @Injectable()
 export class StringDatatype extends DefaultDatatype<string, string> {
-  static dataType = "string";
+  static override dataType = "string";
+  static override label: string = $localize`:datatype-label:text`;
 
   transformToDatabaseFormat(value) {
     return String(value);

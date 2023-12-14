@@ -3,26 +3,27 @@ import {
   Directive,
   Input,
   OnChanges,
+  OnDestroy,
   OnInit,
   TemplateRef,
   ViewContainerRef,
 } from "@angular/core";
 import { DisabledWrapperComponent } from "./disabled-wrapper.component";
 import { EntityAction, EntitySubject } from "../permission-types";
-import { AbilityService } from "../ability/ability.service";
 import { EntityAbility } from "../ability/entity-ability";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Unsubscribe } from "@casl/ability";
 
 /**
  * This directive can be used to disable a element (e.g. button) based on the current users permissions.
  * Additionally, a little popup will be shown when the user hovers the disabled element.
  */
-@UntilDestroy()
 @Directive({
   selector: "[appDisabledEntityOperation]",
   standalone: true,
 })
-export class DisableEntityOperationDirective implements OnInit, OnChanges {
+export class DisableEntityOperationDirective
+  implements OnInit, OnChanges, OnDestroy
+{
   /**
    * These arguments are required to check whether the user has permissions to perform the operation.
    * The operation property defines to what kind of operation a element belongs, e.g. OperationType.CREATE
@@ -36,15 +37,20 @@ export class DisableEntityOperationDirective implements OnInit, OnChanges {
   private wrapperComponent: ComponentRef<DisabledWrapperComponent>;
   private text: string = $localize`:Missing permission:Your account does not have the required permission for this action.`;
 
+  private readonly unsubscribeAbilityUpdates: Unsubscribe;
+
   constructor(
     private templateRef: TemplateRef<HTMLButtonElement>,
     private viewContainerRef: ViewContainerRef,
     private ability: EntityAbility,
-    private abilityService: AbilityService,
   ) {
-    this.abilityService.abilityUpdated
-      .pipe(untilDestroyed(this))
-      .subscribe(() => this.applyPermissions());
+    this.unsubscribeAbilityUpdates = this.ability.on("updated", () =>
+      this.applyPermissions(),
+    );
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribeAbilityUpdates();
   }
 
   ngOnInit() {

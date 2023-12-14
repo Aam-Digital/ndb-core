@@ -38,7 +38,7 @@ export interface PanelComponent {
   /**
    * An optional second title for only this component.
    */
-  title: string;
+  title?: string;
 
   /**
    * The name of the component. When registered, this usually is the name of the

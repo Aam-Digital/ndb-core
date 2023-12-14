@@ -89,8 +89,7 @@ export class Note extends Entity {
    * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    */
   @DatabaseField({
-    innerDataType: "schema-embed",
-    additional: EventAttendance,
+    innerDataType: EventAttendance.DATA_TYPE,
     anonymize: "retain",
   })
   private childrenAttendance: Map<string, EventAttendance> = new Map();
@@ -125,7 +124,7 @@ export class Note extends Entity {
   @DatabaseField({
     label: $localize`:Label for the category of a note:Category`,
     dataType: "configurable-enum",
-    innerDataType: INTERACTION_TYPE_CONFIG_ID,
+    additional: INTERACTION_TYPE_CONFIG_ID,
     anonymize: "retain",
   })
   category: InteractionType;
@@ -175,7 +174,7 @@ export class Note extends Entity {
   @DatabaseField({
     label: $localize`:Status of a note:Status`,
     dataType: "configurable-enum",
-    innerDataType: "warning-levels",
+    additional: "warning-levels",
     anonymize: "retain",
   })
   warningLevel: Ordering.EnumValue;

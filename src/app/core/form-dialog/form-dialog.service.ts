@@ -48,7 +48,7 @@ export class FormDialogService {
     ).filter((col) => !col.hideFromForm);
 
     const columnsToDisplay = columns
-      .filter((col) => col.edit)
+      .filter((col) => col.editComponent)
       .map((col) => Object.assign({}, col, { forTable: false }));
 
     return this.dialog.open(component, {
@@ -56,7 +56,7 @@ export class FormDialogService {
       data: {
         entity: entity,
         columns: columnsToDisplay,
-        viewOnlyColumns: columns.filter((col) => !col.edit),
+        viewOnlyColumns: columns.filter((col) => !col.editComponent),
       },
     });
   }
@@ -68,8 +68,8 @@ export class FormDialogService {
     const columns = columnsOverall.map(toFormFieldConfig);
 
     for (const c of columns) {
-      if (!c.edit) {
-        c.edit = this.schemaService.getComponent(
+      if (!c.editComponent) {
+        c.editComponent = this.schemaService.getComponent(
           entity.getSchema().get(c.id),
           "edit",
         );

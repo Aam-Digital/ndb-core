@@ -20,7 +20,6 @@ import { FormFieldConfig } from "../../common-components/entity-form/entity-form
 import { EntitySubrecordComponent } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
 import { AnalyticsService } from "../../analytics/analytics.service";
-import { RouteTarget } from "../../../app.routing";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
@@ -46,6 +45,7 @@ import { DuplicateRecordService } from "../duplicate-records/duplicate-records.s
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.

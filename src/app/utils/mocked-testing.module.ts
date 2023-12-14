@@ -31,7 +31,7 @@ import { BehaviorSubject } from "rxjs";
  * by passing a different state to the method e.g. `MockedTestingModule.withState(LoginState.LOGGED_OUT)`.
  * The EntityMapper can be initialized with Entities that are passed as the second argument to the static function.
  *
- * This module provides the services `SessionService` `EntityMapperService` together with other often needed services.
+ * This module provides the services `SessionService` `EntityMapperService` together with other often needed backup.
  *
  * If you need a REAL database (e.g. for indices/views) then use the {@link DatabaseTestingModule} instead.
  */

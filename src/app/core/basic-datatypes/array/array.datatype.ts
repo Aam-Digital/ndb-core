@@ -37,7 +37,7 @@ export class ArrayDatatype<
   EntityType = any,
   DBType = any,
 > extends DefaultDatatype<EntityType[], DBType[]> {
-  static dataType = "array";
+  static override dataType = "array";
 
   // components for array should be handled by innerDatatype
   editComponent = undefined;

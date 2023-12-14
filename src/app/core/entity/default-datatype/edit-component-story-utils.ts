@@ -40,14 +40,14 @@ export function generateFormFieldStory<T>(
 
   const fieldConfig: FormFieldConfig = {
     id: "main",
-    edit: editComponent,
+    editComponent: editComponent,
     label: "test field label",
-    tooltip: withTooltip ? "test tooltip" : undefined,
+    description: withTooltip ? "test tooltip" : undefined,
     ...additionalSchema,
   };
   const otherFieldConf: FormFieldConfig = {
     id: "other",
-    edit: "EditText",
+    editComponent: "EditText",
     label: "other field",
   };
 

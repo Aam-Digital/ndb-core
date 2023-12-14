@@ -55,8 +55,10 @@ describe("EntityDetailsComponent", () => {
     mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
     mockChildrenService.queryRelationsOf.and.resolveTo([]);
     mockChildrenService.getAserResultsOfChild.and.resolveTo([]);
-    mockAbility = jasmine.createSpyObj(["cannot", "update"]);
+    mockAbility = jasmine.createSpyObj(["cannot", "update", "on"]);
     mockAbility.cannot.and.returnValue(false);
+    mockAbility.on.and.returnValue(() => true);
+
     TestBed.configureTestingModule({
       imports: [EntityDetailsComponent, MockedTestingModule.withState()],
       providers: [

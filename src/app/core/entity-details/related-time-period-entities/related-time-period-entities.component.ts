@@ -92,12 +92,12 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   }
 }
 
-export const isActiveIndicator = {
+export const isActiveIndicator: FormFieldConfig = {
   id: "isActive",
   label: $localize`:Label for the currently active status|e.g. Currently active:Currently`,
-  view: "ReadonlyFunction",
+  viewComponent: "ReadonlyFunction",
   hideFromTable: true,
-  tooltip: $localize`:Tooltip for the status of currently active or not:Only added to linked record if active. Change the start or end date to modify this status.`,
+  description: $localize`:Tooltip for the status of currently active or not:Only added to linked record if active. Change the start or end date to modify this status.`,
   additional: (csr: ChildSchoolRelation) =>
     csr.isActive
       ? $localize`:Indication for the currently active status of an entry:active`

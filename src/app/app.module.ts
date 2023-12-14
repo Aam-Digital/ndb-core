@@ -71,7 +71,6 @@ import {
 import { AttendanceModule } from "./child-dev-project/attendance/attendance.module";
 import { NotesModule } from "./child-dev-project/notes/notes.module";
 import { SchoolsModule } from "./child-dev-project/schools/schools.module";
-import { ConflictResolutionModule } from "./features/conflict-resolution/conflict-resolution.module";
 import { HistoricalDataModule } from "./features/historical-data/historical-data.module";
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/progress-dashboard-widget/progress-dashboard-widget.module";
@@ -87,10 +86,9 @@ import { ImportModule } from "./core/import/import.module";
 import { ShortcutDashboardWidgetModule } from "./features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard-widget.module";
 import { EntityCountDashboardWidgetModule } from "./features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard-widget.module";
 import { BirthdayDashboardWidgetModule } from "./features/dashboard-widgets/birthday-dashboard-widget/birthday-dashboard-widget.module";
-import { ConfigSetupModule } from "./features/config-setup/config-setup.module";
 import { MarkdownPageModule } from "./features/markdown-page/markdown-page.module";
-import { AdminModule } from "./features/admin/admin.module";
 import { LoginStateSubject } from "./core/session/session-type";
+import { AdminModule } from "./core/admin/admin.module";
 
 /**
  * Main entry point of the application.
@@ -123,10 +121,7 @@ import { LoginStateSubject } from "./core/session/session-type";
     NotesModule,
     SchoolsModule,
     // feature module
-    ConflictResolutionModule,
-    AdminModule,
     ImportModule,
-    ConfigSetupModule,
     FileModule,
     MarkdownPageModule,
     HistoricalDataModule,
@@ -138,6 +133,7 @@ import { LoginStateSubject } from "./core/session/session-type";
     BirthdayDashboardWidgetModule,
     ReportingModule,
     TodosModule,
+    AdminModule,
     // top level component
     UiComponent,
     // Global Angular Material modules

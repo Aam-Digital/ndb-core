@@ -18,6 +18,7 @@
 import { dateToString } from "../../../utils/utils";
 import { Injectable } from "@angular/core";
 import { DateDatatype } from "../date/date.datatype";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 /**
  * Datatype for the EntitySchemaService transforming Date values to/from a date string format ("YYYY-mm-dd").
@@ -30,7 +31,8 @@ import { DateDatatype } from "../date/date.datatype";
  */
 @Injectable()
 export class DateOnlyDatatype extends DateDatatype<string> {
-  static dataType = "date-only";
+  static override dataType = "date-only";
+  static override label: string = $localize`:datatype-label:date`;
 
   transformToDatabaseFormat(value: Date) {
     if (!(value instanceof Date)) {
@@ -39,7 +41,11 @@ export class DateOnlyDatatype extends DateDatatype<string> {
     return dateToString(value);
   }
 
-  transformToObjectFormat(value: string): Date {
+  transformToObjectFormat(
+    value: string,
+    schemaField?: EntitySchemaField,
+    parent?: any,
+  ): Date {
     value = migrateIsoDatesToInferredDateOnly(value);
 
     // new Date("2022-01-01") is interpreted as UTC time whereas new Date(2022, 0, 1) is local time
@@ -50,10 +56,9 @@ export class DateOnlyDatatype extends DateDatatype<string> {
       // fallback to legacy date parsing if format is not "YYYY-mm-dd"
       date = new Date(value);
     }
-    if (Number.isNaN(date.getTime())) {
-      throw new Error("failed to convert data to Date object: " + value);
-    }
-    return date;
+
+    // re-use error logging and basic return logic from base type
+    return super.transformToObjectFormat(date, schemaField, parent);
   }
 }
 

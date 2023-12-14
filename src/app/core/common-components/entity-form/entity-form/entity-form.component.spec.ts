@@ -42,9 +42,9 @@ describe("EntityFormComponent", () => {
 
   function setupInitialForm(entity, columns) {
     component.entity = entity;
-    component.columns = columns;
+    component.fieldGroups = columns.map((c) => ({ fields: c }));
     component.form = TestBed.inject(EntityFormService).createFormGroup(
-      component.columns[0],
+      columns[0],
       component.entity,
     );
     component.ngOnChanges({ entity: true, form: true } as any);

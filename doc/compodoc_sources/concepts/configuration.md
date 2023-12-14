@@ -164,7 +164,7 @@ Example:
     "columns": [
       "projectNumber",
       {
-        "view": "ChildBlock",
+        "viewComponent": "ChildBlock",
         "label": "Name",
         "id": "name"
       },
@@ -281,26 +281,24 @@ The component configuration requires another `"title"`, the `"component"` that s
 #### The Form Component
 The form component is a flexible component that can be used inside the details component.
 It allows to dynamically create a form through configuration.
-The configuration for this component expects a single field, the `"cols"`.
-This field should be a two dimensional array where the first dimension defines what is rendered next to each other (the columns), and the second dimension what is rendered in each column.
-If all fields are the same height, then every field can be defined as a column.
-The definitions for the columns is defined by the [FormFieldConfiguration](../../interfaces/FormFieldConfig.html)
+The configuration for this component expects a single field, the `"fieldGroups"`.
+
+The fieldGroups should be an array of logically related fields and optionally a header displayed above the group of fields.
+Each field group is rendered next to each other (as columns).
+You can also define only a single field in each fieldGroups entry, to display them next to each other instead of one field taking up full width.
+The definitions for the fields is defined by the [FormFieldConfiguration](../../interfaces/FormFieldConfig.html)
 However, the schema definitions of the entity should be sufficient so that only the names of the properties which should be editable in the form have to be provided.
-This means instead of placing an object in the `cols` array, simple strings do the same job.
+This means instead of placing an object in the `fields` array, simple strings do the same job.
 
 ```json
   "config": {
-    "cols": [
-      [
-        "photo"
-      ],
-      [
-        "name"
-        "projectNumber"
-      ],
-      [
-        "dateOfBirth"
-      ]
+    "fieldGroups": [
+      { "fields": ["photo"] },
+      { "fields": ["name", "projectNumber"] }
+      {
+        "fields": ["dateOfBirth"],
+        "header": "Demographics"
+      }
     ]
   }
 ```
@@ -334,17 +332,17 @@ The name of the entity to which this config refers comes after the colon in this
 
 #### Attributes
 The attribute field allows to add attributes to an entity:
-Each attribute requires a `"name"` and a `"schema"` which refers to the entity [schemas](entity-schema-system.md).
+Configure this as a key-value object with the property name as key and the schema as value, which refers to the entity [schemas](entity-schema-system.md).
 
 Example:
 ```json
 "entity:Child": {
-    "attributes": [
-        {"name": "address", "schema": { "dataType": "string", "label": "Address" } },
-        {"name": "phone", "schema": { "dataType": "string", "label": "Phone number" } },
+    "attributes": {
+        "address": { "dataType": "string", "label": "Address" },
+        "phone": { "dataType": "string", "label": "Phone number" },
         ...
-        {"name": "health_lastDeworming", "schema": { "dataType": "Date", "label": "Last deworming" } }
-    ]
+        "health_lastDeworming": { "dataType": "Date", "label": "Last deworming" }
+    }
 }
 
 ```
@@ -361,9 +359,9 @@ To achieve this, the configuration of the `Child` entity can be extended like th
 ```json
 "entity:Child": {
     "toStringAttributes": ["firstname", "lastname"],
-    "attributes": [
-        {"name": "firstname", "schema": { "dataType": "string", "label": "First name" } },
-        {"name": "lastname", "schema": { "dataType": "string", "label": "Last name" } },
+    "attributes": {
+        "firstname": { ... },
+        "lastname": { ... },
         ...
     ]
 }
@@ -427,10 +425,10 @@ Example:
 
 In order to use such an "enum" in entity fields, you need to set the schema datatype and the form type in the according config objects:
 
-In the entity, set the dataType to "configurable-enum" and the "innerDataType" to the id of the enum config:
+In the entity, set the dataType to "configurable-enum" and the "additional" to the id of the enum config:
 ```json
 "entity:Child": {
-  {"name": "status", "schema": { "dataType": "configurable-enum", "innerDataType": "project-status"  } }
+  "attritubtes": { "status": { "dataType": "configurable-enum", "additional": "project-status"  } }
   ...
 ```
 
@@ -446,26 +444,6 @@ In the List View columns config, use the "DisplayConfigurableEnum" component for
   },
   ...
 ]
-```
-
-#### Display a configurable enum property in the details view
-
-In the Details View config for a "Form" component, use the "configurable-enum-select" input type
-and additionally define the "enumId" of the enum config it refers to:
-```json
-"component": "Form",
-"config": {
-  "cols": [
-    [
-      {
-        "id": "status",
-        "input": "configurable-enum-select",
-        "enumId": "project-status",
-        "placeholder": "Status"
-      }
-    ]
-  ]
-}
 ```
 
 #### Allowing multi select

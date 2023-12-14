@@ -34,7 +34,7 @@ export class EducationalMaterial extends Entity {
   @DatabaseField({
     label: $localize`:The material which has been borrowed:Material`,
     dataType: "configurable-enum",
-    innerDataType: "materials",
+    additional: "materials",
     validators: {
       required: true,
     },

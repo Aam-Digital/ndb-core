@@ -1,16 +1,10 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { Router } from "@angular/router";
-import {
-  EntityDetailsConfig,
-  Panel,
-  PanelComponent,
-  PanelConfig,
-} from "../EntityDetailsConfig";
+import { Router, RouterLink } from "@angular/router";
+import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { RouteTarget } from "../../../app.routing";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
@@ -20,7 +14,7 @@ import { MatTabsModule } from "@angular/material/tabs";
 import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { NgForOf, NgIf } from "@angular/common";
+import { CommonModule, NgForOf, NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
@@ -31,6 +25,8 @@ import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-arch
 import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Subscription } from "rxjs";
+import { AbilityModule } from "@casl/angular";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -61,9 +57,12 @@ import { Subscription } from "rxjs";
     DisableEntityOperationDirective,
     EntityActionsMenuComponent,
     EntityArchivedInfoComponent,
+    RouterLink,
+    AbilityModule,
+    CommonModule,
   ],
 })
-export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
+export class EntityDetailsComponent implements OnChanges {
   creatingNew = false;
   isLoading = true;
   private changesSubscription: Subscription;
@@ -78,6 +77,9 @@ export class EntityDetailsComponent implements EntityDetailsConfig, OnChanges {
   @Input() id: string;
   record: Entity;
 
+  /**
+   * The configuration for the panels on this details page.
+   */
   @Input() panels: Panel[] = [];
 
   constructor(

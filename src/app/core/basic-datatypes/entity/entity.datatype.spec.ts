@@ -21,6 +21,7 @@ import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 describe("Schema data type: entity", () => {
   testDatatype(new EntityDatatype(null, null), "1", "1", "User");
@@ -55,7 +56,10 @@ describe("Schema data type: entity", () => {
     const dataType = new EntityDatatype(entityMapper, mockRemoveService);
 
     const testValue = referencedEntity.getId();
-    const testSchemaField = { additional: "Child", dataType: "entity" };
+    const testSchemaField: EntitySchemaField = {
+      additional: "Child",
+      dataType: "entity",
+    };
 
     const anonymizedValue = await dataType.anonymize(
       testValue,

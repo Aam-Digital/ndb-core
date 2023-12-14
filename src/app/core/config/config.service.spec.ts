@@ -4,6 +4,8 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import { Config } from "./config";
 import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
+import { EntityConfig } from "../entity/entity-config";
+import { FieldGroup } from "../entity-details/form/field-group";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -97,5 +99,185 @@ describe("ConfigService", () => {
     tick();
     const result = service.exportConfig();
     expect(result).toEqual(expected);
+  }));
+
+  it("should migrate entity attributes config to flattened object format with id", fakeAsync(() => {
+    const config = new Config();
+    config.data = {
+      "entity:old-format": {
+        attributes: [
+          {
+            name: "count",
+            schema: {
+              dataType: "number",
+            },
+          },
+        ],
+      },
+      "entity:new-format": {
+        attributes: {
+          count: {
+            dataType: "number",
+          },
+        },
+      },
+    };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const expectedEntityAttributes = {
+      count: { dataType: "number" },
+    };
+
+    const actualFromOld = service.getConfig<EntityConfig>("entity:old-format");
+    expect(actualFromOld.attributes).toEqual(expectedEntityAttributes);
+
+    const actualFromNew = service.getConfig<EntityConfig>("entity:new-format");
+    expect(actualFromNew.attributes).toEqual(expectedEntityAttributes);
+  }));
+
+  it("should migrate Form field group headers into combined format", fakeAsync(() => {
+    const testConfigId = "view:test/:id";
+
+    const form1Config = {
+      cols: [["name"], ["other"]],
+      headers: [null, "2nd group"],
+    };
+    const form2Config = {
+      cols: [["name"], ["other"]],
+    };
+    const formNewConfig = {
+      fieldGroups: [
+        { fields: ["name"] } as FieldGroup,
+        { fields: ["name"] } as FieldGroup,
+      ],
+    };
+
+    const viewConfig = {
+      component: "EntityDetails",
+      config: {
+        entity: "Entity",
+        panels: [
+          {
+            title: "Tab 1",
+            components: [{ title: "", component: "Form", config: form1Config }],
+          },
+          {
+            title: "Tab 2",
+            components: [
+              { component: "ActivitiesOverview" },
+              { component: "Form", config: form2Config },
+            ],
+          },
+          {
+            title: "Tab with new config",
+            components: [{ component: "Form", config: formNewConfig }],
+          },
+        ],
+      },
+    };
+
+    updateSubject.next({
+      entity: Object.assign(new Config(), {
+        data: { [testConfigId]: viewConfig },
+      }),
+      type: "update",
+    });
+    tick();
+
+    const result: any = service.getConfig(testConfigId);
+
+    const expectedForm1Config = {
+      fieldGroups: [
+        { fields: form1Config.cols[0] },
+        { fields: form1Config.cols[1], header: form1Config.headers[1] },
+      ],
+    };
+    const expectedForm2Config = {
+      fieldGroups: [
+        { fields: form2Config.cols[0] },
+        { fields: form2Config.cols[1] },
+      ],
+    };
+
+    expect(result.config.panels[0].components[0].config).toEqual(
+      expectedForm1Config,
+    );
+    expect(result.config.panels[1].components[1].config).toEqual(
+      expectedForm2Config,
+    );
+    expect(result.config.panels[1].components[0].config).toEqual(
+      viewConfig.config.panels[1].components[0].config,
+    );
+    // keep new format unchanged:
+    expect(result.config.panels[2].components[0].config).toEqual(formNewConfig);
+  }));
+
+  it("should migrate FormFieldConfig view/edit to viewComponent/editComponent", fakeAsync(() => {
+    const testConfig1 = "view:test";
+    const testConfig2 = "view:test/:id";
+
+    const oldFieldConfig = { id: "name", view: "SomeView", edit: "SomeEdit" };
+
+    const viewConfig1 = {
+      component: "EntityDetails",
+      config: {
+        entity: "Entity",
+        panels: [
+          {
+            components: [
+              {
+                title: "Form 1",
+                component: "Form",
+                config: {
+                  cols: [[oldFieldConfig], ["other"]],
+                },
+              },
+              {
+                title: "Form 2",
+                component: "Form",
+                config: {
+                  fieldGroups: [{ fields: ["other", oldFieldConfig] }],
+                },
+              },
+            ],
+          },
+        ],
+      },
+    };
+
+    const viewConfig2 = {
+      component: "EntityList",
+      config: {
+        entity: "School",
+        columns: [oldFieldConfig, "other"],
+      },
+    };
+
+    updateSubject.next({
+      entity: Object.assign(new Config(), {
+        data: { [testConfig1]: viewConfig1, [testConfig2]: viewConfig2 },
+      }),
+      type: "update",
+    });
+    tick();
+
+    const result1: any = service.getConfig(testConfig1);
+    const result2: any = service.getConfig(testConfig2);
+
+    const expectedFieldConfig = {
+      id: "name",
+      viewComponent: "SomeView",
+      editComponent: "SomeEdit",
+    };
+
+    expect(
+      result1.config.panels[0].components[0].config.fieldGroups[0].fields[0],
+    ).toEqual(expectedFieldConfig);
+    expect(
+      result1.config.panels[0].components[1].config.fieldGroups[0].fields[1],
+    ).toEqual(expectedFieldConfig);
+
+    expect(result2.config.columns[0]).toEqual(expectedFieldConfig);
   }));
 });

@@ -19,7 +19,6 @@ import { AlertService } from "../../../alerts/alert.service";
 import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { genders } from "../../../../child-dev-project/children/model/genders";
-import { LoggingService } from "../../../logging/logging.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import moment from "moment";
 import { Subject } from "rxjs";
@@ -29,6 +28,7 @@ import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observe
 import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
 import { FormDialogService } from "../../../form-dialog/form-dialog.service";
 import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
+import { assignInputAndTriggerOnChanges } from "../../../../utils/test-utils/mock-ng-on-changes.spec";
 
 describe("EntitySubrecordComponent", () => {
   let component: EntitySubrecordComponent<Entity>;
@@ -79,7 +79,7 @@ describe("EntitySubrecordComponent", () => {
       {
         id: "enumValue",
         label: "Test Configurable Enum",
-        view: "DisplayConfigurableEnum",
+        viewComponent: "DisplayConfigurableEnum",
       },
     ];
     component.ngOnChanges({ records: undefined, columns: undefined });
@@ -184,26 +184,12 @@ describe("EntitySubrecordComponent", () => {
     expect(sortedNames).toEqual(["A", "b", "C"]);
   });
 
-  it("should log a warning when the column definition can not be initialized", () => {
-    const loggingService = TestBed.inject(LoggingService);
-    spyOn(loggingService, "warn");
-    component.records = [new Child()];
-    component.columns = [
-      {
-        id: "correctColumn",
-        label: "Predefined Title",
-        view: "DisplayDate",
-      },
-      { id: "notExistentColumn" },
-    ];
-
-    component.ngOnChanges({ columns: null });
-
-    expect(loggingService.warn).toHaveBeenCalled();
-  });
-
   it("should create a formGroup when editing a row", () => {
     component.columns = ["name", "projectNumber"];
+    assignInputAndTriggerOnChanges(component, {
+      columns: ["name", "projectNumber"],
+    });
+
     const child = new Child();
     child.name = "Child Name";
     child.projectNumber = "01";
@@ -279,13 +265,17 @@ describe("EntitySubrecordComponent", () => {
   it("should create a new entity and open a dialog on default when clicking create", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
+    assignInputAndTriggerOnChanges(component, {
+      newRecordFactory: component.newRecordFactory,
+    });
+
     const dialog = TestBed.inject(FormDialogService);
 
     component.create();
 
     expect(dialog.openFormPopup).toHaveBeenCalledWith(
       child,
-      defaultTestColumns.map((x) => ({ id: x })),
+      defaultTestColumns.map((x) => jasmine.objectContaining({ id: x })),
     );
   });
 
@@ -338,18 +328,22 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should correctly determine the entity constructor from factory", () => {
-    expect(() => component.getEntityConstructor()).toThrowError();
+    expect(component.entityConstructor).toBeUndefined();
 
     const newRecordSpy = jasmine.createSpy().and.returnValue(new Child());
-    component.newRecordFactory = newRecordSpy;
-    expect(component.getEntityConstructor()).toEqual(Child);
+    assignInputAndTriggerOnChanges(component, {
+      newRecordFactory: newRecordSpy,
+    });
+    expect(component.entityConstructor).toEqual(Child);
     expect(newRecordSpy).toHaveBeenCalled();
   });
 
   it("should correctly determine the entity constructor from existing record", () => {
-    component.newRecordFactory = undefined;
-    component.records = [new Note()];
-    expect(component.getEntityConstructor()).toEqual(Note);
+    assignInputAndTriggerOnChanges(component, {
+      newRecordFactory: undefined,
+      records: [new Note()],
+    });
+    expect(component.entityConstructor).toEqual(Note);
   });
 
   it("should filter data based on filter definition", () => {

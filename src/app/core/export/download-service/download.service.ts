@@ -63,7 +63,7 @@ export class DownloadService {
 
     switch (format.toLowerCase()) {
       case "json":
-        result = JSON.stringify(data); // TODO: support exportConfig for json format
+        result = typeof data === "string" ? data : JSON.stringify(data); // TODO: support exportConfig for json format
         return new Blob([result], { type: "application/json" });
       case "csv":
         result = await this.createCsv(data);

@@ -20,6 +20,18 @@ describe("Schema data type: location", () => {
     service = TestBed.inject(LocationDatatype);
   });
 
+  it("should only return Geo objects when transforming from database to object format", async () => {
+    const mockGeoResult: GeoResult = {
+      lat: 1,
+      lon: 2,
+      display_name: "test address",
+    };
+    expect(service.transformToObjectFormat(mockGeoResult)).toEqual(
+      mockGeoResult,
+    );
+    expect(service.transformToObjectFormat(123 as any)).toBeUndefined();
+  });
+
   async function testImportMapping(
     importedValue: string,
     mockedLookup: GeoResult[],
