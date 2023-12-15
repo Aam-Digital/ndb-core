@@ -17,7 +17,7 @@ import { ExportDataDirective } from "../../../../core/export/export-data-directi
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { ReportType } from "../../report-config";
+import { ReportEntity } from "../../report-config";
 
 @Component({
   selector: "app-select-report",
@@ -40,12 +40,12 @@ import { ReportType } from "../../report-config";
   standalone: true,
 })
 export class SelectReportComponent implements OnChanges {
-  @Input() reports: ReportType[];
+  @Input() reports: ReportEntity[];
   @Input() loading: boolean;
   @Input() exportableData: any;
   @Output() calculateClick = new EventEmitter<CalculateReportOptions>();
 
-  selectedReport: ReportType;
+  selectedReport: ReportEntity;
   fromDate: Date;
   toDate: Date;
 
@@ -59,7 +59,7 @@ export class SelectReportComponent implements OnChanges {
 }
 
 interface CalculateReportOptions {
-  report: ReportType;
+  report: ReportEntity;
   from: Date;
   to: Date;
 }

@@ -10,7 +10,7 @@ import {
 } from "../../../core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
 import { of } from "rxjs";
-import { SqlReport } from "../report-config";
+import { ReportEntity, SqlReport } from "../report-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { SqsSchema } from "./sqs-schema";
@@ -43,7 +43,8 @@ describe("SqlReportService", () => {
   it("should query the external service with the provided report data", async () => {
     const mockResult = [{ some: "data" }];
     mockHttpClient.post.and.returnValue(of(mockResult));
-    const report = new SqlReport();
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
 
     const result = await service.query(
       report,
@@ -52,7 +53,7 @@ describe("SqlReportService", () => {
     );
 
     expect(mockHttpClient.post).toHaveBeenCalledWith(
-      `${SqlReportService.QUERY_PROXY}/app/${report.getId(true)}`,
+      `${SqlReportService.QUERY_PROXY}/report/app/${report.getId(true)}`,
       {
         from: "2023-01-01",
         to: "2024-01-01",
@@ -106,19 +107,21 @@ describe("SqlReportService", () => {
     mockEntities.add(SchemaTest.ENTITY_TYPE, SchemaTest);
     const entityMapper = TestBed.inject(EntityMapperService);
     const saveSpy = spyOn(entityMapper, "save").and.callThrough();
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
 
-    await service.query(new SqlReport(), new Date(), new Date());
+    await service.query(report, new Date(), new Date());
     expect(saveSpy).toHaveBeenCalledWith(jasmine.any(SqsSchema));
 
     // SqsSchema exists and entity schema hasn't changed
     saveSpy.calls.reset();
-    await service.query(new SqlReport(), new Date(), new Date());
+    await service.query(report, new Date(), new Date());
     expect(saveSpy).not.toHaveBeenCalled();
 
     // SqsSchema exists and entity schema changed
     saveSpy.calls.reset();
     SchemaTest.schema.set("test", { dataType: "string" });
-    await service.query(new SqlReport(), new Date(), new Date());
+    await service.query(report, new Date(), new Date());
     expect(saveSpy).toHaveBeenCalledWith(jasmine.any(SqsSchema));
 
     SchemaTest.schema.delete("test");

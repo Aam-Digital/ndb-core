@@ -12,7 +12,7 @@ import { ReportRowComponent } from "./report-row/report-row.component";
 import { ObjectTableComponent } from "./object-table/object-table.component";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { ReportConfig, ReportType } from "../report-config";
+import { ReportEntity } from "../report-config";
 import { SqlReportService } from "../sql-report/sql-report.service";
 import { RouteTarget } from "../../../route-target";
 
@@ -31,8 +31,8 @@ import { RouteTarget } from "../../../route-target";
   standalone: true,
 })
 export class ReportingComponent {
-  reports: ReportType[];
-  mode: ReportType["mode"];
+  reports: ReportEntity[];
+  mode: ReportEntity["mode"];
   loading: boolean;
 
   data: any[];
@@ -45,12 +45,12 @@ export class ReportingComponent {
     private entityMapper: EntityMapperService,
   ) {
     this.entityMapper
-      .loadType(ReportConfig)
-      .then((res) => (this.reports = res as ReportType[]));
+      .loadType(ReportEntity)
+      .then((res) => (this.reports = res));
   }
 
   async calculateResults(
-    selectedReport: ReportType,
+    selectedReport: ReportEntity,
     fromDate: Date,
     toDate: Date,
   ) {
@@ -73,7 +73,7 @@ export class ReportingComponent {
     this.loading = false;
   }
 
-  private getReportResults(report: ReportType, from: Date, to: Date) {
+  private getReportResults(report: ReportEntity, from: Date, to: Date) {
     switch (report.mode) {
       case "exporting":
         return this.dataTransformationService.queryAndTransformData(

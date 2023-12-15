@@ -19,7 +19,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
-import { ReportConfig, SqlReport } from "../report-config";
+import { ReportEntity, SqlReport } from "../report-config";
 import { SqlReportService } from "../sql-report/sql-report.service";
 
 describe("ReportingComponent", () => {
@@ -29,17 +29,7 @@ describe("ReportingComponent", () => {
   let mockDataTransformationService: jasmine.SpyObj<DataTransformationService>;
   let mockSqlReportService: jasmine.SpyObj<SqlReportService>;
 
-  const testReport = ReportConfig.create({
-    title: "test report",
-    aggregationDefinitions: [
-      {
-        query: "some query",
-        label: "some label",
-        groupBy: ["some", "values"],
-        aggregations: [],
-      },
-    ],
-  });
+  const testReport = new ReportEntity();
 
   beforeEach(async () => {
     mockReportingService = jasmine.createSpyObj(["calculateReport"]);
@@ -204,12 +194,10 @@ describe("ReportingComponent", () => {
       { First: 3, Second: 4 },
     ];
     mockDataTransformationService.queryAndTransformData.and.resolveTo(data);
+    const report = new ReportEntity();
+    report.mode = "exporting";
 
-    await component.calculateResults(
-      ReportConfig.create({ mode: "exporting", aggregationDefinitions: [] }),
-      new Date(),
-      new Date(),
-    );
+    await component.calculateResults(report, new Date(), new Date());
 
     expect(
       mockDataTransformationService.queryAndTransformData,
@@ -219,7 +207,8 @@ describe("ReportingComponent", () => {
   });
 
   it("should use the sql report service when report has mode 'sql'", async () => {
-    const report = new SqlReport();
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
 
     await component.calculateResults(
       report,

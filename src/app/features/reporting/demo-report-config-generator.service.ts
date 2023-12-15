@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
-import { ReportConfig, ReportType } from "./report-config";
+import { ReportEntity } from "./report-config";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
@@ -8,7 +8,7 @@ import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { EducationalMaterial } from "../../child-dev-project/children/educational-material/model/educational-material";
 
 @Injectable()
-export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportConfig> {
+export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportEntity> {
   static provider() {
     return [
       {
@@ -18,12 +18,14 @@ export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportCo
     ];
   }
 
-  protected generateEntities(): ReportConfig[] {
-    return demoReports.map((report) => ReportConfig.create(report));
+  protected generateEntities(): ReportEntity[] {
+    return demoReports.map((report) =>
+      Object.assign(new ReportEntity(), report),
+    );
   }
 }
 
-const demoReports: Partial<ReportType>[] = [
+const demoReports: Partial<ReportEntity>[] = [
   {
     title: $localize`:Name of a report:Basic Report`,
     aggregationDefinitions: [
