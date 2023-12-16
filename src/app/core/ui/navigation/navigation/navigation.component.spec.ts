@@ -118,7 +118,7 @@ describe("NavigationComponent", () => {
     ]);
   }));
 
-  it("should add menu items where entity permissions are missing", fakeAsync(() => {
+  it("should not add menu items if entity permissions are missing", fakeAsync(() => {
     const testConfig = {
       items: [
         { name: "Dashboard", icon: "home", link: "/dashboard" },

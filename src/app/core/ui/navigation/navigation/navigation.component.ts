@@ -117,12 +117,14 @@ export class NavigationComponent {
   private async initMenuItemsFromConfig() {
     const config: NavigationMenuConfig =
       this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
-    this.menuItems = [];
+    const menuItems = [];
     for (const item of config.items) {
       if (await this.isAccessibleRouteForUser(item.link)) {
-        this.menuItems.push(new MenuItem(item.name, item.icon, item.link));
+        menuItems.push(new MenuItem(item.name, item.icon, item.link));
       }
     }
+    this.menuItems = menuItems;
+    this.activeLink = this.computeActiveLink(location.pathname);
   }
 
   private isAccessibleRouteForUser(path: string) {
