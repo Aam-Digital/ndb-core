@@ -1,14 +1,10 @@
 import { Component } from "@angular/core";
-import {
-  Aggregation,
-  DataAggregationService,
-} from "../data-aggregation.service";
+import { DataAggregationService } from "../data-aggregation.service";
 import {
   getGroupingInformationString,
   GroupByDescription,
 } from "../report-row";
 import moment from "moment";
-import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
@@ -16,7 +12,8 @@ import { ReportRowComponent } from "./report-row/report-row.component";
 import { ObjectTableComponent } from "./object-table/object-table.component";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { ReportConfig } from "../report-config";
+import { ReportEntity } from "../report-config";
+import { SqlReportService } from "../sql-report/sql-report.service";
 import { RouteTarget } from "../../../route-target";
 
 @RouteTarget("Reporting")
@@ -34,8 +31,8 @@ import { RouteTarget } from "../../../route-target";
   standalone: true,
 })
 export class ReportingComponent {
-  reports: ReportConfig[];
-  mode: "exporting" | "reporting" = "exporting";
+  reports: ReportEntity[];
+  mode: ReportEntity["mode"];
   loading: boolean;
 
   data: any[];
@@ -44,15 +41,16 @@ export class ReportingComponent {
   constructor(
     private dataAggregationService: DataAggregationService,
     private dataTransformationService: DataTransformationService,
+    private sqlReportService: SqlReportService,
     private entityMapper: EntityMapperService,
   ) {
-    this.entityMapper
-      .loadType(ReportConfig)
-      .then((res) => (this.reports = res));
+    this.entityMapper.loadType(ReportEntity).then((res) => {
+      this.reports = res.sort((a, b) => a.title.localeCompare(b.title));
+    });
   }
 
   async calculateResults(
-    selectedReport: ReportConfig,
+    selectedReport: ReportEntity,
     fromDate: Date,
     toDate: Date,
   ) {
@@ -64,50 +62,35 @@ export class ReportingComponent {
 
     // Add one day because to date is exclusive
     const dayAfterToDate = moment(toDate).add(1, "day").toDate();
-
-    if (selectedReport.mode === "exporting") {
-      await this.createExport(
-        selectedReport.aggregationDefinitions as ExportColumnConfig[],
-        fromDate,
-        dayAfterToDate,
-      );
-    } else {
-      await this.createReport(
-        selectedReport.aggregationDefinitions as Aggregation[],
-        fromDate,
-        dayAfterToDate,
-      );
-    }
-
+    this.data = await this.getReportResults(
+      selectedReport,
+      fromDate,
+      dayAfterToDate,
+    );
+    this.mode = selectedReport.mode ?? "reporting";
+    this.exportableData =
+      this.mode === "reporting" ? this.flattenReportRows() : this.data;
     this.loading = false;
   }
 
-  private async createExport(
-    exportConfig: ExportColumnConfig[],
-    fromDate: Date,
-    toDate: Date,
-  ) {
-    this.data = await this.dataTransformationService.queryAndTransformData(
-      exportConfig,
-      fromDate,
-      toDate,
-    );
-    this.exportableData = this.data;
-    this.mode = "exporting";
-  }
-
-  private async createReport(
-    aggregationDefinitions: Aggregation[],
-    fromDate: Date,
-    toDate: Date,
-  ) {
-    this.data = await this.dataAggregationService.calculateReport(
-      aggregationDefinitions,
-      fromDate,
-      toDate,
-    );
-    this.exportableData = this.flattenReportRows();
-    this.mode = "reporting";
+  private getReportResults(report: ReportEntity, from: Date, to: Date) {
+    switch (report.mode) {
+      case "exporting":
+        return this.dataTransformationService.queryAndTransformData(
+          report.aggregationDefinitions,
+          from,
+          to,
+        );
+      case "sql":
+        // TODO check/ensure "to" date is also exclusive
+        return this.sqlReportService.query(report, from, to);
+      default:
+        return this.dataAggregationService.calculateReport(
+          report.aggregationDefinitions,
+          from,
+          to,
+        );
+    }
   }
 
   private flattenReportRows(

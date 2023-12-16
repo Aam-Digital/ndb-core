@@ -1,7 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { SelectReportComponent } from "./select-report.component";
-import { ReportConfig } from "../../report-config";
+import { ReportEntity } from "../../report-config";
 
 describe("SelectReportComponent", () => {
   let component: SelectReportComponent;
@@ -24,7 +24,7 @@ describe("SelectReportComponent", () => {
   });
 
   it("should select the first report if only one exists", () => {
-    const report = ReportConfig.create({ title: "someReport" });
+    const report = new ReportEntity();
     component.reports = [report];
 
     component.ngOnChanges({ reports: undefined });

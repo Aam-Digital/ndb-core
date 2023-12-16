@@ -8,6 +8,15 @@
       "/db": ""
     }
   },
+  "/query": {
+    "target": "http://localhost:3000",
+    "secure": true,
+    "logLevel": "debug",
+    "changeOrigin": true,
+    "pathRewrite": {
+      "/query": ""
+    }
+  },
   "/nominatim": {
     "target": "https://nominatim.openstreetmap.org",
     "secure": true,
