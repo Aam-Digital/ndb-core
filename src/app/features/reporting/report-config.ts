@@ -9,7 +9,7 @@ import { DatabaseField } from "../../core/entity/database-field.decorator";
  * "read" permission for a ReportConfig entity is also used to control which users can generate the report's results.
  *
  * This is the class which is saved to the database.
- * However, when when using, use the {@link ReportEntity} instead which provides better type safety.
+ * However, when using this in code, use the {@link ReportEntity} instead which provides better type safety.
  */
 @DatabaseEntity("ReportConfig")
 class ReportConfig extends Entity {
