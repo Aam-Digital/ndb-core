@@ -111,6 +111,7 @@ export class AdminEntityFormComponent implements OnChanges {
           ),
       )
       .filter(([key, value]) => value.label) // no technical, internal fields
+      .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
 
     this.availableFields = [this.createNewFieldPlaceholder, ...unusedFields];
@@ -157,9 +158,9 @@ export class AdminEntityFormComponent implements OnChanges {
       );
     }
 
-    if (newFieldsArray === this.availableFields && event.currentIndex === 0) {
-      // ensure "create new field" is always first
-      moveItemInArray(newFieldsArray, event.currentIndex, 1);
+    if (newFieldsArray === this.availableFields) {
+      // ensure available fields have consistent order
+      this.initAvailableFields();
     }
   }
 
@@ -198,6 +199,6 @@ export class AdminEntityFormComponent implements OnChanges {
 
   removeGroup(i: number) {
     const [removedFieldGroup] = this.config.fieldGroups.splice(i, 1);
-    this.availableFields.push(...removedFieldGroup.fields);
+    this.initAvailableFields();
   }
 }
