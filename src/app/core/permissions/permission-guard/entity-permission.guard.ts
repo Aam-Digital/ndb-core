@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { ActivatedRouteSnapshot, CanActivate, Router } from "@angular/router";
-import { RouteData } from "../../config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityAbility } from "../ability/entity-ability";
 
 /**
@@ -15,7 +15,7 @@ export class EntityPermissionGuard implements CanActivate {
   ) {}
 
   async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
-    const routeData: RouteData = route.data;
+    const routeData: DynamicComponentConfig = route.data;
     if (await this.canAccessRoute(routeData)) {
       return true;
     } else {
@@ -27,7 +27,7 @@ export class EntityPermissionGuard implements CanActivate {
     }
   }
 
-  private async canAccessRoute(routeData: RouteData) {
+  private async canAccessRoute(routeData: DynamicComponentConfig) {
     const operation = routeData?.["requiredPermissionOperation"] ?? "read";
     const primaryEntity =
       routeData?.["entityType"] ??

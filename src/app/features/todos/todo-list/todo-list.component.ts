@@ -5,7 +5,7 @@ import {
   EntityListConfig,
   PrebuiltFilterConfig,
 } from "../../../core/entity-list/EntityListConfig";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { LoggingService } from "../../../core/logging/logging.service";
@@ -45,9 +45,10 @@ export class TodoListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((data: RouteData<EntityListConfig>) =>
-      // TODO replace this use of route and rely on the RoutedViewComponent instead
-      this.init(data.config),
+    this.route.data.subscribe(
+      (data: DynamicComponentConfig<EntityListConfig>) =>
+        // TODO replace this use of route and rely on the RoutedViewComponent instead
+        this.init(data.config),
     );
   }
 

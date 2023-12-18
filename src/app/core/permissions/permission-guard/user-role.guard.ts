@@ -7,12 +7,12 @@ import {
 } from "@angular/router";
 import {
   PREFIX_VIEW_CONFIG,
-  RouteData,
   ViewConfig,
 } from "../../config/dynamic-routing/view-config.interface";
 import { AuthUser } from "../../session/auth/auth-user";
 import { ConfigService } from "../../config/config.service";
 import { CurrentUserSubject } from "../../user/user";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
 /**
  * A guard that checks the roles of the current user against the permissions which are saved in the route data.
@@ -26,7 +26,7 @@ export class UserRoleGuard implements CanActivate {
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
-    const routeData: RouteData = route.data;
+    const routeData: DynamicComponentConfig = route.data;
     const user = this.currentUser.value;
     if (this.canAccessRoute(routeData?.permittedUserRoles, user)) {
       return true;
