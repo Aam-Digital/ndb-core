@@ -28,10 +28,10 @@ export class RoutePermissionsService {
     return accessibleRoutes;
   }
 
-  private isAccessibleRouteForUser(path: string) {
+  private async isAccessibleRouteForUser(path: string) {
     return (
-      this.roleGuard.checkRoutePermissions(path) &&
-      this.permissionGuard.checkRoutePermissions(path)
+      (await this.roleGuard.checkRoutePermissions(path)) &&
+      (await this.permissionGuard.checkRoutePermissions(path))
     );
   }
 }

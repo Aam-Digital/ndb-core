@@ -49,7 +49,7 @@ describe("NavigationComponent", () => {
     mockConfigService.getConfig.and.returnValue({ items: [] });
     mockConfigService.getAllConfigs.and.returnValue([]);
     mockRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockRoleGuard.checkRoutePermissions.and.returnValue(true);
+    mockRoleGuard.checkRoutePermissions.and.resolveTo(true);
     mockEntityGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
     mockEntityGuard.checkRoutePermissions.and.resolveTo(true);
 
@@ -97,7 +97,7 @@ describe("NavigationComponent", () => {
         { name: "Children", icon: "child", link: "/child" },
       ],
     };
-    mockRoleGuard.checkRoutePermissions.and.callFake((route: string) => {
+    mockRoleGuard.checkRoutePermissions.and.callFake(async (route: string) => {
       switch (route) {
         case "/dashboard":
           return false;

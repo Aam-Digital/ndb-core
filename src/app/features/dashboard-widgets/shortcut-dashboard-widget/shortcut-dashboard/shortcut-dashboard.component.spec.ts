@@ -41,7 +41,7 @@ describe("ShortcutDashboardComponent", () => {
   });
 
   it("should only show routes to which the user has access", fakeAsync(() => {
-    mockRoleGuard.checkRoutePermissions.and.callFake((route) => {
+    mockRoleGuard.checkRoutePermissions.and.callFake(async (route) => {
       switch (route) {
         case "/child":
           return true;

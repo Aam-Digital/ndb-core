@@ -1,33 +1,28 @@
 import { Injectable } from "@angular/core";
-import { ActivatedRouteSnapshot, CanActivate, Router } from "@angular/router";
-import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { CanActivate, Router } from "@angular/router";
 import { EntityAbility } from "../ability/entity-ability";
+import { AbstractPermissionGuard } from "./abstract-permission.guard";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 
 /**
  * A guard that checks the current users permission to interact with the entity of the route.
  * Define `requiredPermissionOperation` in the route data / config, to enable a check that will find the relevant entity from config.
  */
 @Injectable()
-export class EntityPermissionGuard implements CanActivate {
+export class EntityPermissionGuard
+  extends AbstractPermissionGuard
+  implements CanActivate
+{
   constructor(
-    private router: Router,
+    router: Router,
     private ability: EntityAbility,
-  ) {}
-
-  async canActivate(route: ActivatedRouteSnapshot): Promise<boolean> {
-    const routeData: DynamicComponentConfig = route.data;
-    if (await this.canAccessRoute(routeData)) {
-      return true;
-    } else {
-      if (route instanceof ActivatedRouteSnapshot) {
-        // Route should only change if this is a "real" navigation check (not the check in the NavigationComponent)
-        this.router.navigate(["/404"]);
-      }
-      return false;
-    }
+  ) {
+    super(router);
   }
 
-  private async canAccessRoute(routeData: DynamicComponentConfig) {
+  protected async canAccessRoute(
+    routeData: DynamicComponentConfig,
+  ): Promise<boolean> {
     const operation = routeData?.["requiredPermissionOperation"] ?? "read";
     const primaryEntity =
       routeData?.["entityType"] ??
@@ -46,25 +41,5 @@ export class EntityPermissionGuard implements CanActivate {
     }
 
     return this.ability.can(operation, primaryEntity);
-  }
-
-  public checkRoutePermissions(path: string) {
-    // removing leading slash
-    path = path.replace(/^\//, "");
-
-    function isPathMatch(genericPath: string, path: string) {
-      // TODO this does not seem to work with children routes (admin module)
-      const routeRegex = genericPath
-        .split("/")
-        // replace params with wildcard regex
-        .map((part) => (part.startsWith(":") ? "[^/]*" : part))
-        .join("/");
-      return path.match("^" + routeRegex + "$");
-    }
-
-    const routeData = this.router.config.find((r) => isPathMatch(r.path, path))
-      ?.data;
-
-    return this.canAccessRoute(routeData);
   }
 }
