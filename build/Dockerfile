@@ -77,6 +77,8 @@ COPY --from=builder /app/dist/ /usr/share/nginx/html
 ENV PORT=80
 # The url to the CouchDB database
 ENV COUCHDB_URL="http://localhost"
+# The url to the query backend, see https://github.com/Aam-Digital/query-backend
+ENV QUERY_URL="http://localhost:3000"
 # The url to a nominatim instance, see https://nominatim.org/
 ENV NOMINATIM_URL="https://nominatim.openstreetmap.org"
 
@@ -91,5 +93,5 @@ ENV CSP="default-src 'self' 'unsafe-eval' data: https://*.tile.openstreetmap.org
 ### 'unsafe-eval' required for pouchdb https://github.com/pouchdb/pouchdb/issues/7853#issuecomment-535020600
 
 # variables are inserted into the nginx config
-CMD envsubst '$$PORT $$COUCHDB_URL $$NOMINATIM_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
+CMD envsubst '$$PORT $$COUCHDB_URL $$QUERY_URL $$NOMINATIM_URL $$CSP $$CSP_REPORT_URI' < /etc/nginx/templates/default.conf > /etc/nginx/conf.d/default.conf &&\
     nginx -g 'daemon off;'
