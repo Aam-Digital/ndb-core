@@ -102,8 +102,7 @@ export class AdminEntityDetailsComponent implements OnInit {
 
     await this.entityMapper.save(newConfig);
     this.entityActionsService.showSnackbarConfirmationWithUndo(
-      newConfig,
-      $localize`:Save config confirmation message:updated`,
+      $localize`:Save config confirmation message:Configuration updated`,
       [originalConfig],
     );
 
