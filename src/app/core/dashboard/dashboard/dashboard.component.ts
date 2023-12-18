@@ -21,6 +21,8 @@ import { NgFor } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { DashboardWidget } from "../dashboard-widget/dashboard-widget";
 
 @RouteTarget("Dashboard")
 @Component({
@@ -35,17 +37,39 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 })
 export class DashboardComponent implements DashboardConfig {
   @Input() set widgets(widgets: DynamicComponentConfig[]) {
-    this._widgets = widgets.filter((widget) => this.userHasAccess(widget));
+    this.filterPermittedWidgets(widgets).then((res) => (this._widgets = res));
   }
   get widgets(): DynamicComponentConfig[] {
     return this._widgets;
   }
   _widgets: DynamicComponentConfig[] = [];
 
-  constructor(private ability: EntityAbility) {}
+  constructor(
+    private ability: EntityAbility,
+    private components: ComponentRegistry,
+  ) {}
 
-  private userHasAccess(widget: DynamicComponentConfig): boolean {
-    const entity = this.getWidgetEntity(widget);
+  private async filterPermittedWidgets(
+    widgets: DynamicComponentConfig[],
+  ): Promise<DynamicComponentConfig[]> {
+    const permittedWidgets: DynamicComponentConfig[] = [];
+    for (const widget of widgets) {
+      const comp = (await this.components.get(
+        widget.component,
+      )()) as unknown as typeof DashboardWidget;
+      let entity: string | string[];
+      if (typeof comp.getRequiredEntities === "function") {
+        entity = comp.getRequiredEntities(widget.config);
+      }
+      console.log("is permitted", entity, this.userHasAccess(entity));
+      if (this.userHasAccess(entity)) {
+        permittedWidgets.push(widget);
+      }
+    }
+    return permittedWidgets;
+  }
+
+  private userHasAccess(entity: string | string[]): boolean {
     if (entity) {
       if (Array.isArray(entity)) {
         return entity.some((e) => this.ability.can("read", e));
@@ -55,36 +79,6 @@ export class DashboardComponent implements DashboardConfig {
     }
     // No entity relation -> show widget
     return true;
-  }
-
-  /**
-   * Detect, which entity is required for which widget.
-   *
-   * TODO in the future the widget itself should expose this
-   *
-   * @param widget
-   * @private
-   */
-  private getWidgetEntity(widget: DynamicComponentConfig): string | string[] {
-    switch (widget.component) {
-      case "EntityCountDashboard":
-        return widget.config?.entity || "Child";
-      case "ImportantNotesDashboard":
-      case "NotesDashboard":
-        return "Note";
-      case "AttendanceWeekDashboard":
-        return "EventNote";
-      case "TodosDashboard":
-        return "Todo";
-      case "ProgressDashboard":
-        return "ProgressDashboardConfig";
-      case "BirthdayDashboard":
-        return widget.config?.entities
-          ? Object.keys(widget.config.entities)
-          : "Child";
-      case "ChildrenBmiDashboard":
-        return "HealthCheck";
-    }
   }
 }
 
