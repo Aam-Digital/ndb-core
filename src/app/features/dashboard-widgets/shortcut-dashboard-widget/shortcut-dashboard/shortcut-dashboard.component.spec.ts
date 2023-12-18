@@ -50,8 +50,16 @@ describe("ShortcutDashboardComponent", () => {
       }
     });
     mockPermissionGuard.checkRoutePermissions.and.resolveTo(true);
-    const childItem = new MenuItem("Children", "child", "/child");
-    const schoolItem = new MenuItem("School", "building", "/school");
+    const childItem: MenuItem = {
+      label: "Children",
+      icon: "child",
+      link: "/child",
+    };
+    const schoolItem: MenuItem = {
+      label: "School",
+      icon: "building",
+      link: "/school",
+    };
 
     component.shortcuts = [childItem, schoolItem];
     tick();

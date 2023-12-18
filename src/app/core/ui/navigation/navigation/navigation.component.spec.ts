@@ -24,7 +24,6 @@ import {
 } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
-import { MenuItem } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../../../config/config";
@@ -86,8 +85,8 @@ describe("NavigationComponent", () => {
     tick();
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Dashboard", "home", "/dashboard"),
-      new MenuItem("Children", "child", "/child"),
+      { label: "Dashboard", icon: "home", link: "/dashboard" },
+      { label: "Children", icon: "child", link: "/child" },
     ]);
   }));
 
@@ -114,7 +113,7 @@ describe("NavigationComponent", () => {
     tick();
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Children", "child", "/child"),
+      { label: "Children", icon: "child", link: "/child" },
     ]);
   }));
 
@@ -141,7 +140,7 @@ describe("NavigationComponent", () => {
     tick();
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Children", "child", "/child"),
+      { label: "Children", icon: "child", link: "/child" },
     ]);
   }));
 
