@@ -135,6 +135,8 @@ describe("EntityListComponent", () => {
 
   it("should set the clicked column group", async () => {
     createComponent();
+    // Test only works in desktop mode
+    component.isDesktop = true;
     await initComponentInputs();
     expect(component.selectedColumnGroupIndex).toBe(1);
 
