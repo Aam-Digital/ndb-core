@@ -27,17 +27,12 @@ export class EntityActionsService {
   ) {}
 
   showSnackbarConfirmationWithUndo(
-    entity: Entity,
-    action: string,
+    message: string,
     previousEntitiesForUndo: Entity[],
     navigateBackToUrl?: string,
   ) {
-    const snackBarTitle = $localize`:Entity action confirmation message:${
-      entity.getConstructor().label
-    } "${entity.toString()}" ${action}`;
-
     const snackBarRef = this.snackBar.open(
-      snackBarTitle,
+      message,
       $localize`:Undo an entity action:Undo`,
       {
         duration: 8000,
@@ -110,8 +105,9 @@ export class EntityActionsService {
     }
 
     this.showSnackbarConfirmationWithUndo(
-      result.originalEntitiesBeforeChange[0],
-      $localize`:Entity action confirmation message verb:Deleted`,
+      $localize`:Entity action confirmation message:${
+        result.originalEntitiesBeforeChange[0].getConstructor().label
+      } "${result.originalEntitiesBeforeChange[0].toString()}" deleted`,
       result.originalEntitiesBeforeChange,
       currentUrl,
     );
@@ -159,8 +155,9 @@ export class EntityActionsService {
     }
 
     this.showSnackbarConfirmationWithUndo(
-      result.originalEntitiesBeforeChange[0],
-      $localize`:Entity action confirmation message verb:Anonymized`,
+      $localize`:Entity action confirmation message:${
+        result.originalEntitiesBeforeChange[0].getConstructor().label
+      } "${result.originalEntitiesBeforeChange[0].toString()}" anonymized`,
       result.originalEntitiesBeforeChange,
     );
     return true;
@@ -177,8 +174,9 @@ export class EntityActionsService {
     await this.entityMapper.save(entity);
 
     this.showSnackbarConfirmationWithUndo(
-      originalEntity,
-      $localize`:Entity action confirmation message verb:Archived`,
+      $localize`:Entity action confirmation message:${
+        originalEntity.getConstructor().label
+      } "${originalEntity.toString()}" archived`,
       [originalEntity],
     );
     return true;
@@ -193,8 +191,9 @@ export class EntityActionsService {
     await this.entityMapper.save(entity);
 
     this.showSnackbarConfirmationWithUndo(
-      originalEntity,
-      $localize`:Entity action confirmation message verb:Reactivated`,
+      $localize`:Entity action confirmation message:${
+        originalEntity.getConstructor().label
+      } "${originalEntity.toString()}" reactivated`,
       [originalEntity],
     );
     return true;
