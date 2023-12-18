@@ -26,7 +26,7 @@ import { EntityAbility } from "../../permissions/ability/entity-ability";
 @Component({
   selector: "app-dashboard",
   template: ` <ng-template
-    *ngFor="let widgetConfig of widgets"
+    *ngFor="let widgetConfig of _widgets"
     [appDynamicComponent]="widgetConfig"
   ></ng-template>`,
   styleUrls: ["./dashboard.component.scss"],
@@ -40,7 +40,7 @@ export class DashboardComponent implements DashboardConfig {
   get widgets(): DynamicComponentConfig[] {
     return this._widgets;
   }
-  private _widgets: DynamicComponentConfig[] = [];
+  _widgets: DynamicComponentConfig[] = [];
 
   constructor(private ability: EntityAbility) {}
 

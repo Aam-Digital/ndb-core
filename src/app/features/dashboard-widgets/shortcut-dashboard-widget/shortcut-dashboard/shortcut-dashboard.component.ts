@@ -32,7 +32,7 @@ export class ShortcutDashboardComponent {
   get shortcuts(): MenuItem[] {
     return this._shortcuts;
   }
-  private _shortcuts: MenuItem[] = [];
+  _shortcuts: MenuItem[] = [];
 
   constructor(
     private roleGuard: UserRoleGuard,
