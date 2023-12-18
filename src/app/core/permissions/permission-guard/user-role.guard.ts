@@ -17,7 +17,7 @@ export class UserRoleGuard extends AbstractPermissionGuard {
   }
 
   protected async canAccessRoute(
-    routeData: DynamicComponentConfig
+    routeData: DynamicComponentConfig,
   ): Promise<boolean> {
     const permittedRoles = routeData?.permittedUserRoles;
     const user = this.currentUser.value;
