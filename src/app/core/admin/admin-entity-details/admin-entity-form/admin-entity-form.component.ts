@@ -72,7 +72,10 @@ export class AdminEntityFormComponent implements OnChanges {
   ) {
     adminEntityService.entitySchemaUpdated
       .pipe(untilDestroyed(this))
-      .subscribe(() => this.initForm());
+      .subscribe(() => {
+        this.availableFields = []; // force re-init of the label components that otherwise do not detect the change
+        setTimeout(() => this.initForm());
+      });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
