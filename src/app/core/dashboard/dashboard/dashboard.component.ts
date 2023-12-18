@@ -23,6 +23,7 @@ import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DashboardWidget } from "../dashboard-widget/dashboard-widget";
+import { CurrentUserSubject } from "../../user/user";
 
 @RouteTarget("Dashboard")
 @Component({
@@ -47,6 +48,7 @@ export class DashboardComponent implements DashboardConfig {
   constructor(
     private ability: EntityAbility,
     private components: ComponentRegistry,
+    private user: CurrentUserSubject,
   ) {}
 
   private async filterPermittedWidgets(
@@ -54,19 +56,35 @@ export class DashboardComponent implements DashboardConfig {
   ): Promise<DynamicComponentConfig[]> {
     const permittedWidgets: DynamicComponentConfig[] = [];
     for (const widget of widgets) {
-      const comp = (await this.components.get(
-        widget.component,
-      )()) as unknown as typeof DashboardWidget;
-      let entity: string | string[];
-      if (typeof comp.getRequiredEntities === "function") {
-        entity = comp.getRequiredEntities(widget.config);
-      }
-      console.log("is permitted", entity, this.userHasAccess(entity));
-      if (this.userHasAccess(entity)) {
+      if (
+        this.hasRequiredRole(widget) &&
+        (await this.hasEntityPermission(widget))
+      ) {
         permittedWidgets.push(widget);
       }
     }
     return permittedWidgets;
+  }
+
+  private hasRequiredRole(widget: DynamicComponentConfig) {
+    if (widget.permittedUserRoles?.length > 0) {
+      const userRoles = this.user.value.roles;
+      const requiredRoles = widget.permittedUserRoles;
+      return requiredRoles.some((role) => userRoles.includes(role));
+    } else {
+      return true;
+    }
+  }
+
+  private async hasEntityPermission(widget: DynamicComponentConfig) {
+    const comp = (await this.components.get(
+      widget.component,
+    )()) as unknown as typeof DashboardWidget;
+    let entity: string | string[];
+    if (typeof comp.getRequiredEntities === "function") {
+      entity = comp.getRequiredEntities(widget.config);
+    }
+    return this.userHasAccess(entity);
   }
 
   private userHasAccess(entity: string | string[]): boolean {
