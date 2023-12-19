@@ -20,12 +20,16 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 import { NgFor } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { RouteTarget } from "../../../route-target";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { ComponentRegistry } from "../../../dynamic-components";
+import { DashboardWidget } from "../dashboard-widget/dashboard-widget";
+import { CurrentUserSubject } from "../../user/user";
 
 @RouteTarget("Dashboard")
 @Component({
   selector: "app-dashboard",
   template: ` <ng-template
-    *ngFor="let widgetConfig of widgets"
+    *ngFor="let widgetConfig of _widgets"
     [appDynamicComponent]="widgetConfig"
   ></ng-template>`,
   styleUrls: ["./dashboard.component.scss"],
@@ -33,7 +37,67 @@ import { RouteTarget } from "../../../route-target";
   standalone: true,
 })
 export class DashboardComponent implements DashboardConfig {
-  @Input() widgets: DynamicComponentConfig[] = [];
+  @Input() set widgets(widgets: DynamicComponentConfig[]) {
+    this.filterPermittedWidgets(widgets).then((res) => (this._widgets = res));
+  }
+  get widgets(): DynamicComponentConfig[] {
+    return this._widgets;
+  }
+  _widgets: DynamicComponentConfig[] = [];
+
+  constructor(
+    private ability: EntityAbility,
+    private components: ComponentRegistry,
+    private user: CurrentUserSubject,
+  ) {}
+
+  private async filterPermittedWidgets(
+    widgets: DynamicComponentConfig[],
+  ): Promise<DynamicComponentConfig[]> {
+    const permittedWidgets: DynamicComponentConfig[] = [];
+    for (const widget of widgets) {
+      if (
+        this.hasRequiredRole(widget) &&
+        (await this.hasEntityPermission(widget))
+      ) {
+        permittedWidgets.push(widget);
+      }
+    }
+    return permittedWidgets;
+  }
+
+  private hasRequiredRole(widget: DynamicComponentConfig) {
+    if (widget.permittedUserRoles?.length > 0) {
+      const userRoles = this.user.value.roles;
+      const requiredRoles = widget.permittedUserRoles;
+      return requiredRoles.some((role) => userRoles.includes(role));
+    } else {
+      return true;
+    }
+  }
+
+  private async hasEntityPermission(widget: DynamicComponentConfig) {
+    const comp = (await this.components.get(
+      widget.component,
+    )()) as unknown as typeof DashboardWidget;
+    let entity: string | string[];
+    if (typeof comp.getRequiredEntities === "function") {
+      entity = comp.getRequiredEntities(widget.config);
+    }
+    return this.userHasAccess(entity);
+  }
+
+  private userHasAccess(entity: string | string[]): boolean {
+    if (entity) {
+      if (Array.isArray(entity)) {
+        return entity.some((e) => this.ability.can("read", e));
+      } else {
+        return this.ability.can("read", entity);
+      }
+    }
+    // No entity relation -> show widget
+    return true;
+  }
 }
 
 export interface DashboardConfig {

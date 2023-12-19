@@ -9,6 +9,7 @@ import { DatePipe, NgStyle } from "@angular/common";
 import { MatTableModule } from "@angular/material/table";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { CurrentUserSubject } from "../../../core/user/user";
+import { DashboardWidget } from "../../../core/dashboard/dashboard-widget/dashboard-widget";
 
 @DynamicComponent("TodosDashboard")
 @Component({
@@ -24,7 +25,11 @@ import { CurrentUserSubject } from "../../../core/user/user";
     DatePipe,
   ],
 })
-export class TodosDashboardComponent {
+export class TodosDashboardComponent extends DashboardWidget {
+  static getRequiredEntities() {
+    return Todo.ENTITY_TYPE;
+  }
+
   dataMapper: (data: Todo[]) => Todo[] = (data) =>
     data.filter(this.filterEntries).sort(this.sortEntries);
 
@@ -33,7 +38,9 @@ export class TodosDashboardComponent {
   constructor(
     private formDialog: FormDialogService,
     private currentUser: CurrentUserSubject,
-  ) {}
+  ) {
+    super();
+  }
 
   filterEntries = (todo: Todo) => {
     return (

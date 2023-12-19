@@ -22,6 +22,8 @@ import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/
 import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
 import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
 import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
+import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
+import { EventNote } from "../../model/event-note";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -46,7 +48,14 @@ interface AttendanceWeekRow {
   ],
   standalone: true,
 })
-export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
+export class AttendanceWeekDashboardComponent
+  extends DashboardWidget
+  implements OnInit, AfterViewInit
+{
+  static getRequiredEntities() {
+    return EventNote.ENTITY_TYPE;
+  }
+
   /**
    * The offset from the default time period, which is the last complete week.
    *
@@ -89,7 +98,9 @@ export class AttendanceWeekDashboardComponent implements OnInit, AfterViewInit {
   constructor(
     private attendanceService: AttendanceService,
     private router: Router,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     if (this.periodLabel && !this.label) {
