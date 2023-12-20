@@ -12,7 +12,7 @@ import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
 import { WarningLevel } from "../../warning-level";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { merge } from "rxjs";
 import moment from "moment";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
@@ -98,7 +98,9 @@ export class NotesManagerComponent implements OnInit {
 
   async ngOnInit() {
     this.route.data.subscribe(
-      async (data: RouteData<EntityListConfig & NotesManagerConfig>) => {
+      async (
+        data: DynamicComponentConfig<EntityListConfig & NotesManagerConfig>,
+      ) => {
         // TODO replace this use of route and rely on the RoutedViewComponent instead
         this.config = data.config;
         this.addPrebuiltFilters();

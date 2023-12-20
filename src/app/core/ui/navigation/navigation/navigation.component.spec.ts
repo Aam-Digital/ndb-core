@@ -24,7 +24,6 @@ import {
 } from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
-import { MenuItem } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../../../config/config";
@@ -50,7 +49,7 @@ describe("NavigationComponent", () => {
     mockConfigService.getConfig.and.returnValue({ items: [] });
     mockConfigService.getAllConfigs.and.returnValue([]);
     mockRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockRoleGuard.checkRoutePermissions.and.returnValue(true);
+    mockRoleGuard.checkRoutePermissions.and.resolveTo(true);
     mockEntityGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
     mockEntityGuard.checkRoutePermissions.and.resolveTo(true);
 
@@ -86,8 +85,8 @@ describe("NavigationComponent", () => {
     tick();
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Dashboard", "home", "/dashboard"),
-      new MenuItem("Children", "child", "/child"),
+      { label: "Dashboard", icon: "home", link: "/dashboard" },
+      { label: "Children", icon: "child", link: "/child" },
     ]);
   }));
 
@@ -98,7 +97,7 @@ describe("NavigationComponent", () => {
         { name: "Children", icon: "child", link: "/child" },
       ],
     };
-    mockRoleGuard.checkRoutePermissions.and.callFake((route: string) => {
+    mockRoleGuard.checkRoutePermissions.and.callFake(async (route: string) => {
       switch (route) {
         case "/dashboard":
           return false;
@@ -114,11 +113,11 @@ describe("NavigationComponent", () => {
     tick();
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Children", "child", "/child"),
+      { label: "Children", icon: "child", link: "/child" },
     ]);
   }));
 
-  it("should not add menu items if entity permissions are missing", fakeAsync(() => {
+  it("should add menu items where entity permissions are missing", fakeAsync(() => {
     const testConfig = {
       items: [
         { name: "Dashboard", icon: "home", link: "/dashboard" },
@@ -141,7 +140,7 @@ describe("NavigationComponent", () => {
     tick();
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Children", "child", "/child"),
+      { label: "Children", icon: "child", link: "/child" },
     ]);
   }));
 
