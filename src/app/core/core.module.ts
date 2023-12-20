@@ -20,6 +20,7 @@ import { TimePeriod } from "./entity-details/related-time-period-entities/time-p
 import { CommonModule } from "@angular/common";
 import { LongTextDatatype } from "./basic-datatypes/string/long-text.datatype";
 import { UpdateMetadataDatatype } from "./entity/model/update-metadata.datatype";
+import { CurrentlyLoggedInSubject } from "./session/currently-logged-in";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -27,6 +28,7 @@ import { UpdateMetadataDatatype } from "./entity/model/update-metadata.datatype"
 @NgModule({
   providers: [
     CurrentUserSubject,
+    CurrentlyLoggedInSubject,
     // base dataTypes
     { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
     { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },

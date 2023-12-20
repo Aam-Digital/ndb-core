@@ -24,12 +24,14 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { CurrentUserSubject } from "../../user/user";
+import { CurrentUserSubject, User } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { Database } from "../../database/database";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { CurrentlyLoggedInSubject } from "../currently-logged-in";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 
 /**
  * This service handles the user session.
@@ -47,10 +49,12 @@ export class SessionManagerService {
     private localAuthService: LocalAuthService,
     private syncService: SyncService,
     private currentUser: CurrentUserSubject,
+    private currentlyLoggedIn: CurrentlyLoggedInSubject,
+    private entityMapper: EntityMapperService,
     private loginStateSubject: LoginStateSubject,
     private router: Router,
-    private database: Database,
     @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
+    database: Database,
   ) {
     if (database instanceof PouchDatabase) {
       this.pouchDatabase = database;
@@ -90,7 +94,11 @@ export class SessionManagerService {
 
   private async initializeUser(user: AuthUser) {
     await this.initializeDatabaseForCurrentUser(user);
+    // TODO can we remove this?
     this.currentUser.next(user);
+    // TODO allow generic entities with fallback to User entity
+    const entity = await this.entityMapper.load(User, user.name);
+    this.currentlyLoggedIn.next(entity);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
   }
 
