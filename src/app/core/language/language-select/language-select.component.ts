@@ -9,7 +9,7 @@ import { NgForOf } from "@angular/common";
 import { LOCALE_ENUM_ID } from "../languages";
 import { ConfigurableEnumDirective } from "../../basic-datatypes/configurable-enum/configurable-enum-directive/configurable-enum.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { IconProp } from "@fortawesome/fontawesome-svg-core";
+
 
 /**
  * Shows a dropdown-menu of available languages
