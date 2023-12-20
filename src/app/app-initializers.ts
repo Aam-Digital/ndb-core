@@ -12,7 +12,8 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { environment } from "../environments/environment";
 import { LoginStateSubject } from "./core/session/session-type";
-import { CurrentUserSubject } from "./core/user/user";
+import { CurrentlyLoggedInSubject } from "./core/session/currently-logged-in";
+import { combineLatest } from "rxjs";
 
 export const appInitializers = {
   provide: APP_INITIALIZER,
@@ -23,7 +24,7 @@ export const appInitializers = {
       routerService: RouterService,
       entityConfigService: EntityConfigService,
       router: Router,
-      currentUser: CurrentUserSubject,
+      currentlyLoggedIn: CurrentlyLoggedInSubject,
       analyticsService: AnalyticsService,
       loginState: LoginStateSubject,
     ) =>
@@ -35,18 +36,19 @@ export const appInitializers = {
         const url = location.href.replace(location.origin, "");
         router.navigateByUrl(url, { skipLocationChange: true });
       });
-
       // update the user context for remote error logging and tracking and load config initially
-      loginState.subscribe((newState) => {
-        if (newState === LoginState.LOGGED_IN) {
-          const username = currentUser.value.name;
-          LoggingService.setLoggingContextUser(username);
-          analyticsService.setUser(username);
-        } else {
-          LoggingService.setLoggingContextUser(undefined);
-          analyticsService.setUser(undefined);
-        }
-      });
+      combineLatest([loginState, currentlyLoggedIn]).subscribe(
+        ([newState, user]) => {
+          if (newState === LoginState.LOGGED_IN) {
+            const username = user?.getId(true);
+            LoggingService.setLoggingContextUser(username);
+            analyticsService.setUser(username);
+          } else {
+            LoggingService.setLoggingContextUser(undefined);
+            analyticsService.setUser(undefined);
+          }
+        },
+      );
 
       if (environment.production) {
         analyticsService.init();
@@ -64,7 +66,7 @@ export const appInitializers = {
     RouterService,
     EntityConfigService,
     Router,
-    CurrentUserSubject,
+    CurrentlyLoggedInSubject,
     AnalyticsService,
     LoginStateSubject,
   ],

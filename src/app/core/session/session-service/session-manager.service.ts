@@ -32,6 +32,7 @@ import { Database } from "../../database/database";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentlyLoggedInSubject } from "../currently-logged-in";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { filter } from "rxjs/operators";
 
 /**
  * This service handles the user session.
@@ -96,10 +97,24 @@ export class SessionManagerService {
     await this.initializeDatabaseForCurrentUser(user);
     // TODO can we remove this?
     this.currentUser.next(user);
-    // TODO allow generic entities with fallback to User entity
-    const entity = await this.entityMapper.load(User, user.name);
-    this.currentlyLoggedIn.next(entity);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
+
+    // TODO allow generic entities with fallback to User entity
+    // TODO quite similar to LatestEntityLoader?
+    // TODO is it a problem if the user entity is only available later or not at all?
+    this.entityMapper
+      .load(User, user.name)
+      .then((res) => this.currentlyLoggedIn.next(res))
+      .catch(() => undefined);
+    this.entityMapper
+      .receiveUpdates(User)
+      .pipe(
+        filter(
+          ({ entity }) =>
+            entity.getId(true) === user.name || entity.getId() === user.name,
+        ),
+      )
+      .subscribe(({ entity }) => this.currentlyLoggedIn.next(entity));
   }
 
   /**

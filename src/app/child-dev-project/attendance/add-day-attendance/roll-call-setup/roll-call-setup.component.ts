@@ -26,7 +26,7 @@ import { NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatButtonModule } from "@angular/material/button";
-import { CurrentUserSubject } from "../../../../core/user/user";
+import { CurrentlyLoggedInSubject } from "../../../../core/session/currently-logged-in";
 
 @Component({
   selector: "app-roll-call-setup",
@@ -76,7 +76,7 @@ export class RollCallSetupComponent implements OnInit {
   constructor(
     private entityMapper: EntityMapperService,
     private attendanceService: AttendanceService,
-    private currentUser: CurrentUserSubject,
+    private currentlyLoggedIn: CurrentlyLoggedInSubject,
     private formDialog: FormDialogService,
     private alertService: AlertService,
     private filerService: FilterService,
@@ -104,8 +104,9 @@ export class RollCallSetupComponent implements OnInit {
     if (this.showingAll) {
       this.visibleActivities = this.allActivities;
     } else {
+      // TODO implement a generic function that finds the property where a entity has relations to another entity type (e.g. `authors` for `Note` when looking for `User`) to allow dynamic checks
       this.visibleActivities = this.allActivities.filter((a) =>
-        a.isAssignedTo(this.currentUser.value.name),
+        a.isAssignedTo(this.currentlyLoggedIn.value.getId()),
       );
       if (this.visibleActivities.length === 0) {
         this.visibleActivities = this.allActivities.filter(
@@ -155,7 +156,7 @@ export class RollCallSetupComponent implements OnInit {
       activity,
       this.date,
     )) as NoteForActivitySetup;
-    event.authors = [this.currentUser.value.name];
+    event.authors = [this.currentlyLoggedIn.value.getId()];
     event.isNewFromActivity = true;
     return event;
   }
@@ -175,7 +176,7 @@ export class RollCallSetupComponent implements OnInit {
         score += 1;
       }
 
-      if (assignedUsers.includes(this.currentUser.value.name)) {
+      if (assignedUsers.includes(this.currentlyLoggedIn.value.getId())) {
         score += 2;
       }
 
@@ -189,7 +190,7 @@ export class RollCallSetupComponent implements OnInit {
 
   createOneTimeEvent() {
     const newNote = Note.create(new Date());
-    newNote.authors = [this.currentUser.value.name];
+    newNote.authors = [this.currentlyLoggedIn.value.getId()];
 
     this.formDialog
       .openFormPopup(newNote, [], NoteDetailsComponent)
