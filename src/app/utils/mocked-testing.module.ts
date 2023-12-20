@@ -22,6 +22,7 @@ import { SwRegistrationOptions } from "@angular/service-worker";
 import { TEST_USER } from "./mock-local-session";
 import { BehaviorSubject } from "rxjs";
 import { CurrentlyLoggedInSubject } from "../core/session/currently-logged-in";
+import { SessionInfo } from "../core/session/auth/session-info";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -82,8 +83,8 @@ export class MockedTestingModule {
         },
         {
           provide: SessionSubject,
-          useValue: new BehaviorSubject({
-            name: TEST_USER,
+          useValue: new BehaviorSubject<SessionInfo>({
+            entityId: TEST_USER,
             roles: ["user_app"],
           }),
         },
