@@ -6,7 +6,7 @@ import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generatin
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
-import { AuthUser } from "../session/auth/auth-user";
+import { SessionInfo } from "../session/auth/session-info";
 import { LoggingService } from "../logging/logging.service";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
@@ -15,7 +15,7 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { AppSettings } from "../app-settings";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
-import { CurrentUserSubject } from "../user/user";
+import { SessionSubject } from "../user/user";
 import PouchDB from "pouchdb-browser";
 
 /**
@@ -29,11 +29,11 @@ import PouchDB from "pouchdb-browser";
 export class DemoDataInitializerService {
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
   private pouchDatabase: PouchDatabase;
-  private readonly normalUser: AuthUser = {
+  private readonly normalUser: SessionInfo = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
     roles: ["user_app"],
   };
-  private readonly adminUser: AuthUser = {
+  private readonly adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     roles: ["user_app", "admin_app", KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
   };
@@ -45,7 +45,7 @@ export class DemoDataInitializerService {
     private loggingService: LoggingService,
     private database: Database,
     private loginState: LoginStateSubject,
-    private currentUser: CurrentUserSubject,
+    private sessionInfo: SessionSubject,
   ) {}
 
   async run() {
@@ -74,7 +74,7 @@ export class DemoDataInitializerService {
     this.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
-        this.currentUser.value.name !==
+        this.sessionInfo.value.name !==
           DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local

@@ -6,7 +6,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
-import { CurrentUserSubject, User } from "../../user/user";
+import { SessionSubject, User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
@@ -44,7 +44,7 @@ describe("AbilityService", () => {
         AbilityService,
         EntityAbility,
         {
-          provide: CurrentUserSubject,
+          provide: SessionSubject,
           useValue: new BehaviorSubject({
             name: TEST_USER,
             roles: ["user_app"],
@@ -132,7 +132,7 @@ describe("AbilityService", () => {
     tick();
 
     spyOn(ability, "update");
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
@@ -167,7 +167,7 @@ describe("AbilityService", () => {
     expect(ability.can("manage", new Note())).toBeFalse();
     expect(ability.can("create", new Note())).toBeFalse();
 
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
@@ -263,7 +263,7 @@ describe("AbilityService", () => {
     service.initializeRules();
     tick();
 
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: "new-user",
       roles: ["invalid_role"],
     });
@@ -294,7 +294,7 @@ describe("AbilityService", () => {
 
     expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
 
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: "admin",
       roles: ["user_app", "admin_app"],
     });

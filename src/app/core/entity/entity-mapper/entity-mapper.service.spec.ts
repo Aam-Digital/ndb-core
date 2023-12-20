@@ -22,7 +22,7 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { Database } from "../../database/database";
 import { TEST_USER } from "../../../utils/mock-local-session";
-import { CurrentUserSubject } from "../../user/user";
+import { SessionSubject } from "../../user/user";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 
 describe("EntityMapperService", () => {
@@ -48,7 +48,7 @@ describe("EntityMapperService", () => {
       imports: [CoreTestingModule],
       providers: [
         { provide: Database, useValue: testDatabase },
-        CurrentUserSubject,
+        SessionSubject,
         EntityMapperService,
       ],
     });
@@ -271,7 +271,7 @@ describe("EntityMapperService", () => {
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: TEST_USER,
       roles: [],
     });

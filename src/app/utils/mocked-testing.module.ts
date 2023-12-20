@@ -2,7 +2,7 @@ import { ModuleWithProviders, NgModule } from "@angular/core";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
-import { CurrentUserSubject, User } from "../core/user/user";
+import { SessionSubject, User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -81,7 +81,7 @@ export class MockedTestingModule {
           useValue: createTestingConfigurableEnumService(),
         },
         {
-          provide: CurrentUserSubject,
+          provide: SessionSubject,
           useValue: new BehaviorSubject({
             name: TEST_USER,
             roles: ["user_app"],
@@ -89,7 +89,7 @@ export class MockedTestingModule {
         },
         {
           provide: CurrentlyLoggedInSubject,
-          useValue: new User(TEST_USER),
+          useValue: new BehaviorSubject(new User(TEST_USER)),
         },
       ],
     };

@@ -10,9 +10,9 @@ import {
   RouteData,
   ViewConfig,
 } from "../../config/dynamic-routing/view-config.interface";
-import { AuthUser } from "../../session/auth/auth-user";
+import { SessionInfo } from "../../session/auth/session-info";
 import { ConfigService } from "../../config/config.service";
-import { CurrentUserSubject } from "../../user/user";
+import { SessionSubject } from "../../user/user";
 
 /**
  * A guard that checks the roles of the current user against the permissions which are saved in the route data.
@@ -20,14 +20,14 @@ import { CurrentUserSubject } from "../../user/user";
 @Injectable()
 export class UserRoleGuard implements CanActivate {
   constructor(
-    private currentUser: CurrentUserSubject,
+    private sessionInfo: SessionSubject,
     private router: Router,
     private configService: ConfigService,
   ) {}
 
   canActivate(route: ActivatedRouteSnapshot): boolean {
     const routeData: RouteData = route.data;
-    const user = this.currentUser.value;
+    const user = this.sessionInfo.value;
     if (this.canAccessRoute(routeData?.permittedUserRoles, user)) {
       return true;
     } else {
@@ -39,7 +39,7 @@ export class UserRoleGuard implements CanActivate {
     }
   }
 
-  private canAccessRoute(permittedRoles: string[], user: AuthUser) {
+  private canAccessRoute(permittedRoles: string[], user: SessionInfo) {
     if (permittedRoles?.length > 0) {
       // Check if user has a role which is in the list of permitted roles
       return permittedRoles.some((role) => user?.roles.includes(role));

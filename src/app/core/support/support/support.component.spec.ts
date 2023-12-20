@@ -22,7 +22,7 @@ import { TEST_USER } from "../../../utils/mock-local-session";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
-import { CurrentUserSubject, User } from "../../user/user";
+import { SessionSubject, User } from "../../user/user";
 import { CurrentlyLoggedInSubject } from "../../session/currently-logged-in";
 
 class MockDeleteRequest {
@@ -69,7 +69,7 @@ describe("SupportComponent", () => {
       ],
       providers: [
         {
-          provide: CurrentUserSubject,
+          provide: SessionSubject,
           useValue: new BehaviorSubject(testUser),
         },
         {
@@ -98,7 +98,7 @@ describe("SupportComponent", () => {
   });
 
   it("should initialize application information", () => {
-    expect(component.currentUser).toBe(testUser);
+    expect(component.sessionInfo).toBe(testUser);
     expect(component.currentlyLoggedIn).toBe(userEntity);
     expect(component.currentSyncState).toBe("unsynced");
     expect(component.lastSync).toBe("never");

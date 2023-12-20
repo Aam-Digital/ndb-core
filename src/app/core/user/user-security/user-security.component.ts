@@ -11,7 +11,7 @@ import {
   KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
-import { CurrentUserSubject, User } from "../user";
+import { SessionSubject, User } from "../user";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { AppSettings } from "../../app-settings";
@@ -55,13 +55,13 @@ export class UserSecurityComponent implements OnInit {
 
   constructor(
     private authService: KeycloakAuthService,
-    currentUser: CurrentUserSubject,
+    sessionInfo: SessionSubject,
     private fb: FormBuilder,
     private alertService: AlertService,
     private http: HttpClient,
   ) {
     if (
-      currentUser.value?.roles.includes(
+      sessionInfo.value?.roles.includes(
         KeycloakAuthService.ACCOUNT_MANAGER_ROLE,
       )
     ) {

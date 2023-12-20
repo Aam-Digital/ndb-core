@@ -6,7 +6,7 @@ import * as Sentry from "@sentry/browser";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-import { AuthUser } from "../../session/auth/auth-user";
+import { SessionInfo } from "../../session/auth/session-info";
 import { firstValueFrom } from "rxjs";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
@@ -17,7 +17,7 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { SyncStateSubject } from "../../session/session-type";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
-import { CurrentUserSubject } from "../../user/user";
+import { SessionSubject } from "../../user/user";
 import { CurrentlyLoggedInSubject } from "../../session/currently-logged-in";
 import { Entity } from "../../entity/model/entity";
 
@@ -29,7 +29,7 @@ import { Entity } from "../../entity/model/entity";
   standalone: true,
 })
 export class SupportComponent implements OnInit {
-  currentUser: AuthUser;
+  sessionInfo: SessionInfo;
   currentlyLoggedIn: Entity;
   currentSyncState: string;
   lastSync: string;
@@ -43,7 +43,7 @@ export class SupportComponent implements OnInit {
 
   constructor(
     private syncState: SyncStateSubject,
-    private userSubject: CurrentUserSubject,
+    private sessionSubject: SessionSubject,
     private currentlyLoggedInSubject: CurrentlyLoggedInSubject,
     private sw: SwUpdate,
     private database: PouchDatabase,
@@ -56,7 +56,7 @@ export class SupportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.currentUser = this.userSubject.value;
+    this.sessionInfo = this.sessionSubject.value;
     this.currentlyLoggedIn = this.currentlyLoggedInSubject.value;
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
@@ -131,7 +131,7 @@ export class SupportComponent implements OnInit {
   sendReport() {
     // This is sent even without submitting the crash report.
     Sentry.captureMessage("report information", {
-      user: { name: this.currentUser.name },
+      user: { name: this.sessionInfo.name },
       level: "debug",
       extra: {
         currentlyLoggedIn: this.currentlyLoggedIn.getId(true),
@@ -148,7 +148,7 @@ export class SupportComponent implements OnInit {
     });
     Sentry.showReportDialog({
       user: {
-        name: this.currentUser.name,
+        name: this.sessionInfo.name,
         email: "example@email.com",
       },
       title: $localize`:Title user feedback dialog:Support request`,

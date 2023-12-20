@@ -3,16 +3,16 @@ import { TestBed } from "@angular/core/testing";
 import { UserRoleGuard } from "./user-role.guard";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRouteSnapshot, Route, Router } from "@angular/router";
-import { AuthUser } from "../../session/auth/auth-user";
+import { SessionInfo } from "../../session/auth/session-info";
 import { ConfigService } from "../../config/config.service";
 import { PREFIX_VIEW_CONFIG } from "../../config/dynamic-routing/view-config.interface";
-import { CurrentUserSubject } from "../../user/user";
+import { SessionSubject } from "../../user/user";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;
-  let userSubject: CurrentUserSubject;
-  const normalUser: AuthUser = { name: "normalUser", roles: ["user_app"] };
-  const adminUser: AuthUser = {
+  let sessionInfo: SessionSubject;
+  const normalUser: SessionInfo = { name: "normalUser", roles: ["user_app"] };
+  const adminUser: SessionInfo = {
     name: "admin",
     roles: ["admin", "user_app"],
   };
@@ -24,13 +24,13 @@ describe("UserRoleGuard", () => {
     TestBed.configureTestingModule({
       imports: [RouterTestingModule],
       providers: [
-        CurrentUserSubject,
+        SessionSubject,
         UserRoleGuard,
         { provide: ConfigService, useValue: mockConfigService },
       ],
     });
     guard = TestBed.inject(UserRoleGuard);
-    userSubject = TestBed.inject(CurrentUserSubject);
+    sessionInfo = TestBed.inject(SessionSubject);
   });
 
   it("should be created", () => {
@@ -38,7 +38,7 @@ describe("UserRoleGuard", () => {
   });
 
   it("should return true if current user is allowed", () => {
-    userSubject.next(adminUser);
+    sessionInfo.next(adminUser);
 
     const result = guard.canActivate({
       routeConfig: { path: "url" },
@@ -49,7 +49,7 @@ describe("UserRoleGuard", () => {
   });
 
   it("should return false for a user without permissions", () => {
-    userSubject.next(normalUser);
+    sessionInfo.next(normalUser);
     const router = TestBed.inject(Router);
     spyOn(router, "navigate");
 
@@ -63,7 +63,7 @@ describe("UserRoleGuard", () => {
   });
 
   it("should navigate to 404 for real navigation requests without permissions", () => {
-    userSubject.next(normalUser);
+    sessionInfo.next(normalUser);
     const router = TestBed.inject(Router);
     spyOn(router, "navigate");
     const route = new ActivatedRouteSnapshot();
@@ -96,7 +96,7 @@ describe("UserRoleGuard", () => {
       }
     });
 
-    userSubject.next(normalUser);
+    sessionInfo.next(normalUser);
     expect(guard.checkRoutePermissions("free")).toBeTrue();
     expect(guard.checkRoutePermissions("/free")).toBeTrue();
     expect(guard.checkRoutePermissions("restricted")).toBeFalse();
@@ -104,7 +104,7 @@ describe("UserRoleGuard", () => {
     expect(guard.checkRoutePermissions("/pathA")).toBeTrue();
     expect(guard.checkRoutePermissions("pathA/1")).toBeFalse();
 
-    userSubject.next(adminUser);
+    sessionInfo.next(adminUser);
     expect(guard.checkRoutePermissions("free")).toBeTrue();
     expect(guard.checkRoutePermissions("restricted")).toBeTrue();
     expect(guard.checkRoutePermissions("pathA")).toBeTrue();
@@ -129,13 +129,13 @@ describe("UserRoleGuard", () => {
     router.config.push(nestedRoute);
     router.config.push(onParentRoute);
 
-    userSubject.next(normalUser);
+    sessionInfo.next(normalUser);
     expect(guard.checkRoutePermissions("nested")).toBeFalse();
     expect(guard.checkRoutePermissions("nested/X")).toBeTrue();
     expect(guard.checkRoutePermissions("on-parent")).toBeFalse();
     expect(guard.checkRoutePermissions("on-parent/X")).toBeFalse();
 
-    userSubject.next(adminUser);
+    sessionInfo.next(adminUser);
     expect(guard.checkRoutePermissions("nested")).toBeTrue();
     expect(guard.checkRoutePermissions("nested/X")).toBeTrue();
     expect(guard.checkRoutePermissions("on-parent")).toBeTrue();

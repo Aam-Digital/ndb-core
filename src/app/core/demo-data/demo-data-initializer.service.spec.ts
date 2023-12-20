@@ -7,21 +7,21 @@ import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
-import { AuthUser } from "../session/auth/auth-user";
+import { SessionInfo } from "../session/auth/session-info";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { PouchDatabase } from "../database/pouch-database";
 import { AppSettings } from "../app-settings";
 import { Database } from "../database/database";
-import { CurrentUserSubject } from "../user/user";
+import { SessionSubject } from "../user/user";
 import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("DemoDataInitializerService", () => {
-  const normalUser: AuthUser = {
+  const normalUser: SessionInfo = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
     roles: ["user_app"],
   };
-  const adminUser: AuthUser = {
+  const adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     roles: ["user_app", "admin_app", "account_manager"],
   };
@@ -48,7 +48,7 @@ describe("DemoDataInitializerService", () => {
       providers: [
         DemoDataInitializerService,
         LoginStateSubject,
-        CurrentUserSubject,
+        SessionSubject,
         { provide: MatDialog, useValue: mockDialog },
         { provide: Database, useClass: PouchDatabase },
         { provide: DemoDataService, useValue: mockDemoDataService },
@@ -113,7 +113,7 @@ describe("DemoDataInitializerService", () => {
     database.put(userDoc);
     tick();
 
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: DemoUserGeneratorService.ADMIN_USERNAME,
       roles: [],
     });
@@ -144,7 +144,7 @@ describe("DemoDataInitializerService", () => {
     tick();
 
     const database = TestBed.inject(Database) as PouchDatabase;
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: DemoUserGeneratorService.ADMIN_USERNAME,
       roles: [],
     });

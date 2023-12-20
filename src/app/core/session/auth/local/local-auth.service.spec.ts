@@ -1,10 +1,10 @@
 import { LocalAuthService } from "./local-auth.service";
-import { AuthUser } from "../auth-user";
+import { SessionInfo } from "../session-info";
 import { TEST_USER } from "../../../../utils/mock-local-session";
 
 describe("LocalAuthService", () => {
   let service: LocalAuthService;
-  let testUser: AuthUser;
+  let testUser: SessionInfo;
 
   beforeEach(() => {
     service = new LocalAuthService();
