@@ -3,7 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { TodoService } from "./todo.service";
 import { AlertService } from "../../core/alerts/alert.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
-import { CurrentUserSubject } from "../../core/user/user";
+import { CurrentlyLoggedInSubject } from "../../core/session/currently-logged-in";
 
 describe("TodoService", () => {
   let service: TodoService;
@@ -11,7 +11,7 @@ describe("TodoService", () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       providers: [
-        CurrentUserSubject,
+        CurrentlyLoggedInSubject,
         { provide: AlertService, useValue: null },
         { provide: EntityMapperService, useValue: null },
       ],

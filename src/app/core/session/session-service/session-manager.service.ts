@@ -138,6 +138,7 @@ export class SessionManagerService {
       }
     }
     this.currentUser.next(undefined);
+    this.currentlyLoggedIn.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;
     return this.router.navigate(["/login"], {

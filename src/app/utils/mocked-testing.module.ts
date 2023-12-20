@@ -21,6 +21,7 @@ import { createTestingConfigurableEnumService } from "../core/basic-datatypes/co
 import { SwRegistrationOptions } from "@angular/service-worker";
 import { TEST_USER } from "./mock-local-session";
 import { BehaviorSubject } from "rxjs";
+import { CurrentlyLoggedInSubject } from "../core/session/currently-logged-in";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -85,6 +86,10 @@ export class MockedTestingModule {
             name: TEST_USER,
             roles: ["user_app"],
           }),
+        },
+        {
+          provide: CurrentlyLoggedInSubject,
+          useValue: new User(TEST_USER),
         },
       ],
     };

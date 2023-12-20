@@ -12,8 +12,9 @@ import {
   PageEvent,
 } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
-import { CurrentUserSubject, User } from "../../../user/user";
+import { User } from "../../../user/user";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { CurrentlyLoggedInSubject } from "../../../session/currently-logged-in";
 
 @Component({
   selector: "app-list-paginator",
@@ -34,9 +35,11 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
   pageSize = 10;
 
   constructor(
-    private currentUser: CurrentUserSubject,
+    currentlyLoggedIn: CurrentlyLoggedInSubject,
     private entityMapperService: EntityMapperService,
-  ) {}
+  ) {
+    currentlyLoggedIn.subscribe((val: User) => (this.user = val));
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("idForSavingPagination")) {
@@ -54,7 +57,7 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
   }
 
   private async applyUserPaginationSettings() {
-    if (!(await this.ensureUserIsLoaded())) {
+    if (!this.user) {
       return;
     }
 
@@ -64,7 +67,7 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
   }
 
   private async updateUserPaginationSettings() {
-    if (!(await this.ensureUserIsLoaded())) {
+    if (!this.user) {
       return;
     }
     // The page size is stored in the database, the page index is only in memory
@@ -76,17 +79,7 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
       this.pageSize;
 
     if (hasChangesToBeSaved) {
-      await this.entityMapperService.save<User>(this.user);
+      await this.entityMapperService.save(this.user);
     }
-  }
-
-  private async ensureUserIsLoaded(): Promise<boolean> {
-    if (!this.user) {
-      const currentUser = this.currentUser.value;
-      this.user = await this.entityMapperService
-        .load(User, currentUser.name)
-        .catch(() => undefined);
-    }
-    return !!this.user;
   }
 }

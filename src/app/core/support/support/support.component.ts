@@ -18,6 +18,8 @@ import { SyncStateSubject } from "../../session/session-type";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { CurrentUserSubject } from "../../user/user";
+import { CurrentlyLoggedInSubject } from "../../session/currently-logged-in";
+import { Entity } from "../../entity/model/entity";
 
 @Component({
   selector: "app-support",
@@ -28,6 +30,7 @@ import { CurrentUserSubject } from "../../user/user";
 })
 export class SupportComponent implements OnInit {
   currentUser: AuthUser;
+  currentlyLoggedIn: Entity;
   currentSyncState: string;
   lastSync: string;
   lastRemoteLogin: string;
@@ -41,6 +44,7 @@ export class SupportComponent implements OnInit {
   constructor(
     private syncState: SyncStateSubject,
     private userSubject: CurrentUserSubject,
+    private currentlyLoggedInSubject: CurrentlyLoggedInSubject,
     private sw: SwUpdate,
     private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,
@@ -53,6 +57,7 @@ export class SupportComponent implements OnInit {
 
   ngOnInit() {
     this.currentUser = this.userSubject.value;
+    this.currentlyLoggedIn = this.currentlyLoggedInSubject.value;
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
     this.initLastSync();
@@ -129,6 +134,7 @@ export class SupportComponent implements OnInit {
       user: { name: this.currentUser.name },
       level: "debug",
       extra: {
+        currentlyLoggedIn: this.currentlyLoggedIn.getId(true),
         currentSyncState: this.currentSyncState,
         lastSync: this.lastSync,
         lastRemoteLogin: this.lastRemoteLogin,

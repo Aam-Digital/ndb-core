@@ -22,7 +22,8 @@ import { TEST_USER } from "../../../utils/mock-local-session";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
-import { CurrentUserSubject } from "../../user/user";
+import { CurrentUserSubject, User } from "../../user/user";
+import { CurrentlyLoggedInSubject } from "../../session/currently-logged-in";
 
 class MockDeleteRequest {
   onsuccess: () => {};
@@ -35,6 +36,7 @@ describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
   const testUser = { name: TEST_USER, roles: [] };
+  const userEntity = new User(TEST_USER);
   const mockSW = { isEnabled: false };
   let mockDB: jasmine.SpyObj<PouchDatabase>;
   const mockWindow = {
@@ -70,6 +72,10 @@ describe("SupportComponent", () => {
           provide: CurrentUserSubject,
           useValue: new BehaviorSubject(testUser),
         },
+        {
+          provide: CurrentlyLoggedInSubject,
+          useValue: new BehaviorSubject(userEntity),
+        },
         { provide: SwUpdate, useValue: mockSW },
         { provide: PouchDatabase, useValue: mockDB },
         { provide: WINDOW_TOKEN, useValue: mockWindow },
@@ -93,6 +99,7 @@ describe("SupportComponent", () => {
 
   it("should initialize application information", () => {
     expect(component.currentUser).toBe(testUser);
+    expect(component.currentlyLoggedIn).toBe(userEntity);
     expect(component.currentSyncState).toBe("unsynced");
     expect(component.lastSync).toBe("never");
     expect(component.lastRemoteLogin).toBe("never");

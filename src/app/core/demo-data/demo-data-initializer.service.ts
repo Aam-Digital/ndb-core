@@ -70,6 +70,7 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
+    // TODO needs to work without access to entity (entity is only available once sync starts)
     this.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
