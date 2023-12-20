@@ -65,7 +65,7 @@ export class KeycloakAuthService {
       );
     }
     return {
-      name: parsedToken.username,
+      entityId: parsedToken.username,
       roles: parsedToken["_couchdb.roles"],
     };
   }

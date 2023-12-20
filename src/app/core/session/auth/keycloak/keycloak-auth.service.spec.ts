@@ -54,7 +54,7 @@ describe("KeycloakAuthService", () => {
 
   it("should return user object after successful login check", () => {
     return expectAsync(service.login()).toBeResolvedTo({
-      name: "test",
+      entityId: "test",
       roles: ["user_app"],
     });
   });

@@ -30,11 +30,11 @@ export class DemoDataInitializerService {
   private liveSyncHandle: PouchDB.Replication.Sync<any>;
   private pouchDatabase: PouchDatabase;
   private readonly normalUser: SessionInfo = {
-    name: DemoUserGeneratorService.DEFAULT_USERNAME,
+    entityId: DemoUserGeneratorService.DEFAULT_USERNAME,
     roles: ["user_app"],
   };
   private readonly adminUser: SessionInfo = {
-    name: DemoUserGeneratorService.ADMIN_USERNAME,
+    entityId: DemoUserGeneratorService.ADMIN_USERNAME,
     roles: ["user_app", "admin_app", KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
   };
   constructor(
@@ -74,7 +74,7 @@ export class DemoDataInitializerService {
     this.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&
-        this.sessionInfo.value.name !==
+        this.sessionInfo.value.entityId !==
           DemoUserGeneratorService.DEFAULT_USERNAME
       ) {
         // There is a slight race-condition with session type local

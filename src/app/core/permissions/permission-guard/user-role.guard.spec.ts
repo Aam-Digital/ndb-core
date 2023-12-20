@@ -11,9 +11,12 @@ import { SessionSubject } from "../../user/user";
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;
   let sessionInfo: SessionSubject;
-  const normalUser: SessionInfo = { name: "normalUser", roles: ["user_app"] };
+  const normalUser: SessionInfo = {
+    entityId: "normalUser",
+    roles: ["user_app"],
+  };
   const adminUser: SessionInfo = {
-    name: "admin",
+    entityId: "admin",
     roles: ["admin", "user_app"],
   };
   let mockConfigService: jasmine.SpyObj<ConfigService>;

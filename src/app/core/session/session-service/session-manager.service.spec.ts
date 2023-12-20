@@ -52,7 +52,7 @@ describe("SessionManagerService", () => {
   let initIndexedSpy: jasmine.Spy;
 
   beforeEach(waitForAsync(() => {
-    dbUser = { name: TEST_USER, roles: ["user_app"] };
+    dbUser = { entityId: TEST_USER, roles: ["user_app"] };
     mockKeycloak = jasmine.createSpyObj(["login", "logout", "addAuthHeader"]);
     mockKeycloak.login.and.resolveTo(dbUser);
     mockNavigator = { onLine: true };
@@ -98,7 +98,7 @@ describe("SessionManagerService", () => {
 
   it("should update the local user object once authenticated", async () => {
     const updatedUser: SessionInfo = {
-      name: TEST_USER,
+      entityId: TEST_USER,
       roles: dbUser.roles.concat("admin"),
     };
     mockKeycloak.login.and.resolveTo(updatedUser);

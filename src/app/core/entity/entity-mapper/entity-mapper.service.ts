@@ -196,7 +196,7 @@ export class EntityMapperService {
 
   protected setEntityMetadata(entity: Entity) {
     // TODO use Entity (CurrentlyLoggedIn) or keep AuthUser?
-    const newMetadata = new UpdateMetadata(this.sessionInfo.value?.name);
+    const newMetadata = new UpdateMetadata(this.sessionInfo.value?.entityId);
     if (entity.isNew) {
       entity.created = newMetadata;
     }

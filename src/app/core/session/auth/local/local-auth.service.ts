@@ -25,7 +25,7 @@ export class LocalAuthService {
    */
   saveUser(user: SessionInfo) {
     localStorage.setItem(
-      this.STORED_USER_PREFIX + user.name,
+      this.STORED_USER_PREFIX + user.entityId,
       JSON.stringify(user),
     );
   }
