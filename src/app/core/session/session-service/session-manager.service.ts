@@ -98,13 +98,10 @@ export class SessionManagerService {
 
   private async initializeUser(user: SessionInfo) {
     await this.initializeDatabaseForCurrentUser(user);
-    // TODO can we remove this?
     this.sessionInfo.next(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
 
     // TODO allow generic entities with fallback to User entity
-    // TODO quite similar to LatestEntityLoader?
-    // TODO is it a problem if the user entity is only available later or not at all?
     this.entityMapper
       .load(User, user.name)
       .then((res) => this.currentUser.next(res))
