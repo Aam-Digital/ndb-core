@@ -4,7 +4,7 @@ import { HttpErrorResponse } from "@angular/common/http";
 import { Entity, EntityConstructor } from "../model/entity";
 import { UpdatedEntity } from "../model/entity-update";
 import { entityRegistry } from "../database-entity.decorator";
-import { TEST_USER } from "../../../utils/mock-local-session";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 export function mockEntityMapper(
   withData: Entity[] = [],

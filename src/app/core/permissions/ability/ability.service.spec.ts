@@ -14,11 +14,11 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
-import { TEST_USER } from "../../../utils/mock-local-session";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EventAttendanceDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
 import { SessionSubject } from "../../session/auth/session-info";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("AbilityService", () => {
   let service: AbilityService;

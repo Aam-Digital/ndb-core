@@ -19,10 +19,10 @@ import { ComponentRegistry } from "../dynamic-components";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
-import { TEST_USER } from "./mock-local-session";
 import { BehaviorSubject } from "rxjs";
 import { CurrentUserSubject } from "../core/session/current-user-subject";
 import { SessionInfo, SessionSubject } from "../core/session/auth/session-info";
+import { TEST_USER } from "../core/user/demo-user-generator.service";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService

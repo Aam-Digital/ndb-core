@@ -37,6 +37,7 @@ import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { User } from "../../user/user";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;

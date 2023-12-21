@@ -21,10 +21,10 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { Database } from "../../database/database";
-import { TEST_USER } from "../../../utils/mock-local-session";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { User } from "../../user/user";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;

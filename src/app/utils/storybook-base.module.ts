@@ -21,8 +21,8 @@ import {
 } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
-import { TEST_USER } from "./mock-local-session";
 import { EntityConfigService } from "../core/entity/entity-config.service";
+import { TEST_USER } from "../core/user/demo-user-generator.service";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
