@@ -33,6 +33,7 @@ import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentlyLoggedInSubject } from "../currently-logged-in";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
+import { Subscription } from "rxjs";
 
 /**
  * This service handles the user session.
@@ -45,6 +46,8 @@ export class SessionManagerService {
   readonly RESET_REMOTE_SESSION_KEY = "RESET_REMOTE";
   private pouchDatabase: PouchDatabase;
   private remoteLoggedIn = false;
+  private updateSubscription: Subscription;
+
   constructor(
     private remoteAuthService: KeycloakAuthService,
     private localAuthService: LocalAuthService,
@@ -106,7 +109,7 @@ export class SessionManagerService {
       .load(User, user.entityId)
       .then((res) => this.currentlyLoggedIn.next(res))
       .catch(() => undefined);
-    this.entityMapper
+    this.updateSubscription = this.entityMapper
       .receiveUpdates(User)
       .pipe(
         filter(
@@ -138,10 +141,13 @@ export class SessionManagerService {
         localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, "1");
       }
     }
+    // resetting app state
     this.sessionInfo.next(undefined);
+    this.updateSubscription.unsubscribe();
     this.currentlyLoggedIn.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;
+    this.pouchDatabase.reset();
     return this.router.navigate(["/login"], {
       queryParams: { redirect_uri: this.router.routerState.snapshot.url },
     });

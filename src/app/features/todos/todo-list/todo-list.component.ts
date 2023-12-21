@@ -14,7 +14,9 @@ import { EntityListComponent } from "../../../core/entity-list/entity-list/entit
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 import { RouteTarget } from "../../../route-target";
 import { CurrentlyLoggedInSubject } from "../../../core/session/currently-logged-in";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @RouteTarget("TodoList")
 @Component({
   selector: "app-todo-list",
@@ -90,7 +92,10 @@ export class TodoListComponent implements OnInit {
       (c) => c.id === "assignedTo",
     );
     if (assignedToFilter && !assignedToFilter.default) {
-      assignedToFilter.default = this.currentlyLoggedIn.value.getId();
+      // filter based on currently logged-in user
+      this.currentlyLoggedIn
+        .pipe(untilDestroyed(this))
+        .subscribe((entity) => (assignedToFilter.default = entity?.getId()));
     }
   }
 

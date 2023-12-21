@@ -307,6 +307,12 @@ export class PouchDatabase extends Database {
     }
   }
 
+  reset() {
+    this.pouchDB = undefined;
+    this.changesFeed = undefined;
+    this.databaseInitialized = new Subject();
+  }
+
   /**
    * Query data from the database based on a more complex, indexed request.
    * (see {@link Database})
