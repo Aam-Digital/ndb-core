@@ -307,6 +307,9 @@ export class PouchDatabase extends Database {
     }
   }
 
+  /**
+   * Reset the database state so a new one can be opened.
+   */
   reset() {
     this.pouchDB = undefined;
     this.changesFeed = undefined;
