@@ -19,9 +19,6 @@ import { Entity } from "../entity/model/entity";
 import { DatabaseEntity } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
-import { BehaviorSubject } from "rxjs";
-import { SessionInfo } from "../session/auth/session-info";
-import { Injectable } from "@angular/core";
 
 /**
  * Entity representing a User object including password.
@@ -66,14 +63,4 @@ export class User extends Entity {
    * This map holds information for the page size settings for different tables in the app
    */
   @DatabaseField() paginatorSettingsPageSize: { [id: string]: number } = {};
-}
-
-/**
- * Use this provider to access the currently logged-in user object and subscribe to changes of user.
- */
-@Injectable()
-export class SessionSubject extends BehaviorSubject<SessionInfo> {
-  constructor() {
-    super(undefined);
-  }
 }

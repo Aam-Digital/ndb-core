@@ -3,14 +3,14 @@ import { AlertService } from "../../core/alerts/alert.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Todo } from "./model/todo";
 import moment from "moment/moment";
-import { CurrentlyLoggedInSubject } from "../../core/session/currently-logged-in";
+import { CurrentUserSubject } from "../../core/session/current-user-subject";
 
 @Injectable({
   providedIn: "root",
 })
 export class TodoService {
   constructor(
-    private currentlyLoggedIn: CurrentlyLoggedInSubject,
+    private currentUser: CurrentUserSubject,
     private alertService: AlertService,
     private entityMapper: EntityMapperService,
   ) {}
@@ -19,7 +19,7 @@ export class TodoService {
     const nextTodo = await this.createNextRepetition(todo);
 
     todo.completed = {
-      completedBy: this.currentlyLoggedIn.value.getId(),
+      completedBy: this.currentUser.value.getId(),
       completedAt: new Date(),
       nextRepetition: nextTodo?.getId(true),
     };

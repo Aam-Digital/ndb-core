@@ -7,8 +7,7 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
-import { SessionInfo } from "../../session/auth/session-info";
-import { SessionSubject } from "../../user/user";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.

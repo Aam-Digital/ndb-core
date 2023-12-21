@@ -6,7 +6,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
-import { SessionSubject, User } from "../../user/user";
+import { User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
@@ -18,6 +18,7 @@ import { TEST_USER } from "../../../utils/mock-local-session";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EventAttendanceDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
+import { SessionSubject } from "../../session/auth/session-info";
 
 describe("AbilityService", () => {
   let service: AbilityService;

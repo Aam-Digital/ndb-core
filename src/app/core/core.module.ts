@@ -1,7 +1,7 @@
 import { NgModule } from "@angular/core";
 import { ComponentRegistry } from "../dynamic-components";
 import { coreComponents } from "./core-components";
-import { SessionSubject, User } from "./user/user";
+import { User } from "./user/user";
 import { Config } from "./config/config";
 import { StringDatatype } from "./basic-datatypes/string/string.datatype";
 import { DefaultDatatype } from "./entity/default-datatype/default.datatype";
@@ -20,7 +20,8 @@ import { TimePeriod } from "./entity-details/related-time-period-entities/time-p
 import { CommonModule } from "@angular/common";
 import { LongTextDatatype } from "./basic-datatypes/string/long-text.datatype";
 import { UpdateMetadataDatatype } from "./entity/model/update-metadata.datatype";
-import { CurrentlyLoggedInSubject } from "./session/currently-logged-in";
+import { CurrentUserSubject } from "./session/current-user-subject";
+import { SessionSubject } from "./session/auth/session-info";
 
 /**
  * Core module registering basic parts like datatypes and components.
@@ -28,7 +29,7 @@ import { CurrentlyLoggedInSubject } from "./session/currently-logged-in";
 @NgModule({
   providers: [
     SessionSubject,
-    CurrentlyLoggedInSubject,
+    CurrentUserSubject,
     // base dataTypes
     { provide: DefaultDatatype, useClass: StringDatatype, multi: true },
     { provide: DefaultDatatype, useClass: LongTextDatatype, multi: true },

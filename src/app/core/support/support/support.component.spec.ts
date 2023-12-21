@@ -22,8 +22,9 @@ import { TEST_USER } from "../../../utils/mock-local-session";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
-import { SessionSubject, User } from "../../user/user";
-import { CurrentlyLoggedInSubject } from "../../session/currently-logged-in";
+import { User } from "../../user/user";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { SessionSubject } from "../../session/auth/session-info";
 
 class MockDeleteRequest {
   onsuccess: () => {};
@@ -73,7 +74,7 @@ describe("SupportComponent", () => {
           useValue: new BehaviorSubject(testUser),
         },
         {
-          provide: CurrentlyLoggedInSubject,
+          provide: CurrentUserSubject,
           useValue: new BehaviorSubject(userEntity),
         },
         { provide: SwUpdate, useValue: mockSW },
@@ -99,7 +100,7 @@ describe("SupportComponent", () => {
 
   it("should initialize application information", () => {
     expect(component.sessionInfo).toBe(testUser);
-    expect(component.currentlyLoggedIn).toBe(userEntity);
+    expect(component.currentUser).toBe(userEntity);
     expect(component.currentSyncState).toBe("unsynced");
     expect(component.lastSync).toBe("never");
     expect(component.lastRemoteLogin).toBe("never");

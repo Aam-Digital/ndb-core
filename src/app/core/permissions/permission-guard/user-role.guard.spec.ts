@@ -3,8 +3,7 @@ import { TestBed } from "@angular/core/testing";
 import { UserRoleGuard } from "./user-role.guard";
 import { RouterTestingModule } from "@angular/router/testing";
 import { ActivatedRouteSnapshot, Route, Router } from "@angular/router";
-import { SessionInfo } from "../../session/auth/session-info";
-import { SessionSubject } from "../../user/user";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 
 describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;

@@ -17,20 +17,20 @@
 
 import { Inject, Injectable } from "@angular/core";
 
-import { SessionInfo } from "../auth/session-info";
+import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { SyncService } from "../../database/sync.service";
 import { LoginStateSubject, SessionType } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { SessionSubject, User } from "../../user/user";
+import { User } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { Database } from "../../database/database";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { CurrentlyLoggedInSubject } from "../currently-logged-in";
+import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { Subscription } from "rxjs";
@@ -53,7 +53,7 @@ export class SessionManagerService {
     private localAuthService: LocalAuthService,
     private syncService: SyncService,
     private sessionInfo: SessionSubject,
-    private currentlyLoggedIn: CurrentlyLoggedInSubject,
+    private currentUser: CurrentUserSubject,
     private entityMapper: EntityMapperService,
     private loginStateSubject: LoginStateSubject,
     private router: Router,
@@ -107,7 +107,7 @@ export class SessionManagerService {
     // TODO is it a problem if the user entity is only available later or not at all?
     this.entityMapper
       .load(User, user.name)
-      .then((res) => this.currentlyLoggedIn.next(res))
+      .then((res) => this.currentUser.next(res))
       .catch(() => undefined);
     this.updateSubscription = this.entityMapper
       .receiveUpdates(User)
@@ -117,7 +117,7 @@ export class SessionManagerService {
             entity.getId(true) === user.name || entity.getId() === user.name,
         ),
       )
-      .subscribe(({ entity }) => this.currentlyLoggedIn.next(entity));
+      .subscribe(({ entity }) => this.currentUser.next(entity));
   }
 
   /**
@@ -143,7 +143,7 @@ export class SessionManagerService {
     // resetting app state
     this.sessionInfo.next(undefined);
     this.updateSubscription.unsubscribe();
-    this.currentlyLoggedIn.next(undefined);
+    this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;
     this.pouchDatabase.reset();

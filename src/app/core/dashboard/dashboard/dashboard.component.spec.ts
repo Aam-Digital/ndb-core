@@ -8,7 +8,7 @@ import { DashboardComponent } from "./dashboard.component";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { SessionSubject } from "../../user/user";
+import { SessionSubject } from "../../session/auth/session-info";
 
 describe("DashboardComponent", () => {
   let component: DashboardComponent;

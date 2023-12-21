@@ -14,7 +14,7 @@ import {
 import { MatTableDataSource } from "@angular/material/table";
 import { User } from "../../../user/user";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { CurrentlyLoggedInSubject } from "../../../session/currently-logged-in";
+import { CurrentUserSubject } from "../../../session/current-user-subject";
 
 @Component({
   selector: "app-list-paginator",
@@ -35,10 +35,10 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
   pageSize = 10;
 
   constructor(
-    currentlyLoggedIn: CurrentlyLoggedInSubject,
+    currentUser: CurrentUserSubject,
     private entityMapperService: EntityMapperService,
   ) {
-    currentlyLoggedIn.subscribe((val: User) => (this.user = val));
+    currentUser.subscribe((val: User) => (this.user = val));
   }
 
   ngOnChanges(changes: SimpleChanges): void {

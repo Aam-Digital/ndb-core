@@ -25,17 +25,16 @@ import {
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
-import { SessionInfo } from "../auth/session-info";
+import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { TEST_USER } from "../../../utils/mock-local-session";
 import { LocalAuthService } from "../auth/local/local-auth.service";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { Database } from "../../database/database";
 import { Router } from "@angular/router";
-import { SessionSubject } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
-import { CurrentlyLoggedInSubject } from "../currently-logged-in";
+import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 
@@ -63,7 +62,7 @@ describe("SessionManagerService", () => {
         SyncStateSubject,
         LoginStateSubject,
         SessionSubject,
-        CurrentlyLoggedInSubject,
+        CurrentUserSubject,
         { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: Database, useClass: PouchDatabase },
         { provide: KeycloakAuthService, useValue: mockKeycloak },

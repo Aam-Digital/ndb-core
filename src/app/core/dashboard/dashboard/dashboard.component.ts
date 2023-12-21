@@ -23,7 +23,7 @@ import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DashboardWidget } from "../dashboard-widget/dashboard-widget";
-import { SessionSubject } from "../../user/user";
+import { SessionSubject } from "../../session/auth/session-info";
 
 @RouteTarget("Dashboard")
 @Component({

@@ -2,7 +2,7 @@ import { ModuleWithProviders, NgModule } from "@angular/core";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
-import { SessionSubject, User } from "../core/user/user";
+import { User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -21,8 +21,8 @@ import { createTestingConfigurableEnumService } from "../core/basic-datatypes/co
 import { SwRegistrationOptions } from "@angular/service-worker";
 import { TEST_USER } from "./mock-local-session";
 import { BehaviorSubject } from "rxjs";
-import { CurrentlyLoggedInSubject } from "../core/session/currently-logged-in";
-import { SessionInfo } from "../core/session/auth/session-info";
+import { CurrentUserSubject } from "../core/session/current-user-subject";
+import { SessionInfo, SessionSubject } from "../core/session/auth/session-info";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -89,7 +89,7 @@ export class MockedTestingModule {
           }),
         },
         {
-          provide: CurrentlyLoggedInSubject,
+          provide: CurrentUserSubject,
           useValue: new BehaviorSubject(new User(TEST_USER)),
         },
       ],

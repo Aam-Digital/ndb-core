@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { SessionSubject } from "../../user/user";
 import { AbstractPermissionGuard } from "./abstract-permission.guard";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * A guard that checks the roles of the current user against the permissions which are saved in the route data.

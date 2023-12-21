@@ -13,7 +13,7 @@ import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 import { RouteTarget } from "../../../route-target";
-import { CurrentlyLoggedInSubject } from "../../../core/session/currently-logged-in";
+import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
 @UntilDestroy()
@@ -41,7 +41,7 @@ export class TodoListComponent implements OnInit {
 
   constructor(
     private route: ActivatedRoute,
-    private currentlyLoggedIn: CurrentlyLoggedInSubject,
+    private currentUser: CurrentUserSubject,
     private formDialog: FormDialogService,
     private logger: LoggingService,
   ) {}
@@ -93,7 +93,7 @@ export class TodoListComponent implements OnInit {
     );
     if (assignedToFilter && !assignedToFilter.default) {
       // filter based on currently logged-in user
-      this.currentlyLoggedIn
+      this.currentUser
         .pipe(untilDestroyed(this))
         .subscribe((entity) => (assignedToFilter.default = entity?.getId()));
     }

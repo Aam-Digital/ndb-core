@@ -6,7 +6,7 @@ import * as Sentry from "@sentry/browser";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-import { SessionInfo } from "../../session/auth/session-info";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { firstValueFrom } from "rxjs";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
@@ -17,8 +17,7 @@ import { DownloadService } from "../../export/download-service/download.service"
 import { SyncStateSubject } from "../../session/session-type";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
-import { SessionSubject } from "../../user/user";
-import { CurrentlyLoggedInSubject } from "../../session/currently-logged-in";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 import { Entity } from "../../entity/model/entity";
 
 @Component({
@@ -30,7 +29,7 @@ import { Entity } from "../../entity/model/entity";
 })
 export class SupportComponent implements OnInit {
   sessionInfo: SessionInfo;
-  currentlyLoggedIn: Entity;
+  currentUser: Entity;
   currentSyncState: string;
   lastSync: string;
   lastRemoteLogin: string;
@@ -44,7 +43,7 @@ export class SupportComponent implements OnInit {
   constructor(
     private syncState: SyncStateSubject,
     private sessionSubject: SessionSubject,
-    private currentlyLoggedInSubject: CurrentlyLoggedInSubject,
+    private currentUserSubject: CurrentUserSubject,
     private sw: SwUpdate,
     private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,
@@ -57,7 +56,7 @@ export class SupportComponent implements OnInit {
 
   ngOnInit() {
     this.sessionInfo = this.sessionSubject.value;
-    this.currentlyLoggedIn = this.currentlyLoggedInSubject.value;
+    this.currentUser = this.currentUserSubject.value;
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
     this.initLastSync();
@@ -134,7 +133,7 @@ export class SupportComponent implements OnInit {
       user: { name: this.sessionInfo.name },
       level: "debug",
       extra: {
-        currentlyLoggedIn: this.currentlyLoggedIn.getId(true),
+        currentUser: this.currentUser.getId(true),
         currentSyncState: this.currentSyncState,
         lastSync: this.lastSync,
         lastRemoteLogin: this.lastRemoteLogin,

@@ -13,7 +13,7 @@ import { LoggingService } from "./core/logging/logging.service";
 import { environment } from "../environments/environment";
 import { LoginStateSubject } from "./core/session/session-type";
 import { combineLatest } from "rxjs";
-import { SessionSubject } from "./core/user/user";
+import { SessionSubject } from "./core/session/auth/session-info";
 
 export const appInitializers = {
   provide: APP_INITIALIZER,

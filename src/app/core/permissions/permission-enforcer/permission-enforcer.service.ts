@@ -9,7 +9,7 @@ import { EntityAbility } from "../ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
 import { firstValueFrom } from "rxjs";
-import { SessionSubject } from "../../user/user";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * This service checks whether the relevant rules for the current user changed.

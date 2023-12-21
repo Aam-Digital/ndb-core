@@ -11,7 +11,7 @@ import {
   KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
-import { SessionSubject, User } from "../user";
+import { User } from "../user";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { AppSettings } from "../../app-settings";
@@ -22,6 +22,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { SessionSubject } from "../../session/auth/session-info";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")

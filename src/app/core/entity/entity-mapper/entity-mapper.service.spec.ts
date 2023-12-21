@@ -22,8 +22,9 @@ import { PouchDatabase } from "../../database/pouch-database";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { Database } from "../../database/database";
 import { TEST_USER } from "../../../utils/mock-local-session";
-import { SessionSubject } from "../../user/user";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { User } from "../../user/user";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -48,7 +49,7 @@ describe("EntityMapperService", () => {
       imports: [CoreTestingModule],
       providers: [
         { provide: Database, useValue: testDatabase },
-        SessionSubject,
+        CurrentUserSubject,
         EntityMapperService,
       ],
     });
@@ -271,10 +272,7 @@ describe("EntityMapperService", () => {
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
-    TestBed.inject(SessionSubject).next({
-      name: TEST_USER,
-      roles: [],
-    });
+    TestBed.inject(CurrentUserSubject).next(new User(TEST_USER));
     const id = "test_created";
     const entity = new Entity(id);
 
@@ -284,9 +282,9 @@ describe("EntityMapperService", () => {
     const createdEntity = await entityMapper.load<Entity>(Entity, id);
 
     expect(createdEntity.created?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.created?.by).toEqual(TEST_USER);
+    expect(createdEntity.created?.by).toEqual(`User:${TEST_USER}`);
     expect(createdEntity.updated?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.updated?.by).toEqual(TEST_USER);
+    expect(createdEntity.updated?.by).toEqual(`User:${TEST_USER}`);
 
     const mockTime2 = mockTime1 + 1;
     jasmine.clock().mockDate(new Date(mockTime2));

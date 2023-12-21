@@ -15,8 +15,9 @@ import {
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
 import { BehaviorSubject, of, throwError } from "rxjs";
-import { SessionSubject, User } from "../user";
+import { User } from "../user";
 import { AppSettings } from "../../app-settings";
+import { SessionSubject } from "../../session/auth/session-info";
 
 describe("UserSecurityComponent", () => {
   let component: UserSecurityComponent;

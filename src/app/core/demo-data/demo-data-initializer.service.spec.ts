@@ -7,13 +7,12 @@ import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import { environment } from "../../../environments/environment";
-import { SessionInfo } from "../session/auth/session-info";
+import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { PouchDatabase } from "../database/pouch-database";
 import { AppSettings } from "../app-settings";
 import { Database } from "../database/database";
-import { SessionSubject } from "../user/user";
 import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("DemoDataInitializerService", () => {

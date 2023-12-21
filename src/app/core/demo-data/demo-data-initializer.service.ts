@@ -6,7 +6,7 @@ import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generatin
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
-import { SessionInfo } from "../session/auth/session-info";
+import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LoggingService } from "../logging/logging.service";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
@@ -15,7 +15,6 @@ import { LoginState } from "../session/session-states/login-state.enum";
 import { AppSettings } from "../app-settings";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
-import { SessionSubject } from "../user/user";
 import PouchDB from "pouchdb-browser";
 
 /**
