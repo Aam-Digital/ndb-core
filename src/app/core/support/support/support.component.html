@@ -14,8 +14,12 @@
   </thead>
   <tbody class="support-table--body">
     <tr>
+      <td>Session</td>
+      <td>{{ sessionInfo?.name ?? "-" }}</td>
+    </tr>
+    <tr>
       <td>Username</td>
-      <td>{{ currentUser?.name ?? "-" }}</td>
+      <td>{{ currentUser?.toString() ?? "-" }}</td>
     </tr>
     <tr>
       <td>App version</td>

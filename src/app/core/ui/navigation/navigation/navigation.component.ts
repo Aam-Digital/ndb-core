@@ -123,5 +123,8 @@ export class NavigationComponent {
     }));
     this.menuItems =
       await this.routePermissionService.filterPermittedRoutes(items);
+
+    // re-select active menu item after menu has been fully initialized
+    this.activeLink = this.computeActiveLink(location.pathname);
   }
 }

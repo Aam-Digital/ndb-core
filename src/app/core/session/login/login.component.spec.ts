@@ -31,7 +31,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { firstValueFrom, Subject } from "rxjs";
-import { AuthUser } from "../auth/auth-user";
+import { SessionInfo } from "../auth/session-info";
 import { environment } from "../../../../environments/environment";
 
 describe("LoginComponent", () => {
@@ -86,7 +86,7 @@ describe("LoginComponent", () => {
     const mockUsers = [{ name: "test", roles: [] }];
     spyOn(sessionManager, "getOfflineUsers").and.returnValue(mockUsers);
     spyOn(sessionManager, "remoteLoginAvailable").and.returnValue(true);
-    const remoteLoginSubject = new Subject<AuthUser>();
+    const remoteLoginSubject = new Subject<SessionInfo>();
     mockKeycloak.login.and.returnValue(firstValueFrom(remoteLoginSubject));
     loginState.next(LoginState.LOGGED_OUT);
     fixture.detectChanges();

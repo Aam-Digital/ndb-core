@@ -4,7 +4,7 @@ import { ImportHistoryComponent } from "./import-history.component";
 import { User } from "../../user/user";
 import { IMPORT_SAMPLE_PREVIOUS_IMPORTS } from "../import/import-sample-raw-data";
 import { importProvidersFrom } from "@angular/core";
-import { TEST_USER } from "../../../utils/mock-local-session";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 export default {
   title: "Features/Import/Import History",
