@@ -44,7 +44,7 @@
   <div class="flex-row gap-regular flex-wrap">
     <div *ngTemplateOutlet="filterDialog"></div>
     <app-filter
-      *ngIf="!isLoading"
+      *ngIf="!!allEntities"
       class="flex-row gap-regular flex-wrap"
       [filterConfig]="filters"
       [entityType]="entityConstructor"
@@ -120,21 +120,22 @@
 </ng-template>
 
 <ng-template #subrecord>
-  <app-entity-subrecord
+  <app-entities-table
+    [entityType]="entityConstructor"
     [records]="allEntities"
-    [columns]="columns"
+    [customColumns]="columns"
     [editable]="false"
     [clickMode]="clickMode"
     (rowClick)="elementClick.emit($event)"
     [columnsToDisplay]="columnsToDisplay"
-    [isLoading]="isLoading"
     [filter]="filterObj"
-    [defaultSort]="defaultSort"
+    [sortBy]="defaultSort"
     [(selectedRecords)]="selectedRows"
     [selectable]="!!selectedRows"
     [showInactive]="showInactive"
     (filteredRecordsChange)="filteredData = $event"
-  ></app-entity-subrecord>
+    [filterFreetext]="filterFreetext"
+  ></app-entities-table>
 </ng-template>
 
 <mat-menu #additional>

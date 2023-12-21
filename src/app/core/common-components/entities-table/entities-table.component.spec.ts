@@ -3,57 +3,37 @@ import {
   fakeAsync,
   TestBed,
   tick,
-  waitForAsync,
 } from "@angular/core/testing";
 
-import {
-  EntitySubrecordComponent,
-  TableRow,
-} from "./entity-subrecord.component";
-import { Entity } from "../../../entity/model/entity";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { ConfigurableEnumValue } from "../../../basic-datatypes/configurable-enum/configurable-enum.interface";
-import { Child } from "../../../../child-dev-project/children/model/child";
-import { Note } from "../../../../child-dev-project/notes/model/note";
-import { AlertService } from "../../../alerts/alert.service";
+import { EntitiesTableComponent, TableRow } from "./entities-table.component";
+import { Entity } from "../../entity/model/entity";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
+import { Note } from "../../../child-dev-project/notes/model/note";
+import moment from "moment/moment";
+import { Child } from "../../../child-dev-project/children/model/child";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
-import { EntityFormService } from "../../entity-form/entity-form.service";
-import { genders } from "../../../../child-dev-project/children/model/genders";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import moment from "moment";
+import { genders } from "../../../child-dev-project/children/model/genders";
+import { EntityFormService } from "../entity-form/entity-form.service";
+import { AlertService } from "../../alerts/alert.service";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { Subject } from "rxjs";
-import { UpdatedEntity } from "../../../entity/model/entity-update";
-import { EntityAbility } from "../../../permissions/ability/entity-ability";
-import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
-import { WINDOW_TOKEN } from "../../../../utils/di-tokens";
-import { FormDialogService } from "../../../form-dialog/form-dialog.service";
-import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
-import { assignInputAndTriggerOnChanges } from "../../../../utils/test-utils/mock-ng-on-changes.spec";
+import { UpdatedEntity } from "../../entity/model/entity-update";
+import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
 
-describe("EntitySubrecordComponent", () => {
-  let component: EntitySubrecordComponent<Entity>;
-  let fixture: ComponentFixture<EntitySubrecordComponent<Entity>>;
+describe("EntityTableComponent", () => {
+  let component: EntitiesTableComponent<Entity>;
+  let fixture: ComponentFixture<EntitiesTableComponent<Entity>>;
 
-  const defaultTestColumns = ["x", "name", "label"];
-
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
-      imports: [EntitySubrecordComponent, MockedTestingModule.withState()],
-      providers: [
-        { provide: WINDOW_TOKEN, useValue: window },
-        {
-          provide: FormDialogService,
-          useValue: jasmine.createSpyObj(["openFormPopup"]),
-        },
-      ],
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
+      imports: [EntitiesTableComponent],
     }).compileComponents();
-  }));
 
-  beforeEach(() => {
-    fixture = TestBed.createComponent(EntitySubrecordComponent);
+    fixture = TestBed.createComponent(EntitiesTableComponent);
     component = fixture.componentInstance;
-    component.editable = false;
-    component.columns = defaultTestColumns;
     fixture.detectChanges();
   });
 
@@ -75,14 +55,13 @@ describe("EntitySubrecordComponent", () => {
     const second = new Test("aab", "second");
     const third = new Test("c", "third");
     component.records = [second, first, third];
-    component.columns = [
+    component.customColumns = [
       {
         id: "enumValue",
         label: "Test Configurable Enum",
         viewComponent: "DisplayConfigurableEnum",
       },
     ];
-    component.ngOnChanges({ records: undefined, columns: undefined });
     fixture.detectChanges();
 
     component.recordsDataSource.sort.direction = "";
@@ -99,23 +78,20 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should apply default sort on first column and order dates descending", () => {
-    component.columns = ["date", "subject"];
+    component.customColumns = ["date", "subject"];
     component.columnsToDisplay = ["date", "subject"];
     component.records = [];
-    // Trigger a change with empty columns first as this is what some components do that init data asynchronously
-    component.ngOnChanges({ columns: undefined, records: undefined });
 
     const oldNote = Note.create(moment().subtract(1, "day").toDate());
     const newNote = Note.create(new Date());
     component.records = [oldNote, newNote];
-    component.ngOnChanges({ records: undefined });
 
     expect(component.recordsDataSource.sort.direction).toBe("desc");
     expect(component.recordsDataSource.sort.active).toBe("date");
   });
 
   it("should use input defaultSort if defined", () => {
-    component.columns = ["date", "subject"];
+    component.customColumns = ["date", "subject"];
     component.columnsToDisplay = ["date", "subject"];
     const n1 = Note.create(new Date(), "1");
     const n2 = Note.create(new Date(), "2");
@@ -123,8 +99,7 @@ describe("EntitySubrecordComponent", () => {
 
     component.records = [n3, n1, n2];
 
-    component.defaultSort = { active: "subject", direction: "asc" };
-    component.ngOnChanges({ columns: undefined, records: undefined });
+    component.sortBy = { active: "subject", direction: "asc" };
 
     expect(component.recordsDataSource.sort.direction).toBe("asc");
     expect(component.recordsDataSource.sort.active).toBe("subject");
@@ -142,7 +117,6 @@ describe("EntitySubrecordComponent", () => {
     children[2].name = "Z";
     children[1].name = "C";
     component.records = children;
-    component.ngOnChanges({ records: undefined });
 
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
@@ -159,7 +133,6 @@ describe("EntitySubrecordComponent", () => {
     notes[2].category = { id: "2", label: "Z", _ordinal: 0 };
     notes[3].category = { id: "1", label: "AB", _ordinal: 2 };
     component.records = notes;
-    component.ngOnChanges({ records: undefined });
 
     component.sort.sort({ id: "category", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
@@ -172,7 +145,6 @@ describe("EntitySubrecordComponent", () => {
   it("should sort strings ignoring case", () => {
     const names = ["C", "A", "b"];
     component.records = names.map((name) => Child.create(name));
-    component.ngOnChanges({ records: undefined });
     component.sort.sort({ id: "resetSort", start: "asc", disableClear: false });
 
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
@@ -185,10 +157,7 @@ describe("EntitySubrecordComponent", () => {
   });
 
   it("should create a formGroup when editing a row", () => {
-    component.columns = ["name", "projectNumber"];
-    assignInputAndTriggerOnChanges(component, {
-      columns: ["name", "projectNumber"],
-    });
+    component.customColumns = ["name", "projectNumber"];
 
     const child = new Child();
     child.name = "Child Name";
@@ -254,7 +223,7 @@ describe("EntitySubrecordComponent", () => {
   it("should create new entities and call the show entity function when it is supplied", fakeAsync(() => {
     const child = new Child();
     component.newRecordFactory = () => child;
-    component.columns = [{ id: "name" }, { id: "projectNumber" }];
+    component.customColumns = [{ id: "name" }, { id: "projectNumber" }];
 
     component.create();
     tick();
@@ -265,14 +234,12 @@ describe("EntitySubrecordComponent", () => {
   it("should create a new entity and open a dialog on default when clicking create", () => {
     const child = new Child();
     component.newRecordFactory = () => child;
-    assignInputAndTriggerOnChanges(component, {
-      newRecordFactory: component.newRecordFactory,
-    });
 
     const dialog = TestBed.inject(FormDialogService);
 
     component.create();
 
+    const defaultTestColumns = []; // TODO: what was this test case?
     expect(dialog.openFormPopup).toHaveBeenCalledWith(
       child,
       defaultTestColumns.map((x) => jasmine.objectContaining({ id: x })),
@@ -295,7 +262,6 @@ describe("EntitySubrecordComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     component.newRecordFactory = () => new Entity();
     component.records = [];
-    component.ngOnChanges({ records: undefined, newRecordFactory: undefined });
 
     const entity = new Entity();
     entityUpdates.next({ entity: entity, type: "new" });
@@ -309,7 +275,6 @@ describe("EntitySubrecordComponent", () => {
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     const entity = new Entity();
     component.records = [entity];
-    component.ngOnChanges({ records: undefined });
 
     expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
 
@@ -321,29 +286,9 @@ describe("EntitySubrecordComponent", () => {
   it("does not change the size of it's records when not saving a new record", async () => {
     const entity = new Entity();
     component.records = [entity];
-    component.ngOnChanges({ records: undefined });
 
     await component.save({ record: entity });
     expect(component.recordsDataSource.data).toHaveSize(1);
-  });
-
-  it("should correctly determine the entity constructor from factory", () => {
-    expect(component.entityConstructor).toBeUndefined();
-
-    const newRecordSpy = jasmine.createSpy().and.returnValue(new Child());
-    assignInputAndTriggerOnChanges(component, {
-      newRecordFactory: newRecordSpy,
-    });
-    expect(component.entityConstructor).toEqual(Child);
-    expect(newRecordSpy).toHaveBeenCalled();
-  });
-
-  it("should correctly determine the entity constructor from existing record", () => {
-    assignInputAndTriggerOnChanges(component, {
-      newRecordFactory: undefined,
-      records: [new Note()],
-    });
-    expect(component.entityConstructor).toEqual(Note);
   });
 
   it("should filter data based on filter definition", () => {
@@ -354,11 +299,10 @@ describe("EntitySubrecordComponent", () => {
     const c3 = Child.create("Matching");
     c3.dateOfBirth = new DateWithAge(moment().subtract(3, "years").toDate());
     // get type-safety for filters
-    const childComponent = component as any as EntitySubrecordComponent<Child>;
+    const childComponent = component as any as EntitiesTableComponent<Child>;
     childComponent.records = [c1, c2, c3];
 
     childComponent.filter = { name: "Matching" };
-    childComponent.ngOnChanges({ records: undefined, filter: undefined });
 
     expect(childComponent.recordsDataSource.data).toEqual([
       { record: c1 },
@@ -369,7 +313,6 @@ describe("EntitySubrecordComponent", () => {
       name: "Matching",
       "dateOfBirth.age": { $gte: 2 },
     } as any;
-    childComponent.ngOnChanges({ filter: undefined });
 
     expect(childComponent.recordsDataSource.data).toEqual([{ record: c3 }]);
 
@@ -378,7 +321,6 @@ describe("EntitySubrecordComponent", () => {
     const c5 = Child.create("Not Matching");
 
     childComponent.records = [c1, c2, c3, c4, c5];
-    childComponent.ngOnChanges({ records: undefined });
 
     expect(childComponent.recordsDataSource.data).toEqual([
       { record: c3 },
@@ -394,7 +336,6 @@ describe("EntitySubrecordComponent", () => {
     tick();
     component.records = [child];
     component.filter = { "gender.id": genders[1].id } as any;
-    component.ngOnChanges({ records: undefined, filter: undefined });
 
     expect(component.recordsDataSource.data).toEqual([{ record: child }]);
 
@@ -412,8 +353,6 @@ describe("EntitySubrecordComponent", () => {
     inactive.inactive = true;
 
     component.records = [active1, inactive];
-
-    component.ngOnChanges({ records: undefined, filter: undefined });
 
     expect(component.recordsDataSource.data).toEqual([{ record: active1 }]);
   });

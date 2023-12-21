@@ -3,20 +3,20 @@ import { Aser } from "../model/aser";
 import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
 import { ColumnConfig } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { NgIf } from "@angular/common";
 
 @DynamicComponent("Aser")
 @Component({
   selector: "app-aser",
-  template: ` <app-entity-subrecord
+  template: `<app-entities-table
+    [entityType]="entityCtr"
     [records]="records"
-    [columns]="config.columns"
+    [customColumns]="config.columns"
     [newRecordFactory]="generateNewRecordFactory()"
-  ></app-entity-subrecord>`,
+  ></app-entities-table>`,
   standalone: true,
-  imports: [EntitySubrecordComponent, NgIf],
+  imports: [EntitiesTableComponent],
 })
 export class AserComponent implements OnInit {
   @Input() entity: Child;
@@ -31,6 +31,7 @@ export class AserComponent implements OnInit {
     ],
   };
   records: Aser[];
+  entityCtr = Aser;
 
   constructor(private childrenService: ChildrenService) {}
 

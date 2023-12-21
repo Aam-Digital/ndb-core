@@ -13,7 +13,7 @@ import { DatePipe, NgIf, PercentPipe } from "@angular/common";
 import { FormsModule } from "@angular/forms";
 import { MatInputModule } from "@angular/material/input";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 
 @Component({
   selector: "app-attendance-details",
@@ -28,7 +28,7 @@ import { EntitySubrecordComponent } from "../../../core/common-components/entity
     DatePipe,
     FormsModule,
     MatInputModule,
-    EntitySubrecordComponent,
+    EntitiesTableComponent,
     AttendanceCalendarComponent,
   ],
   standalone: true,
@@ -36,6 +36,7 @@ import { EntitySubrecordComponent } from "../../../core/common-components/entity
 export class AttendanceDetailsComponent {
   @Input() entity: ActivityAttendance = new ActivityAttendance();
   @Input() forChild: string;
+  EventNote = EventNote;
 
   eventsColumns: FormFieldConfig[] = [
     { id: "date" },

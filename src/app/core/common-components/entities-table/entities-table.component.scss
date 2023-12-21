@@ -2,6 +2,16 @@
 @use "variables/colors";
 @use "@angular/material/core/style/elevation" as mat-elevation;
 
+.table-container {
+  position: relative; // anchor for further absolute positioning of child elements
+}
+
+.column-menu {
+  position: absolute;
+  top: 0;
+  right: 0;
+}
+
 .table-action-button {
   border: 1px solid lightgrey;
   border-radius: 4px;

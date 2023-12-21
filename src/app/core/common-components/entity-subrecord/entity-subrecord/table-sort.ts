@@ -1,7 +1,7 @@
 import { getReadableValue } from "./value-accessor";
-import { TableRow } from "./entity-subrecord.component";
 import { Entity } from "../../../entity/model/entity";
 import { Ordering } from "../../../basic-datatypes/configurable-enum/configurable-enum-ordering";
+import { TableRow } from "../../entities-table/entities-table.component";
 
 /**
  * Custom sort implementation for a MatTableDataSource<TableRow<T>>

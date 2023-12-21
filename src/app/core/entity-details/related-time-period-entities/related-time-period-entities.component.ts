@@ -7,7 +7,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgIf } from "@angular/common";
-import { EntitySubrecordComponent } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
@@ -28,7 +28,7 @@ import { TimePeriod } from "./time-period";
   styleUrls: ["./related-time-period-entities.component.scss"],
   imports: [
     FontAwesomeModule,
-    EntitySubrecordComponent,
+    EntitiesTableComponent,
     MatSlideToggleModule,
     FormsModule,
     MatTooltipModule,
@@ -66,6 +66,7 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   async ngOnInit() {
     this.onIsActiveFilterChange(this.showInactive);
     await super.initData();
+    super.listenToEntityUpdates();
   }
 
   onIsActiveFilterChange(newValue: boolean) {

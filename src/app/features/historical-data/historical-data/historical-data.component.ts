@@ -4,7 +4,7 @@ import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalDataService } from "../historical-data.service";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 
 /**
  * A general component that can be included on a entity details page through the config.
@@ -14,18 +14,21 @@ import { EntitySubrecordComponent } from "../../../core/common-components/entity
 @DynamicComponent("HistoricalDataComponent")
 @Component({
   selector: "app-historical-data",
-  template: ` <app-entity-subrecord
+  template: ` <app-entities-table
+    [entityType]="entityConstructor"
     [records]="entries"
-    [columns]="config"
+    [customColumns]="config"
     [newRecordFactory]="getNewEntryFunction()"
-  ></app-entity-subrecord>`,
-  imports: [EntitySubrecordComponent],
+  ></app-entities-table>`,
+  imports: [EntitiesTableComponent],
   standalone: true,
 })
 export class HistoricalDataComponent implements OnInit {
   @Input() entity: Entity;
   @Input() config: FormFieldConfig[] = [];
-  entries: HistoricalEntityData[] = [];
+  entries: HistoricalEntityData[];
+
+  entityConstructor = HistoricalEntityData;
 
   constructor(private historicalDataService: HistoricalDataService) {}
 

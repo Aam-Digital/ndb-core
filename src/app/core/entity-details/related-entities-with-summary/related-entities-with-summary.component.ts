@@ -2,11 +2,11 @@ import { Component, Input, OnInit } from "@angular/core";
 import { NgFor, NgIf } from "@angular/common";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { EntitySubrecordComponent } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { Entity } from "../../entity/model/entity";
 import { filter } from "rxjs/operators";
 import { applyUpdate } from "../../entity/model/entity-update";
+import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view)
@@ -17,7 +17,7 @@ import { applyUpdate } from "../../entity/model/entity-update";
 @Component({
   selector: "app-related-entities-with-summary",
   templateUrl: "./related-entities-with-summary.component.html",
-  imports: [EntitySubrecordComponent, NgIf, NgFor],
+  imports: [EntitiesTableComponent, NgIf, NgFor],
   standalone: true,
 })
 export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>

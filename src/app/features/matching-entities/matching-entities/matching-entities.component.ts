@@ -31,7 +31,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { Coordinates } from "../../location/coordinates";
@@ -42,6 +41,7 @@ import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pip
 import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { RouteTarget } from "../../../route-target";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -78,7 +78,7 @@ export interface MatchingSide extends MatchingSideConfig {
     NgIf,
     MatButtonModule,
     NgForOf,
-    EntitySubrecordComponent,
+    EntitiesTableComponent,
     EntityFieldViewComponent,
     MapComponent,
     FilterComponent,

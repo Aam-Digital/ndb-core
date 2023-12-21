@@ -17,7 +17,9 @@ export interface EntityListConfig {
   entity?: string;
 
   /**
-   * The columns to be displayed in the table
+   * The columns to be displayed in the table.
+   *
+   * If any special columns aside from the entity's fields are needed, add them here.
    */
   columns: (FormFieldConfig | string)[];
 

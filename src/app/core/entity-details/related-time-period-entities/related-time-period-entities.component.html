@@ -1,24 +1,21 @@
-<app-pill class="hint-badge" *ngIf="!hasCurrentlyActiveEntry && !isLoading">
+<app-pill class="hint-badge" *ngIf="!hasCurrentlyActiveEntry && !!data">
   Currently there is no active entry. To add a new entry, click on the
   <fa-icon
     class="pointer color-accent"
     aria-label="add"
     icon="plus-circle"
-    (click)="entitySubrecord.create()"
   ></fa-icon>
   button.
 </app-pill>
 
-<app-entity-subrecord
-  #entitySubrecord
+<app-entities-table
+  [entityType]="entityCtr"
   [records]="data"
   [filter]="filter"
-  [isLoading]="isLoading"
-  [columns]="_columns"
+  [customColumns]="_columns"
   [newRecordFactory]="generateNewRecordFactory()"
   [getBackgroundColor]="backgroundColorFn"
   [clickMode]="clickMode"
-  [(showInactive)]="showInactive"
-  (showInactiveChange)="onIsActiveFilterChange($event)"
+  [showInactive]="showInactive"
 >
-</app-entity-subrecord>
+</app-entities-table>

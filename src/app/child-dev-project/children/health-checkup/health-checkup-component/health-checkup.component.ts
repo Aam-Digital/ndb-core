@@ -4,17 +4,19 @@ import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
 
 @DynamicComponent("HealthCheckup")
 @Component({
   selector: "app-health-checkup",
   templateUrl: "./health-checkup.component.html",
-  imports: [EntitySubrecordComponent],
+  imports: [EntitiesTableComponent],
   standalone: true,
 })
 export class HealthCheckupComponent implements OnInit {
   records: HealthCheck[] = [];
+  entityCtr = HealthCheck;
+
   /**
    * Column Description for the SubentityRecordComponent
    * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
