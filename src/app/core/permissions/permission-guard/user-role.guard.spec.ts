@@ -10,11 +10,11 @@ describe("UserRoleGuard", () => {
   let guard: UserRoleGuard;
   let sessionInfo: SessionSubject;
   const normalUser: SessionInfo = {
-    entityId: "normalUser",
+    name: "normalUser",
     roles: ["user_app"],
   };
   const adminUser: SessionInfo = {
-    entityId: "admin",
+    name: "admin",
     roles: ["admin", "user_app"],
   };
 

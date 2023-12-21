@@ -84,7 +84,7 @@ export class MockedTestingModule {
         {
           provide: SessionSubject,
           useValue: new BehaviorSubject<SessionInfo>({
-            entityId: TEST_USER,
+            name: TEST_USER,
             roles: ["user_app"],
           }),
         },

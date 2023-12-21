@@ -17,7 +17,7 @@ describe("LocalAuthService", () => {
   it("should return saved users", () => {
     localStorage.clear();
     testUser = {
-      entityId: TEST_USER,
+      name: TEST_USER,
       roles: ["user_app"],
     };
     service.saveUser(testUser);

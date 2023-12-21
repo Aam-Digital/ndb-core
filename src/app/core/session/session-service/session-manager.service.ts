@@ -106,7 +106,7 @@ export class SessionManagerService {
     // TODO quite similar to LatestEntityLoader?
     // TODO is it a problem if the user entity is only available later or not at all?
     this.entityMapper
-      .load(User, user.entityId)
+      .load(User, user.name)
       .then((res) => this.currentlyLoggedIn.next(res))
       .catch(() => undefined);
     this.updateSubscription = this.entityMapper
@@ -114,8 +114,7 @@ export class SessionManagerService {
       .pipe(
         filter(
           ({ entity }) =>
-            entity.getId(true) === user.entityId ||
-            entity.getId() === user.entityId,
+            entity.getId(true) === user.name || entity.getId() === user.name,
         ),
       )
       .subscribe(({ entity }) => this.currentlyLoggedIn.next(entity));
@@ -168,7 +167,7 @@ export class SessionManagerService {
   }
 
   private async initializeDatabaseForCurrentUser(user: SessionInfo) {
-    const userDBName = `${user.entityId}-${AppSettings.DB_NAME}`;
+    const userDBName = `${user.name}-${AppSettings.DB_NAME}`;
     // Work on a temporary database before initializing the real one
     const tmpDB = new PouchDatabase(undefined);
     this.initDatabase(userDBName, tmpDB);
@@ -180,10 +179,10 @@ export class SessionManagerService {
 
     this.initDatabase(AppSettings.DB_NAME, tmpDB);
     const dbFallback = window.localStorage.getItem(this.DEPRECATED_DB_KEY);
-    const dbAvailable = !dbFallback || dbFallback === user.entityId;
+    const dbAvailable = !dbFallback || dbFallback === user.name;
     if (dbAvailable && !(await tmpDB.isEmpty())) {
       // Old database is available and can be used by the current user
-      window.localStorage.setItem(this.DEPRECATED_DB_KEY, user.entityId);
+      window.localStorage.setItem(this.DEPRECATED_DB_KEY, user.name);
       this.initDatabase(AppSettings.DB_NAME);
       return;
     }

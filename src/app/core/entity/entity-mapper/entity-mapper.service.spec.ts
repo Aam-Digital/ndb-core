@@ -272,7 +272,7 @@ describe("EntityMapperService", () => {
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
     TestBed.inject(SessionSubject).next({
-      entityId: TEST_USER,
+      name: TEST_USER,
       roles: [],
     });
     const id = "test_created";

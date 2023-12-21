@@ -58,7 +58,7 @@ export class PermissionEnforcerService {
   }
 
   private getUserStorageKey() {
-    return `${this.sessionInfo.value.entityId}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`;
+    return `${this.sessionInfo.value.name}-${PermissionEnforcerService.LOCALSTORAGE_KEY}`;
   }
 
   private getSubjectsWithReadRestrictions(

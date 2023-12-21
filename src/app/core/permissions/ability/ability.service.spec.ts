@@ -133,7 +133,7 @@ describe("AbilityService", () => {
 
     spyOn(ability, "update");
     TestBed.inject(SessionSubject).next({
-      entityId: "testAdmin",
+      name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
 
@@ -168,7 +168,7 @@ describe("AbilityService", () => {
     expect(ability.can("create", new Note())).toBeFalse();
 
     TestBed.inject(SessionSubject).next({
-      entityId: "testAdmin",
+      name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
 
@@ -264,7 +264,7 @@ describe("AbilityService", () => {
     tick();
 
     TestBed.inject(SessionSubject).next({
-      entityId: "new-user",
+      name: "new-user",
       roles: ["invalid_role"],
     });
     const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
@@ -295,7 +295,7 @@ describe("AbilityService", () => {
     expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
 
     TestBed.inject(SessionSubject).next({
-      entityId: "admin",
+      name: "admin",
       roles: ["user_app", "admin_app"],
     });
 

@@ -10,7 +10,7 @@ export interface SessionInfo {
    * This is either a full ID or (e.g. Child:123) or only the last part.
    * In the later case it refers to the `User` entity.
    */
-  entityId?: string;
+  name?: string;
   /**
    * a list of roles the logged-in user hold.
    */

@@ -131,7 +131,7 @@ export class SupportComponent implements OnInit {
   sendReport() {
     // This is sent even without submitting the crash report.
     Sentry.captureMessage("report information", {
-      user: { name: this.sessionInfo.entityId },
+      user: { name: this.sessionInfo.name },
       level: "debug",
       extra: {
         currentlyLoggedIn: this.currentlyLoggedIn.getId(true),
@@ -148,7 +148,7 @@ export class SupportComponent implements OnInit {
     });
     Sentry.showReportDialog({
       user: {
-        name: this.sessionInfo.entityId,
+        name: this.sessionInfo.name,
         email: "example@email.com",
       },
       title: $localize`:Title user feedback dialog:Support request`,

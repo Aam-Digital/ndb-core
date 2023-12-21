@@ -52,7 +52,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       // No rules or only default rules defined
       const user = this.sessionInfo.value;
       this.logger.warn(
-        `no rules found for user "${user?.entityId}" with roles "${user?.roles}"`,
+        `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
     }
     this.ability.update(userRules);
