@@ -17,11 +17,11 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
-import { CurrentUserSubject } from "../../user/user";
 import {
   ColumnConfig,
   toFormFieldConfig,
 } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -188,7 +188,7 @@ export class EntityFormService {
         newVal = new Date();
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.currentUser.value.name;
+        newVal = this.currentUser.value.getId();
         break;
       default:
         newVal = schema.defaultValue;

@@ -25,7 +25,7 @@ import { LoginStateSubject } from "../session-type";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { SessionManagerService } from "../session-service/session-manager.service";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
-import { AuthUser } from "../auth/auth-user";
+import { SessionInfo } from "../auth/session-info";
 import { SiteSettingsService } from "../../site-settings/site-settings.service";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatListModule } from "@angular/material/list";
@@ -55,7 +55,7 @@ import { race, timer } from "rxjs";
   standalone: true,
 })
 export class LoginComponent implements OnInit {
-  offlineUsers: AuthUser[] = [];
+  offlineUsers: SessionInfo[] = [];
   enableOfflineLogin = !this.sessionManager.remoteLoginAvailable();
   loginInProgress = false;
 

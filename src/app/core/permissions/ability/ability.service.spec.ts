@@ -6,7 +6,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
-import { CurrentUserSubject, User } from "../../user/user";
+import { User } from "../../user/user";
 import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 import { EntityAbility } from "./entity-ability";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
@@ -14,10 +14,11 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
-import { TEST_USER } from "../../../utils/mock-local-session";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
 import { EventAttendanceDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
+import { SessionSubject } from "../../session/auth/session-info";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -44,7 +45,7 @@ describe("AbilityService", () => {
         AbilityService,
         EntityAbility,
         {
-          provide: CurrentUserSubject,
+          provide: SessionSubject,
           useValue: new BehaviorSubject({
             name: TEST_USER,
             roles: ["user_app"],
@@ -132,7 +133,7 @@ describe("AbilityService", () => {
     tick();
 
     spyOn(ability, "update");
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
@@ -167,7 +168,7 @@ describe("AbilityService", () => {
     expect(ability.can("manage", new Note())).toBeFalse();
     expect(ability.can("create", new Note())).toBeFalse();
 
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: "testAdmin",
       roles: ["user_app", "admin_app"],
     });
@@ -263,7 +264,7 @@ describe("AbilityService", () => {
     service.initializeRules();
     tick();
 
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: "new-user",
       roles: ["invalid_role"],
     });
@@ -294,7 +295,7 @@ describe("AbilityService", () => {
 
     expect(ability.rules).toEqual(defaultRules.concat(...rules.user_app));
 
-    TestBed.inject(CurrentUserSubject).next({
+    TestBed.inject(SessionSubject).next({
       name: "admin",
       roles: ["user_app", "admin_app"],
     });

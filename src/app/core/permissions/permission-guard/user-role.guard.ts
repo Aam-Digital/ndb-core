@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { Router } from "@angular/router";
-import { CurrentUserSubject } from "../../user/user";
 import { AbstractPermissionGuard } from "./abstract-permission.guard";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * A guard that checks the roles of the current user against the permissions which are saved in the route data.
@@ -11,7 +11,7 @@ import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-
 export class UserRoleGuard extends AbstractPermissionGuard {
   constructor(
     router: Router,
-    private currentUser: CurrentUserSubject,
+    private sessionInfo: SessionSubject,
   ) {
     super(router);
   }
@@ -20,7 +20,7 @@ export class UserRoleGuard extends AbstractPermissionGuard {
     routeData: DynamicComponentConfig,
   ): Promise<boolean> {
     const permittedRoles = routeData?.permittedUserRoles;
-    const user = this.currentUser.value;
+    const user = this.sessionInfo.value;
 
     if (permittedRoles?.length > 0) {
       // Check if user has a role which is in the list of permitted roles

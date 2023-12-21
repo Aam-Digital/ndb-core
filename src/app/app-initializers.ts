@@ -12,7 +12,7 @@ import { LoginState } from "./core/session/session-states/login-state.enum";
 import { LoggingService } from "./core/logging/logging.service";
 import { environment } from "../environments/environment";
 import { LoginStateSubject } from "./core/session/session-type";
-import { CurrentUserSubject } from "./core/user/user";
+import { SessionSubject } from "./core/session/auth/session-info";
 
 export const appInitializers = {
   provide: APP_INITIALIZER,
@@ -23,7 +23,7 @@ export const appInitializers = {
       routerService: RouterService,
       entityConfigService: EntityConfigService,
       router: Router,
-      currentUser: CurrentUserSubject,
+      sessionInfo: SessionSubject,
       analyticsService: AnalyticsService,
       loginState: LoginStateSubject,
     ) =>
@@ -39,7 +39,7 @@ export const appInitializers = {
       // update the user context for remote error logging and tracking and load config initially
       loginState.subscribe((newState) => {
         if (newState === LoginState.LOGGED_IN) {
-          const username = currentUser.value.name;
+          const username = sessionInfo.value.name;
           LoggingService.setLoggingContextUser(username);
           analyticsService.setUser(username);
         } else {
@@ -64,7 +64,7 @@ export const appInitializers = {
     RouterService,
     EntityConfigService,
     Router,
-    CurrentUserSubject,
+    SessionSubject,
     AnalyticsService,
     LoginStateSubject,
   ],
