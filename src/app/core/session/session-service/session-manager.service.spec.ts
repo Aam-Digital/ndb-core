@@ -38,6 +38,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { Child } from "../../../child-dev-project/children/model/child";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -139,6 +140,23 @@ describe("SessionManagerService", () => {
     const adminUser = new User("admin-user");
     await entityMapper.save(adminUser);
     expect(currentUser.value).toEqual(adminUser);
+  });
+
+  it("should allow other entities to log in", async () => {
+    const childSession: SessionInfo = { name: "Child:123", roles: [] };
+    mockKeycloak.login.and.resolveTo(childSession);
+    const loggedInChild = new Child("123");
+    const otherChild = new Child("456");
+    await TestBed.inject(EntityMapperService).saveAll([
+      loggedInChild,
+      otherChild,
+    ]);
+
+    await service.remoteLogin();
+
+    expect(sessionInfo.value).toBe(childSession);
+    expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+    expect(TestBed.inject(CurrentUserSubject).value).toEqual(loggedInChild);
   });
 
   it("should automatically login, if the session is still valid", async () => {

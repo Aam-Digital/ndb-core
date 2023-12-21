@@ -34,6 +34,7 @@ import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { Subscription } from "rxjs";
+import { Entity } from "../../entity/model/entity";
 
 /**
  * This service handles the user session.
@@ -96,18 +97,23 @@ export class SessionManagerService {
     return this.initializeUser(user);
   }
 
-  private async initializeUser(user: SessionInfo) {
-    await this.initializeDatabaseForCurrentUser(user);
-    this.sessionInfo.next(user);
+  private async initializeUser(session: SessionInfo) {
+    await this.initializeDatabaseForCurrentUser(session);
+    this.sessionInfo.next(session);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
+    this.initUserEntity(session);
+  }
 
-    // TODO allow generic entities with fallback to User entity
+  private initUserEntity(user: SessionInfo) {
+    const entityType = user.name.includes(":")
+      ? Entity.extractTypeFromId(user.name)
+      : User;
     this.entityMapper
-      .load(User, user.name)
+      .load(entityType, user.name)
       .then((res) => this.currentUser.next(res))
       .catch(() => undefined);
     this.updateSubscription = this.entityMapper
-      .receiveUpdates(User)
+      .receiveUpdates(entityType)
       .pipe(
         filter(
           ({ entity }) =>
