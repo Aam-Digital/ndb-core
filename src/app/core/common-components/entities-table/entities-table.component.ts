@@ -6,14 +6,10 @@ import {
   ViewChild,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
-import { Angulartics2Module } from "angulartics2";
-import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
-import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
-import { MatButtonModule } from "@angular/material/button";
 import {
   MatCheckboxChange,
   MatCheckboxModule,
@@ -45,6 +41,7 @@ import { Router } from "@angular/router";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
+import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -55,20 +52,17 @@ import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/e
   standalone: true,
   imports: [
     CommonModule,
-    Angulartics2Module,
-    DisableEntityOperationDirective,
     EntityFieldEditComponent,
     EntityFieldLabelComponent,
     EntityFieldViewComponent,
-    FaIconComponent,
     ListPaginatorComponent,
-    MatButtonModule,
     MatCheckboxModule,
     MatProgressBarModule,
     MatSlideToggleModule,
     MatSortModule,
     MatTableModule,
     EntityInlineEditActionsComponent,
+    EntityCreateButtonComponent,
   ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
@@ -247,15 +241,6 @@ export class EntitiesTableComponent<T extends Entity> {
   @Input() newRecordFactory: () => T;
 
   /**
-   * Create a new entity.
-   * The entity is only written to the database when the user saves this record which is newly added in edit mode.
-   */
-  create() {
-    const newRecord = this.newRecordFactory();
-    this.showEntity(newRecord);
-  }
-
-  /**
    * Show one record's details in a modal dialog (if configured).
    * @param row The entity whose details should be displayed.
    */
@@ -263,9 +248,10 @@ export class EntitiesTableComponent<T extends Entity> {
     if (!row.formGroup || row.formGroup.disabled) {
       this.showEntity(row.record);
     }
+    this.rowClick.emit(row.record);
   }
 
-  private showEntity(entity: T) {
+  showEntity(entity: T) {
     switch (this.clickMode) {
       case "popup":
         this.formDialog.openFormPopup(entity, this.columnsToDisplay); // TODO this.formDialog.openFormPopup(entity, this._columns)
@@ -277,7 +263,6 @@ export class EntitiesTableComponent<T extends Entity> {
         ]);
         break;
     }
-    this.rowClick.emit(entity);
   }
 
   constructor(

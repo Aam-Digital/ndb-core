@@ -45,6 +45,7 @@ import { EntitiesTableComponent } from "../../common-components/entities-table/e
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
+import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -82,6 +83,7 @@ import { DataFilter } from "../../filter/filters/filters";
     DisableEntityOperationDirective,
     RouterLink,
     MatTooltipModule,
+    EntityCreateButtonComponent,
   ],
   standalone: true,
 })
