@@ -10,6 +10,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
+import { LoggingService } from "../../../logging/logging.service";
 
 @DynamicComponent("EditSingleEntity")
 @Component({
@@ -32,17 +33,37 @@ export class EditSingleEntityComponent
   implements OnInit
 {
   entities: Entity[] = [];
-  entityToId = (e: Entity) => e?.getId();
+  entityToId = (e: Entity) => e?.getId(true);
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(
+    private entityMapper: EntityMapperService,
+    private logger: LoggingService,
+  ) {
     super();
   }
 
   async ngOnInit() {
     super.ngOnInit();
-    this.entities = await this.entityMapperService.loadType(
-      this.formFieldConfig.additional,
+    const availableEntities = await this.entityMapper.loadType(this.additional);
+    const selected = this.formControl.value;
+    if (
+      selected &&
+      !availableEntities.some(
+        (e) => e.getId(true) === selected || e.getId() === selected,
+      )
+    ) {
+      try {
+        const type = Entity.extractTypeFromId(selected);
+        const entity = await this.entityMapper.load(type, selected);
+        availableEntities.push(entity);
+      } catch (e) {
+        this.logger.warn(
+          `[EDIT_SINGLE_ENTITY] Could not find entity with ID: ${selected}: ${e}`,
+        );
+      }
+    }
+    this.entities = availableEntities.sort((e1, e2) =>
+      e1.toString().localeCompare(e2.toString()),
     );
-    this.entities.sort((e1, e2) => e1.toString().localeCompare(e2.toString()));
   }
 }
