@@ -42,6 +42,10 @@ import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
+import { DateWithAgeDatatype } from "../../basic-datatypes/date-with-age/date-with-age.datatype";
+import { MonthDatatype } from "../../basic-datatypes/month/month.datatype";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -88,11 +92,15 @@ export class EntitiesTableComponent<T extends Entity> {
    */
   @Input() set customColumns(value: ColumnConfig[]) {
     this._customColumns = value.map((c) =>
-      this.entityFormService.extendFormFieldConfig(c, this.entityType),
+      this.entityType
+        ? this.entityFormService.extendFormFieldConfig(c, this.entityType)
+        : toFormFieldConfig(c),
     );
-    const entityColumns = [...this.entityType.schema.keys()].map((c) =>
-      toFormFieldConfig(c),
-    );
+    const entityColumns = this.entityType?.schema
+      ? [...this.entityType.schema.entries()].map(
+          ([id, field]) => ({ ...field, id }) as FormFieldConfig,
+        )
+      : [];
 
     const allColumns = [...entityColumns, ...this._customColumns];
     this._columns = allColumns
@@ -179,6 +187,7 @@ export class EntitiesTableComponent<T extends Entity> {
   @Output() filteredRecordsChange = new EventEmitter<T[]>(true);
 
   private updateFilteredData() {
+    this.addActiveInactiveFilter(this._filter);
     const filterPredicate = this.filterService.getFilterPredicate(this._filter);
     const filteredData = this._records.filter(filterPredicate);
     this.recordsDataSource.data = filteredData.map((record) => ({ record }));
@@ -285,7 +294,13 @@ export class EntitiesTableComponent<T extends Entity> {
     let sortDirection: SortDirection = "asc";
     if (
       sortByColumn?.viewComponent === "DisplayDate" ||
-      sortByColumn?.viewComponent === "DisplayMonth"
+      sortByColumn?.viewComponent === "DisplayMonth" ||
+      [
+        DateDatatype.dataType,
+        DateOnlyDatatype.dataType,
+        DateWithAgeDatatype.dataType,
+        MonthDatatype.dataType,
+      ].includes(sortByColumn?.dataType)
     ) {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";
@@ -302,22 +317,23 @@ export class EntitiesTableComponent<T extends Entity> {
    *
    *
    */
-  @Input() showInactive = false;
+  @Input() set showInactive(value: boolean) {
+    if (value === this._showInactive) {
+      return;
+    }
+
+    this._showInactive = value;
+    this.updateFilteredData();
+    this.showInactiveChange.emit(value);
+  }
+  _showInactive: boolean = false;
   @Output() showInactiveChange = new EventEmitter<boolean>();
 
-  setActiveInactiveFilter(newValue: boolean) {
-    if (newValue !== this.showInactive) {
-      this.showInactive = newValue;
-
-      const newFilter = { ...this.filter };
-      if (this.showInactive) {
-        delete newFilter["isActive"];
-      } else {
-        newFilter["isActive"] = true;
-      }
-      this.filter = newFilter;
-
-      this.showInactiveChange.emit(newValue);
+  addActiveInactiveFilter(filter: DataFilter<T>) {
+    if (this._showInactive) {
+      delete filter["isActive"];
+    } else {
+      filter["isActive"] = true;
     }
   }
 }

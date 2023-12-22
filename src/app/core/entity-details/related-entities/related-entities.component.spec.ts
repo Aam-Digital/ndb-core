@@ -1,10 +1,18 @@
-import { ComponentFixture, TestBed } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+} from "@angular/core/testing";
 
 import { RelatedEntitiesComponent } from "./related-entities.component";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
+import { Subject } from "rxjs";
+import { UpdatedEntity } from "../../entity/model/entity-update";
+import { Entity } from "../../entity/model/entity";
 
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<ChildSchoolRelation>;
@@ -69,4 +77,33 @@ describe("RelatedEntitiesComponent", () => {
     expect(newEntity instanceof ChildSchoolRelation).toBeTrue();
     expect(newEntity["childId"]).toBe(related.getId());
   });
+
+  it("should add a new entity that was created after the initial loading to the table", fakeAsync(() => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    component.ngOnInit();
+    tick();
+
+    const entity = new ChildSchoolRelation();
+    entityUpdates.next({ entity: entity, type: "new" });
+    tick();
+
+    expect(component.data).toEqual([entity]);
+  }));
+
+  it("should remove an entity from the table when it has been deleted", fakeAsync(() => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    const entity = new ChildSchoolRelation();
+    component.data = [entity];
+    component.ngOnInit();
+    tick();
+
+    entityUpdates.next({ entity: entity, type: "remove" });
+    tick();
+
+    expect(component.data).toEqual([]);
+  }));
 });

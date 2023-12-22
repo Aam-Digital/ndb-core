@@ -6,7 +6,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { Subscription } from "rxjs";
-import { untilDestroyed } from "@ngneat/until-destroy";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../entity/model/entity-update";
 import {
   ScreenSize,
@@ -22,6 +22,7 @@ import { DataFilter } from "../../filter/filters/filters";
  * Load and display a list of entity subrecords (entities related to the current entity details view).
  */
 @DynamicComponent("RelatedEntities")
+@UntilDestroy()
 @Component({
   selector: "app-related-entities",
   templateUrl: "./related-entities.component.html",

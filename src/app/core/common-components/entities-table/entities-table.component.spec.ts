@@ -1,39 +1,56 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-} from "@angular/core/testing";
+import { ComponentFixture, fakeAsync, TestBed } from "@angular/core/testing";
 
-import { EntitiesTableComponent, TableRow } from "./entities-table.component";
+import { EntitiesTableComponent } from "./entities-table.component";
 import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
 import moment from "moment/moment";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
-import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { UntypedFormBuilder, UntypedFormGroup } from "@angular/forms";
 import { genders } from "../../../child-dev-project/children/model/genders";
-import { EntityFormService } from "../entity-form/entity-form.service";
-import { AlertService } from "../../alerts/alert.service";
-import { FormDialogService } from "../../form-dialog/form-dialog.service";
-import { Subject } from "rxjs";
-import { UpdatedEntity } from "../../entity/model/entity-update";
 import { DateWithAge } from "../../basic-datatypes/date-with-age/dateWithAge";
+import { EntityFormService } from "../entity-form/entity-form.service";
+import { toFormFieldConfig } from "../entity-form/FormConfig";
+import { FilterService } from "../../filter/filter.service";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { of } from "rxjs";
+import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
 
 describe("EntityTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
   let fixture: ComponentFixture<EntitiesTableComponent<Entity>>;
 
+  let mockFormService: jasmine.SpyObj<EntityFormService>;
+
   beforeEach(async () => {
+    mockFormService = jasmine.createSpyObj(["extendFormFieldConfig"]);
+    mockFormService.extendFormFieldConfig.and.callFake((c) =>
+      toFormFieldConfig(c),
+    );
+
     await TestBed.configureTestingModule({
-      imports: [EntitiesTableComponent],
+      imports: [
+        EntitiesTableComponent,
+        CoreTestingModule,
+        NoopAnimationsModule,
+      ],
+      providers: [
+        { provide: EntityFormService, useValue: mockFormService },
+        FilterService,
+        {
+          provide: FormDialogService,
+          useValue: jasmine.createSpyObj(["openFormPopup"]),
+        },
+        { provide: CurrentUserSubject, useValue: of(null) },
+        { provide: EntityMapperService, useValue: null },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EntitiesTableComponent);
     component = fixture.componentInstance;
+    component.editable = false;
     fixture.detectChanges();
   });
 
@@ -78,9 +95,9 @@ describe("EntityTableComponent", () => {
   });
 
   it("should apply default sort on first column and order dates descending", () => {
+    component.entityType = Note;
     component.customColumns = ["date", "subject"];
     component.columnsToDisplay = ["date", "subject"];
-    component.records = [];
 
     const oldNote = Note.create(moment().subtract(1, "day").toDate());
     const newNote = Note.create(new Date());
@@ -118,11 +135,11 @@ describe("EntityTableComponent", () => {
     children[1].name = "C";
     component.records = children;
 
-    component.sort.sort({ id: "name", start: "asc", disableClear: false });
+    component.sortBy = { active: "name", direction: "asc" };
+
     const sortedIds = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
       .map((c) => c.record.getId());
-
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 
@@ -134,116 +151,25 @@ describe("EntityTableComponent", () => {
     notes[3].category = { id: "1", label: "AB", _ordinal: 2 };
     component.records = notes;
 
-    component.sort.sort({ id: "category", start: "asc", disableClear: false });
+    component.sortBy = { active: "category", direction: "asc" };
+
     const sortedIds = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
       .map((note) => note.record.getId());
-
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 
   it("should sort strings ignoring case", () => {
     const names = ["C", "A", "b"];
     component.records = names.map((name) => Child.create(name));
-    component.sort.sort({ id: "resetSort", start: "asc", disableClear: false });
 
-    component.sort.sort({ id: "name", start: "asc", disableClear: false });
+    component.sortBy = { active: "name", direction: "asc" };
 
     const sortedNames = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
       .map((row) => row.record["name"]);
 
     expect(sortedNames).toEqual(["A", "b", "C"]);
-  });
-
-  it("should create a formGroup when editing a row", () => {
-    component.customColumns = ["name", "projectNumber"];
-
-    const child = new Child();
-    child.name = "Child Name";
-    child.projectNumber = "01";
-    const tableRow: TableRow<Entity> = { record: child };
-    const media = TestBed.inject(ScreenWidthObserver);
-    spyOn(media, "isDesktop").and.returnValue(true);
-
-    component.edit(tableRow);
-
-    const formGroup = tableRow.formGroup;
-    expect(formGroup.get("name")).toHaveValue("Child Name");
-    expect(formGroup.get("projectNumber")).toHaveValue("01");
-    expect(formGroup).toBeEnabled();
-  });
-
-  it("should correctly save changes to an entity", fakeAsync(() => {
-    TestBed.inject(EntityAbility).update([
-      { subject: "Child", action: "create" },
-    ]);
-    const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "save").and.resolveTo();
-    const fb = TestBed.inject(UntypedFormBuilder);
-    const child = new Child();
-    child.name = "Old Name";
-    const formGroup = fb.group({
-      name: "New Name",
-      gender: genders[2],
-    });
-    const tableRow = { record: child, formGroup: formGroup };
-
-    component.save(tableRow);
-    tick();
-
-    expect(entityMapper.save).toHaveBeenCalledWith(tableRow.record);
-    expect(tableRow.record.name).toBe("New Name");
-    expect(tableRow.record.gender).toBe(genders[2]);
-    expect(tableRow.formGroup).not.toBeEnabled();
-  }));
-
-  it("should show a error message when saving fails", fakeAsync(() => {
-    const entityFormService = TestBed.inject(EntityFormService);
-    spyOn(entityFormService, "saveChanges").and.rejectWith(
-      new Error("Form invalid"),
-    );
-    const alertService = TestBed.inject(AlertService);
-    spyOn(alertService, "addDanger");
-
-    component.save({ formGroup: null, record: new Child() });
-    tick();
-
-    expect(alertService.addDanger).toHaveBeenCalledWith("Form invalid");
-  }));
-
-  it("should clear the form group when resetting", () => {
-    const row = { record: new Child(), formGroup: new UntypedFormGroup({}) };
-
-    component.resetChanges(row);
-
-    expect(row.formGroup).toBeFalsy();
-  });
-
-  it("should create new entities and call the show entity function when it is supplied", fakeAsync(() => {
-    const child = new Child();
-    component.newRecordFactory = () => child;
-    component.customColumns = [{ id: "name" }, { id: "projectNumber" }];
-
-    component.create();
-    tick();
-
-    expect(TestBed.inject(FormDialogService).openFormPopup).toHaveBeenCalled();
-  }));
-
-  it("should create a new entity and open a dialog on default when clicking create", () => {
-    const child = new Child();
-    component.newRecordFactory = () => child;
-
-    const dialog = TestBed.inject(FormDialogService);
-
-    component.create();
-
-    const defaultTestColumns = []; // TODO: what was this test case?
-    expect(dialog.openFormPopup).toHaveBeenCalledWith(
-      child,
-      defaultTestColumns.map((x) => jasmine.objectContaining({ id: x })),
-    );
   });
 
   it("should notify when an entity is clicked", (done) => {
@@ -254,41 +180,6 @@ describe("EntityTableComponent", () => {
     });
 
     component.onRowClick({ record: child });
-  });
-
-  it("should add a new entity that was created after the initial loading to the table", () => {
-    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
-    component.newRecordFactory = () => new Entity();
-    component.records = [];
-
-    const entity = new Entity();
-    entityUpdates.next({ entity: entity, type: "new" });
-
-    expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
-  });
-
-  it("should remove a entity from the table when it has been deleted", async () => {
-    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
-    const entity = new Entity();
-    component.records = [entity];
-
-    expect(component.recordsDataSource.data).toEqual([{ record: entity }]);
-
-    entityUpdates.next({ entity: entity, type: "remove" });
-
-    expect(component.recordsDataSource.data).toEqual([]);
-  });
-
-  it("does not change the size of it's records when not saving a new record", async () => {
-    const entity = new Entity();
-    component.records = [entity];
-
-    await component.save({ record: entity });
-    expect(component.recordsDataSource.data).toHaveSize(1);
   });
 
   it("should filter data based on filter definition", () => {
@@ -332,16 +223,13 @@ describe("EntityTableComponent", () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const child = new Child();
     child.gender = genders[1];
-    entityMapper.save(child);
-    tick();
     component.records = [child];
     component.filter = { "gender.id": genders[1].id } as any;
 
     expect(component.recordsDataSource.data).toEqual([{ record: child }]);
 
     child.gender = genders[2];
-    entityMapper.save(child);
-    tick(5000);
+    component.records = [child]; // parent component has to update the records Input array
 
     expect(component.recordsDataSource.data).toEqual([]);
   }));

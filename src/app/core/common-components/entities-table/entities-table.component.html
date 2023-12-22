@@ -57,7 +57,7 @@
     <!--
       INLINE EDIT ACTIONS
     -->
-    <ng-container [matColumnDef]="ACTIONCOLUMN_EDIT">
+    <ng-container [matColumnDef]="ACTIONCOLUMN_EDIT" *ngIf="editable">
       <th mat-header-cell *matHeaderCellDef class="remove-padding-left">
         <app-entity-create-button
           [entityType]="entityType"
@@ -98,8 +98,8 @@
   -->
   <div class="table-footer filter-inactive-toggle">
     <mat-slide-toggle
-      [checked]="showInactive"
-      (change)="setActiveInactiveFilter($event.checked)"
+      [checked]="_showInactive"
+      (change)="showInactive = $event.checked"
       i18n="slider|also show entries that are archived"
     >
       Include archived records

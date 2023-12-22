@@ -12,6 +12,7 @@ import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { TimePeriod } from "./time-period";
+import { UntilDestroy } from "@ngneat/until-destroy";
 
 /**
  * Display a list of entity subrecords (entities related to the current entity details view)
@@ -22,6 +23,7 @@ import { TimePeriod } from "./time-period";
  * show/hide inactive entries from the list.
  */
 @DynamicComponent("RelatedTimePeriodEntities")
+@UntilDestroy()
 @Component({
   selector: "app-related-time-period-entities",
   templateUrl: "./related-time-period-entities.component.html",
