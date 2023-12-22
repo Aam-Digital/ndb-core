@@ -94,4 +94,16 @@ describe("DisplayEntityArrayComponent", () => {
 
     expect(component.entities).toEqual(expectedEntities);
   });
+
+  it("should load entities of not configured type", async () => {
+    component.config = School.ENTITY_TYPE;
+    const existingChild = testEntities.find(
+      (e) => e.getType() === Child.ENTITY_TYPE,
+    );
+    component.value = [existingChild.getId(true)];
+
+    await component.ngOnInit();
+
+    expect(component.entities).toEqual([existingChild]);
+  });
 });
