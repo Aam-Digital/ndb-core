@@ -3,7 +3,7 @@ import { ActivityAttendance } from "../model/activity-attendance";
 import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { EventNote } from "../model/event-note";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";

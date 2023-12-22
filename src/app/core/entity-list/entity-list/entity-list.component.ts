@@ -14,7 +14,7 @@ import {
   GroupConfig,
 } from "../EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";

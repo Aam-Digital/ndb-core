@@ -14,7 +14,7 @@ import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
-} from "../../../common-components/entity-form/entity-form/FormConfig";
+} from "../../../common-components/entity-form/FormConfig";
 import { AdminEntityService } from "../../admin-entity.service";
 import { lastValueFrom } from "rxjs";
 import { NgForOf, NgIf } from "@angular/common";

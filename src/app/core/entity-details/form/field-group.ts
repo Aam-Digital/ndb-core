@@ -1,4 +1,4 @@
-import { ColumnConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 
 /**
  * A group of related form fields displayed within a Form component.

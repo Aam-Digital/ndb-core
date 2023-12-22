@@ -18,7 +18,7 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { ColumnConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DataFilter } from "../../../core/filter/filters/filters";
 
 /**

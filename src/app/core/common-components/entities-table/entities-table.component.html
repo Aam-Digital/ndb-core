@@ -82,54 +82,9 @@
         </ng-container>
       </th>
 
-      <td mat-cell *matCellDef="let row" [class.remove-padding-left]="editable">
-        <div *ngIf="editable">
-          <ng-container *ngIf="!row.formGroup || row.formGroup.disabled">
-            <button
-              mat-icon-button
-              *appDisabledEntityOperation="{
-                entity: row.record,
-                operation: 'update'
-              }"
-              (click)="edit(row)"
-            >
-              <fa-icon aria-label="edit" icon="pen"></fa-icon>
-            </button>
-          </ng-container>
-          <ng-container *ngIf="row.formGroup?.enabled">
-            <button
-              mat-icon-button
-              (click)="save(row)"
-              angulartics2On="click"
-              [angularticsCategory]="row?.record?.getType()"
-              angularticsAction="subrecord_inlineedit_save"
-            >
-              <fa-icon aria-label="save" icon="check-circle"></fa-icon>
-            </button>
-            <button
-              mat-icon-button
-              (click)="resetChanges(row)"
-              angulartics2On="click"
-              [angularticsCategory]="row?.record?.getType()"
-              angularticsAction="subrecord_inlineedit_cancel"
-            >
-              <fa-icon aria-label="cancel" icon="times-circle"></fa-icon>
-            </button>
-            <button
-              mat-icon-button
-              *appDisabledEntityOperation="{
-                entity: row.record,
-                operation: 'delete'
-              }"
-              (click)="delete(row)"
-              angulartics2On="click"
-              [angularticsCategory]="row?.record?.getType()"
-              angularticsAction="subrecord_inlineedit_delete"
-            >
-              <fa-icon aria-label="delete" icon="trash"></fa-icon>
-            </button>
-          </ng-container>
-        </div>
+      <td mat-cell *matCellDef="let row">
+        <app-entity-inline-edit-actions [row]="row">
+        </app-entity-inline-edit-actions>
       </td>
     </ng-container>
 

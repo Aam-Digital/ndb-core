@@ -1,6 +1,6 @@
 import { FilterConfig } from "../../../core/entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
-import { ColumnConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DataFilter } from "../../../core/filter/filters/filters";
 
 /**

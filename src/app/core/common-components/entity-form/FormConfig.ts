@@ -1,4 +1,4 @@
-import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 /**
  * The general configuration for fields in tables and forms.

@@ -2,7 +2,7 @@ import { FormComponent } from "../../entity-details/form/form.component";
 import { Entity, EntityConstructor } from "../model/entity";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { DatabaseField } from "../database-field.decorator";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { applicationConfig, Meta } from "@storybook/angular";
 import {
   entityFormStorybookDefaultParameters,

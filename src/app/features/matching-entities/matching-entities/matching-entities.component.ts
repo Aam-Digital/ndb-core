@@ -38,7 +38,7 @@ import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
 import {
   ColumnConfig,
   FormFieldConfig,
-} from "../../../core/common-components/entity-form/entity-form/FormConfig";
+} from "../../../core/common-components/entity-form/FormConfig";
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { DataFilter } from "../../../core/filter/filters/filters";

@@ -10,7 +10,6 @@ import { Angulartics2Module } from "angulartics2";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit.component";
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
-import { EntityFieldMenuComponent } from "../entity-field-menu/entity-field-menu.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
@@ -33,14 +32,11 @@ import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
-} from "../entity-form/entity-form/FormConfig";
-import { InvalidFormFieldError } from "../entity-form/invalid-form-field.error";
-import { AlertService } from "../../alerts/alert.service";
+} from "../entity-form/FormConfig";
 import {
   EntityForm,
   EntityFormService,
 } from "../entity-form/entity-form.service";
-import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { tableSort } from "./table-sort/table-sort";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
@@ -48,6 +44,7 @@ import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { Router } from "@angular/router";
 import { FilterService } from "../../filter/filter.service";
 import { DataFilter } from "../../filter/filters/filters";
+import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -62,7 +59,6 @@ import { DataFilter } from "../../filter/filters/filters";
     DisableEntityOperationDirective,
     EntityFieldEditComponent,
     EntityFieldLabelComponent,
-    EntityFieldMenuComponent,
     EntityFieldViewComponent,
     FaIconComponent,
     ListPaginatorComponent,
@@ -72,6 +68,7 @@ import { DataFilter } from "../../filter/filters/filters";
     MatSlideToggleModule,
     MatSortModule,
     MatTableModule,
+    EntityInlineEditActionsComponent,
   ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
@@ -126,7 +123,10 @@ export class EntitiesTableComponent<T extends Entity> {
    */
   @Input() set columnsToDisplay(value: string[]) {
     if (!value || value.length === 0) {
-      value = (this._customColumns ?? this._columns).map((c) => c.id);
+      value = (this._customColumns ?? this._columns)
+        .map((c) => c.id)
+        // remove internal action columns:
+        .filter((c) => !c.startsWith("__"));
     }
 
     const cols = [];
@@ -235,61 +235,16 @@ export class EntitiesTableComponent<T extends Entity> {
   }
 
   /**
-   *
-   *
    * INLINE EDIT
    * User can switch a row into edit mode to change and save field values directly from within the table
-   *
-   *
    */
-  @Input() editable: boolean = false;
+  @Input() editable: boolean = true;
   readonly ACTIONCOLUMN_EDIT = "__edit";
   /**
    * factory method to create a new instance of the displayed Entity type
    * used when the user adds a new entity to the list.
    */
   @Input() newRecordFactory: () => T;
-
-  edit(row: TableRow<T>) {
-    if (!row.formGroup) {
-      row.formGroup = this.entityFormService.createFormGroup(
-        this._columns,
-        row.record,
-        true,
-      );
-    }
-    row.formGroup.enable();
-  }
-
-  /**
-   * Save an edited record to the database (if validation succeeds).
-   * @param row The entity to be saved.
-   */
-  async save(row: TableRow<T>): Promise<void> {
-    try {
-      row.record = await this.entityFormService.saveChanges(
-        row.formGroup,
-        row.record,
-      );
-      row.formGroup.disable();
-    } catch (err) {
-      if (!(err instanceof InvalidFormFieldError)) {
-        this.alertService.addDanger(err.message);
-      }
-    }
-  }
-
-  async delete(row: TableRow<T>): Promise<void> {
-    await this.entityRemoveService.delete(row.record);
-  }
-
-  /**
-   * Discard any changes to the given entity and reset it to the state before the user started editing.
-   * @param row The entity to be reset.
-   */
-  resetChanges(row: TableRow<T>) {
-    row.formGroup = null;
-  }
 
   /**
    * Create a new entity.
@@ -326,9 +281,7 @@ export class EntitiesTableComponent<T extends Entity> {
   }
 
   constructor(
-    private alertService: AlertService,
     private entityFormService: EntityFormService,
-    private entityRemoveService: EntityActionsService,
     private formDialog: FormDialogService,
     private router: Router,
     private filterService: FilterService,
@@ -384,6 +337,9 @@ export class EntitiesTableComponent<T extends Entity> {
   }
 }
 
+/**
+ * Wrapper to keep additional form data for each row of an entity, required for inline editing.
+ */
 export interface TableRow<T extends Entity> {
   record: T;
   formGroup?: EntityForm<T>;
@@ -393,11 +349,4 @@ export interface TableRow<T extends Entity> {
  * NOT COVERED HERE:
  *
  * - RelatedTimePeriodEntity.onIsActiveFilterChange
- */
-
-/*****************************************************
- *****************************************************
- *
- * - edit code & buttons --> in own component
- *****************************************************
  */

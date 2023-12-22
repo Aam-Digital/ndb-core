@@ -1,5 +1,5 @@
 import { Component, Inject } from "@angular/core";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity } from "../../entity/model/entity";
 import {

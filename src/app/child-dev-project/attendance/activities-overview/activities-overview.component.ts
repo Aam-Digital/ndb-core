@@ -5,7 +5,7 @@ import { RelatedEntitiesComponent } from "../../../core/entity-details/related-e
 import {
   ColumnConfig,
   FormFieldConfig,
-} from "../../../core/common-components/entity-form/entity-form/FormConfig";
+} from "../../../core/common-components/entity-form/FormConfig";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 
 /**

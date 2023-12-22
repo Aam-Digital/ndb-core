@@ -17,7 +17,7 @@ import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { of } from "rxjs";
 import { AdminModule } from "../../admin.module";
 import { FormConfig } from "../../../entity-details/form/form.component";
-import { ColumnConfig } from "../../../common-components/entity-form/entity-form/FormConfig";
+import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;

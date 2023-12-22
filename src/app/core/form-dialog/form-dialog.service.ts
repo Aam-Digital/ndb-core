@@ -11,7 +11,7 @@ import {
   ColumnConfig,
   FormFieldConfig,
   toFormFieldConfig,
-} from "../common-components/entity-form/entity-form/FormConfig";
+} from "../common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 
 @Injectable({ providedIn: "root" })

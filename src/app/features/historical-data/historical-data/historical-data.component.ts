@@ -2,7 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { HistoricalEntityData } from "../model/historical-entity-data";
 import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalDataService } from "../historical-data.service";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 

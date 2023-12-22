@@ -1,10 +1,6 @@
 import { Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, ɵElement } from "@angular/forms";
-import {
-  ColumnConfig,
-  FormFieldConfig,
-  toFormFieldConfig,
-} from "./entity-form/FormConfig";
+import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";

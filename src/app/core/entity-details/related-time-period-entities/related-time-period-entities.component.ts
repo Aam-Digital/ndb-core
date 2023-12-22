@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import moment from "moment";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";

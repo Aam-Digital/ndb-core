@@ -15,7 +15,7 @@ import {
 import {
   ColumnConfig,
   toFormFieldConfig,
-} from "../../common-components/entity-form/entity-form/FormConfig";
+} from "../../common-components/entity-form/FormConfig";
 import { DataFilter } from "../../filter/filters/filters";
 
 /**

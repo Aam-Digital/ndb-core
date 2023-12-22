@@ -6,10 +6,7 @@ import {
   EntityForm,
   EntityFormService,
 } from "../entity-form/entity-form.service";
-import {
-  ColumnConfig,
-  FormFieldConfig,
-} from "../entity-form/entity-form/FormConfig";
+import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { NgIf } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 

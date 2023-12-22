@@ -5,7 +5,7 @@ import { AttendanceService } from "../attendance.service";
 import { formatPercent, NgIf } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import moment from "moment";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
