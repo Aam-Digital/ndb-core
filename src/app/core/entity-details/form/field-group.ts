@@ -1,4 +1,4 @@
-import { ColumnConfig } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { ColumnConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 
 /**
  * A group of related form fields displayed within a Form component.

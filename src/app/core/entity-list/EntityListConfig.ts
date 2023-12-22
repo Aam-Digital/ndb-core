@@ -1,5 +1,5 @@
 import { FilterSelectionOption } from "../filter/filters/filters";
-import { FormFieldConfig } from "../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 import { ExportColumnConfig } from "../export/data-transformation-service/export-column-config";
 import { Sort } from "@angular/material/sort";
 import { unitOfTime } from "moment";

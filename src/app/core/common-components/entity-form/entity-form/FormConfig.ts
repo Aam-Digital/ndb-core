@@ -44,3 +44,16 @@ export interface FormFieldConfig extends EntitySchemaField {
    */
   forTable?: boolean;
 }
+
+/**
+ * Type for the definition of a single column in the EntitySubrecord
+ */
+export type ColumnConfig = string | FormFieldConfig;
+
+export function toFormFieldConfig(column: ColumnConfig): FormFieldConfig {
+  if (typeof column === "string") {
+    return { id: column };
+  } else {
+    return column;
+  }
+}

@@ -2,11 +2,6 @@ import { Component, Input, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import {
-  ColumnConfig,
-  DataFilter,
-  toFormFieldConfig,
-} from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
@@ -17,6 +12,11 @@ import {
   ScreenSize,
   ScreenWidthObserver,
 } from "../../../utils/media/screen-size-observer.service";
+import {
+  ColumnConfig,
+  toFormFieldConfig,
+} from "../../common-components/entity-form/entity-form/FormConfig";
+import { DataFilter } from "../../filter/filters/filters";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).

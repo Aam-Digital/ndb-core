@@ -20,7 +20,6 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
 import { NgForOf, NgIf, NgStyle, NgTemplateOutlet } from "@angular/common";
@@ -45,6 +44,7 @@ import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
+import { DataFilter } from "../../filter/filters/filters";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.

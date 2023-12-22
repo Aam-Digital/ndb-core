@@ -6,10 +6,6 @@ import moment from "moment";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
-import {
-  ColumnConfig,
-  DataFilter,
-} from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterService } from "../../../core/filter/filter.service";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
@@ -22,6 +18,8 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { ColumnConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { DataFilter } from "../../../core/filter/filters/filters";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.

@@ -4,7 +4,8 @@ import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
-import { ColumnConfig } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+
+import { ColumnConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
 
 @DynamicComponent("Aser")
 @Component({

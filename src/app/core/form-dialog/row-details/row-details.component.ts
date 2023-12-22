@@ -1,23 +1,23 @@
 import { Component, Inject } from "@angular/core";
-import { FormFieldConfig } from "../../entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
-import { Entity } from "../../../entity/model/entity";
+import { Entity } from "../../entity/model/entity";
 import {
   EntityForm,
   EntityFormService,
-} from "../../entity-form/entity-form.service";
-import { DialogCloseComponent } from "../../dialog-close/dialog-close.component";
-import { EntityFormComponent } from "../../entity-form/entity-form/entity-form.component";
+} from "../../common-components/entity-form/entity-form.service";
+import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
+import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { NgForOf, NgIf } from "@angular/common";
-import { PillComponent } from "../../pill/pill.component";
-import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
+import { PillComponent } from "../../common-components/pill/pill.component";
+import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DialogButtonsComponent } from "../../../form-dialog/dialog-buttons/dialog-buttons.component";
-import { EntityArchivedInfoComponent } from "../../../entity-details/entity-archived-info/entity-archived-info.component";
-import { FieldGroup } from "../../../entity-details/form/field-group";
-import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
-import { EntityFieldViewComponent } from "../../entity-field-view/entity-field-view.component";
+import { DialogButtonsComponent } from "../dialog-buttons/dialog-buttons.component";
+import { EntityArchivedInfoComponent } from "../../entity-details/entity-archived-info/entity-archived-info.component";
+import { FieldGroup } from "../../entity-details/form/field-group";
+import { EntityFieldEditComponent } from "../../common-components/entity-field-edit/entity-field-edit.component";
+import { EntityFieldViewComponent } from "../../common-components/entity-field-view/entity-field-view.component";
 
 /**
  * Data interface that must be given when opening the dialog

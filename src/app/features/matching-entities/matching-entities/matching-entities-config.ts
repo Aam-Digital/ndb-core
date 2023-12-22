@@ -1,9 +1,7 @@
 import { FilterConfig } from "../../../core/entity-list/EntityListConfig";
-import {
-  ColumnConfig,
-  DataFilter,
-} from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity, EntityConstructor } from "../../../core/entity/model/entity";
+import { ColumnConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { DataFilter } from "../../../core/filter/filters/filters";
 
 /**
  * Config to be defined to set up a MatchingEntitiesComponent.

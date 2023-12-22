@@ -13,7 +13,7 @@ import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-la
 import { EntityFieldMenuComponent } from "../entity-field-menu/entity-field-menu.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { ListPaginatorComponent } from "../entity-subrecord/list-paginator/list-paginator.component";
+import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
 import { MatButtonModule } from "@angular/material/button";
 import {
   MatCheckboxChange,
@@ -29,7 +29,11 @@ import {
 } from "@angular/material/sort";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+  toFormFieldConfig,
+} from "../entity-form/entity-form/FormConfig";
 import { InvalidFormFieldError } from "../entity-form/invalid-form-field.error";
 import { AlertService } from "../../alerts/alert.service";
 import {
@@ -37,17 +41,13 @@ import {
   EntityFormService,
 } from "../entity-form/entity-form.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
-import {
-  ColumnConfig,
-  DataFilter,
-  toFormFieldConfig,
-} from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { tableSort } from "../entity-subrecord/entity-subrecord/table-sort";
+import { tableSort } from "./table-sort/table-sort";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { Router } from "@angular/router";
 import { FilterService } from "../../filter/filter.service";
+import { DataFilter } from "../../filter/filters/filters";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.

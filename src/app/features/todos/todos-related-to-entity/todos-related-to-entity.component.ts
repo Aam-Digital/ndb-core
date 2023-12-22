@@ -1,15 +1,15 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Entity } from "../../../core/entity/model/entity";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
-import { DataFilter } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { DataFilter } from "../../../core/filter/filters/filters";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({

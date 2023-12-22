@@ -2,8 +2,10 @@ import { Component, OnInit } from "@angular/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import { ColumnConfig } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 
 /**

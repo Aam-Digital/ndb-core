@@ -6,10 +6,12 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { ColumnConfig } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
-import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "../entity-form/entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { PillComponent } from "../pill/pill.component";
 
