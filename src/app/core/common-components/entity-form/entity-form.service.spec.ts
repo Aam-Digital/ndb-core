@@ -180,15 +180,15 @@ describe("EntityFormService", () => {
 
     schema.defaultValue = PLACEHOLDERS.CURRENT_USER;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue(TEST_USER);
+    expect(form.get("test")).toHaveValue(`User:${TEST_USER}`);
 
     schema.dataType = ArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([TEST_USER]);
+    expect(form.get("test")).toHaveValue([`User:${TEST_USER}`]);
 
     schema.dataType = EntityArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([TEST_USER]);
+    expect(form.get("test")).toHaveValue([`User:${TEST_USER}`]);
 
     Entity.schema.delete("test");
   });

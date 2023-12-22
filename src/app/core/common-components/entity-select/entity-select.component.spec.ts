@@ -12,6 +12,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../session/session-states/login-state.enum";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
@@ -139,12 +140,10 @@ describe("EntitySelectComponent", () => {
 
     component.unselectEntity(testUsers[0]);
 
-    const remainingChildren = testUsers
-      .filter((c) => c.getId() !== testUsers[0].getId())
-      .map((c) => c.getId());
-    expect(component.selectionChange.emit).toHaveBeenCalledWith(
-      remainingChildren,
-    );
+    const remainingUsers = testUsers
+      .filter((u) => u.getId() !== testUsers[0].getId())
+      .map((u) => u.getId(true));
+    expect(component.selectionChange.emit).toHaveBeenCalledWith(remainingUsers);
   });
 
   it("adds a new entity if it matches a known entity", fakeAsync(() => {
@@ -222,6 +221,30 @@ describe("EntitySelectComponent", () => {
     fixture.detectChanges();
     expect(component.allEntities).toEqual([...testUsers, ...testChildren]);
     expect(component.filteredEntities).toEqual([...testUsers, ...testChildren]);
+  }));
+
+  it("should show selected entities of type that is not configured", fakeAsync(() => {
+    component.entityType = [User.ENTITY_TYPE];
+    component.selection = [testUsers[0].getId(), testChildren[0].getId(true)];
+    tick();
+    fixture.detectChanges();
+    expect(component.selectedEntities).toEqual([testUsers[0], testChildren[0]]);
+    expect(component.allEntities).toEqual(testUsers);
+    expect(component.filteredEntities).toEqual(
+      jasmine.arrayWithExactContents(testUsers.slice(1)),
+    );
+  }));
+
+  it("should not fail if entity cannot be found", fakeAsync(() => {
+    const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
+    component.entityType = User.ENTITY_TYPE;
+    component.selection = [testUsers[0].getId(), "missing_user"];
+    tick();
+    fixture.detectChanges();
+    expect(warnSpy).toHaveBeenCalledWith(
+      jasmine.stringContaining("missing_user"),
+    );
+    expect(component.selectedEntities).toEqual([testUsers[0]]);
   }));
 
   it("should be able to select entities from different types", fakeAsync(() => {

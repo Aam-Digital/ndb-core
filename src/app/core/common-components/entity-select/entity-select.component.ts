@@ -26,6 +26,7 @@ import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-ent
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
+import { LoggingService } from "../../logging/logging.service";
 
 @Component({
   selector: "app-entity-select",
@@ -70,8 +71,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     } else {
       type = [type];
     }
-    this.loadAvailableEntities(type);
+    this._entityType = type;
+    this.loadAvailableEntities();
   }
+
+  private _entityType: string[] = [];
 
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
@@ -88,11 +92,33 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         untilDestroyed(this),
         filter((isLoading) => !isLoading),
       )
-      .subscribe((_) => {
-        this.selectedEntities = this.allEntities.filter((e) =>
-          sel.find((s) => s === e.getId(true) || s === e.getId()),
-        );
-      });
+      .subscribe(() => this.initSelectedEntities(sel));
+  }
+
+  private async initSelectedEntities(selected: string[]) {
+    const entities: E[] = [];
+    for (const s of selected) {
+      const found = this.allEntities.find(
+        (e) => s === e.getId(true) || s === e.getId(),
+      );
+      if (found) {
+        entities.push(found);
+      } else {
+        // missing or entity from other type
+        try {
+          const type = Entity.extractTypeFromId(s);
+          const entity = await this.entityMapperService.load<E>(type, s);
+          entities.push(entity);
+        } catch (e) {
+          this.logger.warn(
+            `[ENTITY_SELECT] Could not find entity with ID: ${s}: ${e}`,
+          );
+        }
+      }
+    }
+    this.selectedEntities = entities;
+    // updating autocomplete values
+    this.formControl.setValue(this.formControl.value);
   }
 
   /** Underlying data-array */
@@ -162,16 +188,17 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private logger: LoggingService,
+  ) {
     this.formControl.valueChanges
       .pipe(
         untilDestroyed(this),
         filter((value) => value === null || typeof value === "string"), // sometimes produces entities
         map((searchText?: string) => this.filter(searchText)),
       )
-      .subscribe((value) => {
-        this.filteredEntities = value;
-      });
+      .subscribe((value) => (this.filteredEntities = value));
     this.loading.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.inputPlaceholder = isLoading
         ? this.loadingPlaceholder
@@ -196,11 +223,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
-  private async loadAvailableEntities(types: string[]) {
+  private async loadAvailableEntities() {
     this.loading.next(true);
     const entities: E[] = [];
 
-    for (const type of types) {
+    for (const type of this._entityType) {
       entities.push(...(await this.entityMapperService.loadType<E>(type)));
     }
 
@@ -278,9 +305,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private emitChange() {
-    this.selectionChange.emit(
-      this.selectedEntities.map((e) => e.getId(this.withPrefix)),
+    // entities that do not belong to the possible types should always have full ID
+    const selectedIds = this.selectedEntities.map((e) =>
+      this._entityType.includes(e.getType())
+        ? e.getId(this.withPrefix)
+        : e.getId(true),
     );
+    this.selectionChange.emit(selectedIds);
   }
 
   private isSelected(entity: E): boolean {
