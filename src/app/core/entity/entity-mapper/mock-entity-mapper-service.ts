@@ -84,7 +84,11 @@ export class MockEntityMapperService extends EntityMapperService {
     const entityId = Entity.extractEntityIdFromId(id);
     const result = this.data.get(entityType)?.get(entityId);
     if (!result) {
-      throw new HttpErrorResponse({ status: 404 });
+      throw new HttpErrorResponse({
+        url: "MockEntityMapperService",
+        status: 404,
+        statusText: `${entityType}:${entityId} not found`,
+      });
     }
     return result;
   }
@@ -115,12 +119,7 @@ export class MockEntityMapperService extends EntityMapperService {
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
     const type = new ctor().getType();
-    const entity = this.get(type, id) as T;
-    if (!entity) {
-      throw Error(`Entity ${id} does not exist in MockEntityMapper`);
-    } else {
-      return entity;
-    }
+    return this.get(type, id) as T;
   }
 
   async loadType<T extends Entity>(
