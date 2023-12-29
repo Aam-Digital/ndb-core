@@ -41,10 +41,8 @@ export function applyUpdate<T extends Entity>(
   }
 
   if (
-    next.type === "new" ||
-    (addIfMissing &&
-      next.type === "update" &&
-      !entities.find((e) => e.getId() === next.entity.getId()))
+    (next.type === "new" || (addIfMissing && next.type === "update")) &&
+    !entities.find((e) => e.getId() === next.entity.getId())
   ) {
     return [next.entity].concat(entities);
   }
@@ -58,4 +56,6 @@ export function applyUpdate<T extends Entity>(
   if (next.type === "remove") {
     return entities.filter((e) => e.getId() !== next.entity.getId());
   }
+
+  return entities;
 }

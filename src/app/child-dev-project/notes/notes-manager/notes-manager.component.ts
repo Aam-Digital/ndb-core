@@ -57,7 +57,6 @@ export class NotesManagerComponent implements OnInit {
   config: EntityListConfig;
   noteConstructor = Note;
   notes: Note[];
-  isLoading: boolean = true;
 
   private statusFS: FilterSelectionOption<Note>[] = [
     {

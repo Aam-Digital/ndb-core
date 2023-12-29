@@ -1,20 +1,20 @@
-<ng-container *ngIf="!row.formGroup || row.formGroup.disabled">
+<ng-container *ngIf="row && (!row.formGroup || row.formGroup.disabled)">
   <button
     mat-icon-button
     *appDisabledEntityOperation="{
       entity: row.record,
       operation: 'update'
     }"
-    (click)="edit(row); $event.stopPropagation()"
+    (click)="edit(); $event.stopPropagation()"
   >
     <fa-icon aria-label="edit" icon="pen"></fa-icon>
   </button>
 </ng-container>
 
-<div *ngIf="row.formGroup?.enabled" class="flex-row">
+<div *ngIf="row?.formGroup?.enabled" class="flex-row">
   <button
     mat-icon-button
-    (click)="save(row); $event.stopPropagation()"
+    (click)="save(); $event.stopPropagation()"
     angulartics2On="click"
     [angularticsCategory]="row?.record?.getType()"
     angularticsAction="subrecord_inlineedit_save"
@@ -24,7 +24,7 @@
 
   <button
     mat-icon-button
-    (click)="resetChanges(row); $event.stopPropagation()"
+    (click)="resetChanges(); $event.stopPropagation()"
     angulartics2On="click"
     [angularticsCategory]="row?.record?.getType()"
     angularticsAction="subrecord_inlineedit_cancel"
@@ -38,7 +38,7 @@
       entity: row.record,
       operation: 'delete'
     }"
-    (click)="delete(row); $event.stopPropagation()"
+    (click)="delete(); $event.stopPropagation()"
     angulartics2On="click"
     [angularticsCategory]="row?.record?.getType()"
     angularticsAction="subrecord_inlineedit_delete"

@@ -66,12 +66,12 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   hasCurrentlyActiveEntry: boolean;
 
   async ngOnInit() {
-    this.onIsActiveFilterChange(this.showInactive);
     await super.initData();
     super.listenToEntityUpdates();
+    this.onIsActiveFilterChange();
   }
 
-  onIsActiveFilterChange(newValue: boolean) {
+  onIsActiveFilterChange() {
     this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
 
     if (this.showInactive) {
@@ -86,7 +86,7 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
       const newRelation = super.createNewRecordFactory()();
 
       newRelation.start =
-        this.data.length && this.data[0].end
+        this.data?.length && this.data[0].end
           ? moment(this.data[0].end).add(1, "day").toDate()
           : moment().startOf("day").toDate();
 

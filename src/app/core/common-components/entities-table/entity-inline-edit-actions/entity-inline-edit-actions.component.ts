@@ -33,28 +33,28 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
     private entityRemoveService: EntityActionsService,
   ) {}
 
-  edit(row: TableRow<T>) {
-    if (!row.formGroup) {
-      row.formGroup = this.entityFormService.createFormGroup(
+  edit() {
+    if (!this.row.formGroup) {
+      this.row.formGroup = this.entityFormService.createFormGroup(
         Array.from(this.row.record.getSchema().keys()),
-        row.record,
+        this.row.record,
         true,
       );
     }
-    row.formGroup.enable();
+    this.row.formGroup.enable();
   }
 
   /**
    * Save an edited record to the database (if validation succeeds).
    * @param row The entity to be saved.
    */
-  async save(row: TableRow<T>): Promise<void> {
+  async save(): Promise<void> {
     try {
-      row.record = await this.entityFormService.saveChanges(
-        row.formGroup,
-        row.record,
+      this.row.record = await this.entityFormService.saveChanges(
+        this.row.formGroup,
+        this.row.record,
       );
-      row.formGroup.disable();
+      this.row.formGroup.disable();
     } catch (err) {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
@@ -62,15 +62,15 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
     }
   }
 
-  async delete(row: TableRow<T>): Promise<void> {
-    await this.entityRemoveService.delete(row.record);
+  async delete(): Promise<void> {
+    await this.entityRemoveService.delete(this.row.record);
   }
 
   /**
    * Discard any changes to the given entity and reset it to the state before the user started editing.
    * @param row The entity to be reset.
    */
-  resetChanges(row: TableRow<T>) {
-    row.formGroup = null;
+  resetChanges() {
+    this.row.formGroup = null;
   }
 }

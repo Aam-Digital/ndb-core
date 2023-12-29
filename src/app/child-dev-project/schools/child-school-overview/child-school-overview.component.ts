@@ -46,7 +46,7 @@ export class ChildSchoolOverviewComponent
   implements OnInit
 {
   mode: "child" | "school" = "child";
-  @Input() showInactive = false;
+  @Input() showInactive = this.mode === "child";
   entityCtr = ChildSchoolRelation;
 
   constructor(
@@ -71,7 +71,7 @@ export class ChildSchoolOverviewComponent
     this.switchRelatedEntityColumnForMode();
 
     await this.loadData();
-    super.onIsActiveFilterChange(this.showInactive);
+    super.onIsActiveFilterChange();
     super.listenToEntityUpdates();
   }
 

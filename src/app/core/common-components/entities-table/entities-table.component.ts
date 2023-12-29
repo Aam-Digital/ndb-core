@@ -91,7 +91,7 @@ export class EntitiesTableComponent<T extends Entity> {
    * @param value
    */
   @Input() set customColumns(value: ColumnConfig[]) {
-    this._customColumns = value.map((c) =>
+    this._customColumns = (value ?? []).map((c) =>
       this.entityType
         ? this.entityFormService.extendFormFieldConfig(c, this.entityType)
         : toFormFieldConfig(c),
@@ -125,17 +125,15 @@ export class EntitiesTableComponent<T extends Entity> {
    */
   @Input() set columnsToDisplay(value: string[]) {
     if (!value || value.length === 0) {
-      value = (this._customColumns ?? this._columns)
-        .map((c) => c.id)
-        // remove internal action columns:
-        .filter((c) => !c.startsWith("__"));
+      value = (this._customColumns ?? this._columns).map((c) => c.id);
     }
+    value = value.filter((c) => !c.startsWith("__")); // remove internal action columns
 
     const cols = [];
-    if (this.selectable) {
+    if (this._selectable) {
       cols.push(this.ACTIONCOLUMN_SELECT);
     }
-    if (this.editable) {
+    if (this._editable) {
       cols.push(this.ACTIONCOLUMN_EDIT);
     }
     cols.push(...value);
@@ -214,7 +212,12 @@ export class EntitiesTableComponent<T extends Entity> {
    *
    *
    */
-  @Input() selectable: boolean = false;
+  @Input() set selectable(v: boolean) {
+    this._selectable = v;
+    this.columnsToDisplay = this._columnsToDisplay;
+  }
+  _selectable: boolean = false;
+
   readonly ACTIONCOLUMN_SELECT = "__select";
 
   /**
@@ -241,7 +244,11 @@ export class EntitiesTableComponent<T extends Entity> {
    * INLINE EDIT
    * User can switch a row into edit mode to change and save field values directly from within the table
    */
-  @Input() editable: boolean = true;
+  @Input() set editable(v: boolean) {
+    this._editable = v;
+    this.columnsToDisplay = this._columnsToDisplay;
+  }
+  _editable: boolean = true;
   readonly ACTIONCOLUMN_EDIT = "__edit";
   /**
    * factory method to create a new instance of the displayed Entity type
@@ -306,7 +313,7 @@ export class EntitiesTableComponent<T extends Entity> {
       sortDirection = "desc";
     }
 
-    return { active: sortBy, direction: sortDirection };
+    return sortBy ? { active: sortBy, direction: sortDirection } : undefined;
   }
 
   /**
@@ -345,9 +352,3 @@ export interface TableRow<T extends Entity> {
   record: T;
   formGroup?: EntityForm<T>;
 }
-
-/**
- * NOT COVERED HERE:
- *
- * - RelatedTimePeriodEntity.onIsActiveFilterChange
- */
