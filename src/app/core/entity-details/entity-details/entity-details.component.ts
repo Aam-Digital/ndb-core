@@ -74,6 +74,7 @@ export class EntityDetailsComponent implements OnChanges {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
 
+  // TODO id is short in URl, should we keep it this way?
   @Input() id: string;
   record: Entity;
 
@@ -110,6 +111,7 @@ export class EntityDetailsComponent implements OnChanges {
     this.changesSubscription = this.entityMapperService
       .receiveUpdates(this.entityConstructor)
       .pipe(
+        // TODO depends on URL
         filter(({ entity }) => entity.getId() === this.id),
         filter(({ type }) => type !== "remove"),
         untilDestroyed(this),

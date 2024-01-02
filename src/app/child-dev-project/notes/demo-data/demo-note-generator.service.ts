@@ -101,9 +101,9 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     const selectedStory = faker.helpers.arrayElement(noteIndividualStories);
     Object.assign(note, selectedStory);
 
-    note.addChild(child.getId());
+    note.addChild(child.getId(true));
     note.authors = [
-      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(true),
     ];
 
     if (!date) {
@@ -136,9 +136,9 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     const selectedStory = faker.helpers.arrayElement(noteGroupStories);
     Object.assign(note, selectedStory);
 
-    note.children = children.map((c) => c.getId());
+    note.children = children.map((c) => c.getId(true));
     children.forEach((child) => {
-      const attendance = note.getAttendance(child.getId());
+      const attendance = note.getAttendance(child.getId(true));
       // get an approximate presence of 85%
       if (faker.number.int(100) <= 15) {
         attendance.status = defaultAttendanceStatusTypes.find(
@@ -153,7 +153,7 @@ export class DemoNoteGeneratorService extends DemoDataGenerator<Note> {
     });
 
     note.authors = [
-      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(true),
     ];
 
     note.date = faker.date.past({ years: 1 });

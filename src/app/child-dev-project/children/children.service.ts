@@ -33,7 +33,7 @@ export class ChildrenService {
     const children = await this.entityMapper.loadType(Child);
     const relations = await this.entityMapper.loadType(ChildSchoolRelation);
     groupBy(relations, "childId").forEach(([id, rels]) => {
-      const child = children.find((c) => c.getId() === id);
+      const child = children.find((c) => c.getId(true) === id);
       if (child) {
         this.extendChildWithSchoolInfo(child, rels);
       }
@@ -125,7 +125,7 @@ export class ChildrenService {
       legacyLinkedNotes = await this.dbIndexing.queryIndexDocs(
         Note,
         `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
-        Entity.extractEntityIdFromId(entityId),
+        entityId,
       );
     }
 
@@ -177,18 +177,17 @@ export class ChildrenService {
     const entities = await this.entityMapper.loadType(entityType);
     entities
       .filter((c) => c.isActive)
-      .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
+      .forEach((c) => results.set(c.getId(true), Number.POSITIVE_INFINITY));
 
     const noteProperty = Note.getPropertyFor(entityType);
     for (const note of notes) {
       // TODO: filter notes to only include them if the given child is marked "present"
 
       for (const entityId of note[noteProperty]) {
-        const trimmedId = Entity.extractEntityIdFromId(entityId);
         const daysSinceNote = moment().diff(note.date, "days");
-        const previousValue = results.get(trimmedId);
+        const previousValue = results.get(entityId);
         if (previousValue > daysSinceNote) {
-          results.set(trimmedId, daysSinceNote);
+          results.set(entityId, daysSinceNote);
         }
       }
     }
@@ -289,7 +288,7 @@ export class ChildrenService {
 
   getAserResultsOfChild(childId: string): Promise<Aser[]> {
     return this.entityMapper
-      .loadType<Aser>(Aser)
+      .loadType(Aser)
       .then((res) => res.filter((o) => o.child === childId));
   }
 }

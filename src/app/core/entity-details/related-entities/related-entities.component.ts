@@ -69,14 +69,14 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
       (e) =>
         this.isArray
-          ? e[this.property].includes(this.entity.getId())
-          : e[this.property] === this.entity.getId(),
+          ? e[this.property].includes(this.entity.getId(true))
+          : e[this.property] === this.entity.getId(true),
     );
     this.filter = {
       ...this.filter,
       [this.property]: this.isArray
-        ? { $elemMatch: { $eq: this.entity.getId() } }
-        : this.entity.getId(),
+        ? { $elemMatch: { $eq: this.entity.getId(true) } }
+        : this.entity.getId(true),
     };
 
     if (this.showInactive === undefined) {
@@ -91,8 +91,8 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     return () => {
       const rec = new this.entityCtr();
       rec[this.property] = this.isArray
-        ? [this.entity.getId()]
-        : this.entity.getId();
+        ? [this.entity.getId(true)]
+        : this.entity.getId(true);
       return rec;
     };
   }

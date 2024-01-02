@@ -83,7 +83,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
   additionalForm: FormControl;
-  typeAdditionalOptions: SimpleDropdownValue[];
+  typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
 
   constructor(
@@ -218,7 +218,7 @@ export class AdminEntityFieldComponent implements OnChanges {
       .listEnums()
       .map((x) => ({
         label: Entity.extractEntityIdFromId(x), // TODO: add human-readable label to configurable-enum entities
-        value: Entity.extractEntityIdFromId(x),
+        value: x,
       }));
     this.additionalForm.addValidators(Validators.required);
 

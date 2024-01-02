@@ -307,15 +307,13 @@ export class QueryService {
     const targetEntities = this.toArray(this.entities[entityType]);
     const srcIds = srcEntities
       .filter((entity) => typeof entity.getId === "function") // skip empty placeholder objects
-      .map((entity) => entity.getId());
+      .map((entity) => entity.getId(true));
     if (
       targetEntities.length > 0 &&
       Array.isArray(targetEntities[0][relationKey])
     ) {
       return targetEntities.filter((entity) =>
-        (entity[relationKey] as Array<string>).some((id) =>
-          srcIds.includes(id.split(":").pop()),
-        ),
+        (entity[relationKey] as string[]).some((id) => srcIds.includes(id)),
       );
     } else {
       return targetEntities.filter((entity) =>

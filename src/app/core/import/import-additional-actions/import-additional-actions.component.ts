@@ -53,7 +53,7 @@ export class ImportAdditionalActionsComponent implements OnChanges {
   linkableEntityTypes: string[] = [];
   typeToString = (val) => this.entityTypeLabelPipe.transform(val);
   linkableEntities: Entity[] = [];
-  entityToId = (e: Entity) => e.getId();
+  entityToId = (e: Entity) => e.getId(true);
 
   linkEntityForm = new FormGroup({
     type: new FormControl({ value: "", disabled: true }),

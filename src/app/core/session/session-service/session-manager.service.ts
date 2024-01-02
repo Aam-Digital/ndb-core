@@ -111,6 +111,7 @@ export class SessionManagerService {
       .pipe(
         filter(
           ({ entity }) =>
+            // TODO user.name does not (necessarily) have prefix
             entity.getId(true) === user.name || entity.getId() === user.name,
         ),
       )

@@ -238,7 +238,7 @@ export class ConfigurableEnumFilter<
 }
 
 export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
-  constructor(name: string, label: string, filterEntities) {
+  constructor(name: string, label: string, filterEntities: Entity[]) {
     filterEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
     const options: FilterSelectionOption<T>[] = [
       {
@@ -249,12 +249,12 @@ export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
     ];
     options.push(
       ...filterEntities.map((filterEntity) => ({
-        key: filterEntity.getId(),
+        key: filterEntity.getId(true),
         label: filterEntity.toString(),
         filter: {
           $or: [
-            { [name]: filterEntity.getId() },
-            { [name]: { $elemMatch: { $eq: filterEntity.getId() } } },
+            { [name]: filterEntity.getId(true) },
+            { [name]: { $elemMatch: { $eq: filterEntity.getId(true) } } },
           ],
         },
       })),

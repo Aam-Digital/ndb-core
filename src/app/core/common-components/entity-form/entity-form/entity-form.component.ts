@@ -68,7 +68,9 @@ export class EntityFormComponent<T extends Entity = Entity>
       this.changesSubscription = this.entityMapper
         .receiveUpdates(this.entity.getConstructor())
         .pipe(
-          filter(({ entity }) => entity.getId() === this.entity.getId()),
+          filter(
+            ({ entity }) => entity.getId(true) === this.entity.getId(true),
+          ),
           filter(({ type }) => type !== "remove"),
           untilDestroyed(this),
         )

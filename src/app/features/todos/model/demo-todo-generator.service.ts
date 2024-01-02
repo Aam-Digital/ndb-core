@@ -78,7 +78,7 @@ export class DemoTodoGeneratorService extends DemoDataGenerator<Todo> {
     todo.relatedEntities = [entity.getId(true)];
 
     todo.assignedTo = [
-      faker.helpers.arrayElement(this.demoUsers.entities).getId(),
+      faker.helpers.arrayElement(this.demoUsers.entities).getId(true),
     ];
 
     return todo;

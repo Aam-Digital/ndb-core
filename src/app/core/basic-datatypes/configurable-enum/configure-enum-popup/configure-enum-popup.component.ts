@@ -89,6 +89,7 @@ export class ConfigureEnumPopupComponent {
   private async getUsages(value: ConfigurableEnumValue) {
     const enumMap: { [key in string]: string[] } = {};
     for (const entity of this.entities.values()) {
+      // TODO should this be migrated?
       const schemaFields = [...entity.schema.entries()]
         .filter(
           ([_, schema]) =>
@@ -135,5 +136,4 @@ export class ConfigureEnumPopupComponent {
     });
     this.newOptionInput = "";
   }
-  mynewFun() {}
 }

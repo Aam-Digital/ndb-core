@@ -49,7 +49,7 @@ export class MockEntityMapperService extends EntityMapperService {
     }
     super.setEntityMetadata(entity);
     const alreadyExists = this.contains(entity);
-    this.data.get(type).set(entity.getId(), entity);
+    this.data.get(type).set(entity.getId(true), entity);
     this.publishUpdates(
       entity.getType(),
       alreadyExists ? { type: "update", entity } : { type: "new", entity },
@@ -63,7 +63,7 @@ export class MockEntityMapperService extends EntityMapperService {
   public contains(entity: Entity): boolean {
     return (
       this.data.has(entity.getType()) &&
-      this.data.get(entity.getType()).has(entity.getId())
+      this.data.get(entity.getType()).has(entity.getId(true))
     );
   }
 
@@ -81,8 +81,7 @@ export class MockEntityMapperService extends EntityMapperService {
    * @param id
    */
   public get(entityType: string, id: string): Entity {
-    const entityId = Entity.extractEntityIdFromId(id);
-    const result = this.data.get(entityType)?.get(entityId);
+    const result = this.data.get(entityType)?.get(id);
     if (!result) {
       throw new HttpErrorResponse({ status: 404 });
     }
@@ -104,7 +103,7 @@ export class MockEntityMapperService extends EntityMapperService {
   public delete(entity: Entity) {
     const entities = this.data.get(entity.getType());
     if (entities) {
-      entities.delete(entity.getId());
+      entities.delete(entity.getId(true));
       this.publishUpdates(entity.getType(), { type: "remove", entity });
     }
   }

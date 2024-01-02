@@ -60,7 +60,8 @@ export class NotesRelatedToEntityComponent implements OnInit {
   ngOnInit(): void {
     if (this.entity.getType() === Child.ENTITY_TYPE) {
       // When displaying notes for a child, use attendance color highlighting
-      this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
+      this.getColor = (note: Note) =>
+        note?.getColorForId(this.entity.getId(true));
     }
     this.newRecordFactory = this.generateNewRecordFactory();
     this.initNotesOfEntity();

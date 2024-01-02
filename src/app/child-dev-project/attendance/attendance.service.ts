@@ -244,7 +244,9 @@ export class AttendanceService {
       );
       for (const activityThroughRelation of activitiesThroughRelation) {
         if (
-          !activities.some((a) => a.getId() === activityThroughRelation.getId())
+          !activities.some(
+            (a) => a.getId(true) === activityThroughRelation.getId(true),
+          )
         ) {
           activities.push(activityThroughRelation);
         }

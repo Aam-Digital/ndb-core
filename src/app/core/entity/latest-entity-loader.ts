@@ -29,10 +29,9 @@ export abstract class LatestEntityLoader<T extends Entity> {
     const initialValue = await this.loadOnce();
     this.entityMapper
       .receiveUpdates(this.entityCtor)
+      // TODO do we want to keep it this way (pass short ID and match short here?)
       .pipe(filter(({ entity }) => entity.getId() === this.entityID))
-      .subscribe(({ entity }) => {
-        this.entityUpdated.next(entity);
-      });
+      .subscribe(({ entity }) => this.entityUpdated.next(entity));
     return initialValue;
   }
 

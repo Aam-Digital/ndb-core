@@ -6,8 +6,8 @@ import moment from "moment";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import {
-  ScreenWidthObserver,
   ScreenSize,
+  ScreenWidthObserver,
 } from "../../../../utils/media/screen-size-observer.service";
 import { NgForOf, SlicePipe } from "@angular/common";
 import { AttendanceBlockComponent } from "../../../attendance/attendance-block/attendance-block.component";
@@ -25,7 +25,7 @@ import { AttendanceBlockComponent } from "../../../attendance/attendance-block/a
     <app-attendance-block
       *ngFor="let att of attendanceList | slice: 0 : maxAttendanceBlocks"
       [attendanceData]="att"
-      [forChild]="entity.getId()"
+      [forChild]="entity.getId(true)"
     ></app-attendance-block>
   `,
   imports: [NgForOf, SlicePipe, AttendanceBlockComponent],
@@ -71,7 +71,7 @@ export class RecentAttendanceBlocksComponent implements OnInit {
 
   async ngOnInit() {
     let activities = await this.attendanceService.getActivitiesForChild(
-      this.entity.getId(),
+      this.entity.getId(true),
     );
     if (this.config.filterByActivityType) {
       activities = activities.filter(
@@ -87,7 +87,9 @@ export class RecentAttendanceBlocksComponent implements OnInit {
       );
 
     for (const record of activityRecords) {
-      if (activities.find((a) => a.getId() === record.activity?.getId())) {
+      if (
+        activities.find((a) => a.getId(true) === record.activity?.getId(true))
+      ) {
         this.attendanceList.push(record);
       }
     }

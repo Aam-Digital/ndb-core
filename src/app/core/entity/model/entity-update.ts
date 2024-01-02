@@ -44,18 +44,18 @@ export function applyUpdate<T extends Entity>(
     next.type === "new" ||
     (addIfMissing &&
       next.type === "update" &&
-      !entities.find((e) => e.getId() === next.entity.getId()))
+      !entities.find((e) => e.getId(true) === next.entity.getId(true)))
   ) {
     return [next.entity].concat(entities);
   }
 
   if (next.type === "update") {
     return entities.map((e) =>
-      e.getId() === next.entity.getId() ? next.entity : e,
+      e.getId(true) === next.entity.getId(true) ? next.entity : e,
     );
   }
 
   if (next.type === "remove") {
-    return entities.filter((e) => e.getId() !== next.entity.getId());
+    return entities.filter((e) => e.getId(true) !== next.entity.getId(true));
   }
 }

@@ -106,7 +106,7 @@ export class RollCallSetupComponent implements OnInit {
     } else {
       // TODO implement a generic function that finds the property where a entity has relations to another entity type (e.g. `authors` for `Note` when looking for `User`) to allow dynamic checks
       this.visibleActivities = this.allActivities.filter((a) =>
-        a.isAssignedTo(this.currentUser.value.getId()),
+        a.isAssignedTo(this.currentUser.value.getId(true)),
       );
       if (this.visibleActivities.length === 0) {
         this.visibleActivities = this.allActivities.filter(
@@ -156,7 +156,7 @@ export class RollCallSetupComponent implements OnInit {
       activity,
       this.date,
     )) as NoteForActivitySetup;
-    event.authors = [this.currentUser.value.getId()];
+    event.authors = [this.currentUser.value.getId(true)];
     event.isNewFromActivity = true;
     return event;
   }
@@ -176,7 +176,7 @@ export class RollCallSetupComponent implements OnInit {
         score += 1;
       }
 
-      if (assignedUsers.includes(this.currentUser.value.getId())) {
+      if (assignedUsers.includes(this.currentUser.value.getId(true))) {
         score += 2;
       }
 
@@ -190,7 +190,7 @@ export class RollCallSetupComponent implements OnInit {
 
   createOneTimeEvent() {
     const newNote = Note.create(new Date());
-    newNote.authors = [this.currentUser.value.getId()];
+    newNote.authors = [this.currentUser.value.getId(true)];
 
     this.formDialog
       .openFormPopup(newNote, [], NoteDetailsComponent)

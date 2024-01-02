@@ -32,7 +32,7 @@ export class EditSingleEntityComponent
   implements OnInit
 {
   entities: Entity[] = [];
-  entityToId = (e: Entity) => e?.getId();
+  entityToId = (e: Entity) => e?.getId(true);
 
   constructor(private entityMapperService: EntityMapperService) {
     super();
