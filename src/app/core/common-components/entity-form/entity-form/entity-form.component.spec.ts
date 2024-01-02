@@ -151,7 +151,7 @@ describe("EntityFormComponent", () => {
       component.form.get(c).setValue(formChanges[c]);
       component.form.get(c).markAsDirty();
     }
-    const updatedChild = new Child(component.entity.getId());
+    const updatedChild = new Child(component.entity.getId(true));
     Object.assign(updatedChild, remoteChanges);
 
     const entityMapper = TestBed.inject(EntityMapperService);

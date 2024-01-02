@@ -150,7 +150,9 @@ describe("AttendanceService", () => {
   });
 
   it("gets events for an activity", async () => {
-    const actualEvents = await service.getEventsForActivity(activity1.getId());
+    const actualEvents = await service.getEventsForActivity(
+      activity1.getId(true),
+    );
     expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e1_3]);
   });
 
@@ -311,28 +313,28 @@ describe("AttendanceService", () => {
   it("should not include duplicate children for event from activity", async () => {
     const activity = new RecurringActivity();
     const linkedSchool = new School();
-    activity.linkedGroups.push(linkedSchool.getId());
+    activity.linkedGroups.push(linkedSchool.getId(true));
 
     const duplicateChild = new Child();
     const duplicateChildRelation = new ChildSchoolRelation();
-    duplicateChildRelation.childId = duplicateChild.getId();
-    duplicateChildRelation.schoolId = linkedSchool.getId();
+    duplicateChildRelation.childId = duplicateChild.getId(true);
+    duplicateChildRelation.schoolId = linkedSchool.getId(true);
     const anotherRelation = new ChildSchoolRelation();
     anotherRelation.childId = "another child id";
-    anotherRelation.schoolId = linkedSchool.getId();
+    anotherRelation.schoolId = linkedSchool.getId(true);
     await entityMapper.saveAll([duplicateChildRelation, anotherRelation]);
 
     const directlyAddedChild = new Child();
     activity.participants.push(
-      directlyAddedChild.getId(),
-      duplicateChild.getId(),
+      directlyAddedChild.getId(true),
+      duplicateChild.getId(true),
     );
 
     const event = await service.createEventForActivity(activity, new Date());
 
     expect(event.children).toHaveSize(3);
-    expect(event.children).toContain(directlyAddedChild.getId());
-    expect(event.children).toContain(duplicateChild.getId());
+    expect(event.children).toContain(directlyAddedChild.getId(true));
+    expect(event.children).toContain(duplicateChild.getId(true));
     expect(event.children).toContain(anotherRelation.childId);
   });
 

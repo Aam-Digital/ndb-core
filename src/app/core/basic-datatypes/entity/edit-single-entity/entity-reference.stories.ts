@@ -70,7 +70,7 @@ class TestEntity extends Entity {
 }
 
 const testEntity = new TestEntity();
-testEntity.relatedEntity = testUser.getId();
+testEntity.relatedEntity = testUser.getId(true);
 
 export const Primary = Template.bind({});
 Primary.args = {

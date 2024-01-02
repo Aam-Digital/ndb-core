@@ -80,6 +80,6 @@ Disabled.args = {
   entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",
-  selection: [child1.getId()],
+  selection: [child1.getId(true)],
   disabled: true,
 };

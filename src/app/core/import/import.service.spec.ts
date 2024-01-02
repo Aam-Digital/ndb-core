@@ -175,7 +175,7 @@ describe("ImportService", () => {
     await expectEntitiesToBeInDatabase([relations[2]], false, true);
     expect(activity.participants).toEqual(["3"]);
     await expectAsync(
-      entityMapper.load(ImportMetadata, importMeta.getId()),
+      entityMapper.load(ImportMetadata, importMeta.getId(true)),
     ).toBeRejected();
   });
 

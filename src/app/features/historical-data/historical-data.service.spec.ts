@@ -29,13 +29,13 @@ describe("HistoricalDataService", () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const entity = new Entity();
     const relatedData = new HistoricalEntityData();
-    relatedData.relatedEntity = entity.getId();
+    relatedData.relatedEntity = entity.getId(true);
     const unrelatedData = new HistoricalEntityData();
     unrelatedData.relatedEntity = "anotherEntity";
     await entityMapper.save(relatedData);
     await entityMapper.save(unrelatedData);
 
-    const results = await service.getHistoricalDataFor(entity.getId());
+    const results = await service.getHistoricalDataFor(entity.getId(true));
 
     expectEntitiesToMatch(results, [relatedData]);
   });
@@ -44,13 +44,13 @@ describe("HistoricalDataService", () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     const entity = new Entity();
     const firstData = new HistoricalEntityData();
-    firstData.relatedEntity = entity.getId();
+    firstData.relatedEntity = entity.getId(true);
     firstData.date = new Date();
     const secondData = new HistoricalEntityData();
-    secondData.relatedEntity = entity.getId();
+    secondData.relatedEntity = entity.getId(true);
     secondData.date = moment().subtract(1, "day").toDate();
     const thirdData = new HistoricalEntityData();
-    thirdData.relatedEntity = entity.getId();
+    thirdData.relatedEntity = entity.getId(true);
     thirdData.date = moment().subtract(10, "days").toDate();
     const unrelatedData = new HistoricalEntityData();
     unrelatedData.relatedEntity = "anotherEntity";
@@ -60,13 +60,13 @@ describe("HistoricalDataService", () => {
     await entityMapper.save(thirdData);
     await entityMapper.save(secondData);
 
-    const result = await service.getHistoricalDataFor(entity.getId());
+    const result = await service.getHistoricalDataFor(entity.getId(true));
 
     expect(result).toHaveSize(3);
-    expect(result.map((res) => res.getId())).toEqual([
-      firstData.getId(),
-      secondData.getId(),
-      thirdData.getId(),
+    expect(result.map((res) => res.getId(true))).toEqual([
+      firstData.getId(true),
+      secondData.getId(true),
+      thirdData.getId(true),
     ]);
   });
 });

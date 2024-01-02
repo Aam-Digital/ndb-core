@@ -17,9 +17,9 @@ export default {
         importProvidersFrom(
           StorybookBaseModule.withData([
             child,
-            Note.create(new Date("2023-01-23"), "note A", [child.getId()]),
-            Note.create(new Date("2023-03-02"), "note B", [child.getId()]),
-            Note.create(new Date("2023-06-18"), "note C", [child.getId()]),
+            Note.create(new Date("2023-01-23"), "note A", [child.getId(true)]),
+            Note.create(new Date("2023-03-02"), "note B", [child.getId(true)]),
+            Note.create(new Date("2023-06-18"), "note C", [child.getId(true)]),
           ]),
         ),
       ],

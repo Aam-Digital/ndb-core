@@ -83,17 +83,17 @@ describe("AttendanceCalendarComponent", () => {
     const childWithoutAttendance = new Child("childWithoutAttendance");
     const note = new Note();
     note.date = new Date();
-    note.addChild(attendedChild.getId());
-    note.addChild(absentChild.getId());
-    note.addChild(childWithoutAttendance.getId());
+    note.addChild(attendedChild);
+    note.addChild(absentChild);
+    note.addChild(childWithoutAttendance);
     const presentAttendance = defaultAttendanceStatusTypes.find(
       (it) => it.id === "PRESENT",
     );
     const absentAttendance = defaultAttendanceStatusTypes.find(
       (it) => it.id === "ABSENT",
     );
-    note.getAttendance(attendedChild.getId()).status = presentAttendance;
-    note.getAttendance(absentChild.getId()).status = absentAttendance;
+    note.getAttendance(attendedChild).status = presentAttendance;
+    note.getAttendance(absentChild).status = absentAttendance;
     component.records = [note];
 
     component.selectDay(new Date());
@@ -109,10 +109,12 @@ describe("AttendanceCalendarComponent", () => {
     const note = new Note();
     note.date = testDate;
     component.records = [note];
-    component.highlightForChild = excludedChild.getId();
+    component.highlightForChild = excludedChild.getId(true);
 
     component.selectDay(testDate);
 
-    expect(component.selectedEvent.children).toContain(excludedChild.getId());
+    expect(component.selectedEvent.children).toContain(
+      excludedChild.getId(true),
+    );
   });
 });

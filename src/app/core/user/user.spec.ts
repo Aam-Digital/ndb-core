@@ -31,7 +31,7 @@ describe("User", () => {
     user.name = "test-name";
 
     expect(user.name).toBe("test-name");
-    expect(user.getId()).toBe("test-name");
+    expect(user.getId(true)).toBe(`${User.ENTITY_TYPE}:test-name`);
     expect(() => (user.name = "another-name")).toThrowError();
   });
 

@@ -52,13 +52,13 @@ describe("EntityFormService", () => {
     });
 
     await expectAsync(service.saveChanges(formGroup, entity)).toBeRejected();
-    expect(entity.getId()).not.toBe("newId");
+    expect(entity.getId(true)).not.toBe(`${Entity.ENTITY_TYPE}:newId`);
   });
 
   it("should update entity if saving is successful", async () => {
     const entity = new Entity("initialId");
     const formGroup = new UntypedFormGroup({
-      _id: new UntypedFormControl("newId"),
+      _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
     });
     TestBed.inject(EntityAbility).update([
       { subject: "Entity", action: "create" },
@@ -66,7 +66,7 @@ describe("EntityFormService", () => {
 
     await service.saveChanges(formGroup, entity);
 
-    expect(entity.getId()).toBe("newId");
+    expect(entity.getId(true)).toBe(`${Entity.ENTITY_TYPE}:newId`);
   });
 
   it("should throw an error when trying to create a entity with missing permissions", async () => {

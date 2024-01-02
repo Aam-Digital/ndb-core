@@ -8,11 +8,13 @@ const entityMatchers: jasmine.CustomMatcherFactories = {
       (entity, type) =>
         `Expected entity ${util.pp(
           entity,
-        )} to have type '${type}' but it has type ${entity.getId()}`,
+        )} to have type '${type}' but it has type ${entity.getId(true)}`,
       (entity, type) =>
         `Expected entity ${util.pp(
           entity,
-        )} not to have type '${type}' but it actually has type ${entity.getId()}`,
+        )} not to have type '${type}' but it actually has type ${entity.getId(
+          true,
+        )}`,
     );
   },
 };

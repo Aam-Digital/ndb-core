@@ -31,7 +31,7 @@ describe("BasicAutocompleteComponent", () => {
   let fixture: ComponentFixture<BasicAutocompleteComponent<any, any>>;
   let loader: HarnessLoader;
   let testControl: FormControl;
-  const entityToId = (e: Entity) => e?.getId();
+  const entityToId = (e: Entity) => e?.getId(true);
 
   beforeEach(async () => {
     testControl = new FormControl("");
@@ -86,7 +86,7 @@ describe("BasicAutocompleteComponent", () => {
   it("should show name of the selected entity", async () => {
     const child1 = Child.create("First Child");
     const child2 = Child.create("Second Child");
-    component.value = child1.getId();
+    component.value = child1.getId(true);
     component.options = [child1, child2];
     component.valueMapper = entityToId;
 
@@ -102,9 +102,9 @@ describe("BasicAutocompleteComponent", () => {
     component.options = [child1, child2];
     component.valueMapper = entityToId;
 
-    component.select({ asValue: child1.getId() } as any);
+    component.select({ asValue: child1.getId(true) } as any);
 
-    expect(component.value).toBe(child1.getId());
+    expect(component.value).toBe(child1.getId(true));
   });
 
   it("should reset if leaving empty autocomplete", fakeAsync(() => {
@@ -113,8 +113,8 @@ describe("BasicAutocompleteComponent", () => {
     component.options = [first, second];
     component.valueMapper = entityToId;
 
-    component.select({ asValue: first.getId() } as any);
-    expect(component.value).toBe(first.getId());
+    component.select({ asValue: first.getId(true) } as any);
+    expect(component.value).toBe(first.getId(true));
 
     component.autocompleteForm.setValue("");
     component.onFocusOut({} as any);

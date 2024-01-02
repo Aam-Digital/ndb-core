@@ -30,7 +30,7 @@ const demoChildren = [
 ];
 
 const simpleEvent = Note.create(new Date(), "some meeting");
-demoChildren.forEach((c) => simpleEvent.addChild(c.getId()));
+demoChildren.forEach((c) => simpleEvent.addChild(c));
 
 const longEvent = Note.create(new Date(), "another meeting");
 longEvent.text =
@@ -40,12 +40,12 @@ longEvent.category = {
   label: "Guardians Meeting",
   isMeeting: true,
 };
-demoChildren.forEach((c) => longEvent.addChild(c.getId()));
+demoChildren.forEach((c) => longEvent.addChild(c));
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
 activityEvent.relatesTo =
   RecurringActivity.create("Coaching Batch C").getId(true);
-demoChildren.forEach((c) => activityEvent.addChild(c.getId()));
+demoChildren.forEach((c) => activityEvent.addChild(c));
 
 export const OneTimeEvent = Template.bind({});
 OneTimeEvent.args = {
