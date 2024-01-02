@@ -50,8 +50,7 @@ describe("EntityDeleteService", () => {
   ) {
     const result = entity.copy();
     result[property] = result[property].filter(
-      (id) =>
-        id !== referencedEntity.getId() && id !== referencedEntity.getId(true),
+      (id) => id !== referencedEntity.getId(true),
     );
     return result;
   }
@@ -184,7 +183,7 @@ describe("EntityDeleteService", () => {
     const primary = new Child();
     const note = new Note();
     note.subject = "test";
-    note.children = [primary.getId(), "some-other"];
+    note.children = [primary.getId(true), "Child:some-other"];
     note.relatedEntities = [primary.getId(true)];
     const originalNote = note.copy();
     await entityMapper.save(primary);
@@ -198,7 +197,7 @@ describe("EntityDeleteService", () => {
     ) as Note;
 
     expect(actualNote.relatedEntities).toEqual([]);
-    expect(actualNote.children).toEqual(["some-other"]);
+    expect(actualNote.children).toEqual(["Child:some-other"]);
 
     expect(result.originalEntitiesBeforeChange.length).toBe(2);
     expectEntitiesToMatch(result.originalEntitiesBeforeChange, [

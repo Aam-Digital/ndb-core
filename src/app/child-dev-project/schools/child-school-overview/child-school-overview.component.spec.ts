@@ -44,8 +44,7 @@ describe("ChildSchoolOverviewComponent", () => {
   it("it calls children service with id from passed child", async () => {
     await component.ngOnInit();
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
-      "child",
-      testChild.getId(),
+      testChild.getId(true),
     );
   });
 
@@ -57,8 +56,7 @@ describe("ChildSchoolOverviewComponent", () => {
 
     expect(component.mode).toBe("school");
     expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
-      "school",
-      testSchool.getId(),
+      testSchool.getId(true),
     );
   });
 
@@ -74,7 +72,7 @@ describe("ChildSchoolOverviewComponent", () => {
 
     const newRelation = component.generateNewRecordFactory()();
 
-    expect(newRelation.childId).toEqual(child.getId());
+    expect(newRelation.childId).toEqual(child.getId(true));
     expect(
       moment(existingRelation.end)
         .add(1, "day")
@@ -89,6 +87,6 @@ describe("ChildSchoolOverviewComponent", () => {
     const newRelation = component.generateNewRecordFactory()();
 
     expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
-    expect(newRelation.schoolId).toBe("testID");
+    expect(newRelation.schoolId).toBe("School:testID");
   });
 });

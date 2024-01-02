@@ -53,7 +53,7 @@ describe("NotesRelatedToEntityComponent", () => {
 
     component.getColor(note);
 
-    expect(note.getColorForId).toHaveBeenCalledWith(entity.getId());
+    expect(note.getColorForId).toHaveBeenCalledWith(entity.getId(true));
   });
 
   it("should create a new note and fill it with the appropriate initial value", () => {
@@ -61,13 +61,13 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = entity;
     component.ngOnInit();
     let note = component.generateNewRecordFactory()();
-    expect(note.children).toEqual([entity.getId()]);
+    expect(note.children).toEqual([entity.getId(true)]);
 
     entity = new School();
     component.entity = entity;
     component.ngOnInit();
     note = component.generateNewRecordFactory()();
-    expect(note.schools).toEqual([entity.getId()]);
+    expect(note.schools).toEqual([entity.getId(true)]);
 
     entity = new User();
     component.entity = entity;

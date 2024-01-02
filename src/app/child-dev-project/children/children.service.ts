@@ -47,7 +47,7 @@ export class ChildrenService {
    */
   async getChild(id: string): Promise<Child> {
     const child = await this.entityMapper.load(Child, id);
-    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}:${id}`);
+    const relations = await this.queryRelations(id);
     this.extendChildWithSchoolInfo(child, relations);
     return child;
   }

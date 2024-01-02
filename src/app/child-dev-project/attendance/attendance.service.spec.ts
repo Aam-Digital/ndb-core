@@ -284,7 +284,7 @@ describe("AttendanceService", () => {
   it("should include children from a linked school for event from activity", async () => {
     const activity = new RecurringActivity();
     const linkedSchool = new School();
-    activity.linkedGroups.push(linkedSchool.getId());
+    activity.linkedGroups.push(linkedSchool.getId(true));
 
     const childAttendingSchool = new ChildSchoolRelation();
     childAttendingSchool.childId = "child attending school";
@@ -294,18 +294,17 @@ describe("AttendanceService", () => {
     ).and.resolveTo([childAttendingSchool]);
 
     const directlyAddedChild = new Child();
-    activity.participants.push(directlyAddedChild.getId());
+    activity.participants.push(directlyAddedChild.getId(true));
     const date = new Date();
 
     const event = await service.createEventForActivity(activity, date);
 
     expect(mockQueryRelationsOf).toHaveBeenCalledWith(
-      "school",
-      linkedSchool.getId(),
+      linkedSchool.getId(true),
       date,
     );
     expect(event.children).toHaveSize(2);
-    expect(event.children).toContain(directlyAddedChild.getId());
+    expect(event.children).toContain(directlyAddedChild.getId(true));
     expect(event.children).toContain(childAttendingSchool.childId);
   });
 

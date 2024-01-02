@@ -148,13 +148,13 @@ describe("FilterGeneratorService", () => {
     school2.name = "Second School";
     await TestBed.inject(EntityMapperService).saveAll([school1, school2]);
     const csr1 = new ChildSchoolRelation();
-    csr1.schoolId = school1.getId();
+    csr1.schoolId = school1.getId(true);
     const csr2 = new ChildSchoolRelation();
-    csr2.schoolId = school2.getId();
+    csr2.schoolId = school2.getId(true);
     const csr3 = new ChildSchoolRelation();
-    csr3.schoolId = school2.getId();
+    csr3.schoolId = school2.getId(true);
     const csr4 = new ChildSchoolRelation();
-    csr4.schoolId = school1.getId();
+    csr4.schoolId = school1.getId(true);
     const schema = ChildSchoolRelation.schema.get("schoolId");
 
     const filterOptions = (
@@ -168,12 +168,12 @@ describe("FilterGeneratorService", () => {
     expect(allFilter.label).toEqual("All");
     expect(filter(allRelations, allFilter)).toEqual(allRelations);
     const school1Filter = filterOptions.options.find(
-      (opt) => opt.key === school1.getId(),
+      (opt) => opt.key === school1.getId(true),
     );
     expect(school1Filter.label).toEqual(school1.name);
     expect(filter(allRelations, school1Filter)).toEqual([csr1, csr4]);
     const school2Filter = filterOptions.options.find(
-      (opt) => opt.key === school2.getId(),
+      (opt) => opt.key === school2.getId(true),
     );
     expect(school2Filter.label).toEqual(school2.name);
     expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);

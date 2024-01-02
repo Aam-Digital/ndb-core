@@ -25,6 +25,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./entity-form/FormConfig";
+import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("EntityFormService", () => {
@@ -180,15 +181,15 @@ describe("EntityFormService", () => {
 
     schema.defaultValue = PLACEHOLDERS.CURRENT_USER;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue(TEST_USER);
+    expect(form.get("test")).toHaveValue(`${User.ENTITY_TYPE}:${TEST_USER}`);
 
     schema.dataType = ArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([TEST_USER]);
+    expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
     schema.dataType = EntityArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([TEST_USER]);
+    expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
     Entity.schema.delete("test");
   });

@@ -36,10 +36,10 @@ describe("Schema data type: entity", () => {
 
     await expectAsync(
       dataType.importMapFunction("first", schema, "name"),
-    ).toBeResolvedTo(c1.getId());
+    ).toBeResolvedTo(c1.getId(true));
     await expectAsync(
       dataType.importMapFunction("123", schema, "projectNumber"),
-    ).toBeResolvedTo(c2.getId());
+    ).toBeResolvedTo(c2.getId(true));
     await expectAsync(
       dataType.importMapFunction("345", schema, "projectNumber"),
     ).toBeResolvedTo(undefined);
@@ -55,7 +55,7 @@ describe("Schema data type: entity", () => {
       jasmine.createSpyObj("EntityRemoveService", ["anonymize"]);
     const dataType = new EntityDatatype(entityMapper, mockRemoveService);
 
-    const testValue = referencedEntity.getId();
+    const testValue = referencedEntity.getId(true);
     const testSchemaField: EntitySchemaField = {
       additional: "Child",
       dataType: "entity",

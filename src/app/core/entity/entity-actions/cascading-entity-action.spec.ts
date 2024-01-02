@@ -50,7 +50,7 @@ export function expectAllUnchangedExcept(
   entityMapper: MockEntityMapperService,
 ) {
   const isExpectedUnchanged = (entity: EntityWithAnonRelations) => {
-    !changedEntities.some((c) => entity.getId() === c.getId());
+    !changedEntities.some((c) => entity.getId(true) === c.getId(true));
   };
 
   const actualEntitiesAfter =
@@ -82,7 +82,7 @@ export function expectUpdated(
 
   for (const updatedEntity of updatedEntities) {
     const actualEntity = actualEntitiesAfter.find(
-      (e) => e.getId() === updatedEntity.getId(),
+      (e) => e.getId(true) === updatedEntity.getId(true),
     );
     expect(comparableEntityData(actualEntity)).toEqual(
       comparableEntityData(updatedEntity),
@@ -100,7 +100,7 @@ const ReferencedAsComposite = EntityWithAnonRelations.create(
 const ReferencingSingleComposite = EntityWithAnonRelations.create(
   "entity having a composite reference",
   {
-    refComposite: [ReferencedAsComposite.getId()],
+    refComposite: [ReferencedAsComposite.getId(true)],
   },
 );
 
@@ -114,8 +114,8 @@ const ReferencingTwoComposites = EntityWithAnonRelations.create(
   "entity referencing two entities as composites",
   {
     refComposite: [
-      ReferencedAsOneOfMultipleComposites1.getId(),
-      ReferencedAsOneOfMultipleComposites2.getId(),
+      ReferencedAsOneOfMultipleComposites1.getId(true),
+      ReferencedAsOneOfMultipleComposites2.getId(true),
     ],
   },
 );
@@ -131,8 +131,8 @@ const ReferencingCompositeAndAggregate_refAggregate =
 const ReferencingCompositeAndAggregate = EntityWithAnonRelations.create(
   "having both a composite and a aggregate reference",
   {
-    refComposite: [ReferencingCompositeAndAggregate_refComposite.getId()],
-    refAggregate: [ReferencingCompositeAndAggregate_refAggregate.getId()],
+    refComposite: [ReferencingCompositeAndAggregate_refComposite.getId(true)],
+    refAggregate: [ReferencingCompositeAndAggregate_refAggregate.getId(true)],
   },
 );
 
@@ -142,7 +142,7 @@ const ReferencingAggregate_ref = EntityWithAnonRelations.create(
 const ReferencingAggregate = EntityWithAnonRelations.create(
   "entity having an aggregate reference",
   {
-    refAggregate: [ReferencingAggregate_ref.getId()],
+    refAggregate: [ReferencingAggregate_ref.getId(true)],
   },
 );
 
@@ -156,8 +156,8 @@ const ReferencingTwoAggregates = EntityWithAnonRelations.create(
   "entity referencing two entities as aggregates",
   {
     refAggregate: [
-      ReferencingTwoAggregates_ref1.getId(),
-      ReferencingTwoAggregates_ref2.getId(),
+      ReferencingTwoAggregates_ref1.getId(true),
+      ReferencingTwoAggregates_ref2.getId(true),
     ],
   },
 );

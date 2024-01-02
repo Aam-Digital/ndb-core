@@ -70,30 +70,16 @@ describe("EntitySelectComponent", () => {
 
   it("contains the initial selection as entities", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
-    const expectation = testUsers.slice(2, 3).map((user) => user.getId());
+    const expectation = testUsers.slice(2, 3).map((user) => user.getId(true));
 
     component.selection = expectation;
     fixture.detectChanges();
     tick();
 
     component.selectedEntities.forEach((s) => expect(s).toBeInstanceOf(User));
-    expect(component.selectedEntities.map((s) => s.getId())).toEqual(
+    expect(component.selectedEntities.map((s) => s.getId(true))).toEqual(
       expectation,
     );
-  }));
-
-  it("accepts initial selection as IDs with and without prefix", fakeAsync(() => {
-    component.entityType = User.ENTITY_TYPE;
-
-    component.selection = [testUsers[1].getId()];
-    fixture.detectChanges();
-    tick();
-    expect(component.selectedEntities).toEqual([testUsers[1]]);
-
-    component.selection = [testUsers[2].getId(true)];
-    fixture.detectChanges();
-    tick();
-    expect(component.selectedEntities).toEqual([testUsers[2]]);
   }));
 
   it("emits whenever a new entity is selected", fakeAsync(() => {
@@ -103,19 +89,18 @@ describe("EntitySelectComponent", () => {
 
     component.selectEntity(testUsers[0]);
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(),
+      testUsers[0].getId(true),
     ]);
 
     component.selectEntity(testUsers[1]);
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(),
-      testUsers[1].getId(),
+      testUsers[0].getId(true),
+      testUsers[1].getId(true),
     ]);
     tick();
   }));
 
-  it("emits with prefix the new entity selected", fakeAsync(() => {
-    component.withPrefix = true;
+  it("emits the new selected entity", fakeAsync(() => {
     spyOn(component.selectionChange, "emit");
     component.entityType = User.ENTITY_TYPE;
     tick();
@@ -140,8 +125,8 @@ describe("EntitySelectComponent", () => {
     component.unselectEntity(testUsers[0]);
 
     const remainingChildren = testUsers
-      .filter((c) => c.getId() !== testUsers[0].getId())
-      .map((c) => c.getId());
+      .filter((c) => c.getId(true) !== testUsers[0].getId(true))
+      .map((c) => c.getId(true));
     expect(component.selectionChange.emit).toHaveBeenCalledWith(
       remainingChildren,
     );
@@ -234,13 +219,5 @@ describe("EntitySelectComponent", () => {
     tick();
 
     expect(component.selectedEntities).toEqual([testUsers[1], testChildren[0]]);
-  }));
-
-  it("activates withPrefix automatically when multiple different types are configured", fakeAsync(() => {
-    component.withPrefix = false;
-    component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
-    tick();
-    fixture.detectChanges();
-    expect(component.withPrefix).toBeTrue();
   }));
 });

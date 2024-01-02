@@ -317,9 +317,7 @@ export class QueryService {
       );
     } else {
       return targetEntities.filter((entity) =>
-        entity[relationKey]
-          ? srcIds.includes(entity[relationKey].split(":").pop())
-          : false,
+        entity[relationKey] ? srcIds.includes(entity[relationKey]) : false,
       );
     }
   }

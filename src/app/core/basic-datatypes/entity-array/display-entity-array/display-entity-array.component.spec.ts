@@ -14,6 +14,10 @@ import { mockEntityMapper } from "../../../entity/entity-mapper/mock-entity-mapp
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import {
+  componentRegistry,
+  ComponentRegistry,
+} from "../../../../dynamic-components";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;
@@ -26,6 +30,7 @@ describe("DisplayEntityArrayComponent", () => {
     await TestBed.configureTestingModule({
       imports: [DisplayEntityArrayComponent, HttpClientTestingModule],
       providers: [
+        { provide: ComponentRegistry, useValue: componentRegistry },
         {
           provide: EntityMapperService,
           useValue: mockEntityMapper(testEntities),

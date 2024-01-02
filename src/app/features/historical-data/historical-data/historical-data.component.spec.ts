@@ -41,14 +41,14 @@ describe("HistoricalDataComponent", () => {
   it("should load the historical data", async () => {
     component.entity = new Entity();
     const relatedData = new HistoricalEntityData();
-    relatedData.relatedEntity = component.entity.getId();
+    relatedData.relatedEntity = component.entity.getId(true);
     mockHistoricalDataService.getHistoricalDataFor.and.resolveTo([relatedData]);
 
     await component.ngOnInit();
 
     expect(component.entries).toEqual([relatedData]);
     expect(mockHistoricalDataService.getHistoricalDataFor).toHaveBeenCalledWith(
-      component.entity.getId(),
+      component.entity.getId(true),
     );
   });
 
@@ -57,7 +57,7 @@ describe("HistoricalDataComponent", () => {
 
     const newEntry = component.getNewEntryFunction()();
 
-    expect(newEntry.relatedEntity).toBe(component.entity.getId());
+    expect(newEntry.relatedEntity).toBe(component.entity.getId(true));
     expect(moment(newEntry.date).isSame(new Date(), "day")).toBeTrue();
   });
 });

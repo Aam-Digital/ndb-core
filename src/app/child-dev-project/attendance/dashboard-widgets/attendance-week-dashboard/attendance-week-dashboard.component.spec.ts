@@ -75,7 +75,7 @@ describe("AttendanceWeekDashboardComponent", () => {
     expect(component.tableDataSource.data).toEqual([
       [
         {
-          childId: absentChild.getId(),
+          childId: absentChild.getId(true),
           activity: activity,
           attendanceDays: [
             // sundays are excluded
