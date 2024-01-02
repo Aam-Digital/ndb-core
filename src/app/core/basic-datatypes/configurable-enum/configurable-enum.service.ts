@@ -24,7 +24,7 @@ export class ConfigurableEnumService {
   }
 
   private cacheEnum(entity: ConfigurableEnum) {
-    return this.enums.set(entity.getId(true), entity);
+    return this.enums.set(entity.getId(), entity);
   }
 
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(

@@ -57,7 +57,7 @@ export class EntityDatatype extends StringDatatype {
     }
     return this.entityMapper
       .loadType(schemaField.additional)
-      .then((res) => res.find((e) => e[additional] === val)?.getId(true));
+      .then((res) => res.find((e) => e[additional] === val)?.getId());
   }
 
   importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {

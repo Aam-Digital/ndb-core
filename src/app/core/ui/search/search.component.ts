@@ -104,7 +104,7 @@ export class SearchComponent {
     // TODO keep route like this?
     await this.router.navigate([
       optionElement.value.getConstructor().route,
-      optionElement.value.getId(),
+      optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
   }

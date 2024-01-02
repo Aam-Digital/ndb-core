@@ -58,7 +58,7 @@ class TestEntity extends Entity {
 }
 
 const testEntity = new TestEntity();
-testEntity.relatedEntities = [testUser.getId(true)];
+testEntity.relatedEntities = [testUser.getId()];
 
 export const Primary = Template.bind({});
 Primary.args = {

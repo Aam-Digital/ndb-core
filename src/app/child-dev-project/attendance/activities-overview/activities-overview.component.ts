@@ -42,7 +42,7 @@ export class ActivitiesOverviewComponent
   ];
 
   async ngOnInit() {
-    this.titleColumn.additional.relevantValue = this.entity.getId(true);
+    this.titleColumn.additional.relevantValue = this.entity.getId();
     await super.ngOnInit();
   }
 }

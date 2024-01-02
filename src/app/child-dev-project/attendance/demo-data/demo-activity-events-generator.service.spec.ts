@@ -10,7 +10,7 @@ describe("DemoActivityEventsGenerator", () => {
 
   beforeEach(() => {
     const testActivity = RecurringActivity.create("test-activity");
-    testActivity.participants.push(Child.create("John Doe").getId(true));
+    testActivity.participants.push(Child.create("John Doe").getId());
 
     const mockActivityGenerator = {
       entities: [testActivity],

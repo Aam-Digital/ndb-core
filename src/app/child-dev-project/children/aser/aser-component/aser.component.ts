@@ -40,7 +40,7 @@ export class AserComponent implements OnInit {
 
   async loadData() {
     this.records = await this.childrenService.getAserResultsOfChild(
-      this.entity.getId(true),
+      this.entity.getId(),
     );
     this.records.sort(
       (a, b) =>
@@ -51,7 +51,7 @@ export class AserComponent implements OnInit {
   generateNewRecordFactory() {
     return () => {
       const newAtt = new Aser(Date.now().toString());
-      newAtt.child = this.entity.getId(true);
+      newAtt.child = this.entity.getId();
       return newAtt;
     };
   }

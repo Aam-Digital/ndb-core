@@ -29,7 +29,7 @@ export class DemoActivityEventsGeneratorService extends DemoDataGenerator<EventN
     const eventNote = EventNote.create(date, activity.title);
     eventNote.authors = activity.assignedTo;
     eventNote.category = activity.type;
-    eventNote.relatesTo = activity.getId(true); // relatesTo requires the id including prefix!
+    eventNote.relatesTo = activity.getId(); // relatesTo requires the id including prefix!
 
     for (const participantId of activity.participants) {
       eventNote.addChild(participantId);

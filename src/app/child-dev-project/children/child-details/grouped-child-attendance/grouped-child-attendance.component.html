@@ -6,7 +6,7 @@
   <mat-tab *ngFor="let activity of activities" [label]="activity.title">
     <app-activity-attendance-section
       [entity]="activity"
-      [forChild]="entity.getId(true)"
+      [forChild]="entity.getId()"
     >
     </app-activity-attendance-section>
   </mat-tab>

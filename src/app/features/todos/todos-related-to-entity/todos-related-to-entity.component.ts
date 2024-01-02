@@ -65,7 +65,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
   }
 
   async ngOnInit() {
-    this.entries = await this.loadDataFor(this.entity.getId(true));
+    this.entries = await this.loadDataFor(this.entity.getId());
   }
 
   private async loadDataFor(entityId: string): Promise<Todo[]> {
@@ -88,7 +88,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
   public getNewEntryFunction(): () => Todo {
     return () => {
       const newEntry = new Todo();
-      newEntry.relatedEntities = [this.entity.getId(true)];
+      newEntry.relatedEntities = [this.entity.getId()];
       return newEntry;
     };
   }

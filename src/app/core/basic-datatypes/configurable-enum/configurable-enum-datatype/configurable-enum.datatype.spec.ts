@@ -118,7 +118,7 @@ describe("Schema data type: configurable-enum", () => {
     entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
-    expect(entity.getId(true)).toEqual(data._id);
+    expect(entity.getId()).toEqual(data._id);
   });
 
   it("should gracefully handle invalid enum ids and show a dummy option to users", () => {

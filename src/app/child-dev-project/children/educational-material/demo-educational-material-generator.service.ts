@@ -64,7 +64,7 @@ export class DemoEducationalMaterialGeneratorService extends DemoDataGenerator<E
   private generateEducationalMaterialEntity(child: Child): EducationalMaterial {
     const entity = new EducationalMaterial();
 
-    entity.child = child.getId(true);
+    entity.child = child.getId();
     entity.date = faker.date.between({
       from: child.admissionDate,
       to: faker.getEarlierDateOrToday(child.dropoutDate),

@@ -63,7 +63,7 @@ export class ImportService {
   ) {
     const importMeta = new ImportMetadata();
     importMeta.config = settings;
-    importMeta.ids = savedEntities.map((entity) => entity.getId(true));
+    importMeta.ids = savedEntities.map((entity) => entity.getId());
     await this.entityMapper.save(importMeta);
     return importMeta;
   }
@@ -79,7 +79,7 @@ export class ImportService {
   private linkToSchool(entities: Entity[], id: string) {
     const relations = entities.map((entity) => {
       const relation = new ChildSchoolRelation();
-      relation.childId = entity.getId(true);
+      relation.childId = entity.getId();
       relation.schoolId = id;
       return relation;
     });
@@ -96,7 +96,7 @@ export class ImportService {
 
   private async linkToActivity(entities: Entity[], id: string) {
     const activity = await this.entityMapper.load(RecurringActivity, id);
-    const ids = entities.map((e) => e.getId(true));
+    const ids = entities.map((e) => e.getId());
     activity.participants.push(...ids);
     return this.entityMapper.save(activity);
   }

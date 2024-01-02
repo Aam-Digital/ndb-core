@@ -90,7 +90,7 @@ describe("EntityDetailsComponent", () => {
     TestBed.inject(EntityMapperService).save(testChild);
     tick();
     component.creatingNew = false;
-    component.id = testChild.getId();
+    component.id = testChild.getId(true);
     component.ngOnChanges(simpleChangesFor(component, "id"));
     tick();
 
@@ -111,12 +111,15 @@ describe("EntityDetailsComponent", () => {
     tick();
     spyOn(entityMapper, "load").and.callThrough();
 
-    component.id = testChild.getId();
+    component.id = testChild.getId(true);
     component.ngOnChanges(simpleChangesFor(component, "id"));
     expect(component.isLoading).toBeTrue();
     tick();
 
-    expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
+    expect(entityMapper.load).toHaveBeenCalledWith(
+      Child,
+      testChild.getId(true),
+    );
     expect(component.record).toBe(testChild);
     expect(component.isLoading).toBeFalse();
   }));

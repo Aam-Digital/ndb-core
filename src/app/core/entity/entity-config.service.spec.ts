@@ -135,12 +135,12 @@ describe("EntityConfigService", () => {
     expect(dynamicEntity.schema.get("dynamicProperty")).toEqual(schema);
     const dynamicInstance = new dynamicEntity("someId");
     expect(dynamicInstance instanceof Test).toBeTrue();
-    expect(dynamicInstance.getId(true)).toBe("DynamicTest:someId");
+    expect(dynamicInstance.getId()).toBe("DynamicTest:someId");
 
     // it should overwrite anything in the extended entity
     expect(Test.schema.has("dynamicProperty")).toBeFalse();
     const parentInstance = new Test("otherId");
-    expect(parentInstance.getId(true)).toBe("Test:otherId");
+    expect(parentInstance.getId()).toBe("Test:otherId");
   });
 
   it("should subclass entity if no extension is specified", () => {
@@ -160,7 +160,7 @@ describe("EntityConfigService", () => {
     ]);
     const dynamicInstance = new dynamicEntity("someId");
     expect(dynamicInstance instanceof Entity).toBeTrue();
-    expect(dynamicInstance.getId(true)).toBe("NoExtends:someId");
+    expect(dynamicInstance.getId()).toBe("NoExtends:someId");
   });
 });
 

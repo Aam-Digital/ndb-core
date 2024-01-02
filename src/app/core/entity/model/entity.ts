@@ -280,9 +280,9 @@ export class Entity {
    *
    * @returns {string} the unique id of this entity
    */
-  public getId(withPrefix: boolean = false): string {
-    if (withPrefix) return this._id;
-    return this.entityId;
+  public getId(withoutPrefix = false): string {
+    if (withoutPrefix) return this.entityId;
+    return this._id;
   }
 
   /**

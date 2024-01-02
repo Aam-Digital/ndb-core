@@ -148,7 +148,7 @@ export class RollCallComponent implements OnChanges {
   private setInitialIndex() {
     let index = 0;
     for (const entry of this.children) {
-      if (!this.eventEntity.getAttendance(entry.getId(true))?.status?.id) {
+      if (!this.eventEntity.getAttendance(entry.getId())?.status?.id) {
         break;
       }
       index += 1;
@@ -180,7 +180,7 @@ export class RollCallComponent implements OnChanges {
           "Could not find child " +
             childId +
             " for event " +
-            this.eventEntity.getId(true),
+            this.eventEntity.getId(),
         );
         this.eventEntity.removeChild(childId);
         continue;
@@ -202,7 +202,7 @@ export class RollCallComponent implements OnChanges {
 
     this.children.sort(sortByAttribute<any>(this.sortParticipantsBy, "asc"));
     // also sort the participants in the Note entity itself for display in details view later
-    this.eventEntity.children = this.children.map((e) => e.getId(true));
+    this.eventEntity.children = this.children.map((e) => e.getId());
   }
 
   markAttendance(status: AttendanceStatusType) {
@@ -220,7 +220,7 @@ export class RollCallComponent implements OnChanges {
     } else {
       this.currentChild = this.children[this.currentIndex];
       this.currentAttendance = this.eventEntity.getAttendance(
-        this.currentChild.getId(true),
+        this.currentChild.getId(),
       );
     }
   }

@@ -106,7 +106,7 @@ describe("EntityAnonymizeService", () => {
     await service.anonymizeEntity(entity);
 
     AnonymizableEntity.expectAnonymized(
-      entity.getId(true),
+      entity.getId(),
       AnonymizableEntity.create({ retainedField: "test" }),
     );
   });
@@ -118,7 +118,7 @@ describe("EntityAnonymizeService", () => {
     await service.anonymizeEntity(entity);
 
     AnonymizableEntity.expectAnonymized(
-      entity.getId(true),
+      entity.getId(),
       AnonymizableEntity.create({}),
     );
   });
@@ -136,7 +136,7 @@ describe("EntityAnonymizeService", () => {
     await service.anonymizeEntity(entity);
 
     AnonymizableEntity.expectAnonymized(
-      entity.getId(true),
+      entity.getId(),
       AnonymizableEntity.create({
         inactive: true,
         anonymized: true,
@@ -153,7 +153,7 @@ describe("EntityAnonymizeService", () => {
     await service.anonymizeEntity(entity);
 
     AnonymizableEntity.expectAnonymized(
-      entity.getId(true),
+      entity.getId(),
       AnonymizableEntity.create({ inactive: true, anonymized: true }),
       true,
     );
@@ -169,7 +169,7 @@ describe("EntityAnonymizeService", () => {
     await service.anonymizeEntity(entity);
 
     AnonymizableEntity.expectAnonymized(
-      entity.getId(true),
+      entity.getId(),
       AnonymizableEntity.create({
         retainAnonymizedDates: [
           moment("2023-07-01").toDate(),
@@ -186,7 +186,7 @@ describe("EntityAnonymizeService", () => {
     await service.anonymizeEntity(entity);
 
     AnonymizableEntity.expectAnonymized(
-      entity.getId(true),
+      entity.getId(),
       AnonymizableEntity.create({}),
     );
     expect(mockFileService.removeFile).toHaveBeenCalled();
@@ -202,7 +202,7 @@ describe("EntityAnonymizeService", () => {
     await service.anonymizeEntity(entity);
 
     AnonymizableEntity.expectAnonymized(
-      entity.getId(true),
+      entity.getId(),
       AnonymizableEntity.create({ defaultField: "test" }),
       true,
     );
@@ -222,11 +222,11 @@ describe("EntityAnonymizeService", () => {
 
     for (const anonEntity of expectedToGetAnonymized) {
       const actualEntity = actualEntitiesAfter.find(
-        (e) => e.getId(true) === anonEntity.getId(true),
+        (e) => e.getId() === anonEntity.getId(),
       );
 
       const expectedAnonymizedEntity = new EntityWithAnonRelations(
-        anonEntity.getId(true),
+        anonEntity.getId(),
       );
       // copy over properties that are marked as `anonymize: "retain"`
       expectedAnonymizedEntity.refAggregate = anonEntity.refAggregate;

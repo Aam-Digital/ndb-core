@@ -49,7 +49,7 @@ describe("ImportService", () => {
 
     expect(entityMapper.save).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        ids: testEntities.map((e) => e.getId(true)),
+        ids: testEntities.map((e) => e.getId()),
         config: testImportSettings,
       }),
     );
@@ -105,7 +105,7 @@ describe("ImportService", () => {
       { name: "with broken mapping column" },
       { name: "with zero", counter: 0 },
       { name: "custom mapping fn", date: moment("2023-01-30").toDate() },
-      { name: "entity array", entityRefs: [child.getId(true)] },
+      { name: "entity array", entityRefs: [child.getId()] },
     ];
 
     expectEntitiesToMatch(
@@ -175,7 +175,7 @@ describe("ImportService", () => {
     await expectEntitiesToBeInDatabase([relations[2]], false, true);
     expect(activity.participants).toEqual(["3"]);
     await expectAsync(
-      entityMapper.load(ImportMetadata, importMeta.getId(true)),
+      entityMapper.load(ImportMetadata, importMeta.getId()),
     ).toBeRejected();
   });
 

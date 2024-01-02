@@ -222,7 +222,7 @@ export class Note extends Entity {
    * @param child The child or the id of the child to add to the notes
    */
   addChild(child: Child | string) {
-    const childId = typeof child === "string" ? child : child.getId(true);
+    const childId = typeof child === "string" ? child : child.getId();
     if (this.children.includes(childId)) {
       return;
     }
@@ -235,7 +235,7 @@ export class Note extends Entity {
    * @param school The school or its id to be added to the note
    */
   addSchool(school: School | string) {
-    const schoolId = typeof school === "string" ? school : school.getId(true);
+    const schoolId = typeof school === "string" ? school : school.getId();
     if (this.schools.includes(schoolId)) {
       return;
     }
@@ -252,7 +252,7 @@ export class Note extends Entity {
    * @param child: The child or the id of the child to look for
    */
   getAttendance(child: string | Child): EventAttendance {
-    const childId = typeof child === "string" ? child : child.getId(true);
+    const childId = typeof child === "string" ? child : child.getId();
     if (!this.children.includes(childId)) {
       return undefined;
     }

@@ -133,7 +133,7 @@ export class SupportComponent implements OnInit {
       user: { name: this.sessionInfo.name },
       level: "debug",
       extra: {
-        currentUser: this.currentUser.getId(true),
+        currentUser: this.currentUser.getId(),
         currentSyncState: this.currentSyncState,
         lastSync: this.lastSync,
         lastRemoteLogin: this.lastRemoteLogin,

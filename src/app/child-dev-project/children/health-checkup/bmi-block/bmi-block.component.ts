@@ -25,7 +25,7 @@ export class BmiBlockComponent implements OnInit {
 
   ngOnInit() {
     this.childrenService
-      .getHealthChecksOfChild(this.entity.getId(true))
+      .getHealthChecksOfChild(this.entity.getId())
       .then((results) => {
         if (results.length > 0) {
           this.currentHealthCheck = results.reduce((prev, cur) =>

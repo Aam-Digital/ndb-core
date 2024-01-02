@@ -112,7 +112,7 @@ export class EntityDetailsComponent implements OnChanges {
       .receiveUpdates(this.entityConstructor)
       .pipe(
         // TODO depends on URL
-        filter(({ entity }) => entity.getId() === this.id),
+        filter(({ entity }) => entity.getId(true) === this.id),
         filter(({ type }) => type !== "remove"),
         untilDestroyed(this),
       )

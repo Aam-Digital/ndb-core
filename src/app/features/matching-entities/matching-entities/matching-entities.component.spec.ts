@@ -216,8 +216,8 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        schoolId: testEntity.getId(true),
-        childId: matchedEntity.getId(true),
+        schoolId: testEntity.getId(),
+        childId: matchedEntity.getId(),
         name:
           "ChildSchoolRelation " + testEntity.toString() + " - matched child",
       } as Partial<ChildSchoolRelation>),
@@ -250,8 +250,8 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        schools: [testEntity.getId(true)],
-        children: [child1.getId(true), child2.getId(true)],
+        schools: [testEntity.getId()],
+        children: [child1.getId(), child2.getId()],
         name:
           "Note " +
           testEntity.toString() +

@@ -70,14 +70,14 @@ describe("EntitySelectComponent", () => {
 
   it("contains the initial selection as entities", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
-    const expectation = testUsers.slice(2, 3).map((user) => user.getId(true));
+    const expectation = testUsers.slice(2, 3).map((user) => user.getId());
 
     component.selection = expectation;
     fixture.detectChanges();
     tick();
 
     component.selectedEntities.forEach((s) => expect(s).toBeInstanceOf(User));
-    expect(component.selectedEntities.map((s) => s.getId(true))).toEqual(
+    expect(component.selectedEntities.map((s) => s.getId())).toEqual(
       expectation,
     );
   }));
@@ -89,13 +89,13 @@ describe("EntitySelectComponent", () => {
 
     component.selectEntity(testUsers[0]);
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(true),
+      testUsers[0].getId(),
     ]);
 
     component.selectEntity(testUsers[1]);
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(true),
-      testUsers[1].getId(true),
+      testUsers[0].getId(),
+      testUsers[1].getId(),
     ]);
     tick();
   }));
@@ -107,13 +107,13 @@ describe("EntitySelectComponent", () => {
 
     component.selectEntity(testUsers[0]);
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(true),
+      testUsers[0].getId(),
     ]);
 
     component.selectEntity(testUsers[1]);
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(true),
-      testUsers[1].getId(true),
+      testUsers[0].getId(),
+      testUsers[1].getId(),
     ]);
     tick();
   }));
@@ -125,8 +125,8 @@ describe("EntitySelectComponent", () => {
     component.unselectEntity(testUsers[0]);
 
     const remainingChildren = testUsers
-      .filter((c) => c.getId(true) !== testUsers[0].getId(true))
-      .map((c) => c.getId(true));
+      .filter((c) => c.getId() !== testUsers[0].getId())
+      .map((c) => c.getId());
     expect(component.selectionChange.emit).toHaveBeenCalledWith(
       remainingChildren,
     );
@@ -211,10 +211,7 @@ describe("EntitySelectComponent", () => {
 
   it("should be able to select entities from different types", fakeAsync(() => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
-    component.selection = [
-      testUsers[1].getId(true),
-      testChildren[0].getId(true),
-    ];
+    component.selection = [testUsers[1].getId(), testChildren[0].getId()];
     fixture.detectChanges();
     tick();
 

@@ -49,7 +49,7 @@ export class MockEntityMapperService extends EntityMapperService {
     }
     super.setEntityMetadata(entity);
     const alreadyExists = this.contains(entity);
-    this.data.get(type).set(entity.getId(true), entity);
+    this.data.get(type).set(entity.getId(), entity);
     this.publishUpdates(
       entity.getType(),
       alreadyExists ? { type: "update", entity } : { type: "new", entity },
@@ -63,7 +63,7 @@ export class MockEntityMapperService extends EntityMapperService {
   public contains(entity: Entity): boolean {
     return (
       this.data.has(entity.getType()) &&
-      this.data.get(entity.getType()).has(entity.getId(true))
+      this.data.get(entity.getType()).has(entity.getId())
     );
   }
 
@@ -104,7 +104,7 @@ export class MockEntityMapperService extends EntityMapperService {
   public delete(entity: Entity) {
     const entities = this.data.get(entity.getType());
     if (entities) {
-      entities.delete(entity.getId(true));
+      entities.delete(entity.getId());
       this.publishUpdates(entity.getType(), { type: "remove", entity });
     }
   }

@@ -109,12 +109,10 @@ describe("AttendanceCalendarComponent", () => {
     const note = new Note();
     note.date = testDate;
     component.records = [note];
-    component.highlightForChild = excludedChild.getId(true);
+    component.highlightForChild = excludedChild.getId();
 
     component.selectDay(testDate);
 
-    expect(component.selectedEvent.children).toContain(
-      excludedChild.getId(true),
-    );
+    expect(component.selectedEvent.children).toContain(excludedChild.getId());
   });
 });

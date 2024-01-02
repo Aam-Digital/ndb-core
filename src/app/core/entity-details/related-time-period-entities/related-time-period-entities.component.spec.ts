@@ -33,11 +33,11 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   beforeEach(waitForAsync(() => {
     mainEntity = new Child("22");
     active1 = new ChildSchoolRelation("a1");
-    active1.childId = mainEntity.getId(true);
+    active1.childId = mainEntity.getId();
     active2 = new ChildSchoolRelation("a2");
-    active2.childId = mainEntity.getId(true);
+    active2.childId = mainEntity.getId();
     inactive = new ChildSchoolRelation("i1");
-    inactive.childId = mainEntity.getId(true);
+    inactive.childId = mainEntity.getId();
     inactive.end = moment().subtract("1", "week").toDate();
 
     TestBed.configureTestingModule({
@@ -69,7 +69,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
 
   it("should load correctly filtered data", async () => {
     const testSchool = new School();
-    active1.schoolId = testSchool.getId(true);
+    active1.schoolId = testSchool.getId();
     active2.schoolId = "School:some-other-id";
     inactive.schoolId = "School:some-other-id";
 
@@ -120,7 +120,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
 
     const newRelation = component.generateNewRecordFactory()();
 
-    expect(newRelation.childId).toEqual(child.getId(true));
+    expect(newRelation.childId).toEqual(child.getId());
   });
 
   it("should create a new entity with the start date inferred from previous relations", async () => {
@@ -128,7 +128,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     const existingRelation = new ChildSchoolRelation();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
-    existingRelation.childId = child.getId(true);
+    existingRelation.childId = child.getId();
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([existingRelation]);
 

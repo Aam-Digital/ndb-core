@@ -85,11 +85,11 @@ export class DemoChildSchoolRelationGenerator extends DemoDataGenerator<ChildSch
     school: School,
   ): ChildSchoolRelation {
     const schoolRelation = new ChildSchoolRelation();
-    schoolRelation.childId = child.getId(true);
+    schoolRelation.childId = child.getId();
     schoolRelation.start = new Date(year + "-01-01");
     schoolRelation.end = new Date(year + "-12-31");
     schoolRelation.schoolClass = String(schoolClass);
-    schoolRelation.schoolId = school.getId(true);
+    schoolRelation.schoolId = school.getId();
     schoolRelation.result = faker.number.int(100);
     return schoolRelation;
   }

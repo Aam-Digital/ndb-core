@@ -57,7 +57,7 @@ export class HealthCheckupComponent implements OnInit {
 
       // use last entered date as default, otherwise today's date
       newHC.date = this.records.length > 0 ? this.records[0].date : new Date();
-      newHC.child = this.entity.getId(true);
+      newHC.child = this.entity.getId();
 
       return newHC;
     };
@@ -68,7 +68,7 @@ export class HealthCheckupComponent implements OnInit {
    */
   async loadData() {
     this.records = await this.childrenService.getHealthChecksOfChild(
-      this.entity.getId(true),
+      this.entity.getId(),
     );
     this.records.sort(
       (a, b) =>

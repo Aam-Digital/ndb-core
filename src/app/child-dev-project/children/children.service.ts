@@ -33,7 +33,7 @@ export class ChildrenService {
     const children = await this.entityMapper.loadType(Child);
     const relations = await this.entityMapper.loadType(ChildSchoolRelation);
     groupBy(relations, "childId").forEach(([id, rels]) => {
-      const child = children.find((c) => c.getId(true) === id);
+      const child = children.find((c) => c.getId() === id);
       if (child) {
         this.extendChildWithSchoolInfo(child, rels);
       }
@@ -171,7 +171,7 @@ export class ChildrenService {
     const entities = await this.entityMapper.loadType(entityType);
     entities
       .filter((c) => c.isActive)
-      .forEach((c) => results.set(c.getId(true), Number.POSITIVE_INFINITY));
+      .forEach((c) => results.set(c.getId(), Number.POSITIVE_INFINITY));
 
     const noteProperty = Note.getPropertyFor(entityType);
     for (const note of notes) {

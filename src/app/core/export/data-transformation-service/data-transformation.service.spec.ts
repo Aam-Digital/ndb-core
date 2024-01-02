@@ -176,7 +176,7 @@ describe("DataTransformationService", () => {
       [childWithoutSchool, childWithSchool],
       ["PRESENT", "ABSENT"],
     );
-    note.schools = [school.getId(true)];
+    note.schools = [school.getId()];
     await entityMapper.save(note);
 
     const exportConfig: ExportColumnConfig[] = [
@@ -395,7 +395,7 @@ describe("DataTransformationService", () => {
     const note = new Note();
     note.subject = subject;
     note.date = new Date();
-    note.children = children.map((child) => child.getId(true));
+    note.children = children.map((child) => child.getId());
 
     for (let i = 0; i < attendanceStatus.length; i++) {
       note.getAttendance(note.children[i]).status =
@@ -415,8 +415,8 @@ describe("DataTransformationService", () => {
 
     for (const child of students) {
       const childSchoolRel = new ChildSchoolRelation();
-      childSchoolRel.childId = child.getId(true);
-      childSchoolRel.schoolId = school.getId(true);
+      childSchoolRel.childId = child.getId();
+      childSchoolRel.schoolId = school.getId();
       childSchoolRel.start = new Date();
       await entityMapper.save(childSchoolRel);
     }
@@ -431,8 +431,8 @@ describe("DataTransformationService", () => {
   ): Promise<RecurringActivity> {
     const activity = new RecurringActivity();
     activity.title = activityTitle;
-    activity.participants = participants.map((p) => p.getId(true));
-    activity.linkedGroups = groups.map((g) => g.getId(true));
+    activity.participants = participants.map((p) => p.getId());
+    activity.linkedGroups = groups.map((g) => g.getId());
     await entityMapper.save(activity);
 
     return activity;

@@ -93,8 +93,8 @@ export class ConfigureEnumPopupComponent {
       const schemaFields = [...entity.schema.entries()]
         .filter(
           ([_, schema]) =>
-            schema.innerDataType === this.enumEntity.getId() ||
-            schema.additional === this.enumEntity.getId(),
+            schema.innerDataType === this.enumEntity.getId(true) ||
+            schema.additional === this.enumEntity.getId(true),
         )
         .map(([name]) => name);
       if (schemaFields.length > 0) {

@@ -48,7 +48,7 @@ export class DemoHealthCheckGeneratorService extends DemoDataGenerator<HealthChe
     previousRecord.weight = 0;
     do {
       const record = new HealthCheck();
-      record.child = child.getId(true);
+      record.child = child.getId();
       record.date = date;
       this.setNextHeightAndWeight(
         record,

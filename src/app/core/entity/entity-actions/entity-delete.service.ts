@@ -68,7 +68,7 @@ export class EntityDeleteService extends CascadingEntityAction {
     if (Array.isArray(relatedEntityWithReference[refField])) {
       relatedEntityWithReference[refField] = relatedEntityWithReference[
         refField
-      ].filter((id) => id !== referencedEntity.getId(true));
+      ].filter((id) => id !== referencedEntity.getId());
     } else {
       delete relatedEntityWithReference[refField];
     }

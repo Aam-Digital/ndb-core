@@ -47,8 +47,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
         untilDestroyed(this),
         filter(
           ({ entity, type }) =>
-            type === "remove" ||
-            entity[this.property] === this.entity.getId(true),
+            type === "remove" || entity[this.property] === this.entity.getId(),
         ),
       )
       .subscribe((update) => {

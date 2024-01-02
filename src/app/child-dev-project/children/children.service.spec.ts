@@ -44,10 +44,10 @@ describe("ChildrenService", () => {
     await entityMapper.save(child);
     const childrenAfter = await service.getChildren();
 
-    let find = childrenBefore.find((c) => c.getId(true) === child.getId(true));
+    let find = childrenBefore.find((c) => c.getId() === child.getId());
     expect(find).toBeUndefined();
 
-    find = childrenAfter.find((c) => c.getId(true) === child.getId(true));
+    find = childrenAfter.find((c) => c.getId() === child.getId());
     expect(find).toBeDefined();
     expect(find).toEqual(child);
     expect(childrenBefore).toHaveSize(childrenAfter.length - 1);
@@ -57,14 +57,14 @@ describe("ChildrenService", () => {
     const child = new Child("10");
     let error;
     try {
-      await service.getChild(child.getId(true));
+      await service.getChild(child.getId());
     } catch (err) {
       error = err;
     }
     expect(error).toBeDefined();
 
     await entityMapper.save(child);
-    const childAfter = await service.getChild(child.getId(true));
+    const childAfter = await service.getChild(child.getId());
     expect(childAfter).toBeDefined();
     expect(childAfter).toEqual(child);
   });
@@ -74,7 +74,7 @@ describe("ChildrenService", () => {
   it("calculates days since last note for children", async () => {
     const allChildren = await entityMapper.loadType(Child);
 
-    const c0 = allChildren[0].getId(true);
+    const c0 = allChildren[0].getId();
     await entityMapper.save(
       Note.create(moment().subtract(5, "days").toDate(), "n0-1", [c0]),
     );
@@ -82,7 +82,7 @@ describe("ChildrenService", () => {
       Note.create(moment().subtract(8, "days").toDate(), "n0-2", [c0]),
     );
 
-    const c1 = allChildren[1].getId(true);
+    const c1 = allChildren[1].getId();
     // no notes
 
     const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity();
@@ -95,7 +95,7 @@ describe("ChildrenService", () => {
   it("calculates days since last note as infinity if above cut-off period for better performance", async () => {
     const allChildren = await entityMapper.loadType(Child);
 
-    const c0 = allChildren[0].getId(true);
+    const c0 = allChildren[0].getId();
     await entityMapper.save(
       Note.create(moment().subtract(50, "days").toDate(), "n0-1", [c0]),
     );
@@ -114,19 +114,19 @@ describe("ChildrenService", () => {
     const s2 = schools[1];
     const n1 = new Note();
     n1.date = moment().subtract(10, "days").toDate();
-    n1.schools.push(s1.getId(true));
-    n1.schools.push(s2.getId(true));
+    n1.schools.push(s1.getId());
+    n1.schools.push(s2.getId());
     const n2 = new Note();
     n2.date = moment().subtract(2, "days").toDate();
-    n2.schools.push(s1.getId(true));
+    n2.schools.push(s1.getId());
     await entityMapper.saveAll([n1, n2]);
 
     const recentNotesMap = await service.getDaysSinceLastNoteOfEachEntity(
       School.ENTITY_TYPE,
     );
 
-    expect(recentNotesMap.get(s1.getId(true))).toBe(2);
-    expect(recentNotesMap.get(s2.getId(true))).toBe(10);
+    expect(recentNotesMap.get(s1.getId())).toBe(2);
+    expect(recentNotesMap.get(s2.getId())).toBe(10);
   });
 
   it("should load a single child and add school info", async () => {
@@ -142,35 +142,35 @@ describe("ChildrenService", () => {
 
     // multiple active relations
     const newRelation = new ChildSchoolRelation();
-    newRelation.childId = child1.getId(true);
+    newRelation.childId = child1.getId();
     newRelation.start = new Date();
     newRelation.schoolId = "School:2";
     newRelation.schoolClass = "3";
     await entityMapper.save(newRelation);
-    child1 = await service.getChild(child1.getId(true));
+    child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("3");
     expect(child1.schoolId).toEqual(["School:2", "School:1"]);
 
     // multiple active, no start date on one
     const noStartDate = new ChildSchoolRelation();
-    noStartDate.childId = child1.getId(true);
+    noStartDate.childId = child1.getId();
     noStartDate.schoolId = "School:2";
     noStartDate.schoolClass = "4";
     await entityMapper.save(noStartDate);
-    child1 = await service.getChild(child1.getId(true));
+    child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("4");
     expect(child1.schoolId).toEqual(["School:2", "School:2", "School:1"]);
   });
 
   it("should load all children with school info", async () => {
     const children = await service.getChildren();
-    const child1 = children.find((child) => child.getId(true) === "Child:1");
+    const child1 = children.find((child) => child.getId() === "Child:1");
     expect(child1.schoolClass).toBe("2");
     expect(child1.schoolId).toEqual(["School:1"]);
-    const child2 = children.find((child) => child.getId(true) === "Child:2");
+    const child2 = children.find((child) => child.getId() === "Child:2");
     expect(child2.schoolClass).toBeUndefined();
     expect(child2.schoolId).toBeEmpty();
-    const child3 = children.find((child) => child.getId(true) === "Child:3");
+    const child3 = children.find((child) => child.getId() === "Child:3");
     expect(child3.schoolClass).toBe("2");
     expect(child3.schoolId).toEqual(["School:1"]);
   });
@@ -189,11 +189,11 @@ describe("ChildrenService", () => {
 
     expect(relations).toHaveSize(2);
     const relation1 = relations.find(
-      (relation) => relation.getId(true) === "ChildSchoolRelation:1",
+      (relation) => relation.getId() === "ChildSchoolRelation:1",
     );
     expect(relation1.childId).toBe("Child:1");
     const relation2 = relations.find(
-      (relation) => relation.getId(true) === "ChildSchoolRelation:4",
+      (relation) => relation.getId() === "ChildSchoolRelation:4",
     );
     expect(relation2.childId).toBe("Child:3");
   });
@@ -246,13 +246,13 @@ describe("ChildrenService", () => {
     n3.addSchool(s2);
     await entityMapper.saveAll([n1, n2, n3]);
 
-    let res = await service.getNotesRelatedTo(c1.getId(true));
+    let res = await service.getNotesRelatedTo(c1.getId());
     expect(res).toEqual([n1, n2]);
 
-    res = await service.getNotesRelatedTo(s1.getId(true));
+    res = await service.getNotesRelatedTo(s1.getId());
     expect(res).toEqual([n1]);
 
-    res = await service.getNotesRelatedTo(s2.getId(true));
+    res = await service.getNotesRelatedTo(s2.getId());
     expect(res).toEqual([n3]);
   });
 
@@ -260,15 +260,15 @@ describe("ChildrenService", () => {
     const c1 = new Child("c1");
     const s1 = new School("s1");
     const n1 = new Note("n1");
-    n1.children.push(c1.getId(true));
-    n1.relatedEntities.push(c1.getId(true));
-    n1.schools.push(s1.getId(true));
+    n1.children.push(c1.getId());
+    n1.relatedEntities.push(c1.getId());
+    n1.schools.push(s1.getId());
     await entityMapper.saveAll([n1]);
 
-    let res = await service.getNotesRelatedTo(c1.getId(true));
+    let res = await service.getNotesRelatedTo(c1.getId());
     expect(res).toEqual([n1]);
 
-    res = await service.getNotesRelatedTo(s1.getId(true));
+    res = await service.getNotesRelatedTo(s1.getId());
     expect(res).toEqual([n1]);
   });
 

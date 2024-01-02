@@ -48,8 +48,8 @@ Primary.args = {
 
 const eventNote = Note.create(new Date(), "Coaching today");
 eventNote.category = { id: "COACHING", label: "Coaching", isMeeting: true };
-eventNote.addChild(demoChildren[0].getId(true));
-eventNote.addChild(demoChildren[1].getId(true));
+eventNote.addChild(demoChildren[0].getId());
+eventNote.addChild(demoChildren[1].getId());
 
 export const EventWithAttendance = Template.bind({});
 EventWithAttendance.args = {

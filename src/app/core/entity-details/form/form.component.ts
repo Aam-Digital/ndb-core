@@ -66,7 +66,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
         // TODO short or long ID in URL?
         await this.router.navigate([
           getParentUrl(this.router),
-          this.entity.getId(),
+          this.entity.getId(true),
         ]);
       }
     } catch (err) {

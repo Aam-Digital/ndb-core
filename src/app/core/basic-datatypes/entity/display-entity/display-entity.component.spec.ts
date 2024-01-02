@@ -52,14 +52,14 @@ describe("DisplayEntityComponent", () => {
 
     component.entity = new ChildSchoolRelation();
     component.id = "schoolId";
-    component.value = school.getId(true);
+    component.value = school.getId();
     component.config = School.ENTITY_TYPE;
     await component.ngOnInit();
 
     expect(component.entityBlockComponent).toEqual(School.getBlockComponent());
     expect(mockEntityMapper.load).toHaveBeenCalledWith(
       school.getType(),
-      school.getId(true),
+      school.getId(),
     );
     expect(component.entityToDisplay).toEqual(school);
   });

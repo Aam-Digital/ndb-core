@@ -361,9 +361,9 @@ describe("QueryService", () => {
     );
     expect(allEventsLastWeek).toEqual(
       jasmine.arrayWithExactContents([
-        oneWeekAgo.getId(),
-        threeDaysAgo.getId(),
-        today.getId(),
+        oneWeekAgo.getId(true),
+        threeDaysAgo.getId(true),
+        today.getId(true),
       ]),
     );
   });
@@ -501,29 +501,29 @@ describe("QueryService", () => {
       await queryData(attendanceArrayQuery);
 
     expect(attendanceResult).toContain({
-      participant: presentTwiceWithSchool.getId(true),
-      school: school.getId(true),
+      participant: presentTwiceWithSchool.getId(),
+      school: school.getId(),
       status: new EventAttendance(presentAttendanceStatus),
     });
     expect(attendanceResult).toContain({
-      participant: presentTwiceWithSchool.getId(true),
+      participant: presentTwiceWithSchool.getId(),
       status: new EventAttendance(presentAttendanceStatus),
     });
     expect(attendanceResult).toContain({
-      participant: presentOnceWithoutSchool.getId(true),
+      participant: presentOnceWithoutSchool.getId(),
       status: new EventAttendance(presentAttendanceStatus),
     });
     expect(attendanceResult).toContain({
-      participant: presentOnceWithoutSchool.getId(true),
+      participant: presentOnceWithoutSchool.getId(),
       status: new EventAttendance(absentAttendanceStatus),
     });
     expect(attendanceResult).toContain({
-      participant: alwaysAbsentWithSchool.getId(true),
-      school: school.getId(true),
+      participant: alwaysAbsentWithSchool.getId(),
+      school: school.getId(),
       status: new EventAttendance(absentAttendanceStatus),
     });
     expect(attendanceResult).toContain({
-      participant: alwaysAbsentWithSchool.getId(true),
+      participant: alwaysAbsentWithSchool.getId(),
       status: new EventAttendance(absentAttendanceStatus),
     });
   });
@@ -553,21 +553,21 @@ describe("QueryService", () => {
     const report: AttendanceReport[] = await queryData(reportQuery);
 
     expect(report).toContain({
-      participant: presentTwice.getId(true),
+      participant: presentTwice.getId(),
       present: 2,
       total: 2,
       percentage: "1.00",
       detailedStatus: { PRESENT: 1, LATE: 1 },
     });
     expect(report).toContain({
-      participant: presentOnce.getId(true),
+      participant: presentOnce.getId(),
       present: 1,
       total: 2,
       percentage: "0.50",
       detailedStatus: { PRESENT: 1, ABSENT: 1 },
     });
     expect(report).toContain({
-      participant: alwaysAbsent.getId(true),
+      participant: alwaysAbsent.getId(),
       present: 0,
       total: 2,
       percentage: "0.00",
@@ -689,8 +689,8 @@ describe("QueryService", () => {
     await entityMapper.save(school);
     for (const child of children) {
       const relation = new ChildSchoolRelation();
-      relation.childId = child.getId(true);
-      relation.schoolId = school.getId(true);
+      relation.childId = child.getId();
+      relation.schoolId = school.getId();
       relation.start = new Date();
       await entityMapper.save(relation);
     }
@@ -707,7 +707,7 @@ describe("QueryService", () => {
     event.children = [];
     event.category = activity?.type || schoolClass;
     event.schools = activity?.linkedGroups || [];
-    event.relatesTo = activity?.getId(true);
+    event.relatesTo = activity?.getId();
     children.forEach((child) => {
       event.addChild(child.child);
       event.getAttendance(child.child).status = child.status;
@@ -721,7 +721,7 @@ describe("QueryService", () => {
     category = schoolClass,
   ): Promise<RecurringActivity> {
     const activity = new RecurringActivity();
-    activity.linkedGroups = schools.map((s) => s.getId(true));
+    activity.linkedGroups = schools.map((s) => s.getId());
     activity.type = category;
     await entityMapper.save(activity);
     return activity;

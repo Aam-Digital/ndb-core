@@ -249,12 +249,12 @@ export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
     ];
     options.push(
       ...filterEntities.map((filterEntity) => ({
-        key: filterEntity.getId(true),
+        key: filterEntity.getId(),
         label: filterEntity.toString(),
         filter: {
           $or: [
-            { [name]: filterEntity.getId(true) },
-            { [name]: { $elemMatch: { $eq: filterEntity.getId(true) } } },
+            { [name]: filterEntity.getId() },
+            { [name]: { $elemMatch: { $eq: filterEntity.getId() } } },
           ],
         },
       })),

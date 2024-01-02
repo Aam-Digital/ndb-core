@@ -95,9 +95,7 @@ export class TodoListComponent implements OnInit {
       // filter based on currently logged-in user
       this.currentUser
         .pipe(untilDestroyed(this))
-        .subscribe(
-          (entity) => (assignedToFilter.default = entity?.getId(true)),
-        );
+        .subscribe((entity) => (assignedToFilter.default = entity?.getId()));
     }
   }
 

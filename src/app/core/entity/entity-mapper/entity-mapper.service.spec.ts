@@ -64,7 +64,7 @@ describe("EntityMapperService", () => {
   });
 
   function expectEntity(actualEntity, expectedEntity) {
-    expect(actualEntity.getId(true)).toBe(expectedEntity._id);
+    expect(actualEntity.getId()).toBe(expectedEntity._id);
     expect(actualEntity).toBeInstanceOf(Entity);
   }
 
@@ -106,7 +106,7 @@ describe("EntityMapperService", () => {
     const entity = new Entity("test1");
 
     await entityMapper.save(entity);
-    const loadedEntity = await entityMapper.load(Entity, entity.getId(true));
+    const loadedEntity = await entityMapper.load(Entity, entity.getId());
     expectEntity(loadedEntity, entity);
   });
 
@@ -125,7 +125,7 @@ describe("EntityMapperService", () => {
 
   it("saves new version of existing entity", async () => {
     const loadedEntity = await entityMapper.load(Entity, existingEntity._id);
-    expect(loadedEntity.getId(true)).toEqual(existingEntity._id);
+    expect(loadedEntity.getId()).toEqual(existingEntity._id);
 
     await entityMapper.save<Entity>(loadedEntity);
   });
@@ -157,18 +157,16 @@ describe("EntityMapperService", () => {
 
     const loadedByEntityId = await entityMapper.load(
       Entity,
-      testEntity.getId(true),
+      testEntity.getId(),
     );
     expect(loadedByEntityId).toBeDefined();
 
-    expect(
-      loadedByEntityId.getId(true).startsWith(Entity.ENTITY_TYPE),
-    ).toBeTrue();
+    expect(loadedByEntityId.getId().startsWith(Entity.ENTITY_TYPE)).toBeTrue();
     const loadedByFullId = await entityMapper.load(
       Entity,
-      loadedByEntityId.getId(true),
+      loadedByEntityId.getId(),
     );
-    expect(loadedByFullId.getId(true)).toBe(loadedByEntityId.getId(true));
+    expect(loadedByFullId.getId()).toBe(loadedByEntityId.getId());
     expect(loadedByFullId._rev).toBe(loadedByEntityId._rev);
   });
 
@@ -294,7 +292,7 @@ describe("EntityMapperService", () => {
             expect(e.type).toBe(type);
           }
           if (entityId) {
-            expect(e.entity.getId(true)).toBe(entityId);
+            expect(e.entity.getId()).toBe(entityId);
           }
           resolve();
         }

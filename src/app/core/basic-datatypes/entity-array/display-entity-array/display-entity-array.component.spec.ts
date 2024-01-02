@@ -66,7 +66,7 @@ describe("DisplayEntityArrayComponent", () => {
     }
 
     const testEntity = new DisplayEntityTest1();
-    testEntity.relatedEntities = expectedEntities.map((e) => e.getId(true));
+    testEntity.relatedEntities = expectedEntities.map((e) => e.getId());
 
     component.entity = testEntity;
     component.id = "relatedEntities";
@@ -90,7 +90,7 @@ describe("DisplayEntityArrayComponent", () => {
     }
 
     const testEntity = new DisplayEntityTest2();
-    testEntity.relatedEntities = expectedEntities.map((e) => e.getId(true));
+    testEntity.relatedEntities = expectedEntities.map((e) => e.getId());
 
     component.entity = testEntity;
     component.id = "relatedEntities";

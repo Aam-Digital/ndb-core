@@ -55,7 +55,7 @@ export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [
     type: "RecurringActivity",
     id: IMPORT_SAMPLE_LINKABLE_DATA.find(
       (e) => e.getType() === "RecurringActivity",
-    ).getId(true),
+    ).getId(),
   },
 ];
 

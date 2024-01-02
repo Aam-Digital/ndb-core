@@ -162,8 +162,8 @@ describe("RollCallComponent", () => {
 
   it("isn't dirty when the user has skipped participants", async () => {
     component.eventEntity = Note.create(new Date(), "test", [
-      participant1.getId(true),
-      participant2.getId(true),
+      participant1.getId(),
+      participant2.getId(),
     ]);
     await component.ngOnChanges(dummyChanges);
 
@@ -175,7 +175,7 @@ describe("RollCallComponent", () => {
 
   it("is dirty when the user has entered some attendance", async () => {
     component.eventEntity = Note.create(new Date(), "test", [
-      participant1.getId(true),
+      participant1.getId(),
     ]);
     await component.ngOnChanges(dummyChanges);
 
@@ -259,7 +259,7 @@ describe("RollCallComponent", () => {
 
     expect(component.children).toEqual(expectedParticipantsOrder);
     expect(component.eventEntity.children).toEqual(
-      expectedParticipantsOrder.map((p) => p.getId(true)),
+      expectedParticipantsOrder.map((p) => p.getId()),
     );
     flush();
   }

@@ -53,7 +53,7 @@ describe("NotesRelatedToEntityComponent", () => {
 
     component.getColor(note);
 
-    expect(note.getColorForId).toHaveBeenCalledWith(entity.getId(true));
+    expect(note.getColorForId).toHaveBeenCalledWith(entity.getId());
   });
 
   it("should create a new note and fill it with the appropriate initial value", () => {
@@ -61,19 +61,19 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = entity;
     component.ngOnInit();
     let note = component.generateNewRecordFactory()();
-    expect(note.children).toEqual([entity.getId(true)]);
+    expect(note.children).toEqual([entity.getId()]);
 
     entity = new School();
     component.entity = entity;
     component.ngOnInit();
     note = component.generateNewRecordFactory()();
-    expect(note.schools).toEqual([entity.getId(true)]);
+    expect(note.schools).toEqual([entity.getId()]);
 
     entity = new User();
     component.entity = entity;
     component.ngOnInit();
     note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId(true)]);
+    expect(note.relatedEntities).toEqual([entity.getId()]);
 
     entity = new ChildSchoolRelation();
     entity["childId"] = "someChild";
@@ -81,7 +81,7 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = entity;
     component.ngOnInit();
     note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toContain(entity.getId(true));
+    expect(note.relatedEntities).toContain(entity.getId());
     expect(note.children).toEqual(["someChild"]);
     expect(note.schools).toEqual(["someSchool"]);
   });
@@ -119,7 +119,7 @@ describe("NotesRelatedToEntityComponent", () => {
 
     const newNote = component.generateNewRecordFactory()();
 
-    expect(newNote.relatedEntities).toContain(customEntity.getId(true));
+    expect(newNote.relatedEntities).toContain(customEntity.getId());
     expect(newNote.relatedEntities).toContain(customEntity.links[0]);
     expect(newNote.relatedEntities).not.toContain(customEntity.links[1]);
     expect(newNote.relatedEntities).toContain(
@@ -141,7 +141,7 @@ describe("NotesRelatedToEntityComponent", () => {
     tick();
 
     expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
-      component.entity.getId(true),
+      component.entity.getId(),
     );
     expect(component.records).toEqual([n1, n2, n3]);
   }));

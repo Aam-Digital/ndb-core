@@ -43,8 +43,7 @@ longEvent.category = {
 demoChildren.forEach((c) => longEvent.addChild(c));
 
 const activityEvent = Note.create(new Date(), "Coaching Batch C");
-activityEvent.relatesTo =
-  RecurringActivity.create("Coaching Batch C").getId(true);
+activityEvent.relatesTo = RecurringActivity.create("Coaching Batch C").getId();
 demoChildren.forEach((c) => activityEvent.addChild(c));
 
 export const OneTimeEvent = Template.bind({});

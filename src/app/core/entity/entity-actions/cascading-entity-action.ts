@@ -27,7 +27,7 @@ export class CascadingActionResult {
       ...otherResult.originalEntitiesBeforeChange.filter(
         (e) =>
           !this.originalEntitiesBeforeChange.some(
-            (x) => x.getId(true) === e.getId(true),
+            (x) => x.getId() === e.getId(),
           ),
       ),
     ];
@@ -35,9 +35,7 @@ export class CascadingActionResult {
       ...this.potentiallyRetainingPII,
       ...otherResult.potentiallyRetainingPII.filter(
         (e) =>
-          !this.potentiallyRetainingPII.some(
-            (x) => x.getId(true) === e.getId(true),
-          ),
+          !this.potentiallyRetainingPII.some((x) => x.getId() === e.getId()),
       ),
     ];
 
@@ -89,7 +87,7 @@ export abstract class CascadingEntityAction {
 
       for (const refField of refType.referencingProperties) {
         const affectedEntities = entities.filter((e) =>
-          asArray(e[refField]).includes(entity.getId(true)),
+          asArray(e[refField]).includes(entity.getId()),
         );
 
         for (const e of affectedEntities) {

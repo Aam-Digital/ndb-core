@@ -150,9 +150,9 @@ export class QueryService {
           .receiveUpdates(ENTITY_TYPE)
           .subscribe(({ entity, type }) => {
             if (type === "remove") {
-              delete this.entities[ENTITY_TYPE][entity.getId(true)];
+              delete this.entities[ENTITY_TYPE][entity.getId()];
             } else {
-              this.entities[ENTITY_TYPE][entity.getId(true)] = entity;
+              this.entities[ENTITY_TYPE][entity.getId()] = entity;
             }
           });
       });
@@ -192,7 +192,7 @@ export class QueryService {
     this.entities[entityClass.ENTITY_TYPE] = {};
     entities.forEach(
       (entity) =>
-        (this.entities[entityClass.ENTITY_TYPE][entity.getId(true)] = entity),
+        (this.entities[entityClass.ENTITY_TYPE][entity.getId()] = entity),
     );
   }
 
@@ -307,7 +307,7 @@ export class QueryService {
     const targetEntities = this.toArray(this.entities[entityType]);
     const srcIds = srcEntities
       .filter((entity) => typeof entity.getId === "function") // skip empty placeholder objects
-      .map((entity) => entity.getId(true));
+      .map((entity) => entity.getId());
     if (
       targetEntities.length > 0 &&
       Array.isArray(targetEntities[0][relationKey])

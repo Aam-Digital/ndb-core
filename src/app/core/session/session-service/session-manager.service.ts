@@ -112,7 +112,7 @@ export class SessionManagerService {
         filter(
           ({ entity }) =>
             // TODO user.name does not (necessarily) have prefix
-            entity.getId(true) === user.name || entity.getId() === user.name,
+            entity.getId() === user.name || entity.getId(true) === user.name,
         ),
       )
       .subscribe(({ entity }) => this.currentUser.next(entity));

@@ -187,10 +187,7 @@ export class AttendanceService {
       return attMonth;
     }
 
-    const events = await this.getEventsForActivity(
-      activity.getId(true),
-      sinceDate,
-    );
+    const events = await this.getEventsForActivity(activity.getId(), sinceDate);
 
     for (const event of events) {
       const record = getOrCreateAttendancePeriod(event);
@@ -242,9 +239,7 @@ export class AttendanceService {
       );
       for (const activityThroughRelation of activitiesThroughRelation) {
         if (
-          !activities.some(
-            (a) => a.getId(true) === activityThroughRelation.getId(true),
-          )
+          !activities.some((a) => a.getId() === activityThroughRelation.getId())
         ) {
           activities.push(activityThroughRelation);
         }
@@ -266,7 +261,7 @@ export class AttendanceService {
       date,
     );
     instance.schools = activity.linkedGroups;
-    instance.relatesTo = activity.getId(true);
+    instance.relatesTo = activity.getId();
     instance.category = activity.type;
     return instance;
   }

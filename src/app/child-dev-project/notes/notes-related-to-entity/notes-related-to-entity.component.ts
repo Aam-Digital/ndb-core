@@ -60,8 +60,7 @@ export class NotesRelatedToEntityComponent implements OnInit {
   ngOnInit(): void {
     if (this.entity.getType() === Child.ENTITY_TYPE) {
       // When displaying notes for a child, use attendance color highlighting
-      this.getColor = (note: Note) =>
-        note?.getColorForId(this.entity.getId(true));
+      this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
     }
     this.newRecordFactory = this.generateNewRecordFactory();
     this.initNotesOfEntity();
@@ -71,7 +70,7 @@ export class NotesRelatedToEntityComponent implements OnInit {
     this.isLoading = true;
 
     this.records = await this.childrenService
-      .getNotesRelatedTo(this.entity.getId(true))
+      .getNotesRelatedTo(this.entity.getId())
       .then((notes: Note[]) => {
         notes.sort((a, b) => {
           if (!a.date && b.date) {
@@ -100,7 +99,7 @@ export class NotesRelatedToEntityComponent implements OnInit {
         newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
       }
 
-      newNote.relatedEntities.push(this.entity.getId(true));
+      newNote.relatedEntities.push(this.entity.getId());
       this.getIndirectlyRelatedEntityIds(this.entity).forEach((e) =>
         newNote.relatedEntities.push(e),
       );

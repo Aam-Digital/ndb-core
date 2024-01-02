@@ -31,14 +31,14 @@ export class HistoricalDataComponent implements OnInit {
 
   async ngOnInit() {
     this.entries = await this.historicalDataService.getHistoricalDataFor(
-      this.entity.getId(true),
+      this.entity.getId(),
     );
   }
 
   public getNewEntryFunction(): () => HistoricalEntityData {
     return () => {
       const newEntry = new HistoricalEntityData();
-      newEntry.relatedEntity = this.entity.getId(true);
+      newEntry.relatedEntity = this.entity.getId();
       return newEntry;
     };
   }

@@ -14,32 +14,32 @@ const child1 = Child.create("Jack");
 const child2 = Child.create("Jane");
 
 const act1 = RecurringActivity.create("Demo Activity");
-act1.participants.push(child1.getId(true));
-act1.participants.push(child2.getId(true));
+act1.participants.push(child1.getId());
+act1.participants.push(child2.getId());
 const act2 = RecurringActivity.create("Other Activity");
-act1.participants.push(child1.getId(true));
+act1.participants.push(child1.getId());
 
 const events: Note[] = [
   generateEventWithAttendance(
     [
-      [child1.getId(true), AttendanceLogicalStatus.PRESENT],
-      [child2.getId(true), AttendanceLogicalStatus.ABSENT],
+      [child1.getId(), AttendanceLogicalStatus.PRESENT],
+      [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     new Date(),
     act1,
   ),
   generateEventWithAttendance(
     [
-      [child1.getId(true), AttendanceLogicalStatus.ABSENT],
-      [child2.getId(true), AttendanceLogicalStatus.ABSENT],
+      [child1.getId(), AttendanceLogicalStatus.ABSENT],
+      [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(1, "day").toDate(),
     act1,
   ),
   generateEventWithAttendance(
     [
-      [child1.getId(true), AttendanceLogicalStatus.ABSENT, "Remark 123"],
-      [child2.getId(true), AttendanceLogicalStatus.ABSENT],
+      [child1.getId(), AttendanceLogicalStatus.ABSENT, "Remark 123"],
+      [child2.getId(), AttendanceLogicalStatus.ABSENT],
     ],
     moment().subtract(2, "day").toDate(),
     act1,

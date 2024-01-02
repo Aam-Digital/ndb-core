@@ -30,7 +30,7 @@ export abstract class LatestEntityLoader<T extends Entity> {
     this.entityMapper
       .receiveUpdates(this.entityCtor)
       // TODO do we want to keep it this way (pass short ID and match short here?)
-      .pipe(filter(({ entity }) => entity.getId() === this.entityID))
+      .pipe(filter(({ entity }) => entity.getId(true) === this.entityID))
       .subscribe(({ entity }) => this.entityUpdated.next(entity));
     return initialValue;
   }

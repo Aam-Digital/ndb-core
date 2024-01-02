@@ -25,7 +25,7 @@ import { AttendanceBlockComponent } from "../../../attendance/attendance-block/a
     <app-attendance-block
       *ngFor="let att of attendanceList | slice: 0 : maxAttendanceBlocks"
       [attendanceData]="att"
-      [forChild]="entity.getId(true)"
+      [forChild]="entity.getId()"
     ></app-attendance-block>
   `,
   imports: [NgForOf, SlicePipe, AttendanceBlockComponent],
@@ -71,7 +71,7 @@ export class RecentAttendanceBlocksComponent implements OnInit {
 
   async ngOnInit() {
     let activities = await this.attendanceService.getActivitiesForChild(
-      this.entity.getId(true),
+      this.entity.getId(),
     );
     if (this.config.filterByActivityType) {
       activities = activities.filter(
@@ -87,9 +87,7 @@ export class RecentAttendanceBlocksComponent implements OnInit {
       );
 
     for (const record of activityRecords) {
-      if (
-        activities.find((a) => a.getId(true) === record.activity?.getId(true))
-      ) {
+      if (activities.find((a) => a.getId() === record.activity?.getId())) {
         this.attendanceList.push(record);
       }
     }

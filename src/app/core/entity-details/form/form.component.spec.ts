@@ -54,7 +54,7 @@ describe("FormComponent", () => {
     await component.saveClicked();
 
     expect(entityFormService.saveChanges).toHaveBeenCalled();
-    expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
+    expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId(true)]);
   });
 
   it("should show an alert when form service rejects saving", async () => {

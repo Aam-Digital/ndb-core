@@ -147,7 +147,7 @@ describe("EntitySubrecordComponent", () => {
     component.sort.sort({ id: "name", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
-      .map((c) => c.record.getId());
+      .map((c) => c.record.getId(true));
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
@@ -164,7 +164,7 @@ describe("EntitySubrecordComponent", () => {
     component.sort.sort({ id: "category", start: "asc", disableClear: false });
     const sortedIds = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
-      .map((note) => note.record.getId());
+      .map((note) => note.record.getId(true));
 
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });

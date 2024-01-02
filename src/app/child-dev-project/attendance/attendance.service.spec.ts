@@ -41,10 +41,10 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    e1_1 = createEvent(moment("2020-01-01").toDate(), activity1.getId(true));
-    e1_2 = createEvent(moment("2020-01-02").toDate(), activity1.getId(true));
-    e1_3 = createEvent(moment("2020-03-02").toDate(), activity1.getId(true));
-    e2_1 = createEvent(moment("2020-01-01").toDate(), activity2.getId(true));
+    e1_1 = createEvent(moment("2020-01-01").toDate(), activity1.getId());
+    e1_2 = createEvent(moment("2020-01-02").toDate(), activity1.getId());
+    e1_3 = createEvent(moment("2020-03-02").toDate(), activity1.getId());
+    e2_1 = createEvent(moment("2020-01-01").toDate(), activity2.getId());
 
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
@@ -150,9 +150,7 @@ describe("AttendanceService", () => {
   });
 
   it("gets events for an activity", async () => {
-    const actualEvents = await service.getEventsForActivity(
-      activity1.getId(true),
-    );
+    const actualEvents = await service.getEventsForActivity(activity1.getId());
     expectEntitiesToMatch(actualEvents, [e1_1, e1_2, e1_3]);
   });
 
@@ -188,15 +186,13 @@ describe("AttendanceService", () => {
 
     expect(actualAttendences).toHaveSize(2);
     expectEntitiesToMatch(
-      actualAttendences.find(
-        (t) => t.activity.getId(true) === activity1.getId(true),
-      ).events,
+      actualAttendences.find((t) => t.activity.getId() === activity1.getId())
+        .events,
       [e1_1, e1_2],
     );
     expectEntitiesToMatch(
-      actualAttendences.find(
-        (t) => t.activity.getId(true) === activity2.getId(true),
-      ).events,
+      actualAttendences.find((t) => t.activity.getId() === activity2.getId())
+        .events,
       [e2_1],
     );
 
@@ -286,7 +282,7 @@ describe("AttendanceService", () => {
   it("should include children from a linked school for event from activity", async () => {
     const activity = new RecurringActivity();
     const linkedSchool = new School();
-    activity.linkedGroups.push(linkedSchool.getId(true));
+    activity.linkedGroups.push(linkedSchool.getId());
 
     const childAttendingSchool = new ChildSchoolRelation();
     childAttendingSchool.childId = "child attending school";
@@ -296,45 +292,45 @@ describe("AttendanceService", () => {
     ).and.resolveTo([childAttendingSchool]);
 
     const directlyAddedChild = new Child();
-    activity.participants.push(directlyAddedChild.getId(true));
+    activity.participants.push(directlyAddedChild.getId());
     const date = new Date();
 
     const event = await service.createEventForActivity(activity, date);
 
     expect(mockQueryRelationsOf).toHaveBeenCalledWith(
-      linkedSchool.getId(true),
+      linkedSchool.getId(),
       date,
     );
     expect(event.children).toHaveSize(2);
-    expect(event.children).toContain(directlyAddedChild.getId(true));
+    expect(event.children).toContain(directlyAddedChild.getId());
     expect(event.children).toContain(childAttendingSchool.childId);
   });
 
   it("should not include duplicate children for event from activity", async () => {
     const activity = new RecurringActivity();
     const linkedSchool = new School();
-    activity.linkedGroups.push(linkedSchool.getId(true));
+    activity.linkedGroups.push(linkedSchool.getId());
 
     const duplicateChild = new Child();
     const duplicateChildRelation = new ChildSchoolRelation();
-    duplicateChildRelation.childId = duplicateChild.getId(true);
-    duplicateChildRelation.schoolId = linkedSchool.getId(true);
+    duplicateChildRelation.childId = duplicateChild.getId();
+    duplicateChildRelation.schoolId = linkedSchool.getId();
     const anotherRelation = new ChildSchoolRelation();
     anotherRelation.childId = "another child id";
-    anotherRelation.schoolId = linkedSchool.getId(true);
+    anotherRelation.schoolId = linkedSchool.getId();
     await entityMapper.saveAll([duplicateChildRelation, anotherRelation]);
 
     const directlyAddedChild = new Child();
     activity.participants.push(
-      directlyAddedChild.getId(true),
-      duplicateChild.getId(true),
+      directlyAddedChild.getId(),
+      duplicateChild.getId(),
     );
 
     const event = await service.createEventForActivity(activity, new Date());
 
     expect(event.children).toHaveSize(3);
-    expect(event.children).toContain(directlyAddedChild.getId(true));
-    expect(event.children).toContain(duplicateChild.getId(true));
+    expect(event.children).toContain(directlyAddedChild.getId());
+    expect(event.children).toContain(duplicateChild.getId());
     expect(event.children).toContain(anotherRelation.childId);
   });
 

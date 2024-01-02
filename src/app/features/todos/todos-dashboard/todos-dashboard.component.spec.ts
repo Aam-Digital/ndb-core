@@ -36,7 +36,7 @@ describe("TodosDashboardComponent", () => {
   }));
 
   beforeEach(async () => {
-    testUser = TestBed.inject(CurrentUserSubject).value.getId(true);
+    testUser = TestBed.inject(CurrentUserSubject).value.getId();
     fixture = TestBed.createComponent(TodosDashboardComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
