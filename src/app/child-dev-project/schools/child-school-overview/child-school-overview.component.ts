@@ -86,14 +86,9 @@ export class ChildSchoolOverviewComponent
   }
 
   async loadData() {
-    if (!this.mode) {
-      return;
-    }
-
     this.isLoading = true;
     this.data = await this.childrenService.queryRelationsOf(
-      this.mode,
-      this.entity.getId(false),
+      this.entity.getId(true),
     );
 
     this.isLoading = false;

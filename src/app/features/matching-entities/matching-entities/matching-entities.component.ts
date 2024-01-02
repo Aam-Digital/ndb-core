@@ -281,12 +281,12 @@ export class MatchingEntitiesComponent implements OnInit {
 
     newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] = this
       .sideDetails[0].multiSelect
-      ? leftMatch.map((e) => e.getId(false))
-      : leftMatch[0].getId(false);
+      ? leftMatch.map((e) => e.getId(true))
+      : leftMatch[0].getId(true);
     newMatchEntity[this.onMatch.newEntityMatchPropertyRight] = this
       .sideDetails[1].multiSelect
-      ? rightMatch.map((e) => e.getId(false))
-      : rightMatch[0].getId(false);
+      ? rightMatch.map((e) => e.getId(true))
+      : rightMatch[0].getId(true);
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();

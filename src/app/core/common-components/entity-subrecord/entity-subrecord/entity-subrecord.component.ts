@@ -454,10 +454,7 @@ export class EntitySubrecordComponent<T extends Entity> implements OnChanges {
         this.formDialog.openFormPopup(entity, this._columns);
         break;
       case "navigate":
-        this.router.navigate([
-          entity.getConstructor().route,
-          entity.getId(false),
-        ]);
+        this.router.navigate([entity.getConstructor().route, entity.getId()]);
         break;
     }
     this.rowClick.emit(entity);

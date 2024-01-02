@@ -73,8 +73,8 @@ export class ChildrenService {
               return;
             };
             const start = new Date(doc.start || '3000-01-01').getTime();
-            emit(["${Child.ENTITY_TYPE}:" + doc.childId, start]);
-            emit(["${School.ENTITY_TYPE}:" + doc.schoolId, start]);
+            emit([doc.childId, start]);
+            emit([doc.schoolId, start]);
             return;
           }`,
         },
@@ -97,22 +97,16 @@ export class ChildrenService {
   }
 
   queryActiveRelationsOf(
-    queryType: "child" | "school",
     id: string,
     date = new Date(),
   ): Promise<ChildSchoolRelation[]> {
-    return this.queryRelationsOf(queryType, id).then((relations) =>
+    return this.queryRelationsOf(id).then((relations) =>
       relations.filter((rel) => rel.isActiveAt(date)),
     );
   }
 
-  queryRelationsOf(
-    queryType: "child" | "school",
-    id: string,
-  ): Promise<ChildSchoolRelation[]> {
-    const type = queryType === "child" ? Child.ENTITY_TYPE : School.ENTITY_TYPE;
-    const prefixed = Entity.createPrefixedId(type, id);
-    return this.queryRelations(prefixed);
+  queryRelationsOf(id: string): Promise<ChildSchoolRelation[]> {
+    return this.queryRelations(id);
   }
 
   /**
@@ -282,7 +276,7 @@ export class ChildrenService {
    */
   getHealthChecksOfChild(childId: string): Promise<HealthCheck[]> {
     return this.entityMapper
-      .loadType<HealthCheck>(HealthCheck)
+      .loadType(HealthCheck)
       .then((res) => res.filter((h) => h.child === childId));
   }
 
