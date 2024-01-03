@@ -220,7 +220,6 @@ describe("EntityTableComponent", () => {
   });
 
   it("should remove an entity if it does not pass the filter anymore", fakeAsync(() => {
-    const entityMapper = TestBed.inject(EntityMapperService);
     const child = new Child();
     child.gender = genders[1];
     component.records = [child];
