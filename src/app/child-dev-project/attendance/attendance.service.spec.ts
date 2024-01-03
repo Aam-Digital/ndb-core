@@ -316,7 +316,7 @@ describe("AttendanceService", () => {
     duplicateChildRelation.childId = duplicateChild.getId();
     duplicateChildRelation.schoolId = linkedSchool.getId();
     const anotherRelation = new ChildSchoolRelation();
-    anotherRelation.childId = "another child id";
+    anotherRelation.childId = "Child:another_child_id";
     anotherRelation.schoolId = linkedSchool.getId();
     await entityMapper.saveAll([duplicateChildRelation, anotherRelation]);
 
