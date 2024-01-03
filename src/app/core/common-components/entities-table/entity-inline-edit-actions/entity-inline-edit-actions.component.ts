@@ -11,6 +11,9 @@ import { EntityFormService } from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 
+/**
+ * Buttons to edit an (entities-table) row inline, handling the necessary logic and UI buttons.
+ */
 @Component({
   selector: "app-entity-inline-edit-actions",
   standalone: true,
