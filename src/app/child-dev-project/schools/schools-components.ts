@@ -29,4 +29,11 @@ export const schoolsComponents: ComponentTuple[] = [
         (c) => c.SchoolBlockComponent,
       ),
   ],
+  [
+    "DisplayActiveStudents",
+    () =>
+      import("./active-students/active-students.component").then(
+        (c) => c.ActiveStudentsComponent,
+      ),
+  ],
 ];

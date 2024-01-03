@@ -310,7 +310,8 @@ export const defaultJsonConfig = {
       "columns": [
         "name",
         "privateSchool",
-        "language"
+        "language",
+        { id: "some-id", viewComponent: "DisplayActiveStudents", label: "Active Students" }
       ],
       "filters": [
         {
