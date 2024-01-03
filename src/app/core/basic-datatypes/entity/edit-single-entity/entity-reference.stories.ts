@@ -74,13 +74,15 @@ testEntity.relatedEntity = testUser.getId();
 
 export const Primary = Template.bind({});
 Primary.args = {
-  cols: [
-    [
-      otherField,
-      fieldConfig,
-      Object.assign({}, fieldConfig, { id: "relatedChild" }),
-      otherField,
-    ],
+  fieldGroups: [
+    {
+      fields: [
+        otherField,
+        fieldConfig,
+        Object.assign({}, fieldConfig, { id: "relatedChild" }),
+        otherField,
+      ],
+    },
   ],
   entity: testEntity,
 };

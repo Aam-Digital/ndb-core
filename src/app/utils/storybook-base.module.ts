@@ -23,6 +23,7 @@ import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
 import { EntityConfigService } from "../core/entity/entity-config.service";
 import { TEST_USER } from "../core/user/demo-user-generator.service";
+import { RouterTestingModule } from "@angular/router/testing";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
@@ -38,7 +39,7 @@ export const entityFormStorybookDefaultParameters = {
  */
 @NgModule({
   declarations: [],
-  imports: [AppModule],
+  imports: [AppModule, RouterTestingModule],
   providers: [
     { provide: ConfigService, useValue: createTestingConfigService() },
     {
