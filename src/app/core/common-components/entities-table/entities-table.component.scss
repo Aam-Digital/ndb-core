@@ -4,12 +4,17 @@
 
 .table-container {
   position: relative; // anchor for further absolute positioning of child elements
+
+  padding: 4px; // ensure elevation shadow is visible
 }
 
-.column-menu {
+.fields-menu {
   position: absolute;
-  top: 0;
-  right: 0;
+  top: 4px;
+  right: 4px;
+}
+.th-field-menu-spacing:last-child {
+  padding-right: 48px;
 }
 
 .table-row:hover {

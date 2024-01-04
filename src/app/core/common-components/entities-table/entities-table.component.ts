@@ -46,6 +46,7 @@ import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
 import { DateWithAgeDatatype } from "../../basic-datatypes/date-with-age/date-with-age.datatype";
 import { MonthDatatype } from "../../basic-datatypes/month/month.datatype";
+import { EntityFieldsMenuComponent } from "../entity-fields-menu/entity-fields-menu.component";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -67,6 +68,7 @@ import { MonthDatatype } from "../../basic-datatypes/month/month.datatype";
     MatTableModule,
     EntityInlineEditActionsComponent,
     EntityCreateButtonComponent,
+    EntityFieldsMenuComponent,
   ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",

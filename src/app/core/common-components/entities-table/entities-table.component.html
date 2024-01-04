@@ -15,6 +15,7 @@
         mat-sort-header
         *matHeaderCellDef
         [disabled]="col.noSorting"
+        class="th-field-menu-spacing"
       >
         <app-entity-field-label
           [field]="col"
@@ -105,4 +106,14 @@
       Include archived records
     </mat-slide-toggle>
   </div>
+
+  <!--
+    SELECT VISIBLE COLUMNS
+  -->
+  <app-entity-fields-menu
+    class="fields-menu"
+    [entityType]="entityType"
+    [(activeFields)]="_columnsToDisplay"
+    [availableFields]="_columns"
+  ></app-entity-fields-menu>
 </div>

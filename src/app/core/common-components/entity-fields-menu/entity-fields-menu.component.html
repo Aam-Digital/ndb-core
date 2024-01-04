@@ -1,0 +1,26 @@
+<button
+  mat-icon-button
+  [matMenuTriggerFor]="list"
+  matTooltip="Add or remove visible fields"
+  i18n-matTooltip
+  class="square-button"
+>
+  <fa-icon [icon]="icon" transform="shrink-4"></fa-icon>
+</button>
+
+<mat-menu #list>
+  <button
+    mat-menu-item
+    *ngFor="let field of _availableFields"
+    (click)="toggleFieldSelection(field)"
+  >
+    <fa-icon
+      class="standard-icon-with-text"
+      [icon]="activeFields.includes(field.id) ? 'toggle-on' : 'toggle-off'"
+    ></fa-icon>
+    <app-entity-field-label
+      [field]="field"
+      [entityType]="entityType"
+    ></app-entity-field-label>
+  </button>
+</mat-menu>
