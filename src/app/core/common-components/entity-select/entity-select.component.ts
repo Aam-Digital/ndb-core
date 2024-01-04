@@ -8,7 +8,7 @@ import {
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
-import { COMMA, E, ENTER } from "@angular/cdk/keycodes";
+import { COMMA, ENTER } from "@angular/cdk/keycodes";
 import { Entity } from "../../entity/model/entity";
 import { BehaviorSubject } from "rxjs";
 import { FormControl, ReactiveFormsModule } from "@angular/forms";
