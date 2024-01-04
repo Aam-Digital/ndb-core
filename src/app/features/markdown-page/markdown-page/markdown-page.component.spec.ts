@@ -4,7 +4,7 @@ import { MarkdownPageComponent } from "./markdown-page.component";
 import { ActivatedRoute } from "@angular/router";
 import { BehaviorSubject } from "rxjs";
 import { MarkdownPageConfig } from "../MarkdownPageConfig";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { MarkdownPageModule } from "../markdown-page.module";
 import { ComponentRegistry } from "../../../dynamic-components";
 
@@ -12,7 +12,9 @@ describe("MarkdownPageComponent", () => {
   let component: MarkdownPageComponent;
   let fixture: ComponentFixture<MarkdownPageComponent>;
 
-  let mockRouteData: BehaviorSubject<RouteData<MarkdownPageConfig>>;
+  let mockRouteData: BehaviorSubject<
+    DynamicComponentConfig<MarkdownPageConfig>
+  >;
 
   beforeEach(waitForAsync(() => {
     mockRouteData = new BehaviorSubject({

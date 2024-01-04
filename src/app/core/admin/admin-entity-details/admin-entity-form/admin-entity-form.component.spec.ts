@@ -87,6 +87,7 @@ describe("AdminEntityFormComponent", () => {
 
     const noteUserFacingFields = Array.from(Note.schema.entries())
       .filter(([key, value]) => value.label)
+      .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
     expect(component.availableFields).toEqual([
       component.createNewFieldPlaceholder,

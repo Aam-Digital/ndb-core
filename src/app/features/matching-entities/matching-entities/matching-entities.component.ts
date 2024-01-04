@@ -19,7 +19,7 @@ import {
   ColumnConfig,
   DataFilter,
 } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { addAlphaToHexColor } from "../../../utils/style-utils";
@@ -127,16 +127,18 @@ export class MatchingEntitiesComponent implements OnInit {
       ) ?? {};
     Object.assign(this, JSON.parse(JSON.stringify(config)));
 
-    this.route.data.subscribe((data: RouteData<MatchingEntitiesConfig>) => {
-      if (
-        !data?.config?.leftSide &&
-        !data?.config?.rightSide &&
-        !data?.config?.columns
-      ) {
-        return;
-      }
-      Object.assign(this, JSON.parse(JSON.stringify(data.config)));
-    });
+    this.route.data.subscribe(
+      (data: DynamicComponentConfig<MatchingEntitiesConfig>) => {
+        if (
+          !data?.config?.leftSide &&
+          !data?.config?.rightSide &&
+          !data?.config?.columns
+        ) {
+          return;
+        }
+        Object.assign(this, JSON.parse(JSON.stringify(data.config)));
+      },
+    );
   }
 
   // TODO: fill selection on hover already?

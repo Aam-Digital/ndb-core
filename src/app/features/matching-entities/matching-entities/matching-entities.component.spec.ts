@@ -21,14 +21,14 @@ import { FormFieldConfig } from "../../../core/common-components/entity-form/ent
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { School } from "../../../child-dev-project/schools/model/school";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
   let fixture: ComponentFixture<MatchingEntitiesComponent>;
 
-  let routeData: Subject<RouteData<MatchingEntitiesConfig>>;
+  let routeData: Subject<DynamicComponentConfig<MatchingEntitiesConfig>>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
 
   let testConfig: MatchingEntitiesConfig = {

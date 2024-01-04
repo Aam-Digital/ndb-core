@@ -21,6 +21,6 @@
   [rows]="data"
 ></app-report-row>
 <app-object-table
-  *ngIf="data?.length > 0 && mode === 'exporting'"
+  *ngIf="data?.length > 0 && (mode === 'exporting' || mode === 'sql')"
   [objects]="data"
 ></app-object-table>

@@ -13,8 +13,8 @@ import { Subject } from "rxjs";
 import { Config } from "../../config/config";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
-import { TEST_USER } from "../../../utils/mock-local-session";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("PermissionEnforcerService", () => {
   let service: PermissionEnforcerService;

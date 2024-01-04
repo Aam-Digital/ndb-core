@@ -17,19 +17,23 @@
 
 import { Inject, Injectable } from "@angular/core";
 
-import { AuthUser } from "../auth/auth-user";
+import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { SyncService } from "../../database/sync.service";
 import { LoginStateSubject, SessionType } from "../session-type";
 import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { CurrentUserSubject } from "../../user/user";
+import { User } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
 import { Database } from "../../database/database";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { CurrentUserSubject } from "../current-user-subject";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { filter } from "rxjs/operators";
+import { Subscription } from "rxjs";
 
 /**
  * This service handles the user session.
@@ -42,15 +46,19 @@ export class SessionManagerService {
   readonly RESET_REMOTE_SESSION_KEY = "RESET_REMOTE";
   private pouchDatabase: PouchDatabase;
   private remoteLoggedIn = false;
+  private updateSubscription: Subscription;
+
   constructor(
     private remoteAuthService: KeycloakAuthService,
     private localAuthService: LocalAuthService,
     private syncService: SyncService,
+    private sessionInfo: SessionSubject,
     private currentUser: CurrentUserSubject,
+    private entityMapper: EntityMapperService,
     private loginStateSubject: LoginStateSubject,
     private router: Router,
-    private database: Database,
     @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
+    database: Database,
   ) {
     if (database instanceof PouchDatabase) {
       this.pouchDatabase = database;
@@ -84,20 +92,35 @@ export class SessionManagerService {
    * Login a offline session without sync.
    * @param user
    */
-  offlineLogin(user: AuthUser) {
+  offlineLogin(user: SessionInfo) {
     return this.initializeUser(user);
   }
 
-  private async initializeUser(user: AuthUser) {
+  private async initializeUser(user: SessionInfo) {
     await this.initializeDatabaseForCurrentUser(user);
-    this.currentUser.next(user);
+    this.sessionInfo.next(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
+
+    // TODO allow generic entities with fallback to User entity
+    this.entityMapper
+      .load(User, user.name)
+      .then((res) => this.currentUser.next(res))
+      .catch(() => undefined);
+    this.updateSubscription = this.entityMapper
+      .receiveUpdates(User)
+      .pipe(
+        filter(
+          ({ entity }) =>
+            entity.getId(true) === user.name || entity.getId() === user.name,
+        ),
+      )
+      .subscribe(({ entity }) => this.currentUser.next(entity));
   }
 
   /**
    * Get a list of all users that can login offline
    */
-  getOfflineUsers(): AuthUser[] {
+  getOfflineUsers(): SessionInfo[] {
     return this.localAuthService.getStoredUsers();
   }
 
@@ -114,9 +137,13 @@ export class SessionManagerService {
         localStorage.setItem(this.RESET_REMOTE_SESSION_KEY, "1");
       }
     }
+    // resetting app state
+    this.sessionInfo.next(undefined);
+    this.updateSubscription.unsubscribe();
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;
+    this.pouchDatabase.reset();
     return this.router.navigate(["/login"], {
       queryParams: { redirect_uri: this.router.routerState.snapshot.url },
     });
@@ -129,14 +156,14 @@ export class SessionManagerService {
     }
   }
 
-  private async handleRemoteLogin(user: AuthUser) {
+  private async handleRemoteLogin(user: SessionInfo) {
     this.remoteLoggedIn = true;
     await this.initializeUser(user);
     this.syncService.startSync();
     this.localAuthService.saveUser(user);
   }
 
-  private async initializeDatabaseForCurrentUser(user: AuthUser) {
+  private async initializeDatabaseForCurrentUser(user: SessionInfo) {
     const userDBName = `${user.name}-${AppSettings.DB_NAME}`;
     // Work on a temporary database before initializing the real one
     const tmpDB = new PouchDatabase(undefined);

@@ -5,16 +5,18 @@ import {
   EntityListConfig,
   PrebuiltFilterConfig,
 } from "../../../core/entity-list/EntityListConfig";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
-import { CurrentUserSubject } from "../../../core/user/user";
 import { RouteTarget } from "../../../route-target";
+import { CurrentUserSubject } from "../../../core/session/current-user-subject";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 
+@UntilDestroy()
 @RouteTarget("TodoList")
 @Component({
   selector: "app-todo-list",
@@ -45,9 +47,10 @@ export class TodoListComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.route.data.subscribe((data: RouteData<EntityListConfig>) =>
-      // TODO replace this use of route and rely on the RoutedViewComponent instead
-      this.init(data.config),
+    this.route.data.subscribe(
+      (data: DynamicComponentConfig<EntityListConfig>) =>
+        // TODO replace this use of route and rely on the RoutedViewComponent instead
+        this.init(data.config),
     );
   }
 
@@ -89,7 +92,10 @@ export class TodoListComponent implements OnInit {
       (c) => c.id === "assignedTo",
     );
     if (assignedToFilter && !assignedToFilter.default) {
-      assignedToFilter.default = this.currentUser.value.name;
+      // filter based on currently logged-in user
+      this.currentUser
+        .pipe(untilDestroyed(this))
+        .subscribe((entity) => (assignedToFilter.default = entity?.getId()));
     }
   }
 
