@@ -1,5 +1,10 @@
-<button mat-icon-button [matMenuTriggerFor]="menu">
-  <fa-icon icon="language" class="toolbar-icon"></fa-icon>
+<button
+  mat-icon-button
+  [matMenuTriggerFor]="menu"
+  matTooltip="Change language"
+  i18n-matTooltip
+>
+  <fa-icon icon="globe" class="toolbar-icon"></fa-icon>
 </button>
 
 <mat-menu #menu>

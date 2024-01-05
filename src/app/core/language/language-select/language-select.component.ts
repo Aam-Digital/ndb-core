@@ -9,6 +9,7 @@ import { NgForOf } from "@angular/common";
 import { LOCALE_ENUM_ID } from "../languages";
 import { ConfigurableEnumDirective } from "../../basic-datatypes/configurable-enum/configurable-enum-directive/configurable-enum.directive";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatTooltipModule } from "@angular/material/tooltip";
 
 /**
  * Shows a dropdown-menu of available languages
@@ -24,6 +25,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
     NgForOf,
     ConfigurableEnumDirective,
     FontAwesomeModule,
+    MatTooltipModule,
   ],
   standalone: true,
   changeDetection: ChangeDetectionStrategy.OnPush,
