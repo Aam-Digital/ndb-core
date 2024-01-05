@@ -10,7 +10,7 @@ import {
 } from "./import-sample-raw-data";
 import { User } from "../../user/user";
 import { importProvidersFrom } from "@angular/core";
-import { TEST_USER } from "../../../utils/mock-local-session";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 export default {
   title: "Features/Import/> Overall Module",

@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { AuthUser } from "../auth-user";
+import { SessionInfo } from "../session-info";
 
 /**
  * Manages the offline login.
@@ -13,7 +13,7 @@ export class LocalAuthService {
   /**
    * Get a list of users stored in the local storage.
    */
-  getStoredUsers(): AuthUser[] {
+  getStoredUsers(): SessionInfo[] {
     return Object.entries(localStorage)
       .filter(([key]) => key.startsWith(this.STORED_USER_PREFIX))
       .map(([_, user]) => JSON.parse(user));
@@ -23,7 +23,7 @@ export class LocalAuthService {
    * Saves a user to the local storage
    * @param user a object holding the username and the roles of the user
    */
-  saveUser(user: AuthUser) {
+  saveUser(user: SessionInfo) {
     localStorage.setItem(
       this.STORED_USER_PREFIX + user.name,
       JSON.stringify(user),

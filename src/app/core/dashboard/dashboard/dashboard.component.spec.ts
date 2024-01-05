@@ -8,7 +8,7 @@ import { DashboardComponent } from "./dashboard.component";
 import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { CurrentUserSubject } from "../../user/user";
+import { SessionSubject } from "../../session/auth/session-info";
 
 describe("DashboardComponent", () => {
   let component: DashboardComponent;
@@ -107,18 +107,18 @@ describe("DashboardComponent", () => {
 
   it("should hide widgets if the user is missing the required role", fakeAsync(() => {
     ability.update([{ subject: "all", action: "manage" }]);
-    const user = TestBed.inject(CurrentUserSubject);
+    const session = TestBed.inject(SessionSubject);
     const widgets = [
       { component: "TodosDashboard", permittedUserRoles: ["admin_app"] },
       { component: "EntityCountDashboard" },
     ];
 
-    user.next({ name: "not admin", roles: ["user_app"] });
+    session.next({ name: "not_admin", roles: ["user_app"] });
     component.widgets = widgets;
     tick();
     expect(component.widgets).toEqual([widgets[1]]);
 
-    user.next({ name: "admin", roles: ["user_app", "admin_app"] });
+    session.next({ name: "admin", roles: ["user_app", "admin_app"] });
     component.widgets = widgets;
     tick();
     expect(component.widgets).toEqual(widgets);

@@ -3,7 +3,7 @@ import { AlertService } from "../../core/alerts/alert.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Todo } from "./model/todo";
 import moment from "moment/moment";
-import { CurrentUserSubject } from "../../core/user/user";
+import { CurrentUserSubject } from "../../core/session/current-user-subject";
 
 @Injectable({
   providedIn: "root",
@@ -19,7 +19,7 @@ export class TodoService {
     const nextTodo = await this.createNextRepetition(todo);
 
     todo.completed = {
-      completedBy: this.currentUser.value.name,
+      completedBy: this.currentUser.value.getId(),
       completedAt: new Date(),
       nextRepetition: nextTodo?.getId(true),
     };

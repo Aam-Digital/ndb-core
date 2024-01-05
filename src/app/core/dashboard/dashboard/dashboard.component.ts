@@ -23,7 +23,7 @@ import { RouteTarget } from "../../../route-target";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DashboardWidget } from "../dashboard-widget/dashboard-widget";
-import { CurrentUserSubject } from "../../user/user";
+import { SessionSubject } from "../../session/auth/session-info";
 
 @RouteTarget("Dashboard")
 @Component({
@@ -48,7 +48,7 @@ export class DashboardComponent implements DashboardConfig {
   constructor(
     private ability: EntityAbility,
     private components: ComponentRegistry,
-    private user: CurrentUserSubject,
+    private session: SessionSubject,
   ) {}
 
   private async filterPermittedWidgets(
@@ -68,7 +68,7 @@ export class DashboardComponent implements DashboardConfig {
 
   private hasRequiredRole(widget: DynamicComponentConfig) {
     if (widget.permittedUserRoles?.length > 0) {
-      const userRoles = this.user.value.roles;
+      const userRoles = this.session.value.roles;
       const requiredRoles = widget.permittedUserRoles;
       return requiredRoles.some((role) => userRoles.includes(role));
     } else {
