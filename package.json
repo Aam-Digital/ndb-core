@@ -61,7 +61,7 @@
     "pouchdb-adapter-memory": "^8.0.1",
     "pouchdb-browser": "^8.0.1",
     "process": "^0.11.10",
-    "reflect-metadata": "^0.1.14",
+    "reflect-metadata": "^0.2.0",
     "rxjs": "^7.8.1",
     "stream-browserify": "^3.0.0",
     "tslib": "^2.6.2",
