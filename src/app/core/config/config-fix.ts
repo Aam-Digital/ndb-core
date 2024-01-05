@@ -309,6 +309,7 @@ export const defaultJsonConfig = {
       "entity": "School",
       "columns": [
         "name",
+        { id: "DisplayParticipantsCount", viewComponent: "DisplayParticipantsCount", label: $localize`Children` },
         "privateSchool",
         "language"
       ],
