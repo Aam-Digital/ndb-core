@@ -33,7 +33,6 @@
             "styles": [
               "src/styles/styles.scss",
               "src/styles/themes/ndb-theme.scss",
-              "node_modules/flag-icons/css/flag-icons.min.css",
               "node_modules/leaflet/dist/leaflet.css"
             ],
             "stylePreprocessorOptions": {

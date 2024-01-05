@@ -7,6 +7,7 @@ import { LOCATION_TOKEN } from "../../../utils/di-tokens";
 import { LanguageService } from "../language.service";
 import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { availableLocales } from "../languages";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("LanguageSelectComponent", () => {
   let component: LanguageSelectComponent;
@@ -21,7 +22,11 @@ describe("LanguageSelectComponent", () => {
       "initDefaultLanguage",
     ]);
     await TestBed.configureTestingModule({
-      imports: [LanguageSelectComponent, RouterTestingModule],
+      imports: [
+        LanguageSelectComponent,
+        RouterTestingModule,
+        FontAwesomeTestingModule,
+      ],
       providers: [
         { provide: LOCATION_TOKEN, useValue: mockLocation },
         { provide: LanguageService, useValue: mockLanguageService },

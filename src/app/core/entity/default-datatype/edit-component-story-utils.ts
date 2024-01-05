@@ -63,10 +63,15 @@ export function generateFormFieldStory<T>(
     ],
     parameters: entityFormStorybookDefaultParameters,
     args: {
-      headers: ["Section A", "Section B"],
-      cols: [
-        [otherFieldConf, fieldConfig, fieldConfig, otherFieldConf],
-        [otherFieldConf, fieldConfig, fieldConfig, otherFieldConf],
+      fieldGroups: [
+        {
+          fields: [otherFieldConf, fieldConfig, fieldConfig, otherFieldConf],
+          header: "Section A",
+        },
+        {
+          fields: [otherFieldConf, fieldConfig, fieldConfig, otherFieldConf],
+          header: "Section B",
+        },
       ],
       entity: testEntity,
     },
