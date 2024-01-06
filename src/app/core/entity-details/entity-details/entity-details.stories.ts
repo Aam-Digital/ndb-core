@@ -18,12 +18,14 @@ const config: EntityDetailsConfig = {
           title: "",
           component: "Form",
           config: {
-            cols: [
-              ["photo"],
-              ["name", "projectNumber", "admissionDate"],
-              ["center", "phone"],
+            fieldGroups: [
+              { fields: ["photo"] },
+              {
+                fields: ["name", "projectNumber", "admissionDate"],
+                header: "Personal Information",
+              },
+              { fields: ["center", "phone"], header: "Contact Details" },
             ],
-            headers: [null, "Personal Information", "Contact Details"],
           },
         },
       ],
