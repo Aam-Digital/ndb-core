@@ -19,8 +19,8 @@ describe("ChildSchoolOverviewComponent", () => {
   inactive.end = moment().subtract("1", "week").toDate();
 
   beforeEach(waitForAsync(() => {
-    mockChildrenService = jasmine.createSpyObj(["queryRelationsOf"]);
-    mockChildrenService.queryRelationsOf.and.resolveTo([
+    mockChildrenService = jasmine.createSpyObj(["queryRelations"]);
+    mockChildrenService.queryRelations.and.resolveTo([
       new ChildSchoolRelation(),
     ]);
 
@@ -43,7 +43,7 @@ describe("ChildSchoolOverviewComponent", () => {
 
   it("it calls children service with id from passed child", async () => {
     await component.ngOnInit();
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+    expect(mockChildrenService.queryRelations).toHaveBeenCalledWith(
       testChild.getId(),
     );
   });
@@ -55,7 +55,7 @@ describe("ChildSchoolOverviewComponent", () => {
     await component.ngOnInit();
 
     expect(component.mode).toBe("school");
-    expect(mockChildrenService.queryRelationsOf).toHaveBeenCalledWith(
+    expect(mockChildrenService.queryRelations).toHaveBeenCalledWith(
       testSchool.getId(),
     );
   });
@@ -64,7 +64,7 @@ describe("ChildSchoolOverviewComponent", () => {
     const existingRelation = new ChildSchoolRelation();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
-    mockChildrenService.queryRelationsOf.and.resolveTo([existingRelation]);
+    mockChildrenService.queryRelations.and.resolveTo([existingRelation]);
 
     const child = new Child();
     component.entity = child;

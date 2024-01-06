@@ -83,7 +83,7 @@ export class ChildrenService {
     return this.dbIndexing.createIndex(designDoc);
   }
 
-  private queryRelations(prefix: string) {
+  queryRelations(prefix: string) {
     const startkey = prefix.endsWith(":") ? [prefix + "\uffff"] : [prefix, {}];
     return this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
@@ -100,13 +100,9 @@ export class ChildrenService {
     id: string,
     date = new Date(),
   ): Promise<ChildSchoolRelation[]> {
-    return this.queryRelationsOf(id).then((relations) =>
+    return this.queryRelations(id).then((relations) =>
       relations.filter((rel) => rel.isActiveAt(date)),
     );
-  }
-
-  queryRelationsOf(id: string): Promise<ChildSchoolRelation[]> {
-    return this.queryRelations(id);
   }
 
   /**

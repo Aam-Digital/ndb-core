@@ -176,7 +176,7 @@ describe("ChildrenService", () => {
   });
 
   it("should get the relations for a child in sorted order", async () => {
-    const relations = await service.queryRelationsOf("Child:3");
+    const relations = await service.queryRelations("Child:3");
 
     expect(relations).toHaveSize(2);
     expect(relations[0].start.getTime()).toBeGreaterThanOrEqual(
@@ -185,7 +185,7 @@ describe("ChildrenService", () => {
   });
 
   it("should get all relations for a school", async () => {
-    const relations = await service.queryRelationsOf("School:1");
+    const relations = await service.queryRelations("School:1");
 
     expect(relations).toHaveSize(2);
     const relation1 = relations.find(

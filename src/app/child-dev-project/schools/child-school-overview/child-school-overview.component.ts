@@ -87,9 +87,7 @@ export class ChildSchoolOverviewComponent
 
   async loadData() {
     this.isLoading = true;
-    this.data = await this.childrenService.queryRelationsOf(
-      this.entity.getId(),
-    );
+    this.data = await this.childrenService.queryRelations(this.entity.getId());
 
     this.isLoading = false;
   }
