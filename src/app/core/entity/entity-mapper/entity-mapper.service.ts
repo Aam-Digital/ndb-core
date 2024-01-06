@@ -57,7 +57,6 @@ export class EntityMapperService {
     id: string,
   ): Promise<T> {
     const ctor = this.resolveConstructor(entityType);
-    // TODO should short ID still be supported?
     const entityId = Entity.createPrefixedId(ctor.ENTITY_TYPE, id);
     const result = await this._db.get(entityId);
     return this.transformToEntityFormat(result, ctor);

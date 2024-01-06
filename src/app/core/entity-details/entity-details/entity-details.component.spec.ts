@@ -124,6 +124,29 @@ describe("EntityDetailsComponent", () => {
     expect(component.isLoading).toBeFalse();
   }));
 
+  it("should also support the long ID format", fakeAsync(() => {
+    const child = new Child();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    entityMapper.save(child);
+    tick();
+    spyOn(entityMapper, "load").and.callThrough();
+
+    component.id = child.getId();
+    component.ngOnChanges(simpleChangesFor(component, "id"));
+    tick();
+
+    expect(entityMapper.load).toHaveBeenCalledWith(Child, child.getId());
+    expect(component.record).toEqual(child);
+
+    // entity is updated
+    const childUpdate = child.copy();
+    childUpdate.name = "update";
+    entityMapper.save(childUpdate);
+    tick();
+
+    expect(component.record).toEqual(childUpdate);
+  }));
+
   it("should call router when user is not permitted to create entities", () => {
     mockAbility.cannot.and.returnValue(true);
     const router = fixture.debugElement.injector.get(Router);

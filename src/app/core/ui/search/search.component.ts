@@ -101,7 +101,6 @@ export class SearchComponent {
   }
 
   async clickOption(optionElement) {
-    // TODO keep route like this?
     await this.router.navigate([
       optionElement.value.getConstructor().route,
       optionElement.value.getId(true),

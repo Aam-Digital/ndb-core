@@ -137,11 +137,7 @@ export class NotesRelatedToEntityComponent implements OnInit {
       }
 
       for (const referencedId of asArray(entity[property])) {
-        // TODO: can we assert that ids always have prefix? Maybe (without saving) add that in transformToEntityFormat() ?
-        let referencedType = Entity.extractTypeFromId(referencedId);
-        if (referencedType === "") {
-          referencedType = schema.additional;
-        }
+        const referencedType = Entity.extractTypeFromId(referencedId);
 
         if (permittedRelatedTypes.includes(referencedType)) {
           // entity can have references of multiple entity types of which only some are allowed to be linked to Notes

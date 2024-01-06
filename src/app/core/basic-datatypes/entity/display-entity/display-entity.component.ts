@@ -65,7 +65,6 @@ export class DisplayEntityComponent
       return;
     }
 
-    // TODO should we keep short routes?
     this.router.navigate([
       this.entityToDisplay.getConstructor().route,
       this.entityToDisplay.getId(true),

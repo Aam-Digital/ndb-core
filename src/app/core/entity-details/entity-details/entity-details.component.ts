@@ -74,7 +74,6 @@ export class EntityDetailsComponent implements OnChanges {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
 
-  // TODO id is short in URl, should we keep it this way?
   @Input() id: string;
   record: Entity;
 
@@ -98,7 +97,7 @@ export class EntityDetailsComponent implements OnChanges {
       this.entityConstructor = this.entities.get(this.entityType);
     }
     if (changes.id) {
-      this.loadEntity(this.id);
+      this.loadEntity();
       this.subscribeToEntityChanges();
       // `initPanels()` is already called inside `loadEntity()`
     } else if (changes.panels) {
@@ -107,20 +106,20 @@ export class EntityDetailsComponent implements OnChanges {
   }
 
   private subscribeToEntityChanges() {
+    const fullId = Entity.createPrefixedId(this.entityType, this.id);
     this.changesSubscription?.unsubscribe();
     this.changesSubscription = this.entityMapperService
       .receiveUpdates(this.entityConstructor)
       .pipe(
-        // TODO depends on URL
-        filter(({ entity }) => entity.getId(true) === this.id),
+        filter(({ entity }) => entity.getId() === fullId),
         filter(({ type }) => type !== "remove"),
         untilDestroyed(this),
       )
       .subscribe(({ entity }) => (this.record = entity));
   }
 
-  private async loadEntity(id: string) {
-    if (id === "new") {
+  private async loadEntity() {
+    if (this.id === "new") {
       if (this.ability.cannot("create", this.entityConstructor)) {
         this.router.navigate([""]);
         return;
@@ -131,7 +130,7 @@ export class EntityDetailsComponent implements OnChanges {
       this.creatingNew = false;
       this.record = await this.entityMapperService.load(
         this.entityConstructor,
-        id,
+        this.id,
       );
     }
     this.initPanels();
