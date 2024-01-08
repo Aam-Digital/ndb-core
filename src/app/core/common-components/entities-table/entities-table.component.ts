@@ -109,7 +109,9 @@ export class EntitiesTableComponent<T extends Entity> {
       .filter((v) => allColumns.find((c) => c.id === v.id) === v);
 
     if (!this.columnsToDisplay) {
-      this.columnsToDisplay = this._customColumns.map((c) => c.id);
+      this.columnsToDisplay = this._customColumns
+        .filter((c) => !c.hideFromTable)
+        .map((c) => c.id);
     }
 
     this.idForSavingPagination = this._customColumns
@@ -269,7 +271,7 @@ export class EntitiesTableComponent<T extends Entity> {
   showEntity(entity: T) {
     switch (this.clickMode) {
       case "popup":
-        this.formDialog.openFormPopup(entity, this.columnsToDisplay); // TODO this.formDialog.openFormPopup(entity, this._columns)
+        this.formDialog.openFormPopup(entity, this._customColumns);
         break;
       case "navigate":
         this.router.navigate([
