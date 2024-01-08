@@ -10,10 +10,8 @@ import { RelatedEntitiesComponent } from "../../../../core/entity-details/relate
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
-import { UntilDestroy } from "@ngneat/until-destroy";
 
 @DynamicComponent("Aser")
-@UntilDestroy()
 @Component({
   selector: "app-aser",
   templateUrl:
