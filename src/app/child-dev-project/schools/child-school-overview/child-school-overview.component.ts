@@ -68,9 +68,7 @@ export class ChildSchoolOverviewComponent
     this.mode = this.inferMode(this.entity);
     this.switchRelatedEntityColumnForMode();
 
-    await this.loadData();
-    super.onIsActiveFilterChange();
-    super.listenToEntityUpdates();
+    await super.ngOnInit();
   }
 
   private inferMode(entity: Entity): "child" | "school" {
@@ -94,7 +92,7 @@ export class ChildSchoolOverviewComponent
     }
   }
 
-  async loadData() {
+  override async initData() {
     if (!this.mode) {
       return;
     }
