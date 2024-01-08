@@ -258,9 +258,11 @@ export class EntitiesTableComponent<T extends Entity> {
    * @param row The entity whose details should be displayed.
    */
   onRowClick(row: TableRow<T>) {
-    if (!row.formGroup || row.formGroup.disabled) {
-      this.showEntity(row.record);
+    if (row.formGroup && !row.formGroup.disabled) {
+      return;
     }
+
+    this.showEntity(row.record);
     this.rowClick.emit(row.record);
   }
 

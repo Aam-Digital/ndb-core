@@ -41,6 +41,11 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
   @Input() entity: T;
   @Input() form: EntityForm<T>;
 
+  /**
+   * Whether to display the field in a limited space, hiding details like the help description button.
+   */
+  @Input() compactMode: boolean;
+
   constructor(private entityFormService: EntityFormService) {}
 
   ngOnChanges(changes: SimpleChanges): void {
