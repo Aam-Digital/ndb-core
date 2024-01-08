@@ -2,10 +2,7 @@ import { Component, OnInit } from "@angular/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import {
-  ColumnConfig,
-  FormFieldConfig,
-} from "../../../core/common-components/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 
 /**
@@ -35,12 +32,12 @@ export class ActivitiesOverviewComponent
       relevantValue: "",
     },
   };
-  _columns: ColumnConfig[] = [
+  override _columns: FormFieldConfig[] = [
     this.titleColumn,
-    "type",
-    "assignedTo",
-    "linkedGroups",
-    "excludedParticipants",
+    { id: "type" },
+    { id: "assignedTo" },
+    { id: "linkedGroups" },
+    { id: "excludedParticipants" },
   ];
 
   async ngOnInit() {

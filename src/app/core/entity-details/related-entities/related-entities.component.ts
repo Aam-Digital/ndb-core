@@ -13,6 +13,7 @@ import {
 } from "../../../utils/media/screen-size-observer.service";
 import {
   ColumnConfig,
+  FormFieldConfig,
   toFormFieldConfig,
 } from "../../common-components/entity-form/FormConfig";
 import { DataFilter } from "../../filter/filters/filters";
@@ -43,13 +44,14 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   @Input()
   public set columns(value: ColumnConfig[]) {
-    this._columns = value;
+    if (!Array.isArray(value)) {
+      return;
+    }
+
+    this._columns = value.map((c) => toFormFieldConfig(c));
     this.updateColumnsToDisplayForScreenSize();
   }
-  public get columns(): ColumnConfig[] {
-    return this._columns;
-  }
-  protected _columns: ColumnConfig[];
+  protected _columns: FormFieldConfig[];
 
   columnsToDisplay: string[];
 
@@ -123,15 +125,12 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   private updateColumnsToDisplayForScreenSize() {
-    if (!this.columns) {
+    if (!this._columns) {
       return;
     }
 
-    this.columnsToDisplay = this.columns
-      .filter((c) => {
-        const column = toFormFieldConfig(
-          (this.columns ?? []).find((x) => toFormFieldConfig(x).id === c),
-        );
+    this.columnsToDisplay = this._columns
+      .filter((column) => {
         if (column?.hideFromTable) {
           return false;
         }
@@ -142,6 +141,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
         }
         return this.screenWidthObserver.currentScreenSize() >= numericValue;
       })
-      .map((c) => toFormFieldConfig(c).id);
+      .map((c) => c.id);
   }
 }

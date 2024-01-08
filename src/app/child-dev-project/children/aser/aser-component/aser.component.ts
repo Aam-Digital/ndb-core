@@ -5,7 +5,10 @@ import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
 
-import { ColumnConfig } from "../../../../core/common-components/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "../../../../core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponent } from "../../../../core/entity-details/related-entities/related-entities.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
@@ -24,7 +27,7 @@ export class AserComponent extends RelatedEntitiesComponent<Aser> {
   property = "child";
   entityCtr = Aser;
 
-  protected _columns: ColumnConfig[] = [
+  override _columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },
     { id: "math", visibleFrom: "xs" },
     { id: "english", visibleFrom: "xs" },
