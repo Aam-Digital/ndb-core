@@ -44,9 +44,7 @@ import { DataFilter } from "../../filter/filters/filters";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
-import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
-import { DateWithAgeDatatype } from "../../basic-datatypes/date-with-age/date-with-age.datatype";
-import { MonthDatatype } from "../../basic-datatypes/month/month.datatype";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -274,6 +272,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     private formDialog: FormDialogService,
     private router: Router,
     private filterService: FilterService,
+    private schemaService: EntitySchemaService,
   ) {
     this.recordsDataSource = this.createDataSource();
   }
@@ -305,12 +304,8 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     if (
       sortByColumn?.viewComponent === "DisplayDate" ||
       sortByColumn?.viewComponent === "DisplayMonth" ||
-      [
-        DateDatatype.dataType,
-        DateOnlyDatatype.dataType,
-        DateWithAgeDatatype.dataType,
-        MonthDatatype.dataType,
-      ].includes(sortByColumn?.dataType)
+      this.schemaService.getDatatypeOrDefault(sortByColumn?.dataType) instanceof
+        DateDatatype
     ) {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";
