@@ -13,7 +13,6 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
 import { asArray } from "../../../utils/utils";
-import { Subscription } from "rxjs";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
@@ -69,6 +68,7 @@ export class NotesRelatedToEntityComponent implements OnInit {
     }
     this.newRecordFactory = this.generateNewRecordFactory();
     this.initNotesOfEntity();
+    this.listenToEntityUpdates();
   }
 
   private async initNotesOfEntity() {
@@ -86,17 +86,13 @@ export class NotesRelatedToEntityComponent implements OnInit {
       });
   }
 
-  private updateSubscription: Subscription;
-
   private listenToEntityUpdates() {
-    if (!this.updateSubscription && this.entityConstructor) {
-      this.updateSubscription = this.entityMapper
-        .receiveUpdates(this.entityConstructor)
-        .pipe(untilDestroyed(this))
-        .subscribe((next) => {
-          this.records = applyUpdate(this.records, next, true);
-        });
-    }
+    this.entityMapper
+      .receiveUpdates(this.entityConstructor)
+      .pipe(untilDestroyed(this))
+      .subscribe((next) => {
+        this.records = applyUpdate(this.records, next, true);
+      });
   }
 
   generateNewRecordFactory() {

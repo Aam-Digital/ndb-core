@@ -5,7 +5,6 @@ import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
-import { Subscription } from "rxjs";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../entity/model/entity-update";
 import {
@@ -103,17 +102,13 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     }
   }
 
-  private updateSubscription: Subscription;
-
   protected listenToEntityUpdates() {
-    if (!this.updateSubscription && this.entityCtr) {
-      this.updateSubscription = this.entityMapper
-        .receiveUpdates(this.entityCtr)
-        .pipe(untilDestroyed(this))
-        .subscribe((next) => {
-          this.data = applyUpdate(this.data, next, true);
-        });
-    }
+    this.entityMapper
+      .receiveUpdates(this.entityCtr)
+      .pipe(untilDestroyed(this))
+      .subscribe((next) => {
+        this.data = applyUpdate(this.data, next, true);
+      });
   }
 
   createNewRecordFactory() {
