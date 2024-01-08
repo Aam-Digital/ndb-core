@@ -104,7 +104,8 @@ export class EntitiesTableComponent<T extends Entity> {
 
     const allColumns = [...entityColumns, ...this._customColumns];
     this._columns = allColumns
-      // remove duplicates (keep customColumn = last in array)
+      // remove duplicates
+      //   if there is a customColumn for a field from entity config, the custom FormFieldConfig takes precedent (which is the latter item with the same id in array)
       .filter((v) => allColumns.find((c) => c.id === v.id) === v);
 
     if (!this.columnsToDisplay) {
@@ -205,12 +206,8 @@ export class EntitiesTableComponent<T extends Entity> {
   @Output() rowClick: EventEmitter<T> = new EventEmitter<T>();
 
   /**
-   *
-   *
    * BULK SELECT
    * User can use checkboxes to select multiple rows, so that parent components can execute bulk actions on them.
-   *
-   *
    */
   @Input() set selectable(v: boolean) {
     this._selectable = v;
@@ -317,12 +314,8 @@ export class EntitiesTableComponent<T extends Entity> {
   }
 
   /**
-   *
-   *
    * FILTER ARCHIVED RECORDS
    * User can hide / show inactive records through a toggle
-   *
-   *
    */
   @Input() set showInactive(value: boolean) {
     if (value === this._showInactive) {
