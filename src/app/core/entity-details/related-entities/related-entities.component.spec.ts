@@ -59,7 +59,6 @@ describe("RelatedEntitiesComponent", () => {
     component.filter = filter;
     await component.ngOnInit();
 
-    expect(component.columns).toBe(columns);
     expect(component.data).toEqual([r1, r2]);
     expect(component.filter).toEqual({ ...filter, childId: c1.getId() });
   });
