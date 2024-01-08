@@ -34,3 +34,10 @@ jobs:
             SENTRY_AUTH_TOKEN=${{ secrets.SENTRY_TOKEN }}
             SENTRY_ORG=${{ secrets.SENTRY_ORG }}
             SENTRY_PROJECT=${{ secrets.SENTRY_PROJECT }}
+      - name: If new release, delete pre-release tags from Docker Hub
+        if: ${{ ! contains(env.TAG, '-master.') }}
+        run: |
+          token=$(curl -s -L 'https://hub.docker.com/v2/users/login' -H 'Content-Type: application/json' -d '{ "username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}')
+          token=${token#*\"token\":\"}
+          token=${token%%\"*}
+          curl -s -L "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags?page_size=100" -H "Authorization: Bearer $token" | jq '.results.[].name | select(test("-master.")?)' | xargs -n1 -I $tag curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/$tag" -H "Authorization: Bearer $token"
