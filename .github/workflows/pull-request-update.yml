@@ -79,5 +79,5 @@ jobs:
           token=$(curl -s -L 'https://hub.docker.com/v2/users/login' -H 'Content-Type: application/json' -d '{ "username": "${{ secrets.DOCKER_USERNAME }}", "password": "${{ secrets.DOCKER_PASSWORD }}"}')
           token=${token#*\"token\":\"}
           token=${token%%\"*}
-          echo $(curl -s -L "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags?page_size=100&page=5" -H "Authorization: Bearer $token" | jq '.results.[].name')
+          echo $(curl -s -L "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags?page_size=100&page=5" -H "Authorization: Bearer $token" | jq '.results')
           curl -s -L "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags?page_size=100&page=5" -H "Authorization: Bearer $token" | jq '.results.[].name | select(test("pr-")?)' | xargs -n1 -I $tag curl -s -L -X DELETE "https://hub.docker.com/v2/namespaces/aamdigital/repositories/ndb-server/tags/$tag" -H "Authorization: Bearer $token"
