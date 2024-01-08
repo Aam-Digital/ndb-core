@@ -64,8 +64,7 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   hasCurrentlyActiveEntry: boolean;
 
   async ngOnInit() {
-    await this.initData();
-    super.listenToEntityUpdates();
+    await super.ngOnInit();
     this.onIsActiveFilterChange();
   }
 
