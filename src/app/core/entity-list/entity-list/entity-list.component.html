@@ -108,7 +108,7 @@
     [customColumns]="columns"
     [editable]="false"
     [clickMode]="clickMode"
-    (rowClick)="elementClick.emit($event)"
+    (rowClick)="onRowClick($event)"
     [columnsToDisplay]="columnsToDisplay"
     [filter]="filterObj"
     [sortBy]="defaultSort"

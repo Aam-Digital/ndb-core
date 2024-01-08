@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -71,7 +72,7 @@ import { MonthDatatype } from "../../basic-datatypes/month/month.datatype";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity> {
+export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   @Input() set records(value: T[]) {
     if (!value) {
       return;
@@ -83,7 +84,7 @@ export class EntitiesTableComponent<T extends Entity> {
   }
   _records: T[] = [];
   /** data displayed in the template's table */
-  recordsDataSource = new MatTableDataSource<TableRow<T>>();
+  recordsDataSource: MatTableDataSource<TableRow<T>>;
   isLoading: boolean = true;
 
   /**
@@ -157,20 +158,6 @@ export class EntitiesTableComponent<T extends Entity> {
     }
 
     this._sortBy = value;
-
-    this.recordsDataSource.sort = this.sort;
-
-    this.recordsDataSource.sortData = (data, sort) =>
-      tableSort(data, {
-        active: sort.active as keyof Entity | "",
-        direction: sort.direction,
-      });
-
-    this.sort.sort({
-      id: value.active,
-      start: value.direction,
-      disableClear: false,
-    });
   }
   _sortBy: Sort;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -288,8 +275,23 @@ export class EntitiesTableComponent<T extends Entity> {
     private router: Router,
     private filterService: FilterService,
   ) {
-    this.recordsDataSource.filterPredicate = (data, filter) =>
+    this.recordsDataSource = this.createDataSource();
+  }
+
+  ngAfterViewInit(): void {
+    this.recordsDataSource.sort = this.sort;
+  }
+
+  private createDataSource() {
+    const dataSource = new MatTableDataSource<TableRow<T>>();
+    dataSource.sortData = (data, sort) =>
+      tableSort(data, {
+        active: sort.active as keyof Entity | "",
+        direction: sort.direction,
+      });
+    dataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);
+    return dataSource;
   }
 
   private inferDefaultSort(): Sort {

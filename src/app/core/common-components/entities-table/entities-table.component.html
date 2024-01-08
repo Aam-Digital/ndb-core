@@ -7,6 +7,8 @@
     mat-table
     [dataSource]="recordsDataSource"
     matSort
+    [matSortActive]="_sortBy?.active"
+    [matSortDirection]="_sortBy?.direction"
     class="full-width table"
   >
     <ng-container *ngFor="let col of _columns" [matColumnDef]="col.id">
