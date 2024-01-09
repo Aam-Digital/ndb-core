@@ -3,9 +3,9 @@
   theme="child"
   subtitle="Upcoming Birthdays"
   i18n-subtitle="Subtitle of the birthday widget"
-  [entries]="dataSource"
+  [entries]="entries"
 >
-  <table mat-table [dataSource]="dataSource">
+  <table mat-table [dataSource]="entries">
     <tr hidden="true">
       <th scope="col">Name</th>
       <th scope="col">DateOfBirth</th>

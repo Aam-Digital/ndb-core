@@ -1,20 +1,12 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
+import { MatTableModule } from "@angular/material/table";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatePipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
-import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
-import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
+
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
@@ -34,9 +26,6 @@ interface BirthdayDashboardConfig {
     MatTableModule,
     DisplayEntityComponent,
     DatePipe,
-    MatPaginatorModule,
-    DashboardWidgetComponent,
-    WidgetContentComponent,
     DashboardListWidgetComponent,
   ],
 })
@@ -65,8 +54,7 @@ export class BirthdayDashboardComponent
    */
   @Input() threshold = 32;
 
-  dataSource = new MatTableDataSource<EntityWithBirthday>();
-  isLoading = true;
+  entries: EntityWithBirthday[];
 
   constructor(private entityMapper: EntityMapperService) {
     super();
@@ -92,8 +80,7 @@ export class BirthdayDashboardComponent
     data.sort(
       (a, b) => this.daysUntil(a.birthday) - this.daysUntil(b.birthday),
     );
-    this.dataSource.data = data;
-    this.isLoading = false;
+    this.entries = data;
   }
 
   private getNextBirthday(dateOfBirth: Date): Date {
