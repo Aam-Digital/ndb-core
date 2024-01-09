@@ -16,6 +16,7 @@ import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/
 import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
+import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 interface BirthdayDashboardConfig {
   entities: EntityPropertyMap;
@@ -27,6 +28,7 @@ interface BirthdayDashboardConfig {
   selector: "app-birthday-dashboard",
   templateUrl: "./birthday-dashboard.component.html",
   styleUrls: ["./birthday-dashboard.component.scss"],
+  standalone: true,
   imports: [
     NgIf,
     MatTableModule,
@@ -35,18 +37,17 @@ interface BirthdayDashboardConfig {
     MatPaginatorModule,
     DashboardWidgetComponent,
     WidgetContentComponent,
+    DashboardListWidgetComponent,
   ],
-  standalone: true,
 })
 export class BirthdayDashboardComponent
   extends DashboardWidget
-  implements BirthdayDashboardConfig, OnInit, AfterViewInit
+  implements BirthdayDashboardConfig, OnInit
 {
   static getRequiredEntities(config: BirthdayDashboardConfig) {
     return config?.entities ? Object.keys(config.entities) : Child.ENTITY_TYPE;
   }
 
-  @ViewChild(MatPaginator) paginator: MatPaginator;
   private readonly today: Date;
 
   /**
@@ -93,10 +94,6 @@ export class BirthdayDashboardComponent
     );
     this.dataSource.data = data;
     this.isLoading = false;
-  }
-
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
   }
 
   private getNextBirthday(dateOfBirth: Date): Date {
