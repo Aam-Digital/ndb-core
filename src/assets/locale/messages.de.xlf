@@ -3545,7 +3545,7 @@
       </trans-unit>
       <trans-unit id="3e6fc3895c9af3f65008d77e0b2717bac7070ce3" datatype="html">
         <source>Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited.</source>
-        <target state="new">Zusätzlich kann ein optionales kurzes Label definiert werden welches in Tabellen oder anderen Stellen mit wenig Platz genutzt wird.</target>
+        <target state="translated">Zusätzlich kann ein optionales kurzes Label definiert werden welches in Tabellen oder anderen Stellen mit wenig Platz genutzt wird.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
           <context context-type="linenumber">26</context>
@@ -3657,7 +3657,7 @@
       </trans-unit>
       <trans-unit id="40a97b2b2ee1ac4de06388f57955c8a7cf4b1f1c" datatype="html">
         <source>You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.</source>
-        <target state="new">You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.</target>
+        <target state="translated">Felder können gruppiert werden, sodass sie auch auf unterschiedlichen Bildschirmgrößen zusammen erscheinen. Ein zusätzlicher Titel kann für eine solche Gruppe an Feldern auch angezeigt werden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
           <context context-type="linenumber">61</context>
@@ -3665,7 +3665,7 @@
       </trans-unit>
       <trans-unit id="f4b6b9d2f78ab9bb1bc39f0618cc9db4823ef9a0" datatype="html">
         <source>You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it.</source>
-        <target state="new">You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it.</target>
+        <target state="translated">Felder können entfernt werden ohne diese komplett zu löschen. Die Felder hier werden nicht angezeigt aber sie können in anderen Ansichten sichtbar sein oder als archivierte Felder behalten werden um die darin gespeicherten Daten nicht zu verlieren. Um ein Feld anzuzeigen, ziehe es in die Formular-Vorschau.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
           <context context-type="linenumber">81</context>
@@ -3675,9 +3675,9 @@
         <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;
             class=&quot;standard-icon-with-text&quot;
           >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Add Section </source>
-        <target state="new"><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;
+        <target state="translated"><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;
             class=&quot;standard-icon-with-text&quot;
-          >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Add Section </target>
+          >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Sektion hinzufügen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.html</context>
           <context context-type="linenumber">63,69</context>
@@ -3685,7 +3685,7 @@
       </trans-unit>
       <trans-unit id="fa65a382efbfc345ec1629a4ad16a3d84e18ae14" datatype="html">
         <source>add a new tab</source>
-        <target state="new">add a new tab</target>
+        <target state="translated">neuen Tab hinzufügen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.html</context>
           <context context-type="linenumber">80</context>
@@ -3693,7 +3693,7 @@
       </trans-unit>
       <trans-unit id="5103146006962696736" datatype="html">
         <source>Configuration updated</source>
-        <target state="new">Configuration updated</target>
+        <target state="translated">Konfiguration aktualisiert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.ts</context>
           <context context-type="linenumber">105</context>
@@ -3702,7 +3702,7 @@
       </trans-unit>
       <trans-unit id="5315885280668074846" datatype="html">
         <source>Delete Section?</source>
-        <target state="new">Delete Section?</target>
+        <target state="translated">Sektion löschen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-section-header/admin-section-header.component.ts</context>
           <context context-type="linenumber">58</context>
@@ -3711,7 +3711,7 @@
       </trans-unit>
       <trans-unit id="6212624747803316944" datatype="html">
         <source>Do you really want to delete this section with all its content?</source>
-        <target state="new">Do you really want to delete this section with all its content?</target>
+        <target state="translated">Sind Sie sicher, dass Sie diese Sektion mit alles darin befindliche löschen wollen?</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-section-header/admin-section-header.component.ts</context>
           <context context-type="linenumber">59</context>
@@ -4862,7 +4862,7 @@
       </trans-unit>
       <trans-unit id="a631796887986f4bf345a7c6c2815bf8ede072bc" datatype="html">
         <source>Edit Data Structure</source>
-        <target state="new">Edit Data Structure</target>
+        <target state="translated">Bearbeite Datenstruktur</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity-details/entity-details/entity-details.component.html</context>
           <context context-type="linenumber">41</context>
@@ -5075,7 +5075,7 @@
       </trans-unit>
       <trans-unit id="4030572490892031811" datatype="html">
         <source><x id="PH" equiv-text="result.originalEntitiesBeforeChange[0].getConstructor().label"/> "<x id="PH_1" equiv-text="result.originalEntitiesBeforeChange[0].toString()"/>" deleted</source>
-        <target state="new"><x id="PH" equiv-text="result.originalEntitiesBeforeChange[0].getConstructor().label"/> "<x id="PH_1" equiv-text="result.originalEntitiesBeforeChange[0].toString()"/>" deleted</target>
+        <target state="translated"><x id="PH" equiv-text="result.originalEntitiesBeforeChange[0].getConstructor().label"/> "<x id="PH_1" equiv-text="result.originalEntitiesBeforeChange[0].toString()"/>" gelöscht®</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
           <context context-type="linenumber">108,110</context>
@@ -5123,7 +5123,7 @@
       </trans-unit>
       <trans-unit id="2362715214984054615" datatype="html">
         <source><x id="PH" equiv-text="result.originalEntitiesBeforeChange[0].getConstructor().label"/> "<x id="PH_1" equiv-text="result.originalEntitiesBeforeChange[0].toString()"/>" anonymized</source>
-        <target state="new"><x id="PH" equiv-text="result.originalEntitiesBeforeChange[0].getConstructor().label"/> "<x id="PH_1" equiv-text="result.originalEntitiesBeforeChange[0].toString()"/>" anonymized</target>
+        <target state="translated"><x id="PH" equiv-text="result.originalEntitiesBeforeChange[0].getConstructor().label"/> "<x id="PH_1" equiv-text="result.originalEntitiesBeforeChange[0].toString()"/>" anonymisiert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
           <context context-type="linenumber">158,160</context>
@@ -5132,7 +5132,7 @@
       </trans-unit>
       <trans-unit id="2632166520979938411" datatype="html">
         <source><x id="PH" equiv-text="originalEntity.getConstructor().label"/> "<x id="PH_1" equiv-text="originalEntity.toString()"/>" archived</source>
-        <target state="new"><x id="PH" equiv-text="originalEntity.getConstructor().label"/> "<x id="PH_1" equiv-text="originalEntity.toString()"/>" archived</target>
+        <target state="translated"><x id="PH" equiv-text="originalEntity.getConstructor().label"/> "<x id="PH_1" equiv-text="originalEntity.toString()"/>" archiviert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
           <context context-type="linenumber">177,179</context>
@@ -5141,7 +5141,7 @@
       </trans-unit>
       <trans-unit id="7742623069047131047" datatype="html">
         <source><x id="PH" equiv-text="originalEntity.getConstructor().label"/> "<x id="PH_1" equiv-text="originalEntity.toString()"/>" reactivated</source>
-        <target state="new"><x id="PH" equiv-text="originalEntity.getConstructor().label"/> "<x id="PH_1" equiv-text="originalEntity.toString()"/>" reactivated</target>
+        <target state="translated"><x id="PH" equiv-text="originalEntity.getConstructor().label"/> "<x id="PH_1" equiv-text="originalEntity.toString()"/>" re-aktiviert</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/entity-actions/entity-actions.service.ts</context>
           <context context-type="linenumber">194,196</context>
@@ -5441,7 +5441,7 @@
       </trans-unit>
       <trans-unit id="6432053201000095653" datatype="html">
         <source>link to other records (multi-select)</source>
-        <target state="new">link to other records (multi-select)</target>
+        <target state="translated">mit anderem Datentyp verknüpfen (mehrfach Auswahl)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/entity-array/entity-array.datatype.ts</context>
           <context context-type="linenumber">35</context>
@@ -5661,7 +5661,7 @@
       </trans-unit>
       <trans-unit id="2296681895307893686" datatype="html">
         <source>any</source>
-        <target state="new">any</target>
+        <target state="translated">sonstiges</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/default-datatype/default.datatype.ts</context>
           <context context-type="linenumber">48</context>
@@ -5715,7 +5715,7 @@
       </trans-unit>
       <trans-unit id="3938396793871184620" datatype="html">
         <source>date</source>
-        <target state="new">date</target>
+        <target state="translated">Datum</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date-only/date-only.datatype.ts</context>
           <context context-type="linenumber">35</context>
@@ -5724,7 +5724,7 @@
       </trans-unit>
       <trans-unit id="1886271369587224373" datatype="html">
         <source>date of birth (date + age)</source>
-        <target state="new">date of birth (date + age)</target>
+        <target state="translated">Geburtsdatum (Datum + Alter)</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date-with-age/date-with-age.datatype.ts</context>
           <context context-type="linenumber">12</context>
@@ -5784,7 +5784,7 @@
       </trans-unit>
       <trans-unit id="3389637354851652058" datatype="html">
         <source>The app is in a unrecoverable state, please reload.</source>
-        <target state="translation">Die Anwendung ist in einem nicht wiederherstellbaren Zustand, bitte neu laden.</target>
+        <target state="translated">Die Anwendung ist in einem nicht wiederherstellbaren Zustand, bitte neu laden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/update-manager.service.ts</context>
           <context context-type="linenumber">137</context>
@@ -6151,7 +6151,7 @@
       </trans-unit>
       <trans-unit id="3982571199769260291" datatype="html">
         <source>id already in use</source>
-        <target state="new">id already in use</target>
+        <target state="translated">bereits vergeben</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/unique-id-validator.ts</context>
           <context context-type="linenumber">9</context>
@@ -7001,7 +7001,7 @@
       </trans-unit>
       <trans-unit id="7102691293586506862" datatype="html">
         <source>time interval</source>
-        <target state="new">time interval</target>
+        <target state="translated">Zeitintervall</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/recurring-interval/time-interval.datatype.ts</context>
           <context context-type="linenumber">8</context>
@@ -7438,7 +7438,7 @@
       </trans-unit>
       <trans-unit id="60a3620e64219321c8b50da502a404e9cef901ef" datatype="html">
         <source>Change language</source>
-        <target state="new">Change language</target>
+        <target state="translated">Sprache wechseln</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/language/language-select/language-select.component.html</context>
           <context context-type="linenumber">4</context>
