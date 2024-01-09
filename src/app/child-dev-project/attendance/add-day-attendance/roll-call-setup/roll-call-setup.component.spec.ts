@@ -13,7 +13,7 @@ import { ChildrenService } from "../../../children/children.service";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { TEST_USER } from "../../../../utils/mock-local-session";
+import { TEST_USER } from "../../../../core/user/demo-user-generator.service";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;

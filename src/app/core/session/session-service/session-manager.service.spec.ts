@@ -25,24 +25,27 @@ import {
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
-import { AuthUser } from "../auth/auth-user";
-import { TEST_USER } from "../../../utils/mock-local-session";
+import { SessionInfo, SessionSubject } from "../auth/session-info";
 import { LocalAuthService } from "../auth/local/local-auth.service";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { Database } from "../../database/database";
 import { Router } from "@angular/router";
-import { CurrentUserSubject } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { CurrentUserSubject } from "../current-user-subject";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { User } from "../../user/user";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
   let loginStateSubject: LoginStateSubject;
-  let userSubject: CurrentUserSubject;
+  let sessionInfo: SessionSubject;
   let mockKeycloak: jasmine.SpyObj<KeycloakAuthService>;
   let mockNavigator: { onLine: boolean };
-  let dbUser: AuthUser;
+  let dbUser: SessionInfo;
   const userDBName = `${TEST_USER}-${AppSettings.DB_NAME}`;
   const deprecatedDBName = AppSettings.DB_NAME;
   let initInMemorySpy: jasmine.Spy;
@@ -59,7 +62,9 @@ describe("SessionManagerService", () => {
         SessionManagerService,
         SyncStateSubject,
         LoginStateSubject,
+        SessionSubject,
         CurrentUserSubject,
+        { provide: EntityMapperService, useValue: mockEntityMapper() },
         { provide: Database, useClass: PouchDatabase },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
@@ -74,11 +79,13 @@ describe("SessionManagerService", () => {
     });
     service = TestBed.inject(SessionManagerService);
     loginStateSubject = TestBed.inject(LoginStateSubject);
-    userSubject = TestBed.inject(CurrentUserSubject);
+    sessionInfo = TestBed.inject(SessionSubject);
 
     const db = TestBed.inject(Database) as PouchDatabase;
     initInMemorySpy = spyOn(db, "initInMemoryDB").and.callThrough();
     initIndexedSpy = spyOn(db, "initIndexedDB").and.callThrough();
+    spyOn(TestBed.inject(SyncService), "startSync");
+
     TestBed.inject(LocalAuthService).saveUser(dbUser);
     environment.session_type = SessionType.mock;
     spyOn(service, "remoteLoginAvailable").and.returnValue(true);
@@ -91,28 +98,54 @@ describe("SessionManagerService", () => {
     await tmpDB.initInMemoryDB(deprecatedDBName).destroy();
   });
 
-  it("should update the local user object once authenticated", async () => {
-    const updatedUser: AuthUser = {
+  it("should update the session info once authenticated", async () => {
+    const updatedUser: SessionInfo = {
       name: TEST_USER,
       roles: dbUser.roles.concat("admin"),
     };
     mockKeycloak.login.and.resolveTo(updatedUser);
     const saveUserSpy = spyOn(TestBed.inject(LocalAuthService), "saveUser");
-    const syncSpy = spyOn(TestBed.inject(SyncService), "startSync");
 
     await service.remoteLogin();
 
     expect(saveUserSpy).toHaveBeenCalledWith(updatedUser);
-    expect(userSubject.value).toEqual(updatedUser);
-    expect(syncSpy).toHaveBeenCalled();
+    expect(sessionInfo.value).toEqual(updatedUser);
+    expect(TestBed.inject(SyncService).startSync).toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+  });
+
+  it("should initialize current user as the entity to which a login is connected", async () => {
+    const entityMapper = TestBed.inject(EntityMapperService);
+    const loggedInUser = new User(TEST_USER);
+    const otherUser = new User("other_user");
+    await entityMapper.saveAll([loggedInUser, otherUser]);
+    const currentUser = TestBed.inject(CurrentUserSubject);
+
+    // first login with existing user entity
+    mockKeycloak.login.and.resolveTo({ name: TEST_USER, roles: [] });
+    await service.remoteLogin();
+    expect(currentUser.value).toEqual(loggedInUser);
+
+    // logout -> user should reset
+    await service.logout();
+    expect(currentUser.value).toBeUndefined();
+
+    // login, user entity not available yet
+    mockKeycloak.login.and.resolveTo({ name: "admin-user", roles: ["admin"] });
+    await service.remoteLogin();
+    expect(currentUser.value).toBeUndefined();
+
+    // user entity available -> user should be set
+    const adminUser = new User("admin-user");
+    await entityMapper.save(adminUser);
+    expect(currentUser.value).toEqual(adminUser);
   });
 
   it("should automatically login, if the session is still valid", async () => {
     await service.remoteLogin();
 
     expect(loginStateSubject.value).toEqual(LoginState.LOGGED_IN);
-    expect(userSubject.value).toEqual(dbUser);
+    expect(sessionInfo.value).toEqual(dbUser);
   });
 
   it("should trigger remote logout if remote login succeeded before", async () => {
@@ -127,13 +160,13 @@ describe("SessionManagerService", () => {
     const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
     await service.offlineLogin(dbUser);
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
-    expect(userSubject.value).toEqual(dbUser);
+    expect(sessionInfo.value).toEqual(dbUser);
 
     service.logout();
 
     expect(mockKeycloak.logout).not.toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_OUT);
-    expect(userSubject.value).toBeUndefined();
+    expect(sessionInfo.value).toBeUndefined();
     expect(navigateSpy).toHaveBeenCalled();
   });
 

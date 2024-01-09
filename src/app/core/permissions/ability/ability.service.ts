@@ -7,8 +7,7 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
-import { AuthUser } from "../../session/auth/auth-user";
-import { CurrentUserSubject } from "../../user/user";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -20,7 +19,7 @@ import { CurrentUserSubject } from "../../user/user";
 export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   constructor(
     private ability: EntityAbility,
-    private currentUser: CurrentUserSubject,
+    private sessionInfo: SessionSubject,
     private permissionEnforcer: PermissionEnforcerService,
     entityMapper: EntityMapperService,
     logger: LoggingService,
@@ -50,7 +49,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
     if (userRules.length === 0) {
       // No rules or only default rules defined
-      const user = this.currentUser.value;
+      const user = this.sessionInfo.value;
       this.logger.warn(
         `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
@@ -60,24 +59,24 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
-    const currentUser = this.currentUser.value;
-    if (!currentUser) {
+    const sessionInfo = this.sessionInfo.value;
+    if (!sessionInfo) {
       return rules.public ?? [];
     }
     const rawUserRules: DatabaseRule[] = [];
     if (rules.default) {
       rawUserRules.push(...rules.default);
     }
-    currentUser.roles.forEach((role) => {
+    sessionInfo.roles.forEach((role) => {
       const rulesForRole = rules[role] || [];
       rawUserRules.push(...rulesForRole);
     });
-    return this.interpolateUser(rawUserRules, currentUser);
+    return this.interpolateUser(rawUserRules, sessionInfo);
   }
 
   private interpolateUser(
     rules: DatabaseRule[],
-    user: AuthUser,
+    user: SessionInfo,
   ): DatabaseRule[] {
     return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
       if (rawValue[0] !== "$") {
