@@ -20,7 +20,7 @@ import { DataFilter } from "../../../core/filter/filters/filters";
   imports: [EntitiesTableComponent, MatSlideToggleModule, FormsModule],
 })
 export class TodosRelatedToEntityComponent implements OnInit {
-  entries: Todo[] = [];
+  entries: Todo[];
   entityCtr = Todo;
 
   @Input() entity: Entity;

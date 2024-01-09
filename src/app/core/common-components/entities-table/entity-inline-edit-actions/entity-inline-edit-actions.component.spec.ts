@@ -89,7 +89,7 @@ describe("EntityInlineEditActionsComponent", () => {
     expect(entityMapper.save).toHaveBeenCalledWith(component.row.record);
     expect(component.row.record.name).toBe("New Name");
     expect(component.row.record.gender).toBe(genders[2]);
-    expect(component.row.formGroup).not.toBeEnabled();
+    expect(component.row.formGroup).toBeUndefined();
   }));
 
   it("should show a error message when saving fails", fakeAsync(() => {

@@ -1,4 +1,5 @@
 import {
+  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -43,9 +44,7 @@ import { DataFilter } from "../../filter/filters/filters";
 import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/entity-inline-edit-actions.component";
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
-import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
-import { DateWithAgeDatatype } from "../../basic-datatypes/date-with-age/date-with-age.datatype";
-import { MonthDatatype } from "../../basic-datatypes/month/month.datatype";
+import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityFieldsMenuComponent } from "../entity-fields-menu/entity-fields-menu.component";
 
 /**
@@ -73,7 +72,7 @@ import { EntityFieldsMenuComponent } from "../entity-fields-menu/entity-fields-m
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity> {
+export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   @Input() set records(value: T[]) {
     if (!value) {
       return;
@@ -85,7 +84,7 @@ export class EntitiesTableComponent<T extends Entity> {
   }
   _records: T[] = [];
   /** data displayed in the template's table */
-  recordsDataSource = new MatTableDataSource<TableRow<T>>();
+  recordsDataSource: MatTableDataSource<TableRow<T>>;
   isLoading: boolean = true;
 
   /**
@@ -106,11 +105,14 @@ export class EntitiesTableComponent<T extends Entity> {
 
     const allColumns = [...entityColumns, ...this._customColumns];
     this._columns = allColumns
-      // remove duplicates (keep customColumn = last in array)
+      // remove duplicates
+      //   if there is a customColumn for a field from entity config, the custom FormFieldConfig takes precedent (which is the latter item with the same id in array)
       .filter((v) => allColumns.find((c) => c.id === v.id) === v);
 
     if (!this.columnsToDisplay) {
-      this.columnsToDisplay = this._customColumns.map((c) => c.id);
+      this.columnsToDisplay = this._customColumns
+        .filter((c) => !c.hideFromTable)
+        .map((c) => c.id);
     }
 
     this.idForSavingPagination = this._customColumns
@@ -156,20 +158,6 @@ export class EntitiesTableComponent<T extends Entity> {
     }
 
     this._sortBy = value;
-
-    this.recordsDataSource.sort = this.sort;
-
-    this.recordsDataSource.sortData = (data, sort) =>
-      tableSort(data, {
-        active: sort.active as keyof Entity | "",
-        direction: sort.direction,
-      });
-
-    this.sort.sort({
-      id: value.active,
-      start: value.direction,
-      disableClear: false,
-    });
   }
   _sortBy: Sort;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
@@ -207,12 +195,8 @@ export class EntitiesTableComponent<T extends Entity> {
   @Output() rowClick: EventEmitter<T> = new EventEmitter<T>();
 
   /**
-   *
-   *
    * BULK SELECT
    * User can use checkboxes to select multiple rows, so that parent components can execute bulk actions on them.
-   *
-   *
    */
   @Input() set selectable(v: boolean) {
     this._selectable = v;
@@ -263,16 +247,18 @@ export class EntitiesTableComponent<T extends Entity> {
    * @param row The entity whose details should be displayed.
    */
   onRowClick(row: TableRow<T>) {
-    if (!row.formGroup || row.formGroup.disabled) {
-      this.showEntity(row.record);
+    if (row.formGroup && !row.formGroup.disabled) {
+      return;
     }
+
+    this.showEntity(row.record);
     this.rowClick.emit(row.record);
   }
 
   showEntity(entity: T) {
     switch (this.clickMode) {
       case "popup":
-        this.formDialog.openFormPopup(entity, this.columnsToDisplay); // TODO this.formDialog.openFormPopup(entity, this._columns)
+        this.formDialog.openFormPopup(entity, this._customColumns);
         break;
       case "navigate":
         this.router.navigate([
@@ -288,9 +274,25 @@ export class EntitiesTableComponent<T extends Entity> {
     private formDialog: FormDialogService,
     private router: Router,
     private filterService: FilterService,
+    private schemaService: EntitySchemaService,
   ) {
-    this.recordsDataSource.filterPredicate = (data, filter) =>
+    this.recordsDataSource = this.createDataSource();
+  }
+
+  ngAfterViewInit(): void {
+    this.recordsDataSource.sort = this.sort;
+  }
+
+  private createDataSource() {
+    const dataSource = new MatTableDataSource<TableRow<T>>();
+    dataSource.sortData = (data, sort) =>
+      tableSort(data, {
+        active: sort.active as keyof Entity | "",
+        direction: sort.direction,
+      });
+    dataSource.filterPredicate = (data, filter) =>
       entityFilterPredicate(data.record, filter);
+    return dataSource;
   }
 
   private inferDefaultSort(): Sort {
@@ -304,12 +306,8 @@ export class EntitiesTableComponent<T extends Entity> {
     if (
       sortByColumn?.viewComponent === "DisplayDate" ||
       sortByColumn?.viewComponent === "DisplayMonth" ||
-      [
-        DateDatatype.dataType,
-        DateOnlyDatatype.dataType,
-        DateWithAgeDatatype.dataType,
-        MonthDatatype.dataType,
-      ].includes(sortByColumn?.dataType)
+      this.schemaService.getDatatypeOrDefault(sortByColumn?.dataType) instanceof
+        DateDatatype
     ) {
       // flip default sort order for dates (latest first)
       sortDirection = "desc";
@@ -319,12 +317,8 @@ export class EntitiesTableComponent<T extends Entity> {
   }
 
   /**
-   *
-   *
    * FILTER ARCHIVED RECORDS
    * User can hide / show inactive records through a toggle
-   *
-   *
    */
   @Input() set showInactive(value: boolean) {
     if (value === this._showInactive) {

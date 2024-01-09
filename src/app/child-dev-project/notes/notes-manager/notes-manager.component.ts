@@ -55,7 +55,7 @@ export class NotesManagerComponent implements OnInit {
   @Input() showEventNotesToggle: boolean;
 
   config: EntityListConfig;
-  noteConstructor = Note;
+  entityConstructor = Note;
   notes: Note[];
 
   private statusFS: FilterSelectionOption<Note>[] = [

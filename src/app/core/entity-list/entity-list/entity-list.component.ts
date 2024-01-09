@@ -293,4 +293,8 @@ export class EntityListComponent<T extends Entity>
     this.duplicateRecord.duplicateRecord(this.selectedRows);
     this.selectedRows = undefined;
   }
+
+  onRowClick(row: T) {
+    this.elementClick.emit(row);
+  }
 }

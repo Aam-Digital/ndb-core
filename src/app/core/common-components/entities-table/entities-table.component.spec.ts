@@ -18,7 +18,7 @@ import { of } from "rxjs";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 
-describe("EntityTableComponent", () => {
+describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
   let fixture: ComponentFixture<EntitiesTableComponent<Entity>>;
 
@@ -102,6 +102,7 @@ describe("EntityTableComponent", () => {
     const oldNote = Note.create(moment().subtract(1, "day").toDate());
     const newNote = Note.create(new Date());
     component.records = [oldNote, newNote];
+    fixture.detectChanges();
 
     expect(component.recordsDataSource.sort.direction).toBe("desc");
     expect(component.recordsDataSource.sort.active).toBe("date");
@@ -117,6 +118,7 @@ describe("EntityTableComponent", () => {
     component.records = [n3, n1, n2];
 
     component.sortBy = { active: "subject", direction: "asc" };
+    fixture.detectChanges();
 
     expect(component.recordsDataSource.sort.direction).toBe("asc");
     expect(component.recordsDataSource.sort.active).toBe("subject");
@@ -136,6 +138,7 @@ describe("EntityTableComponent", () => {
     component.records = children;
 
     component.sortBy = { active: "name", direction: "asc" };
+    fixture.detectChanges();
 
     const sortedIds = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
@@ -152,6 +155,7 @@ describe("EntityTableComponent", () => {
     component.records = notes;
 
     component.sortBy = { active: "category", direction: "asc" };
+    fixture.detectChanges();
 
     const sortedIds = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
@@ -164,6 +168,7 @@ describe("EntityTableComponent", () => {
     component.records = names.map((name) => Child.create(name));
 
     component.sortBy = { active: "name", direction: "asc" };
+    fixture.detectChanges();
 
     const sortedNames = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)

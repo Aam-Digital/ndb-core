@@ -48,7 +48,9 @@ export class EntityCreateButtonComponent<T extends Entity = Entity> {
    * The entity is only written to the database when the user saves this record which is newly added in edit mode.
    */
   create() {
-    const newRecord = this.newRecordFactory();
+    const newRecord = this.newRecordFactory
+      ? this.newRecordFactory()
+      : new this.entityType();
     this.entityCreate.emit(newRecord);
   }
 }

@@ -37,13 +37,11 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   ) {}
 
   edit() {
-    if (!this.row.formGroup) {
-      this.row.formGroup = this.entityFormService.createFormGroup(
-        Array.from(this.row.record.getSchema().keys()),
-        this.row.record,
-        true,
-      );
-    }
+    this.row.formGroup = this.entityFormService.createFormGroup(
+      Array.from(this.row.record.getSchema().keys()),
+      this.row.record,
+      true,
+    );
     this.row.formGroup.enable();
   }
 
@@ -57,7 +55,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
         this.row.formGroup,
         this.row.record,
       );
-      this.row.formGroup.disable();
+      delete this.row.formGroup;
     } catch (err) {
       if (!(err instanceof InvalidFormFieldError)) {
         this.alertService.addDanger(err.message);
