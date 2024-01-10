@@ -1,10 +1,4 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { ColumnConfig } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { NgIf } from "@angular/common";
@@ -25,7 +19,6 @@ import { PillComponent } from "../pill/pill.component";
   selector: "app-entity-field-view",
   templateUrl: "./entity-field-view.component.html",
   styleUrls: ["./entity-field-view.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgIf, DynamicComponentDirective, PillComponent],
   standalone: true,
 })
