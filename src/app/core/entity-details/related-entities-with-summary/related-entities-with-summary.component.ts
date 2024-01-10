@@ -51,7 +51,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
         ),
       )
       .subscribe((update) => {
-        this.data = applyUpdate(this.data, update);
+        this.data = applyUpdate(this.data, update, false);
         this.updateSummary();
       });
   }

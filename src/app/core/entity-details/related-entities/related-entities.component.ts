@@ -109,7 +109,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
       .receiveUpdates(this.entityCtr)
       .pipe(untilDestroyed(this))
       .subscribe((next) => {
-        this.data = applyUpdate(this.data, next, true);
+        this.data = applyUpdate(this.data, next);
       });
   }
 
