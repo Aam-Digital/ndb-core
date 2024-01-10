@@ -15,6 +15,7 @@ import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 import { RouteTarget } from "../../../route-target";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { DataFilter } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -160,5 +161,5 @@ const filterCurrentlyActive: FilterSelectionOption<Todo> = {
         ],
       },
     ],
-  },
+  } as DataFilter<Todo>,
 };

@@ -12,7 +12,8 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { DateRange } from "@angular/material/datepicker";
 import { MatCalendarHarness } from "@angular/material/datepicker/testing";
 import moment from "moment";
-import { DateFilter } from "../../../../filter/filters/filters";
+
+import { DateFilter } from "../../../../filter/filters/dateFilter";
 
 describe("DateRangeFilterPanelComponent", () => {
   let component: DateRangeFilterPanelComponent;
@@ -22,7 +23,7 @@ describe("DateRangeFilterPanelComponent", () => {
 
   beforeEach(async () => {
     dateFilter = new DateFilter("test", "Test", defaultDateFilters);
-    dateFilter.selectedOption = "1";
+    dateFilter.selectedOptionsKeys = ["1"];
     jasmine.clock().mockDate(moment("2023-04-08").toDate());
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule],
@@ -85,7 +86,7 @@ describe("DateRangeFilterPanelComponent", () => {
       moment("2023-04-08").startOf("day").toDate(),
     );
     expect(filterRange.end).toEqual(moment("2023-04-08").endOf("day").toDate());
-    expect(dateFilter.selectedOption).toBe("0");
+    expect(dateFilter.selectedOptionsKeys).toEqual(["0"]);
   });
 
   it("should highlight the date range when hovering over a option", async () => {
@@ -114,9 +115,9 @@ describe("DateRangeFilterPanelComponent", () => {
     }
   });
 
-  it("should return '_' as filter.selectedOption when 'all' option has been chosen", async () => {
+  it("should return empty array as filter.selectedOption when 'all' option has been chosen", async () => {
     component.selectRangeAndClose("all");
-    expect(dateFilter.selectedOption).toEqual("_");
+    expect(dateFilter.selectedOptionsKeys).toEqual([]);
   });
 
   it("should correctly calculate date ranges based on the config", () => {

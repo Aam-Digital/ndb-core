@@ -11,6 +11,7 @@ import {
 } from "@ucast/mongo2js";
 import moment from "moment";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { Filter as EntityFilter } from "./filters/filters";
 
 /**
  * Utility service to help handling and aligning filters with entities.
@@ -27,6 +28,22 @@ export class FilterService {
 
   constructor(private enumService: ConfigurableEnumService) {}
 
+  combineFilters<T extends Entity>(
+    entityFilters: EntityFilter<T>[],
+  ): DataFilter<T> {
+    if (entityFilters.length === 0) {
+      return {} as DataFilter<T>;
+    }
+
+    return {
+      $and: [
+        ...entityFilters.map((value: EntityFilter<T>): DataFilter<T> => {
+          return value.getFilter();
+        }),
+      ],
+    } as unknown as DataFilter<T>;
+  }
+
   /**
    * Builds a predicate for a given filter object.
    * This predicate can be used to filter arrays of objects.
@@ -36,6 +53,7 @@ export class FilterService {
    * ```
    * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
    */
+  // todo: check usage for array usage (typing not working)
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
     return this.filterFactory<T>(filter);
   }
@@ -44,7 +62,7 @@ export class FilterService {
    * Patches an entity with values required to pass the filter query.
    * This patch happens in-place.
    * @param entity the entity to be patched
-   * @param filter the filter which the entity should pass afterwards
+   * @param filter the filter which the entity should pass afterward
    */
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
     const schema = entity.getSchema();

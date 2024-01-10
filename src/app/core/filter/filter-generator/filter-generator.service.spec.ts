@@ -14,15 +14,12 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { FilterService } from "../filter.service";
-import {
-  BooleanFilter,
-  ConfigurableEnumFilter,
-  DateFilter,
-  EntityFilter,
-  FilterSelectionOption,
-  SelectableFilter,
-} from "../filters/filters";
+import { FilterSelectionOption, SelectableFilter } from "../filters/filters";
 import { Entity } from "../../entity/model/entity";
+import { DateFilter } from "../filters/dateFilter";
+import { BooleanFilter } from "../filters/booleanFilter";
+import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
+import { EntityFilter } from "../filters/entityFilter";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -61,7 +58,6 @@ describe("FilterGeneratorService", () => {
         return { key: option.key, label: option.label };
       }),
     ).toEqual([
-      { key: "all", label: "All" },
       { key: "true", label: "Private" },
       { key: "false", label: "Government" },
     ]);
@@ -70,9 +66,6 @@ describe("FilterGeneratorService", () => {
   it("should create a configurable enum filter", async () => {
     const interactionTypes = defaultInteractionTypes.map((it) =>
       jasmine.objectContaining({ key: it.id, label: it.label }),
-    );
-    interactionTypes.push(
-      jasmine.objectContaining({ key: "all", label: "All" }),
     );
     const schema = Note.schema.get("category");
 
@@ -133,10 +126,9 @@ describe("FilterGeneratorService", () => {
       defaultInteractionTypes[2],
     ];
 
-    // indices are increased by one as first option is "all"
+    expect(filter([note], filterOptions.options[1])).toEqual([note]);
     expect(filter([note], filterOptions.options[2])).toEqual([note]);
-    expect(filter([note], filterOptions.options[3])).toEqual([note]);
-    expect(filter([note], filterOptions.options[4])).toEqual([]);
+    expect(filter([note], filterOptions.options[3])).toEqual([]);
 
     Note.schema.delete("otherEnum");
   });
@@ -164,17 +156,17 @@ describe("FilterGeneratorService", () => {
     expect(filterOptions.label).toEqual(schema.label);
     expect(filterOptions.name).toEqual("schoolId");
     const allRelations = [csr1, csr2, csr3, csr4];
-    const allFilter = filterOptions.options.find((opt) => opt.key === "all");
-    expect(allFilter.label).toEqual("All");
-    expect(filter(allRelations, allFilter)).toEqual(allRelations);
-    const school1Filter = filterOptions.options.find(
-      (opt) => opt.key === school1.getId(),
-    );
+    // const allFilter: FilterSelectionOption<Entity> = filterOptions.options.find(
+    //   (opt) => opt.key === "all",
+    // );
+    // expect(allFilter.label).toEqual("All");
+    // expect(filter(allRelations, allFilter)).toEqual(allRelations);
+    const school1Filter: FilterSelectionOption<Entity> =
+      filterOptions.options.find((opt) => opt.key === school1.getId());
     expect(school1Filter.label).toEqual(school1.name);
     expect(filter(allRelations, school1Filter)).toEqual([csr1, csr4]);
-    const school2Filter = filterOptions.options.find(
-      (opt) => opt.key === school2.getId(),
-    );
+    const school2Filter: FilterSelectionOption<Entity> =
+      filterOptions.options.find((opt) => opt.key === school2.getId());
     expect(school2Filter.label).toEqual(school2.name);
     expect(filter(allRelations, school2Filter)).toEqual([csr2, csr3]);
   });
@@ -203,7 +195,6 @@ describe("FilterGeneratorService", () => {
     });
     expect(comparableOptions).toEqual(
       jasmine.arrayWithExactContents([
-        { key: "", label: "All" },
         { key: "muslim", label: "muslim" },
         { key: "christian", label: "christian" },
       ]),
@@ -218,7 +209,6 @@ describe("FilterGeneratorService", () => {
       label: "Date",
       default: "today",
       options: [
-        { key: "", label: "All", filter: {} },
         {
           key: "today",
           label: "Today",
@@ -239,15 +229,15 @@ describe("FilterGeneratorService", () => {
     expect(filterOptions.label).toEqual(prebuiltFilter.label);
     expect(filterOptions.name).toEqual(prebuiltFilter.id);
     expect(filterOptions.options).toEqual(prebuiltFilter.options);
-    expect(filterOptions.selectedOption).toEqual(prebuiltFilter.default);
+    expect(filterOptions.selectedOptionsKeys).toEqual([prebuiltFilter.default]);
 
     const todayNote = new Note();
     todayNote.date = new Date();
     const yesterdayNote = new Note();
     const notes = [todayNote, yesterdayNote];
     yesterdayNote.date = moment().subtract(1, "day").toDate();
-    const allFilter = filterOptions.options.find((f) => f.key === "");
-    expect(filter(notes, allFilter)).toEqual(notes);
+    // const allFilter = filterOptions.options.find((f) => f.key === "");
+    // expect(filter(notes, allFilter)).toEqual(notes);
     const todayFilter = filterOptions.options.find((f) => f.key === "today");
     expect(filter(notes, todayFilter)).toEqual([todayNote]);
     const beforeFilter = filterOptions.options.find((f) => f.key === "before");

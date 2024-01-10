@@ -23,7 +23,7 @@ export interface EntityListConfig {
 
   /**
    * Optional config for which columns are displayed.
-   * By default all columns are shown
+   * By default, all columns are shown
    */
   columnGroups?: ColumnGroupsConfig;
 
@@ -55,7 +55,7 @@ export interface ColumnGroupsConfig {
   default?: string;
 
   /**
-   * The name of the group group that should be selected by default on a mobile device.
+   * The name of the group that should be selected by default on a mobile device.
    * Default is the name of the first group.
    */
   mobile?: string;

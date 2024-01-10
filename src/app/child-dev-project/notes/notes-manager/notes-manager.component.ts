@@ -22,6 +22,7 @@ import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouteTarget } from "../../../route-target";
+import { DataFilter } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -63,28 +64,27 @@ export class NotesManagerComponent implements OnInit {
     {
       key: "urgent",
       label: $localize`:Filter-option for notes:Urgent`,
-      filter: { "warningLevel.id": WarningLevel.URGENT },
+      filter: { "warningLevel.id": WarningLevel.URGENT } as DataFilter<any>,
     },
     {
       key: "follow-up",
       label: $localize`:Filter-option for notes:Needs Follow-Up`,
       filter: {
-        "warningLevel.id": { $in: [WarningLevel.URGENT, WarningLevel.WARNING] },
-      },
+        "warningLevel.id": { $in: [WarningLevel.WARNING] },
+      } as DataFilter<any>,
     },
-    { key: "", label: $localize`All`, filter: {} },
   ];
 
   private dateFS: FilterSelectionOption<Note>[] = [
     {
       key: "current-week",
       label: $localize`:Filter-option for notes:This Week`,
-      filter: { date: this.getWeeksFilter(0) },
+      filter: { date: this.getWeeksFilter(0) } as DataFilter<any>,
     },
     {
       key: "last-week",
       label: $localize`:Filter-option for notes:Since Last Week`,
-      filter: { date: this.getWeeksFilter(1) },
+      filter: { date: this.getWeeksFilter(1) } as DataFilter<any>,
     },
     { key: "", label: $localize`All`, filter: {} },
   ];
