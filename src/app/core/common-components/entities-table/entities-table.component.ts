@@ -141,8 +141,9 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     cols.push(...value);
     this._columnsToDisplay = cols;
 
-    if (!this._sortBy) {
+    if (this.sortIsInferred) {
       this.sortBy = this.inferDefaultSort();
+      this.sortIsInferred = true;
     }
   }
   _columnsToDisplay: string[];
@@ -156,9 +157,11 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     }
 
     this._sortBy = value;
+    this.sortIsInferred = false;
   }
   _sortBy: Sort;
   @ViewChild(MatSort, { static: true }) sort: MatSort;
+  private sortIsInferred: boolean = true;
 
   /**
    * Adds a filter for the displayed data.
