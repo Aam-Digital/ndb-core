@@ -72,6 +72,6 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
    * @param row The entity to be reset.
    */
   resetChanges() {
-    this.row.formGroup = null;
+    delete this.row.formGroup;
   }
 }
