@@ -22,16 +22,7 @@ import { UserAccountComponent } from "./core/user/user-account/user-account.comp
 import { SupportComponent } from "./core/support/support/support.component";
 import { AuthGuard } from "./core/session/auth.guard";
 import { LoginComponent } from "./core/session/login/login.component";
-
-/**
- * Marks a class to be the target when routing.
- * Use this by adding the annotation `@RouteTarget("...")` to a component.
- * The name provided to the annotation can then be used in the configuration.
- *
- * IMPORTANT:
- *  The component also needs to be added to the `...Components` list of the respective module.
- */
-export const RouteTarget = (_name: string) => (_) => undefined;
+import { AdminModule } from "./core/admin/admin.module";
 
 /**
  * All routes configured for the main app routing.
@@ -59,6 +50,12 @@ export const allRoutes: Routes = [
       import("./features/public-form/public-form.component").then(
         (c) => c.PublicFormComponent,
       ),
+  },
+  {
+    path: "admin",
+    canActivate: [AuthGuard],
+    // add directly without lazy-loading so that Menu can detect permissions for child routes
+    children: AdminModule.routes,
   },
   { path: "login", component: LoginComponent },
   { path: "404", component: NotFoundComponent },

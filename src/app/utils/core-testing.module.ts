@@ -9,13 +9,14 @@ import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mappe
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { ComponentRegistry } from "../dynamic-components";
 import { EntityActionsService } from "../core/entity/entity-actions/entity-actions.service";
+import { ConfigurableEnumModule } from "../core/basic-datatypes/configurable-enum/configurable-enum.module";
 
 /**
  * A basic module that can be imported in unit tests to provide default datatypes.
  * In contrast to MockedTestingModule this imports a much more limited set of modules.
  */
 @NgModule({
-  imports: [CoreModule],
+  imports: [CoreModule, ConfigurableEnumModule],
   providers: [
     { provide: EntityRegistry, useValue: entityRegistry },
     { provide: EntityMapperService, useValue: mockEntityMapper() },

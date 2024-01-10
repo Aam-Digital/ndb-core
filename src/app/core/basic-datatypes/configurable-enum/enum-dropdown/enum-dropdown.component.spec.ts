@@ -8,16 +8,25 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 describe("EnumDropdownComponent", () => {
   let component: EnumDropdownComponent;
   let fixture: ComponentFixture<EnumDropdownComponent>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
+  let mockAbility: jasmine.SpyObj<EntityAbility>;
+
   beforeEach(async () => {
     mockDialog = jasmine.createSpyObj(["open"]);
+    mockAbility = jasmine.createSpyObj(["can"]);
+    mockAbility.can.and.returnValue(true);
+
     await TestBed.configureTestingModule({
       imports: [EnumDropdownComponent, MockedTestingModule.withState()],
-      providers: [{ provide: MatDialog, useValue: mockDialog }],
+      providers: [
+        { provide: MatDialog, useValue: mockDialog },
+        { provide: EntityAbility, useValue: mockAbility },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EnumDropdownComponent);

@@ -15,6 +15,12 @@ import { DatePipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
 import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
+import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
+
+interface BirthdayDashboardConfig {
+  entities: EntityPropertyMap;
+  threshold: number;
+}
 
 @DynamicComponent("BirthdayDashboard")
 @Component({
@@ -32,7 +38,14 @@ import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-wid
   ],
   standalone: true,
 })
-export class BirthdayDashboardComponent implements OnInit, AfterViewInit {
+export class BirthdayDashboardComponent
+  extends DashboardWidget
+  implements BirthdayDashboardConfig, OnInit, AfterViewInit
+{
+  static getRequiredEntities(config: BirthdayDashboardConfig) {
+    return config?.entities ? Object.keys(config.entities) : Child.ENTITY_TYPE;
+  }
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
   private readonly today: Date;
 
@@ -55,6 +68,7 @@ export class BirthdayDashboardComponent implements OnInit, AfterViewInit {
   isLoading = true;
 
   constructor(private entityMapper: EntityMapperService) {
+    super();
     this.today = new Date();
     this.today.setHours(0, 0, 0, 0);
   }

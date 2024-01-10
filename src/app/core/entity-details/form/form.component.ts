@@ -32,7 +32,7 @@ import { FieldGroup } from "./field-group";
   ],
   standalone: true,
 })
-export class FormComponent<E extends Entity> implements OnInit {
+export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   @Input() entity: E;
   @Input() creatingNew = false;
 
@@ -82,4 +82,11 @@ export class FormComponent<E extends Entity> implements OnInit {
     this.entityFormService.resetForm(this.form, this.entity);
     this.form.disable();
   }
+}
+
+/**
+ * Config format that the FormComponent handles.
+ */
+export interface FormConfig {
+  fieldGroups: FieldGroup[];
 }

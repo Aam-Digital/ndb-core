@@ -308,6 +308,15 @@ export class PouchDatabase extends Database {
   }
 
   /**
+   * Reset the database state so a new one can be opened.
+   */
+  reset() {
+    this.pouchDB = undefined;
+    this.changesFeed = undefined;
+    this.databaseInitialized = new Subject();
+  }
+
+  /**
    * Query data from the database based on a more complex, indexed request.
    * (see {@link Database})
    *

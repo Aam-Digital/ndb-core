@@ -3,9 +3,9 @@ import { Child } from "../model/child";
 import { ActivatedRoute } from "@angular/router";
 import { ChildrenService } from "../children.service";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
-import { RouteTarget } from "../../../app.routing";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
+import { RouteTarget } from "../../../route-target";
 
 @RouteTarget("ChildrenList")
 @Component({
@@ -36,7 +36,8 @@ export class ChildrenListComponent implements OnInit {
     this.route.data.subscribe(
       // TODO replace this use of route and rely on the RoutedViewComponent instead
       // see  that flattens the config option, assigning individual properties as inputs however, so we can't easily pass on
-      (data: RouteData<EntityListConfig>) => (this.listConfig = data.config),
+      (data: DynamicComponentConfig<EntityListConfig>) =>
+        (this.listConfig = data.config),
     );
     this.childrenList = await this.childrenService.getChildren();
     this.isLoading = false;

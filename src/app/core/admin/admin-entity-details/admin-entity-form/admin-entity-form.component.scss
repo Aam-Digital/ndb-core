@@ -1,0 +1,126 @@
+@use "../../../../../styles/variables/colors";
+@use "../../../../../styles/variables/sizes";
+@use "../../../../../styles/mixins/grid-layout";
+@use "../../../../../../node_modules/@angular/material/core/style/elevation" as mat-elevation;
+
+$toolbar-width: 300px;
+.toolbar {
+  width: $toolbar-width;
+  padding: sizes.$small;
+  margin-right: - sizes.$small;
+  margin-bottom: - sizes.$small;
+
+  @include mat-elevation.elevation(4);
+  border-bottom-left-radius: 0;
+  border-top-right-radius: 0;
+  background-color: transparent;
+}
+
+.admin-grid-layout {
+  @include grid-layout.adaptive(
+    $min-block-width: calc(#{sizes.$form-group-min-width} + 28px + 2*2*#{sizes.$small}),
+    $max-screen-width: 414px
+  );
+}
+
+.fields-group-list {
+  border: dashed 1px #ccc;
+  border-radius: 4px;
+  overflow: hidden;
+  display: block;
+  padding: 0 sizes.$small;
+}
+.drop-list {
+  min-height: 60px;
+  height: 99%;
+}
+
+.admin-form-field {
+  padding: sizes.$small;
+  margin: sizes.$small auto;
+  border: dotted 1px colors.$accent;
+  border-radius: sizes.$x-small;
+  position: relative;
+  overflow: hidden;
+
+  // draggable item must not be wider than toolbar, otherwise it cannot be dropped there due to cdkDragBoundary
+  max-width: $toolbar-width;
+ }
+.admin-form-field:hover {
+  background-color: colors.$grey-transparent;
+}
+
+.admin-form-field-new, .admin-form-field-new:hover {
+  border-color: green;
+  background-color: rgba(0, 255, 0, 0.05);
+  font-style: italic;
+  cursor: move;
+}
+
+.drag-handle {
+  color: colors.$accent;
+  cursor: move;
+  min-width: 2em;
+  text-align: center;
+}
+
+.field-edit-button {
+  visibility: hidden;
+  background: white !important;
+  z-index: 10;
+  padding: 1.5em;
+
+  position: absolute;
+  // center within parent:
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  margin: auto;
+  width: fit-content;
+}
+.admin-form-field:hover .field-edit-button {
+  visibility: visible;
+}
+.field-edit-button-small {
+  left: unset;
+}
+
+.dummy-form-field { width: 100% }
+.dummy-form-field ::ng-deep input, .dummy-form-field ::ng-deep button { pointer-events: none }
+.dummy-form-field ::ng-deep mat-form-field {
+  width: 100%
+}
+
+
+.drop-area-hint {
+  text-align: center;
+  padding: sizes.$small;
+  color: colors.$hint-text
+}
+
+.admin-form-column {
+  border: dashed 1px #ccc;
+  padding: sizes.$small;
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow: 0 5px 5px -3px rgba(0, 0, 0, 0.2),
+  0 8px 10px 1px rgba(0, 0, 0, 0.14),
+  0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.4;
+  border-color: green;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drop-list.cdk-drop-list-dragging .admin-form-field:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}

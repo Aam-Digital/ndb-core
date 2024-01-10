@@ -15,16 +15,22 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { NavigationComponent } from "./navigation.component";
-import { MenuItem } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
 import { BehaviorSubject, Subject } from "rxjs";
 import { Config } from "../../../config/config";
 import { UserRoleGuard } from "../../../permissions/permission-guard/user-role.guard";
 import { Event, NavigationEnd, Router } from "@angular/router";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
+import { EntityPermissionGuard } from "../../../permissions/permission-guard/entity-permission.guard";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -32,7 +38,8 @@ describe("NavigationComponent", () => {
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let mockConfigUpdated: BehaviorSubject<Config>;
-  let mockUserRoleGuard: jasmine.SpyObj<UserRoleGuard>;
+  let mockRoleGuard: jasmine.SpyObj<UserRoleGuard>;
+  let mockEntityGuard: jasmine.SpyObj<EntityPermissionGuard>;
 
   beforeEach(waitForAsync(() => {
     mockConfigUpdated = new BehaviorSubject<Config>(null);
@@ -41,13 +48,16 @@ describe("NavigationComponent", () => {
     });
     mockConfigService.getConfig.and.returnValue({ items: [] });
     mockConfigService.getAllConfigs.and.returnValue([]);
-    mockUserRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
-    mockUserRoleGuard.checkRoutePermissions.and.returnValue(true);
+    mockRoleGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
+    mockRoleGuard.checkRoutePermissions.and.resolveTo(true);
+    mockEntityGuard = jasmine.createSpyObj(["checkRoutePermissions"]);
+    mockEntityGuard.checkRoutePermissions.and.resolveTo(true);
 
     TestBed.configureTestingModule({
       imports: [NavigationComponent, MockedTestingModule.withState()],
       providers: [
-        { provide: UserRoleGuard, useValue: mockUserRoleGuard },
+        { provide: UserRoleGuard, useValue: mockRoleGuard },
+        { provide: EntityPermissionGuard, useValue: mockEntityGuard },
         { provide: ConfigService, useValue: mockConfigService },
       ],
     }).compileComponents();
@@ -63,7 +73,7 @@ describe("NavigationComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("generates menu items from config", function () {
+  it("generates menu items from config", fakeAsync(() => {
     const testConfig = {
       items: [
         { name: "Dashboard", icon: "home", link: "/dashboard" },
@@ -72,23 +82,22 @@ describe("NavigationComponent", () => {
     };
     mockConfigService.getConfig.and.returnValue(testConfig);
     mockConfigUpdated.next(null);
-    const items = component.menuItems;
+    tick();
 
-    expect(items).toEqual([
-      new MenuItem("Dashboard", "home", "/dashboard"),
-      new MenuItem("Children", "child", "/child"),
+    expect(component.menuItems).toEqual([
+      { label: "Dashboard", icon: "home", link: "/dashboard" },
+      { label: "Children", icon: "child", link: "/child" },
     ]);
-  });
+  }));
 
-  it("marks items that require admin rights", function () {
+  it("marks items that require admin rights", fakeAsync(() => {
     const testConfig = {
       items: [
         { name: "Dashboard", icon: "home", link: "/dashboard" },
         { name: "Children", icon: "child", link: "/child" },
       ],
     };
-    mockConfigService.getConfig.and.returnValue(testConfig);
-    mockUserRoleGuard.checkRoutePermissions.and.callFake((route: string) => {
+    mockRoleGuard.checkRoutePermissions.and.callFake(async (route: string) => {
       switch (route) {
         case "/dashboard":
           return false;
@@ -101,11 +110,39 @@ describe("NavigationComponent", () => {
 
     mockConfigService.getConfig.and.returnValue(testConfig);
     mockConfigUpdated.next(null);
+    tick();
 
     expect(component.menuItems).toEqual([
-      new MenuItem("Children", "child", "/child"),
+      { label: "Children", icon: "child", link: "/child" },
     ]);
-  });
+  }));
+
+  it("should add menu items where entity permissions are missing", fakeAsync(() => {
+    const testConfig = {
+      items: [
+        { name: "Dashboard", icon: "home", link: "/dashboard" },
+        { name: "Children", icon: "child", link: "/child" },
+      ],
+    };
+    mockEntityGuard.checkRoutePermissions.and.callFake((route: string) => {
+      switch (route) {
+        case "/dashboard":
+          return Promise.resolve(false);
+        case "/child":
+          return Promise.resolve(true);
+        default:
+          return Promise.resolve(false);
+      }
+    });
+
+    mockConfigService.getConfig.and.returnValue(testConfig);
+    mockConfigUpdated.next(null);
+    tick();
+
+    expect(component.menuItems).toEqual([
+      { label: "Children", icon: "child", link: "/child" },
+    ]);
+  }));
 
   it("should highlight active menu item", () => {
     const routerEvents = TestBed.inject(Router).events as Subject<Event>;

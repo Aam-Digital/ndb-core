@@ -19,7 +19,6 @@ import { Component } from "@angular/core";
 import { MenuItem } from "../menu-item";
 import { NavigationMenuConfig } from "../navigation-menu-config.interface";
 import { ConfigService } from "../../../config/config.service";
-import { UserRoleGuard } from "../../../permissions/permission-guard/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NavigationEnd, Router, RouterLink } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
@@ -27,6 +26,7 @@ import { MatListModule } from "@angular/material/list";
 import { NgForOf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 
 /**
  * Main app menu listing.
@@ -54,9 +54,9 @@ export class NavigationComponent {
   public menuItems: MenuItem[] = [];
 
   constructor(
-    private userRoleGuard: UserRoleGuard,
     private configService: ConfigService,
     private router: Router,
+    private routePermissionService: RoutePermissionsService,
   ) {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
@@ -112,11 +112,19 @@ export class NavigationComponent {
   /**
    * Load menu items from config file
    */
-  private initMenuItemsFromConfig() {
+  private async initMenuItemsFromConfig() {
     const config: NavigationMenuConfig =
       this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
-    this.menuItems = config.items
-      .filter(({ link }) => this.userRoleGuard.checkRoutePermissions(link))
-      .map(({ name, icon, link }) => new MenuItem(name, icon, link));
+    // TODO align interface {@link https://github.com/Aam-Digital/ndb-core/issues/2066}
+    const items: MenuItem[] = config.items.map(({ name, icon, link }) => ({
+      label: name,
+      icon,
+      link,
+    }));
+    this.menuItems =
+      await this.routePermissionService.filterPermittedRoutes(items);
+
+    // re-select active menu item after menu has been fully initialized
+    this.activeLink = this.computeActiveLink(location.pathname);
   }
 }

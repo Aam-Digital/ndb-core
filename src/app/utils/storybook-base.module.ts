@@ -21,7 +21,9 @@ import {
 } from "../core/entity/entity-mapper/mock-entity-mapper-service";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { DatabaseIndexingService } from "../core/entity/database-indexing/database-indexing.service";
-import { TEST_USER } from "./mock-local-session";
+import { EntityConfigService } from "../core/entity/entity-config.service";
+import { TEST_USER } from "../core/user/demo-user-generator.service";
+import { RouterTestingModule } from "@angular/router/testing";
 
 componentRegistry.allowDuplicates();
 entityRegistry.allowDuplicates();
@@ -37,7 +39,7 @@ export const entityFormStorybookDefaultParameters = {
  */
 @NgModule({
   declarations: [],
-  imports: [AppModule],
+  imports: [AppModule, RouterTestingModule],
   providers: [
     { provide: ConfigService, useValue: createTestingConfigService() },
     {
@@ -73,10 +75,15 @@ export class StorybookBaseModule {
     StorybookBaseModule.initData = data;
     return StorybookBaseModule;
   }
-  constructor(icons: FaIconLibrary, entityMapper: EntityMapperService) {
+  constructor(
+    icons: FaIconLibrary,
+    entityMapper: EntityMapperService,
+    entityConfigService: EntityConfigService,
+  ) {
     (entityMapper as MockEntityMapperService).addAll(
       StorybookBaseModule.initData,
     );
     icons.addIconPacks(fas, far);
+    entityConfigService.setupEntitiesFromConfig();
   }
 }

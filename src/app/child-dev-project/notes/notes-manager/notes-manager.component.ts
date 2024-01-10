@@ -12,9 +12,8 @@ import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
 import { WarningLevel } from "../../warning-level";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { merge } from "rxjs";
-import { RouteTarget } from "../../../app.routing";
 import moment from "moment";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { NgIf } from "@angular/common";
@@ -22,6 +21,7 @@ import { FormsModule } from "@angular/forms";
 import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
+import { RouteTarget } from "../../../route-target";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -98,7 +98,9 @@ export class NotesManagerComponent implements OnInit {
 
   async ngOnInit() {
     this.route.data.subscribe(
-      async (data: RouteData<EntityListConfig & NotesManagerConfig>) => {
+      async (
+        data: DynamicComponentConfig<EntityListConfig & NotesManagerConfig>,
+      ) => {
         // TODO replace this use of route and rely on the RoutedViewComponent instead
         this.config = data.config;
         this.addPrebuiltFilters();

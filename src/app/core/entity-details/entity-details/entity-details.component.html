@@ -28,10 +28,19 @@
     Adding new {{ this.entityConstructor?.label }}
   </app-view-title>
 
-  <app-entity-actions-menu
-    [entity]="record"
-    [navigateOnDelete]="true"
-  ></app-entity-actions-menu>
+  <app-entity-actions-menu [entity]="record" [navigateOnDelete]="true">
+    <button
+      mat-menu-item
+      [routerLink]="['/admin/entity', record?.getType(), 'details']"
+      *ngIf="'update' | ablePure: 'Config' | async"
+    >
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        icon="tools"
+      ></fa-icon>
+      <span i18n>Edit Data Structure</span>
+    </button>
+  </app-entity-actions-menu>
 </div>
 
 <app-entity-archived-info [entity]="record"></app-entity-archived-info>

@@ -16,13 +16,15 @@ import { MatDialogModule } from "@angular/material/dialog";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { PouchDatabase } from "../../database/pouch-database";
-import { BackupService } from "../../../features/admin/services/backup.service";
+import { BackupService } from "../../admin/backup/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
-import { TEST_USER } from "../../../utils/mock-local-session";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
 import { SyncStateSubject } from "../../session/session-type";
-import { CurrentUserSubject } from "../../user/user";
+import { User } from "../../user/user";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { SessionSubject } from "../../session/auth/session-info";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 class MockDeleteRequest {
   onsuccess: () => {};
@@ -35,6 +37,7 @@ describe("SupportComponent", () => {
   let component: SupportComponent;
   let fixture: ComponentFixture<SupportComponent>;
   const testUser = { name: TEST_USER, roles: [] };
+  const userEntity = new User(TEST_USER);
   const mockSW = { isEnabled: false };
   let mockDB: jasmine.SpyObj<PouchDatabase>;
   const mockWindow = {
@@ -67,8 +70,12 @@ describe("SupportComponent", () => {
       ],
       providers: [
         {
-          provide: CurrentUserSubject,
+          provide: SessionSubject,
           useValue: new BehaviorSubject(testUser),
+        },
+        {
+          provide: CurrentUserSubject,
+          useValue: new BehaviorSubject(userEntity),
         },
         { provide: SwUpdate, useValue: mockSW },
         { provide: PouchDatabase, useValue: mockDB },
@@ -92,7 +99,8 @@ describe("SupportComponent", () => {
   });
 
   it("should initialize application information", () => {
-    expect(component.currentUser).toBe(testUser);
+    expect(component.sessionInfo).toBe(testUser);
+    expect(component.currentUser).toBe(userEntity);
     expect(component.currentSyncState).toBe("unsynced");
     expect(component.lastSync).toBe("never");
     expect(component.lastRemoteLogin).toBe("never");

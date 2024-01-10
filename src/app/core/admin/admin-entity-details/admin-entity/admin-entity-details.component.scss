@@ -1,0 +1,36 @@
+@use "../../../../../../node_modules/@angular/material/core/style/elevation" as mat-elevation;
+@use "../../../../../styles/variables/sizes";
+
+.admin-ui-title {
+  font-style: italic;
+}
+
+.save-buttons {
+  margin: auto 0;
+}
+
+.section-wrapper {
+  @include mat-elevation.elevation(1);
+  margin: sizes.$small;
+  padding: sizes.$small;
+}
+// TODO: making direct child of app-admin-section-header somehow breaks this
+//  although `:has(> app-admin-section-header .group-remove-button` (without :hover) does work ...
+.section-wrapper:has(> app-admin-section-header .group-remove-button:hover) {
+  border-color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.1);
+}
+
+
+.section-add-button {
+  padding: sizes.$large;
+  margin: sizes.$small;
+}
+
+:host ::ng-deep .mat-mdc-tab {
+  // adjust tab header height to properly display mat-form-field for editing tab label
+  height: 60px !important;
+}
+app-admin-section-header {
+  margin-bottom: -1em;
+}

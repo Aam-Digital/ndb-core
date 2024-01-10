@@ -42,12 +42,18 @@ describe("FormComponent", () => {
   });
 
   it("calls router once a new child is saved", async () => {
+    const entityFormService = TestBed.inject(EntityFormService);
+    spyOn(entityFormService, "saveChanges").and.resolveTo();
+
     const testChild = new Child();
     const router = fixture.debugElement.injector.get(Router);
     spyOn(router, "navigate");
+
     component.creatingNew = true;
     component.entity = testChild;
     await component.saveClicked();
+
+    expect(entityFormService.saveChanges).toHaveBeenCalled();
     expect(router.navigate).toHaveBeenCalledWith(["", testChild.getId()]);
   });
 

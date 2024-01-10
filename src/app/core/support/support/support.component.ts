@@ -6,18 +6,19 @@ import * as Sentry from "@sentry/browser";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { HttpClient } from "@angular/common/http";
 import { environment } from "../../../../environments/environment";
-import { AuthUser } from "../../session/auth/auth-user";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { firstValueFrom } from "rxjs";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { MatButtonModule } from "@angular/material/button";
 import { PouchDatabase } from "../../database/pouch-database";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { BackupService } from "../../../features/admin/services/backup.service";
+import { BackupService } from "../../admin/backup/backup.service";
 import { DownloadService } from "../../export/download-service/download.service";
 import { SyncStateSubject } from "../../session/session-type";
 import { SyncService } from "../../database/sync.service";
 import { KeycloakAuthService } from "../../session/auth/keycloak/keycloak-auth.service";
-import { CurrentUserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { Entity } from "../../entity/model/entity";
 
 @Component({
   selector: "app-support",
@@ -27,7 +28,8 @@ import { CurrentUserSubject } from "../../user/user";
   standalone: true,
 })
 export class SupportComponent implements OnInit {
-  currentUser: AuthUser;
+  sessionInfo: SessionInfo;
+  currentUser: Entity;
   currentSyncState: string;
   lastSync: string;
   lastRemoteLogin: string;
@@ -40,7 +42,8 @@ export class SupportComponent implements OnInit {
 
   constructor(
     private syncState: SyncStateSubject,
-    private userSubject: CurrentUserSubject,
+    private sessionSubject: SessionSubject,
+    private currentUserSubject: CurrentUserSubject,
     private sw: SwUpdate,
     private database: PouchDatabase,
     private confirmationDialog: ConfirmationDialogService,
@@ -52,7 +55,8 @@ export class SupportComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.currentUser = this.userSubject.value;
+    this.sessionInfo = this.sessionSubject.value;
+    this.currentUser = this.currentUserSubject.value;
     this.appVersion = environment.appVersion;
     this.initCurrentSyncState();
     this.initLastSync();
@@ -126,9 +130,10 @@ export class SupportComponent implements OnInit {
   sendReport() {
     // This is sent even without submitting the crash report.
     Sentry.captureMessage("report information", {
-      user: { name: this.currentUser.name },
+      user: { name: this.sessionInfo.name },
       level: "debug",
       extra: {
+        currentUser: this.currentUser.getId(true),
         currentSyncState: this.currentSyncState,
         lastSync: this.lastSync,
         lastRemoteLogin: this.lastRemoteLogin,
@@ -142,7 +147,7 @@ export class SupportComponent implements OnInit {
     });
     Sentry.showReportDialog({
       user: {
-        name: this.currentUser.name,
+        name: this.sessionInfo.name,
         email: "example@email.com",
       },
       title: $localize`:Title user feedback dialog:Support request`,

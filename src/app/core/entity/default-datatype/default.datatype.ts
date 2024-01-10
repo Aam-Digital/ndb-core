@@ -43,6 +43,14 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
   }
 
   /**
+   * The human-readable name for this dataType, used in config UIs.
+   */
+  static label: string = $localize`:datatype-label:any`;
+  get label(): string {
+    return (this.constructor as typeof DefaultDatatype).label;
+  }
+
+  /**
    * The default component how this datatype should be displayed in lists and forms.
    *
    * The edit component has to be a registered component. Components that are registered contain the `DynamicComponent`

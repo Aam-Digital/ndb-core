@@ -3,30 +3,20 @@ import { Component, ElementRef, ViewChild } from "@angular/core";
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 import { Entity } from "../../entity/model/entity";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { Subject } from "rxjs";
-import { AbilityService } from "../ability/ability.service";
 import { EntityAbility } from "../ability/entity-ability";
 
 describe("DisableEntityOperationDirective", () => {
   let testComponent: ComponentFixture<TestComponent>;
-  let mockAbility: jasmine.SpyObj<EntityAbility>;
-  let mockAbilityService: jasmine.SpyObj<AbilityService>;
-  let mockUpdateNotifier: Subject<void>;
+  let mockAbility: EntityAbility;
 
   beforeEach(() => {
-    mockAbility = jasmine.createSpyObj(["cannot"]);
-    mockUpdateNotifier = new Subject();
-    mockAbilityService = jasmine.createSpyObj([], {
-      abilityUpdated: mockUpdateNotifier,
-    });
+    mockAbility = new EntityAbility(null);
+    spyOn(mockAbility, "cannot");
 
     TestBed.configureTestingModule({
       declarations: [TestComponent],
       imports: [DisableEntityOperationDirective],
-      providers: [
-        { provide: EntityAbility, useValue: mockAbility },
-        { provide: AbilityService, useValue: mockAbilityService },
-      ],
+      providers: [{ provide: EntityAbility, useValue: mockAbility }],
     });
   });
 
@@ -58,7 +48,7 @@ describe("DisableEntityOperationDirective", () => {
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
     ).toBeFalse();
 
-    mockAbility.cannot.and.returnValue(true);
+    (mockAbility.cannot as jasmine.Spy).and.returnValue(true);
     testComponent.componentInstance.entityConstructor = Child;
     testComponent.detectChanges();
 
@@ -74,8 +64,8 @@ describe("DisableEntityOperationDirective", () => {
       testComponent.componentInstance.buttonRef.nativeElement.disabled,
     ).toBeTrue();
 
-    mockAbility.cannot.and.returnValue(false);
-    mockUpdateNotifier.next();
+    (mockAbility.cannot as jasmine.Spy).and.returnValue(false);
+    mockAbility.update([{ action: "manage", subject: "all" }]);
     testComponent.detectChanges();
 
     expect(
@@ -84,7 +74,7 @@ describe("DisableEntityOperationDirective", () => {
   });
 
   function createComponent(disabled: boolean = true) {
-    mockAbility.cannot.and.returnValue(disabled);
+    (mockAbility.cannot as jasmine.Spy).and.returnValue(disabled);
     testComponent = TestBed.createComponent(TestComponent);
     testComponent.detectChanges();
   }

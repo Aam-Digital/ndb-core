@@ -47,4 +47,8 @@ export class ConfigurableEnumService {
     }
     return this.enums.get(entityId);
   }
+
+  listEnums() {
+    return Array.from(this.enums.keys());
+  }
 }

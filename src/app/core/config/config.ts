@@ -26,4 +26,10 @@ export class Config<T = any> extends Entity {
     super(id);
     this.data = configuration;
   }
+
+  override copy(): this {
+    const newConfig = super.copy();
+    newConfig.data = JSON.parse(JSON.stringify(this.data));
+    return newConfig;
+  }
 }

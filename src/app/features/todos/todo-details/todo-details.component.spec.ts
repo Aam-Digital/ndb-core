@@ -9,6 +9,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { NEVER } from "rxjs";
+import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
 
 describe("TodoDetailsComponent", () => {
   let component: TodoDetailsComponent;
@@ -51,6 +52,8 @@ describe("TodoDetailsComponent", () => {
   });
 
   it("should save entity with all changes when completing todo", async () => {
+    spyOn(TestBed.inject(EntityAbility), "can").and.returnValue(true);
+
     const editedEntityProp = "subject";
     component.formColumns = [{ fields: [editedEntityProp] }];
     component.ngOnInit();

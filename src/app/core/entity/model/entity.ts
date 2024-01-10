@@ -43,7 +43,7 @@ export type EntityConstructor<T extends Entity = Entity> = (new (
  *
  * Entity classes do not deal with database actions, use {@link EntityMapperService} with its find/save/delete functions.
  *
- * Do not use the Entity class directly. Instead implement your own Entity types, writing classes that extend "Entity".
+ * Do not use the Entity class directly. Instead, implement your own Entity types, writing classes that extend "Entity".
  * A How-To Guide on how to implement your own types is available:
  * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
@@ -184,15 +184,11 @@ export class Entity {
   @DatabaseField({ anonymize: "retain" }) _rev: string;
 
   @DatabaseField({
-    dataType: "schema-embed",
-    additional: UpdateMetadata,
     anonymize: "retain",
   })
   created: UpdateMetadata;
 
   @DatabaseField({
-    dataType: "schema-embed",
-    additional: UpdateMetadata,
     anonymize: "retain",
   })
   updated: UpdateMetadata;

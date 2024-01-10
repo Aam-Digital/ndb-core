@@ -12,6 +12,12 @@ export abstract class ViewDirective<T, C = any> implements OnChanges {
   /** indicating that the value is not in its original state, so that components can explain this to the user */
   isPartiallyAnonymized: boolean;
 
+  /**
+   * Attention:
+   * When content is loaded async in your child component, you need to manually trigger the change detection
+   * See: https://angularindepth.com/posts/1054/here-is-what-you-need-to-know-about-dynamic-components-in-angular#ngonchanges
+   *
+   */
   ngOnChanges() {
     this.isPartiallyAnonymized =
       this.entity?.anonymized &&

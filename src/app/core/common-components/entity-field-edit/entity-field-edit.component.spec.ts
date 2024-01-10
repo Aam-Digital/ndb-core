@@ -40,4 +40,13 @@ describe("EntityFieldEditComponent", () => {
     );
     expect(component._field).toEqual(mockField);
   });
+
+  it("should silently hide if no entity with constructor is given", () => {
+    component.field = "testField";
+    component.entity = undefined;
+
+    component.ngOnChanges({ field: true as any });
+
+    expect(component).toBeTruthy();
+  });
 });

@@ -24,7 +24,9 @@ import { EntitySchemaField } from "../../core/entity/schema/entity-schema-field"
  */
 @Injectable()
 export class FileDatatype extends StringDatatype {
-  static dataType = "file";
+  static override dataType = "file";
+  static override label: string = $localize`:datatype-label:file attachment`;
+
   viewComponent = "ViewFile";
   editComponent = "EditFile";
 

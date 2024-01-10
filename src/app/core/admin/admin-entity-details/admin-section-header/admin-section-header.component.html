@@ -1,0 +1,16 @@
+<div class="flex-row align-baseline">
+  <mat-form-field floatLabel="always" class="flex-grow">
+    <mat-label>{{ label }}</mat-label>
+    <input
+      matInput
+      [ngModel]="title"
+      (ngModelChange)="titleChange.emit($event)"
+      placeholder="(no title)"
+      i18n-placeholder="Placeholder for entering a title"
+    />
+  </mat-form-field>
+
+  <button (click)="removeSection()" mat-icon-button class="group-remove-button">
+    <fa-icon icon="times"></fa-icon>
+  </button>
+</div>

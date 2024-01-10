@@ -14,7 +14,7 @@ import { AttendanceService } from "../../../child-dev-project/attendance/attenda
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute, Router } from "@angular/router";
 import { Subject } from "rxjs";
-import { RouteData } from "../../config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../config/dynamic-components/dynamic-component-config.interface";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
@@ -72,7 +72,7 @@ describe("EntityListComponent", () => {
   };
   let mockAttendanceService: jasmine.SpyObj<AttendanceService>;
   let mockActivatedRoute: Partial<ActivatedRoute>;
-  let routeData: Subject<RouteData<EntityListConfig>>;
+  let routeData: Subject<DynamicComponentConfig<EntityListConfig>>;
 
   beforeEach(waitForAsync(() => {
     mockAttendanceService = jasmine.createSpyObj([
@@ -81,7 +81,7 @@ describe("EntityListComponent", () => {
     ]);
     mockAttendanceService.getActivitiesForChild.and.resolveTo([]);
     mockAttendanceService.getAllActivityAttendancesForPeriod.and.resolveTo([]);
-    routeData = new Subject<RouteData<EntityListConfig>>();
+    routeData = new Subject<DynamicComponentConfig<EntityListConfig>>();
     mockActivatedRoute = {
       component: undefined,
       queryParams: new Subject(),
@@ -135,6 +135,8 @@ describe("EntityListComponent", () => {
 
   it("should set the clicked column group", async () => {
     createComponent();
+    // Test only works in desktop mode
+    component.isDesktop = true;
     await initComponentInputs();
     expect(component.selectedColumnGroupIndex).toBe(1);
 

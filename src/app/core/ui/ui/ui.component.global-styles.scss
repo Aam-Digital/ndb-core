@@ -18,3 +18,8 @@
   display: block;
   box-sizing: border-box;
 }
+
+.form-field-icon-suffix {
+  cursor: pointer;
+  padding: 0 sizes.$small;
+}

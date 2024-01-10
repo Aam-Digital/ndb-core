@@ -19,6 +19,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import moment from "moment";
+import { LoggingService } from "../../logging/logging.service";
 
 /**
  * Datatype for the EntitySchemaService transforming values to Date instances.
@@ -35,24 +36,28 @@ export class DateDatatype<DBFormat = any> extends DefaultDatatype<
   Date,
   DBFormat
 > {
-  static dataType = "date";
+  static override dataType = "date";
+  // currently not shown to users in Admin UI, as this is not supported well with timezones and UI
+  // static override label: string = $localize`:datatype-label:date (with time)`;
 
   viewComponent = "DisplayDate";
   editComponent = "EditDate";
 
+  constructor(protected loggingService?: LoggingService) {
+    super();
+  }
+
   transformToDatabaseFormat(value: Date) {
-    // TODO: should date format be saved as date object or as string "YYYY-mm-dd"?
-    // return isValidDate(value) ? value.toISOString().slice(0, 10) : '';
-    // DONE: date format is now being saved as date object
     return value as any;
   }
 
-  transformToObjectFormat(value, schemaField, parent) {
+  transformToObjectFormat(value, schemaField: EntitySchemaField, parent: any) {
     const date = new Date(value);
     if (Number.isNaN(date.getTime())) {
-      throw new Error(
-        `failed to convert data '${value}' to Date object for ${parent._id}`,
+      this.loggingService.warn(
+        `failed to convert data '${value}' to Date object for ${parent?._id}`,
       );
+      return undefined;
     }
     return date;
   }

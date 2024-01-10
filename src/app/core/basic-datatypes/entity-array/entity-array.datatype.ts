@@ -31,7 +31,8 @@ import { ArrayDatatype } from "../array/array.datatype";
  */
 @Injectable()
 export class EntityArrayDatatype extends ArrayDatatype<string, string> {
-  static dataType = "entity-array";
+  static override dataType = "entity-array";
+  static override label: string = $localize`:datatype-label:link to other records (multi-select)`;
 
   editComponent = "EditEntityArray";
   viewComponent = "DisplayEntityArray";

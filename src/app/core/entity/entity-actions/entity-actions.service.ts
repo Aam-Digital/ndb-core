@@ -26,18 +26,13 @@ export class EntityActionsService {
     private entityAnonymize: EntityAnonymizeService,
   ) {}
 
-  private showSnackbarConfirmation(
-    entity: Entity,
-    action: string,
+  showSnackbarConfirmationWithUndo(
+    message: string,
     previousEntitiesForUndo: Entity[],
     navigateBackToUrl?: string,
   ) {
-    const snackBarTitle = $localize`:Entity action confirmation message:${
-      entity.getConstructor().label
-    } "${entity.toString()}" ${action}`;
-
     const snackBarRef = this.snackBar.open(
-      snackBarTitle,
+      message,
       $localize`:Undo an entity action:Undo`,
       {
         duration: 8000,
@@ -109,9 +104,10 @@ export class EntityActionsService {
       await this.router.navigate([parentUrl]);
     }
 
-    this.showSnackbarConfirmation(
-      result.originalEntitiesBeforeChange[0],
-      $localize`:Entity action confirmation message verb:Deleted`,
+    this.showSnackbarConfirmationWithUndo(
+      $localize`:Entity action confirmation message:${
+        result.originalEntitiesBeforeChange[0].getConstructor().label
+      } "${result.originalEntitiesBeforeChange[0].toString()}" deleted`,
       result.originalEntitiesBeforeChange,
       currentUrl,
     );
@@ -158,9 +154,10 @@ export class EntityActionsService {
       );
     }
 
-    this.showSnackbarConfirmation(
-      result.originalEntitiesBeforeChange[0],
-      $localize`:Entity action confirmation message verb:Anonymized`,
+    this.showSnackbarConfirmationWithUndo(
+      $localize`:Entity action confirmation message:${
+        result.originalEntitiesBeforeChange[0].getConstructor().label
+      } "${result.originalEntitiesBeforeChange[0].toString()}" anonymized`,
       result.originalEntitiesBeforeChange,
     );
     return true;
@@ -173,11 +170,13 @@ export class EntityActionsService {
   async archive<E extends Entity>(entity: E) {
     const originalEntity = entity.copy();
     entity.inactive = true;
+
     await this.entityMapper.save(entity);
 
-    this.showSnackbarConfirmation(
-      originalEntity,
-      $localize`:Entity action confirmation message verb:Archived`,
+    this.showSnackbarConfirmationWithUndo(
+      $localize`:Entity action confirmation message:${
+        originalEntity.getConstructor().label
+      } "${originalEntity.toString()}" archived`,
       [originalEntity],
     );
     return true;
@@ -191,9 +190,10 @@ export class EntityActionsService {
     entity.inactive = false;
     await this.entityMapper.save(entity);
 
-    this.showSnackbarConfirmation(
-      originalEntity,
-      $localize`:Entity action confirmation message verb:Reactivated`,
+    this.showSnackbarConfirmationWithUndo(
+      $localize`:Entity action confirmation message:${
+        originalEntity.getConstructor().label
+      } "${originalEntity.toString()}" reactivated`,
       [originalEntity],
     );
     return true;

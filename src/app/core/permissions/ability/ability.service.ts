@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { shareReplay } from "rxjs/operators";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
@@ -8,23 +7,19 @@ import { Config } from "../../config/config";
 import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
-import { AuthUser } from "../../session/auth/auth-user";
-import { CurrentUserSubject } from "../../user/user";
+import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
+ *
+ * To get notified whenever the permissions of the current user are updated, use EntityAbility.on("updated", callback):
+ * https://casl.js.org/v6/en/api/casl-ability#on
  */
 @Injectable()
 export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
-  /**
-   * Get notified whenever the permissions of the current user are updated.
-   * Use this to re-evaluate the permissions of the currently logged-in user.
-   */
-  abilityUpdated = this.entityUpdated.pipe(shareReplay(1));
-
   constructor(
     private ability: EntityAbility,
-    private currentUser: CurrentUserSubject,
+    private sessionInfo: SessionSubject,
     private permissionEnforcer: PermissionEnforcerService,
     entityMapper: EntityMapperService,
     logger: LoggingService,
@@ -32,10 +27,15 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     super(Config, Config.PERMISSION_KEY, entityMapper, logger);
   }
 
-  initializeRules() {
-    // Initially allow everything until permission document could be fetched
-    this.ability.update([{ action: "manage", subject: "all" }]);
-    super.startLoading();
+  async initializeRules() {
+    const initialPermissions = await super.startLoading();
+    if (initialPermissions) {
+      await this.updateAbilityWithUserRules(initialPermissions.data);
+    } else {
+      // as default fallback if no permission object is defined: allow everything
+      this.ability.update([{ action: "manage", subject: "all" }]);
+    }
+
     this.entityUpdated.subscribe((config) =>
       this.updateAbilityWithUserRules(config.data),
     );
@@ -49,7 +49,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
     if (userRules.length === 0) {
       // No rules or only default rules defined
-      const user = this.currentUser.value;
+      const user = this.sessionInfo.value;
       this.logger.warn(
         `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
@@ -59,24 +59,24 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   }
 
   private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
-    const currentUser = this.currentUser.value;
-    if (!currentUser) {
+    const sessionInfo = this.sessionInfo.value;
+    if (!sessionInfo) {
       return rules.public ?? [];
     }
     const rawUserRules: DatabaseRule[] = [];
     if (rules.default) {
       rawUserRules.push(...rules.default);
     }
-    currentUser.roles.forEach((role) => {
+    sessionInfo.roles.forEach((role) => {
       const rulesForRole = rules[role] || [];
       rawUserRules.push(...rulesForRole);
     });
-    return this.interpolateUser(rawUserRules, currentUser);
+    return this.interpolateUser(rawUserRules, sessionInfo);
   }
 
   private interpolateUser(
     rules: DatabaseRule[],
-    user: AuthUser,
+    user: SessionInfo,
   ): DatabaseRule[] {
     return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
       if (rawValue[0] !== "$") {

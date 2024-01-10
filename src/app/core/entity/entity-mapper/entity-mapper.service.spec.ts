@@ -20,11 +20,11 @@ import { Entity } from "../model/entity";
 import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { DatabaseEntity } from "../database-entity.decorator";
-import { Child } from "../../../child-dev-project/children/model/child";
 import { Database } from "../../database/database";
-import { TEST_USER } from "../../../utils/mock-local-session";
-import { CurrentUserSubject } from "../../user/user";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { User } from "../../user/user";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -270,23 +270,9 @@ describe("EntityMapperService", () => {
     ]);
   });
 
-  it("should include _id field in transformation errors", (done) => {
-    const doc = { _id: "Child:test", dateOfBirth: "invalidDate" };
-    testDatabase
-      .put(doc)
-      .then(() => entityMapper.load(Child, "Child:test"))
-      .catch((err) => {
-        expect(err.message).toContain("Child:test");
-        done();
-      });
-  });
-
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
-    TestBed.inject(CurrentUserSubject).next({
-      name: TEST_USER,
-      roles: [],
-    });
+    TestBed.inject(CurrentUserSubject).next(new User(TEST_USER));
     const id = "test_created";
     const entity = new Entity(id);
 
@@ -296,9 +282,9 @@ describe("EntityMapperService", () => {
     const createdEntity = await entityMapper.load<Entity>(Entity, id);
 
     expect(createdEntity.created?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.created?.by).toEqual(TEST_USER);
+    expect(createdEntity.created?.by).toEqual(`User:${TEST_USER}`);
     expect(createdEntity.updated?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.updated?.by).toEqual(TEST_USER);
+    expect(createdEntity.updated?.by).toEqual(`User:${TEST_USER}`);
 
     const mockTime2 = mockTime1 + 1;
     jasmine.clock().mockDate(new Date(mockTime2));

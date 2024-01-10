@@ -17,6 +17,15 @@ import { DecimalPipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
 import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
+import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
+import { Note } from "../../model/note";
+
+interface NotesDashboardConfig {
+  entity?: string;
+  sinceDays?: number;
+  fromBeginningOfWeek?: boolean;
+  mode?: "with-recent-notes" | "without-recent-notes";
+}
 
 /**
  * Dashboard Widget displaying entities that do not have a recently added Note.
@@ -40,7 +49,14 @@ import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-wid
   ],
   standalone: true,
 })
-export class NotesDashboardComponent implements OnInit, AfterViewInit {
+export class NotesDashboardComponent
+  extends DashboardWidget
+  implements OnInit, AfterViewInit, NotesDashboardConfig
+{
+  static getRequiredEntities(config: NotesDashboardConfig) {
+    return config?.entity || Note.ENTITY_TYPE;
+  }
+
   /**
    * Entity for which the recent notes should be counted.
    */
@@ -73,7 +89,9 @@ export class NotesDashboardComponent implements OnInit, AfterViewInit {
   constructor(
     private childrenService: ChildrenService,
     private entities: EntityRegistry,
-  ) {}
+  ) {
+    super();
+  }
 
   ngOnInit() {
     let dayRangeBoundary = this.sinceDays;

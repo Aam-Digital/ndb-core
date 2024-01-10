@@ -16,6 +16,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 import { SyncStateSubject } from "../../../../core/session/session-type";
+import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 
 @Component({
   selector: "app-progress-dashboard",
@@ -33,7 +34,14 @@ import { SyncStateSubject } from "../../../../core/session/session-type";
   standalone: true,
 })
 @DynamicComponent("ProgressDashboard")
-export class ProgressDashboardComponent implements OnInit {
+export class ProgressDashboardComponent
+  extends DashboardWidget
+  implements OnInit
+{
+  static getRequiredEntities() {
+    return ProgressDashboardConfig.ENTITY_TYPE;
+  }
+
   @Input() dashboardConfigId = "";
   data: ProgressDashboardConfig;
 
@@ -42,7 +50,9 @@ export class ProgressDashboardComponent implements OnInit {
     private loggingService: LoggingService,
     private dialog: MatDialog,
     private syncState: SyncStateSubject,
-  ) {}
+  ) {
+    super();
+  }
 
   async ngOnInit() {
     this.data = new ProgressDashboardConfig(this.dashboardConfigId);

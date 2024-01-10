@@ -21,11 +21,11 @@ import {
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
 import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
-import { TEST_USER } from "../../../utils/mock-local-session";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./entity-form/FormConfig";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;

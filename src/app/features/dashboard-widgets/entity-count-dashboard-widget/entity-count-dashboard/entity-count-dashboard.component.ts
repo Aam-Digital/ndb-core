@@ -15,6 +15,12 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { Angulartics2Module } from "angulartics2";
 import { groupBy } from "../../../../utils/utils";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
+
+interface EntityCountDashboardConfig {
+  entity?: string;
+  groupBy?: string;
+}
 
 @DynamicComponent("ChildrenCountDashboard")
 @DynamicComponent("EntityCountDashboard")
@@ -30,7 +36,14 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
   ],
   standalone: true,
 })
-export class EntityCountDashboardComponent implements OnInit {
+export class EntityCountDashboardComponent
+  extends DashboardWidget
+  implements EntityCountDashboardConfig, OnInit
+{
+  static getRequiredEntities(config: EntityCountDashboardConfig) {
+    return config?.entity || Child.ENTITY_TYPE;
+  }
+
   /**
    * Entity name which should be grouped
    * @param value
@@ -56,7 +69,9 @@ export class EntityCountDashboardComponent implements OnInit {
     private entityMapper: EntityMapperService,
     private router: Router,
     private entities: EntityRegistry,
-  ) {}
+  ) {
+    super();
+  }
 
   async ngOnInit() {
     const entities = await this.entityMapper.loadType(this._entity);

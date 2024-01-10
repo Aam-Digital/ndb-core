@@ -39,7 +39,7 @@ export class ImportEntityTypeComponent {
   }
 
   set expertMode(value: boolean) {
-    this.loadEntityTypes(value);
+    this.entityTypes = this.entityRegistry.getEntityTypes(!value);
   }
 
   private _expertMode: boolean = false;
@@ -47,17 +47,7 @@ export class ImportEntityTypeComponent {
   entityTypes: { key: string; value: EntityConstructor }[];
 
   constructor(public entityRegistry: EntityRegistry) {
-    this.loadEntityTypes();
-  }
-
-  private loadEntityTypes(expertMode?: boolean) {
-    let entities = Array.from(this.entityRegistry.entries()).map(
-      ([key, value]) => ({ key, value }),
-    );
-    if (!expertMode) {
-      entities = entities.filter(({ key, value }) => value._isCustomizedType);
-    }
-    this.entityTypes = entities;
+    this.entityTypes = this.entityRegistry.getEntityTypes(true);
   }
 
   // TODO: infer entityType automatically -> pre-select + UI explanatory text
