@@ -62,7 +62,7 @@ export class AdminEntityFormComponent implements OnChanges {
   availableFields: ColumnConfig[] = [];
   readonly createNewFieldPlaceholder: FormFieldConfig = {
     id: null,
-    label: "Create New Field",
+    label: $localize`:Label drag and drop item:Create New Field`,
   };
 
   constructor(
