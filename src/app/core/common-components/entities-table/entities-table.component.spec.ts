@@ -17,6 +17,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import { of } from "rxjs";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -96,7 +97,10 @@ describe("EntitiesTableComponent", () => {
 
   it("should apply default sort on first column and order dates descending", () => {
     component.entityType = Note;
-    component.customColumns = ["date", "subject"];
+    component.customColumns = [
+      { id: "date", dataType: DateDatatype.dataType },
+      "subject",
+    ];
     component.columnsToDisplay = ["date", "subject"];
 
     const oldNote = Note.create(moment().subtract(1, "day").toDate());
