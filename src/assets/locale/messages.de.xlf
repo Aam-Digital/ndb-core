@@ -1358,13 +1358,22 @@
         <source>Save</source>
         <target state="translated">Speichern</target>
         <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">186</context>
+        </context-group>
+        <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
           <context context-type="linenumber">123</context>
         </context-group>
+        <note from="description" priority="1">Button label</note>
       </trans-unit>
       <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
         <source>Cancel</source>
         <target state="translated">Abbrechen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">187</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html</context>
           <context context-type="linenumber">38</context>
@@ -1381,6 +1390,33 @@
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
           <context context-type="linenumber">126</context>
         </context-group>
+        <note from="description" priority="1">Button label</note>
+      </trans-unit>
+      <trans-unit id="74647ba8938118fd415570dfbff3af97ffc7279e" datatype="html">
+        <source> Edit Field </source>
+        <target state="translated"> Feld bearbeiten </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
+          <context context-type="linenumber">36,38</context>
+        </context-group>
+        <note priority="1" from="description">Button label</note>
+      </trans-unit>
+      <trans-unit id="fa6fdb09be423d75502b413bccd62b1122cb7ee6" datatype="html">
+        <source> drop here to create new field group <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+          icon=&quot;question-circle&quot;
+          matTooltip=&quot;You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.&quot;
+          i18n-matTooltip
+        >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/div"/></source>
+        <target state="translated"> hier ablegen um einen neue Gruppe zu erstellen <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+          icon=&quot;question-circle&quot;
+          matTooltip=&quot;You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.&quot;
+          i18n-matTooltip
+        >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/div"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
+          <context context-type="linenumber">59,67</context>
+        </context-group>
+        <note priority="1" from="description">Header of drag and drop box</note>
       </trans-unit>
       <trans-unit id="5587442259476875463" datatype="html">
         <source>Ignore values?</source>
@@ -3557,7 +3593,7 @@
                   matTooltip=&quot;The description provides additional explanation or context about this field. It is usually displayed as a help icon with tooltip.&quot;
                   i18n-matTooltip
                 >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/></source>
-        <target state="translated"> Description <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+        <target state="translated"> Beschreibung <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
                   icon=&quot;question-circle&quot;
                   matTooltip=&quot;The description provides additional explanation or context about this field. It is usually displayed as a help icon with tooltip.&quot;
                   i18n-matTooltip
@@ -3660,16 +3696,60 @@
         <target state="translated">Felder können gruppiert werden, sodass sie auch auf unterschiedlichen Bildschirmgrößen zusammen erscheinen. Ein zusätzlicher Titel kann für eine solche Gruppe an Feldern auch angezeigt werden.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">63</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="6f7fdf98772e9e0ce25890db2564de02a048efad" datatype="html">
+        <source>hidden fields</source>
+        <target state="translated">versteckte Felder</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
+          <context context-type="linenumber">79</context>
+        </context-group>
+        <note priority="1" from="description">title for drag and drop section</note>
+      </trans-unit>
+      <trans-unit id="036cac84d3e452b07d32d9da2c88e5b74cee2f32" datatype="html">
+        <source> drag &amp; drop to / from here </source>
+        <target state="translated"> von hier Felder auswählen und ablegen </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
+          <context context-type="linenumber">80,82</context>
+        </context-group>
+        <note priority="1" from="description">subtitle for drag and drop section</note>
       </trans-unit>
       <trans-unit id="f4b6b9d2f78ab9bb1bc39f0618cc9db4823ef9a0" datatype="html">
         <source>You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it.</source>
         <target state="translated">Felder können entfernt werden ohne diese komplett zu löschen. Die Felder hier werden nicht angezeigt aber sie können in anderen Ansichten sichtbar sein oder als archivierte Felder behalten werden um die darin gespeicherten Daten nicht zu verlieren. Um ein Feld anzuzeigen, ziehe es in die Formular-Vorschau.</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">81</context>
+          <context context-type="linenumber">85</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="3972154626835212608" datatype="html">
+        <source>Create New Field</source>
+        <target state="translated">Neues Feld erstellen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
+          <context context-type="linenumber">65</context>
+        </context-group>
+        <note priority="1" from="description">Label drag and drop item</note>
+      </trans-unit>
+      <trans-unit id="dbdebd4ea25f862c0e986e6accfc18f2b36c67ba" datatype="html">
+        <source> Editing advanced sub-sections is not supported yet in this preview. </source>
+        <target state="translated"> Unteransichten können hier noch nicht bearbeitet werden. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-panel-component/admin-entity-panel-component.component.html</context>
+          <context context-type="linenumber">4,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e45dcca08fc39ff539e7f7d8c4828f10fc4ea2e0" datatype="html">
+        <source> Editing details page for "<x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/>" records </source>
+        <target state="translated"> Bearbeite Detailansicht für "<x id="INTERPOLATION" equiv-text="{{ entityType | entityTypeLabel }}"/>" Einträge </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.html</context>
+          <context context-type="linenumber">2,4</context>
+        </context-group>
+        <note priority="1" from="description">page title</note>
       </trans-unit>
       <trans-unit id="71d8e216b163516b1eaef42ff977b6805dab8618" datatype="html">
         <source><x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="us-circle&quot;
@@ -3680,7 +3760,7 @@
           >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="A"/> Sektion hinzufügen </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.html</context>
-          <context context-type="linenumber">63,69</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="fa65a382efbfc345ec1629a4ad16a3d84e18ae14" datatype="html">
@@ -3688,7 +3768,7 @@
         <target state="translated">neuen Tab hinzufügen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.html</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="linenumber">89</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5103146006962696736" datatype="html">
@@ -3699,6 +3779,24 @@
           <context context-type="linenumber">105</context>
         </context-group>
         <note priority="1" from="description">Save config confirmation message</note>
+      </trans-unit>
+      <trans-unit id="6614677774493793726" datatype="html">
+        <source>New Section</source>
+        <target state="translated">Neue Sektion</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.ts</context>
+          <context context-type="linenumber">152</context>
+        </context-group>
+        <note priority="1" from="description">Default title</note>
+      </trans-unit>
+      <trans-unit id="fdcd059f8cbce2216fac7270e422495ff8589086" datatype="html">
+        <source>(no title)</source>
+        <target state="translated">(kein Titel)</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-section-header/admin-section-header.component.html</context>
+          <context context-type="linenumber">8</context>
+        </context-group>
+        <note priority="1" from="description">Placeholder for entering a title</note>
       </trans-unit>
       <trans-unit id="5315885280668074846" datatype="html">
         <source>Delete Section?</source>
@@ -4422,10 +4520,29 @@
       <trans-unit id="863226cffd5b66a6fee9810a9282a5006d6ef576" datatype="html">
         <source>Label</source>
         <target state="translated">Bezeichnung</target>
-        <note priority="1" from="description">The label of an entry</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">17</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
           <context context-type="linenumber">35</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2f67a1738c374c20f834783b8075487242ba174f" datatype="html">
+        <source> Label (short) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+                  icon=&quot;question-circle&quot;
+                  matTooltip=&quot;Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited.&quot;
+                  i18n-matTooltip
+                >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/></source>
+        <target state="translated"> Bezeichnung (kurz) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
+                  icon=&quot;question-circle&quot;
+                  matTooltip=&quot;Optionally you can define an additional shorter label to be displayed in table headers and other places where space is limited.&quot;
+                  i18n-matTooltip
+                >"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon>"/></target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">22,28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1b2109812ff998c232329b1d8cef1ef103e35466" datatype="html">
@@ -4972,7 +5089,11 @@
       <trans-unit id="2a62a59d9424e9e869061ebf3e8f8b8f95411571" datatype="html">
         <source> Save </source>
         <target state="translated">Speichern</target>
-        <note priority="1" from="description">Save button for forms</note>
+        <note priority="1" from="description">Button label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
           <context context-type="linenumber">60</context>
@@ -4981,7 +5102,11 @@
       <trans-unit id="da44efc7b658c318651866454d258bbbe57ff21c" datatype="html">
         <source> Cancel </source>
         <target state="translated">Abbrechen</target>
-        <note priority="1" from="description">Cancel button for forms</note>
+        <note priority="1" from="description">Button label</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity/admin-entity-details.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
           <context context-type="linenumber">69</context>
