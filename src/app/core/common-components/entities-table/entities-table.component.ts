@@ -101,11 +101,13 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
         )
       : [];
 
-    const allColumns = [...entityColumns, ...this._customColumns];
-    this._columns = allColumns
-      // remove duplicates
-      //   if there is a customColumn for a field from entity config, the custom FormFieldConfig takes precedent (which is the latter item with the same id in array)
-      .filter((v) => allColumns.find((c) => c.id === v.id) === v);
+    this._columns = [
+      ...entityColumns.filter(
+        // if there is a customColumn for a field from entity config, don't add the base schema field
+        (c) => !this._customColumns.some((customCol) => customCol.id === c.id),
+      ),
+      ...this._customColumns,
+    ];
 
     if (!this.columnsToDisplay) {
       this.columnsToDisplay = this._customColumns

@@ -248,4 +248,17 @@ describe("EntitiesTableComponent", () => {
 
     expect(component.recordsDataSource.data).toEqual([{ record: active1 }]);
   });
+
+  it("should overwrite entity schema fields with customColumn config", async () => {
+    component.entityType = Child;
+    const customField = {
+      id: "name",
+      label: "Custom Name Label",
+    };
+    component.customColumns = [customField];
+
+    expect(component._columns.find((c) => c.id === customField.id).label).toBe(
+      customField.label,
+    );
+  });
 });
