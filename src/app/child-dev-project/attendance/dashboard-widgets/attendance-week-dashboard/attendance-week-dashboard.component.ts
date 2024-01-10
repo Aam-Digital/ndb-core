@@ -1,10 +1,4 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { AfterViewInit, Component, Input, OnInit } from "@angular/core";
 import { Router } from "@angular/router";
 import { Child } from "../../../children/model/child";
 import { AttendanceLogicalStatus } from "../../model/attendance-status";
@@ -14,16 +8,17 @@ import { ActivityAttendance } from "../../model/activity-attendance";
 import { RecurringActivity } from "../../model/recurring-activity";
 import moment, { Moment } from "moment";
 import { groupBy } from "../../../../utils/utils";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
+import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgForOf, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
-import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
+
 import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
-import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
+
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EventNote } from "../../model/event-note";
+import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
+import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 
 interface AttendanceWeekRow {
   childId: string;
@@ -36,17 +31,16 @@ interface AttendanceWeekRow {
   selector: "app-attendance-week-dashboard",
   templateUrl: "./attendance-week-dashboard.component.html",
   styleUrls: ["./attendance-week-dashboard.component.scss"],
+  standalone: true,
   imports: [
     NgIf,
     MatTableModule,
     NgForOf,
-    MatPaginatorModule,
     DisplayEntityComponent,
-    DashboardWidgetComponent,
-    WidgetContentComponent,
     AttendanceDayBlockComponent,
+    DashboardListWidgetComponent,
+    WidgetContentComponent,
   ],
-  standalone: true,
 })
 export class AttendanceWeekDashboardComponent
   extends DashboardWidget
@@ -90,16 +84,16 @@ export class AttendanceWeekDashboardComponent
    */
   @Input() attendanceStatusType: string;
 
-  @ViewChild("paginator") paginator: MatPaginator;
-  tableDataSource = new MatTableDataSource<AttendanceWeekRow[]>();
-
-  loadingDone = false;
+  entries: AttendanceWeekRow[][];
 
   constructor(
     private attendanceService: AttendanceService,
     private router: Router,
   ) {
     super();
+  }
+  ngAfterViewInit(): void {
+    throw new Error("Method not implemented.");
   }
 
   ngOnInit() {
@@ -137,10 +131,9 @@ export class AttendanceWeekDashboardComponent
     }
 
     const groups = groupBy(records, "childId");
-    this.tableDataSource.data = groups
+    this.entries = groups
       .filter(([childId]) => lowAttendanceCases.has(childId))
       .map(([_, attendance]) => attendance);
-    this.loadingDone = true;
   }
 
   private generateRowsFromActivityAttendance(
@@ -195,9 +188,5 @@ export class AttendanceWeekDashboardComponent
 
   goToChild(childId: string) {
     this.router.navigate([Child.route, childId]);
-  }
-
-  ngAfterViewInit() {
-    this.tableDataSource.paginator = this.paginator;
   }
 }

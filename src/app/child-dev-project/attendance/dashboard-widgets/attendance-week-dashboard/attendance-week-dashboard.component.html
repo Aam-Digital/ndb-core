@@ -1,17 +1,16 @@
-<app-dashboard-widget
+<app-dashboard-list-widget
   icon="exclamation-triangle"
   theme="attendance"
-  [title]="tableDataSource.data.length"
   [subtitle]="label"
   explanation="Cases absent multiple times in the given week"
   i18n-explanation="Dashboard attendance component explanation tooltip"
-  [loading]="!loadingDone"
+  [entries]="entries"
 >
   <app-widget-content>
-    <div *ngIf="tableDataSource.data.length > 0" class="table-wrapper">
+    <div *ngIf="entries.length > 0" class="table-wrapper">
       <table
         mat-table
-        [dataSource]="tableDataSource"
+        [dataSource]="entries"
         i18n-aria-label
         aria-label="cases absent multiple times"
       >
@@ -59,18 +58,11 @@
       </table>
     </div>
     <div
-      *ngIf="tableDataSource.data.length === 0 && loadingDone"
+      *ngIf="entries.length === 0"
       i18n="Placeholder if no absences are visible in dashboar"
       class="headline"
     >
       no absences recorded
     </div>
-    <mat-paginator
-      [style.display]="paginator.getNumberOfPages() === 0 ? 'none' : ''"
-      #paginator
-      [pageSizeOptions]="[5]"
-      [hidePageSize]="true"
-    >
-    </mat-paginator>
   </app-widget-content>
-</app-dashboard-widget>
+</app-dashboard-list-widget>
