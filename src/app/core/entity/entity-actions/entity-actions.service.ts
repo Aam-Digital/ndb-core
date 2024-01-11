@@ -87,6 +87,7 @@ export class EntityActionsService {
     navigate: boolean = false,
   ): Promise<boolean> {
     let textForDeleteEntity = "";
+    let concernsSeveralEntities = false;
     if (Array.isArray(entityParam)) {
       if (entityParam.length > 1) {
         textForDeleteEntity =
@@ -95,6 +96,7 @@ export class EntityActionsService {
           entityParam.length +
           " " +
           entityParam[0].getConstructor().labelPlural;
+        concernsSeveralEntities = true;
       } else {
         textForDeleteEntity =
           $localize`:Definite article singular:the` +
@@ -158,7 +160,9 @@ export class EntityActionsService {
     }
 
     this.showSnackbarConfirmationWithUndo(
-      entityParam,
+      concernsSeveralEntities
+        ? entityParam
+        : result.originalEntitiesBeforeChange[0],
       $localize`:Entity action confirmation message verb:Deleted`,
       result.originalEntitiesBeforeChange,
       currentUrl,
@@ -172,17 +176,44 @@ export class EntityActionsService {
    *
    * This triggers UX interactions like confirmation request dialog and snackbar message as well.
    *
-   * @param entity
+   * @param entityParam
    */
-  async anonymize<E extends Entity>(entity: E) {
+  async anonymize<E extends Entity>(entityParam: E | E[]) {
+    let textForAnonymizeEntity = "";
+    let concernsSeveralEntities = false;
+    if (Array.isArray(entityParam)) {
+      if (entityParam.length > 1) {
+        textForAnonymizeEntity =
+          $localize`:Demonstrative pronoun plural:these` +
+          " " +
+          entityParam.length +
+          " " +
+          entityParam[0].getConstructor().labelPlural;
+        concernsSeveralEntities = true;
+      } else {
+        textForAnonymizeEntity =
+          $localize`:Definite article singular:the` +
+          " " +
+          entityParam[0].getConstructor().label +
+          ' "' +
+          entityParam[0].toString() +
+          '"';
+      }
+    } else if (!Array.isArray(entityParam)) {
+      textForAnonymizeEntity =
+        $localize`:Definite article singular:the` +
+        " " +
+        entityParam.getConstructor().label +
+        ' "' +
+        entityParam.toString() +
+        '"';
+    }
     if (
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Anonymize confirmation dialog:Anonymize?`,
         $localize`:Anonymize confirmation dialog:
         This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.\n
-        If this ${
-          entity.getConstructor().label
-        } has only become inactive and you want to keep all details about the record, consider to use "archive" instead.\n
+        If ${textForAnonymizeEntity} has only become inactive and you want to keep all details, consider to use "archive" instead.\n
         Are you sure you want to anonymize this record?`,
       ))
     ) {
@@ -192,22 +223,31 @@ export class EntityActionsService {
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
       $localize`:Entity action progress dialog:Processing ...`,
     );
-    const result = await this.entityAnonymize.anonymizeEntity(entity);
+    let result = new CascadingActionResult();
+    if (Array.isArray(entityParam)) {
+      for (let entity of entityParam) {
+        console.log("Peter anonymizing entity:", entity);
+        result.mergeResults(await this.entityAnonymize.anonymizeEntity(entity));
+      }
+    } else {
+      console.log("Peter deleting single entity:", entityParam);
+      result = await this.entityAnonymize.anonymizeEntity(entityParam);
+    }
     progressDialogRef.close();
 
     if (result.potentiallyRetainingPII.length > 0) {
       await this.confirmationDialog.getConfirmation(
         $localize`:post-anonymize related PII warning title:Related records may still contain personal data`,
-        $localize`:post-anonymize related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically anonymized all records that are linked to ONLY this ${
-          entity.getConstructor().label
-        }.
+        $localize`:post-anonymize related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically anonymized all records that are linked to ONLY ${textForAnonymizeEntity}.
         However, there are some records that are linked to multiple records. We have not anonymized these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed (e.g. by looking through the linked notes and editing a note's text).`,
         OkButton,
       );
     }
 
     this.showSnackbarConfirmationWithUndo(
-      result.originalEntitiesBeforeChange[0],
+      concernsSeveralEntities
+        ? entityParam
+        : result.originalEntitiesBeforeChange[0],
       $localize`:Entity action confirmation message verb:Anonymized`,
       result.originalEntitiesBeforeChange,
     );

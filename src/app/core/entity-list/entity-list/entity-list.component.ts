@@ -329,4 +329,14 @@ export class EntityListComponent<T extends Entity>
     await this.entityRemoveService.delete(this.selectedRows);
     this.selectedRows = undefined;
   }
+
+  async archiveRecords() {
+    // await this.entityRemoveService.delete(this.selectedRows);
+    // this.selectedRows = undefined;
+  }
+
+  async anonymizeRecords() {
+    await this.entityRemoveService.anonymize(this.selectedRows);
+    this.selectedRows = undefined;
+  }
 }
