@@ -69,7 +69,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
       (e) =>
         this.isArray
-          ? e[this.property].includes(this.entity.getId())
+          ? e[this.property]?.includes(this.entity.getId())
           : e[this.property] === this.entity.getId(),
     );
     this.filter = {
