@@ -265,4 +265,12 @@ describe("EntitiesTableComponent", () => {
       customField.label,
     );
   });
+
+  it("should set noSorting if dataType cannot be sorted properly", () => {
+    component.entityType = Note;
+
+    expect(
+      component._columns.find((c) => c.id === "children").noSorting,
+    ).toBeTrue();
+  });
 });

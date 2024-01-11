@@ -45,6 +45,8 @@ import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/e
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
+import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -91,12 +93,12 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
    */
   @Input() set customColumns(value: ColumnConfig[]) {
     this._customColumns = (value ?? []).map((c) =>
-      this.entityType
-        ? this.entityFormService.extendFormFieldConfig(c, this.entityType)
+      this._entityType
+        ? this.entityFormService.extendFormFieldConfig(c, this._entityType)
         : toFormFieldConfig(c),
     );
-    const entityColumns = this.entityType?.schema
-      ? [...this.entityType.schema.entries()].map(
+    const entityColumns = this._entityType?.schema
+      ? [...this._entityType.schema.entries()].map(
           ([id, field]) => ({ ...field, id }) as FormFieldConfig,
         )
       : [];
@@ -108,6 +110,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
       ),
       ...this._customColumns,
     ];
+    this._columns.forEach((c) => this.disableSortingHeaderForAdvancedFields(c));
 
     if (!this.columnsToDisplay) {
       this.columnsToDisplay = this._customColumns
@@ -150,7 +153,11 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   }
   _columnsToDisplay: string[];
 
-  @Input() entityType: EntityConstructor<T>;
+  @Input() set entityType(value: EntityConstructor<T>) {
+    this._entityType = value;
+    this.customColumns = this._customColumns;
+  }
+  _entityType: EntityConstructor<T>;
 
   /** how to sort data by default during initialization */
   @Input() set sortBy(value: Sort) {
@@ -317,6 +324,22 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     }
 
     return sortBy ? { active: sortBy, direction: sortDirection } : undefined;
+  }
+
+  /**
+   * Advanced fields like entity references cannot be sorted sensibly yet - disable sort for them.
+   * @param c
+   * @private
+   */
+  private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
+    // if no dataType is defined, these are dynamic, display-only components
+    if (
+      c.dataType === EntityArrayDatatype.dataType ||
+      c.dataType === EntityDatatype.dataType ||
+      !c.dataType
+    ) {
+      c.noSorting = true;
+    }
   }
 
   /**
