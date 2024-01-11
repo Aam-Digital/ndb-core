@@ -83,6 +83,8 @@ export class TodoListComponent
     direction: "asc",
   };
 
+  override showInactive = true;
+
   constructor(
     screenWidthObserver: ScreenWidthObserver,
     router: Router,
