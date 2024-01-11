@@ -46,7 +46,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../route-target";
-import { DeleteRecordService } from "../delete-records/delete-records.service";
+import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -62,7 +62,7 @@ import { DeleteRecordService } from "../delete-records/delete-records.service";
   selector: "app-entity-list",
   templateUrl: "./entity-list.component.html",
   styleUrls: ["./entity-list.component.scss"],
-  providers: [DuplicateRecordService, DeleteRecordService],
+  providers: [DuplicateRecordService],
   imports: [
     NgIf,
     NgStyle,
@@ -163,7 +163,7 @@ export class EntityListComponent<T extends Entity>
     private entities: EntityRegistry,
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
-    private deleteRecord: DeleteRecordService,
+    private entityRemoveService: EntityActionsService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -325,8 +325,8 @@ export class EntityListComponent<T extends Entity>
     this.selectedRows = undefined;
   }
 
-  deleteRecords() {
-    this.deleteRecord.deleteRecord(this.selectedRows);
+  async deleteRecords() {
+    await this.entityRemoveService.delete(this.selectedRows);
     this.selectedRows = undefined;
   }
 }
