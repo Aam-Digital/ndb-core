@@ -80,16 +80,49 @@ describe("EntityActionsService", () => {
     expect(mockedEntityDeleteService.deleteEntity).not.toHaveBeenCalled();
   });
 
-  it("should delete entity, show snackbar confirmation and navigate back", async () => {
+  it("should delete a single entity, show snackbar confirmation and navigate back", async () => {
     // onAction is never called
     mockSnackBarRef.onAction.and.returnValues(NEVER);
     mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
 
-    const result = await service.delete(new Entity(), true);
+    const testEntity = new Entity();
+    const result = await service.delete(testEntity, true);
 
     expect(result).toBe(true);
     expect(snackBarSpy.open).toHaveBeenCalled();
-    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalled();
+    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
+      testEntity,
+    );
+    expect(mockRouter.navigate).toHaveBeenCalled();
+  });
+
+  it("should delete several entities, show snackbar confirmation and navigate back", async () => {
+    // onAction is never called
+    mockSnackBarRef.onAction.and.returnValues(NEVER);
+    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+
+    let testEntities: Entity[] = [];
+    testEntities[0] = new Entity();
+    testEntities[1] = new Entity();
+    testEntities[2] = new Entity();
+    testEntities[3] = new Entity();
+    const result = await service.delete(testEntities, true);
+
+    expect(result).toBe(true);
+    expect(snackBarSpy.open).toHaveBeenCalled();
+    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledTimes(4);
+    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
+      testEntities[0],
+    );
+    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
+      testEntities[1],
+    );
+    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
+      testEntities[2],
+    );
+    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
+      testEntities[3],
+    );
     expect(mockRouter.navigate).toHaveBeenCalled();
   });
 

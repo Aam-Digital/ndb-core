@@ -8,6 +8,8 @@ import { getUrlWithoutParams } from "../../../utils/utils";
 import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
+import { en } from "@faker-js/faker";
+import { CascadingActionResult } from "./cascading-entity-action";
 
 /**
  * A service that can triggers a user flow for entity actions (e.g. to safely remove or anonymize an entity),
@@ -27,14 +29,27 @@ export class EntityActionsService {
   ) {}
 
   showSnackbarConfirmationWithUndo(
-    entity: Entity,
+    entityParam: Entity | Entity[],
     action: string,
     previousEntitiesForUndo: Entity[],
     navigateBackToUrl?: string,
   ) {
-    const snackBarTitle = $localize`:Entity action confirmation message:${
-      entity.getConstructor().label
-    } "${entity.toString()}" ${action}`;
+    let snackBarTitle = "";
+    if (Array.isArray(entityParam)) {
+      if (entityParam.length > 1) {
+        snackBarTitle = $localize`:Entity action confirmation message:${
+          entityParam.length
+        } ${entityParam[0].getConstructor().labelPlural} ${action}`;
+      } else {
+        snackBarTitle = $localize`:Entity action confirmation message:${
+          entityParam[0].getConstructor().label
+        } "${entityParam.toString()}" ${action}`;
+      }
+    } else {
+      snackBarTitle = $localize`:Entity action confirmation message:${
+        entityParam.getConstructor().label
+      } "${entityParam.toString()}" ${action}`;
+    }
 
     const snackBarRef = this.snackBar.open(
       snackBarTitle,
@@ -64,22 +79,48 @@ export class EntityActionsService {
    *
    * This also triggers a toast message, enabling the user to undo the action.
    *
-   * @param entity The entity to remove
+   * @param entityParam The entity to remove
    * @param navigate whether upon delete the app will navigate back
    */
   async delete<E extends Entity>(
-    entity: E,
+    entityParam: E | E[],
     navigate: boolean = false,
   ): Promise<boolean> {
+    let textForDeleteEntity = "";
+    if (Array.isArray(entityParam)) {
+      if (entityParam.length > 1) {
+        textForDeleteEntity =
+          $localize`:Demonstrative pronoun plural:these` +
+          " " +
+          entityParam.length +
+          " " +
+          entityParam[0].getConstructor().labelPlural;
+      } else {
+        textForDeleteEntity =
+          $localize`:Definite article singular:the` +
+          " " +
+          entityParam[0].getConstructor().label +
+          ' "' +
+          entityParam[0].toString() +
+          '"';
+      }
+    } else if (!Array.isArray(entityParam)) {
+      textForDeleteEntity =
+        $localize`:Definite article singular:the` +
+        " " +
+        entityParam.getConstructor().label +
+        ' "' +
+        entityParam.toString() +
+        '"';
+    }
+
     if (
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Delete confirmation title:Delete?`,
         $localize`:Delete confirmation dialog:
         This will remove the data permanently as if it never existed. This cannot be undone. Statistical reports (also for past time periods) will change and not include this record anymore.\n
         If you have not just created this record accidentally, deleting this is probably not what you want to do. If the record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.\n
-        Are you sure you want to delete this ${
-          entity.getConstructor().label
-        } record?`,
+        Are you sure you want to delete ${textForDeleteEntity}?`,
       ))
     ) {
       return false;
@@ -88,15 +129,22 @@ export class EntityActionsService {
     const progressDialogRef = this.confirmationDialog.showProgressDialog(
       $localize`:Entity action progress dialog:Processing ...`,
     );
-    const result = await this.entityDelete.deleteEntity(entity);
+    let result = new CascadingActionResult();
+    if (Array.isArray(entityParam)) {
+      for (let entity of entityParam) {
+        console.log("Peter deleting entity:", entity);
+        result.mergeResults(await this.entityDelete.deleteEntity(entity));
+      }
+    } else {
+      console.log("Peter deleting single entity:", entityParam);
+      result = await this.entityDelete.deleteEntity(entityParam);
+    }
     progressDialogRef.close();
 
     if (result.potentiallyRetainingPII.length > 0) {
       await this.confirmationDialog.getConfirmation(
         $localize`:post-delete related PII warning title:Related records may still contain personal data`,
-        $localize`:post-delete related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically deleted all records that are linked to ONLY this ${
-          entity.getConstructor().label
-        }.
+        $localize`:post-delete related PII warning dialog:Some related records (e.g. notes) may still contain personal data in their text. We have automatically deleted all records that are linked to ONLY ${textForDeleteEntity}.
         However, there are some records that are linked to multiple records. We have not deleted these, so that you will not lose relevant data. Please review them manually to ensure all sensitive information is removed, if required (e.g. by looking through the linked notes and editing a note's text).`,
         OkButton,
       );
@@ -110,7 +158,7 @@ export class EntityActionsService {
     }
 
     this.showSnackbarConfirmationWithUndo(
-      result.originalEntitiesBeforeChange[0],
+      entityParam,
       $localize`:Entity action confirmation message verb:Deleted`,
       result.originalEntitiesBeforeChange,
       currentUrl,

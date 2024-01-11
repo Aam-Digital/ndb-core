@@ -18,36 +18,6 @@ export class DeleteRecordService {
   ) {}
 
   async deleteRecord(sourceData: Entity[]) {
-    const deleteData = this.delete(sourceData);
-    return await this.entitymapperservice.saveAll(deleteData);
-  }
-
-  delete(sourceData: Entity[]): any {
-    this.entityRemoveService.delete(sourceData[0]);
-    return;
-
-    // const deleteData = [];
-
-    // sourceData.map((item: Entity) => {
-    //   const entityConstructor = item.getConstructor();
-    //   const keys = [...entityConstructor.schema.keys()].filter(
-    //     (key) => key !== "_id" && key !== "_rev",
-    //   );
-    //   const dbEntity = this.entityService.transformEntityToDatabaseFormat(item);
-    //   const entityformat = this.entityService.transformDatabaseToEntityFormat(
-    //     dbEntity,
-    //     entityConstructor.schema,
-    //   );
-    //   const entity = new entityConstructor();
-    //   const nameAttribute = entityConstructor.toStringAttributes[0];
-    //   for (const key of keys) {
-    //     if (nameAttribute === key && nameAttribute !== "entityId") {
-    //       entityformat[key] = `Copy of ${entityformat[key]}`;
-    //     }
-    //     entity[key] = entityformat[key];
-    //   }
-    //   deleteData.push(entity);
-    // });
-    // return deleteData;
+    return await this.entityRemoveService.delete(sourceData);
   }
 }
