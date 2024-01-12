@@ -5,10 +5,13 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
+import { Note } from "../../../child-dev-project/notes/model/note";
 
 describe("RelatedEntitiesComponent", () => {
-  let component: RelatedEntitiesComponent<ChildSchoolRelation>;
-  let fixture: ComponentFixture<RelatedEntitiesComponent<ChildSchoolRelation>>;
+  let component: RelatedEntitiesComponent<ChildSchoolRelation | Note>;
+  let fixture: ComponentFixture<
+    RelatedEntitiesComponent<ChildSchoolRelation | Note>
+  >;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -54,6 +57,23 @@ describe("RelatedEntitiesComponent", () => {
     expect(component.columns).toBe(columns);
     expect(component.data).toEqual([r1, r2]);
     expect(component.filter).toEqual({ ...filter, childId: c1.getId() });
+  });
+
+  it("should ignore entities of the related type where the matching field is undefined instead of array", async () => {
+    const c1 = new Child();
+    const r1 = new Note();
+    r1.children = [c1.getId()];
+    const rEmpty = new Note();
+    delete rEmpty.children; // some entity types will not have a default empty array
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.saveAll([c1, r1, rEmpty]);
+
+    component.entity = c1;
+    component.entityType = Note.ENTITY_TYPE;
+    component.property = "children";
+    await component.ngOnInit();
+
+    expect(component.data).toEqual([r1]);
   });
 
   it("should create a new entity that references the related one", async () => {
