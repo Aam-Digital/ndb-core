@@ -149,7 +149,7 @@ export class AdminEntityDetailsComponent implements OnInit {
 
   addComponent(panel: Panel) {
     panel.components.push({
-      title: "New Section",
+      title: $localize`:Default title:New Section`,
       component: "Form", // TODO: make this configurable
       config: { fieldGroups: [] },
     });

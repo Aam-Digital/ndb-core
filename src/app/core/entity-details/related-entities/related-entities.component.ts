@@ -85,6 +85,12 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     ) as EntityConstructor<E>;
     this.isArray = isArrayProperty(this.entityCtr, this.property);
 
+    this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
+      (e) =>
+        this.isArray
+          ? e[this.property]?.includes(this.entity.getId())
+          : e[this.property] === this.entity.getId(),
+    );
     this.filter = {
       ...this.filter,
       [this.property]: this.isArray
@@ -95,7 +101,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
       (e) =>
         this.isArray
-          ? e[this.property].includes(this.entity.getId())
+          ? e[this.property]?.includes(this.entity.getId())
           : e[this.property] === this.entity.getId(),
     );
 
@@ -109,7 +115,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
       .receiveUpdates(this.entityCtr)
       .pipe(untilDestroyed(this))
       .subscribe((next) => {
-        this.data = applyUpdate(this.data, next, true);
+        this.data = applyUpdate(this.data, next);
       });
   }
 

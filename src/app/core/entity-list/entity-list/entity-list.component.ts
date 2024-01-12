@@ -223,7 +223,7 @@ export class EntityListComponent<T extends Entity>
         .receiveUpdates(this.entityConstructor)
         .pipe(untilDestroyed(this))
         .subscribe((next) => {
-          this.allEntities = applyUpdate(this.allEntities, next, true);
+          this.allEntities = applyUpdate(this.allEntities, next);
         });
     }
   }

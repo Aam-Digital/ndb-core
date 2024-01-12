@@ -21,7 +21,7 @@
       >
         <app-entity-field-label
           [field]="col"
-          [entityType]="entityType"
+          [entityType]="_entityType"
         ></app-entity-field-label>
       </th>
 
@@ -63,7 +63,7 @@
     <ng-container [matColumnDef]="ACTIONCOLUMN_EDIT">
       <th mat-header-cell *matHeaderCellDef class="remove-padding-left">
         <app-entity-create-button
-          [entityType]="entityType"
+          [entityType]="_entityType"
           [newRecordFactory]="newRecordFactory"
           (entityCreate)="showEntity($event)"
           [iconOnly]="true"

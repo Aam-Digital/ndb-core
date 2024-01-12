@@ -5,10 +5,7 @@ import { Child } from "../../model/child";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
 
-import {
-  ColumnConfig,
-  FormFieldConfig,
-} from "../../../../core/common-components/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../../core/common-components/entity-form/FormConfig";
 import { RelatedEntitiesComponent } from "../../../../core/entity-details/related-entities/related-entities.component";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
@@ -35,15 +32,6 @@ export class AserComponent extends RelatedEntitiesComponent<Aser> {
     { id: "bengali", visibleFrom: "md" },
     { id: "remarks", visibleFrom: "md" },
   ];
-
-  /**
-   * @deprecated only for backward compatibility of old configs
-   */
-  @Input() set config(value: { columns: ColumnConfig[] }) {
-    if (value.columns) {
-      this.columns = value.columns;
-    }
-  }
 
   constructor(
     private childrenService: ChildrenService,

@@ -28,13 +28,14 @@ export interface UpdatedEntity<T extends Entity> {
  * @param next An entity that should be updated as well as the type of update. This, as well as the entity
  * may be undefined or null. In this event, the entities-array is returned as is.
  * @param entities The entities to update, must be defined
- * @param addIfMissing (Optional) whether to add an entity that comes through an update event but is not part of the array yet (default is to ignore)
+ * @param addIfMissing (Optional) whether to add an entity that comes through an update event but is not part of the array yet,
+ *                          default is to add, disable this if you do special filtering or calculations on the data
  * @return An array of the given entities with the update applied
  */
 export function applyUpdate<T extends Entity>(
   entities: T[],
   next: UpdatedEntity<T>,
-  addIfMissing: boolean = false,
+  addIfMissing: boolean = true,
 ): T[] {
   if (!next || !next.entity || !entities) {
     return entities;

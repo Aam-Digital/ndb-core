@@ -10,8 +10,10 @@
   [filter]="filter"
   [customColumns]="_columns"
   [newRecordFactory]="generateNewRecordFactory()"
-  [getBackgroundColor]="backgroundColorFn"
+  [getBackgroundColor]="
+    hasCurrentlyActiveEntry && showInactive ? backgroundColorFn : undefined
+  "
   [clickMode]="clickMode"
-  [showInactive]="showInactive"
+  [(showInactive)]="showInactive"
 >
 </app-entities-table>

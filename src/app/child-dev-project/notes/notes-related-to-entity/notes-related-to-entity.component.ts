@@ -91,7 +91,7 @@ export class NotesRelatedToEntityComponent implements OnInit {
       .receiveUpdates(this.entityConstructor)
       .pipe(untilDestroyed(this))
       .subscribe((next) => {
-        this.records = applyUpdate(this.records, next, true);
+        this.records = applyUpdate(this.records, next);
       });
   }
 

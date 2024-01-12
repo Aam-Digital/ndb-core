@@ -76,10 +76,14 @@ export class TodoListComponent
 
   entityConstructor = Todo;
 
+  override clickMode: "navigate" | "popup" | "none" = "none";
+
   override defaultSort: Sort = {
     active: "deadline",
     direction: "asc",
   };
+
+  override showInactive = true;
 
   constructor(
     screenWidthObserver: ScreenWidthObserver,
