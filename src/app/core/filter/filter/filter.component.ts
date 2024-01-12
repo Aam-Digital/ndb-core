@@ -131,7 +131,8 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     const params = this.route.snapshot.queryParams;
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.name)) {
-        f.selectedOptionsKeys = params[f.name].split(",");
+        let values: string[] = params[f.name].split(",");
+        f.selectedOptionsKeys = values.filter((value) => value !== "");
       } else {
         f.selectedOptionsKeys = [];
       }

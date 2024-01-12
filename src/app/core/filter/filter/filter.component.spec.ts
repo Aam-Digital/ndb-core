@@ -98,6 +98,24 @@ describe("FilterComponent", () => {
     expect(component.filterSelections[0].selectedOptionsKeys[1]).toBe("bar");
   });
 
+  it("should load url params and set no filter value when empty", async () => {
+    component.entityType = Note;
+    component.useUrlQueryParams = true;
+    component.filterConfig = [{ id: "category" }];
+
+    activatedRouteMock.snapshot = {
+      queryParams: {
+        category: "",
+      },
+    };
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    expect(component.filterSelections.length).toBe(1);
+    expect(component.filterSelections[0].name).toBe("category");
+    expect(component.filterSelections[0].selectedOptionsKeys).toBeEmpty();
+  });
+
   it("should set up category filter from configurable enum", async () => {
     component.entityType = Note;
     const t1 = defaultInteractionTypes[0];
