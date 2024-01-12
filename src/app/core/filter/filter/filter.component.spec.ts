@@ -7,15 +7,34 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { HarnessLoader } from "@angular/cdk/testing";
 import { MatSelectHarness } from "@angular/material/select/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { ActivatedRoute } from "@angular/router";
+
+export class ActivatedRouteMock {
+  public snapshot = {
+    queryParams: {},
+  };
+}
 
 describe("FilterComponent", () => {
   let component: FilterComponent;
   let fixture: ComponentFixture<FilterComponent>;
   let loader: HarnessLoader;
 
+  let activatedRouteMock = new ActivatedRouteMock();
+
   beforeEach(async () => {
+    activatedRouteMock.snapshot = {
+      queryParams: {},
+    };
+
     await TestBed.configureTestingModule({
       imports: [FilterComponent, MockedTestingModule.withState()],
+      providers: [
+        {
+          provide: ActivatedRoute,
+          useValue: activatedRouteMock,
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(FilterComponent);
@@ -26,6 +45,57 @@ describe("FilterComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should have no filter selected when url params are empty", async () => {
+    component.entityType = Note;
+    component.useUrlQueryParams = true;
+    component.filterConfig = [{ id: "category" }];
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    expect(component.filterSelections.length).toBe(1);
+    expect(component.filterSelections[0].name).toBe("category");
+    expect(component.filterSelections[0].selectedOptionsKeys).toBeEmpty();
+  });
+
+  it("should load url params and set single filter value", async () => {
+    component.entityType = Note;
+    component.useUrlQueryParams = true;
+    component.filterConfig = [{ id: "category" }];
+
+    activatedRouteMock.snapshot = {
+      queryParams: {
+        category: "foo",
+      },
+    };
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    expect(component.filterSelections.length).toBe(1);
+    expect(component.filterSelections[0].name).toBe("category");
+    expect(component.filterSelections[0].selectedOptionsKeys.length).toBe(1);
+    expect(component.filterSelections[0].selectedOptionsKeys[0]).toBe("foo");
+  });
+
+  it("should load url params and set multiple filter value", async () => {
+    component.entityType = Note;
+    component.useUrlQueryParams = true;
+    component.filterConfig = [{ id: "category" }];
+
+    activatedRouteMock.snapshot = {
+      queryParams: {
+        category: "foo,bar",
+      },
+    };
+
+    await component.ngOnChanges({ filterConfig: true } as any);
+
+    expect(component.filterSelections.length).toBe(1);
+    expect(component.filterSelections[0].name).toBe("category");
+    expect(component.filterSelections[0].selectedOptionsKeys.length).toBe(2);
+    expect(component.filterSelections[0].selectedOptionsKeys[0]).toBe("foo");
+    expect(component.filterSelections[0].selectedOptionsKeys[1]).toBe("bar");
   });
 
   it("should set up category filter from configurable enum", async () => {

@@ -55,19 +55,13 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     valuesToMatchAsOptions: string[],
     attributeName: string,
   ): FilterSelectionOption<T>[] {
-    const options: FilterSelectionOption<T>[] = [];
-
-    options.push(
-      ...valuesToMatchAsOptions
-        .filter((k) => !!k)
-        .map((k) => ({
-          key: k.toLowerCase(),
-          label: k.toString(),
-          filter: { [attributeName]: k } as DataFilter<T>,
-        })),
-    );
-
-    return options;
+    return valuesToMatchAsOptions
+      .filter((k) => !!k)
+      .map((k) => ({
+        key: k.toLowerCase(),
+        label: k.toString(),
+        filter: { [attributeName]: k } as DataFilter<T>,
+      }));
   }
 
   /**

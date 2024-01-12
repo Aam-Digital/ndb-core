@@ -31,10 +31,10 @@ export class ConfigurableEnumService {
     id: string,
   ): T[] {
     let configurableEnum = this.getEnum(id);
-    return configurableEnum == null ? [] : (configurableEnum.values as T[]);
+    return configurableEnum ? (configurableEnum.values as T[]) : [];
   }
 
-  getEnum(id: string): ConfigurableEnum | null {
+  getEnum(id: string): ConfigurableEnum | undefined {
     if (!this.enums) {
       return;
     }

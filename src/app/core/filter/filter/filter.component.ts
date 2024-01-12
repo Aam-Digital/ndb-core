@@ -10,9 +10,9 @@ import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
-import { ActivatedRoute, Params, Router } from "@angular/router";
+import { ActivatedRoute, Router } from "@angular/router";
 import { ListFilterComponent } from "../list-filter/list-filter.component";
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { NgForOf, NgIf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-filter/date-range-filter.component";
 import { Filter } from "../filters/filters";
@@ -31,8 +31,6 @@ import { FilterService } from "../filter.service";
     Angulartics2Module,
     DateRangeFilterComponent,
     NgIf,
-    JsonPipe,
-    AsyncPipe,
   ],
   standalone: true,
 })
@@ -126,11 +124,11 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     });
   }
 
-  private loadUrlParams(parameters?: Params) {
+  private loadUrlParams() {
     if (!this.useUrlQueryParams) {
       return;
     }
-    const params = parameters || this.route.snapshot.queryParams;
+    const params = this.route.snapshot.queryParams;
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.name)) {
         f.selectedOptionsKeys = params[f.name].split(",");
