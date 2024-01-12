@@ -55,7 +55,6 @@ describe("Filters", () => {
       default: "true",
       true: "is true",
       false: "is not true",
-      all: "All",
     });
 
     const recordTrue = { value: true };

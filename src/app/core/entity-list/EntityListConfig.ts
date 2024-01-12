@@ -82,7 +82,6 @@ export interface BasicFilterConfig {
 export interface BooleanFilterConfig extends BasicFilterConfig {
   true: string;
   false: string;
-  all: string;
 }
 
 export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {

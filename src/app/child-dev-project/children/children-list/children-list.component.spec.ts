@@ -51,7 +51,6 @@ describe("ChildrenListComponent", () => {
         default: "true",
         true: "Currently active children",
         false: "Currently inactive children",
-        all: "All children",
       } as BooleanFilterConfig,
       {
         id: "center",

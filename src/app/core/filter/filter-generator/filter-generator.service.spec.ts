@@ -42,7 +42,6 @@ describe("FilterGeneratorService", () => {
       id: "privateSchool",
       true: "Private",
       false: "Government",
-      all: "All",
       type: "boolean",
     };
     const schema = School.schema.get("privateSchool");
