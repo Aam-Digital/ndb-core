@@ -10,6 +10,7 @@ import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.erro
 import { EntityFormService } from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
+import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
 
 /**
  * Buttons to edit an (entities-table) row inline, handling the necessary logic and UI buttons.
@@ -34,6 +35,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
     private entityFormService: EntityFormService,
     private alertService: AlertService,
     private entityRemoveService: EntityActionsService,
+    private unsavedChanges: UnsavedChangesService,
   ) {}
 
   edit() {
@@ -47,7 +49,6 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
 
   /**
    * Save an edited record to the database (if validation succeeds).
-   * @param row The entity to be saved.
    */
   async save(): Promise<void> {
     try {
@@ -69,9 +70,9 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
 
   /**
    * Discard any changes to the given entity and reset it to the state before the user started editing.
-   * @param row The entity to be reset.
    */
   resetChanges() {
     delete this.row.formGroup;
+    this.unsavedChanges.pending = false;
   }
 }
