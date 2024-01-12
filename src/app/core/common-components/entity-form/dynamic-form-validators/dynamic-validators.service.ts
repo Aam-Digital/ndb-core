@@ -1,9 +1,14 @@
 import { Injectable } from "@angular/core";
 import { DynamicValidator, FormValidatorConfig } from "./form-validator-config";
-import { AbstractControl, ValidatorFn, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormControlOptions,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
 import { LoggingService } from "../../../logging/logging.service";
-
-type ValidatorFactory = (value: any, name: string) => ValidatorFn;
+import { uniqueIdValidator } from "../unique-id-validator/unique-id-validator";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -47,23 +52,39 @@ export class DynamicValidatorsService {
    * given a value that serves as basis for the validation.
    * @private
    */
-  private static validators: {
-    [key in DynamicValidator]: ValidatorFactory | null;
-  } = {
-    min: (value) => Validators.min(value as number),
-    max: (value) => Validators.max(value as number),
-    pattern: (value) => {
-      if (typeof value === "object") {
-        return patternWithMessage(value.pattern, value.message);
-      } else {
-        return Validators.pattern(value as string);
-      }
-    },
-    validEmail: (value) => (value ? Validators.email : null),
-    required: (value) => (value ? Validators.required : null),
-  };
+  private getValidator(
+    key: DynamicValidator,
+    value: any,
+  ): { async?: boolean; fn: ValidatorFn } | null {
+    switch (key) {
+      case "min":
+        return { fn: Validators.min(value as number) };
+      case "max":
+        return { fn: Validators.max(value as number) };
+      case "pattern":
+        if (typeof value === "object") {
+          return { fn: patternWithMessage(value.pattern, value.message) };
+        } else {
+          return { fn: Validators.pattern(value as string) };
+        }
+      case "validEmail":
+        return value ? { fn: Validators.email } : null;
+      case "uniqueId":
+        return value ? this.buildUniqueIdValidator(value) : null;
+      case "required":
+        return value ? { fn: Validators.required } : null;
+      default:
+        this.loggingService.warn(
+          `Trying to generate validator ${key} but it does not exist`,
+        );
+        return null;
+    }
+  }
 
-  constructor(private loggingService: LoggingService) {}
+  constructor(
+    private loggingService: LoggingService,
+    private entityMapper: EntityMapperService,
+  ) {}
 
   /**
    * Builds all validator functions that are part of the configuration object.
@@ -76,24 +97,32 @@ export class DynamicValidatorsService {
    * [ Validators.required, Validators.max(5) ]
    * @see ValidatorFn
    */
-  public buildValidators(config: FormValidatorConfig): ValidatorFn[] {
+  public buildValidators(config: FormValidatorConfig): FormControlOptions {
     const validators: ValidatorFn[] = [];
+    const asyncValidators = [];
     for (const key of Object.keys(config)) {
-      const factory = DynamicValidatorsService.validators[key];
-      if (!factory) {
-        this.loggingService.warn(
-          `Trying to generate validator ${key} but it does not exist`,
-        );
+      const validatorFn = this.getValidator(
+        key as DynamicValidator,
+        config[key],
+      );
+
+      if (validatorFn === null) {
         continue;
+      } else if (validatorFn.async) {
+        asyncValidators.push(validatorFn.fn);
+      } else {
+        validators.push(validatorFn.fn);
       }
-      const validatorFn = factory(config[key], key);
-      if (validatorFn !== null) {
-        validators.push(validatorFn);
-      }
+
       // A validator function of `null` is a legal case. For example
       // { required : false } produces a `null` validator function
     }
-    return validators;
+
+    return {
+      validators,
+      asyncValidators,
+      updateOn: asyncValidators.length > 0 ? "blur" : "change",
+    };
   }
 
   /**
@@ -126,6 +155,8 @@ export class DynamicValidatorsService {
         return $localize`Please enter a valid date`;
       case "isNumber":
         return $localize`Please enter a valid number`;
+      case "uniqueId":
+        return validationValue;
       default:
         this.loggingService.error(
           `No description defined for validator "${validator}": ${JSON.stringify(
@@ -134,5 +165,17 @@ export class DynamicValidatorsService {
         );
         throw $localize`Invalid input`;
     }
+  }
+
+  private buildUniqueIdValidator(value: string) {
+    return {
+      fn: uniqueIdValidator(() =>
+        this.entityMapper
+          .loadType(value)
+          // TODO: extend this to allow checking for any configurable property (e.g. Child.name rather than only id)
+          .then((entities) => entities.map((entity) => entity.getId(false))),
+      ),
+      async: true,
+    };
   }
 }

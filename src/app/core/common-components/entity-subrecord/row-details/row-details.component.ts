@@ -65,6 +65,10 @@ export class RowDetailsComponent {
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
     private formService: EntityFormService,
   ) {
+    this.init(data);
+  }
+
+  private init(data: DetailsComponentData) {
     this.form = this.formService.createFormGroup(data.columns, data.entity);
     this.enableSaveWithoutChangesIfNew(data.entity);
 

@@ -37,7 +37,7 @@ import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype"
 import { EntityArrayDatatype } from "../../../basic-datatypes/entity-array/entity-array.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { uniqueIdValidator } from "../../../common-components/entity-form/unique-id-validator";
+import { uniqueIdValidator } from "../../../common-components/entity-form/unique-id-validator/unique-id-validator";
 import { AdminEntityService } from "../../admin-entity.service";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
