@@ -229,7 +229,9 @@ describe("FilterGeneratorService", () => {
     expect(filterOptions.label).toEqual(prebuiltFilter.label);
     expect(filterOptions.name).toEqual(prebuiltFilter.id);
     expect(filterOptions.options).toEqual(prebuiltFilter.options);
-    expect(filterOptions.selectedOptionsKeys).toEqual([prebuiltFilter.default]);
+    expect(filterOptions.selectedOptionValues).toEqual([
+      prebuiltFilter.default,
+    ]);
 
     const todayNote = new Note();
     todayNote.date = new Date();

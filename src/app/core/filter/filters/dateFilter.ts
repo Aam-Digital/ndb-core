@@ -18,7 +18,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     public rangeOptions: DateRangeFilterConfigOption[],
   ) {
     super(name, label);
-    this.selectedOptionsKeys = [];
+    this.selectedOptionValues = [];
   }
 
   /**
@@ -29,7 +29,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     if (selectedOption) {
       return calculateDateRange(selectedOption);
     }
-    const dates = this.selectedOptionsKeys;
+    const dates = this.selectedOptionValues;
     if (dates?.length == 2) {
       return this.getDateRangeFromDateStrings(dates[0], dates[1]);
     }
@@ -54,7 +54,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
   }
 
   getSelectedOption() {
-    return this.rangeOptions[this.selectedOptionsKeys as any];
+    return this.rangeOptions[this.selectedOptionValues as any];
   }
 
   private getDateRangeFromDateStrings(

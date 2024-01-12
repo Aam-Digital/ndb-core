@@ -38,16 +38,16 @@ export class DateRangeFilterComponent<T extends Entity> {
     ) {
       this.fromDate = range.start;
       this.toDate = range.end;
-      this.selectedOptionChange.emit(this.dateFilter.selectedOptionsKeys);
+      this.selectedOptionChange.emit(this.dateFilter.selectedOptionValues);
     }
   }
 
   dateChangedManually() {
-    this.dateFilter.selectedOptionsKeys = [
+    this.dateFilter.selectedOptionValues = [
       isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
       isValidDate(this.toDate) ? dateToString(this.toDate) : "",
     ];
-    this.selectedOptionChange.emit(this.dateFilter.selectedOptionsKeys);
+    this.selectedOptionChange.emit(this.dateFilter.selectedOptionValues);
   }
 
   openDialog(e: Event) {

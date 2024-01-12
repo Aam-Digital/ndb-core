@@ -38,7 +38,7 @@ describe("Filters", () => {
 
     expect(filter.options).toHaveSize(keys.length);
 
-    filter.selectedOptionsKeys = ["x"];
+    filter.selectedOptionValues = ["x"];
 
     const testData = [
       { id: 1, category: "x" },
@@ -61,16 +61,16 @@ describe("Filters", () => {
     const recordTrue = { value: true };
     const recordFalse = { value: false };
 
-    filter.selectedOptionsKeys = ["true"];
+    filter.selectedOptionValues = ["true"];
     testFilter(filter, [recordFalse, recordTrue], [recordTrue]);
 
-    filter.selectedOptionsKeys = ["false"];
+    filter.selectedOptionValues = ["false"];
     testFilter(filter, [recordFalse, recordTrue], [recordFalse]);
 
-    filter.selectedOptionsKeys = [];
+    filter.selectedOptionValues = [];
     testFilter(filter, [recordFalse, recordTrue], [recordFalse, recordTrue]);
 
-    filter.selectedOptionsKeys = ["true", "false"];
+    filter.selectedOptionValues = ["true", "false"];
     testFilter(filter, [recordFalse, recordTrue], [recordFalse, recordTrue]);
   });
 });

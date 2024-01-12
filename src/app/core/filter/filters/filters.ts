@@ -19,7 +19,7 @@ import { DataFilter } from "../../common-components/entity-subrecord/entity-subr
 import { Entity } from "../../entity/model/entity";
 
 export abstract class Filter<T extends Entity> {
-  public selectedOptionsKeys: string[] = [];
+  public selectedOptionValues: string[] = [];
 
   protected constructor(
     public name: string,
@@ -77,7 +77,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     public label: string = name,
   ) {
     super(name, label);
-    this.selectedOptionsKeys = [];
+    this.selectedOptionValues = [];
   }
 
   /**
@@ -95,7 +95,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * If the given key is undefined or invalid, the returned filter matches any elements.
    */
   public getFilter(): DataFilter<T> {
-    let filters: DataFilter<T>[] = this.selectedOptionsKeys
+    let filters: DataFilter<T>[] = this.selectedOptionValues
       .map((value: string) => this.getOption(value))
       .filter((value: FilterSelectionOption<T>) => value !== undefined)
       .map((previousValue: FilterSelectionOption<T>) => {

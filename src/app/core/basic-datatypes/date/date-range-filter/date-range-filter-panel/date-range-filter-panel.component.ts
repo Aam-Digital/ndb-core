@@ -91,9 +91,9 @@ export class DateRangeFilterPanelComponent {
 
   selectRangeAndClose(index: number | "all"): void {
     if (typeof index === "number") {
-      this.filter.selectedOptionsKeys = [index.toString()];
+      this.filter.selectedOptionValues = [index.toString()];
     } else {
-      this.filter.selectedOptionsKeys = [];
+      this.filter.selectedOptionValues = [];
     }
     this.dialogRef.close();
   }
@@ -103,7 +103,7 @@ export class DateRangeFilterPanelComponent {
       this.selectedRangeValue = new DateRange(selectedDate, null);
     } else {
       const start: Date = this.selectedRangeValue.start;
-      this.filter.selectedOptionsKeys =
+      this.filter.selectedOptionValues =
         start < selectedDate
           ? [dateToString(start), dateToString(selectedDate)]
           : [dateToString(selectedDate), dateToString(start)];

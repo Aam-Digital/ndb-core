@@ -18,7 +18,7 @@
           (mouseenter)="preselectAllRange()"
           (mouseleave)="unselectRange()"
           (click)="selectRangeAndClose('all')"
-          [class.selected-option]="filter.selectedOptionsKeys.length === 0"
+          [class.selected-option]="filter.selectedOptionValues.length === 0"
         >
           All
         </button>

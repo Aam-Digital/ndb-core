@@ -111,7 +111,7 @@ export class FilterGeneratorService {
       }
 
       if (filterConfig.hasOwnProperty("default")) {
-        filter.selectedOptionsKeys = [filterConfig.default];
+        filter.selectedOptionValues = [filterConfig.default];
       }
 
       if (filter instanceof SelectableFilter) {

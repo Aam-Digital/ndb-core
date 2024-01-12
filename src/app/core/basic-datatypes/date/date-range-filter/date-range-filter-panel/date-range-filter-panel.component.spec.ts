@@ -23,7 +23,7 @@ describe("DateRangeFilterPanelComponent", () => {
 
   beforeEach(async () => {
     dateFilter = new DateFilter("test", "Test", defaultDateFilters);
-    dateFilter.selectedOptionsKeys = ["1"];
+    dateFilter.selectedOptionValues = ["1"];
     jasmine.clock().mockDate(moment("2023-04-08").toDate());
     await TestBed.configureTestingModule({
       imports: [MatNativeDateModule],
@@ -86,7 +86,7 @@ describe("DateRangeFilterPanelComponent", () => {
       moment("2023-04-08").startOf("day").toDate(),
     );
     expect(filterRange.end).toEqual(moment("2023-04-08").endOf("day").toDate());
-    expect(dateFilter.selectedOptionsKeys).toEqual(["0"]);
+    expect(dateFilter.selectedOptionValues).toEqual(["0"]);
   });
 
   it("should highlight the date range when hovering over a option", async () => {
@@ -117,7 +117,7 @@ describe("DateRangeFilterPanelComponent", () => {
 
   it("should return empty array as filter.selectedOption when 'all' option has been chosen", async () => {
     component.selectRangeAndClose("all");
-    expect(dateFilter.selectedOptionsKeys).toEqual([]);
+    expect(dateFilter.selectedOptionValues).toEqual([]);
   });
 
   it("should correctly calculate date ranges based on the config", () => {

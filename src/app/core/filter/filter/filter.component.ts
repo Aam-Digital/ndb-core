@@ -92,7 +92,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
   }
 
   filterOptionSelected(filter: Filter<T>, selectedOptions: string[]) {
-    filter.selectedOptionsKeys = selectedOptions;
+    filter.selectedOptionValues = selectedOptions;
     this.applyFilterSelections();
     if (this.useUrlQueryParams) {
       this.updateUrl(filter.name, selectedOptions.toString());
@@ -132,9 +132,7 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
     this.filterSelections.forEach((f) => {
       if (params.hasOwnProperty(f.name)) {
         let values: string[] = params[f.name].split(",");
-        f.selectedOptionsKeys = values.filter((value) => value !== "");
-      } else {
-        f.selectedOptionsKeys = [];
+        f.selectedOptionValues = values.filter((value) => value !== "");
       }
     });
   }

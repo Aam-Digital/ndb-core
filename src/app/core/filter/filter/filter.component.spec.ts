@@ -56,7 +56,7 @@ describe("FilterComponent", () => {
 
     expect(component.filterSelections.length).toBe(1);
     expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionsKeys).toBeEmpty();
+    expect(component.filterSelections[0].selectedOptionValues).toBeEmpty();
   });
 
   it("should load url params and set single filter value", async () => {
@@ -74,8 +74,8 @@ describe("FilterComponent", () => {
 
     expect(component.filterSelections.length).toBe(1);
     expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionsKeys.length).toBe(1);
-    expect(component.filterSelections[0].selectedOptionsKeys[0]).toBe("foo");
+    expect(component.filterSelections[0].selectedOptionValues.length).toBe(1);
+    expect(component.filterSelections[0].selectedOptionValues[0]).toBe("foo");
   });
 
   it("should load url params and set multiple filter value", async () => {
@@ -93,9 +93,9 @@ describe("FilterComponent", () => {
 
     expect(component.filterSelections.length).toBe(1);
     expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionsKeys.length).toBe(2);
-    expect(component.filterSelections[0].selectedOptionsKeys[0]).toBe("foo");
-    expect(component.filterSelections[0].selectedOptionsKeys[1]).toBe("bar");
+    expect(component.filterSelections[0].selectedOptionValues.length).toBe(2);
+    expect(component.filterSelections[0].selectedOptionValues[0]).toBe("foo");
+    expect(component.filterSelections[0].selectedOptionValues[1]).toBe("bar");
   });
 
   it("should load url params and set no filter value when empty", async () => {
@@ -113,7 +113,7 @@ describe("FilterComponent", () => {
 
     expect(component.filterSelections.length).toBe(1);
     expect(component.filterSelections[0].name).toBe("category");
-    expect(component.filterSelections[0].selectedOptionsKeys).toBeEmpty();
+    expect(component.filterSelections[0].selectedOptionValues).toBeEmpty();
   });
 
   it("should set up category filter from configurable enum", async () => {
