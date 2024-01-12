@@ -2,7 +2,9 @@ import { Injectable } from "@angular/core";
 import { DynamicValidator, FormValidatorConfig } from "./form-validator-config";
 import {
   AbstractControl,
+  FormControl,
   FormControlOptions,
+  ValidationErrors,
   ValidatorFn,
   Validators,
 } from "@angular/forms";
@@ -55,7 +57,7 @@ export class DynamicValidatorsService {
   private getValidator(
     key: DynamicValidator,
     value: any,
-  ): { async?: boolean; fn: ValidatorFn } | null {
+  ): { async?: boolean; fn: ValidatorFn | AsyncValidatorFn } | null {
     switch (key) {
       case "min":
         return { fn: Validators.min(value as number) };
@@ -109,9 +111,15 @@ export class DynamicValidatorsService {
       if (validatorFn === null) {
         continue;
       } else if (validatorFn.async) {
-        asyncValidators.push(validatorFn.fn);
+        asyncValidators.push((control) =>
+          (validatorFn.fn as AsyncValidatorFn)(control).then((res) =>
+            this.addHumanReadableError(key, res),
+          ),
+        );
       } else {
-        validators.push(validatorFn.fn);
+        validators.push((control: FormControl) =>
+          this.addHumanReadableError(key, validatorFn.fn(control)),
+        );
       }
 
       // A validator function of `null` is a legal case. For example
@@ -125,6 +133,25 @@ export class DynamicValidatorsService {
     };
   }
 
+  private addHumanReadableError(
+    validatorType: string,
+    validationResult: ValidationErrors | null,
+  ): ValidationErrors {
+    if (!validationResult) {
+      return validationResult;
+    }
+
+    validationResult[validatorType] = {
+      ...validationResult[validatorType],
+      errorMessage: this.descriptionForValidator(
+        validatorType,
+        validationResult[validatorType],
+      ),
+    };
+
+    return validationResult;
+  }
+
   /**
    * returns a description for a validator given the value where it failed.
    * The value is specific for a certain validator. For example, the `min` validator
@@ -132,7 +159,7 @@ export class DynamicValidatorsService {
    * @param validator The validator to get the description for
    * @param validationValue The value associated with the validator
    */
-  public descriptionForValidator(
+  private descriptionForValidator(
     validator: DynamicValidator | string,
     validationValue: any,
   ): string {
@@ -179,3 +206,7 @@ export class DynamicValidatorsService {
     };
   }
 }
+
+type AsyncValidatorFn = (
+  control: FormControl,
+) => Promise<ValidationErrors | null>;

@@ -1,4 +1,4 @@
 <div *ngFor="let err of form?.errors | keyvalue">
-  {{ validatorService.descriptionForValidator(err.key, err.value) }}
+  {{ err.value["errorMessage"] }}
   <ng-content></ng-content>
 </div>
