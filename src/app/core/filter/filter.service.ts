@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { DataFilter } from "../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../entity/model/entity";
 import {
   allInterpreters,
@@ -11,6 +10,8 @@ import {
 } from "@ucast/mongo2js";
 import moment from "moment";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { MongoQuery } from "@casl/ability";
+import { DataFilter } from "./filters/filters";
 
 /**
  * Utility service to help handling and aligning filters with entities.
@@ -37,7 +38,7 @@ export class FilterService {
    * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
    */
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
-    return this.filterFactory<T>(filter);
+    return this.filterFactory<T>(filter as MongoQuery<T>);
   }
 
   /**

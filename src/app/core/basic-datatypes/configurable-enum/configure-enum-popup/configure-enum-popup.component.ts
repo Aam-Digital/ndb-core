@@ -135,5 +135,4 @@ export class ConfigureEnumPopupComponent {
     });
     this.newOptionInput = "";
   }
-  mynewFun() {}
 }

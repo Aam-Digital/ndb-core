@@ -15,9 +15,9 @@ import { FormGroup } from "@angular/forms";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { CdkDragDrop } from "@angular/cdk/drag-drop";
 import { of } from "rxjs";
-import { ColumnConfig } from "../../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { AdminModule } from "../../admin.module";
 import { FormConfig } from "../../../entity-details/form/form.component";
+import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;

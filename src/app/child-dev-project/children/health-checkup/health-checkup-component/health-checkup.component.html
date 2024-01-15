@@ -1,5 +1,6 @@
-<app-entity-subrecord
+<app-entities-table
+  [entityType]="entityCtr"
   [records]="records"
-  [columns]="config.columns"
+  [customColumns]="config.columns"
   [newRecordFactory]="generateNewRecordFactory()"
-></app-entity-subrecord>
+></app-entities-table>

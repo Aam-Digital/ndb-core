@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { FormBuilder, FormGroup, ɵElement } from "@angular/forms";
-import { FormFieldConfig } from "./entity-form/FormConfig";
+import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -17,10 +17,6 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
-import {
-  ColumnConfig,
-  toFormFieldConfig,
-} from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
