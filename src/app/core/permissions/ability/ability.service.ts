@@ -8,8 +8,8 @@ import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
 import { Entity } from "../../entity/model/entity";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
