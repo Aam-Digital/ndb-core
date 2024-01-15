@@ -5,9 +5,9 @@ import {
   RowDetailsComponent,
 } from "./row-details.component";
 import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
-import { Entity } from "../../../entity/model/entity";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { Entity } from "../../entity/model/entity";
+import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { NEVER } from "rxjs";
 
 describe("RowDetailsComponent", () => {

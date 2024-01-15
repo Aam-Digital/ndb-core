@@ -7,7 +7,7 @@ import {
   SimpleChanges,
 } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
-import { Entity } from "../../entity/model/entity";
+import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { ImportService } from "../import.service";
 import { MatDialog } from "@angular/material/dialog";
 import {
@@ -19,24 +19,21 @@ import { ImportMetadata } from "../import-metadata";
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
-import { EntitySubrecordComponent } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { NgIf } from "@angular/common";
+import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 @Component({
   selector: "app-import-review-data",
   templateUrl: "./import-review-data.component.html",
   styleUrls: ["./import-review-data.component.scss"],
   standalone: true,
-  imports: [
-    MatButtonModule,
-    HelpButtonComponent,
-    EntitySubrecordComponent,
-    NgIf,
-  ],
+  imports: [MatButtonModule, HelpButtonComponent, EntitiesTableComponent, NgIf],
 })
 export class ImportReviewDataComponent implements OnChanges {
   @Input() rawData: any[];
   @Input() entityType: string;
+  entityConstructor: EntityConstructor;
   @Input() columnMapping: ColumnMapping[];
   @Input() additionalActions: AdditionalImportAction[];
 
@@ -48,9 +45,12 @@ export class ImportReviewDataComponent implements OnChanges {
   constructor(
     private importService: ImportService,
     private matDialog: MatDialog,
+    private entityRegistry: EntityRegistry,
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
+    this.entityConstructor = this.entityRegistry.get(this.entityType);
+
     // Every change requires a complete re-calculation
     this.parseRawData();
   }

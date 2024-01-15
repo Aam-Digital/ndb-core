@@ -24,7 +24,7 @@ import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-a
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { FormFieldConfig } from "./entity-form/FormConfig";
+import { FormFieldConfig } from "./FormConfig";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("EntityFormService", () => {

@@ -3,7 +3,7 @@ import { ExportColumnConfig } from "../data-transformation-service/export-column
 import { ExportDataFormat } from "../export-data-directive/export-data.directive";
 import { LoggingService } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
-import { transformToReadableFormat } from "../../common-components/entity-subrecord/entity-subrecord/value-accessor";
+import { transformToReadableFormat } from "../../common-components/entities-table/value-accessor/value-accessor";
 import { Papa } from "ngx-papaparse";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 

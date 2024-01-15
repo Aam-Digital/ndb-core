@@ -6,34 +6,35 @@ import moment from "moment";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
-import {
-  ColumnConfig,
-  DataFilter,
-} from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterService } from "../../../core/filter/filter.service";
 import { Child } from "../../children/model/child";
 import { School } from "../../schools/model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
 import { asArray } from "../../../utils/utils";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { applyUpdate } from "../../../core/entity/model/entity-update";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { DataFilter } from "../../../core/filter/filters/filters";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
  */
 @DynamicComponent("NotesRelatedToEntity")
 @DynamicComponent("NotesOfChild") // for backward compatibility
+@UntilDestroy()
 @Component({
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
-  imports: [EntitySubrecordComponent],
+  imports: [EntitiesTableComponent],
   standalone: true,
 })
 export class NotesRelatedToEntityComponent implements OnInit {
   @Input() entity: Entity;
-  records: Array<Note> = [];
-  isLoading: boolean;
+  records: Array<Note>;
 
   @Input() columns: ColumnConfig[] = [
     { id: "date", visibleFrom: "xs" },
@@ -51,8 +52,11 @@ export class NotesRelatedToEntityComponent implements OnInit {
   getColor = (note: Note) => note?.getColor();
   newRecordFactory: () => Note;
 
+  entityConstructor = Note;
+
   constructor(
     private childrenService: ChildrenService,
+    private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
     private filterService: FilterService,
   ) {}
@@ -64,11 +68,10 @@ export class NotesRelatedToEntityComponent implements OnInit {
     }
     this.newRecordFactory = this.generateNewRecordFactory();
     this.initNotesOfEntity();
+    this.listenToEntityUpdates();
   }
 
   private async initNotesOfEntity() {
-    this.isLoading = true;
-
     this.records = await this.childrenService
       .getNotesRelatedTo(this.entity.getId(true))
       .then((notes: Note[]) => {
@@ -81,8 +84,15 @@ export class NotesRelatedToEntityComponent implements OnInit {
         });
         return notes;
       });
+  }
 
-    this.isLoading = false;
+  private listenToEntityUpdates() {
+    this.entityMapper
+      .receiveUpdates(this.entityConstructor)
+      .pipe(untilDestroyed(this))
+      .subscribe((next) => {
+        this.records = applyUpdate(this.records, next);
+      });
   }
 
   generateNewRecordFactory() {

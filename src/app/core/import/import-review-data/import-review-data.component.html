@@ -14,9 +14,10 @@
   </app-help-button>
 </div>
 
-<app-entity-subrecord
+<app-entities-table
   *ngIf="mappedEntities.length > 0"
-  [columns]="displayColumns"
+  [entityType]="entityConstructor"
+  [customColumns]="displayColumns"
   [columnsToDisplay]="displayColumns"
   [records]="mappedEntities"
   clickMode="none"

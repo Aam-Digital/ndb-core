@@ -1,72 +1,123 @@
 import { Component, OnInit } from "@angular/core";
-import { ActivatedRoute } from "@angular/router";
 import { Todo } from "../model/todo";
-import {
-  EntityListConfig,
-  PrebuiltFilterConfig,
-} from "../../../core/entity-list/EntityListConfig";
-import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
-import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { PrebuiltFilterConfig } from "../../../core/entity-list/EntityListConfig";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
-import { LoggingService } from "../../../core/logging/logging.service";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { FilterSelectionOption } from "../../../core/filter/filters/filters";
 import { RouteTarget } from "../../../route-target";
-import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { Sort } from "@angular/material/sort";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { ActivatedRoute, Router, RouterLink } from "@angular/router";
+import { AnalyticsService } from "../../../core/analytics/analytics.service";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { MatDialog } from "@angular/material/dialog";
+import { DuplicateRecordService } from "../../../core/entity-list/duplicate-records/duplicate-records.service";
+import { CurrentUserSubject } from "../../../core/session/current-user-subject";
+import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
+import { LoggingService } from "../../../core/logging/logging.service";
+import { NgForOf, NgIf, NgStyle, NgTemplateOutlet } from "@angular/common";
+import { MatButtonModule } from "@angular/material/button";
+import { Angulartics2OnModule } from "angulartics2";
+import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { MatMenuModule } from "@angular/material/menu";
+import { MatTabsModule } from "@angular/material/tabs";
+import { MatFormFieldModule } from "@angular/material/form-field";
+import { MatInputModule } from "@angular/material/input";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { FormsModule } from "@angular/forms";
+import { FilterComponent } from "../../../core/filter/filter/filter.component";
+import { TabStateModule } from "../../../utils/tab-state/tab-state.module";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
+import { ExportDataDirective } from "../../../core/export/export-data-directive/export-data.directive";
+import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
+import { MatTooltipModule } from "@angular/material/tooltip";
+import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
 @Component({
   selector: "app-todo-list",
-  template: `
-    <app-entity-list
-      [listConfig]="listConfig"
-      [entityConstructor]="entityConstructor"
-      clickMode="none"
-      (elementClick)="showDetails($event)"
-      (addNewClick)="createNew()"
-      [showInactive]="true"
-    ></app-entity-list>
-  `,
+  templateUrl:
+    "../../../core/entity-list/entity-list/entity-list.component.html",
   standalone: true,
-  imports: [EntityListComponent],
+
+  imports: [
+    NgIf,
+    NgStyle,
+    MatButtonModule,
+    Angulartics2OnModule,
+    FontAwesomeModule,
+    MatMenuModule,
+    NgTemplateOutlet,
+    MatTabsModule,
+    NgForOf,
+    MatFormFieldModule,
+    MatInputModule,
+    EntitiesTableComponent,
+    FormsModule,
+    FilterComponent,
+    TabStateModule,
+    ViewTitleComponent,
+    ExportDataDirective,
+    DisableEntityOperationDirective,
+    RouterLink,
+    MatTooltipModule,
+    EntityCreateButtonComponent,
+  ],
 })
-export class TodoListComponent implements OnInit {
+export class TodoListComponent
+  extends EntityListComponent<Todo>
+  implements OnInit
+{
   // TODO: make this component obsolete by generalizing Entity and EntityList so that we can define a viewDetailsComponent on the entity that gets opened as popup?
 
-  listConfig: EntityListConfig;
   entityConstructor = Todo;
 
+  override clickMode: "navigate" | "popup" | "none" = "none";
+
+  override defaultSort: Sort = {
+    active: "deadline",
+    direction: "asc",
+  };
+
+  override showInactive = true;
+
   constructor(
-    private route: ActivatedRoute,
+    screenWidthObserver: ScreenWidthObserver,
+    router: Router,
+    activatedRoute: ActivatedRoute,
+    analyticsService: AnalyticsService,
+    entityMapperService: EntityMapperService,
+    entities: EntityRegistry,
+    dialog: MatDialog,
+    duplicateRecord: DuplicateRecordService,
     private currentUser: CurrentUserSubject,
     private formDialog: FormDialogService,
     private logger: LoggingService,
-  ) {}
-
-  ngOnInit() {
-    this.route.data.subscribe(
-      (data: DynamicComponentConfig<EntityListConfig>) =>
-        // TODO replace this use of route and rely on the RoutedViewComponent instead
-        this.init(data.config),
+  ) {
+    super(
+      screenWidthObserver,
+      router,
+      activatedRoute,
+      analyticsService,
+      entityMapperService,
+      entities,
+      dialog,
+      duplicateRecord,
     );
   }
 
-  private init(config: EntityListConfig) {
-    this.listConfig = config;
-    this.listConfig.defaultSort = this.listConfig.defaultSort ?? {
-      active: "deadline",
-      direction: "asc",
-    };
+  ngOnInit() {
     this.addPrebuiltFilters();
   }
 
   private addPrebuiltFilters() {
     this.setFilterDefaultToCurrentUser();
 
-    for (const prebuiltFilter of this.listConfig.filters.filter(
+    for (const prebuiltFilter of this.filters.filter(
       (filter) => filter.type === "prebuilt",
     )) {
       switch (prebuiltFilter.id) {
@@ -88,9 +139,7 @@ export class TodoListComponent implements OnInit {
   }
 
   private setFilterDefaultToCurrentUser() {
-    const assignedToFilter = this.listConfig.filters.find(
-      (c) => c.id === "assignedTo",
-    );
+    const assignedToFilter = this.filters.find((c) => c.id === "assignedTo");
     if (assignedToFilter && !assignedToFilter.default) {
       // filter based on currently logged-in user
       this.currentUser
@@ -123,8 +172,12 @@ export class TodoListComponent implements OnInit {
     filter.default = filter.default ?? "current";
   }
 
-  createNew() {
+  override addNew() {
     this.showDetails(new Todo());
+  }
+
+  override onRowClick(entity: Todo) {
+    this.showDetails(entity);
   }
 
   showDetails(entity: Todo) {
