@@ -3,7 +3,10 @@ import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { FilterSelectionOption } from "../../../core/filter/filters/filters";
+import {
+  DataFilter,
+  FilterSelectionOption,
+} from "../../../core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
@@ -11,7 +14,6 @@ import { EntityListComponent } from "../../../core/entity-list/entity-list/entit
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
-import { WarningLevel } from "../../warning-level";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { merge } from "rxjs";
 import moment from "moment";
@@ -58,32 +60,16 @@ export class NotesManagerComponent implements OnInit {
   entityConstructor = Note;
   notes: Note[];
 
-  private statusFS: FilterSelectionOption<Note>[] = [
-    {
-      key: "urgent",
-      label: $localize`:Filter-option for notes:Urgent`,
-      filter: { "warningLevel.id": WarningLevel.URGENT },
-    },
-    {
-      key: "follow-up",
-      label: $localize`:Filter-option for notes:Needs Follow-Up`,
-      filter: {
-        "warningLevel.id": { $in: [WarningLevel.URGENT, WarningLevel.WARNING] },
-      },
-    },
-    { key: "", label: $localize`All`, filter: {} },
-  ];
-
   private dateFS: FilterSelectionOption<Note>[] = [
     {
       key: "current-week",
       label: $localize`:Filter-option for notes:This Week`,
-      filter: { date: this.getWeeksFilter(0) },
+      filter: { date: this.getWeeksFilter(0) } as DataFilter<any>,
     },
     {
       key: "last-week",
       label: $localize`:Filter-option for notes:Since Last Week`,
-      filter: { date: this.getWeeksFilter(1) },
+      filter: { date: this.getWeeksFilter(1) } as DataFilter<any>,
     },
     { key: "", label: $localize`All`, filter: {} },
   ];
@@ -147,11 +133,6 @@ export class NotesManagerComponent implements OnInit {
       (filter) => filter.type === "prebuilt",
     )) {
       switch (prebuiltFilter.id) {
-        case "status": {
-          prebuiltFilter["options"] = this.statusFS;
-          prebuiltFilter["default"] = "";
-          break;
-        }
         case "date": {
           prebuiltFilter["options"] = this.dateFS;
           prebuiltFilter["default"] = "current-week";
