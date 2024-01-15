@@ -26,6 +26,7 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./FormConfig";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { FieldGroup } from "../../entity-details/form/field-group";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -52,6 +53,46 @@ describe("EntityFormService", () => {
 
     await expectAsync(service.saveChanges(formGroup, entity)).toBeRejected();
     expect(entity.getId()).not.toBe("newId");
+  });
+
+  it("should remove fields without read permissions", async () => {
+    const entity = new Entity();
+    const fieldGroup: FieldGroup[] = [
+      { fields: ["foo", "bar"] },
+      { fields: ["name"] },
+      { fields: ["birthday"] },
+    ];
+
+    TestBed.inject(EntityAbility).update([
+      { subject: "Entity", action: "read", fields: ["foo", "name"] },
+    ]);
+
+    const filteredFieldGroup = service.filterFieldGroupsByPermissions(
+      fieldGroup,
+      entity,
+    );
+
+    expect(filteredFieldGroup.length).toBe(2);
+    expect(filteredFieldGroup[0].fields.length).toBe(1);
+    expect(filteredFieldGroup[1].fields.length).toBe(1);
+  });
+
+  it("should remove controls with read-only permissions from form", async () => {
+    const entity = new Entity();
+    const formGroup = new UntypedFormGroup({
+      name: new UntypedFormControl("name"),
+      foo: new UntypedFormControl("foo"),
+      bar: new UntypedFormControl("bar"),
+    });
+    TestBed.inject(EntityAbility).update([
+      { subject: "Entity", action: "update", fields: ["foo"] },
+    ]);
+
+    service.disableReadOnlyFormControls(formGroup, entity);
+
+    expect(formGroup.get("name").disabled).toBeTruthy();
+    expect(formGroup.get("foo").disabled).toBeFalse();
+    expect(formGroup.get("bar").disabled).toBeTruthy();
   });
 
   it("should update entity if saving is successful", async () => {

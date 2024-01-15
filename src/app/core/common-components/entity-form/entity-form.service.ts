@@ -94,7 +94,7 @@ export class EntityFormService {
         );
         return group;
       })
-      .filter((group) => group.fields.length !== 0);
+      .filter((group) => group.fields.length > 0);
   }
 
   disableReadOnlyFormControls<T extends Entity>(

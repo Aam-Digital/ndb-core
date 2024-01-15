@@ -64,21 +64,7 @@ export class EntityFormComponent<T extends Entity = Entity>
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    if (this.fieldGroups) {
-      this.fieldGroups = this.entityFormService.filterFieldGroupsByPermissions(
-        this.fieldGroups,
-        this.entity,
-      );
-    }
-
-    if (this.form) {
-      this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((_) => {
-        this.entityFormService.disableReadOnlyFormControls(
-          this.form,
-          this.entity,
-        );
-      });
-    }
+    this.applyFormFieldPermissions();
 
     if (changes.entity && this.entity) {
       this.changesSubscription?.unsubscribe();
@@ -101,6 +87,24 @@ export class EntityFormComponent<T extends Entity = Entity>
         this.form,
         this.entity,
       );
+    }
+  }
+
+  private applyFormFieldPermissions() {
+    if (this.fieldGroups) {
+      this.fieldGroups = this.entityFormService.filterFieldGroupsByPermissions(
+        this.fieldGroups,
+        this.entity,
+      );
+    }
+
+    if (this.form) {
+      this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((_) => {
+        this.entityFormService.disableReadOnlyFormControls(
+          this.form,
+          this.entity,
+        );
+      });
     }
   }
 
