@@ -10,14 +10,13 @@ export class ConfigurableEnumFilter<
     label: string,
     enumValues: ConfigurableEnumValue[],
   ) {
-    let options: FilterSelectionOption<T>[] = [];
-    options.push(
-      ...enumValues.map((enumValue: ConfigurableEnumValue) => ({
+    const options: FilterSelectionOption<T>[] = enumValues.map(
+      (enumValue: ConfigurableEnumValue) => ({
         key: enumValue.id,
         label: enumValue.label,
         color: enumValue.color,
         filter: { [name + ".id"]: enumValue.id } as DataFilter<T>,
-      })),
+      }),
     );
     super(name, options, label);
   }

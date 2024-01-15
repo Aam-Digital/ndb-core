@@ -64,7 +64,7 @@ describe("DateRangeFilterComponent", () => {
   it("should set the correct date filter when inputting a specific date range via the URL", () => {
     let dateFilter = new DateFilter("test", "test", []);
 
-    dateFilter.selectedOptionValues = ["1_2_3"];
+    dateFilter.selectedOptionValues = ["1", "2", "3"];
     component.filterConfig = dateFilter;
     expect(component.dateFilter.getFilter()).toEqual({});
 

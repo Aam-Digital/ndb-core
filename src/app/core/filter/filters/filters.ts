@@ -103,7 +103,7 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * If the given key is undefined or invalid, the returned filter matches any elements.
    */
   public getFilter(): DataFilter<T> {
-    let filters: DataFilter<T>[] = this.selectedOptionValues
+    const filters: DataFilter<T>[] = this.selectedOptionValues
       .map((value: string) => this.getOption(value))
       .filter((value: FilterSelectionOption<T>) => value !== undefined)
       .map((previousValue: FilterSelectionOption<T>) => {

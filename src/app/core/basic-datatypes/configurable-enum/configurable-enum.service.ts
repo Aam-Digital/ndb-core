@@ -30,7 +30,7 @@ export class ConfigurableEnumService {
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(
     id: string,
   ): T[] {
-    let configurableEnum = this.getEnum(id);
+    const configurableEnum = this.getEnum(id);
     return configurableEnum ? (configurableEnum.values as T[]) : [];
   }
 

@@ -24,7 +24,7 @@ export class DateFilter<T extends Entity> extends Filter<T> {
    * Returns the date range according to the selected option or dates
    */
   getDateRange(): DateRange<Date> {
-    let selectedOption = this.getSelectedOption();
+    const selectedOption = this.getSelectedOption();
     if (selectedOption) {
       return calculateDateRange(selectedOption);
     }
@@ -60,8 +60,8 @@ export class DateFilter<T extends Entity> extends Filter<T> {
     dateStr1: string,
     dateStr2: string,
   ): DateRange<Date> {
-    let date1 = moment(dateStr1).toDate();
-    let date2 = moment(dateStr2).toDate();
+    const date1 = moment(dateStr1).toDate();
+    const date2 = moment(dateStr2).toDate();
 
     return new DateRange(
       isValidDate(date1) ? date1 : undefined,
