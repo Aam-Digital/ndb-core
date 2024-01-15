@@ -9,7 +9,7 @@ import { MatSelectHarness } from "@angular/material/select/testing";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ActivatedRoute } from "@angular/router";
 
-export class ActivatedRouteMock {
+class ActivatedRouteMock {
   public snapshot = {
     queryParams: {},
   };
