@@ -20,10 +20,7 @@ export class DemoPermissionGeneratorService extends DemoDataGenerator<
     // This can be changed to experiment with different permission setups locally.
     // For the general demo mode everything is allowed
     const rules: DatabaseRules = {
-      user_app: [
-        { subject: "Child", action: "read" },
-        { subject: "Child", action: "manage", fields: ["name", "dateOfBirth"] },
-      ],
+      user_app: [{ subject: "all", action: "manage" }],
       admin_app: [{ subject: "all", action: "manage" }],
     };
     return [new Config(Config.PERMISSION_KEY, rules)];
