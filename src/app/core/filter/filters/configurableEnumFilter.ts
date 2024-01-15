@@ -1,7 +1,6 @@
 import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
-import { FilterSelectionOption, SelectableFilter } from "./filters";
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { DataFilter, FilterSelectionOption, SelectableFilter } from "./filters";
 
 export class ConfigurableEnumFilter<
   T extends Entity,

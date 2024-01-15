@@ -15,16 +15,7 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
-import {
-  BooleanFilterConfig,
-  DateRangeFilterConfigOption,
-} from "../../entity-list/EntityListConfig";
 import { Entity } from "../../entity/model/entity";
-import { DateRange } from "@angular/material/datepicker";
-import { isValidDate } from "../../../utils/utils";
-import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
-import moment from "moment/moment";
 import { MongoQuery } from "@casl/ability";
 
 /**

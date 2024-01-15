@@ -4,7 +4,10 @@ import { PrebuiltFilterConfig } from "../../../core/entity-list/EntityListConfig
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
 import moment from "moment";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
-import { FilterSelectionOption } from "../../../core/filter/filters/filters";
+import {
+  DataFilter,
+  FilterSelectionOption,
+} from "../../../core/filter/filters/filters";
 import { RouteTarget } from "../../../route-target";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Sort } from "@angular/material/sort";

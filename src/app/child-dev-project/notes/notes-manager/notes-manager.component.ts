@@ -3,7 +3,10 @@ import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { FilterSelectionOption } from "../../../core/filter/filters/filters";
+import {
+  DataFilter,
+  FilterSelectionOption,
+} from "../../../core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { LoggingService } from "../../../core/logging/logging.service";
@@ -22,7 +25,6 @@ import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouteTarget } from "../../../route-target";
-import { DataFilter } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 
 /**
  * additional config specifically for NotesManagerComponent

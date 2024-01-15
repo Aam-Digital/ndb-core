@@ -1,7 +1,6 @@
 import { Entity } from "../../entity/model/entity";
 import { BooleanFilterConfig } from "../../entity-list/EntityListConfig";
-import { SelectableFilter } from "./filters";
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { DataFilter, SelectableFilter } from "./filters";
 
 export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
   constructor(name: string, label: string, config?: BooleanFilterConfig) {
