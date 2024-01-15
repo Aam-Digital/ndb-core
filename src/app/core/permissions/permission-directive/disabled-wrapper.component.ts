@@ -54,6 +54,11 @@ export class DisabledWrapperComponent implements AfterViewInit {
     if (this.wrapper) {
       const buttonElement =
         this.wrapper.nativeElement.getElementsByTagName("button")[0];
+
+      if (!buttonElement) {
+        return;
+      }
+
       if (this.elementDisabled) {
         this.renderer.addClass(buttonElement, "mat-button-disabled");
         this.renderer.setAttribute(buttonElement, "disabled", "true");

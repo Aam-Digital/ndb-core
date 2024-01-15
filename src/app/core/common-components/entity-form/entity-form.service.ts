@@ -233,7 +233,7 @@ export class EntityFormService {
   }
 
   private checkFormValidity<T extends Entity>(form: EntityForm<T>) {
-    // errors regarding invalid fields wont be displayed unless marked as touched
+    // errors regarding invalid fields won't be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
       throw new InvalidFormFieldError();

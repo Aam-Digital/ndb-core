@@ -1,5 +1,5 @@
 import { Injectable } from "@angular/core";
-import { DatabaseRule, DatabaseRules } from "../permission-types";
+import { DatabaseRule, DatabaseRules, EntityAction } from "../permission-types";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
@@ -8,6 +8,8 @@ import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
+import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { Entity } from "../../entity/model/entity";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -17,6 +19,16 @@ import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
  */
 @Injectable()
 export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
+  readonly READ_PERMISSION_GROUP: EntityAction[] = [
+    "read",
+    "create",
+    "update",
+    "manage",
+    "delete",
+  ];
+
+  readonly WRITE_PERMISSION_GROUP: EntityAction[] = ["update", "manage"];
+
   constructor(
     private ability: EntityAbility,
     private sessionInfo: SessionSubject,
@@ -25,6 +37,14 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     logger: LoggingService,
   ) {
     super(Config, Config.PERMISSION_KEY, entityMapper, logger);
+  }
+
+  hasReadPermission(entity: Entity, field: string | FormFieldConfig): boolean {
+    return this._hasFieldPermission(entity, field, this.READ_PERMISSION_GROUP);
+  }
+
+  hasEditPermission(entity: Entity, field: string | FormFieldConfig): boolean {
+    return this._hasFieldPermission(entity, field, this.WRITE_PERMISSION_GROUP);
   }
 
   async initializeRules() {
@@ -92,5 +112,19 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
       return value;
     });
+  }
+
+  private _hasFieldPermission(
+    entity: Entity,
+    field: string | FormFieldConfig,
+    permissionGroup: EntityAction[],
+  ) {
+    let fieldId: string = typeof field === "string" ? field : field.id;
+    for (let i = 0; i < permissionGroup.length; i++) {
+      if (this.ability.can(permissionGroup[i], entity, fieldId)) {
+        return true;
+      }
+    }
+    return false;
   }
 }
