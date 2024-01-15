@@ -10,9 +10,8 @@ import {
 } from "@ucast/mongo2js";
 import moment from "moment";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
-import { Filter as EntityFilter } from "./filters/filters";
+import { DataFilter, Filter as EntityFilter } from "./filters/filters";
 import { MongoQuery } from "@casl/ability";
-import { DataFilter } from "./filters/filters";
 
 /**
  * Utility service to help handling and aligning filters with entities.
@@ -54,7 +53,6 @@ export class FilterService {
    * ```
    * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
    */
-  // todo: check usage for array usage (typing not working)
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
     return this.filterFactory<T>(filter as MongoQuery<T>);
   }
