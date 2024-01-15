@@ -63,7 +63,7 @@ export class EnumDropdownComponent implements OnChanges {
     if (changes.hasOwnProperty("enumId") || changes.hasOwnProperty("form")) {
       this.invalidOptions = this.prepareInvalidOptions();
     }
-    this.options = [...this.enumEntity.values, ...this.invalidOptions];
+    this.options = [...this.enumEntity?.values, ...this.invalidOptions];
   }
 
   private prepareInvalidOptions(): ConfigurableEnumValue[] {

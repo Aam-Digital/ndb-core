@@ -1,5 +1,5 @@
 import { FilterSelectionOption } from "../filter/filters/filters";
-import { FormFieldConfig } from "../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../common-components/entity-form/FormConfig";
 import { ExportColumnConfig } from "../export/data-transformation-service/export-column-config";
 import { Sort } from "@angular/material/sort";
 import { unitOfTime } from "moment";
@@ -17,13 +17,15 @@ export interface EntityListConfig {
   entity?: string;
 
   /**
-   * The columns to be displayed in the table
+   * The columns to be displayed in the table.
+   *
+   * If any special columns aside from the entity's fields are needed, add them here.
    */
   columns: (FormFieldConfig | string)[];
 
   /**
    * Optional config for which columns are displayed.
-   * By default all columns are shown
+   * By default, all columns are shown
    */
   columnGroups?: ColumnGroupsConfig;
 
@@ -55,7 +57,7 @@ export interface ColumnGroupsConfig {
   default?: string;
 
   /**
-   * The name of the group group that should be selected by default on a mobile device.
+   * The name of the group that should be selected by default on a mobile device.
    * Default is the name of the first group.
    */
   mobile?: string;
@@ -82,7 +84,6 @@ export interface BasicFilterConfig {
 export interface BooleanFilterConfig extends BasicFilterConfig {
   true: string;
   false: string;
-  all: string;
 }
 
 export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {

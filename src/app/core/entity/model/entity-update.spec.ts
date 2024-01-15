@@ -66,10 +66,14 @@ describe("entity-update", () => {
   });
 
   it("does not change the list when an updated entity is not in the list", () => {
-    const newEntities = applyUpdate<TestEntity>(existingEntities, {
-      entity: new TestEntity("n6", 1),
-      type: "update",
-    });
+    const newEntities = applyUpdate<TestEntity>(
+      existingEntities,
+      {
+        entity: new TestEntity("n6", 1),
+        type: "update",
+      },
+      false,
+    );
     expect(newEntities).toEqual(existingEntities);
   });
 

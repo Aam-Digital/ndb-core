@@ -10,7 +10,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { ImportService } from "../import.service";
-import { Entity } from "../../entity/model/entity";
+import { School } from "../../../child-dev-project/schools/model/school";
 
 describe("ImportReviewDataComponent", () => {
   let component: ImportReviewDataComponent;
@@ -35,11 +35,14 @@ describe("ImportReviewDataComponent", () => {
 
     fixture = TestBed.createComponent(ImportReviewDataComponent);
     component = fixture.componentInstance;
+
+    component.entityType = School.ENTITY_TYPE;
+
     fixture.detectChanges();
   });
 
   it("should parse data whenever it changes", fakeAsync(() => {
-    const testEntities = [new Entity("1")];
+    const testEntities = [new School("1")];
     mockImportService.transformRawDataToEntities.and.resolveTo(testEntities);
     component.columnMapping = [
       { column: "x", propertyName: "name" },

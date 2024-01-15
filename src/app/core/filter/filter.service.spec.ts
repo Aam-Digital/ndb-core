@@ -2,11 +2,11 @@ import { TestBed } from "@angular/core/testing";
 
 import { FilterService } from "./filter.service";
 import { defaultInteractionTypes } from "../config/default-config/default-interaction-types";
-import { DataFilter } from "../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Note } from "../../child-dev-project/notes/model/note";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 import moment from "moment";
+import { DataFilter } from "./filters/filters";
 
 describe("FilterService", () => {
   let service: FilterService;

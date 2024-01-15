@@ -113,14 +113,15 @@
     </mat-form-field>
   </div>
 
-  <app-entity-subrecord
+  <app-entities-table
+    [entityType]="EventNote"
     [records]="entity.events"
-    [columns]="eventsColumns"
+    [customColumns]="eventsColumns"
     clickMode="none"
     (rowClick)="showEventDetails($event)"
     [editable]="false"
   >
-  </app-entity-subrecord>
+  </app-entities-table>
 
   <app-attendance-calendar
     [records]="entity.events"

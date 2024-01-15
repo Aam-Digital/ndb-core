@@ -2,10 +2,6 @@ import { InteractionType } from "../../../child-dev-project/notes/model/interact
 
 export const defaultInteractionTypes: InteractionType[] = [
   {
-    id: "",
-    label: "",
-  },
-  {
     id: "VISIT",
     label: $localize`:Interaction type/Category of a Note:Home Visit`,
   },

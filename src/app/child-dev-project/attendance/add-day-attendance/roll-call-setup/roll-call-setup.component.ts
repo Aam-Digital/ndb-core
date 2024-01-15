@@ -15,7 +15,6 @@ import { AlertService } from "../../../../core/alerts/alert.service";
 import { AlertDisplay } from "../../../../core/alerts/alert-display";
 import { FormsModule, NgModel } from "@angular/forms";
 import { FilterService } from "../../../../core/filter/filter.service";
-import { DataFilter } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterConfig } from "../../../../core/entity-list/EntityListConfig";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -27,6 +26,7 @@ import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatButtonModule } from "@angular/material/button";
 import { CurrentUserSubject } from "../../../../core/session/current-user-subject";
+import { DataFilter } from "../../../../core/filter/filters/filters";
 
 @Component({
   selector: "app-roll-call-setup",
