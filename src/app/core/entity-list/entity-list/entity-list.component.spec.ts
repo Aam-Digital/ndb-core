@@ -21,11 +21,13 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
   let fixture: ComponentFixture<EntityListComponent<Entity>>;
   let loader: HarnessLoader;
+  let entityAbility: EntityAbility;
 
   const testConfig: EntityListConfig = {
     title: "Children List",
@@ -95,6 +97,8 @@ describe("EntityListComponent", () => {
         { provide: FormDialogService, useValue: null },
       ],
     }).compileComponents();
+    entityAbility = TestBed.inject(EntityAbility);
+    spyOn(entityAbility, "can").and.returnValue(true);
   }));
 
   it("should create", () => {

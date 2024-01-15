@@ -7,21 +7,21 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { AlertService } from "../../alerts/alert.service";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
-import { AbilityService } from "../../permissions/ability/ability.service";
+import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("FormComponent", () => {
   let component: FormComponent<Child>;
   let fixture: ComponentFixture<FormComponent<Child>>;
 
-  let abilityService: AbilityService;
+  let entityAbility: EntityAbility;
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [FormComponent, MockedTestingModule.withState()],
       providers: [{ provide: ConfirmationDialogService, useValue: null }],
     }).compileComponents();
-    abilityService = TestBed.inject(AbilityService);
-    abilityService.initializeRules();
+    entityAbility = TestBed.inject(EntityAbility);
+    spyOn(entityAbility, "can").and.returnValue(true);
   }));
 
   beforeEach(() => {

@@ -18,6 +18,7 @@ import {
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { FieldGroup } from "../../entity-details/form/field-group";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -76,6 +77,35 @@ export class EntityFormService {
         `Could not create form config for ${fullField.id}: ${err}`,
       );
     }
+  }
+
+  filterFieldGroupsByPermissions<T extends Entity = Entity>(
+    fieldGroups: FieldGroup[],
+    entity: T,
+  ): FieldGroup[] {
+    return fieldGroups
+      .map((group) => {
+        group.fields = group.fields.filter((field) =>
+          this.ability.can(
+            "read",
+            entity,
+            typeof field === "string" ? field : field.id,
+          ),
+        );
+        return group;
+      })
+      .filter((group) => group.fields.length !== 0);
+  }
+
+  disableReadOnlyFormControls<T extends Entity>(
+    form: EntityForm<T>,
+    entity: T,
+  ) {
+    Object.keys(form.controls).forEach((fieldId) => {
+      if (!this.ability.can("update", entity, fieldId)) {
+        form.get(fieldId).disable({ onlySelf: true, emitEvent: false });
+      }
+    });
   }
 
   private addSchemaToFormField(
