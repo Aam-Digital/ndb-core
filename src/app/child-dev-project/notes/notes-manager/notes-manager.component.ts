@@ -56,9 +56,8 @@ export class NotesManagerComponent implements OnInit {
   @Input() showEventNotesToggle: boolean;
 
   config: EntityListConfig;
-  noteConstructor = Note;
-  notes: Note[] = [];
-  isLoading: boolean = true;
+  entityConstructor = Note;
+  notes: Note[];
 
   private statusFS: FilterSelectionOption<Note>[] = [
     {
@@ -117,7 +116,6 @@ export class NotesManagerComponent implements OnInit {
       const eventNotes = await this.entityMapperService.loadType(EventNote);
       notes = notes.concat(eventNotes);
     }
-    this.isLoading = false;
     return notes;
   }
 
@@ -141,7 +139,6 @@ export class NotesManagerComponent implements OnInit {
 
   async updateIncludeEvents() {
     this.includeEventNotes = !this.includeEventNotes;
-    this.isLoading = true;
     this.notes = await this.loadEntities();
   }
 

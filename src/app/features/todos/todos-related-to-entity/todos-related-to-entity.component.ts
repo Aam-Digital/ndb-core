@@ -1,15 +1,15 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Entity } from "../../../core/entity/model/entity";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { TodoDetailsComponent } from "../todo-details/todo-details.component";
-import { DataFilter } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { DataFilter } from "../../../core/filter/filters/filters";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -17,11 +17,11 @@ import { FormsModule } from "@angular/forms";
   templateUrl: "./todos-related-to-entity.component.html",
   styleUrls: ["./todos-related-to-entity.component.scss"],
   standalone: true,
-  imports: [EntitySubrecordComponent, MatSlideToggleModule, FormsModule],
+  imports: [EntitiesTableComponent, MatSlideToggleModule, FormsModule],
 })
 export class TodosRelatedToEntityComponent implements OnInit {
-  entries: Todo[] = [];
-  isLoading: boolean;
+  entries: Todo[];
+  entityCtr = Todo;
 
   @Input() entity: Entity;
   @Input() columns: FormFieldConfig[] = [
@@ -42,7 +42,6 @@ export class TodosRelatedToEntityComponent implements OnInit {
 
   // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
   filter: DataFilter<Todo> = { isActive: true };
-  includeInactive: boolean;
   backgroundColorFn = (r: Todo) => {
     if (!r.isActive) {
       return "#e0e0e0";
@@ -69,9 +68,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
   }
 
   private async loadDataFor(entityId: string): Promise<Todo[]> {
-    this.isLoading = true;
-
-    const data = await this.dbIndexingService.queryIndexDocs(
+    return this.dbIndexingService.queryIndexDocs(
       Todo,
       "todo_index/by_" + this.referenceProperty,
       {
@@ -80,9 +77,6 @@ export class TodosRelatedToEntityComponent implements OnInit {
         descending: true,
       },
     );
-
-    this.isLoading = false;
-    return data;
   }
 
   public getNewEntryFunction(): () => Todo {

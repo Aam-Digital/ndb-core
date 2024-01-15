@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { DataFilter } from "../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../entity/model/entity";
 import {
   allInterpreters,
@@ -12,6 +11,8 @@ import {
 import moment from "moment";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
 import { Filter as EntityFilter } from "./filters/filters";
+import { MongoQuery } from "@casl/ability";
+import { DataFilter } from "./filters/filters";
 
 /**
  * Utility service to help handling and aligning filters with entities.
@@ -55,7 +56,7 @@ export class FilterService {
    */
   // todo: check usage for array usage (typing not working)
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
-    return this.filterFactory<T>(filter);
+    return this.filterFactory<T>(filter as MongoQuery<T>);
   }
 
   /**

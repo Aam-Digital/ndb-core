@@ -98,7 +98,6 @@ describe("ChildrenListComponent", () => {
   });
 
   it("should load children on init", async () => {
-    component.isLoading = true;
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     mockChildrenService.getChildren.and.resolveTo([child1, child2]);
@@ -106,6 +105,5 @@ describe("ChildrenListComponent", () => {
 
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
     expect(component.childrenList).toEqual([child1, child2]);
-    expect(component.isLoading).toBeFalse();
   });
 });

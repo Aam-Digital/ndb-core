@@ -15,8 +15,25 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
+import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
+import {
+  BooleanFilterConfig,
+  DateRangeFilterConfigOption,
+} from "../../entity-list/EntityListConfig";
 import { Entity } from "../../entity/model/entity";
+import { DateRange } from "@angular/material/datepicker";
+import { isValidDate } from "../../../utils/utils";
+import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
+import moment from "moment/moment";
+import { MongoQuery } from "@casl/ability";
+
+/**
+ * This filter can be used to filter an array of entities.
+ * It has to follow the MongoDB Query Syntax {@link https://www.mongodb.com/docs/manual/reference/operator/query/}.
+ *
+ * The filter is parsed using ucast {@link https://github.com/stalniy/ucast/tree/master/packages/mongo2js}
+ */
+export type DataFilter<T> = MongoQuery<T> | {};
 
 export abstract class Filter<T extends Entity> {
   public selectedOptionValues: string[] = [];

@@ -8,16 +8,15 @@ import {
 } from "@angular/core";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
 import { ActivatedRoute, Router } from "@angular/router";
 import { ListFilterComponent } from "../list-filter/list-filter.component";
 import { NgForOf, NgIf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-filter/date-range-filter.component";
-import { Filter } from "../filters/filters";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { FilterService } from "../filter.service";
+import { DataFilter, Filter } from "../filters/filters";
 
 /**
  * This component can be used to display filters, for example above tables.
