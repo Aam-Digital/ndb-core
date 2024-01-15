@@ -14,7 +14,6 @@ import { RouteTarget } from "../../../route-target";
     <app-entity-list
       [allEntities]="childrenList"
       [listConfig]="listConfig"
-      [isLoading]="isLoading"
       [entityConstructor]="childConstructor"
     ></app-entity-list>
   `,
@@ -22,10 +21,9 @@ import { RouteTarget } from "../../../route-target";
   imports: [EntityListComponent],
 })
 export class ChildrenListComponent implements OnInit {
-  childrenList: Child[] = [];
+  childrenList: Child[];
   listConfig: EntityListConfig;
   childConstructor = Child;
-  isLoading = true;
 
   constructor(
     private childrenService: ChildrenService,
@@ -40,6 +38,5 @@ export class ChildrenListComponent implements OnInit {
         (this.listConfig = data.config),
     );
     this.childrenList = await this.childrenService.getChildren();
-    this.isLoading = false;
   }
 }
