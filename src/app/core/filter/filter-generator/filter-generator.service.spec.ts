@@ -155,11 +155,6 @@ describe("FilterGeneratorService", () => {
     expect(filterOptions.label).toEqual(schema.label);
     expect(filterOptions.name).toEqual("schoolId");
     const allRelations = [csr1, csr2, csr3, csr4];
-    // const allFilter: FilterSelectionOption<Entity> = filterOptions.options.find(
-    //   (opt) => opt.key === "all",
-    // );
-    // expect(allFilter.label).toEqual("All");
-    // expect(filter(allRelations, allFilter)).toEqual(allRelations);
     const school1Filter: FilterSelectionOption<Entity> =
       filterOptions.options.find((opt) => opt.key === school1.getId());
     expect(school1Filter.label).toEqual(school1.name);
