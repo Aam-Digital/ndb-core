@@ -67,7 +67,7 @@ export class EntityFormComponent<T extends Entity = Entity>
     if (this.fieldGroups) {
       this.fieldGroups = this.entityFormService.filterFieldGroupsByPermissions(
         this.fieldGroups,
-        this.entit,
+        this.entity,
       );
     }
 
@@ -75,7 +75,7 @@ export class EntityFormComponent<T extends Entity = Entity>
       this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((_) => {
         this.entityFormService.disableReadOnlyFormControls(
           this.form,
-          this.entit,
+          this.entity,
         );
       });
     }
