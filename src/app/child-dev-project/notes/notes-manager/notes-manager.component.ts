@@ -14,7 +14,6 @@ import { EntityListComponent } from "../../../core/entity-list/entity-list/entit
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
-import { WarningLevel } from "../../warning-level";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { merge } from "rxjs";
 import moment from "moment";
@@ -60,21 +59,6 @@ export class NotesManagerComponent implements OnInit {
   config: EntityListConfig;
   entityConstructor = Note;
   notes: Note[];
-
-  private statusFS: FilterSelectionOption<Note>[] = [
-    {
-      key: "urgent",
-      label: $localize`:Filter-option for notes:Urgent`,
-      filter: { "warningLevel.id": WarningLevel.URGENT } as DataFilter<any>,
-    },
-    {
-      key: "follow-up",
-      label: $localize`:Filter-option for notes:Needs Follow-Up`,
-      filter: {
-        "warningLevel.id": { $in: [WarningLevel.WARNING] },
-      } as DataFilter<any>,
-    },
-  ];
 
   private dateFS: FilterSelectionOption<Note>[] = [
     {
@@ -149,11 +133,6 @@ export class NotesManagerComponent implements OnInit {
       (filter) => filter.type === "prebuilt",
     )) {
       switch (prebuiltFilter.id) {
-        case "status": {
-          prebuiltFilter["options"] = this.statusFS;
-          prebuiltFilter["default"] = "";
-          break;
-        }
         case "date": {
           prebuiltFilter["options"] = this.dateFS;
           prebuiltFilter["default"] = "current-week";
