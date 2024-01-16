@@ -12,12 +12,10 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../session/session-states/login-state.enum";
-import { EntityAbility } from "../../permissions/ability/entity-ability";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any>;
   let fixture: ComponentFixture<EntitySelectComponent<any>>;
-  let entityAbility: EntityAbility;
 
   const testUsers: Entity[] = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
     const user = new User();
@@ -38,8 +36,6 @@ describe("EntitySelectComponent", () => {
         ]),
       ],
     }).compileComponents();
-    entityAbility = TestBed.inject(EntityAbility);
-    spyOn(entityAbility, "can").and.returnValue(true);
   }));
 
   beforeEach(() => {

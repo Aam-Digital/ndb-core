@@ -7,6 +7,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
 import { EntityFormService } from "../entity-form.service";
 import { DateWithAge } from "../../../basic-datatypes/date-with-age/dateWithAge";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 describe("EntityFormComponent", () => {
   let component: EntityFormComponent<Child>;
@@ -53,6 +54,39 @@ describe("EntityFormComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
+  });
+
+  it("should remove fields without read permissions", async () => {
+    component.fieldGroups = [
+      { fields: ["foo", "bar"] },
+      { fields: ["name"] },
+      { fields: ["birthday"] },
+    ];
+
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "read", fields: ["foo", "name"] },
+    ]);
+
+    component.ngOnChanges({ entity: true, form: true } as any);
+
+    expect(component.fieldGroups).toEqual([
+      { fields: ["foo"] },
+      { fields: ["name"] },
+    ]);
+  });
+
+  it("should disable read-only fields after form enable", async () => {
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "read", fields: ["projectNumber", "name"] },
+      { subject: "Child", action: "update", fields: ["name"] },
+    ]);
+
+    component.ngOnChanges({ entity: true, form: true } as any);
+
+    component.form.enable();
+
+    expect(component.form.get("name").enabled).toBeTrue();
+    expect(component.form.get("projectNumber").disabled).toBeTrue();
   });
 
   it("should not change anything if changed entity has same values as form", () => {

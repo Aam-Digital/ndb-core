@@ -18,7 +18,6 @@ import {
 } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { FieldGroup } from "../../entity-details/form/field-group";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -79,24 +78,6 @@ export class EntityFormService {
     }
   }
 
-  filterFieldGroupsByPermissions<T extends Entity = Entity>(
-    fieldGroups: FieldGroup[],
-    entity: T,
-  ): FieldGroup[] {
-    return fieldGroups
-      .map((group) => {
-        group.fields = group.fields.filter((field) =>
-          this.ability.can(
-            "read",
-            entity,
-            typeof field === "string" ? field : field.id,
-          ),
-        );
-        return group;
-      })
-      .filter((group) => group.fields.length > 0);
-  }
-
   disableReadOnlyFormControls<T extends Entity>(
     form: EntityForm<T>,
     entity: T,
@@ -148,6 +129,7 @@ export class EntityFormService {
     formFields: ColumnConfig[],
     entity: T,
     forTable = false,
+    withPermissions = true,
   ): EntityForm<T> {
     const formConfig = {};
     const copy = entity.copy();
@@ -164,6 +146,11 @@ export class EntityFormService {
     const sub = group.valueChanges.subscribe(
       () => (this.unsavedChanges.pending = group.dirty),
     );
+
+    if (withPermissions) {
+      const disableSub = group.statusChanges.subscribe((value) => value);
+    }
+
     this.subscriptions.push(sub);
 
     return group;

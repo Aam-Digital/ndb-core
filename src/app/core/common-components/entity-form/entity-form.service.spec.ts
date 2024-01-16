@@ -26,7 +26,6 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./FormConfig";
 import { TEST_USER } from "../../user/demo-user-generator.service";
-import { FieldGroup } from "../../entity-details/form/field-group";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -55,30 +54,7 @@ describe("EntityFormService", () => {
     expect(entity.getId()).not.toBe("newId");
   });
 
-  it("should remove fields without read permissions", async () => {
-    const entity = new Entity();
-    const fieldGroup: FieldGroup[] = [
-      { fields: ["foo", "bar"] },
-      { fields: ["name"] },
-      { fields: ["birthday"] },
-    ];
-
-    TestBed.inject(EntityAbility).update([
-      { subject: "Entity", action: "read", fields: ["foo", "name"] },
-    ]);
-
-    const filteredFieldGroup = service.filterFieldGroupsByPermissions(
-      fieldGroup,
-      entity,
-    );
-
-    expect(filteredFieldGroup).toEqual([
-      { fields: ["foo"] },
-      { fields: ["name"] },
-    ]);
-  });
-
-  it("should remove controls with read-only permissions from form", async () => {
+  it("should remove controls with read-only permissions from form", () => {
     const entity = new Entity();
     const formGroup = new UntypedFormGroup({
       name: new UntypedFormControl("name"),

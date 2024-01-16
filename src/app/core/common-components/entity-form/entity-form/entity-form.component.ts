@@ -1,10 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityForm, EntityFormService } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -16,6 +10,7 @@ import { Subscription } from "rxjs";
 import moment from "moment";
 import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../entity-details/form/field-group";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -61,6 +56,7 @@ export class EntityFormComponent<T extends Entity = Entity>
     private entityMapper: EntityMapperService,
     private confirmationDialog: ConfirmationDialogService,
     private entityFormService: EntityFormService,
+    private ability: EntityAbility,
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
@@ -92,18 +88,19 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   private applyFormFieldPermissions() {
     if (this.fieldGroups) {
-      this.fieldGroups = this.entityFormService.filterFieldGroupsByPermissions(
+      this.fieldGroups = this.filterFieldGroupsByPermissions(
         this.fieldGroups,
         this.entity,
       );
     }
 
     if (this.form) {
-      this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((_) => {
-        this.entityFormService.disableReadOnlyFormControls(
-          this.form,
-          this.entity,
-        );
+      this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
+        if (status !== "DISABLED")
+          this.entityFormService.disableReadOnlyFormControls(
+            this.form,
+            this.entity,
+          );
       });
     }
   }
@@ -151,6 +148,24 @@ export class EntityFormComponent<T extends Entity = Entity>
     return Object.entries(this.form.getRawValue()).every(([key, value]) =>
       this.entityEqualsFormValue(entity[key], value),
     );
+  }
+
+  private filterFieldGroupsByPermissions<T extends Entity = Entity>(
+    fieldGroups: FieldGroup[],
+    entity: ,
+  ): FieldGroup[] {
+    return fieldGroups
+      .map((group) => {
+        group.fields = group.fields.filter((field) =>
+          this.ability.can(
+            "read",
+            entity,
+            typeof field === "string" ? field : field.i,
+          ,
+        );
+        return group;
+      })
+      .filter((group) => group.fields.length > 0);
   }
 
   private entityEqualsFormValue(entityValue, formValue) {
