@@ -38,7 +38,6 @@ export class ConfigurableEnumService {
     if (!this.enums) {
       return;
     }
-    // TODO or de we rather want to pass full IDs around here as well?
     const entityId = Entity.createPrefixedId(ConfigurableEnum.ENTITY_TYPE, id);
     if (
       !this.enums.has(entityId) &&

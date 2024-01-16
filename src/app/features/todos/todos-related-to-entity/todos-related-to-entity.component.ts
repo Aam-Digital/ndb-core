@@ -35,7 +35,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
     { id: "completed", hideFromForm: true },
   ];
 
-  /** the property name of the Todo that contains the ids referencing related entities */
+  /** the property name of the entity that contains the ids referencing related entities */
   private referenceProperty: keyof Todo & string = "relatedEntities";
 
   showInactive: boolean;
