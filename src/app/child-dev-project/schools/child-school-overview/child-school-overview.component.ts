@@ -66,6 +66,7 @@ export class ChildSchoolOverviewComponent
 
   async ngOnInit() {
     this.mode = this.inferMode(this.entity);
+    this.showInactive = this.mode === "child";
     this.switchRelatedEntityColumnForMode();
 
     await super.ngOnInit();
