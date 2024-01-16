@@ -158,7 +158,7 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   private filterFieldGroupsByPermissions<T extends Entity = Entity>(
     fieldGroups: FieldGroup[],
-    entity: Entit,
+    entity: Entity,
   ): FieldGroup[] {
     return fieldGroups
       .map((group) => {
