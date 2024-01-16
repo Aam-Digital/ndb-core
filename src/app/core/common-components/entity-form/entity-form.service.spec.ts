@@ -91,9 +91,9 @@ describe("EntityFormService", () => {
 
     service.disableReadOnlyFormControls(formGroup, entity);
 
-    expect(formGroup.get("name").disabled).toBeTruthy();
+    expect(formGroup.get("name").disabled).toBeTrue();
     expect(formGroup.get("foo").disabled).toBeFalse();
-    expect(formGroup.get("bar").disabled).toBeTruthy();
+    expect(formGroup.get("bar").disabled).toBeTrue();
   });
 
   it("should update entity if saving is successful", async () => {
