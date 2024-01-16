@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityForm, EntityFormService } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
@@ -152,7 +158,7 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   private filterFieldGroupsByPermissions<T extends Entity = Entity>(
     fieldGroups: FieldGroup[],
-    entity: ,
+    entity: Entit,
   ): FieldGroup[] {
     return fieldGroups
       .map((group) => {
@@ -160,8 +166,8 @@ export class EntityFormComponent<T extends Entity = Entity>
           this.ability.can(
             "read",
             entity,
-            typeof field === "string" ? field : field.i,
-          ,
+            typeof field === "string" ? field : field.id,
+          ),
         );
         return group;
       })
