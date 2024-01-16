@@ -99,7 +99,6 @@ export class QueryService {
         count: this.count,
         sum: this.sum,
         avg: this.avg,
-        addPrefix: this.addPrefix,
         toEntities: this.toEntities.bind(this),
         getRelated: this.getRelated.bind(this),
         filterByObjectAttribute: this.filterByObjectAttribute,
@@ -197,16 +196,6 @@ export class QueryService {
   }
 
   /**
-   * Adds the prefix and a colon (":") to each string in a array. Does nothing if the string already starts with the prefix.
-   * @param ids a string of ids
-   * @param prefix the prefix which should be added to the string
-   * @returns a list where every string has the prefix
-   */
-  private addPrefix(ids: string[], prefix: string): string[] {
-    return ids.map((id) => Entity.createPrefixedId(prefix, id));
-  }
-
-  /**
    * Creates an array containing the value of each key of the object.
    * e.g. `{a: 1, b: 2} => [1,2]`
    * This should be used when iterating over all documents of a given entity type because they are stored as
@@ -271,16 +260,15 @@ export class QueryService {
   /**
    * Turns a list of ids (with the entity prefix) into a list of entities
    * @param ids the array of ids with entity prefix
-   * @param entityPrefix (Optional) entity type prefix that should be added to the given ids where prefix is still missing
+   * @param entityPrefix indicate the type of entity that should be loaded. This is required for pre-loading the required entities.
    * @returns a list of entity objects
    */
-  private toEntities(ids: string[], entityPrefix?: string): Entity[] {
+  private toEntities(ids: string[], entityPrefix: string): Entity[] {
+    if (!entityPrefix) {
+      throw new Error("Entity type not defined");
+    }
     if (!ids) {
       return [];
-    }
-
-    if (entityPrefix) {
-      ids = this.addPrefix(ids, entityPrefix);
     }
 
     return ids

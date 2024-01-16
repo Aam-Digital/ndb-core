@@ -163,7 +163,7 @@ describe("EntitiesTableComponent", () => {
 
     const sortedIds = component.recordsDataSource
       ._orderData(component.recordsDataSource.data)
-      .map((note) => note.record.getId());
+      .map((note) => note.record.getId(true));
     expect(sortedIds).toEqual(["0", "3", "1", "2"]);
   });
 

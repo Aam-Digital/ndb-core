@@ -90,8 +90,8 @@ describe("QueryService", () => {
     const maleChildrenOnPrivateSchoolsQuery = `
       ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
-      [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique
-      :toEntities:filterByObjectAttribute(gender, id, M)`;
+      [*isActive=true].childId:unique:toEntities(${Child.ENTITY_TYPE})
+      :filterByObjectAttribute(gender, id, M)`;
 
     const maleChildrenOnPrivateSchools = await queryData(
       maleChildrenOnPrivateSchoolsQuery,
@@ -101,7 +101,7 @@ describe("QueryService", () => {
     const childrenVisitingAnySchoolQuery = `
       ${School.ENTITY_TYPE}:toArray
       :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
-      [*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
+      [*isActive=true].childId:unique:toEntities(${Child.ENTITY_TYPE})`;
     const childrenVisitingAnySchool = await queryData(
       childrenVisitingAnySchoolQuery,
     );
@@ -176,7 +176,7 @@ describe("QueryService", () => {
     const childrenThatAttendedSomethingQuery = `
       ${EventNote.ENTITY_TYPE}:toArray[*date > ?]
       :getParticipantsWithAttendance(PRESENT)
-      :addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`;
+      :unique:toEntities(${Child.ENTITY_TYPE})`;
     const childrenThatAttendedSomething = await queryData(
       childrenThatAttendedSomethingQuery,
       moment().subtract(1, "week").toDate(),
@@ -218,8 +218,8 @@ describe("QueryService", () => {
       ${School.ENTITY_TYPE}:toArray[*privateSchool=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
-      :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
-      :toEntities:filterByObjectAttribute(gender, id, F)`;
+      :getParticipantsWithAttendance(PRESENT):unique
+      :toEntities(${Child.ENTITY_TYPE}):filterByObjectAttribute(gender, id, F)`;
     const femaleParticipantsInPrivateSchools = await queryData(
       femaleParticipantsPrivateSchoolQuery,
     );
@@ -231,8 +231,8 @@ describe("QueryService", () => {
       ${School.ENTITY_TYPE}:toArray[*privateSchool!=true]
       :getRelated(${RecurringActivity.ENTITY_TYPE}, linkedGroups)
       :getRelated(${EventNote.ENTITY_TYPE}, relatesTo)
-      :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
-      :toEntities`;
+      :getParticipantsWithAttendance(PRESENT):unique
+      :toEntities(${Child.ENTITY_TYPE})`;
     const participantsNotPrivateSchool = await queryData(
       participantsNotPrivateSchoolQuery,
     );
@@ -240,8 +240,8 @@ describe("QueryService", () => {
 
     const attendedParticipantsQuery = `
       ${EventNote.ENTITY_TYPE}:toArray
-      :getParticipantsWithAttendance(PRESENT):addPrefix(${Child.ENTITY_TYPE}):unique
-      :toEntities`;
+      :getParticipantsWithAttendance(PRESENT):unique
+      :toEntities(${Child.ENTITY_TYPE})`;
     const attendedParticipants = await queryData(attendedParticipantsQuery);
     expectEntitiesToMatch(attendedParticipants, [
       femalePrivatePresent,
@@ -443,28 +443,6 @@ describe("QueryService", () => {
     );
 
     expectEntitiesToMatch(eventsWithNotes, [note1, note2, eventNote]);
-  });
-
-  it("should do addPrefix as part of toEntities if optional parameter is given", async () => {
-    const child1 = await createChild();
-    const child2 = await createChild();
-    const child3 = await createChild();
-    await createSchool([child1, child3, child2]);
-
-    const queryWithAddPrefix = `
-      ${School.ENTITY_TYPE}:toArray
-      :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
-      .childId:addPrefix(${Child.ENTITY_TYPE}):toEntities.gender`;
-    const queryWithoutAddPrefix = `
-      ${School.ENTITY_TYPE}:toArray
-      :getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)
-      .childId:toEntities(${Child.ENTITY_TYPE}).gender`;
-
-    const resultWithAddPrefix = await queryData(queryWithAddPrefix);
-    const resultWithoutAddPrefix = await queryData(queryWithoutAddPrefix);
-
-    expect(resultWithoutAddPrefix).toHaveSize(3);
-    expect(resultWithoutAddPrefix).toEqual(resultWithAddPrefix);
   });
 
   it("should create an attendance array with the current school", async () => {
