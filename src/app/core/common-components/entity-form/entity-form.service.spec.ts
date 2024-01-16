@@ -72,9 +72,10 @@ describe("EntityFormService", () => {
       entity,
     );
 
-    expect(filteredFieldGroup.length).toBe(2);
-    expect(filteredFieldGroup[0].fields.length).toBe(1);
-    expect(filteredFieldGroup[1].fields.length).toBe(1);
+    expect(filteredFieldGroup).toEqual([
+      { fields: ["foo"] },
+      { fields: ["name"] },
+    ]);
   });
 
   it("should remove controls with read-only permissions from form", async () => {
