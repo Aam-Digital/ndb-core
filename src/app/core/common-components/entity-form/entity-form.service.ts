@@ -124,12 +124,13 @@ export class EntityFormService {
    * @param formFields
    * @param entity
    * @param forTable
+   * @param withPermissionCheck enable permission based field filter
    */
   public createFormGroup<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
     forTable = false,
-    withPermissions = true,
+    withPermissionCheck = true,
   ): EntityForm<T> {
     const formConfig = {};
     const copy = entity.copy();
@@ -143,15 +144,21 @@ export class EntityFormService {
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
-    const sub = group.valueChanges.subscribe(
+    const valueChangesSubscription = group.valueChanges.subscribe(
       () => (this.unsavedChanges.pending = group.dirty),
     );
 
-    if (withPermissions) {
-      const disableSub = group.statusChanges.subscribe((value) => value);
+    if (withPermissionCheck) {
+      const statusChangesSubscription = group.statusChanges.subscribe(
+        (status) => {
+          if (status !== "DISABLED")
+            this.disableReadOnlyFormControls(group, entity);
+        },
+      );
+      this.subscriptions.push(statusChangesSubscription);
     }
 
-    this.subscriptions.push(sub);
+    this.subscriptions.push(valueChangesSubscription);
 
     return group;
   }

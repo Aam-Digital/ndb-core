@@ -99,16 +99,6 @@ export class EntityFormComponent<T extends Entity = Entity>
         this.entity,
       );
     }
-
-    if (this.form) {
-      this.form.statusChanges.pipe(untilDestroyed(this)).subscribe((status) => {
-        if (status !== "DISABLED")
-          this.entityFormService.disableReadOnlyFormControls(
-            this.form,
-            this.entity,
-          );
-      });
-    }
   }
 
   private async applyChanges(externallyUpdatedEntity: T) {
