@@ -58,7 +58,7 @@ import { MatButtonModule } from "@angular/material/button";
 })
 export class LatestChangesModule {
   constructor(private updateManagerService: UpdateManagerService) {
-    this.updateManagerService.notifyUserWhenUpdateAvailable();
+    this.updateManagerService.listenToAppUpdates();
     this.updateManagerService.regularlyCheckForUpdates();
     this.updateManagerService.detectUnrecoverableState();
   }
