@@ -30,10 +30,11 @@ export class ConfigurableEnumService {
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(
     id: string,
   ): T[] {
-    return this.getEnum(id).values as T[];
+    const configurableEnum = this.getEnum(id);
+    return configurableEnum ? (configurableEnum.values as T[]) : [];
   }
 
-  getEnum(id: string): ConfigurableEnum {
+  getEnum(id: string): ConfigurableEnum | undefined {
     if (!this.enums) {
       return;
     }

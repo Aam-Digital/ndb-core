@@ -1,10 +1,10 @@
 import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { FilterComponent } from "../filter/filter.component";
 import { MatButtonModule } from "@angular/material/button";
+import { DataFilter } from "../filters/filters";
 
 export interface FilterOverlayData<T extends Entity> {
   filterConfig: FilterConfig[];

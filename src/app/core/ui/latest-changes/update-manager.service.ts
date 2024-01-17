@@ -23,6 +23,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { LoggingService } from "../../logging/logging.service";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { LOCATION_TOKEN } from "../../../utils/di-tokens";
+import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 /**
  * Check with the server whether a new version of the app is available in order to notify the user.
@@ -41,17 +42,18 @@ export class UpdateManagerService {
     private snackBar: MatSnackBar,
     private logger: LoggingService,
     private latestChangesDialogService: LatestChangesDialogService,
+    private unsavedChanges: UnsavedChangesService,
     @Inject(LOCATION_TOKEN) private location: Location,
   ) {
     this.updates.unrecoverable.subscribe((err) => {
       this.logger.error("App is in unrecoverable state: " + err.reason);
       this.location.reload();
     });
-    const currentVersion = window.localStorage.getItem(
+    const currentVersion = localStorage.getItem(
       LatestChangesDialogService.VERSION_KEY,
     );
     if (currentVersion && currentVersion.startsWith(this.UPDATE_PREFIX)) {
-      window.localStorage.setItem(
+      localStorage.setItem(
         LatestChangesDialogService.VERSION_KEY,
         currentVersion.replace(this.UPDATE_PREFIX, ""),
       );
@@ -64,13 +66,13 @@ export class UpdateManagerService {
   /**
    * Display a notification to the user in case a new app version is detected by the ServiceWorker.
    */
-  public notifyUserWhenUpdateAvailable() {
+  public listenToAppUpdates() {
     if (!this.updates.isEnabled) {
       return;
     }
     this.updates.versionUpdates
       .pipe(filter((e) => e.type === "VERSION_READY"))
-      .subscribe(() => this.showUpdateNotification());
+      .subscribe(() => this.updateIfPossible());
   }
 
   /**
@@ -93,33 +95,37 @@ export class UpdateManagerService {
     );
   }
 
-  private showUpdateNotification() {
+  private updateIfPossible() {
     const currentVersion =
-      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY) || "";
+      localStorage.getItem(LatestChangesDialogService.VERSION_KEY) || "";
     if (currentVersion.startsWith(this.UPDATE_PREFIX)) {
       // Sometimes this is triggered multiple times for one update
       return;
     }
 
-    window.localStorage.setItem(
-      LatestChangesDialogService.VERSION_KEY,
-      this.UPDATE_PREFIX + currentVersion,
-    );
+    if (this.unsavedChanges.pending) {
+      // app cannot be safely reloaded
+      localStorage.setItem(
+        LatestChangesDialogService.VERSION_KEY,
+        this.UPDATE_PREFIX + currentVersion,
+      );
+      this.snackBar
+        .open(
+          $localize`A new version of the app is available!`,
+          $localize`:Action that a user can update the app with:Update`,
+        )
+        .onAction()
+        .subscribe(() => {
+          localStorage.setItem(
+            LatestChangesDialogService.VERSION_KEY,
+            currentVersion,
+          );
 
-    this.snackBar
-      .open(
-        $localize`A new version of the app is available!`,
-        $localize`:Action that a user can update the app with:Update`,
-      )
-      .onAction()
-      .subscribe(() => {
-        window.localStorage.setItem(
-          LatestChangesDialogService.VERSION_KEY,
-          currentVersion,
-        );
-
-        this.location.reload();
-      });
+          this.location.reload();
+        });
+    } else {
+      this.location.reload();
+    }
   }
 
   /**

@@ -168,12 +168,6 @@ export const defaultJsonConfig = {
       "title": $localize`:Title for notes overview:Notes & Reports`,
       "includeEventNotes": false,
       "showEventNotesToggle": true,
-      "columns": [
-        {
-          "id": "children",
-          "noSorting": true
-        }
-      ],
       "columnGroups": {
         "default": $localize`:Translated name of default column group:Standard`,
         "mobile": $localize`:Translated name of mobile column group:Mobile`,
@@ -200,9 +194,7 @@ export const defaultJsonConfig = {
       },
       "filters": [
         {
-          "id": "status",
-          "label": $localize`:Filter label:Status`,
-          "type": "prebuilt"
+          "id": "warningLevel"
         },
         {
           "id": "date",

@@ -1,10 +1,10 @@
-<app-entity-subrecord
+<app-entities-table
+  [entityType]="entityCtr"
   [records]="data"
   [filter]="filter"
-  [columns]="columns"
+  [customColumns]="_columns"
   [newRecordFactory]="createNewRecordFactory()"
-  [isLoading]="isLoading"
-></app-entity-subrecord>
+></app-entities-table>
 
 <div class="margin-top-large">
   <ng-container *ngIf="summarySum">

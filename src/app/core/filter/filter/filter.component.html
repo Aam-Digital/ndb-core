@@ -2,7 +2,7 @@
   <app-list-filter
     *ngIf="filter.name !== 'date'"
     [filterConfig]="filter"
-    [(selectedOption)]="filter.selectedOption"
+    [selectedOptions]="filter.selectedOptionValues"
     (selectedOptionChange)="filterOptionSelected(filter, $event)"
     angulartics2On="click"
     [angularticsCategory]="entityType?.ENTITY_TYPE"

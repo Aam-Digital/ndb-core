@@ -1,10 +1,10 @@
 import { Component, Inject } from "@angular/core";
 import {
   DateRange,
+  MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
   MatDatepickerModule,
   MatDateSelectionModel,
   MatRangeDateSelectionModel,
-  MAT_RANGE_DATE_SELECTION_MODEL_PROVIDER,
 } from "@angular/material/datepicker";
 import {
   MAT_DIALOG_DATA,
@@ -16,8 +16,8 @@ import { NgForOf } from "@angular/common";
 import { DateRangeFilterConfigOption } from "../../../../entity-list/EntityListConfig";
 import moment from "moment";
 import { FormsModule } from "@angular/forms";
-import { DateFilter } from "../../../../filter/filters/filters";
 import { dateToString } from "../../../../../utils/utils";
+import { DateFilter } from "../../../../filter/filters/dateFilter";
 
 export const defaultDateFilters: DateRangeFilterConfigOption[] = [
   {
@@ -91,9 +91,9 @@ export class DateRangeFilterPanelComponent {
 
   selectRangeAndClose(index: number | "all"): void {
     if (typeof index === "number") {
-      this.filter.selectedOption = index.toString();
+      this.filter.selectedOptionValues = [index.toString()];
     } else {
-      this.filter.selectedOption = "_";
+      this.filter.selectedOptionValues = [];
     }
     this.dialogRef.close();
   }
@@ -102,11 +102,11 @@ export class DateRangeFilterPanelComponent {
     if (!this.selectedRangeValue?.start || this.selectedRangeValue?.end) {
       this.selectedRangeValue = new DateRange(selectedDate, null);
     } else {
-      const start = this.selectedRangeValue.start;
-      this.filter.selectedOption =
+      const start: Date = this.selectedRangeValue.start;
+      this.filter.selectedOptionValues =
         start < selectedDate
-          ? dateToString(start) + "_" + dateToString(selectedDate)
-          : dateToString(selectedDate) + "_" + dateToString(start);
+          ? [dateToString(start), dateToString(selectedDate)]
+          : [dateToString(selectedDate), dateToString(start)];
       this.dialogRef.close();
     }
   }

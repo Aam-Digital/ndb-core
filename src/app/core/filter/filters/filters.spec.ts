@@ -1,11 +1,13 @@
-import { BooleanFilter, Filter, SelectableFilter } from "./filters";
+import { Filter, SelectableFilter } from "./filters";
 import { FilterService } from "../filter.service";
+import { BooleanFilter } from "./booleanFilter";
+import { Entity } from "../../entity/model/entity";
 
 describe("Filters", () => {
   const filterService = new FilterService(undefined);
 
   function testFilter(
-    filterObj: Filter<any>,
+    filterObj: Filter<Entity>,
     testData: any[],
     expectedFilteredResult: any[],
   ) {
@@ -25,24 +27,24 @@ describe("Filters", () => {
   });
 
   it("init new options", () => {
-    const fs = new SelectableFilter(
-      "",
-      [{ key: "", label: "", filter: "" }],
-      "",
+    const filter = new SelectableFilter(
+      "name",
+      [{ key: "option-1", label: "op", filter: {} }],
+      "name",
     );
 
-    const keys = ["x", "y"];
-    fs.options = SelectableFilter.generateOptions(keys, "category");
+    const keys: string[] = ["x", "y"];
+    filter.options = SelectableFilter.generateOptions(keys, "category");
 
-    expect(fs.options).toHaveSize(keys.length + 1);
+    expect(filter.options).toHaveSize(keys.length);
 
-    fs.selectedOption = "x";
+    filter.selectedOptionValues = ["x"];
 
     const testData = [
       { id: 1, category: "x" },
       { id: 2, category: "y" },
     ];
-    const filteredData = testFilter(fs, testData, [testData[0]]);
+    const filteredData = testFilter(filter, testData, [testData[0]]);
     expect(filteredData[0].category).toBe("x");
   });
 
@@ -53,32 +55,21 @@ describe("Filters", () => {
       default: "true",
       true: "is true",
       false: "is not true",
-      all: "All",
     });
 
     const recordTrue = { value: true };
     const recordFalse = { value: false };
-    const recordUndefined = {};
 
-    filter.selectedOption = "true";
-    testFilter(
-      filter,
-      [recordFalse, recordTrue, recordUndefined],
-      [recordTrue],
-    );
+    filter.selectedOptionValues = ["true"];
+    testFilter(filter, [recordFalse, recordTrue], [recordTrue]);
 
-    filter.selectedOption = "false";
-    testFilter(
-      filter,
-      [recordFalse, recordTrue, recordUndefined],
-      [recordFalse, recordUndefined],
-    );
+    filter.selectedOptionValues = ["false"];
+    testFilter(filter, [recordFalse, recordTrue], [recordFalse]);
 
-    filter.selectedOption = "all";
-    testFilter(
-      filter,
-      [recordFalse, recordTrue, recordUndefined],
-      [recordFalse, recordTrue, recordUndefined],
-    );
+    filter.selectedOptionValues = [];
+    testFilter(filter, [recordFalse, recordTrue], [recordFalse, recordTrue]);
+
+    filter.selectedOptionValues = ["true", "false"];
+    testFilter(filter, [recordFalse, recordTrue], [recordFalse, recordTrue]);
   });
 });

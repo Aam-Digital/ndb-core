@@ -66,7 +66,7 @@ export class Entity {
   /**
    * True if this type's schema has been customized dynamically from the config.
    */
-  static _isCustomizedType?: boolean;
+  static _isCustomizedType?: boolean; // todo should be private or renamed to "isCustomizedType"
 
   /**
    * Defining which attribute values of an entity should be shown in the `.toString()` method.
