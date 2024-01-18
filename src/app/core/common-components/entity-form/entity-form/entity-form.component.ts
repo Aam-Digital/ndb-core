@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
