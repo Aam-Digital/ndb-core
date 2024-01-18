@@ -1,12 +1,6 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges, ViewEncapsulation } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
-import { EntityForm, EntityFormService } from "../entity-form.service";
+import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
@@ -61,12 +55,16 @@ export class EntityFormComponent<T extends Entity = Entity>
   constructor(
     private entityMapper: EntityMapperService,
     private confirmationDialog: ConfirmationDialogService,
-    private entityFormService: EntityFormService,
     private ability: EntityAbility,
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
-    this.applyFormFieldPermissions();
+    if (this.fieldGroups) {
+      this.fieldGroups = this.filterFieldGroupsByPermissions(
+        this.fieldGroups,
+        this.entity,
+      );
+    }
 
     if (changes.entity && this.entity) {
       this.changesSubscription?.unsubscribe();
@@ -79,25 +77,10 @@ export class EntityFormComponent<T extends Entity = Entity>
         )
         .subscribe(({ entity }) => this.applyChanges(entity));
     }
+
     if (changes.form && this.form) {
       this.initialFormValues = this.form.getRawValue();
       this.disableForLockedEntity();
-    }
-
-    if (this.form && this.entity) {
-      this.entityFormService.disableReadOnlyFormControls(
-        this.form,
-        this.entity,
-      );
-    }
-  }
-
-  private applyFormFieldPermissions() {
-    if (this.fieldGroups) {
-      this.fieldGroups = this.filterFieldGroupsByPermissions(
-        this.fieldGroups,
-        this.entity,
-      );
     }
   }
 

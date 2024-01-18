@@ -12,10 +12,7 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
-import {
-  EntitySchemaField,
-  PLACEHOLDERS,
-} from "../../entity/schema/entity-schema-field";
+import { EntitySchemaField, PLACEHOLDERS } from "../../entity/schema/entity-schema-field";
 import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 
@@ -78,7 +75,7 @@ export class EntityFormService {
     }
   }
 
-  disableReadOnlyFormControls<T extends Entity>(
+  private disableReadOnlyFormControls<T extends Entity>(
     form: EntityForm<T>,
     entity: T,
   ) {

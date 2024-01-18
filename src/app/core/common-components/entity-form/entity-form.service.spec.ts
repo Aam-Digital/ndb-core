@@ -54,24 +54,6 @@ describe("EntityFormService", () => {
     expect(entity.getId()).not.toBe("newId");
   });
 
-  it("should remove controls with read-only permissions from form", () => {
-    const entity = new Entity();
-    const formGroup = new UntypedFormGroup({
-      name: new UntypedFormControl("name"),
-      foo: new UntypedFormControl("foo"),
-      bar: new UntypedFormControl("bar"),
-    });
-    TestBed.inject(EntityAbility).update([
-      { subject: "Entity", action: "update", fields: ["foo"] },
-    ]);
-
-    service.disableReadOnlyFormControls(formGroup, entity);
-
-    expect(formGroup.get("name").disabled).toBeTrue();
-    expect(formGroup.get("foo").disabled).toBeFalse();
-    expect(formGroup.get("bar").disabled).toBeTrue();
-  });
-
   it("should update entity if saving is successful", async () => {
     const entity = new Entity("initialId");
     const formGroup = new UntypedFormGroup({
@@ -124,6 +106,26 @@ describe("EntityFormService", () => {
     expect(formGroup.invalid).toBeTrue();
     formGroup.patchValue({ result: 100 });
     expect(formGroup.valid).toBeTrue();
+  });
+
+  it("should disable read-only fields after form enable", () => {
+    const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
+    const formGroup = service.createFormGroup(formFields, new Child());
+
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
+      { subject: "Child", action: "update", fields: ["name"] },
+    ]);
+
+    formGroup.disable();
+
+    expect(formGroup.get("name").disabled).toBeTrue();
+    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
+
+    formGroup.enable();
+
+    expect(formGroup.get("name").enabled).toBeTrue();
+    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
   });
 
   it("should create a error if form is invalid", () => {

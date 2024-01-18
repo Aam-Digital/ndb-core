@@ -75,20 +75,6 @@ describe("EntityFormComponent", () => {
     ]);
   });
 
-  it("should disable read-only fields after form enable", async () => {
-    TestBed.inject(EntityAbility).update([
-      { subject: "Child", action: "read", fields: ["projectNumber", "name"] },
-      { subject: "Child", action: "update", fields: ["name"] },
-    ]);
-
-    component.ngOnChanges({ entity: true, form: true } as any);
-
-    component.form.enable();
-
-    expect(component.form.get("name").enabled).toBeTrue();
-    expect(component.form.get("projectNumber").disabled).toBeTrue();
-  });
-
   it("should not change anything if changed entity has same values as form", () => {
     return expectApplyChangesPopup(
       "not-shown",
