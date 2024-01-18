@@ -103,6 +103,16 @@ describe("EntitySelectComponent", () => {
     expect(component.selectedEntities).toEqual([testUsers[2]]);
   }));
 
+  it("discards IDs from initial selection that don't correspond to an existing entity", fakeAsync(() => {
+    component.entityType = User.ENTITY_TYPE;
+
+    component.selection = [, "not-existing-entity", testUsers[1].getId()];
+    fixture.detectChanges();
+    tick();
+
+    expect(component.selectedEntities).toEqual([testUsers[1]]);
+  }));
+
   it("emits whenever a new entity is selected", fakeAsync(() => {
     spyOn(component.selectionChange, "emit");
     component.entityType = User.ENTITY_TYPE;
