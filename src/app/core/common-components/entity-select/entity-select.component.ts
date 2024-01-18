@@ -163,7 +163,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   inputPlaceholder = this.loadingPlaceholder;
 
   allEntities: E[] = [];
-  relevantEntities: E[] = [];
+  entitiesPassingAdditionalFilter: E[] = [];
   filteredEntities: E[] = [];
   inactiveFilteredEntities: E[] = [];
 
@@ -193,7 +193,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("additionalFilter")) {
       // update whenever additional filters are being set
       this.formControl.setValue(this.formControl.value);
-      this.relevantEntities = this.allEntities.filter((e) =>
+      this.entitiesPassingAdditionalFilter = this.allEntities.filter((e) =>
         this.additionalFilter(e),
       );
     }
@@ -218,7 +218,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     }
     this.allEntities = entities;
     this.allEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
-    this.relevantEntities = this.allEntities.filter((e) =>
+    this.entitiesPassingAdditionalFilter = this.allEntities.filter((e) =>
       this.additionalFilter(e),
     );
     this.loading.next(false);
@@ -249,7 +249,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     const value = event.value;
 
     if (value) {
-      const entity = this.relevantEntities.find(
+      const entity = this.entitiesPassingAdditionalFilter.find(
         (e) => this.accessor(e) === value.trim(),
       );
       if (entity) {
@@ -267,12 +267,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param value The value to look for in all entities
    */
   private filter(value: string): E[] {
-    let filteredEntities: E[] = this.relevantEntities.filter(
+    let filteredEntities: E[] = this.entitiesPassingAdditionalFilter.filter(
       (e) => !this.isSelected(e) && (this.includeInactive ? true : e.isActive),
     );
-    let inactiveFilteredEntities: E[] = this.relevantEntities.filter(
-      (e) => !this.isSelected(e) && !e.isActive,
-    );
+    let inactiveFilteredEntities: E[] =
+      this.entitiesPassingAdditionalFilter.filter(
+        (e) => !this.isSelected(e) && !e.isActive,
+      );
     this.filterValue = value;
 
     if (value) {

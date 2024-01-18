@@ -72,10 +72,6 @@ describe("EntitySelectComponent", () => {
     component.entityType = User.ENTITY_TYPE;
     tick();
     fixture.detectChanges();
-    console.log(
-      "should suggest ... filteredEntities",
-      component.filteredEntities,
-    );
     expect(component.filteredEntities.length).toBe(testUsers.length);
   }));
 
@@ -256,7 +252,7 @@ describe("EntitySelectComponent", () => {
     );
     console.log(
       "shows the autocomplete ... RelevantEntities:",
-      component.relevantEntities,
+      component.entitiesPassingAdditionalFilter,
     );
 
     autocomplete.enterText("X");
@@ -325,7 +321,7 @@ describe("EntitySelectComponent", () => {
     );
     console.log(
       "suggests all entities ... relevantEntities:",
-      component.relevantEntities,
+      component.entitiesPassingAdditionalFilter,
     );
     expect(component.allEntities).toEqual(
       [...testUsers, ...testChildren].sort((a, b) =>

@@ -49,13 +49,13 @@
         [linkDisabled]="true"
       ></app-display-entity>
     </mat-option>
+    <!-- The following mat-option is never displayed ("display: none"), but has to be there, because the mat-checkbox is only shown if there is at least one mat-option, may it also not be displayed.  -->
     <mat-option
       *ngIf="
         filteredEntities.length < 1 &&
         !includeInactive &&
         inactiveFilteredEntities.length > 0
       "
-      [disabled]="true"
       style="display: none"
     ></mat-option>
     <mat-checkbox
