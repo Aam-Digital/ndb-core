@@ -2,7 +2,7 @@ import { Injectable } from "@angular/core";
 import {
   getReadableValue,
   transformToReadableFormat,
-} from "../../common-components/entity-subrecord/entity-subrecord/value-accessor";
+} from "../../common-components/entities-table/value-accessor/value-accessor";
 import { ExportColumnConfig } from "./export-column-config";
 import { QueryService } from "../query.service";
 import { groupBy } from "../../../utils/utils";

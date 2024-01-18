@@ -5,16 +5,16 @@ import { AttendanceService } from "../attendance.service";
 import { formatPercent, NgIf } from "@angular/common";
 import { ActivityAttendance } from "../model/activity-attendance";
 import moment from "moment";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatButtonModule } from "@angular/material/button";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { AttendanceCalendarComponent } from "../attendance-calendar/attendance-calendar.component";
 import { AttendanceSummaryComponent } from "../attendance-summary/attendance-summary.component";
 import { MatDialog } from "@angular/material/dialog";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 
 @DynamicComponent("ActivityAttendanceSection")
 @Component({
@@ -23,7 +23,7 @@ import { MatDialog } from "@angular/material/dialog";
   imports: [
     NgIf,
     MatProgressBarModule,
-    EntitySubrecordComponent,
+    EntitiesTableComponent,
     MatSlideToggleModule,
     MatTooltipModule,
     MatButtonModule,
@@ -38,6 +38,7 @@ export class ActivityAttendanceSectionComponent implements OnInit {
 
   loading: boolean = true;
   records: ActivityAttendance[] = [];
+  entityCtr = ActivityAttendance;
   allRecords: ActivityAttendance[] = [];
   combinedAttendance: ActivityAttendance;
 

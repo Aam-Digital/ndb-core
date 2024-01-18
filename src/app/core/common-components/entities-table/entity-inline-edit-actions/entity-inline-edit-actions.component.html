@@ -1,0 +1,48 @@
+<ng-container *ngIf="row && (!row.formGroup || row.formGroup.disabled)">
+  <button
+    mat-icon-button
+    *appDisabledEntityOperation="{
+      entity: row.record,
+      operation: 'update'
+    }"
+    (click)="edit(); $event.stopPropagation()"
+  >
+    <fa-icon aria-label="edit" icon="pen"></fa-icon>
+  </button>
+</ng-container>
+
+<div *ngIf="row?.formGroup?.enabled" class="flex-row">
+  <button
+    mat-icon-button
+    (click)="save(); $event.stopPropagation()"
+    angulartics2On="click"
+    [angularticsCategory]="row?.record?.getType()"
+    angularticsAction="subrecord_inlineedit_save"
+  >
+    <fa-icon aria-label="save" icon="check-circle"></fa-icon>
+  </button>
+
+  <button
+    mat-icon-button
+    (click)="resetChanges(); $event.stopPropagation()"
+    angulartics2On="click"
+    [angularticsCategory]="row?.record?.getType()"
+    angularticsAction="subrecord_inlineedit_cancel"
+  >
+    <fa-icon aria-label="cancel" icon="times-circle"></fa-icon>
+  </button>
+
+  <button
+    mat-icon-button
+    *appDisabledEntityOperation="{
+      entity: row.record,
+      operation: 'delete'
+    }"
+    (click)="delete(); $event.stopPropagation()"
+    angulartics2On="click"
+    [angularticsCategory]="row?.record?.getType()"
+    angularticsAction="subrecord_inlineedit_delete"
+  >
+    <fa-icon aria-label="delete" icon="trash"></fa-icon>
+  </button>
+</div>

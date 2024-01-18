@@ -17,15 +17,16 @@
   ></app-attendance-summary>
 </div>
 
-<app-entity-subrecord
+<app-entities-table
+  [entityType]="entityCtr"
   [records]="records"
-  [columns]="columns"
+  [customColumns]="columns"
   clickMode="none"
   (rowClick)="showDetails($event)"
   [getBackgroundColor]="getBackgroundColor"
   [editable]="false"
 >
-</app-entity-subrecord>
+</app-entities-table>
 
 <div class="margin-top-regular">
   <mat-slide-toggle

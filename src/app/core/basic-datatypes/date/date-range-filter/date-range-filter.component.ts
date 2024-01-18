@@ -1,12 +1,13 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
-import { DateFilter, Filter } from "../../../filter/filters/filters";
+import { Filter } from "../../../filter/filters/filters";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
 import { FormsModule } from "@angular/forms";
 import { dateToString, isValidDate } from "../../../../utils/utils";
+import { DateFilter } from "../../../filter/filters/dateFilter";
 
 @Component({
   selector: "app-date-range-filter",
@@ -20,7 +21,7 @@ export class DateRangeFilterComponent<T extends Entity> {
   toDate: Date;
   dateFilter: DateFilter<T>;
 
-  @Output() selectedOptionChange = new EventEmitter<string>();
+  @Output() selectedOptionChange = new EventEmitter<string[]>();
 
   @Input() set filterConfig(value: Filter<T>) {
     this.dateFilter = value as DateFilter<T>;
@@ -37,16 +38,16 @@ export class DateRangeFilterComponent<T extends Entity> {
     ) {
       this.fromDate = range.start;
       this.toDate = range.end;
-      this.selectedOptionChange.emit(this.dateFilter.selectedOption);
+      this.selectedOptionChange.emit(this.dateFilter.selectedOptionValues);
     }
   }
 
   dateChangedManually() {
-    this.dateFilter.selectedOption =
-      (isValidDate(this.fromDate) ? dateToString(this.fromDate) : "") +
-      "_" +
-      (isValidDate(this.toDate) ? dateToString(this.toDate) : "");
-    this.selectedOptionChange.emit(this.dateFilter.selectedOption);
+    this.dateFilter.selectedOptionValues = [
+      isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
+      isValidDate(this.toDate) ? dateToString(this.toDate) : "",
+    ];
+    this.selectedOptionChange.emit(this.dateFilter.selectedOptionValues);
   }
 
   openDialog(e: Event) {

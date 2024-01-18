@@ -1,0 +1,18 @@
+@use "variables/sizes";
+@use "variables/colors";
+
+.standard-add-button {
+  background-color: white !important;
+  height: 100%;
+}
+
+.table-action-button {
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  margin: sizes.$small;
+  color: colors.$accent;
+}
+
+.icon-only {
+  vertical-align: initial;
+}

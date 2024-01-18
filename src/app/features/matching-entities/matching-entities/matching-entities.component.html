@@ -100,14 +100,15 @@
         (filterObjChange)="applySelectedFilters(side, $event)"
       ></app-filter>
 
-      <app-entity-subrecord
+      <app-entities-table
+        [entityType]="side.entityType"
         [records]="side.availableEntities"
-        [columns]="side.columns"
+        [customColumns]="side.columns"
         [editable]="false"
         clickMode="none"
         (rowClick)="side.selectMatch($event)"
         [filter]="side.filterObj"
-      ></app-entity-subrecord>
+      ></app-entities-table>
     </div>
   </ng-container>
 </div>

@@ -1,4 +1,4 @@
-import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
 /**
  * The general configuration for fields in tables and forms.
@@ -43,4 +43,17 @@ export interface FormFieldConfig extends EntitySchemaField {
    * An internal flag that will be automatically set in the entity subrecord in order to adapt the view/edit components.
    */
   forTable?: boolean;
+}
+
+/**
+ * Type for the definition of a single column in the EntitySubrecord
+ */
+export type ColumnConfig = string | FormFieldConfig;
+
+export function toFormFieldConfig(column: ColumnConfig): FormFieldConfig {
+  if (typeof column === "string") {
+    return { id: column };
+  } else {
+    return column;
+  }
 }
