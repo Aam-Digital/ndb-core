@@ -163,7 +163,7 @@ export class EntityListComponent<T extends Entity>
     private entities: EntityRegistry,
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
-    private entityRemoveService: EntityActionsService,
+    private entityActionsService: EntityActionsService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -326,17 +326,17 @@ export class EntityListComponent<T extends Entity>
   }
 
   async deleteRecords() {
-    await this.entityRemoveService.delete(this.selectedRows);
+    await this.entityActionsService.delete(this.selectedRows);
     this.selectedRows = undefined;
   }
 
   async archiveRecords() {
-    // await this.entityRemoveService.delete(this.selectedRows);
-    // this.selectedRows = undefined;
+    await this.entityActionsService.archive(this.selectedRows);
+    this.selectedRows = undefined;
   }
 
   async anonymizeRecords() {
-    await this.entityRemoveService.anonymize(this.selectedRows);
+    await this.entityActionsService.anonymize(this.selectedRows);
     this.selectedRows = undefined;
   }
 }

@@ -230,7 +230,7 @@ export class EntityActionsService {
         result.mergeResults(await this.entityAnonymize.anonymizeEntity(entity));
       }
     } else {
-      console.log("Peter deleting single entity:", entityParam);
+      console.log("Peter anonymizing single entity:", entityParam);
       result = await this.entityAnonymize.anonymizeEntity(entityParam);
     }
     progressDialogRef.close();
@@ -258,16 +258,20 @@ export class EntityActionsService {
    * Mark the given entity as inactive.
    * @param entity
    */
-  async archive<E extends Entity>(entity: E) {
-    const originalEntity = entity.copy();
-    entity.inactive = true;
-
-    await this.entityMapper.save(entity);
+  async archive<E extends Entity>(entityParam: E | E[]) {
+    let originalEntities: E[] = Array.isArray(entityParam)
+      ? entityParam
+      : [entityParam];
+    const newEntities: E[] = originalEntities.map((e) => e.copy());
+    newEntities.forEach(async (e) => {
+      e.inactive = true;
+      await this.entityMapper.save(e);
+    });
 
     this.showSnackbarConfirmationWithUndo(
-      originalEntity,
+      newEntities,
       $localize`:Entity action confirmation message verb:Archived`,
-      [originalEntity],
+      originalEntities,
     );
     return true;
   }
@@ -275,15 +279,20 @@ export class EntityActionsService {
    * Undo the archive action on the given entity.
    * @param entity
    */
-  async undoArchive<E extends Entity>(entity: E) {
-    const originalEntity = entity.copy();
-    entity.inactive = false;
-    await this.entityMapper.save(entity);
+  async undoArchive<E extends Entity>(entityParam: E | E[]) {
+    let newEntities: E[] = Array.isArray(entityParam)
+      ? entityParam
+      : [entityParam];
+    const originalEntities: E[] = newEntities.map((e) => e.copy());
+    newEntities.forEach(async (e) => {
+      e.inactive = false;
+      await this.entityMapper.save(e);
+    });
 
     this.showSnackbarConfirmationWithUndo(
-      originalEntity,
+      newEntities,
       $localize`:Entity action confirmation message verb:Reactivated`,
-      [originalEntity],
+      originalEntities,
     );
     return true;
   }
