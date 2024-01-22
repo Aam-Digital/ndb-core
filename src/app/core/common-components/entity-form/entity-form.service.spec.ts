@@ -108,14 +108,17 @@ describe("EntityFormService", () => {
     expect(formGroup.valid).toBeTrue();
   });
 
-  it("should disable read-only fields after form enable", () => {
+  it("should always keep properties disabled if user does not have 'update' permissions for them", () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
-    const formGroup = service.createFormGroup(formFields, new Child());
-
     TestBed.inject(EntityAbility).update([
       { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
       { subject: "Child", action: "update", fields: ["name"] },
     ]);
+
+    const formGroup = service.createFormGroup(formFields, new Child());
+
+    expect(formGroup.get("name").enabled).toBeTrue();
+    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
 
     formGroup.disable();
 

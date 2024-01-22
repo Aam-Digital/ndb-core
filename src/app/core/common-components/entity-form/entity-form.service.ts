@@ -78,17 +78,6 @@ export class EntityFormService {
     }
   }
 
-  private disableReadOnlyFormControls<T extends Entity>(
-    form: EntityForm<T>,
-    entity: T,
-  ) {
-    Object.keys(form.controls).forEach((fieldId) => {
-      if (!this.ability.can("update", entity, fieldId)) {
-        form.get(fieldId).disable({ onlySelf: true, emitEvent: false });
-      }
-    });
-  }
-
   private addSchemaToFormField(
     formField: FormFieldConfig,
     propertySchema: EntitySchemaField,
@@ -124,7 +113,7 @@ export class EntityFormService {
    * @param formFields
    * @param entity
    * @param forTable
-   * @param withPermissionCheck enable permission based field filter
+   * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
    */
   public createFormGroup<T extends Entity>(
     formFields: ColumnConfig[],
@@ -147,18 +136,15 @@ export class EntityFormService {
     const valueChangesSubscription = group.valueChanges.subscribe(
       () => (this.unsavedChanges.pending = group.dirty),
     );
+    this.subscriptions.push(valueChangesSubscription);
 
     if (withPermissionCheck) {
-      const statusChangesSubscription = group.statusChanges.subscribe(
-        (status) => {
-          if (status !== "DISABLED")
-            this.disableReadOnlyFormControls(group, entity);
-        },
-      );
+      this.disableReadOnlyFormControls(group, entity);
+      const statusChangesSubscription = group.statusChanges
+        .pipe(filter((status) => status !== "DISABLED"))
+        .subscribe(() => this.disableReadOnlyFormControls(group, entity));
       this.subscriptions.push(statusChangesSubscription);
     }
-
-    this.subscriptions.push(valueChangesSubscription);
 
     return group;
   }
@@ -217,6 +203,17 @@ export class EntityFormService {
       newVal = [newVal];
     }
     return newVal;
+  }
+
+  private disableReadOnlyFormControls<T extends Entity>(
+    form: EntityForm<T>,
+    entity: T,
+  ) {
+    Object.keys(form.controls).forEach((fieldId) => {
+      if (this.ability.cannot("update", entity, fieldId)) {
+        form.get(fieldId).disable({ onlySelf: true, emitEvent: false });
+      }
+    });
   }
 
   /**
