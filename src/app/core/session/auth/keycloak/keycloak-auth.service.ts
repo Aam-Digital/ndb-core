@@ -104,10 +104,9 @@ export class KeycloakAuthService {
     });
   }
 
-  getUserinfo(): Promise<KeycloakUser> {
-    return this.keycloak
-      .getKeycloakInstance()
-      .loadUserInfo() as Promise<KeycloakUser>;
+  async getUserinfo(): Promise<KeycloakUser> {
+    const user = await this.keycloak.getKeycloakInstance().loadUserInfo();
+    return user as KeycloakUser;
   }
 
   setEmail(email: string): Observable<any> {
