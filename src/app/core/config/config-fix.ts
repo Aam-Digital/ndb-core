@@ -640,14 +640,16 @@ export const defaultJsonConfig = {
             {
               "title": "",
               "component": "HistoricalDataComponent",
-              "config": [
-                "date",
-                { "id": "isMotivatedDuringClass", "visibleFrom": "lg" },
-                { "id": "isParticipatingInClass", "visibleFrom": "lg" },
-                { "id": "isInteractingWithOthers", "visibleFrom": "lg" },
-                { "id": "doesHomework", "visibleFrom": "lg" },
-                { "id": "asksQuestions", "visibleFrom": "lg" },
-              ]
+              "config": {
+                "columns": [
+                  "date",
+                  { "id": "isMotivatedDuringClass", "visibleFrom": "lg" },
+                  { "id": "isParticipatingInClass", "visibleFrom": "lg" },
+                  { "id": "isInteractingWithOthers", "visibleFrom": "lg" },
+                  { "id": "doesHomework", "visibleFrom": "lg" },
+                  { "id": "asksQuestions", "visibleFrom": "lg" },
+                ]
+              }
             }
           ]
         },

@@ -5,40 +5,53 @@ import { Child } from "../../model/child";
 import { FormFieldConfig } from "../../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
+import { RelatedEntitiesComponent } from "../../../../core/entity-details/related-entities/related-entities.component";
+import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
+import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
 
 @DynamicComponent("HealthCheckup")
 @Component({
   selector: "app-health-checkup",
-  templateUrl: "./health-checkup.component.html",
+  templateUrl:
+    "../../../../core/entity-details/related-entities/related-entities.component.html",
   imports: [EntitiesTableComponent],
   standalone: true,
 })
-export class HealthCheckupComponent implements OnInit {
-  records: HealthCheck[] = [];
+export class HealthCheckupComponent
+  extends RelatedEntitiesComponent<HealthCheck>
+  implements OnInit
+{
+  @Input() entity: Child;
+  property = "child";
   entityCtr = HealthCheck;
 
   /**
-   * Column Description for the SubentityRecordComponent
+   * Column Description
    * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
    * BMI is rounded to 2 decimal digits
    */
-  @Input() config: { columns: FormFieldConfig[] } = {
-    columns: [
-      { id: "date" },
-      { id: "height" },
-      { id: "weight" },
-      {
-        id: "bmi",
-        label: $localize`:Table header, Short for Body Mass Index:BMI`,
-        viewComponent: "ReadonlyFunction",
-        description: $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
-        additional: (entity: HealthCheck) => this.getBMI(entity),
-      },
-    ],
-  };
-  @Input() entity: Child;
+  override _columns: FormFieldConfig[] = [
+    { id: "date" },
+    { id: "height" },
+    { id: "weight" },
+    {
+      id: "bmi",
+      label: $localize`:Table header, Short for Body Mass Index:BMI`,
+      viewComponent: "ReadonlyFunction",
+      description: $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
+      additional: (entity: HealthCheck) => this.getBMI(entity),
+    },
+  ];
 
-  constructor(private childrenService: ChildrenService) {}
+  constructor(
+    private childrenService: ChildrenService,
+    entityMapper: EntityMapperService,
+    entityRegistry: EntityRegistry,
+    screenWidthObserver: ScreenWidthObserver,
+  ) {
+    super(entityMapper, entityRegistry, screenWidthObserver);
+  }
 
   private getBMI(healthCheck: HealthCheck): string {
     const bmi = healthCheck.bmi;
@@ -49,16 +62,11 @@ export class HealthCheckupComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    return this.loadData();
-  }
-
-  generateNewRecordFactory() {
+  override createNewRecordFactory() {
     return () => {
-      const newHC = new HealthCheck(Date.now().toString());
+      const newHC = new HealthCheck();
 
-      // use last entered date as default, otherwise today's date
-      newHC.date = this.records.length > 0 ? this.records[0].date : new Date();
+      newHC.date = new Date();
       newHC.child = this.entity.getId();
 
       return newHC;
@@ -68,11 +76,10 @@ export class HealthCheckupComponent implements OnInit {
   /**
    * implements the health check loading from the children service and is called in the onInit()
    */
-  async loadData() {
-    this.records = await this.childrenService.getHealthChecksOfChild(
-      this.entity.getId(),
-    );
-    this.records.sort(
+  override async initData() {
+    this.data = (
+      await this.childrenService.getHealthChecksOfChild(this.entity.getId())
+    ).sort(
       (a, b) =>
         (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0),
     );
