@@ -100,37 +100,38 @@ export class DynamicValidatorsService {
    * @see ValidatorFn
    */
   public buildValidators(config: FormValidatorConfig): FormControlOptions {
-    const validators: ValidatorFn[] = [];
-    const asyncValidators = [];
+    const formControlOptions = {
+      validators: [],
+      asyncValidators: [],
+    };
+
     for (const key of Object.keys(config)) {
       const validatorFn = this.getValidator(
         key as DynamicValidator,
         config[key],
       );
 
-      if (validatorFn === null) {
-        continue;
-      } else if (validatorFn.async) {
-        asyncValidators.push((control) =>
+      if (validatorFn?.async) {
+        const validatorFnWithReadableErrors = (control) =>
           (validatorFn.fn as AsyncValidatorFn)(control).then((res) =>
             this.addHumanReadableError(key, res),
-          ),
-        );
-      } else {
-        validators.push((control: FormControl) =>
-          this.addHumanReadableError(key, validatorFn.fn(control)),
-        );
+          );
+        formControlOptions.asyncValidators.push(validatorFnWithReadableErrors);
+      } else if (validatorFn) {
+        const validatorFnWithReadableErrors = (control: FormControl) =>
+          this.addHumanReadableError(key, validatorFn.fn(control));
+        formControlOptions.validators.push(validatorFnWithReadableErrors);
       }
 
-      // A validator function of `null` is a legal case. For example
-      // { required : false } produces a `null` validator function
+      // A validator function of `null` is a legal case, for which no validator function is added.
+      // For example `{ required : false }` produces a `null` validator function
     }
 
-    return {
-      validators,
-      asyncValidators,
-      updateOn: asyncValidators.length > 0 ? "blur" : "change",
-    };
+    if (formControlOptions.asyncValidators.length > 0) {
+      (formControlOptions as FormControlOptions).updateOn = "blur";
+    }
+
+    return formControlOptions;
   }
 
   private addHumanReadableError(
