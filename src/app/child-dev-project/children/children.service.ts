@@ -143,7 +143,7 @@ export class ChildrenService {
     );
   }
 
-  private inferNoteLinkPropertyFromEntityType(entityId: string): string {
+  inferNoteLinkPropertyFromEntityType(entityId: string): string {
     const entityType = Entity.extractTypeFromId(entityId);
     switch (entityType) {
       case Child.ENTITY_TYPE:

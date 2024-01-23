@@ -14,6 +14,9 @@ import { Note } from "../../../child-dev-project/notes/model/note";
 import { Subject } from "rxjs";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
+import moment from "moment";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<ChildSchoolRelation | Note>;
@@ -129,6 +132,34 @@ describe("RelatedEntitiesComponent", () => {
     tick();
 
     expect(component.data).toEqual([entity]);
+  }));
+
+  xit("should only add entities which pass the filter object", fakeAsync(() => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    component.ngOnInit();
+    // only show active relations
+    component.filter = { isActive: true };
+    tick();
+
+    // active -> add
+    const activeRelation = new ChildSchoolRelation();
+    activeRelation.childId = component.entity.getId();
+    activeRelation.start = moment().subtract(1, "week").toDate();
+    entityUpdates.next({ entity: activeRelation, type: "new" });
+    tick();
+    expect(component.data).toEqual([activeRelation]);
+
+    // inactive -> don't add
+    const inactiveRelation = new ChildSchoolRelation();
+    inactiveRelation.childId = component.entity.getId();
+    inactiveRelation.start = moment().subtract(1, "week").toDate();
+    inactiveRelation.end = moment().subtract(2, "days").toDate();
+    entityUpdates.next({ entity: inactiveRelation, type: "new" });
+    tick();
+    // TODO do we actually need to filter the data or is it sufficient to create the correct filter and let the entities table hide it?
+    expect(component.data).toEqual([activeRelation]);
   }));
 
   it("should remove an entity from the table when it has been deleted", fakeAsync(() => {

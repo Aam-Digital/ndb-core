@@ -82,6 +82,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     const data = await this.getData();
 
     this.filter = this.initFilter();
+    // TODO not really required as the entities table anyway hides the not-passing ones
     this.data = data.filter(this.filterService.getFilterPredicate(this.filter));
 
     if (this.showInactive === undefined) {

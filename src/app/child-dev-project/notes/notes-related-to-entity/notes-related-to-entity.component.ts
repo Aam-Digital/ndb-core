@@ -64,6 +64,9 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
       // When displaying notes for a child, use attendance color highlighting
       this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
     }
+    this.property = this.childrenService.inferNoteLinkPropertyFromEntityType(
+      this.entity.getId(true),
+    );
     return super.ngOnInit();
   }
 
