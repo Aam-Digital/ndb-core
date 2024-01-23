@@ -57,7 +57,13 @@ export class DynamicValidatorsService {
   private getValidator(
     key: DynamicValidator,
     value: any,
-  ): { async?: boolean; fn: ValidatorFn | AsyncValidatorFn } | null {
+  ):
+    | { async?: false; fn: ValidatorFn }
+    | {
+        async: true;
+        fn: AsyncPromiseValidatorFn;
+      }
+    | null {
     switch (key) {
       case "min":
         return { fn: Validators.min(value as number) };
@@ -113,9 +119,9 @@ export class DynamicValidatorsService {
 
       if (validatorFn?.async) {
         const validatorFnWithReadableErrors = (control) =>
-          (validatorFn.fn as AsyncValidatorFn)(control).then((res) =>
-            this.addHumanReadableError(key, res),
-          );
+          validatorFn
+            .fn(control)
+            .then((res) => this.addHumanReadableError(key, res));
         formControlOptions.asyncValidators.push(validatorFnWithReadableErrors);
       } else if (validatorFn) {
         const validatorFnWithReadableErrors = (control: FormControl) =>
@@ -195,7 +201,10 @@ export class DynamicValidatorsService {
     }
   }
 
-  private buildUniqueIdValidator(value: string) {
+  private buildUniqueIdValidator(value: string): {
+    async: true;
+    fn: AsyncPromiseValidatorFn;
+  } {
     return {
       fn: uniqueIdValidator(() =>
         this.entityMapper
@@ -208,6 +217,6 @@ export class DynamicValidatorsService {
   }
 }
 
-type AsyncValidatorFn = (
+export type AsyncPromiseValidatorFn = (
   control: FormControl,
 ) => Promise<ValidationErrors | null>;

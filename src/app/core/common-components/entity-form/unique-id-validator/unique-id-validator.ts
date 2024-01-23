@@ -1,8 +1,9 @@
-import { FormControl, ValidationErrors, ValidatorFn } from "@angular/forms";
+import { FormControl, ValidationErrors } from "@angular/forms";
+import { AsyncPromiseValidatorFn } from "../dynamic-form-validators/dynamic-validators.service";
 
 export function uniqueIdValidator(
   existingIds: string[] | (() => Promise<string[]>),
-): ValidatorFn {
+): AsyncPromiseValidatorFn {
   return async (control: FormControl): Promise<ValidationErrors | null> => {
     if (control.pristine && !!control.value) {
       // (control.value === control.defaultValue) // doesn't work as defaultValue unfortunately is not set properly somehow
