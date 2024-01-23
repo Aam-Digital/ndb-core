@@ -64,7 +64,7 @@
         <app-entity-create-button
           [entityType]="_entityType"
           [newRecordFactory]="newRecordFactory"
-          (entityCreate)="showEntity($event); rowClick.emit($event)"
+          (entityCreate)="showEntity($event); entityClick.emit($event)"
           [iconOnly]="true"
         ></app-entity-create-button>
       </th>
