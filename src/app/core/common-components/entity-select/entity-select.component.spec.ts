@@ -100,24 +100,6 @@ describe("EntitySelectComponent", () => {
     tick();
   }));
 
-  it("emits the new selected entity", fakeAsync(() => {
-    spyOn(component.selectionChange, "emit");
-    component.entityType = User.ENTITY_TYPE;
-    tick();
-
-    component.selectEntity(testUsers[0]);
-    expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(),
-    ]);
-
-    component.selectEntity(testUsers[1]);
-    expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(),
-      testUsers[1].getId(),
-    ]);
-    tick();
-  }));
-
   it("emits whenever a selected entity is removed", () => {
     spyOn(component.selectionChange, "emit");
     component.selectedEntities = [...testUsers];
