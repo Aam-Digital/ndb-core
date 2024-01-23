@@ -92,12 +92,12 @@ export class ChildSchoolOverviewComponent
     }
   }
 
-  override async initData() {
+  override getData() {
     if (!this.mode) {
       return;
     }
 
-    this.data = await this.childrenService.queryRelationsOf(
+    return this.childrenService.queryRelationsOf(
       this.mode,
       this.entity.getId(false),
     );

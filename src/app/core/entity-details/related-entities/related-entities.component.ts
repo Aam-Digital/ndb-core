@@ -77,11 +77,11 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   async ngOnInit() {
-    await this.initData();
+    this.data = await this.getData();
     this.listenToEntityUpdates();
   }
 
-  protected async initData() {
+  protected async getData(): Promise<E[]> {
     this.isArray = isArrayProperty(this.entityCtr, this.property);
 
     this.filter = {
@@ -91,7 +91,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
         : this.entity.getId(),
     };
 
-    this.data = (await this.entityMapper.loadType<E>(this.entityCtr)).filter(
+    const data = (await this.entityMapper.loadType<E>(this.entityCtr)).filter(
       (e) =>
         this.isArray
           ? e[this.property]?.includes(this.entity.getId())
@@ -101,6 +101,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     if (this.showInactive === undefined) {
       this.showInactive = this.entity.anonymized;
     }
+    return data;
   }
 
   protected listenToEntityUpdates() {

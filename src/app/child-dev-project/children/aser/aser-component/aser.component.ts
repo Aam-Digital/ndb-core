@@ -42,12 +42,14 @@ export class AserComponent extends RelatedEntitiesComponent<Aser> {
     super(entityMapper, entityRegistry, screenWidthObserver);
   }
 
-  override async initData() {
-    this.data = (
-      await this.childrenService.getAserResultsOfChild(this.entity.getId())
-    ).sort(
-      (a, b) =>
-        (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0),
-    );
+  override getData() {
+    return this.childrenService
+      .getAserResultsOfChild(this.entity.getId())
+      .then((data) =>
+        data.sort(
+          (a, b) =>
+            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0),
+        ),
+      );
   }
 }

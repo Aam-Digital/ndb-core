@@ -47,10 +47,8 @@ export class HistoricalDataComponent
     super(entityMapper, entityRegistry, screenWidthObserver);
   }
 
-  override async initData() {
-    this.data = await this.historicalDataService.getHistoricalDataFor(
-      this.entity.getId(),
-    );
+  override getData() {
+    return this.historicalDataService.getHistoricalDataFor(this.entity.getId());
   }
 
   public getNewEntryFunction(): () => HistoricalEntityData {

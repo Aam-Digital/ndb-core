@@ -65,11 +65,8 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
     );
   }
 
-  override async initData() {
-    this.data = await this.loadDataFor(this.entity.getId(true));
-  }
-
-  private async loadDataFor(entityId: string): Promise<Todo[]> {
+  override getData() {
+    const entityId = this.entity.getId(true);
     return this.dbIndexingService.queryIndexDocs(
       Todo,
       "todo_index/by_" + this.referenceProperty,

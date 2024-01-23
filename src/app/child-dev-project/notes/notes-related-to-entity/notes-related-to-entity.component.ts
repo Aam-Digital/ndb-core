@@ -67,8 +67,8 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
     return super.ngOnInit();
   }
 
-  override async initData() {
-    this.data = await this.childrenService
+  override getData() {
+    return this.childrenService
       .getNotesRelatedTo(this.entity.getId(true))
       .then((notes: Note[]) => {
         notes.sort((a, b) => {
