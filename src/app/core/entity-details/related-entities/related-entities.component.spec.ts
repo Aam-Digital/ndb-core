@@ -34,7 +34,7 @@ describe("RelatedEntitiesComponent", () => {
     }).compileComponents();
 
     fixture = TestBed.createComponent(
-      RelatedEntitiesComponent<ChildSchoolRelation>,
+      RelatedEntitiesComponent<ChildSchoolRelation | Note>,
     );
     component = fixture.componentInstance;
     component.entity = new Child();
