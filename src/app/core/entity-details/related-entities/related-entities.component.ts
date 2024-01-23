@@ -3,7 +3,6 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../entity/model/entity-update";
@@ -20,6 +19,7 @@ import { DataFilter } from "../../filter/filters/filters";
 import { FilterService } from "../../filter/filter.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
+import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -45,7 +45,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
    * property name of the related entities (type given in this.entityType) that holds the entity id
    * to be matched with the id of the current main entity (given in this.entity)
    */
-  @Input() property: string;
+  @Input() property: string | string[];
 
   @Input()
   public set columns(value: ColumnConfig[]) {
@@ -83,7 +83,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   async ngOnInit() {
     const data = await this.getData();
 
-    this.property = this.getProperty() as any;
+    this.property = this.getProperty();
     this.filter = this.initFilter();
     // TODO not really required as the entities table anyway hides the not-passing ones
     this.data = data.filter(this.filterService.getFilterPredicate(this.filter));
@@ -120,13 +120,24 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
     if (this.property) {
       // only show related entities
-      this.isArray = isArrayProperty(this.entityCtr, this.property);
-      filter[this.property] = this.isArray
-        ? { $elemMatch: { $eq: this.entity.getId() } }
-        : this.entity.getId();
+      if (typeof this.property === "string") {
+        Object.assign(filter, this.getFilterForProperty(this.property));
+      } else if (this.property.length > 0) {
+        filter["$or"] = this.property.map((prop) =>
+          this.getFilterForProperty(prop),
+        );
+      }
     }
 
     return filter;
+  }
+
+  private getFilterForProperty(property: string) {
+    const isArray = isArrayProperty(this.entityCtr, property);
+    const filter = isArray
+      ? { $elemMatch: { $eq: this.entity.getId() } }
+      : this.entity.getId();
+    return { [property]: filter };
   }
 
   protected listenToEntityUpdates() {
@@ -142,9 +153,11 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     // TODO has a similar purpose like FilterService.alignEntityWithFilter
     return () => {
       const rec = new this.entityCtr();
-      rec[this.property] = this.isArray
-        ? [this.entity.getId()]
-        : this.entity.getId();
+      if (!Array.isArray(this.property)) {
+        rec[this.property] = this.isArray
+          ? [this.entity.getId()]
+          : this.entity.getId();
+      }
       return rec;
     };
   }

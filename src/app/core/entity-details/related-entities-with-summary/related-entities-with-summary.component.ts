@@ -47,11 +47,13 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
         untilDestroyed(this),
         filter(
           ({ entity, type }) =>
-            type === "remove" || entity[this.property] === this.entity.getId(),
+            type === "remove" ||
+            entity[this.property as string] === this.entity.getId(),
         ),
       )
       .subscribe((update) => {
         this.data = applyUpdate(this.data, update, false);
+        // TODO needs to apply to filtered data
         this.updateSummary();
       });
   }

@@ -19,6 +19,8 @@ import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { School } from "../../../child-dev-project/schools/model/school";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
 
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<ChildSchoolRelation | Note>;
@@ -178,6 +180,46 @@ describe("RelatedEntitiesComponent", () => {
 
     expect(component.data).toEqual([]);
   }));
+
+  it("should support multiple properties", async () => {
+    @DatabaseEntity("MultiPropTest")
+    class MultiPropTest extends Entity {
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        additional: Child.ENTITY_TYPE,
+      })
+      singleChild: string;
+      @DatabaseField({
+        dataType: EntityArrayDatatype.dataType,
+        additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
+      })
+      multiEntities: string;
+    }
+
+    const child = new Child();
+    component.entity = child;
+    component.entityType = MultiPropTest.ENTITY_TYPE;
+    component.filter = {};
+
+    await component.ngOnInit();
+
+    expect(component.property).toEqual(
+      jasmine.arrayWithExactContents(["singleChild", "multiEntities"]),
+    );
+    // filter matching relations at any of the available props
+    expect(component.filter).toEqual({
+      $or: [
+        { singleChild: child.getId() },
+        { multiEntities: { $elemMatch: { $eq: child.getId() } } },
+      ],
+    });
+    // no special properties set when creating a new entity
+    expectEntitiesToMatch(
+      [component.createNewRecordFactory()()],
+      [new MultiPropTest()],
+      true,
+    );
+  });
 
   it("should infer the property based on related entity", async () => {
     @DatabaseEntity("PropTest")

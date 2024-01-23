@@ -19,6 +19,8 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
+import { Child } from "../../model/child";
 
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
@@ -26,7 +28,11 @@ export class EducationalMaterial extends Entity {
     return Object.assign(new EducationalMaterial(), params);
   }
 
-  @DatabaseField() child: string; // id of Child entity
+  @DatabaseField({
+    dataType: EntityDatatype.dataType,
+    additional: Child.ENTITY_TYPE,
+  })
+  child: string; // id of Child entity
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,
   })
