@@ -42,11 +42,16 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   /**
-   * property name of the related entities (type given in this.entityType) that holds the entity id
-   * to be matched with the id of the current main entity (given in this.entity)
+   * Property name of the related entities (type given in this.entityType) that holds the entity id
+   * to be matched with the id of the current main entity (given in this.entity).
+   * This is automatically inferred and does not need to be set.
    */
   property: string | string[];
 
+  /**
+   * Columns to be displayed in the table
+   * @param value
+   */
   @Input()
   public set columns(value: ColumnConfig[]) {
     if (!Array.isArray(value)) {
@@ -60,8 +65,14 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   columnsToDisplay: string[];
 
+  /**
+   * This filter is applied before displaying the data.
+   */
   @Input() filter?: DataFilter<E>;
 
+  /**
+   * Whether inactive/archived records should be shown.
+   */
   @Input() showInactive: boolean;
 
   data: E[];
