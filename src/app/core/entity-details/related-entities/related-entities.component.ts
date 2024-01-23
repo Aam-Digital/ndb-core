@@ -80,20 +80,20 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   async ngOnInit() {
     const data = await this.getData();
+
     this.filter = this.initFilter();
     this.data = data.filter(this.filterService.getFilterPredicate(this.filter));
+
+    if (this.showInactive === undefined) {
+      // show all related docs when visiting an archived entity
+      this.showInactive = this.entity.anonymized;
+    }
+
     this.listenToEntityUpdates();
   }
 
-  protected async getData(): Promise<E[]> {
-    this.isArray = isArrayProperty(this.entityCtr, this.property);
-
-    const data = await this.entityMapper.loadType<E>(this.entityCtr);
-
-    if (this.showInactive === undefined) {
-      this.showInactive = this.entity.anonymized;
-    }
-    return data;
+  protected getData(): Promise<E[]> {
+    return this.entityMapper.loadType(this.entityCtr);
   }
 
   initFilter(): DataFilter<E> {
@@ -101,6 +101,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
     if (this.property) {
       // only show related entities
+      this.isArray = isArrayProperty(this.entityCtr, this.property);
       filter[this.property] = this.isArray
         ? { $elemMatch: { $eq: this.entity.getId() } }
         : this.entity.getId();

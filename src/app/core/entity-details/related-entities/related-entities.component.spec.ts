@@ -87,19 +87,20 @@ describe("RelatedEntitiesComponent", () => {
 
   it("should ignore entities of the related type where the matching field is undefined instead of array", async () => {
     const c1 = new Child();
-    const r1 = new Note();
-    r1.children = [c1.getId()];
-    const rEmpty = new Note();
-    delete rEmpty.children; // some entity types will not have a default empty array
+    const n1 = new Note();
+    n1.children = [c1.getId()];
+    const nEmpty = new Note();
+    delete nEmpty.children; // some entity types will not have a default empty array
     const entityMapper = TestBed.inject(EntityMapperService);
-    await entityMapper.saveAll([c1, r1, rEmpty]);
+    await entityMapper.saveAll([c1, n1, nEmpty]);
 
     component.entity = c1;
     component.entityType = Note.ENTITY_TYPE;
     component.property = "children";
+    component.filter = {}; // reset filter
     await component.ngOnInit();
 
-    expect(component.data).toEqual([r1]);
+    expect(component.data).toEqual([n1]);
   });
 
   it("should create a new entity that references the related one", async () => {
