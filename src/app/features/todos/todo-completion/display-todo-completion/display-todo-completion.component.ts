@@ -1,10 +1,11 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { TodoCompletion } from "../../model/todo-completion";
 import { DatePipe, NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../../core/entity/model/entity";
 import { User } from "../../../../core/user/user";
+import { ViewDirective } from "../../../../core/entity/default-datatype/view.directive";
 
 @Component({
   selector: "app-display-todo-completion",
@@ -13,18 +14,25 @@ import { User } from "../../../../core/user/user";
   standalone: true,
   imports: [NgIf, FontAwesomeModule, DatePipe],
 })
-export class DisplayTodoCompletionComponent implements OnInit {
-  @Input() value: TodoCompletion;
+export class DisplayTodoCompletionComponent
+  extends ViewDirective<TodoCompletion>
+  implements OnInit
+{
   completedBy: Entity;
-  constructor(private entityMapper: EntityMapperService) {}
+
+  constructor(private entityMapper: EntityMapperService) {
+    super();
+  }
 
   ngOnInit() {
-    const entityId = this.value.completedBy;
-    const entityType = entityId.includes(":")
-      ? Entity.extractTypeFromId(entityId)
-      : User;
-    this.entityMapper
-      .load(entityType, entityId)
-      .then((res) => (this.completedBy = res));
+    if (this.value?.completedBy) {
+      const entityId = this.value.completedBy;
+      const entityType = entityId.includes(":")
+        ? Entity.extractTypeFromId(entityId)
+        : User;
+      this.entityMapper
+        .load(entityType, entityId)
+        .then((res) => (this.completedBy = res));
+    }
   }
 }
