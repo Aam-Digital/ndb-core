@@ -24,7 +24,6 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
 
   let mainEntity: Child;
   const entityType = "ChildSchoolRelation";
-  const property = "childId";
 
   let active1, active2, inactive: ChildSchoolRelation;
 
@@ -56,7 +55,6 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
 
     component.entity = mainEntity;
     component.entityType = entityType;
-    component.property = property;
 
     fixture.detectChanges();
   });
@@ -75,7 +73,6 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     loadType.and.resolveTo([active1, active2, inactive]);
 
     component.entity = testSchool;
-    component.property = "schoolId";
     await component.ngOnInit();
 
     expect(component.data).toEqual([active1]);

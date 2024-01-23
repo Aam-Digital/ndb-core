@@ -83,9 +83,9 @@ describe("ChildSchoolOverviewComponent", () => {
     ).toBeTrue();
   });
 
-  it("should create a relation with the school ID", () => {
+  it("should create a relation with the school ID", async () => {
     component.entity = new School("testID");
-    component.ngOnInit();
+    await component.ngOnInit();
 
     const newRelation = component.generateNewRecordFactory()();
 

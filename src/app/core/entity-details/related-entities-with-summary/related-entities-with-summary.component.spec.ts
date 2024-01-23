@@ -45,7 +45,6 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     component = fixture.componentInstance;
     component.entity = child;
     component.entityType = EducationalMaterial.ENTITY_TYPE;
-    component.property = "child";
 
     component.summaries = {
       countProperty: "materialAmount",

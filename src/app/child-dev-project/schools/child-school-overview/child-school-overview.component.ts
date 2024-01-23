@@ -1,10 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { Child } from "../../children/model/child";
-import { School } from "../model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { ChildrenService } from "../../children/children.service";
-import { Entity } from "../../../core/entity/model/entity";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
@@ -66,22 +63,17 @@ export class ChildSchoolOverviewComponent
     ];
   }
 
-  async ngOnInit() {
-    this.mode = this.inferMode(this.entity);
-    this.switchRelatedEntityColumnForMode();
-
-    await super.ngOnInit();
+  override ngOnInit(): Promise<void> {
+    this.mode = this.entity.getType().toLowerCase() as any;
+    return super.ngOnInit();
   }
 
-  private inferMode(entity: Entity): "child" | "school" {
-    switch (entity?.getConstructor()?.ENTITY_TYPE) {
-      case Child.ENTITY_TYPE:
-        this.property = "childId";
-        return "child";
-      case School.ENTITY_TYPE:
-        this.property = "schoolId";
-        return "school";
-    }
+  override getData() {
+    this.switchRelatedEntityColumnForMode();
+    return this.childrenService.queryRelationsOf(
+      this.mode,
+      this.entity.getId(false),
+    );
   }
 
   private switchRelatedEntityColumnForMode() {
@@ -92,12 +84,5 @@ export class ChildSchoolOverviewComponent
     if (idColumn) {
       idColumn.id = this.mode === "child" ? "schoolId" : "childId";
     }
-  }
-
-  override getData() {
-    return this.childrenService.queryRelationsOf(
-      this.mode,
-      this.entity.getId(false),
-    );
   }
 }

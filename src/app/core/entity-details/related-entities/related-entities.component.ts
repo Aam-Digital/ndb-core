@@ -45,7 +45,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
    * property name of the related entities (type given in this.entityType) that holds the entity id
    * to be matched with the id of the current main entity (given in this.entity)
    */
-  @Input() property: string | string[];
+  property: string | string[];
 
   @Input()
   public set columns(value: ColumnConfig[]) {
@@ -81,9 +81,9 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   async ngOnInit() {
+    this.property = this.getProperty();
     const data = await this.getData();
 
-    this.property = this.getProperty();
     this.filter = this.initFilter();
     // TODO not really required as the entities table anyway hides the not-passing ones
     this.data = data.filter(this.filterService.getFilterPredicate(this.filter));

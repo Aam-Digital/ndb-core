@@ -39,7 +39,6 @@ describe("RelatedEntitiesComponent", () => {
     component = fixture.componentInstance;
     component.entity = new Child();
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
-    component.property = "childId";
     component.columns = [];
     fixture.detectChanges();
   });
@@ -63,7 +62,6 @@ describe("RelatedEntitiesComponent", () => {
 
     component.entity = c1;
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
-    component.property = "childId";
     component.columns = columns;
     await component.ngOnInit();
 
@@ -84,7 +82,6 @@ describe("RelatedEntitiesComponent", () => {
 
     component.entity = child;
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
-    component.property = "childId";
     component.filter = filter;
     await component.ngOnInit();
 
@@ -103,7 +100,6 @@ describe("RelatedEntitiesComponent", () => {
 
     component.entity = c1;
     component.entityType = Note.ENTITY_TYPE;
-    component.property = "children";
     component.filter = {}; // reset filter
     await component.ngOnInit();
 
@@ -114,7 +110,6 @@ describe("RelatedEntitiesComponent", () => {
     const related = new Child();
     component.entity = related;
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
-    component.property = "childId";
     component.columns = [];
     await component.ngOnInit();
 

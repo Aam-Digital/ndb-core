@@ -29,7 +29,6 @@ export class HistoricalDataComponent
   implements OnInit
 {
   @Input() entity: Entity;
-  property = "relatedEntity";
   entityCtr = HistoricalEntityData;
 
   /** @deprecated use @Input() columns instead */
@@ -51,13 +50,5 @@ export class HistoricalDataComponent
 
   override getData() {
     return this.historicalDataService.getHistoricalDataFor(this.entity.getId());
-  }
-
-  public getNewEntryFunction(): () => HistoricalEntityData {
-    return () => {
-      const newEntry = new HistoricalEntityData();
-      newEntry.relatedEntity = this.entity.getId();
-      return newEntry;
-    };
   }
 }

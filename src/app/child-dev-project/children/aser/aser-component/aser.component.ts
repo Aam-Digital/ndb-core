@@ -22,7 +22,6 @@ import { FilterService } from "../../../../core/filter/filter.service";
 })
 export class AserComponent extends RelatedEntitiesComponent<Aser> {
   @Input() entity: Child;
-  property = "child";
   entityCtr = Aser;
 
   override _columns: FormFieldConfig[] = [

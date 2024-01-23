@@ -24,7 +24,6 @@ export class HealthCheckupComponent
   implements OnInit
 {
   @Input() entity: Child;
-  property = "child";
   entityCtr = HealthCheck;
 
   /**
