@@ -1,7 +1,7 @@
 <app-entities-table
   [entityType]="entityCtr"
-  [records]="entries"
-  [customColumns]="columns"
+  [records]="data"
+  [customColumns]="_columns"
   [newRecordFactory]="getNewEntryFunction()"
   clickMode="none"
   [filter]="filter"
