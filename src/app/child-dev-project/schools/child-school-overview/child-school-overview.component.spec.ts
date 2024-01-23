@@ -92,4 +92,20 @@ describe("ChildSchoolOverviewComponent", () => {
     expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
     expect(newRelation.schoolId).toBe("testID");
   });
+
+  it("should show archived school in 'child' mode", async () => {
+    component.entity = new Child();
+
+    await component.ngOnInit();
+
+    expect(component.showInactive).toBeTrue();
+  });
+
+  it("should not show archived children in 'school' mode", async () => {
+    component.entity = new School();
+
+    await component.ngOnInit();
+
+    expect(component.showInactive).toBeFalse();
+  });
 });

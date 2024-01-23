@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { ChildrenService } from "../../children/children.service";
@@ -42,7 +42,6 @@ export class ChildSchoolOverviewComponent
   implements OnInit
 {
   mode: "child" | "school" = "child";
-  @Input() showInactive = this.mode === "child";
   entityCtr = ChildSchoolRelation;
 
   constructor(
@@ -65,6 +64,7 @@ export class ChildSchoolOverviewComponent
 
   override ngOnInit(): Promise<void> {
     this.mode = this.entity.getType().toLowerCase() as any;
+    this.showInactive = this.mode === "child";
     return super.ngOnInit();
   }
 
