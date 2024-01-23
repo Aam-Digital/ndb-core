@@ -84,12 +84,7 @@
             </mat-form-field>
 
             <!-- "additional" for enum datatype -->
-            <mat-form-field
-              *ngIf="
-                typeAdditionalOptions &&
-                formDataType.value === 'configurable-enum'
-              "
-            >
+            <mat-form-field *ngIf="formDataType.value === 'configurable-enum'">
               <mat-label i18n>
                 Type Details (dropdown options set)
                 <fa-icon
@@ -119,7 +114,7 @@
             <!-- "additional" for entity ref datatypes -->
             <mat-form-field
               *ngIf="
-                (typeAdditionalOptions && formDataType.value === 'entity') ||
+                formDataType.value === 'entity' ||
                 formDataType.value === 'entity-array'
               "
             >

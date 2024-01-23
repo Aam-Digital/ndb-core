@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../notes/model/note";
-import { Aser } from "./aser/model/aser";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { HealthCheck } from "./health-checkup/model/health-check";
 import moment, { Moment } from "moment";
@@ -274,11 +273,5 @@ export class ChildrenService {
     return this.entityMapper
       .loadType(HealthCheck)
       .then((res) => res.filter((h) => h.child === childId));
-  }
-
-  getAserResultsOfChild(childId: string): Promise<Aser[]> {
-    return this.entityMapper
-      .loadType(Aser)
-      .then((res) => res.filter((o) => o.child === childId));
   }
 }

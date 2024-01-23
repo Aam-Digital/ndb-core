@@ -76,8 +76,10 @@ describe("RelatedEntitiesComponent", () => {
     await entityMapper.saveAll([c1, r1, rEmpty]);
 
     component.entity = c1;
+    console.log("setting type");
     component.entityType = Note.ENTITY_TYPE;
     component.property = "children";
+    console.log("initializing");
     await component.ngOnInit();
 
     expect(component.data).toEqual([r1]);

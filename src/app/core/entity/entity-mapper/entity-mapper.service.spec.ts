@@ -155,19 +155,19 @@ describe("EntityMapperService", () => {
     const testEntity = new Entity(testId);
     await entityMapper.save(testEntity);
 
-    const loadedByEntityId = await entityMapper.load(
+    const loadedByShortId = await entityMapper.load(
       Entity,
-      testEntity.getId(),
+      testEntity.getId(true),
     );
-    expect(loadedByEntityId).toBeDefined();
+    expect(loadedByShortId).toBeDefined();
+    expect(loadedByShortId.getId().startsWith(Entity.ENTITY_TYPE)).toBeTrue();
 
-    expect(loadedByEntityId.getId().startsWith(Entity.ENTITY_TYPE)).toBeTrue();
     const loadedByFullId = await entityMapper.load(
       Entity,
-      loadedByEntityId.getId(),
+      loadedByShortId.getId(),
     );
-    expect(loadedByFullId.getId()).toBe(loadedByEntityId.getId());
-    expect(loadedByFullId._rev).toBe(loadedByEntityId._rev);
+    expect(loadedByFullId.getId()).toBe(loadedByShortId.getId());
+    expect(loadedByFullId._rev).toBe(loadedByShortId._rev);
   });
 
   it("publishes updates to any listeners", () => {

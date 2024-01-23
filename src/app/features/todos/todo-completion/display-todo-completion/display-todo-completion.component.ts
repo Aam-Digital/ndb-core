@@ -6,7 +6,9 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper/entit
 import { Entity } from "../../../../core/entity/model/entity";
 import { User } from "../../../../core/user/user";
 import { ViewDirective } from "../../../../core/entity/default-datatype/view.directive";
+import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 
+@DynamicComponent("DisplayTodoCompletion")
 @Component({
   selector: "app-display-todo-completion",
   templateUrl: "./display-todo-completion.component.html",

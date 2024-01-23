@@ -101,7 +101,6 @@ export class SessionManagerService {
     this.sessionInfo.next(user);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
 
-    // TODO allow generic entities with fallback to User entity
     this.entityMapper
       .load(User, user.name)
       .then((res) => this.currentUser.next(res))
@@ -111,7 +110,6 @@ export class SessionManagerService {
       .pipe(
         filter(
           ({ entity }) =>
-            // TODO user.name does not (necessarily) have prefix
             entity.getId() === user.name || entity.getId(true) === user.name,
         ),
       )

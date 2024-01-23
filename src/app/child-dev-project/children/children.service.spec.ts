@@ -44,28 +44,23 @@ describe("ChildrenService", () => {
     await entityMapper.save(child);
     const childrenAfter = await service.getChildren();
 
-    let find = childrenBefore.find((c) => c.getId() === child.getId());
-    expect(find).toBeUndefined();
+    expect(childrenBefore).not.toContain(child);
 
-    find = childrenAfter.find((c) => c.getId() === child.getId());
-    expect(find).toBeDefined();
-    expect(find).toEqual(child);
+    expect(childrenAfter).toContain(child);
     expect(childrenBefore).toHaveSize(childrenAfter.length - 1);
   });
 
   it("should find a newly saved child", async () => {
     const child = new Child("10");
-    let error;
     try {
       await service.getChild(child.getId());
+      fail("Child should not be found");
     } catch (err) {
-      error = err;
+      expect(err).toBeDefined();
     }
-    expect(error).toBeDefined();
 
     await entityMapper.save(child);
     const childAfter = await service.getChild(child.getId());
-    expect(childAfter).toBeDefined();
     expect(childAfter).toEqual(child);
   });
 

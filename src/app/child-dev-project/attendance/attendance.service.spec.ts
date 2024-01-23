@@ -14,6 +14,7 @@ import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
+import { Entity } from "../../core/entity/model/entity";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -316,7 +317,10 @@ describe("AttendanceService", () => {
     duplicateChildRelation.childId = duplicateChild.getId();
     duplicateChildRelation.schoolId = linkedSchool.getId();
     const anotherRelation = new ChildSchoolRelation();
-    anotherRelation.childId = "Child:another_child_id";
+    anotherRelation.childId = Entity.createPrefixedId(
+      Child.ENTITY_TYPE,
+      "another_child_id",
+    );
     anotherRelation.schoolId = linkedSchool.getId();
     await entityMapper.saveAll([duplicateChildRelation, anotherRelation]);
 

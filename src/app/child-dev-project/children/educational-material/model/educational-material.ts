@@ -32,7 +32,7 @@ export class EducationalMaterial extends Entity {
     additional: Child.ENTITY_TYPE,
     entityReferenceRole: "composite",
   })
-  child: string; // id of Child entity
+  child: string;
 
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,

@@ -218,7 +218,7 @@ export class AdminEntityFieldComponent implements OnChanges {
       .listEnums()
       .map((x) => ({
         label: Entity.extractEntityIdFromId(x), // TODO: add human-readable label to configurable-enum entities
-        value: x,
+        value: Entity.extractEntityIdFromId(x),
       }));
     this.additionalForm.addValidators(Validators.required);
 
@@ -257,7 +257,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   private resetAdditional() {
     this.additionalForm.removeValidators(Validators.required);
     this.additionalForm.reset(null);
-    this.typeAdditionalOptions = undefined;
+    this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
   }
 
