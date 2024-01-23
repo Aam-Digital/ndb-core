@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ChildrenService } from "../../children/children.service";
@@ -13,66 +13,64 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
 import { asArray } from "../../../utils/utils";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { ColumnConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { DataFilter } from "../../../core/filter/filters/filters";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 
 /**
  * The component that is responsible for listing the Notes that are related to a certain entity.
  */
 @DynamicComponent("NotesRelatedToEntity")
 @DynamicComponent("NotesOfChild") // for backward compatibility
-@UntilDestroy()
 @Component({
   selector: "app-notes-related-to-entity",
   templateUrl: "./notes-related-to-entity.component.html",
   imports: [EntitiesTableComponent],
   standalone: true,
 })
-export class NotesRelatedToEntityComponent implements OnInit {
-  @Input() entity: Entity;
-  records: Array<Note>;
-
-  @Input() columns: ColumnConfig[] = [
+export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note> {
+  override entityCtr = Note;
+  override _columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },
     { id: "subject", visibleFrom: "xs" },
     { id: "text", visibleFrom: "md" },
     { id: "authors", visibleFrom: "md" },
     { id: "warningLevel", visibleFrom: "md" },
   ];
-  @Input() filter: DataFilter<Note> = {};
 
   /**
    * returns the color for a note; passed to the entity subrecord component
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColor();
-  newRecordFactory: () => Note;
+  newRecordFactory = this.generateNewRecordFactory();
 
   entityConstructor = Note;
 
   constructor(
     private childrenService: ChildrenService,
-    private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
     private filterService: FilterService,
-  ) {}
+    entityMapper: EntityMapperService,
+    entities: EntityRegistry,
+    screenWidthOberserver: ScreenWidthObserver,
+  ) {
+    super(entityMapper, entities, screenWidthOberserver);
+  }
 
-  ngOnInit(): void {
+  override ngOnInit() {
     if (this.entity.getType() === Child.ENTITY_TYPE) {
       // When displaying notes for a child, use attendance color highlighting
       this.getColor = (note: Note) => note?.getColorForId(this.entity.getId());
     }
-    this.newRecordFactory = this.generateNewRecordFactory();
-    this.initNotesOfEntity();
-    this.listenToEntityUpdates();
+    return super.ngOnInit();
   }
 
-  private async initNotesOfEntity() {
-    this.records = await this.childrenService
+  override async initData() {
+    this.data = await this.childrenService
       .getNotesRelatedTo(this.entity.getId(true))
       .then((notes: Note[]) => {
         notes.sort((a, b) => {
@@ -83,15 +81,6 @@ export class NotesRelatedToEntityComponent implements OnInit {
           return moment(b.date).valueOf() - moment(a.date).valueOf();
         });
         return notes;
-      });
-  }
-
-  private listenToEntityUpdates() {
-    this.entityMapper
-      .receiveUpdates(this.entityConstructor)
-      .pipe(untilDestroyed(this))
-      .subscribe((next) => {
-        this.records = applyUpdate(this.records, next);
       });
   }
 
