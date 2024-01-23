@@ -143,6 +143,6 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
       component.entity.getId(true),
     );
-    expect(component.records).toEqual([n1, n2, n3]);
+    expect(component.data).toEqual([n1, n2, n3]);
   }));
 });

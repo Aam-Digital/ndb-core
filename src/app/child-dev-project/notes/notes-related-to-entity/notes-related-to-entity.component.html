@@ -1,11 +1,11 @@
 <app-entities-table
-  [entityType]="entityConstructor"
-  [records]="records"
-  [customColumns]="columns"
+  [entityType]="entityCtr"
+  [records]="data"
+  [customColumns]="_columns"
   [filter]="filter"
   [newRecordFactory]="newRecordFactory"
   clickMode="none"
-  (rowClick)="showNoteDetails($event)"
+  (entityClick)="showNoteDetails($event)"
   [getBackgroundColor]="getColor"
 >
 </app-entities-table>
