@@ -10,8 +10,12 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
+import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { applyUpdate } from "../../../core/entity/model/entity-update";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 
 @DynamicComponent("TodosRelatedToEntity")
+@UntilDestroy()
 @Component({
   selector: "app-todos-related-to-entity",
   templateUrl: "./todos-related-to-entity.component.html",
@@ -53,6 +57,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
   constructor(
     private formDialog: FormDialogService,
     private dbIndexingService: DatabaseIndexingService,
+    private entityMapper: EntityMapperService,
   ) {
     // TODO: move this generic index creation into schema
     this.dbIndexingService.generateIndexOnProperty(
@@ -65,6 +70,19 @@ export class TodosRelatedToEntityComponent implements OnInit {
 
   async ngOnInit() {
     this.entries = await this.loadDataFor(this.entity.getId(true));
+    this.listenToEntityUpdates();
+  }
+
+  private listenToEntityUpdates() {
+    this.entityMapper
+      .receiveUpdates(this.entityCtr)
+      .pipe(untilDestroyed(this))
+      .subscribe((next) => {
+        if (!next.entity.relatedEntities?.includes(this.entity.getId(true))) {
+          return;
+        }
+        this.entries = applyUpdate(this.entries, next);
+      });
   }
 
   private async loadDataFor(entityId: string): Promise<Todo[]> {

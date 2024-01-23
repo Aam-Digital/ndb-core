@@ -203,6 +203,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
   @Output() rowClick: EventEmitter<T> = new EventEmitter<T>();
+  @Output() addNewClick: EventEmitter<T> = new EventEmitter<T>();
 
   /**
    * BULK SELECT
