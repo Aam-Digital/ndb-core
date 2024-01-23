@@ -41,7 +41,7 @@ describe("RelatedEntitiesComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should load only the entities which are linked with the passed one", async () => {
+  it("should only show the entities which are linked with the passed one", async () => {
     const c1 = new Child();
     const c2 = new Child();
     const r1 = new ChildSchoolRelation();
@@ -53,17 +53,36 @@ describe("RelatedEntitiesComponent", () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     await entityMapper.saveAll([c1, c2, r1, r2, r3]);
     const columns = ["start", "end", "schoolId"];
-    const filter = { start: { $exists: true } } as any;
 
     component.entity = c1;
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
     component.property = "childId";
     component.columns = columns;
-    component.filter = filter;
     await component.ngOnInit();
 
     expect(component.data).toEqual([r1, r2]);
-    expect(component.filter).toEqual({ ...filter, childId: c1.getId() });
+  });
+
+  it("should only show the entities which pass the filter", async () => {
+    const child = new Child();
+    const r1 = new ChildSchoolRelation();
+    r1.start = new Date();
+    r1.childId = child.getId();
+    const r2 = new ChildSchoolRelation();
+    r2.childId = child.getId();
+    const r3 = new ChildSchoolRelation();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    await entityMapper.saveAll([child, r1, r2, r3]);
+    const filter = { start: { $exists: true } } as any;
+
+    component.entity = child;
+    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    component.property = "childId";
+    component.filter = filter;
+    await component.ngOnInit();
+
+    expect(component.data).toEqual([r1]);
+    expect(component.filter).toEqual({ ...filter, childId: child.getId() });
   });
 
   it("should ignore entities of the related type where the matching field is undefined instead of array", async () => {

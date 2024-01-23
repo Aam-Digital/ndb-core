@@ -63,12 +63,13 @@ describe("ChildSchoolOverviewComponent", () => {
   });
 
   it("should create a relation with the child ID", async () => {
+    const child = new Child();
     const existingRelation = new ChildSchoolRelation();
+    existingRelation.childId = child.getId();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
     mockChildrenService.queryRelationsOf.and.resolveTo([existingRelation]);
 
-    const child = new Child();
     component.entity = child;
     await component.ngOnInit();
 

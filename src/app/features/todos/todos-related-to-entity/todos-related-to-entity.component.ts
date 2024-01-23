@@ -13,6 +13,7 @@ import { RelatedEntitiesComponent } from "../../../core/entity-details/related-e
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { FilterService } from "../../../core/filter/filter.service";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -53,9 +54,10 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
     private dbIndexingService: DatabaseIndexingService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    screenWidthOberserver: ScreenWidthObserver,
+    screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
   ) {
-    super(entityMapper, entities, screenWidthOberserver);
+    super(entityMapper, entities, screenWidthObserver, filterService);
     // TODO: move this generic index creation into schema
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",

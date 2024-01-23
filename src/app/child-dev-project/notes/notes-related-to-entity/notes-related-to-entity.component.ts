@@ -51,12 +51,12 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
   constructor(
     private childrenService: ChildrenService,
     private formDialog: FormDialogService,
-    private filterService: FilterService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    screenWidthOberserver: ScreenWidthObserver,
+    screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
   ) {
-    super(entityMapper, entities, screenWidthOberserver);
+    super(entityMapper, entities, screenWidthObserver, filterService);
   }
 
   override ngOnInit() {

@@ -10,6 +10,7 @@ import { RelatedEntitiesComponent } from "../../../../core/entity-details/relate
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
+import { FilterService } from "../../../../core/filter/filter.service";
 
 @DynamicComponent("Aser")
 @Component({
@@ -38,8 +39,9 @@ export class AserComponent extends RelatedEntitiesComponent<Aser> {
     entityMapper: EntityMapperService,
     entityRegistry: EntityRegistry,
     screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
   ) {
-    super(entityMapper, entityRegistry, screenWidthObserver);
+    super(entityMapper, entityRegistry, screenWidthObserver, filterService);
   }
 
   override getData() {

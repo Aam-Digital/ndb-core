@@ -16,6 +16,7 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { FilterService } from "../../../core/filter/filter.service";
 
 // TODO: once schema-generated indices are available (#262), remove this component and use its generic super class directly
 @DynamicComponent("ChildSchoolOverview")
@@ -52,8 +53,9 @@ export class ChildSchoolOverviewComponent
     entityMapper: EntityMapperService,
     entityRegistry: EntityRegistry,
     screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
   ) {
-    super(entityMapper, entityRegistry, screenWidthObserver);
+    super(entityMapper, entityRegistry, screenWidthObserver, filterService);
 
     this.columns = [
       { id: "childId" }, // schoolId/childId replaced dynamically during init
@@ -93,10 +95,6 @@ export class ChildSchoolOverviewComponent
   }
 
   override getData() {
-    if (!this.mode) {
-      return;
-    }
-
     return this.childrenService.queryRelationsOf(
       this.mode,
       this.entity.getId(false),
