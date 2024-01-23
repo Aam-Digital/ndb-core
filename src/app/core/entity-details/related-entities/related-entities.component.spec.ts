@@ -17,6 +17,8 @@ import { Entity } from "../../entity/model/entity";
 import moment from "moment";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
+import { School } from "../../../child-dev-project/schools/model/school";
 
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<ChildSchoolRelation | Note>;
@@ -176,4 +178,42 @@ describe("RelatedEntitiesComponent", () => {
 
     expect(component.data).toEqual([]);
   }));
+
+  it("should infer the property based on related entity", async () => {
+    @DatabaseEntity("PropTest")
+    class PropTest extends Entity {}
+    component.entityType = PropTest.ENTITY_TYPE;
+
+    PropTest.schema.set("singleRelation", {
+      dataType: EntityDatatype.dataType,
+      additional: Child.ENTITY_TYPE,
+    });
+    component.entity = new Child();
+    await component.ngOnInit();
+    expect(component.property).toEqual("singleRelation");
+
+    PropTest.schema.set("arrayRelation", {
+      dataType: EntityArrayDatatype.dataType,
+      additional: School.ENTITY_TYPE,
+    });
+    component.entity = new School();
+    await component.ngOnInit();
+    expect(component.property).toEqual("arrayRelation");
+
+    PropTest.schema.set("multiTypeRelation", {
+      dataType: EntityArrayDatatype.dataType,
+      additional: [ChildSchoolRelation.ENTITY_TYPE, School.ENTITY_TYPE],
+    });
+    component.entity = new ChildSchoolRelation();
+    await component.ngOnInit();
+    expect(component.property).toEqual("multiTypeRelation");
+
+    // Now with 2 relations ("arrayRelation" and "multiTypeRelation")
+    // TODO (how) do we support this case?
+    component.entity = new School();
+    await component.ngOnInit();
+    expect(component.property).toEqual(
+      jasmine.arrayWithExactContents(["multiTypeRelation", "arrayRelation"]),
+    );
+  });
 });

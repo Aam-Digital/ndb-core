@@ -18,6 +18,8 @@ import {
 } from "../../common-components/entity-form/FormConfig";
 import { DataFilter } from "../../filter/filters/filters";
 import { FilterService } from "../../filter/filter.service";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -81,6 +83,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   async ngOnInit() {
     const data = await this.getData();
 
+    this.property = this.getProperty() as any;
     this.filter = this.initFilter();
     // TODO not really required as the entities table anyway hides the not-passing ones
     this.data = data.filter(this.filterService.getFilterPredicate(this.filter));
@@ -97,7 +100,22 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     return this.entityMapper.loadType(this.entityCtr);
   }
 
-  initFilter(): DataFilter<E> {
+  protected getProperty(): string | string[] {
+    const relType = this.entity.getType();
+    const found = [...this.entityCtr.schema].filter(([prop, schema]) => {
+      const additional = schema.additional;
+      switch (schema.dataType) {
+        case EntityDatatype.dataType:
+        case EntityArrayDatatype.dataType:
+          return Array.isArray(additional)
+            ? additional.includes(relType)
+            : additional === relType;
+      }
+    });
+    return found.length === 1 ? found[0][0] : found.map(([key]) => key);
+  }
+
+  protected initFilter(): DataFilter<E> {
     const filter: DataFilter<E> = { ...this.filter };
 
     if (this.property) {
