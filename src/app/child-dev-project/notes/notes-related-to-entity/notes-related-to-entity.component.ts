@@ -48,8 +48,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
   getColor = (note: Note) => note?.getColor();
   newRecordFactory = this.generateNewRecordFactory();
 
-  entityConstructor = Note;
-
   constructor(
     private childrenService: ChildrenService,
     private formDialog: FormDialogService,
