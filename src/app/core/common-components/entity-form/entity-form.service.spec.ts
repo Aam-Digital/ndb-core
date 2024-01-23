@@ -145,6 +145,36 @@ describe("EntityFormService", () => {
     expect(unsavedChanges.pending).toBeFalse();
   });
 
+  it("should reset form on cancel, including special fields with getter", async () => {
+    class MockEntity extends Entity {
+      @DatabaseField() simpleField = "original";
+
+      @DatabaseField() get getterField(): string {
+        return this._getterValue;
+      }
+      set getterField(value) {
+        this._getterValue = value;
+      }
+      private _getterValue: string = "original value";
+
+      @DatabaseField() emptyField;
+    }
+
+    const formFields = ["simpleField", "getterField", "emptyField"];
+    const mockEntity = new MockEntity();
+    const formGroup = service.createFormGroup(formFields, mockEntity);
+
+    formGroup.get("simpleField").setValue("new");
+    formGroup.get("getterField").setValue("new value");
+    formGroup.get("emptyField").setValue("value");
+
+    service.resetForm(formGroup, mockEntity);
+
+    expect(formGroup.get("simpleField").value).toBe("original");
+    expect(formGroup.get("getterField").value).toBe("original value");
+    expect(formGroup.get("emptyField").value).toBeUndefined();
+  });
+
   it("should reset state once navigation happens", async () => {
     const router = TestBed.inject(Router);
     router.resetConfig([{ path: "test", component: NotFoundComponent }]);

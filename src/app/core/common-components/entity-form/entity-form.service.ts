@@ -7,7 +7,6 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
-import { omit } from "lodash-es";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -245,11 +244,10 @@ export class EntityFormService {
   }
 
   resetForm<E extends Entity>(form: EntityForm<E>, entity: E) {
-    // Patch form with values from the entity
-    form.patchValue(entity as any);
-    // Clear values that are not yet present on the entity
-    const newKeys = Object.keys(omit(form.controls, Object.keys(entity)));
-    newKeys.forEach((key) => form.get(key).setValue(null));
+    for (const key of Object.keys(form.controls)) {
+      form.get(key).setValue(entity[key]);
+    }
+
     form.markAsPristine();
     this.unsavedChanges.pending = false;
   }
