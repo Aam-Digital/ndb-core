@@ -17,6 +17,7 @@ import moment from "moment";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -145,4 +146,27 @@ describe("NotesRelatedToEntityComponent", () => {
     );
     expect(component.data).toEqual([n1, n2, n3]);
   }));
+
+  it("should only add related notes after the initial load", async () => {
+    const child = new Child();
+    const data = [new Note(), new Note()];
+    data.forEach((n) => n.addChild(child));
+    mockChildrenService.getNotesRelatedTo.and.resolveTo([...data]);
+    component.entity = child;
+
+    await component.ngOnInit();
+    expect(component.data).toEqual(data);
+
+    const relatedNote = new Note();
+    relatedNote.addChild(child);
+    await TestBed.inject(EntityMapperService).save(relatedNote);
+    const expectedData = jasmine.arrayWithExactContents(
+      data.concat(relatedNote),
+    );
+    expect(component.data).toEqual(expectedData);
+
+    const unrelatedNote = new Note();
+    await TestBed.inject(EntityMapperService).save(unrelatedNote);
+    expect(component.data).toEqual(expectedData);
+  });
 });
