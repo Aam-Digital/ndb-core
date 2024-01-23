@@ -1,7 +1,6 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
 import { ChildrenService } from "../../children.service";
-import { Child } from "../../model/child";
 import { FormFieldConfig } from "../../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
@@ -19,11 +18,7 @@ import { FilterService } from "../../../../core/filter/filter.service";
   imports: [EntitiesTableComponent],
   standalone: true,
 })
-export class HealthCheckupComponent
-  extends RelatedEntitiesComponent<HealthCheck>
-  implements OnInit
-{
-  @Input() entity: Child;
+export class HealthCheckupComponent extends RelatedEntitiesComponent<HealthCheck> {
   entityCtr = HealthCheck;
 
   /**
@@ -61,17 +56,6 @@ export class HealthCheckupComponent
     } else {
       return bmi.toFixed(2);
     }
-  }
-
-  override createNewRecordFactory() {
-    return () => {
-      const newHC = new HealthCheck();
-
-      newHC.date = new Date();
-      newHC.child = this.entity.getId();
-
-      return newHC;
-    };
   }
 
   /**
