@@ -34,7 +34,9 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   @Input() entity: Entity;
 
   /** entity type of the related entities to be displayed */
-  @Input() entityType: string;
+  @Input() set entityType(value: string) {
+    this.entityCtr = this.entityRegistry.get(value) as EntityConstructor<E>;
+  }
 
   /**
    * property name of the related entities (type given in this.entityType) that holds the entity id
@@ -80,17 +82,8 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   protected async initData() {
-    this.entityCtr = this.entityRegistry.get(
-      this.entityType,
-    ) as EntityConstructor<E>;
     this.isArray = isArrayProperty(this.entityCtr, this.property);
 
-    this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
-      (e) =>
-        this.isArray
-          ? e[this.property]?.includes(this.entity.getId())
-          : e[this.property] === this.entity.getId(),
-    );
     this.filter = {
       ...this.filter,
       [this.property]: this.isArray
@@ -98,7 +91,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
         : this.entity.getId(),
     };
 
-    this.data = (await this.entityMapper.loadType<E>(this.entityType)).filter(
+    this.data = (await this.entityMapper.loadType<E>(this.entityCtr)).filter(
       (e) =>
         this.isArray
           ? e[this.property]?.includes(this.entity.getId())
