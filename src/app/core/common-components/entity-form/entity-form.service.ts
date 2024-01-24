@@ -113,12 +113,14 @@ export class EntityFormService {
    * @param entity
    * @param forTable
    * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
+   * @param creatingNew if true, fields without 'create' permissions will stay disabled initially
    */
   public createFormGroup<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
     forTable = false,
     withPermissionCheck = true,
+    creatingNew = false,
   ): EntityForm<T> {
     const formConfig = {};
     const copy = entity.copy();
@@ -138,10 +140,12 @@ export class EntityFormService {
     this.subscriptions.push(valueChangesSubscription);
 
     if (withPermissionCheck) {
-      this.disableReadOnlyFormControls(group, entity);
+      this.disableReadOnlyFormControls(group, entity, creatingNew);
       const statusChangesSubscription = group.statusChanges
         .pipe(filter((status) => status !== "DISABLED"))
-        .subscribe(() => this.disableReadOnlyFormControls(group, entity));
+        .subscribe(() =>
+          this.disableReadOnlyFormControls(group, entity, creatingNew),
+        );
       this.subscriptions.push(statusChangesSubscription);
     }
 
@@ -207,9 +211,11 @@ export class EntityFormService {
   private disableReadOnlyFormControls<T extends Entity>(
     form: EntityForm<T>,
     entity: T,
+    creatingNew: boolean,
   ) {
+    const action = creatingNew ? "create" : "update";
     Object.keys(form.controls).forEach((fieldId) => {
-      if (this.ability.cannot("update", entity, fieldId)) {
+      if (this.ability.cannot(action, entity, fieldId)) {
         form.get(fieldId).disable({ onlySelf: true, emitEvent: false });
       }
     });

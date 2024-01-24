@@ -108,6 +108,26 @@ describe("EntityFormService", () => {
     expect(formGroup.valid).toBeTrue();
   });
 
+  it("should use create permissions to disable fields when creating a new entity", () => {
+    const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
+      { subject: "Child", action: "update", fields: ["name"] },
+      { subject: "Child", action: "create", fields: ["dateOfBirth"] },
+    ]);
+
+    const formGroup = service.createFormGroup(
+      formFields,
+      new Child(),
+      false,
+      true,
+      true,
+    );
+
+    expect(formGroup.get("name").disabled).toBeTrue();
+    expect(formGroup.get("dateOfBirth").enabled).toBeTrue();
+  });
+
   it("should always keep properties disabled if user does not have 'update' permissions for them", () => {
     const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
     TestBed.inject(EntityAbility).update([
