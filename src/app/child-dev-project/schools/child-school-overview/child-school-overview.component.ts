@@ -62,12 +62,11 @@ export class ChildSchoolOverviewComponent
     ];
   }
 
-  override ngOnInit(): Promise<void> {
+  override async ngOnInit(): Promise<void> {
     this.mode = this.entity.getType().toLowerCase() as any;
     this.showInactive = this.mode === "child";
-    // TODO toggling inactive does not hide/show color on school details
     this.switchRelatedEntityColumnForMode();
-    return super.ngOnInit();
+    await super.ngOnInit();
   }
 
   override getData() {
