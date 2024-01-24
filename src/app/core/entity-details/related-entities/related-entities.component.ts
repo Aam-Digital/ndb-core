@@ -76,7 +76,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   @Input() showInactive: boolean;
 
   data: E[];
-  private isArray = false;
   protected entityCtr: EntityConstructor<E>;
 
   constructor(
@@ -162,11 +161,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
     // TODO has a similar purpose like FilterService.alignEntityWithFilter
     return () => {
       const rec = new this.entityCtr();
-      if (!Array.isArray(this.property)) {
-        rec[this.property] = this.isArray
-          ? [this.entity.getId()]
-          : this.entity.getId();
-      }
+      this.filterService.alignEntityWithFilter(rec, this.filter);
       return rec;
     };
   }

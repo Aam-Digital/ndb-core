@@ -6,11 +6,11 @@ import { Child } from "../../children/model/child";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
-import { User } from "../../../core/user/user";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { User } from "../../../core/user/user";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
@@ -45,22 +45,25 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(note.getColorForId).toHaveBeenCalledWith(entity.getId());
   });
 
-  it("should create a new note and fill it with the appropriate initial value", () => {
+  it("should create a new note and fill it with the appropriate initial value", async () => {
     let entity: Entity = new Child();
     component.entity = entity;
-    component.ngOnInit();
+    component.filter = undefined;
+    await component.ngOnInit();
     let note = component.generateNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
 
     entity = new School();
     component.entity = entity;
-    component.ngOnInit();
+    component.filter = undefined;
+    await component.ngOnInit();
     note = component.generateNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
 
     entity = new User();
     component.entity = entity;
-    component.ngOnInit();
+    component.filter = undefined;
+    await component.ngOnInit();
     note = component.generateNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId(true)]);
 
@@ -68,9 +71,10 @@ describe("NotesRelatedToEntityComponent", () => {
     entity["childId"] = "someChild";
     entity["schoolId"] = "someSchool";
     component.entity = entity;
-    component.ngOnInit();
+    component.filter = undefined;
+    await component.ngOnInit();
     note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toContain(entity.getId(true));
+    expect(note.relatedEntities).toEqual([entity.getId(true)]);
     expect(note.children).toEqual(["someChild"]);
     expect(note.schools).toEqual(["someSchool"]);
   });

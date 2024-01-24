@@ -26,13 +26,13 @@ describe("HistoricalDataComponent", () => {
     }).compileComponents();
   }));
 
-  beforeEach(() => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(HistoricalDataComponent);
     component = fixture.componentInstance;
 
     component.entity = new Child();
     fixture.detectChanges();
-  });
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();

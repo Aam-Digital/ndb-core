@@ -7,7 +7,6 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
 import { Entity } from "../../../core/entity/model/entity";
 import { FilterService } from "../../../core/filter/filter.service";
 import { Child } from "../../children/model/child";
-import { School } from "../../schools/model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
@@ -72,14 +71,9 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
 
   generateNewRecordFactory() {
     return () => {
-      const newNote = new Note(Date.now().toString());
-
+      const newNote = super.createNewRecordFactory()();
       //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
-      if (this.entity.getType() === Child.ENTITY_TYPE) {
-        newNote.addChild(this.entity as Child);
-      } else if (this.entity.getType() === School.ENTITY_TYPE) {
-        newNote.addSchool(this.entity as School);
-      } else if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+      if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
         newNote.addChild((this.entity as ChildSchoolRelation).childId);
         newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
       }
@@ -88,8 +82,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
       this.getIndirectlyRelatedEntityIds(this.entity).forEach((e) =>
         newNote.relatedEntities.push(e),
       );
-
-      this.filterService.alignEntityWithFilter(newNote, this.filter);
 
       return newNote;
     };

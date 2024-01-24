@@ -7,6 +7,7 @@ import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/co
 import { createTestingConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum-testing";
 import moment from "moment";
 import { DataFilter } from "./filters/filters";
+import { Child } from "../../child-dev-project/children/model/child";
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -65,6 +66,18 @@ describe("FilterService", () => {
 
     expect(note.date).toBeInstanceOf(Date);
     expect(predicate(note)).toBeTrue();
+  });
+
+  it("should support patching with array values", () => {
+    const child = new Child();
+    const filter = {
+      children: { $elemMatch: { $eq: child.getId() } },
+    } as DataFilter<Note>;
+    const note = new Note();
+
+    service.alignEntityWithFilter(note, filter);
+
+    expect(note.children).toEqual([child.getId()]);
   });
 
   it("should support filtering dates with day granularity", () => {
