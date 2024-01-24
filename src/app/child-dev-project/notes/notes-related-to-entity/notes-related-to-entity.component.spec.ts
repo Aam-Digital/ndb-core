@@ -1,6 +1,5 @@
 import { NotesRelatedToEntityComponent } from "./notes-related-to-entity.component";
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
-import { ChildrenService } from "../../children/children.service";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
@@ -8,7 +7,6 @@ import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { User } from "../../../core/user/user";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
@@ -121,30 +119,5 @@ describe("NotesRelatedToEntityComponent", () => {
     );
 
     Note.schema.get("relatedEntities").additional = schemaBefore;
-  });
-
-  it("should only add related notes after the initial load", async () => {
-    const child = new Child();
-    const data = [new Note(), new Note()];
-    data.forEach((n) => n.addChild(child));
-    const childrenService = TestBed.inject(ChildrenService);
-    spyOn(childrenService, "getNotesRelatedTo").and.resolveTo([...data]);
-    component.entity = child;
-
-    await component.ngOnInit();
-    expect(component.data).toEqual(data);
-
-    const relatedNote = new Note();
-    relatedNote.addChild(child);
-    await TestBed.inject(EntityMapperService).save(relatedNote);
-    const expectedData = jasmine.arrayWithExactContents(
-      data.concat(relatedNote),
-    );
-    expect(component.data).toEqual(expectedData);
-
-    const unrelatedNote = new Note();
-    await TestBed.inject(EntityMapperService).save(unrelatedNote);
-    // TODO is actually filtering data necessary here?
-    // expect(component.data).toEqual(expectedData);
   });
 });

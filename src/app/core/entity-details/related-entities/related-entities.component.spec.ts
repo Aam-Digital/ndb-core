@@ -54,13 +54,13 @@ describe("RelatedEntitiesComponent", () => {
     expect(component.filter).toEqual({ childId: child.getId() });
   });
 
-  it("should also included the provided filter", async () => {
+  it("should also include the provided filter", async () => {
     const child = new Child();
     const filter = { start: { $exists: true } };
 
     component.entity = child;
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
-    component.filter = filter;
+    component.filter = { ...filter };
     await component.ngOnInit();
 
     expect(component.filter).toEqual({ ...filter, childId: child.getId() });
@@ -108,7 +108,7 @@ describe("RelatedEntitiesComponent", () => {
     expect(component.data).toEqual([]);
   }));
 
-  it("should support multiple properties", async () => {
+  it("should support multiple related properties", async () => {
     @DatabaseEntity("MultiPropTest")
     class MultiPropTest extends Entity {
       @DatabaseField({
