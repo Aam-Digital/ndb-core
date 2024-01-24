@@ -202,7 +202,10 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   idForSavingPagination: string;
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
-  @Output() rowClick: EventEmitter<T> = new EventEmitter<T>();
+  /**
+   * Emits the entity being clicked in the table - or the newly created entity from the "create" button.
+   */
+  @Output() entityClick = new EventEmitter<T>();
 
   /**
    * BULK SELECT
@@ -262,7 +265,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     }
 
     this.showEntity(row.record);
-    this.rowClick.emit(row.record);
+    this.entityClick.emit(row.record);
   }
 
   showEntity(entity: T) {
