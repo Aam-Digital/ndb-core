@@ -116,13 +116,7 @@ describe("EntityFormService", () => {
       { subject: "Child", action: "create", fields: ["dateOfBirth"] },
     ]);
 
-    const formGroup = service.createFormGroup(
-      formFields,
-      new Child(),
-      false,
-      true,
-      true,
-    );
+    const formGroup = service.createFormGroup(formFields, new Child());
 
     expect(formGroup.get("name").disabled).toBeTrue();
     expect(formGroup.get("dateOfBirth").enabled).toBeTrue();
@@ -135,7 +129,10 @@ describe("EntityFormService", () => {
       { subject: "Child", action: "update", fields: ["name"] },
     ]);
 
-    const formGroup = service.createFormGroup(formFields, new Child());
+    const child = new Child();
+    child._rev = "foo"; // "not new" state
+
+    const formGroup = service.createFormGroup(formFields, child);
 
     expect(formGroup.get("name").enabled).toBeTrue();
     expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
