@@ -109,7 +109,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   protected getProperty(): string | string[] {
     const relType = this.entity.getType();
-    const found = [...this.entityCtr.schema].filter(([prop, schema]) => {
+    const found = [...this.entityCtr.schema].filter(([, schema]) => {
       const additional = schema.additional;
       switch (schema.dataType) {
         case EntityDatatype.dataType:

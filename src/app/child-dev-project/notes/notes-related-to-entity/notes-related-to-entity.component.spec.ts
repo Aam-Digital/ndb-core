@@ -103,6 +103,7 @@ describe("NotesRelatedToEntityComponent", () => {
     ];
     customEntity.childrenLink = "child-without-prefix";
 
+    const schemaBefore = Note.schema.get("relatedEntities").additional;
     Note.schema.get("relatedEntities").additional = [
       Child.ENTITY_TYPE,
       EntityWithRelations.ENTITY_TYPE,
@@ -118,6 +119,8 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(newNote.relatedEntities).toContain(
       Entity.createPrefixedId(Child.ENTITY_TYPE, customEntity.childrenLink),
     );
+
+    Note.schema.get("relatedEntities").additional = schemaBefore;
   });
 
   it("should only add related notes after the initial load", async () => {
