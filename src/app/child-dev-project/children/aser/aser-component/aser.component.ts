@@ -44,13 +44,6 @@ export class AserComponent extends RelatedEntitiesComponent<Aser> {
   }
 
   override getData() {
-    return this.childrenService
-      .getAserResultsOfChild(this.entity.getId())
-      .then((data) =>
-        data.sort(
-          (a, b) =>
-            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0),
-        ),
-      );
+    return this.childrenService.getAserResultsOfChild(this.entity.getId());
   }
 }

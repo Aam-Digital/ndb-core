@@ -62,13 +62,6 @@ export class HealthCheckupComponent extends RelatedEntitiesComponent<HealthCheck
    * implements the health check loading from the children service and is called in the onInit()
    */
   override getData() {
-    return this.childrenService
-      .getHealthChecksOfChild(this.entity.getId())
-      .then((data) =>
-        data.sort(
-          (a, b) =>
-            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0),
-        ),
-      );
+    return this.childrenService.getHealthChecksOfChild(this.entity.getId());
   }
 }

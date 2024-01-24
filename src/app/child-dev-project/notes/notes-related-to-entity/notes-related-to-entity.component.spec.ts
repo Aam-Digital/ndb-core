@@ -1,11 +1,5 @@
 import { NotesRelatedToEntityComponent } from "./notes-related-to-entity.component";
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { ChildrenService } from "../../children/children.service";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
@@ -13,7 +7,6 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
 import { User } from "../../../core/user/user";
-import moment from "moment";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
@@ -122,28 +115,6 @@ describe("NotesRelatedToEntityComponent", () => {
       Entity.createPrefixedId(Child.ENTITY_TYPE, customEntity.childrenLink),
     );
   });
-
-  it("should sort notes by date", fakeAsync(() => {
-    const child = new Child();
-    // No date should come first
-    const n1 = new Note();
-    const n2 = new Note();
-    n2.date = moment().subtract(1, "day").toDate();
-    const n3 = new Note();
-    n3.date = moment().subtract(2, "days").toDate();
-    [n3, n2, n1].forEach((n) => n.addChild(child));
-    const childrenService = TestBed.inject(ChildrenService);
-    spyOn(childrenService, "getNotesRelatedTo").and.resolveTo([n3, n2, n1]);
-
-    component.entity = child;
-    component.ngOnInit();
-    tick();
-
-    expect(childrenService.getNotesRelatedTo).toHaveBeenCalledWith(
-      component.entity.getId(true),
-    );
-    expect(component.data).toEqual([n1, n2, n3]);
-  }));
 
   it("should only add related notes after the initial load", async () => {
     const child = new Child();

@@ -2,7 +2,6 @@ import { Component } from "@angular/core";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ChildrenService } from "../../children/children.service";
-import moment from "moment";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
@@ -68,18 +67,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
   }
 
   override getData() {
-    return this.childrenService
-      .getNotesRelatedTo(this.entity.getId(true))
-      .then((notes: Note[]) => {
-        notes.sort((a, b) => {
-          if (!a.date && b.date) {
-            // note without date should be first
-            return -1;
-          }
-          return moment(b.date).valueOf() - moment(a.date).valueOf();
-        });
-        return notes;
-      });
+    return this.childrenService.getNotesRelatedTo(this.entity.getId(true));
   }
 
   generateNewRecordFactory() {

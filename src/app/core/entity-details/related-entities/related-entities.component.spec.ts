@@ -246,7 +246,6 @@ describe("RelatedEntitiesComponent", () => {
     expect(component.property).toEqual("multiTypeRelation");
 
     // Now with 2 relations ("arrayRelation" and "multiTypeRelation")
-    // TODO (how) do we support this case?
     component.entity = new School();
     await component.ngOnInit();
     expect(component.property).toEqual(
