@@ -46,7 +46,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
    * to be matched with the id of the current main entity (given in this.entity).
    * This is automatically inferred and does not need to be set.
    */
-  property: string | string[];
+  protected property: string | string[];
 
   /**
    * Columns to be displayed in the table

@@ -130,9 +130,6 @@ describe("RelatedEntitiesComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.property).toEqual(
-      jasmine.arrayWithExactContents(["singleChild", "multiEntities"]),
-    );
     // filter matching relations at any of the available props
     expect(component.filter).toEqual({
       $or: [
@@ -148,40 +145,56 @@ describe("RelatedEntitiesComponent", () => {
     );
   });
 
-  it("should infer the property based on related entity", async () => {
+  it("should align the filter with the provided property", async () => {
     @DatabaseEntity("PropTest")
     class PropTest extends Entity {}
     component.entityType = PropTest.ENTITY_TYPE;
+    const entity = new Child();
 
     PropTest.schema.set("singleRelation", {
       dataType: EntityDatatype.dataType,
       additional: Child.ENTITY_TYPE,
     });
-    component.entity = new Child();
+    component.entity = entity;
+    component.filter = undefined;
     await component.ngOnInit();
-    expect(component.property).toEqual("singleRelation");
+    expect(component.filter).toEqual({
+      singleRelation: component.entity.getId(),
+    });
 
     PropTest.schema.set("arrayRelation", {
       dataType: EntityArrayDatatype.dataType,
       additional: School.ENTITY_TYPE,
     });
     component.entity = new School();
+    component.filter = undefined;
     await component.ngOnInit();
-    expect(component.property).toEqual("arrayRelation");
+    expect(component.filter).toEqual({
+      arrayRelation: { $elemMatch: { $eq: component.entity.getId() } },
+    });
 
     PropTest.schema.set("multiTypeRelation", {
       dataType: EntityArrayDatatype.dataType,
-      additional: [ChildSchoolRelation.ENTITY_TYPE, School.ENTITY_TYPE],
+      additional: [ChildSchoolRelation.ENTITY_TYPE, Child.ENTITY_TYPE],
     });
     component.entity = new ChildSchoolRelation();
+    component.filter = undefined;
     await component.ngOnInit();
-    expect(component.property).toEqual("multiTypeRelation");
+    expect(component.filter).toEqual({
+      multiTypeRelation: { $elemMatch: { $eq: component.entity.getId() } },
+    });
 
-    // Now with 2 relations ("arrayRelation" and "multiTypeRelation")
-    component.entity = new School();
+    // Now with 2 relations ("singleRelation" and "multiTypeRelation")
+    component.entity = new Child();
+    component.filter = undefined;
     await component.ngOnInit();
-    expect(component.property).toEqual(
-      jasmine.arrayWithExactContents(["multiTypeRelation", "arrayRelation"]),
-    );
+    expect(component.filter).toEqual({
+      $or: [
+        { singleRelation: component.entity.getId() },
+        {
+          multiTypeRelation: { $elemMatch: { $eq: component.entity.getId() } },
+        },
+      ],
+    });
   });
 });
