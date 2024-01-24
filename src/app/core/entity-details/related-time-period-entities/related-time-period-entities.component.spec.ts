@@ -10,7 +10,6 @@ import { RelatedTimePeriodEntitiesComponent } from "./related-time-period-entiti
 import moment from "moment";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Child } from "../../../child-dev-project/children/model/child";
-import { School } from "../../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 
@@ -61,21 +60,6 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should load correctly filtered data", async () => {
-    const testSchool = new School();
-    active1.schoolId = testSchool.getId();
-    active2.schoolId = "some-other-id";
-    inactive.schoolId = "some-other-id";
-
-    const loadType = spyOn(entityMapper, "loadType");
-    loadType.and.resolveTo([active1, active2, inactive]);
-
-    component.entity = testSchool;
-    await component.ngOnInit();
-
-    expect(component.data).toEqual([active1]);
   });
 
   it("should change columns to be displayed via config", async () => {

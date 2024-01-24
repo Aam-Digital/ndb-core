@@ -93,11 +93,8 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   async ngOnInit() {
     this.property = this.getProperty();
-    const data = await this.getData();
-
+    this.data = await this.getData();
     this.filter = this.initFilter();
-    // TODO not really required as the entities table anyway hides the not-passing ones
-    this.data = data.filter(this.filterService.getFilterPredicate(this.filter));
 
     if (this.showInactive === undefined) {
       // show all related docs when visiting an archived entity
