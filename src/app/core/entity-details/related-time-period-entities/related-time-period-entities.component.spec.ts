@@ -97,7 +97,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     component.entity = child;
     await component.ngOnInit();
 
-    const newRelation = component.generateNewRecordFactory()();
+    const newRelation = component.createNewRecordFactory()();
 
     expect(newRelation.childId).toEqual(child.getId());
   });
@@ -114,7 +114,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     component.entity = child;
     await component.ngOnInit();
 
-    const newRelation = component.generateNewRecordFactory()();
+    const newRelation = component.createNewRecordFactory()();
 
     expect(
       moment(existingRelation.end)

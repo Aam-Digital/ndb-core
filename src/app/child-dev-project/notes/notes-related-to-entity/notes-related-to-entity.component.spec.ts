@@ -50,21 +50,21 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = entity;
     component.filter = undefined;
     await component.ngOnInit();
-    let note = component.generateNewRecordFactory()();
+    let note = component.createNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
 
     entity = new School();
     component.entity = entity;
     component.filter = undefined;
     await component.ngOnInit();
-    note = component.generateNewRecordFactory()();
+    note = component.createNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
 
     entity = new User();
     component.entity = entity;
     component.filter = undefined;
     await component.ngOnInit();
-    note = component.generateNewRecordFactory()();
+    note = component.createNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId(true)]);
 
     entity = new ChildSchoolRelation();
@@ -73,7 +73,7 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = entity;
     component.filter = undefined;
     await component.ngOnInit();
-    note = component.generateNewRecordFactory()();
+    note = component.createNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId(true)]);
     expect(note.children).toEqual(["someChild"]);
     expect(note.schools).toEqual(["someSchool"]);
@@ -110,7 +110,7 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = customEntity;
     component.ngOnInit();
 
-    const newNote = component.generateNewRecordFactory()();
+    const newNote = component.createNewRecordFactory()();
 
     expect(newNote.relatedEntities).toContain(customEntity.getId(true));
     expect(newNote.relatedEntities).toContain(customEntity.links[0]);

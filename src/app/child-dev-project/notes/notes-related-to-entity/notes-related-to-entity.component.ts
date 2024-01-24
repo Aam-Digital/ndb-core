@@ -44,7 +44,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColor();
-  newRecordFactory = this.generateNewRecordFactory();
+  newRecordFactory = this.createNewRecordFactory();
 
   constructor(
     private childrenService: ChildrenService,
@@ -69,7 +69,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
     return this.childrenService.getNotesRelatedTo(this.entity.getId(true));
   }
 
-  generateNewRecordFactory() {
+  override createNewRecordFactory() {
     return () => {
       const newNote = super.createNewRecordFactory()();
       //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501

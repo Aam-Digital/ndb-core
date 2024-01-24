@@ -78,7 +78,7 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
     }
   }
 
-  generateNewRecordFactory() {
+  override createNewRecordFactory() {
     return () => {
       const newRelation = super.createNewRecordFactory()();
 

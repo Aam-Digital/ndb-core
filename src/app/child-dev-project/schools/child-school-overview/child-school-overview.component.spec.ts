@@ -73,7 +73,7 @@ describe("ChildSchoolOverviewComponent", () => {
     component.entity = child;
     await component.ngOnInit();
 
-    const newRelation = component.generateNewRecordFactory()();
+    const newRelation = component.createNewRecordFactory()();
 
     expect(newRelation.childId).toEqual(child.getId());
     expect(
@@ -87,7 +87,7 @@ describe("ChildSchoolOverviewComponent", () => {
     component.entity = new School("testID");
     await component.ngOnInit();
 
-    const newRelation = component.generateNewRecordFactory()();
+    const newRelation = component.createNewRecordFactory()();
 
     expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
     expect(newRelation.schoolId).toBe("testID");
