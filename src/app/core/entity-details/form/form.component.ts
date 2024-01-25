@@ -52,6 +52,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       [].concat(...this.fieldGroups.map((group) => group.fields)),
       this.entity,
     );
+
     if (!this.creatingNew) {
       this.form.disable();
     }
