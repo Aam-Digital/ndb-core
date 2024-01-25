@@ -31,10 +31,11 @@ describe("UniqueIdValidator", () => {
   });
 
   it("should allow to keep unchanged value (to not refuse saving an existing entity with unchanged id)", async () => {
-    formControl.setValue(demoIds[1]);
-    formControl.markAsPristine();
+    formControl = new FormControl(demoIds[1], { nonNullable: true });
+    formControl.markAsDirty();
     const validationResult = await validator(formControl);
 
+    expect(formControl.pristine).toBeFalse();
     expect(validationResult).toBeNull();
   });
 });
