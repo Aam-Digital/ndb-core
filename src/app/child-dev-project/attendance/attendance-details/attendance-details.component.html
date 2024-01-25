@@ -118,7 +118,7 @@
     [records]="entity.events"
     [customColumns]="eventsColumns"
     clickMode="none"
-    (rowClick)="showEventDetails($event)"
+    (entityClick)="showEventDetails($event)"
     [editable]="false"
   >
   </app-entities-table>

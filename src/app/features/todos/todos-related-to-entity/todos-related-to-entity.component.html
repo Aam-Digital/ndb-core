@@ -1,10 +1,10 @@
 <app-entities-table
   [entityType]="entityCtr"
-  [records]="entries"
-  [customColumns]="columns"
+  [records]="data"
+  [customColumns]="_columns"
   [newRecordFactory]="getNewEntryFunction()"
   clickMode="none"
   [filter]="filter"
-  (rowClick)="showDetails($event)"
+  (entityClick)="showDetails($event)"
   [getBackgroundColor]="backgroundColorFn"
 ></app-entities-table>
