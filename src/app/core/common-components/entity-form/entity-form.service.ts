@@ -1,5 +1,11 @@
 import { Injectable } from "@angular/core";
-import { FormBuilder, FormGroup, ɵElement } from "@angular/forms";
+import {
+  FormBuilder,
+  FormControl,
+  FormControlOptions,
+  FormGroup,
+  ɵElement,
+} from "@angular/forms";
 import { ColumnConfig, FormFieldConfig, toFormFieldConfig } from "./FormConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
@@ -157,7 +163,7 @@ export class EntityFormService {
    * @private
    */
   private addFormControlConfig(
-    formConfig: Object,
+    formConfig: { [key: string]: FormControl },
     fieldConfig: ColumnConfig,
     entity: Entity,
     forTable: boolean,
@@ -176,14 +182,16 @@ export class EntityFormService {
     ) {
       value = this.getDefaultValue(field);
     }
-    formConfig[field.id] = [value];
 
+    const controlOptions: FormControlOptions = { nonNullable: true };
     if (field.validators) {
       const validators = this.dynamicValidator.buildValidators(
         field.validators,
       );
-      formConfig[field.id].push(validators);
+      Object.assign(controlOptions, validators);
     }
+
+    formConfig[field.id] = new FormControl(value, controlOptions);
   }
 
   private getDefaultValue<T>(schema: EntitySchemaField) {
