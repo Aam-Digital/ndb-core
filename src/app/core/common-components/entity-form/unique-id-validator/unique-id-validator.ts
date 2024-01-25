@@ -5,10 +5,7 @@ export function uniqueIdValidator(
   existingIds: string[] | (() => Promise<string[]>),
 ): AsyncPromiseValidatorFn {
   return async (control: FormControl): Promise<ValidationErrors | null> => {
-    if (control.pristine && !!control.value) {
-      // (control.value === control.defaultValue) // doesn't work as defaultValue unfortunately is not set properly somehow
-
-      // always allow the existing id, if unchanged
+    if (control.value === control.defaultValue) {
       return null;
     }
 
