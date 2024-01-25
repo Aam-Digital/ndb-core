@@ -138,12 +138,10 @@ export class EntityFormService {
     this.subscriptions.push(valueChangesSubscription);
 
     if (withPermissionCheck) {
-      this.disableReadOnlyFormControls(group, entity, entity.isNew);
+      this.disableReadOnlyFormControls(group, entity);
       const statusChangesSubscription = group.statusChanges
         .pipe(filter((status) => status !== "DISABLED"))
-        .subscribe(() =>
-          this.disableReadOnlyFormControls(group, entity, entity.isNew),
-        );
+        .subscribe(() => this.disableReadOnlyFormControls(group, entity));
       this.subscriptions.push(statusChangesSubscription);
     }
 
@@ -209,9 +207,8 @@ export class EntityFormService {
   private disableReadOnlyFormControls<T extends Entity>(
     form: EntityForm<T>,
     entity: T,
-    creatingNew: boolean,
   ) {
-    const action = creatingNew ? "create" : "update";
+    const action = entity.isNew ? "create" : "update";
     Object.keys(form.controls).forEach((fieldId) => {
       if (this.ability.cannot(action, entity, fieldId)) {
         form.get(fieldId).disable({ onlySelf: true, emitEvent: false });
