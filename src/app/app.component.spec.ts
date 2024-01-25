@@ -41,11 +41,11 @@ describe("AppComponent", () => {
     fixture.detectChanges();
   }));
 
-  afterEach(() => {
+  afterEach(waitForAsync(() => {
     environment.demo_mode = false;
     jasmine.DEFAULT_TIMEOUT_INTERVAL = intervalBefore;
     return TestBed.inject(Database).destroy();
-  });
+  }));
 
   it("should be created", () => {
     expect(component).toBeTruthy();
