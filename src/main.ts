@@ -30,7 +30,7 @@ import { LoggingService } from "./app/core/logging/logging.service";
 import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
 
 // write browser details to initial loading page for debugging
-//document.getElementById("browserDetails").innerHTML = navigator.userAgent;
+document.getElementById("browserDetails").innerHTML = navigator.userAgent;
 
 if (environment.production) {
   enableProdMode();
