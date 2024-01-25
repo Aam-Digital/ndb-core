@@ -6,6 +6,7 @@ import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { FieldGroup } from "../entity-details/form/field-group";
+import { MenuItem } from "../ui/navigation/menu-item";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -56,6 +57,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateEntityAttributesWithId,
       migrateFormHeadersIntoFieldGroups,
       migrateFormFieldConfigView2ViewComponent,
+      migrateMenuItemConfig,
     ];
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
@@ -155,5 +157,34 @@ const migrateFormFieldConfigView2ViewComponent: ConfigMigration = (
     configPart.editComponent = configPart.edit;
     delete configPart.edit;
   }
+  return configPart;
+};
+
+const migrateMenuItemConfig: ConfigMigration = (key, configPart) => {
+  if (key !== "navigationMenu") {
+    return configPart;
+  }
+
+  const oldItems: (
+    | {
+        name: string;
+        icon: string;
+        link: string;
+      }
+    | MenuItem
+  )[] = configPart.items;
+
+  configPart.items = oldItems.map((item) => {
+    if (item.hasOwnProperty("name")) {
+      return {
+        label: item["name"],
+        icon: item.icon,
+        link: item.link,
+      };
+    } else {
+      return item;
+    }
+  });
+
   return configPart;
 };
