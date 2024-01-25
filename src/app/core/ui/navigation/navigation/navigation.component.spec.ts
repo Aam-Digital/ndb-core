@@ -31,6 +31,7 @@ import { UserRoleGuard } from "../../../permissions/permission-guard/user-role.g
 import { Event, NavigationEnd, Router } from "@angular/router";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { EntityPermissionGuard } from "../../../permissions/permission-guard/entity-permission.guard";
+import { NavigationMenuConfig } from "../menu-item";
 
 describe("NavigationComponent", () => {
   let component: NavigationComponent;
@@ -73,28 +74,11 @@ describe("NavigationComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("generates menu items from config", fakeAsync(() => {
-    const testConfig = {
-      items: [
-        { name: "Dashboard", icon: "home", link: "/dashboard" },
-        { name: "Children", icon: "child", link: "/child" },
-      ],
-    };
-    mockConfigService.getConfig.and.returnValue(testConfig);
-    mockConfigUpdated.next(null);
-    tick();
-
-    expect(component.menuItems).toEqual([
-      { label: "Dashboard", icon: "home", link: "/dashboard" },
-      { label: "Children", icon: "child", link: "/child" },
-    ]);
-  }));
-
   it("marks items that require admin rights", fakeAsync(() => {
-    const testConfig = {
+    const testConfig: NavigationMenuConfig = {
       items: [
-        { name: "Dashboard", icon: "home", link: "/dashboard" },
-        { name: "Children", icon: "child", link: "/child" },
+        { label: "Dashboard", icon: "home", link: "/dashboard" },
+        { label: "Children", icon: "child", link: "/child" },
       ],
     };
     mockRoleGuard.checkRoutePermissions.and.callFake(async (route: string) => {
@@ -118,10 +102,10 @@ describe("NavigationComponent", () => {
   }));
 
   it("should add menu items where entity permissions are missing", fakeAsync(() => {
-    const testConfig = {
+    const testConfig: NavigationMenuConfig = {
       items: [
-        { name: "Dashboard", icon: "home", link: "/dashboard" },
-        { name: "Children", icon: "child", link: "/child" },
+        { label: "Dashboard", icon: "home", link: "/dashboard" },
+        { label: "Children", icon: "child", link: "/child" },
       ],
     };
     mockEntityGuard.checkRoutePermissions.and.callFake((route: string) => {

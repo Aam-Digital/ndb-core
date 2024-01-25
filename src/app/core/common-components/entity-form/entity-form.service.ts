@@ -7,7 +7,6 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DynamicValidatorsService } from "./dynamic-form-validators/dynamic-validators.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { InvalidFormFieldError } from "./invalid-form-field.error";
-import { omit } from "lodash-es";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
@@ -113,11 +112,13 @@ export class EntityFormService {
    * @param formFields
    * @param entity
    * @param forTable
+   * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
    */
   public createFormGroup<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
     forTable = false,
+    withPermissionCheck = true,
   ): EntityForm<T> {
     const formConfig = {};
     const copy = entity.copy();
@@ -131,10 +132,18 @@ export class EntityFormService {
     }
     const group = this.fb.group<Partial<T>>(formConfig);
 
-    const sub = group.valueChanges.subscribe(
+    const valueChangesSubscription = group.valueChanges.subscribe(
       () => (this.unsavedChanges.pending = group.dirty),
     );
-    this.subscriptions.push(sub);
+    this.subscriptions.push(valueChangesSubscription);
+
+    if (withPermissionCheck) {
+      this.disableReadOnlyFormControls(group, entity);
+      const statusChangesSubscription = group.statusChanges
+        .pipe(filter((status) => status !== "DISABLED"))
+        .subscribe(() => this.disableReadOnlyFormControls(group, entity));
+      this.subscriptions.push(statusChangesSubscription);
+    }
 
     return group;
   }
@@ -195,6 +204,18 @@ export class EntityFormService {
     return newVal;
   }
 
+  private disableReadOnlyFormControls<T extends Entity>(
+    form: EntityForm<T>,
+    entity: T,
+  ) {
+    const action = entity.isNew ? "create" : "update";
+    Object.keys(form.controls).forEach((fieldId) => {
+      if (this.ability.cannot(action, entity, fieldId)) {
+        form.get(fieldId).disable({ onlySelf: true, emitEvent: false });
+      }
+    });
+  }
+
   /**
    * This function applies the changes of the formGroup to the entity.
    * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
@@ -229,7 +250,7 @@ export class EntityFormService {
   }
 
   private checkFormValidity<T extends Entity>(form: EntityForm<T>) {
-    // errors regarding invalid fields wont be displayed unless marked as touched
+    // errors regarding invalid fields won't be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
       throw new InvalidFormFieldError();
@@ -245,11 +266,10 @@ export class EntityFormService {
   }
 
   resetForm<E extends Entity>(form: EntityForm<E>, entity: E) {
-    // Patch form with values from the entity
-    form.patchValue(entity as any);
-    // Clear values that are not yet present on the entity
-    const newKeys = Object.keys(omit(form.controls, Object.keys(entity)));
-    newKeys.forEach((key) => form.get(key).setValue(null));
+    for (const key of Object.keys(form.controls)) {
+      form.get(key).setValue(entity[key]);
+    }
+
     form.markAsPristine();
     this.unsavedChanges.pending = false;
   }
