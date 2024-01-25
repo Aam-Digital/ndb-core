@@ -6,6 +6,7 @@ import { firstValueFrom, Subject } from "rxjs";
 import { UpdatedEntity } from "../entity/model/entity-update";
 import { EntityConfig } from "../entity/entity-config";
 import { FieldGroup } from "../entity-details/form/field-group";
+import { NavigationMenuConfig } from "../ui/navigation/menu-item";
 
 describe("ConfigService", () => {
   let service: ConfigService;
@@ -279,5 +280,51 @@ describe("ConfigService", () => {
     ).toEqual(expectedFieldConfig);
 
     expect(result2.config.columns[0]).toEqual(expectedFieldConfig);
+  }));
+
+  it("should migrate menu item format", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      items: [
+        {
+          name: "one",
+          icon: "child",
+          link: "/one",
+        },
+        {
+          name: "two",
+          icon: "child",
+          link: "/two",
+        },
+      ],
+    };
+    const newFormat = {
+      items: [
+        {
+          label: "one",
+          icon: "child",
+          link: "/one",
+        },
+        {
+          label: "two",
+          icon: "child",
+          link: "/two",
+        },
+      ],
+    };
+
+    config.data = { navigationMenu: oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromOld =
+      service.getConfig<NavigationMenuConfig>("navigationMenu");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { navigationMenu: newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew =
+      service.getConfig<NavigationMenuConfig>("navigationMenu");
+    expect(actualFromNew).toEqual(newFormat);
   }));
 });
