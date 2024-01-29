@@ -139,11 +139,13 @@ export class EntityFormComponent<T extends Entity = Entity>
     fieldGroups: FieldGroup[],
     entity: Entity,
   ): FieldGroup[] {
+    const action = entity.isNew ? "create" : "read";
+
     return fieldGroups
       .map((group) => {
         group.fields = group.fields.filter((field) =>
           this.ability.can(
-            "read",
+            action,
             entity,
             typeof field === "string" ? field : field.id,
           ),
