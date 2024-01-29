@@ -20,6 +20,7 @@ import {
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
+import { EducationalMaterial } from "../../../../child-dev-project/children/educational-material/model/educational-material";
 
 describe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;
@@ -110,6 +111,34 @@ describe("EntityCountDashboardComponent", () => {
       label: c2.label,
       value: 1,
       id: c2.id,
+    });
+  });
+
+  it("should groupBy entity references and display an entity-block", async () => {
+    const testGroupBy = "child";
+    component.groupBy = testGroupBy;
+    component.entity = EducationalMaterial.ENTITY_TYPE;
+
+    const c1 = new Child();
+    const x0 = new EducationalMaterial();
+    const x1 = new EducationalMaterial();
+
+    x1[testGroupBy] = c1.getId();
+    entityMapper.addAll([x0, x1, c1]);
+
+    await component.ngOnInit();
+
+    expect(component.groupedByEntity).toBe(Child.ENTITY_TYPE);
+    expect(component.entityGroupCounts).toHaveSize(2);
+    expect(component.entityGroupCounts).toContain({
+      label: "",
+      value: 1,
+      id: "",
+    });
+    expect(component.entityGroupCounts).toContain({
+      label: c1.getId(),
+      value: 1,
+      id: c1.getId(),
     });
   });
 

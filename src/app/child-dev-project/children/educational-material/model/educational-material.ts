@@ -26,11 +26,17 @@ export class EducationalMaterial extends Entity {
     return Object.assign(new EducationalMaterial(), params);
   }
 
-  @DatabaseField() child: string; // id of Child entity
+  @DatabaseField({
+    dataType: "entity",
+    additional: "Child",
+  })
+  child: string; // id of Child entity
+
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,
   })
   date: Date;
+
   @DatabaseField({
     label: $localize`:The material which has been borrowed:Material`,
     dataType: "configurable-enum",
@@ -40,6 +46,7 @@ export class EducationalMaterial extends Entity {
     },
   })
   materialType: ConfigurableEnumValue;
+
   @DatabaseField({
     label: $localize`:The amount of the material which has been borrowed:Amount`,
     defaultValue: 1,
@@ -48,6 +55,7 @@ export class EducationalMaterial extends Entity {
     },
   })
   materialAmount: number;
+
   @DatabaseField({
     label: $localize`:An additional description for the borrowed material:Description`,
   })

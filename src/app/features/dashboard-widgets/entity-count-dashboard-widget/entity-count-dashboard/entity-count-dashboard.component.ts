@@ -16,6 +16,10 @@ import { Angulartics2Module } from "angulartics2";
 import { groupBy } from "../../../../utils/utils";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
+import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
+import { EntityArrayDatatype } from "../../../../core/basic-datatypes/entity-array/entity-array.datatype";
+import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
+import { NgIf } from "@angular/common";
 
 interface EntityCountDashboardConfig {
   entity?: string;
@@ -33,6 +37,8 @@ interface EntityCountDashboardConfig {
     FontAwesomeModule,
     Angulartics2Module,
     DashboardListWidgetComponent,
+    DisplayEntityComponent,
+    NgIf,
   ],
   standalone: true,
 })
@@ -52,13 +58,20 @@ export class EntityCountDashboardComponent
     this._entity = this.entities.get(value);
   }
 
-  private _entity: EntityConstructor = Child;
+  protected _entity: EntityConstructor = Child;
   /**
    * The property of the Child entities to group counts by.
    *
    * Default is "center".
    */
   @Input() groupBy = "center";
+
+  /**
+   * if the groupBy field is an entity reference this holds the related entity type,
+   * so that the entity block will be displayed instead of an id string,
+   * otherwise undefined, to display simply the group label.
+   * */
+  groupedByEntity: string;
 
   totalEntities: number;
   entityGroupCounts: { label: string; value: number; id: string }[] = [];
@@ -74,6 +87,13 @@ export class EntityCountDashboardComponent
   }
 
   async ngOnInit() {
+    const groupByType = this._entity.schema.get(this.groupBy);
+    this.groupedByEntity =
+      groupByType.dataType === EntityDatatype.dataType ||
+      groupByType.dataType === EntityArrayDatatype.dataType
+        ? groupByType.additional
+        : undefined;
+
     const entities = await this.entityMapper.loadType(this._entity);
     this.updateCounts(entities.filter((e) => e.isActive));
     this.label = this._entity.labelPlural;
