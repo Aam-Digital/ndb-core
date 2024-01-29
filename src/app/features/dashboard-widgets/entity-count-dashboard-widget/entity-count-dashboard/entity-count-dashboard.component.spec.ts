@@ -21,6 +21,7 @@ import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
 import { EducationalMaterial } from "../../../../child-dev-project/children/educational-material/model/educational-material";
+import { Note } from "../../../../child-dev-project/notes/model/note";
 
 describe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;
@@ -139,6 +140,39 @@ describe("EntityCountDashboardComponent", () => {
       label: c1.getId(),
       value: 1,
       id: c1.getId(),
+    });
+  });
+
+  it("should groupBy arrays, split and summarized for individual array elements", async () => {
+    const testGroupBy = "children";
+    component.groupBy = testGroupBy;
+    component.entity = Note.ENTITY_TYPE;
+
+    const x0 = new Note();
+    const x1 = new Note();
+    x1[testGroupBy] = ["link-1"];
+    const x2 = new Note();
+    x2[testGroupBy] = ["link-1", "link-2"];
+
+    entityMapper.addAll([x0, x1, x2]);
+
+    await component.ngOnInit();
+
+    expect(component.entityGroupCounts).toHaveSize(3);
+    expect(component.entityGroupCounts).toContain({
+      label: "",
+      value: 1,
+      id: "",
+    });
+    expect(component.entityGroupCounts).toContain({
+      label: "link-1",
+      value: 2,
+      id: "link-1",
+    });
+    expect(component.entityGroupCounts).toContain({
+      label: "link-2",
+      value: 1,
+      id: "link-2",
     });
   });
 
