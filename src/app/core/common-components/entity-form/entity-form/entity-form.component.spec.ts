@@ -56,7 +56,7 @@ describe("EntityFormComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should remove fields without read permissions", async () => {
+  it("should remove fields without read permissions when entity is not new", async () => {
     component.fieldGroups = [
       { fields: ["foo", "bar"] },
       { fields: ["name"] },
@@ -65,6 +65,27 @@ describe("EntityFormComponent", () => {
 
     TestBed.inject(EntityAbility).update([
       { subject: "Child", action: "read", fields: ["foo", "name"] },
+    ]);
+
+    component.entity._rev = "foo";
+
+    component.ngOnChanges({ entity: true, form: true } as any);
+
+    expect(component.fieldGroups).toEqual([
+      { fields: ["foo"] },
+      { fields: ["name"] },
+    ]);
+  });
+
+  it("should remove fields without create permissions when entity is new", async () => {
+    component.fieldGroups = [
+      { fields: ["foo", "bar"] },
+      { fields: ["name"] },
+      { fields: ["birthday"] },
+    ];
+
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "create", fields: ["foo", "name"] },
     ]);
 
     component.ngOnChanges({ entity: true, form: true } as any);
