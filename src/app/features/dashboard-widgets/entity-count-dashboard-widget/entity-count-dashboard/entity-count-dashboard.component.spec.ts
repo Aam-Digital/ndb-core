@@ -90,6 +90,7 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy enum values and display label", async () => {
     const testGroupBy = "test";
+    Child.schema.set(testGroupBy, { dataType: "configurable-enum" });
     component.groupBy = testGroupBy;
 
     const children = [new Child(), new Child(), new Child(), new Child()];
@@ -113,6 +114,8 @@ describe("EntityCountDashboardComponent", () => {
       value: 1,
       id: c2.id,
     });
+
+    Child.schema.delete(testGroupBy);
   });
 
   it("should groupBy entity references and display an entity-block", async () => {
