@@ -158,7 +158,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   createNewRecordFactory() {
-    // TODO has a similar purpose like FilterService.alignEntityWithFilter
     return () => {
       const rec = new this.entityCtr();
       this.filterService.alignEntityWithFilter(rec, this.filter);
