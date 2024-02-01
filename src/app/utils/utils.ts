@@ -46,7 +46,7 @@ export function getParentUrl(router: Router): string {
 export function groupBy<T, P extends keyof T, E>(
   array: T[],
   propertyToGroupBy: P,
-): [T[P] extends Array<E> ? E | undefined : T[P], T[]][] {
+): [T[P] extends Array<infer E> ? E | undefined : T[P], T[]][] {
   return array.reduce((allGroups, currentElement) => {
     let currentValue = currentElement[propertyToGroupBy];
     if (Array.isArray(currentValue) && currentValue.length === 0) {
