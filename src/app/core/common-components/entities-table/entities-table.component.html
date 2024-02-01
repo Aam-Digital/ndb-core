@@ -50,7 +50,6 @@
 
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
-          (change)="selectRow(row, $event)"
           [checked]="selectedRecords?.includes(row.record)"
         ></mat-checkbox>
       </td>
