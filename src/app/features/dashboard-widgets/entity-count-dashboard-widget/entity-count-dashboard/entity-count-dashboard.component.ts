@@ -58,7 +58,7 @@ export class EntityCountDashboardComponent
     this._entity = this.entities.get(value);
   }
 
-  protected _entity: EntityConstructor = Child;
+  private _entity: EntityConstructor = Child;
   /**
    * The property of the Child entities to group counts by.
    *
