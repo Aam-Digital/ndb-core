@@ -11,10 +11,7 @@ import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
-import {
-  MatCheckboxChange,
-  MatCheckboxModule,
-} from "@angular/material/checkbox";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import {
@@ -226,8 +223,8 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   @Output() selectedRecordsChange: EventEmitter<T[]> = new EventEmitter<T[]>();
   @Input() selectedRecords: T[] = [];
 
-  selectRow(row: TableRow<T>, event: MatCheckboxChange) {
-    if (event.checked) {
+  selectRow(row: TableRow<T>, checked: boolean) {
+    if (checked) {
       this.selectedRecords.push(row.record);
     } else {
       const index = this.selectedRecords.indexOf(row.record);
@@ -261,6 +258,11 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
    */
   onRowClick(row: TableRow<T>) {
     if (row.formGroup && !row.formGroup.disabled) {
+      return;
+    }
+
+    if (this._selectable) {
+      this.selectRow(row, !this.selectedRecords?.includes(row.record));
       return;
     }
 
