@@ -8,6 +8,7 @@ import { createTestingConfigurableEnumService } from "../basic-datatypes/configu
 import moment from "moment";
 import { DataFilter } from "./filters/filters";
 import { Child } from "../../child-dev-project/children/model/child";
+import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
 
 describe("FilterService", () => {
   let service: FilterService;
@@ -78,6 +79,19 @@ describe("FilterService", () => {
     service.alignEntityWithFilter(note, filter);
 
     expect(note.children).toEqual([child.getId()]);
+  });
+
+  it("should not set properties without a schema", () => {
+    const filter = {
+      childId: `${Child.ENTITY_TYPE}:some-id`,
+      isActive: false,
+    } as DataFilter<ChildSchoolRelation>;
+
+    const relation = new ChildSchoolRelation();
+    service.alignEntityWithFilter(relation, filter);
+
+    expect(relation.childId).toEqual(`${Child.ENTITY_TYPE}:some-id`);
+    expect(relation.isActive).toBeTrue();
   });
 
   it("should support filtering dates with day granularity", () => {

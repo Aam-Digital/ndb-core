@@ -92,6 +92,12 @@ export class FilterService {
       [key, value] = this.transformNestedKey(key, value);
     }
     const property = schema.get(key);
+
+    if (!property) {
+      // not a schema property
+      return;
+    }
+
     if (property?.dataType === "configurable-enum") {
       value = this.parseConfigurableEnumValue(property, value);
     }
