@@ -32,13 +32,16 @@ export class EducationalMaterial extends Entity {
   @DatabaseField({
     dataType: EntityDatatype.dataType,
     additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
   })
-  child: string; // id of Child entity
+  child: string;
+
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,
     defaultValue: PLACEHOLDERS.NOW,
   })
   date: Date;
+
   @DatabaseField({
     label: $localize`:The material which has been borrowed:Material`,
     dataType: "configurable-enum",
@@ -48,6 +51,7 @@ export class EducationalMaterial extends Entity {
     },
   })
   materialType: ConfigurableEnumValue;
+
   @DatabaseField({
     label: $localize`:The amount of the material which has been borrowed:Amount`,
     defaultValue: 1,
@@ -56,6 +60,7 @@ export class EducationalMaterial extends Entity {
     },
   })
   materialAmount: number;
+
   @DatabaseField({
     label: $localize`:An additional description for the borrowed material:Description`,
   })

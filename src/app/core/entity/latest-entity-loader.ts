@@ -29,10 +29,8 @@ export abstract class LatestEntityLoader<T extends Entity> {
     const initialValue = await this.loadOnce();
     this.entityMapper
       .receiveUpdates(this.entityCtor)
-      .pipe(filter(({ entity }) => entity.getId() === this.entityID))
-      .subscribe(({ entity }) => {
-        this.entityUpdated.next(entity);
-      });
+      .pipe(filter(({ entity }) => entity.getId(true) === this.entityID))
+      .subscribe(({ entity }) => this.entityUpdated.next(entity));
     return initialValue;
   }
 

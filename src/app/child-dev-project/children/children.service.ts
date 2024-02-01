@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../notes/model/note";
-import { Aser } from "./aser/model/aser";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
 import { HealthCheck } from "./health-checkup/model/health-check";
 import moment, { Moment } from "moment";
@@ -47,7 +46,7 @@ export class ChildrenService {
    */
   async getChild(id: string): Promise<Child> {
     const child = await this.entityMapper.load(Child, id);
-    const relations = await this.queryRelations(`${Child.ENTITY_TYPE}:${id}`);
+    const relations = await this.queryRelations(id);
     this.extendChildWithSchoolInfo(child, relations);
     return child;
   }
@@ -73,8 +72,8 @@ export class ChildrenService {
               return;
             };
             const start = new Date(doc.start || '3000-01-01').getTime();
-            emit(["${Child.ENTITY_TYPE}:" + doc.childId, start]);
-            emit(["${School.ENTITY_TYPE}:" + doc.schoolId, start]);
+            emit([doc.childId, start]);
+            emit([doc.schoolId, start]);
             return;
           }`,
         },
@@ -83,7 +82,7 @@ export class ChildrenService {
     return this.dbIndexing.createIndex(designDoc);
   }
 
-  private queryRelations(prefix: string) {
+  queryRelations(prefix: string) {
     const startkey = prefix.endsWith(":") ? [prefix + "\uffff"] : [prefix, {}];
     return this.dbIndexing.queryIndexDocs(
       ChildSchoolRelation,
@@ -97,22 +96,12 @@ export class ChildrenService {
   }
 
   queryActiveRelationsOf(
-    queryType: "child" | "school",
     id: string,
     date = new Date(),
   ): Promise<ChildSchoolRelation[]> {
-    return this.queryRelationsOf(queryType, id).then((relations) =>
+    return this.queryRelations(id).then((relations) =>
       relations.filter((rel) => rel.isActiveAt(date)),
     );
-  }
-
-  queryRelationsOf(
-    queryType: "child" | "school",
-    id: string,
-  ): Promise<ChildSchoolRelation[]> {
-    const type = queryType === "child" ? Child.ENTITY_TYPE : School.ENTITY_TYPE;
-    const prefixed = Entity.createPrefixedId(type, id);
-    return this.queryRelations(prefixed);
   }
 
   /**
@@ -125,7 +114,7 @@ export class ChildrenService {
       legacyLinkedNotes = await this.dbIndexing.queryIndexDocs(
         Note,
         `notes_index/by_${this.inferNoteLinkPropertyFromEntityType(entityId)}`,
-        Entity.extractEntityIdFromId(entityId),
+        entityId,
       );
     }
 
@@ -184,11 +173,10 @@ export class ChildrenService {
       // TODO: filter notes to only include them if the given child is marked "present"
 
       for (const entityId of note[noteProperty]) {
-        const trimmedId = Entity.extractEntityIdFromId(entityId);
         const daysSinceNote = moment().diff(note.date, "days");
-        const previousValue = results.get(trimmedId);
+        const previousValue = results.get(entityId);
         if (previousValue > daysSinceNote) {
-          results.set(trimmedId, daysSinceNote);
+          results.set(entityId, daysSinceNote);
         }
       }
     }
@@ -283,13 +271,7 @@ export class ChildrenService {
    */
   getHealthChecksOfChild(childId: string): Promise<HealthCheck[]> {
     return this.entityMapper
-      .loadType<HealthCheck>(HealthCheck)
+      .loadType(HealthCheck)
       .then((res) => res.filter((h) => h.child === childId));
-  }
-
-  getAserResultsOfChild(childId: string): Promise<Aser[]> {
-    return this.entityMapper
-      .loadType<Aser>(Aser)
-      .then((res) => res.filter((o) => o.child === childId));
   }
 }

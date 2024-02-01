@@ -2,8 +2,8 @@ import { Injectable } from "@angular/core";
 import { ConfigurableEnum } from "./configurable-enum";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { ConfigurableEnumValue } from "./configurable-enum.interface";
-import { Entity } from "../../entity/model/entity";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
+import { Entity } from "../../entity/model/entity";
 
 @Injectable({ providedIn: "root" })
 export class ConfigurableEnumService {
@@ -24,7 +24,7 @@ export class ConfigurableEnumService {
   }
 
   private cacheEnum(entity: ConfigurableEnum) {
-    return this.enums.set(entity.getId(true), entity);
+    return this.enums.set(entity.getId(), entity);
   }
 
   getEnumValues<T extends ConfigurableEnumValue = ConfigurableEnumValue>(

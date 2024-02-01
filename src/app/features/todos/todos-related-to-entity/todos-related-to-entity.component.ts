@@ -69,7 +69,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
       this.property as keyof Todo,
       "deadline",
     );
-    const entityId = this.entity.getId(true);
+    const entityId = this.entity.getId();
     return this.dbIndexingService.queryIndexDocs(
       Todo,
       "todo_index/by_" + this.property,
@@ -84,7 +84,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   public getNewEntryFunction(): () => Todo {
     return () => {
       const newEntry = new Todo();
-      newEntry.relatedEntities = [this.entity.getId(true)];
+      newEntry.relatedEntities = [this.entity.getId()];
       return newEntry;
     };
   }

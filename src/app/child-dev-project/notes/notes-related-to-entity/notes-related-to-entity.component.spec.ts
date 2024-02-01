@@ -63,18 +63,18 @@ describe("NotesRelatedToEntityComponent", () => {
     component.filter = undefined;
     await component.ngOnInit();
     note = component.createNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId(true)]);
+    expect(note.relatedEntities).toEqual([entity.getId()]);
 
     entity = new ChildSchoolRelation();
-    entity["childId"] = "someChild";
-    entity["schoolId"] = "someSchool";
+    entity["childId"] = `${Child.ENTITY_TYPE}:someChild`;
+    entity["schoolId"] = `${Child.ENTITY_TYPE}:someSchool`;
     component.entity = entity;
     component.filter = undefined;
     await component.ngOnInit();
     note = component.createNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId(true)]);
-    expect(note.children).toEqual(["someChild"]);
-    expect(note.schools).toEqual(["someSchool"]);
+    expect(note.relatedEntities).toEqual([entity.getId()]);
+    expect(note.children).toEqual([`${Child.ENTITY_TYPE}:someChild`]);
+    expect(note.schools).toEqual([`${Child.ENTITY_TYPE}:someSchool`]);
   });
 
   it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {
@@ -96,10 +96,10 @@ describe("NotesRelatedToEntityComponent", () => {
     }
     const customEntity = new EntityWithRelations();
     customEntity.links = [
-      "Child:1",
-      "School:not-a-type-for-note.relatedEntities",
+      `${Child.ENTITY_TYPE}:1`,
+      `${School.ENTITY_TYPE}:not-a-type-for-note.relatedEntities`,
     ];
-    customEntity.childrenLink = "child-without-prefix";
+    customEntity.childrenLink = `${Child.ENTITY_TYPE}:child-without-prefix`;
 
     const schemaBefore = Note.schema.get("relatedEntities").additional;
     Note.schema.get("relatedEntities").additional = [
@@ -111,7 +111,7 @@ describe("NotesRelatedToEntityComponent", () => {
 
     const newNote = component.createNewRecordFactory()();
 
-    expect(newNote.relatedEntities).toContain(customEntity.getId(true));
+    expect(newNote.relatedEntities).toContain(customEntity.getId());
     expect(newNote.relatedEntities).toContain(customEntity.links[0]);
     expect(newNote.relatedEntities).not.toContain(customEntity.links[1]);
     expect(newNote.relatedEntities).toContain(

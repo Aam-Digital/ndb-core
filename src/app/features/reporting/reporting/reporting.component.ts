@@ -45,7 +45,7 @@ export class ReportingComponent {
     private entityMapper: EntityMapperService,
   ) {
     this.entityMapper.loadType(ReportEntity).then((res) => {
-      this.reports = res.sort((a, b) => a.title.localeCompare(b.title));
+      this.reports = res.sort((a, b) => a.title?.localeCompare(b.title));
     });
   }
 

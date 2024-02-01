@@ -1,14 +1,9 @@
 import { Component } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
-import { ChildrenService } from "../../children.service";
 import { FormFieldConfig } from "../../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
 import { RelatedEntitiesComponent } from "../../../../core/entity-details/related-entities/related-entities.component";
-import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
-import { ScreenWidthObserver } from "../../../../utils/media/screen-size-observer.service";
-import { FilterService } from "../../../../core/filter/filter.service";
 
 @DynamicComponent("HealthCheckup")
 @Component({
@@ -39,16 +34,6 @@ export class HealthCheckupComponent extends RelatedEntitiesComponent<HealthCheck
     },
   ];
 
-  constructor(
-    private childrenService: ChildrenService,
-    entityMapper: EntityMapperService,
-    entityRegistry: EntityRegistry,
-    screenWidthObserver: ScreenWidthObserver,
-    filterService: FilterService,
-  ) {
-    super(entityMapper, entityRegistry, screenWidthObserver, filterService);
-  }
-
   private getBMI(healthCheck: HealthCheck): string {
     const bmi = healthCheck.bmi;
     if (Number.isNaN(bmi)) {
@@ -56,12 +41,5 @@ export class HealthCheckupComponent extends RelatedEntitiesComponent<HealthCheck
     } else {
       return bmi.toFixed(2);
     }
-  }
-
-  /**
-   * implements the health check loading from the children service and is called in the onInit()
-   */
-  override getData() {
-    return this.childrenService.getHealthChecksOfChild(this.entity.getId());
   }
 }

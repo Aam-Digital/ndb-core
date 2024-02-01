@@ -47,7 +47,7 @@ const demoReports: Partial<ReportEntity>[] = [
             query: `[*privateSchool!=true]`,
           },
           {
-            query: `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+            query: `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId::unique:toEntities(${Child.ENTITY_TYPE})`,
             label: $localize`:Label for report query:Children attending a governmental school`,
             groupBy: ["gender"],
           },
@@ -56,7 +56,7 @@ const demoReports: Partial<ReportEntity>[] = [
             query: `[*privateSchool=true]`,
           },
           {
-            query: `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+            query: `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId::unique:toEntities(${Child.ENTITY_TYPE})`,
             label: $localize`:Label for report query:Children attending a private school`,
             groupBy: ["gender"],
           },
@@ -73,7 +73,7 @@ const demoReports: Partial<ReportEntity>[] = [
         label: $localize`:Label for a report query:Events`,
         aggregations: [
           {
-            query: `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+            query: `:getParticipantsWithAttendance(PRESENT):unique:toEntities(${Child.ENTITY_TYPE})`,
             groupBy: ["gender"],
             label: $localize`:Label for a report query:Participants`,
           },

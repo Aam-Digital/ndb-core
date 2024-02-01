@@ -70,10 +70,7 @@ export class ChildSchoolOverviewComponent
   }
 
   override getData() {
-    return this.childrenService.queryRelationsOf(
-      this.mode,
-      this.entity.getId(false),
-    );
+    return this.childrenService.queryRelations(this.entity.getId(false));
   }
 
   private switchRelatedEntityColumnForMode() {

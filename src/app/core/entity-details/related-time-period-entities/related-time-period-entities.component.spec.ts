@@ -107,7 +107,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     const existingRelation = new ChildSchoolRelation();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
-    existingRelation.childId = child.getId(false);
+    existingRelation.childId = child.getId();
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([existingRelation]);
 

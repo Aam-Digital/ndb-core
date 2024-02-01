@@ -19,7 +19,7 @@ export interface ExportColumnConfig {
    * each object in the parent query result will lead to its own row in the final export (extending one object into multiple export rows);
    * each query in the subQueries will lead to one (or recursively more) columns in the export rows.
    *
-   * e.g. `{ query: ".participants:toEntities(Child)", subQueries: [ {query: "name"}, {query: "phone"} ] }`
+   * e.g. `{ query: ".participants:toEntities(Child), subQueries: [ {query: "name"}, {query: "phone"} ] }`
    * => parent query (not output in export): [{..child1}, {..child2}]
    * => overall result: two export rows: [{ name: "child1", phone: "123"}, {name: "child2", phone: "567"}]
    */

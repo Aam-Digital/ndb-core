@@ -30,7 +30,7 @@ export class DisplayParticipantsCountComponent
     super.ngOnChanges();
 
     return this._childrenService
-      .queryActiveRelationsOf("school", this.entity.getId())
+      .queryActiveRelationsOf(this.entity.getId())
       .then((relations: ChildSchoolRelation[]) => {
         this.participantRelationsCount.set(relations.length);
       })

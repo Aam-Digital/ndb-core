@@ -5,13 +5,29 @@ import {
   patternWithMessage,
 } from "./dynamic-validators.service";
 import { FormValidatorConfig } from "./form-validator-config";
-import { UntypedFormControl, ValidatorFn } from "@angular/forms";
+import {
+  AsyncValidatorFn,
+  UntypedFormControl,
+  ValidatorFn,
+} from "@angular/forms";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { User } from "../../../user/user";
 
 describe("DynamicValidatorsService", () => {
   let service: DynamicValidatorsService;
 
+  let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
+
   beforeEach(() => {
-    TestBed.configureTestingModule({});
+    mockedEntityMapper = jasmine.createSpyObj("EntityMapperService", [
+      "loadType",
+    ]);
+
+    TestBed.configureTestingModule({
+      providers: [
+        { provide: EntityMapperService, useValue: mockedEntityMapper },
+      ],
+    });
     service = TestBed.inject(DynamicValidatorsService);
   });
 
@@ -19,21 +35,26 @@ describe("DynamicValidatorsService", () => {
     expect(service).toBeTruthy();
   });
 
-  function testValidator(
-    validator: ValidatorFn,
+  async function testValidator(
+    validator: ValidatorFn | AsyncValidatorFn,
     successState: any,
     failureState: any,
   ) {
-    const results = [successState, failureState].map((state) => {
-      const mockControl = new UntypedFormControl(state);
-      return validator(mockControl);
-    });
-    expect(results[0])
+    function dummyFormControl(state) {
+      const control = new UntypedFormControl(state);
+      control.markAsDirty();
+      return control;
+    }
+
+    const resultSuccess = await validator(dummyFormControl(successState));
+    expect(resultSuccess)
       .withContext("Expected validator not to have errors")
       .toBeNull();
-    expect(results[1])
+
+    const resultFailure = await validator(dummyFormControl(failureState));
+    expect(resultFailure)
       .withContext("Expected validator to have errors")
-      .not.toBeNull();
+      .toEqual(jasmine.any(Object));
   }
 
   it("should load validators from the config", () => {
@@ -41,7 +62,7 @@ describe("DynamicValidatorsService", () => {
       min: 9,
       pattern: "[a-z]*",
     };
-    const validators = service.buildValidators(config);
+    const validators = service.buildValidators(config).validators;
     expect(validators).toHaveSize(2);
     testValidator(validators[0], 10, 8);
     testValidator(validators[1], "ab", "1");
@@ -55,7 +76,7 @@ describe("DynamicValidatorsService", () => {
       validEmail: true,
       pattern: "foo",
     };
-    const validators = service.buildValidators(config);
+    const validators = service.buildValidators(config).validators;
     [
       [10, 8],
       [8, 11],
@@ -73,7 +94,7 @@ describe("DynamicValidatorsService", () => {
         message: "M",
         pattern: "[a-z]",
       },
-    });
+    }).validators;
     expect(validators).toHaveSize(1);
     const invalidForm = new UntypedFormControl("09");
     const validationErrors = validators[0](invalidForm);
@@ -82,6 +103,16 @@ describe("DynamicValidatorsService", () => {
         message: "M",
       }),
     );
+  });
+
+  it("should build uniqueId async validator", async () => {
+    const config: FormValidatorConfig = {
+      uniqueId: "User",
+    };
+    mockedEntityMapper.loadType.and.resolveTo([new User("existing id")]);
+
+    const validators = service.buildValidators(config).asyncValidators;
+    await testValidator(validators[0], "User:new id", "User:existing id");
   });
 });
 
