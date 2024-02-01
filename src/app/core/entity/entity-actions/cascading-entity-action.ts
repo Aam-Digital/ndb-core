@@ -86,10 +86,8 @@ export abstract class CascadingEntityAction {
       const entities = await this.entityMapper.loadType(refType.entityType);
 
       for (const refField of refType.referencingProperties) {
-        const affectedEntities = entities.filter(
-          (e) =>
-            asArray(e[refField]).includes(entity.getId()) ||
-            asArray(e[refField]).includes(entity.getId(true)),
+        const affectedEntities = entities.filter((e) =>
+          asArray(e[refField]).includes(entity.getId()),
         );
 
         for (const e of affectedEntities) {

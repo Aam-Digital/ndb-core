@@ -48,13 +48,9 @@ describe("EntityDetailsComponent", () => {
   let mockAbility: jasmine.SpyObj<EntityAbility>;
 
   beforeEach(waitForAsync(() => {
-    mockChildrenService = jasmine.createSpyObj([
-      "queryRelationsOf",
-      "getAserResultsOfChild",
-    ]);
+    mockChildrenService = jasmine.createSpyObj(["queryRelations"]);
     mockEntityRemoveService = jasmine.createSpyObj(["remove"]);
-    mockChildrenService.queryRelationsOf.and.resolveTo([]);
-    mockChildrenService.getAserResultsOfChild.and.resolveTo([]);
+    mockChildrenService.queryRelations.and.resolveTo([]);
     mockAbility = jasmine.createSpyObj(["cannot", "update", "on"]);
     mockAbility.cannot.and.returnValue(false);
     mockAbility.on.and.returnValue(() => true);
@@ -90,7 +86,7 @@ describe("EntityDetailsComponent", () => {
     TestBed.inject(EntityMapperService).save(testChild);
     tick();
     component.creatingNew = false;
-    component.id = testChild.getId();
+    component.id = testChild.getId(true);
     component.ngOnChanges(simpleChangesFor(component, "id"));
     tick();
 
@@ -111,14 +107,40 @@ describe("EntityDetailsComponent", () => {
     tick();
     spyOn(entityMapper, "load").and.callThrough();
 
-    component.id = testChild.getId();
+    component.id = testChild.getId(true);
     component.ngOnChanges(simpleChangesFor(component, "id"));
     expect(component.isLoading).toBeTrue();
     tick();
 
-    expect(entityMapper.load).toHaveBeenCalledWith(Child, testChild.getId());
+    expect(entityMapper.load).toHaveBeenCalledWith(
+      Child,
+      testChild.getId(true),
+    );
     expect(component.record).toBe(testChild);
     expect(component.isLoading).toBeFalse();
+  }));
+
+  it("should also support the long ID format", fakeAsync(() => {
+    const child = new Child();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    entityMapper.save(child);
+    tick();
+    spyOn(entityMapper, "load").and.callThrough();
+
+    component.id = child.getId();
+    component.ngOnChanges(simpleChangesFor(component, "id"));
+    tick();
+
+    expect(entityMapper.load).toHaveBeenCalledWith(Child, child.getId());
+    expect(component.record).toEqual(child);
+
+    // entity is updated
+    const childUpdate = child.copy();
+    childUpdate.name = "update";
+    entityMapper.save(childUpdate);
+    tick();
+
+    expect(component.record).toEqual(childUpdate);
   }));
 
   it("should call router when user is not permitted to create entities", () => {

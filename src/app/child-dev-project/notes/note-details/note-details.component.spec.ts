@@ -18,9 +18,8 @@ function generateTestNote(forChildren: Child[]) {
     isMeeting: true,
   };
   for (const child of forChildren) {
-    testNote.addChild(child.getId());
-    testNote.getAttendance(child.getId()).status =
-      defaultAttendanceStatusTypes[0];
+    testNote.addChild(child);
+    testNote.getAttendance(child).status = defaultAttendanceStatusTypes[0];
   }
   return testNote;
 }

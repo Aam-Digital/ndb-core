@@ -21,7 +21,7 @@ export class TodoService {
     todo.completed = {
       completedBy: this.currentUser.value.getId(),
       completedAt: new Date(),
-      nextRepetition: nextTodo?.getId(true),
+      nextRepetition: nextTodo?.getId(),
     };
 
     await this.entityMapper.save(todo);

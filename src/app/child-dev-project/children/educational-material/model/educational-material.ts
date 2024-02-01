@@ -19,6 +19,7 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+import { Child } from "../../model/child";
 
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
@@ -28,9 +29,10 @@ export class EducationalMaterial extends Entity {
 
   @DatabaseField({
     dataType: "entity",
-    additional: "Child",
+    additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
   })
-  child: string; // id of Child entity
+  child: string;
 
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,

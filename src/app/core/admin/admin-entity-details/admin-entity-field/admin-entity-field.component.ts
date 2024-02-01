@@ -83,7 +83,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
   additionalForm: FormControl;
-  typeAdditionalOptions: SimpleDropdownValue[];
+  typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
 
   constructor(
@@ -259,7 +259,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   private resetAdditional() {
     this.additionalForm.removeValidators(Validators.required);
     this.additionalForm.reset(null);
-    this.typeAdditionalOptions = undefined;
+    this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
   }
 

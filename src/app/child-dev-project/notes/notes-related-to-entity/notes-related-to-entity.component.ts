@@ -69,7 +69,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
 
   override async initData() {
     this.data = await this.childrenService
-      .getNotesRelatedTo(this.entity.getId(true))
+      .getNotesRelatedTo(this.entity.getId())
       .then((notes: Note[]) => {
         notes.sort((a, b) => {
           if (!a.date && b.date) {
@@ -96,7 +96,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
         newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
       }
 
-      newNote.relatedEntities.push(this.entity.getId(true));
+      newNote.relatedEntities.push(this.entity.getId());
       this.getIndirectlyRelatedEntityIds(this.entity).forEach((e) =>
         newNote.relatedEntities.push(e),
       );
@@ -134,11 +134,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
       }
 
       for (const referencedId of asArray(entity[property])) {
-        // TODO: can we assert that ids always have prefix? Maybe (without saving) add that in transformToEntityFormat() ?
-        let referencedType = Entity.extractTypeFromId(referencedId);
-        if (referencedType === "") {
-          referencedType = schema.additional;
-        }
+        const referencedType = Entity.extractTypeFromId(referencedId);
 
         if (permittedRelatedTypes.includes(referencedType)) {
           // entity can have references of multiple entity types of which only some are allowed to be linked to Notes

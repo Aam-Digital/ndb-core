@@ -103,7 +103,7 @@ export class SearchComponent {
   async clickOption(optionElement) {
     await this.router.navigate([
       optionElement.value.getConstructor().route,
-      optionElement.value.getId(),
+      optionElement.value.getId(true),
     ]);
     this.formControl.setValue("");
   }
