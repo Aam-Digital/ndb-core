@@ -15,7 +15,7 @@ import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
 
-describe("EntityActionsService", () => {
+fdescribe("EntityActionsService", () => {
   let service: EntityActionsService;
   let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;

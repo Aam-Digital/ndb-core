@@ -8,7 +8,6 @@ import { getUrlWithoutParams } from "../../../utils/utils";
 import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { OkButton } from "../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
-import { en } from "@faker-js/faker";
 import { CascadingActionResult } from "./cascading-entity-action";
 
 /**
@@ -29,30 +28,12 @@ export class EntityActionsService {
   ) {}
 
   showSnackbarConfirmationWithUndo(
-    entityParam: Entity | Entity[],
-    action: string,
+    message: string,
     previousEntitiesForUndo: Entity[],
     navigateBackToUrl?: string,
   ) {
-    let snackBarTitle = "";
-    if (Array.isArray(entityParam)) {
-      if (entityParam.length > 1) {
-        snackBarTitle = $localize`:Entity action confirmation message:${
-          entityParam.length
-        } ${entityParam[0].getConstructor().labelPlural} ${action}`;
-      } else {
-        snackBarTitle = $localize`:Entity action confirmation message:${
-          entityParam[0].getConstructor().label
-        } "${entityParam.toString()}" ${action}`;
-      }
-    } else {
-      snackBarTitle = $localize`:Entity action confirmation message:${
-        entityParam.getConstructor().label
-      } "${entityParam.toString()}" ${action}`;
-    }
-
     const snackBarRef = this.snackBar.open(
-      snackBarTitle,
+      message,
       $localize`:Undo an entity action:Undo`,
       {
         duration: 8000,
@@ -87,32 +68,21 @@ export class EntityActionsService {
     navigate: boolean = false,
   ): Promise<boolean> {
     let textForDeleteEntity = "";
-    let concernsSeveralEntities = false;
-    if (Array.isArray(entityParam)) {
-      if (entityParam.length > 1) {
-        textForDeleteEntity =
-          $localize`:Demonstrative pronoun plural:these` +
-          " " +
-          entityParam.length +
-          " " +
-          entityParam[0].getConstructor().labelPlural;
-        concernsSeveralEntities = true;
-      } else {
-        textForDeleteEntity =
-          $localize`:Definite article singular:the` +
-          " " +
-          entityParam[0].getConstructor().label +
-          ' "' +
-          entityParam[0].toString() +
-          '"';
-      }
-    } else if (!Array.isArray(entityParam)) {
+    let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
+    if (entities.length > 1) {
+      textForDeleteEntity =
+        $localize`:Demonstrative pronoun plural:these` +
+        " " +
+        entities.length +
+        " " +
+        entities[0].getConstructor().labelPlural;
+    } else {
       textForDeleteEntity =
         $localize`:Definite article singular:the` +
         " " +
-        entityParam.getConstructor().label +
+        entities[0].getConstructor().label +
         ' "' +
-        entityParam.toString() +
+        entities[0].toString() +
         '"';
     }
 
@@ -132,14 +102,9 @@ export class EntityActionsService {
       $localize`:Entity action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
-    if (Array.isArray(entityParam)) {
-      for (let entity of entityParam) {
-        console.log("Peter deleting entity:", entity);
-        result.mergeResults(await this.entityDelete.deleteEntity(entity));
-      }
-    } else {
-      console.log("Peter deleting single entity:", entityParam);
-      result = await this.entityDelete.deleteEntity(entityParam);
+    for (let entity of entities) {
+      console.log("Peter deleting entity:", entity);
+      result.mergeResults(await this.entityDelete.deleteEntity(entity));
     }
     progressDialogRef.close();
 
@@ -160,10 +125,12 @@ export class EntityActionsService {
     }
 
     this.showSnackbarConfirmationWithUndo(
-      concernsSeveralEntities
-        ? entityParam
-        : result.originalEntitiesBeforeChange[0],
-      $localize`:Entity action confirmation message verb:Deleted`,
+      this.generateMessageForConfirmationWithUndo(
+        entities.length > 0
+          ? entities
+          : [result.originalEntitiesBeforeChange[0]],
+        $localize`:Entity action confirmation message verb:deleted`,
+      ),
       result.originalEntitiesBeforeChange,
       currentUrl,
     );
@@ -180,34 +147,25 @@ export class EntityActionsService {
    */
   async anonymize<E extends Entity>(entityParam: E | E[]) {
     let textForAnonymizeEntity = "";
-    let concernsSeveralEntities = false;
-    if (Array.isArray(entityParam)) {
-      if (entityParam.length > 1) {
-        textForAnonymizeEntity =
-          $localize`:Demonstrative pronoun plural:these` +
-          " " +
-          entityParam.length +
-          " " +
-          entityParam[0].getConstructor().labelPlural;
-        concernsSeveralEntities = true;
-      } else {
-        textForAnonymizeEntity =
-          $localize`:Definite article singular:the` +
-          " " +
-          entityParam[0].getConstructor().label +
-          ' "' +
-          entityParam[0].toString() +
-          '"';
-      }
-    } else if (!Array.isArray(entityParam)) {
+    let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
+
+    if (entities.length > 1) {
+      textForAnonymizeEntity =
+        $localize`:Demonstrative pronoun plural:these` +
+        " " +
+        entities.length +
+        " " +
+        entities[0].getConstructor().labelPlural;
+    } else {
       textForAnonymizeEntity =
         $localize`:Definite article singular:the` +
         " " +
-        entityParam.getConstructor().label +
+        entities[0].getConstructor().label +
         ' "' +
-        entityParam.toString() +
+        entities[0].toString() +
         '"';
     }
+
     if (
       !(await this.confirmationDialog.getConfirmation(
         $localize`:Anonymize confirmation dialog:Anonymize?`,
@@ -224,15 +182,15 @@ export class EntityActionsService {
       $localize`:Entity action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
-    if (Array.isArray(entityParam)) {
-      for (let entity of entityParam) {
-        console.log("Peter anonymizing entity:", entity);
-        result.mergeResults(await this.entityAnonymize.anonymizeEntity(entity));
-      }
-    } else {
-      console.log("Peter anonymizing single entity:", entityParam);
-      result = await this.entityAnonymize.anonymizeEntity(entityParam);
+    // if (Array.isArray(entityParam)) {
+    for (let entity of entities) {
+      console.log("Peter anonymizing entity:", entity);
+      result.mergeResults(await this.entityAnonymize.anonymizeEntity(entity));
     }
+    // } else {
+    //   console.log("Peter anonymizing single entity:", entityParam);
+    //   result = await this.entityAnonymize.anonymizeEntity(entityParam);
+    // }
     progressDialogRef.close();
 
     if (result.potentiallyRetainingPII.length > 0) {
@@ -245,12 +203,12 @@ export class EntityActionsService {
     }
 
     this.showSnackbarConfirmationWithUndo(
-      concernsSeveralEntities
-        ? entityParam
-        : result.originalEntitiesBeforeChange[0],
-      $localize`:Entity action confirmation message:${
-        result.originalEntitiesBeforeChange[0].getConstructor().label
-      } "${result.originalEntitiesBeforeChange[0].toString()}" anonymized`,
+      this.generateMessageForConfirmationWithUndo(
+        entities.length > 0
+          ? entities
+          : [result.originalEntitiesBeforeChange[0]],
+        $localize`:Entity action confirmation message verb:anonymized`,
+      ),
       result.originalEntitiesBeforeChange,
     );
     return true;
@@ -271,8 +229,10 @@ export class EntityActionsService {
     });
 
     this.showSnackbarConfirmationWithUndo(
-      newEntities,
-      $localize`:Entity action confirmation message verb:Archived`,
+      this.generateMessageForConfirmationWithUndo(
+        newEntities,
+        $localize`:Entity action confirmation message verb:archived`,
+      ),
       originalEntities,
     );
     return true;
@@ -292,10 +252,27 @@ export class EntityActionsService {
     });
 
     this.showSnackbarConfirmationWithUndo(
-      newEntities,
-      $localize`:Entity action confirmation message verb:Reactivated`,
+      this.generateMessageForConfirmationWithUndo(
+        newEntities,
+        $localize`:Entity action confirmation message verb:Reactivated`,
+      ),
       originalEntities,
     );
     return true;
+  }
+
+  private generateMessageForConfirmationWithUndo(
+    entities: Entity[],
+    action: string,
+  ): string {
+    if (entities.length > 1) {
+      return $localize`:Entity action confirmation message:${entities.length} ${
+        entities[0].getConstructor().labelPlural
+      } ${action}`;
+    } else {
+      return $localize`:Entity action confirmation message:${
+        entities[0].getConstructor().label
+      } "${entities.toString()}" ${action}`;
+    }
   }
 }
