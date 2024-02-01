@@ -701,7 +701,7 @@ export const defaultJsonConfig = {
               "config": {
                 "fieldGroups": [
                   { "fields": ["title"] },
-                  { "fields": ["type", "inactive"] },
+                  { "fields": ["type"] },
                   { "fields": ["assignedTo"] }
                 ]
               }

@@ -28,7 +28,7 @@ describe("ConfigurableEnumService", () => {
   it("should create a new enum if it cannot be found", () => {
     const newEnum = service.getEnum("new-id");
 
-    expect(newEnum.getId()).toEqual("new-id");
+    expect(newEnum.getId(true)).toEqual("new-id");
     expect(newEnum.values).toEqual([]);
     // returns same enum in consecutive calls
     expect(service.getEnum("new-id")).toBe(newEnum);

@@ -66,7 +66,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       if (this.creatingNew) {
         await this.router.navigate([
           getParentUrl(this.router),
-          this.entity.getId(),
+          this.entity.getId(true),
         ]);
       }
     } catch (err) {

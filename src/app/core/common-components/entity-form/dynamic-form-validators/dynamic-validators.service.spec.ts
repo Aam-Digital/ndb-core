@@ -112,7 +112,7 @@ describe("DynamicValidatorsService", () => {
     mockedEntityMapper.loadType.and.resolveTo([new User("existing id")]);
 
     const validators = service.buildValidators(config).asyncValidators;
-    await testValidator(validators[0], "new id", "existing id");
+    await testValidator(validators[0], "User:new id", "User:existing id");
   });
 });
 

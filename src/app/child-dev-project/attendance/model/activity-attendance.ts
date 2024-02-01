@@ -248,6 +248,6 @@ export function generateEventWithAttendance(
       event.getAttendance(att[0]).remarks = att[2];
     }
   }
-  event.relatesTo = activity?.getId(true);
+  event.relatesTo = activity?.getId();
   return event;
 }

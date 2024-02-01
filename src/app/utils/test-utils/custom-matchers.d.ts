@@ -28,13 +28,6 @@ declare namespace jasmine {
     toHaveKey(key: any): void;
 
     /**
-     * expects an entity to have the given ID
-     * The ID is computed via `Entity#getId()`
-     * @param id
-     */
-    toHaveId(id: string): void;
-
-    /**
      * expects an entity to have a given type
      * The type of entity is equal to the static `ENTITY_TYPE`.
      * It is computed via `Entity#getType()`

@@ -25,6 +25,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./FormConfig";
+import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("EntityFormService", () => {
@@ -51,13 +52,13 @@ describe("EntityFormService", () => {
     });
 
     await expectAsync(service.saveChanges(formGroup, entity)).toBeRejected();
-    expect(entity.getId()).not.toBe("newId");
+    expect(entity.getId()).not.toBe(`${Entity.ENTITY_TYPE}:newId`);
   });
 
   it("should update entity if saving is successful", async () => {
     const entity = new Entity("initialId");
     const formGroup = new UntypedFormGroup({
-      _id: new UntypedFormControl("newId"),
+      _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
     });
     TestBed.inject(EntityAbility).update([
       { subject: "Entity", action: "create" },
@@ -65,7 +66,7 @@ describe("EntityFormService", () => {
 
     await service.saveChanges(formGroup, entity);
 
-    expect(entity.getId()).toBe("newId");
+    expect(entity.getId()).toBe(`${Entity.ENTITY_TYPE}:newId`);
   });
 
   it("should throw an error when trying to create a entity with missing permissions", async () => {
@@ -246,19 +247,19 @@ describe("EntityFormService", () => {
 
     schema.defaultValue = PLACEHOLDERS.NOW;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test").value).toEqual(new Date());
+    expect(form.get("test").value).toBeDate(new Date());
 
     schema.defaultValue = PLACEHOLDERS.CURRENT_USER;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue(TEST_USER);
+    expect(form.get("test")).toHaveValue(`${User.ENTITY_TYPE}:${TEST_USER}`);
 
     schema.dataType = ArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([TEST_USER]);
+    expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
     schema.dataType = EntityArrayDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([TEST_USER]);
+    expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
     Entity.schema.delete("test");
   });

@@ -35,7 +35,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
     { id: "completed", hideFromForm: true },
   ];
 
-  /** the property name of the Todo that contains the ids referencing related entities */
+  /** the property name of the entity that contains the ids referencing related entities */
   private referenceProperty: keyof Todo & string = "relatedEntities";
 
   // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
@@ -66,7 +66,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   }
 
   override async initData() {
-    this.data = await this.loadDataFor(this.entity.getId(true));
+    this.data = await this.loadDataFor(this.entity.getId());
   }
 
   private async loadDataFor(entityId: string): Promise<Todo[]> {
@@ -84,7 +84,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
   public getNewEntryFunction(): () => Todo {
     return () => {
       const newEntry = new Todo();
-      newEntry.relatedEntities = [this.entity.getId(true)];
+      newEntry.relatedEntities = [this.entity.getId()];
       return newEntry;
     };
   }

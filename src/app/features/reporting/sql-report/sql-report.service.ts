@@ -35,7 +35,7 @@ export class SqlReportService {
     await this.updateSchemaIfNecessary();
     return firstValueFrom(
       this.http.post<any[]>(
-        `${SqlReportService.QUERY_PROXY}/report/app/${report.getId(true)}`,
+        `${SqlReportService.QUERY_PROXY}/report/app/${report.getId()}`,
         {
           from: moment(from).format("YYYY-MM-DD"),
           to: moment(to).format("YYYY-MM-DD"),
