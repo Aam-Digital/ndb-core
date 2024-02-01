@@ -96,11 +96,7 @@ export const defaultJsonConfig = {
           }
         },
         {
-          "component": "EntityCountDashboard",
-          "config": {
-            "entity": "Note",
-            "groupBy": "children"
-          }
+          "component": "EntityCountDashboard"
         },
         {
           "component": "ImportantNotesDashboard",
