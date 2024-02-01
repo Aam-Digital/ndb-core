@@ -24,7 +24,7 @@ import { UpdatedEntity } from "../model/entity-update";
 import { EntityRegistry } from "../database-entity.decorator";
 import { map } from "rxjs/operators";
 import { UpdateMetadata } from "../model/update-metadata";
-import { CurrentUserSubject } from "../../user/user";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
  * Handles loading and saving of data for any higher-level feature module.
@@ -195,7 +195,7 @@ export class EntityMapperService {
   }
 
   protected setEntityMetadata(entity: Entity) {
-    const newMetadata = new UpdateMetadata(this.currentUser.value?.name);
+    const newMetadata = new UpdateMetadata(this.currentUser.value?.getId());
     if (entity.isNew) {
       entity.created = newMetadata;
     }

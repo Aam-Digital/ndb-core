@@ -1,5 +1,5 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { FormFieldConfig } from "../../../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 import {
   entityFormStorybookDefaultParameters,
   StorybookBaseModule,
@@ -62,6 +62,6 @@ testEntity.relatedEntities = [testUser.getId()];
 
 export const Primary = Template.bind({});
 Primary.args = {
-  cols: [[otherField, fieldConfig, otherField, otherField]],
+  fieldGroups: [{ fields: [otherField, fieldConfig, otherField, otherField] }],
   entity: testEntity,
 };

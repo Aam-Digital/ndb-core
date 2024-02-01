@@ -1,12 +1,10 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Input,
   OnChanges,
   Output,
   SimpleChanges,
-  ViewChild,
 } from "@angular/core";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
 import {
@@ -16,15 +14,12 @@ import {
   GroupConfig,
 } from "../EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
-import { EntitySubrecordComponent } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { entityFilterPredicate } from "../../filter/filter-generator/filter-predicate";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
 import { NgForOf, NgIf, NgStyle, NgTemplateOutlet } from "@angular/common";
@@ -47,6 +42,11 @@ import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../route-target";
 import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
+import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
+import { applyUpdate } from "../../entity/model/entity-update";
+import { Subscription } from "rxjs";
+import { DataFilter } from "../../filter/filters/filters";
+import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -75,7 +75,7 @@ import { EntityActionsService } from "app/core/entity/entity-actions/entity-acti
     NgForOf,
     MatFormFieldModule,
     MatInputModule,
-    EntitySubrecordComponent,
+    EntitiesTableComponent,
     FormsModule,
     FilterComponent,
     TabStateModule,
@@ -84,12 +84,13 @@ import { EntityActionsService } from "app/core/entity/entity-actions/entity-acti
     DisableEntityOperationDirective,
     RouterLink,
     MatTooltipModule,
+    EntityCreateButtonComponent,
   ],
   standalone: true,
 })
 @UntilDestroy()
 export class EntityListComponent<T extends Entity>
-  implements EntityListConfig, OnChanges, AfterViewInit
+  implements EntityListConfig, OnChanges
 {
   @Input() allEntities: T[];
 
@@ -106,13 +107,9 @@ export class EntityListComponent<T extends Entity>
   /** initial / default state whether to include archived records in the list */
   @Input() showInactive: boolean;
 
-  @Input() isLoading: boolean;
-
   @Output() elementClick = new EventEmitter<T>();
   @Output() addNewClick = new EventEmitter();
   selectedRows: T[];
-
-  @ViewChild(EntitySubrecordComponent) entityTable: EntitySubrecordComponent<T>;
 
   isDesktop: boolean;
 
@@ -124,11 +121,12 @@ export class EntityListComponent<T extends Entity>
   mobileColumnGroup = "";
   @Input() filters: FilterConfig[] = [];
 
-  columnsToDisplay: string[] = [];
+  columnsToDisplay: string[];
 
   filterObj: DataFilter<T>;
   filterString = "";
   filteredData = [];
+  filterFreetext: string;
 
   get selectedColumnGroupIndex(): number {
     return this.selectedColumnGroupIndex_;
@@ -189,11 +187,6 @@ export class EntityListComponent<T extends Entity>
     return this.buildComponentFromConfig();
   }
 
-  ngAfterViewInit() {
-    this.entityTable.recordsDataSource.filterPredicate = (data, filter) =>
-      entityFilterPredicate(data.record, filter);
-  }
-
   private async buildComponentFromConfig() {
     if (this.entity) {
       this.entityConstructor = this.entities.get(
@@ -208,7 +201,6 @@ export class EntityListComponent<T extends Entity>
 
     this.title = this.title || this.entityConstructor?.labelPlural;
 
-    this.addColumnsFromColumnGroups();
     this.initColumnGroups(this.columnGroups);
 
     this.displayColumnGroupByName(
@@ -219,39 +211,22 @@ export class EntityListComponent<T extends Entity>
   }
 
   private async loadEntities() {
-    this.isLoading = true;
-
     this.allEntities = await this.entityMapperService.loadType(
       this.entityConstructor,
     );
-
-    this.isLoading = false;
+    this.listenToEntityUpdates();
   }
 
-  private addColumnsFromColumnGroups() {
-    const allColumns = [...this.columns];
-    const groupColumns = (this.columnGroups?.groups ?? []).reduce(
-      (accumulatedColumns: string[], currentGroup) => [
-        ...accumulatedColumns,
-        ...currentGroup.columns,
-      ],
-      [],
-    );
-    for (const column of groupColumns) {
-      if (
-        !allColumns.some((existingColumn) =>
-          // Check if the column is already defined as object or string
-          typeof existingColumn === "string"
-            ? existingColumn === column
-            : existingColumn.id === column,
-        )
-      ) {
-        allColumns.push(column);
-      }
-    }
+  private updateSubscription: Subscription;
 
-    if (allColumns.length !== this.columns.length) {
-      this.columns = [...allColumns];
+  private listenToEntityUpdates() {
+    if (!this.updateSubscription && this.entityConstructor) {
+      this.updateSubscription = this.entityMapperService
+        .receiveUpdates(this.entityConstructor)
+        .pipe(untilDestroyed(this))
+        .subscribe((next) => {
+          this.allEntities = applyUpdate(this.allEntities, next);
+        });
     }
   }
 
@@ -275,12 +250,8 @@ export class EntityListComponent<T extends Entity>
 
   applyFilter(filterValue: string) {
     // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
-    filterValue = filterValue.trim();
-    filterValue = filterValue.toLowerCase(); // MatTableDataSource defaults to lowercase matches
-    this.entityTable.recordsDataSource.filter = filterValue;
-    this.filteredData = this.entityTable.recordsDataSource.filteredData.map(
-      (x) => x.record,
-    );
+    this.filterFreetext = filterValue.trim().toLowerCase();
+
     this.analyticsService.eventTrack("list_filter_freetext", {
       category: this.entityConstructor?.ENTITY_TYPE,
     });
@@ -338,5 +309,9 @@ export class EntityListComponent<T extends Entity>
   async anonymizeRecords() {
     await this.entityActionsService.anonymize(this.selectedRows);
     this.selectedRows = undefined;
+  }
+
+  onRowClick(row: T) {
+    this.elementClick.emit(row);
   }
 }

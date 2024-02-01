@@ -1,6 +1,6 @@
 import { Injectable } from "@angular/core";
 import { DemoDataGenerator } from "../../core/demo-data/demo-data-generator";
-import { ReportConfig } from "./report-config";
+import { ReportEntity } from "./report-config";
 import { Child } from "../../child-dev-project/children/model/child";
 import { School } from "../../child-dev-project/schools/model/school";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
@@ -8,7 +8,7 @@ import { EventNote } from "../../child-dev-project/attendance/model/event-note";
 import { EducationalMaterial } from "../../child-dev-project/children/educational-material/model/educational-material";
 
 @Injectable()
-export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportConfig> {
+export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportEntity> {
   static provider() {
     return [
       {
@@ -18,12 +18,14 @@ export class DemoReportConfigGeneratorService extends DemoDataGenerator<ReportCo
     ];
   }
 
-  protected generateEntities(): ReportConfig[] {
-    return demoReports.map((report) => ReportConfig.create(report));
+  protected generateEntities(): ReportEntity[] {
+    return demoReports.map((report) =>
+      Object.assign(new ReportEntity(), report),
+    );
   }
 }
 
-const demoReports: Partial<ReportConfig>[] = [
+const demoReports: Partial<ReportEntity>[] = [
   {
     title: $localize`:Name of a report:Basic Report`,
     aggregationDefinitions: [
@@ -45,7 +47,7 @@ const demoReports: Partial<ReportConfig>[] = [
             query: `[*privateSchool!=true]`,
           },
           {
-            query: `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+            query: `[*privateSchool!=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId::unique:toEntities(${Child.ENTITY_TYPE})`,
             label: $localize`:Label for report query:Children attending a governmental school`,
             groupBy: ["gender"],
           },
@@ -54,7 +56,7 @@ const demoReports: Partial<ReportConfig>[] = [
             query: `[*privateSchool=true]`,
           },
           {
-            query: `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId:addPrefix(${Child.ENTITY_TYPE}):unique:toEntities`,
+            query: `[*privateSchool=true]:getRelated(${ChildSchoolRelation.ENTITY_TYPE}, schoolId)[*isActive=true].childId::unique:toEntities(${Child.ENTITY_TYPE})`,
             label: $localize`:Label for report query:Children attending a private school`,
             groupBy: ["gender"],
           },
@@ -71,7 +73,7 @@ const demoReports: Partial<ReportConfig>[] = [
         label: $localize`:Label for a report query:Events`,
         aggregations: [
           {
-            query: `:getParticipantsWithAttendance(PRESENT):unique:addPrefix(${Child.ENTITY_TYPE}):toEntities`,
+            query: `:getParticipantsWithAttendance(PRESENT):unique:toEntities(${Child.ENTITY_TYPE})`,
             groupBy: ["gender"],
             label: $localize`:Label for a report query:Participants`,
           },

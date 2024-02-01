@@ -13,7 +13,8 @@ import { ChildrenService } from "../../../children/children.service";
 import { AttendanceService } from "../../attendance.service";
 import { EventNote } from "../../model/event-note";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { TEST_USER } from "../../../../utils/mock-local-session";
+import { TEST_USER } from "../../../../core/user/demo-user-generator.service";
+import { User } from "../../../../core/user/user";
 
 describe("RollCallSetupComponent", () => {
   let component: RollCallSetupComponent;
@@ -64,8 +65,12 @@ describe("RollCallSetupComponent", () => {
     flush();
 
     expect(component.existingEvents.length).toBe(2);
-    expect(component.existingEvents[0].authors).toEqual([TEST_USER]);
-    expect(component.existingEvents[1].authors).toEqual([TEST_USER]);
+    expect(component.existingEvents[0].authors).toEqual([
+      `${User.ENTITY_TYPE}:${TEST_USER}`,
+    ]);
+    expect(component.existingEvents[1].authors).toEqual([
+      `${User.ENTITY_TYPE}:${TEST_USER}`,
+    ]);
   }));
 
   it("should only show active activities", fakeAsync(() => {

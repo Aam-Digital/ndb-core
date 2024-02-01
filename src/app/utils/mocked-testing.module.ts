@@ -2,7 +2,7 @@ import { ModuleWithProviders, NgModule } from "@angular/core";
 import { LoginState } from "../core/session/session-states/login-state.enum";
 import { EntityMapperService } from "../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../core/entity/entity-mapper/mock-entity-mapper-service";
-import { CurrentUserSubject, User } from "../core/user/user";
+import { User } from "../core/user/user";
 import { AnalyticsService } from "../core/analytics/analytics.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { RouterTestingModule } from "@angular/router/testing";
@@ -19,8 +19,13 @@ import { ComponentRegistry } from "../dynamic-components";
 import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum.service";
 import { createTestingConfigurableEnumService } from "../core/basic-datatypes/configurable-enum/configurable-enum-testing";
 import { SwRegistrationOptions } from "@angular/service-worker";
-import { TEST_USER } from "./mock-local-session";
 import { BehaviorSubject } from "rxjs";
+import { CurrentUserSubject } from "../core/session/current-user-subject";
+import { SessionInfo, SessionSubject } from "../core/session/auth/session-info";
+import { TEST_USER } from "../core/user/demo-user-generator.service";
+import { EntityAbility } from "../core/permissions/ability/entity-ability";
+import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
+import { entityAbilityFactory } from "app/core/permissions/ability/testing-entity-ability-factory";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -70,9 +75,15 @@ export class MockedTestingModule {
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([...data]);
+
     return {
       ngModule: MockedTestingModule,
       providers: [
+        {
+          provide: EntityAbility,
+          useFactory: entityAbilityFactory,
+          deps: [EntitySchemaService],
+        },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
         {
@@ -80,11 +91,15 @@ export class MockedTestingModule {
           useValue: createTestingConfigurableEnumService(),
         },
         {
-          provide: CurrentUserSubject,
-          useValue: new BehaviorSubject({
+          provide: SessionSubject,
+          useValue: new BehaviorSubject<SessionInfo>({
             name: TEST_USER,
             roles: ["user_app"],
           }),
+        },
+        {
+          provide: CurrentUserSubject,
+          useValue: new BehaviorSubject(new User(TEST_USER)),
         },
       ],
     };

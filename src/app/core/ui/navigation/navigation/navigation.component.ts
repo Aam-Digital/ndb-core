@@ -16,10 +16,8 @@
  */
 
 import { Component } from "@angular/core";
-import { MenuItem } from "../menu-item";
-import { NavigationMenuConfig } from "../navigation-menu-config.interface";
+import { MenuItem, NavigationMenuConfig } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
-import { UserRoleGuard } from "../../../permissions/permission-guard/user-role.guard";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NavigationEnd, Router, RouterLink } from "@angular/router";
 import { filter, startWith } from "rxjs/operators";
@@ -27,7 +25,7 @@ import { MatListModule } from "@angular/material/list";
 import { NgForOf } from "@angular/common";
 import { Angulartics2Module } from "angulartics2";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
-import { EntityPermissionGuard } from "../../../permissions/permission-guard/entity-permission.guard";
+import { RoutePermissionsService } from "../../../config/dynamic-routing/route-permissions.service";
 
 /**
  * Main app menu listing.
@@ -49,16 +47,17 @@ import { EntityPermissionGuard } from "../../../permissions/permission-guard/ent
 export class NavigationComponent {
   /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
+
   /** name of config array in the config json file */
   private readonly CONFIG_ID = "navigationMenu";
+
   /** all menu items to be displayed */
   public menuItems: MenuItem[] = [];
 
   constructor(
     private configService: ConfigService,
     private router: Router,
-    private userRoleGuard: UserRoleGuard,
-    private entityPermissionGuard: EntityPermissionGuard,
+    private routePermissionService: RoutePermissionsService,
   ) {
     this.configService.configUpdates
       .pipe(untilDestroyed(this))
@@ -114,18 +113,16 @@ export class NavigationComponent {
   /**
    * Load menu items from config file
    */
-  private initMenuItemsFromConfig() {
-    const config: NavigationMenuConfig =
-      this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
-    this.menuItems = config.items
-      .filter(({ link }) => this.isAccessibleRouteForUser(link))
-      .map(({ name, icon, link }) => new MenuItem(name, icon, link));
-  }
-
-  private isAccessibleRouteForUser(path: string) {
-    return (
-      this.userRoleGuard.checkRoutePermissions(path) &&
-      this.entityPermissionGuard.checkRoutePermissions(path)
+  private async initMenuItemsFromConfig() {
+    const config = this.configService.getConfig<NavigationMenuConfig>(
+      this.CONFIG_ID,
     );
+
+    this.menuItems = await this.routePermissionService.filterPermittedRoutes(
+      config.items,
+    );
+
+    // re-select active menu item after menu has been fully initialized
+    this.activeLink = this.computeActiveLink(location.pathname);
   }
 }

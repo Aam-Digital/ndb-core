@@ -1,42 +1,44 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { HealthCheck } from "../model/health-check";
-import { ChildrenService } from "../../children.service";
 import { Child } from "../../model/child";
-import { FormFieldConfig } from "../../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../../core/common-components/entity-form/FormConfig";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EntitySubrecordComponent } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitiesTableComponent } from "../../../../core/common-components/entities-table/entities-table.component";
+import { RelatedEntitiesComponent } from "../../../../core/entity-details/related-entities/related-entities.component";
 
 @DynamicComponent("HealthCheckup")
 @Component({
   selector: "app-health-checkup",
-  templateUrl: "./health-checkup.component.html",
-  imports: [EntitySubrecordComponent],
+  templateUrl:
+    "../../../../core/entity-details/related-entities/related-entities.component.html",
+  imports: [EntitiesTableComponent],
   standalone: true,
 })
-export class HealthCheckupComponent implements OnInit {
-  records: HealthCheck[] = [];
+export class HealthCheckupComponent
+  extends RelatedEntitiesComponent<HealthCheck>
+  implements OnInit
+{
+  @Input() entity: Child;
+  property = "child";
+  entityCtr = HealthCheck;
+
   /**
-   * Column Description for the SubentityRecordComponent
+   * Column Description
    * The Date-Column needs to be transformed to apply the MathFormCheck in the SubentityRecordComponent
    * BMI is rounded to 2 decimal digits
    */
-  @Input() config: { columns: FormFieldConfig[] } = {
-    columns: [
-      { id: "date" },
-      { id: "height" },
-      { id: "weight" },
-      {
-        id: "bmi",
-        label: $localize`:Table header, Short for Body Mass Index:BMI`,
-        viewComponent: "ReadonlyFunction",
-        description: $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
-        additional: (entity: HealthCheck) => this.getBMI(entity),
-      },
-    ],
-  };
-  @Input() entity: Child;
-
-  constructor(private childrenService: ChildrenService) {}
+  override _columns: FormFieldConfig[] = [
+    { id: "date" },
+    { id: "height" },
+    { id: "weight" },
+    {
+      id: "bmi",
+      label: $localize`:Table header, Short for Body Mass Index:BMI`,
+      viewComponent: "ReadonlyFunction",
+      description: $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
+      additional: (entity: HealthCheck) => this.getBMI(entity),
+    },
+  ];
 
   private getBMI(healthCheck: HealthCheck): string {
     const bmi = healthCheck.bmi;
@@ -47,16 +49,11 @@ export class HealthCheckupComponent implements OnInit {
     }
   }
 
-  ngOnInit() {
-    return this.loadData();
-  }
-
-  generateNewRecordFactory() {
+  override createNewRecordFactory() {
     return () => {
-      const newHC = new HealthCheck(Date.now().toString());
+      const newHC = new HealthCheck();
 
-      // use last entered date as default, otherwise today's date
-      newHC.date = this.records.length > 0 ? this.records[0].date : new Date();
+      newHC.date = new Date();
       newHC.child = this.entity.getId();
 
       return newHC;
@@ -66,13 +63,14 @@ export class HealthCheckupComponent implements OnInit {
   /**
    * implements the health check loading from the children service and is called in the onInit()
    */
-  async loadData() {
-    this.records = await this.childrenService.getHealthChecksOfChild(
-      this.entity.getId(),
-    );
-    this.records.sort(
-      (a, b) =>
-        (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0),
-    );
+  override async initData() {
+    super
+      .initData()
+      .then(() =>
+        this.data.sort(
+          (a, b) =>
+            (b.date ? b.date.valueOf() : 0) - (a.date ? a.date.valueOf() : 0),
+        ),
+      );
   }
 }

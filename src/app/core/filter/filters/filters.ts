@@ -15,82 +15,26 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
-import {
-  BooleanFilterConfig,
-  DateRangeFilterConfigOption,
-} from "../../entity-list/EntityListConfig";
-import { DataFilter } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../../entity/model/entity";
-import { DateRange } from "@angular/material/datepicker";
-import { isValidDate } from "../../../utils/utils";
-import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
-import moment from "moment/moment";
+import { MongoQuery } from "@casl/ability";
+
+/**
+ * This filter can be used to filter an array of entities.
+ * It has to follow the MongoDB Query Syntax {@link https://www.mongodb.com/docs/manual/reference/operator/query/}.
+ *
+ * The filter is parsed using ucast {@link https://github.com/stalniy/ucast/tree/master/packages/mongo2js}
+ */
+export type DataFilter<T> = MongoQuery<T> | {};
 
 export abstract class Filter<T extends Entity> {
-  public selectedOption: string;
+  public selectedOptionValues: string[] = [];
 
-  constructor(
+  protected constructor(
     public name: string,
     public label: string = name,
   ) {}
 
   abstract getFilter(): DataFilter<T>;
-}
-
-/**
- * Represents a filter for date values.
- * The filter can either be one of the predefined options or two manually entered dates.
- */
-export class DateFilter<T extends Entity> extends Filter<T> {
-  constructor(
-    public name: string,
-    public label: string = name,
-    public rangeOptions: DateRangeFilterConfigOption[],
-  ) {
-    super(name, label);
-    this.selectedOption = "1";
-  }
-
-  /**
-   * Returns the date range according to the selected option or dates
-   */
-  getDateRange(): DateRange<Date> {
-    if (this.getSelectedOption()) {
-      return calculateDateRange(this.getSelectedOption());
-    }
-    const dates = this.selectedOption?.split("_");
-    if (dates?.length == 2) {
-      const firstDate = moment(dates[0]).toDate();
-      const secondDate = moment(dates[1]).toDate();
-      return new DateRange(
-        isValidDate(firstDate) ? firstDate : undefined,
-        isValidDate(secondDate) ? secondDate : undefined,
-      );
-    }
-    return new DateRange(undefined, undefined);
-  }
-
-  getFilter(): DataFilter<T> {
-    const range = this.getDateRange();
-    const filterObject: { $gte?: string; $lte?: string } = {};
-    if (range.start) {
-      filterObject.$gte = moment(range.start).format("YYYY-MM-DD");
-    }
-    if (range.end) {
-      filterObject.$lte = moment(range.end).format("YYYY-MM-DD");
-    }
-    if (filterObject.$gte || filterObject.$lte) {
-      return {
-        [this.name]: filterObject,
-      } as DataFilter<T>;
-    }
-    return {} as DataFilter<T>;
-  }
-
-  getSelectedOption() {
-    return this.rangeOptions[this.selectedOption as any];
-  }
 }
 
 /**
@@ -119,25 +63,13 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     valuesToMatchAsOptions: string[],
     attributeName: string,
   ): FilterSelectionOption<T>[] {
-    const options = [
-      {
-        key: "",
-        label: $localize`:generic filter option showing all entries:All`,
-        filter: {} as DataFilter<T>,
-      },
-    ];
-
-    options.push(
-      ...valuesToMatchAsOptions
-        .filter((k) => !!k)
-        .map((k) => ({
-          key: k.toLowerCase(),
-          label: k.toString(),
-          filter: { [attributeName]: k } as DataFilter<T>,
-        })),
-    );
-
-    return options;
+    return valuesToMatchAsOptions
+      .filter((k) => !!k)
+      .map((k) => ({
+        key: k.toLowerCase(),
+        label: k.toString(),
+        filter: { [attributeName]: k } as DataFilter<T>,
+      }));
   }
 
   /**
@@ -153,18 +85,17 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
     public label: string = name,
   ) {
     super(name, label);
-    this.selectedOption = this.options[0]?.key;
+    this.selectedOptionValues = [];
   }
-
-  /** default filter will keep all items in the result */
-  defaultFilter = {};
 
   /**
    * Get the full filter option by its key.
    * @param key The identifier of the requested option
    */
-  getOption(key: string): FilterSelectionOption<T> {
-    return this.options.find((option) => option.key === key);
+  getOption(key: string): FilterSelectionOption<T> | undefined {
+    return this.options.find((option: FilterSelectionOption<T>): boolean => {
+      return option.key === key;
+    });
   }
 
   /**
@@ -172,94 +103,19 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * If the given key is undefined or invalid, the returned filter matches any elements.
    */
   public getFilter(): DataFilter<T> {
-    const option = this.getOption(this.selectedOption);
+    const filters: DataFilter<T>[] = this.selectedOptionValues
+      .map((value: string) => this.getOption(value))
+      .filter((value: FilterSelectionOption<T>) => value !== undefined)
+      .map((previousValue: FilterSelectionOption<T>) => {
+        return previousValue.filter as DataFilter<T>;
+      });
 
-    if (!option) {
-      return this.defaultFilter as DataFilter<T>;
-    } else {
-      return option.filter;
+    if (filters.length === 0) {
+      return {} as DataFilter<T>;
     }
-  }
-}
-
-export class BooleanFilter<T extends Entity> extends SelectableFilter<T> {
-  constructor(name: string, label: string, config?: BooleanFilterConfig) {
-    super(
-      name,
-      [
-        {
-          key: "all",
-          label: config.all ?? $localize`:Filter label:All`,
-          filter: {},
-        },
-        {
-          key: "true",
-          label:
-            config.true ?? $localize`:Filter label default boolean true:Yes`,
-          filter: { [config.id]: true },
-        },
-        {
-          key: "false",
-          label:
-            config.false ?? $localize`:Filter label default boolean true:No`,
-          filter: { $or: [{ [config.id]: false }, { [config.id]: undefined }] },
-        },
-      ],
-      label,
-    );
-  }
-}
-
-export class ConfigurableEnumFilter<
-  T extends Entity,
-> extends SelectableFilter<T> {
-  constructor(
-    name: string,
-    label: string,
-    enumValues: ConfigurableEnumValue[],
-  ) {
-    let options: FilterSelectionOption<T>[] = [
-      {
-        key: "all",
-        label: $localize`:Filter label:All`,
-        filter: {},
-      },
-    ];
-    options.push(
-      ...enumValues.map((enumValue) => ({
-        key: enumValue.id,
-        label: enumValue.label,
-        color: enumValue.color,
-        filter: { [name + ".id"]: enumValue.id },
-      })),
-    );
-    super(name, options, label);
-  }
-}
-
-export class EntityFilter<T extends Entity> extends SelectableFilter<T> {
-  constructor(name: string, label: string, filterEntities) {
-    filterEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
-    const options: FilterSelectionOption<T>[] = [
-      {
-        key: "all",
-        label: $localize`:Filter label:All`,
-        filter: {},
-      },
-    ];
-    options.push(
-      ...filterEntities.map((filterEntity) => ({
-        key: filterEntity.getId(),
-        label: filterEntity.toString(),
-        filter: {
-          $or: [
-            { [name]: filterEntity.getId() },
-            { [name]: { $elemMatch: { $eq: filterEntity.getId() } } },
-          ],
-        },
-      })),
-    );
-    super(name, options, label);
+    return {
+      $or: [...filters],
+    } as unknown as DataFilter<T>;
   }
 }
 
@@ -280,5 +136,5 @@ export interface FilterSelectionOption<T> {
   /**
    * The filter query which should be used if this filter is selected
    */
-  filter: DataFilter<T> | any;
+  filter: DataFilter<T>;
 }

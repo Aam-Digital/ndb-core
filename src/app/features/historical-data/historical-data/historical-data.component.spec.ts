@@ -46,7 +46,7 @@ describe("HistoricalDataComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.entries).toEqual([relatedData]);
+    expect(component.data).toEqual([relatedData]);
     expect(mockHistoricalDataService.getHistoricalDataFor).toHaveBeenCalledWith(
       component.entity.getId(),
     );

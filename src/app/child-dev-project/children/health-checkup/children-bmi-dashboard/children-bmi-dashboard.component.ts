@@ -11,6 +11,7 @@ import { DecimalPipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
 import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
 import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
+import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 
 interface BmiRow {
   childId: string;
@@ -33,13 +34,22 @@ interface BmiRow {
   ],
   standalone: true,
 })
-export class ChildrenBmiDashboardComponent implements OnInit, AfterViewInit {
+export class ChildrenBmiDashboardComponent
+  extends DashboardWidget
+  implements OnInit, AfterViewInit
+{
+  static getRequiredEntities() {
+    return HealthCheck.ENTITY_TYPE;
+  }
+
   bmiDataSource = new MatTableDataSource<BmiRow>();
   isLoading = true;
   entityLabelPlural: string = Child.labelPlural;
   @ViewChild("paginator") paginator: MatPaginator;
 
-  constructor(private entityMapper: EntityMapperService) {}
+  constructor(private entityMapper: EntityMapperService) {
+    super();
+  }
 
   ngOnInit() {
     return this.loadBMIData();

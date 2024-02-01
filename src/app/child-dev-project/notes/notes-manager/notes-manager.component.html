@@ -1,8 +1,7 @@
 <app-entity-list
   [allEntities]="notes"
   [listConfig]="config"
-  [isLoading]="isLoading"
-  [entityConstructor]="noteConstructor"
+  [entityConstructor]="entityConstructor"
   clickMode="none"
   (elementClick)="showDetails($event)"
   (addNewClick)="addNoteClick()"

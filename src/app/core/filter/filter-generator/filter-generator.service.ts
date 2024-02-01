@@ -1,10 +1,7 @@
 import { Injectable } from "@angular/core";
 import {
-  BooleanFilter,
-  ConfigurableEnumFilter,
-  DateFilter,
-  EntityFilter,
   Filter,
+  FilterSelectionOption,
   SelectableFilter,
 } from "../filters/filters";
 import {
@@ -21,6 +18,10 @@ import { FilterService } from "../filter.service";
 import { defaultDateFilters } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { DateFilter } from "../filters/dateFilter";
+import { BooleanFilter } from "../filters/booleanFilter";
+import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
+import { EntityFilter } from "../filters/entityFilter";
 
 @Injectable({
   providedIn: "root",
@@ -99,7 +100,9 @@ export class FilterGeneratorService {
         );
       } else {
         const options = [...new Set(data.map((c) => c[filterConfig.id]))];
-        const fSO = SelectableFilter.generateOptions(options, filterConfig.id);
+        const fSO: FilterSelectionOption<T>[] =
+          SelectableFilter.generateOptions(options, filterConfig.id);
+
         filter = new SelectableFilter<T>(
           filterConfig.id,
           fSO,
@@ -108,7 +111,7 @@ export class FilterGeneratorService {
       }
 
       if (filterConfig.hasOwnProperty("default")) {
-        filter.selectedOption = filterConfig.default;
+        filter.selectedOptionValues = [filterConfig.default];
       }
 
       if (filter instanceof SelectableFilter) {

@@ -14,6 +14,7 @@ import { ChildSchoolRelation } from "../children/model/childSchoolRelation";
 import { Child } from "../children/model/child";
 import { Note } from "../notes/model/note";
 import { DatabaseTestingModule } from "../../utils/database-testing.module";
+import { Entity } from "../../core/entity/model/entity";
 
 describe("AttendanceService", () => {
   let service: AttendanceService;
@@ -41,10 +42,10 @@ describe("AttendanceService", () => {
     activity1 = RecurringActivity.create("activity 1");
     activity2 = RecurringActivity.create("activity 2");
 
-    e1_1 = createEvent(moment("2020-01-01").toDate(), activity1.getId(true));
-    e1_2 = createEvent(moment("2020-01-02").toDate(), activity1.getId(true));
-    e1_3 = createEvent(moment("2020-03-02").toDate(), activity1.getId(true));
-    e2_1 = createEvent(moment("2020-01-01").toDate(), activity2.getId(true));
+    e1_1 = createEvent(moment("2020-01-01").toDate(), activity1.getId());
+    e1_2 = createEvent(moment("2020-01-02").toDate(), activity1.getId());
+    e1_3 = createEvent(moment("2020-03-02").toDate(), activity1.getId());
+    e2_1 = createEvent(moment("2020-01-01").toDate(), activity2.getId());
 
     TestBed.configureTestingModule({
       imports: [DatabaseTestingModule],
@@ -186,15 +187,13 @@ describe("AttendanceService", () => {
 
     expect(actualAttendences).toHaveSize(2);
     expectEntitiesToMatch(
-      actualAttendences.find(
-        (t) => t.activity.getId(true) === activity1.getId(true),
-      ).events,
+      actualAttendences.find((t) => t.activity.getId() === activity1.getId())
+        .events,
       [e1_1, e1_2],
     );
     expectEntitiesToMatch(
-      actualAttendences.find(
-        (t) => t.activity.getId(true) === activity2.getId(true),
-      ).events,
+      actualAttendences.find((t) => t.activity.getId() === activity2.getId())
+        .events,
       [e2_1],
     );
 
@@ -300,7 +299,6 @@ describe("AttendanceService", () => {
     const event = await service.createEventForActivity(activity, date);
 
     expect(mockQueryRelationsOf).toHaveBeenCalledWith(
-      "school",
       linkedSchool.getId(),
       date,
     );
@@ -319,7 +317,10 @@ describe("AttendanceService", () => {
     duplicateChildRelation.childId = duplicateChild.getId();
     duplicateChildRelation.schoolId = linkedSchool.getId();
     const anotherRelation = new ChildSchoolRelation();
-    anotherRelation.childId = "another child id";
+    anotherRelation.childId = Entity.createPrefixedId(
+      Child.ENTITY_TYPE,
+      "another_child_id",
+    );
     anotherRelation.schoolId = linkedSchool.getId();
     await entityMapper.saveAll([duplicateChildRelation, anotherRelation]);
 

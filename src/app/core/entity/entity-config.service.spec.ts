@@ -14,6 +14,7 @@ import { EntityMapperService } from "./entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "./entity-mapper/mock-entity-mapper-service";
 import { EntityConfig } from "./entity-config";
 import { EntitySchemaField } from "./schema/entity-schema-field";
+import { Child } from "../../child-dev-project/children/model/child";
 
 describe("EntityConfigService", () => {
   let service: EntityConfigService;
@@ -82,6 +83,32 @@ describe("EntityConfigService", () => {
     expect(Test2.schema).toHaveKey(ATTRIBUTE_2_NAME);
   });
 
+  it("should reset attribute to basic class config if custom attribute disappears from config doc", () => {
+    const originalLabel = Child.schema.get("name").label;
+    const customLabel = "custom label";
+
+    const mockEntityConfigs: (EntityConfig & { _id: string })[] = [
+      {
+        _id: "entity:Child",
+        attributes: { name: { label: customLabel } },
+      },
+    ];
+    mockConfigService.getAllConfigs.and.returnValue(mockEntityConfigs);
+    service.setupEntitiesFromConfig();
+    expect(Child.schema.get("name").label).toEqual(customLabel);
+
+    mockConfigService.getAllConfigs.and.returnValue([
+      {
+        _id: "entity:Child",
+        attributes: {
+          /* undo custom label */
+        },
+      },
+    ]);
+    service.setupEntitiesFromConfig();
+    expect(Child.schema.get("name").label).toEqual(originalLabel);
+  });
+
   it("should allow to configure the `.toString` method", () => {
     mockConfigService.getAllConfigs.and.returnValue([
       { _id: "entity:Test", toStringAttributes: ["name", "entityId"] },
@@ -135,12 +162,12 @@ describe("EntityConfigService", () => {
     expect(dynamicEntity.schema.get("dynamicProperty")).toEqual(schema);
     const dynamicInstance = new dynamicEntity("someId");
     expect(dynamicInstance instanceof Test).toBeTrue();
-    expect(dynamicInstance.getId(true)).toBe("DynamicTest:someId");
+    expect(dynamicInstance.getId()).toBe("DynamicTest:someId");
 
     // it should overwrite anything in the extended entity
     expect(Test.schema.has("dynamicProperty")).toBeFalse();
     const parentInstance = new Test("otherId");
-    expect(parentInstance.getId(true)).toBe("Test:otherId");
+    expect(parentInstance.getId()).toBe("Test:otherId");
   });
 
   it("should subclass entity if no extension is specified", () => {
@@ -160,7 +187,7 @@ describe("EntityConfigService", () => {
     ]);
     const dynamicInstance = new dynamicEntity("someId");
     expect(dynamicInstance instanceof Entity).toBeTrue();
-    expect(dynamicInstance.getId(true)).toBe("NoExtends:someId");
+    expect(dynamicInstance.getId()).toBe("NoExtends:someId");
   });
 });
 

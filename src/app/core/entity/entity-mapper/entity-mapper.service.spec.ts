@@ -21,9 +21,10 @@ import { TestBed, waitForAsync } from "@angular/core/testing";
 import { PouchDatabase } from "../../database/pouch-database";
 import { DatabaseEntity } from "../database-entity.decorator";
 import { Database } from "../../database/database";
-import { TEST_USER } from "../../../utils/mock-local-session";
-import { CurrentUserSubject } from "../../user/user";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { CurrentUserSubject } from "../../session/current-user-subject";
+import { User } from "../../user/user";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 describe("EntityMapperService", () => {
   let entityMapper: EntityMapperService;
@@ -31,13 +32,11 @@ describe("EntityMapperService", () => {
 
   const existingEntity = {
     _id: "Entity:existing-entity",
-    entityId: "existing-entity",
     label: "entity from database",
   };
 
   const existingEntity2 = {
     _id: "Entity:existing-entity2",
-    entityId: "existing-entity2",
     label: "entity 2 from database",
   };
 
@@ -65,18 +64,14 @@ describe("EntityMapperService", () => {
   });
 
   function expectEntity(actualEntity, expectedEntity) {
-    expect(actualEntity.getId()).toBe(expectedEntity.entityId);
-    expect(
-      Entity.createPrefixedId(actualEntity.getType(), actualEntity.getId()),
-    ).toBe(expectedEntity._id);
-
+    expect(actualEntity.getId()).toBe(expectedEntity._id);
     expect(actualEntity).toBeInstanceOf(Entity);
   }
 
   it("loads existing entity", async () => {
     const loadedEntity = await entityMapper.load<Entity>(
       Entity,
-      existingEntity.entityId,
+      existingEntity._id,
     );
     expectEntity(loadedEntity, existingEntity);
   });
@@ -110,16 +105,13 @@ describe("EntityMapperService", () => {
   it("saves new entity and loads it", async () => {
     const entity = new Entity("test1");
 
-    await entityMapper.save<Entity>(entity);
-    const loadedEntity = await entityMapper.load<Entity>(
-      Entity,
-      entity.getId(),
-    );
+    await entityMapper.save(entity);
+    const loadedEntity = await entityMapper.load(Entity, entity.getId());
     expectEntity(loadedEntity, entity);
   });
 
   it("rejects promise when saving new entity with existing entityId", async () => {
-    const duplicateEntity = new Entity(existingEntity.entityId);
+    const duplicateEntity = new Entity(existingEntity._id);
 
     await entityMapper
       .save<Entity>(duplicateEntity)
@@ -132,24 +124,18 @@ describe("EntityMapperService", () => {
   });
 
   it("saves new version of existing entity", async () => {
-    const loadedEntity = await entityMapper.load<Entity>(
-      Entity,
-      existingEntity.entityId,
-    );
-    expect(loadedEntity).toHaveId(existingEntity.entityId);
+    const loadedEntity = await entityMapper.load(Entity, existingEntity._id);
+    expect(loadedEntity.getId()).toEqual(existingEntity._id);
 
     await entityMapper.save<Entity>(loadedEntity);
   });
 
   it("removes existing entity", async () => {
-    const loadedEntity = await entityMapper.load<Entity>(
-      Entity,
-      existingEntity.entityId,
-    );
+    const loadedEntity = await entityMapper.load(Entity, existingEntity._id);
     await entityMapper.remove<Entity>(loadedEntity);
 
     await expectAsync(
-      entityMapper.load<Entity>(Entity, existingEntity.entityId),
+      entityMapper.load(Entity, existingEntity._id),
     ).toBeRejected();
   });
 
@@ -169,25 +155,23 @@ describe("EntityMapperService", () => {
     const testEntity = new Entity(testId);
     await entityMapper.save(testEntity);
 
-    const loadedByEntityId = await entityMapper.load<Entity>(
+    const loadedByShortId = await entityMapper.load(
       Entity,
-      testEntity.getId(),
+      testEntity.getId(true),
     );
-    expect(loadedByEntityId).toBeDefined();
+    expect(loadedByShortId).toBeDefined();
+    expect(loadedByShortId.getId().startsWith(Entity.ENTITY_TYPE)).toBeTrue();
 
-    expect(
-      loadedByEntityId.getId(true).startsWith(Entity.ENTITY_TYPE),
-    ).toBeTrue();
-    const loadedByFullId = await entityMapper.load<Entity>(
+    const loadedByFullId = await entityMapper.load(
       Entity,
-      loadedByEntityId.getId(true),
+      loadedByShortId.getId(),
     );
-    expect(loadedByFullId.getId(true)).toBe(loadedByEntityId.getId(true));
-    expect(loadedByFullId._rev).toBe(loadedByEntityId._rev);
+    expect(loadedByFullId.getId()).toBe(loadedByShortId.getId());
+    expect(loadedByFullId._rev).toBe(loadedByShortId._rev);
   });
 
   it("publishes updates to any listeners", () => {
-    const testId = "t1";
+    const testId = "Entity:t1";
     const testEntity = new Entity(testId);
     entityMapper
       .save(testEntity, true)
@@ -198,22 +182,22 @@ describe("EntityMapperService", () => {
 
   it("publishes when an existing entity is updated", () => {
     entityMapper
-      .load(Entity, existingEntity.entityId)
+      .load(Entity, existingEntity._id)
       .then((loadedEntity) => entityMapper.save(loadedEntity));
 
-    return receiveUpdatesAndTestTypeAndId("update", existingEntity.entityId);
+    return receiveUpdatesAndTestTypeAndId("update", existingEntity._id);
   });
 
   it("publishes when an existing entity is deleted", () => {
     entityMapper
-      .load(Entity, existingEntity.entityId)
+      .load(Entity, existingEntity._id)
       .then((loadedEntity) => entityMapper.remove(loadedEntity));
 
-    return receiveUpdatesAndTestTypeAndId("remove", existingEntity.entityId);
+    return receiveUpdatesAndTestTypeAndId("remove", existingEntity._id);
   });
 
   it("publishes when a new entity is being saved", () => {
-    const testId = "t1";
+    const testId = "Entity:t1";
     const testEntity = new Entity(testId);
     entityMapper.save(testEntity, true);
 
@@ -271,22 +255,23 @@ describe("EntityMapperService", () => {
 
   it("sets the entityCreated property on save if it is a new entity & entityUpdated on subsequent saves", async () => {
     jasmine.clock().install();
-    TestBed.inject(CurrentUserSubject).next({
-      name: TEST_USER,
-      roles: [],
-    });
+    TestBed.inject(CurrentUserSubject).next(new User(TEST_USER));
     const id = "test_created";
     const entity = new Entity(id);
 
     const mockTime1 = 1;
     jasmine.clock().mockDate(new Date(mockTime1));
-    await entityMapper.save<Entity>(entity);
-    const createdEntity = await entityMapper.load<Entity>(Entity, id);
+    await entityMapper.save(entity);
+    const createdEntity = await entityMapper.load(Entity, id);
 
     expect(createdEntity.created?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.created?.by).toEqual(TEST_USER);
+    expect(createdEntity.created?.by).toEqual(
+      `${User.ENTITY_TYPE}:${TEST_USER}`,
+    );
     expect(createdEntity.updated?.at.getTime()).toEqual(mockTime1);
-    expect(createdEntity.updated?.by).toEqual(TEST_USER);
+    expect(createdEntity.updated?.by).toEqual(
+      `${User.ENTITY_TYPE}:${TEST_USER}`,
+    );
 
     const mockTime2 = mockTime1 + 1;
     jasmine.clock().mockDate(new Date(mockTime2));

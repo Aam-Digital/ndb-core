@@ -15,7 +15,6 @@ import { AlertService } from "../../../../core/alerts/alert.service";
 import { AlertDisplay } from "../../../../core/alerts/alert-display";
 import { FormsModule, NgModel } from "@angular/forms";
 import { FilterService } from "../../../../core/filter/filter.service";
-import { DataFilter } from "../../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { FilterConfig } from "../../../../core/entity-list/EntityListConfig";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
@@ -26,7 +25,8 @@ import { NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { ActivityCardComponent } from "../../activity-card/activity-card.component";
 import { MatButtonModule } from "@angular/material/button";
-import { CurrentUserSubject } from "../../../../core/user/user";
+import { CurrentUserSubject } from "../../../../core/session/current-user-subject";
+import { DataFilter } from "../../../../core/filter/filters/filters";
 
 @Component({
   selector: "app-roll-call-setup",
@@ -104,8 +104,9 @@ export class RollCallSetupComponent implements OnInit {
     if (this.showingAll) {
       this.visibleActivities = this.allActivities;
     } else {
+      // TODO implement a generic function that finds the property where a entity has relations to another entity type (e.g. `authors` for `Note` when looking for `User`) to allow dynamic checks
       this.visibleActivities = this.allActivities.filter((a) =>
-        a.isAssignedTo(this.currentUser.value.name),
+        a.isAssignedTo(this.currentUser.value.getId()),
       );
       if (this.visibleActivities.length === 0) {
         this.visibleActivities = this.allActivities.filter(
@@ -147,7 +148,7 @@ export class RollCallSetupComponent implements OnInit {
   private async createEventForActivity(
     activity: RecurringActivity,
   ): Promise<NoteForActivitySetup> {
-    if (this.existingEvents.find((e) => e.relatesTo === activity.getId(true))) {
+    if (this.existingEvents.find((e) => e.relatesTo === activity.getId())) {
       return undefined;
     }
 
@@ -155,7 +156,7 @@ export class RollCallSetupComponent implements OnInit {
       activity,
       this.date,
     )) as NoteForActivitySetup;
-    event.authors = [this.currentUser.value.name];
+    event.authors = [this.currentUser.value.getId()];
     event.isNewFromActivity = true;
     return event;
   }
@@ -165,7 +166,7 @@ export class RollCallSetupComponent implements OnInit {
       let score = 0;
 
       const activityAssignedUsers = this.allActivities.find(
-        (a) => a.getId(true) === event.relatesTo,
+        (a) => a.getId() === event.relatesTo,
       )?.assignedTo;
       // use parent activities' assigned users and only fall back to event if necessary
       const assignedUsers = activityAssignedUsers ?? event.authors;
@@ -175,7 +176,7 @@ export class RollCallSetupComponent implements OnInit {
         score += 1;
       }
 
-      if (assignedUsers.includes(this.currentUser.value.name)) {
+      if (assignedUsers.includes(this.currentUser.value.getId())) {
         score += 2;
       }
 
@@ -189,7 +190,7 @@ export class RollCallSetupComponent implements OnInit {
 
   createOneTimeEvent() {
     const newNote = Note.create(new Date());
-    newNote.authors = [this.currentUser.value.name];
+    newNote.authors = [this.currentUser.value.getId()];
 
     this.formDialog
       .openFormPopup(newNote, [], NoteDetailsComponent)

@@ -5,14 +5,17 @@
         component: _field.editComponent,
         config: {
           formFieldConfig: _field,
-          formControl: form.get(_field.id),
+          formControl: form?.get(_field.id),
           entity: entity
         }
       }"
     >
     </ng-container>
   </div>
-  <app-help-button [text]="_field.description"></app-help-button>
+  <app-help-button
+    *ngIf="!compactMode"
+    [text]="_field.description"
+  ></app-help-button>
 </div>
 
 <ng-template #displayComponent>

@@ -35,7 +35,9 @@ describe("PublicFormComponent", () => {
         {
           provide: ActivatedRoute,
           useValue: {
-            snapshot: { paramMap: new Map([["id", testFormConfig.getId()]]) },
+            snapshot: {
+              paramMap: new Map([["id", testFormConfig.getId(true)]]),
+            },
           },
         },
       ],

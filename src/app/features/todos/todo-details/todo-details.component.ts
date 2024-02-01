@@ -12,7 +12,7 @@ import {
   MatDialogModule,
   MatDialogRef,
 } from "@angular/material/dialog";
-import { DetailsComponentData } from "../../../core/common-components/entity-subrecord/row-details/row-details.component";
+import { DetailsComponentData } from "../../../core/form-dialog/row-details/row-details.component";
 import { TodoService } from "../todo.service";
 import {
   EntityForm,

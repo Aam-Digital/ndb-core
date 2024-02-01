@@ -248,7 +248,9 @@ export class EntityActionsService {
       concernsSeveralEntities
         ? entityParam
         : result.originalEntitiesBeforeChange[0],
-      $localize`:Entity action confirmation message verb:Anonymized`,
+      $localize`:Entity action confirmation message:${
+        result.originalEntitiesBeforeChange[0].getConstructor().label
+      } "${result.originalEntitiesBeforeChange[0].toString()}" anonymized`,
       result.originalEntitiesBeforeChange,
     );
     return true;

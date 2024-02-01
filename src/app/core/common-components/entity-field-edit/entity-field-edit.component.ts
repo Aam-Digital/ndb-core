@@ -6,8 +6,7 @@ import {
   EntityForm,
   EntityFormService,
 } from "../entity-form/entity-form.service";
-import { ColumnConfig } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
+import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { NgIf } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 
@@ -41,6 +40,11 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
 
   @Input() entity: T;
   @Input() form: EntityForm<T>;
+
+  /**
+   * Whether to display the field in a limited space, hiding details like the help description button.
+   */
+  @Input() compactMode: boolean;
 
   constructor(private entityFormService: EntityFormService) {}
 

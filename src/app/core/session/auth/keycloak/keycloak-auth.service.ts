@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
-import { AuthUser } from "../auth-user";
+import { SessionInfo } from "../session-info";
 import { KeycloakService } from "keycloak-angular";
 
 /**
@@ -27,7 +27,7 @@ export class KeycloakAuthService {
   /**
    * Check for a existing session or forward to the login page.
    */
-  async login(): Promise<AuthUser> {
+  async login(): Promise<SessionInfo> {
     if (!this.keycloakInitialised) {
       this.keycloakInitialised = true;
       const loggedIn = await this.keycloak.init({
@@ -52,7 +52,7 @@ export class KeycloakAuthService {
       .then((token) => this.processToken(token));
   }
 
-  private processToken(token: string): AuthUser {
+  private processToken(token: string): SessionInfo {
     if (!token) {
       throw new Error();
     }
@@ -104,10 +104,9 @@ export class KeycloakAuthService {
     });
   }
 
-  getUserinfo(): Promise<KeycloakUser> {
-    return this.keycloak
-      .getKeycloakInstance()
-      .loadUserInfo() as Promise<KeycloakUser>;
+  async getUserinfo(): Promise<KeycloakUser> {
+    const user = await this.keycloak.getKeycloakInstance().loadUserInfo();
+    return user as KeycloakUser;
   }
 
   setEmail(email: string): Observable<any> {

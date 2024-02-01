@@ -17,18 +17,18 @@ import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { BehaviorSubject, NEVER, Subject } from "rxjs";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 import { Coordinates } from "../../location/coordinates";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { School } from "../../../child-dev-project/schools/model/school";
-import { RouteData } from "../../../core/config/dynamic-routing/view-config.interface";
+import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
   let fixture: ComponentFixture<MatchingEntitiesComponent>;
 
-  let routeData: Subject<RouteData<MatchingEntitiesConfig>>;
+  let routeData: Subject<DynamicComponentConfig<MatchingEntitiesConfig>>;
   let mockConfigService: jasmine.SpyObj<ConfigService>;
 
   let testConfig: MatchingEntitiesConfig = {
@@ -216,8 +216,8 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        schoolId: testEntity.getId(false),
-        childId: matchedEntity.getId(false),
+        schoolId: testEntity.getId(),
+        childId: matchedEntity.getId(),
         name:
           "ChildSchoolRelation " + testEntity.toString() + " - matched child",
       } as Partial<ChildSchoolRelation>),
@@ -250,8 +250,8 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(saveSpy).toHaveBeenCalledWith(
       jasmine.objectContaining({
-        schools: [testEntity.getId(false)],
-        children: [child1.getId(false), child2.getId(false)],
+        schools: [testEntity.getId()],
+        children: [child1.getId(), child2.getId()],
         name:
           "Note " +
           testEntity.toString() +

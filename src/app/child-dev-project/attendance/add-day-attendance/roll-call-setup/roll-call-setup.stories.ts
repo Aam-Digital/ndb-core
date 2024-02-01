@@ -28,7 +28,7 @@ const demoChildren = [
   DemoChildGenerator.generateEntity("2"),
   DemoChildGenerator.generateEntity("3"),
 ];
-demoChildren.forEach((c) => demoEvent.addChild(c.getId()));
+demoChildren.forEach((c) => demoEvent.addChild(c));
 
 const demoActivities = [
   DemoActivityGeneratorService.generateActivityForChildren(demoChildren),

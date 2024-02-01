@@ -5,8 +5,7 @@ import { Entity } from "../../entity/model/entity";
 import { ColumnMapping } from "../column-mapping";
 import { genders } from "../../../child-dev-project/children/model/genders";
 import { ImportMetadata } from "../import-metadata";
-
-import { TEST_USER } from "../../../utils/mock-local-session";
+import { TEST_USER } from "../../user/demo-user-generator.service";
 
 /**
  * Sample raw data that can be used in Storybook and tests.
@@ -48,9 +47,9 @@ export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
 export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [
   {
     type: "School",
-    id: IMPORT_SAMPLE_LINKABLE_DATA.find(
-      (e) => e.getType() === "School",
-    ).getId(),
+    id: IMPORT_SAMPLE_LINKABLE_DATA.find((e) => e.getType() === "School").getId(
+      true,
+    ),
   },
   {
     type: "RecurringActivity",

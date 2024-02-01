@@ -82,20 +82,6 @@ describe("EntitySelectComponent", () => {
     );
   }));
 
-  it("accepts initial selection as IDs with and without prefix", fakeAsync(() => {
-    component.entityType = User.ENTITY_TYPE;
-
-    component.selection = [testUsers[1].getId()];
-    fixture.detectChanges();
-    tick();
-    expect(component.selectedEntities).toEqual([testUsers[1]]);
-
-    component.selection = [testUsers[2].getId(true)];
-    fixture.detectChanges();
-    tick();
-    expect(component.selectedEntities).toEqual([testUsers[2]]);
-  }));
-
   it("emits whenever a new entity is selected", fakeAsync(() => {
     spyOn(component.selectionChange, "emit");
     component.entityType = User.ENTITY_TYPE;
@@ -110,25 +96,6 @@ describe("EntitySelectComponent", () => {
     expect(component.selectionChange.emit).toHaveBeenCalledWith([
       testUsers[0].getId(),
       testUsers[1].getId(),
-    ]);
-    tick();
-  }));
-
-  it("emits with prefix the new entity selected", fakeAsync(() => {
-    component.withPrefix = true;
-    spyOn(component.selectionChange, "emit");
-    component.entityType = User.ENTITY_TYPE;
-    tick();
-
-    component.selectEntity(testUsers[0]);
-    expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(true),
-    ]);
-
-    component.selectEntity(testUsers[1]);
-    expect(component.selectionChange.emit).toHaveBeenCalledWith([
-      testUsers[0].getId(true),
-      testUsers[1].getId(true),
     ]);
     tick();
   }));
@@ -226,21 +193,10 @@ describe("EntitySelectComponent", () => {
 
   it("should be able to select entities from different types", fakeAsync(() => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
-    component.selection = [
-      testUsers[1].getId(true),
-      testChildren[0].getId(true),
-    ];
+    component.selection = [testUsers[1].getId(), testChildren[0].getId()];
     fixture.detectChanges();
     tick();
 
     expect(component.selectedEntities).toEqual([testUsers[1], testChildren[0]]);
-  }));
-
-  it("activates withPrefix automatically when multiple different types are configured", fakeAsync(() => {
-    component.withPrefix = false;
-    component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
-    tick();
-    fixture.detectChanges();
-    expect(component.withPrefix).toBeTrue();
   }));
 });

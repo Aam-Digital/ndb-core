@@ -5,7 +5,6 @@ import { ConfigImportComponent } from "../../features/config-setup/config-import
 import { ConflictResolutionListComponent } from "../../features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 import { UserRoleGuard } from "../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../permissions/permission-guard/entity-permission.guard";
-import { AuthGuard } from "../session/auth.guard";
 
 export const adminRoutes: Routes = [
   {
@@ -24,7 +23,7 @@ export const adminRoutes: Routes = [
       entity: "Config",
       requiredPermissionOperation: "update",
     },
-    canActivate: [AuthGuard, EntityPermissionGuard],
+    canActivate: [EntityPermissionGuard],
   },
 
   {
