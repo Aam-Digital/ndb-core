@@ -91,6 +91,6 @@ describe("FormComponent", () => {
     component.form.get("name").setValue("my name");
     component.cancelClicked();
 
-    expect(component.form.get("name")).toHaveValue(null);
+    expect(component.form.get("name").value).toBeUndefined();
   });
 });

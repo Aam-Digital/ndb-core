@@ -13,57 +13,57 @@ export const defaultJsonConfig = {
   "navigationMenu": {
     "items": [
       {
-        "name": $localize`:Menu item:Dashboard`,
+        "label": $localize`:Menu item:Dashboard`,
         "icon": "home",
         "link": "/"
       },
       {
-        "name": $localize`:Menu item:Children`,
+        "label": $localize`:Menu item:Children`,
         "icon": "child",
         "link": "/child"
       },
       {
-        "name": $localize`:Menu item:Schools`,
+        "label": $localize`:Menu item:Schools`,
         "icon": "university",
         "link": "/school"
       },
       {
-        "name": $localize`:Menu item:Attendance`,
+        "label": $localize`:Menu item:Attendance`,
         "icon": "calendar-check",
         "link": "/attendance"
       },
       {
-        "name": $localize`:Menu item:Notes`,
+        "label": $localize`:Menu item:Notes`,
         "icon": "file-alt",
         "link": "/note"
       },
       {
-        "name": $localize`:Menu item:Tasks`,
+        "label": $localize`:Menu item:Tasks`,
         "icon": "tasks",
         "link": "/todo"
       },
       {
-        "name": $localize`:Menu item:Import`,
+        "label": $localize`:Menu item:Import`,
         "icon": "file-import",
         "link": "/import"
       },
       {
-        "name": $localize`:Menu item:Users`,
+        "label": $localize`:Menu item:Users`,
         "icon": "users",
         "link": "/user"
       },
       {
-        "name": $localize`:Menu item:Reports`,
+        "label": $localize`:Menu item:Reports`,
         "icon": "line-chart",
         "link": "/report"
       },
       {
-        "name": $localize`:Menu item:Help`,
+        "label": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
       },
       {
-        "name": $localize`:Menu item:Admin`,
+        "label": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
       },

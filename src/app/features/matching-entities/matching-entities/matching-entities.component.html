@@ -106,7 +106,7 @@
         [customColumns]="side.columns"
         [editable]="false"
         clickMode="none"
-        (rowClick)="side.selectMatch($event)"
+        (entityClick)="side.selectMatch($event)"
         [filter]="side.filterObj"
       ></app-entities-table>
     </div>

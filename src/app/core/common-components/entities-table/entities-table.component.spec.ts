@@ -183,7 +183,7 @@ describe("EntitiesTableComponent", () => {
 
   it("should notify when an entity is clicked", (done) => {
     const child = new Child();
-    component.rowClick.subscribe((entity) => {
+    component.entityClick.subscribe((entity) => {
       expect(entity).toEqual(child);
       done();
     });

@@ -23,6 +23,9 @@ import { BehaviorSubject } from "rxjs";
 import { CurrentUserSubject } from "../core/session/current-user-subject";
 import { SessionInfo, SessionSubject } from "../core/session/auth/session-info";
 import { TEST_USER } from "../core/user/demo-user-generator.service";
+import { EntityAbility } from "../core/permissions/ability/entity-ability";
+import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
+import { entityAbilityFactory } from "app/core/permissions/ability/testing-entity-ability-factory";
 
 /**
  * Utility module that can be imported in test files or stories to have mock implementations of the SessionService
@@ -72,9 +75,15 @@ export class MockedTestingModule {
   ): ModuleWithProviders<MockedTestingModule> {
     environment.session_type = SessionType.mock;
     const mockedEntityMapper = mockEntityMapper([...data]);
+
     return {
       ngModule: MockedTestingModule,
       providers: [
+        {
+          provide: EntityAbility,
+          useFactory: entityAbilityFactory,
+          deps: [EntitySchemaService],
+        },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: ConfigService, useValue: createTestingConfigService() },
         {

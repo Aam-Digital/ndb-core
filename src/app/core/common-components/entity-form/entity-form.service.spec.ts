@@ -109,6 +109,46 @@ describe("EntityFormService", () => {
     expect(formGroup.valid).toBeTrue();
   });
 
+  it("should use create permissions to disable fields when creating a new entity", () => {
+    const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
+      { subject: "Child", action: "update", fields: ["name"] },
+      { subject: "Child", action: "create", fields: ["dateOfBirth"] },
+    ]);
+
+    const formGroup = service.createFormGroup(formFields, new Child());
+
+    expect(formGroup.get("name").disabled).toBeTrue();
+    expect(formGroup.get("dateOfBirth").enabled).toBeTrue();
+  });
+
+  it("should always keep properties disabled if user does not have 'update' permissions for them", () => {
+    const formFields = [{ id: "name" }, { id: "dateOfBirth" }];
+    TestBed.inject(EntityAbility).update([
+      { subject: "Child", action: "read", fields: ["name", "dateOfBirth"] },
+      { subject: "Child", action: "update", fields: ["name"] },
+    ]);
+
+    const child = new Child();
+    child._rev = "foo"; // "not new" state
+
+    const formGroup = service.createFormGroup(formFields, child);
+
+    expect(formGroup.get("name").enabled).toBeTrue();
+    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
+
+    formGroup.disable();
+
+    expect(formGroup.get("name").disabled).toBeTrue();
+    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
+
+    formGroup.enable();
+
+    expect(formGroup.get("name").enabled).toBeTrue();
+    expect(formGroup.get("dateOfBirth").disabled).toBeTrue();
+  });
+
   it("should create a error if form is invalid", () => {
     const formFields = [{ id: "schoolId" }, { id: "start" }];
     const formGroup = service.createFormGroup(
@@ -144,6 +184,36 @@ describe("EntityFormService", () => {
     service.resetForm(formGroup, new Entity());
 
     expect(unsavedChanges.pending).toBeFalse();
+  });
+
+  it("should reset form on cancel, including special fields with getter", async () => {
+    class MockEntity extends Entity {
+      @DatabaseField() simpleField = "original";
+
+      @DatabaseField() get getterField(): string {
+        return this._getterValue;
+      }
+      set getterField(value) {
+        this._getterValue = value;
+      }
+      private _getterValue: string = "original value";
+
+      @DatabaseField() emptyField;
+    }
+
+    const formFields = ["simpleField", "getterField", "emptyField"];
+    const mockEntity = new MockEntity();
+    const formGroup = service.createFormGroup(formFields, mockEntity);
+
+    formGroup.get("simpleField").setValue("new");
+    formGroup.get("getterField").setValue("new value");
+    formGroup.get("emptyField").setValue("value");
+
+    service.resetForm(formGroup, mockEntity);
+
+    expect(formGroup.get("simpleField").value).toBe("original");
+    expect(formGroup.get("getterField").value).toBe("original value");
+    expect(formGroup.get("emptyField").value).toBeUndefined();
   });
 
   it("should reset state once navigation happens", async () => {
