@@ -146,8 +146,8 @@ export class EntityActionsService {
    * @param entityParam
    */
   async anonymize<E extends Entity>(entityParam: E | E[]) {
-    let textForAnonymizeEntity = "";
     let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
+    let textForAnonymizeEntity = "";
 
     if (entities.length > 1) {
       textForAnonymizeEntity =
@@ -155,7 +155,10 @@ export class EntityActionsService {
         " " +
         entities.length +
         " " +
-        entities[0].getConstructor().labelPlural;
+        entities[0].getConstructor().labelPlural +
+        " " +
+        $localize`:Auxiliary verb plural:have` +
+        " ";
     } else {
       textForAnonymizeEntity =
         $localize`:Definite article singular:the` +
@@ -163,7 +166,10 @@ export class EntityActionsService {
         entities[0].getConstructor().label +
         ' "' +
         entities[0].toString() +
-        '"';
+        '"' +
+        " " +
+        $localize`:Auxiliary verb singular:has` +
+        " ";
     }
 
     if (
@@ -171,7 +177,7 @@ export class EntityActionsService {
         $localize`:Anonymize confirmation dialog:Anonymize?`,
         $localize`:Anonymize confirmation dialog:
         This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.\n
-        If ${textForAnonymizeEntity} has only become inactive and you want to keep all details, consider to use "archive" instead.\n
+        If ${textForAnonymizeEntity} only become inactive and you want to keep all details, consider to use "archive" instead.\n
         Are you sure you want to anonymize this record?`,
       ))
     ) {
@@ -182,15 +188,10 @@ export class EntityActionsService {
       $localize`:Entity action progress dialog:Processing ...`,
     );
     let result = new CascadingActionResult();
-    // if (Array.isArray(entityParam)) {
     for (let entity of entities) {
       console.log("Peter anonymizing entity:", entity);
       result.mergeResults(await this.entityAnonymize.anonymizeEntity(entity));
     }
-    // } else {
-    //   console.log("Peter anonymizing single entity:", entityParam);
-    //   result = await this.entityAnonymize.anonymizeEntity(entityParam);
-    // }
     progressDialogRef.close();
 
     if (result.potentiallyRetainingPII.length > 0) {
@@ -254,7 +255,7 @@ export class EntityActionsService {
     this.showSnackbarConfirmationWithUndo(
       this.generateMessageForConfirmationWithUndo(
         newEntities,
-        $localize`:Entity action confirmation message verb:Reactivated`,
+        $localize`:Entity action confirmation message verb:reactivated`,
       ),
       originalEntities,
     );
