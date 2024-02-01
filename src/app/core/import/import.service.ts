@@ -63,7 +63,7 @@ export class ImportService {
   ) {
     const importMeta = new ImportMetadata();
     importMeta.config = settings;
-    importMeta.ids = savedEntities.map((entity) => entity.getId(true));
+    importMeta.ids = savedEntities.map((entity) => entity.getId());
     await this.entityMapper.save(importMeta);
     return importMeta;
   }
