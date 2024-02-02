@@ -47,6 +47,7 @@ describe("NotesRelatedToEntityComponent", () => {
     let entity: Entity = new Child();
     component.entity = entity;
     component.filter = undefined;
+    component.property = undefined;
     await component.ngOnInit();
     let note = component.createNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
@@ -54,6 +55,7 @@ describe("NotesRelatedToEntityComponent", () => {
     entity = new School();
     component.entity = entity;
     component.filter = undefined;
+    component.property = undefined;
     await component.ngOnInit();
     note = component.createNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
@@ -61,6 +63,7 @@ describe("NotesRelatedToEntityComponent", () => {
     entity = new User();
     component.entity = entity;
     component.filter = undefined;
+    component.property = undefined;
     await component.ngOnInit();
     note = component.createNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId()]);
@@ -70,6 +73,7 @@ describe("NotesRelatedToEntityComponent", () => {
     entity["schoolId"] = `${Child.ENTITY_TYPE}:someSchool`;
     component.entity = entity;
     component.filter = undefined;
+    component.property = undefined;
     await component.ngOnInit();
     note = component.createNewRecordFactory()();
     expect(note.relatedEntities).toEqual([entity.getId()]);

@@ -33,57 +33,63 @@ describe("RelatedEntitiesComponent", () => {
       RelatedEntitiesComponent<ChildSchoolRelation>,
     );
     component = fixture.componentInstance;
-    component.entity = new Child();
-    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
-    component.columns = [];
-    fixture.detectChanges();
   });
 
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should create a filter for the passed entity", async () => {
+  it("should create a filter for the passed entity", fakeAsync(() => {
     const child = new Child();
     const columns = ["start", "end", "schoolId"];
     component.entity = child;
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
     component.columns = columns;
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
     expect(component.filter).toEqual({ childId: child.getId() });
-  });
+  }));
 
-  it("should also include the provided filter", async () => {
+  it("should also include the provided filter", fakeAsync(() => {
     const child = new Child();
     const filter = { start: { $exists: true } };
 
     component.entity = child;
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
     component.filter = { ...filter };
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
-    expect(component.filter).toEqual({ ...filter, childId: child.getId() });
-  });
+    expect(component.filter).toEqual({
+      ...filter,
+      childId: child.getId(),
+      // added by table
+      isActive: true,
+    });
+  }));
 
-  it("should create a new entity that references the related one", async () => {
+  it("should create a new entity that references the related one", fakeAsync(() => {
     const related = new Child();
     component.entity = related;
     component.entityType = ChildSchoolRelation.ENTITY_TYPE;
     component.columns = [];
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
     const newEntity = component.createNewRecordFactory()();
 
     expect(newEntity instanceof ChildSchoolRelation).toBeTrue();
     expect(newEntity["childId"]).toBe(related.getId());
-  });
+  }));
 
   it("should add a new entity that was created after the initial loading to the table", fakeAsync(() => {
     const entityUpdates = new Subject<UpdatedEntity<Entity>>();
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
-    component.ngOnInit();
+    component.entity = new Child();
+    component.entityType = ChildSchoolRelation.ENTITY_TYPE;
+    fixture.detectChanges();
     tick();
 
     const entity = new ChildSchoolRelation();
@@ -98,8 +104,10 @@ describe("RelatedEntitiesComponent", () => {
     const entityMapper = TestBed.inject(EntityMapperService);
     spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
     const entity = new ChildSchoolRelation();
+    component.entity = new Child();
+    component.entityType = entity.getType();
     component.data = [entity];
-    component.ngOnInit();
+    fixture.detectChanges();
     tick();
 
     entityUpdates.next({ entity: entity, type: "remove" });
@@ -108,7 +116,7 @@ describe("RelatedEntitiesComponent", () => {
     expect(component.data).toEqual([]);
   }));
 
-  it("should support multiple related properties", async () => {
+  it("should support multiple related properties", fakeAsync(() => {
     @DatabaseEntity("MultiPropTest")
     class MultiPropTest extends Entity {
       @DatabaseField({
@@ -128,7 +136,8 @@ describe("RelatedEntitiesComponent", () => {
     component.entityType = MultiPropTest.ENTITY_TYPE;
     component.filter = {};
 
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
     // filter matching relations at any of the available props
     expect(component.filter).toEqual({
@@ -136,6 +145,8 @@ describe("RelatedEntitiesComponent", () => {
         { singleChild: child.getId() },
         { multiEntities: { $elemMatch: { $eq: child.getId() } } },
       ],
+      // is added inside table
+      isActive: true,
     });
     // no special properties set when creating a new entity
     expectEntitiesToMatch(
@@ -143,7 +154,7 @@ describe("RelatedEntitiesComponent", () => {
       [new MultiPropTest()],
       true,
     );
-  });
+  }));
 
   it("should align the filter with the related properties", async () => {
     @DatabaseEntity("PropTest")

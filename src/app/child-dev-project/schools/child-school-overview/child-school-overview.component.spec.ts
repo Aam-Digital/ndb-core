@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { ChildSchoolOverviewComponent } from "./child-school-overview.component";
 import moment from "moment";
@@ -14,10 +20,6 @@ describe("ChildSchoolOverviewComponent", () => {
 
   let mockChildrenService: jasmine.SpyObj<ChildrenService>;
 
-  const testChild = new Child("22");
-  const inactive = new ChildSchoolRelation("r2");
-  inactive.end = moment().subtract("1", "week").toDate();
-
   beforeEach(waitForAsync(() => {
     mockChildrenService = jasmine.createSpyObj(["queryRelations"]);
     mockChildrenService.queryRelations.and.resolveTo([
@@ -28,39 +30,39 @@ describe("ChildSchoolOverviewComponent", () => {
       imports: [ChildSchoolOverviewComponent, MockedTestingModule.withState()],
       providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
-  }));
-
-  beforeEach(() => {
     fixture = TestBed.createComponent(ChildSchoolOverviewComponent);
     component = fixture.componentInstance;
-    component.entity = testChild;
-    fixture.detectChanges();
-  });
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("it calls children service with id from passed child", async () => {
-    await component.ngOnInit();
-    expect(mockChildrenService.queryRelations).toHaveBeenCalledWith(
-      testChild.getId(),
-    );
-  });
+  it("it calls children service with id from passed child", fakeAsync(() => {
+    component.entity = new Child();
 
-  it("it detects mode and uses correct index to load data ", async () => {
+    fixture.detectChanges();
+    tick();
+
+    expect(mockChildrenService.queryRelations).toHaveBeenCalledWith(
+      component.entity.getId(),
+    );
+  }));
+
+  it("it detects mode and uses correct index to load data ", fakeAsync(() => {
     const testSchool = new School();
 
     component.entity = testSchool;
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
     expect(component.mode).toBe("school");
     expect(mockChildrenService.queryRelations).toHaveBeenCalledWith(
       testSchool.getId(),
     );
-  });
+  }));
 
-  it("should create a relation with the child ID", async () => {
+  it("should create a relation with the child ID", fakeAsync(() => {
     const child = new Child();
     const existingRelation = new ChildSchoolRelation();
     existingRelation.childId = child.getId();
@@ -69,7 +71,8 @@ describe("ChildSchoolOverviewComponent", () => {
     mockChildrenService.queryRelations.and.resolveTo([existingRelation]);
 
     component.entity = child;
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
     const newRelation = component.createNewRecordFactory()();
 
@@ -79,31 +82,34 @@ describe("ChildSchoolOverviewComponent", () => {
         .add(1, "day")
         .isSame(newRelation.start, "day"),
     ).toBeTrue();
-  });
+  }));
 
-  it("should create a relation with the school ID", async () => {
+  it("should create a relation with the school ID", fakeAsync(() => {
     component.entity = new School("testID");
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
     const newRelation = component.createNewRecordFactory()();
 
     expect(newRelation).toBeInstanceOf(ChildSchoolRelation);
     expect(newRelation.schoolId).toBe("School:testID");
-  });
+  }));
 
-  it("should show archived school in 'child' mode", async () => {
+  it("should show archived school in 'child' mode", fakeAsync(() => {
     component.entity = new Child();
 
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
     expect(component.showInactive).toBeTrue();
-  });
+  }));
 
-  it("should not show archived children in 'school' mode", async () => {
+  it("should not show archived children in 'school' mode", fakeAsync(() => {
     component.entity = new School();
 
-    await component.ngOnInit();
+    fixture.detectChanges();
+    tick();
 
     expect(component.showInactive).toBeFalse();
-  });
+  }));
 });
