@@ -140,7 +140,6 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   private getFilterForProperty(property: string) {
-    // TODO doesnt work with full ids
     const isArray = isArrayProperty(this.entityCtr, property);
     const filter = isArray
       ? { $elemMatch: { $eq: this.entity.getId() } }

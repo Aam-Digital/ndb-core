@@ -59,7 +59,7 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
 
   override getData() {
     if (Array.isArray(this.property)) {
-      return;
+      return super.getData();
     }
 
     // TODO: move this generic index creation into schema
