@@ -24,13 +24,6 @@ export const childrenComponents: ComponentTuple[] = [
       ).then((c) => c.RecentAttendanceBlocksComponent),
   ],
   [
-    "Aser",
-    () =>
-      import("./aser/aser-component/aser.component").then(
-        (c) => c.AserComponent,
-      ),
-  ],
-  [
     "ChildBlock",
     () =>
       import("./child-block/child-block.component").then(

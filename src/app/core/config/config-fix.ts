@@ -549,7 +549,37 @@ export const defaultJsonConfig = {
             },
             {
               "title": $localize`:Title inside a panel:ASER Results`,
-              "component": "Aser"
+              "component": "RelatedEntities",
+              "config": {
+                "entityType": "Aser",
+                "property": "child",
+                "columns": [
+                  {
+                    "id": "date",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "math",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "english",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "hindi",
+                    "visibleFrom": "md"
+                  },
+                  {
+                    "id": "bengali",
+                    "visibleFrom": "md"
+                  },
+                  {
+                    "id": "remarks",
+                    "visibleFrom": "md"
+                  }
+                ]
+              }
             },
             {
               "title": $localize`:Child details section title:Find a suitable new school`,
