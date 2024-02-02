@@ -75,7 +75,7 @@ export class DialogButtonsComponent implements OnInit {
       route &&
       this.router.config.some((r) => "/" + r.path === route + "/:id")
     ) {
-      this.detailsRoute = route + "/" + this.entity.getId();
+      this.detailsRoute = route + "/" + this.entity.getId(true);
     }
   }
 

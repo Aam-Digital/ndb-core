@@ -68,8 +68,8 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
   it("should load correctly filtered data", async () => {
     const testSchool = new School();
     active1.schoolId = testSchool.getId();
-    active2.schoolId = "some-other-id";
-    inactive.schoolId = "some-other-id";
+    active2.schoolId = "School:some-other-id";
+    inactive.schoolId = "School:some-other-id";
 
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([active1, active2, inactive]);
@@ -126,7 +126,7 @@ describe("RelatedTimePeriodEntitiesComponent", () => {
     const existingRelation = new ChildSchoolRelation();
     existingRelation.start = moment().subtract(1, "year").toDate();
     existingRelation.end = moment().subtract(1, "week").toDate();
-    existingRelation.childId = child.getId(false);
+    existingRelation.childId = child.getId();
     const loadType = spyOn(entityMapper, "loadType");
     loadType.and.resolveTo([existingRelation]);
 

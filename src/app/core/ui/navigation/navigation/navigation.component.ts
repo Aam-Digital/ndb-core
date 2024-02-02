@@ -16,8 +16,7 @@
  */
 
 import { Component } from "@angular/core";
-import { MenuItem } from "../menu-item";
-import { NavigationMenuConfig } from "../navigation-menu-config.interface";
+import { MenuItem, NavigationMenuConfig } from "../menu-item";
 import { ConfigService } from "../../../config/config.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { NavigationEnd, Router, RouterLink } from "@angular/router";
@@ -48,8 +47,10 @@ import { RoutePermissionsService } from "../../../config/dynamic-routing/route-p
 export class NavigationComponent {
   /** The menu-item link (not the actual router link) that is currently active */
   activeLink: string;
+
   /** name of config array in the config json file */
   private readonly CONFIG_ID = "navigationMenu";
+
   /** all menu items to be displayed */
   public menuItems: MenuItem[] = [];
 
@@ -113,16 +114,13 @@ export class NavigationComponent {
    * Load menu items from config file
    */
   private async initMenuItemsFromConfig() {
-    const config: NavigationMenuConfig =
-      this.configService.getConfig<NavigationMenuConfig>(this.CONFIG_ID);
-    // TODO align interface {@link https://github.com/Aam-Digital/ndb-core/issues/2066}
-    const items: MenuItem[] = config.items.map(({ name, icon, link }) => ({
-      label: name,
-      icon,
-      link,
-    }));
-    this.menuItems =
-      await this.routePermissionService.filterPermittedRoutes(items);
+    const config = this.configService.getConfig<NavigationMenuConfig>(
+      this.CONFIG_ID,
+    );
+
+    this.menuItems = await this.routePermissionService.filterPermittedRoutes(
+      config.items,
+    );
 
     // re-select active menu item after menu has been fully initialized
     this.activeLink = this.computeActiveLink(location.pathname);

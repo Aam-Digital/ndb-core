@@ -66,6 +66,7 @@ export class ChildSchoolOverviewComponent
 
   async ngOnInit() {
     this.mode = this.inferMode(this.entity);
+    this.showInactive = this.mode === "child";
     this.switchRelatedEntityColumnForMode();
 
     await super.ngOnInit();
@@ -93,13 +94,6 @@ export class ChildSchoolOverviewComponent
   }
 
   override async initData() {
-    if (!this.mode) {
-      return;
-    }
-
-    this.data = await this.childrenService.queryRelationsOf(
-      this.mode,
-      this.entity.getId(false),
-    );
+    this.data = await this.childrenService.queryRelations(this.entity.getId());
   }
 }

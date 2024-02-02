@@ -110,7 +110,7 @@ describe("Schema data type: configurable-enum", () => {
 
   it("should also support the name of the enum in the 'additional' field", () => {
     const data = {
-      _id: "Test",
+      _id: TestEntity.ENTITY_TYPE + ":Test",
       optionInAdditional: "TEST_3",
     };
     const entity = new TestEntity();
@@ -118,7 +118,7 @@ describe("Schema data type: configurable-enum", () => {
     entitySchemaService.loadDataIntoEntity(entity, data);
 
     expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
-    expect(entity).toHaveId("Test");
+    expect(entity.getId()).toEqual(data._id);
   });
 
   it("should gracefully handle invalid enum ids and show a dummy option to users", () => {

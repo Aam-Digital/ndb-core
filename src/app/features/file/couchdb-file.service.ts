@@ -61,7 +61,7 @@ export class CouchdbFileService extends FileService {
       this.runFileUpload(file, entity, property),
     );
     this.reportProgress($localize`Uploading "${file.name}"`, obs);
-    this.cache[`${entity.getId(true)}/${property}`] = obs.pipe(
+    this.cache[`${entity.getId()}/${property}`] = obs.pipe(
       last(),
       map(() => URL.createObjectURL(file)),
       shareReplay(),
@@ -70,7 +70,7 @@ export class CouchdbFileService extends FileService {
   }
 
   private runFileUpload(file: File, entity: Entity, property: string) {
-    const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
+    const attachmentPath = `${this.attachmentsUrl}/${entity.getId()}`;
     return this.getAttachmentsDocument(attachmentPath).pipe(
       concatMap(({ _rev }) =>
         this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, file, {
@@ -104,9 +104,9 @@ export class CouchdbFileService extends FileService {
   }
 
   private runFileRemoval(entity: Entity, property: string) {
-    const path = `${entity.getId(true)}/${property}`;
+    const path = `${entity.getId()}/${property}`;
     return this.http
-      .get<{ _rev: string }>(`${this.attachmentsUrl}/${entity.getId(true)}`)
+      .get<{ _rev: string }>(`${this.attachmentsUrl}/${entity.getId()}`)
       .pipe(
         concatMap(({ _rev }) =>
           this.http.delete(`${this.attachmentsUrl}/${path}?rev=${_rev}`),
@@ -127,7 +127,7 @@ export class CouchdbFileService extends FileService {
   }
 
   private runAllFilesRemoval(entity: Entity) {
-    const attachmentPath = `${this.attachmentsUrl}/${entity.getId(true)}`;
+    const attachmentPath = `${this.attachmentsUrl}/${entity.getId()}`;
     return this.http
       .get<{ _rev: string }>(attachmentPath)
       .pipe(
@@ -139,7 +139,7 @@ export class CouchdbFileService extends FileService {
 
   showFile(entity: Entity, property: string) {
     const obs = this.http
-      .get(`${this.attachmentsUrl}/${entity.getId(true)}/${property}`, {
+      .get(`${this.attachmentsUrl}/${entity.getId()}/${property}`, {
         responseType: "blob",
         reportProgress: true,
         observe: "events",
@@ -160,7 +160,7 @@ export class CouchdbFileService extends FileService {
   }
 
   loadFile(entity: Entity, property: string): Observable<SafeUrl> {
-    const path = `${entity.getId(true)}/${property}`;
+    const path = `${entity.getId()}/${property}`;
     if (!this.cache[path]) {
       this.cache[path] = this.http
         .get(`${this.attachmentsUrl}/${path}`, {

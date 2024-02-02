@@ -46,7 +46,7 @@ export interface EntitySchemaField {
    *
    * @todo not implemented yet
    */
-  generateIndex?: boolean; // TODO: implement index support in EntitySchema
+  generateIndex?: boolean;
 
   /**
    * If set to `true`, the entity can be found in the global search by entering this value

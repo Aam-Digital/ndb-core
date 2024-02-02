@@ -54,6 +54,6 @@ const Template: StoryFn<EntityDetailsComponent> = (
 
 export const Primary = Template.bind({});
 Primary.args = {
-  id: demoEntity.getId(false),
+  id: demoEntity.getId(true),
   ...config,
 };

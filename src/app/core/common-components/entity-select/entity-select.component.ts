@@ -70,9 +70,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @throws Error when `type` is not in the entity-map
    */
   @Input() set entityType(type: string | string[]) {
-    if (Array.isArray(type)) {
-      this.withPrefix = true;
-    } else {
+    if (!Array.isArray(type)) {
       type = [type];
     }
     this.loadAvailableEntities(type);
@@ -97,7 +95,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         this.selectedEntities = sel
           .map((id) =>
             this.allEntities.find(
-              (s) => id === s.getId(true) || id === s.getId(),
+              (s) => id === s.getId(),
             ),
           )
           .filter((e) => !!e);
@@ -181,9 +179,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         filter((value) => value === null || typeof value === "string"), // sometimes produces entities
         map((searchText?: string) => this.filter(searchText)),
       )
-      .subscribe((value) => {
-        this.filteredEntities = value;
-      });
+      .subscribe((value) => (this.filteredEntities = value));
     this.loading.pipe(untilDestroyed(this)).subscribe((isLoading) => {
       this.inputPlaceholder = isLoading
         ? this.loadingPlaceholder
@@ -302,7 +298,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   unselectEntity(entity: E) {
     const index = this.selectedEntities.findIndex(
-      (e) => e.getId(true) === entity.getId(true),
+      (e) => e.getId() === entity.getId(),
     );
     if (index !== -1) {
       this.selectedEntities.splice(index, 1);
@@ -313,14 +309,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private emitChange() {
-    this.selectionChange.emit(
-      this.selectedEntities.map((e) => e.getId(this.withPrefix)),
-    );
+    this.selectionChange.emit(this.selectedEntities.map((e) => e.getId()));
   }
 
   private isSelected(entity: E): boolean {
-    return this.selectedEntities.some(
-      (e) => e.getId(true) === entity.getId(true),
-    );
+    return this.selectedEntities.some((e) => e.getId() === entity.getId());
   }
 }

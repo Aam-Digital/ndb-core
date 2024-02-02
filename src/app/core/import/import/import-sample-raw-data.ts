@@ -47,9 +47,9 @@ export const IMPORT_SAMPLE_LINKABLE_DATA: Entity[] = [
 export const IMPORT_SAMPLE_ADDITIONAL_ACTIONS: AdditionalImportAction[] = [
   {
     type: "School",
-    id: IMPORT_SAMPLE_LINKABLE_DATA.find(
-      (e) => e.getType() === "School",
-    ).getId(),
+    id: IMPORT_SAMPLE_LINKABLE_DATA.find((e) => e.getType() === "School").getId(
+      true,
+    ),
   },
   {
     type: "RecurringActivity",

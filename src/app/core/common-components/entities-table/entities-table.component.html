@@ -50,7 +50,6 @@
 
       <td mat-cell *matCellDef="let row">
         <mat-checkbox
-          (change)="selectRow(row, $event)"
           [checked]="selectedRecords?.includes(row.record)"
         ></mat-checkbox>
       </td>
@@ -64,7 +63,7 @@
         <app-entity-create-button
           [entityType]="_entityType"
           [newRecordFactory]="newRecordFactory"
-          (entityCreate)="showEntity($event)"
+          (entityCreate)="showEntity($event); entityClick.emit($event)"
           [iconOnly]="true"
         ></app-entity-create-button>
       </th>

@@ -199,10 +199,10 @@ describe("CouchdbFileService", () => {
     tick();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
-      jasmine.stringContaining(entity.getId(true)),
+      jasmine.stringContaining(entity.getId()),
     );
     expect(mockHttp.delete).toHaveBeenCalledWith(
-      jasmine.stringContaining(`/${entity.getId(true)}?rev=someRev`),
+      jasmine.stringContaining(`/${entity.getId()}?rev=someRev`),
     );
   }));
 

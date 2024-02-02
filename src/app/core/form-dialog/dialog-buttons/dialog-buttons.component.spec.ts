@@ -90,7 +90,7 @@ describe("DialogButtonsComponent", () => {
 
     component.ngOnInit();
 
-    expect(component.detailsRoute).toBe(`${Child.route}/${child.getId()}`);
+    expect(component.detailsRoute).toBe(`${Child.route}/${child.getId(true)}`);
   });
 
   it("should close the dialog if a entity is deleted", async () => {
