@@ -278,7 +278,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
       case "navigate":
         this.router.navigate([
           entity.getConstructor().route,
-          entity.getId(true),
+          entity.isNew ? "new" : entity.getId(true),
         ]);
         break;
     }

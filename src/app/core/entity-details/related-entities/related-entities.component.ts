@@ -61,6 +61,8 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   @Input() showInactive: boolean;
 
+  @Input() clickMode: "popup" | "navigate" = "popup";
+
   data: E[];
   private isArray = false;
   protected entityCtr: EntityConstructor<E>;
