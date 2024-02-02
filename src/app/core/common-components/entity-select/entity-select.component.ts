@@ -52,14 +52,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
-  /**
-   * Handle and emit ids including entity type prefix - default is false.
-   * If multiple `entityType`s are given, this automatically switches prefixes to be activated.
-   *
-   * TODO: make ids including prefix the default everywhere and remove this option (see #1526)
-   */
-  @Input() withPrefix: boolean = false;
-
   includeInactive: boolean = false;
   filterValue: string;
 
@@ -93,11 +85,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
       )
       .subscribe((_) => {
         this.selectedEntities = sel
-          .map((id) =>
-            this.allEntities.find(
-              (s) => id === s.getId(),
-            ),
-          )
+          .map((id) => this.allEntities.find((s) => id === s.getId()))
           .filter((e) => !!e);
       });
   }

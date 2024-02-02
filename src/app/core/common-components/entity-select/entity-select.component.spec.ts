@@ -89,24 +89,19 @@ describe("EntitySelectComponent", () => {
     );
   }));
 
-  it("accepts initial selection as IDs with and without prefix", fakeAsync(() => {
+  it("accepts initial selection as IDs", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
 
-    component.selection = [testUsers[1].getId()];
+    component.selection = [testUsers[1].getId(), testUsers[2].getId()];
     fixture.detectChanges();
     tick();
-    expect(component.selectedEntities).toEqual([testUsers[1]]);
-
-    component.selection = [testUsers[2].getId()];
-    fixture.detectChanges();
-    tick();
-    expect(component.selectedEntities).toEqual([testUsers[2]]);
+    expect(component.selectedEntities).toEqual([testUsers[1], testUsers[2]]);
   }));
 
   it("discards IDs from initial selection that don't correspond to an existing entity", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
 
-    component.selection = [, "not-existing-entity", testUsers[1].getId()];
+    component.selection = ["not-existing-entity", testUsers[1].getId()];
     fixture.detectChanges();
     tick();
 
@@ -237,15 +232,6 @@ describe("EntitySelectComponent", () => {
     const autocomplete = await loader.getHarness(MatAutocompleteHarness);
     let options;
 
-    console.log(
-      "shows the autocomplete ... allEntities:",
-      component.allEntities,
-    );
-    console.log(
-      "shows the autocomplete ... RelevantEntities:",
-      component.entitiesPassingAdditionalFilter,
-    );
-
     autocomplete.enterText("X");
     options = await autocomplete.getOptions();
     expect(options.length).toEqual(0);
@@ -258,9 +244,28 @@ describe("EntitySelectComponent", () => {
     autocomplete.clear();
     autocomplete.enterText("Ca");
     options = await autocomplete.getOptions();
-    expect(options.length).toEqual(1);
+    expect(options.length).toEqual(1); // dummy element, because some inactive hidden options are available
+    expect(component.inactiveFilteredEntities.length).toEqual(2);
 
     tick();
+  }));
+
+  it("shows also include inactive options upon toggling 'include inactive'", fakeAsync(async () => {
+    const active = Child.create("active child");
+    const inactive = Child.create("inactive child");
+    inactive.inactive = true;
+
+    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo([
+      active,
+      inactive,
+    ]);
+    component.entityType = Child.ENTITY_TYPE;
+    tick();
+
+    expect(component.filteredEntities).toEqual([active]);
+
+    component.toggleIncludeInactive();
+    expect(component.filteredEntities).toEqual([active, inactive]);
   }));
 
   it("should use the configurable toStringAttributes for comparing values", fakeAsync(() => {
@@ -306,14 +311,7 @@ describe("EntitySelectComponent", () => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
     tick();
     fixture.detectChanges();
-    console.log(
-      "suggests all entities ... allEntities:",
-      component.allEntities,
-    );
-    console.log(
-      "suggests all entities ... relevantEntities:",
-      component.entitiesPassingAdditionalFilter,
-    );
+
     expect(component.allEntities).toEqual(
       [...testUsers, ...testChildren].sort((a, b) =>
         a.toString().localeCompare(b.toString()),
