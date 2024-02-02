@@ -60,6 +60,7 @@ describe("ImportService", () => {
       @DatabaseField() name: string;
       @DatabaseField() counter: number;
       @DatabaseField() date: Date;
+      @DatabaseField() text: string;
       @DatabaseField({
         dataType: EntityArrayDatatype.dataType,
         additional: "Child",
@@ -83,6 +84,18 @@ describe("ImportService", () => {
       { rawName: "with zero", rawCounter: "0" }, // 0 value mapped
       { rawName: "custom mapping fn", rawDate: "30.01.2023" },
       { rawName: "entity array", rawRefName: child.name },
+      {
+        rawName: "no null",
+        rawCounter: null,
+        rawText: null,
+        rawDate: null,
+      },
+      {
+        rawName: "no undefined",
+        rawCounter: undefined,
+        rawText: undefined,
+        rawDate: undefined,
+      },
     ];
     const columnMapping: ColumnMapping[] = [
       { column: "rawName", propertyName: "name" },
@@ -90,6 +103,7 @@ describe("ImportService", () => {
       { column: "rawDate", propertyName: "date", additional: "DD.MM.YYYY" },
       { column: "brokenMapping", propertyName: "brokenMapping" },
       { column: "rawRefName", propertyName: "entityRefs", additional: "name" },
+      { column: "rawText", propertyName: "text" },
     ];
 
     const parsedEntities = await service.transformRawDataToEntities(
@@ -106,6 +120,8 @@ describe("ImportService", () => {
       { name: "with zero", counter: 0 },
       { name: "custom mapping fn", date: moment("2023-01-30").toDate() },
       { name: "entity array", entityRefs: [child.getId()] },
+      { name: "no null" },
+      { name: "no undefined" },
     ];
 
     expectEntitiesToMatch(
