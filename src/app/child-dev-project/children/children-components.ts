@@ -30,25 +30,4 @@ export const childrenComponents: ComponentTuple[] = [
         (c) => c.ChildBlockComponent,
       ),
   ],
-  [
-    "ChildrenBmiDashboard",
-    () =>
-      import(
-        "./health-checkup/children-bmi-dashboard/children-bmi-dashboard.component"
-      ).then((c) => c.ChildrenBmiDashboardComponent),
-  ],
-  [
-    "BmiBlock",
-    () =>
-      import("./health-checkup/bmi-block/bmi-block.component").then(
-        (c) => c.BmiBlockComponent,
-      ),
-  ],
-  [
-    "HealthCheckup",
-    () =>
-      import(
-        "./health-checkup/health-checkup-component/health-checkup.component"
-      ).then((c) => c.HealthCheckupComponent),
-  ],
 ];

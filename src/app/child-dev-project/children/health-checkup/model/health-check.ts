@@ -65,8 +65,12 @@ export class HealthCheck extends Entity {
   })
   weight: number;
 
+  /**
+   * dynamically calculated BMI value based on the height and weight, rounded to 2 decimal digits
+   */
   get bmi(): number {
-    return this.weight / ((this.height / 100) * (this.height / 100));
+    const bmi = this.weight / ((this.height / 100) * (this.height / 100));
+    return Math.round(bmi * 100) / 100;
   }
 
   getWarningLevel(): WarningLevel {
