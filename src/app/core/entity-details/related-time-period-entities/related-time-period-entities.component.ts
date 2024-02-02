@@ -44,7 +44,7 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   // also see super class for Inputs
 
   @Input() single = true;
-  @Input() clickMode: "popup" | "navigate" = "popup";
+  @Input() showInactive = false;
 
   @Input() set columns(value: FormFieldConfig[]) {
     this._columns = [...value, isActiveIndicator];
