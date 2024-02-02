@@ -44,9 +44,9 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   /**
    * Property name of the related entities (type given in this.entityType) that holds the entity id
    * to be matched with the id of the current main entity (given in this.entity).
-   * This is automatically inferred and does not need to be set.
+   * If not explicitly set, this will be inferred based on the defined relations between the entities.
    */
-  protected property: string | string[];
+  @Input() property: string | string[];
 
   /**
    * Columns to be displayed in the table
@@ -91,7 +91,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   async ngOnInit() {
-    this.property = this.getProperty();
+    this.property = this.property ?? this.getProperty();
     this.data = await this.getData();
     this.filter = this.initFilter();
 

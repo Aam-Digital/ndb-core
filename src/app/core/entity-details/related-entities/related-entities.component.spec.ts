@@ -145,18 +145,18 @@ describe("RelatedEntitiesComponent", () => {
     );
   });
 
-  it("should align the filter with the provided property", async () => {
+  it("should align the filter with the related properties", async () => {
     @DatabaseEntity("PropTest")
     class PropTest extends Entity {}
     component.entityType = PropTest.ENTITY_TYPE;
-    const entity = new Child();
 
     PropTest.schema.set("singleRelation", {
       dataType: EntityDatatype.dataType,
       additional: Child.ENTITY_TYPE,
     });
-    component.entity = entity;
+    component.entity = new Child();
     component.filter = undefined;
+    component.property = undefined;
     await component.ngOnInit();
     expect(component.filter).toEqual({
       singleRelation: component.entity.getId(),
@@ -168,6 +168,7 @@ describe("RelatedEntitiesComponent", () => {
     });
     component.entity = new School();
     component.filter = undefined;
+    component.property = undefined;
     await component.ngOnInit();
     expect(component.filter).toEqual({
       arrayRelation: { $elemMatch: { $eq: component.entity.getId() } },
@@ -179,6 +180,7 @@ describe("RelatedEntitiesComponent", () => {
     });
     component.entity = new ChildSchoolRelation();
     component.filter = undefined;
+    component.property = undefined;
     await component.ngOnInit();
     expect(component.filter).toEqual({
       multiTypeRelation: { $elemMatch: { $eq: component.entity.getId() } },
@@ -187,6 +189,7 @@ describe("RelatedEntitiesComponent", () => {
     // Now with 2 relations ("singleRelation" and "multiTypeRelation")
     component.entity = new Child();
     component.filter = undefined;
+    component.property = undefined;
     await component.ngOnInit();
     expect(component.filter).toEqual({
       $or: [
@@ -195,6 +198,15 @@ describe("RelatedEntitiesComponent", () => {
           multiTypeRelation: { $elemMatch: { $eq: component.entity.getId() } },
         },
       ],
+    });
+
+    // preselected property should not be changed
+    component.entity = new Child();
+    component.filter = undefined;
+    component.property = "singleRelation";
+    await component.ngOnInit();
+    expect(component.filter).toEqual({
+      singleRelation: component.entity.getId(),
     });
   });
 });
