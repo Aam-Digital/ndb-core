@@ -15,10 +15,6 @@ import {
   MatchingSideConfig,
   NewMatchAction,
 } from "./matching-entities-config";
-import {
-  ColumnConfig,
-  DataFilter,
-} from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { ActivatedRoute } from "@angular/router";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -31,7 +27,6 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgForOf, NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityFieldViewComponent } from "../../../core/common-components/entity-field-view/entity-field-view.component";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { MapComponent } from "../../location/map/map.component";
 import { FilterComponent } from "../../../core/filter/filter/filter.component";
 import { Coordinates } from "../../location/coordinates";
@@ -40,8 +35,13 @@ import { LocationProperties } from "../../location/map/map-properties-popup/map-
 import { getLocationProperties } from "../../location/map-utils";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
 import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import {
+  ColumnConfig,
+  FormFieldConfig,
+} from "../../../core/common-components/entity-form/FormConfig";
 import { RouteTarget } from "../../../route-target";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { DataFilter } from "../../../core/filter/filters/filters";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -78,7 +78,7 @@ export interface MatchingSide extends MatchingSideConfig {
     NgIf,
     MatButtonModule,
     NgForOf,
-    EntitySubrecordComponent,
+    EntitiesTableComponent,
     EntityFieldViewComponent,
     MapComponent,
     FilterComponent,
@@ -281,12 +281,12 @@ export class MatchingEntitiesComponent implements OnInit {
 
     newMatchEntity[this.onMatch.newEntityMatchPropertyLeft] = this
       .sideDetails[0].multiSelect
-      ? leftMatch.map((e) => e.getId(false))
-      : leftMatch[0].getId(false);
+      ? leftMatch.map((e) => e.getId())
+      : leftMatch[0].getId();
     newMatchEntity[this.onMatch.newEntityMatchPropertyRight] = this
       .sideDetails[1].multiSelect
-      ? rightMatch.map((e) => e.getId(false))
-      : rightMatch[0].getId(false);
+      ? rightMatch.map((e) => e.getId())
+      : rightMatch[0].getId();
 
     // best guess properties (if they do not exist on the specific entity, the values will be discarded during save
     newMatchEntity["date"] = new Date();

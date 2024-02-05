@@ -1,18 +1,19 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { Child } from "../../children/model/child";
-import { School } from "../model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { ChildrenService } from "../../children/children.service";
-import { Entity } from "../../../core/entity/model/entity";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgIf } from "@angular/common";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
 import { PillComponent } from "../../../core/common-components/pill/pill.component";
 import { RelatedTimePeriodEntitiesComponent } from "../../../core/entity-details/related-time-period-entities/related-time-period-entities.component";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { FilterService } from "../../../core/filter/filter.service";
 
 // TODO: once schema-generated indices are available (#262), remove this component and use its generic super class directly
 @DynamicComponent("ChildSchoolOverview")
@@ -27,7 +28,7 @@ import { RelatedTimePeriodEntitiesComponent } from "../../../core/entity-details
   ],
   imports: [
     FontAwesomeModule,
-    EntitySubrecordComponent,
+    EntitiesTableComponent,
     MatSlideToggleModule,
     FormsModule,
     MatTooltipModule,
@@ -41,12 +42,17 @@ export class ChildSchoolOverviewComponent
   implements OnInit
 {
   mode: "child" | "school" = "child";
-  @Input() showInactive = false;
+  entityCtr = ChildSchoolRelation;
 
-  constructor(private childrenService: ChildrenService) {
-    super(null, null);
+  constructor(
+    private childrenService: ChildrenService,
+    entityMapper: EntityMapperService,
+    entityRegistry: EntityRegistry,
+    screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
+  ) {
+    super(entityMapper, entityRegistry, screenWidthObserver, filterService);
 
-    this.entityCtr = ChildSchoolRelation;
     this.columns = [
       { id: "childId" }, // schoolId/childId replaced dynamically during init
       { id: "start", visibleFrom: "md" },
@@ -56,23 +62,15 @@ export class ChildSchoolOverviewComponent
     ];
   }
 
-  async ngOnInit() {
-    this.mode = this.inferMode(this.entity);
+  override async ngOnInit(): Promise<void> {
+    this.mode = this.entity.getType().toLowerCase() as any;
+    this.showInactive = this.mode === "child";
     this.switchRelatedEntityColumnForMode();
-
-    await this.loadData();
-    super.onIsActiveFilterChange(this.showInactive);
+    await super.ngOnInit();
   }
 
-  private inferMode(entity: Entity): "child" | "school" {
-    switch (entity?.getConstructor()?.ENTITY_TYPE) {
-      case Child.ENTITY_TYPE:
-        this.property = "childId";
-        return "child";
-      case School.ENTITY_TYPE:
-        this.property = "schoolId";
-        return "school";
-    }
+  override getData() {
+    return this.childrenService.queryRelations(this.entity.getId(false));
   }
 
   private switchRelatedEntityColumnForMode() {
@@ -83,19 +81,5 @@ export class ChildSchoolOverviewComponent
     if (idColumn) {
       idColumn.id = this.mode === "child" ? "schoolId" : "childId";
     }
-  }
-
-  async loadData() {
-    if (!this.mode) {
-      return;
-    }
-
-    this.isLoading = true;
-    this.data = await this.childrenService.queryRelationsOf(
-      this.mode,
-      this.entity.getId(false),
-    );
-
-    this.isLoading = false;
   }
 }

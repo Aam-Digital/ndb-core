@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -37,7 +37,6 @@ export class DisplayEntityComponent
     private entityMapper: EntityMapperService,
     private router: Router,
     private logger: LoggingService,
-    private changeDetector: ChangeDetectorRef,
   ) {
     super();
   }
@@ -67,7 +66,6 @@ export class DisplayEntityComponent
         .getConstructor()
         .getBlockComponent();
     }
-    this.changeDetector.detectChanges();
   }
 
   showDetailsPage() {
@@ -77,7 +75,7 @@ export class DisplayEntityComponent
 
     this.router.navigate([
       this.entityToDisplay.getConstructor().route,
-      this.entityToDisplay.getId(),
+      this.entityToDisplay.getId(true),
     ]);
   }
 }

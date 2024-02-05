@@ -1,5 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
-import { FormFieldConfig } from "../../common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import moment from "moment";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -7,7 +7,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { NgIf } from "@angular/common";
-import { EntitySubrecordComponent } from "../../common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { ChildSchoolRelation } from "../../../child-dev-project/children/model/childSchoolRelation";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
@@ -28,7 +28,7 @@ import { TimePeriod } from "./time-period";
   styleUrls: ["./related-time-period-entities.component.scss"],
   imports: [
     FontAwesomeModule,
-    EntitySubrecordComponent,
+    EntitiesTableComponent,
     MatSlideToggleModule,
     FormsModule,
     MatTooltipModule,
@@ -45,7 +45,6 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
 
   @Input() single = true;
   @Input() showInactive = false;
-  @Input() clickMode: "popup" | "navigate" = "popup";
 
   @Input() set columns(value: FormFieldConfig[]) {
     this._columns = [...value, isActiveIndicator];
@@ -64,26 +63,16 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
   hasCurrentlyActiveEntry: boolean;
 
   async ngOnInit() {
-    this.onIsActiveFilterChange(this.showInactive);
-    await super.initData();
-  }
-
-  onIsActiveFilterChange(newValue: boolean) {
+    await super.ngOnInit();
     this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
-
-    if (this.showInactive) {
-      this.backgroundColorFn = (r: E) => r.getColor();
-    } else {
-      this.backgroundColorFn = undefined; // Do not highlight active ones when only active are shown
-    }
   }
 
-  generateNewRecordFactory() {
+  override createNewRecordFactory() {
     return () => {
       const newRelation = super.createNewRecordFactory()();
 
       newRelation.start =
-        this.data.length && this.data[0].end
+        this.data?.length && this.data[0].end
           ? moment(this.data[0].end).add(1, "day").toDate()
           : moment().startOf("day").toDate();
 

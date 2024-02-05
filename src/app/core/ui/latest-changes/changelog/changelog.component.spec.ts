@@ -57,7 +57,7 @@ describe("ChangelogComponent", () => {
         {
           provide: UpdateManagerService,
           useValue: jasmine.createSpyObj([
-            "notifyUserWhenUpdateAvailable",
+            "listenToAppUpdates",
             "regularlyCheckForUpdates",
             "detectUnrecoverableState",
           ]),

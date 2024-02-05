@@ -16,6 +16,7 @@ import { Subscription } from "rxjs";
 import moment from "moment";
 import { EntityFieldEditComponent } from "../../entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../entity-details/form/field-group";
+import { EntityAbility } from "../../../permissions/ability/entity-ability";
 
 /**
  * A general purpose form component for displaying and editing entities.
@@ -60,9 +61,17 @@ export class EntityFormComponent<T extends Entity = Entity>
   constructor(
     private entityMapper: EntityMapperService,
     private confirmationDialog: ConfirmationDialogService,
+    private ability: EntityAbility,
   ) {}
 
   ngOnChanges(changes: SimpleChanges) {
+    if (this.fieldGroups) {
+      this.fieldGroups = this.filterFieldGroupsByPermissions(
+        this.fieldGroups,
+        this.entity,
+      );
+    }
+
     if (changes.entity && this.entity) {
       this.changesSubscription?.unsubscribe();
       this.changesSubscription = this.entityMapper
@@ -74,6 +83,7 @@ export class EntityFormComponent<T extends Entity = Entity>
         )
         .subscribe(({ entity }) => this.applyChanges(entity));
     }
+
     if (changes.form && this.form) {
       this.initialFormValues = this.form.getRawValue();
       this.disableForLockedEntity();
@@ -123,6 +133,26 @@ export class EntityFormComponent<T extends Entity = Entity>
     return Object.entries(this.form.getRawValue()).every(([key, value]) =>
       this.entityEqualsFormValue(entity[key], value),
     );
+  }
+
+  private filterFieldGroupsByPermissions<T extends Entity = Entity>(
+    fieldGroups: FieldGroup[],
+    entity: Entity,
+  ): FieldGroup[] {
+    const action = entity.isNew ? "create" : "read";
+
+    return fieldGroups
+      .map((group) => {
+        group.fields = group.fields.filter((field) =>
+          this.ability.can(
+            action,
+            entity,
+            typeof field === "string" ? field : field.id,
+          ),
+        );
+        return group;
+      })
+      .filter((group) => group.fields.length > 0);
   }
 
   private entityEqualsFormValue(entityValue, formValue) {

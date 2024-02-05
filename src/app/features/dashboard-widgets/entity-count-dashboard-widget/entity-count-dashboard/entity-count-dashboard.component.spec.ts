@@ -20,6 +20,8 @@ import {
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { RecurringActivity } from "../../../../child-dev-project/attendance/model/recurring-activity";
 import { defaultInteractionTypes } from "../../../../core/config/default-config/default-interaction-types";
+import { EducationalMaterial } from "../../../../child-dev-project/children/educational-material/model/educational-material";
+import { Note } from "../../../../child-dev-project/notes/model/note";
 
 describe("EntityCountDashboardComponent", () => {
   let component: EntityCountDashboardComponent;
@@ -88,6 +90,7 @@ describe("EntityCountDashboardComponent", () => {
 
   it("should groupBy enum values and display label", async () => {
     const testGroupBy = "test";
+    Child.schema.set(testGroupBy, { dataType: "configurable-enum" });
     component.groupBy = testGroupBy;
 
     const children = [new Child(), new Child(), new Child(), new Child()];
@@ -110,6 +113,69 @@ describe("EntityCountDashboardComponent", () => {
       label: c2.label,
       value: 1,
       id: c2.id,
+    });
+
+    Child.schema.delete(testGroupBy);
+  });
+
+  it("should groupBy entity references and display an entity-block", async () => {
+    const testGroupBy = "child";
+    component.groupBy = testGroupBy;
+    component.entity = EducationalMaterial.ENTITY_TYPE;
+
+    const c1 = new Child();
+    const x0 = new EducationalMaterial();
+    const x1 = new EducationalMaterial();
+
+    x1[testGroupBy] = c1.getId();
+    entityMapper.addAll([x0, x1, c1]);
+
+    await component.ngOnInit();
+
+    expect(component.groupedByEntity).toBe(Child.ENTITY_TYPE);
+    expect(component.entityGroupCounts).toHaveSize(2);
+    expect(component.entityGroupCounts).toContain({
+      label: "",
+      value: 1,
+      id: "",
+    });
+    expect(component.entityGroupCounts).toContain({
+      label: c1.getId(),
+      value: 1,
+      id: c1.getId(),
+    });
+  });
+
+  it("should groupBy arrays, split and summarized for individual array elements", async () => {
+    const testGroupBy = "children";
+    component.groupBy = testGroupBy;
+    component.entity = Note.ENTITY_TYPE;
+
+    const x0 = new Note();
+    const x1 = new Note();
+    x1[testGroupBy] = ["link-1"];
+    const x2 = new Note();
+    x2[testGroupBy] = ["link-1", "link-2"];
+
+    entityMapper.addAll([x0, x1, x2]);
+
+    await component.ngOnInit();
+
+    expect(component.entityGroupCounts).toHaveSize(3);
+    expect(component.entityGroupCounts).toContain({
+      label: "",
+      value: 1,
+      id: "",
+    });
+    expect(component.entityGroupCounts).toContain({
+      label: "link-1",
+      value: 2,
+      id: "link-1",
+    });
+    expect(component.entityGroupCounts).toContain({
+      label: "link-2",
+      value: 1,
+      id: "link-2",
     });
   });
 

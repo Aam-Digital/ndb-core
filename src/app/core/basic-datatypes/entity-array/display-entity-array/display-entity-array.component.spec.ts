@@ -14,6 +14,10 @@ import { mockEntityMapper } from "../../../entity/entity-mapper/mock-entity-mapp
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { DatabaseField } from "../../../entity/database-field.decorator";
 import { HttpClientTestingModule } from "@angular/common/http/testing";
+import {
+  componentRegistry,
+  ComponentRegistry,
+} from "../../../../dynamic-components";
 
 describe("DisplayEntityArrayComponent", () => {
   let component: DisplayEntityArrayComponent;
@@ -26,6 +30,7 @@ describe("DisplayEntityArrayComponent", () => {
     await TestBed.configureTestingModule({
       imports: [DisplayEntityArrayComponent, HttpClientTestingModule],
       providers: [
+        { provide: ComponentRegistry, useValue: componentRegistry },
         {
           provide: EntityMapperService,
           useValue: mockEntityMapper(testEntities),
@@ -61,7 +66,7 @@ describe("DisplayEntityArrayComponent", () => {
     }
 
     const testEntity = new DisplayEntityTest1();
-    testEntity.relatedEntities = expectedEntities.map((e) => e.getId(false));
+    testEntity.relatedEntities = expectedEntities.map((e) => e.getId());
 
     component.entity = testEntity;
     component.id = "relatedEntities";
@@ -85,7 +90,7 @@ describe("DisplayEntityArrayComponent", () => {
     }
 
     const testEntity = new DisplayEntityTest2();
-    testEntity.relatedEntities = expectedEntities.map((e) => e.getId(true));
+    testEntity.relatedEntities = expectedEntities.map((e) => e.getId());
 
     component.entity = testEntity;
     component.id = "relatedEntities";

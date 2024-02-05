@@ -1,10 +1,10 @@
-<app-entity-subrecord
-  [records]="entries"
-  [isLoading]="isLoading"
-  [columns]="columns"
+<app-entities-table
+  [entityType]="entityCtr"
+  [records]="data"
+  [customColumns]="_columns"
   [newRecordFactory]="getNewEntryFunction()"
   clickMode="none"
   [filter]="filter"
-  (rowClick)="showDetails($event)"
+  (entityClick)="showDetails($event)"
   [getBackgroundColor]="backgroundColorFn"
-></app-entity-subrecord>
+></app-entities-table>

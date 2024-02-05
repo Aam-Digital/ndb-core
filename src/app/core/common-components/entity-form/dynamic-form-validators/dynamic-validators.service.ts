@@ -1,9 +1,16 @@
 import { Injectable } from "@angular/core";
 import { DynamicValidator, FormValidatorConfig } from "./form-validator-config";
-import { AbstractControl, ValidatorFn, Validators } from "@angular/forms";
+import {
+  AbstractControl,
+  FormControl,
+  FormControlOptions,
+  ValidationErrors,
+  ValidatorFn,
+  Validators,
+} from "@angular/forms";
 import { LoggingService } from "../../../logging/logging.service";
-
-type ValidatorFactory = (value: any, name: string) => ValidatorFn;
+import { uniqueIdValidator } from "../unique-id-validator/unique-id-validator";
+import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 
 /**
  * creates a pattern validator that also carries a predefined
@@ -47,23 +54,45 @@ export class DynamicValidatorsService {
    * given a value that serves as basis for the validation.
    * @private
    */
-  private static validators: {
-    [key in DynamicValidator]: ValidatorFactory | null;
-  } = {
-    min: (value) => Validators.min(value as number),
-    max: (value) => Validators.max(value as number),
-    pattern: (value) => {
-      if (typeof value === "object") {
-        return patternWithMessage(value.pattern, value.message);
-      } else {
-        return Validators.pattern(value as string);
+  private getValidator(
+    key: DynamicValidator,
+    value: any,
+  ):
+    | { async?: false; fn: ValidatorFn }
+    | {
+        async: true;
+        fn: AsyncPromiseValidatorFn;
       }
-    },
-    validEmail: (value) => (value ? Validators.email : null),
-    required: (value) => (value ? Validators.required : null),
-  };
+    | null {
+    switch (key) {
+      case "min":
+        return { fn: Validators.min(value as number) };
+      case "max":
+        return { fn: Validators.max(value as number) };
+      case "pattern":
+        if (typeof value === "object") {
+          return { fn: patternWithMessage(value.pattern, value.message) };
+        } else {
+          return { fn: Validators.pattern(value as string) };
+        }
+      case "validEmail":
+        return value ? { fn: Validators.email } : null;
+      case "uniqueId":
+        return value ? this.buildUniqueIdValidator(value) : null;
+      case "required":
+        return value ? { fn: Validators.required } : null;
+      default:
+        this.loggingService.warn(
+          `Trying to generate validator ${key} but it does not exist`,
+        );
+        return null;
+    }
+  }
 
-  constructor(private loggingService: LoggingService) {}
+  constructor(
+    private loggingService: LoggingService,
+    private entityMapper: EntityMapperService,
+  ) {}
 
   /**
    * Builds all validator functions that are part of the configuration object.
@@ -76,24 +105,58 @@ export class DynamicValidatorsService {
    * [ Validators.required, Validators.max(5) ]
    * @see ValidatorFn
    */
-  public buildValidators(config: FormValidatorConfig): ValidatorFn[] {
-    const validators: ValidatorFn[] = [];
+  public buildValidators(config: FormValidatorConfig): FormControlOptions {
+    const formControlOptions = {
+      validators: [],
+      asyncValidators: [],
+    };
+
     for (const key of Object.keys(config)) {
-      const factory = DynamicValidatorsService.validators[key];
-      if (!factory) {
-        this.loggingService.warn(
-          `Trying to generate validator ${key} but it does not exist`,
-        );
-        continue;
+      const validatorFn = this.getValidator(
+        key as DynamicValidator,
+        config[key],
+      );
+
+      if (validatorFn?.async) {
+        const validatorFnWithReadableErrors = (control) =>
+          validatorFn
+            .fn(control)
+            .then((res) => this.addHumanReadableError(key, res));
+        formControlOptions.asyncValidators.push(validatorFnWithReadableErrors);
+      } else if (validatorFn) {
+        const validatorFnWithReadableErrors = (control: FormControl) =>
+          this.addHumanReadableError(key, validatorFn.fn(control));
+        formControlOptions.validators.push(validatorFnWithReadableErrors);
       }
-      const validatorFn = factory(config[key], key);
-      if (validatorFn !== null) {
-        validators.push(validatorFn);
-      }
-      // A validator function of `null` is a legal case. For example
-      // { required : false } produces a `null` validator function
+
+      // A validator function of `null` is a legal case, for which no validator function is added.
+      // For example `{ required : false }` produces a `null` validator function
     }
-    return validators;
+
+    if (formControlOptions.asyncValidators.length > 0) {
+      (formControlOptions as FormControlOptions).updateOn = "blur";
+    }
+
+    return formControlOptions;
+  }
+
+  private addHumanReadableError(
+    validatorType: string,
+    validationResult: ValidationErrors | null,
+  ): ValidationErrors {
+    if (!validationResult) {
+      return validationResult;
+    }
+
+    validationResult[validatorType] = {
+      ...validationResult[validatorType],
+      errorMessage: this.descriptionForValidator(
+        validatorType,
+        validationResult[validatorType],
+      ),
+    };
+
+    return validationResult;
   }
 
   /**
@@ -103,7 +166,7 @@ export class DynamicValidatorsService {
    * @param validator The validator to get the description for
    * @param validationValue The value associated with the validator
    */
-  public descriptionForValidator(
+  private descriptionForValidator(
     validator: DynamicValidator | string,
     validationValue: any,
   ): string {
@@ -126,6 +189,8 @@ export class DynamicValidatorsService {
         return $localize`Please enter a valid date`;
       case "isNumber":
         return $localize`Please enter a valid number`;
+      case "uniqueId":
+        return validationValue;
       default:
         this.loggingService.error(
           `No description defined for validator "${validator}": ${JSON.stringify(
@@ -135,4 +200,23 @@ export class DynamicValidatorsService {
         throw $localize`Invalid input`;
     }
   }
+
+  private buildUniqueIdValidator(value: string): {
+    async: true;
+    fn: AsyncPromiseValidatorFn;
+  } {
+    return {
+      fn: uniqueIdValidator(() =>
+        this.entityMapper
+          .loadType(value)
+          // TODO: extend this to allow checking for any configurable property (e.g. Child.name rather than only id)
+          .then((entities) => entities.map((entity) => entity.getId())),
+      ),
+      async: true,
+    };
+  }
 }
+
+export type AsyncPromiseValidatorFn = (
+  control: FormControl,
+) => Promise<ValidationErrors | null>;

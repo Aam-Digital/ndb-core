@@ -51,18 +51,6 @@ export class EntityArrayDatatype extends ArrayDatatype<string, string> {
       { ...schema, innerDataType: EntityDatatype.dataType },
       parent,
     );
-
-    // TODO: maybe introduce a prefix transformation in the future (also see #1526)
-    // this is only possible when no indices depend on un-prefixed IDs
-    /*
-    if (typeof schemaField.additional === "string") {
-      // if only one clear EntityType, make sure IDs are prefixed even for legacy data
-      return value.map((id) =>
-        Entity.createPrefixedId(schemaField.additional, id)
-      );
-    } else {
-      return value;
-    }*/
   }
 
   async anonymize(value, schema: EntitySchemaField, parent) {

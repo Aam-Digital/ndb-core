@@ -6,8 +6,8 @@ import moment from "moment";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import {
-  ScreenWidthObserver,
   ScreenSize,
+  ScreenWidthObserver,
 } from "../../../../utils/media/screen-size-observer.service";
 import { NgForOf, SlicePipe } from "@angular/common";
 import { AttendanceBlockComponent } from "../../../attendance/attendance-block/attendance-block.component";

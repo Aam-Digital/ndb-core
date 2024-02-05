@@ -6,6 +6,8 @@ import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { EntityConfig } from "./entity-config";
 import { addPropertySchema } from "./database-field.decorator";
 import { PREFIX_VIEW_CONFIG } from "../config/dynamic-routing/view-config.interface";
+import { EntitySchemaField } from "./schema/entity-schema-field";
+import { EntitySchema } from "./schema/entity-schema";
 
 /**
  * A service that allows to work with configuration-objects
@@ -19,6 +21,9 @@ export class EntityConfigService {
   /** @deprecated will become private, use the service to access the data */
   static readonly PREFIX_ENTITY_CONFIG = "entity:";
 
+  /** original initial entity schemas without overrides from config */
+  private coreEntitySchemas = new Map<string, EntitySchema>();
+
   static getDetailsViewId(entityConstructor: EntityConstructor) {
     return (
       PREFIX_VIEW_CONFIG + entityConstructor.route.replace(/^\//, "") + "/:id"
@@ -30,7 +35,21 @@ export class EntityConfigService {
   constructor(
     private configService: ConfigService,
     private entities: EntityRegistry,
-  ) {}
+  ) {
+    this.storeCoreEntitySchemas();
+  }
+
+  private storeCoreEntitySchemas() {
+    this.entities.forEach((ctr, key) => {
+      this.coreEntitySchemas.set(key, this.deepCopySchema(ctr.schema));
+    });
+  }
+
+  private deepCopySchema(schema: EntitySchema): EntitySchema {
+    return new Map<string, EntitySchemaField>(
+      JSON.parse(JSON.stringify(Array.from(schema))),
+    );
+  }
 
   /**
    * Assigns additional schema-fields to all entities that are
@@ -49,6 +68,7 @@ export class EntityConfigService {
         this.createNewEntity(id, config.extends);
       }
       const ctor = this.entities.get(id);
+      this.setCoreSchemaAttributes(ctor, config.extends);
       this.addConfigAttributes(ctor, config);
     }
   }
@@ -58,12 +78,35 @@ export class EntityConfigService {
       ? this.entities.get(parent)
       : Entity;
 
+    const schema = this.deepCopySchema(parentClass.schema);
     class DynamicClass extends parentClass {
-      static schema = new Map(parentClass.schema.entries());
+      static schema = schema;
       static ENTITY_TYPE = id;
     }
 
     this.entities.set(id, DynamicClass);
+  }
+
+  /**
+   * Set field definitons from the core schema to ensure undoing customized attributes is correctly applied.
+   * @param entityType
+   * @param parent
+   */
+  private setCoreSchemaAttributes(
+    entityType: EntityConstructor,
+    parent: string,
+  ) {
+    const coreEntityId = parent ?? entityType.ENTITY_TYPE;
+    const coreSchema =
+      this.coreEntitySchemas.get(coreEntityId) ?? Entity.schema;
+
+    for (const [key, value] of coreSchema.entries()) {
+      addPropertySchema(
+        entityType.prototype,
+        key,
+        JSON.parse(JSON.stringify(value)),
+      );
+    }
   }
 
   /**

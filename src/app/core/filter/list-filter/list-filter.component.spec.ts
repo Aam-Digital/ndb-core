@@ -1,8 +1,8 @@
 import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ListFilterComponent } from "./list-filter.component";
-import { SelectableFilter } from "../filters/filters";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
+import { SelectableFilter } from "../filters/filters";
 
 describe("ListFilterComponent", () => {
   let component: ListFilterComponent<any>;

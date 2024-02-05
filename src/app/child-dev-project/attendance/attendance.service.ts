@@ -187,10 +187,7 @@ export class AttendanceService {
       return attMonth;
     }
 
-    const events = await this.getEventsForActivity(
-      activity.getId(true),
-      sinceDate,
-    );
+    const events = await this.getEventsForActivity(activity.getId(), sinceDate);
 
     for (const event of events) {
       const record = getOrCreateAttendancePeriod(event);
@@ -232,10 +229,8 @@ export class AttendanceService {
       childId,
     );
 
-    const visitedSchools = await this.childrenService.queryActiveRelationsOf(
-      "child",
-      childId,
-    );
+    const visitedSchools =
+      await this.childrenService.queryActiveRelationsOf(childId);
     for (const currentRelation of visitedSchools) {
       const activitiesThroughRelation = await this.dbIndexing.queryIndexDocs(
         RecurringActivity,
@@ -266,7 +261,7 @@ export class AttendanceService {
       date,
     );
     instance.schools = activity.linkedGroups;
-    instance.relatesTo = activity.getId(true);
+    instance.relatesTo = activity.getId();
     instance.category = activity.type;
     return instance;
   }
@@ -296,7 +291,7 @@ export class AttendanceService {
   ): Promise<string[]> {
     const childIdPromises = linkedGroups.map((groupId) =>
       this.childrenService
-        .queryActiveRelationsOf("school", groupId, date)
+        .queryActiveRelationsOf(groupId, date)
         .then((relations) =>
           relations.map((r) => r.childId).filter((id) => !!id),
         ),

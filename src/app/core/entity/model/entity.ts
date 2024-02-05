@@ -43,7 +43,7 @@ export type EntityConstructor<T extends Entity = Entity> = (new (
  *
  * Entity classes do not deal with database actions, use {@link EntityMapperService} with its find/save/delete functions.
  *
- * Do not use the Entity class directly. Instead implement your own Entity types, writing classes that extend "Entity".
+ * Do not use the Entity class directly. Instead, implement your own Entity types, writing classes that extend "Entity".
  * A How-To Guide on how to implement your own types is available:
  * - [How to Create a new Entity Type]{@link /additional-documentation/how-to-guides/create-a-new-entity-type.html}
  */
@@ -66,7 +66,7 @@ export class Entity {
   /**
    * True if this type's schema has been customized dynamically from the config.
    */
-  static _isCustomizedType?: boolean;
+  static _isCustomizedType?: boolean; // todo should be private or renamed to "isCustomizedType"
 
   /**
    * Defining which attribute values of an entity should be shown in the `.toString()` method.
@@ -280,9 +280,8 @@ export class Entity {
    *
    * @returns {string} the unique id of this entity
    */
-  public getId(withPrefix: boolean = false): string {
-    if (withPrefix) return this._id;
-    return this.entityId;
+  public getId(withoutPrefix = false): string {
+    return withoutPrefix ? this.entityId : this._id;
   }
 
   /**

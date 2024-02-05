@@ -117,7 +117,7 @@ export class SessionManagerService {
       .pipe(
         filter(
           ({ entity }) =>
-            entity.getId(true) === user.name || entity.getId() === user.name,
+            entity.getId() === user.name || entity.getId(true) === user.name,
         ),
       )
       .subscribe(({ entity }) => this.currentUser.next(entity));

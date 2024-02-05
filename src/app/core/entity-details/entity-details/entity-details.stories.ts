@@ -18,12 +18,14 @@ const config: EntityDetailsConfig = {
           title: "",
           component: "Form",
           config: {
-            cols: [
-              ["photo"],
-              ["name", "projectNumber", "admissionDate"],
-              ["center", "phone"],
+            fieldGroups: [
+              { fields: ["photo"] },
+              {
+                fields: ["name", "projectNumber", "admissionDate"],
+                header: "Personal Information",
+              },
+              { fields: ["center", "phone"], header: "Contact Details" },
             ],
-            headers: [null, "Personal Information", "Contact Details"],
           },
         },
       ],
@@ -52,6 +54,6 @@ const Template: StoryFn<EntityDetailsComponent> = (
 
 export const Primary = Template.bind({});
 Primary.args = {
-  id: demoEntity.getId(false),
+  id: demoEntity.getId(true),
   ...config,
 };

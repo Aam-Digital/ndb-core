@@ -26,12 +26,13 @@ export class DisableEntityOperationDirective
 {
   /**
    * These arguments are required to check whether the user has permissions to perform the operation.
-   * The operation property defines to what kind of operation a element belongs, e.g. OperationType.CREATE
+   * The operation property defines to what kind of operation an element belongs, e.g. OperationType.CREATE
    * The entity property defines for which kind of entity the operation will be performed, e.g. Child
    */
   @Input("appDisabledEntityOperation") arguments: {
     operation: EntityAction;
     entity: EntitySubject;
+    field?: string;
   };
 
   private wrapperComponent: ComponentRef<DisabledWrapperComponent>;
@@ -76,6 +77,7 @@ export class DisableEntityOperationDirective
       this.wrapperComponent.instance.elementDisabled = this.ability.cannot(
         this.arguments.operation,
         this.arguments.entity,
+        this.arguments.field,
       );
       this.wrapperComponent.instance.ngAfterViewInit();
     }

@@ -45,7 +45,6 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     component = fixture.componentInstance;
     component.entity = child;
     component.entityType = EducationalMaterial.ENTITY_TYPE;
-    component.property = "child";
 
     component.summaries = {
       countProperty: "materialAmount",
@@ -63,7 +62,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
 
   it("produces an empty summary when there are no records", () => {
     component.data = [];
-    component.updateSummary();
+    component.updateSummary(component.data);
     expect(component.summarySum).toHaveSize(0);
     expect(component.summaryAvg).toHaveSize(0);
   });
@@ -72,7 +71,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     ...records: Partial<EducationalMaterial>[]
   ) {
     component.data = records.map(EducationalMaterial.create);
-    component.updateSummary();
+    component.updateSummary(component.data);
   }
 
   it("produces a singleton summary when there is a single record", () => {
@@ -99,7 +98,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     component.data = [{ amount: 1 }, { amount: 5 }] as any[];
     delete component.summaries.groupBy;
     component.summaries.countProperty = "amount";
-    component.updateSummary();
+    component.updateSummary(component.data);
 
     expect(component.summarySum).toEqual(`6`);
     expect(component.summaryAvg).toEqual(`3`);
@@ -178,7 +177,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     );
   });
 
-  it("loads all education data associated with a child and updates the summary", async () => {
+  it("loads all education data associated with a child and updates the summary", fakeAsync(() => {
     const educationalData = [
       { materialType: PENCIL, materialAmount: 1, child: child.getId() },
       { materialType: RULER, materialAmount: 2, child: child.getId() },
@@ -186,16 +185,22 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
       educationalData,
     );
+
     component.entity = new Child("22");
-    await component.ngOnInit();
+    component.ngOnInit();
+    tick();
+    fixture.detectChanges();
+    tick();
+
     expect(component.summarySum).toEqual(
       `${PENCIL.label}: 1, ${RULER.label}: 2`,
     );
     expect(component.data).toEqual(educationalData);
-  });
+  }));
 
   it("should update the summary when entity updates are received", fakeAsync(() => {
     component.ngOnInit();
+    fixture.detectChanges();
     tick();
 
     const update1 = EducationalMaterial.create({
@@ -204,6 +209,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
       materialAmount: 1,
     });
     updates.next({ entity: update1, type: "new" });
+    fixture.detectChanges();
     tick();
 
     expect(component.data).toEqual([update1]);
@@ -212,6 +218,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     const update2 = update1.copy() as EducationalMaterial;
     update2.materialAmount = 2;
     updates.next({ entity: update2, type: "update" });
+    fixture.detectChanges();
     tick();
 
     expect(component.data).toEqual([update2]);
@@ -220,6 +227,7 @@ describe("RelatedEntitiesWithSummaryComponent", () => {
     const unrelatedUpdate = update1.copy() as EducationalMaterial;
     unrelatedUpdate.child = "differentChild";
     updates.next({ entity: unrelatedUpdate, type: "new" });
+    fixture.detectChanges();
     tick();
     // No change
     expect(component.data).toEqual([update2]);

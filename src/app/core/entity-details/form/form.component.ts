@@ -52,6 +52,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       [].concat(...this.fieldGroups.map((group) => group.fields)),
       this.entity,
     );
+
     if (!this.creatingNew) {
       this.form.disable();
     }
@@ -65,7 +66,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
       if (this.creatingNew) {
         await this.router.navigate([
           getParentUrl(this.router),
-          this.entity.getId(),
+          this.entity.getId(true),
         ]);
       }
     } catch (err) {

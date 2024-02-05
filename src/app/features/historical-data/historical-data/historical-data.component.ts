@@ -2,9 +2,14 @@ import { Component, Input, OnInit } from "@angular/core";
 import { HistoricalEntityData } from "../model/historical-entity-data";
 import { Entity } from "../../../core/entity/model/entity";
 import { HistoricalDataService } from "../historical-data.service";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
+import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { FilterService } from "../../../core/filter/filter.service";
 
 /**
  * A general component that can be included on a entity details page through the config.
@@ -14,32 +19,36 @@ import { EntitySubrecordComponent } from "../../../core/common-components/entity
 @DynamicComponent("HistoricalDataComponent")
 @Component({
   selector: "app-historical-data",
-  template: ` <app-entity-subrecord
-    [records]="entries"
-    [columns]="config"
-    [newRecordFactory]="getNewEntryFunction()"
-  ></app-entity-subrecord>`,
-  imports: [EntitySubrecordComponent],
+  templateUrl:
+    "../../../core/entity-details/related-entities/related-entities.component.html",
+  imports: [EntitiesTableComponent],
   standalone: true,
 })
-export class HistoricalDataComponent implements OnInit {
+export class HistoricalDataComponent
+  extends RelatedEntitiesComponent<HistoricalEntityData>
+  implements OnInit
+{
   @Input() entity: Entity;
-  @Input() config: FormFieldConfig[] = [];
-  entries: HistoricalEntityData[] = [];
+  entityCtr = HistoricalEntityData;
 
-  constructor(private historicalDataService: HistoricalDataService) {}
-
-  async ngOnInit() {
-    this.entries = await this.historicalDataService.getHistoricalDataFor(
-      this.entity.getId(),
-    );
+  /** @deprecated use @Input() columns instead */
+  @Input() set config(value: FormFieldConfig[]) {
+    if (Array.isArray(value)) {
+      this.columns = value;
+    }
   }
 
-  public getNewEntryFunction(): () => HistoricalEntityData {
-    return () => {
-      const newEntry = new HistoricalEntityData();
-      newEntry.relatedEntity = this.entity.getId();
-      return newEntry;
-    };
+  constructor(
+    private historicalDataService: HistoricalDataService,
+    entityMapper: EntityMapperService,
+    entityRegistry: EntityRegistry,
+    screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
+  ) {
+    super(entityMapper, entityRegistry, screenWidthObserver, filterService);
+  }
+
+  override getData() {
+    return this.historicalDataService.getHistoricalDataFor(this.entity.getId());
   }
 }

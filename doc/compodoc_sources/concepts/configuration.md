@@ -265,12 +265,13 @@ The component configuration requires another `"title"`, the `"component"` that s
           "title": "Education",
           "components": [
             {
-              "title": "SchoolHistory",
+              "title": "School History",
               "component": "PreviousSchools"
             },
             {
-              "title": "ASER Results",
-              "component": "Aser"
+              "title": "Literacy Test Results",
+              "component": "RelatedEntities",
+              "config": {}
             }
           ]
         }

@@ -43,12 +43,29 @@
     (optionSelected)="selectEntity($event.option.value)"
     autoActiveFirstOption
   >
-    <ng-content select="mat-option"></ng-content>
     <mat-option *ngFor="let res of filteredEntities" [value]="res">
       <app-display-entity
         [entityToDisplay]="res"
         [linkDisabled]="true"
       ></app-display-entity>
     </mat-option>
+    <!-- The following mat-option is never displayed ("display: none"), but has to be there, because the mat-checkbox is only shown if there is at least one mat-option, may it also not be displayed.  -->
+    <mat-option
+      *ngIf="
+        filteredEntities.length < 1 &&
+        !includeInactive &&
+        inactiveFilteredEntities.length > 0
+      "
+      style="display: none"
+    ></mat-option>
+    <mat-checkbox
+      *ngIf="inactiveFilteredEntities.length > 0"
+      labelPosition="after"
+      (change)="toggleIncludeInactive()"
+      [checked]="includeInactive"
+      i18n="Label for checkbox|e.g. include inactive children"
+    >
+      Also show {{ inactiveFilteredEntities.length }} inactive
+    </mat-checkbox>
   </mat-autocomplete>
 </mat-form-field>

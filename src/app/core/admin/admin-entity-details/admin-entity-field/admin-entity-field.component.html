@@ -14,12 +14,12 @@
         <div class="grid-layout margin-top-regular">
           <div class="entity-form-cell">
             <mat-form-field>
-              <mat-label>Label</mat-label>
+              <mat-label i18n>Label</mat-label>
               <input formControlName="label" matInput #formLabel />
             </mat-form-field>
 
             <mat-form-field floatLabel="always">
-              <mat-label>
+              <mat-label i18n>
                 Label (short)
                 <fa-icon
                   icon="question-circle"
@@ -84,12 +84,7 @@
             </mat-form-field>
 
             <!-- "additional" for enum datatype -->
-            <mat-form-field
-              *ngIf="
-                typeAdditionalOptions &&
-                formDataType.value === 'configurable-enum'
-              "
-            >
+            <mat-form-field *ngIf="formDataType.value === 'configurable-enum'">
               <mat-label i18n>
                 Type Details (dropdown options set)
                 <fa-icon
@@ -101,7 +96,7 @@
 
               <app-basic-autocomplete
                 formControlName="additional"
-                [options]="typeAdditionalOptions ?? []"
+                [options]="typeAdditionalOptions"
                 [optionToString]="objectToLabel"
                 [valueMapper]="objectToValue"
                 [createOption]="createNewAdditionalOption"
@@ -119,7 +114,7 @@
             <!-- "additional" for entity ref datatypes -->
             <mat-form-field
               *ngIf="
-                (typeAdditionalOptions && formDataType.value === 'entity') ||
+                formDataType.value === 'entity' ||
                 formDataType.value === 'entity-array'
               "
             >
@@ -134,7 +129,7 @@
 
               <app-basic-autocomplete
                 formControlName="additional"
-                [options]="typeAdditionalOptions ?? []"
+                [options]="typeAdditionalOptions"
                 [optionToString]="objectToLabel"
                 [valueMapper]="objectToValue"
                 [createOption]="createNewAdditionalOption"
@@ -183,6 +178,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions>
-  <button mat-button (click)="save()">Save</button>
-  <button mat-button mat-dialog-close>Cancel</button>
+  <button mat-button (click)="save()" i18n="Button label">Save</button>
+  <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
 </mat-dialog-actions>

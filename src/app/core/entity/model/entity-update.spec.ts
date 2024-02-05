@@ -29,11 +29,11 @@ describe("entity-update", () => {
       type: "new",
     });
     expect(newEntities).toHaveSize(existingEntities.length + 1);
-    expect(newEntities.find((e) => e.getId() === "n6")).toBeDefined();
+    expect(newEntities.find((e) => e.getId(true) === "n6")).toBeDefined();
   });
 
   it("updates the entity-list when an existing entity should be updated", () => {
-    const indexOfN2 = existingEntities.findIndex((e) => e.getId() === "n2");
+    const indexOfN2 = existingEntities.findIndex((e) => e.getId(true) === "n2");
     const newEntities = applyUpdate<TestEntity>(existingEntities, {
       entity: new TestEntity("n2", 2),
       type: "update",
@@ -49,7 +49,7 @@ describe("entity-update", () => {
       type: "remove",
     });
     expect(newEntities).toHaveSize(oldLength - 1);
-    expect(newEntities.findIndex((e) => e.getId() === "n2")).toBe(-1);
+    expect(newEntities.findIndex((e) => e.getId(true) === "n2")).toBe(-1);
   });
 
   it("does not change the list when the passed updated-entity is illegal", () => {
@@ -66,10 +66,14 @@ describe("entity-update", () => {
   });
 
   it("does not change the list when an updated entity is not in the list", () => {
-    const newEntities = applyUpdate<TestEntity>(existingEntities, {
-      entity: new TestEntity("n6", 1),
-      type: "update",
-    });
+    const newEntities = applyUpdate<TestEntity>(
+      existingEntities,
+      {
+        entity: new TestEntity("n6", 1),
+        type: "update",
+      },
+      false,
+    );
     expect(newEntities).toEqual(existingEntities);
   });
 

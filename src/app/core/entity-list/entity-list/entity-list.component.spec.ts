@@ -20,6 +20,7 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatTabGroupHarness } from "@angular/material/tabs/testing";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { UpdatedEntity } from "../../entity/model/entity-update";
 
 describe("EntityListComponent", () => {
   let component: EntityListComponent<Entity>;
@@ -45,7 +46,7 @@ describe("EntityListComponent", () => {
       groups: [
         {
           name: "Basic Info",
-          columns: ["projectNumber", "name", "age", "gender", "religion"],
+          columns: ["projectNumber", "name", "age", "gender"],
         },
         {
           name: "School Info",
@@ -60,13 +61,9 @@ describe("EntityListComponent", () => {
         default: "true",
         true: "Currently active children",
         false: "Currently inactive children",
-        all: "All children",
       } as BooleanFilterConfig,
       {
         id: "center",
-      },
-      {
-        id: "religion",
       },
     ],
   };
@@ -109,13 +106,7 @@ describe("EntityListComponent", () => {
     createComponent();
     initComponentInputs();
     tick();
-    expect(component.columns).toEqual([
-      ...testConfig.columns,
-      "projectNumber",
-      "name",
-      "gender",
-      "religion",
-    ]);
+    expect(component.columns).toEqual([...testConfig.columns]);
   }));
 
   it("should create column groups from config and set correct one", fakeAsync(() => {
@@ -153,7 +144,7 @@ describe("EntityListComponent", () => {
     expect(component.columnsToDisplay).toEqual(clickedColumnGroup.columns);
   });
 
-  it("should add and initialize columns which are only mentioned in the columnGroups", fakeAsync(() => {
+  it("should allow to use entity fields which are only mentioned in the columnGroups", fakeAsync(() => {
     createComponent();
     initComponentInputs();
     tick();
@@ -173,21 +164,17 @@ describe("EntityListComponent", () => {
         },
       ],
       columnGroups: {
-        groups: [
-          { name: "One", columns: ["anotherColumn"] },
-          { name: "Both", columns: ["testProperty", "anotherColumn"] },
-        ],
+        groups: [{ name: "Both", columns: ["testProperty", "anotherColumn"] }],
       },
     };
 
     component.ngOnChanges({ listConfig: null });
     tick();
 
-    expect(
-      component.columns.map((col) => (typeof col === "string" ? col : col.id)),
-    ).toEqual(
-      jasmine.arrayWithExactContents(["testProperty", "anotherColumn"]),
-    );
+    expect(component.columnsToDisplay).toEqual([
+      "testProperty",
+      "anotherColumn",
+    ]);
   }));
 
   it("should automatically initialize values if directly referenced from config", fakeAsync(() => {
@@ -228,16 +215,49 @@ describe("EntityListComponent", () => {
     expect(navigateSpy).toHaveBeenCalled();
   });
 
+  it("should add a new entity that was created after the initial loading to the table", fakeAsync(() => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    createComponent();
+    initComponentInputs();
+    tick();
+
+    const entity = new Child();
+    entityUpdates.next({ entity: entity, type: "new" });
+    tick();
+
+    expect(component.allEntities).toEqual([entity]);
+  }));
+
+  it("should remove an entity from the table when it has been deleted", fakeAsync(() => {
+    const entityUpdates = new Subject<UpdatedEntity<Entity>>();
+    const entityMapper = TestBed.inject(EntityMapperService);
+    spyOn(entityMapper, "receiveUpdates").and.returnValue(entityUpdates);
+    const entity = new Child();
+    createComponent();
+    initComponentInputs();
+    tick();
+
+    component.allEntities = [entity];
+    entityUpdates.next({ entity: entity, type: "remove" });
+    tick();
+
+    expect(component.allEntities).toEqual([]);
+  }));
+
   function createComponent() {
     fixture = TestBed.createComponent(EntityListComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
+
+    component.entityConstructor = Child;
+
     fixture.detectChanges();
   }
 
   async function initComponentInputs() {
     component.listConfig = testConfig;
-    component.entityConstructor = Child;
     await component.ngOnChanges({
       allEntities: undefined,
       listConfig: undefined,

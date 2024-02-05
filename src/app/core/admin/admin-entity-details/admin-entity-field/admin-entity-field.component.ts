@@ -37,13 +37,13 @@ import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype"
 import { EntityArrayDatatype } from "../../../basic-datatypes/entity-array/entity-array.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { uniqueIdValidator } from "../../../common-components/entity-form/unique-id-validator";
 import { AdminEntityService } from "../../admin-entity.service";
 import { ConfigureEnumPopupComponent } from "../../../basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component";
 import { ConfigurableEnum } from "../../../basic-datatypes/configurable-enum/configurable-enum";
 import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/generate-id-from-label";
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
+import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -83,7 +83,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
   schemaFieldsForm: FormGroup;
   additionalForm: FormControl;
-  typeAdditionalOptions: SimpleDropdownValue[];
+  typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
 
   constructor(
@@ -115,10 +115,12 @@ export class AdminEntityFieldComponent implements OnChanges {
   }
 
   private initSettings() {
-    this.fieldIdForm = this.fb.control(this.fieldId, [
-      Validators.required,
-      uniqueIdValidator(Array.from(this.entityType.schema.keys())),
-    ]);
+    this.fieldIdForm = this.fb.control(this.fieldId, {
+      validators: [Validators.required],
+      asyncValidators: [
+        uniqueIdValidator(Array.from(this.entityType.schema.keys())),
+      ],
+    });
     this.additionalForm = this.fb.control(this.entitySchemaField.additional);
 
     this.schemaFieldsForm = this.fb.group({
@@ -257,7 +259,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   private resetAdditional() {
     this.additionalForm.removeValidators(Validators.required);
     this.additionalForm.reset(null);
-    this.typeAdditionalOptions = undefined;
+    this.typeAdditionalOptions = [];
     this.createNewAdditionalOption = undefined;
   }
 
