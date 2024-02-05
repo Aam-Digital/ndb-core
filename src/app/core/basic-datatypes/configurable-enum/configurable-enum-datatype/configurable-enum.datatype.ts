@@ -36,6 +36,10 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype<
     value: string,
     schemaField: EntitySchemaField,
   ): ConfigurableEnumValue {
+    if (value === undefined) {
+      return undefined;
+    }
+
     let enumId = schemaField.additional || schemaField.innerDataType;
     let enumOption = this.enumService
       .getEnumValues(enumId)

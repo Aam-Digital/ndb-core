@@ -20,6 +20,7 @@ import { DatabaseEntity } from "../../../../core/entity/database-entity.decorato
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import { WarningLevel } from "../../../warning-level";
 import { Child } from "../../model/child";
+import { PLACEHOLDERS } from "../../../../core/entity/schema/entity-schema-field";
 
 /**
  * Model Class for the Health Checks that are taken for a Child.
@@ -44,6 +45,7 @@ export class HealthCheck extends Entity {
   @DatabaseField({
     label: $localize`:Label for date of a health check:Date`,
     anonymize: "retain-anonymized",
+    defaultValue: PLACEHOLDERS.NOW,
   })
   date: Date;
 
@@ -63,8 +65,12 @@ export class HealthCheck extends Entity {
   })
   weight: number;
 
+  /**
+   * dynamically calculated BMI value based on the height and weight, rounded to 2 decimal digits
+   */
   get bmi(): number {
-    return this.weight / ((this.height / 100) * (this.height / 100));
+    const bmi = this.weight / ((this.height / 100) * (this.height / 100));
+    return Math.round(bmi * 100) / 100;
   }
 
   getWarningLevel(): WarningLevel {

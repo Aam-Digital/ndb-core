@@ -13,6 +13,7 @@ import { RelatedEntitiesComponent } from "../../../core/entity-details/related-e
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { FilterService } from "../../../core/filter/filter.service";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -35,9 +36,6 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
     { id: "completed", hideFromForm: true },
   ];
 
-  /** the property name of the entity that contains the ids referencing related entities */
-  private referenceProperty: keyof Todo & string = "relatedEntities";
-
   // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
   override filter: DataFilter<Todo> = { isActive: true };
   backgroundColorFn = (r: Todo) => {
@@ -53,26 +51,28 @@ export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo
     private dbIndexingService: DatabaseIndexingService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    screenWidthOberserver: ScreenWidthObserver,
+    screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
   ) {
-    super(entityMapper, entities, screenWidthOberserver);
+    super(entityMapper, entities, screenWidthObserver, filterService);
+  }
+
+  override getData() {
+    if (Array.isArray(this.property)) {
+      return super.getData();
+    }
+
     // TODO: move this generic index creation into schema
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",
       Todo,
-      this.referenceProperty,
+      this.property as keyof Todo,
       "deadline",
     );
-  }
-
-  override async initData() {
-    this.data = await this.loadDataFor(this.entity.getId());
-  }
-
-  private async loadDataFor(entityId: string): Promise<Todo[]> {
+    const entityId = this.entity.getId();
     return this.dbIndexingService.queryIndexDocs(
       Todo,
-      "todo_index/by_" + this.referenceProperty,
+      "todo_index/by_" + this.property,
       {
         startkey: [entityId, "\uffff"],
         endkey: [entityId],

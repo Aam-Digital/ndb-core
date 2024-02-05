@@ -137,6 +137,17 @@ describe("Schema data type: configurable-enum", () => {
     });
   });
 
+  it("should not expand 'undefined' into a full INVALID_OPTION enum object", () => {
+    const dataType = new ConfigurableEnumDatatype(enumService);
+
+    const undefinedToObjectFormat = dataType.transformToObjectFormat(
+      undefined,
+      TestEntity.schema.get("option"),
+    );
+
+    expect(undefinedToObjectFormat).toBeUndefined();
+  });
+
   it("should map values using importMappingFunction", () => {
     const dataType = new ConfigurableEnumDatatype(enumService);
     enumService.getEnumValues.and.returnValue(genders);

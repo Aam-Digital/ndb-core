@@ -45,7 +45,6 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
 
   @Input() single = true;
   @Input() showInactive = false;
-  @Input() clickMode: "popup" | "navigate" = "popup";
 
   @Input() set columns(value: FormFieldConfig[]) {
     this._columns = [...value, isActiveIndicator];
@@ -65,20 +64,10 @@ export class RelatedTimePeriodEntitiesComponent<E extends TimePeriod>
 
   async ngOnInit() {
     await super.ngOnInit();
-    this.onIsActiveFilterChange();
-  }
-
-  onIsActiveFilterChange() {
     this.hasCurrentlyActiveEntry = this.data.some((record) => record.isActive);
-
-    if (this.showInactive) {
-      this.backgroundColorFn = (r: E) => r.getColor();
-    } else {
-      this.backgroundColorFn = undefined; // Do not highlight active ones when only active are shown
-    }
   }
 
-  generateNewRecordFactory() {
+  override createNewRecordFactory() {
     return () => {
       const newRelation = super.createNewRecordFactory()();
 

@@ -77,4 +77,18 @@ describe("Utils", () => {
       [{ id: "b", label: "B" }, [third]],
     ]);
   });
+
+  it("should group by individual elements within the property, if group by property is an array", () => {
+    const first = { categories: ["a"] };
+    const second = { categories: ["a", "b"] };
+    const third = { categories: [] };
+
+    const groups = groupBy([first, second, third], "categories");
+
+    expect(groups).toEqual([
+      ["a", [first, second]],
+      ["b", [second]],
+      [undefined, [third]],
+    ]);
+  });
 });

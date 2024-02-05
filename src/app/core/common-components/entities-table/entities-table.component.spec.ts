@@ -18,6 +18,7 @@ import { of } from "rxjs";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
+import { Router } from "@angular/router";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -272,5 +273,20 @@ describe("EntitiesTableComponent", () => {
     expect(
       component._columns.find((c) => c.id === "children").noSorting,
     ).toBeTrue();
+  });
+
+  it("should navigate to '/new' route on newly created entities", () => {
+    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
+    component.clickMode = "navigate";
+
+    const child = new Child();
+    expect(child.isNew).toBeTrue();
+    component.showEntity(child);
+    expect(navigateSpy).toHaveBeenCalledWith(["/child", "new"]);
+
+    child._rev = "1-existing";
+    expect(child.isNew).toBeFalse();
+    component.showEntity(child);
+    expect(navigateSpy).toHaveBeenCalledWith(["/child", child.getId(true)]);
   });
 });
