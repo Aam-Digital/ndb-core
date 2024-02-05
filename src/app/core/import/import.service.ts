@@ -156,6 +156,9 @@ export class ImportService {
         }
 
         const parsed = await this.parseRow(row[col], mapping, entity);
+        if (parsed === undefined) {
+          continue;
+        }
 
         // ignoring falsy values except 0 (=> null, undefined, empty string)
         if (!!parsed || parsed === 0) {
@@ -177,8 +180,11 @@ export class ImportService {
   }
 
   private parseRow(val: any, mapping: ColumnMapping, entity: Entity) {
-    const schema = entity.getSchema().get(mapping.propertyName);
+    if (val === undefined || val === null) {
+      return undefined;
+    }
 
+    const schema = entity.getSchema().get(mapping.propertyName);
     if (!schema) {
       return undefined;
     }
