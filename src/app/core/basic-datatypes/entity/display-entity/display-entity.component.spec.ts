@@ -86,13 +86,13 @@ describe("DisplayEntityComponent", () => {
   it("should log a warning if entity cannot be loaded", async () => {
     const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
     const child = new Child("not_existing");
-    component.entityId = child.getId(true);
+    component.entityId = child.getId();
     component.config = School.ENTITY_TYPE;
 
     await component.ngOnInit();
 
     expect(warnSpy).toHaveBeenCalledWith(
-      jasmine.stringContaining(child.getId(true)),
+      jasmine.stringContaining(child.getId()),
     );
     expect(component.entityToDisplay).toBeUndefined();
   });

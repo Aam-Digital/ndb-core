@@ -33,7 +33,7 @@ export class EditSingleEntityComponent
   implements OnInit
 {
   entities: Entity[] = [];
-  entityToId = (e: Entity) => e?.getId(true);
+  entityToId = (e: Entity) => e?.getId();
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -46,12 +46,7 @@ export class EditSingleEntityComponent
     super.ngOnInit();
     const availableEntities = await this.entityMapper.loadType(this.additional);
     const selected = this.formControl.value;
-    if (
-      selected &&
-      !availableEntities.some(
-        (e) => e.getId(true) === selected || e.getId() === selected,
-      )
-    ) {
+    if (selected && !availableEntities.some((e) => e.getId() === selected)) {
       try {
         const type = Entity.extractTypeFromId(selected);
         const entity = await this.entityMapper.load(type, selected);

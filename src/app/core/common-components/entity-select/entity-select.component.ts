@@ -87,9 +87,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   private async initSelectedEntities(selected: string[]) {
     const entities: E[] = [];
     for (const s of selected) {
-      const found = this.allEntities.find(
-        (e) => s === e.getId(true) || s === e.getId(),
-      );
+      const found = this.allEntities.find((e) => s === e.getId());
       if (found) {
         entities.push(found);
       } else {
