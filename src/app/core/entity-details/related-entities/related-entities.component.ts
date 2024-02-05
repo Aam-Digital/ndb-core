@@ -3,7 +3,6 @@ import { DynamicComponent } from "../../config/dynamic-components/dynamic-compon
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { applyUpdate } from "../../entity/model/entity-update";
@@ -17,6 +16,10 @@ import {
   toFormFieldConfig,
 } from "../../common-components/entity-form/FormConfig";
 import { DataFilter } from "../../filter/filters/filters";
+import { FilterService } from "../../filter/filter.service";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
+import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -39,11 +42,21 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   /**
-   * property name of the related entities (type given in this.entityType) that holds the entity id
-   * to be matched with the id of the current main entity (given in this.entity)
+   * Property name of the related entities (type given in this.entityType) that holds the entity id
+   * to be matched with the id of the current main entity (given in this.entity).
+   * If not explicitly set, this will be inferred based on the defined relations between the entities.
+   *
+   * manually setting this is only necessary if you have multiple properties referencing the same entity type
+   * and you want to list only records related to one of them.
+   * For example: if you set `entityType = "Project"` (to display a list of projects here) and the Project entities have a properties "participants" and "supervisors" both storing references to User entities,
+   * you can set `property = "supervisors"` to only list those projects where the current User is supervisors, not participant.
    */
-  @Input() property: string;
+  @Input() property: string | string[];
 
+  /**
+   * Columns to be displayed in the table
+   * @param value
+   */
   @Input()
   public set columns(value: ColumnConfig[]) {
     if (!Array.isArray(value)) {
@@ -57,20 +70,26 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   columnsToDisplay: string[];
 
+  /**
+   * This filter is applied before displaying the data.
+   */
   @Input() filter?: DataFilter<E>;
 
+  /**
+   * Whether inactive/archived records should be shown.
+   */
   @Input() showInactive: boolean;
 
   @Input() clickMode: "popup" | "navigate" = "popup";
 
   data: E[];
-  private isArray = false;
   protected entityCtr: EntityConstructor<E>;
 
   constructor(
     protected entityMapper: EntityMapperService,
     private entityRegistry: EntityRegistry,
     private screenWidthObserver: ScreenWidthObserver,
+    protected filterService: FilterService,
   ) {
     this.screenWidthObserver
       .shared()
@@ -79,30 +98,60 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   async ngOnInit() {
-    await this.initData();
+    this.property = this.property ?? this.getProperty();
+    this.data = await this.getData();
+    this.filter = this.initFilter();
+
+    if (this.showInactive === undefined) {
+      // show all related docs when visiting an archived entity
+      this.showInactive = this.entity.anonymized;
+    }
+
     this.listenToEntityUpdates();
   }
 
-  protected async initData() {
-    this.isArray = isArrayProperty(this.entityCtr, this.property);
+  protected getData(): Promise<E[]> {
+    return this.entityMapper.loadType(this.entityCtr);
+  }
 
-    this.filter = {
-      ...this.filter,
-      [this.property]: this.isArray
-        ? { $elemMatch: { $eq: this.entity.getId() } }
-        : this.entity.getId(),
-    };
-
-    this.data = (await this.entityMapper.loadType<E>(this.entityCtr)).filter(
-      (e) =>
-        this.isArray
-          ? e[this.property]?.includes(this.entity.getId())
-          : e[this.property] === this.entity.getId(),
+  protected getProperty(): string | string[] {
+    const relType = this.entity.getType();
+    const found = [...this.entityCtr.schema].filter(
+      ([, { dataType, additional }]) => {
+        const entityDatatype =
+          dataType === EntityDatatype.dataType ||
+          dataType === EntityArrayDatatype.dataType;
+        return entityDatatype && Array.isArray(additional)
+          ? additional.includes(relType)
+          : additional === relType;
+      },
     );
+    return found.length === 1 ? found[0][0] : found.map(([key]) => key);
+  }
 
-    if (this.showInactive === undefined) {
-      this.showInactive = this.entity.anonymized;
+  protected initFilter(): DataFilter<E> {
+    const filter: DataFilter<E> = { ...this.filter };
+
+    if (this.property) {
+      // only show related entities
+      if (typeof this.property === "string") {
+        Object.assign(filter, this.getFilterForProperty(this.property));
+      } else if (this.property.length > 0) {
+        filter["$or"] = this.property.map((prop) =>
+          this.getFilterForProperty(prop),
+        );
+      }
     }
+
+    return filter;
+  }
+
+  private getFilterForProperty(property: string) {
+    const isArray = isArrayProperty(this.entityCtr, property);
+    const filter = isArray
+      ? { $elemMatch: { $eq: this.entity.getId() } }
+      : this.entity.getId();
+    return { [property]: filter };
   }
 
   protected listenToEntityUpdates() {
@@ -115,12 +164,9 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   createNewRecordFactory() {
-    // TODO has a similar purpose like FilterService.alignEntityWithFilter
     return () => {
       const rec = new this.entityCtr();
-      rec[this.property] = this.isArray
-        ? [this.entity.getId()]
-        : this.entity.getId();
+      this.filterService.alignEntityWithFilter(rec, this.filter);
       return rec;
     };
   }

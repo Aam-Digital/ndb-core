@@ -66,10 +66,17 @@ export class FilterService {
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
     const schema = entity.getSchema();
     Object.entries(filter ?? {}).forEach(([key, value]) => {
-      // TODO support arrays through recursion
       if (typeof value !== "object") {
         // only simple equality filters are automatically applied to new entities, complex conditions (e.g. $lt / $gt) are ignored)
         this.assignValueToEntity(key, value, schema, entity);
+      } else if (value["$elemMatch"]?.["$eq"]) {
+        // e.g. { children: { $elemMatch: { $eq: "Child:some-id" } } }
+        this.assignValueToEntity(
+          key,
+          [value["$elemMatch"]["$eq"]],
+          schema,
+          entity,
+        );
       }
     });
   }
@@ -85,6 +92,12 @@ export class FilterService {
       [key, value] = this.transformNestedKey(key, value);
     }
     const property = schema.get(key);
+
+    if (!property) {
+      // not a schema property
+      return;
+    }
+
     if (property?.dataType === "configurable-enum") {
       value = this.parseConfigurableEnumValue(property, value);
     }

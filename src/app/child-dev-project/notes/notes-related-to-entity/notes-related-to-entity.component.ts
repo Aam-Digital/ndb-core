@@ -2,13 +2,11 @@ import { Component } from "@angular/core";
 import { Note } from "../model/note";
 import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ChildrenService } from "../../children/children.service";
-import moment from "moment";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Entity } from "../../../core/entity/model/entity";
 import { FilterService } from "../../../core/filter/filter.service";
 import { Child } from "../../children/model/child";
-import { School } from "../../schools/model/school";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
@@ -46,17 +44,17 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
    * @param note note to get color for
    */
   getColor = (note: Note) => note?.getColor();
-  newRecordFactory = this.generateNewRecordFactory();
+  newRecordFactory = this.createNewRecordFactory();
 
   constructor(
     private childrenService: ChildrenService,
     private formDialog: FormDialogService,
-    private filterService: FilterService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    screenWidthOberserver: ScreenWidthObserver,
+    screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
   ) {
-    super(entityMapper, entities, screenWidthOberserver);
+    super(entityMapper, entities, screenWidthObserver, filterService);
   }
 
   override ngOnInit() {
@@ -67,31 +65,15 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
     return super.ngOnInit();
   }
 
-  override async initData() {
-    this.data = await this.childrenService
-      .getNotesRelatedTo(this.entity.getId())
-      .then((notes: Note[]) => {
-        notes.sort((a, b) => {
-          if (!a.date && b.date) {
-            // note without date should be first
-            return -1;
-          }
-          return moment(b.date).valueOf() - moment(a.date).valueOf();
-        });
-        return notes;
-      });
+  override getData() {
+    return this.childrenService.getNotesRelatedTo(this.entity.getId());
   }
 
-  generateNewRecordFactory() {
+  override createNewRecordFactory() {
     return () => {
-      const newNote = new Note(Date.now().toString());
-
+      const newNote = super.createNewRecordFactory()();
       //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
-      if (this.entity.getType() === Child.ENTITY_TYPE) {
-        newNote.addChild(this.entity as Child);
-      } else if (this.entity.getType() === School.ENTITY_TYPE) {
-        newNote.addSchool(this.entity as School);
-      } else if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
+      if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
         newNote.addChild((this.entity as ChildSchoolRelation).childId);
         newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
       }
@@ -100,8 +82,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
       this.getIndirectlyRelatedEntityIds(this.entity).forEach((e) =>
         newNote.relatedEntities.push(e),
       );
-
-      this.filterService.alignEntityWithFilter(newNote, this.filter);
 
       return newNote;
     };

@@ -34,7 +34,7 @@ import { EntitiesTableComponent } from "../../../core/common-components/entities
   standalone: true,
 })
 export class AttendanceDetailsComponent {
-  @Input() entity: ActivityAttendance = new ActivityAttendance();
+  @Input() entity: ActivityAttendance;
   @Input() forChild: string;
   EventNote = EventNote;
 

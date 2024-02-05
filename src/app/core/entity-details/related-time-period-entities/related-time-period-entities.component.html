@@ -9,10 +9,8 @@
   [records]="data"
   [filter]="filter"
   [customColumns]="_columns"
-  [newRecordFactory]="generateNewRecordFactory()"
-  [getBackgroundColor]="
-    hasCurrentlyActiveEntry && showInactive ? backgroundColorFn : undefined
-  "
+  [newRecordFactory]="createNewRecordFactory()"
+  [getBackgroundColor]="showInactive ? backgroundColorFn : undefined"
   [clickMode]="clickMode"
   [(showInactive)]="showInactive"
 >

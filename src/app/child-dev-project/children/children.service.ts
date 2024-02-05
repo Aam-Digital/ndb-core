@@ -3,7 +3,6 @@ import { Child } from "./model/child";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { Note } from "../notes/model/note";
 import { ChildSchoolRelation } from "./model/childSchoolRelation";
-import { HealthCheck } from "./health-checkup/model/health-check";
 import moment, { Moment } from "moment";
 import { DatabaseIndexingService } from "../../core/entity/database-indexing/database-indexing.service";
 import { Entity } from "../../core/entity/model/entity";
@@ -212,7 +211,7 @@ export class ChildrenService {
             if (!Array.isArray(doc.children) || !doc.date) return;
             if (doc.date.length === 10) {
               emit(doc.date);
-            } else {            
+            } else {
               var d = new Date(doc.date || null);
               emit(d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0"));
             }
@@ -240,7 +239,7 @@ export class ChildrenService {
             var dString;
             if (doc.date && doc.date.length === 10) {
               dString = doc.date;
-            } else {            
+            } else {
               var d = new Date(doc.date || null);
               dString = d.getFullYear() + "-" + String(d.getMonth()+1).padStart(2, "0") + "-" + String(d.getDate()).padStart(2, "0");
             }
@@ -262,16 +261,5 @@ export class ChildrenService {
         doc.${property}.forEach(val => emit(val));
       }`,
     };
-  }
-
-  /**
-   *
-   * @param childId should be set in the specific components and is passed by the URL as a parameter
-   * This function should be considered refactored and should use a index, once they're made generic
-   */
-  getHealthChecksOfChild(childId: string): Promise<HealthCheck[]> {
-    return this.entityMapper
-      .loadType(HealthCheck)
-      .then((res) => res.filter((h) => h.child === childId));
   }
 }
