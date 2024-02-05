@@ -201,7 +201,7 @@ export class EntityFormService {
         newVal = new Date();
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.currentUser.value.getId(true);
+        newVal = this.currentUser.value.getId();
         break;
       default:
         newVal = schema.defaultValue;

@@ -134,8 +134,8 @@ describe("EntitySelectComponent", () => {
     component.unselectEntity(testUsers[0]);
 
     const remainingUsers = testUsers
-      .filter((u) => u.getId() !== testUsers[0].getId())
-      .map((u) => u.getId(true));
+      .map((u) => u.getId())
+      .filter((id) => id !== testUsers[0].getId());
     expect(component.selectionChange.emit).toHaveBeenCalledWith(remainingUsers);
   });
 
@@ -325,11 +325,15 @@ describe("EntitySelectComponent", () => {
 
   it("should show selected entities of type that is not configured", fakeAsync(() => {
     component.entityType = [User.ENTITY_TYPE];
-    component.selection = [testUsers[0].getId(), testChildren[0].getId(true)];
+    component.selection = [testUsers[0].getId(), testChildren[0].getId()];
     tick();
     fixture.detectChanges();
-    expect(component.selectedEntities).toEqual([testUsers[0], testChildren[0]]);
-    expect(component.allEntities).toEqual(testUsers);
+    expect(component.selectedEntities).toEqual(
+      jasmine.arrayWithExactContents([testUsers[0], testChildren[0]]),
+    );
+    expect(component.allEntities).toEqual(
+      jasmine.arrayWithExactContents(testUsers),
+    );
     expect(component.filteredEntities).toEqual(
       jasmine.arrayWithExactContents(testUsers.slice(1)),
     );

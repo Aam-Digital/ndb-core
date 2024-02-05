@@ -62,7 +62,7 @@ describe("EditSingleEntityComponent", () => {
     const selectedChild = new Child();
     await entityMapper.saveAll(someSchools.concat(selectedChild));
     component.formFieldConfig.additional = School.ENTITY_TYPE;
-    component.formControl.setValue(selectedChild.getId(true));
+    component.formControl.setValue(selectedChild.getId());
 
     await component.ngOnInit();
 

@@ -41,10 +41,10 @@ describe("DisplayTodoCompletionComponent", () => {
     entityMapper.addAll([completingChild, otherChild]);
 
     component.value = {
-      completedBy: completingChild.getId(true),
+      completedBy: completingChild.getId(),
       completedAt: new Date(),
     };
-    component.ngOnChanges({ value: true } as any);
+    component.ngOnInit();
     tick();
 
     expect(component.completedBy).toEqual(completingChild);
@@ -56,10 +56,10 @@ describe("DisplayTodoCompletionComponent", () => {
     entityMapper.addAll([completingUser, otherUser]);
 
     component.value = {
-      completedBy: completingUser.getId(),
+      completedBy: completingUser.getId(true),
       completedAt: new Date(),
     };
-    component.ngOnChanges({ value: true } as any);
+    component.ngOnInit();
     tick();
 
     expect(component.completedBy).toEqual(completingUser);

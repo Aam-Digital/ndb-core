@@ -105,7 +105,7 @@ describe("DisplayEntityArrayComponent", () => {
     const existingChild = testEntities.find(
       (e) => e.getType() === Child.ENTITY_TYPE,
     );
-    component.value = [existingChild.getId(true)];
+    component.value = [existingChild.getId()];
 
     await component.ngOnInit();
 

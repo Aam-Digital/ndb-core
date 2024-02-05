@@ -75,7 +75,7 @@ describe("DisplayEntityComponent", () => {
   it("should show entities which are not of the configured type", async () => {
     const child = new Child();
     entityMapper.add(child);
-    component.entityId = child.getId(true);
+    component.entityId = child.getId();
     component.config = School.ENTITY_TYPE;
 
     await component.ngOnInit();
