@@ -45,6 +45,11 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
    * Property name of the related entities (type given in this.entityType) that holds the entity id
    * to be matched with the id of the current main entity (given in this.entity).
    * If not explicitly set, this will be inferred based on the defined relations between the entities.
+   *
+   * manually setting this is only necessary if you have multiple properties referencing the same entity type
+   * and you want to list only records related to one of them.
+   * For example: if you set `entityType = "Project"` (to display a list of projects here) and the Project entities have a properties "participants" and "supervisors" both storing references to User entities,
+   * you can set `property = "supervisors"` to only list those projects where the current User is supervisors, not participant.
    */
   @Input() property: string | string[];
 
