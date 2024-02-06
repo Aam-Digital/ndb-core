@@ -90,16 +90,6 @@
   <form [formGroup]="form">
     <div>
       <mat-form-field>
-        <mat-label i18n="label of username input">Username</mat-label>
-        <input matInput type="text" formControlName="username" />
-        <mat-error *ngIf="form.hasError('required', 'username')" i18n>
-          This field is required
-        </mat-error>
-      </mat-form-field>
-    </div>
-
-    <div>
-      <mat-form-field>
         <mat-label i18n="label of email input">Email</mat-label>
         <input matInput type="text" formControlName="email" />
         <mat-error *ngIf="form.hasError('email', 'email')" i18n>

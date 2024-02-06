@@ -68,6 +68,8 @@ export class UserSecurityComponent implements OnInit {
       )
     ) {
       this.userIsPermitted = true;
+    } else {
+      return;
     }
     // automatically skip trailing and leading whitespaces when the form changes
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((next) => {
@@ -92,16 +94,17 @@ export class UserSecurityComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form.get("username").setValue(this.entity.toString());
-    if (this.authService) {
-      this.authService
-        .getUser(this.entity.getId(true))
-        .pipe(catchError(() => this.authService.getUser(this.entity.getId())))
-        .subscribe({
-          next: (res) => this.assignUser(res),
-          error: () => undefined,
-        });
+    if (!this.userIsPermitted) {
+      return;
     }
+    this.form.get("username").setValue(this.entity.getId());
+    this.authService
+      .getUser(this.entity.getId(true))
+      .pipe(catchError(() => this.authService.getUser(this.entity.getId())))
+      .subscribe({
+        next: (res) => this.assignUser(res),
+        error: () => undefined,
+      });
   }
 
   private assignUser(user: KeycloakUser) {
@@ -147,6 +150,9 @@ export class UserSecurityComponent implements OnInit {
 
   createAccount() {
     const user = this.getFormValues();
+    if (!user) {
+      return;
+    }
     user.enabled = true;
     if (user) {
       this.authService.createUser(user).subscribe({
