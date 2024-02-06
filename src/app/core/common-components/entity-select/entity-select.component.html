@@ -5,7 +5,7 @@
     #inputField
     matInput
     [hidden]="!formControl.enabled"
-    [placeholder]="inputPlaceholder"
+    [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
     [formControl]="formControl"
     [matAutocomplete]="autoSuggestions"
     [matChipInputFor]="chipList"

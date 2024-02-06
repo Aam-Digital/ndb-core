@@ -21,7 +21,7 @@ import {
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-entity/display-entity.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -44,6 +44,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
     MatTooltipModule,
     MatInputModule,
     MatCheckboxModule,
+    AsyncPipe,
   ],
   standalone: true,
 })
@@ -92,17 +93,20 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   /** Underlying data-array */
   selectedEntities: E[] = [];
+
   /**
    * called whenever the selection changes.
    * This happens when a new entity is being added or an existing
    * one is removed
    */
   @Output() selectionChange = new EventEmitter<string[]>();
+
   /**
    * The label is what is seen above the list. For example when used
    * in the note-details-view, this is "Children"
    */
   @Input() label: string;
+
   /**
    * The placeholder is what is seen when someone clicks into the input-
    * field and adds new entities.
@@ -110,19 +114,21 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * The placeholder is only displayed if `loading === false`
    */
   @Input() placeholder: string;
+
   /**
-   * Whether or not single chips (entity-views) are selectable.
+   * Whether single chips (entity-views) are selectable.
    * This currently has no specific meaning and defaults to <code>false</code>
    */
   @Input() selectable = false;
+
   /**
-   * Whether or not single chips (entity-views) are removable.
+   * Whether single chips (entity-views) are removable.
    * If this is the case, they can be deleted.
    */
   @Input() removable = true;
 
   /**
-   * Whether or not to show entities in the list.
+   * Whether to show entities in the list.
    * Entities can still be selected using the autocomplete,
    * and {@link selection} as well as {@link selectionChange} will
    * still work as expected
@@ -148,8 +154,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    */
   loading = new BehaviorSubject(true);
 
-  inputPlaceholder = this.loadingPlaceholder;
-
   allEntities: E[] = [];
   entitiesPassingAdditionalFilter: E[] = [];
   filteredEntities: E[] = [];
@@ -168,11 +172,6 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         map((searchText?: string) => this.filter(searchText)),
       )
       .subscribe((value) => (this.filteredEntities = value));
-    this.loading.pipe(untilDestroyed(this)).subscribe((isLoading) => {
-      this.inputPlaceholder = isLoading
-        ? this.loadingPlaceholder
-        : this.placeholder;
-    });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
