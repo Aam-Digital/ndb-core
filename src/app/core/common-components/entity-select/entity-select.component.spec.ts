@@ -102,7 +102,10 @@ describe("EntitySelectComponent", () => {
   it("discards IDs from initial selection that don't correspond to an existing entity", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
 
-    component.selection = ["not-existing-entity", testUsers[1].getId()];
+    component.selection = [
+      new Child("not-existing").getId(),
+      testUsers[1].getId(),
+    ];
     fixture.detectChanges();
     tick();
 
@@ -358,5 +361,33 @@ describe("EntitySelectComponent", () => {
     tick();
 
     expect(component.selectedEntities).toEqual([testUsers[1], testChildren[0]]);
+  }));
+
+  it("should not request entities of the defined type which were not found", fakeAsync(() => {
+    const loadSpy = spyOn(
+      TestBed.inject(EntityMapperService),
+      "load",
+    ).and.callThrough();
+
+    component.entityType = User.ENTITY_TYPE;
+    const notExistingUser = new User("not-existing-user");
+    component.selection = [
+      testUsers[1].getId(),
+      testChildren[0].getId(),
+      notExistingUser.getId(),
+    ];
+
+    fixture.detectChanges();
+    tick();
+
+    expect(component.selectedEntities).toEqual([testUsers[1], testChildren[0]]);
+    expect(loadSpy).toHaveBeenCalledWith(
+      Child.ENTITY_TYPE,
+      testChildren[0].getId(),
+    );
+    expect(loadSpy).not.toHaveBeenCalledWith(
+      User.ENTITY_TYPE,
+      notExistingUser.getId(),
+    );
   }));
 });

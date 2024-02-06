@@ -63,8 +63,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @throws Error when `type` is not in the entity-map
    */
   @Input() set entityType(type: string | string[]) {
-    this.loadAvailableEntities(Array.isArray(type) ? type : [type]);
+    this._entityType = Array.isArray(type) ? type : [type];
+    this.loadAvailableEntities();
   }
+
+  private _entityType: string[];
 
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
@@ -87,25 +90,29 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   private async initSelectedEntities(selected: string[]) {
     const entities: E[] = [];
     for (const s of selected) {
-      const found = this.allEntities.find((e) => s === e.getId());
-      if (found) {
-        entities.push(found);
-      } else {
-        // missing or entity from other type
-        try {
-          const type = Entity.extractTypeFromId(s);
-          const entity = await this.entityMapperService.load<E>(type, s);
-          entities.push(entity);
-        } catch (e) {
+      await this.getEntity(s)
+        .then((entity) => entities.push(entity))
+        .catch((err: Error) =>
           this.logger.warn(
-            `[ENTITY_SELECT] Could not find entity with ID: ${s}: ${e}`,
-          );
-        }
-      }
+            `[ENTITY_SELECT] Error loading selected entity "${s}": ${err.message}`,
+          ),
+        );
     }
     this.selectedEntities = entities;
     // updating autocomplete values
     this.formControl.setValue(this.formControl.value);
+  }
+
+  private async getEntity(id: string) {
+    const type = Entity.extractTypeFromId(id);
+    const entity = this._entityType.includes(type)
+      ? this.allEntities.find((e) => id === e.getId())
+      : await this.entityMapperService.load<E>(type, id);
+
+    if (!entity) {
+      throw Error(`Entity not found`);
+    }
+    return entity;
   }
 
   /** Underlying data-array */
@@ -216,11 +223,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
-  private async loadAvailableEntities(types: string[]) {
+  private async loadAvailableEntities() {
     this.loading.next(true);
     const entities: E[] = [];
 
-    for (const type of types) {
+    for (const type of this._entityType) {
       entities.push(...(await this.entityMapperService.loadType<E>(type)));
     }
     this.allEntities = entities;
