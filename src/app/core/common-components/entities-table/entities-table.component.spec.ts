@@ -19,6 +19,7 @@ import { CoreTestingModule } from "../../../utils/core-testing.module";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { Router } from "@angular/router";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("EntitiesTableComponent", () => {
   let component: EntitiesTableComponent<Entity>;
@@ -37,6 +38,7 @@ describe("EntitiesTableComponent", () => {
         EntitiesTableComponent,
         CoreTestingModule,
         NoopAnimationsModule,
+        FontAwesomeTestingModule,
       ],
       providers: [
         { provide: EntityFormService, useValue: mockFormService },
