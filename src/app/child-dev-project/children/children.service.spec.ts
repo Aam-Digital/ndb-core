@@ -41,32 +41,27 @@ describe("ChildrenService", () => {
   it("should list newly saved children", async () => {
     const childrenBefore = await service.getChildren();
     const child = new Child("10");
-    await entityMapper.save<Child>(child);
+    await entityMapper.save(child);
     const childrenAfter = await service.getChildren();
 
-    let find = childrenBefore.find((c) => c.getId() === child.getId());
-    expect(find).toBeUndefined();
+    expect(childrenBefore).not.toContain(child);
 
-    find = childrenAfter.find((c) => c.getId() === child.getId());
-    expect(find).toBeDefined();
-    expect(find).toHaveId(child.getId());
+    expect(childrenAfter).toContain(child);
     expect(childrenBefore).toHaveSize(childrenAfter.length - 1);
   });
 
   it("should find a newly saved child", async () => {
     const child = new Child("10");
-    let error;
     try {
       await service.getChild(child.getId());
+      fail("Child should not be found");
     } catch (err) {
-      error = err;
+      expect(err).toBeDefined();
     }
-    expect(error).toBeDefined();
 
-    await entityMapper.save<Child>(child);
+    await entityMapper.save(child);
     const childAfter = await service.getChild(child.getId());
-    expect(childAfter).toBeDefined();
-    expect(childAfter).toHaveId(child.getId());
+    expect(childAfter).toEqual(child);
   });
 
   // TODO: test getAttendances
@@ -131,52 +126,52 @@ describe("ChildrenService", () => {
 
   it("should load a single child and add school info", async () => {
     // no active relation
-    const child2 = await service.getChild("2");
+    const child2 = await service.getChild("Child:2");
     expect(child2.schoolClass).toBeUndefined();
     expect(child2.schoolId).toBeEmpty();
 
     // one active relation
-    let child1 = await service.getChild("1");
+    let child1 = await service.getChild("Child:1");
     expect(child1.schoolClass).toBe("2");
-    expect(child1.schoolId).toEqual(["1"]);
+    expect(child1.schoolId).toEqual(["School:1"]);
 
     // multiple active relations
     const newRelation = new ChildSchoolRelation();
     newRelation.childId = child1.getId();
     newRelation.start = new Date();
-    newRelation.schoolId = "2";
+    newRelation.schoolId = "School:2";
     newRelation.schoolClass = "3";
     await entityMapper.save(newRelation);
     child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("3");
-    expect(child1.schoolId).toEqual(["2", "1"]);
+    expect(child1.schoolId).toEqual(["School:2", "School:1"]);
 
     // multiple active, no start date on one
     const noStartDate = new ChildSchoolRelation();
     noStartDate.childId = child1.getId();
-    noStartDate.schoolId = "2";
+    noStartDate.schoolId = "School:2";
     noStartDate.schoolClass = "4";
     await entityMapper.save(noStartDate);
     child1 = await service.getChild(child1.getId());
     expect(child1.schoolClass).toBe("4");
-    expect(child1.schoolId).toEqual(["2", "2", "1"]);
+    expect(child1.schoolId).toEqual(["School:2", "School:2", "School:1"]);
   });
 
   it("should load all children with school info", async () => {
     const children = await service.getChildren();
-    const child1 = children.find((child) => child.getId() === "1");
+    const child1 = children.find((child) => child.getId() === "Child:1");
     expect(child1.schoolClass).toBe("2");
-    expect(child1.schoolId).toEqual(["1"]);
-    const child2 = children.find((child) => child.getId() === "2");
+    expect(child1.schoolId).toEqual(["School:1"]);
+    const child2 = children.find((child) => child.getId() === "Child:2");
     expect(child2.schoolClass).toBeUndefined();
     expect(child2.schoolId).toBeEmpty();
-    const child3 = children.find((child) => child.getId() === "3");
+    const child3 = children.find((child) => child.getId() === "Child:3");
     expect(child3.schoolClass).toBe("2");
-    expect(child3.schoolId).toEqual(["1"]);
+    expect(child3.schoolId).toEqual(["School:1"]);
   });
 
   it("should get the relations for a child in sorted order", async () => {
-    const relations = await service.queryRelationsOf("child", "3");
+    const relations = await service.queryRelations("Child:3");
 
     expect(relations).toHaveSize(2);
     expect(relations[0].start.getTime()).toBeGreaterThanOrEqual(
@@ -185,45 +180,47 @@ describe("ChildrenService", () => {
   });
 
   it("should get all relations for a school", async () => {
-    const relations = await service.queryRelationsOf("school", "1");
+    const relations = await service.queryRelations("School:1");
 
     expect(relations).toHaveSize(2);
-    const relation1 = relations.find((relation) => relation.getId() === "1");
-    expect(relation1.childId).toBe("1");
-    const relation2 = relations.find((relation) => relation.getId() === "4");
-    expect(relation2.childId).toBe("3");
+    const relation1 = relations.find(
+      (relation) => relation.getId() === "ChildSchoolRelation:1",
+    );
+    expect(relation1.childId).toBe("Child:1");
+    const relation2 = relations.find(
+      (relation) => relation.getId() === "ChildSchoolRelation:4",
+    );
+    expect(relation2.childId).toBe("Child:3");
   });
 
   it("should get a active relation which starts today", async () => {
     const todayRelation = new ChildSchoolRelation("today");
-    todayRelation.schoolId = "3";
+    todayRelation.schoolId = "School:3";
     todayRelation.start = new Date();
     await entityMapper.save(todayRelation);
-    const relations = await service.queryActiveRelationsOf("school", "3");
+    const relations = await service.queryActiveRelationsOf("School:3");
     expectEntitiesToMatch(relations, [todayRelation]);
   });
 
   it("should on default only return active relations", async () => {
     const allRelations = await entityMapper.loadType(ChildSchoolRelation);
     const activeRelations = allRelations
-      .filter((rel) => rel.isActive && rel.childId === "3")
+      .filter((rel) => rel.isActive && rel.childId === "Child:3")
       .sort(sortByAttribute("start", "desc"));
 
-    const result = await service.queryActiveRelationsOf("child", "3");
+    const result = await service.queryActiveRelationsOf("Child:3");
     expect(result).toEqual(activeRelations);
   });
 
   it("should return active relations for a given date", async () => {
     let relations = await service.queryActiveRelationsOf(
-      "school",
-      "1",
+      "School:1",
       new Date("2010-01-01"),
     );
     expect(relations).toHaveSize(1);
 
     relations = await service.queryActiveRelationsOf(
-      "school",
-      "1",
+      "School:1",
       new Date("2016-10-01"),
     );
     expect(relations).toHaveSize(2);
@@ -244,13 +241,13 @@ describe("ChildrenService", () => {
     n3.addSchool(s2);
     await entityMapper.saveAll([n1, n2, n3]);
 
-    let res = await service.getNotesRelatedTo(c1.getId(true));
+    let res = await service.getNotesRelatedTo(c1.getId());
     expect(res).toEqual([n1, n2]);
 
-    res = await service.getNotesRelatedTo(s1.getId(true));
+    res = await service.getNotesRelatedTo(s1.getId());
     expect(res).toEqual([n1]);
 
-    res = await service.getNotesRelatedTo(s2.getId(true));
+    res = await service.getNotesRelatedTo(s2.getId());
     expect(res).toEqual([n3]);
   });
 
@@ -259,14 +256,14 @@ describe("ChildrenService", () => {
     const s1 = new School("s1");
     const n1 = new Note("n1");
     n1.children.push(c1.getId());
-    n1.relatedEntities.push(c1.getId(true));
+    n1.relatedEntities.push(c1.getId());
     n1.schools.push(s1.getId());
     await entityMapper.saveAll([n1]);
 
-    let res = await service.getNotesRelatedTo(c1.getId(true));
+    let res = await service.getNotesRelatedTo(c1.getId());
     expect(res).toEqual([n1]);
 
-    res = await service.getNotesRelatedTo(s1.getId(true));
+    res = await service.getNotesRelatedTo(s1.getId());
     expect(res).toEqual([n1]);
   });
 
@@ -340,31 +337,31 @@ function generateSchoolEntities(): School[] {
 function generateChildSchoolRelationEntities(): ChildSchoolRelation[] {
   const data: ChildSchoolRelation[] = [];
   const rel1: ChildSchoolRelation = new ChildSchoolRelation("1");
-  rel1.childId = "1";
-  rel1.schoolId = "1";
+  rel1.childId = "Child:1";
+  rel1.schoolId = "School:1";
   rel1.start = new Date("2016-10-01");
   rel1.schoolClass = "2";
   data.push(rel1);
 
   const rel4: ChildSchoolRelation = new ChildSchoolRelation("2");
-  rel4.childId = "3";
-  rel4.schoolId = "2";
+  rel4.childId = "Child:3";
+  rel4.schoolId = "School:2";
   rel4.start = new Date("2001-01-01");
   rel4.end = new Date("2002-01-01");
   rel4.schoolClass = "1";
   data.push(rel4);
 
   const rel2: ChildSchoolRelation = new ChildSchoolRelation("3");
-  rel2.childId = "2";
-  rel2.schoolId = "2";
+  rel2.childId = "Child:2";
+  rel2.schoolId = "School:2";
   rel2.start = new Date("2018-05-07");
   rel2.end = new Date("2018-05-09");
   rel2.schoolClass = "3";
   data.push(rel2);
 
   const rel3: ChildSchoolRelation = new ChildSchoolRelation("4");
-  rel3.childId = "3";
-  rel3.schoolId = "1";
+  rel3.childId = "Child:3";
+  rel3.schoolId = "School:1";
   rel3.start = new Date("2010-01-01");
   rel3.schoolClass = "2";
   data.push(rel3);

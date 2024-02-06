@@ -1,29 +1,27 @@
-import { Component, Input, OnInit } from "@angular/core";
-import { NgFor, NgIf } from "@angular/common";
+import { Component, Input, OnInit, ViewChild } from "@angular/core";
+import { NgIf } from "@angular/common";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { RelatedEntitiesComponent } from "../related-entities/related-entities.component";
 import { Entity } from "../../entity/model/entity";
-import { filter } from "rxjs/operators";
-import { applyUpdate } from "../../entity/model/entity-update";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 
 /**
- * Load and display a list of entity subrecords (entities related to the current entity details view)
+ * Load and display a list of related entities
  * including a summary below the table.
  */
 @DynamicComponent("RelatedEntitiesWithSummary")
-@UntilDestroy()
 @Component({
   selector: "app-related-entities-with-summary",
   templateUrl: "./related-entities-with-summary.component.html",
-  imports: [EntitiesTableComponent, NgIf, NgFor],
+  imports: [EntitiesTableComponent, NgIf],
   standalone: true,
 })
 export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   extends RelatedEntitiesComponent<E>
   implements OnInit
 {
+  @ViewChild(EntitiesTableComponent, { static: true })
+  entitiesTable: EntitiesTableComponent<E>;
   /**
    * Configuration of what numbers should be summarized below the table.
    */
@@ -37,23 +35,11 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
   summarySum = "";
   summaryAvg = "";
 
-  async ngOnInit() {
+  override async ngOnInit() {
     await super.ngOnInit();
-    this.updateSummary();
-
-    this.entityMapper
-      .receiveUpdates(this.entityCtr)
-      .pipe(
-        untilDestroyed(this),
-        filter(
-          ({ entity, type }) =>
-            type === "remove" || entity[this.property] === this.entity.getId(),
-        ),
-      )
-      .subscribe((update) => {
-        this.data = applyUpdate(this.data, update, false);
-        this.updateSummary();
-      });
+    this.entitiesTable.filteredRecordsChange.subscribe((data) =>
+      this.updateSummary(data),
+    );
   }
 
   /**
@@ -61,7 +47,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
    * The summary contains no duplicates and is in a
    * human-readable format
    */
-  updateSummary() {
+  updateSummary(filteredData: E[]) {
     if (!this.summaries) {
       this.summarySum = "";
       this.summaryAvg = "";
@@ -71,7 +57,7 @@ export class RelatedEntitiesWithSummaryComponent<E extends Entity = Entity>
     const summary = new Map<string, { count: number; sum: number }>();
     const average = new Map<string, number>();
 
-    this.data.forEach((m) => {
+    filteredData.forEach((m) => {
       const amount = m[this.summaries.countProperty];
       let groupLabel;
       if (this.summaries.groupBy) {

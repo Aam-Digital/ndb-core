@@ -12,7 +12,14 @@
       aria-label="Table showing disaggregation of the beneficiaries"
     >
       <ng-container matColumnDef="label">
-        <td *matCellDef="let group">{{ group.label }}</td>
+        <td *matCellDef="let group">
+          <span *ngIf="!groupedByEntity">{{ group.label }}</span>
+          <app-display-entity
+            *ngIf="groupedByEntity"
+            [entityId]="group.id"
+            [entityType]="groupedByEntity"
+          ></app-display-entity>
+        </td>
       </ng-container>
       <ng-container matColumnDef="value">
         <td *matCellDef="let group" class="text-align-end">

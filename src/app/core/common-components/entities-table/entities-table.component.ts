@@ -11,10 +11,7 @@ import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
-import {
-  MatCheckboxChange,
-  MatCheckboxModule,
-} from "@angular/material/checkbox";
+import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import {
@@ -204,7 +201,10 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   idForSavingPagination: string;
 
   @Input() clickMode: "popup" | "navigate" | "none" = "popup";
-  @Output() rowClick: EventEmitter<T> = new EventEmitter<T>();
+  /**
+   * Emits the entity being clicked in the table - or the newly created entity from the "create" button.
+   */
+  @Output() entityClick = new EventEmitter<T>();
 
   /**
    * BULK SELECT
@@ -225,8 +225,8 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   @Output() selectedRecordsChange: EventEmitter<T[]> = new EventEmitter<T[]>();
   @Input() selectedRecords: T[] = [];
 
-  selectRow(row: TableRow<T>, event: MatCheckboxChange) {
-    if (event.checked) {
+  selectRow(row: TableRow<T>, checked: boolean) {
+    if (checked) {
       this.selectedRecords.push(row.record);
     } else {
       const index = this.selectedRecords.indexOf(row.record);
@@ -263,8 +263,13 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
       return;
     }
 
+    if (this._selectable) {
+      this.selectRow(row, !this.selectedRecords?.includes(row.record));
+      return;
+    }
+
     this.showEntity(row.record);
-    this.rowClick.emit(row.record);
+    this.entityClick.emit(row.record);
   }
 
   showEntity(entity: T) {
@@ -275,7 +280,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
       case "navigate":
         this.router.navigate([
           entity.getConstructor().route,
-          entity.getId(false),
+          entity.isNew ? "new" : entity.getId(true),
         ]);
         break;
     }

@@ -65,7 +65,7 @@ export class DisplayEntityComponent
 
     this.router.navigate([
       this.entityToDisplay.getConstructor().route,
-      this.entityToDisplay.getId(),
+      this.entityToDisplay.getId(true),
     ]);
   }
 }

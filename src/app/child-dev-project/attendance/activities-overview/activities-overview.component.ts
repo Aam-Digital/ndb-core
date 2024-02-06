@@ -20,8 +20,7 @@ export class ActivitiesOverviewComponent
   extends RelatedEntitiesComponent<RecurringActivity>
   implements OnInit
 {
-  entityType = RecurringActivity.ENTITY_TYPE;
-  property = "linkedGroups";
+  entityCtr = RecurringActivity;
 
   titleColumn: FormFieldConfig = {
     id: "title",

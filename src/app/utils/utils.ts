@@ -40,25 +40,36 @@ export function getParentUrl(router: Router): string {
  * Group an array by the given property.
  *
  * @param array A simple array to be grouped.
- * @param propertyToGroupBy The key of the property in the elements by whose value the result is grouped.
+ * @param propertyToGroupBy The key of the property in the elements by whose value the result is grouped. If this is an array, grouped by individual elements.
  * @returns an array where the first entry is the value of this group and the second all entries that have this value.
  */
-export function groupBy<T, P extends keyof T>(
+export function groupBy<T, P extends keyof T, E>(
   array: T[],
   propertyToGroupBy: P,
-): [T[P], T[]][] {
+): [T[P] extends Array<infer E> ? E | undefined : T[P], T[]][] {
   return array.reduce((allGroups, currentElement) => {
-    const currentValue = currentElement[propertyToGroupBy];
-    let existingGroup = allGroups.find(([group]) =>
-      equals(group, currentValue),
-    );
-    if (!existingGroup) {
-      existingGroup = [currentValue, []];
-      allGroups.push(existingGroup);
+    let currentValue = currentElement[propertyToGroupBy];
+    if (Array.isArray(currentValue) && currentValue.length === 0) {
+      // make sure items with empty array are not skipped but grouped as "undefined"
+      currentValue = undefined;
     }
-    existingGroup[1].push(currentElement);
+
+    if (Array.isArray(currentValue)) {
+      currentValue.forEach((v) => addToGroup(allGroups, v, currentElement));
+    } else {
+      addToGroup(allGroups, currentValue, currentElement);
+    }
     return allGroups;
-  }, new Array<[T[P], T[]]>());
+  }, []);
+}
+
+function addToGroup(allGroups, currentValue, currentElement) {
+  let existingGroup = allGroups.find(([group]) => equals(group, currentValue));
+  if (!existingGroup) {
+    existingGroup = [currentValue, []];
+    allGroups.push(existingGroup);
+  }
+  existingGroup[1].push(currentElement);
 }
 
 /**

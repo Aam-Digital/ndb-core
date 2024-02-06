@@ -1,6 +1,5 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component } from "@angular/core";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
-import { Entity } from "../../../core/entity/model/entity";
 import { Todo } from "../model/todo";
 import { DatabaseIndexingService } from "../../../core/entity/database-indexing/database-indexing.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -10,6 +9,11 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FormsModule } from "@angular/forms";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
+import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
+import { FilterService } from "../../../core/filter/filter.service";
 
 @DynamicComponent("TodosRelatedToEntity")
 @Component({
@@ -19,12 +23,9 @@ import { DataFilter } from "../../../core/filter/filters/filters";
   standalone: true,
   imports: [EntitiesTableComponent, MatSlideToggleModule, FormsModule],
 })
-export class TodosRelatedToEntityComponent implements OnInit {
-  entries: Todo[];
-  entityCtr = Todo;
-
-  @Input() entity: Entity;
-  @Input() columns: FormFieldConfig[] = [
+export class TodosRelatedToEntityComponent extends RelatedEntitiesComponent<Todo> {
+  override entityCtr = Todo;
+  override _columns: FormFieldConfig[] = [
     { id: "deadline" },
     { id: "subject" },
     { id: "startDate" },
@@ -35,13 +36,8 @@ export class TodosRelatedToEntityComponent implements OnInit {
     { id: "completed", hideFromForm: true },
   ];
 
-  /** the property name of the Todo that contains the ids referencing related entities */
-  private referenceProperty: keyof Todo & string = "relatedEntities";
-
-  showInactive: boolean;
-
   // TODO: filter by current user as default in UX? --> custom filter component or some kind of variable interpolation?
-  filter: DataFilter<Todo> = { isActive: true };
+  override filter: DataFilter<Todo> = { isActive: true };
   backgroundColorFn = (r: Todo) => {
     if (!r.isActive) {
       return "#e0e0e0";
@@ -53,24 +49,30 @@ export class TodosRelatedToEntityComponent implements OnInit {
   constructor(
     private formDialog: FormDialogService,
     private dbIndexingService: DatabaseIndexingService,
+    entityMapper: EntityMapperService,
+    entities: EntityRegistry,
+    screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
   ) {
+    super(entityMapper, entities, screenWidthObserver, filterService);
+  }
+
+  override getData() {
+    if (Array.isArray(this.property)) {
+      return super.getData();
+    }
+
     // TODO: move this generic index creation into schema
     this.dbIndexingService.generateIndexOnProperty(
       "todo_index",
       Todo,
-      this.referenceProperty,
+      this.property as keyof Todo,
       "deadline",
     );
-  }
-
-  async ngOnInit() {
-    this.entries = await this.loadDataFor(this.entity.getId(true));
-  }
-
-  private async loadDataFor(entityId: string): Promise<Todo[]> {
+    const entityId = this.entity.getId();
     return this.dbIndexingService.queryIndexDocs(
       Todo,
-      "todo_index/by_" + this.referenceProperty,
+      "todo_index/by_" + this.property,
       {
         startkey: [entityId, "\uffff"],
         endkey: [entityId],
@@ -82,7 +84,7 @@ export class TodosRelatedToEntityComponent implements OnInit {
   public getNewEntryFunction(): () => Todo {
     return () => {
       const newEntry = new Todo();
-      newEntry.relatedEntities = [this.entity.getId(true)];
+      newEntry.relatedEntities = [this.entity.getId()];
       return newEntry;
     };
   }

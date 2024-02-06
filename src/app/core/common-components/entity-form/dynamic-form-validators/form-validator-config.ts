@@ -11,6 +11,8 @@ export type DynamicValidator =
   | "required"
   /** type: boolean */
   | "validEmail"
+  /** type: string = EntityType; check against existing ids of the entity type */
+  | "uniqueId"
   /** type: string or regex */
   | "pattern";
 

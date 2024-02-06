@@ -13,57 +13,57 @@ export const defaultJsonConfig = {
   "navigationMenu": {
     "items": [
       {
-        "name": $localize`:Menu item:Dashboard`,
+        "label": $localize`:Menu item:Dashboard`,
         "icon": "home",
         "link": "/"
       },
       {
-        "name": $localize`:Menu item:Children`,
+        "label": $localize`:Menu item:Children`,
         "icon": "child",
         "link": "/child"
       },
       {
-        "name": $localize`:Menu item:Schools`,
+        "label": $localize`:Menu item:Schools`,
         "icon": "university",
         "link": "/school"
       },
       {
-        "name": $localize`:Menu item:Attendance`,
+        "label": $localize`:Menu item:Attendance`,
         "icon": "calendar-check",
         "link": "/attendance"
       },
       {
-        "name": $localize`:Menu item:Notes`,
+        "label": $localize`:Menu item:Notes`,
         "icon": "file-alt",
         "link": "/note"
       },
       {
-        "name": $localize`:Menu item:Tasks`,
+        "label": $localize`:Menu item:Tasks`,
         "icon": "tasks",
         "link": "/todo"
       },
       {
-        "name": $localize`:Menu item:Import`,
+        "label": $localize`:Menu item:Import`,
         "icon": "file-import",
         "link": "/import"
       },
       {
-        "name": $localize`:Menu item:Users`,
+        "label": $localize`:Menu item:Users`,
         "icon": "users",
         "link": "/user"
       },
       {
-        "name": $localize`:Menu item:Reports`,
+        "label": $localize`:Menu item:Reports`,
         "icon": "line-chart",
         "link": "/report"
       },
       {
-        "name": $localize`:Menu item:Help`,
+        "label": $localize`:Menu item:Help`,
         "icon": "question",
         "link": "/help"
       },
       {
-        "name": $localize`:Menu item:Admin`,
+        "label": $localize`:Menu item:Admin`,
         "icon": "wrench",
         "link": "/admin"
       },
@@ -154,9 +154,6 @@ export const defaultJsonConfig = {
         },
         {
           "component": "BirthdayDashboard"
-        },
-        {
-          "component": "ChildrenBmiDashboard"
         },
       ]
     }
@@ -401,12 +398,6 @@ export const defaultJsonConfig = {
             "filterByActivityType": "COACHING_CLASS"
           },
           "noSorting": true
-        },
-        {
-          "viewComponent": "BmiBlock",
-          "label": $localize`:Column label for BMI of child:BMI`,
-          "id": "health_BMI",
-          "noSorting": true
         }
       ],
       "columnGroups": {
@@ -455,7 +446,6 @@ export const defaultJsonConfig = {
               "projectNumber",
               "name",
               "center",
-              "health_BMI",
               "health_bloodGroup",
               "health_lastDentalCheckup",
               "gender",
@@ -549,7 +539,37 @@ export const defaultJsonConfig = {
             },
             {
               "title": $localize`:Title inside a panel:ASER Results`,
-              "component": "Aser"
+              "component": "RelatedEntities",
+              "config": {
+                "entityType": "Aser",
+                "property": "child",
+                "columns": [
+                  {
+                    "id": "date",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "math",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "english",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "hindi",
+                    "visibleFrom": "md"
+                  },
+                  {
+                    "id": "bengali",
+                    "visibleFrom": "md"
+                  },
+                  {
+                    "id": "remarks",
+                    "visibleFrom": "md"
+                  }
+                ]
+              }
             },
             {
               "title": $localize`:Child details section title:Find a suitable new school`,
@@ -605,7 +625,22 @@ export const defaultJsonConfig = {
             },
             {
               "title": $localize`:Title inside a panel:Height & Weight Tracking`,
-              "component": "HealthCheckup"
+              "component": "RelatedEntities",
+              "config": {
+                "entityType": "HealthCheck",
+                "property": "child",
+                "columns": [
+                  { "id": "date" },
+                  { "id": "height" },
+                  { "id": "weight" },
+                  {
+                    "id": "bmi",
+                    "label": $localize`:Table header, Short for Body Mass Index:BMI`,
+                    "viewComponent": "DisplayText",
+                    "description": $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
+                  }
+                ]
+              }
             }
           ]
         },
@@ -640,14 +675,16 @@ export const defaultJsonConfig = {
             {
               "title": "",
               "component": "HistoricalDataComponent",
-              "config": [
-                "date",
-                { "id": "isMotivatedDuringClass", "visibleFrom": "lg" },
-                { "id": "isParticipatingInClass", "visibleFrom": "lg" },
-                { "id": "isInteractingWithOthers", "visibleFrom": "lg" },
-                { "id": "doesHomework", "visibleFrom": "lg" },
-                { "id": "asksQuestions", "visibleFrom": "lg" },
-              ]
+              "config": {
+                "columns": [
+                  "date",
+                  { "id": "isMotivatedDuringClass", "visibleFrom": "lg" },
+                  { "id": "isParticipatingInClass", "visibleFrom": "lg" },
+                  { "id": "isInteractingWithOthers", "visibleFrom": "lg" },
+                  { "id": "doesHomework", "visibleFrom": "lg" },
+                  { "id": "asksQuestions", "visibleFrom": "lg" },
+                ]
+              }
             }
           ]
         },
@@ -699,7 +736,7 @@ export const defaultJsonConfig = {
               "config": {
                 "fieldGroups": [
                   { "fields": ["title"] },
-                  { "fields": ["type", "inactive"] },
+                  { "fields": ["type"] },
                   { "fields": ["assignedTo"] }
                 ]
               }
