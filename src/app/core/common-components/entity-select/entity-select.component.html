@@ -1,10 +1,13 @@
-<mat-form-field floatLabel="always">
+<mat-form-field
+  floatLabel="always"
+  (click)="formControl.enabled ? autocomplete.openPanel() : null"
+>
   <mat-label *ngIf="label">{{ label }}</mat-label>
 
   <input
     #inputField
     matInput
-    [hidden]="!formControl.enabled"
+    [hidden]="!formControl.enabled || (!multi && selectedEntities.length > 0)"
     [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
     [formControl]="formControl"
     [matAutocomplete]="autoSuggestions"

@@ -49,7 +49,11 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
   standalone: true,
 })
 @UntilDestroy()
-export class EntitySelectComponent<E extends Entity> implements OnChanges {
+export class EntitySelectComponent<
+  E extends Entity,
+  T extends string[] | string = string[],
+> implements OnChanges
+{
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
@@ -70,22 +74,25 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   /**
+   * Whether users can select multiple entities.
+   */
+  @Input() multi: boolean = true;
+
+  /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
    * to enable two-way binding to an array of strings corresponding to the id's of the entities.
-   * @param sel The initial selection
+   * @param sel The initial selection (single id string for multi=false, array of id strings for multi=true)
    */
-  @Input() set selection(sel: string[]) {
-    if (!Array.isArray(sel)) {
-      this.selectedEntities = [];
-      return;
-    }
+  @Input() set selection(sel: T) {
+    const selArray = Array.isArray(sel) ? sel : [sel];
+
     this.loading
       .pipe(
         untilDestroyed(this),
         filter((isLoading) => !isLoading),
       )
       .subscribe((_) => {
-        this.selectedEntities = sel
+        this.selectedEntities = selArray
           .map((id) => this.allEntities.find((s) => id === s.getId()))
           .filter((e) => !!e);
       });
@@ -96,10 +103,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   /**
    * called whenever the selection changes.
-   * This happens when a new entity is being added or an existing
-   * one is removed
+   * This happens when a new entity is being added or a selected one is removed.
+   *
+   * Emits a single id string for multi=false, array of id strings for multi=true
    */
-  @Output() selectionChange = new EventEmitter<string[]>();
+  @Output() selectionChange = new EventEmitter<T>();
 
   /**
    * The label is what is seen above the list. For example when used
@@ -215,13 +223,21 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity the entity to select
    */
   selectEntity(entity: E) {
-    if (entity) {
-      this.selectedEntities.push(entity);
-      this.emitChange();
-      this.inputField.nativeElement.value = "";
-      this.formControl.setValue(null);
-      setTimeout(() => this.autocomplete.openPanel());
+    if (!entity) {
+      return;
     }
+
+    if (this.multi) {
+      this.selectedEntities.push(entity);
+      setTimeout(() => this.autocomplete.openPanel());
+    } else {
+      this.selectedEntities = [entity];
+      this.autocomplete.closePanel();
+    }
+
+    this.emitChange();
+    this.inputField.nativeElement.value = "";
+    this.formControl.setValue(null);
   }
 
   /**
@@ -296,10 +312,22 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   }
 
   private emitChange() {
-    this.selectionChange.emit(this.selectedEntities.map((e) => e.getId()));
+    const newSelection = this.selectedEntities.map((e) => e.getId());
+
+    if (isMulti(this)) {
+      this.selectionChange.emit(newSelection);
+    } else {
+      this.selectionChange.emit(newSelection[0] as T);
+    }
   }
 
   private isSelected(entity: E): boolean {
     return this.selectedEntities.some((e) => e.getId() === entity.getId());
   }
+}
+
+function isMulti(
+  cmp: EntitySelectComponent<any, string | string[]>,
+): cmp is EntitySelectComponent<any, string[]> {
+  return cmp.multi;
 }

@@ -75,6 +75,14 @@ MultipleTypes.args = {
   placeholder: "Select records",
 };
 
+export const SingleSelect = Template.bind({});
+SingleSelect.args = {
+  entityType: Child.ENTITY_TYPE,
+  label: "Select one child",
+  selection: child1.getId(),
+  multi: false,
+};
+
 export const Disabled = Template.bind({});
 Disabled.args = {
   entityType: Child.ENTITY_TYPE,

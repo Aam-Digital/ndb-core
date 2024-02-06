@@ -36,7 +36,7 @@ export class EntityDatatype extends StringDatatype {
   static override dataType = "entity";
   static override label: string = $localize`:datatype-label:link to another record`;
 
-  editComponent = "EditSingleEntity";
+  editComponent = "EditEntityArray";
   viewComponent = "DisplayEntity";
   importConfigComponent = "EntityImportConfig";
 

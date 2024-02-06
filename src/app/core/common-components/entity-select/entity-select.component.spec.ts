@@ -18,8 +18,8 @@ import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
 describe("EntitySelectComponent", () => {
-  let component: EntitySelectComponent<any>;
-  let fixture: ComponentFixture<EntitySelectComponent<any>>;
+  let component: EntitySelectComponent<any, any>;
+  let fixture: ComponentFixture<EntitySelectComponent<any, any>>;
   let loader: HarnessLoader;
   let testUsers: Entity[];
   let testChildren: Entity[];
@@ -139,6 +139,46 @@ describe("EntitySelectComponent", () => {
       remainingChildren,
     );
   });
+
+  it("switches selected entity instead of adding additionally, if multi is set to false", fakeAsync(() => {
+    spyOn(component.selectionChange, "emit");
+    component.multi = false;
+    component.entityType = User.ENTITY_TYPE;
+    tick();
+
+    component.selectEntity(testUsers[0]);
+    expect(component.selectedEntities).toEqual([testUsers[0]]);
+
+    component.selectEntity(testUsers[1]);
+    expect(component.selectedEntities).toEqual([testUsers[1]]);
+    expect(component.selectionChange.emit).toHaveBeenCalledWith(
+      testUsers[1].getId(),
+    );
+  }));
+
+  it("emits a single id or undefined for multi=false", fakeAsync(() => {
+    spyOn(component.selectionChange, "emit");
+    component.multi = false;
+    component.entityType = User.ENTITY_TYPE;
+    tick();
+
+    component.selectEntity(testUsers[0]);
+    expect(component.selectionChange.emit).toHaveBeenCalledWith(
+      testUsers[0].getId(),
+    );
+
+    component.unselectEntity(testUsers[0]);
+    expect(component.selectionChange.emit).toHaveBeenCalledWith(undefined);
+  }));
+
+  it("should init from a single string id for multi=false", fakeAsync(() => {
+    component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
+    component.selection = testUsers[1].getId();
+    fixture.detectChanges();
+    tick();
+
+    expect(component.selectedEntities).toEqual([testUsers[1]]);
+  }));
 
   it("adds a new entity if it matches a known entity", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
