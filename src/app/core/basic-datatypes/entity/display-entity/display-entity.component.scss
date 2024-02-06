@@ -1,9 +1,9 @@
 @use "variables/sizes";
 
 .clickable {
+  pointer-events: all;
   cursor: pointer;
 }
-
 .clickable:hover {
   text-decoration: underline;
 }
