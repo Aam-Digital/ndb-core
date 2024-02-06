@@ -5,14 +5,18 @@ import { EntitySelectComponent } from "../../../common-components/entity-select/
 import { ArrayDatatype } from "../../array/array.datatype";
 import { EntityArrayDatatype } from "../entity-array.datatype";
 
-@DynamicComponent("EditEntityArray")
+/**
+ * A form field to select among the entities of the given type(s).
+ * Can be configured as single or multi select.
+ */
+@DynamicComponent("EditEntity")
 @Component({
-  selector: "app-edit-entity-array",
-  templateUrl: "./edit-entity-array.component.html",
+  selector: "app-edit-entity",
+  templateUrl: "./edit-entity.component.html",
   imports: [EntitySelectComponent],
   standalone: true,
 })
-export class EditEntityArrayComponent<T extends string[] | string>
+export class EditEntityComponent<T extends string[] | string = string[]>
   extends EditComponent<T>
   implements OnInit
 {
@@ -27,12 +31,10 @@ export class EditEntityArrayComponent<T extends string[] | string>
     super.ngOnInit();
 
     this.entityName = this.formFieldConfig.additional;
-    if (
+
+    this.multi =
       this.formFieldConfig.dataType === ArrayDatatype.dataType ||
-      this.formFieldConfig.dataType === EntityArrayDatatype.dataType
-    ) {
-      this.multi = true;
-    }
+      this.formFieldConfig.dataType === EntityArrayDatatype.dataType;
 
     this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
   }
