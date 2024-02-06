@@ -80,7 +80,7 @@ describe("UserSecurityComponent", () => {
 
     expect(component.user).toBe(keycloakUser);
     expect(component.form).toHaveValue({
-      username: user.toString(),
+      username: user.getId(),
       email: "my@email.de",
       roles: [assignedRole],
     });
@@ -116,7 +116,7 @@ describe("UserSecurityComponent", () => {
     expect(mockHttp.post).toHaveBeenCalledWith(
       jasmine.stringMatching(/\/account$/),
       {
-        username: user.toString(),
+        username: user.getId(),
         email: "new@email.com",
         roles: [assignedRole],
         enabled: true,

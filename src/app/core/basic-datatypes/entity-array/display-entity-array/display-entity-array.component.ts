@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
@@ -22,10 +22,7 @@ export class DisplayEntityArrayComponent
 
   entities: Entity[];
 
-  constructor(
-    private entityMapper: EntityMapperService,
-    private changeDetector: ChangeDetectorRef,
-  ) {
+  constructor(private entityMapper: EntityMapperService) {
     super();
   }
 
@@ -39,7 +36,6 @@ export class DisplayEntityArrayComponent
         return this.entityMapper.load(type, entityId);
       });
       this.entities = await Promise.all(entityPromises);
-      this.changeDetector.detectChanges();
     }
   }
 }

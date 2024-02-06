@@ -18,6 +18,9 @@ export interface SessionInfo {
 
   /**
    * ID of the entity which is connected with the user account.
+   *
+   * This is either a full ID or (e.g. Child:123) or only the last part.
+   * In the later case it refers to the `User` entity.
    */
   entityId?: string;
 
