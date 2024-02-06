@@ -56,14 +56,18 @@ describe("KeycloakAuthService", () => {
     return expectAsync(service.login()).toBeResolvedTo({
       name: "test",
       roles: ["user_app"],
+      entityId: "test",
     });
   });
 
-  it("should throw an error if username claim is not available", () => {
-    const tokenWithoutUser =
-      "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJpcjdiVjZoOVkxazBzTGh2aFRxWThlMzgzV3NMY0V3cmFsaC1TM2NJUTVjIn0.eyJleHAiOjE2OTE1Njc4NzcsImlhdCI6MTY5MTU2NzU3NywianRpIjoiNzNiNGUzODEtMzk4My00ZjI1LWE1ZGYtOTRlOTYxYmU3MjgwIiwiaXNzIjoiaHR0cHM6Ly9rZXljbG9hay5hYW0tZGlnaXRhbC5uZXQvcmVhbG1zL2RldiIsInN1YiI6IjI0YWM1Yzg5LTU3OGMtNDdmOC1hYmQ5LTE1ZjRhNmQ4M2JiNSIsInR5cCI6IkJlYXJlciIsImF6cCI6ImFwcCIsInNlc3Npb25fc3RhdGUiOiIwYjVhNGQ0OS0wOTFhLTQzOGYtOTEwNi1mNmZjYmQyMDM1Y2EiLCJzY29wZSI6ImVtYWlsIiwic2lkIjoiMGI1YTRkNDktMDkxYS00MzhmLTkxMDYtZjZmY2JkMjAzNWNhIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJfY291Y2hkYi5yb2xlcyI6WyJkZWZhdWx0LXJvbGVzLWRldiIsIm9mZmxpbmVfYWNjZXNzIiwidW1hX2F1dGhvcml6YXRpb24iLCJ1c2VyX2FwcCJdfQ.EvF1wc32KwdDCUGboviRYGqKv2C3yK5B1WL_hCm-IGg58DoE_XGOchVVfbFrtphXD3yQa8uAaY58jWb6SeZQt0P92qtn5ulZOqcs3q2gQfrvxkxafMWffpCsxusVLBuGJ4B4EgoRGp_puQJIJE4p5KBwcA_u0PznFDFyLzPD18AYXevGWKLP5L8Zfgitf3Lby5AtCoOKHM7u6F_hDGSvLw-YlHEZBupqJzbpsjOs2UF1_woChMm2vbllZgIaUu9bbobcWi1mZSfNP3r9Ojk2t0NauOiKXDqtG5XyBLYMTC6wZXxsoCPGhOAwDr9LffkLDl-zvZ-0f_ujTpU8M2jzsg";
-    mockKeycloak.getToken.and.resolveTo(tokenWithoutUser);
-    return expectAsync(service.login()).toBeRejected();
+  it("should use `sub` if `username` is not available", () => {
+    const tokenWithoutUsername =
+      "eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJycVB3eFM4U1hXZ2FGOFBDbDZrYWFkVUxOYWQyaEloX21vQjhmTDdUVnJJIn0.eyJleHAiOjE3MDcyMTk0MTgsImlhdCI6MTcwNzIxNTgxOCwiYXV0aF90aW1lIjoxNzA3MjE1MDQxLCJqdGkiOiI0OWZjMjEyZS0wNGMwLTRmOWItOTAwZi1mYmVlYWE5ZGZmZjUiLCJpc3MiOiJodHRwczovL2tleWNsb2FrLmFhbS1kaWdpdGFsLm5ldC9yZWFsbXMvZGV2Iiwic3ViIjoiODQ0MGFkZDAtOTdhOS00M2VkLWFmMGItMTE2YzBmYWI3ZTkwIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYXBwIiwibm9uY2UiOiI2N2I5N2U1NS1kMTY2LTQ3YjUtYTE4NC0zZDk1ZmIxMDQxM2UiLCJzZXNzaW9uX3N0YXRlIjoiZDZiYzQ2NTMtNmRmMC00M2NmLTliMWItNjgwODVmYTMyMTAzIiwic2NvcGUiOiJvcGVuaWQgZW1haWwiLCJzaWQiOiJkNmJjNDY1My02ZGYwLTQzY2YtOWIxYi02ODA4NWZhMzIxMDMiLCJlbWFpbF92ZXJpZmllZCI6ZmFsc2UsIl9jb3VjaGRiLnJvbGVzIjpbInVzZXJfYXBwIl19.AK5qz9keozPFwBMl4xtBVt2T42AfkAdSvX5s6kSdZBdjfqnWazi3RB4YmQ-Rfik7z_uUhXayx2i72S557d3fo1G9YttLkormB2vZ-zM0GJeYXlGmG1jLUc8w3cQARdLBTrBsgWSGo2ZnZJ-eExn8UhwG5d5BUCl-IU-KJHB1C5R3sSTgXOpkED4WRaoxPOZORr40W263tHJjjNcPECUOtmpQvY0sGUbKHGWpqgWZNXE_G75DMHd0lEBeE924sIeEZcw0Y6TpjBwJULe89EVeI6sr4qhFKjNfn_2miB1HyOOM3jxUfUngR0ju0dJpm5Jmmcyr0Pah0QiA8OWVPKEZgQ\n";
+    mockKeycloak.getToken.and.resolveTo(tokenWithoutUsername);
+    return expectAsync(service.login()).toBeResolvedTo({
+      name: "8440add0-97a9-43ed-af0b-116c0fab7e90",
+      roles: ["user_app"],
+    });
   });
 
   it("should call keycloak for a password reset", () => {

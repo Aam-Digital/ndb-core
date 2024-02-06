@@ -31,10 +31,12 @@ export class DemoDataInitializerService {
   private readonly normalUser: SessionInfo = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
     roles: ["user_app"],
+    entityId: DemoUserGeneratorService.DEFAULT_USERNAME,
   };
   private readonly adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     roles: ["user_app", "admin_app", KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
+    entityId: DemoUserGeneratorService.ADMIN_USERNAME,
   };
   constructor(
     private demoDataService: DemoDataService,
@@ -69,7 +71,6 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
-    // TODO needs to work without access to entity (entity is only available once sync starts)
     this.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&

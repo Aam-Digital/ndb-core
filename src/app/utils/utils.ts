@@ -145,8 +145,14 @@ export function compareEnums(
  * @param token a valid JWT
  */
 export function parseJwt(token): {
+  // keycloak user ID
   sub: string;
+  // keycloak `exact_username` attribute
   username: string;
+  // email of keycloak user
+  email: string;
+  // roles according to couchdb format
+  "_couchdb.roles": string[];
   sid: string;
   jti: string;
 } {

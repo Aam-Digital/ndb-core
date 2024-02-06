@@ -123,7 +123,11 @@ describe("SessionManagerService", () => {
     const currentUser = TestBed.inject(CurrentUserSubject);
 
     // first login with existing user entity
-    mockKeycloak.login.and.resolveTo({ name: TEST_USER, roles: [] });
+    mockKeycloak.login.and.resolveTo({
+      name: TEST_USER,
+      roles: [],
+      entityId: loggedInUser.getId(),
+    });
     await service.remoteLogin();
     expect(currentUser.value).toEqual(loggedInUser);
 
@@ -131,21 +135,39 @@ describe("SessionManagerService", () => {
     await service.logout();
     expect(currentUser.value).toBeUndefined();
 
+    const adminUser = new User("admin-user");
     // login, user entity not available yet
-    mockKeycloak.login.and.resolveTo({ name: "admin-user", roles: ["admin"] });
+    mockKeycloak.login.and.resolveTo({
+      name: "admin-user",
+      roles: ["admin"],
+      entityId: adminUser.getId(),
+    });
     await service.remoteLogin();
     expect(currentUser.value).toBeUndefined();
 
     // user entity available -> user should be set
-    const adminUser = new User("admin-user");
     await entityMapper.save(adminUser);
     expect(currentUser.value).toEqual(adminUser);
   });
 
+  it("should not initialize the user entity if no entityId is set", async () => {
+    const loadSpy = spyOn(TestBed.inject(EntityMapperService), "load");
+
+    mockKeycloak.login.and.resolveTo({ name: "some-user", roles: [] });
+    await service.remoteLogin();
+
+    expect(loadSpy).not.toHaveBeenCalled();
+    expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+  });
+
   it("should allow other entities to log in", async () => {
-    const childSession: SessionInfo = { name: "Child:123", roles: [] };
-    mockKeycloak.login.and.resolveTo(childSession);
     const loggedInChild = new Child("123");
+    const childSession: SessionInfo = {
+      name: loggedInChild.getId(),
+      roles: [],
+      entityId: loggedInChild.getId(),
+    };
+    mockKeycloak.login.and.resolveTo(childSession);
     const otherChild = new Child("456");
     await TestBed.inject(EntityMapperService).saveAll([
       loggedInChild,

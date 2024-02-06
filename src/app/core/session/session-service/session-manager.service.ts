@@ -101,15 +101,17 @@ export class SessionManagerService {
     await this.initializeDatabaseForCurrentUser(session);
     this.sessionInfo.next(session);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
-    this.initUserEntity(session);
+    if (session.entityId) {
+      this.initUserEntity(session.entityId);
+    }
   }
 
-  private initUserEntity(user: SessionInfo) {
-    const entityType = user.name.includes(":")
-      ? Entity.extractTypeFromId(user.name)
+  private initUserEntity(entityId: string) {
+    const entityType = entityId.includes(":")
+      ? Entity.extractTypeFromId(entityId)
       : User;
     this.entityMapper
-      .load(entityType, user.name)
+      .load(entityType, entityId)
       .then((res) => this.currentUser.next(res))
       .catch(() => undefined);
     this.updateSubscription = this.entityMapper
@@ -117,7 +119,7 @@ export class SessionManagerService {
       .pipe(
         filter(
           ({ entity }) =>
-            entity.getId() === user.name || entity.getId(true) === user.name,
+            entity.getId() === entityId || entity.getId(true) === entityId,
         ),
       )
       .subscribe(({ entity }) => this.currentUser.next(entity));
@@ -145,7 +147,7 @@ export class SessionManagerService {
     }
     // resetting app state
     this.sessionInfo.next(undefined);
-    this.updateSubscription.unsubscribe();
+    this.updateSubscription?.unsubscribe();
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;

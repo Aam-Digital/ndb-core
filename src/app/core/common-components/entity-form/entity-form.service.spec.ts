@@ -272,6 +272,7 @@ describe("EntityFormService", () => {
     const form = service.createFormGroup([{ id: "user" }], new Entity());
 
     expect(form.get("user")).toHaveValue(null);
+    Entity.schema.delete("user");
   });
 
   it("should not assign default values to existing entities", () => {
