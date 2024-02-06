@@ -265,13 +265,19 @@ describe("EntityFormService", () => {
     Entity.schema.delete("test");
   });
 
-  it("should current user default value should not fail if user entity does not exist", () => {
-    Entity.schema.set("user", { defaultValue: PLACEHOLDERS.CURRENT_USER });
+  it("should not fail if user entity does not exist and current user value is assigned", () => {
     TestBed.inject(CurrentUserSubject).next(undefined);
 
-    const form = service.createFormGroup([{ id: "user" }], new Entity());
-
+    // simple property
+    Entity.schema.set("user", { defaultValue: PLACEHOLDERS.CURRENT_USER });
+    let form = service.createFormGroup([{ id: "user" }], new Entity());
     expect(form.get("user")).toHaveValue(null);
+
+    // array property
+    Entity.schema.get("user").dataType = EntityArrayDatatype.dataType;
+    form = service.createFormGroup([{ id: "user" }], new Entity());
+    expect(form.get("user")).toHaveValue(null);
+
     Entity.schema.delete("user");
   });
 

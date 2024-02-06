@@ -206,7 +206,7 @@ export class EntityFormService {
       default:
         newVal = schema.defaultValue;
     }
-    if (isArrayDataType(schema.dataType)) {
+    if (newVal && isArrayDataType(schema.dataType)) {
       newVal = [newVal];
     }
     return newVal;
