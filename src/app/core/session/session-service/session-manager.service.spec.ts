@@ -158,6 +158,7 @@ describe("SessionManagerService", () => {
 
     expect(loadSpy).not.toHaveBeenCalled();
     expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+    expect(TestBed.inject(CurrentUserSubject).value).toBeUndefined();
   });
 
   it("should allow other entities to log in", async () => {
