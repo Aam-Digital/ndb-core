@@ -1,11 +1,11 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
 import { SessionInfo } from "../session-info";
 import { KeycloakService } from "keycloak-angular";
 import { LoggingService } from "../../../logging/logging.service";
+import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
 
 /**
  * Handles the remote session with keycloak
@@ -60,7 +60,7 @@ export class KeycloakAuthService {
     }
     this.accessToken = token;
     this.logSuccessfulAuth();
-    const parsedToken = parseJwt(this.accessToken);
+    const parsedToken: ParsedJWT = parseJwt(this.accessToken);
 
     const sessionInfo: SessionInfo = {
       name: parsedToken.username ?? parsedToken.sub,
