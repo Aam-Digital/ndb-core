@@ -5,7 +5,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
-import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LoggingService } from "../logging/logging.service";
 import { Database } from "../database/database";
@@ -36,7 +35,7 @@ export class DemoDataInitializerService {
   };
   private readonly adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
-    roles: ["user_app", "admin_app", KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
+    roles: ["user_app", "admin_app"],
     entityId: `${User.ENTITY_TYPE}:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };
   constructor(

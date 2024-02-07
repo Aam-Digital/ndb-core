@@ -57,9 +57,6 @@ export class KeycloakAuthService {
   }
 
   private processToken(token: string): SessionInfo {
-    if (!token) {
-      throw new Error();
-    }
     this.accessToken = token;
     this.logSuccessfulAuth();
     const parsedToken: ParsedJWT = parseJwt(this.accessToken);
