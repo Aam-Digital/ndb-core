@@ -32,5 +32,9 @@
 
       <app-account-page [disabled]="passwordChangeDisabled"></app-account-page>
     </div>
+    <div *ngIf="entityId" class="entity-box">
+      <span>Linked entity:</span>
+      <app-display-entity [entityId]="entityId"></app-display-entity>
+    </div>
   </mat-tab>
 </mat-tab-group>
