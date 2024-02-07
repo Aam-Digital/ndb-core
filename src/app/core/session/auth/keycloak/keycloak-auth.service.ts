@@ -5,6 +5,8 @@ import { environment } from "../../../../../environments/environment";
 import { SessionInfo } from "../session-info";
 import { KeycloakService } from "keycloak-angular";
 import { LoggingService } from "../../../logging/logging.service";
+import { Entity } from "../../../entity/model/entity";
+import { User } from "../../../user/user";
 import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
 
 /**
@@ -68,7 +70,9 @@ export class KeycloakAuthService {
     };
 
     if (parsedToken.username) {
-      sessionInfo.entityId = parsedToken.username;
+      sessionInfo.entityId = parsedToken.username.includes(":")
+        ? parsedToken.username
+        : Entity.createPrefixedId(User.ENTITY_TYPE, parsedToken.username);
     } else {
       this.logger.debug(
         `User not linked with an entity (userId: ${sessionInfo.name})`,

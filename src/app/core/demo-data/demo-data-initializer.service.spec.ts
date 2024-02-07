@@ -17,14 +17,14 @@ import { LoginState } from "../session/session-states/login-state.enum";
 
 describe("DemoDataInitializerService", () => {
   const normalUser: SessionInfo = {
-    name: DemoUserGeneratorService.DEFAULT_USERNAME,
-    entityId: DemoUserGeneratorService.DEFAULT_USERNAME,
+    name: "demo",
+    entityId: "User:demo",
     roles: ["user_app"],
   };
   const adminUser: SessionInfo = {
-    name: DemoUserGeneratorService.ADMIN_USERNAME,
-    entityId: DemoUserGeneratorService.ADMIN_USERNAME,
-    roles: ["user_app", "admin_app", "account_manager"],
+    name: "demo-admin",
+    entityId: "User:demo-admin",
+    roles: ["user_app", "admin_app"],
   };
   let service: DemoDataInitializerService;
   let mockDemoDataService: jasmine.SpyObj<DemoDataService>;

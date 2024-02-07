@@ -16,6 +16,7 @@ import { AppSettings } from "../app-settings";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
 import PouchDB from "pouchdb-browser";
+import { User } from "../user/user";
 
 /**
  * This service handles everything related to the demo-mode
@@ -31,12 +32,12 @@ export class DemoDataInitializerService {
   private readonly normalUser: SessionInfo = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
     roles: ["user_app"],
-    entityId: DemoUserGeneratorService.DEFAULT_USERNAME,
+    entityId: `${User.ENTITY_TYPE}:${DemoUserGeneratorService.DEFAULT_USERNAME}`,
   };
   private readonly adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
     roles: ["user_app", "admin_app", KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
-    entityId: DemoUserGeneratorService.ADMIN_USERNAME,
+    entityId: `${User.ENTITY_TYPE}:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };
   constructor(
     private demoDataService: DemoDataService,

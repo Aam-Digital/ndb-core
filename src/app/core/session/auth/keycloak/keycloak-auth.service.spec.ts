@@ -56,7 +56,7 @@ describe("KeycloakAuthService", () => {
     return expectAsync(service.login()).toBeResolvedTo({
       name: "test",
       roles: ["user_app"],
-      entityId: "test",
+      entityId: "User:test",
     });
   });
 

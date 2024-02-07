@@ -24,7 +24,6 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { User } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
@@ -107,9 +106,7 @@ export class SessionManagerService {
   }
 
   private initUserEntity(entityId: string) {
-    const entityType = entityId.includes(":")
-      ? Entity.extractTypeFromId(entityId)
-      : User;
+    const entityType = Entity.extractTypeFromId(entityId);
     this.entityMapper
       .load(entityType, entityId)
       .then((res) => this.currentUser.next(res))
