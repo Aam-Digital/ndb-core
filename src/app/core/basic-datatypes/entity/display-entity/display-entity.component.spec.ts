@@ -14,21 +14,25 @@ import {
   componentRegistry,
   ComponentRegistry,
 } from "../../../../dynamic-components";
+import {
+  mockEntityMapper,
+  MockEntityMapperService,
+} from "../../../entity/entity-mapper/mock-entity-mapper-service";
+import { LoggingService } from "../../../logging/logging.service";
 
 describe("DisplayEntityComponent", () => {
   let component: DisplayEntityComponent;
   let fixture: ComponentFixture<DisplayEntityComponent>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let entityMapper: MockEntityMapperService;
   let mockRouter: jasmine.SpyObj<Router>;
 
   beforeEach(async () => {
-    mockEntityMapper = jasmine.createSpyObj(["load"]);
-    mockEntityMapper.load.and.resolveTo(new Child());
+    entityMapper = mockEntityMapper();
     mockRouter = jasmine.createSpyObj(["navigate"]);
     await TestBed.configureTestingModule({
       imports: [DisplayEntityComponent],
       providers: [
-        { provide: EntityMapperService, useValue: mockEntityMapper },
+        { provide: EntityMapperService, useValue: entityMapper },
         { provide: EntityRegistry, useValue: entityRegistry },
         { provide: ComponentRegistry, useValue: componentRegistry },
         { provide: Router, useValue: mockRouter },
@@ -48,7 +52,7 @@ describe("DisplayEntityComponent", () => {
 
   it("should use the block component when available", async () => {
     const school = new School();
-    mockEntityMapper.load.and.resolveTo(school);
+    entityMapper.add(school);
 
     component.entity = new ChildSchoolRelation();
     component.id = "schoolId";
@@ -57,10 +61,6 @@ describe("DisplayEntityComponent", () => {
     await component.ngOnInit();
 
     expect(component.entityBlockComponent).toEqual(School.getBlockComponent());
-    expect(mockEntityMapper.load).toHaveBeenCalledWith(
-      school.getType(),
-      school.getId(),
-    );
     expect(component.entityToDisplay).toEqual(school);
   });
 
@@ -70,5 +70,30 @@ describe("DisplayEntityComponent", () => {
     component.showDetailsPage();
 
     expect(mockRouter.navigate).toHaveBeenCalledWith(["/child", "1"]);
+  });
+
+  it("should show entities which are not of the configured type", async () => {
+    const child = new Child();
+    entityMapper.add(child);
+    component.entityId = child.getId();
+    component.config = School.ENTITY_TYPE;
+
+    await component.ngOnInit();
+
+    expect(component.entityToDisplay).toEqual(child);
+  });
+
+  it("should log a warning if entity cannot be loaded", async () => {
+    const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
+    const child = new Child("not_existing");
+    component.entityId = child.getId();
+    component.config = School.ENTITY_TYPE;
+
+    await component.ngOnInit();
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      jasmine.stringContaining(child.getId()),
+    );
+    expect(component.entityToDisplay).toBeUndefined();
   });
 });

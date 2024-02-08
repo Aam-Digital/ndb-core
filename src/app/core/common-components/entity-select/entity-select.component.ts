@@ -26,6 +26,8 @@ import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-ent
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { LoggingService } from "../../logging/logging.service";
 
 @Component({
   selector: "app-entity-select",
@@ -42,6 +44,7 @@ import { MatInputModule } from "@angular/material/input";
     FontAwesomeModule,
     MatTooltipModule,
     MatInputModule,
+    MatCheckboxModule,
   ],
   standalone: true,
 })
@@ -50,6 +53,9 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   readonly separatorKeysCodes: number[] = [ENTER, COMMA];
   readonly loadingPlaceholder = $localize`:A placeholder for the input element when select options are not loaded yet:loading...`;
 
+  includeInactive: boolean = false;
+  filterValue: string;
+
   /**
    * The entity-type (e.g. 'Child', 'School', e.t.c.) to set.
    * @param type The ENTITY_TYPE of a Entity. This affects the entities which will be loaded and the component
@@ -57,11 +63,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @throws Error when `type` is not in the entity-map
    */
   @Input() set entityType(type: string | string[]) {
-    if (!Array.isArray(type)) {
-      type = [type];
-    }
-    this.loadAvailableEntities(type);
+    this._entityType = Array.isArray(type) ? type : [type];
+    this.loadAvailableEntities();
   }
+
+  private _entityType: string[];
 
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
@@ -78,11 +84,35 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         untilDestroyed(this),
         filter((isLoading) => !isLoading),
       )
-      .subscribe(() => {
-        this.selectedEntities = this.allEntities.filter((e) =>
-          sel.find((s) => s === e.getId()),
+      .subscribe(() => this.initSelectedEntities(sel));
+  }
+
+  private async initSelectedEntities(selected: string[]) {
+    const entities: E[] = [];
+    for (const s of selected) {
+      await this.getEntity(s)
+        .then((entity) => entities.push(entity))
+        .catch((err: Error) =>
+          this.logger.warn(
+            `[ENTITY_SELECT] Error loading selected entity "${s}": ${err.message}`,
+          ),
         );
-      });
+    }
+    this.selectedEntities = entities;
+    // updating autocomplete values
+    this.formControl.setValue(this.formControl.value);
+  }
+
+  private async getEntity(id: string) {
+    const type = Entity.extractTypeFromId(id);
+    const entity = this._entityType.includes(type)
+      ? this.allEntities.find((e) => id === e.getId())
+      : await this.entityMapperService.load<E>(type, id);
+
+    if (!entity) {
+      throw Error(`Entity not found`);
+    }
+    return entity;
   }
 
   /** Underlying data-array */
@@ -146,13 +176,19 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   inputPlaceholder = this.loadingPlaceholder;
 
   allEntities: E[] = [];
+  entitiesPassingAdditionalFilter: E[] = [];
   filteredEntities: E[] = [];
+  inactiveFilteredEntities: E[] = [];
+
   formControl = new FormControl("");
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private logger: LoggingService,
+  ) {
     this.formControl.valueChanges
       .pipe(
         untilDestroyed(this),
@@ -171,6 +207,9 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     if (changes.hasOwnProperty("additionalFilter")) {
       // update whenever additional filters are being set
       this.formControl.setValue(this.formControl.value);
+      this.entitiesPassingAdditionalFilter = this.allEntities.filter((e) =>
+        this.additionalFilter(e),
+      );
     }
   }
 
@@ -184,15 +223,18 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
-  private async loadAvailableEntities(types: string[]) {
+  private async loadAvailableEntities() {
     this.loading.next(true);
     const entities: E[] = [];
 
-    for (const type of types) {
+    for (const type of this._entityType) {
       entities.push(...(await this.entityMapperService.loadType<E>(type)));
     }
-
     this.allEntities = entities;
+    this.allEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
+    this.entitiesPassingAdditionalFilter = this.allEntities.filter((e) =>
+      this.additionalFilter(e),
+    );
     this.loading.next(false);
     this.formControl.setValue(null);
   }
@@ -202,11 +244,13 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @param entity the entity to select
    */
   selectEntity(entity: E) {
-    this.selectedEntities.push(entity);
-    this.emitChange();
-    this.inputField.nativeElement.value = "";
-    this.formControl.setValue(null);
-    setTimeout(() => this.autocomplete.openPanel());
+    if (entity) {
+      this.selectedEntities.push(entity);
+      this.emitChange();
+      this.inputField.nativeElement.value = "";
+      this.formControl.setValue(null);
+      setTimeout(() => this.autocomplete.openPanel());
+    }
   }
 
   /**
@@ -219,7 +263,7 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
     const value = event.value;
 
     if (value) {
-      const entity = this.allEntities.find(
+      const entity = this.entitiesPassingAdditionalFilter.find(
         (e) => this.accessor(e) === value.trim(),
       );
       if (entity) {
@@ -236,17 +280,32 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * this will return all entities (with the aforementioned additional filters).
    * @param value The value to look for in all entities
    */
-  private filter(value?: string): E[] {
-    let filteredEntities: E[] = this.allEntities.filter(
-      (e) => this.additionalFilter(e) && !this.isSelected(e),
+  private filter(value: string): E[] {
+    let filteredEntities: E[] = this.entitiesPassingAdditionalFilter.filter(
+      (e) => !this.isSelected(e) && (this.includeInactive ? true : e.isActive),
     );
+    let inactiveFilteredEntities: E[] =
+      this.entitiesPassingAdditionalFilter.filter(
+        (e) => !this.isSelected(e) && !e.isActive,
+      );
+    this.filterValue = value;
+
     if (value) {
       const filterValue = value.toLowerCase();
       filteredEntities = filteredEntities.filter((entity) =>
         this.accessor(entity).toLowerCase().includes(filterValue),
       );
+      inactiveFilteredEntities = inactiveFilteredEntities.filter((entity) =>
+        this.accessor(entity).toLowerCase().includes(filterValue),
+      );
     }
+    this.inactiveFilteredEntities = inactiveFilteredEntities;
     return filteredEntities;
+  }
+
+  toggleIncludeInactive() {
+    this.includeInactive = !this.includeInactive;
+    this.filteredEntities = this.filter(this.filterValue);
   }
 
   /**

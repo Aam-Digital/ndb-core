@@ -21,7 +21,6 @@ export class ActivitiesOverviewComponent
   implements OnInit
 {
   entityCtr = RecurringActivity;
-  property = "linkedGroups";
 
   titleColumn: FormFieldConfig = {
     id: "title",

@@ -155,9 +155,6 @@ export const defaultJsonConfig = {
         {
           "component": "BirthdayDashboard"
         },
-        {
-          "component": "ChildrenBmiDashboard"
-        },
       ]
     }
   },
@@ -280,8 +277,7 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-    },
-    "permittedUserRoles": ["admin_app"]
+    }
   },
   "view:help": {
     "component": "MarkdownPage",
@@ -401,12 +397,6 @@ export const defaultJsonConfig = {
             "filterByActivityType": "COACHING_CLASS"
           },
           "noSorting": true
-        },
-        {
-          "viewComponent": "BmiBlock",
-          "label": $localize`:Column label for BMI of child:BMI`,
-          "id": "health_BMI",
-          "noSorting": true
         }
       ],
       "columnGroups": {
@@ -455,7 +445,6 @@ export const defaultJsonConfig = {
               "projectNumber",
               "name",
               "center",
-              "health_BMI",
               "health_bloodGroup",
               "health_lastDentalCheckup",
               "gender",
@@ -549,7 +538,37 @@ export const defaultJsonConfig = {
             },
             {
               "title": $localize`:Title inside a panel:ASER Results`,
-              "component": "Aser"
+              "component": "RelatedEntities",
+              "config": {
+                "entityType": "Aser",
+                "property": "child",
+                "columns": [
+                  {
+                    "id": "date",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "math",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "english",
+                    "visibleFrom": "xs"
+                  },
+                  {
+                    "id": "hindi",
+                    "visibleFrom": "md"
+                  },
+                  {
+                    "id": "bengali",
+                    "visibleFrom": "md"
+                  },
+                  {
+                    "id": "remarks",
+                    "visibleFrom": "md"
+                  }
+                ]
+              }
             },
             {
               "title": $localize`:Child details section title:Find a suitable new school`,
@@ -605,7 +624,22 @@ export const defaultJsonConfig = {
             },
             {
               "title": $localize`:Title inside a panel:Height & Weight Tracking`,
-              "component": "HealthCheckup"
+              "component": "RelatedEntities",
+              "config": {
+                "entityType": "HealthCheck",
+                "property": "child",
+                "columns": [
+                  { "id": "date" },
+                  { "id": "height" },
+                  { "id": "weight" },
+                  {
+                    "id": "bmi",
+                    "label": $localize`:Table header, Short for Body Mass Index:BMI`,
+                    "viewComponent": "DisplayText",
+                    "description": $localize`:Tooltip for BMI info:This is calculated using the height and the weight measure`,
+                  }
+                ]
+              }
             }
           ]
         },

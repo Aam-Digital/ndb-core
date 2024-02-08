@@ -25,6 +25,9 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { AsyncPipe, NgIf } from "@angular/common";
+import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-entity/display-entity.component";
+import { SessionSubject } from "../../session/auth/session-info";
 
 /**
  * User account form to allow the user to view and edit information.
@@ -40,6 +43,9 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
     MatTooltipModule,
     MatInputModule,
     AccountPageComponent,
+    AsyncPipe,
+    DisplayEntityComponent,
+    NgIf,
   ],
   standalone: true,
 })
@@ -49,8 +55,12 @@ export class UserAccountComponent implements OnInit {
 
   passwordChangeDisabled = false;
   tooltipText;
+  entityId = this.sessionInfo.value.entityId;
 
-  constructor(private currentUser: CurrentUserSubject) {}
+  constructor(
+    private currentUser: CurrentUserSubject,
+    private sessionInfo: SessionSubject,
+  ) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();

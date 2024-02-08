@@ -9,6 +9,7 @@ import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-m
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { FilterService } from "../../../core/filter/filter.service";
 
 /**
  * A general component that can be included on a entity details page through the config.
@@ -28,7 +29,6 @@ export class HistoricalDataComponent
   implements OnInit
 {
   @Input() entity: Entity;
-  property = "relatedEntity";
   entityCtr = HistoricalEntityData;
 
   /** @deprecated use @Input() columns instead */
@@ -43,21 +43,12 @@ export class HistoricalDataComponent
     entityMapper: EntityMapperService,
     entityRegistry: EntityRegistry,
     screenWidthObserver: ScreenWidthObserver,
+    filterService: FilterService,
   ) {
-    super(entityMapper, entityRegistry, screenWidthObserver);
+    super(entityMapper, entityRegistry, screenWidthObserver, filterService);
   }
 
-  override async initData() {
-    this.data = await this.historicalDataService.getHistoricalDataFor(
-      this.entity.getId(),
-    );
-  }
-
-  public getNewEntryFunction(): () => HistoricalEntityData {
-    return () => {
-      const newEntry = new HistoricalEntityData();
-      newEntry.relatedEntity = this.entity.getId();
-      return newEntry;
-    };
+  override getData() {
+    return this.historicalDataService.getHistoricalDataFor(this.entity.getId());
   }
 }

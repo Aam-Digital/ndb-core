@@ -287,7 +287,7 @@ describe("AttendanceService", () => {
 
     const childAttendingSchool = new ChildSchoolRelation();
     childAttendingSchool.childId = "child attending school";
-    const mockQueryRelationsOf = spyOn(
+    const mockQueryRelations = spyOn(
       TestBed.inject(ChildrenService),
       "queryActiveRelationsOf",
     ).and.resolveTo([childAttendingSchool]);
@@ -298,10 +298,7 @@ describe("AttendanceService", () => {
 
     const event = await service.createEventForActivity(activity, date);
 
-    expect(mockQueryRelationsOf).toHaveBeenCalledWith(
-      linkedSchool.getId(),
-      date,
-    );
+    expect(mockQueryRelations).toHaveBeenCalledWith(linkedSchool.getId(), date);
     expect(event.children).toHaveSize(2);
     expect(event.children).toContain(directlyAddedChild.getId());
     expect(event.children).toContain(childAttendingSchool.childId);
