@@ -15,7 +15,7 @@ import { EntityDeleteService } from "./entity-delete.service";
 import { EntityAnonymizeService } from "./entity-anonymize.service";
 import { CascadingActionResult } from "./cascading-entity-action";
 
-describe("EntityActionsService", () => {
+fdescribe("EntityActionsService", () => {
   let service: EntityActionsService;
   let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
   let snackBarSpy: jasmine.SpyObj<MatSnackBar>;
@@ -23,14 +23,23 @@ describe("EntityActionsService", () => {
   let mockConfirmationDialog: jasmine.SpyObj<ConfirmationDialogService>;
   let mockRouter;
   let mockedEntityDeleteService: jasmine.SpyObj<EntityDeleteService>;
+  let mockedEntityAnonymizeService: jasmine.SpyObj<EntityAnonymizeService>;
 
   let primaryEntity: Entity;
+  let testEntities: Entity[] = [];
 
   beforeEach(() => {
     primaryEntity = new Entity();
+    testEntities[0] = new Entity();
+    testEntities[1] = new Entity();
+    testEntities[2] = new Entity();
 
     mockedEntityDeleteService = jasmine.createSpyObj(["deleteEntity"]);
     mockedEntityDeleteService.deleteEntity.and.resolveTo(
+      new CascadingActionResult([primaryEntity]),
+    );
+    mockedEntityAnonymizeService = jasmine.createSpyObj(["anonymizeEntity"]);
+    mockedEntityAnonymizeService.anonymizeEntity.and.resolveTo(
       new CascadingActionResult([primaryEntity]),
     );
     mockedEntityMapper = jasmine.createSpyObj(["save", "saveAll"]);
@@ -54,7 +63,10 @@ describe("EntityActionsService", () => {
       providers: [
         EntityActionsService,
         { provide: EntityDeleteService, useValue: mockedEntityDeleteService },
-        { provide: EntityAnonymizeService, useValue: null },
+        {
+          provide: EntityAnonymizeService,
+          useValue: mockedEntityAnonymizeService,
+        },
         { provide: EntityMapperService, useValue: mockedEntityMapper },
         { provide: MatSnackBar, useValue: snackBarSpy },
         Router,
@@ -85,32 +97,26 @@ describe("EntityActionsService", () => {
     mockSnackBarRef.onAction.and.returnValues(NEVER);
     mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
 
-    const testEntity = new Entity();
-    const result = await service.delete(testEntity, true);
+    const result = await service.delete(primaryEntity, true);
 
     expect(result).toBe(true);
     expect(snackBarSpy.open).toHaveBeenCalled();
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
-      testEntity,
+      primaryEntity,
     );
     expect(mockRouter.navigate).toHaveBeenCalled();
   });
 
-  it("should delete several entities, show snackbar confirmation and navigate back", async () => {
+  it("should delete several entities and show snackbar confirmation", async () => {
     // onAction is never called
     mockSnackBarRef.onAction.and.returnValues(NEVER);
     mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
 
-    let testEntities: Entity[] = [];
-    testEntities[0] = new Entity();
-    testEntities[1] = new Entity();
-    testEntities[2] = new Entity();
-    testEntities[3] = new Entity();
-    const result = await service.delete(testEntities, true);
+    const result = await service.delete(testEntities);
 
     expect(result).toBe(true);
     expect(snackBarSpy.open).toHaveBeenCalled();
-    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledTimes(4);
+    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledTimes(3);
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       testEntities[0],
     );
@@ -120,10 +126,6 @@ describe("EntityActionsService", () => {
     expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
       testEntities[2],
     );
-    expect(mockedEntityDeleteService.deleteEntity).toHaveBeenCalledWith(
-      testEntities[3],
-    );
-    expect(mockRouter.navigate).toHaveBeenCalled();
   });
 
   it("should re-save all affected entities and navigate back to entity on undo", fakeAsync(() => {
@@ -154,21 +156,113 @@ describe("EntityActionsService", () => {
     expect(mockRouter.navigate).toHaveBeenCalled();
   }));
 
-  // it("should archive and save a single entity", async () => {
-  //   await service.archive(primaryEntity);
+  it("should anonymize and save a single entity", async () => {
+    // onAction is never called
+    mockSnackBarRef.onAction.and.returnValues(NEVER);
+    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
 
-  //   expect(primaryEntity.isActive).toBeFalsy();
-  //   expect(mockedEntityMapper.save).toHaveBeenCalledWith(primaryEntity);
-  // });
+    // const testEntity = new Entity();
+    const result = await service.anonymize(primaryEntity);
 
-  // it("should archiveUndo and save entity", async () => {
-  //   await service.archive(primaryEntity);
-  //   expect(primaryEntity.isActive).toBeFalse();
-  //   mockedEntityMapper.save.calls.reset();
+    expect(result).toBe(true);
+    expect(snackBarSpy.open).toHaveBeenCalled();
+    expect(mockedEntityAnonymizeService.anonymizeEntity).toHaveBeenCalledWith(
+      primaryEntity,
+    );
+  });
 
-  //   await service.undoArchive(primaryEntity);
+  it("should anonymize and save several entities and show snackbar confirmation", async () => {
+    // onAction is never called
+    mockSnackBarRef.onAction.and.returnValues(NEVER);
+    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
 
-  //   expect(primaryEntity.isActive).toBeTrue();
-  //   expect(mockedEntityMapper.save).toHaveBeenCalledWith(primaryEntity);
-  // });
+    const result = await service.anonymize(testEntities);
+
+    expect(result).toBe(true);
+    expect(snackBarSpy.open).toHaveBeenCalled();
+    expect(mockedEntityAnonymizeService.anonymizeEntity).toHaveBeenCalledTimes(
+      3,
+    );
+    expect(mockedEntityAnonymizeService.anonymizeEntity).toHaveBeenCalledWith(
+      testEntities[0],
+    );
+    expect(mockedEntityAnonymizeService.anonymizeEntity).toHaveBeenCalledWith(
+      testEntities[1],
+    );
+    expect(mockedEntityAnonymizeService.anonymizeEntity).toHaveBeenCalledWith(
+      testEntities[2],
+    );
+  });
+
+  it("should archive and save a single entity and show snackbar confirmation", async () => {
+    // onAction is never called
+    mockSnackBarRef.onAction.and.returnValues(NEVER);
+    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+
+    let expectedSavedEntity = primaryEntity.copy();
+    expectedSavedEntity.inactive = true;
+
+    const result = await service.archive(primaryEntity);
+    expect(result).toBe(true);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(expectedSavedEntity);
+    expect(snackBarSpy.open).toHaveBeenCalled();
+  });
+
+  it("should archive and save several entities and show snackbar confirmation", async () => {
+    // onAction is never called
+    mockSnackBarRef.onAction.and.returnValues(NEVER);
+    mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
+
+    let expectedSavedEntities = testEntities.map((e) => e.copy());
+    expectedSavedEntities.forEach((e) => (e.inactive = true));
+
+    const result = await service.archive(testEntities);
+    expect(result).toBe(true);
+    expect(mockedEntityMapper.save).toHaveBeenCalledTimes(3);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
+      expectedSavedEntities[0],
+    );
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
+      expectedSavedEntities[1],
+    );
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
+      expectedSavedEntities[2],
+    );
+    expect(snackBarSpy.open).toHaveBeenCalled();
+  });
+
+  it("should archiveUndo and save a single entity", async () => {
+    let expectedSavedEntity = primaryEntity.copy();
+    expectedSavedEntity.inactive = true;
+
+    await service.archive(primaryEntity);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(expectedSavedEntity);
+    mockedEntityMapper.save.calls.reset();
+
+    await service.undoArchive(primaryEntity);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(primaryEntity);
+  });
+
+  it("should archiveUndo and save several entities", async () => {
+    let expectedSavedEntities = testEntities.map((e) => e.copy());
+    expectedSavedEntities.forEach((e) => (e.inactive = true));
+
+    await service.archive(testEntities);
+    expect(mockedEntityMapper.save).toHaveBeenCalledTimes(3);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
+      expectedSavedEntities[0],
+    );
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
+      expectedSavedEntities[1],
+    );
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(
+      expectedSavedEntities[2],
+    );
+    mockedEntityMapper.save.calls.reset();
+
+    await service.undoArchive(testEntities);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(testEntities[0]);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(testEntities[1]);
+    expect(mockedEntityMapper.save).toHaveBeenCalledWith(testEntities[2]);
+  });
 });

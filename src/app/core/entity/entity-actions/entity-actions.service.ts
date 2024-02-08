@@ -103,7 +103,6 @@ export class EntityActionsService {
     );
     let result = new CascadingActionResult();
     for (let entity of entities) {
-      console.log("Peter deleting entity:", entity);
       result.mergeResults(await this.entityDelete.deleteEntity(entity));
     }
     progressDialogRef.close();
@@ -178,7 +177,7 @@ export class EntityActionsService {
         $localize`:Anonymize confirmation dialog:
         This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.\n
         If ${textForAnonymizeEntity} only become inactive and you want to keep all details, consider to use "archive" instead.\n
-        Are you sure you want to anonymize this record?`,
+        Are you sure you want to anonymize?`,
       ))
     ) {
       return false;
@@ -189,7 +188,6 @@ export class EntityActionsService {
     );
     let result = new CascadingActionResult();
     for (let entity of entities) {
-      console.log("Peter anonymizing entity:", entity);
       result.mergeResults(await this.entityAnonymize.anonymizeEntity(entity));
     }
     progressDialogRef.close();
@@ -239,7 +237,7 @@ export class EntityActionsService {
     return true;
   }
   /**
-   * Undo the archive action on the given entity.
+   * Undo the archive action on the given entity or entities.
    * @param entity
    */
   async undoArchive<E extends Entity>(entityParam: E | E[]) {
