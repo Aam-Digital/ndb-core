@@ -27,6 +27,7 @@ import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { FormFieldConfig } from "./FormConfig";
 import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -262,6 +263,22 @@ describe("EntityFormService", () => {
     expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
     Entity.schema.delete("test");
+  });
+
+  it("should not fail if user entity does not exist and current user value is assigned", () => {
+    TestBed.inject(CurrentUserSubject).next(undefined);
+
+    // simple property
+    Entity.schema.set("user", { defaultValue: PLACEHOLDERS.CURRENT_USER });
+    let form = service.createFormGroup([{ id: "user" }], new Entity());
+    expect(form.get("user")).toHaveValue(null);
+
+    // array property
+    Entity.schema.get("user").dataType = EntityArrayDatatype.dataType;
+    form = service.createFormGroup([{ id: "user" }], new Entity());
+    expect(form.get("user")).toHaveValue(null);
+
+    Entity.schema.delete("user");
   });
 
   it("should not assign default values to existing entities", () => {

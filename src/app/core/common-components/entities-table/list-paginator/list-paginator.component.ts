@@ -12,9 +12,6 @@ import {
   PageEvent,
 } from "@angular/material/paginator";
 import { MatTableDataSource } from "@angular/material/table";
-import { User } from "../../../user/user";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { CurrentUserSubject } from "../../../session/current-user-subject";
 
 @Component({
   selector: "app-list-paginator",
@@ -24,6 +21,7 @@ import { CurrentUserSubject } from "../../../session/current-user-subject";
   standalone: true,
 })
 export class ListPaginatorComponent<E> implements OnChanges, OnInit {
+  readonly LOCAL_STORAGE_KEY = "PAGINATION-";
   readonly pageSizeOptions = [10, 20, 50, 100];
 
   @Input() dataSource: MatTableDataSource<E>;
@@ -31,15 +29,7 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
 
   @ViewChild(MatPaginator, { static: true }) paginator: MatPaginator;
 
-  user: User;
   pageSize = 10;
-
-  constructor(
-    currentUser: CurrentUserSubject,
-    private entityMapperService: EntityMapperService,
-  ) {
-    currentUser.subscribe((val: User) => (this.user = val));
-  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("idForSavingPagination")) {
@@ -53,33 +43,24 @@ export class ListPaginatorComponent<E> implements OnChanges, OnInit {
 
   onPaginateChange(event: PageEvent) {
     this.pageSize = event.pageSize;
-    this.updateUserPaginationSettings();
+    this.savePageSize(this.pageSize);
   }
 
-  private async applyUserPaginationSettings() {
-    if (!this.user) {
-      return;
-    }
-
-    const savedSize =
-      this.user?.paginatorSettingsPageSize[this.idForSavingPagination];
+  private applyUserPaginationSettings() {
+    const savedSize = this.getSavedPageSize();
     this.pageSize = savedSize && savedSize !== -1 ? savedSize : this.pageSize;
   }
 
-  private async updateUserPaginationSettings() {
-    if (!this.user) {
-      return;
-    }
-    // The page size is stored in the database, the page index is only in memory
-    const hasChangesToBeSaved =
-      this.pageSize !==
-      this.user.paginatorSettingsPageSize[this.idForSavingPagination];
+  private getSavedPageSize(): number {
+    return Number.parseInt(
+      localStorage.getItem(this.LOCAL_STORAGE_KEY + this.idForSavingPagination),
+    );
+  }
 
-    this.user.paginatorSettingsPageSize[this.idForSavingPagination] =
-      this.pageSize;
-
-    if (hasChangesToBeSaved) {
-      await this.entityMapperService.save(this.user);
-    }
+  private savePageSize(size: number) {
+    localStorage.setItem(
+      this.LOCAL_STORAGE_KEY + this.idForSavingPagination,
+      size?.toString(),
+    );
   }
 }

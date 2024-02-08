@@ -27,6 +27,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from "@angular/material/checkbox";
+import { LoggingService } from "../../logging/logging.service";
 
 @Component({
   selector: "app-entity-select",
@@ -62,11 +63,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
    * @throws Error when `type` is not in the entity-map
    */
   @Input() set entityType(type: string | string[]) {
-    if (!Array.isArray(type)) {
-      type = [type];
-    }
-    this.loadAvailableEntities(type);
+    this._entityType = Array.isArray(type) ? type : [type];
+    this.loadAvailableEntities();
   }
+
+  private _entityType: string[];
 
   /**
    * The (initial) selection. Can be used in combination with {@link selectionChange}
@@ -83,11 +84,35 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
         untilDestroyed(this),
         filter((isLoading) => !isLoading),
       )
-      .subscribe((_) => {
-        this.selectedEntities = sel
-          .map((id) => this.allEntities.find((s) => id === s.getId()))
-          .filter((e) => !!e);
-      });
+      .subscribe(() => this.initSelectedEntities(sel));
+  }
+
+  private async initSelectedEntities(selected: string[]) {
+    const entities: E[] = [];
+    for (const s of selected) {
+      await this.getEntity(s)
+        .then((entity) => entities.push(entity))
+        .catch((err: Error) =>
+          this.logger.warn(
+            `[ENTITY_SELECT] Error loading selected entity "${s}": ${err.message}`,
+          ),
+        );
+    }
+    this.selectedEntities = entities;
+    // updating autocomplete values
+    this.formControl.setValue(this.formControl.value);
+  }
+
+  private async getEntity(id: string) {
+    const type = Entity.extractTypeFromId(id);
+    const entity = this._entityType.includes(type)
+      ? this.allEntities.find((e) => id === e.getId())
+      : await this.entityMapperService.load<E>(type, id);
+
+    if (!entity) {
+      throw Error(`Entity not found`);
+    }
+    return entity;
   }
 
   /** Underlying data-array */
@@ -160,7 +185,10 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
 
-  constructor(private entityMapperService: EntityMapperService) {
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private logger: LoggingService,
+  ) {
     this.formControl.valueChanges
       .pipe(
         untilDestroyed(this),
@@ -195,11 +223,11 @@ export class EntitySelectComponent<E extends Entity> implements OnChanges {
 
   @Input() additionalFilter: (e: E) => boolean = (_) => true;
 
-  private async loadAvailableEntities(types: string[]) {
+  private async loadAvailableEntities() {
     this.loading.next(true);
     const entities: E[] = [];
 
-    for (const type of types) {
+    for (const type of this._entityType) {
       entities.push(...(await this.entityMapperService.loadType<E>(type)));
     }
     this.allEntities = entities;

@@ -1,17 +1,9 @@
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 
 import { ListPaginatorComponent } from "./list-paginator.component";
 import { MatTableDataSource } from "@angular/material/table";
 import { PageEvent } from "@angular/material/paginator";
-import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
-import { User } from "../../../user/user";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("ListPaginatorComponent", () => {
   let component: ListPaginatorComponent<any>;
@@ -19,7 +11,7 @@ describe("ListPaginatorComponent", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [ListPaginatorComponent, MockedTestingModule.withState()],
+      imports: [ListPaginatorComponent, NoopAnimationsModule],
     }).compileComponents();
   }));
 
@@ -30,44 +22,38 @@ describe("ListPaginatorComponent", () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => localStorage.clear());
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should save pagination settings in the user entity", fakeAsync(() => {
+  it("should save pagination settings in the local storage", () => {
     component.idForSavingPagination = "table-id";
-    const saveEntitySpy = spyOn(TestBed.inject(EntityMapperService), "save");
 
     component.onPaginateChange({ pageSize: 20, pageIndex: 1 } as PageEvent);
-    tick();
 
-    expect(saveEntitySpy).toHaveBeenCalledWith(component.user);
-    expect(component.user.paginatorSettingsPageSize["table-id"]).toEqual(20);
-  }));
+    expect(
+      localStorage.getItem(component.LOCAL_STORAGE_KEY + "table-id"),
+    ).toEqual("20");
+  });
 
-  it("should update pagination when the idForSavingPagination changed", fakeAsync(() => {
-    const userPaginationSettings = {
-      c1: 11,
-      c2: 12,
-    };
-    component.user = {
-      paginatorSettingsPageSize: userPaginationSettings,
-    } as Partial<User> as User;
+  it("should update pagination when the idForSavingPagination changed", () => {
+    localStorage.setItem(component.LOCAL_STORAGE_KEY + "c1", "11");
+    localStorage.setItem(component.LOCAL_STORAGE_KEY + "c2", "12");
 
     component.idForSavingPagination = "c1";
     component.ngOnChanges({ idForSavingPagination: undefined });
-    tick();
     fixture.detectChanges();
 
-    expect(component.pageSize).toBe(userPaginationSettings.c1);
-    expect(component.paginator.pageSize).toBe(userPaginationSettings.c1);
+    expect(component.pageSize).toBe(11);
+    expect(component.paginator.pageSize).toBe(11);
 
     component.idForSavingPagination = "c2";
     component.ngOnChanges({ idForSavingPagination: undefined });
-    tick();
     fixture.detectChanges();
 
-    expect(component.pageSize).toBe(userPaginationSettings.c2);
-    expect(component.paginator.pageSize).toBe(userPaginationSettings.c2);
-  }));
+    expect(component.pageSize).toBe(12);
+    expect(component.paginator.pageSize).toBe(12);
+  });
 });
