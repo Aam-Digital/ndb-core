@@ -1,5 +1,14 @@
 @use "variables/colors";
+@use "variables/sizes";
 
 em {
   color: colors.$primary;
+}
+
+.disable-autocomplete-active-color {
+  color: black;
+}
+
+.autocomplete-footer {
+  margin: sizes.$small sizes.$regular
 }
