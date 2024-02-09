@@ -20,6 +20,9 @@
   [value]="displayText"
 />
 
+<!--
+  Autocomplete
+-->
 <mat-autocomplete
   [disableRipple]="true"
   #autoSuggestions="matAutocomplete"
@@ -32,15 +35,18 @@
     [value]="item"
   >
     <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-    <ng-container *ngIf="!templateRef; else useTemplate">{{
-      item.asString
-    }}</ng-container>
+    <ng-container *ngIf="!templateRef; else itemTemplate">
+      {{ item.asString }}
+    </ng-container>
+
     <ng-template
-      #useTemplate
+      #itemTemplate
       [ngTemplateOutlet]="templateRef"
       [ngTemplateOutletContext]="{ $implicit: item.initial }"
     ></ng-template>
   </mat-option>
+
+  <!-- Create new option -->
   <mat-option
     *ngIf="createOption && showAddOption && inputElement.value"
     [value]="inputElement.value"
