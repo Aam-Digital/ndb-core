@@ -23,13 +23,6 @@ export const schoolsComponents: ComponentTuple[] = [
       ),
   ],
   [
-    "SchoolBlock",
-    () =>
-      import("./school-block/school-block.component").then(
-        (c) => c.SchoolBlockComponent,
-      ),
-  ],
-  [
     "DisplayParticipantsCount",
     () =>
       import(

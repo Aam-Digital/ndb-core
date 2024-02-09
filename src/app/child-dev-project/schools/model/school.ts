@@ -11,10 +11,6 @@ export class School extends Entity {
   static labelPlural = $localize`:label (plural) for entity:Schools`;
   static color = "#9E9D24";
 
-  static getBlockComponent(): string {
-    return "SchoolBlock";
-  }
-
   static create(params: Partial<School>): School {
     const school = new School();
     Object.assign(school, params);
