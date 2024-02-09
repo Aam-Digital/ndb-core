@@ -16,6 +16,7 @@ import { HarnessLoader } from "@angular/cdk/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatAutocompleteHarness } from "@angular/material/autocomplete/testing";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { LoggingService } from "../../logging/logging.service";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any, any>;
@@ -101,7 +102,10 @@ describe("EntitySelectComponent", () => {
   it("discards IDs from initial selection that don't correspond to an existing entity", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
 
-    component.selection = ["not-existing-entity", testUsers[1].getId()];
+    component.selection = [
+      new Child("not-existing").getId(),
+      testUsers[1].getId(),
+    ];
     fixture.detectChanges();
     tick();
 
@@ -132,12 +136,10 @@ describe("EntitySelectComponent", () => {
 
     component.unselectEntity(testUsers[0]);
 
-    const remainingChildren = testUsers
-      .filter((c) => c.getId() !== testUsers[0].getId())
-      .map((c) => c.getId());
-    expect(component.selectionChange.emit).toHaveBeenCalledWith(
-      remainingChildren,
-    );
+    const remainingUsers = testUsers
+      .map((u) => u.getId())
+      .filter((id) => id !== testUsers[0].getId());
+    expect(component.selectionChange.emit).toHaveBeenCalledWith(remainingUsers);
   });
 
   it("switches selected entity instead of adding additionally, if multi is set to false", fakeAsync(() => {
@@ -364,6 +366,34 @@ describe("EntitySelectComponent", () => {
     );
   }));
 
+  it("should show selected entities of type that is not configured", fakeAsync(() => {
+    component.entityType = [User.ENTITY_TYPE];
+    component.selection = [testUsers[0].getId(), testChildren[0].getId()];
+    tick();
+    fixture.detectChanges();
+    expect(component.selectedEntities).toEqual(
+      jasmine.arrayWithExactContents([testUsers[0], testChildren[0]]),
+    );
+    expect(component.allEntities).toEqual(
+      jasmine.arrayWithExactContents(testUsers),
+    );
+    expect(component.filteredEntities).toEqual(
+      jasmine.arrayWithExactContents(testUsers.slice(1)),
+    );
+  }));
+
+  it("should not fail if entity cannot be found", fakeAsync(() => {
+    const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
+    component.entityType = User.ENTITY_TYPE;
+    component.selection = [testUsers[0].getId(), "missing_user"];
+    tick();
+    fixture.detectChanges();
+    expect(warnSpy).toHaveBeenCalledWith(
+      jasmine.stringContaining("missing_user"),
+    );
+    expect(component.selectedEntities).toEqual([testUsers[0]]);
+  }));
+
   it("should be able to select entities from different types", fakeAsync(() => {
     component.entityType = [User.ENTITY_TYPE, Child.ENTITY_TYPE];
     component.selection = [testUsers[1].getId(), testChildren[0].getId()];
@@ -371,5 +401,33 @@ describe("EntitySelectComponent", () => {
     tick();
 
     expect(component.selectedEntities).toEqual([testUsers[1], testChildren[0]]);
+  }));
+
+  it("should not request entities of the defined type which were not found", fakeAsync(() => {
+    const loadSpy = spyOn(
+      TestBed.inject(EntityMapperService),
+      "load",
+    ).and.callThrough();
+
+    component.entityType = User.ENTITY_TYPE;
+    const notExistingUser = new User("not-existing-user");
+    component.selection = [
+      testUsers[1].getId(),
+      testChildren[0].getId(),
+      notExistingUser.getId(),
+    ];
+
+    fixture.detectChanges();
+    tick();
+
+    expect(component.selectedEntities).toEqual([testUsers[1], testChildren[0]]);
+    expect(loadSpy).toHaveBeenCalledWith(
+      Child.ENTITY_TYPE,
+      testChildren[0].getId(),
+    );
+    expect(loadSpy).not.toHaveBeenCalledWith(
+      User.ENTITY_TYPE,
+      notExistingUser.getId(),
+    );
   }));
 });

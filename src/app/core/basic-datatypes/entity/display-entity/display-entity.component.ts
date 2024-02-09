@@ -6,6 +6,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { Router } from "@angular/router";
 import { NgClass, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
+import { LoggingService } from "../../../logging/logging.service";
 
 @DynamicComponent("DisplayEntity")
 @Component({
@@ -35,21 +36,30 @@ export class DisplayEntityComponent
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
+    private logger: LoggingService,
   ) {
     super();
   }
 
   async ngOnInit() {
     if (!this.entityToDisplay) {
-      this.entityType = this.entityType ?? this.config;
       this.entityId = this.entityId ?? this.value;
+      this.entityType = this.entityId.includes(":")
+        ? Entity.extractTypeFromId(this.entityId)
+        : this.entityType ?? this.config;
       if (!this.entityType || !this.entityId) {
         return;
       }
-      this.entityToDisplay = await this.entityMapper.load(
-        this.entityType,
-        this.entityId,
-      );
+      try {
+        this.entityToDisplay = await this.entityMapper.load(
+          this.entityType,
+          this.entityId,
+        );
+      } catch (e) {
+        this.logger.warn(
+          `[DISPLAY_ENTITY] Could not find entity with ID: ${this.entityId}: ${e}`,
+        );
+      }
     }
     if (this.entityToDisplay) {
       this.entityBlockComponent = this.entityToDisplay

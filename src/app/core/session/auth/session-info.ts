@@ -7,17 +7,27 @@ import { BehaviorSubject } from "rxjs";
  */
 export interface SessionInfo {
   /**
-   * ID of an in-app entity.
-   * This can be used to retrieve an ID to which the logged-in user is linked.
+   * Name of user account.
+   */
+  name: string;
+
+  /**
+   * List of roles the logged-in user hold.
+   */
+  roles: string[];
+
+  /**
+   * ID of the entity which is connected with the user account.
    *
    * This is either a full ID or (e.g. Child:123) or only the last part.
    * In the later case it refers to the `User` entity.
    */
-  name?: string;
+  entityId?: string;
+
   /**
-   * a list of roles the logged-in user hold.
+   * Email address of a user
    */
-  roles: string[];
+  email?: string;
 }
 
 /**

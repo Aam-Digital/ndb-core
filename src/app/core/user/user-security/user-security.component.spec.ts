@@ -33,7 +33,7 @@ describe("UserSecurityComponent", () => {
     name: "Not Assigned Role",
     description: "this role is not assigned to the user",
   };
-  const user = { name: "test-user" } as User;
+  const user = Object.assign(new User(), { username: "test-user" });
   let keycloakUser: KeycloakUser;
 
   beforeEach(async () => {
@@ -57,7 +57,7 @@ describe("UserSecurityComponent", () => {
         {
           provide: SessionSubject,
           useValue: new BehaviorSubject({
-            name: user.name,
+            name: user.getId(true),
             roles: [KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
           }),
         },
@@ -80,7 +80,7 @@ describe("UserSecurityComponent", () => {
 
     expect(component.user).toBe(keycloakUser);
     expect(component.form).toHaveValue({
-      username: user.name,
+      username: user.getId(),
       email: "my@email.de",
       roles: [assignedRole],
     });
@@ -116,7 +116,7 @@ describe("UserSecurityComponent", () => {
     expect(mockHttp.post).toHaveBeenCalledWith(
       jasmine.stringMatching(/\/account$/),
       {
-        username: user.name,
+        username: user.getId(),
         email: "new@email.com",
         roles: [assignedRole],
         enabled: true,
