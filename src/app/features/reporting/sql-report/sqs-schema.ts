@@ -41,8 +41,10 @@ export class SqsSchema extends Entity {
 export type SqlTables = {
   // Name of the entity
   [table: string]: {
-    // Name of the entity attribute and the type of it
-    [column: string]: SqlType | { field: string; type: SqlType };
+    fields: {
+      // Name of the entity attribute and the type of it
+      [column: string]: SqlType | { field: string; type: SqlType };
+    };
   };
 };
 

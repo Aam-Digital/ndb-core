@@ -68,13 +68,13 @@ export class SqlReportService {
   generateSchema(): SqsSchema {
     const tables: SqlTables = {};
     for (const [name, ctr] of this.entities.entries()) {
-      tables[name] = {};
+      tables[name] = { fields: {} };
       for (const [attr, attrSchema] of ctr.schema) {
         if (attr === "_rev") {
           // skip internal property
           continue;
         }
-        tables[name][attr] = this.getSqlType(attrSchema);
+        tables[name].fields[attr] = this.getSqlType(attrSchema);
       }
     }
     return SqsSchema.create(tables);
