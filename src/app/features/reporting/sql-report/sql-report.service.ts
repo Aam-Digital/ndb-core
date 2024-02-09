@@ -10,6 +10,14 @@ import moment from "moment";
 import { firstValueFrom } from "rxjs";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { isEqual } from "lodash-es";
+import { UpdateMetadata } from "../../../core/entity/model/update-metadata";
+import { ArrayDatatype } from "../../../core/basic-datatypes/array/array.datatype";
+import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
+import { EventAttendance } from "../../../child-dev-project/attendance/model/event-attendance";
+import { TimeInterval } from "../../todos/recurring-interval/time-interval";
+import { DefaultDatatype } from "../../../core/entity/default-datatype/default.datatype";
+import { MapDatatype } from "../../../core/basic-datatypes/map/map.datatype";
+import { LocationDatatype } from "../../location/location.datatype";
 
 /**
  * Service that handles management of necessary SQS configurations
@@ -72,6 +80,24 @@ export class SqlReportService {
       for (const [attr, attrSchema] of ctr.schema) {
         if (attr === "_rev") {
           // skip internal property
+          continue;
+        }
+        // TODO undo once we are able to include JSON data
+        const dt = attrSchema.dataType;
+        if (
+          !dt ||
+          [
+            ArrayDatatype.dataType,
+            EntityArrayDatatype.dataType,
+            UpdateMetadata.DATA_TYPE,
+            EventAttendance.DATA_TYPE,
+            TimeInterval.DATA_TYPE,
+            DefaultDatatype.dataType,
+            MapDatatype.dataType,
+            LocationDatatype.dataType,
+          ].includes(dt)
+        ) {
+          // skip complex properties
           continue;
         }
         tables[name].fields[attr] = this.getSqlType(attrSchema);
