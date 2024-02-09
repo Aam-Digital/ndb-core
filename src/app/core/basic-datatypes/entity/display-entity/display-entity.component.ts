@@ -7,13 +7,14 @@ import { Router } from "@angular/router";
 import { NgClass, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
 import { LoggingService } from "../../../logging/logging.service";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("DisplayEntity")
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
-  imports: [NgClass, NgIf, DynamicComponentDirective],
+  imports: [NgClass, NgIf, DynamicComponentDirective, FaDynamicIconComponent],
   standalone: true,
 })
 export class DisplayEntityComponent
@@ -32,6 +33,7 @@ export class DisplayEntityComponent
   @Input() config: string;
 
   entityBlockComponent: string;
+  entityIcon: string;
 
   constructor(
     private entityMapper: EntityMapperService,
@@ -65,6 +67,7 @@ export class DisplayEntityComponent
       this.entityBlockComponent = this.entityToDisplay
         .getConstructor()
         .getBlockComponent();
+      this.entityIcon = this.entityToDisplay.getConstructor().icon;
     }
   }
 
