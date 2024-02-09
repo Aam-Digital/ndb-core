@@ -180,6 +180,11 @@ describe("EntitySelectComponent", () => {
     tick();
 
     expect(component.selectedEntities).toEqual([testUsers[1]]);
+
+    component.selection = undefined;
+    tick();
+
+    expect(component.selectedEntities).toEqual([]);
   }));
 
   it("adds a new entity if it matches a known entity", fakeAsync(() => {

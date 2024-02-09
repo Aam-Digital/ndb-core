@@ -28,6 +28,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { LoggingService } from "../../logging/logging.service";
+import { ErrorHintComponent } from "../error-hint/error-hint.component";
 
 @Component({
   selector: "app-entity-select",
@@ -46,6 +47,7 @@ import { LoggingService } from "../../logging/logging.service";
     MatInputModule,
     MatCheckboxModule,
     AsyncPipe,
+    ErrorHintComponent,
   ],
   standalone: true,
 })
@@ -85,7 +87,9 @@ export class EntitySelectComponent<
    * @param sel The initial selection (single id string for multi=false, array of id strings for multi=true)
    */
   @Input() set selection(sel: T) {
-    const selArray: string[] = Array.isArray(sel) ? sel : [sel];
+    const selArray: string[] = (Array.isArray(sel) ? sel : [sel]).filter(
+      (i) => !!i,
+    );
 
     this.loading
       .pipe(
