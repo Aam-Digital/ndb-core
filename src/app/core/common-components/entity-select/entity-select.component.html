@@ -1,15 +1,17 @@
 <mat-form-field
   floatLabel="always"
-  (click)="formControl.enabled ? autocomplete.openPanel() : null"
+  (click)="autocompleteForm.enabled ? autocomplete.openPanel() : null"
 >
   <mat-label *ngIf="label">{{ label }}</mat-label>
 
   <input
     #inputField
     matInput
-    [hidden]="!formControl.enabled || (!multi && selectedEntities.length > 0)"
+    [hidden]="
+      !autocompleteForm.enabled || (!multi && selectedEntities.length > 0)
+    "
     [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
-    [formControl]="formControl"
+    [formControl]="autocompleteForm"
     [matAutocomplete]="autoSuggestions"
     [matChipInputFor]="chipList"
     [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
@@ -19,8 +21,8 @@
   <mat-chip-grid #chipList>
     <ng-container *ngIf="showEntities">
       <mat-chip-row
-        [editable]="selectable && formControl.enabled"
-        [removable]="removable && formControl.enabled"
+        [editable]="selectable && autocompleteForm.enabled"
+        [removable]="removable && autocompleteForm.enabled"
         *ngFor="let entity of selectedEntities"
         (removed)="unselectEntity(entity)"
         class="chip"
@@ -28,9 +30,9 @@
         <app-display-entity
           class="display-entity"
           [entityToDisplay]="entity"
-          [linkDisabled]="formControl.enabled"
+          [linkDisabled]="autocompleteForm.enabled"
         ></app-display-entity>
-        <button matChipRemove *ngIf="removable && formControl.enabled">
+        <button matChipRemove *ngIf="removable && autocompleteForm.enabled">
           <fa-icon
             i18n-matTooltip="tooltip for remove icon-button"
             matTooltip="remove"

@@ -112,7 +112,7 @@ export class EntitySelectComponent<
     }
     this.selectedEntities = entities;
     // updating autocomplete values
-    this.formControl.setValue(this.formControl.value);
+    this.autocompleteForm.setValue(this.autocompleteForm.value);
   }
 
   private async getEntity(id: string) {
@@ -178,9 +178,9 @@ export class EntitySelectComponent<
    */
   @Input() set disabled(disabled: boolean) {
     if (disabled) {
-      this.formControl.disable();
+      this.autocompleteForm.disable();
     } else {
-      this.formControl.enable();
+      this.autocompleteForm.enable();
     }
   }
 
@@ -196,7 +196,7 @@ export class EntitySelectComponent<
   filteredEntities: E[] = [];
   inactiveFilteredEntities: E[] = [];
 
-  formControl = new FormControl("");
+  autocompleteForm = new FormControl("");
 
   @ViewChild("inputField") inputField: ElementRef<HTMLInputElement>;
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
@@ -205,7 +205,7 @@ export class EntitySelectComponent<
     private entityMapperService: EntityMapperService,
     private logger: LoggingService,
   ) {
-    this.formControl.valueChanges
+    this.autocompleteForm.valueChanges
       .pipe(
         untilDestroyed(this),
         filter((value) => value === null || typeof value === "string"), // sometimes produces entities
@@ -217,7 +217,7 @@ export class EntitySelectComponent<
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.hasOwnProperty("additionalFilter")) {
       // update whenever additional filters are being set
-      this.formControl.setValue(this.formControl.value);
+      this.autocompleteForm.setValue(this.autocompleteForm.value);
       this.entitiesPassingAdditionalFilter = this.allEntities.filter((e) =>
         this.additionalFilter(e),
       );
@@ -247,7 +247,7 @@ export class EntitySelectComponent<
       this.additionalFilter(e),
     );
     this.loading.next(false);
-    this.formControl.setValue(null);
+    this.autocompleteForm.setValue(null);
   }
 
   /**
@@ -269,7 +269,7 @@ export class EntitySelectComponent<
 
     this.emitChange();
     this.inputField.nativeElement.value = "";
-    this.formControl.setValue(null);
+    this.autocompleteForm.setValue(null);
   }
 
   /**
@@ -339,7 +339,7 @@ export class EntitySelectComponent<
       this.selectedEntities.splice(index, 1);
       this.emitChange();
       // Update the form control to re-run the filter function
-      this.formControl.updateValueAndValidity();
+      this.autocompleteForm.updateValueAndValidity();
     }
   }
 

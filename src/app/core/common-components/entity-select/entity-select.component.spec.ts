@@ -210,23 +210,23 @@ describe("EntitySelectComponent", () => {
     component.allEntities = testUsers;
     component.loading.next(false);
 
-    component.formControl.setValue(null);
+    component.autocompleteForm.setValue(null);
     tick();
     expect(component.filteredEntities.length).toEqual(4);
 
-    component.formControl.setValue("A");
+    component.autocompleteForm.setValue("A");
     tick();
     expect(component.filteredEntities.length).toEqual(3);
 
-    component.formControl.setValue("c");
+    component.autocompleteForm.setValue("c");
     tick();
     expect(component.filteredEntities.length).toEqual(2);
 
-    component.formControl.setValue("Abc");
+    component.autocompleteForm.setValue("Abc");
     tick();
     expect(component.filteredEntities.length).toEqual(1);
 
-    component.formControl.setValue("z");
+    component.autocompleteForm.setValue("z");
     tick();
     expect(component.filteredEntities.length).toEqual(0);
     tick();
@@ -240,7 +240,7 @@ describe("EntitySelectComponent", () => {
     component.allEntities = testUsers;
     component.loading.next(false);
 
-    component.formControl.setValue(null);
+    component.autocompleteForm.setValue(null);
     expect(component.filteredEntities.length).toEqual(2);
 
     component.toggleIncludeInactive();
@@ -331,11 +331,11 @@ describe("EntitySelectComponent", () => {
     component.allEntities = [p1, p2];
     component.loading.next(false);
 
-    component.formControl.setValue("Aa");
+    component.autocompleteForm.setValue("Aa");
     tick();
     expect(component.filteredEntities).toEqual([p1, p2]);
 
-    component.formControl.setValue("Aa b");
+    component.autocompleteForm.setValue("Aa b");
     tick();
     expect(component.filteredEntities).toEqual([p1]);
   }));
