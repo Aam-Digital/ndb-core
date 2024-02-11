@@ -2,9 +2,11 @@ import {
   Component,
   ContentChild,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   Optional,
+  Output,
   Self,
   TemplateRef,
   ViewChild,
@@ -109,6 +111,8 @@ export class BasicAutocompleteComponent<O, V = O>
     startWith([] as SelectableOption<O, V>[]),
   );
   showAddOption = false;
+  autocompleteFilterFunction: (option: O) => boolean;
+  @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
 
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
@@ -211,11 +215,17 @@ export class BasicAutocompleteComponent<O, V = O>
       (o) => !this.hideOption(o.initial),
     );
     if (inputText) {
+      this.autocompleteFilterFunction = (option) =>
+        this.optionToString(option)
+          .toLowerCase()
+          .includes(inputText.toLowerCase());
+      this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
+
       filteredOptions = filteredOptions.filter((o) =>
-        o.asString.toLowerCase().includes(inputText.toLowerCase()),
+        this.autocompleteFilterFunction(o.initial),
       );
-      this.showAddOption = !this._options.some(
-        (o) => o.asString.toLowerCase() === inputText.toLowerCase(),
+      this.showAddOption = !this._options.some((o) =>
+        this.autocompleteFilterFunction(o.initial),
       );
     }
     return filteredOptions;

@@ -14,6 +14,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { LoggingService } from "../../logging/logging.service";
 import { FormControl } from "@angular/forms";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any, any>;
@@ -115,14 +116,37 @@ describe("EntitySelectComponent", () => {
     component.entityType = User.ENTITY_TYPE;
     tick();
 
-    expect(component.availableOptions.value.length).toEqual(2);
+    expect(component.availableOptions.value.length).toEqual(
+      testUsers.length - 2,
+    );
 
     component.toggleIncludeInactive();
-    expect(component.availableOptions.value.length).toEqual(4);
+    tick();
+    expect(component.availableOptions.value.length).toEqual(testUsers.length);
 
     testUsers[2].isActive = true;
     component.toggleIncludeInactive();
+    tick();
     expect(component.availableOptions.value.length).toEqual(3);
+  }));
+
+  it("should update matchingInactive count when autocomplete filter changes", fakeAsync(() => {
+    const testEntities = [
+      Child.create("AB"),
+      Child.create("AC"),
+      Child.create("X"),
+    ];
+    testEntities.forEach((e) => (e.inactive = true));
+    spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo(
+      testEntities,
+    );
+
+    component.entityType = Child.ENTITY_TYPE;
+    tick();
+    expect(component.currentlyMatchingInactive).toBe(testEntities.length);
+
+    component.recalculateMatchingInactive((o) => o["name"].startsWith("A"));
+    expect(component.currentlyMatchingInactive).toBe(2);
   }));
 
   it("should show selected entities of type that is not configured", fakeAsync(() => {

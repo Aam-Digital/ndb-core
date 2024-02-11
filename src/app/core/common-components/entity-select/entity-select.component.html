@@ -6,6 +6,7 @@
     [formControl]="form"
     [valueMapper]="entityToId"
     [optionToString]="accessor"
+    (autocompleteFilterChange)="recalculateMatchingInactive($event)"
     [multi]="multi"
     [display]="showEntities ? 'chips' : 'none'"
     [options]="availableOptions | async"
@@ -19,12 +20,12 @@
       ></app-display-entity>
     </ng-template>
 
-    <ng-container autocompleteFooter>
+    <ng-container autocompleteFooter *ngIf="currentlyMatchingInactive > 0">
       <mat-slide-toggle
         [checked]="includeInactive"
         (toggleChange)="toggleIncludeInactive()"
         i18n="Label for checkbox|e.g. include inactive children"
-        >Also show inactive
+        >Also show {{ currentlyMatchingInactive }} inactive
       </mat-slide-toggle>
     </ng-container>
   </app-basic-autocomplete>

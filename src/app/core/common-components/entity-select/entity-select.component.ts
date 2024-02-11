@@ -102,6 +102,7 @@ export class EntitySelectComponent<
   availableOptions = new BehaviorSubject<E[]>([]);
 
   @Input() includeInactive: boolean = false;
+  currentlyMatchingInactive: number = 0;
 
   constructor(
     private entityMapperService: EntityMapperService,
@@ -148,6 +149,7 @@ export class EntitySelectComponent<
     await this.alignAvailableAndSelectedEntities(newAvailableEntities);
 
     this.availableOptions.next(newAvailableEntities);
+    this.recalculateMatchingInactive();
   }
 
   /**
@@ -157,6 +159,10 @@ export class EntitySelectComponent<
    * @private
    */
   private async alignAvailableAndSelectedEntities(availableEntities: E[]) {
+    if (this.form.value === null || this.form.value === undefined) {
+      return;
+    }
+
     let updatedValue: T = this.form.value;
 
     for (const id of asArray(this.form.value)) {
@@ -193,9 +199,26 @@ export class EntitySelectComponent<
       });
   }
 
-  toggleIncludeInactive() {
+  async toggleIncludeInactive() {
     this.includeInactive = !this.includeInactive;
-    this.updateAvailableOptions();
+    await this.updateAvailableOptions();
+  }
+
+  private autocompleteFilter: (o: E) => boolean = () => true;
+
+  /**
+   * Recalculates the number of inactive entities that match the current filter,
+   * and optionally updates the current filter function (otherwise reuses the filter previously set)
+   * @param newAutocompleteFilter
+   */
+  recalculateMatchingInactive(newAutocompleteFilter?: (o: Entity) => boolean) {
+    if (newAutocompleteFilter) {
+      this.autocompleteFilter = newAutocompleteFilter;
+    }
+
+    this.currentlyMatchingInactive = this.allEntities.filter(
+      (e) => !e.isActive && this.autocompleteFilter(e),
+    ).length;
   }
 }
 
