@@ -17,6 +17,7 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { asArray } from "../../../utils/utils";
+import { LoggingService } from "../../logging/logging.service";
 
 @Component({
   selector: "app-entity-select",
@@ -102,7 +103,10 @@ export class EntitySelectComponent<
 
   @Input() includeInactive: boolean = false;
 
-  constructor(private entityMapperService: EntityMapperService) {}
+  constructor(
+    private entityMapperService: EntityMapperService,
+    private logger: LoggingService,
+  ) {}
 
   /**
    * The accessor used for filtering and when selecting a new
@@ -126,24 +130,77 @@ export class EntitySelectComponent<
     }
     this.allEntities.sort((a, b) => a.toString().localeCompare(b.toString()));
 
-    this.updateAvailableOptions();
+    await this.updateAvailableOptions();
 
     this.loading.next(false);
   }
 
-  private updateAvailableOptions() {
+  private async updateAvailableOptions() {
     const includeInactive = (entity: E) =>
       this.includeInactive || entity.isActive;
     const includeSelected = (entity: E) =>
       asArray(this.form.value).includes(entity.getId());
 
-    this.availableOptions.next(
-      this.allEntities.filter((e) => includeInactive(e) || includeSelected(e)),
+    const newAvailableEntities = this.allEntities.filter(
+      (e) => includeInactive(e) || includeSelected(e),
     );
+
+    await this.alignAvailableAndSelectedEntities(newAvailableEntities);
+
+    this.availableOptions.next(newAvailableEntities);
+  }
+
+  /**
+   * Edit form value (currently selected) and the given available Entities to be consistent:
+   * Entities that do not exist should be removed from the form value
+   * and availableEntities should contain all selected entities, even from other types.
+   * @private
+   */
+  private async alignAvailableAndSelectedEntities(availableEntities: E[]) {
+    let updatedValue: T = this.form.value;
+
+    for (const id of asArray(this.form.value)) {
+      if (availableEntities.find((e) => id === e.getId())) {
+        // already available, nothing to do
+        continue;
+      }
+
+      const additionalEntity = await this.getEntity(id);
+      if (additionalEntity) {
+        availableEntities.push(additionalEntity);
+      } else {
+        updatedValue = isMulti(this)
+          ? ((updatedValue as string[]).filter((v) => v !== id) as T)
+          : undefined;
+      }
+    }
+
+    if (this.form.value !== updatedValue) {
+      this.form.setValue(updatedValue);
+    }
+  }
+
+  private getEntity(selectedId: string): Promise<E | undefined> {
+    const type = Entity.extractTypeFromId(selectedId);
+
+    return this.entityMapperService
+      .load<E>(type, selectedId)
+      .catch((err: Error) => {
+        this.logger.warn(
+          `[ENTITY_SELECT] Error loading selected entity "${selectedId}": ${err.message}`,
+        );
+        return undefined;
+      });
   }
 
   toggleIncludeInactive() {
     this.includeInactive = !this.includeInactive;
     this.updateAvailableOptions();
   }
+}
+
+function isMulti(
+  cmp: EntitySelectComponent<any, string | string[]>,
+): cmp is EntitySelectComponent<any, string[]> {
+  return cmp.multi;
 }

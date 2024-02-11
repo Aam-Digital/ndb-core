@@ -12,18 +12,19 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../session/session-states/login-state.enum";
-import { HarnessLoader } from "@angular/cdk/testing";
-import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { LoggingService } from "../../logging/logging.service";
+import { FormControl } from "@angular/forms";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any, any>;
   let fixture: ComponentFixture<EntitySelectComponent<any, any>>;
-  let loader: HarnessLoader;
   let testUsers: Entity[];
   let testChildren: Entity[];
+  let formControl: FormControl;
 
   beforeEach(waitForAsync(() => {
+    formControl = new FormControl();
+
     testUsers = ["Abc", "Bcd", "Abd", "Aba"].map((s) => {
       const user = new User();
       user.name = s;
@@ -31,6 +32,7 @@ describe("EntitySelectComponent", () => {
     });
     testChildren = [new Child(), new Child()];
     const otherEntities: Entity[] = [new School()];
+
     TestBed.configureTestingModule({
       imports: [
         EntitySelectComponent,
@@ -45,8 +47,8 @@ describe("EntitySelectComponent", () => {
 
   beforeEach(() => {
     fixture = TestBed.createComponent(EntitySelectComponent);
-    loader = TestbedHarnessEnvironment.loader(fixture);
     component = fixture.componentInstance;
+    component.form = formControl;
     fixture.detectChanges();
   });
 
@@ -63,6 +65,7 @@ describe("EntitySelectComponent", () => {
 
   it("should not be in loading-state when all data is received", fakeAsync(() => {
     component.entityType = User.ENTITY_TYPE;
+    expect(component.loading.value).toBe(true);
     tick();
     expect(component.loading.value).toBe(false);
   }));
@@ -71,38 +74,9 @@ describe("EntitySelectComponent", () => {
     component.entityType = User.ENTITY_TYPE;
     tick();
     fixture.detectChanges();
-    expect(component.availableOptions.value.length).toBe(testUsers.length);
-  }));
-
-  it("discards IDs from initial selection that don't correspond to an existing entity", fakeAsync(() => {
-    component.entityType = User.ENTITY_TYPE;
-
-    component.selection = [
-      new Child("not-existing").getId(),
-      testUsers[1].getId(),
-    ];
-    fixture.detectChanges();
-    tick();
-
-    expect(component.selectedEntities).toEqual([testUsers[1]]);
-  }));
-
-  it("shows inactive entites according to the includeInactive state", fakeAsync(() => {
-    testUsers[0].isActive = false;
-    testUsers[2].isActive = false;
-    component.entityType = User.ENTITY_TYPE;
-    tick();
-    component.allEntities = testUsers;
-    component.loading.next(false);
-
-    expect(component.availableOptions.value.length).toEqual(2);
-
-    component.toggleIncludeInactive();
-    expect(component.availableOptions.value.length).toEqual(4);
-
-    testUsers[2].isActive = true;
-    component.toggleIncludeInactive();
-    expect(component.availableOptions.value.length).toEqual(3);
+    expect(component.availableOptions.value).toEqual(
+      jasmine.arrayWithExactContents(testUsers),
+    );
   }));
 
   it("suggests all entities of multiple different types if configured", fakeAsync(() => {
@@ -122,31 +96,52 @@ describe("EntitySelectComponent", () => {
     );
   }));
 
-  it("should show selected entities of type that is not configured", fakeAsync(() => {
-    component.entityType = [User.ENTITY_TYPE];
-    component.selection = [testUsers[0].getId(), testChildren[0].getId()];
+  it("should not fail if selected entity (value) is not found", fakeAsync(() => {
+    const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
+    component.entityType = User.ENTITY_TYPE;
+    component.form.setValue([testUsers[0].getId(), "missing_user"]);
     tick();
     fixture.detectChanges();
-    expect(component.selectedEntities).toEqual(
-      jasmine.arrayWithExactContents([testUsers[0], testChildren[0]]),
+
+    expect(warnSpy).toHaveBeenCalledWith(
+      jasmine.stringContaining("missing_user"),
+    );
+    expect(component.form.value).toEqual([testUsers[0].getId()]);
+  }));
+
+  it("shows inactive entities according to the includeInactive state", fakeAsync(() => {
+    testUsers[0].isActive = false;
+    testUsers[2].isActive = false;
+    component.entityType = User.ENTITY_TYPE;
+    tick();
+
+    expect(component.availableOptions.value.length).toEqual(2);
+
+    component.toggleIncludeInactive();
+    expect(component.availableOptions.value.length).toEqual(4);
+
+    testUsers[2].isActive = true;
+    component.toggleIncludeInactive();
+    expect(component.availableOptions.value.length).toEqual(3);
+  }));
+
+  it("should show selected entities of type that is not configured", fakeAsync(() => {
+    component.entityType = [User.ENTITY_TYPE];
+    component.form.setValue([testUsers[0].getId(), testChildren[0].getId()]);
+    tick();
+    fixture.detectChanges();
+
+    expect(component.form.value).toEqual(
+      jasmine.arrayWithExactContents([
+        testUsers[0].getId(),
+        testChildren[0].getId(),
+      ]),
     );
     expect(component.allEntities).toEqual(
       jasmine.arrayWithExactContents(testUsers),
     );
-    expect(component.filteredEntities).toEqual(
-      jasmine.arrayWithExactContents(testUsers.slice(1)),
+    expect(component.availableOptions.value).toEqual(
+      jasmine.arrayWithExactContents([...testUsers, testChildren[0]]),
     );
-  }));
-
-  it("should not fail if entity cannot be found", fakeAsync(() => {
-    const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
-    component.entityType = User.ENTITY_TYPE;
-    component.selection = [testUsers[0].getId(), "missing_user"];
-    tick();
-    fixture.detectChanges();
-    expect(warnSpy).toHaveBeenCalledWith(
-      jasmine.stringContaining("missing_user"),
-    );
-    expect(component.selectedEntities).toEqual([testUsers[0]]);
   }));
 });
