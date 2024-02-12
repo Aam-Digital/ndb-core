@@ -48,7 +48,7 @@ export type SqlTables = {
   };
 };
 
-export type SqlType = "TEXT" | "INTEGER" | "REAL";
+export type SqlType = "TEXT" | "INTEGER" | "REAL" | "JSON";
 
 export type SqlOptions = {
   table_name: {
