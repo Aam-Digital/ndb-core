@@ -10,13 +10,6 @@ import moment from "moment";
 import { firstValueFrom } from "rxjs";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { isEqual } from "lodash-es";
-import { LongTextDatatype } from "../../../core/basic-datatypes/string/long-text.datatype";
-import { StringDatatype } from "../../../core/basic-datatypes/string/string.datatype";
-import { DateDatatype } from "../../../core/basic-datatypes/date/date.datatype";
-import { DateOnlyDatatype } from "../../../core/basic-datatypes/date-only/date-only.datatype";
-import { MonthDatatype } from "../../../core/basic-datatypes/month/month.datatype";
-import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
-import { DateWithAgeDatatype } from "../../../core/basic-datatypes/date-with-age/date-with-age.datatype";
 
 /**
  * Service that handles management of necessary SQS configurations
@@ -92,16 +85,8 @@ export class SqlReportService {
       case NumberDatatype.dataType:
       case BooleanDatatype.dataType:
         return "INTEGER";
-      case LongTextDatatype.dataType:
-      case StringDatatype.dataType:
-      case DateDatatype.dataType:
-      case DateOnlyDatatype.dataType:
-      case DateWithAgeDatatype.dataType:
-      case MonthDatatype.dataType:
-      case EntityDatatype.dataType:
-        return "TEXT";
       default:
-        return "JSON";
+        return "TEXT";
     }
   }
 }
