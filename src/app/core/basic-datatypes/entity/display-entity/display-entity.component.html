@@ -1,5 +1,5 @@
 <span
-  class="block-height"
+  class="block-height truncate-text"
   [ngClass]="{ clickable: !linkDisabled }"
   (click)="showDetailsPage()"
 >
@@ -17,6 +17,12 @@
   </ng-container>
 
   <ng-container *ngIf="!entityBlockComponent">
+    <app-fa-dynamic-icon
+      *ngIf="entityIcon"
+      [icon]="entityIcon"
+      class="margin-right-small"
+    ></app-fa-dynamic-icon>
+
     {{ entityToDisplay?.toString() }}
   </ng-container>
 </span>
