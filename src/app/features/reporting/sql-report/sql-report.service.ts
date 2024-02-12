@@ -81,8 +81,10 @@ export class SqlReportService {
   }
 
   private getSqlType(schema: EntitySchemaField): SqlType {
+    // The types here don't matter too much as SQLITE anyway has dynamic typing https://sqlite.org/datatype3.html
     switch (schema.dataType) {
       case NumberDatatype.dataType:
+      // booleans are mapped to 0 (false) or 1 (true)
       case BooleanDatatype.dataType:
         return "INTEGER";
       default:

@@ -85,11 +85,11 @@ describe("SqlReportService", () => {
             updated: "TEXT",
             inactive: "INTEGER",
             anonymized: "INTEGER",
-            numberProp: "INTEGER", // TODO distinguish REAL and INT? SQLITE anyways has dynamic typing https://sqlite.org/datatype3.html
+            numberProp: "INTEGER",
             stringProp: "TEXT",
             entityProp: "TEXT",
             arrayEnum: "TEXT",
-            booleanProp: "INTEGER", // TODO check that this works with SQS
+            booleanProp: "INTEGER",
           },
         },
       },
