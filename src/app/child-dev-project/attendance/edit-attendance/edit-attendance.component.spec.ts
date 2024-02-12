@@ -10,6 +10,8 @@ import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { defaultInteractionTypes } from "../../../core/config/default-config/default-interaction-types";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
+import { Child } from "../../children/model/child";
+import { LoginState } from "../../../core/session/session-states/login-state.enum";
 
 describe("EditAttendanceComponent", () => {
   let component: EditAttendanceComponent;
@@ -17,15 +19,22 @@ describe("EditAttendanceComponent", () => {
   let categoryForm: FormControl<InteractionType>;
   let childrenForm: FormControl<string[]>;
 
+  let childrenEntities: Child[];
+
   beforeEach(async () => {
+    childrenEntities = [new Child("child1"), new Child("child2")];
+
     await TestBed.configureTestingModule({
-      imports: [EditAttendanceComponent, MockedTestingModule.withState()],
+      imports: [
+        EditAttendanceComponent,
+        MockedTestingModule.withState(LoginState.LOGGED_IN, childrenEntities),
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditAttendanceComponent);
     component = fixture.componentInstance;
     categoryForm = new FormControl<InteractionType>(defaultInteractionTypes[0]);
-    childrenForm = new FormControl(["child1", "child2"]);
+    childrenForm = new FormControl(childrenEntities.map((c) => c.getId()));
     component.parent = new FormGroup({
       children: childrenForm,
       category: categoryForm,
@@ -66,18 +75,18 @@ describe("EditAttendanceComponent", () => {
     categoryForm.setValue(defaultInteractionTypes.find((c) => c.isMeeting));
     fixture.detectChanges();
     const attendanceForm = component.parent.get("childrenAttendance");
-    const a1 = component.getAttendance("child1");
-    const a2 = component.getAttendance("child2");
+    const a1 = component.getAttendance(childrenEntities[0].getId());
+    const a2 = component.getAttendance(childrenEntities[1].getId());
     a1.remarks = "absent";
     a2.remarks = "excused";
 
     expect([...attendanceForm.value.values()]).toHaveSize(2);
 
-    component.removeChild("child2");
+    component.removeChild(childrenEntities[1].getId());
 
-    expect(childrenForm.value).toEqual(["child1"]);
+    expect(childrenForm.value).toEqual([childrenEntities[0].getId()]);
     expect([...attendanceForm.value.values()]).toHaveSize(1);
-    expect(attendanceForm.value.get("child1")).toBe(a1);
+    expect(attendanceForm.value.get(childrenEntities[0].getId())).toBe(a1);
   });
 
   it("should mark form as dirty when some attendance detail was changed", async () => {
@@ -88,10 +97,15 @@ describe("EditAttendanceComponent", () => {
       await TestbedHarnessEnvironment.loader(fixture).getAllHarnesses(
         MatInputHarness,
       );
-    const firstRemarkInput = inputElements[1];
+    const firstRemarkInput = inputElements[2];
     await firstRemarkInput.setValue("new remarks");
 
-    expect(component.getAttendance("child1").remarks).toEqual("new remarks");
+    const placeholder = await firstRemarkInput.getPlaceholder();
+    const name = await firstRemarkInput.getName();
+
+    expect(
+      component.getAttendance(childrenEntities[0].getId()).remarks,
+    ).toEqual("new remarks");
     expect(component.formControl.dirty).toBeTrue();
   });
 });

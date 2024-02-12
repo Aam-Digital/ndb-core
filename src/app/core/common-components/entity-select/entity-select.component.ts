@@ -59,6 +59,10 @@ export class EntitySelectComponent<
    * @throws Error when `type` is not in the entity-map
    */
   @Input() set entityType(type: string | string[]) {
+    if (type === undefined || type === null) {
+      type = [];
+    }
+
     this._entityType = Array.isArray(type) ? type : [type];
     this.loadAvailableEntities();
   }
@@ -186,10 +190,10 @@ export class EntitySelectComponent<
     }
   }
 
-  private getEntity(selectedId: string): Promise<E | undefined> {
+  private async getEntity(selectedId: string): Promise<E | undefined> {
     const type = Entity.extractTypeFromId(selectedId);
 
-    return this.entityMapperService
+    const entity = await this.entityMapperService
       .load<E>(type, selectedId)
       .catch((err: Error) => {
         this.logger.warn(
@@ -197,6 +201,8 @@ export class EntitySelectComponent<
         );
         return undefined;
       });
+
+    return entity;
   }
 
   async toggleIncludeInactive() {

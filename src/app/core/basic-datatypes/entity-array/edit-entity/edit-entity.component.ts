@@ -29,7 +29,7 @@ export class EditEntityComponent<T extends string[] | string = string[]>
   ngOnInit() {
     super.ngOnInit();
 
-    this.entityName = this.formFieldConfig.additional;
+    this.entityName = this.entityName ?? this.formFieldConfig.additional;
 
     this.multi = isArrayDataType(this.formFieldConfig.dataType);
 
