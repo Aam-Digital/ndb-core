@@ -63,6 +63,7 @@ export abstract class AbstractPermissionGuard implements CanActivate {
 
     function isPathMatch(genericPath: string, path: string) {
       const routeRegex = genericPath
+        .replace(/\*/g, ".*") // allow for wildcard routes in regex
         .split("/")
         // replace params with wildcard regex
         .map((part) => (part.startsWith(":") ? "[^/]*" : part))
