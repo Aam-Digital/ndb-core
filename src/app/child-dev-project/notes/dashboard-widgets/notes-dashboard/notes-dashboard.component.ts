@@ -1,4 +1,4 @@
-import { AfterViewInit, Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
 import { MatTableModule } from "@angular/material/table";
@@ -8,8 +8,6 @@ import { EntityRegistry } from "../../../../core/entity/database-entity.decorato
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { DecimalPipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
-
-import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { Note } from "../../model/note";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
