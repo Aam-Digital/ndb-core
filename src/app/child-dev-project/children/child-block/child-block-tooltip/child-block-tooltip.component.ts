@@ -2,10 +2,10 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Child } from "../../model/child";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { NgForOf, NgIf } from "@angular/common";
-import { SchoolBlockComponent } from "../../../schools/school-block/school-block.component";
 import { FaDynamicIconComponent } from "../../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../../../../features/file/file.service";
+import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
 
 /**
  * Tooltip that is shown when hovering over a child block and the tooltip is enabled.
@@ -17,9 +17,9 @@ import { FileService } from "../../../../features/file/file.service";
   imports: [
     FontAwesomeModule,
     NgIf,
-    SchoolBlockComponent,
     NgForOf,
     FaDynamicIconComponent,
+    DisplayEntityComponent,
   ],
   standalone: true,
 })

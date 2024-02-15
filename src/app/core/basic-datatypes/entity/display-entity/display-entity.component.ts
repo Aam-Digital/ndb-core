@@ -1,4 +1,4 @@
-import { ChangeDetectorRef, Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
@@ -6,13 +6,15 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { Router } from "@angular/router";
 import { NgClass, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
+import { LoggingService } from "../../../logging/logging.service";
+import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 @DynamicComponent("DisplayEntity")
 @Component({
   selector: "app-display-entity",
   templateUrl: "./display-entity.component.html",
   styleUrls: ["./display-entity.component.scss"],
-  imports: [NgClass, NgIf, DynamicComponentDirective],
+  imports: [NgClass, NgIf, DynamicComponentDirective, FaDynamicIconComponent],
   standalone: true,
 })
 export class DisplayEntityComponent
@@ -31,32 +33,41 @@ export class DisplayEntityComponent
   @Input() config: string;
 
   entityBlockComponent: string;
+  entityIcon: string;
 
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
-    private changeDetector: ChangeDetectorRef,
+    private logger: LoggingService,
   ) {
     super();
   }
 
   async ngOnInit() {
     if (!this.entityToDisplay) {
-      this.entityType = this.entityType ?? this.config;
       this.entityId = this.entityId ?? this.value;
+      this.entityType = this.entityId.includes(":")
+        ? Entity.extractTypeFromId(this.entityId)
+        : this.entityType ?? this.config;
       if (!this.entityType || !this.entityId) {
         return;
       }
-      this.entityToDisplay = await this.entityMapper.load(
-        this.entityType,
-        this.entityId,
-      );
-      this.changeDetector.detectChanges();
+      try {
+        this.entityToDisplay = await this.entityMapper.load(
+          this.entityType,
+          this.entityId,
+        );
+      } catch (e) {
+        this.logger.warn(
+          `[DISPLAY_ENTITY] Could not find entity with ID: ${this.entityId}: ${e}`,
+        );
+      }
     }
     if (this.entityToDisplay) {
       this.entityBlockComponent = this.entityToDisplay
         .getConstructor()
         .getBlockComponent();
+      this.entityIcon = this.entityToDisplay.getConstructor().icon;
     }
   }
 
@@ -67,7 +78,7 @@ export class DisplayEntityComponent
 
     this.router.navigate([
       this.entityToDisplay.getConstructor().route,
-      this.entityToDisplay.getId(),
+      this.entityToDisplay.getId(true),
     ]);
   }
 }

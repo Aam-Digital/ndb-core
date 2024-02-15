@@ -53,7 +53,7 @@ describe("SqlReportService", () => {
     );
 
     expect(mockHttpClient.post).toHaveBeenCalledWith(
-      `${SqlReportService.QUERY_PROXY}/report/app/${report.getId(true)}`,
+      `${SqlReportService.QUERY_PROXY}/report/app/${report.getId()}`,
       {
         from: "2023-01-01",
         to: "2024-01-01",

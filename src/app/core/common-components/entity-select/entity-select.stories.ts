@@ -5,7 +5,6 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { componentRegistry } from "../../../dynamic-components";
 import { ChildBlockComponent } from "../../../child-dev-project/children/child-block/child-block.component";
-import { SchoolBlockComponent } from "../../../child-dev-project/schools/school-block/school-block.component";
 import { importProvidersFrom } from "@angular/core";
 
 const child1 = new Child();
@@ -52,7 +51,6 @@ export default {
 } as Meta;
 
 componentRegistry.add("ChildBlock", async () => ChildBlockComponent);
-componentRegistry.add("SchoolBlock", async () => SchoolBlockComponent);
 
 const Template: StoryFn<EntitySelectComponent<Child>> = (
   args: EntitySelectComponent<Child>,

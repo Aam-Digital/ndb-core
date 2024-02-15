@@ -19,6 +19,9 @@ import { Entity } from "../../../../core/entity/model/entity";
 import { DatabaseEntity } from "../../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../../core/entity/database-field.decorator";
 import { ConfigurableEnumValue } from "../../../../core/basic-datatypes/configurable-enum/configurable-enum.interface";
+import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
+import { Child } from "../../model/child";
+import { PLACEHOLDERS } from "../../../../core/entity/schema/entity-schema-field";
 
 @DatabaseEntity("EducationalMaterial")
 export class EducationalMaterial extends Entity {
@@ -26,11 +29,19 @@ export class EducationalMaterial extends Entity {
     return Object.assign(new EducationalMaterial(), params);
   }
 
-  @DatabaseField() child: string; // id of Child entity
+  @DatabaseField({
+    dataType: EntityDatatype.dataType,
+    additional: Child.ENTITY_TYPE,
+    entityReferenceRole: "composite",
+  })
+  child: string;
+
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,
+    defaultValue: PLACEHOLDERS.NOW,
   })
   date: Date;
+
   @DatabaseField({
     label: $localize`:The material which has been borrowed:Material`,
     dataType: "configurable-enum",
@@ -40,6 +51,7 @@ export class EducationalMaterial extends Entity {
     },
   })
   materialType: ConfigurableEnumValue;
+
   @DatabaseField({
     label: $localize`:The amount of the material which has been borrowed:Amount`,
     defaultValue: 1,
@@ -48,6 +60,7 @@ export class EducationalMaterial extends Entity {
     },
   })
   materialAmount: number;
+
   @DatabaseField({
     label: $localize`:An additional description for the borrowed material:Description`,
   })

@@ -10,6 +10,8 @@ import { ConfigurableEnumService } from "../core/basic-datatypes/configurable-en
 import { ComponentRegistry } from "../dynamic-components";
 import { EntityActionsService } from "../core/entity/entity-actions/entity-actions.service";
 import { ConfigurableEnumModule } from "../core/basic-datatypes/configurable-enum/configurable-enum.module";
+import { EntityAbility } from "../core/permissions/ability/entity-ability";
+import { EntitySchemaService } from "../core/entity/schema/entity-schema.service";
 
 /**
  * A basic module that can be imported in unit tests to provide default datatypes.
@@ -28,6 +30,8 @@ import { ConfigurableEnumModule } from "../core/basic-datatypes/configurable-enu
       provide: EntityActionsService,
       useValue: jasmine.createSpyObj(["anonymize"]),
     },
+    EntitySchemaService,
+    EntityAbility,
     ComponentRegistry,
   ],
 })

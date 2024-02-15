@@ -5,7 +5,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generating-progress-dialog.component";
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
-import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
 import { LoggingService } from "../logging/logging.service";
 import { Database } from "../database/database";
@@ -16,6 +15,7 @@ import { AppSettings } from "../app-settings";
 import { LoginStateSubject, SessionType } from "../session/session-type";
 import memory from "pouchdb-adapter-memory";
 import PouchDB from "pouchdb-browser";
+import { User } from "../user/user";
 
 /**
  * This service handles everything related to the demo-mode
@@ -31,10 +31,12 @@ export class DemoDataInitializerService {
   private readonly normalUser: SessionInfo = {
     name: DemoUserGeneratorService.DEFAULT_USERNAME,
     roles: ["user_app"],
+    entityId: `${User.ENTITY_TYPE}:${DemoUserGeneratorService.DEFAULT_USERNAME}`,
   };
   private readonly adminUser: SessionInfo = {
     name: DemoUserGeneratorService.ADMIN_USERNAME,
-    roles: ["user_app", "admin_app", KeycloakAuthService.ACCOUNT_MANAGER_ROLE],
+    roles: ["user_app", "admin_app"],
+    entityId: `${User.ENTITY_TYPE}:${DemoUserGeneratorService.ADMIN_USERNAME}`,
   };
   constructor(
     private demoDataService: DemoDataService,
@@ -69,7 +71,6 @@ export class DemoDataInitializerService {
   }
 
   private syncDatabaseOnUserChange() {
-    // TODO needs to work without access to entity (entity is only available once sync starts)
     this.loginState.subscribe((state) => {
       if (
         state === LoginState.LOGGED_IN &&

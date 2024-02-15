@@ -1,0 +1,25 @@
+<button
+  mat-stroked-button
+  color="accent"
+  [class.standard-add-button]="!iconOnly"
+  [class.table-action-button]="iconOnly"
+  (click)="create()"
+  angulartics2On="click"
+  angularticsCategory="UserAction"
+  [angularticsCategory]="entityType.ENTITY_TYPE"
+  angularticsAction="list_add_entity"
+  *appDisabledEntityOperation="{
+    entity: entityType,
+    operation: 'create'
+  }"
+  matTooltip="Create a new {{ entityType.label }} record"
+  i18n-matTooltip
+>
+  <fa-icon
+    aria-label="add element"
+    icon="plus-circle"
+    [class.standard-icon-with-text]="!iconOnly"
+    [class.icon-only]="iconOnly"
+  ></fa-icon>
+  <span *ngIf="!iconOnly" i18n>Add New</span>
+</button>

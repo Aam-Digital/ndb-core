@@ -2,9 +2,8 @@ import { Component, OnInit } from "@angular/core";
 import { RecurringActivity } from "../model/recurring-activity";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { RelatedEntitiesComponent } from "../../../core/entity-details/related-entities/related-entities.component";
-import { EntitySubrecordComponent } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord.component";
-import { ColumnConfig } from "../../../core/common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../../../core/common-components/entity-form/entity-form/FormConfig";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
+import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 
 /**
  * @deprecated configure a RelatedEntitiesComponent instead
@@ -14,15 +13,14 @@ import { FormFieldConfig } from "../../../core/common-components/entity-form/ent
   selector: "app-activities-overview",
   templateUrl:
     "../../../core/entity-details/related-entities/related-entities.component.html",
-  imports: [EntitySubrecordComponent],
+  imports: [EntitiesTableComponent],
   standalone: true,
 })
 export class ActivitiesOverviewComponent
   extends RelatedEntitiesComponent<RecurringActivity>
   implements OnInit
 {
-  entityType = RecurringActivity.ENTITY_TYPE;
-  property = "linkedGroups";
+  entityCtr = RecurringActivity;
 
   titleColumn: FormFieldConfig = {
     id: "title",
@@ -33,12 +31,12 @@ export class ActivitiesOverviewComponent
       relevantValue: "",
     },
   };
-  _columns: ColumnConfig[] = [
+  override _columns: FormFieldConfig[] = [
     this.titleColumn,
-    "type",
-    "assignedTo",
-    "linkedGroups",
-    "excludedParticipants",
+    { id: "type" },
+    { id: "assignedTo" },
+    { id: "linkedGroups" },
+    { id: "excludedParticipants" },
   ];
 
   async ngOnInit() {

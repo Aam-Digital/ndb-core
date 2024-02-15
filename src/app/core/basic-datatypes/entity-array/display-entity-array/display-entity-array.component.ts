@@ -30,10 +30,9 @@ export class DisplayEntityArrayComponent
     const entityIds: string[] = this.value || [];
     if (entityIds.length < this.aggregationThreshold) {
       const entityPromises = entityIds.map((entityId) => {
-        const type =
-          typeof this.config === "string"
-            ? this.config
-            : Entity.extractTypeFromId(entityId);
+        const type = entityId.includes(":")
+          ? Entity.extractTypeFromId(entityId)
+          : this.config;
         return this.entityMapper.load(type, entityId);
       });
       this.entities = await Promise.all(entityPromises);

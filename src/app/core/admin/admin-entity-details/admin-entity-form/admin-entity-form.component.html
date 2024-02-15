@@ -32,6 +32,7 @@
             color="accent"
             class="field-edit-button"
             (click)="openFieldConfig(field)"
+            i18n="Button label"
           >
             Edit Field
           </button>
@@ -54,6 +55,7 @@
         cdkDropList
         (cdkDropListDropped)="dropNewGroup($event)"
         class="fields-group-list drop-list drop-area-hint"
+        i18n="Header of drag and drop box"
       >
         drop here to create new field group
         <fa-icon
@@ -74,8 +76,10 @@
       class="drop-list"
     >
       <div class="drop-area-hint">
-        <em>hidden fields</em><br />
-        drag & drop to / from here
+        <em i18n="title for drag and drop section">hidden fields</em><br />
+        <span i18n="subtitle for drag and drop section">
+          drag & drop to / from here
+        </span>
         <fa-icon
           icon="question-circle"
           matTooltip="You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it."

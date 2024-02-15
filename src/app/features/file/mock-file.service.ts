@@ -28,7 +28,7 @@ export class MockFileService extends FileService {
   }
 
   removeFile(entity: Entity, property: string): Observable<any> {
-    this.fileMap.delete(`${entity.getId(true)}:${property}`);
+    this.fileMap.delete(`${entity.getId()}:${property}`);
     return of({ ok: true });
   }
 
@@ -37,18 +37,18 @@ export class MockFileService extends FileService {
   }
 
   showFile(entity: Entity, property: string): void {
-    const url = this.fileMap.get(`${entity.getId(true)}:${property}`);
+    const url = this.fileMap.get(`${entity.getId()}:${property}`);
     window.open(url, "_blank");
   }
 
   loadFile(entity: Entity, property: string): Observable<SafeUrl> {
-    const url = this.fileMap.get(`${entity.getId(true)}:${property}`);
+    const url = this.fileMap.get(`${entity.getId()}:${property}`);
     return of(this.sanitizer.bypassSecurityTrustUrl(url));
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
     const fileURL = URL.createObjectURL(file);
-    this.fileMap.set(`${entity.getId(true)}:${property}`, fileURL);
+    this.fileMap.set(`${entity.getId()}:${property}`, fileURL);
     return of({ ok: true });
   }
 }

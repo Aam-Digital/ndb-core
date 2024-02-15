@@ -1,6 +1,5 @@
 import { Injectable } from "@angular/core";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
-import { DataFilter } from "../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { Entity } from "../entity/model/entity";
 import {
   allInterpreters,
@@ -11,6 +10,8 @@ import {
 } from "@ucast/mongo2js";
 import moment from "moment";
 import { ConfigurableEnumService } from "../basic-datatypes/configurable-enum/configurable-enum.service";
+import { DataFilter, Filter as EntityFilter } from "./filters/filters";
+import { MongoQuery } from "@casl/ability";
 
 /**
  * Utility service to help handling and aligning filters with entities.
@@ -27,6 +28,22 @@ export class FilterService {
 
   constructor(private enumService: ConfigurableEnumService) {}
 
+  combineFilters<T extends Entity>(
+    entityFilters: EntityFilter<T>[],
+  ): DataFilter<T> {
+    if (entityFilters.length === 0) {
+      return {} as DataFilter<T>;
+    }
+
+    return {
+      $and: [
+        ...entityFilters.map((value: EntityFilter<T>): DataFilter<T> => {
+          return value.getFilter();
+        }),
+      ],
+    } as unknown as DataFilter<T>;
+  }
+
   /**
    * Builds a predicate for a given filter object.
    * This predicate can be used to filter arrays of objects.
@@ -37,22 +54,29 @@ export class FilterService {
    * @param filter a valid filter object, e.g. as provided by the `FilterComponent`
    */
   getFilterPredicate<T extends Entity>(filter: DataFilter<T>) {
-    return this.filterFactory<T>(filter);
+    return this.filterFactory<T>(filter as MongoQuery<T>);
   }
 
   /**
    * Patches an entity with values required to pass the filter query.
    * This patch happens in-place.
    * @param entity the entity to be patched
-   * @param filter the filter which the entity should pass afterwards
+   * @param filter the filter which the entity should pass afterward
    */
   alignEntityWithFilter<T extends Entity>(entity: T, filter: DataFilter<T>) {
     const schema = entity.getSchema();
     Object.entries(filter ?? {}).forEach(([key, value]) => {
-      // TODO support arrays through recursion
       if (typeof value !== "object") {
         // only simple equality filters are automatically applied to new entities, complex conditions (e.g. $lt / $gt) are ignored)
         this.assignValueToEntity(key, value, schema, entity);
+      } else if (value["$elemMatch"]?.["$eq"]) {
+        // e.g. { children: { $elemMatch: { $eq: "Child:some-id" } } }
+        this.assignValueToEntity(
+          key,
+          [value["$elemMatch"]["$eq"]],
+          schema,
+          entity,
+        );
       }
     });
   }
@@ -68,6 +92,12 @@ export class FilterService {
       [key, value] = this.transformNestedKey(key, value);
     }
     const property = schema.get(key);
+
+    if (!property) {
+      // not a schema property
+      return;
+    }
+
     if (property?.dataType === "configurable-enum") {
       value = this.parseConfigurableEnumValue(property, value);
     }

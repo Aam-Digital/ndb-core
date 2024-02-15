@@ -1,11 +1,11 @@
-<app-entity-subrecord
-  [records]="records"
-  [isLoading]="isLoading"
-  [columns]="columns"
+<app-entities-table
+  [entityType]="entityCtr"
+  [records]="data"
+  [customColumns]="_columns"
   [filter]="filter"
   [newRecordFactory]="newRecordFactory"
   clickMode="none"
-  (rowClick)="showNoteDetails($event)"
+  (entityClick)="showNoteDetails($event)"
   [getBackgroundColor]="getColor"
 >
-</app-entity-subrecord>
+</app-entities-table>

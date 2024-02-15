@@ -37,7 +37,7 @@ export class User extends Entity {
   /** username used for login and identification */
   @DatabaseField({
     label: $localize`:Label of username:Username`,
-    validators: { required: true },
+    validators: { required: true, uniqueId: "User" },
   })
   set name(value: string) {
     if (this._name && value !== this._name) {

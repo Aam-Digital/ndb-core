@@ -66,7 +66,7 @@ export class Entity {
   /**
    * True if this type's schema has been customized dynamically from the config.
    */
-  static _isCustomizedType?: boolean;
+  static _isCustomizedType?: boolean; // todo should be private or renamed to "isCustomizedType"
 
   /**
    * Defining which attribute values of an entity should be shown in the `.toString()` method.
@@ -280,9 +280,8 @@ export class Entity {
    *
    * @returns {string} the unique id of this entity
    */
-  public getId(withPrefix: boolean = false): string {
-    if (withPrefix) return this._id;
-    return this.entityId;
+  public getId(withoutPrefix = false): string {
+    return withoutPrefix ? this.entityId : this._id;
   }
 
   /**

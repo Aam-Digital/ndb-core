@@ -1,15 +1,8 @@
-import {
-  ChangeDetectionStrategy,
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { ColumnConfig } from "../entity-subrecord/entity-subrecord/entity-subrecord-config";
 import { NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
-import { FormFieldConfig } from "../entity-form/entity-form/FormConfig";
+import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { PillComponent } from "../pill/pill.component";
 
@@ -25,7 +18,6 @@ import { PillComponent } from "../pill/pill.component";
   selector: "app-entity-field-view",
   templateUrl: "./entity-field-view.component.html",
   styleUrls: ["./entity-field-view.component.scss"],
-  changeDetection: ChangeDetectionStrategy.OnPush,
   imports: [NgIf, DynamicComponentDirective, PillComponent],
   standalone: true,
 })

@@ -10,6 +10,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { Subject } from "rxjs";
 import { LoggingService } from "../../logging/logging.service";
+import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 
 describe("UpdateManagerService", () => {
   let service: UpdateManagerService;
@@ -23,6 +24,7 @@ describe("UpdateManagerService", () => {
   let stableSubject: Subject<boolean>;
   let latestChangesDialog: jasmine.SpyObj<LatestChangesDialogService>;
   let mockLogger: jasmine.SpyObj<LoggingService>;
+  let unsavedChanges: UnsavedChangesService;
 
   beforeEach(() => {
     mockLocation = jasmine.createSpyObj(["reload"]);
@@ -43,32 +45,51 @@ describe("UpdateManagerService", () => {
     appRef = jasmine.createSpyObj([], { isStable: stableSubject });
     latestChangesDialog = jasmine.createSpyObj(["showLatestChangesIfUpdated"]);
     mockLogger = jasmine.createSpyObj(["error"]);
+    unsavedChanges = new UnsavedChangesService(undefined);
+    unsavedChanges.pending = true;
 
     service = createService();
   });
+
+  afterEach(() => localStorage.clear());
 
   it("should create", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should show a snackBar that allows to reload the page when an update is available", fakeAsync(() => {
-    service.notifyUserWhenUpdateAvailable();
+  it("should show a snackBar that allows to reload the page when an update is available", () => {
+    service.listenToAppUpdates();
     // notify about new update
     updateSubject.next({ type: "VERSION_READY" });
-    tick();
 
     expect(snackBar.open).toHaveBeenCalled();
 
     // user activates update
     snackBarAction.next(undefined);
-    tick();
 
     expect(mockLocation.reload).toHaveBeenCalled();
-  }));
+  });
+
+  it("should reload app if no unsaved changes are detected", () => {
+    service.listenToAppUpdates();
+    unsavedChanges.pending = true;
+
+    updateSubject.next({ type: "VERSION_READY" });
+
+    expect(mockLocation.reload).not.toHaveBeenCalled();
+    expect(snackBar.open).toHaveBeenCalled();
+
+    createService();
+    unsavedChanges.pending = false;
+
+    updateSubject.next({ type: "VERSION_READY" });
+
+    expect(mockLocation.reload).toHaveBeenCalled();
+  });
 
   it("should reload the page during construction if noted in the local storage", () => {
     const version = "1.1.1";
-    window.localStorage.setItem(
+    localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
       "update-" + version,
     );
@@ -76,31 +97,28 @@ describe("UpdateManagerService", () => {
     createService();
 
     expect(mockLocation.reload).toHaveBeenCalled();
-    expect(
-      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY),
-    ).toBe(version);
-  });
-
-  it("should set the note for reloading the app on next startup and remove it if user triggers reload manually", fakeAsync(() => {
-    const version = "1.1.1";
-    window.localStorage.setItem(
-      LatestChangesDialogService.VERSION_KEY,
+    expect(localStorage.getItem(LatestChangesDialogService.VERSION_KEY)).toBe(
       version,
     );
-    service.notifyUserWhenUpdateAvailable();
+  });
+
+  it("should set the note for reloading the app on next startup and remove it if user triggers reload manually", () => {
+    const version = "1.1.1";
+    localStorage.setItem(LatestChangesDialogService.VERSION_KEY, version);
+    service.listenToAppUpdates();
     updateSubject.next({ type: "VERSION_READY" });
 
-    expect(
-      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY),
-    ).toBe("update-" + version);
+    expect(localStorage.getItem(LatestChangesDialogService.VERSION_KEY)).toBe(
+      "update-" + version,
+    );
 
     // reload is triggered by clicking button on the snackbar
     snackBarAction.next();
 
-    expect(
-      window.localStorage.getItem(LatestChangesDialogService.VERSION_KEY),
-    ).toBe(version);
-  }));
+    expect(localStorage.getItem(LatestChangesDialogService.VERSION_KEY)).toBe(
+      version,
+    );
+  });
 
   it("should check for updates once on startup and then every hour", fakeAsync(() => {
     service.regularlyCheckForUpdates();
@@ -138,7 +156,7 @@ describe("UpdateManagerService", () => {
   it("should trigger the latest changes dialog on startup only if update note is set", () => {
     latestChangesDialog.showLatestChangesIfUpdated.calls.reset();
 
-    window.localStorage.setItem(
+    localStorage.setItem(
       LatestChangesDialogService.VERSION_KEY,
       "update-1.0.0",
     );
@@ -148,10 +166,7 @@ describe("UpdateManagerService", () => {
       latestChangesDialog.showLatestChangesIfUpdated,
     ).not.toHaveBeenCalled();
 
-    window.localStorage.setItem(
-      LatestChangesDialogService.VERSION_KEY,
-      "1.0.0",
-    );
+    localStorage.setItem(LatestChangesDialogService.VERSION_KEY, "1.0.0");
     createService();
 
     expect(latestChangesDialog.showLatestChangesIfUpdated).toHaveBeenCalled();
@@ -176,6 +191,7 @@ describe("UpdateManagerService", () => {
       snackBar,
       mockLogger,
       latestChangesDialog,
+      unsavedChanges,
       mockLocation,
     );
   }

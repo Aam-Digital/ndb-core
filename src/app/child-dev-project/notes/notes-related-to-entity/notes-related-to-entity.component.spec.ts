@@ -1,44 +1,31 @@
 import { NotesRelatedToEntityComponent } from "./notes-related-to-entity.component";
-import {
-  ComponentFixture,
-  fakeAsync,
-  TestBed,
-  tick,
-  waitForAsync,
-} from "@angular/core/testing";
-import { ChildrenService } from "../../children/children.service";
+import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
 import { Note } from "../model/note";
 import { Child } from "../../children/model/child";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { Entity } from "../../../core/entity/model/entity";
 import { School } from "../../schools/model/school";
-import { User } from "../../../core/user/user";
-import moment from "moment";
-import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { DatabaseEntity } from "../../../core/entity/database-entity.decorator";
 import { DatabaseField } from "../../../core/entity/database-field.decorator";
+import { User } from "../../../core/user/user";
+import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
   let fixture: ComponentFixture<NotesRelatedToEntityComponent>;
 
-  let mockChildrenService: jasmine.SpyObj<ChildrenService>;
-
   beforeEach(waitForAsync(() => {
-    mockChildrenService = jasmine.createSpyObj(["getNotesRelatedTo"]);
-    mockChildrenService.getNotesRelatedTo.and.resolveTo([]);
     TestBed.configureTestingModule({
       imports: [NotesRelatedToEntityComponent, MockedTestingModule.withState()],
-      providers: [{ provide: ChildrenService, useValue: mockChildrenService }],
     }).compileComponents();
   }));
 
-  beforeEach(async () => {
+  beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
     component = fixture.componentInstance;
     component.entity = new Child("1");
     fixture.detectChanges();
-  });
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();
@@ -56,34 +43,42 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(note.getColorForId).toHaveBeenCalledWith(entity.getId());
   });
 
-  it("should create a new note and fill it with the appropriate initial value", () => {
+  it("should create a new note and fill it with the appropriate initial value", async () => {
     let entity: Entity = new Child();
     component.entity = entity;
-    component.ngOnInit();
-    let note = component.generateNewRecordFactory()();
+    component.filter = undefined;
+    component.property = undefined;
+    await component.ngOnInit();
+    let note = component.createNewRecordFactory()();
     expect(note.children).toEqual([entity.getId()]);
 
     entity = new School();
     component.entity = entity;
-    component.ngOnInit();
-    note = component.generateNewRecordFactory()();
+    component.filter = undefined;
+    component.property = undefined;
+    await component.ngOnInit();
+    note = component.createNewRecordFactory()();
     expect(note.schools).toEqual([entity.getId()]);
 
     entity = new User();
     component.entity = entity;
-    component.ngOnInit();
-    note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toEqual([entity.getId(true)]);
+    component.filter = undefined;
+    component.property = undefined;
+    await component.ngOnInit();
+    note = component.createNewRecordFactory()();
+    expect(note.relatedEntities).toEqual([entity.getId()]);
 
     entity = new ChildSchoolRelation();
-    entity["childId"] = "someChild";
-    entity["schoolId"] = "someSchool";
+    entity["childId"] = `${Child.ENTITY_TYPE}:someChild`;
+    entity["schoolId"] = `${Child.ENTITY_TYPE}:someSchool`;
     component.entity = entity;
-    component.ngOnInit();
-    note = component.generateNewRecordFactory()();
-    expect(note.relatedEntities).toContain(entity.getId(true));
-    expect(note.children).toEqual(["someChild"]);
-    expect(note.schools).toEqual(["someSchool"]);
+    component.filter = undefined;
+    component.property = undefined;
+    await component.ngOnInit();
+    note = component.createNewRecordFactory()();
+    expect(note.relatedEntities).toEqual([entity.getId()]);
+    expect(note.children).toEqual([`${Child.ENTITY_TYPE}:someChild`]);
+    expect(note.schools).toEqual([`${Child.ENTITY_TYPE}:someSchool`]);
   });
 
   it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {
@@ -105,11 +100,12 @@ describe("NotesRelatedToEntityComponent", () => {
     }
     const customEntity = new EntityWithRelations();
     customEntity.links = [
-      "Child:1",
-      "School:not-a-type-for-note.relatedEntities",
+      `${Child.ENTITY_TYPE}:1`,
+      `${School.ENTITY_TYPE}:not-a-type-for-note.relatedEntities`,
     ];
-    customEntity.childrenLink = "child-without-prefix";
+    customEntity.childrenLink = `${Child.ENTITY_TYPE}:child-without-prefix`;
 
+    const schemaBefore = Note.schema.get("relatedEntities").additional;
     Note.schema.get("relatedEntities").additional = [
       Child.ENTITY_TYPE,
       EntityWithRelations.ENTITY_TYPE,
@@ -117,32 +113,15 @@ describe("NotesRelatedToEntityComponent", () => {
     component.entity = customEntity;
     component.ngOnInit();
 
-    const newNote = component.generateNewRecordFactory()();
+    const newNote = component.createNewRecordFactory()();
 
-    expect(newNote.relatedEntities).toContain(customEntity.getId(true));
+    expect(newNote.relatedEntities).toContain(customEntity.getId());
     expect(newNote.relatedEntities).toContain(customEntity.links[0]);
     expect(newNote.relatedEntities).not.toContain(customEntity.links[1]);
     expect(newNote.relatedEntities).toContain(
       Entity.createPrefixedId(Child.ENTITY_TYPE, customEntity.childrenLink),
     );
+
+    Note.schema.get("relatedEntities").additional = schemaBefore;
   });
-
-  it("should sort notes by date", fakeAsync(() => {
-    // No date should come first
-    const n1 = new Note();
-    const n2 = new Note();
-    n2.date = moment().subtract(1, "day").toDate();
-    const n3 = new Note();
-    n3.date = moment().subtract(2, "days").toDate();
-    mockChildrenService.getNotesRelatedTo.and.resolveTo([n3, n2, n1]);
-
-    component.entity = new Child();
-    component.ngOnInit();
-    tick();
-
-    expect(mockChildrenService.getNotesRelatedTo).toHaveBeenCalledWith(
-      component.entity.getId(true),
-    );
-    expect(component.records).toEqual([n1, n2, n3]);
-  }));
 });

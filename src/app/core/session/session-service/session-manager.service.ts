@@ -24,7 +24,6 @@ import { LoginState } from "../session-states/login-state.enum";
 import { Router } from "@angular/router";
 import { KeycloakAuthService } from "../auth/keycloak/keycloak-auth.service";
 import { LocalAuthService } from "../auth/local/local-auth.service";
-import { User } from "../../user/user";
 import { AppSettings } from "../../app-settings";
 import { PouchDatabase } from "../../database/pouch-database";
 import { environment } from "../../../../environments/environment";
@@ -34,6 +33,7 @@ import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { Subscription } from "rxjs";
+import { Entity } from "../../entity/model/entity";
 
 /**
  * This service handles the user session.
@@ -96,22 +96,27 @@ export class SessionManagerService {
     return this.initializeUser(user);
   }
 
-  private async initializeUser(user: SessionInfo) {
-    await this.initializeDatabaseForCurrentUser(user);
-    this.sessionInfo.next(user);
+  private async initializeUser(session: SessionInfo) {
+    await this.initializeDatabaseForCurrentUser(session);
+    this.sessionInfo.next(session);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
+    if (session.entityId) {
+      this.initUserEntity(session.entityId);
+    }
+  }
 
-    // TODO allow generic entities with fallback to User entity
+  private initUserEntity(entityId: string) {
+    const entityType = Entity.extractTypeFromId(entityId);
     this.entityMapper
-      .load(User, user.name)
+      .load(entityType, entityId)
       .then((res) => this.currentUser.next(res))
       .catch(() => undefined);
     this.updateSubscription = this.entityMapper
-      .receiveUpdates(User)
+      .receiveUpdates(entityType)
       .pipe(
         filter(
           ({ entity }) =>
-            entity.getId(true) === user.name || entity.getId() === user.name,
+            entity.getId() === entityId || entity.getId(true) === entityId,
         ),
       )
       .subscribe(({ entity }) => this.currentUser.next(entity));
@@ -139,7 +144,7 @@ export class SessionManagerService {
     }
     // resetting app state
     this.sessionInfo.next(undefined);
-    this.updateSubscription.unsubscribe();
+    this.updateSubscription?.unsubscribe();
     this.currentUser.next(undefined);
     this.loginStateSubject.next(LoginState.LOGGED_OUT);
     this.remoteLoggedIn = false;

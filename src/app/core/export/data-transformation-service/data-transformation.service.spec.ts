@@ -205,7 +205,7 @@ describe("DataTransformationService", () => {
       {
         participant: "child with school",
         Name: school.name,
-        school_id: school.getId(),
+        school_id: school.getId(true),
       },
     ]);
   });

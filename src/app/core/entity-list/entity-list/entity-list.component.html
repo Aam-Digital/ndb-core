@@ -10,29 +10,11 @@
     <div class="flex-row gap-regular">
       <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
 
-      <button
-        mat-stroked-button
-        color="accent"
-        class="standard-add-button"
-        (click)="addNew()"
-        angulartics2On="click"
-        angularticsCategory="UserAction"
-        [angularticsAction]="title.toLowerCase().replace(' ', '_') + '_add_new'"
-        [angularticsCategory]="entityConstructor?.ENTITY_TYPE"
-        angularticsAction="list_add_entity"
-        *appDisabledEntityOperation="{
-          entity: entityConstructor,
-          operation: 'create'
-        }"
-        i18n
-      >
-        <fa-icon
-          aria-label="add element"
-          icon="plus-circle"
-          class="standard-icon-with-text"
-        ></fa-icon>
-        Add New
-      </button>
+      <app-entity-create-button
+        [entityType]="entityConstructor"
+        (entityCreate)="addNew()"
+      ></app-entity-create-button>
+
       <button mat-icon-button color="primary" [matMenuTriggerFor]="additional">
         <fa-icon icon="ellipsis-v"></fa-icon>
       </button>
@@ -44,7 +26,7 @@
   <div class="flex-row gap-regular flex-wrap">
     <div *ngTemplateOutlet="filterDialog"></div>
     <app-filter
-      *ngIf="!isLoading"
+      *ngIf="!!allEntities"
       class="flex-row gap-regular flex-wrap"
       [filterConfig]="filters"
       [entityType]="entityConstructor"
@@ -120,21 +102,22 @@
 </ng-template>
 
 <ng-template #subrecord>
-  <app-entity-subrecord
+  <app-entities-table
+    [entityType]="entityConstructor"
     [records]="allEntities"
-    [columns]="columns"
+    [customColumns]="columns"
     [editable]="false"
     [clickMode]="clickMode"
-    (rowClick)="elementClick.emit($event)"
+    (entityClick)="onRowClick($event)"
     [columnsToDisplay]="columnsToDisplay"
-    [isLoading]="isLoading"
     [filter]="filterObj"
-    [defaultSort]="defaultSort"
+    [sortBy]="defaultSort"
     [(selectedRecords)]="selectedRows"
     [selectable]="!!selectedRows"
     [showInactive]="showInactive"
     (filteredRecordsChange)="filteredData = $event"
-  ></app-entity-subrecord>
+    [filterFreetext]="filterFreetext"
+  ></app-entities-table>
 </ng-template>
 
 <mat-menu #additional>

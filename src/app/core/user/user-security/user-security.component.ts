@@ -11,7 +11,6 @@ import {
   KeycloakUser,
   Role,
 } from "../../session/auth/keycloak/keycloak-auth.service";
-import { User } from "../user";
 import { AlertService } from "../../alerts/alert.service";
 import { HttpClient } from "@angular/common/http";
 import { AppSettings } from "../../app-settings";
@@ -23,6 +22,8 @@ import { MatInputModule } from "@angular/material/input";
 import { MatSelectModule } from "@angular/material/select";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SessionSubject } from "../../session/auth/session-info";
+import { Entity } from "../../entity/model/entity";
+import { catchError } from "rxjs/operators";
 
 @UntilDestroy()
 @DynamicComponent("UserSecurity")
@@ -43,7 +44,7 @@ import { SessionSubject } from "../../session/auth/session-info";
   standalone: true,
 })
 export class UserSecurityComponent implements OnInit {
-  @Input() entity: User;
+  @Input() entity: Entity;
   form = this.fb.group({
     username: [{ value: "", disabled: true }],
     email: ["", [Validators.required, Validators.email]],
@@ -67,6 +68,8 @@ export class UserSecurityComponent implements OnInit {
       )
     ) {
       this.userIsPermitted = true;
+    } else {
+      return;
     }
     // automatically skip trailing and leading whitespaces when the form changes
     this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((next) => {
@@ -91,13 +94,17 @@ export class UserSecurityComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.form.get("username").setValue(this.entity.name);
-    if (this.authService) {
-      this.authService.getUser(this.entity.name).subscribe({
+    if (!this.userIsPermitted) {
+      return;
+    }
+    this.form.get("username").setValue(this.entity.getId());
+    this.authService
+      .getUser(this.entity.getId(true))
+      .pipe(catchError(() => this.authService.getUser(this.entity.getId())))
+      .subscribe({
         next: (res) => this.assignUser(res),
         error: () => undefined,
       });
-    }
   }
 
   private assignUser(user: KeycloakUser) {
@@ -143,6 +150,9 @@ export class UserSecurityComponent implements OnInit {
 
   createAccount() {
     const user = this.getFormValues();
+    if (!user) {
+      return;
+    }
     user.enabled = true;
     if (user) {
       this.authService.createUser(user).subscribe({

@@ -12,9 +12,9 @@ import {
 } from "@angular/cdk/drag-drop";
 import {
   ColumnConfig,
+  FormFieldConfig,
   toFormFieldConfig,
-} from "../../../common-components/entity-subrecord/entity-subrecord/entity-subrecord-config";
-import { FormFieldConfig } from "../../../common-components/entity-form/entity-form/FormConfig";
+} from "../../../common-components/entity-form/FormConfig";
 import { AdminEntityService } from "../../admin-entity.service";
 import { lastValueFrom } from "rxjs";
 import { NgForOf, NgIf } from "@angular/common";
@@ -62,7 +62,7 @@ export class AdminEntityFormComponent implements OnChanges {
   availableFields: ColumnConfig[] = [];
   readonly createNewFieldPlaceholder: FormFieldConfig = {
     id: null,
-    label: "Create New Field",
+    label: $localize`:Label drag and drop item:Create New Field`,
   };
 
   constructor(
