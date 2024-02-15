@@ -65,7 +65,7 @@ describe("BirthdayDashboardComponent", () => {
     tick();
 
     const expectedNextBirthday = birthdaySoon.add(10, "years");
-    expect(component.dataSource.data).toEqual([
+    expect(component.entries).toEqual([
       { entity: child1, birthday: expectedNextBirthday.toDate(), newAge: 10 },
     ]);
   }));
@@ -90,7 +90,7 @@ describe("BirthdayDashboardComponent", () => {
 
     const expectedFirstBirthday = firstBirthday.add(12, "years");
     const expectedSecondBirthday = secondBirthday.add(15, "years");
-    expect(component.dataSource.data).toEqual([
+    expect(component.entries).toEqual([
       { entity: child1, birthday: expectedFirstBirthday.toDate(), newAge: 12 },
       { entity: child2, birthday: expectedSecondBirthday.toDate(), newAge: 15 },
     ]);
@@ -123,7 +123,7 @@ describe("BirthdayDashboardComponent", () => {
     component.ngOnInit();
     tick();
 
-    expect(component.dataSource.data).toEqual([
+    expect(component.entries).toEqual([
       {
         entity: e1,
         birthday: moment().add(1, "day").startOf("day").toDate(),
