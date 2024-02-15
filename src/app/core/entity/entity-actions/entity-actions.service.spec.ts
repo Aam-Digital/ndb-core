@@ -161,7 +161,6 @@ describe("EntityActionsService", () => {
     mockSnackBarRef.onAction.and.returnValues(NEVER);
     mockSnackBarRef.afterDismissed.and.returnValue(of(undefined));
 
-    // const testEntity = new Entity();
     const result = await service.anonymize(primaryEntity);
 
     expect(result).toBe(true);

@@ -147,6 +147,7 @@ export class EntityActionsService {
   async anonymize<E extends Entity>(entityParam: E | E[]) {
     let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
     let textForAnonymizeEntity = "";
+    let verbForAnonymizeEntity = "";
 
     if (entities.length > 1) {
       textForAnonymizeEntity =
@@ -154,10 +155,8 @@ export class EntityActionsService {
         " " +
         entities.length +
         " " +
-        entities[0].getConstructor().labelPlural +
-        " " +
-        $localize`:Auxiliary verb plural:have` +
-        " ";
+        entities[0].getConstructor().labelPlural;
+      verbForAnonymizeEntity = $localize`:Auxiliary verb plural:have`;
     } else {
       textForAnonymizeEntity =
         $localize`:Definite article singular:the` +
@@ -165,10 +164,8 @@ export class EntityActionsService {
         entities[0].getConstructor().label +
         ' "' +
         entities[0].toString() +
-        '"' +
-        " " +
-        $localize`:Auxiliary verb singular:has` +
-        " ";
+        '"';
+      verbForAnonymizeEntity = $localize`:Auxiliary verb singular:has`;
     }
 
     if (
@@ -176,7 +173,7 @@ export class EntityActionsService {
         $localize`:Anonymize confirmation dialog:Anonymize?`,
         $localize`:Anonymize confirmation dialog:
         This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.\n
-        If ${textForAnonymizeEntity} only become inactive and you want to keep all details, consider to use "archive" instead.\n
+        If ${textForAnonymizeEntity} ${verbForAnonymizeEntity} only become inactive and you want to keep all details, consider to use "archive" instead.\n
         Are you sure you want to anonymize?`,
       ))
     ) {
