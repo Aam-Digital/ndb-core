@@ -44,7 +44,7 @@ interface NotesDashboardConfig {
 })
 export class NotesDashboardComponent
   extends DashboardWidget
-  implements OnInit, AfterViewInit, NotesDashboardConfig
+  implements OnInit, NotesDashboardConfig
 {
   static getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;
@@ -80,9 +80,6 @@ export class NotesDashboardComponent
     private entities: EntityRegistry,
   ) {
     super();
-  }
-  ngAfterViewInit(): void {
-    throw new Error("Method not implemented.");
   }
 
   ngOnInit() {
