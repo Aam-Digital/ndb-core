@@ -5,30 +5,32 @@
   i18n-subtitle="Subtitle of the birthday widget"
   [entries]="entries"
 >
-  <table mat-table [dataSource]="entries">
-    <tr hidden="true">
-      <th scope="col">Name</th>
-      <th scope="col">DateOfBirth</th>
-      <th scope="col">AfterBirthdayAge</th>
-    </tr>
-    <ng-container matColumnDef="entity">
-      <td *matCellDef="let entity">
-        <app-display-entity
-          [entityToDisplay]="entity.entity"
-        ></app-display-entity>
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="dateOfBirth">
-      <td *matCellDef="let entity">
-        {{ entity.birthday | date: "E dd.MM" }}
-      </td>
-    </ng-container>
-    <ng-container matColumnDef="newAge">
-      <td *matCellDef="let entity" i18n>{{ entity.newAge }} yrs</td>
-    </ng-container>
-    <tr
-      mat-row
-      *matRowDef="let row; columns: ['entity', 'dateOfBirth', 'newAge']"
-    ></tr>
-  </table>
+  <div class="table-wrapper">
+    <table mat-table>
+      <tr hidden="true">
+        <th scope="col">Name</th>
+        <th scope="col">DateOfBirth</th>
+        <th scope="col">AfterBirthdayAge</th>
+      </tr>
+      <ng-container matColumnDef="entity">
+        <td *matCellDef="let entity">
+          <app-display-entity
+            [entityToDisplay]="entity.entity"
+          ></app-display-entity>
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="dateOfBirth">
+        <td *matCellDef="let entity">
+          {{ entity.birthday | date: "E dd.MM" }}
+        </td>
+      </ng-container>
+      <ng-container matColumnDef="newAge">
+        <td *matCellDef="let entity" i18n>{{ entity.newAge }} yrs</td>
+      </ng-container>
+      <tr
+        mat-row
+        *matRowDef="let row; columns: ['entity', 'dateOfBirth', 'newAge']"
+      ></tr>
+    </table>
+  </div>
 </app-dashboard-list-widget>
