@@ -39,7 +39,6 @@ interface AttendanceWeekRow {
     DisplayEntityComponent,
     AttendanceDayBlockComponent,
     DashboardListWidgetComponent,
-    WidgetContentComponent,
   ],
 })
 export class AttendanceWeekDashboardComponent

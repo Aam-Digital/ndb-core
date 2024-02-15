@@ -29,7 +29,6 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
     MatProgressBarModule,
     MatButtonModule,
     FontAwesomeModule,
-    WidgetContentComponent,
     DashboardListWidgetComponent,
   ],
 })

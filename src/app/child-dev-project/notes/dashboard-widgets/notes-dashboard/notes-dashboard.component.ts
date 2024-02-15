@@ -39,7 +39,6 @@ interface NotesDashboardConfig {
     DisplayEntityComponent,
     DecimalPipe,
     DashboardListWidgetComponent,
-    WidgetContentComponent,
   ],
 })
 export class NotesDashboardComponent
