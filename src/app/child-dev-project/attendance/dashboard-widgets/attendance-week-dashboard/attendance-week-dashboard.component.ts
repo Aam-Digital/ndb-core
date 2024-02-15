@@ -44,7 +44,7 @@ interface AttendanceWeekRow {
 })
 export class AttendanceWeekDashboardComponent
   extends DashboardWidget
-  implements OnInit, AfterViewInit
+  implements OnInit
 {
   static getRequiredEntities() {
     return EventNote.ENTITY_TYPE;
@@ -91,9 +91,6 @@ export class AttendanceWeekDashboardComponent
     private router: Router,
   ) {
     super();
-  }
-  ngAfterViewInit(): void {
-    throw new Error("Method not implemented.");
   }
 
   ngOnInit() {
