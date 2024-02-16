@@ -11,7 +11,7 @@ describe("NotFoundComponent", () => {
   let mockLogging: jasmine.SpyObj<LoggingService>;
 
   beforeEach(async () => {
-    mockLogging = jasmine.createSpyObj(LoggingService.name, ["warn"]);
+    mockLogging = jasmine.createSpyObj(LoggingService.name, ["debug"]);
     await TestBed.configureTestingModule({
       imports: [NotFoundComponent, RouterTestingModule],
       providers: [
@@ -32,8 +32,8 @@ describe("NotFoundComponent", () => {
   });
 
   it("should call logging service with current route", () => {
-    expect(mockLogging.warn).toHaveBeenCalledWith(
-      "Could not find component for route: /some/path",
+    expect(mockLogging.debug).toHaveBeenCalledWith(
+      "Could not find route: /some/path",
     );
   });
 });

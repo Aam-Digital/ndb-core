@@ -44,7 +44,6 @@ interface SelectableOption<O, V> {
   selected: boolean;
 }
 
-/** Custom `MatFormFieldControl` for telephone number input. */
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",

@@ -19,14 +19,12 @@ export class TodoService {
     const nextTodo = await this.createNextRepetition(todo);
 
     todo.completed = {
-      completedBy: this.currentUser.value.getId(),
+      completedBy: this.currentUser.value?.getId(),
       completedAt: new Date(),
       nextRepetition: nextTodo?.getId(),
     };
 
     await this.entityMapper.save(todo);
-
-    // TODO: user block instead of id to display in template
   }
 
   private async createNextRepetition(originalTodo: Todo): Promise<Todo | null> {

@@ -38,6 +38,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { Child } from "../../../child-dev-project/children/model/child";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -122,7 +123,11 @@ describe("SessionManagerService", () => {
     const currentUser = TestBed.inject(CurrentUserSubject);
 
     // first login with existing user entity
-    mockKeycloak.login.and.resolveTo({ name: TEST_USER, roles: [] });
+    mockKeycloak.login.and.resolveTo({
+      name: TEST_USER,
+      roles: [],
+      entityId: loggedInUser.getId(),
+    });
     await service.remoteLogin();
     expect(currentUser.value).toEqual(loggedInUser);
 
@@ -130,15 +135,51 @@ describe("SessionManagerService", () => {
     await service.logout();
     expect(currentUser.value).toBeUndefined();
 
+    const adminUser = new User("admin-user");
     // login, user entity not available yet
-    mockKeycloak.login.and.resolveTo({ name: "admin-user", roles: ["admin"] });
+    mockKeycloak.login.and.resolveTo({
+      name: "admin-user",
+      roles: ["admin"],
+      entityId: adminUser.getId(),
+    });
     await service.remoteLogin();
     expect(currentUser.value).toBeUndefined();
 
     // user entity available -> user should be set
-    const adminUser = new User("admin-user");
     await entityMapper.save(adminUser);
     expect(currentUser.value).toEqual(adminUser);
+  });
+
+  it("should not initialize the user entity if no entityId is set", async () => {
+    const loadSpy = spyOn(TestBed.inject(EntityMapperService), "load");
+
+    mockKeycloak.login.and.resolveTo({ name: "some-user", roles: [] });
+    await service.remoteLogin();
+
+    expect(loadSpy).not.toHaveBeenCalled();
+    expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+    expect(TestBed.inject(CurrentUserSubject).value).toBeUndefined();
+  });
+
+  it("should allow other entities to log in", async () => {
+    const loggedInChild = new Child("123");
+    const childSession: SessionInfo = {
+      name: loggedInChild.getId(),
+      roles: [],
+      entityId: loggedInChild.getId(),
+    };
+    mockKeycloak.login.and.resolveTo(childSession);
+    const otherChild = new Child("456");
+    await TestBed.inject(EntityMapperService).saveAll([
+      loggedInChild,
+      otherChild,
+    ]);
+
+    await service.remoteLogin();
+
+    expect(sessionInfo.value).toBe(childSession);
+    expect(loginStateSubject.value).toBe(LoginState.LOGGED_IN);
+    expect(TestBed.inject(CurrentUserSubject).value).toEqual(loggedInChild);
   });
 
   it("should automatically login, if the session is still valid", async () => {

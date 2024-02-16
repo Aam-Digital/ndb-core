@@ -3,10 +3,9 @@ _Aam Digital_ is open source because we believe in building things together
 and letting people benefit from and adapt things rather than everybody reinventing their own wheel.
 
 In order to build great software for small social impact organisations
-we rely on anybody willing to contribute.
-In fact _Aam Digital_ is completely run by volunteers.
-So whether you want to extend our code for your own use case
-or just help out - 
+we welcome anybody willing to contribute.
+We are a small core team of full-time developers as well as a few regular volunteer contributors.
+So whether you want to extend our code for your own use case or just help out - 
 we welcome any contributions to make this project better!
 
 -----
@@ -31,5 +30,16 @@ Feel free to open one yourself also to ask a question.
 
 ## Where can I help?
 Have a look at our issues on GitHub.
-Beware: The list of GitHub issues also contains some rough ideas that are not ready to be implemented yet.
+Some of them are explicitly label as suitable issues for a new contributor to work on: [Community Help Wanted](https://github.com/orgs/Aam-Digital/projects/2/views/4?filterQuery=label%3A%22Status%3A+Community+Help+Wanted+%28good+first+issue%29%22+).
 If you are not sure whether you should work on a certain issue, just post a short comment in the issue to clarify.
+
+Whenever you start working on an issue, please assign yourself on the GitHub issue and change the "status" within the project to "In Progress".
+
+We organize our work using GitHub Projects' kanban boards and issue labels:
+- [Project Board](https://github.com/orgs/Aam-Digital/projects/2)
+  - Get an overview of all issues (across all repositories) and their status here, we use a kanban-style board where issues are moved through the columns based on their status.
+  - The issues in the board are sorted by priority (most important on top).
+  - Please do not work on issues in the "Triage / Analysis" status, these topics still required a clearer definition and approval from the core team.
+- [Labels](https://github.com/Aam-Digital/ndb-core/labels)
+  - Our labels are scoped into a few logical groups (e.g. "Status" or "Type" related labels), do check the descriptions shown beside the label name in the list of GitHub labels.
+  - The same labels are maintained across all our repositories.

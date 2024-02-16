@@ -176,7 +176,7 @@ export class RollCallComponent implements OnChanges {
       try {
         child = await this.entityMapper.load(Child, childId);
       } catch (e) {
-        this.loggingService.warn(
+        this.loggingService.debug(
           "Could not find child " +
             childId +
             " for event " +
