@@ -1,24 +1,16 @@
-import {
-  AfterViewInit,
-  Component,
-  Input,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, Input, OnInit } from "@angular/core";
 import { ChildrenService } from "../../../children/children.service";
 import moment from "moment";
-import { MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
+import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { Child } from "../../../children/model/child";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { DecimalPipe, NgIf } from "@angular/common";
 import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
-import { DashboardWidgetComponent } from "../../../../core/dashboard/dashboard-widget/dashboard-widget.component";
-import { WidgetContentComponent } from "../../../../core/dashboard/dashboard-widget/widget-content/widget-content.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { Note } from "../../model/note";
+import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 
 interface NotesDashboardConfig {
   entity?: string;
@@ -38,20 +30,18 @@ interface NotesDashboardConfig {
   selector: "app-no-recent-notes-dashboard",
   templateUrl: "./notes-dashboard.component.html",
   styleUrls: ["./notes-dashboard.component.scss"],
+  standalone: true,
   imports: [
     NgIf,
     MatTableModule,
     DisplayEntityComponent,
     DecimalPipe,
-    MatPaginatorModule,
-    DashboardWidgetComponent,
-    WidgetContentComponent,
+    DashboardListWidgetComponent,
   ],
-  standalone: true,
 })
 export class NotesDashboardComponent
   extends DashboardWidget
-  implements OnInit, AfterViewInit, NotesDashboardConfig
+  implements OnInit, NotesDashboardConfig
 {
   static getRequiredEntities(config: NotesDashboardConfig) {
     return config?.entity || Note.ENTITY_TYPE;
@@ -78,13 +68,9 @@ export class NotesDashboardComponent
   /**
    * Entities displayed in the template with additional "daysSinceLastNote" field
    */
-  dataSource = new MatTableDataSource<EntityWithRecentNoteInfo>();
+  entries: EntityWithRecentNoteInfo[];
 
   subtitle: string;
-
-  @ViewChild("paginator") paginator: MatPaginator;
-
-  isLoading = true;
 
   constructor(
     private childrenService: ChildrenService,
@@ -116,10 +102,6 @@ export class NotesDashboardComponent
     }
   }
 
-  ngAfterViewInit() {
-    this.dataSource.paginator = this.paginator;
-  }
-
   private async loadConcernedEntities(
     filter: (stat: [string, number]) => boolean,
     dayRangeBoundary: number,
@@ -133,12 +115,10 @@ export class NotesDashboardComponent
         this._entity.ENTITY_TYPE,
         queryRange,
       );
-    this.dataSource.data = Array.from(recentNotesMap)
+    this.entries = Array.from(recentNotesMap)
       .filter(filter)
       .map((stat) => statsToEntityWithRecentNoteInfo(stat, queryRange))
       .sort((a, b) => order * (b.daysSinceLastNote - a.daysSinceLastNote));
-
-    this.isLoading = false;
   }
 
   get tooltip(): string {
