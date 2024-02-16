@@ -1,13 +1,13 @@
-<app-dashboard-widget
+<app-dashboard-list-widget
   icon="list"
   theme="child"
-  [title]="data.getTotalPercentage() | percent: '1.0-0'"
   [subtitle]="data.title"
+  [entries]="data?.parts"
+  class="widget-container"
 >
-  <app-widget-content class="table-wrapper position-relative">
+  <div class="table-wrapper">
     <table
       mat-table
-      [dataSource]="data?.parts"
       i18n-aria-label="Label for progress dashboard"
       aria-label="Table showing organization progress"
     >
@@ -50,5 +50,5 @@
     <button mat-icon-button (click)="showEditComponent()" class="config-panel">
       <fa-icon aria-label="configure" icon="wrench"></fa-icon>
     </button>
-  </app-widget-content>
-</app-dashboard-widget>
+  </div>
+</app-dashboard-list-widget>
