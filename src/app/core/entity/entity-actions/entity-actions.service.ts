@@ -91,7 +91,7 @@ export class EntityActionsService {
         $localize`:Delete confirmation title:Delete?`,
         $localize`:Delete confirmation dialog:
         This will remove the data permanently as if it never existed. This cannot be undone. Statistical reports (also for past time periods) will change and not include this record anymore.\n
-        If you have not just created this record accidentally, deleting this is probably not what you want to do. If the record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.\n
+        If you have not just created a record accidentally, deleting this is probably not what you want to do. If a record represents something that actually happened in your work, consider to use "anonymize" or just "archive" instead, so that you will not lose your documentation for reports.\n
         Are you sure you want to delete ${textForDeleteEntity}?`,
       ))
     ) {
@@ -147,7 +147,6 @@ export class EntityActionsService {
   async anonymize<E extends Entity>(entityParam: E | E[]) {
     let entities = Array.isArray(entityParam) ? entityParam : [entityParam];
     let textForAnonymizeEntity = "";
-    let verbForAnonymizeEntity = "";
 
     if (entities.length > 1) {
       textForAnonymizeEntity =
@@ -156,7 +155,6 @@ export class EntityActionsService {
         entities.length +
         " " +
         entities[0].getConstructor().labelPlural;
-      verbForAnonymizeEntity = $localize`:Auxiliary verb plural:have`;
     } else {
       textForAnonymizeEntity =
         $localize`:Definite article singular:the` +
@@ -165,7 +163,6 @@ export class EntityActionsService {
         ' "' +
         entities[0].toString() +
         '"';
-      verbForAnonymizeEntity = $localize`:Auxiliary verb singular:has`;
     }
 
     if (
@@ -173,8 +170,8 @@ export class EntityActionsService {
         $localize`:Anonymize confirmation dialog:Anonymize?`,
         $localize`:Anonymize confirmation dialog:
         This will remove all personal information (PII) permanently and keep only a basic record for statistical reports. Details that are removed during anonymization cannot be recovered.\n
-        If ${textForAnonymizeEntity} ${verbForAnonymizeEntity} only become inactive and you want to keep all details, consider to use "archive" instead.\n
-        Are you sure you want to anonymize?`,
+        If a record has only become inactive and you want to keep all details, consider to use "archive" instead.\n
+        Are you sure you want to anonymize ${textForAnonymizeEntity}?`,
       ))
     ) {
       return false;
