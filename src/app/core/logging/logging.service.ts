@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
-import { environment } from "../../../environments/environment";
 import { BrowserOptions, SeverityLevel } from "@sentry/browser";
+import { environment } from "../../../environments/environment";
 
 /* eslint-disable no-console */
 
@@ -123,7 +123,11 @@ export class LoggingService {
 
   private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
     if (logLevel === LogLevel.ERROR) {
-      Sentry.captureException(message);
+      if (message instanceof Error) {
+        Sentry.captureException(message);
+      } else {
+        Sentry.captureException(new Error(message?.error ?? message), message);
+      }
     } else {
       Sentry.captureMessage(message, this.translateLogLevel(logLevel));
     }
