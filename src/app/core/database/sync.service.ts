@@ -33,14 +33,18 @@ export class SyncService {
     private syncStateSubject: SyncStateSubject,
     private loginStateSubject: LoginStateSubject,
   ) {
+    LoggingService.addContext(
+      "last sync completed",
+      localStorage.getItem(SyncService.LAST_SYNC_KEY),
+    );
+
     this.syncStateSubject
       .pipe(filter((state) => state === SyncState.COMPLETED))
-      .subscribe(() =>
-        localStorage.setItem(
-          SyncService.LAST_SYNC_KEY,
-          new Date().toISOString(),
-        ),
-      );
+      .subscribe(() => {
+        const lastSyncTime = new Date().toISOString();
+        localStorage.setItem(SyncService.LAST_SYNC_KEY, lastSyncTime);
+        LoggingService.addContext("last sync completed", lastSyncTime);
+      });
   }
 
   /**
@@ -49,7 +53,7 @@ export class SyncService {
   startSync() {
     this.initDatabases();
     this.sync()
-      .catch((err) => this.loggingService.error(`Sync failed: ${err}`))
+      .catch((err) => this.loggingService.warn(`Initial sync failed: ${err}`))
       // Call live sync even when initial sync fails
       .finally(() => this.liveSyncDeferred());
   }
