@@ -126,7 +126,10 @@ export class LoggingService {
       if (message instanceof Error) {
         Sentry.captureException(message);
       } else {
-        Sentry.captureException(new Error(message?.error ?? message), message);
+        Sentry.captureException(
+          new Error(message?.message ?? message?.error ?? message),
+          message,
+        );
       }
     } else {
       Sentry.captureMessage(message, this.translateLogLevel(logLevel));
