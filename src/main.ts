@@ -52,8 +52,7 @@ if (appLang === DEFAULT_LANGUAGE) {
 
 function bootstrap(): Promise<any> {
   // Dynamically load the main module after the language has been initialized
-  return AppSettings.initRuntimeSettings()
-    .catch((err) => logger.debug(err))
+  return AppSettings.initRuntimeSettings(logger)
     .then(() => import("./app/app.module"))
     .then((m) => platformBrowserDynamic().bootstrapModule(m.AppModule))
     .catch((err) => logger.error(err));

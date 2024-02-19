@@ -159,7 +159,11 @@ export class CouchdbFileService extends FileService {
       });
   }
 
-  loadFile(entity: Entity, property: string): Observable<SafeUrl> {
+  loadFile(
+    entity: Entity,
+    property: string,
+    throwErrors: boolean = false,
+  ): Observable<SafeUrl> {
     const path = `${entity.getId()}/${property}`;
     if (!this.cache[path]) {
       this.cache[path] = this.http
@@ -168,6 +172,15 @@ export class CouchdbFileService extends FileService {
         })
         .pipe(
           map((blob) => URL.createObjectURL(blob)),
+          catchError((err) => {
+            this.logger.warn(
+              `Could not load file (${entity?.getId()} . ${property}): ${err}`,
+            );
+            if (throwErrors) {
+              throw err;
+            }
+            return "";
+          }),
           shareReplay(),
         );
     }

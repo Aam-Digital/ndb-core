@@ -38,13 +38,16 @@ export class LoggingService {
   /**
    * Update a piece of context information that will be attached to all log messages for easier debugging,
    * especially in remote logging.
-   * @param tagName Identifier of the key-value pair
+   * @param key Identifier of the key-value pair
    * @param value Value of the key-value pair
+   * @param asTag If this should be added as indexed tag rather than simple context (see https://docs.sentry.io/platforms/javascript/enriching-events/tags/)
    */
-  static setLoggingContext(tagName: string, value: any) {
-    Sentry.configureScope((scope) => {
-      scope.setTag(tagName, value);
-    });
+  static addContext(key: string, value: any, asTag: boolean = false) {
+    if (asTag) {
+      Sentry.setTag(key, value);
+    } else {
+      Sentry.getCurrentScope().setContext(key, value);
+    }
   }
 
   /**
@@ -126,7 +129,10 @@ export class LoggingService {
       if (message instanceof Error) {
         Sentry.captureException(message);
       } else {
-        Sentry.captureException(new Error(message?.error ?? message), message);
+        Sentry.captureException(
+          new Error(message?.message ?? message?.error ?? message),
+          message,
+        );
       }
     } else {
       Sentry.captureMessage(message, this.translateLogLevel(logLevel));
