@@ -176,10 +176,12 @@ export class CouchdbFileService extends FileService {
             this.logger.warn(
               `Could not load file (${entity?.getId()} . ${property}): ${err}`,
             );
+
             if (throwErrors) {
               throw err;
+            } else {
+              return of("");
             }
-            return "";
           }),
           shareReplay(),
         );
