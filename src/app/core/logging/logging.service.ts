@@ -46,6 +46,9 @@ export class LoggingService {
     if (asTag) {
       Sentry.setTag(key, value);
     } else {
+      if (typeof value !== "object") {
+        value = { value: value };
+      }
       Sentry.getCurrentScope().setContext(key, value);
     }
   }

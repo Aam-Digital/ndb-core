@@ -33,18 +33,23 @@ export class SyncService {
     private syncStateSubject: SyncStateSubject,
     private loginStateSubject: LoginStateSubject,
   ) {
-    LoggingService.addContext(
-      "last sync completed",
-      localStorage.getItem(SyncService.LAST_SYNC_KEY),
-    );
+    this.logSyncContext();
 
     this.syncStateSubject
       .pipe(filter((state) => state === SyncState.COMPLETED))
       .subscribe(() => {
         const lastSyncTime = new Date().toISOString();
         localStorage.setItem(SyncService.LAST_SYNC_KEY, lastSyncTime);
-        LoggingService.addContext("last sync completed", lastSyncTime);
+        this.logSyncContext();
       });
+  }
+
+  private logSyncContext() {
+    const lastSyncTime = localStorage.getItem(SyncService.LAST_SYNC_KEY);
+
+    LoggingService.addContext("Aam Digital sync", {
+      "last sync completed": lastSyncTime,
+    });
   }
 
   /**
