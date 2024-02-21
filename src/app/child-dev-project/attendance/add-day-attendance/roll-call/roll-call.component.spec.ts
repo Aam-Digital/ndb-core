@@ -51,7 +51,7 @@ describe("RollCallComponent", () => {
     participant2 = new Child("child2");
     participant3 = new Child("child3");
 
-    mockLoggingService = jasmine.createSpyObj(["warn"]);
+    mockLoggingService = jasmine.createSpyObj(["warn", "debug"]);
 
     TestBed.configureTestingModule({
       imports: [
@@ -107,7 +107,7 @@ describe("RollCallComponent", () => {
 
     expect(component.children).toEqual([participant1]);
     expect(component.eventEntity.children).not.toContain(nonExistingChildId);
-    expect(mockLoggingService.warn).toHaveBeenCalled();
+    expect(mockLoggingService.debug).toHaveBeenCalled();
     flush();
   }));
 

@@ -48,11 +48,12 @@ export class DynamicComponentDirective implements OnChanges {
         this.appDynamicComponent.component,
       )();
     } catch (e) {
-      this.logger.error(
-        `Failed to load dynamic component:\n${JSON.stringify(
+      this.logger.error({
+        message: `Failed to load dynamic component:\n${JSON.stringify(
           this.appDynamicComponent,
         )}`,
-      );
+        error: e,
+      });
       // abort if component failed to load
       return;
     }

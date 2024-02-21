@@ -18,8 +18,10 @@ export class NotFoundComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.loggingService.warn(
-      "Could not find component for route: " + this.location.pathname,
-    );
+    if (!this.location.pathname.endsWith("/404")) {
+      this.loggingService.debug(
+        "Could not find route: " + this.location.pathname,
+      );
+    }
   }
 }

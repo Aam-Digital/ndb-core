@@ -83,7 +83,12 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
         return rawValue;
       }
 
-      const name = rawValue.slice(2, -1);
+      let name = rawValue.slice(2, -1);
+      if (name === "user.name") {
+        // the user account related entity (assured with prefix) is now stored in user.entityId
+        // mapping the previously valid ${user.name} here for backwards compatibility
+        name = "user.entityId";
+      }
       const value = get({ user }, name);
 
       if (typeof value === "undefined") {
