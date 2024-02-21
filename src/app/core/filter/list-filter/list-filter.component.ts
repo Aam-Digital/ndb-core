@@ -30,10 +30,14 @@ export class ListFilterComponent<E extends Entity> {
   @Output() selectedOptionChange: EventEmitter<string[]> = new EventEmitter();
 
   selectAll() {
-    this.selectedOptions = this.filterConfig.options;
+    this.selectedOptions = this.filterConfig.options.map(
+      (option) => option.key,
+    );
+    this.selectedOptionChange.emit(this.selectedOptions);
   }
 
   deselectAll() {
-    this.selectedOptions = null;
+    this.selectedOptions = [];
+    this.selectedOptionChange.emit(this.selectedOptions);
   }
 }
