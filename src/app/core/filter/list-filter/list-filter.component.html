@@ -6,8 +6,23 @@
     (valueChange)="selectedOptionChange.emit($event)"
     multiple
   >
-    <button mat-stroked-button i18n (click)="selectAll()">Select All</button>
-    <button mat-stroked-button i18n (click)="deselectAll()">Clear</button>
+    <button
+      mat-flat-button
+      i18n
+      (click)="selectAll()"
+      style="font-size: 12px; background-color: orange"
+    >
+      Select All
+    </button>
+
+    <button
+      mat-flat-button
+      i18n
+      (click)="deselectAll()"
+      style="font-size: 12px; background-color: rgb(225, 226, 228)"
+    >
+      Clear
+    </button>
 
     @for (option of filterConfig.options; track option.key) {
     <mat-option
