@@ -6,6 +6,11 @@ import { DataTransformationService } from "../data-transformation-service/data-t
 import { transformToReadableFormat } from "../../common-components/entities-table/value-accessor/value-accessor";
 import { Papa } from "ngx-papaparse";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { Entity } from "app/core/entity/model/entity";
+import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
+import { DefaultDatatype } from "app/core/entity/default-datatype/default.datatype";
+import { EntityArrayDatatype } from "app/core/basic-datatypes/entity-array/entity-array.datatype";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
 /**
  * This service allows to start a download process from the browser.
@@ -22,6 +27,7 @@ export class DownloadService {
     private dataTransformationService: DataTransformationService,
     private papa: Papa,
     private loggingService: LoggingService,
+    private entityMapperService: EntityMapperService,
   ) {}
 
   /**
@@ -37,6 +43,16 @@ export class DownloadService {
     filename: string,
     exportConfig?: ExportColumnConfig[],
   ) {
+    console.log(
+      "trigger download with data: ",
+      data,
+      "; format: ",
+      format,
+      "; filename: ",
+      filename,
+      "; exportConfig: ",
+      exportConfig,
+    );
     const blobData = await this.getFormattedBlobData(
       data,
       format,
@@ -96,10 +112,14 @@ export class DownloadService {
     if (data.length > 0 && typeof data[0]?.getConstructor === "function") {
       entityConstructor = data[0].getConstructor();
     }
+    console.log("entity constructor: ", entityConstructor);
     const keys = new Set<string>();
+    console.log("data: ", data);
     data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
 
     data = data.map(transformToReadableFormat);
+
+    console.log("data after map: ", data);
 
     if (!entityConstructor) {
       return this.papa.unparse(data, {
@@ -111,32 +131,57 @@ export class DownloadService {
     }
 
     const result = this.exportFile(data, entityConstructor);
+    console.log("result: ", result);
     return result;
   }
 
   exportFile(data: any[], entityConstructor: { schema: any }) {
     const entitySchema = entityConstructor.schema;
-    const columnLabels = new Map<string, EntitySchemaField>();
+    const columnLabels = new Map<string, string>();
 
-    entitySchema.forEach((value: { label: EntitySchemaField }, key: string) => {
-      if (value.label) columnLabels.set(key, value.label);
+    console.log("entitySchema: ", entitySchema);
+
+    entitySchema.forEach((value: EntitySchemaField, key: string) => {
+      if (value.label) {
+        columnLabels.set(key, value.label);
+        if (value.dataType === EntityDatatype.dataType) {
+          console.log("EntityDataType bei", value.label);
+          columnLabels.set(key + "_readable", value.label + "_readable");
+        }
+        if (value.dataType === EntityArrayDatatype.dataType)
+          console.log("EntityArrayDataType bei", value.label);
+      }
     });
 
-    const exportEntities = data.map((item) => {
+    console.log("columnLabels: ", columnLabels);
+
+    // XXX TODO XXX: await doen't work in here!
+    const exportEntities = data.map(async (item) => {
       let newItem = {};
       for (const key in item) {
+        console.log("Peter prüft key:", key);
         if (columnLabels.has(key)) {
           newItem[key] = item[key];
+        }
+        if (columnLabels.has(key + "_readable")) {
+          console.log("   Peter ist hier");
+          const type = Entity.extractTypeFromId(key);
+          const entity: Entity = await this.entityMapperService.load(type, key);
+          newItem[key + "_readable"] = entity.toString();
         }
       }
       return newItem;
     });
+
+    console.log("exportEntities; ", exportEntities);
 
     const columnKeys: string[] = Array.from(columnLabels.keys());
     const labels: any[] = Array.from(columnLabels.values());
     const orderedData: any[] = exportEntities.map((item) =>
       columnKeys.map((key) => item[key]),
     );
+
+    console.log("orderedData:", orderedData);
 
     return this.papa.unparse(
       {
