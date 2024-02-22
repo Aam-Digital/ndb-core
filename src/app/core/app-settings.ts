@@ -16,6 +16,7 @@
  */
 
 import { environment } from "../../environments/environment";
+import { LoggingService } from "./logging/logging.service";
 
 /**
  * Central static app settings.
@@ -34,9 +35,13 @@ export class AppSettings {
    * Overwrite environment settings with the settings from the `config.json` if present.
    * If no file is found, the environment settings are kept.
    **/
-  static initRuntimeSettings(): Promise<void> {
+  static initRuntimeSettings(logger: LoggingService): Promise<void> {
     return fetch(this.CONFIG_FILE)
       .then((res) => res.json())
+      .catch((err) => {
+        logger.warn(`Error fetching config.json: ${err}`);
+        return {};
+      })
       .then((res) => Object.assign(environment, res));
   }
 }

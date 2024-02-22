@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
-import { environment } from "../../../environments/environment";
 import { BrowserOptions, SeverityLevel } from "@sentry/browser";
+import { environment } from "../../../environments/environment";
 
 /* eslint-disable no-console */
 
@@ -38,13 +38,19 @@ export class LoggingService {
   /**
    * Update a piece of context information that will be attached to all log messages for easier debugging,
    * especially in remote logging.
-   * @param tagName Identifier of the key-value pair
+   * @param key Identifier of the key-value pair
    * @param value Value of the key-value pair
+   * @param asTag If this should be added as indexed tag rather than simple context (see https://docs.sentry.io/platforms/javascript/enriching-events/tags/)
    */
-  static setLoggingContext(tagName: string, value: any) {
-    Sentry.configureScope((scope) => {
-      scope.setTag(tagName, value);
-    });
+  static addContext(key: string, value: any, asTag: boolean = false) {
+    if (asTag) {
+      Sentry.setTag(key, value);
+    } else {
+      if (typeof value !== "object") {
+        value = { value: value };
+      }
+      Sentry.getCurrentScope().setContext(key, value);
+    }
   }
 
   /**
@@ -123,7 +129,14 @@ export class LoggingService {
 
   private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
     if (logLevel === LogLevel.ERROR) {
-      Sentry.captureException(message);
+      if (message instanceof Error) {
+        Sentry.captureException(message);
+      } else {
+        Sentry.captureException(
+          new Error(message?.message ?? message?.error ?? message),
+          message,
+        );
+      }
     } else {
       Sentry.captureMessage(message, this.translateLogLevel(logLevel));
     }

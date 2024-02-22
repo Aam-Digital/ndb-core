@@ -19,6 +19,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
 import { EventAttendanceDatatype } from "../../../child-dev-project/attendance/model/event-attendance.datatype";
 import { SessionSubject } from "../../session/auth/session-info";
 import { TEST_USER } from "../../user/demo-user-generator.service";
+import { Entity } from "../../entity/model/entity";
 
 describe("AbilityService", () => {
   let service: AbilityService;
@@ -49,6 +50,7 @@ describe("AbilityService", () => {
           useValue: new BehaviorSubject({
             name: TEST_USER,
             roles: ["user_app"],
+            entityId: Entity.createPrefixedId(User.ENTITY_TYPE, TEST_USER),
           }),
         },
         {
@@ -214,24 +216,32 @@ describe("AbilityService", () => {
     service.initializeRules();
     tick();
 
-    const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
-      user_app: [
-        {
-          subject: "User",
-          action: "manage",
-          conditions: { name: "${user.name}" },
-        },
-      ],
-    });
-    entityUpdates.next({ entity: config, type: "update" });
-    tick();
+    function testPlaceholderCondition(placeholder: string) {
+      const config = new Config<DatabaseRules>(Config.PERMISSION_KEY, {
+        user_app: [
+          {
+            subject: "User",
+            action: "manage",
+            conditions: { name: placeholder },
+          },
+        ],
+      });
+      entityUpdates.next({ entity: config, type: "update" });
+      tick();
 
-    const userEntity = new User();
-    userEntity.name = TEST_USER;
-    expect(ability.can("manage", userEntity)).toBeTrue();
-    const anotherUser = new User();
-    anotherUser.name = "another user";
-    expect(ability.cannot("manage", anotherUser)).toBeTrue();
+      const userEntity = new User();
+      userEntity.name = Entity.createPrefixedId(User.ENTITY_TYPE, TEST_USER);
+      expect(ability.can("manage", userEntity)).toBeTrue();
+      const anotherUser = new User();
+      anotherUser.name = Entity.createPrefixedId(
+        User.ENTITY_TYPE,
+        "another user",
+      );
+      expect(ability.cannot("manage", anotherUser)).toBeTrue();
+    }
+
+    testPlaceholderCondition("${user.name}");
+    testPlaceholderCondition("${user.entityId}");
   }));
 
   it("should allow to check conditions with complex data types", fakeAsync(() => {
