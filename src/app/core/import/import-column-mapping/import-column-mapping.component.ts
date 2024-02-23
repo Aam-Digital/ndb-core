@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnChanges,
+  Output,
+  SimpleChanges,
+} from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { EntityConstructor } from "../../entity/model/entity";
@@ -13,6 +20,7 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
+import { ImportColumnMappingService } from "app/import-column-mapping.service";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
@@ -34,7 +42,7 @@ import { DefaultDatatype } from "../../entity/default-datatype/default.datatype"
     MatBadgeModule,
   ],
 })
-export class ImportColumnMappingComponent {
+export class ImportColumnMappingComponent implements OnChanges {
   @Input() rawData: any[] = [];
   @Input() columnMapping: ColumnMapping[] = [];
   @Output() columnMappingChange = new EventEmitter<ColumnMapping[]>();
@@ -75,7 +83,16 @@ export class ImportColumnMappingComponent {
     private schemaService: EntitySchemaService,
     private componentRegistry: ComponentRegistry,
     private dialog: MatDialog,
+    private importColumnMappingService: ImportColumnMappingService,
   ) {}
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.columnMapping) {
+      this.importColumnMappingService.automaticallySelectMappings(
+        this.columnMapping,
+      );
+    }
+  }
 
   async openMappingComponent(col: ColumnMapping) {
     const uniqueValues = new Set<any>();
