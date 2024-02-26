@@ -141,7 +141,11 @@ describe("BasicAutocompleteComponent", () => {
     component.showAutocomplete();
     component.autocomplete.openPanel();
     const options = await autocomplete.getOptions();
-    expect(options).toHaveSize(3);
+    expect(options).toHaveSize(
+      3 +
+        // includes a hidden option to enable footer display within the autocomplete panel
+        1,
+    );
 
     await options[2].click();
     // When browser is not in foreground, this doesn't happen automatically

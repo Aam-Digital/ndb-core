@@ -151,8 +151,7 @@ export class Note extends Entity {
    */
   @DatabaseField({
     label: $localize`:label for the related Entities:Related Records`,
-    viewComponent: "DisplayEntityArray",
-    editComponent: "EditEntityArray",
+    dataType: "entity-array",
     // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
     additional: undefined,
     anonymize: "retain",
