@@ -6,6 +6,7 @@ import { School } from "../../../child-dev-project/schools/model/school";
 import { componentRegistry } from "../../../dynamic-components";
 import { ChildBlockComponent } from "../../../child-dev-project/children/child-block/child-block.component";
 import { importProvidersFrom } from "@angular/core";
+import { FormControl } from "@angular/forms";
 
 const child1 = new Child();
 child1.name = "First Child";
@@ -16,6 +17,7 @@ child2.projectNumber = "2";
 const child3 = new Child();
 child3.name = "Third Child";
 child3.projectNumber = "3";
+child3.inactive = true;
 
 export default {
   title: "Core/Entities/EntitySelect",
@@ -64,6 +66,7 @@ Active.args = {
   entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",
+  form: new FormControl(),
 };
 
 export const MultipleTypes = Template.bind({});
@@ -71,13 +74,24 @@ MultipleTypes.args = {
   entityType: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
   label: "Related Records",
   placeholder: "Select records",
+  form: new FormControl(),
+};
+
+export const SingleSelect = Template.bind({});
+SingleSelect.args = {
+  entityType: Child.ENTITY_TYPE,
+  label: "Select one child",
+  multi: false,
+  form: new FormControl(child1.getId()),
 };
 
 export const Disabled = Template.bind({});
+const formDisabled = new FormControl();
+formDisabled.setValue([child1.getId()]);
+formDisabled.disable();
 Disabled.args = {
   entityType: Child.ENTITY_TYPE,
   label: "Attending Children",
   placeholder: "Select Children",
-  selection: [child1.getId()],
-  disabled: true,
+  form: formDisabled,
 };
