@@ -24,8 +24,13 @@ export class EntityAbility extends Ability<[EntityAction, string | any]> {
     super([]);
   }
 
-  can(action: EntityAction, entity: EntitySubject, field?: string): boolean {
-    if (action === "create") {
+  can(
+    action: EntityAction,
+    entity: EntitySubject,
+    field?: string,
+    enforceConditions?: boolean,
+  ): boolean {
+    if (action === "create" && !enforceConditions) {
       const rules = this.rules.map((r) => {
         const simplifiedRule = { ...r };
         delete simplifiedRule.conditions;
