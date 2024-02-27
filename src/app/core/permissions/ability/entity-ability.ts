@@ -25,6 +25,19 @@ export class EntityAbility extends Ability<[EntityAction, string | any]> {
   }
 
   can(action: EntityAction, entity: EntitySubject, field?: string): boolean {
+    if (action === "create") {
+      const rules = this.rules.map((r) => {
+        const simplifiedRule = { ...r };
+        delete simplifiedRule.conditions;
+        return simplifiedRule;
+      });
+      const abilityWithoutConditions = new Ability(rules);
+      return abilityWithoutConditions.can(
+        action,
+        this.getSubject(entity),
+        field,
+      );
+    }
     return super.can(action, this.getSubject(entity), field);
   }
 
