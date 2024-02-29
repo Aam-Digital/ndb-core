@@ -130,12 +130,12 @@ export class DownloadService {
       });
     }
 
-    const result = this.exportFile(data, entityConstructor);
+    const result = await this.exportFile(data, entityConstructor);
     console.log("result: ", result);
     return result;
   }
 
-  exportFile(data: any[], entityConstructor: { schema: any }) {
+  async exportFile(data: any[], entityConstructor: { schema: any }) {
     const entitySchema = entityConstructor.schema;
     const columnLabels = new Map<string, string>();
 
@@ -150,28 +150,15 @@ export class DownloadService {
         }
         if (value.dataType === EntityArrayDatatype.dataType)
           console.log("EntityArrayDataType bei", value.label);
+        /// ToDo: Add code here
       }
     });
 
     console.log("columnLabels: ", columnLabels);
 
-    // XXX TODO XXX: await doen't work in here!
-    const exportEntities = data.map(async (item) => {
-      let newItem = {};
-      for (const key in item) {
-        console.log("Peter prüft key:", key);
-        if (columnLabels.has(key)) {
-          newItem[key] = item[key];
-        }
-        if (columnLabels.has(key + "_readable")) {
-          console.log("   Peter ist hier");
-          const type = Entity.extractTypeFromId(key);
-          const entity: Entity = await this.entityMapperService.load(type, key);
-          newItem[key + "_readable"] = entity.toString();
-        }
-      }
-      return newItem;
-    });
+    const exportEntities = await Promise.all(
+      data.map(async (item) => this.mapEntity(item, columnLabels)),
+    );
 
     console.log("exportEntities; ", exportEntities);
 
@@ -193,5 +180,32 @@ export class DownloadService {
         newline: DownloadService.SEPARATOR_ROW,
       },
     );
+  }
+
+  private async mapEntity(item: Entity, columnLabels): Promise<Object> {
+    let newItem = {};
+    for (const key in item) {
+      console.log("Peter prüft key:", key);
+      if (columnLabels.has(key)) {
+        newItem[key] = item[key];
+      }
+      if (columnLabels.has(key + "_readable")) {
+        const relatedEntityId = item[key];
+        console.log("   Peter ist hier", key);
+        const type = Entity.extractTypeFromId(relatedEntityId);
+        console.log(
+          "   Peter type:",
+          type,
+          "; relatedEntityId: ",
+          relatedEntityId,
+        );
+        const entity: Entity = await this.entityMapperService.load(
+          type,
+          relatedEntityId,
+        );
+        newItem[key + "_readable"] = entity.toString();
+      }
+    }
+    return newItem;
   }
 }

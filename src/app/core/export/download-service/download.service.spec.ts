@@ -8,21 +8,31 @@ import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { School } from "app/child-dev-project/schools/model/school";
 
-describe("DownloadService", () => {
+fdescribe("DownloadService", () => {
   let service: DownloadService;
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
+  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  const testSchool = School.create({ name: "Test School" });
 
   beforeEach(() => {
     mockDataTransformationService = jasmine.createSpyObj([
       "queryAndTransformData",
     ]);
+    mockEntityMapper = jasmine.createSpyObj(["load"]);
+    mockEntityMapper.load.and.resolveTo(testSchool);
     TestBed.configureTestingModule({
       providers: [
         DownloadService,
         {
           provide: DataTransformationService,
           useValue: mockDataTransformationService,
+        },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper,
         },
         LoggingService,
       ],
@@ -78,7 +88,7 @@ describe("DownloadService", () => {
       '"_id","_rev","propOne","propTwo"' +
       DownloadService.SEPARATOR_ROW +
       '"TestForCsvEntity:1","2","first","second"';
-    spyOn(service, "exportFile").and.returnValue(expected);
+    spyOn(service, "exportFile").and.resolveTo(expected);
     const result = await service.createCsv([test]);
     expect(result).toEqual(expected);
   });
@@ -112,6 +122,29 @@ describe("DownloadService", () => {
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
     expect(columnValues).toContain('"' + testDate + '"');
     expect(columnValues).toContain('"true"');
+  });
+
+  fit("should add column with entity toString for referenced entities in export", async () => {
+    @DatabaseEntity("EntityRefDownloadTestEntity")
+    class EntityRefDownloadTestEntity extends Entity {
+      @DatabaseField({ dataType: "entity", label: "referenced entity" })
+      relatedEntity: string;
+      //@DatabaseField({ dataType: "entity-array" }) relatedEntitiesArray: string[];
+    }
+    const relatedEntity = testSchool;
+
+    const testEntity = new EntityRefDownloadTestEntity();
+    testEntity.relatedEntity = relatedEntity.getId();
+
+    const csvExport = await service.createCsv([testEntity]);
+    console.log("csvExport:", csvExport);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
+    expect(columnValues).toHaveSize(2);
+    expect(columnValues).toContain('"' + relatedEntity.getId() + '"');
+    expect(columnValues).toContain('"' + relatedEntity.toString() + '"');
   });
 
   it("should export all properties using object keys as headers, if no schema is available", async () => {
