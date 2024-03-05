@@ -4,7 +4,6 @@ import { DatePipe, NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Entity } from "../../../../core/entity/model/entity";
-import { User } from "../../../../core/user/user";
 import { ViewDirective } from "../../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 
@@ -29,9 +28,7 @@ export class DisplayTodoCompletionComponent
   ngOnInit() {
     if (this.value?.completedBy) {
       const entityId = this.value.completedBy;
-      const entityType = entityId.includes(":")
-        ? Entity.extractTypeFromId(entityId)
-        : User;
+      const entityType = Entity.extractTypeFromId(entityId);
       this.entityMapper
         .load(entityType, entityId)
         .then((res) => (this.completedBy = res));

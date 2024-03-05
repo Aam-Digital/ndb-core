@@ -19,5 +19,5 @@ import { EntityActionsService } from "../../entity/entity-actions/entity-actions
 export class EntityArchivedInfoComponent {
   @Input() entity: Entity;
 
-  constructor(public entityRemoveService: EntityActionsService) {}
+  constructor(public entityActionsService: EntityActionsService) {}
 }

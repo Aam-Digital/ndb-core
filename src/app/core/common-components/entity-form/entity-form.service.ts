@@ -201,12 +201,12 @@ export class EntityFormService {
         newVal = new Date();
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.currentUser.value.getId();
+        newVal = this.currentUser.value?.getId();
         break;
       default:
         newVal = schema.defaultValue;
     }
-    if (isArrayDataType(schema.dataType)) {
+    if (newVal && isArrayDataType(schema.dataType)) {
       newVal = [newVal];
     }
     return newVal;
@@ -240,11 +240,8 @@ export class EntityFormService {
     const updatedEntity = entity.copy() as T;
     Object.assign(updatedEntity, form.getRawValue());
     updatedEntity.assertValid();
-    if (!this.canSave(entity, updatedEntity)) {
-      throw new Error(
-        $localize`Current user is not permitted to save these changes`,
-      );
-    }
+
+    this.assertPermissionsToSave(entity, updatedEntity);
 
     return this.entityMapper
       .save(updatedEntity)
@@ -265,11 +262,26 @@ export class EntityFormService {
     }
   }
 
-  private canSave(oldEntity: Entity, newEntity: Entity): boolean {
+  private assertPermissionsToSave(oldEntity: Entity, newEntity: Entity) {
+    let action, entity;
     if (oldEntity.isNew) {
-      return this.ability.can("create", newEntity);
+      action = "create";
+      entity = newEntity;
     } else {
-      return this.ability.can("update", oldEntity);
+      action = "update";
+      entity = oldEntity;
+    }
+
+    if (!this.ability.can(action, entity, undefined, true)) {
+      const conditions = this.ability
+        .rulesFor(action, entity.getType())
+        .map((r) => r.conditions);
+
+      throw new Error(
+        $localize`Current user is not permitted to save these changes: ${JSON.stringify(
+          conditions,
+        )}`,
+      );
     }
   }
 

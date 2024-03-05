@@ -71,8 +71,7 @@ describe("AttendanceWeekDashboardComponent", () => {
 
     await component.ngOnInit();
 
-    expect(component.loadingDone).toBeTrue();
-    expect(component.tableDataSource.data).toEqual([
+    expect(component.entries).toEqual([
       [
         {
           childId: absentChild.getId(),

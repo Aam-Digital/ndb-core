@@ -38,6 +38,7 @@ import { ExportDataDirective } from "../../../core/export/export-data-directive/
 import { DisableEntityOperationDirective } from "../../../core/permissions/permission-directive/disable-entity-operation.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
+import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -94,6 +95,7 @@ export class TodoListComponent
     activatedRoute: ActivatedRoute,
     analyticsService: AnalyticsService,
     entityMapperService: EntityMapperService,
+    entityActionsService: EntityActionsService,
     entities: EntityRegistry,
     dialog: MatDialog,
     duplicateRecord: DuplicateRecordService,
@@ -110,6 +112,7 @@ export class TodoListComponent
       entities,
       dialog,
       duplicateRecord,
+      entityActionsService,
     );
   }
 

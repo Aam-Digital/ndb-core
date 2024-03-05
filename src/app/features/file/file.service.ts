@@ -18,7 +18,7 @@ export abstract class FileService {
   protected constructor(
     private entityMapper: EntityMapperService,
     private entities: EntityRegistry,
-    private logger: LoggingService,
+    protected logger: LoggingService,
     private syncState: SyncStateSubject,
   ) {
     // TODO maybe registration is too late (only when component is rendered)

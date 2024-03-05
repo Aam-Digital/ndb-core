@@ -65,7 +65,7 @@ describe("BirthdayDashboardComponent", () => {
     tick();
 
     const expectedNextBirthday = birthdaySoon.add(10, "years");
-    expect(component.dataSource.data).toEqual([
+    expect(component.entries).toEqual([
       { entity: child1, birthday: expectedNextBirthday.toDate(), newAge: 10 },
     ]);
   }));
@@ -90,7 +90,7 @@ describe("BirthdayDashboardComponent", () => {
 
     const expectedFirstBirthday = firstBirthday.add(12, "years");
     const expectedSecondBirthday = secondBirthday.add(15, "years");
-    expect(component.dataSource.data).toEqual([
+    expect(component.entries).toEqual([
       { entity: child1, birthday: expectedFirstBirthday.toDate(), newAge: 12 },
       { entity: child2, birthday: expectedSecondBirthday.toDate(), newAge: 15 },
     ]);
@@ -104,15 +104,15 @@ describe("BirthdayDashboardComponent", () => {
 
     const e1 = new BirthdayEntity();
     e1.birthday = new DateWithAge(
-      moment().subtract(1, "year").add(1, "day").toDate(),
+      moment().subtract(4, "year").add(1, "day").toDate(),
     );
     const e2 = new BirthdayEntity();
     e2.birthday = new DateWithAge(
-      moment().subtract(3, "years").add(3, "days").toDate(),
+      moment().subtract(12, "year").add(3, "day").toDate(),
     );
     const e3 = new Child();
     e3.dateOfBirth = new DateWithAge(
-      moment().subtract(2, "years").add(2, "days").toDate(),
+      moment().subtract(8, "year").add(2, "day").toDate(),
     );
     entityMapper.saveAll([e1, e2, e3]);
 
@@ -123,21 +123,21 @@ describe("BirthdayDashboardComponent", () => {
     component.ngOnInit();
     tick();
 
-    expect(component.dataSource.data).toEqual([
+    expect(component.entries).toEqual([
       {
         entity: e1,
         birthday: moment().add(1, "day").startOf("day").toDate(),
-        newAge: 1,
+        newAge: 4,
       },
       {
         entity: e3,
         birthday: moment().add(2, "day").startOf("day").toDate(),
-        newAge: 2,
+        newAge: 8,
       },
       {
         entity: e2,
         birthday: moment().add(3, "day").startOf("day").toDate(),
-        newAge: 3,
+        newAge: 12,
       },
     ]);
   }));

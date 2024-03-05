@@ -32,5 +32,14 @@
 
       <app-account-page [disabled]="passwordChangeDisabled"></app-account-page>
     </div>
+
+    <div *ngIf="entityId">
+      <hr />
+      <h2 i18n>Your profile:</h2>
+      <app-display-entity
+        [entityId]="entityId"
+        class="entity-box"
+      ></app-display-entity>
+    </div>
   </mat-tab>
 </mat-tab-group>

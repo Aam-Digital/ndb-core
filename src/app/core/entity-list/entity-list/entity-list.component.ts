@@ -41,6 +41,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { Sort } from "@angular/material/sort";
 import { ExportColumnConfig } from "../../export/data-transformation-service/export-column-config";
 import { RouteTarget } from "../../../route-target";
+import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { applyUpdate } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
@@ -160,6 +161,7 @@ export class EntityListComponent<T extends Entity>
     private entities: EntityRegistry,
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
+    private entityActionsService: EntityActionsService,
   ) {
     this.screenWidthObserver
       .platform()
@@ -291,6 +293,21 @@ export class EntityListComponent<T extends Entity>
 
   duplicateRecords() {
     this.duplicateRecord.duplicateRecord(this.selectedRows);
+    this.selectedRows = undefined;
+  }
+
+  async deleteRecords() {
+    await this.entityActionsService.delete(this.selectedRows);
+    this.selectedRows = undefined;
+  }
+
+  async archiveRecords() {
+    await this.entityActionsService.archive(this.selectedRows);
+    this.selectedRows = undefined;
+  }
+
+  async anonymizeRecords() {
+    await this.entityActionsService.anonymize(this.selectedRows);
     this.selectedRows = undefined;
   }
 

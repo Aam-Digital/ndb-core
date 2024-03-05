@@ -2,9 +2,11 @@ import {
   Component,
   ContentChild,
   ElementRef,
+  EventEmitter,
   Input,
   OnChanges,
   Optional,
+  Output,
   Self,
   TemplateRef,
   ViewChild,
@@ -36,6 +38,15 @@ import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
 import { concat, of } from "rxjs";
+import {
+  MatChipGrid,
+  MatChipInput,
+  MatChipRemove,
+  MatChipRow,
+} from "@angular/material/chips";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatTooltip } from "@angular/material/tooltip";
+import { MatIcon } from "@angular/material/icon";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -44,7 +55,7 @@ interface SelectableOption<O, V> {
   selected: boolean;
 }
 
-/** Custom `MatFormFieldControl` for telephone number input. */
+/** Custom `MatFormFieldControl` for any select / dropdown field. */
 @Component({
   selector: "app-basic-autocomplete",
   templateUrl: "basic-autocomplete.component.html",
@@ -62,6 +73,13 @@ interface SelectableOption<O, V> {
     NgIf,
     AsyncPipe,
     NgTemplateOutlet,
+    MatChipInput,
+    MatChipGrid,
+    MatChipRow,
+    FaIconComponent,
+    MatTooltip,
+    MatIcon,
+    MatChipRemove,
   ],
 })
 export class BasicAutocompleteComponent<O, V = O>
@@ -79,6 +97,10 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() optionToString = (option: O) => option?.toString();
   @Input() createOption: (input: string) => O;
   @Input() hideOption: (option: O) => boolean = () => false;
+
+  /**
+   * Whether the user should be able to select multiple values.
+   */
   @Input() multi?: boolean;
 
   autocompleteForm = new FormControl("");
@@ -89,6 +111,8 @@ export class BasicAutocompleteComponent<O, V = O>
     startWith([] as SelectableOption<O, V>[]),
   );
   showAddOption = false;
+  autocompleteFilterFunction: (option: O) => boolean;
+  @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
 
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
@@ -115,6 +139,13 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   private _options: SelectableOption<O, V>[] = [];
+
+  _selectedOptions: SelectableOption<O, V>[] = [];
+
+  /**
+   * Display the selected items as simple text, as chips or not at all (if used in combination with another component)
+   */
+  @Input() display: "text" | "chips" | "none" = "text";
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
@@ -146,10 +177,15 @@ export class BasicAutocompleteComponent<O, V = O>
     }
     if (changes.value || changes.options) {
       this.setInitialInputValue();
+
+      if (this.autocomplete?.panelOpen) {
+        // if new options have been added, make sure to update the visible autocomplete options
+        this.showAutocomplete(this.autocompleteForm.value);
+      }
     }
   }
 
-  showAutocomplete() {
+  showAutocomplete(valueToRevertTo?: string) {
     if (this.multi) {
       this.autocompleteForm.setValue("");
     } else {
@@ -167,6 +203,9 @@ export class BasicAutocompleteComponent<O, V = O>
       (
         this.inputElement._elementRef.nativeElement as HTMLInputElement
       ).select();
+      if (valueToRevertTo) {
+        this.autocompleteForm.setValue(valueToRevertTo);
+      }
     });
     this.focus();
   }
@@ -176,22 +215,30 @@ export class BasicAutocompleteComponent<O, V = O>
       (o) => !this.hideOption(o.initial),
     );
     if (inputText) {
+      this.autocompleteFilterFunction = (option) =>
+        this.optionToString(option)
+          .toLowerCase()
+          .includes(inputText.toLowerCase());
+      this.autocompleteFilterChange.emit(this.autocompleteFilterFunction);
+
       filteredOptions = filteredOptions.filter((o) =>
-        o.asString.toLowerCase().includes(inputText.toLowerCase()),
+        this.autocompleteFilterFunction(o.initial),
       );
-      this.showAddOption = !this._options.some(
-        (o) => o.asString.toLowerCase() === inputText.toLowerCase(),
+      this.showAddOption = !this._options.some((o) =>
+        this.autocompleteFilterFunction(o.initial),
       );
     }
     return filteredOptions;
   }
 
   private setInitialInputValue() {
-    if (this.multi) {
-      this._options.forEach(
-        (o) => (o.selected = (this.value as V[])?.includes(o.asValue)),
-      );
-    }
+    this._options.forEach(
+      (o) =>
+        (o.selected = Array.isArray(this.value)
+          ? this.value?.includes(o.asValue)
+          : this.value === o.asValue),
+    );
+    this._selectedOptions = this._options.filter((o) => o.selected);
   }
 
   select(selected: string | SelectableOption<O, V>) {
@@ -204,6 +251,19 @@ export class BasicAutocompleteComponent<O, V = O>
       this.selectOption(selected);
     } else {
       this.autocompleteForm.setValue("");
+      this._selectedOptions = [];
+      this.value = undefined;
+    }
+    this.onChange(this.value);
+  }
+
+  unselect(option: SelectableOption<O, V>) {
+    option.selected = false;
+    this._selectedOptions = this._options.filter((o) => o.selected);
+
+    if (this.multi) {
+      this.value = this._selectedOptions.map((o) => o.asValue);
+    } else {
       this.value = undefined;
     }
     this.onChange(this.value);
@@ -228,12 +288,12 @@ export class BasicAutocompleteComponent<O, V = O>
   private selectOption(option: SelectableOption<O, V>) {
     if (this.multi) {
       option.selected = !option.selected;
-      this.value = this._options
-        .filter((o) => o.selected)
-        .map((o) => o.asValue);
+      this._selectedOptions = this._options.filter((o) => o.selected);
+      this.value = this._selectedOptions.map((o) => o.asValue);
       // re-open autocomplete to select next option
       this.showAutocomplete();
     } else {
+      this._selectedOptions = [option];
       this.value = option.asValue;
       this.blur();
     }

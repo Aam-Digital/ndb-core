@@ -277,8 +277,7 @@ export const defaultJsonConfig = {
           ]
         }
       ],
-    },
-    "permittedUserRoles": ["admin_app"]
+    }
   },
   "view:help": {
     "component": "MarkdownPage",

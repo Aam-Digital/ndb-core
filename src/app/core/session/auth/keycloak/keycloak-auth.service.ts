@@ -1,10 +1,13 @@
 import { Injectable } from "@angular/core";
 import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
-import { parseJwt } from "../../../../utils/utils";
 import { environment } from "../../../../../environments/environment";
 import { SessionInfo } from "../session-info";
 import { KeycloakService } from "keycloak-angular";
+import { LoggingService } from "../../../logging/logging.service";
+import { Entity } from "../../../entity/model/entity";
+import { User } from "../../../user/user";
+import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
 
 /**
  * Handles the remote session with keycloak
@@ -22,6 +25,7 @@ export class KeycloakAuthService {
   constructor(
     private httpClient: HttpClient,
     private keycloak: KeycloakService,
+    private logger: LoggingService,
   ) {}
 
   /**
@@ -54,20 +58,33 @@ export class KeycloakAuthService {
 
   private processToken(token: string): SessionInfo {
     if (!token) {
-      throw new Error();
+      throw new Error("No token received from Keycloak");
     }
+
     this.accessToken = token;
     this.logSuccessfulAuth();
-    const parsedToken = parseJwt(this.accessToken);
-    if (!parsedToken.username) {
-      throw new Error(
-        `Login error: User is not correctly set up (userId: ${parsedToken.sub})`,
-      );
-    }
-    return {
-      name: parsedToken.username,
+    const parsedToken: ParsedJWT = parseJwt(this.accessToken);
+
+    const sessionInfo: SessionInfo = {
+      name: parsedToken.username ?? parsedToken.sub,
       roles: parsedToken["_couchdb.roles"],
     };
+
+    if (parsedToken.username) {
+      sessionInfo.entityId = parsedToken.username.includes(":")
+        ? parsedToken.username
+        : Entity.createPrefixedId(User.ENTITY_TYPE, parsedToken.username);
+    } else {
+      this.logger.debug(
+        `User not linked with an entity (userId: ${sessionInfo.name})`,
+      );
+    }
+
+    if (parsedToken.email) {
+      sessionInfo.email = parsedToken.email;
+    }
+
+    return sessionInfo;
   }
 
   /**
