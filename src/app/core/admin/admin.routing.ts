@@ -16,6 +16,16 @@ export const adminRoutes: Routes = [
     },
   },
   {
+    path: "entity/:entityType/list",
+    component: RoutedViewComponent,
+    data: {
+      component: "AdminEntityList",
+      entity: "Config",
+      requiredPermissionOperation: "update",
+    },
+    canActivate: [EntityPermissionGuard],
+  },
+  {
     path: "entity/:entityType/details",
     component: RoutedViewComponent,
     data: {

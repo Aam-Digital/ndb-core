@@ -30,6 +30,13 @@ export class AdminModule {
             "./admin-entity-details/admin-entity/admin-entity-details.component"
           ).then((c) => c.AdminEntityDetailsComponent),
       ],
+      [
+        "AdminEntityList",
+        () =>
+          import("./admin-entity-list/admin-entity-list.component").then(
+            (c) => c.AdminEntityListComponent,
+          ),
+      ],
     ]);
   }
 }
