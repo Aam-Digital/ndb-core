@@ -47,11 +47,14 @@ export class AdminEntityListComponent implements OnChanges {
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityListConfig;
 
-  allFields: ColumnConfig[];
+  allFields: ColumnConfig[] = [];
   filters: string[];
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
+      this.config = this.config ?? {
+        entity: this.entityConstructor.ENTITY_TYPE,
+      };
       this.config.filters = this.config.filters ?? [];
 
       this.initColumnGroupsIfNecessary();
@@ -71,7 +74,7 @@ export class AdminEntityListComponent implements OnChanges {
         groups: [
           {
             name: "",
-            columns: this.config.columns.map((c) =>
+            columns: (this.config.columns ?? []).map((c) =>
               typeof c === "string" ? c : c.id,
             ),
           },
@@ -82,7 +85,7 @@ export class AdminEntityListComponent implements OnChanges {
 
   private initAvailableFields() {
     this.allFields = [
-      ...this.config.columns,
+      ...(this.config.columns ?? []),
       ...this.entityConstructor.schema.keys(),
     ];
     this.filters = (this.config.filters ?? []).map((f) => f.id);

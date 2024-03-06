@@ -8,7 +8,7 @@ export interface EntityListConfig {
   /**
    * Title that is shown on top of the component
    */
-  title: string;
+  title?: string;
 
   /**
    * Select which entities should be displayed in the table
@@ -17,11 +17,12 @@ export interface EntityListConfig {
   entity?: string;
 
   /**
-   * The columns to be displayed in the table.
+   * Custom overwrites or additional columns to be displayed in the table.
    *
    * If any special columns aside from the entity's fields are needed, add them here.
+   * Fields of the entity type are available automatically.
    */
-  columns: (FormFieldConfig | string)[];
+  columns?: (FormFieldConfig | string)[];
 
   /**
    * Optional config for which columns are displayed.

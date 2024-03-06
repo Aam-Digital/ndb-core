@@ -107,12 +107,18 @@ export class AdminEntityComponent {
     );
     const newConfig = originalConfig.copy();
 
-    newConfig.data[
-      EntityConfigService.getDetailsViewId(this.entityConstructor)
-    ].config = this.configDetailsView;
-    newConfig.data[
-      EntityConfigService.getListViewId(this.entityConstructor)
-    ].config = this.configListView;
+    this.setViewConfig(
+      newConfig,
+      EntityConfigService.getDetailsViewId(this.entityConstructor),
+      this.configDetailsView,
+      "EntityDetails",
+    );
+    this.setViewConfig(
+      newConfig,
+      EntityConfigService.getListViewId(this.entityConstructor),
+      this.configListView,
+      "EntityList",
+    );
     this.setEntityConfig(newConfig);
 
     await this.entityMapper.save(newConfig);
@@ -142,6 +148,24 @@ export class AdminEntityComponent {
         continue;
       }
       entitySchemaConfig.attributes[fieldId] = field;
+    }
+  }
+
+  private setViewConfig(
+    targetConfig,
+    detailsViewId: string,
+    viewConfig: EntityDetailsConfig | EntityListConfig,
+    componentForNewConfig: string,
+  ) {
+    if (targetConfig.data[detailsViewId]) {
+      targetConfig.data[detailsViewId].config = viewConfig;
+    } else {
+      // create new config
+      viewConfig.entity = this.entityType;
+      targetConfig.data[detailsViewId] = {
+        component: componentForNewConfig,
+        config: viewConfig,
+      } as ViewConfig<EntityDetailsConfig | EntityListConfig>;
     }
   }
 }
