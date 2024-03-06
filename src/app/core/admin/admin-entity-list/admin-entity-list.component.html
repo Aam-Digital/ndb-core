@@ -1,1 +1,25 @@
-<p>admin-entity-list works!</p>
+<!-- Filters -->
+<div class="flex-row gap-regular flex-wrap">
+  <app-filter
+    class="flex-row gap-regular flex-wrap"
+    [filterConfig]="config?.filters ?? []"
+    [entityType]="entityConstructor"
+  ></app-filter>
+</div>
+
+<div class="mat-elevation-z1">
+  <mat-tab-group>
+    <mat-tab
+      *ngFor="let columnGroup of config?.columnGroups?.groups"
+      [label]="columnGroup.name"
+    >
+      <app-entities-table
+        [entityType]="entityConstructor"
+        [editable]="false"
+        [records]="[]"
+        [customColumns]="config?.columns"
+        [columnsToDisplay]="columnGroup.columns"
+      ></app-entities-table>
+    </mat-tab>
+  </mat-tab-group>
+</div>

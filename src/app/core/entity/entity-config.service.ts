@@ -25,9 +25,10 @@ export class EntityConfigService {
   private coreEntitySchemas = new Map<string, EntitySchema>();
 
   static getDetailsViewId(entityConstructor: EntityConstructor) {
-    return (
-      PREFIX_VIEW_CONFIG + entityConstructor.route.replace(/^\//, "") + "/:id"
-    );
+    return this.getListViewId(entityConstructor) + "/:id";
+  }
+  static getListViewId(entityConstructor: EntityConstructor) {
+    return PREFIX_VIEW_CONFIG + entityConstructor.route.replace(/^\//, "");
   }
 
   // TODO: merge with EntityRegistry?

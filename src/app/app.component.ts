@@ -16,6 +16,8 @@
  */
 
 import { Component } from "@angular/core";
+import { NavigationEnd, Router } from "@angular/router";
+import { filter } from "rxjs/operators";
 
 /**
  * Component as the main entry point for the app.
@@ -23,6 +25,21 @@ import { Component } from "@angular/core";
  */
 @Component({
   selector: "app-root",
-  template: "<app-ui></app-ui>",
+  template:
+    "<app-ui *ngIf='!configFullscreen; else configUi'></app-ui><ng-template #configUi><router-outlet></router-outlet></ng-template>",
 })
-export class AppComponent {}
+export class AppComponent {
+  configFullscreen: boolean = false;
+
+  constructor(private router: Router) {
+    this.detectConfigMode();
+    router.events
+      .pipe(filter((e) => e instanceof NavigationEnd))
+      .subscribe(() => this.detectConfigMode());
+  }
+
+  private detectConfigMode() {
+    const currentUrl = this.router.url;
+    this.configFullscreen = currentUrl.startsWith("/admin/entity");
+  }
+}

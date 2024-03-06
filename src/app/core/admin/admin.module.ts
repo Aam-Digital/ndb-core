@@ -26,15 +26,8 @@ export class AdminModule {
       [
         "AdminEntity",
         () =>
-          import(
-            "./admin-entity-details/admin-entity/admin-entity-details.component"
-          ).then((c) => c.AdminEntityDetailsComponent),
-      ],
-      [
-        "AdminEntityList",
-        () =>
-          import("./admin-entity-list/admin-entity-list.component").then(
-            (c) => c.AdminEntityListComponent,
+          import("./admin-entity/admin-entity.component").then(
+            (c) => c.AdminEntityComponent,
           ),
       ],
     ]);
