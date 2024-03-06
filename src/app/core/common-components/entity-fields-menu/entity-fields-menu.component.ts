@@ -1,4 +1,10 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Optional,
+  Output,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatMenuModule } from "@angular/material/menu";
@@ -12,6 +18,7 @@ import {
   FormFieldConfig,
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
+import { EntityFormService } from "../entity-form/entity-form.service";
 
 @Component({
   selector: "app-entity-fields-menu",
@@ -34,13 +41,23 @@ export class EntityFieldsMenuComponent {
 
   @Input() set availableFields(value: ColumnConfig[]) {
     this._availableFields = value
-      .map((field) => toFormFieldConfig(field))
-      .filter((field) => field.label);
+      .map((field) =>
+        this.entityFormService && this.entityType
+          ? this.entityFormService.extendFormFieldConfig(field, this.entityType)
+          : toFormFieldConfig(field),
+      )
+      .filter((field) => field.label)
+      // filter duplicates:
+      .filter(
+        (item, pos, arr) => arr.findIndex((x) => x.id === item.id) === pos,
+      );
   }
   _availableFields: FormFieldConfig[];
 
   @Input() activeFields: string[];
   @Output() activeFieldsChange = new EventEmitter<string[]>();
+
+  constructor(@Optional() private entityFormService: EntityFormService) {}
 
   toggleFieldSelection(field: FormFieldConfig) {
     if (this.activeFields.includes(field.id)) {

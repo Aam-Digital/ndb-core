@@ -56,6 +56,8 @@ export class AdminEntityComponent {
   configDetailsView: EntityDetailsConfig;
   configListView: EntityListConfig;
 
+  protected mode: "details" | "list" | "general" = "list";
+
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
   constructor(
@@ -105,7 +107,12 @@ export class AdminEntityComponent {
     );
     const newConfig = originalConfig.copy();
 
-    this.setViewConfig(newConfig);
+    newConfig.data[
+      EntityConfigService.getDetailsViewId(this.entityConstructor)
+    ].config = this.configDetailsView;
+    newConfig.data[
+      EntityConfigService.getListViewId(this.entityConstructor)
+    ].config = this.configListView;
     this.setEntityConfig(newConfig);
 
     await this.entityMapper.save(newConfig);
@@ -115,11 +122,6 @@ export class AdminEntityComponent {
     );
 
     this.location.back();
-  }
-
-  private setViewConfig(newConfig: Config) {
-    const viewId = EntityConfigService.getDetailsViewId(this.entityConstructor);
-    newConfig.data[viewId].config = this.configDetailsView;
   }
 
   private setEntityConfig(newConfig: Config) {
@@ -142,6 +144,4 @@ export class AdminEntityComponent {
       entitySchemaConfig.attributes[fieldId] = field;
     }
   }
-
-  protected mode: "details" | "list" | "general" = "details";
 }

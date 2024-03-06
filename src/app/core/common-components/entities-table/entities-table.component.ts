@@ -44,7 +44,6 @@ import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { EntityFieldsMenuComponent } from "../entity-fields-menu/entity-fields-menu.component";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -66,7 +65,6 @@ import { EntityFieldsMenuComponent } from "../entity-fields-menu/entity-fields-m
     MatTableModule,
     EntityInlineEditActionsComponent,
     EntityCreateButtonComponent,
-    EntityFieldsMenuComponent,
   ],
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
