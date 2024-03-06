@@ -38,6 +38,10 @@ export class AppComponent {
       .subscribe(() => this.detectConfigMode());
   }
 
+  /**
+   * Switch the layout for certain admin routes to display those fullscreen without app menu and toolbar.
+   * @private
+   */
   private detectConfigMode() {
     const currentUrl = this.router.url;
     this.configFullscreen = currentUrl.startsWith("/admin/entity");
