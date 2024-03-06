@@ -53,7 +53,30 @@ export class AdminEntityListComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
       this.config.filters = this.config.filters ?? [];
+
+      this.initColumnGroupsIfNecessary();
+
       this.initAvailableFields();
+    }
+  }
+
+  /**
+   * Config allows to not have columnGroups and by default then display all `columns`,
+   * create an initial columnGroup in this case to allow full editing.
+   * @private
+   */
+  private initColumnGroupsIfNecessary() {
+    if (!this.config.columnGroups) {
+      this.config.columnGroups = {
+        groups: [
+          {
+            name: "",
+            columns: this.config.columns.map((c) =>
+              typeof c === "string" ? c : c.id,
+            ),
+          },
+        ],
+      };
     }
   }
 
