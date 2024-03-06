@@ -11,7 +11,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
 import { ViewTitleComponent } from "../../../common-components/view-title/view-title.component";
-import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
+import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { AdminEntityPanelComponentComponent } from "../admin-entity-panel-component/admin-entity-panel-component.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
