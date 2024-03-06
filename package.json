@@ -42,7 +42,7 @@
     "@fortawesome/free-regular-svg-icons": "^6.5.1",
     "@fortawesome/free-solid-svg-icons": "^6.5.1",
     "@ngneat/until-destroy": "^10.0.0",
-    "@sentry/browser": "^7.100.1",
+    "@sentry/browser": "^7.101.0",
     "angulartics2": "^12.2.1",
     "assert": "^2.1.0",
     "crypto-es": "^2.1.0",
