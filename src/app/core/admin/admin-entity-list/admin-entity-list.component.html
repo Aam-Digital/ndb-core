@@ -7,25 +7,25 @@
     class="drop-list flex-row gap-regular flex-wrap gap-large"
   >
     @for (filter of config?.filters; track filter) {
-    <div cdkDrag class="filter-field drop-item flex-row gap-small">
-      <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+      <div cdkDrag class="filter-field drop-item flex-row gap-small">
+        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
 
-      <mat-form-field appearance="fill">
-        <mat-label
-          ><app-entity-field-label
-            [field]="filter"
-            [entityType]="entityConstructor"
-          ></app-entity-field-label>
-        </mat-label>
-        <mat-select disabled></mat-select>
-      </mat-form-field>
+        <mat-form-field appearance="fill">
+          <mat-label
+            ><app-entity-field-label
+              [field]="filter"
+              [entityType]="entityConstructor"
+            ></app-entity-field-label>
+          </mat-label>
+          <mat-select disabled></mat-select>
+        </mat-form-field>
 
-      <fa-icon
-        icon="times"
-        class="remove-icon"
-        (click)="removeItem(filters, filter.id); updateFilters(filters)"
-      ></fa-icon>
-    </div>
+        <fa-icon
+          icon="times"
+          class="remove-icon"
+          (click)="removeItem(filters, filter.id); updateFilters(filters)"
+        ></fa-icon>
+      </div>
     }
   </div>
 
@@ -44,30 +44,30 @@
 
 <h2>Table Views</h2>
 <div class="mat-elevation-z1">
-  <mat-tab-group>
-    <mat-tab
-      *ngFor="let columnGroup of config?.columnGroups?.groups"
-      [label]="columnGroup.name"
-    >
+  <app-admin-tabs
+    [tabs]="config?.columnGroups?.groups"
+    [newTabFactory]="newColumnGroupFactory"
+  >
+    <ng-template [appAdminTabTemplate]="config?.columnGroups?.groups" let-item>
       <div
         class="table-header drop-list flex-row"
         cdkDropList
         cdkDropListOrientation="horizontal"
         cdkDropListLockAxis="x"
-        (cdkDropListDropped)="drop($event, columnGroup.columns)"
+        (cdkDropListDropped)="drop($event, item.columns)"
       >
-        @for (col of columnGroup.columns; track col) {
-        <div cdkDrag class="column-header drop-item flex-row gap-small">
-          <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+        @for (col of item["columns"]; track col) {
+          <div cdkDrag class="column-header drop-item flex-row gap-small">
+            <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
 
-          {{ col }}
+            {{ col }}
 
-          <fa-icon
-            icon="times"
-            class="remove-icon"
-            (click)="removeItem(columnGroup.columns, col)"
-          ></fa-icon>
-        </div>
+            <fa-icon
+              icon="times"
+              class="remove-icon"
+              (click)="removeItem(item.columns, col)"
+            ></fa-icon>
+          </div>
         }
       </div>
 
@@ -75,12 +75,12 @@
         Drag & drop table column headers and add columns using the
         <app-entity-fields-menu
           [entityType]="entityConstructor"
-          [(activeFields)]="columnGroup.columns"
+          [(activeFields)]="item.columns"
           [availableFields]="allFields"
           icon="square-plus"
         ></app-entity-fields-menu>
         button
       </div>
-    </mat-tab>
-  </mat-tab-group>
+    </ng-template>
+  </app-admin-tabs>
 </div>

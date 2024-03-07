@@ -6,6 +6,7 @@ import { FilterService } from "../../filter/filter.service";
 import { ActivatedRoute } from "@angular/router";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 
 describe("AdminEntityListComponent", () => {
   let component: AdminEntityListComponent;
@@ -13,7 +14,11 @@ describe("AdminEntityListComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [AdminEntityListComponent, FontAwesomeTestingModule],
+      imports: [
+        AdminEntityListComponent,
+        FontAwesomeTestingModule,
+        NoopAnimationsModule,
+      ],
       providers: [
         { provide: FilterGeneratorService, useValue: {} },
         { provide: FilterService, useValue: {} },

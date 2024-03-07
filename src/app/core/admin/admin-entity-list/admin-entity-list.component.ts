@@ -4,7 +4,10 @@ import { FilterComponent } from "../../filter/filter/filter.component";
 import { MatTab, MatTabGroup } from "@angular/material/tabs";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { EntityConstructor } from "../../entity/model/entity";
-import { EntityListConfig } from "../../entity-list/EntityListConfig";
+import {
+  EntityListConfig,
+  GroupConfig,
+} from "../../entity-list/EntityListConfig";
 import { EntityFieldsMenuComponent } from "../../common-components/entity-fields-menu/entity-fields-menu.component";
 import { ColumnConfig } from "../../common-components/entity-form/FormConfig";
 import { MatTableModule } from "@angular/material/table";
@@ -19,6 +22,8 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
 import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatSelect } from "@angular/material/select";
+import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.component";
+import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
 
 @Component({
   selector: "app-admin-entity-list",
@@ -39,6 +44,8 @@ import { MatSelect } from "@angular/material/select";
     MatFormField,
     MatLabel,
     MatSelect,
+    AdminTabsComponent,
+    AdminTabTemplateDirective,
   ],
   templateUrl: "./admin-entity-list.component.html",
   styleUrl: "./admin-entity-list.component.scss",
@@ -99,6 +106,10 @@ export class AdminEntityListComponent implements OnChanges {
           (existingFilter) => existingFilter.id === f,
         ) ?? { id: f },
     );
+  }
+
+  newColumnGroupFactory(): GroupConfig {
+    return { name: "", columns: [] };
   }
 
   removeItem<E>(array: E[], item: E) {

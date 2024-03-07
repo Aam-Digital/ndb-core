@@ -1,4 +1,4 @@
-import { Component, Input, ViewChild } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import {
   EntityDetailsConfig,
   Panel,
@@ -6,7 +6,7 @@ import {
 import { EntityConstructor } from "../../../entity/model/entity";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { NgForOf, NgIf } from "@angular/common";
-import { MatTabGroup, MatTabsModule } from "@angular/material/tabs";
+import { MatTabsModule } from "@angular/material/tabs";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
@@ -15,6 +15,8 @@ import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section
 import { AdminEntityFormComponent } from "../admin-entity-form/admin-entity-form.component";
 import { AdminEntityPanelComponentComponent } from "../admin-entity-panel-component/admin-entity-panel-component.component";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { AdminTabsComponent } from "../../building-blocks/admin-tabs/admin-tabs.component";
+import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admin-tab-template.directive";
 
 @DynamicComponent("AdminEntityDetails")
 @Component({
@@ -34,24 +36,16 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatTooltipModule,
     NgForOf,
     NgIf,
+    AdminTabsComponent,
+    AdminTabTemplateDirective,
   ],
 })
 export class AdminEntityDetailsComponent {
   @Input() entityConstructor: EntityConstructor;
   @Input() config: EntityDetailsConfig;
 
-  @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
-
-  createPanel() {
-    const newPanel: Panel = { title: "New Tab", components: [] };
-    this.config.panels.push(newPanel);
-
-    // wait until view has actually added the new tab before we can auto-select it
-    setTimeout(() => {
-      const newTabIndex = this.config.panels.length - 1;
-      this.tabGroup.selectedIndex = newTabIndex;
-      this.tabGroup.focusTab(newTabIndex);
-    });
+  newPanelFactory(): Panel {
+    return { title: "New Tab", components: [] };
   }
 
   addComponent(panel: Panel) {

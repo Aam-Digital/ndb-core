@@ -52,12 +52,6 @@ describe("AdminEntityDetailsComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should add new panel (tab) to config", () => {
-    component.createPanel();
-
-    expect(component.config.panels.length).toBe(viewConfig.panels.length + 1);
-  });
-
   it("should add new section (component in panel) to config", () => {
     component.addComponent(component.config.panels[0]);
 
