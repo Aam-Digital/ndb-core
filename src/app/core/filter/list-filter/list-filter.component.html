@@ -7,13 +7,13 @@
     multiple
   >
     @for (option of filterConfig.options; track option.key) {
-    <mat-option
-      [value]="option.key"
-      [appBorderHighlight]="option.color"
-      style="padding-top: 0.5em; padding-bottom: 0.5em"
-    >
-      {{ option.label }}
-    </mat-option>
+      <mat-option
+        [value]="option.key"
+        [appBorderHighlight]="option.color"
+        style="padding-top: 0.5em; padding-bottom: 0.5em"
+      >
+        {{ option.label }}
+      </mat-option>
     }
   </mat-select>
 </mat-form-field>

@@ -21,7 +21,13 @@ import { DuplicateRecordService } from "../../../core/entity-list/duplicate-reco
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { LoggingService } from "../../../core/logging/logging.service";
-import { NgForOf, NgIf, NgStyle, NgTemplateOutlet } from "@angular/common";
+import {
+  AsyncPipe,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgTemplateOutlet,
+} from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -39,6 +45,7 @@ import { DisableEntityOperationDirective } from "../../../core/permissions/permi
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
 import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
+import { AbilityModule } from "@casl/angular";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -70,6 +77,8 @@ import { EntityActionsService } from "app/core/entity/entity-actions/entity-acti
     RouterLink,
     MatTooltipModule,
     EntityCreateButtonComponent,
+    AbilityModule,
+    AsyncPipe,
   ],
 })
 export class TodoListComponent

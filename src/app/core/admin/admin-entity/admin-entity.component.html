@@ -1,0 +1,61 @@
+<div class="host-container flex-column">
+  <div class="header flex-row flex-wrap justify-space-between">
+    <app-view-title class="admin-ui-title" i18n="page title">
+      Editing data structure for "{{ entityType | entityTypeLabel }}" records
+    </app-view-title>
+
+    <div class="flex-row gap-small save-buttons">
+      <button
+        mat-raised-button
+        color="accent"
+        (click)="save()"
+        i18n="Button label"
+      >
+        Save
+      </button>
+      <button mat-stroked-button (click)="cancel()" i18n="Button label">
+        Cancel
+      </button>
+    </div>
+  </div>
+
+  <div class="main-container flex-row">
+    <mat-nav-list>
+      <mat-list-item
+        (click)="mode = 'details'"
+        [activated]="mode === 'details'"
+      >
+        Details View & Fields
+      </mat-list-item>
+      <mat-list-item (click)="mode = 'list'" [activated]="mode === 'list'">
+        List View
+      </mat-list-item>
+      <mat-list-item
+        (click)="mode = 'general'"
+        [activated]="mode === 'general'"
+      >
+        General Settings
+      </mat-list-item>
+    </mat-nav-list>
+
+    <div class="config-component flex-grow mat-elevation-z1">
+      @switch (mode) {
+        @case ("details") {
+          <app-admin-entity-details
+            [entityConstructor]="entityConstructor"
+            [config]="configDetailsView"
+          ></app-admin-entity-details>
+        }
+        @case ("list") {
+          <app-admin-entity-list
+            [entityConstructor]="entityConstructor"
+            [config]="configListView"
+          ></app-admin-entity-list>
+        }
+        @case ("general") {
+          <div>COMING SOON</div>
+        }
+      }
+    </div>
+  </div>
+</div>

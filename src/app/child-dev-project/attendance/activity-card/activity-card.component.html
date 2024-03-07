@@ -8,8 +8,8 @@
   </mat-card-header>
   <mat-card-content class="text-secondary">
     <fa-icon icon="child"></fa-icon>
-    {{ event.children.length }} { event.children.length, plural, one
-    {participant} other {participants} }
+    {{ event.children.length }}
+    {event.children.length, plural, one {participant} other {participants}}
     <ng-container *ngIf="!recurring">
       <span class="sep">/</span>
       <fa-icon icon="calendar"></fa-icon>

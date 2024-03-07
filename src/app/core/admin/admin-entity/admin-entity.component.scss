@@ -1,0 +1,19 @@
+.host-container {
+  height: 100vh;
+}
+
+.header {
+  margin: 20px;
+}
+
+.main-container {
+  width: 100%;
+  min-height: 0;
+  flex-grow: 1;
+}
+
+.config-component {
+  min-width: 0;
+  padding: 8px;
+  overflow-y: auto;
+}

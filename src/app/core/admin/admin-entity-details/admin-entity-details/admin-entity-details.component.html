@@ -1,0 +1,44 @@
+<app-admin-tabs [tabs]="config?.panels" [newTabFactory]="newPanelFactory">
+  <ng-template [appAdminTabTemplate]="config?.panels" let-item>
+    <div class="flex-column gap-large padding-top-large">
+      <div
+        *ngFor="let componentConfig of item.components; let j = index"
+        class="section-wrapper"
+      >
+        <app-admin-section-header
+          [(title)]="componentConfig.title"
+          (remove)="item.components.splice(j, 1)"
+        ></app-admin-section-header>
+
+        <app-admin-entity-form
+          *ngIf="componentConfig.component === 'Form'; else otherComponent"
+          [config]="componentConfig.config"
+          [entityType]="entityConstructor"
+        >
+        </app-admin-entity-form>
+
+        <ng-template #otherComponent>
+          <app-admin-entity-panel-component
+            [config]="componentConfig"
+            [entityType]="entityConstructor"
+          ></app-admin-entity-panel-component>
+        </ng-template>
+      </div>
+
+      <button
+        mat-stroked-button
+        color="accent"
+        class="section-add-button"
+        (click)="addComponent(item)"
+        i18n
+      >
+        <fa-icon
+          aria-label="add element"
+          icon="plus-circle"
+          class="standard-icon-with-text"
+        ></fa-icon>
+        Add Section
+      </button>
+    </div>
+  </ng-template>
+</app-admin-tabs>
