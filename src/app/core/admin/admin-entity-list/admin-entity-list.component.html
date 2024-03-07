@@ -1,4 +1,7 @@
-<h2>Filters</h2>
+<app-view-title [disableBackButton]="true">
+  {{ entityConstructor.labelPlural }}
+</app-view-title>
+
 <div>
   <div
     cdkDropList
@@ -42,7 +45,6 @@
   </div>
 </div>
 
-<h2>Table Views</h2>
 <div class="mat-elevation-z1">
   <app-admin-tabs
     [tabs]="config?.columnGroups?.groups"
