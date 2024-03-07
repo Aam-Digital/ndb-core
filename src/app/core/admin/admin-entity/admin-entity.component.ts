@@ -1,4 +1,10 @@
-import { Component, ContentChild, Input, TemplateRef } from "@angular/core";
+import {
+  Component,
+  ContentChild,
+  Input,
+  OnInit,
+  TemplateRef,
+} from "@angular/core";
 import { CommonModule, Location } from "@angular/common";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ConfigService } from "../../config/config.service";
@@ -48,7 +54,7 @@ import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entit
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
 })
-export class AdminEntityComponent {
+export class AdminEntityComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
