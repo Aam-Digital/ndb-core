@@ -39,19 +39,23 @@
     </mat-nav-list>
 
     <div class="config-component flex-grow mat-elevation-z1">
-      <app-admin-entity-details
-        *ngIf="mode === 'details'"
-        [entityConstructor]="entityConstructor"
-        [config]="configDetailsView"
-      ></app-admin-entity-details>
-
-      <app-admin-entity-list
-        *ngIf="mode === 'list'"
-        [entityConstructor]="entityConstructor"
-        [config]="configListView"
-      ></app-admin-entity-list>
-
-      <div *ngIf="mode === 'general'">COMING SOON</div>
+      @switch (mode) {
+        @case ("details") {
+          <app-admin-entity-details
+            [entityConstructor]="entityConstructor"
+            [config]="configDetailsView"
+          ></app-admin-entity-details>
+        }
+        @case ("list") {
+          <app-admin-entity-list
+            [entityConstructor]="entityConstructor"
+            [config]="configListView"
+          ></app-admin-entity-list>
+        }
+        @case ("general") {
+          <div>COMING SOON</div>
+        }
+      }
     </div>
   </div>
 </div>
