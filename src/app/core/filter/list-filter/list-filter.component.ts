@@ -11,6 +11,7 @@ import { MatButtonModule } from "@angular/material/button";
 @Component({
   selector: "app-list-filter",
   templateUrl: "./list-filter.component.html",
+  styleUrls: ["./list-filter.component.scss"],
   imports: [
     MatFormFieldModule,
     MatSelectModule,
