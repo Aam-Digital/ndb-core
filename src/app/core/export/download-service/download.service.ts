@@ -148,9 +148,10 @@ export class DownloadService {
           console.log("EntityDataType bei", value.label);
           columnLabels.set(key + "_readable", value.label + "_readable");
         }
-        if (value.dataType === EntityArrayDatatype.dataType)
+        if (value.dataType === EntityArrayDatatype.dataType) {
           console.log("EntityArrayDataType bei", value.label);
-        /// ToDo: Add code here
+          columnLabels.set(key + "_readable", value.label + "_readable");
+        }
       }
     });
 
@@ -190,20 +191,31 @@ export class DownloadService {
         newItem[key] = item[key];
       }
       if (columnLabels.has(key + "_readable")) {
-        const relatedEntityId = item[key];
-        console.log("   Peter ist hier", key);
-        const type = Entity.extractTypeFromId(relatedEntityId);
-        console.log(
-          "   Peter type:",
-          type,
-          "; relatedEntityId: ",
-          relatedEntityId,
-        );
-        const entity: Entity = await this.entityMapperService.load(
-          type,
-          relatedEntityId,
-        );
-        newItem[key + "_readable"] = entity.toString();
+        let relatedEntitiesIdArray: string[] = [];
+        let relatedEntitiesToStringArray: string[] = [];
+        if (Array.isArray(item[key])) {
+          relatedEntitiesIdArray = item[key];
+        } else {
+          relatedEntitiesIdArray = [...item[key]];
+        }
+        relatedEntitiesIdArray.forEach(async (relatedEntityId) => {
+          console.log("   Peter ist hier", key);
+          const type = Entity.extractTypeFromId(relatedEntityId);
+          console.log(
+            "   Peter type:",
+            type,
+            "; relatedEntityId: ",
+            relatedEntityId,
+          );
+          let relatedEntity: Entity = await this.entityMapperService.load(
+            type,
+            relatedEntityId,
+          );
+          console.log("Peter entity", relatedEntity);
+          console.log("Peter entity.toString()", relatedEntity.toString());
+          relatedEntitiesToStringArray.push(relatedEntity.toString());
+        });
+        newItem[key + "_readable"] = relatedEntitiesToStringArray;
       }
     }
     return newItem;

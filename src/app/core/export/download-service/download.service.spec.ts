@@ -10,19 +10,21 @@ import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 import { School } from "app/child-dev-project/schools/model/school";
+import { Child } from "app/child-dev-project/children/model/child";
+import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 
 fdescribe("DownloadService", () => {
   let service: DownloadService;
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
-  let mockEntityMapper: jasmine.SpyObj<EntityMapperService>;
+  let mockedEntityMapper;
   const testSchool = School.create({ name: "Test School" });
+  const testChild = Child.create("Test Child");
 
   beforeEach(() => {
     mockDataTransformationService = jasmine.createSpyObj([
       "queryAndTransformData",
     ]);
-    mockEntityMapper = jasmine.createSpyObj(["load"]);
-    mockEntityMapper.load.and.resolveTo(testSchool);
+    mockedEntityMapper = mockEntityMapper([testSchool, testChild]);
     TestBed.configureTestingModule({
       providers: [
         DownloadService,
@@ -32,7 +34,7 @@ fdescribe("DownloadService", () => {
         },
         {
           provide: EntityMapperService,
-          useValue: mockEntityMapper,
+          useValue: mockedEntityMapper,
         },
         LoggingService,
       ],
@@ -124,17 +126,20 @@ fdescribe("DownloadService", () => {
     expect(columnValues).toContain('"true"');
   });
 
-  fit("should add column with entity toString for referenced entities in export", async () => {
+  it("should add columns with entity toString for referenced entities in export", async () => {
     @DatabaseEntity("EntityRefDownloadTestEntity")
     class EntityRefDownloadTestEntity extends Entity {
       @DatabaseField({ dataType: "entity", label: "referenced entity" })
       relatedEntity: string;
-      //@DatabaseField({ dataType: "entity-array" }) relatedEntitiesArray: string[];
+      @DatabaseField({ dataType: "entity", label: "referenced entity 2" })
+      relatedEntity2: string;
     }
     const relatedEntity = testSchool;
+    const relatedEntity2 = testChild;
 
     const testEntity = new EntityRefDownloadTestEntity();
     testEntity.relatedEntity = relatedEntity.getId();
+    testEntity.relatedEntity2 = relatedEntity2.getId();
 
     const csvExport = await service.createCsv([testEntity]);
     console.log("csvExport:", csvExport);
@@ -142,9 +147,35 @@ fdescribe("DownloadService", () => {
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
     const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(2);
+    expect(columnValues).toHaveSize(4);
     expect(columnValues).toContain('"' + relatedEntity.getId() + '"');
     expect(columnValues).toContain('"' + relatedEntity.toString() + '"');
+    expect(columnValues).toContain('"' + relatedEntity2.getId() + '"');
+    expect(columnValues).toContain('"' + relatedEntity2.toString() + '"');
+  });
+
+  fit("should add column with entity toString for referenced array of entities in export", async () => {
+    @DatabaseEntity("EntityRefDownloadTestEntity")
+    class EntityRefDownloadTestEntity extends Entity {
+      // @DatabaseField({ dataType: "entity", label: "referenced entity" })
+      // relatedEntity: string;
+      @DatabaseField({ dataType: "entity-array", label: "referenced entities" })
+      relatedEntitiesArray: string[];
+    }
+    const testEntity = new EntityRefDownloadTestEntity();
+    testEntity.relatedEntitiesArray = [testSchool.getId(), testChild.getId()];
+
+    const csvExport = await service.createCsv([testEntity]);
+    console.log("csvExport:", csvExport);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
+    expect(columnValues).toHaveSize(4);
+    expect(columnValues).toContain('"' + testSchool.getId() + '"');
+    expect(columnValues).toContain('"' + testSchool.toString() + '"');
+    expect(columnValues).toContain('"' + testChild.getId() + '"');
+    expect(columnValues).toContain('"' + testChild.toString() + '"');
   });
 
   it("should export all properties using object keys as headers, if no schema is available", async () => {
