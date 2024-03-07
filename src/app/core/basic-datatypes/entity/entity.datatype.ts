@@ -23,8 +23,7 @@ import { ColumnMapping } from "../../import/column-mapping";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 
 /**
- * Datatype for the EntitySchemaService to handle a single reference to another entity
- * using EditSingleEntityComponent in the UI.
+ * Datatype for the EntitySchemaService to handle a single reference to another entity.
  * Stored as simple id string.
  *
  * For example:
@@ -36,7 +35,7 @@ export class EntityDatatype extends StringDatatype {
   static override dataType = "entity";
   static override label: string = $localize`:datatype-label:link to another record`;
 
-  editComponent = "EditSingleEntity";
+  editComponent = "EditEntity";
   viewComponent = "DisplayEntity";
   importConfigComponent = "EntityImportConfig";
 

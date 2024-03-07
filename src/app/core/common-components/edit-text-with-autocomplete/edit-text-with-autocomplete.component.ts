@@ -17,7 +17,7 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
 
 /**
  * This component creates a normal text input with autocomplete.
- * Compared to the {@link EditSingleEntityComponent} this does not just assign the ID to the form control
+ * Compared to the {@link EditEntityComponent} this does not just assign the ID to the form control
  * but instead completely overwrites the form with the values taken from the selected entity.
  * This is especially useful when instead of creating a new entity, an existing one can also be selected (and extended).
  *
