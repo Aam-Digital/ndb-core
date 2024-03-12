@@ -24,6 +24,7 @@ import { MatFormField, MatLabel } from "@angular/material/form-field";
 import { MatSelect } from "@angular/material/select";
 import { AdminTabsComponent } from "../building-blocks/admin-tabs/admin-tabs.component";
 import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-tab-template.directive";
+import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 
 @Component({
   selector: "app-admin-entity-list",
@@ -46,6 +47,7 @@ import { AdminTabTemplateDirective } from "../building-blocks/admin-tabs/admin-t
     MatSelect,
     AdminTabsComponent,
     AdminTabTemplateDirective,
+    ViewTitleComponent,
   ],
   templateUrl: "./admin-entity-list.component.html",
   styleUrl: "./admin-entity-list.component.scss",

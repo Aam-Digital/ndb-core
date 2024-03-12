@@ -1,3 +1,5 @@
+@use "variables/colors";
+
 .table-header {
   height: 56px;
   border-bottom: 1px solid #0000001f;
@@ -15,6 +17,10 @@
 
 .filter-field {
   padding: 0 16px;
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    height: 0;
+  }
 }
 
 .cdk-drag-preview {
@@ -40,6 +46,10 @@
 .drag-handle {
   cursor: move;
   margin: auto;
+  color: colors.$accent;
+}
+app-entity-fields-menu {
+  color: colors.$accent;
 }
 
 .remove-icon {

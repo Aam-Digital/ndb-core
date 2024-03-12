@@ -1,3 +1,7 @@
+<app-view-title [disableBackButton]="true">
+  &lt;Name of displayed {{ this.entityConstructor?.label }}&gt;
+</app-view-title>
+
 <app-admin-tabs [tabs]="config?.panels" [newTabFactory]="newPanelFactory">
   <ng-template [appAdminTabTemplate]="config?.panels" let-item>
     <div class="flex-column gap-large padding-top-large">
