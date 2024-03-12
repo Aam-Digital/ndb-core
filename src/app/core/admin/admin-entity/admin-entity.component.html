@@ -5,17 +5,10 @@
     </app-view-title>
 
     <div class="flex-row gap-small save-buttons">
-      <button
-        mat-raised-button
-        color="accent"
-        (click)="save()"
-        i18n="Button label"
-      >
+      <button mat-raised-button color="accent" (click)="save()" i18n>
         Save
       </button>
-      <button mat-stroked-button (click)="cancel()" i18n="Button label">
-        Cancel
-      </button>
+      <button mat-stroked-button (click)="cancel()" i18n>Cancel</button>
     </div>
   </div>
 
@@ -24,15 +17,21 @@
       <mat-list-item
         (click)="mode = 'details'"
         [activated]="mode === 'details'"
+        i18n="admin entity: nav item"
       >
         Details View & Fields
       </mat-list-item>
-      <mat-list-item (click)="mode = 'list'" [activated]="mode === 'list'">
+      <mat-list-item
+        (click)="mode = 'list'"
+        [activated]="mode === 'list'"
+        i18n="admin entity: nav item"
+      >
         List View
       </mat-list-item>
       <mat-list-item
         (click)="mode = 'general'"
         [activated]="mode === 'general'"
+        i18n="admin entity: nav item"
       >
         General Settings
       </mat-list-item>

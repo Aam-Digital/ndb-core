@@ -32,7 +32,7 @@
     }
   </div>
 
-  <div class="table-content-preview">
+  <div class="table-content-preview" i18n>
     Drag & drop filters and add filters using the
     <app-entity-fields-menu
       [entityType]="entityConstructor"
@@ -62,7 +62,11 @@
           <div cdkDrag class="column-header drop-item flex-row gap-small">
             <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
 
-            {{ col }}
+            <!-- TODO: for custom column overrides, this cannot display the label yet -->
+            <app-entity-field-label
+              [field]="col"
+              [entityType]="entityConstructor"
+            ></app-entity-field-label>
 
             <fa-icon
               icon="times"
@@ -73,7 +77,7 @@
         }
       </div>
 
-      <div class="table-content-preview">
+      <div class="table-content-preview" i18n>
         Drag & drop table column headers and add columns using the
         <app-entity-fields-menu
           [entityType]="entityConstructor"
