@@ -10,6 +10,8 @@ import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { filter } from "rxjs/operators";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
+import { Config } from "../config/config";
+import { Entity } from "../entity/model/entity";
 
 /**
  * This service initializes the remote DB and manages the sync between the local and remote DB.
@@ -44,11 +46,16 @@ export class SyncService {
       });
   }
 
-  private logSyncContext() {
+  private async logSyncContext() {
     const lastSyncTime = localStorage.getItem(SyncService.LAST_SYNC_KEY);
+    const configRev = await this.database
+      .get(Entity.createPrefixedId(Config.ENTITY_TYPE, Config.CONFIG_KEY))
+      .catch(() => null)
+      .then((config) => config?._rev);
 
     LoggingService.addContext("Aam Digital sync", {
       "last sync completed": lastSyncTime,
+      "config _rev": configRev,
     });
   }
 
