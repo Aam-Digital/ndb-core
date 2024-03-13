@@ -31,7 +31,7 @@
   <app-entity-actions-menu [entity]="record" [navigateOnDelete]="true">
     <button
       mat-menu-item
-      [routerLink]="['/admin/entity', record?.getType(), 'details']"
+      [routerLink]="['/admin/entity', record?.getType()]"
       *ngIf="'update' | ablePure: 'Config' | async"
     >
       <fa-icon
