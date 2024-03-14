@@ -220,6 +220,18 @@
     <span i18n> Bulk Actions </span>
   </button>
 
+  <button
+    mat-menu-item
+    [routerLink]="['/admin/entity', entityConstructor.ENTITY_TYPE]"
+    *ngIf="'update' | ablePure: 'Config' | async"
+  >
+    <fa-icon
+      class="standard-icon-with-text color-accent"
+      icon="tools"
+    ></fa-icon>
+    <span i18n>Edit Data Structure</span>
+  </button>
+
   <ng-content select="[mat-menu-item]"></ng-content>
 </mat-menu>
 

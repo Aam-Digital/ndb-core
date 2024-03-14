@@ -22,7 +22,13 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FilterOverlayComponent } from "../../filter/filter-overlay/filter-overlay.component";
 import { MatDialog } from "@angular/material/dialog";
-import { NgForOf, NgIf, NgStyle, NgTemplateOutlet } from "@angular/common";
+import {
+  AsyncPipe,
+  NgForOf,
+  NgIf,
+  NgStyle,
+  NgTemplateOutlet,
+} from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2OnModule } from "angulartics2";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -47,6 +53,8 @@ import { applyUpdate } from "../../entity/model/entity-update";
 import { Subscription } from "rxjs";
 import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
+import { AbilityModule } from "@casl/angular";
+import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -85,6 +93,9 @@ import { EntityCreateButtonComponent } from "../../common-components/entity-crea
     RouterLink,
     MatTooltipModule,
     EntityCreateButtonComponent,
+    AbilityModule,
+    AsyncPipe,
+    EntityActionsMenuComponent,
   ],
   standalone: true,
 })

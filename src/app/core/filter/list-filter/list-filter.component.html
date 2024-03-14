@@ -1,19 +1,30 @@
 <mat-form-field appearance="fill" class="full-width">
   <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
+
   <mat-select
     [id]="filterConfig.name"
     [(value)]="selectedOptions"
     (valueChange)="selectedOptionChange.emit($event)"
     multiple
   >
+    <!-- SELECT ALL / CLEAR -->
+    <div class="flex-row">
+      <button mat-flat-button i18n class="util-button" (click)="selectAll()">
+        Select All
+      </button>
+      <button mat-flat-button i18n class="util-button" (click)="deselectAll()">
+        Clear
+      </button>
+    </div>
+
     @for (option of filterConfig.options; track option.key) {
-    <mat-option
-      [value]="option.key"
-      [appBorderHighlight]="option.color"
-      style="padding-top: 0.5em; padding-bottom: 0.5em"
-    >
-      {{ option.label }}
-    </mat-option>
+      <mat-option
+        [value]="option.key"
+        [appBorderHighlight]="option.color"
+        style="padding-top: 0.5em; padding-bottom: 0.5em"
+      >
+        {{ option.label }}
+      </mat-option>
     }
   </mat-select>
 </mat-form-field>

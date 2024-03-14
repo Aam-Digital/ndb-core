@@ -1,0 +1,92 @@
+<app-view-title [disableBackButton]="true">
+  {{ entityConstructor.labelPlural }}
+</app-view-title>
+
+<div>
+  <div
+    cdkDropList
+    cdkDropListOrientation="horizontal"
+    (cdkDropListDropped)="drop($event, config?.filters)"
+    class="drop-list flex-row gap-regular flex-wrap gap-large"
+  >
+    @for (filter of config?.filters; track filter) {
+      <div cdkDrag class="filter-field drop-item flex-row gap-small">
+        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+
+        <mat-form-field appearance="fill">
+          <mat-label
+            ><app-entity-field-label
+              [field]="filter"
+              [entityType]="entityConstructor"
+            ></app-entity-field-label>
+          </mat-label>
+          <mat-select disabled></mat-select>
+        </mat-form-field>
+
+        <fa-icon
+          icon="times"
+          class="remove-icon"
+          (click)="removeItem(filters, filter.id); updateFilters(filters)"
+        ></fa-icon>
+      </div>
+    }
+  </div>
+
+  <div class="table-content-preview" i18n>
+    Drag & drop filters and add filters using the
+    <app-entity-fields-menu
+      [entityType]="entityConstructor"
+      [activeFields]="filters"
+      (activeFieldsChange)="updateFilters($event)"
+      [availableFields]="allFields"
+      icon="square-plus"
+    ></app-entity-fields-menu>
+    button
+  </div>
+</div>
+
+<div class="mat-elevation-z1">
+  <app-admin-tabs
+    [tabs]="config?.columnGroups?.groups"
+    [newTabFactory]="newColumnGroupFactory"
+  >
+    <ng-template [appAdminTabTemplate]="config?.columnGroups?.groups" let-item>
+      <div
+        class="table-header drop-list flex-row"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        cdkDropListLockAxis="x"
+        (cdkDropListDropped)="drop($event, item.columns)"
+      >
+        @for (col of item["columns"]; track col) {
+          <div cdkDrag class="column-header drop-item flex-row gap-small">
+            <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>
+
+            <!-- TODO: for custom column overrides, this cannot display the label yet -->
+            <app-entity-field-label
+              [field]="col"
+              [entityType]="entityConstructor"
+            ></app-entity-field-label>
+
+            <fa-icon
+              icon="times"
+              class="remove-icon"
+              (click)="removeItem(item.columns, col)"
+            ></fa-icon>
+          </div>
+        }
+      </div>
+
+      <div class="table-content-preview" i18n>
+        Drag & drop table column headers and add columns using the
+        <app-entity-fields-menu
+          [entityType]="entityConstructor"
+          [(activeFields)]="item.columns"
+          [availableFields]="allFields"
+          icon="square-plus"
+        ></app-entity-fields-menu>
+        button
+      </div>
+    </ng-template>
+  </app-admin-tabs>
+</div>

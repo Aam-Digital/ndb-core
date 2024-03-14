@@ -24,7 +24,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatCardModule } from "@angular/material/card";
 import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
 import { EntityFieldEditComponent } from "../../../common-components/entity-field-edit/entity-field-edit.component";
-import { AdminSectionHeaderComponent } from "../admin-section-header/admin-section-header.component";
+import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormConfig } from "../../../entity-details/form/form.component";
 
@@ -34,7 +34,7 @@ import { FormConfig } from "../../../entity-details/form/form.component";
   templateUrl: "./admin-entity-form.component.html",
   styleUrls: [
     "./admin-entity-form.component.scss",
-    "../admin-section-header/admin-section-header.component.scss",
+    "../../building-blocks/admin-section-header/admin-section-header.component.scss",
     "../../../common-components/entity-form/entity-form/entity-form.component.scss",
   ],
   standalone: true,
