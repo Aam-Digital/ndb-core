@@ -34,26 +34,34 @@ const Template: StoryFn<FormComponent<any>> = (args: FormComponent<any>) => ({
 });
 
 const fieldConfig: FormFieldConfig = {
+  id: "relatedEntity",
+  label: "related entity",
+  description: "test tooltip",
+};
+const fieldMultiConfig: FormFieldConfig = {
   id: "relatedEntities",
-  viewComponent: "DisplayEntityArray",
-  editComponent: "EditEntity",
-  label: "test related entities label",
+  label: "related entities (multi select)",
   description: "test tooltip",
 };
 const otherField: FormFieldConfig = {
   id: "x",
-  viewComponent: "DisplayNumber",
-  editComponent: "EditNumber",
   label: "other label",
 };
 
 @DatabaseEntity("TestEntityReferenceArrayEntity")
 class TestEntity extends Entity {
   @DatabaseField({
-    dataType: "entity-reference-array",
+    dataType: "entity-array",
     additional: User.ENTITY_TYPE,
   })
   relatedEntities: string[];
+
+  @DatabaseField({
+    dataType: "entity",
+    additional: User.ENTITY_TYPE,
+  })
+  relatedEntity: string;
+
   @DatabaseField() x: number;
 }
 
@@ -62,6 +70,8 @@ testEntity.relatedEntities = [testUser.getId()];
 
 export const Primary = Template.bind({});
 Primary.args = {
-  fieldGroups: [{ fields: [otherField, fieldConfig, otherField, otherField] }],
+  fieldGroups: [
+    { fields: [otherField, fieldConfig, fieldMultiConfig, otherField] },
+  ],
   entity: testEntity,
 };

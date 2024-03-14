@@ -1,6 +1,6 @@
 import { Component, Input } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
-import { BehaviorSubject } from "rxjs";
+import { BehaviorSubject, lastValueFrom } from "rxjs";
 import { FormControl, FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatChipsModule } from "@angular/material/chips";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
@@ -18,6 +18,8 @@ import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomp
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { asArray } from "../../../utils/utils";
 import { LoggingService } from "../../logging/logging.service";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 @Component({
   selector: "app-entity-select",
@@ -111,6 +113,8 @@ export class EntitySelectComponent<
   constructor(
     private entityMapperService: EntityMapperService,
     private logger: LoggingService,
+    private formDialog: FormDialogService,
+    private entityRegistry: EntityRegistry,
   ) {}
 
   /**
@@ -226,10 +230,53 @@ export class EntitySelectComponent<
       (e) => !e.isActive && this.autocompleteFilter(e),
     ).length;
   }
+
+  createNewEntity = async (input: string): Promise<E> => {
+    if (this._entityType?.length < 1) {
+      return;
+    }
+    if (this._entityType.length > 0) {
+      this.logger.warn(
+        "EntitySelect with multiple types is always creating a new entity of the first listed type only.",
+      );
+      // TODO: maybe display an additional popup asking the user to select which type should be created?
+    }
+
+    const newEntity = new (this.entityRegistry.get(this._entityType[0]))();
+    applyTextToCreatedEntity(newEntity, input);
+
+    const dialogRef = this.formDialog.openFormPopup(newEntity);
+    return lastValueFrom<E | undefined>(dialogRef.afterClosed());
+  };
 }
 
 function isMulti(
   cmp: EntitySelectComponent<any, string | string[]>,
 ): cmp is EntitySelectComponent<any, string[]> {
   return cmp.multi;
+}
+
+/**
+ * Update the given entity by applying the text entered by a user
+ * to the most likely appropriate entity field, inferred from the toString representation.
+ */
+export function applyTextToCreatedEntity(entity: Entity, input: string) {
+  const toStringFields = entity.getConstructor().toStringAttributes;
+  if (!toStringFields || toStringFields.length < 1) {
+    return;
+  }
+
+  const inputParts = input.split(/\s+/);
+  for (let i = 0; i < inputParts.length; i++) {
+    const targetProperty =
+      toStringFields[i < toStringFields.length ? i : toStringFields.length - 1];
+
+    entity[targetProperty] = (
+      (entity[targetProperty] ?? "") +
+      " " +
+      inputParts[i]
+    ).trim();
+  }
+
+  return entity;
 }
