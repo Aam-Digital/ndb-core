@@ -1484,7 +1484,7 @@
       </trans-unit>
       <trans-unit id="3667842621564887364" datatype="html">
         <source>text</source>
-        <target state="translated">Test</target>
+        <target state="translated">Text</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/string/string.datatype.ts</context>
           <context context-type="linenumber">36</context>
