@@ -7,6 +7,7 @@ import { ActivatedRoute } from "@angular/router";
 import { EntityFormService } from "../../common-components/entity-form/entity-form.service";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { Entity } from "../../entity/model/entity";
 
 describe("AdminEntityListComponent", () => {
   let component: AdminEntityListComponent;
@@ -29,6 +30,9 @@ describe("AdminEntityListComponent", () => {
 
     fixture = TestBed.createComponent(AdminEntityListComponent);
     component = fixture.componentInstance;
+
+    component.entityConstructor = Entity;
+
     fixture.detectChanges();
   });
 

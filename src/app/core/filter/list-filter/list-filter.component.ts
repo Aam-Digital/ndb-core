@@ -6,10 +6,12 @@ import { BorderHighlightDirective } from "../../common-components/border-highlig
 import { JsonPipe, NgForOf } from "@angular/common";
 import { ReactiveFormsModule } from "@angular/forms";
 import { SelectableFilter } from "../filters/filters";
+import { MatButtonModule } from "@angular/material/button";
 
 @Component({
   selector: "app-list-filter",
   templateUrl: "./list-filter.component.html",
+  styleUrls: ["./list-filter.component.scss"],
   imports: [
     MatFormFieldModule,
     MatSelectModule,
@@ -17,6 +19,8 @@ import { SelectableFilter } from "../filters/filters";
     BorderHighlightDirective,
     NgForOf,
     JsonPipe,
+    MatButtonModule,
+    ReactiveFormsModule,
   ],
   standalone: true,
 })
@@ -25,4 +29,16 @@ export class ListFilterComponent<E extends Entity> {
   filterConfig: SelectableFilter<E>;
   @Input() selectedOptions: string[];
   @Output() selectedOptionChange: EventEmitter<string[]> = new EventEmitter();
+
+  selectAll() {
+    this.selectedOptions = this.filterConfig.options.map(
+      (option) => option.key,
+    );
+    this.selectedOptionChange.emit(this.selectedOptions);
+  }
+
+  deselectAll() {
+    this.selectedOptions = [];
+    this.selectedOptionChange.emit(this.selectedOptions);
+  }
 }
