@@ -169,7 +169,8 @@ export class DownloadService {
       columnKeys.map((key) => item[key]),
     );
 
-    console.log("orderedData:", orderedData);
+    console.log("Peter labels", labels);
+    console.log("orderedData:", JSON.stringify(orderedData));
 
     return this.papa.unparse(
       {
@@ -198,7 +199,7 @@ export class DownloadService {
         } else {
           relatedEntitiesIdArray = [...item[key]];
         }
-        relatedEntitiesIdArray.forEach(async (relatedEntityId) => {
+        for (let relatedEntityId of relatedEntitiesIdArray) {
           console.log("   Peter ist hier", key);
           const type = Entity.extractTypeFromId(relatedEntityId);
           console.log(
@@ -214,7 +215,7 @@ export class DownloadService {
           console.log("Peter entity", relatedEntity);
           console.log("Peter entity.toString()", relatedEntity.toString());
           relatedEntitiesToStringArray.push(relatedEntity.toString());
-        });
+        }
         newItem[key + "_readable"] = relatedEntitiesToStringArray;
       }
     }
