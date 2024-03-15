@@ -235,7 +235,7 @@ export class EntitySelectComponent<
     if (this._entityType?.length < 1) {
       return;
     }
-    if (this._entityType.length > 0) {
+    if (this._entityType.length > 1) {
       this.logger.warn(
         "EntitySelect with multiple types is always creating a new entity of the first listed type only.",
       );
