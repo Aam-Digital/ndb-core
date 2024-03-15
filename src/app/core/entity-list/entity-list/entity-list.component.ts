@@ -108,7 +108,7 @@ export class EntityListComponent<T extends Entity>
   /** @deprecated this is often used when this has a wrapper component (e.g. ChildrenList), preferably use individual @Input properties */
   @Input() listConfig: EntityListConfig;
 
-  @Input() entity: string;
+  @Input() entityType: string;
   @Input() entityConstructor: EntityConstructor<T>;
   @Input() defaultSort: Sort;
   @Input() exportConfig: ExportColumnConfig[];
@@ -199,9 +199,9 @@ export class EntityListComponent<T extends Entity>
   }
 
   private async buildComponentFromConfig() {
-    if (this.entity) {
+    if (this.entityType) {
       this.entityConstructor = this.entities.get(
-        this.entity,
+        this.entityType,
       ) as EntityConstructor<T>;
     }
 
