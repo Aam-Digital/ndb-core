@@ -34,7 +34,7 @@
     "@angular/router": "^17.0.4",
     "@angular/service-worker": "^17.0.4",
     "@aytek/material-color-picker": "^1.0.4",
-    "@casl/ability": "^6.5.0",
+    "@casl/ability": "^6.6.0",
     "@casl/angular": "^8.2.3",
     "@faker-js/faker": "^8.4.0",
     "@fortawesome/angular-fontawesome": "^0.14.1",
