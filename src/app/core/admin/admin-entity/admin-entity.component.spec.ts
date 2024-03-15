@@ -52,7 +52,7 @@ describe("AdminEntityComponent", () => {
     viewConfigId = `view:${AdminTestEntity.route.substring(1)}/:id`;
     entityConfigId = `entity:${AdminTestEntity.ENTITY_TYPE}`;
     viewConfig = {
-      entity: AdminTestEntity.ENTITY_TYPE,
+      entityType: AdminTestEntity.ENTITY_TYPE,
       panels: [{ title: "Tab 1", components: [] }],
     };
     config = {
@@ -134,7 +134,7 @@ describe("AdminEntityComponent", () => {
     tick();
 
     const expectedViewConfig = {
-      entity: AdminTestEntity.ENTITY_TYPE,
+      entityType: AdminTestEntity.ENTITY_TYPE,
       panels: [{ title: "Tab 1", components: [] }, newPanel],
     };
     const expectedEntityConfig = {

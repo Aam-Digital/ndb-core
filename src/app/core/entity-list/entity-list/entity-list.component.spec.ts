@@ -185,7 +185,7 @@ describe("EntityListComponent", () => {
 
     createComponent();
     component.listConfig = {
-      entity: "Child",
+      entityType: "Child",
       title: "Some title",
       columns: ["name", "gender"],
     };
