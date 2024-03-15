@@ -33,7 +33,6 @@ import {
   skip,
   startWith,
 } from "rxjs/operators";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
@@ -95,7 +94,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
   @Input() valueMapper = (option: O) => option as unknown as V;
   @Input() optionToString = (option: O) => option?.toString();
-  @Input() createOption: (input: string) => O;
+  @Input() createOption: (input: string) => Promise<O>;
   @Input() hideOption: (option: O) => boolean = () => false;
 
   /**
@@ -110,9 +109,11 @@ export class BasicAutocompleteComponent<O, V = O>
     map((val) => this.updateAutocomplete(val)),
     startWith([] as SelectableOption<O, V>[]),
   );
-  showAddOption = false;
   autocompleteFilterFunction: (option: O) => boolean;
   @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
+
+  /** whether the "add new" option is logically allowed in the current context (e.g. not creating a duplicate) */
+  showAddOption = false;
 
   get displayText() {
     const values: V[] = Array.isArray(this.value) ? this.value : [this.value];
@@ -149,7 +150,6 @@ export class BasicAutocompleteComponent<O, V = O>
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
-    private confirmation: ConfirmationDialogService,
     errorStateMatcher: ErrorStateMatcher,
     @Optional() @Self() ngControl: NgControl,
     @Optional() parentForm: NgForm,
@@ -224,8 +224,10 @@ export class BasicAutocompleteComponent<O, V = O>
       filteredOptions = filteredOptions.filter((o) =>
         this.autocompleteFilterFunction(o.initial),
       );
-      this.showAddOption = !this._options.some((o) =>
-        this.autocompleteFilterFunction(o.initial),
+
+      // do not allow users to create a new entry "identical" to an existing one:
+      this.showAddOption = !this._options.some(
+        (o) => o.asString.toLowerCase() === inputText.toLowerCase(),
       );
     }
     return filteredOptions;
@@ -270,12 +272,9 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   async createNewOption(option: string) {
-    const userConfirmed = await this.confirmation.getConfirmation(
-      $localize`Create new option`,
-      $localize`Do you want to create the new option "${option}"?`,
-    );
-    if (userConfirmed) {
-      const newOption = this.toSelectableOption(this.createOption(option));
+    const createdOption = await this.createOption(option);
+    if (createdOption) {
+      const newOption = this.toSelectableOption(createdOption);
       this._options.push(newOption);
       this.select(newOption);
     } else {

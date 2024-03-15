@@ -5,7 +5,10 @@ import {
   tick,
   waitForAsync,
 } from "@angular/core/testing";
-import { EntitySelectComponent } from "./entity-select.component";
+import {
+  applyTextToCreatedEntity,
+  EntitySelectComponent,
+} from "./entity-select.component";
 import { Entity } from "../../entity/model/entity";
 import { User } from "../../user/user";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -15,6 +18,8 @@ import { LoginState } from "../../session/session-states/login-state.enum";
 import { LoggingService } from "../../logging/logging.service";
 import { FormControl } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { FormDialogService } from "../../form-dialog/form-dialog.service";
+import { of } from "rxjs";
 
 describe("EntitySelectComponent", () => {
   let component: EntitySelectComponent<any, any>;
@@ -168,4 +173,46 @@ describe("EntitySelectComponent", () => {
       jasmine.arrayWithExactContents([...testUsers, testChildren[0]]),
     );
   }));
+
+  it("should create a new entity when user selects 'add new' and apply input text", async () => {
+    component.entityType = [Child.ENTITY_TYPE];
+    const formDialogSpy = spyOn(
+      TestBed.inject(FormDialogService),
+      "openFormPopup",
+    );
+    const savedEntity = new Child("123");
+
+    formDialogSpy.and.returnValue({ afterClosed: () => of(undefined) } as any);
+    const resultCancel = await component.createNewEntity("my new record");
+    expect(resultCancel).toBeUndefined();
+
+    formDialogSpy.and.returnValue({
+      afterClosed: () => of(savedEntity),
+    } as any);
+    const resultSave = await component.createNewEntity("my new record");
+    expect(resultSave).toEqual(savedEntity);
+    expect(formDialogSpy).toHaveBeenCalledWith(
+      jasmine.objectContaining({ name: "my new record" }),
+    );
+  });
+
+  it("should smartly distribute the input text to all toStringAttributes when create a new record", async () => {
+    class TestEntity extends Entity {
+      static override toStringAttributes = ["firstName", "lastName"];
+    }
+
+    expect(applyTextToCreatedEntity(new TestEntity(), "one")).toEqual(
+      jasmine.objectContaining({ firstName: "one" }),
+    );
+    expect(applyTextToCreatedEntity(new TestEntity(), "one two")).toEqual(
+      jasmine.objectContaining({ firstName: "one", lastName: "two" }),
+    );
+    expect(applyTextToCreatedEntity(new TestEntity(), "one    two")).toEqual(
+      jasmine.objectContaining({ firstName: "one", lastName: "two" }),
+    );
+    // if more input parts than toStringAttributes, put all remaining parts into last property:
+    expect(applyTextToCreatedEntity(new TestEntity(), "one two three")).toEqual(
+      jasmine.objectContaining({ firstName: "one", lastName: "two three" }),
+    );
+  });
 });
