@@ -1,10 +1,9 @@
-:host {
-  display: flex;
-  flex-direction: row;
+.container {
   align-items: center;
   margin-bottom: 0 !important;
 
   max-width: 100%;
+  width: 100%
 }
 
 .back-button {

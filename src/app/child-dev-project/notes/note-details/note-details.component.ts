@@ -1,11 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnInit,
-  Optional,
-  ViewEncapsulation,
-} from "@angular/core";
+import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
 import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
@@ -22,17 +15,19 @@ import {
 } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import { MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
 import { EntityFieldEditComponent } from "../../../core/common-components/entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 
 /**
  * Component responsible for displaying the Note creation/view window
  */
 @UntilDestroy()
+@DynamicComponent("NoteDetails")
 @Component({
   selector: "app-note-details",
   templateUrl: "./note-details.component.html",
@@ -72,11 +67,7 @@ export class NoteDetailsComponent implements OnInit {
   constructor(
     private configService: ConfigService,
     private entityFormService: EntityFormService,
-    @Optional() @Inject(MAT_DIALOG_DATA) data: { entity: Note },
   ) {
-    if (data) {
-      this.entity = data.entity;
-    }
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;

@@ -1,0 +1,14 @@
+<div mat-dialog-title>
+  <ng-container *ngTemplateOutlet="viewContext.title"></ng-container>
+  <app-dialog-close class="dialog-close" mat-dialog-close></app-dialog-close>
+</div>
+
+<div class="dialog-container" mat-dialog-content>
+  <ng-container
+    *ngComponentOutlet="
+      component | dynamicComponent | async;
+      inputs: config;
+      injector: componentInjector
+    "
+  ></ng-container>
+</div>

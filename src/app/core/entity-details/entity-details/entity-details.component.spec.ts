@@ -116,7 +116,7 @@ describe("EntityDetailsComponent", () => {
       Child,
       testChild.getId(true),
     );
-    expect(component.record).toBe(testChild);
+    expect(component.entity).toBe(testChild);
     expect(component.isLoading).toBeFalse();
   }));
 
@@ -132,7 +132,7 @@ describe("EntityDetailsComponent", () => {
     tick();
 
     expect(entityMapper.load).toHaveBeenCalledWith(Child, child.getId());
-    expect(component.record).toEqual(child);
+    expect(component.entity).toEqual(child);
 
     // entity is updated
     const childUpdate = child.copy();
@@ -140,7 +140,7 @@ describe("EntityDetailsComponent", () => {
     entityMapper.save(childUpdate);
     tick();
 
-    expect(component.record).toEqual(childUpdate);
+    expect(component.entity).toEqual(childUpdate);
   }));
 
   it("should call router when user is not permitted to create entities", () => {

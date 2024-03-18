@@ -1,6 +1,5 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
-import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import {
@@ -163,6 +162,6 @@ export class NotesManagerComponent implements OnInit {
   }
 
   showDetails(entity: Note) {
-    this.formDialog.openFormPopup(entity, [], NoteDetailsComponent);
+    this.formDialog.openView(entity, "NoteDetails");
   }
 }

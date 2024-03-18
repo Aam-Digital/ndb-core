@@ -1,0 +1,9 @@
+<ng-container *ngTemplateOutlet="viewContext.title"></ng-container>
+
+<ng-container
+  *ngComponentOutlet="
+    component | dynamicComponent | async;
+    inputs: config;
+    injector: componentInjector
+  "
+></ng-container>

@@ -77,6 +77,8 @@ export class DynamicComponentDirective implements OnChanges {
     const initialValues = pick(component, inputs);
     Object.assign(component, inputValues);
 
+    component.viewContext = this.appDynamicComponent.viewContext;
+
     if (
       typeof component["ngOnChanges"] === "function" &&
       Object.keys(inputValues).length > 0

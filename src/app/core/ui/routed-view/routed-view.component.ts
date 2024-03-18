@@ -1,9 +1,12 @@
-import { Component } from "@angular/core";
+import { Component, Injector } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { ActivatedRoute } from "@angular/router";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../route-target";
+import { ViewComponentContext } from "../dialog-view/dialog-view.component";
+import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
+import { AbstractViewComponent } from "../abstract-view/abstract-view.component";
 
 /**
  * Wrapper component for a primary, full page view
@@ -16,17 +19,19 @@ import { RouteTarget } from "../../../route-target";
 @Component({
   selector: "app-routed-view",
   standalone: true,
-  imports: [CommonModule, DynamicComponentDirective],
-  template: `<ng-container
-    *ngIf="component"
-    [appDynamicComponent]="{ component: component, config: config }"
-  ></ng-container>`,
+  imports: [CommonModule, DynamicComponentDirective, DynamicComponentPipe],
+  templateUrl: "./routed-view.component.html",
 })
-export class RoutedViewComponent<T = any> {
+export class RoutedViewComponent<T = any> extends AbstractViewComponent {
   component: string;
-  config: T;
+  config: any;
 
-  constructor(route: ActivatedRoute) {
+  viewContext = new ViewComponentContext(false);
+  componentInjector: Injector;
+
+  constructor(route: ActivatedRoute, injector: Injector) {
+    super(injector);
+
     route.data.subscribe((data: { component: string } & ViewConfig<T>) => {
       this.component = data.component;
       // pass all other config properties to the component as config

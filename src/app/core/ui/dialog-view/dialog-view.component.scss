@@ -1,0 +1,18 @@
+@use "variables/sizes";
+
+.dialog-container {
+  padding: sizes.$regular;
+}
+
+.dialog-close {
+  position: absolute;
+  top: - sizes.$small;
+  right: 0;
+}
+
+.mdc-dialog__title {
+  margin-top: sizes.$small;
+}
+.mdc-dialog__title::before {
+  display: none;
+}

@@ -3,7 +3,6 @@ import { Router, RouterLink } from "@angular/router";
 import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { MatButtonModule } from "@angular/material/button";
@@ -64,7 +63,7 @@ import { RouteTarget } from "../../../route-target";
 })
 export class EntityDetailsComponent implements OnChanges {
   creatingNew = false;
-  isLoading = true;
+  isLoading: boolean;
   private changesSubscription: Subscription;
 
   @Input() entityType: string;
@@ -72,7 +71,7 @@ export class EntityDetailsComponent implements OnChanges {
 
   // TODO: instead use an @Input entity: Entity and let RoutedView handle the entity loading
   @Input() id: string;
-  record: Entity;
+  @Input() entity: Entity;
 
   /**
    * The configuration for the panels on this details page.
@@ -82,22 +81,24 @@ export class EntityDetailsComponent implements OnChanges {
   constructor(
     private entityMapperService: EntityMapperService,
     private router: Router,
-    private analyticsService: AnalyticsService,
     private ability: EntityAbility,
     private entities: EntityRegistry,
     private logger: LoggingService,
     public unsavedChanges: UnsavedChangesService,
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.entity || changes.entityType) {
+  async ngOnChanges(changes: SimpleChanges) {
+    if (changes.entityType) {
       this.entityConstructor = this.entities.get(this.entityType);
     }
+
     if (changes.id) {
-      this.loadEntity();
+      await this.loadEntity();
       this.subscribeToEntityChanges();
-      // `initPanels()` is already called inside `loadEntity()`
-    } else if (changes.panels) {
+    }
+
+    if (changes.id || changes.entity || changes.panels) {
+      this.creatingNew = this.entity.isNew;
       this.initPanels();
     }
   }
@@ -112,25 +113,23 @@ export class EntityDetailsComponent implements OnChanges {
         filter(({ type }) => type !== "remove"),
         untilDestroyed(this),
       )
-      .subscribe(({ entity }) => (this.record = entity));
+      .subscribe(({ entity }) => (this.entity = entity));
   }
 
   private async loadEntity() {
+    this.isLoading = true;
     if (this.id === "new") {
       if (this.ability.cannot("create", this.entityConstructor)) {
         this.router.navigate([""]);
         return;
       }
-      this.record = new this.entityConstructor();
-      this.creatingNew = true;
+      this.entity = new this.entityConstructor();
     } else {
-      this.creatingNew = false;
-      this.record = await this.entityMapperService.load(
+      this.entity = await this.entityMapperService.load(
         this.entityConstructor,
         this.id,
       );
     }
-    this.initPanels();
     this.isLoading = false;
   }
 
@@ -147,7 +146,7 @@ export class EntityDetailsComponent implements OnChanges {
 
   private getPanelConfig(c: PanelComponent): PanelConfig {
     let panelConfig: PanelConfig = {
-      entity: this.record,
+      entity: this.entity,
       creatingNew: this.creatingNew,
     };
     if (typeof c.config === "object" && !Array.isArray(c.config)) {
@@ -165,12 +164,5 @@ export class EntityDetailsComponent implements OnChanges {
       panelConfig.config = c.config;
     }
     return panelConfig;
-  }
-
-  trackTabChanged(index: number) {
-    this.analyticsService.eventTrack("details_tab_changed", {
-      category: this.entityType,
-      label: this.panels[index].title,
-    });
   }
 }

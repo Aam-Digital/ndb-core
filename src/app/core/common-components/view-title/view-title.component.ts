@@ -1,19 +1,43 @@
-import { Component, HostBinding, Input } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  HostBinding,
+  Input,
+  Optional,
+  ViewChild,
+} from "@angular/core";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
-import { Location, NgIf } from "@angular/common";
+import { Location, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ViewComponentContext } from "../../ui/dialog-view/dialog-view.component";
+import { MatDialogTitle } from "@angular/material/dialog";
 
 @Component({
   selector: "app-view-title",
   templateUrl: "./view-title.component.html",
   styleUrls: ["./view-title.component.scss"],
-  imports: [NgIf, MatButtonModule, MatTooltipModule, FontAwesomeModule],
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    MatDialogTitle,
+    NgTemplateOutlet,
+  ],
   standalone: true,
 })
-export class ViewTitleComponent {
+export class ViewTitleComponent implements AfterViewInit {
+  @ViewChild("main") mainTemplate;
+
+  /**
+   * Whether this component should be rendered in place or only define a template for RoutedViewComponent / DialogViewComponent use.
+   * Default is asTemplate = true;
+   */
+  @Input() asTemplate: boolean = true;
+
   /** The page title to be displayed */
   @Input() title: string;
 
@@ -30,8 +54,17 @@ export class ViewTitleComponent {
   constructor(
     private router: Router,
     private location: Location,
+    @Optional() protected viewContext: ViewComponentContext,
   ) {
     this.parentUrl = this.findParentUrl();
+
+    if (this.viewContext?.isDialog) {
+      this.disableBackButton = true;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => (this.viewContext.title = this.mainTemplate));
   }
 
   private findParentUrl(): string {
