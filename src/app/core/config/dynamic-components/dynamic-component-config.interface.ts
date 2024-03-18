@@ -1,4 +1,4 @@
-import { ViewComponentContext } from "../../ui/dialog-view/dialog-view.component";
+import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
 
 /**
  * This interface is set on the `data` property of the route.

@@ -1,5 +1,5 @@
 <div mat-dialog-title>
-  <ng-container *ngTemplateOutlet="viewContext.title"></ng-container>
+  <ng-container *ngTemplateOutlet="viewContext?.title?.template"></ng-container>
   <app-dialog-close class="dialog-close" mat-dialog-close></app-dialog-close>
 </div>
 

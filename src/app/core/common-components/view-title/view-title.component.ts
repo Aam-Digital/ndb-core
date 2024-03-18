@@ -4,6 +4,7 @@ import {
   HostBinding,
   Input,
   Optional,
+  TemplateRef,
   ViewChild,
 } from "@angular/core";
 import { getUrlWithoutParams } from "../../../utils/utils";
@@ -12,8 +13,7 @@ import { Location, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ViewComponentContext } from "../../ui/dialog-view/dialog-view.component";
-import { MatDialogTitle } from "@angular/material/dialog";
+import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
 
 @Component({
   selector: "app-view-title",
@@ -24,13 +24,12 @@ import { MatDialogTitle } from "@angular/material/dialog";
     MatButtonModule,
     MatTooltipModule,
     FontAwesomeModule,
-    MatDialogTitle,
     NgTemplateOutlet,
   ],
   standalone: true,
 })
 export class ViewTitleComponent implements AfterViewInit {
-  @ViewChild("main") mainTemplate;
+  @ViewChild("template") template: TemplateRef<any>;
 
   /**
    * Whether this component should be rendered in place or only define a template for RoutedViewComponent / DialogViewComponent use.
@@ -64,7 +63,7 @@ export class ViewTitleComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => (this.viewContext.title = this.mainTemplate));
+    setTimeout(() => (this.viewContext.title = this));
   }
 
   private findParentUrl(): string {

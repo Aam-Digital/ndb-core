@@ -4,7 +4,6 @@ import { ActivatedRoute } from "@angular/router";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../route-target";
-import { ViewComponentContext } from "../dialog-view/dialog-view.component";
 import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
 import { AbstractViewComponent } from "../abstract-view/abstract-view.component";
 
@@ -26,11 +25,8 @@ export class RoutedViewComponent<T = any> extends AbstractViewComponent {
   component: string;
   config: any;
 
-  viewContext = new ViewComponentContext(false);
-  componentInjector: Injector;
-
   constructor(route: ActivatedRoute, injector: Injector) {
-    super(injector);
+    super(injector, false);
 
     route.data.subscribe((data: { component: string } & ViewConfig<T>) => {
       this.component = data.component;

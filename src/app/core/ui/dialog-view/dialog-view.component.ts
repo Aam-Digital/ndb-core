@@ -43,15 +43,13 @@ export class DialogViewComponent<T = any> extends AbstractViewComponent {
   component: string;
   config: any;
 
-  viewContext: ViewComponentContext = new ViewComponentContext(true);
-
   constructor(
     @Inject(MAT_DIALOG_DATA)
     dialogData: DialogViewData<T>,
     private entityConfigService: EntityConfigService,
     injector: Injector,
   ) {
-    super(injector);
+    super(injector, true);
 
     this.component = dialogData.component;
 
@@ -81,17 +79,4 @@ export interface DialogViewData<T = any> {
    * (Optional) if an EntityDetails view, the full entity record to be displayed
    */
   entity?: Entity;
-}
-
-/**
- * Implement for components that can be used both in dialogs (wrapped by DialogViewComponent)
- * and in full screen (wrapped by RoutedViewComponent).
- */
-export interface ViewComponent {
-  viewContext: ViewComponentContext;
-}
-export class ViewComponentContext {
-  constructor(public isDialog: boolean) {}
-
-  title;
 }
