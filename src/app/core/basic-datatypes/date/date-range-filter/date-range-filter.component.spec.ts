@@ -32,7 +32,7 @@ describe("DateRangeFilterComponent", () => {
 
     dateFilter.selectedOptionValues = ["9"];
     component.filterConfig = dateFilter;
-    expect(component.dateFilter.getFilter()).toEqual({});
+    expect(component.filterConfig.getFilter()).toEqual({});
 
     jasmine.clock().mockDate(moment("2023-05-18").toDate());
     dateFilter.selectedOptionValues = ["0"];
@@ -43,7 +43,7 @@ describe("DateRangeFilterComponent", () => {
         $lte: "2023-05-18",
       },
     };
-    expect(component.dateFilter.getFilter()).toEqual(expectedDataFilter);
+    expect(component.filterConfig.getFilter()).toEqual(expectedDataFilter);
 
     dateFilter.selectedOptionValues = ["1"];
     component.filterConfig = dateFilter;
@@ -53,11 +53,11 @@ describe("DateRangeFilterComponent", () => {
         $lte: "2023-05-20",
       },
     };
-    expect(component.dateFilter.getFilter()).toEqual(expectedDataFilter);
+    expect(component.filterConfig.getFilter()).toEqual(expectedDataFilter);
 
     dateFilter.selectedOptionValues = [];
     component.filterConfig = dateFilter;
-    expect(component.dateFilter.getFilter()).toEqual({});
+    expect(component.filterConfig.getFilter()).toEqual({});
     jasmine.clock().uninstall();
   });
 
@@ -66,11 +66,11 @@ describe("DateRangeFilterComponent", () => {
 
     dateFilter.selectedOptionValues = ["1", "2", "3"];
     component.filterConfig = dateFilter;
-    expect(component.dateFilter.getFilter()).toEqual({});
+    expect(component.filterConfig.getFilter()).toEqual({});
 
     dateFilter.selectedOptionValues = [];
     component.filterConfig = dateFilter;
-    expect(component.dateFilter.getFilter()).toEqual({});
+    expect(component.filterConfig.getFilter()).toEqual({});
 
     dateFilter.selectedOptionValues = ["2022-9-18", ""];
     component.filterConfig = dateFilter;
@@ -78,7 +78,7 @@ describe("DateRangeFilterComponent", () => {
     let expectedDateFilter = {
       test: testFilter,
     };
-    expect(component.dateFilter.getFilter()).toEqual(expectedDateFilter);
+    expect(component.filterConfig.getFilter()).toEqual(expectedDateFilter);
 
     dateFilter.selectedOptionValues = ["", "2023-01-3"];
     component.filterConfig = dateFilter;
@@ -86,7 +86,7 @@ describe("DateRangeFilterComponent", () => {
     expectedDateFilter = {
       test: testFilter,
     };
-    expect(component.dateFilter.getFilter()).toEqual(expectedDateFilter);
+    expect(component.filterConfig.getFilter()).toEqual(expectedDateFilter);
 
     dateFilter.selectedOptionValues = ["2022-9-18", "2023-01-3"];
     component.filterConfig = dateFilter;
@@ -97,7 +97,7 @@ describe("DateRangeFilterComponent", () => {
     expectedDateFilter = {
       test: testFilter,
     };
-    expect(component.dateFilter.getFilter()).toEqual(expectedDateFilter);
+    expect(component.filterConfig.getFilter()).toEqual(expectedDateFilter);
   });
 
   it("should set the correct date filter when changing the date range manually", () => {
@@ -107,7 +107,7 @@ describe("DateRangeFilterComponent", () => {
 
     component.dateChangedManually();
 
-    expect(component.dateFilter.selectedOptionValues).toEqual([
+    expect(component.filterConfig.selectedOptionValues).toEqual([
       "2021-10-28",
       "2024-02-12",
     ]);
@@ -117,6 +117,6 @@ describe("DateRangeFilterComponent", () => {
         $lte: "2024-02-12",
       },
     };
-    expect(component.dateFilter.getFilter()).toEqual(expectedDataFilter);
+    expect(component.filterConfig.getFilter()).toEqual(expectedDataFilter);
   });
 });

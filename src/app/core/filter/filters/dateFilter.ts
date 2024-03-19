@@ -5,12 +5,15 @@ import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter
 import moment from "moment";
 import { DataFilter, Filter } from "./filters";
 import { isValidDate } from "../../../utils/utils";
+import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-filter/date-range-filter.component";
 
 /**
  * Represents a filter for date values.
  * The filter can either be one of the predefined options or two manually entered dates.
  */
 export class DateFilter<T extends Entity> extends Filter<T> {
+  override component = DateRangeFilterComponent;
+
   constructor(
     public name: string,
     public label: string = name,
