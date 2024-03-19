@@ -20,6 +20,9 @@ describe("DateRangeFilterComponent", () => {
 
     fixture = TestBed.createComponent(DateRangeFilterComponent);
     component = fixture.componentInstance;
+
+    component.filterConfig = new DateFilter<any>("test", "test label", []);
+
     fixture.detectChanges();
   });
 
