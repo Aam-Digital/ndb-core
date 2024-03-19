@@ -1,3 +1,4 @@
+@use "variables/colors";
 
 :host ::ng-deep .mat-mdc-tab {
   // adjust tab header height to properly display mat-form-field for editing tab label
@@ -5,4 +6,9 @@
 }
 app-admin-section-header {
   margin-bottom: -1em;
+}
+.drag-handle {
+  cursor: move;
+  margin: auto;
+  color: colors.$accent;
 }

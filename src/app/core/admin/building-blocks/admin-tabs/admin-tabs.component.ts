@@ -19,6 +19,7 @@ import {
 } from "@angular/material/tabs";
 import { MatTooltip } from "@angular/material/tooltip";
 import { AdminTabTemplateDirective } from "./admin-tab-template.directive";
+import { CdkDragDrop, moveItemInArray, DragDropModule } from "@angular/cdk/drag-drop";
 
 /**
  * Building block for drag&drop form builder to let an admin user manage multiple tabs.
@@ -50,6 +51,7 @@ import { AdminTabTemplateDirective } from "./admin-tab-template.directive";
     MatTabLabel,
     MatTooltip,
     AdminTabTemplateDirective,
+    DragDropModule,
   ],
   templateUrl: "./admin-tabs.component.html",
   styleUrl: "./admin-tabs.component.scss",
@@ -75,5 +77,21 @@ export class AdminTabsComponent<
       this.tabGroup.selectedIndex = newTabIndex;
       this.tabGroup.focusTab(newTabIndex);
     });
+  }
+  getAllTabs(index){
+    var allTabs = [];
+    for(var i=0; i < this.tabs?.length; i++){
+      if(i != index){
+        allTabs.push("tabs-" + i);
+      }
+    }
+  
+    return allTabs;
+  }
+  
+  dropStep(event: CdkDragDrop<string[]>) {
+    const previousIndex = parseInt(event.previousContainer.id.replace("tabs-",""));
+    const currentIndex = parseInt(event.container.id.replace("tabs-",""));
+    moveItemInArray(this.tabs, previousIndex, currentIndex);
   }
 }
