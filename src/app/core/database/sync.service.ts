@@ -22,7 +22,7 @@ import { from, of } from "rxjs";
 export class SyncService {
   static readonly LAST_SYNC_KEY = "LAST_SYNC";
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
-  static readonly SYNC_INTERVAL = 10000;
+  static readonly SYNC_INTERVAL = 60000;
 
   private remoteDatabase = new PouchDatabase(this.loggingService);
   private remoteDB: PouchDB.Database;
