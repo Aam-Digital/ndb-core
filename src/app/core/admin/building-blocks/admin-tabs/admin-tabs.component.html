@@ -5,7 +5,7 @@
         [id]="'tabs-' + tabIndex"
         cdkDropList
         cdkDropListOrientation="horizontal"
-        (cdkDropListDropped)="dropStep($event)"
+        (cdkDropListDropped)="drop($event)"
         [cdkDropListConnectedTo]="getAllTabs(tabIndex)"
       >
         <div cdkDrag >

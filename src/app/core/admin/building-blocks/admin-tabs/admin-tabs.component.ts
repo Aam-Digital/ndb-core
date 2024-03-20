@@ -78,20 +78,20 @@ export class AdminTabsComponent<
       this.tabGroup.focusTab(newTabIndex);
     });
   }
-  getAllTabs(index){
+  getAllTabs(index) {
     var allTabs = [];
-    for(var i=0; i < this.tabs?.length; i++){
-      if(i != index){
+    for (var i = 0; i < this.tabs?.length; i++) {
+      if (i != index) {
         allTabs.push("tabs-" + i);
       }
     }
-  
+
     return allTabs;
   }
-  
-  dropStep(event: CdkDragDrop<string[]>) {
-    const previousIndex = parseInt(event.previousContainer.id.replace("tabs-",""));
-    const currentIndex = parseInt(event.container.id.replace("tabs-",""));
+
+  drop(event: CdkDragDrop<string[]>) {
+    const previousIndex = parseInt(event.previousContainer.id.replace("tabs-", ""));
+    const currentIndex = parseInt(event.container.id.replace("tabs-", ""));
     moveItemInArray(this.tabs, previousIndex, currentIndex);
   }
 }
