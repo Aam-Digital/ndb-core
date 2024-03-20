@@ -4,7 +4,7 @@
   <mat-select
     [id]="filterConfig.name"
     [(value)]="selectedOptions"
-    (valueChange)="selectedOptionChange.emit($event)"
+    (valueChange)="filterConfig.selectedOptionChange.emit($event)"
     multiple
   >
     <!-- SELECT ALL / CLEAR -->
