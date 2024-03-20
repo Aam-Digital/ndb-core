@@ -93,5 +93,7 @@ export class AdminTabsComponent<
     const previousIndex = parseInt(event.previousContainer.id.replace("tabs-", ""));
     const currentIndex = parseInt(event.container.id.replace("tabs-", ""));
     moveItemInArray(this.tabs, previousIndex, currentIndex);
+    let tab = JSON.stringify(this.tabs);
+    this.tabs = JSON.parse(tab);// Needed to avoid Angular Ivy render bug
   }
 }
