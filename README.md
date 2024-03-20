@@ -39,6 +39,13 @@ The overall architecture and tech stack including backend services looks like th
 3. `npm install` the dependencies (external libraries and packages) 
 4. `npm run start` to run your local dev server and get started.
 
+By default the app is started with a "mock" session, generating demo data into an in-memory database.
+You can change this mode by editing the environment.ts
+(or create a file assets/config.json to overwrite settings; that file is on the .gitignore list).
+
+Use the dockerized local environment to run a fully synced app including backend services on your machine:
+https://github.com/Aam-Digital/aam-services/tree/main/docs/developer
+
 ## Documentation
 Our detailed [Developer Documentation](https://aam-digital.github.io/ndb-core/documentation/additional-documentation/overview.html)
 provides tutorials, guides, concepts and an API reference.
