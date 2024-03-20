@@ -17,6 +17,8 @@
 
 import { Entity } from "../../entity/model/entity";
 import { MongoQuery } from "@casl/ability";
+import { ListFilterComponent } from "../list-filter/list-filter.component";
+import { EventEmitter, Type } from "@angular/core";
 
 /**
  * This filter can be used to filter an array of entities.
@@ -27,7 +29,20 @@ import { MongoQuery } from "@casl/ability";
 export type DataFilter<T> = MongoQuery<T> | {};
 
 export abstract class Filter<T extends Entity> {
+  /**
+   * The component used to display filter option to the user.
+   */
+  component: Type<any> = ListFilterComponent;
+
   public selectedOptionValues: string[] = [];
+
+  /**
+   * Triggered when this filter changes value
+   * (e.g. when the user selects a new value in a FilterComponent).
+   *
+   * This is part of the filter object because dynamic filter components can't expose @Outputs
+   */
+  selectedOptionChange = new EventEmitter<string[]>();
 
   protected constructor(
     public name: string,

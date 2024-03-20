@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, Input } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatSelectModule } from "@angular/material/select";
@@ -27,18 +27,18 @@ import { MatButtonModule } from "@angular/material/button";
 export class ListFilterComponent<E extends Entity> {
   @Input({ transform: (value: any) => value as SelectableFilter<E> })
   filterConfig: SelectableFilter<E>;
-  @Input() selectedOptions: string[];
-  @Output() selectedOptionChange: EventEmitter<string[]> = new EventEmitter();
+
+  selectedOptions: string[];
 
   selectAll() {
     this.selectedOptions = this.filterConfig.options.map(
       (option) => option.key,
     );
-    this.selectedOptionChange.emit(this.selectedOptions);
+    this.filterConfig.selectedOptionChange.emit(this.selectedOptions);
   }
 
   deselectAll() {
     this.selectedOptions = [];
-    this.selectedOptionChange.emit(this.selectedOptions);
+    this.filterConfig.selectedOptionChange.emit(this.selectedOptions);
   }
 }

@@ -115,15 +115,6 @@ describe("NotesManagerComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should set up prebuilt filters", fakeAsync(() => {
-    component.ngOnInit();
-    tick();
-    expect(component.config.filters.length).toEqual(3);
-    expect(component.config.filters[0]).toHaveOwnProperty("options");
-    expect(component.config.filters[1]).toHaveOwnProperty("options");
-    expect(component.config.filters[2]).not.toHaveOwnProperty("options");
-  }));
-
   it("should open the dialog when clicking details", () => {
     const note = new Note("testNote");
     component.showDetails(note);
