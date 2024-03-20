@@ -19,7 +19,11 @@ import {
 } from "@angular/material/tabs";
 import { MatTooltip } from "@angular/material/tooltip";
 import { AdminTabTemplateDirective } from "./admin-tab-template.directive";
-import { CdkDragDrop, moveItemInArray, DragDropModule } from "@angular/cdk/drag-drop";
+import {
+  CdkDragDrop,
+  moveItemInArray,
+  DragDropModule,
+} from "@angular/cdk/drag-drop";
 
 /**
  * Building block for drag&drop form builder to let an admin user manage multiple tabs.
@@ -90,10 +94,12 @@ export class AdminTabsComponent<
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    const previousIndex = parseInt(event.previousContainer.id.replace("tabs-", ""), 10);
-    const currentIndex = parseInt(event.container.id.replace("tabs-", ""), 10);
+    const previousIndex = parseInt(
+      event.previousContainer.id.replace("tabs-", ""),
+    );
+    const currentIndex = parseInt(event.container.id.replace("tabs-", ""));
     moveItemInArray(this.tabs, previousIndex, currentIndex);
     let tab = JSON.stringify(this.tabs);
-    this.tabs = JSON.parse(tab);// Needed to avoid Angular Ivy render bug
+    this.tabs = JSON.parse(tab); // Needed to avoid Angular Ivy render bug
   }
 }
