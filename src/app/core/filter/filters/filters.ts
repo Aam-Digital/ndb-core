@@ -75,13 +75,13 @@ export class SelectableFilter<T extends Entity> extends Filter<T> {
    * @param attributeName The name of the property of a data item that is compared to the value in the filter function.
    */
   public static generateOptions<T extends Entity>(
-    valuesToMatchAsOptions: string[],
+    valuesToMatchAsOptions: (string | number)[],
     attributeName: string,
   ): FilterSelectionOption<T>[] {
     return valuesToMatchAsOptions
       .filter((k) => !!k)
       .map((k) => ({
-        key: k.toLowerCase(),
+        key: k.toString().toLowerCase(),
         label: k.toString(),
         filter: { [attributeName]: k } as DataFilter<T>,
       }));
