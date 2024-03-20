@@ -96,5 +96,7 @@ describe("SyncService", () => {
     expect(opts.headers).toEqual({ Authorization: "valid" });
     expect(mockAuthService.login).toHaveBeenCalled();
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
+
+    service.liveSyncEnabled = false;
   });
 });
