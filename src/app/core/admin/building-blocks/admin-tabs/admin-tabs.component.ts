@@ -90,8 +90,8 @@ export class AdminTabsComponent<
   }
 
   drop(event: CdkDragDrop<string[]>) {
-    const previousIndex = parseInt(event.previousContainer.id.replace("tabs-", ""));
-    const currentIndex = parseInt(event.container.id.replace("tabs-", ""));
+    const previousIndex = parseInt(event.previousContainer.id.replace("tabs-", ""), 10);
+    const currentIndex = parseInt(event.container.id.replace("tabs-", ""), 10);
     moveItemInArray(this.tabs, previousIndex, currentIndex);
     let tab = JSON.stringify(this.tabs);
     this.tabs = JSON.parse(tab);// Needed to avoid Angular Ivy render bug
