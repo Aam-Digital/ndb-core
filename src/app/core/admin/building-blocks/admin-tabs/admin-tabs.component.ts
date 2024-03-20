@@ -99,6 +99,10 @@ export class AdminTabsComponent<
     );
     const currentIndex = parseInt(event.container.id.replace("tabs-", ""));
     moveItemInArray(this.tabs, previousIndex, currentIndex);
+    if (this.tabGroup.selectedIndex !== currentIndex) {
+      this.tabGroup.selectedIndex = currentIndex;
+      this.tabGroup.focusTab(currentIndex);
+    }
     let tab = JSON.stringify(this.tabs);
     this.tabs = JSON.parse(tab); // Needed to avoid Angular Ivy render bug
   }

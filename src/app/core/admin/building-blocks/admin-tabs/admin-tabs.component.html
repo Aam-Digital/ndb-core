@@ -8,7 +8,11 @@
         (cdkDropListDropped)="drop($event)"
         [cdkDropListConnectedTo]="getAllTabs(tabIndex)"
       >
-        <div cdkDrag>
+        <div
+          cdkDrag
+          cdkDragLockAxis="x"
+          class="flex-row align-center gap-small"
+        >
           <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
           @if (tabIndex === matTabGroup.selectedIndex) {
             <app-admin-section-header
