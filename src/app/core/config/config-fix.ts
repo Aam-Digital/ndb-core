@@ -237,6 +237,12 @@ export const defaultJsonConfig = {
       ]
     }
   },
+  "view:note/:id": {
+    "component": "NoteDetails",
+    "config": {
+      "topForm": ["date", "warningLevel", "category", "authors", "attachment"]
+    }
+  },
   "view:import": {
     "component": "Import",
   },

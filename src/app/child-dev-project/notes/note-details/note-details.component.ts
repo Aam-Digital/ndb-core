@@ -57,7 +57,13 @@ export class NoteDetailsComponent implements OnChanges {
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  @Input() topForm = ["date", "warningLevel", "category", "authors"];
+  @Input() topForm = [
+    "date",
+    "warningLevel",
+    "category",
+    "authors",
+    "attachment",
+  ];
   @Input() middleForm = ["subject", "text"];
   @Input() bottomForm = ["children", "schools"];
 
@@ -74,13 +80,6 @@ export class NoteDetailsComponent implements OnChanges {
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
-
-    const formConfig = this.configService.getConfig<any>(
-      "appConfig:note-details",
-    );
-    this.topForm = formConfig?.topForm ?? this.topForm;
-    this.middleForm = formConfig?.middleForm ?? this.middleForm;
-    this.bottomForm = formConfig?.bottomForm ?? this.bottomForm;
   }
 
   ngOnChanges() {
