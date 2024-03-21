@@ -22,7 +22,7 @@ import { from, of } from "rxjs";
 export class SyncService {
   static readonly LAST_SYNC_KEY = "LAST_SYNC";
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
-  static readonly SYNC_INTERVAL = 60000;
+  static readonly SYNC_INTERVAL = 30000;
 
   private remoteDatabase = new PouchDatabase(this.loggingService);
   private remoteDB: PouchDB.Database;
@@ -111,6 +111,7 @@ export class SyncService {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       })
       .then((res) => {
+        this.loggingService.debug("sync completed", res);
         this.syncStateSubject.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
