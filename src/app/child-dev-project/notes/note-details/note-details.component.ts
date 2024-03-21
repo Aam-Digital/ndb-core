@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, ViewEncapsulation } from "@angular/core";
+import { Component, Input, OnChanges, ViewEncapsulation } from "@angular/core";
 import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
@@ -22,6 +22,7 @@ import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity
 import { EntityFieldEditComponent } from "../../../core/common-components/entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -45,19 +46,21 @@ import { DynamicComponent } from "../../../core/config/dynamic-components/dynami
     DialogCloseComponent,
     EntityArchivedInfoComponent,
     EntityFieldEditComponent,
+    ViewTitleComponent,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
-export class NoteDetailsComponent implements OnInit {
+export class NoteDetailsComponent implements OnChanges {
   @Input() entity: Note;
 
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  topForm = ["date", "warningLevel", "category", "authors", "attachment"];
-  middleForm = ["subject", "text"];
-  bottomForm = ["children", "schools"];
+  @Input() topForm = ["date", "warningLevel", "category", "authors"];
+  @Input() middleForm = ["subject", "text"];
+  @Input() bottomForm = ["children", "schools"];
+
   topFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
 
@@ -80,7 +83,7 @@ export class NoteDetailsComponent implements OnInit {
     this.bottomForm = formConfig?.bottomForm ?? this.bottomForm;
   }
 
-  ngOnInit() {
+  ngOnChanges() {
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 

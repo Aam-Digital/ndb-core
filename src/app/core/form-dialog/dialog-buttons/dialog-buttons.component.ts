@@ -1,4 +1,12 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnInit,
+  Optional,
+  TemplateRef,
+  ViewChild,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
@@ -15,6 +23,7 @@ import { Router, RouterLink } from "@angular/router";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
+import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
 
 @Component({
   selector: "app-dialog-buttons",
@@ -33,7 +42,9 @@ import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-
   templateUrl: "./dialog-buttons.component.html",
   styleUrls: ["./dialog-buttons.component.scss"],
 })
-export class DialogButtonsComponent implements OnInit {
+export class DialogButtonsComponent implements OnInit, AfterViewInit {
+  @ViewChild("template") template: TemplateRef<any>;
+
   @Input() entity: Entity;
   @Input() form: FormGroup;
   detailsRoute: string;
@@ -45,6 +56,7 @@ export class DialogButtonsComponent implements OnInit {
     private router: Router,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
+    @Optional() protected viewContext: ViewComponentContext,
   ) {
     this.dialog.disableClose = true;
     this.dialog.backdropClick().subscribe(() =>
@@ -67,6 +79,10 @@ export class DialogButtonsComponent implements OnInit {
       }
       this.initializeDetailsRouteIfAvailable();
     }
+  }
+
+  ngAfterViewInit(): void {
+    setTimeout(() => (this.viewContext.actions = this));
   }
 
   private initializeDetailsRouteIfAvailable() {

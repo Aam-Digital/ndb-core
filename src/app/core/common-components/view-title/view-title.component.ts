@@ -31,12 +31,6 @@ import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.compo
 export class ViewTitleComponent implements AfterViewInit {
   @ViewChild("template") template: TemplateRef<any>;
 
-  /**
-   * Whether this component should be rendered in place or only define a template for RoutedViewComponent / DialogViewComponent use.
-   * Default is asTemplate = true;
-   */
-  @Input() asTemplate: boolean = true;
-
   /** The page title to be displayed */
   @Input() title: string;
 

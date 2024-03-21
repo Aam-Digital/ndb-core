@@ -1,38 +1,47 @@
-<button
-  mat-raised-button
-  color="accent"
-  [disabled]="!form.dirty"
-  (click)="save()"
-  angulartics2On="click"
-  [angularticsCategory]="entity?.getType()"
-  angularticsAction="form_popup_save"
-  i18n="Form save button"
->
-  Save
-</button>
+<ng-template #template>
+  <button
+    mat-raised-button
+    color="accent"
+    [disabled]="!form.dirty"
+    (click)="save()"
+    angulartics2On="click"
+    [angularticsCategory]="entity?.getType()"
+    angularticsAction="form_popup_save"
+    i18n="Form save button"
+  >
+    Save
+  </button>
 
-<button
-  mat-stroked-button
-  mat-dialog-close
-  angulartics2On="click"
-  [angularticsCategory]="entity?.getType()"
-  angularticsAction="form_popup_cancel"
-  i18n="Form cancel button"
->
-  Cancel
-</button>
+  <button
+    mat-stroked-button
+    mat-dialog-close
+    angulartics2On="click"
+    [angularticsCategory]="entity?.getType()"
+    angularticsAction="form_popup_cancel"
+    i18n="Form cancel button"
+  >
+    Cancel
+  </button>
 
-<button
-  *ngIf="detailsRoute"
-  mat-raised-button
-  [routerLink]="detailsRoute"
-  mat-dialog-close
-  [disabled]="form.disabled"
-  i18n="Form button to navigate to details page of entity"
->
-  Go to details
-</button>
+  <button
+    *ngIf="detailsRoute"
+    mat-raised-button
+    [routerLink]="detailsRoute"
+    mat-dialog-close
+    [disabled]="form.disabled"
+    i18n="Form button to navigate to details page of entity"
+  >
+    Go to details
+  </button>
 
-<app-entity-actions-menu [entity]="entity" (actionTriggered)="onAction($event)">
-  <ng-content></ng-content>
-</app-entity-actions-menu>
+  <app-entity-actions-menu
+    [entity]="entity"
+    (actionTriggered)="onAction($event)"
+  >
+    <ng-content></ng-content>
+  </app-entity-actions-menu>
+</ng-template>
+
+@if (!viewContext) {
+  <ng-container *ngTemplateOutlet="template"></ng-container>
+}

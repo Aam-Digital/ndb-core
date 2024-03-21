@@ -1,87 +1,67 @@
-<!--
-  ~     This file is part of ndb-core.
-  ~
-  ~     ndb-core is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     (at your option) any later version.
-  ~
-  ~     ndb-core is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+<app-view-title>
+  {{ tmpEntity.date | date }}: {{ tmpEntity.subject }}
+</app-view-title>
 
-<h1 mat-dialog-title>{{ tmpEntity.date | date }}: {{ tmpEntity.subject }}</h1>
-<app-dialog-close mat-dialog-close=""></app-dialog-close>
+<div class="flex-column gap-regular">
+  <app-entity-archived-info [entity]="entity"></app-entity-archived-info>
 
-<mat-dialog-content>
-  <div class="flex-column gap-regular">
-    <app-entity-archived-info [entity]="entity"></app-entity-archived-info>
+  <app-entity-form
+    [fieldGroups]="topFieldGroups"
+    [entity]="entity"
+    [form]="form"
+  >
+  </app-entity-form>
 
-    <app-entity-form
-      [fieldGroups]="topFieldGroups"
-      [entity]="entity"
-      [form]="form"
-    >
-    </app-entity-form>
-
-    <!-- Primary information of Note -->
-    <div
-      class="mat-elevation-z2 flex-column gap-small padding-small margin-bottom-regular"
-    >
-      <div class="middle-form-field">
-        <app-entity-field-edit
-          [field]="middleForm[0]"
-          [entity]="entity"
-          [form]="form"
-        ></app-entity-field-edit>
-      </div>
-
-      <div class="textarea middle-form-field">
-        <app-entity-field-edit
-          [field]="middleForm[1]"
-          [entity]="entity"
-          [form]="form"
-        ></app-entity-field-edit>
-      </div>
+  <!-- Primary information of Note -->
+  <div
+    class="mat-elevation-z2 flex-column gap-small padding-small margin-bottom-regular"
+  >
+    <div class="middle-form-field">
+      <app-entity-field-edit
+        [field]="middleForm[0]"
+        [entity]="entity"
+        [form]="form"
+      ></app-entity-field-edit>
     </div>
 
-    <app-entity-form
-      [fieldGroups]="bottomFieldGroups"
-      [entity]="entity"
-      [form]="form"
-      style="margin-top: 10px"
-    ></app-entity-form>
+    <div class="textarea middle-form-field">
+      <app-entity-field-edit
+        [field]="middleForm[1]"
+        [entity]="entity"
+        [form]="form"
+      ></app-entity-field-edit>
+    </div>
   </div>
-</mat-dialog-content>
 
-<mat-dialog-actions>
-  <app-dialog-buttons [form]="form" [entity]="entity">
-    <button
-      mat-menu-item
-      [appExportData]="[entity]"
-      format="csv"
-      [exportConfig]="exportConfig"
-      [filename]="
-        'event_' +
-        entity.toString()?.replace(' ', '-') +
-        '_' +
-        (entity.date | date: 'YYYY-MM-dd')
-      "
-    >
-      <fa-icon
-        class="color-accent standard-icon-with-text"
-        aria-label="download csv"
-        icon="download"
-        angulartics2On="click"
-        angularticsCategory="Note"
-        angularticsAction="single_note_csv_export"
-      ></fa-icon>
-      <span i18n="Download note details as CSV"> Download details </span>
-    </button>
-  </app-dialog-buttons>
-</mat-dialog-actions>
+  <app-entity-form
+    [fieldGroups]="bottomFieldGroups"
+    [entity]="entity"
+    [form]="form"
+    style="margin-top: 10px"
+  ></app-entity-form>
+</div>
+
+<app-dialog-buttons [form]="form" [entity]="entity">
+  <button
+    mat-menu-item
+    [appExportData]="[entity]"
+    format="csv"
+    [exportConfig]="exportConfig"
+    [filename]="
+      'event_' +
+      entity.toString()?.replace(' ', '-') +
+      '_' +
+      (entity.date | date: 'YYYY-MM-dd')
+    "
+  >
+    <fa-icon
+      class="color-accent standard-icon-with-text"
+      aria-label="download csv"
+      icon="download"
+      angulartics2On="click"
+      angularticsCategory="Note"
+      angularticsAction="single_note_csv_export"
+    ></fa-icon>
+    <span i18n="Download note details as CSV"> Download details </span>
+  </button>
+</app-dialog-buttons>

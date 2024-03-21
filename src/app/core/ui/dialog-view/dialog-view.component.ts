@@ -3,6 +3,7 @@ import { CommonModule } from "@angular/common";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import {
   MAT_DIALOG_DATA,
+  MatDialogActions,
   MatDialogClose,
   MatDialogContent,
   MatDialogTitle,
@@ -35,6 +36,7 @@ import { AbstractViewComponent } from "../abstract-view/abstract-view.component"
     DynamicComponentPipe,
     MatDialogTitle,
     MatDialogContent,
+    MatDialogActions,
   ],
   templateUrl: "./dialog-view.component.html",
   styleUrls: ["./dialog-view.component.scss"],
