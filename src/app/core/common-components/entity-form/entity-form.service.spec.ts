@@ -28,6 +28,7 @@ import { FormFieldConfig } from "./FormConfig";
 import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import moment from "moment";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -248,7 +249,9 @@ describe("EntityFormService", () => {
 
     schema.defaultValue = PLACEHOLDERS.NOW;
     form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test").value).toBeDate(new Date());
+    expect(
+      moment(form.get("test").value).isSame(moment(), "minutes"),
+    ).toBeTrue();
 
     schema.defaultValue = PLACEHOLDERS.CURRENT_USER;
     form = service.createFormGroup([{ id: "test" }], new Entity());

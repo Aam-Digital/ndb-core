@@ -57,6 +57,7 @@ export class DateImportConfigComponent {
   checkDateValues() {
     this.format.setErrors(undefined);
     this.values.forEach((val) => {
+      // TODO: check and improve the date parsing. Tests fail with moment.js > 2.29
       const date = moment(val.value, this.format.value?.toUpperCase(), true);
       if (date.isValid()) {
         val.parsed = date.toDate();

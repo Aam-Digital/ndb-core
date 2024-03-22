@@ -15,12 +15,13 @@ describe("LoggingService", () => {
     expect(loggingService).toBeTruthy();
   });
 
-  it("should log a debug message", function () {
-    loggingService.debug(testMessage);
+  it("should log a debug message with additional context", function () {
+    loggingService.debug(testMessage, "extra context");
 
     expect(loggingService["logToConsole"]).toHaveBeenCalledWith(
       testMessage,
       LogLevel.DEBUG,
+      "extra context",
     );
     expect(loggingService["logToRemoteMonitoring"]).not.toHaveBeenCalled();
   });

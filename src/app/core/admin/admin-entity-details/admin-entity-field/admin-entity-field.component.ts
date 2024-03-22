@@ -197,6 +197,8 @@ export class AdminEntityFieldComponent implements OnChanges {
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.value;
   createNewAdditionalOption: (input: string) => SimpleDropdownValue;
+  createNewAdditionalOptionAsync = async (input) =>
+    this.createNewAdditionalOptionAsync(input);
 
   private updateDataTypeAdditional(dataType: string) {
     this.resetAdditional();

@@ -65,9 +65,10 @@ export class LoggingService {
   /**
    * Log the message with "debug" level - for very detailed, non-essential information.
    * @param message
+   * @param context Additional context for debugging
    */
-  public debug(message: any) {
-    this.log(message, LogLevel.DEBUG);
+  public debug(message: any, ...context: any[]) {
+    this.log(message, LogLevel.DEBUG, ...context);
   }
 
   /**
@@ -98,31 +99,36 @@ export class LoggingService {
    * Generic logging of a message.
    * @param message Message to be logged
    * @param logLevel Optional log level - default is "info"
+   * @param context Additional context for debugging
    */
-  public log(message: any, logLevel: LogLevel = LogLevel.INFO) {
-    this.logToConsole(message, logLevel);
+  public log(
+    message: any,
+    logLevel: LogLevel = LogLevel.INFO,
+    ...context: any[]
+  ) {
+    this.logToConsole(message, logLevel, ...context);
 
     if (logLevel !== LogLevel.DEBUG && logLevel !== LogLevel.INFO) {
       this.logToRemoteMonitoring(message, logLevel);
     }
   }
 
-  private logToConsole(message: any, logLevel: LogLevel) {
+  private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
     switch (+logLevel) {
       case LogLevel.DEBUG:
-        console.debug(message);
+        console.debug(message, ...context);
         break;
       case LogLevel.INFO:
-        console.info(message);
+        console.info(message, ...context);
         break;
       case LogLevel.WARN:
-        console.warn(message);
+        console.warn(message, ...context);
         break;
       case LogLevel.ERROR:
-        console.error(message);
+        console.error(message, ...context);
         break;
       default:
-        console.log(message);
+        console.log(message, ...context);
         break;
     }
   }

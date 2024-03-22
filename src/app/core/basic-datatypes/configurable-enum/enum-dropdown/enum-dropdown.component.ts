@@ -14,6 +14,7 @@ import { ConfigureEnumPopupComponent } from "../configure-enum-popup/configure-e
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import { MatButtonModule } from "@angular/material/button";
+import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -43,13 +44,14 @@ export class EnumDropdownComponent implements OnChanges {
   options: ConfigurableEnumValue[];
   canEdit = false;
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
-  createNewOption: (input: string) => ConfigurableEnumValue;
+  createNewOption: (input: string) => Promise<ConfigurableEnumValue>;
 
   constructor(
     private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
     private ability: EntityAbility,
     private dialog: MatDialog,
+    private confirmation: ConfirmationDialogService,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -77,10 +79,18 @@ export class EnumDropdownComponent implements OnChanges {
     return additionalOptions ?? [];
   }
 
-  private addNewOption(name: string) {
+  private async addNewOption(name: string) {
+    const userConfirmed = await this.confirmation.getConfirmation(
+      $localize`Create new option`,
+      $localize`Do you want to create the new option "${name}"?`,
+    );
+    if (!userConfirmed) {
+      return undefined;
+    }
+
     const option = { id: name, label: name };
     this.enumEntity.values.push(option);
-    this.entityMapper.save(this.enumEntity);
+    await this.entityMapper.save(this.enumEntity);
     return option;
   }
 

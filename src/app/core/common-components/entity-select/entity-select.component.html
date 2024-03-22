@@ -11,6 +11,7 @@
     [display]="showEntities ? 'chips' : 'none'"
     [options]="availableOptions | async"
     [placeholder]="(loading | async) ? loadingPlaceholder : placeholder"
+    [createOption]="createNewEntity"
   >
     <ng-template let-item>
       <app-display-entity

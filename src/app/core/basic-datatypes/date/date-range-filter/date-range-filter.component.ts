@@ -1,7 +1,6 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
-import { Filter } from "../../../filter/filters/filters";
 import { DateRangeFilterPanelComponent } from "./date-range-filter-panel/date-range-filter-panel.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatDatepickerModule } from "@angular/material/datepicker";
@@ -16,38 +15,42 @@ import { DateFilter } from "../../../filter/filters/dateFilter";
   standalone: true,
   imports: [MatFormFieldModule, MatDatepickerModule, FormsModule],
 })
-export class DateRangeFilterComponent<T extends Entity> {
+export class DateRangeFilterComponent<T extends Entity> implements OnChanges {
   fromDate: Date;
   toDate: Date;
-  dateFilter: DateFilter<T>;
 
-  @Output() selectedOptionChange = new EventEmitter<string[]>();
-
-  @Input() set filterConfig(value: Filter<T>) {
-    this.dateFilter = value as DateFilter<T>;
-    this.initDates();
-  }
+  @Input() filterConfig: DateFilter<T>;
 
   constructor(private dialog: MatDialog) {}
 
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.filterConfig) {
+      this.initDates();
+    }
+  }
+
   private initDates() {
-    const range = this.dateFilter.getDateRange();
+    const range = this.filterConfig.getDateRange();
     if (
       (range.start !== this.fromDate || range.start === undefined) &&
       (range.end !== this.toDate || range.end === undefined)
     ) {
       this.fromDate = range.start;
       this.toDate = range.end;
-      this.selectedOptionChange.emit(this.dateFilter.selectedOptionValues);
+      this.filterConfig.selectedOptionChange.emit(
+        this.filterConfig.selectedOptionValues,
+      );
     }
   }
 
   dateChangedManually() {
-    this.dateFilter.selectedOptionValues = [
+    this.filterConfig.selectedOptionValues = [
       isValidDate(this.fromDate) ? dateToString(this.fromDate) : "",
       isValidDate(this.toDate) ? dateToString(this.toDate) : "",
     ];
-    this.selectedOptionChange.emit(this.dateFilter.selectedOptionValues);
+    this.filterConfig.selectedOptionChange.emit(
+      this.filterConfig.selectedOptionValues,
+    );
   }
 
   openDialog(e: Event) {
@@ -56,7 +59,7 @@ export class DateRangeFilterComponent<T extends Entity> {
       .open(DateRangeFilterPanelComponent, {
         width: "600px",
         minWidth: "400px",
-        data: this.dateFilter,
+        data: this.filterConfig,
       })
       .afterClosed()
       .subscribe(() => this.initDates());

@@ -1,20 +1,5 @@
-<ng-container *ngFor="let filter of filterSelections">
-  <app-list-filter
-    *ngIf="filter.name !== 'date'"
-    [filterConfig]="filter"
-    [selectedOptions]="filter.selectedOptionValues"
-    (selectedOptionChange)="filterOptionSelected(filter, $event)"
-    angulartics2On="click"
-    [angularticsCategory]="entityType?.ENTITY_TYPE"
-    [angularticsAction]="'filter_' + urlPath"
-    [angularticsLabel]="filter.label"
-  >
-  </app-list-filter>
-
-  <app-date-range-filter
-    *ngIf="filter.name === 'date'"
-    [filterConfig]="filter"
-    (selectedOptionChange)="filterOptionSelected(filter, $event)"
-  >
-  </app-date-range-filter>
-</ng-container>
+@for (filter of filterSelections; track filter.name) {
+  <ng-container
+    *ngComponentOutlet="filter.component; inputs: { filterConfig: filter }"
+  />
+}

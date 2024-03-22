@@ -23,22 +23,5 @@ describe("User", () => {
     _id: "User:tester",
 
     name: "tester",
-    paginatorSettingsPageSize: {},
-  });
-
-  it("should not allow to change the name after initialization and set it as the ID", () => {
-    const user = new User();
-    user.name = "test-name";
-
-    expect(user.name).toBe("test-name");
-    expect(user.getId()).toBe(`${User.ENTITY_TYPE}:test-name`);
-    expect(() => (user.name = "another-name")).toThrowError();
-  });
-
-  it("should not fail when name is actually the same", () => {
-    const user = new User();
-    user.name = "test-name";
-
-    expect(() => (user.name = "test-name")).not.toThrowError();
   });
 });

@@ -72,4 +72,22 @@ describe("Filters", () => {
     filter.selectedOptionValues = ["true", "false"];
     testFilter(filter, [recordFalse, recordTrue], [recordFalse, recordTrue]);
   });
+
+  it("should support numbers as options", () => {
+    const filter = new SelectableFilter("counts", [], "Counts");
+
+    const keys = [1, 4, 7];
+    filter.options = SelectableFilter.generateOptions(keys, "category");
+
+    expect(filter.options).toHaveSize(keys.length);
+
+    filter.selectedOptionValues = ["1"];
+
+    const testData = [
+      { id: 1, category: 1 },
+      { id: 2, category: 4 },
+    ];
+    const filteredData = testFilter(filter, testData, [testData[0]]);
+    expect(filteredData[0].category).toBe(1);
+  });
 });
