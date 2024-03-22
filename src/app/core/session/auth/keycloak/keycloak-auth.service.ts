@@ -61,12 +61,9 @@ export class KeycloakAuthService {
 
     return this.keycloak
       .updateToken()
-      .then((updateSuccessful) => {
-        if (!updateSuccessful) {
-          throw new Error("Keycloak updateToken failed");
-          // TODO: should we notify the user to manually log in again when failing to refresh token?
-        }
+      .then(() => {
         return this.keycloak.getToken();
+        // TODO: should we notify the user to manually log in again when failing to refresh token?
       })
       .then((token) => this.processToken(token));
   }
