@@ -2,6 +2,7 @@
   <mat-tab *ngFor="let tab of tabs; index as tabIndex">
     <ng-template mat-tab-label>
       <div
+        class="drop-list"
         [id]="'tabs-' + tabIndex"
         cdkDropList
         cdkDropListOrientation="horizontal"
@@ -11,7 +12,7 @@
         <div
           cdkDrag
           cdkDragLockAxis="x"
-          class="flex-row align-center gap-small"
+          class="flex-row align-center drop-item gap-small"
         >
           <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
           @if (tabIndex === matTabGroup.selectedIndex) {

@@ -98,8 +98,9 @@ export class AdminTabsComponent<
       event.previousContainer.id.replace("tabs-", ""),
     );
     const currentIndex = parseInt(event.container.id.replace("tabs-", ""));
+    const wasSelectedTabActive = this.tabGroup.selectedIndex === previousIndex;
     moveItemInArray(this.tabs, previousIndex, currentIndex);
-    if (this.tabGroup.selectedIndex !== currentIndex) {
+    if (wasSelectedTabActive || currentIndex === this.tabGroup.selectedIndex) {
       this.tabGroup.selectedIndex = currentIndex;
       this.tabGroup.focusTab(currentIndex);
     }
