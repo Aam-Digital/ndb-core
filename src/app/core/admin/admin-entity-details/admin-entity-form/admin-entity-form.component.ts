@@ -200,6 +200,10 @@ export class AdminEntityFormComponent implements OnChanges {
     this.drop(event);
   }
 
+  dropGroup(event: CdkDragDrop<any>){
+    moveItemInArray( this.config.fieldGroups, event.previousIndex, event.currentIndex)
+  }
+
   removeGroup(i: number) {
     const [removedFieldGroup] = this.config.fieldGroups.splice(i, 1);
     this.initAvailableFields();

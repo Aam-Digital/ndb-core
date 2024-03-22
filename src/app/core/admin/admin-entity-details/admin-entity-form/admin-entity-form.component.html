@@ -1,17 +1,24 @@
 <div cdkDropListGroup class="overall-container flex-row">
   <!-- FORM PREVIEW -->
-  <div class="flex-grow admin-grid-layout padding-right-regular">
+  <div
+    class="flex-grow admin-grid-layout padding-right-regular"
+    cdkDropList
+    (cdkDropListDropped)="dropGroup($event)"
+    >
     <!-- FIELD GROUPS -->
     <div
+      cdkDrag
       *ngFor="let group of config.fieldGroups; let i = index"
       class="entity-form-cell admin-form-column section-container"
     >
-      <!-- GROUP HEADER -->
-      <app-admin-section-header
-        [(title)]="group.header"
-        (remove)="removeGroup(i)"
-      ></app-admin-section-header>
-
+      <div class="flex-row align-center" >
+        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+        <!-- GROUP HEADER -->
+        <app-admin-section-header
+          [(title)]="group.header"
+          (remove)="removeGroup(i)"
+        ></app-admin-section-header>
+      </div>
       <div
         cdkDropList
         [cdkDropListData]="group.fields"
