@@ -272,7 +272,7 @@ export class QueryService {
 
     return ids
       .map((id) => {
-        const prefix = id.split(":")[0];
+        const prefix = id?.split(":")[0];
         return this.entities[prefix][id];
       })
       .filter((entity) => !!entity);
