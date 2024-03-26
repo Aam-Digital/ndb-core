@@ -5,6 +5,7 @@ import { ConfigImportComponent } from "../../features/config-setup/config-import
 import { ConflictResolutionListComponent } from "../../features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 import { UserRoleGuard } from "../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../permissions/permission-guard/entity-permission.guard";
+import { SetupWizardComponent } from "./setup-wizard/setup-wizard.component";
 
 export const adminRoutes: Routes = [
   {
@@ -14,6 +15,10 @@ export const adminRoutes: Routes = [
     data: {
       permittedUserRoles: ["admin_app"],
     },
+  },
+  {
+    path: "setup-wizard",
+    component: SetupWizardComponent,
   },
   {
     path: "entity/:entityType",
