@@ -2,7 +2,7 @@
   <mat-tab *ngFor="let tab of tabs; index as tabIndex">
     <ng-template mat-tab-label>
       <div
-        class="drop-list"
+        class="drop-list flex-row"
         [id]="'tabs-' + tabIndex"
         cdkDropList
         cdkDropListOrientation="horizontal"
