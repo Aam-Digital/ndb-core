@@ -1,12 +1,4 @@
-import {
-  Component,
-  Input,
-  OnChanges,
-  SimpleChanges,
-  ViewChildren,
-  QueryList,
-  AfterViewInit,
-} from "@angular/core";
+import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
 import { FormControl, FormGroup } from "@angular/forms";
@@ -17,7 +9,6 @@ import {
   DragDropModule,
   moveItemInArray,
   transferArrayItem,
-  CdkDropList,
 } from "@angular/cdk/drag-drop";
 import {
   ColumnConfig,
@@ -25,7 +16,7 @@ import {
   toFormFieldConfig,
 } from "../../../common-components/entity-form/FormConfig";
 import { AdminEntityService } from "../../admin-entity.service";
-import { lastValueFrom, asapScheduler } from "rxjs";
+import { lastValueFrom } from "rxjs";
 import { NgForOf, NgIf } from "@angular/common";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
@@ -60,14 +51,11 @@ import { FormConfig } from "../../../entity-details/form/form.component";
     NgIf,
   ],
 })
-export class AdminEntityFormComponent implements OnChanges, AfterViewInit {
+export class AdminEntityFormComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   @Input() config: FormConfig;
 
-  @ViewChildren(CdkDropList)
-  private dropListQuery: QueryList<CdkDropList>;
-  public dropLists: CdkDropList[] = [];
   dummyEntity: Entity;
   dummyForm: FormGroup;
 
@@ -109,24 +97,6 @@ export class AdminEntityFormComponent implements OnChanges, AfterViewInit {
 
   private getUsedFields(config: FormConfig): ColumnConfig[] {
     return config.fieldGroups.reduce((p, c) => p.concat(c.fields), []);
-  }
-
-  ngAfterViewInit(): void {
-    let loadedDropLists: CdkDropList[] = [];
-    this.dropListQuery.forEach((dropList) => {
-      loadedDropLists.push(dropList);
-    });
-    loadedDropLists = loadedDropLists.reverse();
-    asapScheduler.schedule(() => {
-      this.dropLists = loadedDropLists;
-      // one array of siblings (shared for a whole tree)
-      const groupSiblings = this.dropLists.map((dl) => dl?._dropListRef);
-      // overwrite _getSiblingContainerFromPosition method
-      this.dropListQuery.forEach((dl) => {
-        dl._dropListRef._getSiblingContainerFromPosition = (item, x, y) =>
-          groupSiblings.find((sibling) => sibling._canReceive(item, x, y));
-      });
-    });
   }
 
   /**
@@ -233,8 +203,8 @@ export class AdminEntityFormComponent implements OnChanges, AfterViewInit {
   dropGroup(event: CdkDragDrop<any>) {
     moveItemInArray(
       this.config.fieldGroups,
-      event.previousContainer.data.index,
-      event.container.data.index,
+      event.previousIndex,
+      event.currentIndex,
     );
   }
 
