@@ -1924,29 +1924,6 @@
       child</note>
         <note priority="1" from="meaning">Slider that allows a user to also include events</note>
       </trans-unit>
-      <trans-unit id="5587127315208307476" datatype="html">
-        <source>This Week</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/notes-manager/notes-manager.component.ts</context>
-          <context context-type="linenumber">66</context>
-        </context-group>
-        <note priority="1" from="description">Filter-option for notes</note>
-      </trans-unit>
-      <trans-unit id="1200738479960313045" datatype="html">
-        <source>Since Last Week</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/notes-manager/notes-manager.component.ts</context>
-          <context context-type="linenumber">71</context>
-        </context-group>
-        <note priority="1" from="description">Filter-option for notes</note>
-      </trans-unit>
-      <trans-unit id="1616102757855967475" datatype="html">
-        <source>All</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/child-dev-project/notes/notes-manager/notes-manager.component.ts</context>
-          <context context-type="linenumber">74</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="5560057304612443507" datatype="html">
         <source>High School</source>
         <context-group purpose="location">
@@ -2495,6 +2472,20 @@
           <context context-type="linenumber">80</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="5432260252143962374" datatype="html">
+        <source>Create new option</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
+          <context context-type="linenumber">84</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5006850401853518123" datatype="html">
+        <source>Do you want to create the new option &quot;<x id="PH" equiv-text="name"/>&quot;?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="3938396793871184620" datatype="html">
         <source>date</source>
         <context-group purpose="location">
@@ -2580,7 +2571,7 @@
         <source>Ignore values?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.ts</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">79</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.ts</context>
@@ -2591,7 +2582,7 @@
         <source>Some values don&apos;t have a mapping and will not be imported. Are you sure you want to keep it like this?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.ts</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">80</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.ts</context>
@@ -2645,18 +2636,6 @@
           <context context-type="linenumber">43</context>
         </context-group>
         <note priority="1" from="description">Filter label</note>
-      </trans-unit>
-      <trans-unit id="1d7ed2343579b6d2528114177b13f59e55b96cef" datatype="html">
-        <source>Enter a date range</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-range-filter/date-range-filter.component.html</context>
-          <context context-type="linenumber">2</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">24</context>
-        </context-group>
-        <note priority="1" from="description">Input label</note>
       </trans-unit>
       <trans-unit id="77bbe324b08f6636fb50f673cea05313b86fb692" datatype="html">
         <source>Start date</source>
@@ -2818,36 +2797,22 @@
         </context-group>
         <note priority="1" from="description">datatype-label</note>
       </trans-unit>
-      <trans-unit id="b0f064424d0d1dd55d56f521755062b3c0f971ac" datatype="html">
-        <source>Add option</source>
+      <trans-unit id="f7dae3023f3dbafa10e2d7b9f3034b44a24d03f8" datatype="html">
+        <source>Add new</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">63</context>
         </context-group>
-        <note priority="1" from="description">e.g. Add option My new Option</note>
+        <note priority="1" from="description">e.g. Add new My new Option</note>
         <note priority="1" from="meaning">Label for adding an option in a dropdown</note>
       </trans-unit>
       <trans-unit id="4da487aec5a29ce4372e7b512227cd665b01fe6f" datatype="html">
         <source>remove</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">112</context>
+          <context context-type="linenumber">110</context>
         </context-group>
         <note priority="1" from="description">tooltip for remove icon on chips of dropdown item</note>
-      </trans-unit>
-      <trans-unit id="5432260252143962374" datatype="html">
-        <source>Create new option</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts</context>
-          <context context-type="linenumber">274</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5006850401853518123" datatype="html">
-        <source>Do you want to create the new option &quot;<x id="PH" equiv-text="option"/>&quot;?</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.ts</context>
-          <context context-type="linenumber">275</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="1115283280221159212" datatype="html">
         <source>Discard Changes?</source>
@@ -3086,7 +3051,7 @@
         <source>Also show <x id="INTERPOLATION" equiv-text="{{ currentlyMatchingInactive }}"/> inactive </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-select/entity-select.component.html</context>
-          <context context-type="linenumber">28,29</context>
+          <context context-type="linenumber">29,30</context>
         </context-group>
         <note priority="1" from="description">e.g. include inactive children</note>
         <note priority="1" from="meaning">Label for checkbox</note>
@@ -3095,7 +3060,7 @@
         <source>loading...</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-select/entity-select.component.ts</context>
-          <context context-type="linenumber">51</context>
+          <context context-type="linenumber">53</context>
         </context-group>
         <note priority="1" from="description">A placeholder for the input element when select options are not loaded yet</note>
       </trans-unit>
@@ -3167,7 +3132,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">36</context>
         </context-group>
         <note priority="1" from="description">Menu item</note>
       </trans-unit>
@@ -5560,7 +5525,7 @@
         <source>User</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">35</context>
         </context-group>
         <note priority="1" from="description">label for entity</note>
       </trans-unit>
@@ -5568,18 +5533,9 @@
         <source>Username</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">39</context>
+          <context context-type="linenumber">41</context>
         </context-group>
         <note priority="1" from="description">Label of username</note>
-      </trans-unit>
-      <trans-unit id="7522118423828297518" datatype="html">
-        <source><x id="PH" equiv-text="label"/> cannot be changed after initialization</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/user/user.ts</context>
-          <context context-type="linenumber">47</context>
-        </context-group>
-        <note priority="1" from="description">e.g. username cannot be changed after initialization</note>
-        <note priority="1" from="meaning">Error message when trying to change the username</note>
       </trans-unit>
       <trans-unit id="54fdb618c658224c6fbd4e10a947f91ea7611913" datatype="html">
         <source>Coming Soon</source>
@@ -6440,6 +6396,13 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
           <context context-type="linenumber">15</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1d7ed2343579b6d2528114177b13f59e55b96cef" datatype="html">
+        <source>Enter a date range</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="26cf133db6bc865d68e69dadfeeda8378533de34" datatype="html">

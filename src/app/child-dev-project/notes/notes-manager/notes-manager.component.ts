@@ -2,20 +2,14 @@ import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import {
-  DataFilter,
-  FilterSelectionOption,
-} from "../../../core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
 import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { merge } from "rxjs";
-import moment from "moment";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -59,25 +53,10 @@ export class NotesManagerComponent implements OnInit {
   entityConstructor = Note;
   notes: Note[];
 
-  private dateFS: FilterSelectionOption<Note>[] = [
-    {
-      key: "current-week",
-      label: $localize`:Filter-option for notes:This Week`,
-      filter: { date: this.getWeeksFilter(0) } as DataFilter<any>,
-    },
-    {
-      key: "last-week",
-      label: $localize`:Filter-option for notes:Since Last Week`,
-      filter: { date: this.getWeeksFilter(1) } as DataFilter<any>,
-    },
-    { key: "", label: $localize`All`, filter: {} },
-  ];
-
   constructor(
     private formDialog: FormDialogService,
     private entityMapperService: EntityMapperService,
     private route: ActivatedRoute,
-    private log: LoggingService,
   ) {}
 
   async ngOnInit() {
@@ -87,7 +66,6 @@ export class NotesManagerComponent implements OnInit {
       ) => {
         // TODO replace this use of route and rely on the RoutedViewComponent instead
         this.config = data.config;
-        this.addPrebuiltFilters();
         this.notes = await this.loadEntities();
       },
     );
@@ -125,35 +103,6 @@ export class NotesManagerComponent implements OnInit {
   async updateIncludeEvents() {
     this.includeEventNotes = !this.includeEventNotes;
     this.notes = await this.loadEntities();
-  }
-
-  private addPrebuiltFilters() {
-    for (const prebuiltFilter of this.config.filters.filter(
-      (filter) => filter.type === "prebuilt",
-    )) {
-      switch (prebuiltFilter.id) {
-        case "date": {
-          prebuiltFilter["options"] = this.dateFS;
-          prebuiltFilter["default"] = "current-week";
-          break;
-        }
-        default: {
-          this.log.warn(
-            "[NoteManagerComponent] No filter options available for prebuilt filter: " +
-              prebuiltFilter.id,
-          );
-          prebuiltFilter["options"] = [];
-        }
-      }
-    }
-  }
-
-  private getWeeksFilter(weeksBack: number) {
-    const start = moment().subtract(weeksBack, "weeks").startOf("week");
-    const end = moment().endOf("day");
-    const startString = start.format("YYYY-MM-DD");
-    const endString = end.format("YYYY-MM-DD");
-    return { $gte: startString, $lte: endString };
   }
 
   addNoteClick() {
