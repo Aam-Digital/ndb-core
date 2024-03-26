@@ -271,8 +271,15 @@ export class QueryService {
     }
 
     return ids
+      .filter((id) => {
+        if (typeof id !== "string") {
+          console.debug("invalid entity id in Query :toEntities", id);
+          return false;
+        }
+        return true;
+      })
       .map((id) => {
-        const prefix = id?.split(":")[0];
+        const prefix = id.split(":")[0];
         return this.entities[prefix][id];
       })
       .filter((entity) => !!entity);
