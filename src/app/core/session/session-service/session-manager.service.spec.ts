@@ -39,6 +39,7 @@ import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-
 import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { Child } from "../../../child-dev-project/children/model/child";
+import { Config } from "../../config/config";
 
 describe("SessionManagerService", () => {
   let service: SessionManagerService;
@@ -65,7 +66,10 @@ describe("SessionManagerService", () => {
         LoginStateSubject,
         SessionSubject,
         CurrentUserSubject,
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
+        {
+          provide: EntityMapperService,
+          useValue: mockEntityMapper(),
+        },
         { provide: Database, useClass: PouchDatabase },
         { provide: KeycloakAuthService, useValue: mockKeycloak },
         { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
@@ -85,7 +89,11 @@ describe("SessionManagerService", () => {
     const db = TestBed.inject(Database) as PouchDatabase;
     initInMemorySpy = spyOn(db, "initInMemoryDB").and.callThrough();
     initIndexedSpy = spyOn(db, "initIndexedDB").and.callThrough();
-    spyOn(TestBed.inject(SyncService), "startSync");
+    spyOn(TestBed.inject(SyncService), "startSync").and.callFake(() =>
+      TestBed.inject(EntityMapperService).save(
+        new Config(Config.CONFIG_KEY, {}),
+      ),
+    );
 
     TestBed.inject(LocalAuthService).saveUser(dbUser);
     environment.session_type = SessionType.mock;
