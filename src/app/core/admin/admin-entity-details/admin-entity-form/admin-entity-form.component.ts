@@ -140,6 +140,8 @@ export class AdminEntityFormComponent implements OnChanges {
   }
 
   drop(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
+    console.log("event3", event)
+
     const prevFieldsArray = event.previousContainer.data;
     const newFieldsArray = event.container.data;
 
@@ -203,8 +205,8 @@ export class AdminEntityFormComponent implements OnChanges {
   dropGroup(event: CdkDragDrop<any>) {
     moveItemInArray(
       this.config.fieldGroups,
-      event.previousIndex,
-      event.currentIndex,
+      event.previousContainer.data.index,
+      event.container.data.index,
     );
   }
 
