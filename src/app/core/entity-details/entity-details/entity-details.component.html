@@ -1,33 +1,27 @@
 <!-- Header: title + actions -->
-<div class="flex-row justify-space-between">
-  <app-view-title>
-    @if (!creatingNew) {
-      {{ entity?.toString() }}
-    } @else {
-      <span i18n="Title when adding a new entity">
-        Adding new {{ this.entityConstructor?.label }}
-      </span>
-    }
+<app-view-title>
+  @if (!entity?.isNew) {
+    {{ entity?.toString() }}
+  } @else {
+    <span i18n="Title when adding a new entity">
+      Adding new {{ this.entityConstructor?.label }}
+    </span>
+  }
 
-    <app-entity-actions-menu
-      actions
-      [entity]="entity"
-      [navigateOnDelete]="true"
+  <app-entity-actions-menu actions [entity]="entity" [navigateOnDelete]="true">
+    <button
+      mat-menu-item
+      [routerLink]="['/admin/entity', entity?.getType()]"
+      *ngIf="'update' | ablePure: 'Config' | async"
     >
-      <button
-        mat-menu-item
-        [routerLink]="['/admin/entity', entity?.getType()]"
-        *ngIf="'update' | ablePure: 'Config' | async"
-      >
-        <fa-icon
-          class="standard-icon-with-text color-accent"
-          icon="tools"
-        ></fa-icon>
-        <span i18n>Edit Data Structure</span>
-      </button>
-    </app-entity-actions-menu>
-  </app-view-title>
-</div>
+      <fa-icon
+        class="standard-icon-with-text color-accent"
+        icon="tools"
+      ></fa-icon>
+      <span i18n>Edit Data Structure</span>
+    </button>
+  </app-entity-actions-menu>
+</app-view-title>
 
 <app-entity-archived-info [entity]="entity"></app-entity-archived-info>
 
@@ -35,11 +29,11 @@
 <mat-tab-group appTabStateMemo [preserveContent]="true">
   <mat-tab
     *ngFor="let panelConfig of panels"
-    [disabled]="creatingNew || unsavedChanges.pending"
+    [disabled]="entity?.isNew || unsavedChanges.pending"
   >
     <ng-template mat-tab-label>
       <span
-        [matTooltipDisabled]="!creatingNew"
+        [matTooltipDisabled]="!entity?.isNew"
         matTooltip="Save the new record to create it before accessing other details"
         i18n-matTooltip="
           Tooltip explaining disabled sections when creating new entity

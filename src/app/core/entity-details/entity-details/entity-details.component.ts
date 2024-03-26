@@ -1,10 +1,6 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { Router, RouterLink } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { Panel, PanelComponent, PanelConfig } from "../EntityDetailsConfig";
-import { Entity, EntityConstructor } from "../../entity/model/entity";
-import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { EntityAbility } from "../../permissions/ability/entity-ability";
-import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { MatButtonModule } from "@angular/material/button";
 import { MatMenuModule } from "@angular/material/menu";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -17,15 +13,12 @@ import { CommonModule, NgForOf, NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
-import { LoggingService } from "../../logging/logging.service";
-import { UnsavedChangesService } from "../form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../entity-actions-menu/entity-actions-menu.component";
 import { EntityArchivedInfoComponent } from "../entity-archived-info/entity-archived-info.component";
-import { filter } from "rxjs/operators";
-import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { Subscription } from "rxjs";
+import { UntilDestroy } from "@ngneat/until-destroy";
 import { AbilityModule } from "@casl/angular";
 import { RouteTarget } from "../../../route-target";
+import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -61,76 +54,21 @@ import { RouteTarget } from "../../../route-target";
     CommonModule,
   ],
 })
-export class EntityDetailsComponent implements OnChanges {
-  creatingNew = false;
-  isLoading: boolean;
-  private changesSubscription: Subscription;
-
-  @Input() entityType: string;
-  entityConstructor: EntityConstructor;
-
-  // TODO: instead use an @Input entity: Entity and let RoutedView handle the entity loading
-  @Input() id: string;
-  @Input() entity: Entity;
-
+export class EntityDetailsComponent
+  extends AbstractEntityDetailsComponent
+  implements OnChanges
+{
   /**
    * The configuration for the panels on this details page.
    */
   @Input() panels: Panel[] = [];
 
-  constructor(
-    private entityMapperService: EntityMapperService,
-    private router: Router,
-    private ability: EntityAbility,
-    private entities: EntityRegistry,
-    private logger: LoggingService,
-    public unsavedChanges: UnsavedChangesService,
-  ) {}
-
   async ngOnChanges(changes: SimpleChanges) {
-    if (changes.entityType) {
-      this.entityConstructor = this.entities.get(this.entityType);
-    }
-
-    if (changes.id) {
-      await this.loadEntity();
-      this.subscribeToEntityChanges();
-    }
+    await super.ngOnChanges(changes);
 
     if (changes.id || changes.entity || changes.panels) {
-      this.creatingNew = this.entity.isNew;
       this.initPanels();
     }
-  }
-
-  private subscribeToEntityChanges() {
-    const fullId = Entity.createPrefixedId(this.entityType, this.id);
-    this.changesSubscription?.unsubscribe();
-    this.changesSubscription = this.entityMapperService
-      .receiveUpdates(this.entityConstructor)
-      .pipe(
-        filter(({ entity }) => entity.getId() === fullId),
-        filter(({ type }) => type !== "remove"),
-        untilDestroyed(this),
-      )
-      .subscribe(({ entity }) => (this.entity = entity));
-  }
-
-  private async loadEntity() {
-    this.isLoading = true;
-    if (this.id === "new") {
-      if (this.ability.cannot("create", this.entityConstructor)) {
-        this.router.navigate([""]);
-        return;
-      }
-      this.entity = new this.entityConstructor();
-    } else {
-      this.entity = await this.entityMapperService.load(
-        this.entityConstructor,
-        this.id,
-      );
-    }
-    this.isLoading = false;
   }
 
   private initPanels() {
@@ -147,7 +85,7 @@ export class EntityDetailsComponent implements OnChanges {
   private getPanelConfig(c: PanelComponent): PanelConfig {
     let panelConfig: PanelConfig = {
       entity: this.entity,
-      creatingNew: this.creatingNew,
+      creatingNew: this.entity.isNew,
     };
     if (typeof c.config === "object" && !Array.isArray(c.config)) {
       if (c.config?.entity) {

@@ -16,7 +16,7 @@
 
     <ng-content select="[actions]"></ng-content>
 
-    @if (viewContext.isDialog) {
+    @if (viewContext?.isDialog) {
       <div style="width: 24px"><!-- spacer for dialog close button--></div>
     }
   </div>

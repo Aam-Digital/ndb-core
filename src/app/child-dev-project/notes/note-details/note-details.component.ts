@@ -1,4 +1,10 @@
-import { Component, Input, OnChanges, ViewEncapsulation } from "@angular/core";
+import {
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewEncapsulation,
+} from "@angular/core";
 import { Note } from "../model/note";
 import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
 import { ConfigService } from "../../../core/config/config.service";
@@ -23,6 +29,14 @@ import { EntityFieldEditComponent } from "../../../core/common-components/entity
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
+import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
+import { Router } from "@angular/router";
+import { LoggingService } from "../../../core/logging/logging.service";
+import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -47,12 +61,17 @@ import { ViewTitleComponent } from "../../../core/common-components/view-title/v
     EntityArchivedInfoComponent,
     EntityFieldEditComponent,
     ViewTitleComponent,
+    MatProgressBar,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
-export class NoteDetailsComponent implements OnChanges {
+export class NoteDetailsComponent
+  extends AbstractEntityDetailsComponent
+  implements OnChanges
+{
   @Input() entity: Note;
+  entityConstructor = Note;
 
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
@@ -74,15 +93,32 @@ export class NoteDetailsComponent implements OnChanges {
   tmpEntity: Note;
 
   constructor(
+    entityMapperService: EntityMapperService,
+    entities: EntityRegistry,
+    ability: EntityAbility,
+    router: Router,
+    logger: LoggingService,
+    unsavedChanges: UnsavedChangesService,
     private configService: ConfigService,
     private entityFormService: EntityFormService,
   ) {
+    super(
+      entityMapperService,
+      entities,
+      ability,
+      router,
+      logger,
+      unsavedChanges,
+    );
+
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
   }
 
-  ngOnChanges() {
+  async ngOnChanges(changes: SimpleChanges) {
+    await super.ngOnChanges(changes);
+
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 

@@ -1,67 +1,73 @@
-<app-view-title>
-  {{ tmpEntity.date | date }}: {{ tmpEntity.subject }}
-</app-view-title>
+@if (isLoading || !tmpEntity) {
+  <div>
+    <mat-progress-bar mode="indeterminate"></mat-progress-bar>
+  </div>
+} @else {
+  <app-view-title>
+    {{ tmpEntity.date | date }}: {{ tmpEntity.subject }}
+  </app-view-title>
 
-<div class="flex-column gap-regular">
-  <app-entity-archived-info [entity]="entity"></app-entity-archived-info>
+  <div class="flex-column gap-regular">
+    <app-entity-archived-info [entity]="entity"></app-entity-archived-info>
 
-  <app-entity-form
-    [fieldGroups]="topFieldGroups"
-    [entity]="entity"
-    [form]="form"
-  >
-  </app-entity-form>
+    <app-entity-form
+      [fieldGroups]="topFieldGroups"
+      [entity]="entity"
+      [form]="form"
+    >
+    </app-entity-form>
 
-  <!-- Primary information of Note -->
-  <div
-    class="mat-elevation-z2 flex-column gap-small padding-small margin-bottom-regular"
-  >
-    <div class="middle-form-field">
-      <app-entity-field-edit
-        [field]="middleForm[0]"
-        [entity]="entity"
-        [form]="form"
-      ></app-entity-field-edit>
+    <!-- Primary information of Note -->
+    <div
+      class="mat-elevation-z2 flex-column gap-small padding-small margin-bottom-regular"
+    >
+      <div class="middle-form-field">
+        <app-entity-field-edit
+          [field]="middleForm[0]"
+          [entity]="entity"
+          [form]="form"
+        ></app-entity-field-edit>
+      </div>
+
+      <div class="textarea middle-form-field">
+        <app-entity-field-edit
+          [field]="middleForm[1]"
+          [entity]="entity"
+          [form]="form"
+        ></app-entity-field-edit>
+      </div>
     </div>
 
-    <div class="textarea middle-form-field">
-      <app-entity-field-edit
-        [field]="middleForm[1]"
-        [entity]="entity"
-        [form]="form"
-      ></app-entity-field-edit>
-    </div>
+    <app-entity-form
+      [fieldGroups]="bottomFieldGroups"
+      [entity]="entity"
+      [form]="form"
+      style="margin-top: 10px"
+    ></app-entity-form>
   </div>
 
-  <app-entity-form
-    [fieldGroups]="bottomFieldGroups"
-    [entity]="entity"
-    [form]="form"
-    style="margin-top: 10px"
-  ></app-entity-form>
-</div>
-
-<app-dialog-buttons [form]="form" [entity]="entity">
-  <button
-    mat-menu-item
-    [appExportData]="[entity]"
-    format="csv"
-    [exportConfig]="exportConfig"
-    [filename]="
-      'event_' +
-      entity.toString()?.replace(' ', '-') +
-      '_' +
-      (entity.date | date: 'YYYY-MM-dd')
-    "
-  >
-    <fa-icon
-      class="color-accent standard-icon-with-text"
-      aria-label="download csv"
-      icon="download"
-      angulartics2On="click"
-      angularticsCategory="Note"
-      angularticsAction="single_note_csv_export"
-    ></fa-icon>
-    <span i18n="Download note details as CSV"> Download details </span>
-  </button>
-</app-dialog-buttons>
+  <app-dialog-buttons [form]="form" [entity]="entity">
+    <button
+      mat-menu-item
+      [appExportData]="[entity]"
+      format="csv"
+      [exportConfig]="exportConfig"
+      [filename]="
+        'event_' +
+        entity.toString()?.replace(' ', '-') +
+        '_' +
+        (entity.date | date: 'YYYY-MM-dd')
+      "
+    >
+      <fa-icon
+        class="color-accent standard-icon-with-text"
+        aria-label="download csv"
+        icon="download"
+        angulartics2On="click"
+        angularticsCategory="Note"
+        angularticsAction="single_note_csv_export"
+      ></fa-icon>
+      <span i18n="Download note details as CSV"> Download details </span>
+    </button>
+  </app-dialog-buttons>
+}

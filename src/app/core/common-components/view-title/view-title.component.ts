@@ -57,7 +57,9 @@ export class ViewTitleComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    setTimeout(() => (this.viewContext.title = this));
+    if (this.viewContext) {
+      setTimeout(() => (this.viewContext.title = this));
+    }
   }
 
   private findParentUrl(): string {

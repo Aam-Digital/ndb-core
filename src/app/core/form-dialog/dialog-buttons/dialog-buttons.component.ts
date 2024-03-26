@@ -51,13 +51,20 @@ export class DialogButtonsComponent implements OnInit, AfterViewInit {
 
   constructor(
     private entityFormService: EntityFormService,
-    private dialog: MatDialogRef<any>,
+    @Optional() private dialog: MatDialogRef<any>,
     private alertService: AlertService,
     private router: Router,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
     @Optional() protected viewContext: ViewComponentContext,
   ) {
+    if (this.dialog) {
+      // TODO: generalize this logic to work in routed as well as dialog views
+      this.initDialogSettings();
+    }
+  }
+
+  private initDialogSettings() {
     this.dialog.disableClose = true;
     this.dialog.backdropClick().subscribe(() =>
       this.unsavedChanges.checkUnsavedChanges().then((confirmed) => {

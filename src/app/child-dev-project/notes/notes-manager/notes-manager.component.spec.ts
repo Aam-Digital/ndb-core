@@ -12,7 +12,6 @@ import { FormDialogService } from "../../../core/form-dialog/form-dialog.service
 import { ActivatedRoute, Router } from "@angular/router";
 import { BehaviorSubject, of, Subject } from "rxjs";
 import { Note } from "../model/note";
-import { NoteDetailsComponent } from "../note-details/note-details.component";
 import {
   ConfigurableEnumFilterConfig,
   EntityListConfig,
@@ -32,7 +31,7 @@ describe("NotesManagerComponent", () => {
   let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
-    ["openFormPopup"],
+    ["openView"],
   );
 
   const routeData: EntityListConfig = {
@@ -118,17 +117,13 @@ describe("NotesManagerComponent", () => {
   it("should open the dialog when clicking details", () => {
     const note = new Note("testNote");
     component.showDetails(note);
-    expect(dialogMock.openFormPopup).toHaveBeenCalledWith(
-      note,
-      [],
-      NoteDetailsComponent,
-    );
+    expect(dialogMock.openView).toHaveBeenCalledWith(note, "NoteDetails");
   });
 
   it("should open dialog when add note is clicked", fakeAsync(() => {
     const newNote = new Note("new");
     const returnValue: any = { afterClosed: () => of(newNote) };
-    dialogMock.openFormPopup.and.returnValue(returnValue);
+    dialogMock.openView.and.returnValue(returnValue);
     component.addNoteClick();
   }));
 

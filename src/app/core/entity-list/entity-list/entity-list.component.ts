@@ -168,7 +168,7 @@ export class EntityListComponent<T extends Entity>
     private router: Router,
     private activatedRoute: ActivatedRoute,
     private analyticsService: AnalyticsService,
-    private entityMapperService: EntityMapperService,
+    protected entityMapperService: EntityMapperService,
     private entities: EntityRegistry,
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
@@ -221,7 +221,7 @@ export class EntityListComponent<T extends Entity>
     );
   }
 
-  private async loadEntities() {
+  protected async loadEntities() {
     this.allEntities = await this.entityMapperService.loadType(
       this.entityConstructor,
     );
