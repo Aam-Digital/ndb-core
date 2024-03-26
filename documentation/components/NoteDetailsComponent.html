@@ -1,0 +1,964 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avaoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+
+               if ($darkModeToggles.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-block d-sm-none">
+            <a href="../" class="navbar-brand">ndb-core documentation</a>
+            <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="hidden-xs menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  NoteDetailsComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/child-dev-project/notes/note-details/note-details.component.ts</code>
+</p>
+
+
+    <p class="comment">
+        <h3>Description</h3>
+    </p>
+    <p class="comment">
+        <p>Component responsible for displaying the Note creation/view window</p>
+
+    </p>
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+            <tr>
+                <td class="col-md-3">encapsulation</td>
+                <td class="col-md-9"><code>ViewEncapsulation.None</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-note-details</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">Standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>MatDialogModule</code>
+                            <code>DatePipe</code>
+                            <code>FontAwesomeModule</code>
+                                <code><a href="../directives/ExportDataDirective.html" target="_self" >ExportDataDirective</a></code>
+                            <code>Angulartics2Module</code>
+                                <code><a href="../components/EntityFormComponent.html" target="_self" >EntityFormComponent</a></code>
+                                <code><a href="../directives/DynamicComponentDirective.html" target="_self" >DynamicComponentDirective</a></code>
+                                <code><a href="../components/DialogButtonsComponent.html" target="_self" >DialogButtonsComponent</a></code>
+                            <code>MatMenuModule</code>
+                                <code><a href="../components/DialogCloseComponent.html" target="_self" >DialogCloseComponent</a></code>
+                                <code><a href="../components/EntityArchivedInfoComponent.html" target="_self" >EntityArchivedInfoComponent</a></code>
+                                <code><a href="../components/EntityFieldEditComponent.html" target="_self" >EntityFieldEditComponent</a></code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./note-details.component.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./note-details.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#bottomFieldGroups" >bottomFieldGroups</a>
+                            </li>
+                            <li>
+                                <a href="#bottomForm" >bottomForm</a>
+                            </li>
+                            <li>
+                                <a href="#exportConfig" >exportConfig</a>
+                            </li>
+                            <li>
+                                <a href="#form" >form</a>
+                            </li>
+                            <li>
+                                <a href="#middleForm" >middleForm</a>
+                            </li>
+                            <li>
+                                <a href="#tmpEntity" >tmpEntity</a>
+                            </li>
+                            <li>
+                                <a href="#topFieldGroups" >topFieldGroups</a>
+                            </li>
+                            <li>
+                                <a href="#topForm" >topForm</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#entity" >entity</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-constructor">
+    <h3 id="constructor">Constructor</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+<code>constructor(configService: <a href="../injectables/ConfigService.html" target="_self">ConfigService</a>, entityFormService: <a href="../injectables/EntityFormService.html" target="_self">EntityFormService</a>, data: literal type)</code>
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:70</a></div>
+                            </td>
+                        </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                            <div>
+                                    <b>Parameters :</b>
+                                    <table class="params">
+                                        <thead>
+                                            <tr>
+                                                <td>Name</td>
+                                                    <td>Type</td>
+                                                <td>Optional</td>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                                <tr>
+                                                        <td>configService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/ConfigService.html" target="_self" >ConfigService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>entityFormService</td>
+                                                  
+                                                        <td>
+                                                                        <code><a href="../injectables/EntityFormService.html" target="_self" >EntityFormService</a></code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                                <tr>
+                                                        <td>data</td>
+                                                  
+                                                        <td>
+                                                                    <code>literal type</code>
+                                                        </td>
+                                                  
+                                                    <td>
+                                                            No
+                                                    </td>
+                                                    
+                                                </tr>
+                                        </tbody>
+                                    </table>
+                            </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+</section>
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="entity"></a>
+                        <b>entity</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Note.html" target="_self" >Note</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="58" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:58</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="bottomFieldGroups"></a>
+                    <span class="name">
+                        <span ><b>bottomFieldGroups</b></span>
+                        <a href="#bottomFieldGroups"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/FieldGroup.html" target="_self" >FieldGroup[]</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="67" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:67</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="bottomForm"></a>
+                    <span class="name">
+                        <span ><b>bottomForm</b></span>
+                        <a href="#bottomForm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[&quot;children&quot;, &quot;schools&quot;]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="65" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:65</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="exportConfig"></a>
+                    <span class="name">
+                        <span ><b>exportConfig</b></span>
+                        <a href="#exportConfig"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/ExportColumnConfig.html" target="_self" >ExportColumnConfig[]</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="61" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:61</a></div>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+                    <div class="io-description"><p>export format for notes to be used for downloading the individual details</p>
+</div>
+                </td>
+            </tr>
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="form"></a>
+                    <span class="name">
+                        <span ><b>form</b></span>
+                        <a href="#form"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityForm" target="_self" >EntityForm&lt;Note&gt;</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="69" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:69</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="middleForm"></a>
+                    <span class="name">
+                        <span ><b>middleForm</b></span>
+                        <a href="#middleForm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[&quot;subject&quot;, &quot;text&quot;]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="64" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:64</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="tmpEntity"></a>
+                    <span class="name">
+                        <span ><b>tmpEntity</b></span>
+                        <a href="#tmpEntity"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Note.html" target="_self" >Note</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:70</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="topFieldGroups"></a>
+                    <span class="name">
+                        <span ><b>topFieldGroups</b></span>
+                        <a href="#topFieldGroups"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/FieldGroup.html" target="_self" >FieldGroup[]</a></code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="66" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:66</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="topForm"></a>
+                    <span class="name">
+                        <span ><b>topForm</b></span>
+                        <a href="#topForm"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>[]</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[&quot;date&quot;, &quot;warningLevel&quot;, &quot;category&quot;, &quot;authors&quot;, &quot;attachment&quot;]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="63" class="link-to-prism">src/app/child-dev-project/notes/note-details/note-details.component.ts:63</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  Component,
+  Inject,
+  Input,
+  OnInit,
+  Optional,
+  ViewEncapsulation,
+} from &quot;@angular/core&quot;;
+import { Note } from &quot;../model/note&quot;;
+import { ExportColumnConfig } from &quot;../../../core/export/data-transformation-service/export-column-config&quot;;
+import { ConfigService } from &quot;../../../core/config/config.service&quot;;
+import { EntityListConfig } from &quot;../../../core/entity-list/EntityListConfig&quot;;
+import { DatePipe } from &quot;@angular/common&quot;;
+import { FontAwesomeModule } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { MatMenuModule } from &quot;@angular/material/menu&quot;;
+import { ExportDataDirective } from &quot;../../../core/export/export-data-directive/export-data.directive&quot;;
+import { Angulartics2Module } from &quot;angulartics2&quot;;
+import { UntilDestroy, untilDestroyed } from &quot;@ngneat/until-destroy&quot;;
+import {
+  EntityForm,
+  EntityFormService,
+} from &quot;../../../core/common-components/entity-form/entity-form.service&quot;;
+import { EntityFormComponent } from &quot;../../../core/common-components/entity-form/entity-form/entity-form.component&quot;;
+import { DynamicComponentDirective } from &quot;../../../core/config/dynamic-components/dynamic-component.directive&quot;;
+import { MAT_DIALOG_DATA, MatDialogModule } from &quot;@angular/material/dialog&quot;;
+import { DialogButtonsComponent } from &quot;../../../core/form-dialog/dialog-buttons/dialog-buttons.component&quot;;
+import { DialogCloseComponent } from &quot;../../../core/common-components/dialog-close/dialog-close.component&quot;;
+import { EntityArchivedInfoComponent } from &quot;../../../core/entity-details/entity-archived-info/entity-archived-info.component&quot;;
+import { EntityFieldEditComponent } from &quot;../../../core/common-components/entity-field-edit/entity-field-edit.component&quot;;
+import { FieldGroup } from &quot;../../../core/entity-details/form/field-group&quot;;
+
+/**
+ * Component responsible for displaying the Note creation/view window
+ */
+@UntilDestroy()
+@Component({
+  selector: &quot;app-note-details&quot;,
+  templateUrl: &quot;./note-details.component.html&quot;,
+  styleUrls: [&quot;./note-details.component.scss&quot;],
+  imports: [
+    MatDialogModule,
+    DatePipe,
+    FontAwesomeModule,
+    ExportDataDirective,
+    Angulartics2Module,
+    EntityFormComponent,
+    DynamicComponentDirective,
+    DialogButtonsComponent,
+    MatMenuModule,
+    DialogCloseComponent,
+    EntityArchivedInfoComponent,
+    EntityFieldEditComponent,
+  ],
+  standalone: true,
+  encapsulation: ViewEncapsulation.None,
+})
+export class NoteDetailsComponent implements OnInit {
+  @Input() entity: Note;
+
+  /** export format for notes to be used for downloading the individual details */
+  exportConfig: ExportColumnConfig[];
+
+  topForm &#x3D; [&quot;date&quot;, &quot;warningLevel&quot;, &quot;category&quot;, &quot;authors&quot;, &quot;attachment&quot;];
+  middleForm &#x3D; [&quot;subject&quot;, &quot;text&quot;];
+  bottomForm &#x3D; [&quot;children&quot;, &quot;schools&quot;];
+  topFieldGroups: FieldGroup[];
+  bottomFieldGroups: FieldGroup[];
+
+  form: EntityForm&lt;Note&gt;;
+  tmpEntity: Note;
+
+  constructor(
+    private configService: ConfigService,
+    private entityFormService: EntityFormService,
+    @Optional() @Inject(MAT_DIALOG_DATA) data: { entity: Note },
+  ) {
+    if (data) {
+      this.entity &#x3D; data.entity;
+    }
+    this.exportConfig &#x3D; this.configService.getConfig&lt;{
+      config: EntityListConfig;
+    }&gt;(&quot;view:note&quot;)?.config.exportConfig;
+
+    const formConfig &#x3D; this.configService.getConfig&lt;any&gt;(
+      &quot;appConfig:note-details&quot;,
+    );
+    this.topForm &#x3D; formConfig?.topForm ?? this.topForm;
+    this.middleForm &#x3D; formConfig?.middleForm ?? this.middleForm;
+    this.bottomForm &#x3D; formConfig?.bottomForm ?? this.bottomForm;
+  }
+
+  ngOnInit() {
+    this.topFieldGroups &#x3D; this.topForm.map((f) &#x3D;&gt; ({ fields: [f] }));
+    this.bottomFieldGroups &#x3D; [{ fields: this.bottomForm }];
+
+    this.form &#x3D; this.entityFormService.createFormGroup(
+      this.middleForm.concat(this.topForm, this.bottomForm),
+      this.entity,
+    );
+    // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
+    this.tmpEntity &#x3D; this.entity.copy();
+    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) &#x3D;&gt; {
+      this.tmpEntity &#x3D; Object.assign(this.tmpEntity, value);
+    });
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;!--
+  ~     This file is part of ndb-core.
+  ~
+  ~     ndb-core is free software: you can redistribute it and/or modify
+  ~     it under the terms of the GNU General Public License as published by
+  ~     the Free Software Foundation, either version 3 of the License, or
+  ~     (at your option) any later version.
+  ~
+  ~     ndb-core is distributed in the hope that it will be useful,
+  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~     GNU General Public License for more details.
+  ~
+  ~     You should have received a copy of the GNU General Public License
+  ~     along with ndb-core.  If not, see &lt;http://www.gnu.org/licenses/&gt;.
+  --&gt;
+
+&lt;h1 mat-dialog-title&gt;{{ tmpEntity.date | date }}: {{ tmpEntity.subject }}&lt;/h1&gt;
+&lt;app-dialog-close mat-dialog-close&#x3D;&quot;&quot;&gt;&lt;/app-dialog-close&gt;
+
+&lt;mat-dialog-content&gt;
+  &lt;div class&#x3D;&quot;flex-column gap-regular&quot;&gt;
+    &lt;app-entity-archived-info [entity]&#x3D;&quot;entity&quot;&gt;&lt;/app-entity-archived-info&gt;
+
+    &lt;app-entity-form
+      [fieldGroups]&#x3D;&quot;topFieldGroups&quot;
+      [entity]&#x3D;&quot;entity&quot;
+      [form]&#x3D;&quot;form&quot;
+    &gt;
+    &lt;/app-entity-form&gt;
+
+    &lt;!-- Primary information of Note --&gt;
+    &lt;div
+      class&#x3D;&quot;mat-elevation-z2 flex-column gap-small padding-small margin-bottom-regular&quot;
+    &gt;
+      &lt;div class&#x3D;&quot;middle-form-field&quot;&gt;
+        &lt;app-entity-field-edit
+          [field]&#x3D;&quot;middleForm[0]&quot;
+          [entity]&#x3D;&quot;entity&quot;
+          [form]&#x3D;&quot;form&quot;
+        &gt;&lt;/app-entity-field-edit&gt;
+      &lt;/div&gt;
+
+      &lt;div class&#x3D;&quot;textarea middle-form-field&quot;&gt;
+        &lt;app-entity-field-edit
+          [field]&#x3D;&quot;middleForm[1]&quot;
+          [entity]&#x3D;&quot;entity&quot;
+          [form]&#x3D;&quot;form&quot;
+        &gt;&lt;/app-entity-field-edit&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+
+    &lt;app-entity-form
+      [fieldGroups]&#x3D;&quot;bottomFieldGroups&quot;
+      [entity]&#x3D;&quot;entity&quot;
+      [form]&#x3D;&quot;form&quot;
+      style&#x3D;&quot;margin-top: 10px&quot;
+    &gt;&lt;/app-entity-form&gt;
+  &lt;/div&gt;
+&lt;/mat-dialog-content&gt;
+
+&lt;mat-dialog-actions&gt;
+  &lt;app-dialog-buttons [form]&#x3D;&quot;form&quot; [entity]&#x3D;&quot;entity&quot;&gt;
+    &lt;button
+      mat-menu-item
+      [appExportData]&#x3D;&quot;[entity]&quot;
+      format&#x3D;&quot;csv&quot;
+      [exportConfig]&#x3D;&quot;exportConfig&quot;
+      [filename]&#x3D;&quot;
+        &#x27;event_&#x27; +
+        entity.toString()?.replace(&#x27; &#x27;, &#x27;-&#x27;) +
+        &#x27;_&#x27; +
+        (entity.date | date: &#x27;YYYY-MM-dd&#x27;)
+      &quot;
+    &gt;
+      &lt;fa-icon
+        class&#x3D;&quot;color-accent standard-icon-with-text&quot;
+        aria-label&#x3D;&quot;download csv&quot;
+        icon&#x3D;&quot;download&quot;
+        angulartics2On&#x3D;&quot;click&quot;
+        angularticsCategory&#x3D;&quot;Note&quot;
+        angularticsAction&#x3D;&quot;single_note_csv_export&quot;
+      &gt;&lt;/fa-icon&gt;
+      &lt;span i18n&#x3D;&quot;Download note details as CSV&quot;&gt; Download details &lt;/span&gt;
+    &lt;/button&gt;
+  &lt;/app-dialog-buttons&gt;
+&lt;/mat-dialog-actions&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./note-details.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/sizes&quot;;
+@use &quot;mixins/grid-layout&quot;;
+
+.input-medium {
+  width: 100%;
+  max-width: 500px;
+}
+
+.content-header {
+  @include grid-layout.adaptive(450px);
+}
+
+.additional-actions-menu {
+  position: absolute;
+  right: sizes.$small;
+  top: sizes.$regular;
+}
+
+.form-section {
+  margin-top: 24px;
+}
+
+.middle-form-field mat-form-field {
+  width: 100%;
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><!--  ~     This file is part of ndb-core.  ~  ~     ndb-core is free software: you can redistribute it and/or modify  ~     it under the terms of the GNU General Public License as published by  ~     the Free Software Foundation, either version 3 of the License, or  ~     (at your option) any later version.  ~  ~     ndb-core is distributed in the hope that it will be useful,  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the  ~     GNU General Public License for more details.  ~  ~     You should have received a copy of the GNU General Public License  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.  --><h1 mat-dialog-title>{{ tmpEntity.date | date }}: {{ tmpEntity.subject }}</h1><app-dialog-close mat-dialog-close=""></app-dialog-close><mat-dialog-content>  <div class="flex-column gap-regular">    <app-entity-archived-info [entity]="entity"></app-entity-archived-info>    <app-entity-form      [fieldGroups]="topFieldGroups"      [entity]="entity"      [form]="form"    >    </app-entity-form>    <!-- Primary information of Note -->    <div      class="mat-elevation-z2 flex-column gap-small padding-small margin-bottom-regular"    >      <div class="middle-form-field">        <app-entity-field-edit          [field]="middleForm[0]"          [entity]="entity"          [form]="form"        ></app-entity-field-edit>      </div>      <div class="textarea middle-form-field">        <app-entity-field-edit          [field]="middleForm[1]"          [entity]="entity"          [form]="form"        ></app-entity-field-edit>      </div>    </div>    <app-entity-form      [fieldGroups]="bottomFieldGroups"      [entity]="entity"      [form]="form"      style="margin-top: 10px"    ></app-entity-form>  </div></mat-dialog-content><mat-dialog-actions>  <app-dialog-buttons [form]="form" [entity]="entity">    <button      mat-menu-item      [appExportData]="[entity]"      format="csv"      [exportConfig]="exportConfig"      [filename]="        \'event_\' +        entity.toString()?.replace(\' \', \'-\') +        \'_\' +        (entity.date | date: \'YYYY-MM-dd\')      "    >      <fa-icon        class="color-accent standard-icon-with-text"        aria-label="download csv"        icon="download"        angulartics2On="click"        angularticsCategory="Note"        angularticsAction="single_note_csv_export"      ></fa-icon>      <span i18n="Download note details as CSV"> Download details </span>    </button>  </app-dialog-buttons></mat-dialog-actions></div>'
+    var COMPONENTS = [{'name': 'AccountPageComponent', 'selector': 'app-account-page'},{'name': 'ActivitiesOverviewComponent', 'selector': 'app-activities-overview'},{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AdminComponent', 'selector': 'app-admin'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': ''},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BooleanInputComponent', 'selector': 'app-boolean-input'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChildBlockComponent', 'selector': 'app-child-block'},{'name': 'ChildBlockTooltipComponent', 'selector': 'app-child-block-tooltip'},{'name': 'ChildrenListComponent', 'selector': 'app-children-list'},{'name': 'ChildSchoolOverviewComponent', 'selector': 'app-child-school-overview'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConfigImportComponent', 'selector': 'app-config-import'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDynamicPercentageComponent', 'selector': 'app-display-dynamic-percentage'},{'name': 'DisplayEntityArrayComponent', 'selector': 'app-display-entity-array'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDescriptionOnlyComponent', 'selector': 'app-edit-description-only'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntitySelectComponent', 'selector': 'app-entity-select'},{'name': 'EnumDropdownComponent', 'selector': 'app-enum-dropdown'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HistoricalDataComponent', 'selector': 'app-historical-data'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteAttendanceCountBlockComponent', 'selector': 'app-note-attendance-count-block'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecentAttendanceBlocksComponent', 'selector': 'app-recent-attendance-blocks'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodoCompletionComponent', 'selector': 'app-todo-completion'},{'name': 'TodoDetailsComponent', 'selector': 'app-todo-details'},{'name': 'TodoListComponent', 'selector': 'app-todo-list'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserAccountComponent', 'selector': 'app-user-account'},{'name': 'UserSecurityComponent', 'selector': 'app-user-security'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'EditComponent', 'selector': ''},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'NoteDetailsComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'NoteDetailsComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
