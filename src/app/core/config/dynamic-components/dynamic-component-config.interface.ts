@@ -1,5 +1,3 @@
-import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
-
 /**
  * This interface is set on the `data` property of the route.
  * It contains static data which are used to build components and manage permissions.
@@ -34,6 +32,4 @@ export interface DynamicComponentConfig<T = any> {
    * If not set, all logged-in users can visit the route.
    */
   permittedUserRoles?: string[];
-
-  viewContext?: ViewComponentContext;
 }

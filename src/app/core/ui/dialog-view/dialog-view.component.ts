@@ -17,7 +17,7 @@ import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-co
 import { AbstractViewComponent } from "../abstract-view/abstract-view.component";
 
 /**
- * Wrapper component for a primary, full page view
+ * Wrapper component for a modal/dialog view
  * that takes parameters from the dialog data and passes these on to normal @Input properties.
  *
  * This allows to develop functional feature components in a way to easily reuse them for display
