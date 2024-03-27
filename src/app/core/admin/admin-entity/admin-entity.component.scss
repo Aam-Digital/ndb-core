@@ -1,0 +1,29 @@
+@use "variables/colors";
+
+.host-container {
+  height: 100vh;
+}
+
+.header {
+  padding: 20px;
+  background-color: colors.$background-secondary;
+}
+.config-nav {
+  background-color: colors.$background-secondary;
+}
+
+.main-container {
+  width: 100%;
+  min-height: 0;
+  flex-grow: 1;
+}
+
+.config-component {
+  min-width: 0;
+  padding: 8px;
+  overflow-y: auto;
+
+  ::ng-deep app-view-title {
+    color: colors.$muted;
+  }
+}

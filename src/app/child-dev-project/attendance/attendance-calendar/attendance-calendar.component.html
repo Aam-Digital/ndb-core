@@ -48,15 +48,21 @@
     >
       All excused (out of
       {{ selectedEvent.children.length }}
-      { selectedEvent.children.length, plural, one {participant} other
-      {participants} } )
+      {selectedEvent.children.length, plural,
+        one {participant}
+        other {participants}
+      }
+      )
     </div>
     <div *ngIf="hasAverage" i18n>
       {{ selectedEventStats.average | percent: "1.0-0" }}
       attended (of
       {{ selectedEvent.children.length }}
-      { selectedEvent.children.length, plural, one {participant} other
-      {participants} })
+      {selectedEvent.children.length, plural,
+        one {participant}
+        other {participants}
+
+      })
     </div>
     <div
       *ngIf="selectedEventStats.excludedUnknown > 0"
@@ -64,8 +70,11 @@
       class="unknown-status-notice"
     >
       {{ selectedEventStats.excludedUnknown }}
-      { selectedEventStats.excludedUnknown, plural, one {participant} other
-      {participants} } without recorded status
+      {selectedEventStats.excludedUnknown, plural,
+        one {participant}
+        other {participants}
+      }
+      without recorded status
     </div>
     <button
       class="margin-top-regular"

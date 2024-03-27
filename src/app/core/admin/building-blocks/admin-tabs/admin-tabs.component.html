@@ -1,0 +1,55 @@
+<mat-tab-group [preserveContent]="true" #matTabGroup>
+  <mat-tab *ngFor="let tab of tabs; index as tabIndex">
+    <ng-template mat-tab-label>
+      <div
+        class="drop-list flex-row"
+        [id]="'tabs-' + tabIndex"
+        cdkDropList
+        cdkDropListOrientation="horizontal"
+        (cdkDropListDropped)="drop($event)"
+        [cdkDropListConnectedTo]="getAllTabs(tabIndex)"
+      >
+        <div
+          cdkDrag
+          cdkDragLockAxis="x"
+          class="flex-row align-center drop-item gap-small"
+        >
+          <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+          @if (tabIndex === matTabGroup.selectedIndex) {
+            <app-admin-section-header
+              [(title)]="tab['title'] ?? tab['name']"
+              (remove)="
+                tabs.splice(tabIndex, 1);
+                matTabGroup.selectedIndex = tabIndex - 1
+              "
+            ></app-admin-section-header>
+          } @else {
+            <!-- only current tab can be renamed -->
+            {{ tab["title"] ?? tab["name"] }}
+          }
+        </div>
+      </div>
+    </ng-template>
+
+    <ng-template matTabContent>
+      <ng-template
+        *ngTemplateOutlet="tabTemplate; context: { $implicit: tab }"
+      ></ng-template>
+    </ng-template>
+  </mat-tab>
+
+  <!-- Add new tab -->
+  <mat-tab>
+    <ng-template mat-tab-label>
+      <button
+        mat-stroked-button
+        color="accent"
+        matTooltip="add a new tab"
+        i18n-matTooltip
+        (click)="createTab()"
+      >
+        <fa-icon aria-label="add" icon="plus-circle"></fa-icon>
+      </button>
+    </ng-template>
+  </mat-tab>
+</mat-tab-group>

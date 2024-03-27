@@ -10,10 +10,7 @@ import { FilterConfig } from "../../entity-list/EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FilterGeneratorService } from "../filter-generator/filter-generator.service";
 import { ActivatedRoute, Router } from "@angular/router";
-import { ListFilterComponent } from "../list-filter/list-filter.component";
-import { NgForOf, NgIf } from "@angular/common";
-import { Angulartics2Module } from "angulartics2";
-import { DateRangeFilterComponent } from "../../basic-datatypes/date/date-range-filter/date-range-filter.component";
+import { NgComponentOutlet } from "@angular/common";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { FilterService } from "../filter.service";
 import { DataFilter, Filter } from "../filters/filters";
@@ -24,13 +21,7 @@ import { DataFilter, Filter } from "../filters/filters";
 @Component({
   selector: "app-filter",
   templateUrl: "./filter.component.html",
-  imports: [
-    ListFilterComponent,
-    NgForOf,
-    Angulartics2Module,
-    DateRangeFilterComponent,
-    NgIf,
-  ],
+  imports: [NgComponentOutlet],
   standalone: true,
 })
 export class FilterComponent<T extends Entity = Entity> implements OnChanges {
@@ -85,6 +76,12 @@ export class FilterComponent<T extends Entity = Entity> implements OnChanges {
         this.entities,
         this.onlyShowRelevantFilterOptions,
       );
+      for (const filter of this.filterSelections) {
+        filter.selectedOptionChange.subscribe((event) =>
+          this.filterOptionSelected(filter, event),
+        );
+      }
+
       this.loadUrlParams();
       this.applyFilterSelections();
     }

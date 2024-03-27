@@ -21,8 +21,7 @@ import { EntityDatatype } from "../entity/entity.datatype";
 import { ArrayDatatype } from "../array/array.datatype";
 
 /**
- * Datatype for the EntitySchemaService to handle multiple references to other entities
- * using EditEntityArrayComponent in the UI.
+ * Datatype for the EntitySchemaService to handle multiple references to other entities.
  * Stored as simple array of id strings.
  *
  * For example:
@@ -34,7 +33,7 @@ export class EntityArrayDatatype extends ArrayDatatype<string, string> {
   static override dataType = "entity-array";
   static override label: string = $localize`:datatype-label:link to other records (multi-select)`;
 
-  editComponent = "EditEntityArray";
+  editComponent = "EditEntity";
   viewComponent = "DisplayEntityArray";
 
   transformToDatabaseFormat(value, schema: EntitySchemaField, parent) {

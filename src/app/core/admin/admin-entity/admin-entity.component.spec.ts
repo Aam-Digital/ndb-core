@@ -5,33 +5,34 @@ import {
   tick,
 } from "@angular/core/testing";
 
-import { AdminEntityDetailsComponent } from "./admin-entity-details.component";
-import { ConfigService } from "../../../config/config.service";
-import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
+import { AdminEntityComponent } from "./admin-entity.component";
+import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
+import { ConfigService } from "../../config/config.service";
 import {
   mockEntityMapper,
   MockEntityMapperService,
-} from "../../../entity/entity-mapper/mock-entity-mapper-service";
-import { Config } from "../../../config/config";
-import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
-import { CoreModule } from "../../../core.module";
-import { CoreTestingModule } from "../../../../utils/core-testing.module";
-import { EntityTypeLabelPipe } from "../../../common-components/entity-type-label/entity-type-label.pipe";
+} from "../../entity/entity-mapper/mock-entity-mapper-service";
 import {
   EntityDetailsConfig,
   Panel,
-} from "../../../entity-details/EntityDetailsConfig";
-import { Entity } from "../../../entity/model/entity";
+} from "../../entity-details/EntityDetailsConfig";
+import { DatabaseEntity } from "../../entity/database-entity.decorator";
+import { Entity } from "../../entity/model/entity";
+import { DatabaseField } from "../../entity/database-field.decorator";
+import { Config } from "../../config/config";
+import { CoreTestingModule } from "../../../utils/core-testing.module";
+import { CoreModule } from "../../core.module";
+import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
 import { MatTabsModule } from "@angular/material/tabs";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
-import { EntitySchemaField } from "../../../entity/schema/entity-schema-field";
-import { DatabaseEntity } from "../../../entity/database-entity.decorator";
-import { DatabaseField } from "../../../entity/database-field.decorator";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 
-describe("AdminEntityDetailsComponent", () => {
-  let component: AdminEntityDetailsComponent;
-  let fixture: ComponentFixture<AdminEntityDetailsComponent>;
+describe("AdminEntityComponent", () => {
+  let component: AdminEntityComponent;
+  let fixture: ComponentFixture<AdminEntityComponent>;
 
   let mockConfigService: jasmine.SpyObj<ConfigService>;
   let entityMapper: MockEntityMapperService;
@@ -89,7 +90,7 @@ describe("AdminEntityDetailsComponent", () => {
         },
       ],
     });
-    fixture = TestBed.createComponent(AdminEntityDetailsComponent);
+    fixture = TestBed.createComponent(AdminEntityComponent);
     component = fixture.componentInstance;
 
     component.entityType = AdminTestEntity.ENTITY_TYPE;
@@ -99,20 +100,6 @@ describe("AdminEntityDetailsComponent", () => {
 
   it("should create", () => {
     expect(component).toBeTruthy();
-  });
-
-  it("should add new panel (tab) to config", () => {
-    component.createPanel();
-
-    expect(component.configDetailsView.panels.length).toBe(
-      viewConfig.panels.length + 1,
-    );
-  });
-
-  it("should add new section (component in panel) to config", () => {
-    component.addComponent(component.configDetailsView.panels[0]);
-
-    expect(component.configDetailsView.panels[0].components.length).toBe(1);
   });
 
   it("should reset all entity schema changes on cancel", () => {

@@ -3,7 +3,7 @@ import { HttpClient } from "@angular/common/http";
 import { Observable } from "rxjs";
 import { environment } from "../../../../../environments/environment";
 import { SessionInfo } from "../session-info";
-import { KeycloakService } from "keycloak-angular";
+import { KeycloakEventType, KeycloakService } from "keycloak-angular";
 import { LoggingService } from "../../../logging/logging.service";
 import { Entity } from "../../../entity/model/entity";
 import { User } from "../../../user/user";
@@ -29,7 +29,7 @@ export class KeycloakAuthService {
   ) {}
 
   /**
-   * Check for a existing session or forward to the login page.
+   * Check for an existing session or forward to the login page.
    */
   async login(): Promise<SessionInfo> {
     if (!this.keycloakInitialised) {
@@ -48,11 +48,23 @@ export class KeycloakAuthService {
         // Forward to the keycloak login page.
         await this.keycloak.login({ redirectUri: location.href });
       }
+
+      // auto-refresh expiring tokens, as suggested by https://github.com/mauriciovigolo/keycloak-angular?tab=readme-ov-file#keycloak-js-events
+      this.keycloak.keycloakEvents$.subscribe((event) => {
+        if (event.type == KeycloakEventType.OnTokenExpired) {
+          this.login().catch((err) =>
+            this.logger.debug("automatic token refresh failed", err),
+          );
+        }
+      });
     }
 
     return this.keycloak
       .updateToken()
-      .then(() => this.keycloak.getToken())
+      .then(() => {
+        return this.keycloak.getToken();
+        // TODO: should we notify the user to manually log in again when failing to refresh token?
+      })
       .then((token) => this.processToken(token));
   }
 

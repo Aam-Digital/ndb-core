@@ -59,7 +59,8 @@ export class DisplayEntityComponent
           this.entityId,
         );
       } catch (e) {
-        this.logger.warn(
+        // this may be caused by restrictive permissions and therefore shouldn't be treated as a technical issue
+        this.logger.debug(
           `[DISPLAY_ENTITY] Could not find entity with ID: ${this.entityId}: ${e}`,
         );
       }

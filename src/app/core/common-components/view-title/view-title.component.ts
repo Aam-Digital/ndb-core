@@ -72,7 +72,7 @@ export class ViewTitleComponent implements OnChanges {
      */
     return {
       position: "relative",
-      left: "-12px",
+      left: this.disableBackButton ? "unset" : "-12px",
     };
   }
 

@@ -33,47 +33,34 @@ describe("SyncService", () => {
   });
 
   it("should restart the sync if it fails at one point", fakeAsync(() => {
-    let errorCallback, pauseCallback;
-    const syncHandle = {
-      on: (action, callback) => {
-        if (action === "error") {
-          errorCallback = callback;
-        }
-        if (action === "paused") {
-          pauseCallback = callback;
-        }
-        return syncHandle;
-      },
-      cancel: () => undefined,
-    };
-    const syncSpy = jasmine
-      .createSpy()
-      .and.returnValues(Promise.resolve("first"), syncHandle, syncHandle);
+    const mockLocalDb = jasmine.createSpyObj(["sync"]);
     spyOn(
       TestBed.inject(Database) as PouchDatabase,
       "getPouchDB",
-    ).and.returnValue({ sync: syncSpy } as any);
+    ).and.returnValue(mockLocalDb);
+
+    loginState.next(LoginState.LOGGED_IN);
 
     service.startSync();
+
+    mockLocalDb.sync.and.resolveTo({});
     tick(1000);
+    expect(mockLocalDb.sync).toHaveBeenCalled();
 
-    // error + logged in -> sync should restart
-    loginState.next(LoginState.LOGGED_IN);
-    syncSpy.calls.reset();
-    errorCallback();
-    expect(syncSpy).toHaveBeenCalled();
+    mockLocalDb.sync.calls.reset();
+    mockLocalDb.sync.and.rejectWith("sync request server error");
+    tick(SyncService.SYNC_INTERVAL);
+    expect(mockLocalDb.sync).toHaveBeenCalled();
+    // expect no errors thrown in service
 
-    // pause -> no restart required
-    syncSpy.calls.reset();
-    pauseCallback();
-    expect(syncSpy).not.toHaveBeenCalled();
+    // continue sync intervals
+    mockLocalDb.sync.calls.reset();
+    mockLocalDb.sync.and.resolveTo({});
+    tick(SyncService.SYNC_INTERVAL);
+    expect(mockLocalDb.sync).toHaveBeenCalled();
 
-    // logout + error -> no restart
-    syncSpy.calls.reset();
-    loginState.next(LoginState.LOGGED_OUT);
-    tick();
-    errorCallback();
-    expect(syncSpy).not.toHaveBeenCalled();
+    service.liveSyncEnabled = false;
+    tick(SyncService.SYNC_INTERVAL);
   }));
 
   it("should try auto-login if fetch fails and fetch again", async () => {
@@ -110,7 +97,6 @@ describe("SyncService", () => {
     expect(mockAuthService.login).toHaveBeenCalled();
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
 
-    // prevent live sync call
-    service["cancelLiveSync"]();
+    service.liveSyncEnabled = false;
   });
 });

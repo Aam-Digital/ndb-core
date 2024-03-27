@@ -16,7 +16,7 @@ export const adminRoutes: Routes = [
     },
   },
   {
-    path: "entity/:entityType/details",
+    path: "entity/:entityType",
     component: RoutedViewComponent,
     data: {
       component: "AdminEntity",
