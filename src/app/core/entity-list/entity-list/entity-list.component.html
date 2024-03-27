@@ -3,8 +3,10 @@
   <!-- Header bar; contains the title on the left and controls on the right -->
   <app-view-title [ngStyle]="offsetFilterStyle">
     {{ title }}
+  </app-view-title>
 
-    <div class="flex-row gap-regular" actions>
+  <app-view-actions>
+    <div class="flex-row gap-regular">
       <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
 
       <app-entity-create-button
@@ -16,7 +18,7 @@
         <fa-icon icon="ellipsis-v"></fa-icon>
       </button>
     </div>
-  </app-view-title>
+  </app-view-actions>
 
   <!-- Filters -->
 

@@ -15,6 +15,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
 
+/**
+ * Building block for views, providing a consistent layout to a title section
+ * for both dialog and routed views.
+ */
 @Component({
   selector: "app-view-title",
   templateUrl: "./view-title.component.html",

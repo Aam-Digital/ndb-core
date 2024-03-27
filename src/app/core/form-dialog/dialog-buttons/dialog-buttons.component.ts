@@ -1,11 +1,10 @@
 import {
-  AfterViewInit,
   Component,
+  EventEmitter,
   Input,
   OnInit,
   Optional,
-  TemplateRef,
-  ViewChild,
+  Output,
 } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
@@ -42,12 +41,12 @@ import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.compo
   templateUrl: "./dialog-buttons.component.html",
   styleUrls: ["./dialog-buttons.component.scss"],
 })
-export class DialogButtonsComponent implements OnInit, AfterViewInit {
-  @ViewChild("template") template: TemplateRef<any>;
-
+export class DialogButtonsComponent implements OnInit {
   @Input() entity: Entity;
   @Input() form: FormGroup;
   detailsRoute: string;
+
+  @Output() closeView = new EventEmitter<any>();
 
   constructor(
     private entityFormService: EntityFormService,
@@ -59,7 +58,6 @@ export class DialogButtonsComponent implements OnInit, AfterViewInit {
     @Optional() protected viewContext: ViewComponentContext,
   ) {
     if (this.dialog) {
-      // TODO: generalize this logic to work in routed as well as dialog views
       this.initDialogSettings();
     }
   }
@@ -88,10 +86,6 @@ export class DialogButtonsComponent implements OnInit, AfterViewInit {
     }
   }
 
-  ngAfterViewInit(): void {
-    setTimeout(() => (this.viewContext.actions = this));
-  }
-
   private initializeDetailsRouteIfAvailable() {
     let route = this.entity.getConstructor().route;
     if (
@@ -109,7 +103,7 @@ export class DialogButtonsComponent implements OnInit, AfterViewInit {
         // Attachments are only saved once form is disabled
         this.form.disable();
         this.form.markAsPristine();
-        this.dialog.close(res);
+        this.close(res);
       })
       .catch((err) => {
         if (!(err instanceof InvalidFormFieldError)) {
@@ -118,9 +112,21 @@ export class DialogButtonsComponent implements OnInit, AfterViewInit {
       });
   }
 
+  cancel() {
+    this.unsavedChanges.pending = false;
+    this.close();
+  }
+
+  close(result?: any) {
+    this.dialog?.close(result);
+    this.closeView.emit(result);
+
+    this.unsavedChanges.pending = false;
+  }
+
   onAction(action: string) {
     if (action === "delete") {
-      this.dialog.close();
+      this.close();
     }
   }
 }

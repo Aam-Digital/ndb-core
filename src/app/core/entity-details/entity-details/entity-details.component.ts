@@ -19,6 +19,7 @@ import { UntilDestroy } from "@ngneat/until-destroy";
 import { AbilityModule } from "@casl/angular";
 import { RouteTarget } from "../../../route-target";
 import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstract-entity-details.component";
+import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 
 /**
  * This component can be used to display an entity in more detail.
@@ -52,6 +53,7 @@ import { AbstractEntityDetailsComponent } from "../abstract-entity-details/abstr
     RouterLink,
     AbilityModule,
     CommonModule,
+    ViewActionsComponent,
   ],
 })
 export class EntityDetailsComponent

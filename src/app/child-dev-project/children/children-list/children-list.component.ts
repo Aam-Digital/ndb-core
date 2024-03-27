@@ -35,6 +35,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
 import { AbilityModule } from "@casl/angular";
 import { EntityActionsMenuComponent } from "../../../core/entity-details/entity-actions-menu/entity-actions-menu.component";
+import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 
 @RouteTarget("ChildrenList")
 @Component({
@@ -71,6 +72,7 @@ import { EntityActionsMenuComponent } from "../../../core/entity-details/entity-
     AbilityModule,
     AsyncPipe,
     EntityActionsMenuComponent,
+    ViewActionsComponent,
   ],
 })
 export class ChildrenListComponent extends EntityListComponent<Child> {

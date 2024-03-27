@@ -6,6 +6,7 @@ import { ViewConfig } from "../../config/dynamic-routing/view-config.interface";
 import { RouteTarget } from "../../../route-target";
 import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
 import { AbstractViewComponent } from "../abstract-view/abstract-view.component";
+import { MatDialogActions } from "@angular/material/dialog";
 
 /**
  * Wrapper component for a primary, full page view
@@ -18,7 +19,12 @@ import { AbstractViewComponent } from "../abstract-view/abstract-view.component"
 @Component({
   selector: "app-routed-view",
   standalone: true,
-  imports: [CommonModule, DynamicComponentDirective, DynamicComponentPipe],
+  imports: [
+    CommonModule,
+    DynamicComponentDirective,
+    DynamicComponentPipe,
+    MatDialogActions,
+  ],
   templateUrl: "./routed-view.component.html",
 })
 export class RoutedViewComponent<T = any> extends AbstractViewComponent {

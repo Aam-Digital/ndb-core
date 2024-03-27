@@ -1,6 +1,6 @@
 import { Injector } from "@angular/core";
 import { ViewTitleComponent } from "../../common-components/view-title/view-title.component";
-import { DialogButtonsComponent } from "../../form-dialog/dialog-buttons/dialog-buttons.component";
+import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 
 /**
  * Base class for wrapper components like RoutedViewComponent or DialogViewComponent
@@ -28,7 +28,7 @@ export abstract class AbstractViewComponent {
  */
 export class ViewComponentContext {
   title: ViewTitleComponent;
-  actions: DialogButtonsComponent;
+  actions: ViewActionsComponent;
 
   constructor(public isDialog: boolean) {}
 }

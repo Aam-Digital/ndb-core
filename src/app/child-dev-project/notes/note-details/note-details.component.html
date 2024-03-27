@@ -46,28 +46,30 @@
     ></app-entity-form>
   </div>
 
-  <app-dialog-buttons [form]="form" [entity]="entity">
-    <button
-      mat-menu-item
-      [appExportData]="[entity]"
-      format="csv"
-      [exportConfig]="exportConfig"
-      [filename]="
-        'event_' +
-        entity.toString()?.replace(' ', '-') +
-        '_' +
-        (entity.date | date: 'YYYY-MM-dd')
-      "
-    >
-      <fa-icon
-        class="color-accent standard-icon-with-text"
-        aria-label="download csv"
-        icon="download"
-        angulartics2On="click"
-        angularticsCategory="Note"
-        angularticsAction="single_note_csv_export"
-      ></fa-icon>
-      <span i18n="Download note details as CSV"> Download details </span>
-    </button>
-  </app-dialog-buttons>
+  <app-view-actions>
+    <app-dialog-buttons [form]="form" [entity]="entity">
+      <button
+        mat-menu-item
+        [appExportData]="[entity]"
+        format="csv"
+        [exportConfig]="exportConfig"
+        [filename]="
+          'event_' +
+          entity.toString()?.replace(' ', '-') +
+          '_' +
+          (entity.date | date: 'YYYY-MM-dd')
+        "
+      >
+        <fa-icon
+          class="color-accent standard-icon-with-text"
+          aria-label="download csv"
+          icon="download"
+          angulartics2On="click"
+          angularticsCategory="Note"
+          angularticsAction="single_note_csv_export"
+        ></fa-icon>
+        <span i18n="Download note details as CSV"> Download details </span>
+      </button>
+    </app-dialog-buttons>
+  </app-view-actions>
 }

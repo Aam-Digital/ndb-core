@@ -45,6 +45,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
 import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
 import { AbilityModule } from "@casl/angular";
+import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
+import { EntityActionsMenuComponent } from "../../../core/entity-details/entity-actions-menu/entity-actions-menu.component";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -78,6 +80,8 @@ import { AbilityModule } from "@casl/angular";
     EntityCreateButtonComponent,
     AbilityModule,
     AsyncPipe,
+    EntityActionsMenuComponent,
+    ViewActionsComponent,
   ],
 })
 export class TodoListComponent

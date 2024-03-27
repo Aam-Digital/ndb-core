@@ -37,6 +37,7 @@ import { Router } from "@angular/router";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
 import { MatProgressBar } from "@angular/material/progress-bar";
+import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
@@ -62,6 +63,7 @@ import { MatProgressBar } from "@angular/material/progress-bar";
     EntityFieldEditComponent,
     ViewTitleComponent,
     MatProgressBar,
+    ViewActionsComponent,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,

@@ -1,4 +1,14 @@
-<ng-container *ngTemplateOutlet="viewContext?.title?.template"></ng-container>
+<div class="flex-row">
+  <div class="flex-grow">
+    <ng-container
+      *ngTemplateOutlet="viewContext?.title?.template"
+    ></ng-container>
+  </div>
+
+  <ng-container
+    *ngTemplateOutlet="viewContext?.actions?.template"
+  ></ng-container>
+</div>
 
 <ng-container
   *ngComponentOutlet="

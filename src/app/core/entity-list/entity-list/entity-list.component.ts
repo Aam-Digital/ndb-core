@@ -54,6 +54,7 @@ import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { AbilityModule } from "@casl/angular";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
+import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -95,6 +96,8 @@ import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-
     AbilityModule,
     AsyncPipe,
     EntityActionsMenuComponent,
+    ViewActionsComponent,
+    // WARNING: all imports here also need to be set for components extending EntityList, like ChildrenListComponent
   ],
   standalone: true,
 })
