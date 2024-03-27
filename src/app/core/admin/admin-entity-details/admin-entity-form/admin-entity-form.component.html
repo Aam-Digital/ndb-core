@@ -10,10 +10,15 @@
         cdkDropList
         [cdkDropListData]="{ group, index: i }"
         (cdkDropListDropped)="dropGroup($event)"
+        [cdkDropListConnectedTo]="dropLists"
       >
         <div cdkDrag>
           <div class="flex-row align-center">
-            <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+            <fa-icon
+              icon="grip-vertical"
+              size="xl"
+              class="drag-handle"
+            ></fa-icon>
             <!-- GROUP HEADER -->
             <app-admin-section-header
               [(title)]="group.header"
@@ -24,16 +29,21 @@
             cdkDropList
             [cdkDropListData]="group.fields"
             (cdkDropListDropped)="drop($event)"
+            [cdkDropListConnectedTo]="dropLists"
             class="fields-group-list drop-list"
           >
             <!-- FIELD [start] -->
             <div
-              *ngFor="let field of group.fields"
+              *ngFor="let field of group.fields; let j = index"
               class="admin-form-field flex-row align-center"
               cdkDrag
               cdkDragBoundary=".overall-container"
             >
-            <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+              <fa-icon
+                icon="grip-vertical"
+                size="xl"
+                class="drag-handle"
+              ></fa-icon>
 
               <button
                 mat-stroked-button
