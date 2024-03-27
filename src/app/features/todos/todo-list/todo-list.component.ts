@@ -13,7 +13,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Sort } from "@angular/material/sort";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { AnalyticsService } from "../../../core/analytics/analytics.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
@@ -102,7 +101,6 @@ export class TodoListComponent
     screenWidthObserver: ScreenWidthObserver,
     router: Router,
     activatedRoute: ActivatedRoute,
-    analyticsService: AnalyticsService,
     entityMapperService: EntityMapperService,
     entityActionsService: EntityActionsService,
     entities: EntityRegistry,
@@ -116,7 +114,6 @@ export class TodoListComponent
       screenWidthObserver,
       router,
       activatedRoute,
-      analyticsService,
       entityMapperService,
       entities,
       dialog,

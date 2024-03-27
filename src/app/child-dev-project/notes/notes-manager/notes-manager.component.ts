@@ -1,14 +1,15 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
-import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
-import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
+import {
+  ColumnGroupsConfig,
+  FilterConfig,
+} from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
-import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { merge } from "rxjs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { NgIf } from "@angular/common";
@@ -17,6 +18,9 @@ import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouteTarget } from "../../../route-target";
+import { Sort } from "@angular/material/sort";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -46,30 +50,28 @@ export interface NotesManagerConfig {
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {
+  // inputs to be passed through to EntityList
+  @Input() defaultSort: Sort;
+  @Input() exportConfig: ExportColumnConfig[];
+  @Input() showInactive: boolean;
+  @Input() title = "";
+  @Input() columns: (FormFieldConfig | string)[] = [];
+  @Input() columnGroups: ColumnGroupsConfig;
+  @Input() filters: FilterConfig[] = [];
+
   @Input() includeEventNotes: boolean;
   @Input() showEventNotesToggle: boolean;
 
-  config: EntityListConfig;
   entityConstructor = Note;
   notes: Note[];
 
   constructor(
     private formDialog: FormDialogService,
     private entityMapperService: EntityMapperService,
-    private route: ActivatedRoute,
   ) {}
 
   async ngOnInit() {
-    this.route.data.subscribe(
-      async (
-        data: DynamicComponentConfig<EntityListConfig & NotesManagerConfig>,
-      ) => {
-        // TODO replace this use of route and rely on the RoutedViewComponent instead
-        this.config = data.config;
-        this.notes = await this.loadEntities();
-      },
-    );
-
+    this.notes = await this.loadEntities();
     this.subscribeEntityUpdates();
   }
 

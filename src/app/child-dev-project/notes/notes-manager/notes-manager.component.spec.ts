@@ -2,15 +2,14 @@ import { NotesManagerComponent } from "./notes-manager.component";
 import {
   ComponentFixture,
   fakeAsync,
-  flush,
   TestBed,
   tick,
   waitForAsync,
 } from "@angular/core/testing";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { BehaviorSubject, of, Subject } from "rxjs";
+import { Router } from "@angular/router";
+import { of, Subject } from "rxjs";
 import { Note } from "../model/note";
 import {
   ConfigurableEnumFilterConfig,
@@ -34,7 +33,7 @@ describe("NotesManagerComponent", () => {
     ["openView"],
   );
 
-  const routeData: EntityListConfig = {
+  const config: EntityListConfig = {
     title: "Notes List",
     columns: [],
     columnGroups: {
@@ -64,12 +63,6 @@ describe("NotesManagerComponent", () => {
     ],
   };
 
-  const routeMock = {
-    data: new BehaviorSubject({ config: routeData }),
-    queryParams: of({}),
-    snapshot: { queryParams: {} },
-  };
-
   const testInteractionTypes: InteractionType[] = Ordering.imposeTotalOrdering([
     {
       id: "HOME_VISIT",
@@ -87,10 +80,7 @@ describe("NotesManagerComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [NotesManagerComponent, MockedTestingModule.withState()],
-      providers: [
-        { provide: FormDialogService, useValue: dialogMock },
-        { provide: ActivatedRoute, useValue: routeMock },
-      ],
+      providers: [{ provide: FormDialogService, useValue: dialogMock }],
     }).compileComponents();
 
     entityMapper = TestBed.inject(EntityMapperService);
@@ -174,11 +164,9 @@ describe("NotesManagerComponent", () => {
     tick();
 
     component.includeEventNotes = true;
-    routeMock.data.next({
-      config: routeData,
-    });
-
-    flush();
+    Object.assign(component, config);
+    component.ngOnInit();
+    tick();
 
     expect(component.notes).toEqual([note, eventNote]);
   }));

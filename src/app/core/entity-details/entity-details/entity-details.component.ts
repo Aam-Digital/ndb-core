@@ -88,15 +88,6 @@ export class EntityDetailsComponent
       creatingNew: this.entity.isNew,
     };
     if (typeof c.config === "object" && !Array.isArray(c.config)) {
-      if (c.config?.entity) {
-        this.logger.warn(
-          `DEPRECATION panel config uses 'entity' keyword: ${JSON.stringify(
-            c,
-          )}`,
-        );
-        c.config["entityType"] = c.config.entity;
-        delete c.config.entity;
-      }
       panelConfig = { ...c.config, ...panelConfig };
     } else {
       panelConfig.config = c.config;

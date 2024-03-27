@@ -161,7 +161,6 @@ export const defaultJsonConfig = {
   "view:note": {
     "component": "NotesManager",
     "config": {
-      "entityType": "Note",
       "title": $localize`:Title for notes overview:Notes & Reports`,
       "includeEventNotes": false,
       "showEventNotesToggle": true,

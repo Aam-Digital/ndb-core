@@ -15,7 +15,6 @@ import {
 } from "../EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
-import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
@@ -105,9 +104,6 @@ export class EntityListComponent<T extends Entity>
 {
   @Input() allEntities: T[];
 
-  /** @deprecated this is often used when this has a wrapper component (e.g. ChildrenList), preferably use individual @Input properties */
-  @Input() listConfig: EntityListConfig;
-
   @Input() entityType: string;
   @Input() entityConstructor: EntityConstructor<T>;
   @Input() defaultSort: Sort;
@@ -167,7 +163,6 @@ export class EntityListComponent<T extends Entity>
     private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private analyticsService: AnalyticsService,
     protected entityMapperService: EntityMapperService,
     private entities: EntityRegistry,
     private dialog: MatDialog,
@@ -192,9 +187,6 @@ export class EntityListComponent<T extends Entity>
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("listConfig")) {
-      Object.assign(this, this.listConfig);
-    }
     return this.buildComponentFromConfig();
   }
 
@@ -222,10 +214,16 @@ export class EntityListComponent<T extends Entity>
   }
 
   protected async loadEntities() {
-    this.allEntities = await this.entityMapperService.loadType(
-      this.entityConstructor,
-    );
+    this.allEntities = await this.getEntities();
     this.listenToEntityUpdates();
+  }
+
+  /**
+   * Template method that can be overwritten to change the loading logic.
+   * @protected
+   */
+  protected async getEntities(): Promise<T[]> {
+    return this.entityMapperService.loadType(this.entityConstructor);
   }
 
   private updateSubscription: Subscription;
@@ -262,10 +260,6 @@ export class EntityListComponent<T extends Entity>
   applyFilter(filterValue: string) {
     // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
     this.filterFreetext = filterValue.trim().toLowerCase();
-
-    this.analyticsService.eventTrack("list_filter_freetext", {
-      category: this.entityConstructor?.ENTITY_TYPE,
-    });
   }
 
   private displayColumnGroupByName(columnGroupName: string) {
