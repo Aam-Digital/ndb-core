@@ -1,9 +1,8 @@
 import {
   Component,
-  Inject,
   Input,
-  OnInit,
-  Optional,
+  OnChanges,
+  SimpleChanges,
   ViewEncapsulation,
 } from "@angular/core";
 import { Note } from "../model/note";
@@ -22,17 +21,29 @@ import {
 } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import { MatDialogModule } from "@angular/material/dialog";
 import { DialogButtonsComponent } from "../../../core/form-dialog/dialog-buttons/dialog-buttons.component";
 import { DialogCloseComponent } from "../../../core/common-components/dialog-close/dialog-close.component";
 import { EntityArchivedInfoComponent } from "../../../core/entity-details/entity-archived-info/entity-archived-info.component";
 import { EntityFieldEditComponent } from "../../../core/common-components/entity-field-edit/entity-field-edit.component";
 import { FieldGroup } from "../../../core/entity-details/form/field-group";
+import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
+import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
+import { AbstractEntityDetailsComponent } from "../../../core/entity-details/abstract-entity-details/abstract-entity-details.component";
+import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
+import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
+import { EntityAbility } from "../../../core/permissions/ability/entity-ability";
+import { Router } from "@angular/router";
+import { LoggingService } from "../../../core/logging/logging.service";
+import { UnsavedChangesService } from "../../../core/entity-details/form/unsaved-changes.service";
+import { MatProgressBar } from "@angular/material/progress-bar";
+import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
 
 /**
  * Component responsible for displaying the Note creation/view window
  */
 @UntilDestroy()
+@DynamicComponent("NoteDetails")
 @Component({
   selector: "app-note-details",
   templateUrl: "./note-details.component.html",
@@ -50,19 +61,33 @@ import { FieldGroup } from "../../../core/entity-details/form/field-group";
     DialogCloseComponent,
     EntityArchivedInfoComponent,
     EntityFieldEditComponent,
+    ViewTitleComponent,
+    MatProgressBar,
+    ViewActionsComponent,
   ],
   standalone: true,
   encapsulation: ViewEncapsulation.None,
 })
-export class NoteDetailsComponent implements OnInit {
+export class NoteDetailsComponent
+  extends AbstractEntityDetailsComponent
+  implements OnChanges
+{
   @Input() entity: Note;
+  entityConstructor = Note;
 
   /** export format for notes to be used for downloading the individual details */
   exportConfig: ExportColumnConfig[];
 
-  topForm = ["date", "warningLevel", "category", "authors", "attachment"];
-  middleForm = ["subject", "text"];
-  bottomForm = ["children", "schools"];
+  @Input() topForm = [
+    "date",
+    "warningLevel",
+    "category",
+    "authors",
+    "attachment",
+  ];
+  @Input() middleForm = ["subject", "text"];
+  @Input() bottomForm = ["children", "schools"];
+
   topFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
 
@@ -70,26 +95,32 @@ export class NoteDetailsComponent implements OnInit {
   tmpEntity: Note;
 
   constructor(
+    entityMapperService: EntityMapperService,
+    entities: EntityRegistry,
+    ability: EntityAbility,
+    router: Router,
+    logger: LoggingService,
+    unsavedChanges: UnsavedChangesService,
     private configService: ConfigService,
     private entityFormService: EntityFormService,
-    @Optional() @Inject(MAT_DIALOG_DATA) data: { entity: Note },
   ) {
-    if (data) {
-      this.entity = data.entity;
-    }
+    super(
+      entityMapperService,
+      entities,
+      ability,
+      router,
+      logger,
+      unsavedChanges,
+    );
+
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
     }>("view:note")?.config.exportConfig;
-
-    const formConfig = this.configService.getConfig<any>(
-      "appConfig:note-details",
-    );
-    this.topForm = formConfig?.topForm ?? this.topForm;
-    this.middleForm = formConfig?.middleForm ?? this.middleForm;
-    this.bottomForm = formConfig?.bottomForm ?? this.bottomForm;
   }
 
-  ngOnInit() {
+  async ngOnChanges(changes: SimpleChanges) {
+    await super.ngOnChanges(changes);
+
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 

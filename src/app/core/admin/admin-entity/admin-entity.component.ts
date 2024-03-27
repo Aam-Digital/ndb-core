@@ -167,7 +167,7 @@ export class AdminEntityComponent implements OnInit {
       targetConfig.data[detailsViewId].config = viewConfig;
     } else {
       // create new config
-      viewConfig.entity = this.entityType;
+      viewConfig.entityType = this.entityType;
       targetConfig.data[detailsViewId] = {
         component: componentForNewConfig,
         config: viewConfig,

@@ -1,0 +1,7 @@
+<ng-template #template>
+  <ng-content></ng-content>
+</ng-template>
+
+@if (!viewContext) {
+  <ng-container *ngTemplateOutlet="template"></ng-container>
+}

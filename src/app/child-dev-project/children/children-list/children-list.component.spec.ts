@@ -8,7 +8,6 @@ import {
   BooleanFilterConfig,
   EntityListConfig,
 } from "../../../core/entity-list/EntityListConfig";
-import { School } from "../../schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { DownloadService } from "../../../core/export/download-service/download.service";
 
@@ -101,9 +100,9 @@ describe("ChildrenListComponent", () => {
     const child1 = new Child("c1");
     const child2 = new Child("c2");
     mockChildrenService.getChildren.and.resolveTo([child1, child2]);
-    await component.ngOnInit();
+    await component.ngOnChanges({});
 
     expect(mockChildrenService.getChildren).toHaveBeenCalled();
-    expect(component.childrenList).toEqual([child1, child2]);
+    expect(component.allEntities).toEqual([child1, child2]);
   });
 });

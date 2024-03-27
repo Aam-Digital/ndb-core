@@ -120,6 +120,10 @@
         "file": "how-to-guides/create-new-entity-type.md"
       },
       {
+        "title": "Create a custom View Component",
+        "file": "how-to-guides/create-custom-view.md"
+      },
+      {
         "title": "Create an Entity Details Panel",
         "file": "how-to-guides/create-entity-details-panel.md"
       },

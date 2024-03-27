@@ -1,0 +1,21 @@
+<div mat-dialog-title>
+  <ng-container *ngTemplateOutlet="viewContext?.title?.template"></ng-container>
+  <div style="width: 24px"><!-- spacer for dialog close button--></div>
+  <app-dialog-close class="dialog-close" mat-dialog-close></app-dialog-close>
+</div>
+
+<div class="dialog-container" mat-dialog-content>
+  <ng-container
+    *ngComponentOutlet="
+      component | dynamicComponent | async;
+      inputs: config;
+      injector: componentInjector
+    "
+  ></ng-container>
+</div>
+
+<mat-dialog-actions>
+  <ng-container
+    *ngTemplateOutlet="viewContext?.actions?.template"
+  ></ng-container>
+</mat-dialog-actions>

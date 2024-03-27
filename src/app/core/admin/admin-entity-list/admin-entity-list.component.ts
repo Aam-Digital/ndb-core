@@ -62,7 +62,7 @@ export class AdminEntityListComponent implements OnChanges {
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
       this.config = this.config ?? {
-        entity: this.entityConstructor.ENTITY_TYPE,
+        entityType: this.entityConstructor.ENTITY_TYPE,
       };
       this.config.filters = this.config.filters ?? [];
 

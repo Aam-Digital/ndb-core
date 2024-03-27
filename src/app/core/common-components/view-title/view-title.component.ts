@@ -1,25 +1,40 @@
 import {
+  AfterViewInit,
   Component,
   HostBinding,
   Input,
-  OnChanges,
-  SimpleChanges,
+  Optional,
+  TemplateRef,
+  ViewChild,
 } from "@angular/core";
 import { getUrlWithoutParams } from "../../../utils/utils";
 import { Router } from "@angular/router";
-import { Location, NgIf } from "@angular/common";
+import { Location, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
+import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
 
+/**
+ * Building block for views, providing a consistent layout to a title section
+ * for both dialog and routed views.
+ */
 @Component({
   selector: "app-view-title",
   templateUrl: "./view-title.component.html",
   styleUrls: ["./view-title.component.scss"],
-  imports: [NgIf, MatButtonModule, MatTooltipModule, FontAwesomeModule],
+  imports: [
+    NgIf,
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    NgTemplateOutlet,
+  ],
   standalone: true,
 })
-export class ViewTitleComponent implements OnChanges {
+export class ViewTitleComponent implements AfterViewInit {
+  @ViewChild("template") template: TemplateRef<any>;
+
   /** The page title to be displayed */
   @Input() title: string;
 
@@ -36,8 +51,19 @@ export class ViewTitleComponent implements OnChanges {
   constructor(
     private router: Router,
     private location: Location,
+    @Optional() protected viewContext: ViewComponentContext,
   ) {
     this.parentUrl = this.findParentUrl();
+
+    if (this.viewContext?.isDialog) {
+      this.disableBackButton = true;
+    }
+  }
+
+  ngAfterViewInit(): void {
+    if (this.viewContext) {
+      setTimeout(() => (this.viewContext.title = this));
+    }
   }
 
   private findParentUrl(): string {
@@ -59,23 +85,5 @@ export class ViewTitleComponent implements OnChanges {
     }
   }
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("disableBackButton")) {
-      this.extraStyles = this.buildExtraStyles();
-    }
-  }
-
-  private buildExtraStyles() {
-    /* Moves the whole title component 12 pixels to the left so that
-     * the "go back" button is aligned with the left border. This class
-     * is applied conditionally when the "back" button is shown
-     */
-    return {
-      position: "relative",
-      left: this.disableBackButton ? "unset" : "-12px",
-    };
-  }
-
   @HostBinding("class") extraClasses = "mat-title";
-  @HostBinding("style") extraStyles = this.buildExtraStyles();
 }

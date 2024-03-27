@@ -21,26 +21,12 @@ Those background details aside, what that means for your implementation is:
 (e.g. `@Input() showDescription: boolean;`, which you can use in your template or code to adapt the component.)
 These values are automatically set to whatever value is specified in the config object for your component at runtime in the database.
 4. Register the new component in its parent module, so that it can be loaded under its name through the config.
+   (for details see [Create a custom View Component](./create-a-custom-view-component.html))
 
 An example config for the above:
 ```json
 {
   "component": "MySubView",
   "config": { "showDescription": true } 
-}
-```
-
-Use the `ComponentRegistry` to register your component,
-e.g. in its Module:
-```javascript
-export class MyModule {
-  constructor(components: ComponentRegistry) {
-    components.addAll([
-      [
-        "MySubView", // this is the name to use in the config document 
-        () => import("./my-sub-view/my-sub-view.component").then((c) => c.MySubViewComponent),
-      ],
-    ]);
-  }
 }
 ```
