@@ -299,7 +299,7 @@ export const defaultJsonConfig = {
         "name",
         { id: "DisplayParticipantsCount", viewComponent: "DisplayParticipantsCount", label: $localize`Children` },
         "privateSchool",
-        "language"
+        "language",
       ],
       "filters": [
         {
@@ -324,8 +324,7 @@ export const defaultJsonConfig = {
                 "fieldGroups": [
                   { "fields": ["name", "privateSchool"] },
                   { "fields": ["address", "phone"] },
-                  { "fields": ["language", "timing"] },
-                  { "fields": ["remarks"] }
+                  { "fields": ["language", "timing"] }
                 ]
               }
             }
