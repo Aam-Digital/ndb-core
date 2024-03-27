@@ -169,7 +169,6 @@ export class DownloadService {
       columnKeys.map((key) => item[key]),
     );
 
-    console.log("Peter labels", labels);
     console.log("orderedData:", JSON.stringify(orderedData));
 
     return this.papa.unparse(
@@ -187,7 +186,6 @@ export class DownloadService {
   private async mapEntity(item: Entity, columnLabels): Promise<Object> {
     let newItem = {};
     for (const key in item) {
-      console.log("Peter prüft key:", key);
       if (columnLabels.has(key)) {
         newItem[key] = item[key];
       }
@@ -197,23 +195,14 @@ export class DownloadService {
         if (Array.isArray(item[key])) {
           relatedEntitiesIdArray = item[key];
         } else {
-          relatedEntitiesIdArray = [...item[key]];
+          relatedEntitiesIdArray = item[key].split();
         }
         for (let relatedEntityId of relatedEntitiesIdArray) {
-          console.log("   Peter ist hier", key);
           const type = Entity.extractTypeFromId(relatedEntityId);
-          console.log(
-            "   Peter type:",
-            type,
-            "; relatedEntityId: ",
-            relatedEntityId,
-          );
           let relatedEntity: Entity = await this.entityMapperService.load(
             type,
             relatedEntityId,
           );
-          console.log("Peter entity", relatedEntity);
-          console.log("Peter entity.toString()", relatedEntity.toString());
           relatedEntitiesToStringArray.push(relatedEntity.toString());
         }
         newItem[key + "_readable"] = relatedEntitiesToStringArray;

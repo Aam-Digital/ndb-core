@@ -300,7 +300,6 @@ export const defaultJsonConfig = {
         { id: "DisplayParticipantsCount", viewComponent: "DisplayParticipantsCount", label: $localize`Children` },
         "privateSchool",
         "language",
-        "linkedSchool"
       ],
       "filters": [
         {
@@ -325,8 +324,7 @@ export const defaultJsonConfig = {
                 "fieldGroups": [
                   { "fields": ["name", "privateSchool"] },
                   { "fields": ["address", "phone"] },
-                  { "fields": ["language", "timing"] },
-                  { "fields": ["remarks", "linkedSchool"] }
+                  { "fields": ["language", "timing"] }
                 ]
               }
             }
@@ -832,11 +830,6 @@ export const defaultJsonConfig = {
       "remarks": {
         "dataType": "string",
         "label": $localize`:Label for the remarks for a school:Remarks`
-      },
-      "linkedSchool": {
-        "dataType": "entity",
-        "additional": "School",
-        "label": $localize`:Label for the remarks for a school:Linked School`
       }
     },
   },
