@@ -19,6 +19,11 @@ import {
 } from "@angular/material/tabs";
 import { MatTooltip } from "@angular/material/tooltip";
 import { AdminTabTemplateDirective } from "./admin-tab-template.directive";
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from "@angular/cdk/drag-drop";
 
 /**
  * Building block for drag&drop form builder to let an admin user manage multiple tabs.
@@ -50,6 +55,7 @@ import { AdminTabTemplateDirective } from "./admin-tab-template.directive";
     MatTabLabel,
     MatTooltip,
     AdminTabTemplateDirective,
+    DragDropModule,
   ],
   templateUrl: "./admin-tabs.component.html",
   styleUrl: "./admin-tabs.component.scss",
@@ -75,5 +81,41 @@ export class AdminTabsComponent<
       this.tabGroup.selectedIndex = newTabIndex;
       this.tabGroup.focusTab(newTabIndex);
     });
+  }
+
+  /**
+   * A list of tab element ids required for linking drag&drop targets
+   * due to the complex template of tab headers.
+   * @param index
+   */
+  getAllTabs(index: number) {
+    const allTabs = [];
+    for (let i = 0; i < this.tabs?.length; i++) {
+      if (i != index) {
+        allTabs.push("tabs-" + i);
+      }
+    }
+
+    return allTabs;
+  }
+
+  drop(event: CdkDragDrop<string[]>) {
+    const previousIndex = parseInt(
+      event.previousContainer.id.replace("tabs-", ""),
+    );
+    const currentIndex = parseInt(event.container.id.replace("tabs-", ""));
+
+    const previouslySelectedTab = this.tabs[this.tabGroup.selectedIndex];
+
+    moveItemInArray(this.tabs, previousIndex, currentIndex);
+
+    // re-select the previously selected tab, even after its index shifted
+    let shiftedSelectedIndex = this.tabs.indexOf(previouslySelectedTab);
+    if (shiftedSelectedIndex !== this.tabGroup.selectedIndex) {
+      this.tabGroup.selectedIndex = shiftedSelectedIndex;
+      this.tabGroup.focusTab(shiftedSelectedIndex);
+    }
+
+    this.tabs = JSON.parse(JSON.stringify(this.tabs)); // Needed to avoid Angular Ivy render bug
   }
 }
