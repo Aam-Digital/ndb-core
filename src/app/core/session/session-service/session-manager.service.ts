@@ -31,9 +31,10 @@ import { Database } from "../../database/database";
 import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 import { CurrentUserSubject } from "../current-user-subject";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
-import { filter } from "rxjs/operators";
+import { filter, take } from "rxjs/operators";
 import { Subscription } from "rxjs";
 import { Entity } from "../../entity/model/entity";
+import { ConfigService } from "../../config/config.service";
 
 /**
  * This service handles the user session.
@@ -58,6 +59,7 @@ export class SessionManagerService {
     private loginStateSubject: LoginStateSubject,
     private router: Router,
     @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
+    private configService: ConfigService,
     database: Database,
   ) {
     if (database instanceof PouchDatabase) {
@@ -101,7 +103,10 @@ export class SessionManagerService {
     this.sessionInfo.next(session);
     this.loginStateSubject.next(LoginState.LOGGED_IN);
     if (session.entityId) {
-      this.initUserEntity(session.entityId);
+      this.configService.configUpdates.pipe(take(1)).subscribe(() =>
+        // requires initial config to be loaded first!
+        this.initUserEntity(session.entityId),
+      );
     }
   }
 

@@ -220,20 +220,61 @@
     <span i18n> Bulk Actions </span>
   </button>
 
+  <button
+    mat-menu-item
+    [routerLink]="['/admin/entity', entityConstructor.ENTITY_TYPE]"
+    *ngIf="'update' | ablePure: 'Config' | async"
+  >
+    <fa-icon
+      class="standard-icon-with-text color-accent"
+      icon="tools"
+    ></fa-icon>
+    <span i18n>Edit Data Structure</span>
+  </button>
+
   <ng-content select="[mat-menu-item]"></ng-content>
 </mat-menu>
 
 <ng-template #bulkActions>
   <div *ngIf="!!selectedRows" class="bulk-action-button">
-    <div>Actions on selected records:</div>
+    <div i18n>Actions on selected records:</div>
 
-    <div class="flex-row gap-small bulk-action-button">
+    <div
+      class="flex-row gap-small bulk-action-button"
+      matTooltip="Select rows for an action on multiple records"
+      i18n-matTooltip
+    >
+      <button
+        mat-raised-button
+        (click)="archiveRecords()"
+        [disabled]="selectedRows.length === 0"
+        color="accent"
+        i18n="bulk action button"
+      >
+        Archive
+      </button>
+      <button
+        mat-raised-button
+        (click)="anonymizeRecords()"
+        [disabled]="selectedRows.length === 0"
+        color="accent"
+        i18n="bulk action button"
+      >
+        Anonymize
+      </button>
+      <button
+        mat-raised-button
+        (click)="deleteRecords()"
+        [disabled]="selectedRows.length === 0"
+        color="accent"
+        i18n="bulk action button"
+      >
+        Delete
+      </button>
       <button
         mat-raised-button
         (click)="duplicateRecords()"
         [disabled]="selectedRows.length === 0"
-        matTooltip="Select rows to clone"
-        i18n-matTooltip
         color="accent"
         i18n="bulk action button"
       >

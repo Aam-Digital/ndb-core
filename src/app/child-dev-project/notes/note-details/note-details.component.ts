@@ -79,7 +79,7 @@ export class NoteDetailsComponent implements OnInit {
     }
     this.exportConfig = this.configService.getConfig<{
       config: EntityListConfig;
-    }>("view:note").config.exportConfig;
+    }>("view:note")?.config.exportConfig;
 
     const formConfig = this.configService.getConfig<any>(
       "appConfig:note-details",

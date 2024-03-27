@@ -166,10 +166,9 @@ export class QueryService {
    */
   private getUncachedEntities(query: string, from: Date, to: Date) {
     return this.queryStringMap
-      .filter(
-        ([matcher]) =>
-          // matches query string without any alphanumeric characters before or after (e.g. so Child does not match ChildSchoolRelation)
-          query?.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`)),
+      .filter(([matcher]) =>
+        // matches query string without any alphanumeric characters before or after (e.g. so Child does not match ChildSchoolRelation)
+        query?.match(new RegExp(`(^|\\W)${matcher}(\\W|$)`)),
       )
       .map(([_, entity]) => entity)
       .filter((entity) => {
@@ -272,6 +271,13 @@ export class QueryService {
     }
 
     return ids
+      .filter((id) => {
+        if (typeof id !== "string") {
+          console.debug("invalid entity id in Query :toEntities", id);
+          return false;
+        }
+        return true;
+      })
       .map((id) => {
         const prefix = id.split(":")[0];
         return this.entities[prefix][id];

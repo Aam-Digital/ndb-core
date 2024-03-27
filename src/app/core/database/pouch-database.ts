@@ -422,6 +422,9 @@ export class PouchDatabase extends Database {
 class DatabaseException extends Error {
   constructor(error: PouchDB.Core.Error) {
     super();
+    if (error.status === 404) {
+      error.message = error.message + ` (${error["docId"]})`;
+    }
     Object.assign(this, error);
   }
 }

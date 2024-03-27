@@ -35,7 +35,7 @@ export class FormDialogService {
    */
   openFormPopup<E extends Entity, T = RowDetailsComponent>(
     entity: E,
-    columnsOverall: ColumnConfig[],
+    columnsOverall?: ColumnConfig[],
     component: ComponentType<T> = RowDetailsComponent as ComponentType<T>,
   ): MatDialogRef<T> {
     if (!columnsOverall) {

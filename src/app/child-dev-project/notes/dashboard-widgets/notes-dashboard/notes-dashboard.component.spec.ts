@@ -59,7 +59,7 @@ describe("NotesDashboardComponent", () => {
       component.ngOnInit();
       tick();
 
-      expect(component.dataSource.data).toHaveSize(3);
+      expect(component.entries).toHaveSize(3);
     }));
   });
 
@@ -92,9 +92,9 @@ describe("NotesDashboardComponent", () => {
 
       tick();
 
-      expect(component.dataSource.data).toHaveSize(3);
+      expect(component.entries).toHaveSize(3);
 
-      expect(component.dataSource.data[0]).toEqual({
+      expect(component.entries[0]).toEqual({
         entityId: "5",
         daysSinceLastNote: 50,
         moreThanDaysSince: false,
@@ -110,11 +110,11 @@ describe("NotesDashboardComponent", () => {
       component.ngOnInit();
       tick();
 
-      expect(component.dataSource.data).toHaveSize(1);
+      expect(component.entries).toHaveSize(1);
 
-      expect(component.dataSource.data[0].entityId).toBe(childId1);
-      expect(component.dataSource.data[0].moreThanDaysSince).toBeTrue();
-      expect(component.dataSource.data[0].daysSinceLastNote).toBeFinite();
+      expect(component.entries[0].entityId).toBe(childId1);
+      expect(component.entries[0].moreThanDaysSince).toBeTrue();
+      expect(component.entries[0].daysSinceLastNote).toBeFinite();
     }));
 
     it("should load notes related to the configured entity", () => {

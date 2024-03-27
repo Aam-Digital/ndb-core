@@ -96,6 +96,30 @@ describe("EntityFormComponent", () => {
     ]);
   });
 
+  it("should not remove fields when creating new and conditions are not met yet", async () => {
+    component.fieldGroups = [
+      { fields: ["foo", "bar"] },
+      { fields: ["name"] },
+      { fields: ["birthday"] },
+    ];
+
+    TestBed.inject(EntityAbility).update([
+      {
+        subject: "Child",
+        action: "manage",
+        fields: ["foo", "name"],
+        conditions: { name: "x" },
+      },
+    ]);
+
+    component.ngOnChanges({ entity: true, form: true } as any);
+
+    expect(component.fieldGroups).toEqual([
+      { fields: ["foo"] },
+      { fields: ["name"] },
+    ]);
+  });
+
   it("should not change anything if changed entity has same values as form", () => {
     return expectApplyChangesPopup(
       "not-shown",

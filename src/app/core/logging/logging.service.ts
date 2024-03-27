@@ -1,8 +1,8 @@
 import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
-import { environment } from "../../../environments/environment";
 import { BrowserOptions, SeverityLevel } from "@sentry/browser";
+import { environment } from "../../../environments/environment";
 
 /* eslint-disable no-console */
 
@@ -38,13 +38,19 @@ export class LoggingService {
   /**
    * Update a piece of context information that will be attached to all log messages for easier debugging,
    * especially in remote logging.
-   * @param tagName Identifier of the key-value pair
+   * @param key Identifier of the key-value pair
    * @param value Value of the key-value pair
+   * @param asTag If this should be added as indexed tag rather than simple context (see https://docs.sentry.io/platforms/javascript/enriching-events/tags/)
    */
-  static setLoggingContext(tagName: string, value: any) {
-    Sentry.configureScope((scope) => {
-      scope.setTag(tagName, value);
-    });
+  static addContext(key: string, value: any, asTag: boolean = false) {
+    if (asTag) {
+      Sentry.setTag(key, value);
+    } else {
+      if (typeof value !== "object") {
+        value = { value: value };
+      }
+      Sentry.getCurrentScope().setContext(key, value);
+    }
   }
 
   /**
@@ -59,9 +65,10 @@ export class LoggingService {
   /**
    * Log the message with "debug" level - for very detailed, non-essential information.
    * @param message
+   * @param context Additional context for debugging
    */
-  public debug(message: any) {
-    this.log(message, LogLevel.DEBUG);
+  public debug(message: any, ...context: any[]) {
+    this.log(message, LogLevel.DEBUG, ...context);
   }
 
   /**
@@ -92,38 +99,50 @@ export class LoggingService {
    * Generic logging of a message.
    * @param message Message to be logged
    * @param logLevel Optional log level - default is "info"
+   * @param context Additional context for debugging
    */
-  public log(message: any, logLevel: LogLevel = LogLevel.INFO) {
-    this.logToConsole(message, logLevel);
+  public log(
+    message: any,
+    logLevel: LogLevel = LogLevel.INFO,
+    ...context: any[]
+  ) {
+    this.logToConsole(message, logLevel, ...context);
 
     if (logLevel !== LogLevel.DEBUG && logLevel !== LogLevel.INFO) {
       this.logToRemoteMonitoring(message, logLevel);
     }
   }
 
-  private logToConsole(message: any, logLevel: LogLevel) {
+  private logToConsole(message: any, logLevel: LogLevel, ...context: any[]) {
     switch (+logLevel) {
       case LogLevel.DEBUG:
-        console.debug(message);
+        console.debug(message, ...context);
         break;
       case LogLevel.INFO:
-        console.info(message);
+        console.info(message, ...context);
         break;
       case LogLevel.WARN:
-        console.warn(message);
+        console.warn(message, ...context);
         break;
       case LogLevel.ERROR:
-        console.error(message);
+        console.error(message, ...context);
         break;
       default:
-        console.log(message);
+        console.log(message, ...context);
         break;
     }
   }
 
   private logToRemoteMonitoring(message: any, logLevel: LogLevel) {
     if (logLevel === LogLevel.ERROR) {
-      Sentry.captureException(message);
+      if (message instanceof Error) {
+        Sentry.captureException(message);
+      } else {
+        Sentry.captureException(
+          new Error(message?.message ?? message?.error ?? message),
+          message,
+        );
+      }
     } else {
       Sentry.captureMessage(message, this.translateLogLevel(logLevel));
     }

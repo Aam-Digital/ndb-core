@@ -9,6 +9,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { MatDialog } from "@angular/material/dialog";
 import { of } from "rxjs";
 import { EntityAbility } from "../../../permissions/ability/entity-ability";
+import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 
 describe("EnumDropdownComponent", () => {
   let component: EnumDropdownComponent;
@@ -72,14 +73,30 @@ describe("EnumDropdownComponent", () => {
     expect(component.invalidOptions).toEqual([invalidOption, invalid2]);
   });
 
-  it("should extend the existing enum with the new option", () => {
+  it("should extend the existing enum with the new option", async () => {
+    const confirmationSpy = spyOn(
+      TestBed.inject<ConfirmationDialogService>(ConfirmationDialogService),
+      "getConfirmation",
+    );
     const saveSpy = spyOn(TestBed.inject(EntityMapperService), "save");
+
     const enumEntity = new ConfigurableEnum();
     enumEntity.values = [{ id: "1", label: "first" }];
     component.enumEntity = enumEntity;
 
-    const res = component.createNewOption("second");
+    // abort if confirmation dialog declined
+    confirmationSpy.and.resolveTo(false);
+    const resCanceled = await component.createNewOption("second");
 
+    expect(confirmationSpy).toHaveBeenCalled();
+    expect(saveSpy).not.toHaveBeenCalled();
+    expect(resCanceled).toBeUndefined();
+
+    // create and save new upon confirmation
+    confirmationSpy.and.resolveTo(true);
+    const res = await component.createNewOption("second");
+
+    expect(confirmationSpy).toHaveBeenCalled();
     expect(res).toEqual({ id: "second", label: "second" });
     expect(enumEntity.values).toEqual([
       { id: "1", label: "first" },

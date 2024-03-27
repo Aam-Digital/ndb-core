@@ -1,0 +1,6 @@
+.square-button {
+  border-radius: 0 0 0 4px;
+}
+:host ::ng-deep .mat-mdc-icon-button .mat-mdc-button-persistent-ripple {
+  border-radius: 0 0 0 4px;
+}

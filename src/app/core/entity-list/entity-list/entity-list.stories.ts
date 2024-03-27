@@ -7,7 +7,6 @@ import { StorybookBaseModule } from "../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
 const user = new User();
-user.paginatorSettingsPageSize["ageprojectNumbernamegendercenterstatus"] = 13;
 
 export default {
   title: "Core/Entities/Entity List",

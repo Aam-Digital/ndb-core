@@ -1,6 +1,6 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
-import { EditEntityArrayComponent } from "../../../core/basic-datatypes/entity-array/edit-entity-array/edit-entity-array.component";
+import { EditEntityComponent } from "../../../core/basic-datatypes/entity-array/edit-entity/edit-entity.component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { startWith } from "rxjs/operators";
 import { FormControl } from "@angular/forms";
@@ -24,7 +24,7 @@ import { MatCardModule } from "@angular/material/card";
   selector: "app-edit-attendance",
   standalone: true,
   imports: [
-    EditEntityArrayComponent,
+    EditEntityComponent,
     NgIf,
     NgForOf,
     FontAwesomeModule,

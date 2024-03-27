@@ -30,6 +30,8 @@ import { AppSettings } from "../../core/app-settings";
 import { FileDatatype } from "./file.datatype";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../../core/session/session-type";
+import { map } from "rxjs/operators";
+import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -65,6 +67,12 @@ describe("CouchdbFileService", () => {
         {
           provide: SyncStateSubject,
           useValue: of(SyncState.COMPLETED),
+        },
+        {
+          provide: DomSanitizer,
+          useValue: {
+            bypassSecurityTrustUrl: (val: string) => val,
+          },
         },
       ],
     });
@@ -317,5 +325,23 @@ describe("CouchdbFileService", () => {
     service.loadFile(entity, "testProp").subscribe();
 
     expect(mockHttp.get).not.toHaveBeenCalled();
+  });
+
+  it("should return empty blob on error (without throwErrors flag)", async () => {
+    mockHttp.get.and.returnValue(
+      of({}).pipe(
+        map(() => {
+          throw new Error("test");
+        }),
+      ),
+    );
+    const entity = new Entity();
+    entity["file"] = "file.name";
+
+    const value: SafeUrl = await firstValueFrom(
+      service.loadFile(entity, "file"),
+    );
+
+    expect(value).toEqual("");
   });
 });

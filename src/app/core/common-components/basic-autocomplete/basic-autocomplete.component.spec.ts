@@ -24,7 +24,6 @@ import {
   Validators,
 } from "@angular/forms";
 import { genders } from "../../../child-dev-project/children/model/genders";
-import { ConfirmationDialogService } from "../confirmation-dialog/confirmation-dialog.service";
 
 describe("BasicAutocompleteComponent", () => {
   let component: BasicAutocompleteComponent<any, any>;
@@ -141,7 +140,11 @@ describe("BasicAutocompleteComponent", () => {
     component.showAutocomplete();
     component.autocomplete.openPanel();
     const options = await autocomplete.getOptions();
-    expect(options).toHaveSize(3);
+    expect(options).toHaveSize(
+      3 +
+        // includes a hidden option to enable footer display within the autocomplete panel
+        1,
+    );
 
     await options[2].click();
     // When browser is not in foreground, this doesn't happen automatically
@@ -184,16 +187,10 @@ describe("BasicAutocompleteComponent", () => {
   });
 
   it("should create new option", fakeAsync(() => {
+    const createOptionMock = jasmine.createSpy();
+
+    component.createOption = createOptionMock;
     const newOption = "new option";
-    const confirmationSpy = spyOn(
-      TestBed.inject<ConfirmationDialogService>(ConfirmationDialogService),
-      "getConfirmation",
-    );
-    component.createOption = (id) => ({ id: id, label: id });
-    const createOptionEventSpy = spyOn(
-      component,
-      "createOption",
-    ).and.callThrough();
     component.options = genders;
     const initialValue = genders[0].id;
     component.value = initialValue;
@@ -204,23 +201,21 @@ describe("BasicAutocompleteComponent", () => {
     component.showAutocomplete();
     component.autocompleteForm.setValue(newOption);
 
-    // decline confirmation for new option
-    confirmationSpy.and.resolveTo(false);
+    // decline creating new option
+    createOptionMock.and.resolveTo(undefined);
     component.select(newOption);
 
     tick();
-    expect(confirmationSpy).toHaveBeenCalled();
-    expect(createOptionEventSpy).not.toHaveBeenCalled();
+    expect(createOptionMock).toHaveBeenCalled();
     expect(component.value).toEqual(initialValue);
 
-    // confirm new option
-    confirmationSpy.calls.reset();
-    confirmationSpy.and.resolveTo(true);
+    // successfully add new option
+    createOptionMock.calls.reset();
+    createOptionMock.and.resolveTo({ id: newOption, label: newOption });
     component.select(newOption);
 
     tick();
-    expect(confirmationSpy).toHaveBeenCalled();
-    expect(createOptionEventSpy).toHaveBeenCalledWith(newOption);
+    expect(createOptionMock).toHaveBeenCalled();
     expect(component.value).toEqual(newOption);
   }));
 });

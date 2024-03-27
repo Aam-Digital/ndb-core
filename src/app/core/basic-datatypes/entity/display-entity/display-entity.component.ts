@@ -46,19 +46,21 @@ export class DisplayEntityComponent
   async ngOnInit() {
     if (!this.entityToDisplay) {
       this.entityId = this.entityId ?? this.value;
-      this.entityType = this.entityId.includes(":")
+      this.entityType = (this.entityId ?? "").includes(":")
         ? Entity.extractTypeFromId(this.entityId)
         : this.entityType ?? this.config;
       if (!this.entityType || !this.entityId) {
         return;
       }
+
       try {
         this.entityToDisplay = await this.entityMapper.load(
           this.entityType,
           this.entityId,
         );
       } catch (e) {
-        this.logger.warn(
+        // this may be caused by restrictive permissions and therefore shouldn't be treated as a technical issue
+        this.logger.debug(
           `[DISPLAY_ENTITY] Could not find entity with ID: ${this.entityId}: ${e}`,
         );
       }
