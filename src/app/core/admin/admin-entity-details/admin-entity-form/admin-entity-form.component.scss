@@ -19,7 +19,6 @@ $toolbar-width: 300px;
 .admin-grid-layout {
   display: flex;
   flex-wrap: wrap;
-  // gap: 20px;
   @include grid-layout.adaptive(
     $min-block-width: calc(#{sizes.$form-group-min-width} + 28px + 2*2*#{sizes.$small}),
     $max-screen-width: 414px

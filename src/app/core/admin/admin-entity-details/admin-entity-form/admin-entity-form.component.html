@@ -1,67 +1,74 @@
-<div class="overall-container flex-row">
+<div cdkDropListGroup class="overall-container flex-row">
   <!-- FORM PREVIEW -->
-  <div
-    class="flex-grow admin-grid-layout padding-right-regular"
-    cdkDropList
-    cdkDropListOrientation="horizontal"
-    (cdkDropListDropped)="dropGroup($event)"
-    cdkDropListGroup
-  >
+  <div class="flex-grow admin-grid-layout padding-right-regular">
     <!-- FIELD GROUPS -->
     <div
       *ngFor="let group of config.fieldGroups; let i = index"
       class="entity-form-cell admin-form-column section-container"
-      cdkDrag
-      [cdkDragData]="group"
     >
-      <!-- GROUP HEADER -->
-      <div class="flex-row align-center">
-        <fa-icon
-          icon="grip-vertical"
-          size="xl"
-          class="drag-handle"
-          cdkDragHandle
-        ></fa-icon>
-        <app-admin-section-header
-          [(title)]="group.header"
-          (remove)="removeGroup(i)"
-        ></app-admin-section-header>
-      </div>
-
       <div
         cdkDropList
-        [cdkDropListData]="group.fields"
-        (cdkDropListDropped)="drop($event)"
-        class="fields-group-list drop-list"
+        [cdkDropListData]="{ group, index: i }"
+        (cdkDropListDropped)="dropGroup($event)"
+        [cdkDropListConnectedTo]="dropLists"
       >
-        <!-- FIELD [start] -->
-        <div
-          *ngFor="let field of group.fields"
-          class="admin-form-field flex-row align-center"
-          cdkDrag
-          cdkDragBoundary=".overall-container"
-        >
-          <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+        <div cdkDrag [cdkDragData]="group">
+          <!-- GROUP HEADER -->
 
-          <button
-            mat-stroked-button
-            color="accent"
-            class="field-edit-button"
-            (click)="openFieldConfig(field)"
-            i18n="Button label"
+          <div class="flex-row align-center">
+            <fa-icon
+              icon="grip-vertical"
+              size="xl"
+              class="drag-handle"
+              cdkDragHandle
+            ></fa-icon>
+            <app-admin-section-header
+              [(title)]="group.header"
+              (remove)="removeGroup(i)"
+            ></app-admin-section-header>
+          </div>
+          <div
+            cdkDropList
+            [cdkDropListData]="group.fields"
+            (cdkDropListDropped)="drop($event)"
+            [cdkDropListConnectedTo]="dropLists"
+            class="fields-group-list drop-list"
           >
-            Edit Field
-          </button>
+            <!-- FIELD [start] -->
+            <div
+              *ngFor="let field of group.fields; let j = index"
+              class="admin-form-field flex-row align-center"
+              cdkDrag
+              [cdkDragData]="field"
+              cdkDragBoundary=".overall-container"
+            >
+              <fa-icon
+                icon="grip-vertical"
+                size="xl"
+                class="drag-handle"
+              ></fa-icon>
 
-          <div class="dummy-form-field">
-            <app-entity-field-edit
-              [field]="field"
-              [entity]="dummyEntity"
-              [form]="dummyForm"
-            ></app-entity-field-edit>
+              <button
+                mat-stroked-button
+                color="accent"
+                class="field-edit-button"
+                (click)="openFieldConfig(field)"
+                i18n="Button label"
+              >
+                Edit Field
+              </button>
+
+              <div class="dummy-form-field">
+                <app-entity-field-edit
+                  [field]="field"
+                  [entity]="dummyEntity"
+                  [form]="dummyForm"
+                ></app-entity-field-edit>
+              </div>
+            </div>
+            <!-- FIELD [end]-->
           </div>
         </div>
-        <!-- FIELD [end]-->
       </div>
     </div>
 
