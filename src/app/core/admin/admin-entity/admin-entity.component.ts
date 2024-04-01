@@ -16,6 +16,7 @@ import { EntityConfigService } from "../../entity/entity-config.service";
 import { Config } from "../../config/config";
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityConstructor } from "../../entity/model/entity";
+import { Entity } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
@@ -31,6 +32,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { RouterLink } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
+import { AdminEntityEditComponent } from "./admin-entity-edit/admin-entity-edit.component";
 
 @Component({
   selector: "app-admin-entity",
@@ -50,6 +52,7 @@ import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entit
     MatNavList,
     MatListItem,
     AdminEntityDetailsComponent,
+    AdminEntityEditComponent,
   ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",

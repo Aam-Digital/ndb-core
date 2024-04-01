@@ -52,7 +52,10 @@
           ></app-admin-entity-list>
         }
         @case ("general") {
-          <div>COMING SOON</div>
+          <app-admin-entity-edit
+            [entityConstructor]="entityConstructor"
+            [config]="configListView"
+          ></app-admin-entity-edit>
         }
       }
     </div>
