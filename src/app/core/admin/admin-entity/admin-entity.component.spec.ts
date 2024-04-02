@@ -30,7 +30,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { ActivatedRoute } from "@angular/router";
-import { of } from 'rxjs';
+import { of } from "rxjs";
 
 describe("AdminEntityComponent", () => {
   let component: AdminEntityComponent;
@@ -62,7 +62,7 @@ describe("AdminEntityComponent", () => {
       [entityConfigId]: {},
     };
     const mockActivatedRoute = {
-      queryParams: of({ mode: 'list' })
+      queryParams: of({ mode: "list" })
     };
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue(config[viewConfigId]);
