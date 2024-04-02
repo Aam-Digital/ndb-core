@@ -62,7 +62,7 @@ describe("AdminEntityComponent", () => {
       [entityConfigId]: {},
     };
     const mockActivatedRoute = {
-      queryParams: of({ mode: "list" })
+      queryParams: of({ mode: "list" }),
     };
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue(config[viewConfigId]);
