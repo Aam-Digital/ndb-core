@@ -42,7 +42,6 @@ import { BasicAutocompleteComponent } from "../../../common-components/basic-aut
 })
 export class AdminEntityEditComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
-  @Input() config: EntityListConfig;
 
   form: FormGroup;
   constructor(private fb: FormBuilder) {}

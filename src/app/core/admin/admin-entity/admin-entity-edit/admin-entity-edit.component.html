@@ -1,9 +1,9 @@
-<div>
-  <p i18n>
-    The entity settings here apply to the record type overall and affect both
-    the entity here in the current view as well as all other forms and lists
-    where this entity is displayed.
-  </p>
+<h2 i18n>Configure Static Field "{{ entityConstructor.label }}"</h2>
+<p i18n>
+  The entity settings here apply to the record type overall and affect both
+  the entity here in the current view as well as all other forms and lists
+  where this entity is displayed.
+</p>
 
   <form [formGroup]="form">
     <mat-tab-group formGroupName="staticDetails">
@@ -47,6 +47,23 @@
               />
             </mat-form-field>
           </div>
+          <div class="entity-form-cell">
+            <mat-form-field floatLabel="always">
+              <mat-label i18n>
+                String-Attributes
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="Optionally you can change the list of attributes which should be shown when calling the `.toString()` method of this entity"
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
+              <input
+                formControlName="toStringAttributes"
+                matInput
+                [placeholder]="formLabel.value"
+              />
+            </mat-form-field>
+          </div>
         </div>
       </mat-tab>
 
@@ -62,4 +79,3 @@
       </mat-tab>
     </mat-tab-group>
   </form>
-</div>
