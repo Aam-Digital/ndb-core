@@ -83,7 +83,6 @@ export class AdminEntityComponent implements OnInit {
       } else if (params.mode === "list") {
         this.mode = "list";
       }
-      this.location.replaceState(window.location.pathname, "");
     });
   }
 
