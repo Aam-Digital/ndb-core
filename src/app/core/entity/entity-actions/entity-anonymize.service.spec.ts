@@ -98,7 +98,7 @@ describe("EntityAnonymizeService", () => {
     }
   }
 
-  it("should anonymize and only keep properties marked to be retained", async () => {
+  it("should anonymize and only keep properties marked to be retained, setting others to 'null'", async () => {
     const entity = new AnonymizableEntity();
     entity.defaultField = "test";
     entity.retainedField = "test";
@@ -107,13 +107,12 @@ describe("EntityAnonymizeService", () => {
 
     AnonymizableEntity.expectAnonymized(
       entity.getId(),
-      AnonymizableEntity.create({ retainedField: "test" }),
+      AnonymizableEntity.create({ retainedField: "test", defaultField: null }),
     );
   });
 
   it("should anonymize and keep empty record without any fields", async () => {
     const entity = new AnonymizableEntity();
-    entity.defaultField = "test";
 
     await service.anonymizeEntity(entity);
 
@@ -140,6 +139,7 @@ describe("EntityAnonymizeService", () => {
       AnonymizableEntity.create({
         inactive: true,
         anonymized: true,
+        defaultField: null,
         ...entityProperties,
       }),
       true,
@@ -154,7 +154,11 @@ describe("EntityAnonymizeService", () => {
 
     AnonymizableEntity.expectAnonymized(
       entity.getId(),
-      AnonymizableEntity.create({ inactive: true, anonymized: true }),
+      AnonymizableEntity.create({
+        inactive: true,
+        anonymized: true,
+        defaultField: null,
+      }),
       true,
     );
   });
@@ -187,7 +191,7 @@ describe("EntityAnonymizeService", () => {
 
     AnonymizableEntity.expectAnonymized(
       entity.getId(),
-      AnonymizableEntity.create({}),
+      AnonymizableEntity.create({ file: null }),
     );
     expect(mockFileService.removeFile).toHaveBeenCalled();
   });
@@ -233,6 +237,12 @@ describe("EntityAnonymizeService", () => {
       expectedAnonymizedEntity.refComposite = anonEntity.refComposite;
       expectedAnonymizedEntity.inactive = true;
       expectedAnonymizedEntity.anonymized = true;
+
+      for (const [k, v] of Object.entries(actualEntity)) {
+        if (v === null) {
+          expectedAnonymizedEntity[k] = null;
+        }
+      }
 
       expect(comparableEntityData(actualEntity)).toEqual(
         comparableEntityData(expectedAnonymizedEntity),
