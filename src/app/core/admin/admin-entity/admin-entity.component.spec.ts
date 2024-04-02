@@ -29,6 +29,8 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityActionsService } from "../../entity/entity-actions/entity-actions.service";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { ActivatedRoute } from "@angular/router";
+import { of } from 'rxjs';
 
 describe("AdminEntityComponent", () => {
   let component: AdminEntityComponent;
@@ -59,7 +61,9 @@ describe("AdminEntityComponent", () => {
       [viewConfigId]: { component: "EntityDetails", config: viewConfig },
       [entityConfigId]: {},
     };
-
+    const mockActivatedRoute = {
+      queryParams: of({ mode: 'list' })
+    };
     mockConfigService = jasmine.createSpyObj(["getConfig"]);
     mockConfigService.getConfig.and.returnValue(config[viewConfigId]);
 
@@ -87,6 +91,10 @@ describe("AdminEntityComponent", () => {
         {
           provide: EntityActionsService,
           useValue: jasmine.createSpyObj(["showSnackbarConfirmationWithUndo"]),
+        },
+        {
+          provide: ActivatedRoute,
+          useValue: mockActivatedRoute,
         },
       ],
     });
