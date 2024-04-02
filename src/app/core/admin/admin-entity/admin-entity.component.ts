@@ -33,6 +33,7 @@ import { RouterLink } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityEditComponent } from "./admin-entity-edit/admin-entity-edit.component";
+import { FormGroup } from "@angular/forms";
 
 @Component({
   selector: "app-admin-entity",
@@ -60,7 +61,11 @@ import { AdminEntityEditComponent } from "./admin-entity-edit/admin-entity-edit.
 export class AdminEntityComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
+  @ContentChild(AdminEntityEditComponent) editComponent: AdminEntityEditComponent;
+
   private originalEntitySchemaFields: [string, EntitySchemaField][];
+  staticDetails: FormGroup;
+
 
   configDetailsView: EntityDetailsConfig;
   configListView: EntityListConfig;
@@ -105,6 +110,10 @@ export class AdminEntityComponent implements OnInit {
     return JSON.parse(JSON.stringify(viewConfig.config));
   }
 
+  handleStaticDetailsChange(formGroup: FormGroup) {
+    this.staticDetails = formGroup
+  }
+  
   cancel() {
     this.entityConstructor.schema = new Map(this.originalEntitySchemaFields);
     this.location.back();
@@ -129,6 +138,7 @@ export class AdminEntityComponent implements OnInit {
       this.configListView,
       "EntityList",
     );
+    console.log('Received static details form:', this.staticDetails);
     this.setEntityConfig(newConfig);
 
     await this.entityMapper.save(newConfig);
@@ -159,6 +169,10 @@ export class AdminEntityComponent implements OnInit {
       }
       entitySchemaConfig.attributes[fieldId] = field;
     }
+    entitySchemaConfig.label = this.staticDetails.value.staticDetails.label;
+    entitySchemaConfig.labelPlural = this.staticDetails.value.staticDetails.labelPlural;
+    entitySchemaConfig.icon = this.staticDetails.value.staticDetails.icon;
+    entitySchemaConfig.toStringAttributes = this.staticDetails.value.staticDetails.toStringAttributes;
   }
 
   private setViewConfig(

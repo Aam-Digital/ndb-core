@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, Output, EventEmitter, OnChanges, SimpleChanges  } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -40,17 +40,25 @@ import { BasicAutocompleteComponent } from "../../../common-components/basic-aut
     BasicAutocompleteComponent,
   ],
 })
-export class AdminEntityEditComponent implements OnInit {
+export class AdminEntityEditComponent implements OnInit, OnChanges {
   @Input() entityConstructor: EntityConstructor;
+  @Output() staticDetailsChange: EventEmitter<FormGroup> = new EventEmitter<FormGroup>();
+  
+  staticDetailsform: FormGroup;
 
-  form: FormGroup;
   constructor(private fb: FormBuilder) {}
+
   ngOnInit(): void {
     this.init();
   }
 
+  ngOnChanges(changes: SimpleChanges): void {
+      console.log(changes)
+  }
+
   private init() {
-    this.form = this.fb.group({
+    const toStringAttributesArray = this.fb.array(this.entityConstructor.toStringAttributes || []);
+    this.staticDetailsform = this.fb.group({
       staticDetails: this.fb.group({
         label: [this.entityConstructor.label, Validators.required],
         labelPlural: [this.entityConstructor.labelPlural],
@@ -61,5 +69,13 @@ export class AdminEntityEditComponent implements OnInit {
         ],
       }),
     });
+    this.staticDetailsform.valueChanges.subscribe(value => {
+      this.emitStaticDetails(); // Optionally, emit the initial value
+    });
+  }
+
+  emitStaticDetails() {
+    this.staticDetailsChange.emit(this.staticDetailsform);
   }
 }
+
