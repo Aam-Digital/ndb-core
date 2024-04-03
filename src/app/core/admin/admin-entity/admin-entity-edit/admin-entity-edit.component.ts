@@ -1,5 +1,5 @@
 import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
-import { Entity, EntityConstructor } from "../../../entity/model/entity";
+import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatInputModule } from "@angular/material/input";

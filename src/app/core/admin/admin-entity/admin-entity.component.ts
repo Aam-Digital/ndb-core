@@ -187,7 +187,10 @@ export class AdminEntityComponent implements OnInit {
       entityConfig.label = staticDetails.label;
       entityConfig.labelPlural = staticDetails.labelPlural;
       entityConfig.icon = staticDetails.icon;
-      entityConfig.toStringAttributes = staticDetails.toStringAttributes;
+      const attributesString = staticDetails.toStringAttributes[0];
+      entityConfig.toStringAttributes = attributesString
+        .split(",")
+        .map((item) => item.trim());
     }
   }
 
