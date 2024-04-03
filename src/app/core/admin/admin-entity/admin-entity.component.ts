@@ -146,7 +146,6 @@ export class AdminEntityComponent implements OnInit {
       this.configListView,
       "EntityList",
     );
-    console.log("Received static details form:", this.staticDetails);
     this.setEntityConfig(newConfig);
 
     await this.entityMapper.save(newConfig);
@@ -177,12 +176,14 @@ export class AdminEntityComponent implements OnInit {
       }
       entitySchemaConfig.attributes[fieldId] = field;
     }
-    entitySchemaConfig.label = this.staticDetails.value.staticDetails.label;
-    entitySchemaConfig.labelPlural =
-      this.staticDetails.value.staticDetails.labelPlural;
-    entitySchemaConfig.icon = this.staticDetails.value.staticDetails.icon;
-    entitySchemaConfig.toStringAttributes =
-      this.staticDetails.value.staticDetails.toStringAttributes;
+    if (this.staticDetails) {
+      entitySchemaConfig.label = this.staticDetails.value.staticDetails.label;
+      entitySchemaConfig.labelPlural =
+        this.staticDetails.value.staticDetails.labelPlural;
+      entitySchemaConfig.icon = this.staticDetails.value.staticDetails.icon;
+      entitySchemaConfig.toStringAttributes =
+        this.staticDetails.value.staticDetails.toStringAttributes;
+    }
   }
 
   private setViewConfig(
