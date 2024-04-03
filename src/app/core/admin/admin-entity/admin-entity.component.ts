@@ -28,7 +28,7 @@ import {
   MatSidenavContent,
 } from "@angular/material/sidenav";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { RouterLink } from "@angular/router";
+import { RouterLink, ActivatedRoute } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 
@@ -72,10 +72,18 @@ export class AdminEntityComponent implements OnInit {
     private location: Location,
     private entityMapper: EntityMapperService,
     private entityActionsService: EntityActionsService,
+    private routes: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.init();
+    this.routes.queryParams.subscribe((params) => {
+      if (params.mode === "details") {
+        this.mode = "details";
+      } else if (params.mode === "list") {
+        this.mode = "list";
+      }
+    });
   }
 
   private init() {
