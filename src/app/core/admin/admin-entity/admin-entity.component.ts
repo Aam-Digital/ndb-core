@@ -87,11 +87,7 @@ export class AdminEntityComponent implements OnInit {
   ngOnInit(): void {
     this.init();
     this.routes.queryParams.subscribe((params) => {
-      if (params.mode === "details") {
-        this.mode = "details";
-      } else if (params.mode === "list") {
-        this.mode = "list";
-      }
+      this.mode = params.mode;
     });
   }
 
