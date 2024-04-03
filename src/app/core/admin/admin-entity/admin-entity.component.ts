@@ -16,7 +16,6 @@ import { EntityConfigService } from "../../entity/entity-config.service";
 import { Config } from "../../config/config";
 import { EntityConfig } from "../../entity/entity-config";
 import { EntityConstructor } from "../../entity/model/entity";
-import { Entity } from "../../entity/model/entity";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
 import { EntityListConfig } from "../../entity-list/EntityListConfig";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
@@ -29,11 +28,10 @@ import {
   MatSidenavContent,
 } from "@angular/material/sidenav";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { RouterLink, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
-import { FormGroup } from "@angular/forms";
 
 @Component({
   selector: "app-admin-entity",
@@ -61,15 +59,12 @@ import { FormGroup } from "@angular/forms";
 export class AdminEntityComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
-  @ContentChild(AdminEntityGeneralSettingsComponent)
-  editComponent: AdminEntityGeneralSettingsComponent;
 
   private originalEntitySchemaFields: [string, EntitySchemaField][];
-  staticDetails: FormGroup;
 
   configDetailsView: EntityDetailsConfig;
   configListView: EntityListConfig;
-  generalView: EntityConfig;
+  configEntitySettings: EntityConfig;
 
   protected mode: "details" | "list" | "general" = "list";
 
@@ -112,10 +107,6 @@ export class AdminEntityComponent implements OnInit {
 
     // work on a deep copy as we are editing in place (for titles, sections, etc.)
     return JSON.parse(JSON.stringify(viewConfig.config));
-  }
-
-  handleStaticDetailsChange(formGroup: FormGroup) {
-    this.staticDetails = formGroup;
   }
 
   cancel() {
@@ -172,19 +163,12 @@ export class AdminEntityComponent implements OnInit {
       }
       entitySchemaConfig.attributes[fieldId] = field;
     }
-    this.setStaticDetailsToConfig(entitySchemaConfig);
-  }
-
-  private setStaticDetailsToConfig(entityConfig: EntityConfig): void {
-    if (this.staticDetails) {
-      const {
-        value: { staticDetails },
-      } = this.staticDetails;
-      entityConfig.label = staticDetails.label;
-      entityConfig.labelPlural = staticDetails.labelPlural;
-      entityConfig.icon = staticDetails.icon;
-      const attributesString = staticDetails.toStringAttributes[0];
-      entityConfig.toStringAttributes = attributesString
+    if (this.configEntitySettings) {
+      entitySchemaConfig.label = this.configEntitySettings.label;
+      entitySchemaConfig.labelPlural = this.configEntitySettings.labelPlural;
+      entitySchemaConfig.icon = this.configEntitySettings.icon;
+      const attributesString = this.configEntitySettings.toStringAttributes[0];
+      entitySchemaConfig.toStringAttributes = attributesString
         .split(",")
         .map((item) => item.trim());
     }

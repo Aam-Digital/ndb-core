@@ -1,4 +1,4 @@
-import { Component, Input, OnInit, Output, EventEmitter } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -17,6 +17,7 @@ import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
+import { EntityConfig } from "../../../entity/entity-config";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -40,10 +41,11 @@ import { BasicAutocompleteComponent } from "../../../common-components/basic-aut
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
-  @Output() staticDetailsChange: EventEmitter<FormGroup> =
-    new EventEmitter<FormGroup>();
+  @Output() generalSettingsChange: EventEmitter<EntityConfig> =
+    new EventEmitter<EntityConfig>();
 
-  staticDetailsform: FormGroup;
+  form: FormGroup;
+  basicSettingsForm: FormGroup;
 
   constructor(private fb: FormBuilder) {}
 
@@ -52,26 +54,27 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   private init() {
-    this.staticDetailsform = this.fb.group({
-      staticDetails: this.fb.group({
-        label: [this.entityConstructor.label, Validators.required],
-        labelPlural: [this.entityConstructor.labelPlural],
-        icon: [this.entityConstructor.icon, Validators.required],
-        toStringAttributes: [
-          this.entityConstructor.toStringAttributes,
-          Validators.required,
-        ],
-      }),
+    this.basicSettingsForm = this.fb.group({
+      label: [this.entityConstructor.label, Validators.required],
+      labelPlural: [this.entityConstructor.labelPlural],
+      icon: [this.entityConstructor.icon, Validators.required],
+      toStringAttributes: [
+        this.entityConstructor.toStringAttributes,
+        Validators.required,
+      ],
     });
-    this.staticDetailsform.valueChanges.subscribe((value) => {
+    this.form = this.fb.group({
+      basicSettings: this.basicSettingsForm,
+    });
+
+    this.form.valueChanges.subscribe((value) => {
       this.emitStaticDetails(); // Optionally, emit the initial value
     });
   }
 
   emitStaticDetails() {
-    const staticDetailsGroup = this.staticDetailsform.get("staticDetails");
     const toStringAttributesControl =
-      staticDetailsGroup.get("toStringAttributes");
+      this.basicSettingsForm.get("toStringAttributes");
     let toStringAttributesValue = toStringAttributesControl.value;
     // Convert toStringAttributesValue to an array if it's a string
     if (typeof toStringAttributesValue === "string") {
@@ -81,6 +84,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     toStringAttributesControl.setValue(toStringAttributesValue, {
       emitEvent: false,
     }); // Avoid triggering value change event
-    this.staticDetailsChange.emit(this.staticDetailsform);
+
+    const value = this.basicSettingsForm.getRawValue();
+    this.generalSettingsChange.emit(value);
   }
 }
