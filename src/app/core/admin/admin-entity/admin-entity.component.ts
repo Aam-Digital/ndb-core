@@ -176,13 +176,18 @@ export class AdminEntityComponent implements OnInit {
       }
       entitySchemaConfig.attributes[fieldId] = field;
     }
+    this.setStaticDetailsToConfig(entitySchemaConfig);
+  }
+
+  private setStaticDetailsToConfig(entityConfig: EntityConfig): void {
     if (this.staticDetails) {
-      entitySchemaConfig.label = this.staticDetails.value.staticDetails.label;
-      entitySchemaConfig.labelPlural =
-        this.staticDetails.value.staticDetails.labelPlural;
-      entitySchemaConfig.icon = this.staticDetails.value.staticDetails.icon;
-      entitySchemaConfig.toStringAttributes =
-        this.staticDetails.value.staticDetails.toStringAttributes;
+      const {
+        value: { staticDetails },
+      } = this.staticDetails;
+      entityConfig.label = staticDetails.label;
+      entityConfig.labelPlural = staticDetails.labelPlural;
+      entityConfig.icon = staticDetails.icon;
+      entityConfig.toStringAttributes = staticDetails.toStringAttributes;
     }
   }
 
