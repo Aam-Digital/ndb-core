@@ -5,15 +5,15 @@ import { MatInputModule } from "@angular/material/input";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { AdminEntityEditComponent } from "./admin-entity-edit.component";
+import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings.component";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
-describe("AdminEntityEditComponent", () => {
-  let component: AdminEntityEditComponent;
-  let fixture: ComponentFixture<AdminEntityEditComponent>;
+describe("AdminEntityGeneralSettingsComponent", () => {
+  let component: AdminEntityGeneralSettingsComponent;
+  let fixture: ComponentFixture<AdminEntityGeneralSettingsComponent>;
 
   // Mock EntityConstructor
   const mockEntityConstructor: EntityConstructor = class MockEntity extends Entity {
@@ -48,7 +48,7 @@ describe("AdminEntityEditComponent", () => {
   });
 
   beforeEach(() => {
-    fixture = TestBed.createComponent(AdminEntityEditComponent);
+    fixture = TestBed.createComponent(AdminEntityGeneralSettingsComponent);
     component = fixture.componentInstance;
     component.entityConstructor = mockEntityConstructor;
     fixture.detectChanges();

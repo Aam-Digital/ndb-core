@@ -52,10 +52,10 @@
           ></app-admin-entity-list>
         }
         @case ("general") {
-          <app-admin-entity-edit
+          <app-admin-entity-general-settings
             [entityConstructor]="entityConstructor"
             (staticDetailsChange)="handleStaticDetailsChange($event)"
-          ></app-admin-entity-edit>
+          ></app-admin-entity-general-settings>
         }
       }
     </div>

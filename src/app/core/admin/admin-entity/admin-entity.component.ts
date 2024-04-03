@@ -32,7 +32,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { RouterLink, ActivatedRoute } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
-import { AdminEntityEditComponent } from "./admin-entity-edit/admin-entity-edit.component";
+import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 import { FormGroup } from "@angular/forms";
 
 @Component({
@@ -53,7 +53,7 @@ import { FormGroup } from "@angular/forms";
     MatNavList,
     MatListItem,
     AdminEntityDetailsComponent,
-    AdminEntityEditComponent,
+    AdminEntityGeneralSettingsComponent,
   ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
@@ -61,8 +61,8 @@ import { FormGroup } from "@angular/forms";
 export class AdminEntityComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
-  @ContentChild(AdminEntityEditComponent)
-  editComponent: AdminEntityEditComponent;
+  @ContentChild(AdminEntityGeneralSettingsComponent)
+  editComponent: AdminEntityGeneralSettingsComponent;
 
   private originalEntitySchemaFields: [string, EntitySchemaField][];
   staticDetails: FormGroup;

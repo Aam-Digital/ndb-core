@@ -19,10 +19,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 
 @Component({
-  selector: "app-admin-entity-edit",
+  selector: "app-admin-entity-general-settings",
   standalone: true,
-  templateUrl: "./admin-entity-edit.component.html",
-  styleUrl: "./admin-entity-edit.component.scss",
+  templateUrl: "./admin-entity-general-settings.component.html",
+  styleUrl: "./admin-entity-general-settings.component.scss",
   imports: [
     MatButtonModule,
     DialogCloseComponent,
@@ -38,7 +38,7 @@ import { BasicAutocompleteComponent } from "../../../common-components/basic-aut
     BasicAutocompleteComponent,
   ],
 })
-export class AdminEntityEditComponent implements OnInit {
+export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
   @Output() staticDetailsChange: EventEmitter<FormGroup> =
     new EventEmitter<FormGroup>();
