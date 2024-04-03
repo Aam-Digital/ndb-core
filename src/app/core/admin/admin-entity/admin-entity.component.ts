@@ -61,11 +61,11 @@ import { FormGroup } from "@angular/forms";
 export class AdminEntityComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
-  @ContentChild(AdminEntityEditComponent) editComponent: AdminEntityEditComponent;
+  @ContentChild(AdminEntityEditComponent)
+  editComponent: AdminEntityEditComponent;
 
   private originalEntitySchemaFields: [string, EntitySchemaField][];
   staticDetails: FormGroup;
-
 
   configDetailsView: EntityDetailsConfig;
   configListView: EntityListConfig;
@@ -111,9 +111,9 @@ export class AdminEntityComponent implements OnInit {
   }
 
   handleStaticDetailsChange(formGroup: FormGroup) {
-    this.staticDetails = formGroup
+    this.staticDetails = formGroup;
   }
-  
+
   cancel() {
     this.entityConstructor.schema = new Map(this.originalEntitySchemaFields);
     this.location.back();
@@ -138,7 +138,7 @@ export class AdminEntityComponent implements OnInit {
       this.configListView,
       "EntityList",
     );
-    console.log('Received static details form:', this.staticDetails);
+    console.log("Received static details form:", this.staticDetails);
     this.setEntityConfig(newConfig);
 
     await this.entityMapper.save(newConfig);
@@ -170,9 +170,11 @@ export class AdminEntityComponent implements OnInit {
       entitySchemaConfig.attributes[fieldId] = field;
     }
     entitySchemaConfig.label = this.staticDetails.value.staticDetails.label;
-    entitySchemaConfig.labelPlural = this.staticDetails.value.staticDetails.labelPlural;
+    entitySchemaConfig.labelPlural =
+      this.staticDetails.value.staticDetails.labelPlural;
     entitySchemaConfig.icon = this.staticDetails.value.staticDetails.icon;
-    entitySchemaConfig.toStringAttributes = this.staticDetails.value.staticDetails.toStringAttributes;
+    entitySchemaConfig.toStringAttributes =
+      this.staticDetails.value.staticDetails.toStringAttributes;
   }
 
   private setViewConfig(

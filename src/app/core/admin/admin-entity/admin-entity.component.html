@@ -53,7 +53,8 @@
         }
         @case ("general") {
           <app-admin-entity-edit
-            [entityConstructor]="entityConstructor" (staticDetailsChange)="handleStaticDetailsChange($event)"
+            [entityConstructor]="entityConstructor"
+            (staticDetailsChange)="handleStaticDetailsChange($event)"
           ></app-admin-entity-edit>
         }
       }
