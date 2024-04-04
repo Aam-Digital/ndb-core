@@ -161,6 +161,22 @@ describe("AdminEntityFieldComponent", () => {
       generateIdFromLabel("test label"),
     );
   }));
+  it("should generate manually created 'additional' value for configurable-enum", fakeAsync(() => {
+    const dataTypeForm = component.schemaFieldsForm.get("dataType");
+    dataTypeForm.setValue(ConfigurableEnumDatatype.dataType);
+    tick();
+
+    let newAdditional;
+    component
+      .createNewAdditionalOptionAsync("newEnumId")
+      .then((result) => (newAdditional = result));
+    tick();
+
+    expect(newAdditional).toEqual({
+      label: "newEnumId",
+      value: "newEnumId",
+    });
+  }));
 
   it("should init 'additional' options for entity datatypes", fakeAsync(() => {
     const mockEntityTypes = [Entity, RecurringActivity];
