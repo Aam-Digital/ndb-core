@@ -127,7 +127,6 @@ fdescribe("DownloadService", () => {
   });
 
   it("should add columns with entity toString for referenced entities in export", async () => {
-    @DatabaseEntity("EntityRefDownloadTestEntity")
     class EntityRefDownloadTestEntity extends Entity {
       @DatabaseField({ dataType: "entity", label: "referenced entity" })
       relatedEntity: string;
@@ -142,7 +141,6 @@ fdescribe("DownloadService", () => {
     testEntity.relatedEntity2 = relatedEntity2.getId();
 
     const csvExport = await service.createCsv([testEntity]);
-    console.log("csvExport:", csvExport);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
@@ -154,11 +152,8 @@ fdescribe("DownloadService", () => {
     expect(columnValues).toContain('"' + relatedEntity2.toString() + '"');
   });
 
-  fit("should add column with entity toString for referenced array of entities in export", async () => {
-    @DatabaseEntity("EntityRefDownloadTestEntity")
+  it("should add column with entity toString for referenced array of entities in export", async () => {
     class EntityRefDownloadTestEntity extends Entity {
-      // @DatabaseField({ dataType: "entity", label: "referenced entity" })
-      // relatedEntity: string;
       @DatabaseField({ dataType: "entity-array", label: "referenced entities" })
       relatedEntitiesArray: string[];
     }
@@ -166,7 +161,6 @@ fdescribe("DownloadService", () => {
     testEntity.relatedEntitiesArray = [testSchool.getId(), testChild.getId()];
 
     const csvExport = await service.createCsv([testEntity]);
-    console.log("csvExport:", csvExport);
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line

@@ -8,7 +8,6 @@ import { Papa } from "ngx-papaparse";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { Entity } from "app/core/entity/model/entity";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
-import { DefaultDatatype } from "app/core/entity/default-datatype/default.datatype";
 import { EntityArrayDatatype } from "app/core/basic-datatypes/entity-array/entity-array.datatype";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
@@ -43,16 +42,6 @@ export class DownloadService {
     filename: string,
     exportConfig?: ExportColumnConfig[],
   ) {
-    console.log(
-      "trigger download with data: ",
-      data,
-      "; format: ",
-      format,
-      "; filename: ",
-      filename,
-      "; exportConfig: ",
-      exportConfig,
-    );
     const blobData = await this.getFormattedBlobData(
       data,
       format,
@@ -112,14 +101,10 @@ export class DownloadService {
     if (data.length > 0 && typeof data[0]?.getConstructor === "function") {
       entityConstructor = data[0].getConstructor();
     }
-    console.log("entity constructor: ", entityConstructor);
     const keys = new Set<string>();
-    console.log("data: ", data);
     data.forEach((row) => Object.keys(row).forEach((key) => keys.add(key)));
 
     data = data.map(transformToReadableFormat);
-
-    console.log("data after map: ", data);
 
     if (!entityConstructor) {
       return this.papa.unparse(data, {
@@ -131,7 +116,6 @@ export class DownloadService {
     }
 
     const result = await this.exportFile(data, entityConstructor);
-    console.log("result: ", result);
     return result;
   }
 
@@ -139,37 +123,27 @@ export class DownloadService {
     const entitySchema = entityConstructor.schema;
     const columnLabels = new Map<string, string>();
 
-    console.log("entitySchema: ", entitySchema);
-
     entitySchema.forEach((value: EntitySchemaField, key: string) => {
       if (value.label) {
         columnLabels.set(key, value.label);
         if (value.dataType === EntityDatatype.dataType) {
-          console.log("EntityDataType bei", value.label);
           columnLabels.set(key + "_readable", value.label + "_readable");
         }
         if (value.dataType === EntityArrayDatatype.dataType) {
-          console.log("EntityArrayDataType bei", value.label);
           columnLabels.set(key + "_readable", value.label + "_readable");
         }
       }
     });
 
-    console.log("columnLabels: ", columnLabels);
-
     const exportEntities = await Promise.all(
       data.map(async (item) => this.mapEntity(item, columnLabels)),
     );
-
-    console.log("exportEntities; ", exportEntities);
 
     const columnKeys: string[] = Array.from(columnLabels.keys());
     const labels: any[] = Array.from(columnLabels.values());
     const orderedData: any[] = exportEntities.map((item) =>
       columnKeys.map((key) => item[key]),
     );
-
-    console.log("orderedData:", JSON.stringify(orderedData));
 
     return this.papa.unparse(
       {
