@@ -324,7 +324,8 @@ export const defaultJsonConfig = {
                 "fieldGroups": [
                   { "fields": ["name", "privateSchool"] },
                   { "fields": ["address", "phone"] },
-                  { "fields": ["language", "timing"] }
+                  { "fields": ["language", "timing"] },
+                  { "fields": ["remarks"] }
                 ]
               }
             }
