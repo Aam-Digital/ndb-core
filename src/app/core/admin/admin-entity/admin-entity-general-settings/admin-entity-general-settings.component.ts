@@ -89,14 +89,17 @@ export class AdminEntityGeneralSettingsComponent implements OnChanges, OnInit {
     let toStringAttributesValue = toStringAttributesControl.value;
     // Convert toStringAttributesValue to an array if it's a string
     if (typeof toStringAttributesValue === "string") {
-      toStringAttributesValue = [toStringAttributesValue];
+      toStringAttributesValue = toStringAttributesValue
+        .split(",")
+        .map((item) => item.trim());
     }
+
     // Update the form control with the modified value
     toStringAttributesControl.setValue(toStringAttributesValue, {
       emitEvent: false,
-    }); // Avoid triggering value change event
+    });
 
-    const value = this.basicSettingsForm.getRawValue();
-    this.generalSettingsChange.emit(value);
+    // Emit the updated value
+    this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
   }
 }

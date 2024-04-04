@@ -168,10 +168,8 @@ export class AdminEntityComponent implements OnInit {
       entitySchemaConfig.label = this.configEntitySettings.label;
       entitySchemaConfig.labelPlural = this.configEntitySettings.labelPlural;
       entitySchemaConfig.icon = this.configEntitySettings.icon;
-      const attributesString = this.configEntitySettings.toStringAttributes[0];
-      entitySchemaConfig.toStringAttributes = attributesString
-        .split(",")
-        .map((item) => item.trim());
+      entitySchemaConfig.toStringAttributes =
+        this.configEntitySettings.toStringAttributes;
     }
   }
 
