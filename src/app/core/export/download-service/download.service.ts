@@ -126,10 +126,10 @@ export class DownloadService {
     entitySchema.forEach((value: EntitySchemaField, key: string) => {
       if (value.label) {
         columnLabels.set(key, value.label);
-        if (value.dataType === EntityDatatype.dataType) {
-          columnLabels.set(key + "_readable", value.label + "_readable");
-        }
-        if (value.dataType === EntityArrayDatatype.dataType) {
+        if (
+          value.dataType === EntityDatatype.dataType ||
+          value.dataType === EntityArrayDatatype.dataType
+        ) {
           columnLabels.set(key + "_readable", value.label + "_readable");
         }
       }
@@ -164,22 +164,21 @@ export class DownloadService {
         newItem[key] = item[key];
       }
       if (columnLabels.has(key + "_readable")) {
-        let relatedEntitiesIdArray: string[] = [];
-        let relatedEntitiesToStringArray: string[] = [];
-        if (Array.isArray(item[key])) {
-          relatedEntitiesIdArray = item[key];
-        } else {
-          relatedEntitiesIdArray = item[key].split();
-        }
-        for (let relatedEntityId of relatedEntitiesIdArray) {
-          const type = Entity.extractTypeFromId(relatedEntityId);
-          let relatedEntity: Entity = await this.entityMapperService.load(
-            type,
-            relatedEntityId,
+        const relatedEntitiesIds: string[] = Array.isArray(item[key])
+          ? item[key]
+          : item[key].split();
+        let relatedEntitiesToStrings: string[] = [];
+        for (let relatedEntityId of relatedEntitiesIds) {
+          relatedEntitiesToStrings.push(
+            (
+              await this.entityMapperService.load(
+                Entity.extractTypeFromId(relatedEntityId),
+                relatedEntityId,
+              )
+            ).toString(),
           );
-          relatedEntitiesToStringArray.push(relatedEntity.toString());
         }
-        newItem[key + "_readable"] = relatedEntitiesToStringArray;
+        newItem[key + "_readable"] = relatedEntitiesToStrings;
       }
     }
     return newItem;

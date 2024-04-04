@@ -13,7 +13,7 @@ import { School } from "app/child-dev-project/schools/model/school";
 import { Child } from "app/child-dev-project/children/model/child";
 import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
 
-fdescribe("DownloadService", () => {
+describe("DownloadService", () => {
   let service: DownloadService;
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
   let mockedEntityMapper;
