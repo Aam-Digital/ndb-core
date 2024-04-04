@@ -28,17 +28,19 @@ export class ListFilterComponent<E extends Entity> {
   @Input({ transform: (value: any) => value as SelectableFilter<E> })
   filterConfig: SelectableFilter<E>;
 
-  selectedOptions: string[];
-
   selectAll() {
-    this.selectedOptions = this.filterConfig.options.map(
+    this.filterConfig.selectedOptionValues = this.filterConfig.options.map(
       (option) => option.key,
     );
-    this.filterConfig.selectedOptionChange.emit(this.selectedOptions);
+    this.filterConfig.selectedOptionChange.emit(
+      this.filterConfig.selectedOptionValues,
+    );
   }
 
   deselectAll() {
-    this.selectedOptions = [];
-    this.filterConfig.selectedOptionChange.emit(this.selectedOptions);
+    this.filterConfig.selectedOptionValues = [];
+    this.filterConfig.selectedOptionChange.emit(
+      this.filterConfig.selectedOptionValues,
+    );
   }
 }

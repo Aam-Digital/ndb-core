@@ -63,7 +63,7 @@ describe("SyncService", () => {
     tick(SyncService.SYNC_INTERVAL);
   }));
 
-  it("should try auto-login if fetch fails and fetch again", async () => {
+  it("should try auto-login if fetch fails and fetch again", fakeAsync(() => {
     // Make sync call pass
     spyOn(
       TestBed.inject(Database) as PouchDatabase,
@@ -83,13 +83,17 @@ describe("SyncService", () => {
     });
     mockAuthService.login.and.resolveTo();
     const initSpy = spyOn(service["remoteDatabase"], "initRemoteDB");
-    await service.startSync();
+    service.startSync();
+    tick();
     // taking fetch function from init call
     const fetch = initSpy.calls.mostRecent().args[1];
 
     const url = "/db/_changes";
     const opts = { headers: {} };
-    await expectAsync(fetch(url, opts)).toBeResolved();
+    let fetchResult;
+    fetch(url, opts).then((res) => (fetchResult = res));
+    tick();
+    expect(fetchResult).toBeDefined();
 
     expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
     expect(PouchDB.fetch).toHaveBeenCalledWith(url, opts);
@@ -98,5 +102,6 @@ describe("SyncService", () => {
     expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
 
     service.liveSyncEnabled = false;
-  });
+    tick(SyncService.SYNC_INTERVAL);
+  }));
 });
