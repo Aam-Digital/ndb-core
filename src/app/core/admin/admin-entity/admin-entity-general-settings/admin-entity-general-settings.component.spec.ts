@@ -51,6 +51,7 @@ describe("AdminEntityGeneralSettingsComponent", () => {
     fixture = TestBed.createComponent(AdminEntityGeneralSettingsComponent);
     component = fixture.componentInstance;
     component.entityConstructor = mockEntityConstructor;
+    component.config = { label: "Test Label" };
     fixture.detectChanges();
   });
 

@@ -139,28 +139,35 @@ describe("AdminEntityComponent", () => {
     component.configDetailsView.panels.push(newPanel);
 
     component.save();
-    tick();
+    fixture.whenStable().then(() => {
+      const expectedViewConfig = {
+        entity: AdminTestEntity.ENTITY_TYPE,
+        panels: [{ title: "Tab 1", components: [] }, newPanel],
+      };
+      const expectedEntityConfig = {
+        label: "AdminTest",
+        labelPlural: "AdminTest",
+        icon: "child",
+        toStringAttributes: ["entityId"],
+        attributes: jasmine.objectContaining({
+          testField: newSchemaField,
+        }),
+      };
 
-    const expectedViewConfig = {
-      entity: AdminTestEntity.ENTITY_TYPE,
-      panels: [{ title: "Tab 1", components: [] }, newPanel],
-    };
-    const expectedEntityConfig = {
-      attributes: jasmine.objectContaining({
-        testField: newSchemaField,
-      }),
-    };
-
-    const actual: Config = entityMapper.get(
-      Config.ENTITY_TYPE,
-      Config.CONFIG_KEY,
-    ) as Config;
-    expect(actual.data[viewConfigId]).toEqual({
-      component: "EntityDetails",
-      config: expectedViewConfig,
+      const actual: Config = entityMapper.get(
+        Config.ENTITY_TYPE,
+        Config.CONFIG_KEY,
+      ) as Config;
+      expect(actual.data[viewConfigId]).toEqual({
+        component: "EntityDetails",
+        config: expectedViewConfig,
+      });
+      expect(actual.data[entityConfigId]).toEqual(expectedEntityConfig);
+      expect(component.configEntitySettings).toEqual(
+        component.entityConstructor,
+      );
+      AdminTestEntity.schema.delete("testField");
     });
-    expect(actual.data[entityConfigId]).toEqual(expectedEntityConfig);
-
-    AdminTestEntity.schema.delete("testField");
+    tick();
   }));
 });

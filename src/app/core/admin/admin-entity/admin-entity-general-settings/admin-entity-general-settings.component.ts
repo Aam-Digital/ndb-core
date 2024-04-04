@@ -5,6 +5,7 @@ import {
   Output,
   OnChanges,
   SimpleChanges,
+  OnInit,
 } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -46,7 +47,7 @@ import { EntityConfig } from "../../../entity/entity-config";
     BasicAutocompleteComponent,
   ],
 })
-export class AdminEntityGeneralSettingsComponent implements OnChanges {
+export class AdminEntityGeneralSettingsComponent implements OnChanges, OnInit {
   @Input() entityConstructor: EntityConstructor;
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
@@ -55,6 +56,10 @@ export class AdminEntityGeneralSettingsComponent implements OnChanges {
   basicSettingsForm: FormGroup;
 
   constructor(private fb: FormBuilder) {}
+
+  ngOnInit(): void {
+    this.init();
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
