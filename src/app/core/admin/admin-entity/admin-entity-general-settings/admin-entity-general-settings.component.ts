@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  Output,
+  OnChanges,
+  SimpleChanges,
+} from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -39,29 +46,28 @@ import { EntityConfig } from "../../../entity/entity-config";
     BasicAutocompleteComponent,
   ],
 })
-export class AdminEntityGeneralSettingsComponent implements OnInit {
+export class AdminEntityGeneralSettingsComponent implements OnChanges {
   @Input() entityConstructor: EntityConstructor;
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
-
+  @Input() config: EntityConfig;
   form: FormGroup;
   basicSettingsForm: FormGroup;
 
   constructor(private fb: FormBuilder) {}
 
-  ngOnInit(): void {
-    this.init();
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.config) {
+      this.init();
+    }
   }
 
   private init() {
     this.basicSettingsForm = this.fb.group({
-      label: [this.entityConstructor.label, Validators.required],
-      labelPlural: [this.entityConstructor.labelPlural],
-      icon: [this.entityConstructor.icon, Validators.required],
-      toStringAttributes: [
-        this.entityConstructor.toStringAttributes,
-        Validators.required,
-      ],
+      label: [this.config.label, Validators.required],
+      labelPlural: [this.config.labelPlural],
+      icon: [this.config.icon, Validators.required],
+      toStringAttributes: [this.config.toStringAttributes, Validators.required],
     });
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,

@@ -98,6 +98,7 @@ export class AdminEntityComponent implements OnInit {
     this.configListView = this.loadViewConfig(
       EntityConfigService.getListViewId(this.entityConstructor),
     );
+    this.configEntitySettings = this.entityConstructor;
   }
 
   private loadViewConfig<C = EntityDetailsConfig | EntityListConfig>(

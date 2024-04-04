@@ -55,6 +55,7 @@
           <app-admin-entity-general-settings
             [entityConstructor]="entityConstructor"
             (generalSettingsChange)="configEntitySettings = $event"
+            [config]="configEntitySettings"
           ></app-admin-entity-general-settings>
         }
       }
