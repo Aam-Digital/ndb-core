@@ -46,6 +46,7 @@ describe("AdminEntityComponent", () => {
   @DatabaseEntity("AdminTest")
   class AdminTestEntity extends Entity {
     static readonly ENTITY_TYPE = "AdminTest";
+    static label = "Admin Test";
 
     @DatabaseField({ label: "Name" }) name: string;
   }
@@ -112,17 +113,23 @@ describe("AdminEntityComponent", () => {
 
   it("should reset all entity schema changes on cancel", () => {
     // simulate schema changes done through the field config popup form
-    AdminTestEntity.schema.set("testField", { label: "New field" });
+    AdminTestEntity.schema.set("testCancelField", { label: "New field" });
     const existingField = AdminTestEntity.schema.get("name");
     const originalLabelOfExisting = existingField.label;
     existingField.label = "Changed existing field";
+    component.configEntitySettings = { label: "new entity label" };
 
     component.cancel();
 
-    expect(AdminTestEntity.schema.has("testField")).toBeFalse();
+    expect(AdminTestEntity.schema.has("testCancelField")).toBeFalse();
     expect(AdminTestEntity.schema.get("name").label).toBe(
       originalLabelOfExisting,
     );
+    expect(AdminTestEntity.label).toBe("Admin Test");
+    console.log(AdminTestEntity, JSON.stringify(AdminTestEntity.schema));
+
+    // cleanup
+    AdminTestEntity.schema.delete("testCancelField");
   });
 
   it("should save schema and view config", fakeAsync(() => {
@@ -130,7 +137,7 @@ describe("AdminEntityComponent", () => {
       _isCustomizedField: true,
       label: "New field",
     };
-    AdminTestEntity.schema.set("testField", newSchemaField);
+    AdminTestEntity.schema.set("testSaveField", newSchemaField);
 
     const newPanel: Panel = {
       title: "New Panel",
@@ -150,7 +157,7 @@ describe("AdminEntityComponent", () => {
         icon: "child",
         toStringAttributes: ["entityId"],
         attributes: jasmine.objectContaining({
-          testField: newSchemaField,
+          testSaveField: newSchemaField,
         }),
       };
 
@@ -166,7 +173,9 @@ describe("AdminEntityComponent", () => {
       expect(component.configEntitySettings).toEqual(
         component.entityConstructor,
       );
-      AdminTestEntity.schema.delete("testField");
+
+      // cleanup:
+      AdminTestEntity.schema.delete("testSaveField");
     });
     tick();
   }));
