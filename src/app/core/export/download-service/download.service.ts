@@ -158,7 +158,7 @@ export class DownloadService {
   }
 
   private async mapEntity(item: Entity, columnLabels): Promise<Object> {
-    let newItem = {};
+    const newItem = {};
     for (const key in item) {
       if (columnLabels.has(key)) {
         newItem[key] = item[key];
@@ -168,7 +168,7 @@ export class DownloadService {
           ? item[key]
           : item[key].split();
         let relatedEntitiesToStrings: string[] = [];
-        for (let relatedEntityId of relatedEntitiesIds) {
+        for (const relatedEntityId of relatedEntitiesIds) {
           relatedEntitiesToStrings.push(
             (
               await this.entityMapperService.load(

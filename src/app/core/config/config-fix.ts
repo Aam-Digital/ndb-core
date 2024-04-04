@@ -299,7 +299,7 @@ export const defaultJsonConfig = {
         "name",
         { id: "DisplayParticipantsCount", viewComponent: "DisplayParticipantsCount", label: $localize`Children` },
         "privateSchool",
-        "language",
+        "language"
       ],
       "filters": [
         {
