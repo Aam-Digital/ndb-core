@@ -52,7 +52,11 @@
           ></app-admin-entity-list>
         }
         @case ("general") {
-          <div>COMING SOON</div>
+          <app-admin-entity-general-settings
+            [entityConstructor]="entityConstructor"
+            (generalSettingsChange)="configEntitySettings = $event"
+            [config]="configEntitySettings"
+          ></app-admin-entity-general-settings>
         }
       }
     </div>
