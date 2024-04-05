@@ -1,8 +1,7 @@
-<h2 i18n>Configure Static Field "{{ entityConstructor.label }}"</h2>
+<h2 i18n>General Settings of "{{ entityConstructor.label }}" Records</h2>
 <p i18n>
-  The entity settings here apply to the record type overall and affect both the
-  entity here in the current view as well as all other forms and lists where
-  this entity is displayed.
+  The settings here apply to the entity type overall and take effect everywhere
+  the entity is displayed, including lists, forms and other views.
 </p>
 
 <form [formGroup]="form">
@@ -20,7 +19,7 @@
               Label (Plural)
               <fa-icon
                 icon="question-circle"
-                matTooltip="Optionally you can define an additional Plural label to be displayed in Entity header."
+                matTooltip="Optionally you can define how multiple records of this entity should be called, e.g. in lists."
                 i18n-matTooltip
               ></fa-icon>
             </mat-label>
@@ -36,7 +35,7 @@
               Icon
               <fa-icon
                 icon="question-circle"
-                matTooltip="Optionally you can Change the Icon of Entity types in navbar."
+                matTooltip="The icon to represent this entity type, e.g. when displaying records as a small preview block. [see fontawesome.com/icons]"
                 i18n-matTooltip
               ></fa-icon>
             </mat-label>
@@ -47,13 +46,14 @@
             />
           </mat-form-field>
         </div>
+
         <div class="entity-form-cell">
           <mat-form-field floatLabel="always">
             <mat-label i18n>
-              String-Attributes
+              Generated Title of Record
               <fa-icon
                 icon="question-circle"
-                matTooltip="Optionally you can change the list of attributes which should be shown when calling the `.toString()` method of this entity"
+                matTooltip="Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type."
                 i18n-matTooltip
               ></fa-icon>
             </mat-label>
