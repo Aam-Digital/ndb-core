@@ -29,6 +29,8 @@ import { User } from "../../user/user";
 import { TEST_USER } from "../../user/demo-user-generator.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import moment from "moment";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
+import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -304,6 +306,25 @@ describe("EntityFormService", () => {
     expect(form.get("test")).toHaveValue(2);
 
     Entity.schema.delete("test");
+  });
+
+  it("should not save 'null' as value from empty form fields", async () => {
+    Entity.schema.set("test", { dataType: "string" });
+
+    const entity = new Entity();
+    const form = service.createFormGroup([{ id: "test" }], entity);
+    form.get("test").reset();
+    expect(form.get("test").getRawValue()).toEqual(null);
+
+    await service.saveChanges(form, entity);
+
+    const entityMapper = TestBed.inject(
+      EntityMapperService,
+    ) as MockEntityMapperService;
+    const actualSaved = entityMapper.get(entity.getType(), entity.getId());
+    expect(actualSaved).toEqual(entity);
+    // service should remove 'null' value, which are the default for empty form fields
+    expect(actualSaved["test"]).not.toEqual(null);
   });
 
   it("should add column definitions from property schema", () => {
