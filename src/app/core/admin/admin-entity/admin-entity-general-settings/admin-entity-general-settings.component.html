@@ -48,7 +48,7 @@
         </div>
 
         <div class="entity-form-cell">
-          <mat-form-field floatLabel="always">
+          <mat-form-field>
             <mat-label i18n>
               Generated Title of Record
               <fa-icon
@@ -57,11 +57,14 @@
                 i18n-matTooltip
               ></fa-icon>
             </mat-label>
-            <input
+            <app-basic-autocomplete
               formControlName="toStringAttributes"
-              matInput
-              [placeholder]="formLabel.value"
-            />
+              #formDataType
+              [options]="toStringAttributess"
+              [optionToString]="objectToLabel"
+              [valueMapper]="objectToValue"
+              [multi]="true"
+            ></app-basic-autocomplete>
           </mat-form-field>
         </div>
       </div>

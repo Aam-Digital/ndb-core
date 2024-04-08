@@ -26,6 +26,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConfig } from "../../../entity/entity-config";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -47,25 +48,27 @@ import { EntityConfig } from "../../../entity/entity-config";
     BasicAutocompleteComponent,
   ],
 })
-export class AdminEntityGeneralSettingsComponent implements OnChanges, OnInit {
+export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
   @Input() config: EntityConfig;
   form: FormGroup;
   basicSettingsForm: FormGroup;
-
+  toStringAttributess: SimpleDropdownValue[] = [];
+  private originalEntitySchemaFields: [string, EntitySchemaField][];
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
     this.init();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.config) {
-      this.init();
-    }
-  }
+  // ngOnChanges(changes: SimpleChanges): void {
+  //   if (changes.config) {
+  //     console.log(changes.config)
+  //     // this.init();
+  //   }
+  // }
 
   private init() {
     this.basicSettingsForm = this.fb.group({
@@ -77,29 +80,33 @@ export class AdminEntityGeneralSettingsComponent implements OnChanges, OnInit {
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
+    this.originalEntitySchemaFields = JSON.parse(
+      JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
+    );
+    this.initAvailableDatatypes(this.originalEntitySchemaFields);
 
     this.form.valueChanges.subscribe((value) => {
       this.emitStaticDetails(); // Optionally, emit the initial value
     });
   }
+  private initAvailableDatatypes(array) {
+    this.toStringAttributess = array.map((entry, index) => ({
+      id: index.toString(),
+      key: entry[0],
+      label: entry[1].label, // Assuming label is present in the second element of each entry
+    }));
+  }
+
+  objectToLabel = (v: SimpleDropdownValue) => v?.label;
+  objectToValue = (v: SimpleDropdownValue) => v?.key;
 
   emitStaticDetails() {
-    const toStringAttributesControl =
-      this.basicSettingsForm.get("toStringAttributes");
-    let toStringAttributesValue = toStringAttributesControl.value;
-    // Convert toStringAttributesValue to an array if it's a string
-    if (typeof toStringAttributesValue === "string") {
-      toStringAttributesValue = toStringAttributesValue
-        .split(",")
-        .map((item) => item.trim());
-    }
-
-    // Update the form control with the modified value
-    toStringAttributesControl.setValue(toStringAttributesValue, {
-      emitEvent: false,
-    });
-
+    console.log(this.basicSettingsForm);
     // Emit the updated value
     this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
   }
+}
+interface SimpleDropdownValue {
+  key: string;
+  label: string;
 }
