@@ -92,7 +92,9 @@ export class EntityAnonymizeService extends CascadingEntityAction {
       await firstValueFrom(this.fileService.removeFile(entity, key));
     }
 
-    delete entity[key];
+    if (entity[key] !== undefined) {
+      entity[key] = null;
+    }
   }
 
   private async keepEntityUnchanged(e: Entity): Promise<CascadingActionResult> {
