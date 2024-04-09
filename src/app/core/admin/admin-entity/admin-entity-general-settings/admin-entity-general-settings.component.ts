@@ -55,7 +55,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() config: EntityConfig;
   form: FormGroup;
   basicSettingsForm: FormGroup;
-  toStringAttributess: SimpleDropdownValue[] = [];
+  toStringAttributesOptions: SimpleDropdownValue[] = [];
   private originalEntitySchemaFields: [string, EntitySchemaField][];
   constructor(private fb: FormBuilder) {}
 
@@ -83,7 +83,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     });
   }
   private initAvailableDatatypes(array) {
-    this.toStringAttributess = array.map((entry, index) => ({
+    this.toStringAttributesOptions = array.map((entry) => ({
       key: entry[0],
       label: entry[1].label,
     }));

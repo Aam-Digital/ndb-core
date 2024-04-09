@@ -215,6 +215,7 @@ export class BasicAutocompleteComponent<O, V = O>
     } else {
       this.value = undefined;
     }
+    this.setInitialInputValue();
     this.onChange(this.value);
     this.showAutocomplete(this.autocompleteForm.value);
   }
