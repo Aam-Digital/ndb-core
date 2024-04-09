@@ -63,13 +63,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.init();
   }
 
-  // ngOnChanges(changes: SimpleChanges): void {
-  //   if (changes.config) {
-  //     console.log(changes.config)
-  //     // this.init();
-  //   }
-  // }
-
   private init() {
     this.basicSettingsForm = this.fb.group({
       label: [this.config.label, Validators.required],
@@ -91,9 +84,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
   private initAvailableDatatypes(array) {
     this.toStringAttributess = array.map((entry, index) => ({
-      id: index.toString(),
       key: entry[0],
-      label: entry[1].label, // Assuming label is present in the second element of each entry
+      label: entry[1].label,
     }));
   }
 
@@ -101,7 +93,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   objectToValue = (v: SimpleDropdownValue) => v?.key;
 
   emitStaticDetails() {
-    console.log(this.basicSettingsForm);
     // Emit the updated value
     this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
   }
