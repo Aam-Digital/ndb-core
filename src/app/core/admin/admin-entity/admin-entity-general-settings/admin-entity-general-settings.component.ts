@@ -73,7 +73,9 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
-    this.initAvailableDatatypes(this.usedFields);
+    if (this.usedFields){
+      this.initAvailableDatatypes(this.usedFields);
+    }
 
     this.form.valueChanges.subscribe((value) => {
       this.emitStaticDetails(); // Optionally, emit the initial value
