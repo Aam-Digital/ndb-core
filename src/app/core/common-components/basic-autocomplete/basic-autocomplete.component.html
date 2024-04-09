@@ -65,11 +65,16 @@
     <mat-option
       *ngFor="let item of autocompleteDraggableOptions; index as i"
       [value]="item"
-      cdkDrag 
+      cdkDrag
     >
       <div class="flex-row disable-autocomplete-active-color">
         <div>
-          <fa-icon icon="grip-vertical" size="sm" class="drag-handle" cdkDragHandle></fa-icon>
+          <fa-icon
+            icon="grip-vertical"
+            size="sm"
+            class="drag-handle"
+            cdkDragHandle
+          ></fa-icon>
         </div>
 
         <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
