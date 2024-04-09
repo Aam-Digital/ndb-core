@@ -73,7 +73,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
-    if (this.usedFields){
+    if (this.usedFields) {
       this.initAvailableDatatypes(this.usedFields);
     }
 
