@@ -53,10 +53,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
   @Input() config: EntityConfig;
+  @Input() usedFields: any;
   form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
-  private originalEntitySchemaFields: [string, EntitySchemaField][];
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -73,19 +73,26 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
-    this.originalEntitySchemaFields = JSON.parse(
-      JSON.stringify(Array.from(this.entityConstructor.schema.entries())),
-    );
-    this.initAvailableDatatypes(this.originalEntitySchemaFields);
+    this.initAvailableDatatypes(this.usedFields);
 
     this.form.valueChanges.subscribe((value) => {
       this.emitStaticDetails(); // Optionally, emit the initial value
     });
   }
   private initAvailableDatatypes(array) {
-    this.toStringAttributesOptions = array.map((entry) => ({
-      key: entry[0],
-      label: entry[1].label,
+    const allUsedFields: string[] = [];
+
+    const basicInformationPanel = array.panels.find(
+      (panel) => panel.title === "Basic Information",
+    );
+    basicInformationPanel.components.forEach((component) => {
+      component.config.fieldGroups.forEach((fieldGroup) => {
+        allUsedFields.push(...fieldGroup.fields);
+      });
+    });
+    this.toStringAttributesOptions = allUsedFields.map((field) => ({
+      key: field,
+      label: field,
     }));
   }
 
