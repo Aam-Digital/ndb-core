@@ -6,6 +6,7 @@ import {
   OnChanges,
   SimpleChanges,
   OnInit,
+  ViewChild,
 } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
@@ -19,14 +20,18 @@ import {
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { NgIf } from "@angular/common";
+import { CommonModule, NgIf } from "@angular/common";
 import { MatTabsModule } from "@angular/material/tabs";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConfig } from "../../../entity/entity-config";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { MatTableDataSource, MatTableModule } from "@angular/material/table";
+import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
+import { MatOptionModule } from "@angular/material/core";
+import { MatSelectModule } from "@angular/material/select";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -46,6 +51,12 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
     FontAwesomeModule,
     MatTooltipModule,
     BasicAutocompleteComponent,
+    MatCheckboxModule,
+    MatTableModule,
+    MatOptionModule,
+    MatSelectModule,
+    MatPaginatorModule,
+    CommonModule,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
@@ -54,13 +65,39 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     new EventEmitter<EntityConfig>();
   @Input() config: EntityConfig;
   @Input() usedFields: any;
+  @ViewChild(MatPaginator) paginator: MatPaginator;
+  dataSource: MatTableDataSource<any>;
+  anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
+
+  showTable = false;
   form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
   constructor(private fb: FormBuilder) {}
-
+  ngOnChanges(changes: SimpleChanges): void {
+    console.log(changes);
+    if (changes.entitySchemaField) {
+      this.init();
+    }
+  }
   ngOnInit(): void {
     this.init();
+    this.dataSource = new MatTableDataSource<any>([]);
+    this.dataSource.paginator = this.paginator;
+  }
+  toggleTable(event: any) {
+    this.showTable = event.checked;
+    if (this.showTable) {
+      const data = [];
+      this.entityConstructor.schema.forEach((field) => {
+        if (field.label) {
+          const fields = field.label;
+          const anonymize = field.anonymize ? field.anonymize : "remove";
+          data.push({ fields, anonymize });
+        }
+      });
+      this.dataSource = new MatTableDataSource<any>(data);
+    }
   }
 
   private init() {

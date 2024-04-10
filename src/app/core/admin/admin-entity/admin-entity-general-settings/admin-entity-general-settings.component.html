@@ -74,8 +74,47 @@
     <!--
         ADVANCED SETTINGS
       -->
-    <mat-tab label="Configure PII / Anonymization" i18n-label [disabled]="true">
-      <div class="grid-layout margin-top-regular"></div>
+    <mat-tab
+      label="Configure PII / Anonymization"
+      i18n-label
+      [disabled]="false"
+    >
+      <div class="grid-layout margin-top-regular">
+        <mat-checkbox (change)="toggleTable($event)"
+          >Has personal information (PII)</mat-checkbox
+        >
+        <mat-table *ngIf="showTable" [dataSource]="dataSource" matSort>
+          <ng-container matColumnDef="fields">
+            <mat-header-cell *matHeaderCellDef>Field</mat-header-cell>
+            <mat-cell *matCellDef="let data">{{ data.fields }}</mat-cell>
+          </ng-container>
+
+          <ng-container matColumnDef="anonymize">
+            <mat-header-cell *matHeaderCellDef>Anonymization</mat-header-cell>
+            <mat-cell *matCellDef="let data">
+              <mat-form-field appearance="fill">
+                <mat-label>Choose an option</mat-label>
+                <mat-select [(value)]="data.anonymize">
+                  <mat-option
+                    *ngFor="let anonymizeOption of anonymizOptionList"
+                    [value]="anonymizeOption"
+                  >
+                    {{ anonymizeOption }}
+                  </mat-option>
+                </mat-select>
+              </mat-form-field>
+            </mat-cell>
+          </ng-container>
+
+          <mat-header-row
+            *matHeaderRowDef="['fields', 'anonymize']"
+          ></mat-header-row>
+          <mat-row
+            *matRowDef="let row; columns: ['fields', 'anonymize']"
+          ></mat-row>
+        </mat-table>
+        <mat-paginator [pageSize]="5" showFirstLastButtons></mat-paginator>
+      </div>
     </mat-tab>
   </mat-tab-group>
 </form>
