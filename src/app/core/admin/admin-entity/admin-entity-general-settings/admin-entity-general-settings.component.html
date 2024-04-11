@@ -1,0 +1,77 @@
+<h2 i18n>General Settings of "{{ entityConstructor.label }}" Records</h2>
+<p i18n>
+  The settings here apply to the entity type overall and take effect everywhere
+  the entity is displayed, including lists, forms and other views.
+</p>
+
+<form [formGroup]="form">
+  <mat-tab-group formGroupName="basicSettings">
+    <mat-tab label="Basics" i18n-label>
+      <div class="grid-layout flex-grow margin-top-regular">
+        <div class="entity-form-cell">
+          <mat-form-field>
+            <mat-label i18n>Label</mat-label>
+            <input formControlName="label" matInput #formLabel />
+          </mat-form-field>
+
+          <mat-form-field floatLabel="always">
+            <mat-label i18n>
+              Label (Plural)
+              <fa-icon
+                icon="question-circle"
+                matTooltip="Optionally you can define how multiple records of this entity should be called, e.g. in lists."
+                i18n-matTooltip
+              ></fa-icon>
+            </mat-label>
+            <input
+              formControlName="labelPlural"
+              matInput
+              [placeholder]="formLabel.value"
+            />
+          </mat-form-field>
+
+          <mat-form-field floatLabel="always">
+            <mat-label i18n>
+              Icon
+              <fa-icon
+                icon="question-circle"
+                matTooltip="The icon to represent this entity type, e.g. when displaying records as a small preview block. [see fontawesome.com/icons]"
+                i18n-matTooltip
+              ></fa-icon>
+            </mat-label>
+            <input
+              formControlName="icon"
+              matInput
+              [placeholder]="formLabel.value"
+            />
+          </mat-form-field>
+        </div>
+
+        <div class="entity-form-cell">
+          <mat-form-field floatLabel="always">
+            <mat-label i18n>
+              Generated Title of Record
+              <fa-icon
+                icon="question-circle"
+                matTooltip="Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type."
+                i18n-matTooltip
+              ></fa-icon>
+            </mat-label>
+            <input
+              formControlName="toStringAttributes"
+              matInput
+              [placeholder]="formLabel.value"
+            />
+          </mat-form-field>
+        </div>
+      </div>
+    </mat-tab>
+
+    <!--
+        ADVANCED SETTINGS
+      -->
+    <mat-tab label="Configure PII / Anonymization" i18n-label [disabled]="true">
+      <div class="grid-layout margin-top-regular"></div>
+    </mat-tab>
+  </mat-tab-group>
+</form>
