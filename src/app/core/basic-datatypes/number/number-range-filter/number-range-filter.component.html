@@ -1,0 +1,26 @@
+<mat-form-field>
+  <!-- <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label> -->
+  <mat-label>Number range filter</mat-label>
+
+  <mat-form-field>
+    <input
+      [min]="toValue"
+      (change)="numberChangedManually()"
+      [(ngModel)]="fromValue"
+      i18n-placeholder="Number range selection"
+      placeholder="From"
+    />
+    <input
+      [max]="fromValue"
+      (change)="numberChangedManually()"
+      [(ngModel)]="toValue"
+      i18n-placeholder="Number range selection"
+      placeholder="To"
+    />
+  </mat-form-field>
+
+  <!-- <mat-datepicker-toggle
+      matSuffix
+      (click)="openDialog($event)"
+    ></mat-datepicker-toggle> -->
+</mat-form-field>
