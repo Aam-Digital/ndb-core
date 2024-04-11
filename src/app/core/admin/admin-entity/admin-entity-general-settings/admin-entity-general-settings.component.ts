@@ -66,6 +66,11 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() config: EntityConfig;
   @Input() usedFields: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  @ViewChild(MatPaginator,  {static: false}) set matPaginator(paginator: MatPaginator) {
+    if (this.showTable) {
+      this.dataSource.paginator = paginator;
+    }
+  }
   dataSource: MatTableDataSource<any>;
   anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
 
@@ -82,8 +87,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
   ngOnInit(): void {
     this.init();
-    this.dataSource = new MatTableDataSource<any>([]);
-    this.dataSource.paginator = this.paginator;
   }
   toggleTable(event: any) {
     this.showTable = event.checked;
@@ -92,13 +95,25 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       this.entityConstructor.schema.forEach((field) => {
         if (field.label) {
           const fields = field.label;
-          const anonymize = field.anonymize ? field.anonymize : "remove";
+          let anonymize = "Remove";
+
+          if (field.anonymize === "retain") {
+            anonymize = "Retain";
+          } else if (field.anonymize === "retain-anonymized") {
+            anonymize = "Partially Anonymize";
+          } else if (field.anonymize) {
+            anonymize = field.anonymize;
+          }
+          
           data.push({ fields, anonymize });
         }
       });
       this.dataSource = new MatTableDataSource<any>(data);
+      this.dataSource.paginator = this.paginator; 
     }
   }
+  
+  
 
   private init() {
     this.basicSettingsForm = this.fb.group({
