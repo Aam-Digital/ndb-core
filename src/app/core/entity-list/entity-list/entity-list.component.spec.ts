@@ -154,18 +154,15 @@ describe("EntityListComponent", () => {
     }
 
     component.entityConstructor = Test;
-    component.listConfig = {
-      title: "",
-      columns: [
-        {
-          id: "anotherColumn",
-          label: "Predefined Title",
-          viewComponent: "DisplayDate",
-        },
-      ],
-      columnGroups: {
-        groups: [{ name: "Both", columns: ["testProperty", "anotherColumn"] }],
+    component.columns = [
+      {
+        id: "anotherColumn",
+        label: "Predefined Title",
+        viewComponent: "DisplayDate",
       },
+    ];
+    component.columnGroups = {
+      groups: [{ name: "Both", columns: ["testProperty", "anotherColumn"] }],
     };
 
     component.ngOnChanges({ listConfig: null });
@@ -175,30 +172,6 @@ describe("EntityListComponent", () => {
       "testProperty",
       "anotherColumn",
     ]);
-  }));
-
-  it("should automatically initialize values if directly referenced from config", fakeAsync(() => {
-    mockActivatedRoute.component = EntityListComponent;
-    const entityMapper = TestBed.inject(EntityMapperService);
-    const children = [new Child(), new Child()];
-    spyOn(entityMapper, "loadType").and.resolveTo(children);
-
-    createComponent();
-    component.listConfig = {
-      entityType: "Child",
-      title: "Some title",
-      columns: ["name", "gender"],
-    };
-    component.ngOnChanges({ listConfig: undefined });
-    tick();
-
-    expect(component.entityConstructor).toBe(Child);
-    expect(component.allEntities).toEqual(children);
-    expect(component.title).toBe("Some title");
-
-    const navigateSpy = spyOn(TestBed.inject(Router), "navigate");
-    component.addNew();
-    expect(navigateSpy.calls.mostRecent().args[0]).toEqual(["new"]);
   }));
 
   it("should not navigate on addNew if clickMode is not 'navigate'", () => {
@@ -257,10 +230,9 @@ describe("EntityListComponent", () => {
   }
 
   async function initComponentInputs() {
-    component.listConfig = testConfig;
+    Object.assign(component, testConfig);
     await component.ngOnChanges({
       allEntities: undefined,
-      listConfig: undefined,
     });
     fixture.detectChanges();
   }

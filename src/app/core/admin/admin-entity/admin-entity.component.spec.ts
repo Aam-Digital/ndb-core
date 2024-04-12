@@ -170,6 +170,7 @@ describe("AdminEntityComponent", () => {
         config: expectedViewConfig,
       });
       expect(actual.data[entityConfigId]).toEqual(expectedEntityConfig);
+      // TODO: this expectation is not useful yet:
       expect(component.configEntitySettings).toEqual(
         component.entityConstructor,
       );
