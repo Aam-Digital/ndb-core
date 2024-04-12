@@ -21,7 +21,7 @@ describe("EntityDetailsComponent", () => {
   let fixture: ComponentFixture<EntityDetailsComponent>;
 
   const routeConfig: EntityDetailsConfig = {
-    entity: "Child",
+    entityType: "Child",
     panels: [
       {
         title: "One Form",

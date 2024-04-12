@@ -7,7 +7,7 @@ export interface EntityDetailsConfig {
   /**
    * The name of the entity (according to the ENTITY_TYPE).
    */
-  entity: string;
+  entityType: string;
 
   /**
    * The configuration for the panels on this details page.

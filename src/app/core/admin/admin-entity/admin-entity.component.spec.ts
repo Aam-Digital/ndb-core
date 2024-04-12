@@ -55,7 +55,7 @@ describe("AdminEntityComponent", () => {
     viewConfigId = `view:${AdminTestEntity.route.substring(1)}/:id`;
     entityConfigId = `entity:${AdminTestEntity.ENTITY_TYPE}`;
     viewConfig = {
-      entity: AdminTestEntity.ENTITY_TYPE,
+      entityType: AdminTestEntity.ENTITY_TYPE,
       panels: [{ title: "Tab 1", components: [] }],
     };
     config = {
@@ -148,7 +148,7 @@ describe("AdminEntityComponent", () => {
     component.save();
     fixture.whenStable().then(() => {
       const expectedViewConfig = {
-        entity: AdminTestEntity.ENTITY_TYPE,
+        entityType: AdminTestEntity.ENTITY_TYPE,
         panels: [{ title: "Tab 1", components: [] }, newPanel],
       };
       const expectedEntityConfig = {
