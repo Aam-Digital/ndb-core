@@ -86,12 +86,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     constructor(private fb: FormBuilder,private adminEntityService: AdminEntityService ) {
     
   }
-  ngOnChanges(changes: SimpleChanges): void {
-    console.log(changes);
-    if (changes.entitySchemaField) {
-      this.init();
-    }
-  }
+
   ngOnInit(): void {
     this.init();
   }
@@ -146,9 +141,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
-    if (this.usedFields) {
-      this.initAvailableDatatypes(this.usedFields);
-    }
+    this.initAvailableDatatypes();
 
     this.form.valueChanges.subscribe((value) => {
       this.emitStaticDetails(); // Optionally, emit the initial value
@@ -158,20 +151,14 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       anonymize: ['retain-anonymized'],
     });
   }
-  private initAvailableDatatypes(array) {
-    const allUsedFields: string[] = [];
+  private initAvailableDatatypes() {
+    const allFields = Array.from(this.entityConstructor.schema.entries())
+      .filter((entry) => entry[1].dataType === "string" && entry[1].label)
+      .map((entry) => ({ name: entry[0], label: entry[1].label }));
 
-    const basicInformationPanel = array.panels.find(
-      (panel) => panel.title === "Basic Information",
-    );
-    basicInformationPanel.components.forEach((component) => {
-      component.config.fieldGroups.forEach((fieldGroup) => {
-        allUsedFields.push(...fieldGroup.fields);
-      });
-    });
-    this.toStringAttributesOptions = allUsedFields.map((field) => ({
-      key: field,
-      label: field,
+    this.toStringAttributesOptions = allFields.map((field) => ({
+      key: field.name,
+      label: field.name,
     }));
   }
 

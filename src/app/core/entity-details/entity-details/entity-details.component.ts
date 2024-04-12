@@ -67,13 +67,10 @@ export class EntityDetailsComponent implements OnChanges {
   isLoading = true;
   private changesSubscription: Subscription;
 
-  /** @deprecated use "entityType" instead, this remains for config backwards compatibility */
-  @Input() set entity(v: string) {
-    this.entityType = v;
-  }
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
 
+  // TODO: instead use an @Input entity: Entity and let RoutedView handle the entity loading
   @Input() id: string;
   record: Entity;
 

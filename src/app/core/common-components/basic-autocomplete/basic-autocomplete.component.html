@@ -33,59 +33,41 @@
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="multi"
 >
-  <div *ngIf="!reorder">
-    <mat-option
-      *ngFor="let item of autocompleteSuggestedOptions | async"
-      [value]="item"
-    >
-      <div class="flex-row disable-autocomplete-active-color">
-        <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-
-        <ng-container *ngIf="!templateRef; else itemTemplate">
-          {{ item.asString }}
-        </ng-container>
-
-        <ng-template
-          class="item-option"
-          #itemTemplate
-          [ngTemplateOutlet]="templateRef"
-          [ngTemplateOutletContext]="{ $implicit: item.initial }"
-        ></ng-template>
-      </div>
-    </mat-option>
-  </div>
-
-  <!-- Conditionally render cdkDropList if reorder is true -->
   <div
-    *ngIf="reorder"
     cdkDropList
     (cdkDropListDropped)="drop($event)"
     cdkDropListGroup
+    [cdkDropListDisabled]="!reorder"
   >
-    <mat-option
-      *ngFor="let item of autocompleteDraggableOptions; index as i"
-      [value]="item"
-      cdkDrag
+    <ng-container
+      *ngFor="
+        let item of reorder
+          ? autocompleteDraggableOptions
+          : (autocompleteSuggestedOptions | async)
+      "
     >
-      <div class="flex-row disable-autocomplete-active-color">
-        <div>
-          <fa-icon icon="grip-vertical" size="sm" class="drag-handle"></fa-icon>
+      <mat-option [value]="item" cdkDrag>
+        <div class="flex-row disable-autocomplete-active-color align-center">
+          <div *ngIf="reorder">
+            <fa-icon
+              icon="grip-vertical"
+              size="sm"
+              class="drag-handle"
+            ></fa-icon>
+          </div>
+          <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+          <ng-container *ngIf="!templateRef; else itemTemplate">
+            {{ item.asString }}
+          </ng-container>
+          <ng-template
+            class="item-option"
+            #itemTemplate
+            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutletContext]="{ $implicit: item.initial }"
+          ></ng-template>
         </div>
-
-        <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-
-        <ng-container *ngIf="!templateRef; else itemTemplate">
-          {{ item.asString }}
-        </ng-container>
-
-        <ng-template
-          class="item-option"
-          #itemTemplate
-          [ngTemplateOutlet]="templateRef"
-          [ngTemplateOutletContext]="{ $implicit: item.initial }"
-        ></ng-template>
-      </div>
-    </mat-option>
+      </mat-option>
+    </ng-container>
   </div>
 
   <!-- Create new option -->
