@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  Optional,
   Output,
   SimpleChanges,
 } from "@angular/core";
@@ -99,7 +100,7 @@ export class EntityActionsMenuComponent implements OnChanges {
 
   constructor(
     private entityRemoveService: EntityActionsService,
-    protected viewContext: ViewComponentContext,
+    @Optional() protected viewContext: ViewComponentContext,
   ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -124,7 +125,10 @@ export class EntityActionsMenuComponent implements OnChanges {
   }
 
   async executeAction(action: EntityMenuActionItem) {
-    const result = await action.execute(this.entity, this.navigateOnDelete);
+    const result = await action.execute(
+      this.entity,
+      this.navigateOnDelete && !this.viewContext?.isDialog,
+    );
     if (result) {
       this.actionTriggered.emit(action.action);
     }
