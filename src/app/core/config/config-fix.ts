@@ -714,11 +714,6 @@ export const defaultJsonConfig = {
         "title",
         "type",
         "assignedTo"
-      ],
-      "exportConfig": [
-        { "label": "Title", "query": "title" },
-        { "label": "Type", "query": "type" },
-        { "label": "Assigned users", "query": "assignedTo" }
       ]
     }
   },

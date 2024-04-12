@@ -5,8 +5,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { transformToReadableFormat } from "../../common-components/entities-table/value-accessor/value-accessor";
 import { Papa } from "ngx-papaparse";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
-import { Entity } from "app/core/entity/model/entity";
+import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "app/core/basic-datatypes/entity-array/entity-array.datatype";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
@@ -119,24 +118,28 @@ export class DownloadService {
     return result;
   }
 
-  async exportFile(data: any[], entityConstructor: { schema: any }) {
+  async exportFile(data: any[], entityConstructor: EntityConstructor) {
     const entitySchema = entityConstructor.schema;
     const columnLabels = new Map<string, string>();
 
-    entitySchema.forEach((value: EntitySchemaField, key: string) => {
-      if (value.label) {
-        columnLabels.set(key, value.label);
-        if (
-          value.dataType === EntityDatatype.dataType ||
-          value.dataType === EntityArrayDatatype.dataType
-        ) {
-          columnLabels.set(key + "_readable", value.label + "_readable");
-        }
+    for (const [id, field] of entitySchema.entries()) {
+      if (!field.label) {
+        // skip "technical" fields without an explicit label
+        continue;
       }
-    });
+
+      columnLabels.set(id, field.label);
+
+      if (
+        field.dataType === EntityDatatype.dataType ||
+        field.dataType === EntityArrayDatatype.dataType
+      ) {
+        columnLabels.set(id + "_readable", field.label + " (readable)");
+      }
+    }
 
     const exportEntities = await Promise.all(
-      data.map((item) => this.mapEntity(item, columnLabels)),
+      data.map((item) => this.mapEntityToExportRow(item, columnLabels)),
     );
 
     const columnKeys: string[] = Array.from(columnLabels.keys());
@@ -157,32 +160,39 @@ export class DownloadService {
     );
   }
 
-  private async mapEntity(item: Entity, columnLabels): Promise<Object> {
+  private async mapEntityToExportRow(
+    item: Entity,
+    columnLabels: Map<string, string>,
+  ): Promise<Object> {
     const newItem = {};
     for (const key in item) {
       if (columnLabels.has(key)) {
         newItem[key] = item[key];
       }
+
       if (columnLabels.has(key + "_readable")) {
-        const relatedEntitiesIds: string[] = Array.isArray(item[key])
-          ? item[key]
-          : item[key].split();
-        let relatedEntitiesToStrings: string[] = [];
-        for (const relatedEntityId of relatedEntitiesIds) {
-          relatedEntitiesToStrings.push(
-            (
-              await this.entityMapperService
-                .load(
-                  Entity.extractTypeFromId(relatedEntityId),
-                  relatedEntityId,
-                )
-                .catch((e) => "<not_found>")
-            ).toString(),
-          );
-        }
-        newItem[key + "_readable"] = relatedEntitiesToStrings;
+        newItem[key + "_readable"] = await this.loadRelatedEntitiesToString(
+          item[key],
+        );
       }
     }
     return newItem;
+  }
+
+  private async loadRelatedEntitiesToString(value: string | string[]) {
+    const relatedEntitiesToStrings: string[] = [];
+
+    const relatedEntitiesIds: string[] = Array.isArray(value) ? value : [value];
+    for (const relatedEntityId of relatedEntitiesIds) {
+      relatedEntitiesToStrings.push(
+        (
+          await this.entityMapperService
+            .load(Entity.extractTypeFromId(relatedEntityId), relatedEntityId)
+            .catch((e) => "<not_found>")
+        ).toString(),
+      );
+    }
+
+    return relatedEntitiesToStrings;
   }
 }
