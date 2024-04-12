@@ -164,12 +164,9 @@ describe("DownloadService", () => {
 
     const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
     expect(rows).toHaveSize(1 + 1); // includes 1 header line
-    const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
-    expect(columnValues).toHaveSize(4);
-    expect(columnValues).toContain('"' + testSchool.getId() + "");
-    expect(columnValues).toContain('"' + testSchool.toString() + "");
-    expect(columnValues).toContain("" + testChild.getId() + '"');
-    expect(columnValues).toContain("" + testChild.toString() + '"');
+    expect(rows[1]).toBe(
+      `"${testSchool.getId()},${testChild.getId()}","${testSchool.toString()},${testChild.toString()}"`,
+    );
   });
 
   it("should export all properties using object keys as headers, if no schema is available", async () => {

@@ -136,7 +136,7 @@ export class DownloadService {
     });
 
     const exportEntities = await Promise.all(
-      data.map(async (item) => this.mapEntity(item, columnLabels)),
+      data.map((item) => this.mapEntity(item, columnLabels)),
     );
 
     const columnKeys: string[] = Array.from(columnLabels.keys());
