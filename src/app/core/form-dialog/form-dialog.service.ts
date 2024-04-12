@@ -32,7 +32,12 @@ export class FormDialogService {
 
   openView<E extends Entity>(entity: E, component: string) {
     return this.dialog.open(DialogViewComponent, {
-      ...FormDialogService.dialogSettings,
+      width: "99%",
+      maxWidth: "95vw",
+      maxHeight: "90vh",
+      // EntityDetails with its multiple tabs needs an explicit height to not change size between tabs
+      height: component === "EntityDetails" ? "90vh" : undefined,
+
       data: {
         component: component,
         entity: entity,

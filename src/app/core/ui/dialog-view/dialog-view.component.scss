@@ -16,3 +16,8 @@
 .mdc-dialog__title::before {
   display: none;
 }
+
+.mdc-dialog__content {
+  // allow "almost fullscreen" sized dialogs for complex views
+  max-height: initial;
+}
