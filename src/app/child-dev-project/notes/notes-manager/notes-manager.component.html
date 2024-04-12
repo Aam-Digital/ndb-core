@@ -1,10 +1,16 @@
 <app-entity-list
   [allEntities]="notes"
-  [listConfig]="config"
   [entityConstructor]="entityConstructor"
   clickMode="none"
   (elementClick)="showDetails($event)"
   (addNewClick)="addNoteClick()"
+  [defaultSort]="defaultSort"
+  [exportConfig]="exportConfig"
+  [showInactive]="showInactive"
+  [title]="title"
+  [columns]="columns"
+  [columnGroups]="columnGroups"
+  [filters]="filters"
 >
   <button
     mat-menu-item
