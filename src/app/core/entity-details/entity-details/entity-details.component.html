@@ -10,7 +10,11 @@
 </app-view-title>
 
 <app-view-actions>
-  <app-entity-actions-menu [entity]="entity" [navigateOnDelete]="true">
+  <app-entity-actions-menu
+    [entity]="entity"
+    [navigateOnDelete]="true"
+    [showExpanded]="true"
+  >
     <button
       mat-menu-item
       [routerLink]="['/admin/entity', entity?.getType()]"

@@ -1,7 +1,8 @@
 <app-entity-list
   [allEntities]="notes"
   [entityConstructor]="entityConstructor"
-  clickMode="navigate"
+  clickMode="none"
+  (elementClick)="showDetails($event)"
   (addNewClick)="addNoteClick()"
   [defaultSort]="defaultSort"
   [exportConfig]="exportConfig"
