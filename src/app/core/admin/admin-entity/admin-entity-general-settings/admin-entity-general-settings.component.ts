@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  OnChanges,
-  SimpleChanges,
-  OnInit,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -26,6 +18,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConfig } from "../../../entity/entity-config";
+import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -51,12 +44,12 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
-  @Input() config: EntityConfig;
-  @Input() usedFields: any;
+  @Input() generalSettings: EntityConfig;
+
   form: FormGroup;
   basicSettingsForm: FormGroup;
-  toStringAttributesOptions: any[] = [];
-  allUsedFields: any;
+  toStringAttributesOptions: SimpleDropdownValue[] = [];
+
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -65,39 +58,40 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   private init() {
     this.basicSettingsForm = this.fb.group({
-      label: [this.config.label, Validators.required],
-      labelPlural: [this.config.labelPlural],
-      icon: [this.config.icon, Validators.required],
-      toStringAttributes: [this.config.toStringAttributes, Validators.required],
+      label: [this.generalSettings.label, Validators.required],
+      labelPlural: [this.generalSettings.labelPlural],
+      icon: [this.generalSettings.icon, Validators.required],
+      toStringAttributes: [
+        this.generalSettings.toStringAttributes,
+        Validators.required,
+      ],
     });
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
-    this.initAvailableDatatypes();
+    this.initToStringAttributesOptions();
 
     this.form.valueChanges.subscribe((value) => {
-      this.emitStaticDetails(); // Optionally, emit the initial value
+      // Emit the updated value
+      this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue()); // Optionally, emit the initial value
     });
   }
-  private initAvailableDatatypes() {
-    const allFields = Array.from(this.entityConstructor.schema.entries())
-      .filter((entry) => entry[1].dataType === "string" && entry[1].label)
-      .map((entry) => ({ name: entry[0], label: entry[1].label }));
 
-    this.toStringAttributesOptions = allFields.map((field) => ({
-      key: field.name,
-      label: field.name,
-    }));
+  private initToStringAttributesOptions() {
+    this.toStringAttributesOptions = Array.from(
+      this.entityConstructor.schema.entries(),
+    )
+      .filter(
+        ([key, field]) =>
+          field.dataType === StringDatatype.dataType && field.label,
+      )
+      .map(([key, field]) => ({ key: key, label: field.label }));
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.key;
-
-  emitStaticDetails() {
-    // Emit the updated value
-    this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
-  }
 }
+
 interface SimpleDropdownValue {
   key: string;
   label: string;
