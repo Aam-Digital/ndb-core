@@ -26,7 +26,6 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConfig } from "../../../entity/entity-config";
-import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -56,7 +55,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() usedFields: any;
   form: FormGroup;
   basicSettingsForm: FormGroup;
-  toStringAttributesOptions: SimpleDropdownValue[] = [];
+  toStringAttributesOptions: any[] = [];
+  allUsedFields: any;
   constructor(private fb: FormBuilder) {}
 
   ngOnInit(): void {
@@ -73,28 +73,20 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
-    if (this.usedFields) {
-      this.initAvailableDatatypes(this.usedFields);
-    }
+    this.initAvailableDatatypes();
 
     this.form.valueChanges.subscribe((value) => {
       this.emitStaticDetails(); // Optionally, emit the initial value
     });
   }
-  private initAvailableDatatypes(array) {
-    const allUsedFields: string[] = [];
+  private initAvailableDatatypes() {
+    const allFields = Array.from(this.entityConstructor.schema.entries())
+      .filter((entry) => entry[1].dataType === "string" && entry[1].label)
+      .map((entry) => ({ name: entry[0], label: entry[1].label }));
 
-    const basicInformationPanel = array.panels.find(
-      (panel) => panel.title === "Basic Information",
-    );
-    basicInformationPanel.components.forEach((component) => {
-      component.config.fieldGroups.forEach((fieldGroup) => {
-        allUsedFields.push(...fieldGroup.fields);
-      });
-    });
-    this.toStringAttributesOptions = allUsedFields.map((field) => ({
-      key: field,
-      label: field,
+    this.toStringAttributesOptions = allFields.map((field) => ({
+      key: field.name,
+      label: field.name,
     }));
   }
 
