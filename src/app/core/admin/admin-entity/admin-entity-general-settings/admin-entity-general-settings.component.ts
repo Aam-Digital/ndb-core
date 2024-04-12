@@ -32,6 +32,8 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
+import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
+import { AdminEntityService } from "../../admin-entity.service";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -71,6 +73,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       this.dataSource.paginator = paginator;
     }
   }
+  entitySchemaField: EntitySchemaField;
+  schemaFieldsForm:FormGroup;
   dataSource: MatTableDataSource<any>;
   anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
 
@@ -78,7 +82,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
-  constructor(private fb: FormBuilder) {}
+    
+    constructor(private fb: FormBuilder,private adminEntityService: AdminEntityService ) {
+    
+  }
   ngOnChanges(changes: SimpleChanges): void {
     console.log(changes);
     if (changes.entitySchemaField) {
@@ -112,8 +119,22 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       this.dataSource.paginator = this.paginator; 
     }
   }
-  
-  
+
+  selectionOnChange(value: any, element: any) {
+    const formValues = this.schemaFieldsForm.getRawValue();
+    const updatedEntitySchema = Object.assign(
+      { _isCustomizedField: true },
+      this.entitySchemaField, // TODO: remove this merge once all schema fields are in the form (then only form values should apply)
+      formValues,
+    );
+    const fieldId = 'projectNumber';
+    this.adminEntityService.updateSchemaField(
+      this.entityConstructor,
+      fieldId,
+      updatedEntitySchema.anonymize = 'retain-anonymized',
+    );
+
+  }
 
   private init() {
     this.basicSettingsForm = this.fb.group({
@@ -131,6 +152,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
     this.form.valueChanges.subscribe((value) => {
       this.emitStaticDetails(); // Optionally, emit the initial value
+    });
+    this.schemaFieldsForm = this.fb.group({
+      dataType: ['string', Validators.required],
+      anonymize: ['retain-anonymized'],
     });
   }
   private initAvailableDatatypes(array) {
