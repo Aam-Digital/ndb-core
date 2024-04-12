@@ -169,6 +169,23 @@ describe("DownloadService", () => {
     );
   });
 
+  it("should handle undefined entity ids without errors", async () => {
+    class EntityRefDownloadTestEntity extends Entity {
+      @DatabaseField({ dataType: "entity-array", label: "referenced entities" })
+      relatedEntitiesArray: string[];
+    }
+    const testEntity = new EntityRefDownloadTestEntity();
+    testEntity.relatedEntitiesArray = ["undefined-id", testChild.getId()];
+
+    const csvExport = await service.createCsv([testEntity]);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    expect(rows[1]).toBe(
+      `"undefined-id,${testChild.getId()}","<not_found>,${testChild.toString()}"`,
+    );
+  });
+
   it("should export all properties using object keys as headers, if no schema is available", async () => {
     const docs = [
       { _id: "Test:1", name: "Child 1" },

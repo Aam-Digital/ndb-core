@@ -171,10 +171,12 @@ export class DownloadService {
         for (const relatedEntityId of relatedEntitiesIds) {
           relatedEntitiesToStrings.push(
             (
-              await this.entityMapperService.load(
-                Entity.extractTypeFromId(relatedEntityId),
-                relatedEntityId,
-              )
+              await this.entityMapperService
+                .load(
+                  Entity.extractTypeFromId(relatedEntityId),
+                  relatedEntityId,
+                )
+                .catch((e) => "<not_found>")
             ).toString(),
           );
         }
