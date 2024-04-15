@@ -15,7 +15,6 @@ import {
 } from "../EntityListConfig";
 import { Entity, EntityConstructor } from "../../entity/model/entity";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
-import { AnalyticsService } from "../../analytics/analytics.service";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
@@ -55,6 +54,7 @@ import { DataFilter } from "../../filter/filters/filters";
 import { EntityCreateButtonComponent } from "../../common-components/entity-create-button/entity-create-button.component";
 import { AbilityModule } from "@casl/angular";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
+import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 
 /**
  * This component allows to create a full-blown table with pagination, filtering, searching and grouping.
@@ -96,6 +96,8 @@ import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-
     AbilityModule,
     AsyncPipe,
     EntityActionsMenuComponent,
+    ViewActionsComponent,
+    // WARNING: all imports here also need to be set for components extending EntityList, like ChildrenListComponent
   ],
   standalone: true,
 })
@@ -104,9 +106,6 @@ export class EntityListComponent<T extends Entity>
   implements EntityListConfig, OnChanges
 {
   @Input() allEntities: T[];
-
-  /** @deprecated this is often used when this has a wrapper component (e.g. ChildrenList), preferably use individual @Input properties */
-  @Input() listConfig: EntityListConfig;
 
   @Input() entityType: string;
   @Input() entityConstructor: EntityConstructor<T>;
@@ -167,8 +166,7 @@ export class EntityListComponent<T extends Entity>
     private screenWidthObserver: ScreenWidthObserver,
     private router: Router,
     private activatedRoute: ActivatedRoute,
-    private analyticsService: AnalyticsService,
-    private entityMapperService: EntityMapperService,
+    protected entityMapperService: EntityMapperService,
     private entities: EntityRegistry,
     private dialog: MatDialog,
     private duplicateRecord: DuplicateRecordService,
@@ -192,9 +190,6 @@ export class EntityListComponent<T extends Entity>
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    if (changes.hasOwnProperty("listConfig")) {
-      Object.assign(this, this.listConfig);
-    }
     return this.buildComponentFromConfig();
   }
 
@@ -221,11 +216,17 @@ export class EntityListComponent<T extends Entity>
     );
   }
 
-  private async loadEntities() {
-    this.allEntities = await this.entityMapperService.loadType(
-      this.entityConstructor,
-    );
+  protected async loadEntities() {
+    this.allEntities = await this.getEntities();
     this.listenToEntityUpdates();
+  }
+
+  /**
+   * Template method that can be overwritten to change the loading logic.
+   * @protected
+   */
+  protected async getEntities(): Promise<T[]> {
+    return this.entityMapperService.loadType(this.entityConstructor);
   }
 
   private updateSubscription: Subscription;
@@ -262,10 +263,6 @@ export class EntityListComponent<T extends Entity>
   applyFilter(filterValue: string) {
     // TODO: turn this into one of our filter types, so that all filtering happens the same way (and we avoid accessing internal datasource of sub-component here)
     this.filterFreetext = filterValue.trim().toLowerCase();
-
-    this.analyticsService.eventTrack("list_filter_freetext", {
-      category: this.entityConstructor?.ENTITY_TYPE,
-    });
   }
 
   private displayColumnGroupByName(columnGroupName: string) {

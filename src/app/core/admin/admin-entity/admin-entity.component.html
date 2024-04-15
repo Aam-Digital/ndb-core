@@ -54,9 +54,7 @@
         @case ("general") {
           <app-admin-entity-general-settings
             [entityConstructor]="entityConstructor"
-            (generalSettingsChange)="configEntitySettings = $event"
-            [config]="configEntitySettings"
-            [usedFields]="configDetailsView"
+            [(generalSettings)]="configEntitySettings"
           ></app-admin-entity-general-settings>
         }
       }

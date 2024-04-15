@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
-import { ReactiveFormsModule, FormsModule } from "@angular/forms";
+import { FormsModule, ReactiveFormsModule } from "@angular/forms";
 import { MatButtonModule } from "@angular/material/button";
 import { MatInputModule } from "@angular/material/input";
 import { MatTabsModule } from "@angular/material/tabs";
@@ -51,7 +51,7 @@ describe("AdminEntityGeneralSettingsComponent", () => {
     fixture = TestBed.createComponent(AdminEntityGeneralSettingsComponent);
     component = fixture.componentInstance;
     component.entityConstructor = mockEntityConstructor;
-    component.config = { label: "Test Label" };
+    component.generalSettings = { label: "Test Label" };
     fixture.detectChanges();
   });
 

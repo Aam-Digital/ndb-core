@@ -161,7 +161,6 @@ export const defaultJsonConfig = {
   "view:note": {
     "component": "NotesManager",
     "config": {
-      "entityType": "Note",
       "title": $localize`:Title for notes overview:Notes & Reports`,
       "includeEventNotes": false,
       "showEventNotesToggle": true,
@@ -235,6 +234,12 @@ export const defaultJsonConfig = {
           ],
         },
       ]
+    }
+  },
+  "view:note/:id": {
+    "component": "NoteDetails",
+    "config": {
+      "topForm": ["date", "warningLevel", "category", "authors", "attachment"]
     }
   },
   "view:import": {
@@ -714,6 +719,11 @@ export const defaultJsonConfig = {
         "title",
         "type",
         "assignedTo"
+      ],
+      "exportConfig": [
+        { "label": "Title", "query": "title" },
+        { "label": "Type", "query": "type" },
+        { "label": "Assigned users", "query": "assignedTo" }
       ]
     }
   },

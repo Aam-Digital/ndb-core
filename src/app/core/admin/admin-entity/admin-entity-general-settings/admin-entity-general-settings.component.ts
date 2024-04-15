@@ -1,13 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  OnChanges,
-  SimpleChanges,
-  OnInit,
-  ViewChild,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -34,6 +25,7 @@ import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { AdminEntityService } from "../../admin-entity.service";
+import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -65,8 +57,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
-  @Input() config: EntityConfig;
-  @Input() usedFields: any;
+  @Input() generalSettings: EntityConfig;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   allFields: any[];
   @ViewChild(MatPaginator,  {static: false}) set matPaginator(paginator: MatPaginator) {
@@ -167,52 +158,44 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
 
   private init() {
     this.basicSettingsForm = this.fb.group({
-      label: [this.config.label, Validators.required],
-      labelPlural: [this.config.labelPlural],
-      icon: [this.config.icon, Validators.required],
-      toStringAttributes: [this.config.toStringAttributes, Validators.required],
+      label: [this.generalSettings.label, Validators.required],
+      labelPlural: [this.generalSettings.labelPlural],
+      icon: [this.generalSettings.icon, Validators.required],
+      toStringAttributes: [
+        this.generalSettings.toStringAttributes,
+        Validators.required,
+      ],
     });
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
-    this.initAvailableDatatypes();
+    this.initToStringAttributesOptions();
 
     this.form.valueChanges.subscribe((value) => {
-      this.emitStaticDetails(); // Optionally, emit the initial value
+      // Emit the updated value
+      this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue()); // Optionally, emit the initial value
     });
     this.schemaFieldsForm = this.fb.group({
       dataType: ['string', Validators.required],
       anonymize: ['retain-anonymized'],
     });
   }
-  private initAvailableDatatypes() {
-    this.allFields = Array.from(this.entityConstructor.schema.entries())
-      .filter((entry) => entry[1].dataType === "string" && entry[1].label)
-      .map((entry) => ({name: entry[0], label: entry[1].label, anonymize: entry[1].anonymize,
-        labelShort: entry[1].labelShort || '', 
-        description: entry[1].description || '',
-        dataType: entry[1].dataType || '', 
-        innerDataType: entry[1].innerDataType || '', 
-        defaultValue: entry[1].defaultValue || '', 
-        searchable: entry[1].searchable !== undefined ? entry[1].searchable : true, 
-        validators: entry[1].validators || [],
 
-       }));
-console.log(this.allFields)
-    this.toStringAttributesOptions = this.allFields.map((field) => ({
-      key: field.name,
-      label: field.name,
-    }));
+  private initToStringAttributesOptions() {
+    this.toStringAttributesOptions = Array.from(
+      this.entityConstructor.schema.entries(),
+    )
+      .filter(
+        ([key, field]) =>
+          field.dataType === StringDatatype.dataType && field.label,
+      )
+      .map(([key, field]) => ({ key: key, label: field.label }));
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.key;
-
-  emitStaticDetails() {
-    // Emit the updated value
-    this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
-  }
 }
+
 interface SimpleDropdownValue {
   key: string;
   label: string;

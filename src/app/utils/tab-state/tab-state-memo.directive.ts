@@ -1,7 +1,8 @@
 import { ActivatedRoute, Router } from "@angular/router";
 import { MatTabGroup } from "@angular/material/tabs";
-import { Directive, OnInit } from "@angular/core";
+import { Directive, OnInit, Optional } from "@angular/core";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { ViewComponentContext } from "../../core/ui/abstract-view/abstract-view.component";
 
 /**
  * Memorizes the current state of a `TabGroup` (i.e. which tab currently is selected)
@@ -26,9 +27,15 @@ export class TabStateMemoDirective implements OnInit {
     private router: Router,
     private route: ActivatedRoute,
     private tab: MatTabGroup,
+    @Optional() private viewContext: ViewComponentContext,
   ) {}
 
   ngOnInit() {
+    if (this.viewContext?.isDialog) {
+      // does not apply if opened in popup
+      return;
+    }
+
     // This logic is purposefully in `ngOnInit` and not in the constructor,
     // so we can override values that are set by custom logic in the component
     // (i.e. we override any binding to [(selectedIndex)] for the initial index)
@@ -46,6 +53,11 @@ export class TabStateMemoDirective implements OnInit {
 
   // Update the URL
   private async updateURLQueryParams(value: number) {
+    if (this.viewContext?.isDialog) {
+      // does not apply if opened in popup
+      return;
+    }
+
     await this.router.navigate(["."], {
       relativeTo: this.route,
       queryParams: { [this.tabIndexKey]: value },

@@ -1,37 +1,23 @@
-<!--
-  ~     This file is part of ndb-core.
-  ~
-  ~     ndb-core is free software: you can redistribute it and/or modify
-  ~     it under the terms of the GNU General Public License as published by
-  ~     the Free Software Foundation, either version 3 of the License, or
-  ~     (at your option) any later version.
-  ~
-  ~     ndb-core is distributed in the hope that it will be useful,
-  ~     but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-  ~     GNU General Public License for more details.
-  ~
-  ~     You should have received a copy of the GNU General Public License
-  ~     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
-  -->
+<!-- Header: title + actions -->
+<app-view-title>
+  @if (!entity?.isNew) {
+    {{ entity?.toString() }}
+  } @else {
+    <span i18n="Title when adding a new entity">
+      Adding new {{ this.entityConstructor?.label }}
+    </span>
+  }
+</app-view-title>
 
-<div class="flex-row justify-space-between">
-  <app-view-title *ngIf="!creatingNew">
-    {{ record?.toString() }}
-  </app-view-title>
-  <app-view-title
-    *ngIf="creatingNew"
-    i18n="
-      Title when adding a new entity|An entity is a child, note, school, etc.
-    "
+<app-view-actions>
+  <app-entity-actions-menu
+    [entity]="entity"
+    [navigateOnDelete]="true"
+    [showExpanded]="true"
   >
-    Adding new {{ this.entityConstructor?.label }}
-  </app-view-title>
-
-  <app-entity-actions-menu [entity]="record" [navigateOnDelete]="true">
     <button
       mat-menu-item
-      [routerLink]="['/admin/entity', record?.getType()]"
+      [routerLink]="['/admin/entity', entity?.getType()]"
       [queryParams]="{ mode: 'details' }"
       queryParamsHandling="merge"
       *ngIf="'update' | ablePure: 'Config' | async"
@@ -43,22 +29,19 @@
       <span i18n>Edit Data Structure</span>
     </button>
   </app-entity-actions-menu>
-</div>
+</app-view-actions>
 
-<app-entity-archived-info [entity]="record"></app-entity-archived-info>
+<app-entity-archived-info [entity]="entity"></app-entity-archived-info>
 
-<mat-tab-group
-  (selectedIndexChange)="trackTabChanged($event)"
-  appTabStateMemo
-  [preserveContent]="true"
->
+<!-- Content: tabbed components -->
+<mat-tab-group appTabStateMemo [preserveContent]="true">
   <mat-tab
     *ngFor="let panelConfig of panels"
-    [disabled]="creatingNew || unsavedChanges.pending"
+    [disabled]="entity?.isNew || unsavedChanges.pending"
   >
     <ng-template mat-tab-label>
       <span
-        [matTooltipDisabled]="!creatingNew"
+        [matTooltipDisabled]="!entity?.isNew"
         matTooltip="Save the new record to create it before accessing other details"
         i18n-matTooltip="
           Tooltip explaining disabled sections when creating new entity
