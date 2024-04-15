@@ -68,6 +68,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() generalSettings: EntityConfig;
   @ViewChild(MatPaginator) paginator: MatPaginator;
   allPIIFields: any[];
+  @Input() showTable: boolean;
   @ViewChild(MatPaginator, { static: false }) set matPaginator(
     paginator: MatPaginator,
   ) {
@@ -78,8 +79,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   entitySchemaField: EntitySchemaField;
   dataSource: MatTableDataSource<any>;
   anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
-
-  showTable = false;
+  @Output() checkboxChange = new EventEmitter<boolean>();
+  // showTable = false;
   form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
@@ -106,6 +107,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
+    this.fetchTableData();
     this.initToStringAttributesOptions();
 
     this.form.valueChanges.subscribe((value) => {
@@ -113,33 +115,34 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     });
   }
 
-  toggleTable(event: any) {
-    this.showTable = event.checked;
-    this.allPIIFields = Array.from(this.entityConstructor.schema.entries())
-      .filter(
-        ([key, field]) =>
-          field.dataType === StringDatatype.dataType && field.label,
-      )
-      .map(([key, field]) => ({ key: key, anonymize: field.anonymize }));
+  fetchTableData() {
     if (this.showTable) {
-      const data = [];
-      this.allPIIFields.forEach((field) => {
-        const fields = field.key;
-        let anonymize = "Remove";
+      this.allPIIFields = Array.from(this.entityConstructor.schema.entries())
+        .filter(
+          ([key, field]) =>
+            field.dataType === StringDatatype.dataType && field.label,
+        )
+        .map(([key, field]) => ({ key: key, anonymize: field.anonymize }));
 
+      const data = this.allPIIFields.map((field) => {
+        let anonymize = "Remove";
         if (field.anonymize === "retain") {
           anonymize = "Retain";
         } else if (field.anonymize === "retain-anonymized") {
           anonymize = "Partially Anonymize";
-        } else if (field.anonymize) {
-          anonymize = field.anonymize;
         }
-
-        data.push({ fields, anonymize });
+        return { fields: field.key, anonymize: anonymize };
       });
+
       this.dataSource = new MatTableDataSource<any>(data);
       this.dataSource.paginator = this.paginator;
     }
+  }
+
+  toggleTable(event: any) {
+    this.showTable = event.checked;
+    this.checkboxChange.emit(this.showTable);
+    this.fetchTableData();
   }
   getTooltip(option: string): string {
     switch (option) {

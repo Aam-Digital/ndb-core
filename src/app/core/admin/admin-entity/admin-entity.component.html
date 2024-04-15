@@ -55,6 +55,8 @@
           <app-admin-entity-general-settings
             [entityConstructor]="entityConstructor"
             [(generalSettings)]="configEntitySettings"
+            [showTable]="checkboxState"
+            (checkboxChange)="updateCheckboxState($event)"
           ></app-admin-entity-general-settings>
         }
       }

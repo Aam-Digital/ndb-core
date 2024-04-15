@@ -80,7 +80,7 @@
       [disabled]="false"
     >
       <div class="grid-layout margin-top-regular">
-        <mat-checkbox (change)="toggleTable($event)"
+        <mat-checkbox [checked]="showTable" (change)="toggleTable($event)"
           >Has personal information (PII)</mat-checkbox
         >
         <div *ngIf="showTable">
