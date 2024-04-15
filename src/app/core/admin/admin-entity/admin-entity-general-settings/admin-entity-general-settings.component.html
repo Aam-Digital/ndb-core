@@ -86,7 +86,7 @@
         <div *ngIf="showTable">
           <mat-table [dataSource]="dataSource" matSort>
             <ng-container matColumnDef="fields">
-              <mat-header-cell *matHeaderCellDef>Field</mat-header-cell>
+              <mat-header-cell *matHeaderCellDef>Fields</mat-header-cell>
               <mat-cell *matCellDef="let data">{{ data.fields }}</mat-cell>
             </ng-container>
 
@@ -94,14 +94,21 @@
               <mat-header-cell *matHeaderCellDef>Anonymization</mat-header-cell>
               <mat-cell *matCellDef="let data">
                 <mat-form-field appearance="fill">
-                  <mat-select [(value)]="data.anonymize" (selectionChange)="selectionOnChange($event.value,data)">
-                    <mat-option *ngFor="let anonymizeOption of anonymizOptionList" [value]="anonymizeOption">
+                  <mat-select
+                    [(value)]="data.anonymize"
+                    (selectionChange)="selectionOnChange($event.value, data)"
+                  >
+                    <mat-option
+                      *ngFor="let anonymizeOption of anonymizOptionList"
+                      [value]="anonymizeOption"
+                      [matTooltip]="getTooltip(anonymizeOption)"
+                      matTooltipPosition="after"
+                    >
                       {{ anonymizeOption }}
                     </mat-option>
                   </mat-select>
                 </mat-form-field>
               </mat-cell>
-                
             </ng-container>
 
             <mat-header-row

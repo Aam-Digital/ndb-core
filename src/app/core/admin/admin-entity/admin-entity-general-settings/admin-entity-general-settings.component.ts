@@ -1,4 +1,11 @@
-import { Component, EventEmitter, Input, OnInit, Output, ViewChild } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Output,
+  ViewChild,
+} from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -51,6 +58,7 @@ import { StringDatatype } from "../../../basic-datatypes/string/string.datatype"
     MatSelectModule,
     MatPaginatorModule,
     CommonModule,
+    MatTooltipModule,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
@@ -59,14 +67,15 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     new EventEmitter<EntityConfig>();
   @Input() generalSettings: EntityConfig;
   @ViewChild(MatPaginator) paginator: MatPaginator;
-  allFields: any[];
-  @ViewChild(MatPaginator,  {static: false}) set matPaginator(paginator: MatPaginator) {
+  allPIIFields: any[];
+  @ViewChild(MatPaginator, { static: false }) set matPaginator(
+    paginator: MatPaginator,
+  ) {
     if (this.showTable) {
       this.dataSource.paginator = paginator;
     }
   }
   entitySchemaField: EntitySchemaField;
-  schemaFieldsForm:FormGroup;
   dataSource: MatTableDataSource<any>;
   anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
 
@@ -74,86 +83,14 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
-    
-    constructor(private fb: FormBuilder,private adminEntityService: AdminEntityService ) {
-    
-  }
+
+  constructor(
+    private fb: FormBuilder,
+    private adminEntityService: AdminEntityService,
+  ) {}
 
   ngOnInit(): void {
     this.init();
-  }
-  toggleTable(event: any) {
-    this.showTable = event.checked;
-    if (this.showTable) {
-      const data = [];
-      this.allFields.forEach((field) => {
-        if (field.label) {
-          const fields = field.name;
-          let anonymize = "Remove";
-
-          if (field.anonymize === "retain") {
-            anonymize = "Retain";
-          } else if (field.anonymize === "retain-anonymized") {
-            anonymize = "Partially Anonymize";
-          } else if (field.anonymize) {
-            anonymize = field.anonymize;
-          }
-          
-          data.push({ fields, anonymize });
-        }
-      });
-      this.dataSource = new MatTableDataSource<any>(data);
-      this.dataSource.paginator = this.paginator; 
-    }
-  }
-
-  selectionOnChange(value: any, data: any) {
-    console.log(data)
-    switch (value) {
-      case 'Partially Anonymize':
-        data.anonymize = 'retain-anonymized';
-        break;
-      case 'Retain':
-        data.anonymize = 'retain';
-        break;
-      case 'Remove':
-        data.anonymize = '';
-        break;
-      default:
-        // Handle other cases if needed
-    }
-
-    const updatedEntitySchema = {
-      label: data.fieldlabel || '',
-      labelShort: data.labelShort || '',
-      description: data.description || '',
-    
-      dataType: data.dataType || '',
-    
-      innerDataType: data.innerDataType || '', 
-    
-      defaultValue: data.defaultValue || '', 
-      searchable: data.searchable !== undefined ? data.searchable : true, 
-    
-      anonymize: data.anonymize || '',
-    
-      validators: data.validators || [],
-    };
-    
-    const updatedEntitySchemaMerged = Object.assign(
-      { _isCustomizedField: true },
-      this.entitySchemaField,
-      updatedEntitySchema
-    );
-    console.log(updatedEntitySchemaMerged)
-
-    
-    const fieldId = data.fields;
-    this.adminEntityService.updateSchemaField(
-      this.entityConstructor,
-      fieldId,
-      updatedEntitySchemaMerged,
-    );
   }
 
   private init() {
@@ -172,13 +109,73 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.initToStringAttributesOptions();
 
     this.form.valueChanges.subscribe((value) => {
-      // Emit the updated value
       this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue()); // Optionally, emit the initial value
     });
-    this.schemaFieldsForm = this.fb.group({
-      dataType: ['string', Validators.required],
-      anonymize: ['retain-anonymized'],
-    });
+  }
+
+  toggleTable(event: any) {
+    this.showTable = event.checked;
+    this.allPIIFields = Array.from(this.entityConstructor.schema.entries())
+      .filter(
+        ([key, field]) =>
+          field.dataType === StringDatatype.dataType && field.label,
+      )
+      .map(([key, field]) => ({ key: key, anonymize: field.anonymize }));
+    if (this.showTable) {
+      const data = [];
+      this.allPIIFields.forEach((field) => {
+        const fields = field.key;
+        let anonymize = "Remove";
+
+        if (field.anonymize === "retain") {
+          anonymize = "Retain";
+        } else if (field.anonymize === "retain-anonymized") {
+          anonymize = "Partially Anonymize";
+        } else if (field.anonymize) {
+          anonymize = field.anonymize;
+        }
+
+        data.push({ fields, anonymize });
+      });
+      this.dataSource = new MatTableDataSource<any>(data);
+      this.dataSource.paginator = this.paginator;
+    }
+  }
+  getTooltip(option: string): string {
+    switch (option) {
+      case "Retain":
+        return "Retain: Keep the original value without any anonymization.";
+      case "Partially Anonymize":
+        return "Partially Anonymize: Anonymize the value but retain some information.";
+      case "Remove":
+        return "Remove: Completely remove the value or anonymize it entirely.";
+      default:
+        return "";
+    }
+  }
+
+  selectionOnChange(value: any, selectFielddata: any) {
+    const selectedFieldId = selectFielddata.fields;
+    const selectedFielddetails =
+      this.entityConstructor.schema.get(selectedFieldId);
+    if (selectFielddata.anonymize == "Partially Anonymize") {
+      selectedFielddetails.anonymize = "retain-anonymized";
+    } else if (selectFielddata.anonymize == "Retain") {
+      selectedFielddetails.anonymize = "retain";
+    } else if ((selectFielddata.anonymize = "Remove")) {
+      selectedFielddetails.anonymize = undefined;
+    }
+    const updatedEntitySchemaMerged = Object.assign(
+      { _isCustomizedField: true },
+      this.entitySchemaField,
+      selectedFielddetails,
+    );
+
+    this.adminEntityService.updateSchemaField(
+      this.entityConstructor,
+      selectedFieldId,
+      updatedEntitySchemaMerged,
+    );
   }
 
   private initToStringAttributesOptions() {
