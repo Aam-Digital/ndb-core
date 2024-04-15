@@ -68,6 +68,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() config: EntityConfig;
   @Input() usedFields: any;
   @ViewChild(MatPaginator) paginator: MatPaginator;
+  allFields: any[];
   @ViewChild(MatPaginator,  {static: false}) set matPaginator(paginator: MatPaginator) {
     if (this.showTable) {
       this.dataSource.paginator = paginator;
@@ -94,9 +95,9 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.showTable = event.checked;
     if (this.showTable) {
       const data = [];
-      this.entityConstructor.schema.forEach((field) => {
+      this.allFields.forEach((field) => {
         if (field.label) {
-          const fields = field.label;
+          const fields = field.name;
           let anonymize = "Remove";
 
           if (field.anonymize === "retain") {
@@ -115,20 +116,53 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     }
   }
 
-  selectionOnChange(value: any, element: any) {
-    const formValues = this.schemaFieldsForm.getRawValue();
-    const updatedEntitySchema = Object.assign(
+  selectionOnChange(value: any, data: any) {
+    console.log(data)
+    switch (value) {
+      case 'Partially Anonymize':
+        data.anonymize = 'retain-anonymized';
+        break;
+      case 'Retain':
+        data.anonymize = 'retain';
+        break;
+      case 'Remove':
+        data.anonymize = '';
+        break;
+      default:
+        // Handle other cases if needed
+    }
+
+    const updatedEntitySchema = {
+      label: data.fieldlabel || '',
+      labelShort: data.labelShort || '',
+      description: data.description || '',
+    
+      dataType: data.dataType || '',
+    
+      innerDataType: data.innerDataType || '', 
+    
+      defaultValue: data.defaultValue || '', 
+      searchable: data.searchable !== undefined ? data.searchable : true, 
+    
+      anonymize: data.anonymize || '',
+    
+      validators: data.validators || [],
+    };
+    
+    const updatedEntitySchemaMerged = Object.assign(
       { _isCustomizedField: true },
-      this.entitySchemaField, // TODO: remove this merge once all schema fields are in the form (then only form values should apply)
-      formValues,
+      this.entitySchemaField,
+      updatedEntitySchema
     );
-    const fieldId = 'projectNumber';
+    console.log(updatedEntitySchemaMerged)
+
+    
+    const fieldId = data.fields;
     this.adminEntityService.updateSchemaField(
       this.entityConstructor,
       fieldId,
-      updatedEntitySchema.anonymize = 'retain-anonymized',
+      updatedEntitySchemaMerged,
     );
-
   }
 
   private init() {
@@ -152,11 +186,20 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     });
   }
   private initAvailableDatatypes() {
-    const allFields = Array.from(this.entityConstructor.schema.entries())
+    this.allFields = Array.from(this.entityConstructor.schema.entries())
       .filter((entry) => entry[1].dataType === "string" && entry[1].label)
-      .map((entry) => ({ name: entry[0], label: entry[1].label }));
+      .map((entry) => ({name: entry[0], label: entry[1].label, anonymize: entry[1].anonymize,
+        labelShort: entry[1].labelShort || '', 
+        description: entry[1].description || '',
+        dataType: entry[1].dataType || '', 
+        innerDataType: entry[1].innerDataType || '', 
+        defaultValue: entry[1].defaultValue || '', 
+        searchable: entry[1].searchable !== undefined ? entry[1].searchable : true, 
+        validators: entry[1].validators || [],
 
-    this.toStringAttributesOptions = allFields.map((field) => ({
+       }));
+console.log(this.allFields)
+    this.toStringAttributesOptions = this.allFields.map((field) => ({
       key: field.name,
       label: field.name,
     }));
