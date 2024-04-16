@@ -78,27 +78,29 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   private initToStringAttributesOptions() {
-    const toStringAttributesSelectedOptions =
-      this.generalSettings.toStringAttributes;
-    if (toStringAttributesSelectedOptions) {
-      const filteredStringAttributesOptions = Array.from(
-        this.entityConstructor.schema.entries(),
-      )
-        .filter(
-          ([key, field]) =>
-            field.dataType === StringDatatype.dataType &&
-            field.label &&
-            !toStringAttributesSelectedOptions.includes(key),
-        )
-        .map(([key, field]) => ({ key: key, label: field.label }));
-      this.toStringAttributesOptions = [
-        ...toStringAttributesSelectedOptions.map((key) => ({
-          key: key,
-          label: this.entityConstructor.schema.get(key)?.label,
-        })),
-        ...filteredStringAttributesOptions,
-      ];
+    if (!this.generalSettings.toStringAttributes) {
+      return;
     }
+
+    const selectedOptions = this.generalSettings.toStringAttributes;
+    const unselectedOptions = Array.from(
+      this.entityConstructor.schema.entries(),
+    )
+      .filter(
+        ([key, field]) =>
+          field.dataType === StringDatatype.dataType &&
+          field.label &&
+          !selectedOptions.includes(key),
+      )
+      .map(([key, field]) => ({ key: key, label: field.label }));
+
+    this.toStringAttributesOptions = [
+      ...selectedOptions.map((key) => ({
+        key: key,
+        label: this.entityConstructor.schema.get(key)?.label,
+      })),
+      ...unselectedOptions,
+    ];
   }
 
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
