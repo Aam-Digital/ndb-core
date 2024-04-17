@@ -45,7 +45,6 @@ import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
 import { ConfigureValidatorPopupComponent } from "../../admin-entity/configure-validator-popup/configure-validator-popup.component";
-
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
  */
@@ -71,6 +70,7 @@ import { ConfigureValidatorPopupComponent } from "../../admin-entity/configure-v
     FontAwesomeModule,
     MatTooltipModule,
     BasicAutocompleteComponent,
+    ConfigureValidatorPopupComponent
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
@@ -78,7 +78,6 @@ export class AdminEntityFieldComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   entitySchemaField: EntitySchemaField;
-dataaa: any;
   form: FormGroup;
   fieldIdForm: FormControl;
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
@@ -116,12 +115,16 @@ dataaa: any;
   }
 
   private initSettings() {
+    console.log(this.entitySchemaField,"byeyey")
+    
+    
     this.fieldIdForm = this.fb.control(this.fieldId, {
       validators: [Validators.required],
       asyncValidators: [
         uniqueIdValidator(Array.from(this.entityType.schema.keys())),
       ],
     });
+    console.log(this.fieldIdForm.value,"byeyey")
     this.additionalForm = this.fb.control(this.entitySchemaField.additional);
 
     this.schemaFieldsForm = this.fb.group({
@@ -305,14 +308,6 @@ dataaa: any;
       enumEntity = new ConfigurableEnum(this.additionalForm.value);
     }
     this.dialog.open(ConfigureEnumPopupComponent, { data: enumEntity });
-  }
-
-  openValidatorOptions(event: Event) {
-    this.dataaa = {
-      data: this.entitySchemaField, fieldId: this.fieldId
-    }
-    event.stopPropagation(); // do not open the autocomplete dropdown when clicking the settings icon
-    this.dialog.open(ConfigureValidatorPopupComponent, { data: this.dataaa });
   }
 }
 

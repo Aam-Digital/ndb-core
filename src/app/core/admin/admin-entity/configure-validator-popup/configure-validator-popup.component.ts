@@ -19,8 +19,8 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
-import { Entity, EntityConstructor } from "../../../entity/model/entity";
-import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
+import {  EntityConstructor } from "../../../entity/model/entity";
+import { AdminEntityService } from "../../admin-entity.service";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 
@@ -46,38 +46,67 @@ import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 export class ConfigureValidatorPopupComponent {
   fieldId: string;
   validatorForm: FormGroup;
- entityType: EntityConstructor;
-
-  entitySchemaField: EntitySchemaField;
-
+  form: FormGroup;
+ @Input() entityConstructor: EntityConstructor;
+  @Input() entitySchemaField: EntitySchemaField;
 
  constructor(
-  @Inject(MAT_DIALOG_DATA) public data: any,
-
-    private formBuilder: FormBuilder
-) {
-    this.validatorForm = this.formBuilder.group({
-        required: [false],
-        min: [null],
-        max: [null],
-        regex: [''],
-        validEmail: [false],
-        uniqueId: ['']
-    });
-}
+  private fb: FormBuilder,
+    private adminEntityService: AdminEntityService,
+) {}
 
 ngOnInit()
-{                                
-  this.fieldId = this.data.fieldId
-  // this.entitySchemaField = this.entityType.schema.get(this.fieldId) ?? {};
+{
+  this.init();           
 
-  console.log(this.data,"hello")
+  // this.fieldId = this.data.fieldId
+
   console.log(this.entitySchemaField,"hello")
 
 } 
+private init() {
 
+  if(this.entitySchemaField.validators)
+    {
+      this.validatorForm = this.fb.group({
+        required: [this.entitySchemaField.validators.required ],
+        min: [this.entitySchemaField.validators.min] ,
+        max: [this.entitySchemaField.validators.max ],
+        regex: [this.entitySchemaField.validators.pattern ],      
+           validEmail: [this.entitySchemaField.validators.validEmail ],
+        uniqueId: [this.entitySchemaField.validators.uniqueId]    });
+     
+    } else {
+    this.validatorForm = this.fb.group({
+      required: [false],
+      min: [null],
+      max: [null],
+      regex: [''],
+      validEmail: [false],
+      uniqueId: ['']
+  });
+}
+this.form = this.fb.group({
+  validatorForm: this.validatorForm,
+});
+}
 
   async save() {
+    // const selectedFielddetails =
+    // this.data.data;
+    // console.log(this.validatorForm,"form")
+    // const updatedEntitySchemaMerged = Object.assign(
+    //   { _isCustomizedField: true },
+    //   this.entitySchemaField,
+    //   selectedFielddetails,
+    // );
+    // console.log(updatedEntitySchemaMerged,"hello22")
+
+    // this.adminEntityService.updateSchemaField(
+    //   this.entityConstructor,
+    //   this.fieldId,
+    //   updatedEntitySchemaMerged,
+    // );
   }
 
 

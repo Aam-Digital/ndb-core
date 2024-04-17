@@ -164,8 +164,13 @@
               <input formControlName="searchable" matInput />
             </mat-form-field>
           </div>
-
           <div class="entity-form-cell">
+
+            <app-configure-validator-popup [entitySchemaField]="entitySchemaField"></app-configure-validator-popup>
+          </div>
+
+
+          <!-- <div class="entity-form-cell">
             <mat-form-field>
               <mat-label>Field Validation</mat-label>
               <input formControlName="validators" matInput />
@@ -177,7 +182,7 @@
               <fa-icon icon="wrench"></fa-icon>
             </button>
             </mat-form-field>
-          </div>
+          </div> -->
         </div>
       </mat-tab>
     </mat-tab-group>
