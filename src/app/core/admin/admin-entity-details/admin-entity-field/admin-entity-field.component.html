@@ -145,7 +145,7 @@
       <mat-tab
         label="Advanced Options & Validation [COMING SOON]"
         i18n-label
-        [disabled]="true"
+        [disabled]="false"
       >
         <div class="grid-layout margin-top-regular">
           <div class="entity-form-cell">
@@ -169,6 +169,13 @@
             <mat-form-field>
               <mat-label>Field Validation</mat-label>
               <input formControlName="validators" matInput />
+              <button
+              mat-icon-button
+              matSuffix
+              (click)="openValidatorOptions($event)"
+            >
+              <fa-icon icon="wrench"></fa-icon>
+            </button>
             </mat-form-field>
           </div>
         </div>

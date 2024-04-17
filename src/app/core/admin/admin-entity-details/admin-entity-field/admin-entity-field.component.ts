@@ -44,6 +44,7 @@ import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/ge
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
+import { ConfigureValidatorPopupComponent } from "../../admin-entity/configure-validator-popup/configure-validator-popup.component";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -77,7 +78,7 @@ export class AdminEntityFieldComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   entitySchemaField: EntitySchemaField;
-
+dataaa: any;
   form: FormGroup;
   fieldIdForm: FormControl;
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
@@ -304,6 +305,14 @@ export class AdminEntityFieldComponent implements OnChanges {
       enumEntity = new ConfigurableEnum(this.additionalForm.value);
     }
     this.dialog.open(ConfigureEnumPopupComponent, { data: enumEntity });
+  }
+
+  openValidatorOptions(event: Event) {
+    this.dataaa = {
+      data: this.entitySchemaField, fieldId: this.fieldId
+    }
+    event.stopPropagation(); // do not open the autocomplete dropdown when clicking the settings icon
+    this.dialog.open(ConfigureValidatorPopupComponent, { data: this.dataaa });
   }
 }
 
