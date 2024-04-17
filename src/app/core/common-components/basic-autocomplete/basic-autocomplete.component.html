@@ -39,13 +39,7 @@
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
   >
-    <ng-container
-      *ngFor="
-        let item of reorder
-          ? autocompleteDraggableOptions
-          : (autocompleteSuggestedOptions | async)
-      "
-    >
+    <ng-container *ngFor="let item of autocompleteOptions">
       <mat-option [value]="item" cdkDrag>
         <div class="flex-row disable-autocomplete-active-color align-center">
           <div *ngIf="reorder">

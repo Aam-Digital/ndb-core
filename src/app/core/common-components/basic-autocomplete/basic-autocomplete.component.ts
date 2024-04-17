@@ -107,16 +107,21 @@ export class BasicAutocompleteComponent<O, V = O>
    * Whether the user should be able to select multiple values.
    */
   @Input() multi?: boolean;
-  @Input() reorder?: boolean;
-  autocompleteDraggableOptions: SelectableOption<O, V>[] = [];
 
+  /**
+   * Whether the user can manually drag & drop to reorder the selected items
+   */
+  @Input() reorder?: boolean;
+
+  autocompleteOptions: SelectableOption<O, V>[] = [];
   autocompleteForm = new FormControl("");
-  autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
-    filter((val) => typeof val === "string"),
-    distinctUntilChanged(),
-    map((val) => this.updateAutocomplete(val)),
-    startWith([] as SelectableOption<O, V>[]),
-  );
+  private autocompleteSuggestedOptions =
+    this.autocompleteForm.valueChanges.pipe(
+      filter((val) => typeof val === "string"),
+      distinctUntilChanged(),
+      map((val) => this.updateAutocomplete(val)),
+      startWith([] as SelectableOption<O, V>[]),
+    );
   autocompleteFilterFunction: (option: O) => boolean;
   @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
 
@@ -174,7 +179,7 @@ export class BasicAutocompleteComponent<O, V = O>
 
   ngOnInit() {
     this.autocompleteSuggestedOptions.subscribe((options) => {
-      this.autocompleteDraggableOptions = options;
+      this.autocompleteOptions = options;
     });
   }
 
@@ -202,14 +207,12 @@ export class BasicAutocompleteComponent<O, V = O>
   drop(event: CdkDragDrop<any[]>) {
     if (event.previousContainer === event.container) {
       moveItemInArray(
-        this.autocompleteDraggableOptions,
+        this.autocompleteOptions,
         event.previousIndex,
         event.currentIndex,
       );
     }
-    this._selectedOptions = this.autocompleteDraggableOptions.filter(
-      (o) => o.selected,
-    );
+    this._selectedOptions = this.autocompleteOptions.filter((o) => o.selected);
     if (this.multi) {
       this.value = this._selectedOptions.map((o) => o.asValue);
     } else {
