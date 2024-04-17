@@ -1,6 +1,5 @@
 import { Component, Inject, Input } from "@angular/core";
 import { ActivityAttendance } from "../model/activity-attendance";
-import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import { Note } from "../../notes/model/note";
 import { calculateAverageAttendance } from "../model/calculate-average-event-attendance";
 import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
@@ -68,6 +67,6 @@ export class AttendanceDetailsComponent {
   }
 
   showEventDetails(event: EventNote) {
-    this.formDialog.openFormPopup(event, [], NoteDetailsComponent);
+    this.formDialog.openView(event, "NoteDetails");
   }
 }
