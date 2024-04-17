@@ -6,12 +6,12 @@ import { AppSettings } from "../app-settings";
 import { HttpStatusCode } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
 import { SyncState } from "../session/session-states/sync-state.enum";
-import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
-import { LoginState } from "../session/session-states/login-state.enum";
-import { filter } from "rxjs/operators";
+import { SyncStateSubject } from "../session/session-type";
+import { filter, mergeMap, repeat, retry, takeWhile } from "rxjs/operators";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { Config } from "../config/config";
 import { Entity } from "../entity/model/entity";
+import { from, of } from "rxjs";
 
 /**
  * This service initializes the remote DB and manages the sync between the local and remote DB.
@@ -22,8 +22,8 @@ import { Entity } from "../entity/model/entity";
 export class SyncService {
   static readonly LAST_SYNC_KEY = "LAST_SYNC";
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
-  private _liveSyncHandle: any;
-  private _liveSyncScheduledHandle: any;
+  static readonly SYNC_INTERVAL = 30000;
+
   private remoteDatabase = new PouchDatabase(this.loggingService);
   private remoteDB: PouchDB.Database;
   private localDB: PouchDB.Database;
@@ -33,7 +33,6 @@ export class SyncService {
     private loggingService: LoggingService,
     private authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
-    private loginStateSubject: LoginStateSubject,
   ) {
     this.logSyncContext();
 
@@ -64,10 +63,7 @@ export class SyncService {
    */
   startSync() {
     this.initDatabases();
-    this.sync()
-      .catch((err) => this.loggingService.warn(`Initial sync failed: ${err}`))
-      // Call live sync even when initial sync fails
-      .finally(() => this.liveSyncDeferred());
+    this.liveSync();
   }
 
   /**
@@ -107,92 +103,41 @@ export class SyncService {
     return PouchDB.fetch(url, opts);
   }
 
-  private sync(): Promise<any> {
+  private sync(): Promise<SyncResult> {
     this.syncStateSubject.next(SyncState.STARTED);
+
     return this.localDB
       .sync(this.remoteDB, {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       })
-      .then(() => {
+      .then((res) => {
+        this.loggingService.debug("sync completed", res);
         this.syncStateSubject.next(SyncState.COMPLETED);
+        return res as SyncResult;
       })
       .catch((err) => {
+        this.loggingService.debug("sync error", err);
         this.syncStateSubject.next(SyncState.FAILED);
         throw err;
       });
   }
 
   /**
-   * Schedules liveSync to be started.
-   * This method should be used to start the liveSync after the initial non-live sync,
-   * so the browser makes a round trip to the UI and hides the potentially visible first-sync dialog.
-   * @param timeout ms to wait before starting the liveSync
+   * Continuous syncing in background.
    */
-  private liveSyncDeferred(timeout = 1000) {
-    this._liveSyncScheduledHandle = setTimeout(() => this.liveSync(), timeout);
-  }
-
-  /**
-   * Start live sync in background.
-   */
+  liveSyncEnabled: boolean;
   private liveSync() {
-    this.cancelLiveSync(); // cancel any liveSync that may have been alive before
-    this.syncStateSubject.next(SyncState.STARTED);
-    this._liveSyncHandle = this.localDB.sync(this.remoteDB, {
-      live: true,
-      retry: true,
-    });
-    this._liveSyncHandle
-      .on("paused", () => {
-        // replication was paused: either because sync is finished or because of a failed sync (mostly due to lost connection). info is empty.
-        if (this.isLoggedIn()) {
-          this.syncStateSubject.next(SyncState.COMPLETED);
-          // We might end up here after a failed sync that is not due to offline errors.
-          // It shouldn't happen too often, as we have an initial non-live sync to catch those situations, but we can't find that out here
-        }
-      })
-      .on("active", () => {
-        // replication was resumed: either because new things to sync or because connection is available again. info contains the direction
-        this.syncStateSubject.next(SyncState.STARTED);
-      })
-      .on("error", this.handleFailedSync())
-      .on("complete", (info) => {
-        this.loggingService.info(
-          `Live sync completed: ${JSON.stringify(info)}`,
-        );
-        this.syncStateSubject.next(SyncState.COMPLETED);
-      });
-  }
+    this.liveSyncEnabled = true;
 
-  private handleFailedSync() {
-    return (info) => {
-      if (this.isLoggedIn()) {
-        this.syncStateSubject.next(SyncState.FAILED);
-        const lastAuth = localStorage.getItem(
-          KeycloakAuthService.LAST_AUTH_KEY,
-        );
-        this.loggingService.warn(
-          `Live sync failed (last auth ${lastAuth}): ${JSON.stringify(info)}`,
-        );
-        this.liveSync();
-      }
-    };
-  }
-
-  private isLoggedIn(): boolean {
-    return this.loginStateSubject.value === LoginState.LOGGED_IN;
-  }
-
-  /**
-   * Cancels a currently running liveSync or a liveSync scheduled to start in the future.
-   */
-  private cancelLiveSync() {
-    if (this._liveSyncScheduledHandle) {
-      clearTimeout(this._liveSyncScheduledHandle);
-    }
-    if (this._liveSyncHandle) {
-      this._liveSyncHandle.cancel();
-    }
-    this.syncStateSubject.next(SyncState.UNSYNCED);
+    of(true)
+      .pipe(
+        mergeMap(() => from(this.sync())),
+        retry({ delay: SyncService.SYNC_INTERVAL }),
+        repeat({ delay: SyncService.SYNC_INTERVAL }),
+        takeWhile(() => this.liveSyncEnabled),
+      )
+      .subscribe();
   }
 }
+
+type SyncResult = PouchDB.Replication.SyncResultComplete<any>;

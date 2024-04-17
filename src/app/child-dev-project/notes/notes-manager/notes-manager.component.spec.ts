@@ -2,17 +2,15 @@ import { NotesManagerComponent } from "./notes-manager.component";
 import {
   ComponentFixture,
   fakeAsync,
-  flush,
   TestBed,
   tick,
   waitForAsync,
 } from "@angular/core/testing";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { ActivatedRoute, Router } from "@angular/router";
-import { BehaviorSubject, of, Subject } from "rxjs";
+import { Router } from "@angular/router";
+import { of, Subject } from "rxjs";
 import { Note } from "../model/note";
-import { NoteDetailsComponent } from "../note-details/note-details.component";
 import {
   ConfigurableEnumFilterConfig,
   EntityListConfig,
@@ -32,10 +30,10 @@ describe("NotesManagerComponent", () => {
   let mockEventNoteObservable: Subject<UpdatedEntity<Note>>;
   const dialogMock: jasmine.SpyObj<FormDialogService> = jasmine.createSpyObj(
     "dialogMock",
-    ["openFormPopup"],
+    ["openView"],
   );
 
-  const routeData: EntityListConfig = {
+  const config: EntityListConfig = {
     title: "Notes List",
     columns: [],
     columnGroups: {
@@ -65,12 +63,6 @@ describe("NotesManagerComponent", () => {
     ],
   };
 
-  const routeMock = {
-    data: new BehaviorSubject({ config: routeData }),
-    queryParams: of({}),
-    snapshot: { queryParams: {} },
-  };
-
   const testInteractionTypes: InteractionType[] = Ordering.imposeTotalOrdering([
     {
       id: "HOME_VISIT",
@@ -88,10 +80,7 @@ describe("NotesManagerComponent", () => {
 
     TestBed.configureTestingModule({
       imports: [NotesManagerComponent, MockedTestingModule.withState()],
-      providers: [
-        { provide: FormDialogService, useValue: dialogMock },
-        { provide: ActivatedRoute, useValue: routeMock },
-      ],
+      providers: [{ provide: FormDialogService, useValue: dialogMock }],
     }).compileComponents();
 
     entityMapper = TestBed.inject(EntityMapperService);
@@ -115,29 +104,16 @@ describe("NotesManagerComponent", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should set up prebuilt filters", fakeAsync(() => {
-    component.ngOnInit();
-    tick();
-    expect(component.config.filters.length).toEqual(3);
-    expect(component.config.filters[0]).toHaveOwnProperty("options");
-    expect(component.config.filters[1]).toHaveOwnProperty("options");
-    expect(component.config.filters[2]).not.toHaveOwnProperty("options");
-  }));
-
   it("should open the dialog when clicking details", () => {
     const note = new Note("testNote");
     component.showDetails(note);
-    expect(dialogMock.openFormPopup).toHaveBeenCalledWith(
-      note,
-      [],
-      NoteDetailsComponent,
-    );
+    expect(dialogMock.openView).toHaveBeenCalledWith(note, "NoteDetails");
   });
 
   it("should open dialog when add note is clicked", fakeAsync(() => {
     const newNote = new Note("new");
     const returnValue: any = { afterClosed: () => of(newNote) };
-    dialogMock.openFormPopup.and.returnValue(returnValue);
+    dialogMock.openView.and.returnValue(returnValue);
     component.addNoteClick();
   }));
 
@@ -188,11 +164,9 @@ describe("NotesManagerComponent", () => {
     tick();
 
     component.includeEventNotes = true;
-    routeMock.data.next({
-      config: routeData,
-    });
-
-    flush();
+    Object.assign(component, config);
+    component.ngOnInit();
+    tick();
 
     expect(component.notes).toEqual([note, eventNote]);
   }));

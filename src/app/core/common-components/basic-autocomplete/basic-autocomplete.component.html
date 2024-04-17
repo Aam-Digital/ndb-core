@@ -33,25 +33,42 @@
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="multi"
 >
-  <mat-option
-    *ngFor="let item of autocompleteSuggestedOptions | async"
-    [value]="item"
+  <div
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+    cdkDropListGroup
+    [cdkDropListDisabled]="!reorder"
   >
-    <div class="flex-row disable-autocomplete-active-color">
-      <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-
-      <ng-container *ngIf="!templateRef; else itemTemplate">
-        {{ item.asString }}
-      </ng-container>
-
-      <ng-template
-        class="item-option"
-        #itemTemplate
-        [ngTemplateOutlet]="templateRef"
-        [ngTemplateOutletContext]="{ $implicit: item.initial }"
-      ></ng-template>
-    </div>
-  </mat-option>
+    <ng-container
+      *ngFor="
+        let item of reorder
+          ? autocompleteDraggableOptions
+          : (autocompleteSuggestedOptions | async)
+      "
+    >
+      <mat-option [value]="item" cdkDrag>
+        <div class="flex-row disable-autocomplete-active-color align-center">
+          <div *ngIf="reorder">
+            <fa-icon
+              icon="grip-vertical"
+              size="sm"
+              class="drag-handle"
+            ></fa-icon>
+          </div>
+          <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+          <ng-container *ngIf="!templateRef; else itemTemplate">
+            {{ item.asString }}
+          </ng-container>
+          <ng-template
+            class="item-option"
+            #itemTemplate
+            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutletContext]="{ $implicit: item.initial }"
+          ></ng-template>
+        </div>
+      </mat-option>
+    </ng-container>
+  </div>
 
   <!-- Create new option -->
   <mat-option
@@ -59,10 +76,8 @@
     [value]="inputElement.value"
   >
     <em
-      i18n="
-        Label for adding an option in a dropdown|e.g. Add option My new Option
-      "
-      >Add option</em
+      i18n="Label for adding an option in a dropdown|e.g. Add new My new Option"
+      >Add new</em
     >
     {{ inputElement.value }}
   </mat-option>

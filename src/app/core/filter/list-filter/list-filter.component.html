@@ -3,8 +3,8 @@
 
   <mat-select
     [id]="filterConfig.name"
-    [(value)]="selectedOptions"
-    (valueChange)="selectedOptionChange.emit($event)"
+    [(value)]="filterConfig.selectedOptionValues"
+    (valueChange)="filterConfig.selectedOptionChange.emit($event)"
     multiple
   >
     <!-- SELECT ALL / CLEAR -->

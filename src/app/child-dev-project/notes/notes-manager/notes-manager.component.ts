@@ -1,22 +1,16 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { Note } from "../model/note";
-import { NoteDetailsComponent } from "../note-details/note-details.component";
-import { ActivatedRoute } from "@angular/router";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import {
-  DataFilter,
-  FilterSelectionOption,
-} from "../../../core/filter/filters/filters";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
-import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityListComponent } from "../../../core/entity-list/entity-list/entity-list.component";
 import { applyUpdate } from "../../../core/entity/model/entity-update";
-import { EntityListConfig } from "../../../core/entity-list/EntityListConfig";
+import {
+  ColumnGroupsConfig,
+  FilterConfig,
+} from "../../../core/entity-list/EntityListConfig";
 import { EventNote } from "../../attendance/model/event-note";
-import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { merge } from "rxjs";
-import moment from "moment";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import { NgIf } from "@angular/common";
 import { FormsModule } from "@angular/forms";
@@ -24,6 +18,9 @@ import { Angulartics2Module } from "angulartics2";
 import { MatMenuModule } from "@angular/material/menu";
 import { FaDynamicIconComponent } from "../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { RouteTarget } from "../../../route-target";
+import { Sort } from "@angular/material/sort";
+import { ExportColumnConfig } from "../../../core/export/data-transformation-service/export-column-config";
+import { FormFieldConfig } from "../../../core/common-components/entity-form/FormConfig";
 
 /**
  * additional config specifically for NotesManagerComponent
@@ -53,46 +50,28 @@ export interface NotesManagerConfig {
 })
 @UntilDestroy()
 export class NotesManagerComponent implements OnInit {
+  // inputs to be passed through to EntityList
+  @Input() defaultSort: Sort;
+  @Input() exportConfig: ExportColumnConfig[];
+  @Input() showInactive: boolean;
+  @Input() title = "";
+  @Input() columns: (FormFieldConfig | string)[] = [];
+  @Input() columnGroups: ColumnGroupsConfig;
+  @Input() filters: FilterConfig[] = [];
+
   @Input() includeEventNotes: boolean;
   @Input() showEventNotesToggle: boolean;
 
-  config: EntityListConfig;
   entityConstructor = Note;
   notes: Note[];
-
-  private dateFS: FilterSelectionOption<Note>[] = [
-    {
-      key: "current-week",
-      label: $localize`:Filter-option for notes:This Week`,
-      filter: { date: this.getWeeksFilter(0) } as DataFilter<any>,
-    },
-    {
-      key: "last-week",
-      label: $localize`:Filter-option for notes:Since Last Week`,
-      filter: { date: this.getWeeksFilter(1) } as DataFilter<any>,
-    },
-    { key: "", label: $localize`All`, filter: {} },
-  ];
 
   constructor(
     private formDialog: FormDialogService,
     private entityMapperService: EntityMapperService,
-    private route: ActivatedRoute,
-    private log: LoggingService,
   ) {}
 
   async ngOnInit() {
-    this.route.data.subscribe(
-      async (
-        data: DynamicComponentConfig<EntityListConfig & NotesManagerConfig>,
-      ) => {
-        // TODO replace this use of route and rely on the RoutedViewComponent instead
-        this.config = data.config;
-        this.addPrebuiltFilters();
-        this.notes = await this.loadEntities();
-      },
-    );
-
+    this.notes = await this.loadEntities();
     this.subscribeEntityUpdates();
   }
 
@@ -128,41 +107,12 @@ export class NotesManagerComponent implements OnInit {
     this.notes = await this.loadEntities();
   }
 
-  private addPrebuiltFilters() {
-    for (const prebuiltFilter of this.config.filters.filter(
-      (filter) => filter.type === "prebuilt",
-    )) {
-      switch (prebuiltFilter.id) {
-        case "date": {
-          prebuiltFilter["options"] = this.dateFS;
-          prebuiltFilter["default"] = "current-week";
-          break;
-        }
-        default: {
-          this.log.warn(
-            "[NoteManagerComponent] No filter options available for prebuilt filter: " +
-              prebuiltFilter.id,
-          );
-          prebuiltFilter["options"] = [];
-        }
-      }
-    }
-  }
-
-  private getWeeksFilter(weeksBack: number) {
-    const start = moment().subtract(weeksBack, "weeks").startOf("week");
-    const end = moment().endOf("day");
-    const startString = start.format("YYYY-MM-DD");
-    const endString = end.format("YYYY-MM-DD");
-    return { $gte: startString, $lte: endString };
-  }
-
   addNoteClick() {
     const newNote = new Note(Date.now().toString());
     this.showDetails(newNote);
   }
 
   showDetails(entity: Note) {
-    this.formDialog.openFormPopup(entity, [], NoteDetailsComponent);
+    this.formDialog.openView(entity, "NoteDetails");
   }
 }

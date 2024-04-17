@@ -1,8 +1,9 @@
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { KeycloakAuthService } from "./keycloak-auth.service";
 import { HttpClient } from "@angular/common/http";
-import { KeycloakService } from "keycloak-angular";
+import { KeycloakEventType, KeycloakService } from "keycloak-angular";
+import { Subject } from "rxjs";
 
 /**
  * Check {@link https://jwt.io} to decode the token.
@@ -29,14 +30,13 @@ describe("KeycloakAuthService", () => {
 
   beforeEach(() => {
     mockHttpClient = jasmine.createSpyObj(["post"]);
-    mockKeycloak = jasmine.createSpyObj([
-      "updateToken",
-      "getToken",
-      "login",
-      "init",
-    ]);
-    mockKeycloak.updateToken.and.resolveTo();
+    mockKeycloak = jasmine.createSpyObj(
+      ["updateToken", "getToken", "login", "init"],
+      { keycloakEvents$: new Subject() },
+    );
     mockKeycloak.getToken.and.resolveTo(keycloakToken);
+    mockKeycloak.updateToken.and.resolveTo(true);
+
     TestBed.configureTestingModule({
       providers: [
         { provide: HttpClient, useValue: mockHttpClient },
@@ -89,4 +89,39 @@ describe("KeycloakAuthService", () => {
     service.addAuthHeader(objHeaders);
     expect(objHeaders["Authorization"]).toBe(`Bearer ${keycloakToken}`);
   });
+
+  it("should re-authorize (login) when access token expires", fakeAsync(() => {
+    service.login();
+    tick();
+    expect(mockKeycloak.updateToken).toHaveBeenCalled();
+
+    mockKeycloak.updateToken.calls.reset();
+    mockKeycloak.getToken.calls.reset();
+
+    mockKeycloak.keycloakEvents$.next({
+      type: KeycloakEventType.OnTokenExpired,
+    });
+    tick();
+    expect(mockKeycloak.updateToken).toHaveBeenCalled();
+    expect(mockKeycloak.getToken).toHaveBeenCalled();
+  }));
+
+  xit("should gracefully handle failed re-authorization", fakeAsync(() => {
+    // TODO: investigate different updateToken return values in dev and prod setups, see #2318
+    service.login();
+    tick();
+    expect(mockKeycloak.updateToken).toHaveBeenCalled();
+
+    mockKeycloak.updateToken.calls.reset();
+    mockKeycloak.getToken.calls.reset();
+
+    mockKeycloak.updateToken.and.resolveTo(false);
+    mockKeycloak.keycloakEvents$.next({
+      type: KeycloakEventType.OnTokenExpired,
+    });
+    tick();
+    expect(mockKeycloak.updateToken).toHaveBeenCalled();
+    // do not getToken if updateToken failed
+    expect(mockKeycloak.getToken).not.toHaveBeenCalled();
+  }));
 });
