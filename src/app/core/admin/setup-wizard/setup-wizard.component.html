@@ -1,4 +1,12 @@
-<mat-stepper linear #stepper>
+<mat-stepper #stepper>
+  <!-- overwrite icons to keep simple numbered steps -->
+  <ng-template matStepperIcon="edit" let-index="index">
+    {{ index + 1 }}
+  </ng-template>
+  <ng-template matStepperIcon="done" let-index="index">
+    {{ index + 1 }}
+  </ng-template>
+
   <mat-step label="Willkommen">
     <p>Herzlich willkommen bei codo!</p>
     <p>codo hilft dir dabei ...</p>
@@ -15,7 +23,7 @@
     <button mat-button matStepperNext>Weiter</button>
   </mat-step>
 
-  <mat-step label="Datenstrukturen individuell anpassen">
+  <mat-step label="Profile & Felder anpassen">
     <p>
       codo ist als Software bereits genau auf die Betreuung von Patenschaften
       zugeschnitten. Unsere langjährige Erfahrungen der BürgerStiftung Hamburg
@@ -45,22 +53,7 @@
     <button mat-button matStepperNext>Weiter</button>
   </mat-step>
 
-  <mat-step label="Daten importieren">
-    <p>
-      Falls ihr bestehende Daten bisheriger Patenschaften habt, könnt ihr diese
-      einfach importieren. Dazu müssen diese aus Excel im ".csv"-Format
-      abgespeichert werden. Das Import-Modul von codo hilft euch dabei, die
-      Tabellen den passenden Datenfeldern zuzuordnen.
-    </p>
-
-    <div>
-      <button mat-button [routerLink]="['/import']">Daten importieren</button>
-    </div>
-
-    <button mat-button matStepperNext>Weiter</button>
-  </mat-step>
-
-  <mat-step label="Weitere Nutzer:innen hinzufügen">
+  <mat-step label="Nutzer:innen hinzufügen">
     <p>
       Ihr könnt in codo sehr einfach als Team zusammenarbeiten. Die Daten sind
       für alle synchronisiert und auf dem aktuellsten Stand. Weitere
@@ -71,6 +64,21 @@
       <button mat-button [routerLink]="['/user']">
         Nutzer-Accounts verwalten
       </button>
+    </div>
+
+    <button mat-button matStepperNext>Weiter</button>
+  </mat-step>
+
+  <mat-step label="Daten importieren">
+    <p>
+      Falls ihr bestehende Daten bisheriger Patenschaften habt, könnt ihr diese
+      einfach importieren. Dazu müssen diese aus Excel im ".csv"-Format
+      abgespeichert werden. Das Import-Modul von codo hilft euch dabei, die
+      Tabellen den passenden Datenfeldern zuzuordnen.
+    </p>
+
+    <div>
+      <button mat-button [routerLink]="['/import']">Daten importieren</button>
     </div>
 
     <button mat-button matStepperNext>Weiter</button>
