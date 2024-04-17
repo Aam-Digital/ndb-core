@@ -27,12 +27,15 @@ import { BasicAutocompleteComponent } from "../../../common-components/basic-aut
 import { EntityConfig } from "../../../entity/entity-config";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatPaginator, MatPaginatorModule } from "@angular/material/paginator";
+import { MatPaginator } from "@angular/material/paginator";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { AdminEntityService } from "../../admin-entity.service";
 import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
+import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
+import { MatSort } from "@angular/material/sort";
+import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -56,9 +59,11 @@ import { StringDatatype } from "../../../basic-datatypes/string/string.datatype"
     MatTableModule,
     MatOptionModule,
     MatSelectModule,
-    MatPaginatorModule,
     CommonModule,
     MatTooltipModule,
+    HelpButtonComponent,
+    MatSort,
+    EntityFieldLabelComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
@@ -69,13 +74,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @ViewChild(MatPaginator) paginator: MatPaginator;
   allPIIFields: any[];
   @Input() showTable: boolean;
-  @ViewChild(MatPaginator, { static: false }) set matPaginator(
-    paginator: MatPaginator,
-  ) {
-    if (this.showTable) {
-      this.dataSource.paginator = paginator;
-    }
-  }
+
   entitySchemaField: EntitySchemaField;
   dataSource: MatTableDataSource<any>;
   anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
@@ -135,7 +134,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       });
 
       this.dataSource = new MatTableDataSource<any>(data);
-      this.dataSource.paginator = this.paginator;
     }
   }
 

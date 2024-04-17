@@ -79,19 +79,32 @@
       i18n-label
       [disabled]="false"
     >
-      <div class="grid-layout margin-top-regular">
+      <div class="margin-top-regular">
         <mat-checkbox [checked]="showTable" (change)="toggleTable($event)"
           >Has personal information (PII)</mat-checkbox
         >
+        <app-help-button
+          text="If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the 'anonymization' feature. This allows users to anonymize records of this type instead of just archiving or deleting them."
+          i18n-text
+        ></app-help-button>
+
         <div *ngIf="showTable">
-          <mat-table [dataSource]="dataSource" matSort>
+          <p i18n>
+            Configure how records of this type can be anonymized. Users can
+            "anonymize" a record as an alternative to just archiving it (keeping
+            all personal details) or deleting it (losing any trace of the
+            record, even in reports). Select below which fields can be
+            "retained" to keep some limited data for statistical reporting and
+            which fields have to be removed because they contain personal
+            details.
+          </p>
+
+          <mat-table [dataSource]="dataSource">
             <ng-container matColumnDef="fields">
-              <mat-header-cell *matHeaderCellDef>Fields</mat-header-cell>
               <mat-cell *matCellDef="let data">{{ data.fields }}</mat-cell>
             </ng-container>
 
             <ng-container matColumnDef="anonymize">
-              <mat-header-cell *matHeaderCellDef>Anonymization</mat-header-cell>
               <mat-cell *matCellDef="let data">
                 <mat-form-field appearance="fill">
                   <mat-select
@@ -111,14 +124,10 @@
               </mat-cell>
             </ng-container>
 
-            <mat-header-row
-              *matHeaderRowDef="['fields', 'anonymize']"
-            ></mat-header-row>
             <mat-row
               *matRowDef="let row; columns: ['fields', 'anonymize']"
             ></mat-row>
           </mat-table>
-          <mat-paginator [pageSize]="5" showFirstLastButtons></mat-paginator>
         </div>
       </div>
     </mat-tab>
