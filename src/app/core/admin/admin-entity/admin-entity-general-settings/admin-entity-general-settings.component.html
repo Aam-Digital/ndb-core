@@ -48,20 +48,24 @@
         </div>
 
         <div class="entity-form-cell">
-          <mat-form-field floatLabel="always">
+          <mat-form-field>
             <mat-label i18n>
               Generated Title of Record
               <fa-icon
                 icon="question-circle"
-                matTooltip="Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type."
+                matTooltip="Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type. (Only text fields can be used here)"
                 i18n-matTooltip
               ></fa-icon>
             </mat-label>
-            <input
+            <app-basic-autocomplete
               formControlName="toStringAttributes"
-              matInput
-              [placeholder]="formLabel.value"
-            />
+              #formDataType
+              [options]="toStringAttributesOptions"
+              [optionToString]="objectToLabel"
+              [valueMapper]="objectToValue"
+              [multi]="true"
+              [reorder]="true"
+            ></app-basic-autocomplete>
           </mat-form-field>
         </div>
       </div>
