@@ -16,7 +16,6 @@ import moment, { Moment } from "moment";
 import { EventAttendance } from "../model/event-attendance";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { NoteDetailsComponent } from "../../notes/note-details/note-details.component";
 import {
   AverageAttendanceStats,
   calculateAverageAttendance,
@@ -217,6 +216,6 @@ export class AttendanceCalendarComponent implements OnChanges {
   }
 
   showEventDetails(selectedEvent: Note) {
-    this.formDialog.openFormPopup(selectedEvent, [], NoteDetailsComponent);
+    this.formDialog.openView(selectedEvent, "NoteDetails");
   }
 }

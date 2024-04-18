@@ -1,12 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  Output,
-  OnChanges,
-  SimpleChanges,
-  OnInit,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -26,6 +18,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConfig } from "../../../entity/entity-config";
+import { StringDatatype } from "../../../basic-datatypes/string/string.datatype";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -47,13 +40,15 @@ import { EntityConfig } from "../../../entity/entity-config";
     BasicAutocompleteComponent,
   ],
 })
-export class AdminEntityGeneralSettingsComponent implements OnChanges, OnInit {
+export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Input() entityConstructor: EntityConstructor;
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
-  @Input() config: EntityConfig;
+  @Input() generalSettings: EntityConfig;
+
   form: FormGroup;
   basicSettingsForm: FormGroup;
+  toStringAttributesOptions: SimpleDropdownValue[] = [];
 
   constructor(private fb: FormBuilder) {}
 
@@ -61,45 +56,58 @@ export class AdminEntityGeneralSettingsComponent implements OnChanges, OnInit {
     this.init();
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes.config) {
-      this.init();
-    }
-  }
-
   private init() {
     this.basicSettingsForm = this.fb.group({
-      label: [this.config.label, Validators.required],
-      labelPlural: [this.config.labelPlural],
-      icon: [this.config.icon, Validators.required],
-      toStringAttributes: [this.config.toStringAttributes, Validators.required],
+      label: [this.generalSettings.label, Validators.required],
+      labelPlural: [this.generalSettings.labelPlural],
+      icon: [this.generalSettings.icon, Validators.required],
+      toStringAttributes: [
+        this.generalSettings.toStringAttributes,
+        Validators.required,
+      ],
     });
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
+    this.initToStringAttributesOptions();
 
     this.form.valueChanges.subscribe((value) => {
-      this.emitStaticDetails(); // Optionally, emit the initial value
+      // Emit the updated value
+      this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue()); // Optionally, emit the initial value
     });
   }
 
-  emitStaticDetails() {
-    const toStringAttributesControl =
-      this.basicSettingsForm.get("toStringAttributes");
-    let toStringAttributesValue = toStringAttributesControl.value;
-    // Convert toStringAttributesValue to an array if it's a string
-    if (typeof toStringAttributesValue === "string") {
-      toStringAttributesValue = toStringAttributesValue
-        .split(",")
-        .map((item) => item.trim());
+  private initToStringAttributesOptions() {
+    if (!this.generalSettings.toStringAttributes) {
+      return;
     }
 
-    // Update the form control with the modified value
-    toStringAttributesControl.setValue(toStringAttributesValue, {
-      emitEvent: false,
-    });
+    const selectedOptions = this.generalSettings.toStringAttributes;
+    const unselectedOptions = Array.from(
+      this.entityConstructor.schema.entries(),
+    )
+      .filter(
+        ([key, field]) =>
+          field.dataType === StringDatatype.dataType &&
+          field.label &&
+          !selectedOptions.includes(key),
+      )
+      .map(([key, field]) => ({ key: key, label: field.label }));
 
-    // Emit the updated value
-    this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue());
+    this.toStringAttributesOptions = [
+      ...selectedOptions.map((key) => ({
+        key: key,
+        label: this.entityConstructor.schema.get(key)?.label,
+      })),
+      ...unselectedOptions,
+    ];
   }
+
+  objectToLabel = (v: SimpleDropdownValue) => v?.label;
+  objectToValue = (v: SimpleDropdownValue) => v?.key;
+}
+
+interface SimpleDropdownValue {
+  key: string;
+  label: string;
 }
