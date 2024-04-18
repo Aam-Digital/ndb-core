@@ -37,7 +37,7 @@ describe("ConfigureValidatorPopupComponent", () => {
         max: 10,
         pattern: "^[a-zA-Z0-9]+$",
         validEmail: true,
-        uniqueId: "uniqueIdValidator",
+        uniqueId: "guid",
       },
     };
     component.entitySchemaField.validators = { required: false };
