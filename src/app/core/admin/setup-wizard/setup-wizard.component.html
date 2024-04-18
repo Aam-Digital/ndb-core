@@ -7,91 +7,19 @@
     {{ index + 1 }}
   </ng-template>
 
-  <mat-step label="Willkommen">
-    <p>Herzlich willkommen bei codo!</p>
-    <p>codo hilft dir dabei ...</p>
-    <p>...</p>
-    <p>
-      Die folgenden Schritten leiten dich durch die wichtigsten Einstellungen,
-      um codo optimal auf euer Projekt anzupassen. Du kannst schon nach wenigen
-      Minuten loslegen und die ersten Daten erfassen.<br />
-      Du kannst jederzeit über den Button unten im Menü links zu diesen
-      Einrichtungsassistenten zurückkehren, wenn du zunächst die Anwendung
-      erkunden möchtest.
-    </p>
+  @for (step of config.steps; track step) {
+    <mat-step [label]="step.title">
+      <markdown>{{ step.text }}</markdown>
 
-    <button mat-button matStepperNext>Weiter</button>
-  </mat-step>
+      <mat-action-list>
+        @for (action of step.actions; track action.link) {
+          <button mat-list-item [routerLink]="action.link">
+            {{ action.label }}
+          </button>
+        }
+      </mat-action-list>
 
-  <mat-step label="Profile & Felder anpassen">
-    <p>
-      codo ist als Software bereits genau auf die Betreuung von Patenschaften
-      zugeschnitten. Unsere langjährige Erfahrungen der BürgerStiftung Hamburg
-      und Stiftung Bürgermut in der Betreuung solcher Projekte sind die Basis
-      für codo und das System wurde in enger Zusammenarbeit mit einer
-      Fokusgruppe von Projekten entwickelt.<br />
-      Damit codo optimal auf euer Projekt passt, könnt ihr innerhalb der
-      vorhandenen Datenstrukturen zusätzliche Felder und Formularbereiche
-      individuell anpassen.
-    </p>
-
-    <mat-action-list>
-      <button mat-list-item [routerLink]="['/admin/entity', 'School']">
-        Mentor:innen-Profile anpassen
-      </button>
-      <button mat-list-item [routerLink]="['/admin/entity', 'Child']">
-        Mentee-Profile anpassen
-      </button>
-      <button
-        mat-list-item
-        [routerLink]="['/admin/entity', 'ChildSchoolRelation']"
-      >
-        Patenschafts-Daten anpassen
-      </button>
-    </mat-action-list>
-
-    <button mat-button matStepperNext>Weiter</button>
-  </mat-step>
-
-  <mat-step label="Nutzer:innen hinzufügen">
-    <p>
-      Ihr könnt in codo sehr einfach als Team zusammenarbeiten. Die Daten sind
-      für alle synchronisiert und auf dem aktuellsten Stand. Weitere
-      Nutzer-Accounts könnt ihr jederzeit selbst erstellen.
-    </p>
-
-    <div>
-      <button mat-button [routerLink]="['/user']">
-        Nutzer-Accounts verwalten
-      </button>
-    </div>
-
-    <button mat-button matStepperNext>Weiter</button>
-  </mat-step>
-
-  <mat-step label="Daten importieren">
-    <p>
-      Falls ihr bestehende Daten bisheriger Patenschaften habt, könnt ihr diese
-      einfach importieren. Dazu müssen diese aus Excel im ".csv"-Format
-      abgespeichert werden. Das Import-Modul von codo hilft euch dabei, die
-      Tabellen den passenden Datenfeldern zuzuordnen.
-    </p>
-
-    <div>
-      <button mat-button [routerLink]="['/import']">Daten importieren</button>
-    </div>
-
-    <button mat-button matStepperNext>Weiter</button>
-  </mat-step>
-
-  <mat-step label="Fertig">
-    <p>
-      Mehr gibt es eigentlich nicht zu beachten. Ihr könnt jetzt loslegen und
-      codo ausprobieren. Bei Fragen oder Problemen wendet euch gerne an xxx.de
-    </p>
-
-    <p>Ein paar Tipps und mögliche erste Schritte zum Abschluss: ...</p>
-
-    <button mat-button [routerLink]="['/']">Loslegen</button>
-  </mat-step>
+      <button mat-button matStepperNext i18n>Continue</button>
+    </mat-step>
+  }
 </mat-stepper>
