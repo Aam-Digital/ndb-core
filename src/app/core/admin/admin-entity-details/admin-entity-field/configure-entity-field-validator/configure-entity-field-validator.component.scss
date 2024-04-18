@@ -1,8 +1,4 @@
 .validator-form-cell {
-    display: flex;
-    flex-direction: column;
-    // set the width of each form field to 100% in every form component that is a descendent
-    // of the columns-wrapper class
     mat-form-field {
       width: 80%;
     }

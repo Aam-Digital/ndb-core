@@ -1,23 +1,33 @@
-<form class="validator-form-cell" [formGroup]="form">
+<form class="validator-form-cell flex-column" [formGroup]="form">
   <mat-tab-group formGroupName="validatorForm">
-    <mat-form-field>
-      <mat-label i18n>Minimum Value</mat-label>
-      <input formControlName="min" matInput type="number" />
-    </mat-form-field>
+    <ng-container *ngIf="entitySchemaField.dataType === 'number'">
+      <mat-form-field class="number-field">
+        <mat-label i18n>Minimum Value</mat-label>
+        <input formControlName="min" matInput type="number" />
+      </mat-form-field>
 
-    <mat-form-field>
-      <mat-label i18n>Maximum Value</mat-label>
-      <input formControlName="max" matInput type="number" />
-    </mat-form-field>
+      <mat-form-field class="number-field">
+        <mat-label i18n>Maximum Value</mat-label>
+        <input formControlName="max" matInput type="number" />
+      </mat-form-field>
+    </ng-container>
 
-    <mat-form-field>
+    <mat-form-field *ngIf="entitySchemaField.dataType === 'string'">
       <mat-label i18n>Regex Pattern</mat-label>
       <input formControlName="regex" matInput />
     </mat-form-field>
-    <mat-checkbox i18n formControlName="required"> Is Required? </mat-checkbox>
-    <mat-checkbox i18n formControlName="validEmail">
-      Is Valid Email?
-    </mat-checkbox>
-    <mat-checkbox i18n formControlName="uniqueId"> Unique Id </mat-checkbox>
+    <div>
+      <mat-checkbox i18n formControlName="required">
+        Is Required?
+      </mat-checkbox>
+      <mat-checkbox i18n formControlName="uniqueId"> Unique Id </mat-checkbox>
+      <mat-checkbox
+        *ngIf="entitySchemaField.dataType === 'string'"
+        i18n
+        formControlName="validEmail"
+      >
+        Is Valid Email?
+      </mat-checkbox>
+    </div>
   </mat-tab-group>
 </form>

@@ -1,7 +1,4 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
-
-import { NgForOf } from "@angular/common";
-import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import {
   FormBuilder,
@@ -9,36 +6,27 @@ import {
   FormsModule,
   ReactiveFormsModule,
 } from "@angular/forms";
-import { DialogCloseComponent } from "../../../../common-components/dialog-close/dialog-close.component";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { MatButtonModule } from "@angular/material/button";
-import { EntityConstructor } from "../../../../entity/model/entity";
 import { MatCheckboxModule } from "@angular/material/checkbox";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { CommonModule } from "@angular/common";
 
 @Component({
   selector: "app-configure-entity-field-validator",
   standalone: true,
   imports: [
-    NgForOf,
-    MatFormFieldModule,
     MatInputModule,
-    DialogCloseComponent,
     FormsModule,
     MatCheckboxModule,
-    FontAwesomeModule,
+    CommonModule,
     ReactiveFormsModule,
-    MatButtonModule,
   ],
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
 })
 export class ConfigureValidatorPopupComponent {
-  fieldId: string;
   validatorForm: FormGroup;
   form: FormGroup;
-  @Input() entityConstructor: EntityConstructor;
   @Input() entitySchemaField: EntitySchemaField;
   @Output() entityValidatorChanges = new EventEmitter<DynamicValidator>();
   constructor(private fb: FormBuilder) {}
