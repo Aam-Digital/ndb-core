@@ -1,11 +1,4 @@
-import {
-  Component,
-  EventEmitter,
-  Input,
-  OnInit,
-  Output,
-  ViewChild,
-} from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
 import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
@@ -71,7 +64,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
   @Input() generalSettings: EntityConfig;
-  @ViewChild(MatPaginator) paginator: MatPaginator;
   allPIIFields: any[];
   @Input() showTable: boolean;
 
@@ -80,6 +72,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
   @Output() checkboxChange = new EventEmitter<boolean>();
   // showTable = false;
+
   form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
@@ -180,16 +173,30 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   private initToStringAttributesOptions() {
-    this.toStringAttributesOptions = Array.from(
+    if (!this.generalSettings.toStringAttributes) {
+      return;
+    }
+
+    const selectedOptions = this.generalSettings.toStringAttributes;
+    const unselectedOptions = Array.from(
       this.entityConstructor.schema.entries(),
     )
       .filter(
         ([key, field]) =>
-          field.dataType === StringDatatype.dataType && field.label,
+          field.dataType === StringDatatype.dataType &&
+          field.label &&
+          !selectedOptions.includes(key),
       )
       .map(([key, field]) => ({ key: key, label: field.label }));
-  }
 
+    this.toStringAttributesOptions = [
+      ...selectedOptions.map((key) => ({
+        key: key,
+        label: this.entityConstructor.schema.get(key)?.label,
+      })),
+      ...unselectedOptions,
+    ];
+  }
   objectToLabel = (v: SimpleDropdownValue) => v?.label;
   objectToValue = (v: SimpleDropdownValue) => v?.key;
 }

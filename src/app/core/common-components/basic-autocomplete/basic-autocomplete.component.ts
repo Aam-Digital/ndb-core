@@ -107,11 +107,11 @@ export class BasicAutocompleteComponent<O, V = O>
    * Whether the user should be able to select multiple values.
    */
   @Input() multi?: boolean;
+  @Input() reorder?: boolean;
 
   /**
    * Whether the user can manually drag & drop to reorder the selected items
    */
-  @Input() reorder?: boolean;
 
   autocompleteOptions: SelectableOption<O, V>[] = [];
   autocompleteForm = new FormControl("");
