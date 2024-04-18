@@ -80,15 +80,19 @@
       [disabled]="false"
     >
       <div class="margin-top-regular">
-        <mat-checkbox [checked]="showTable" (change)="toggleTable($event)"
-          >Has personal information (PII)</mat-checkbox
-        >
-        <app-help-button
-          text="If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the 'anonymization' feature. This allows users to anonymize records of this type instead of just archiving or deleting them."
-          i18n-text
-        ></app-help-button>
+        <div class="flex-row align-center">
+          <mat-checkbox
+            [checked]="showPIIDetails"
+            (change)="toggleTable($event)"
+            >Has personal information (PII)</mat-checkbox
+          >
+          <app-help-button
+            text="If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the 'anonymization' feature. This allows users to anonymize records of this type instead of just archiving or deleting them."
+            i18n-text
+          ></app-help-button>
+        </div>
 
-        <div *ngIf="showTable">
+        <div *ngIf="showPIIDetails">
           <p i18n>
             Configure how records of this type can be anonymized. Users can
             "anonymize" a record as an alternative to just archiving it (keeping
@@ -98,36 +102,37 @@
             which fields have to be removed because they contain personal
             details.
           </p>
+          <div class="overflow-table">
+            <mat-table [dataSource]="dataSource">
+              <ng-container matColumnDef="fields">
+                <mat-cell *matCellDef="let data">{{ data.fields }}</mat-cell>
+              </ng-container>
 
-          <mat-table [dataSource]="dataSource">
-            <ng-container matColumnDef="fields">
-              <mat-cell *matCellDef="let data">{{ data.fields }}</mat-cell>
-            </ng-container>
-
-            <ng-container matColumnDef="anonymize">
-              <mat-cell *matCellDef="let data">
-                <mat-form-field appearance="fill">
-                  <mat-select
-                    [(value)]="data.anonymize"
-                    (selectionChange)="selectionOnChange($event.value, data)"
-                  >
-                    <mat-option
-                      *ngFor="let anonymizeOption of anonymizOptionList"
-                      [value]="anonymizeOption"
-                      [matTooltip]="getTooltip(anonymizeOption)"
-                      matTooltipPosition="after"
+              <ng-container matColumnDef="anonymize">
+                <mat-cell *matCellDef="let data">
+                  <mat-form-field appearance="fill">
+                    <mat-select
+                      [(value)]="data.anonymize"
+                      (selectionChange)="selectionOnChange($event.value, data)"
                     >
-                      {{ anonymizeOption }}
-                    </mat-option>
-                  </mat-select>
-                </mat-form-field>
-              </mat-cell>
-            </ng-container>
+                      <mat-option
+                        *ngFor="let anonymizeOption of anonymizOptionList"
+                        [value]="anonymizeOption"
+                        [matTooltip]="getTooltip(anonymizeOption)"
+                        matTooltipPosition="after"
+                      >
+                        {{ anonymizeOption }}
+                      </mat-option>
+                    </mat-select>
+                  </mat-form-field>
+                </mat-cell>
+              </ng-container>
 
-            <mat-row
-              *matRowDef="let row; columns: ['fields', 'anonymize']"
-            ></mat-row>
-          </mat-table>
+              <mat-row
+                *matRowDef="let row; columns: ['fields', 'anonymize']"
+              ></mat-row>
+            </mat-table>
+          </div>
         </div>
       </div>
     </mat-tab>

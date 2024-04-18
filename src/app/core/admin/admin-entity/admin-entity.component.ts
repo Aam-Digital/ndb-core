@@ -59,7 +59,6 @@ import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-sett
 export class AdminEntityComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
-  checkboxState: boolean = false;
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
   configDetailsView: EntityDetailsConfig;
@@ -83,10 +82,6 @@ export class AdminEntityComponent implements OnInit {
     this.routes.queryParams.subscribe((params) => {
       this.mode = params.mode;
     });
-  }
-
-  updateCheckboxState(checkboxStatus: boolean) {
-    this.checkboxState = checkboxStatus;
   }
 
   private init() {
@@ -173,6 +168,7 @@ export class AdminEntityComponent implements OnInit {
       entitySchemaConfig.icon = this.configEntitySettings.icon;
       entitySchemaConfig.toStringAttributes =
         this.configEntitySettings.toStringAttributes;
+      entitySchemaConfig.hasPII = this.configEntitySettings.hasPII;
     }
   }
 

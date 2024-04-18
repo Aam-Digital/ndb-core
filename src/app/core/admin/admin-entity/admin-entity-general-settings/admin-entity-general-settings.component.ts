@@ -65,13 +65,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     new EventEmitter<EntityConfig>();
   @Input() generalSettings: EntityConfig;
   allPIIFields: any[];
-  @Input() showTable: boolean;
-
+  @Input() showPIIDetails: boolean;
   entitySchemaField: EntitySchemaField;
   dataSource: MatTableDataSource<any>;
   anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
-  @Output() checkboxChange = new EventEmitter<boolean>();
-  // showTable = false;
 
   form: FormGroup;
   basicSettingsForm: FormGroup;
@@ -95,7 +92,9 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
         this.generalSettings.toStringAttributes,
         Validators.required,
       ],
+      hasPII: [this.generalSettings.hasPII],
     });
+    this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
@@ -108,13 +107,17 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   fetchTableData() {
-    if (this.showTable) {
+    if (this.showPIIDetails) {
       this.allPIIFields = Array.from(this.entityConstructor.schema.entries())
         .filter(
           ([key, field]) =>
             field.dataType === StringDatatype.dataType && field.label,
         )
-        .map(([key, field]) => ({ key: key, anonymize: field.anonymize }));
+        .map(([key, field]) => ({
+          key: key,
+          anonymize: field.anonymize,
+          label: field.label,
+        }));
 
       const data = this.allPIIFields.map((field) => {
         let anonymize = "Remove";
@@ -123,7 +126,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
         } else if (field.anonymize === "retain-anonymized") {
           anonymize = "Partially Anonymize";
         }
-        return { fields: field.key, anonymize: anonymize };
+        return { fields: field.label, anonymize: anonymize };
       });
 
       this.dataSource = new MatTableDataSource<any>(data);
@@ -131,8 +134,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   toggleTable(event: any) {
-    this.showTable = event.checked;
-    this.checkboxChange.emit(this.showTable);
+    this.showPIIDetails = event.checked;
+    this.basicSettingsForm.get("hasPII").setValue(this.showPIIDetails);
     this.fetchTableData();
   }
   getTooltip(option: string): string {
@@ -149,7 +152,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   }
 
   selectionOnChange(value: any, selectFielddata: any) {
-    const selectedFieldId = selectFielddata.fields;
+    const selectedFieldDetails = this.allPIIFields.find(
+      (field) => field.label === selectFielddata.fields,
+    );
+    const selectedFieldId = selectedFieldDetails.key;
     const selectedFielddetails =
       this.entityConstructor.schema.get(selectedFieldId);
     if (selectFielddata.anonymize == "Partially Anonymize") {

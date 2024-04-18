@@ -115,13 +115,12 @@ export class BasicAutocompleteComponent<O, V = O>
 
   autocompleteOptions: SelectableOption<O, V>[] = [];
   autocompleteForm = new FormControl("");
-  private autocompleteSuggestedOptions =
-    this.autocompleteForm.valueChanges.pipe(
-      filter((val) => typeof val === "string"),
-      distinctUntilChanged(),
-      map((val) => this.updateAutocomplete(val)),
-      startWith([] as SelectableOption<O, V>[]),
-    );
+  autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
+    filter((val) => typeof val === "string"),
+    distinctUntilChanged(),
+    map((val) => this.updateAutocomplete(val)),
+    startWith([] as SelectableOption<O, V>[]),
+  );
   autocompleteFilterFunction: (option: O) => boolean;
   @Output() autocompleteFilterChange = new EventEmitter<(o: O) => boolean>();
 
