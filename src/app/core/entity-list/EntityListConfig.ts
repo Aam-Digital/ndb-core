@@ -86,6 +86,10 @@ export interface BooleanFilterConfig extends BasicFilterConfig {
   true: string;
   false: string;
 }
+export interface NumberFilterConfig extends BasicFilterConfig {
+  true: string;
+  false: string;
+}
 
 export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {
   options: FilterSelectionOption<T>[];

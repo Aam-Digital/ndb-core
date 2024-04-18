@@ -3,7 +3,6 @@ import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { FormsModule } from "@angular/forms";
-import { DateFilter } from "../../../filter/filters/dateFilter";
 
 @Component({
   selector: "app-date-range-filter",
