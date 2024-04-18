@@ -165,24 +165,11 @@
             </mat-form-field>
           </div>
           <div class="entity-form-cell">
-
-            <app-configure-validator-popup [entitySchemaField]="entitySchemaField"></app-configure-validator-popup>
+            <app-configure-entity-field-validator
+              [entitySchemaField]="entitySchemaField"
+              (entityValidatorChanges)="entityFieldValidatorChanges($event)"
+            ></app-configure-entity-field-validator>
           </div>
-
-
-          <!-- <div class="entity-form-cell">
-            <mat-form-field>
-              <mat-label>Field Validation</mat-label>
-              <input formControlName="validators" matInput />
-              <button
-              mat-icon-button
-              matSuffix
-              (click)="openValidatorOptions($event)"
-            >
-              <fa-icon icon="wrench"></fa-icon>
-            </button>
-            </mat-form-field>
-          </div> -->
         </div>
       </mat-tab>
     </mat-tab-group>

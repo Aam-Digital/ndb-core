@@ -44,7 +44,8 @@ import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/ge
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
-import { ConfigureValidatorPopupComponent } from "../../admin-entity/configure-validator-popup/configure-validator-popup.component";
+import { ConfigureValidatorPopupComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
+import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
  */
@@ -70,7 +71,7 @@ import { ConfigureValidatorPopupComponent } from "../../admin-entity/configure-v
     FontAwesomeModule,
     MatTooltipModule,
     BasicAutocompleteComponent,
-    ConfigureValidatorPopupComponent
+    ConfigureValidatorPopupComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
@@ -85,7 +86,6 @@ export class AdminEntityFieldComponent implements OnChanges {
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
-
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
@@ -115,16 +115,12 @@ export class AdminEntityFieldComponent implements OnChanges {
   }
 
   private initSettings() {
-    console.log(this.entitySchemaField,"byeyey")
-    
-    
     this.fieldIdForm = this.fb.control(this.fieldId, {
       validators: [Validators.required],
       asyncValidators: [
         uniqueIdValidator(Array.from(this.entityType.schema.keys())),
       ],
     });
-    console.log(this.fieldIdForm.value,"byeyey")
     this.additionalForm = this.fb.control(this.entitySchemaField.additional);
 
     this.schemaFieldsForm = this.fb.group({
@@ -180,6 +176,10 @@ export class AdminEntityFieldComponent implements OnChanges {
         autoGenerateSubscr.unsubscribe(),
       );
     }
+  }
+
+  entityFieldValidatorChanges(validatorData: DynamicValidator) {
+    this.schemaFieldsForm.get("validators").setValue(validatorData);
   }
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
