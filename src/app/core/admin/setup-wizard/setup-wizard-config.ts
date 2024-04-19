@@ -3,6 +3,12 @@ import { MenuItem } from "../../ui/navigation/menu-item";
 export const CONFIG_SETUP_WIZARD_ID = "Config:SetupWizard";
 
 export interface SetupWizardConfig {
+  /** index of the current (last visited) step, to be opened when user returns to the wizard **/
+  currentStep?: number;
+
+  /** whether the wizard has been completed overall and should be hidden */
+  finished?: boolean;
+
   steps: SetupWizardStep[];
 }
 
@@ -10,6 +16,9 @@ export interface SetupWizardStep {
   title: string;
   text: string;
   actions?: MenuItem[];
+
+  /** whether the user(s) have completed this step yet */
+  completed?: boolean;
 }
 
 export const defaultSetupWizardConfig: SetupWizardConfig = {
