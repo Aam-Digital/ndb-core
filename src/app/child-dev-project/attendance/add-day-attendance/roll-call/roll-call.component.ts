@@ -18,7 +18,6 @@ import { EntityMapperService } from "../../../../core/entity/entity-mapper/entit
 import { Child } from "../../../children/model/child";
 import { LoggingService } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
-import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { NgClass, NgForOf, NgIf } from "@angular/common";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
@@ -263,7 +262,7 @@ export class RollCallComponent implements OnChanges {
   }
 
   showDetails() {
-    this.formDialog.openFormPopup(this.eventEntity, [], NoteDetailsComponent);
+    this.formDialog.openView(this.eventEntity, "NoteDetails");
   }
 
   async includeInactive() {
