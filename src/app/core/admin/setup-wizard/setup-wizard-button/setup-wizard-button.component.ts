@@ -10,6 +10,7 @@ import {
 } from "../setup-wizard-config";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { filter } from "rxjs/operators";
+import { LoggingService } from "../../../logging/logging.service";
 
 @UntilDestroy()
 @Component({
@@ -22,12 +23,13 @@ import { filter } from "rxjs/operators";
 export class SetupWizardButtonComponent {
   showSetupWizard: boolean;
 
-  constructor(entityMapper: EntityMapperService) {
+  constructor(entityMapper: EntityMapperService, logger: LoggingService) {
     entityMapper
       .load(Config, CONFIG_SETUP_WIZARD_ID)
       .then((r: Config<SetupWizardConfig>) => {
         this.updateStatus(r.data);
-      });
+      })
+      .catch((e) => logger.debug("No Setup Wizard Config found"));
 
     entityMapper
       .receiveUpdates<Config<SetupWizardConfig>>(Config)
