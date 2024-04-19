@@ -79,7 +79,7 @@
       i18n-label
       [disabled]="false"
     >
-      <div class="margin-top-regular">
+      <div class="margin-top-regular overflow-table">
         <div class="flex-row align-center">
           <mat-checkbox
             [checked]="showPIIDetails"
@@ -102,37 +102,46 @@
             which fields have to be removed because they contain personal
             details.
           </p>
-          <div class="overflow-table">
-            <mat-table [dataSource]="dataSource">
-              <ng-container matColumnDef="fields">
-                <mat-cell *matCellDef="let data">{{ data.fields }}</mat-cell>
-              </ng-container>
 
-              <ng-container matColumnDef="anonymize">
-                <mat-cell *matCellDef="let data">
-                  <mat-form-field appearance="fill">
-                    <mat-select
-                      [(value)]="data.anonymize"
-                      (selectionChange)="selectionOnChange($event.value, data)"
+          <mat-table [dataSource]="fieldAnonymizationDataSource">
+            <ng-container matColumnDef="fields">
+              <mat-header-cell *matHeaderCellDef> Fields </mat-header-cell>
+              <mat-cell *matCellDef="let anonymizeData">
+                {{ anonymizeData.fields }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="anonymize">
+              <mat-header-cell *matHeaderCellDef> Anonymize </mat-header-cell>
+              <mat-cell *matCellDef="let anonymizeData">
+                <mat-form-field appearance="fill">
+                  <mat-select
+                    [(value)]="anonymizeData.anonymize"
+                    (selectionChange)="changeFieldAnonymization(anonymizeData)"
+                  >
+                    <mat-option
+                      value=""
+                      matTooltip="Remove: Completely remove the value or anonymize it entirely."
+                      >Remove</mat-option
                     >
-                      <mat-option
-                        *ngFor="let anonymizeOption of anonymizOptionList"
-                        [value]="anonymizeOption"
-                        [matTooltip]="getTooltip(anonymizeOption)"
-                        matTooltipPosition="after"
-                      >
-                        {{ anonymizeOption }}
-                      </mat-option>
-                    </mat-select>
-                  </mat-form-field>
-                </mat-cell>
-              </ng-container>
-
-              <mat-row
-                *matRowDef="let row; columns: ['fields', 'anonymize']"
-              ></mat-row>
-            </mat-table>
-          </div>
+                    <mat-option
+                      value="retain"
+                      matTooltip="Retain: Keep the original value without any anonymization."
+                      >Retain</mat-option
+                    >
+                    <mat-option
+                      value="retain-anonymized"
+                      matTooltip="Partially Anonymize: Anonymize the value but retain some information."
+                      >Partially Anonymize</mat-option
+                    >
+                  </mat-select>
+                </mat-form-field>
+              </mat-cell>
+            </ng-container>
+            <mat-row
+              *matRowDef="let row; columns: ['fields', 'anonymize']"
+            ></mat-row>
+          </mat-table>
         </div>
       </div>
     </mat-tab>

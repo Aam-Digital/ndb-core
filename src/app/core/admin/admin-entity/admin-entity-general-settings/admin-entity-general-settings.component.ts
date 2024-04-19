@@ -1,9 +1,7 @@
 import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { EntityConstructor } from "../../../entity/model/entity";
 import { MatButtonModule } from "@angular/material/button";
-import { DialogCloseComponent } from "../../../common-components/dialog-close/dialog-close.component";
 import { MatInputModule } from "@angular/material/input";
-import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import {
   FormBuilder,
   FormGroup,
@@ -13,14 +11,11 @@ import {
 } from "@angular/forms";
 import { CommonModule, NgIf } from "@angular/common";
 import { MatTabsModule } from "@angular/material/tabs";
-import { MatSlideToggleModule } from "@angular/material/slide-toggle";
-import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConfig } from "../../../entity/entity-config";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { MatPaginator } from "@angular/material/paginator";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
@@ -37,15 +32,11 @@ import { EntityFieldLabelComponent } from "../../../common-components/entity-fie
   styleUrl: "./admin-entity-general-settings.component.scss",
   imports: [
     MatButtonModule,
-    DialogCloseComponent,
     MatInputModule,
-    ErrorHintComponent,
     FormsModule,
     NgIf,
     MatTabsModule,
-    MatSlideToggleModule,
     ReactiveFormsModule,
-    FontAwesomeModule,
     MatTooltipModule,
     BasicAutocompleteComponent,
     MatCheckboxModule,
@@ -67,13 +58,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   allPIIFields: any[];
   @Input() showPIIDetails: boolean;
   entitySchemaField: EntitySchemaField;
-  dataSource: MatTableDataSource<any>;
-  anonymizOptionList: string[] = ["Retain", "Partially Anonymize", "Remove"];
-
+  fieldAnonymizationDataSource: MatTableDataSource<any>;
   form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
-
   constructor(
     private fb: FormBuilder,
     private adminEntityService: AdminEntityService,
@@ -119,17 +107,16 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
           label: field.label,
         }));
 
-      const data = this.allPIIFields.map((field) => {
-        let anonymize = "Remove";
-        if (field.anonymize === "retain") {
-          anonymize = "Retain";
-        } else if (field.anonymize === "retain-anonymized") {
-          anonymize = "Partially Anonymize";
+      const anonymizeData = this.allPIIFields.map((field) => {
+        if (!field.anonymize) {
+          field.anonymize = "";
         }
-        return { fields: field.label, anonymize: anonymize };
+        return { fields: field.label, anonymize: field.anonymize };
       });
 
-      this.dataSource = new MatTableDataSource<any>(data);
+      this.fieldAnonymizationDataSource = new MatTableDataSource<any>(
+        anonymizeData,
+      );
     }
   }
 
@@ -138,33 +125,18 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.basicSettingsForm.get("hasPII").setValue(this.showPIIDetails);
     this.fetchTableData();
   }
-  getTooltip(option: string): string {
-    switch (option) {
-      case "Retain":
-        return "Retain: Keep the original value without any anonymization.";
-      case "Partially Anonymize":
-        return "Partially Anonymize: Anonymize the value but retain some information.";
-      case "Remove":
-        return "Remove: Completely remove the value or anonymize it entirely.";
-      default:
-        return "";
-    }
-  }
 
-  selectionOnChange(value: any, selectFielddata: any) {
+  changeFieldAnonymization(selectFieldData: {
+    anonymize: AnonymizeOption;
+    fields: string;
+  }) {
     const selectedFieldDetails = this.allPIIFields.find(
-      (field) => field.label === selectFielddata.fields,
+      (field) => field.label === selectFieldData.fields,
     );
     const selectedFieldId = selectedFieldDetails.key;
-    const selectedFielddetails =
+    let selectedFielddetails =
       this.entityConstructor.schema.get(selectedFieldId);
-    if (selectFielddata.anonymize == "Partially Anonymize") {
-      selectedFielddetails.anonymize = "retain-anonymized";
-    } else if (selectFielddata.anonymize == "Retain") {
-      selectedFielddetails.anonymize = "retain";
-    } else if ((selectFielddata.anonymize = "Remove")) {
-      selectedFielddetails.anonymize = undefined;
-    }
+    selectedFielddetails.anonymize = selectFieldData.anonymize;
     const updatedEntitySchemaMerged = Object.assign(
       { _isCustomizedField: true },
       this.entitySchemaField,
@@ -207,6 +179,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   objectToValue = (v: SimpleDropdownValue) => v?.key;
 }
 
+type AnonymizeOption = "retain" | "retain-anonymized";
 interface SimpleDropdownValue {
   key: string;
   label: string;
