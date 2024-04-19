@@ -24,80 +24,83 @@ export interface SetupWizardStep {
 export const defaultSetupWizardConfig: SetupWizardConfig = {
   steps: [
     {
-      title: "Willkommen",
-      text: `
-# Herzlich willkommen bei codo!
-codo hilft dir dabei ...
+      title: $localize`:Setup Wizard Step Title:Welcome`,
+      text: $localize`:Setup Wizard Step Text:
+# Welcome to Aam Digital!
+We are here to help you manage your participants' or beneficiaries' details
+and your team's interactions with them.
 
-Die folgenden Schritten leiten dich durch die wichtigsten Einstellungen,
-um codo optimal auf euer Projekt anzupassen. Du kannst schon nach wenigen
-Minuten loslegen und die ersten Daten erfassen.
+The Aam Digital platform is very flexible and you can customize the structures and views
+to exactly fit your project needs.
+The following steps guide you through the most important configuration options for this.
+And you can start working with your data within a few minutes already.
 
-Du kannst jederzeit über den Button unten im Menü links zu diesen
-Einrichtungsassistenten zurückkehren, wenn du zunächst die Anwendung
-erkunden möchtest.`,
+We also have some short video guides for you: [Aam Digital Video Guides (YouTube)](https://www.youtube.com/channel/UCZSFOX_MBa8zz5Mtfv_qlnA/videos)
+
+Feel free to leave this setup wizard in between to explore the existing system first.
+You can always come back to this view through the "Setup Wizard" button at the bottom of the main menu on the left.
+To dismiss and hide this wizard, go to the last step of the wizard and "finish" the setup process.`,
     },
     {
-      title: "Profile & Felder anpassen",
-      text: `
-codo ist als Software bereits genau auf die Betreuung von Patenschaften
-zugeschnitten. Unsere langjährige Erfahrungen der BürgerStiftung Hamburg
-und Stiftung Bürgermut in der Betreuung solcher Projekte sind die Basis
-für codo und das System wurde in enger Zusammenarbeit mit einer
-Fokusgruppe von Projekten entwickelt.
+      title: $localize`:Setup Wizard Step Title:Profiles & Fields`,
+      text: $localize`:Setup Wizard Step Text:
+The system already holds some basic structures for your case management.
+You can adapt the fields and how the details are displayed.
 
-Damit codo optimal auf euer Projekt passt, könnt ihr innerhalb der
-vorhandenen Datenstrukturen zusätzliche Felder und Formularbereiche
-individuell anpassen.`,
+If you have further requirements, don't hesitate to reach out to us at [support@aam-digital.com](mailto:support@aam-digital.com).
+
+_Please note that the setup wizard and form builder is still under active development ("beta" version).
+Some advanced configuration options are not available here yet for you to configure yourself and may need assistance from the tech support team.
+We are currently extending and optimizing the user interfaces for these steps._
+`,
       actions: [
         {
-          label: "Mentor:innen-Profile anpassen",
-          link: "/admin/entity/School",
-        },
-        {
-          label: "Mentee-Profile anpassen",
+          label: $localize`:Setup Wizard Step Action:Customize Child profile`,
           link: "/admin/entity/Child",
         },
         {
-          label: "Patenschafts-Daten anpassen",
-          link: "/admin/entity/ChildSchoolRelation",
+          label: $localize`:Setup Wizard Step Action:Customize School profile`,
+          link: "/admin/entity/School",
         },
       ],
     },
     {
-      title: "Nutzer:innen hinzufügen",
-      text: `
-Ihr könnt in codo sehr einfach als Team zusammenarbeiten. Die Daten sind
-für alle synchronisiert und auf dem aktuellsten Stand. Weitere
-Nutzer-Accounts könnt ihr jederzeit selbst erstellen.`,
+      title: $localize`:Setup Wizard Step Title:User Accounts`,
+      text: $localize`:Setup Wizard Step Text:
+You can collaborate on Aam Digital as a team.
+Data is synced and all users have access to the latest information.`,
       actions: [
         {
-          label: "Nutzer-Accounts verwalten",
+          label: $localize`:Setup Wizard Step Action:Manage User Accounts`,
           link: "/user",
         },
       ],
     },
     {
-      title: "Daten importieren",
-      text: `
-Falls ihr bestehende Daten bisheriger Patenschaften habt, könnt ihr diese
-einfach importieren. Dazu müssen diese aus Excel im ".csv"-Format
-abgespeichert werden. Das Import-Modul von codo hilft euch dabei, die
-Tabellen den passenden Datenfeldern zuzuordnen.`,
+      title: $localize`:Setup Wizard Step Title:Import Data`,
+      text: $localize`:Setup Wizard Step Text:
+If you have exising data from a previous system, you can easily import it.
+Save the data in ".csv" format (e.g. from MS Excel).
+You do not need any specific column names in your file to be imported.
+The Import Module helps your map your spreadsheet data to the relevant fields in your Aam Digital profiles.`,
       actions: [
         {
-          label: "Daten importieren",
+          label: $localize`:Setup Wizard Step Action:Import Data`,
           link: "/import",
         },
       ],
     },
     {
-      title: "Fertig",
-      text: `
-Mehr gibt es eigentlich nicht zu beachten. Ihr könnt jetzt loslegen und
-codo ausprobieren. Bei Fragen oder Problemen wendet euch gerne an xxx.de
+      title: $localize`:Setup Wizard Step Title:Done!`,
+      text: $localize`:Setup Wizard Step Text:
+That's it. You are ready to explore your system and start work!
 
-Ein paar Tipps und mögliche erste Schritte zum Abschluss: ...`,
+You can always adapt your setup further, after you started using it.
+We recommend to keep things simple in the beginning,
+start using it for some of your tasks
+and then add further fields and adjust your setup.
+
+Feel free to reach out to us with your questions or feedback: [support@aam-digital.com](mailto:support@aam-digital.com)`,
     },
   ],
 };
