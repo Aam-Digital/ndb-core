@@ -37,7 +37,10 @@
       </mat-list-item>
     </mat-nav-list>
 
-    <div class="config-component flex-grow mat-elevation-z1">
+    <div
+      class="config-component flex-grow mat-elevation-z1"
+      [ngClass]="{ 'general-mode': mode === 'general' }"
+    >
       @switch (mode) {
         @case ("details") {
           <app-admin-entity-details
