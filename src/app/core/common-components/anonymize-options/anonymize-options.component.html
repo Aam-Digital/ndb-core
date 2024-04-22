@@ -1,0 +1,22 @@
+<mat-form-field appearance="fill">
+  <mat-select
+    [(value)]="anonymizeData.anonymize"
+    (selectionChange)="onValueChange($event)"
+  >
+    <mat-option
+      value=""
+      matTooltip="Remove: Completely remove the value or anonymize it entirely."
+      >Remove</mat-option
+    >
+    <mat-option
+      value="retain"
+      matTooltip="Retain: Keep the original value without any anonymization."
+      >Retain</mat-option
+    >
+    <mat-option
+      value="retain-anonymized"
+      matTooltip="Partially Anonymize: Anonymize the value but retain some information."
+      >Partially Anonymize</mat-option
+    >
+  </mat-select>
+</mat-form-field>

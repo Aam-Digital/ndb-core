@@ -24,6 +24,7 @@ import { StringDatatype } from "../../../basic-datatypes/string/string.datatype"
 import { HelpButtonComponent } from "../../../common-components/help-button/help-button.component";
 import { MatSort } from "@angular/material/sort";
 import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
+import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-options/anonymize-options.component";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -48,6 +49,7 @@ import { EntityFieldLabelComponent } from "../../../common-components/entity-fie
     HelpButtonComponent,
     MatSort,
     EntityFieldLabelComponent,
+    AnonymizeOptionsComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
@@ -108,9 +110,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
         }));
 
       const anonymizeData = this.allPIIFields.map((field) => {
-        if (!field.anonymize) {
-          field.anonymize = "";
-        }
         return { fields: field.label, anonymize: field.anonymize };
       });
 

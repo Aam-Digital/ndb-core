@@ -114,30 +114,13 @@
             <ng-container matColumnDef="anonymize">
               <mat-header-cell *matHeaderCellDef> Anonymize </mat-header-cell>
               <mat-cell *matCellDef="let anonymizeData">
-                <mat-form-field appearance="fill">
-                  <mat-select
-                    [(value)]="anonymizeData.anonymize"
-                    (selectionChange)="changeFieldAnonymization(anonymizeData)"
-                  >
-                    <mat-option
-                      value=""
-                      matTooltip="Remove: Completely remove the value or anonymize it entirely."
-                      >Remove</mat-option
-                    >
-                    <mat-option
-                      value="retain"
-                      matTooltip="Retain: Keep the original value without any anonymization."
-                      >Retain</mat-option
-                    >
-                    <mat-option
-                      value="retain-anonymized"
-                      matTooltip="Partially Anonymize: Anonymize the value but retain some information."
-                      >Partially Anonymize</mat-option
-                    >
-                  </mat-select>
-                </mat-form-field>
+                <app-anonymize-options
+                  [anonymizeData]="anonymizeData"
+                  (valueChange)="changeFieldAnonymization(anonymizeData)"
+                ></app-anonymize-options>
               </mat-cell>
             </ng-container>
+
             <mat-row
               *matRowDef="let row; columns: ['fields', 'anonymize']"
             ></mat-row>
