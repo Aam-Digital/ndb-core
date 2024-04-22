@@ -20,7 +20,7 @@ export class AnonymizeOptionsComponent {
       this.anonymizeData.anonymize = "";
     }
   }
-  onValueChange(event: MatSelectChange) {
+  fetchAnonymizChanges(event: MatSelectChange) {
     console.log(this.anonymizeData, "datata");
     this.valueChange.emit(event.value);
   }
