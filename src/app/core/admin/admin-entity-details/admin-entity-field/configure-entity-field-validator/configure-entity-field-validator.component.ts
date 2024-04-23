@@ -28,7 +28,6 @@ import { HelpButtonComponent } from "../../../../common-components/help-button/h
 })
 export class ConfigureEntityFieldValidatorComponent {
   validatorForm: FormGroup;
-  form: FormGroup;
   @Input() entitySchemaField: EntitySchemaField;
   @Output() entityValidatorChanges = new EventEmitter<DynamicValidator>();
   constructor(private fb: FormBuilder) {}
@@ -57,10 +56,8 @@ export class ConfigureEntityFieldValidatorComponent {
         uniqueId: [""],
       });
     }
-    this.form = this.fb.group({
-      validatorForm: this.validatorForm,
-    });
-    this.form.valueChanges.subscribe((value) => {
+
+    this.validatorForm.valueChanges.subscribe((value) => {
       this.entityValidatorChanges.emit(this.validatorForm.getRawValue());
     });
   }
