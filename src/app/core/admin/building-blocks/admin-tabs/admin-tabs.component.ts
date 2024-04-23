@@ -2,6 +2,8 @@ import {
   Component,
   ContentChild,
   Input,
+  OnChanges,
+  SimpleChanges,
   TemplateRef,
   ViewChild,
 } from "@angular/core";
@@ -29,15 +31,15 @@ import {
  * Building block for drag&drop form builder to let an admin user manage multiple tabs.
  *
  * Provide a template for the tab content when using this component:
-   <app-admin-tabs
-     [tabs]="myTabsArray"
-     [newTabFactory]="newTabFactory"
-   >
-     <!-- provide the array of tabs to the `appAdminTabTemplate` to infer typing -->
-     <ng-template [appAdminTabTemplate]="myTabsArray" let-item>
-       {{ item.title }} <!-- use the tab entry in your template -->
-     </ng-template>
-   </app-admin-tabs>
+ <app-admin-tabs
+ [tabs]="myTabsArray"
+ [newTabFactory]="newTabFactory"
+ >
+ <!-- provide the array of tabs to the `appAdminTabTemplate` to infer typing -->
+ <ng-template [appAdminTabTemplate]="myTabsArray" let-item>
+ {{ item.title }} <!-- use the tab entry in your template -->
+ </ng-template>
+ </app-admin-tabs>
  */
 @Component({
   selector: "app-admin-tabs",
@@ -60,16 +62,35 @@ import {
   templateUrl: "./admin-tabs.component.html",
   styleUrl: "./admin-tabs.component.scss",
 })
-export class AdminTabsComponent<
-  E extends { title: string } | { name: string },
-> {
+export class AdminTabsComponent<E extends { title: string } | { name: string }>
+  implements OnChanges
+{
   @Input() tabs: E[];
-  @Input() newTabFactory: () => E = () => ({ title: "" }) as E;
+  @Input() newTabFactory: () => E = () =>
+    ({ [this.tabTitleProperty]: "" }) as E;
+
+  tabTitleProperty: "title" | "name" = "title";
 
   @ContentChild(AdminTabTemplateDirective<E>, { read: TemplateRef })
   tabTemplate: TemplateRef<any>;
 
   @ViewChild(MatTabGroup) tabGroup: MatTabGroup;
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.tabs) {
+      this.detectTabTitleProperty();
+    }
+  }
+
+  private detectTabTitleProperty() {
+    if (!this.tabs || this.tabs.length < 1) {
+      return;
+    }
+
+    this.tabTitleProperty = this.tabs[0].hasOwnProperty("name")
+      ? "name"
+      : "title";
+  }
 
   createTab() {
     const newTab = this.newTabFactory();
