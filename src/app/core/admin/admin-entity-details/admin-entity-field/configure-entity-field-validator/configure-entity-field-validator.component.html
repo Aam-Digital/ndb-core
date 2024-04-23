@@ -13,21 +13,43 @@
     </ng-container>
 
     <mat-form-field *ngIf="entitySchemaField.dataType === 'string'">
-      <mat-label i18n>Regex Pattern</mat-label>
+      <mat-label i18n>Pattern (Regex)</mat-label>
       <input formControlName="regex" matInput />
+      <app-help-button
+        matSuffix
+        text="Define a format (-> regular expression) that text values have to match to be valid."
+        i18n-text
+      ></app-help-button>
     </mat-form-field>
+
     <div>
       <mat-checkbox i18n formControlName="required">
-        Is Required?
+        Required Field
       </mat-checkbox>
-      <mat-checkbox i18n formControlName="uniqueId"> Unique Id </mat-checkbox>
-      <mat-checkbox
-        *ngIf="entitySchemaField.dataType === 'string'"
-        i18n
-        formControlName="validEmail"
+      <app-help-button
+        text="Users always must provide a value in this field"
+        i18n-text
+      ></app-help-button>
+    </div>
+
+    <div>
+      <mat-checkbox i18n formControlName="uniqueId">
+        Unique ID [experimental]</mat-checkbox
       >
-        Is Valid Email?
+      <app-help-button
+        text="Ensures the value is not used as an ID for another existing record already. (Experimental Feature: Does not support advanced edge cases)"
+        i18n-text
+      ></app-help-button>
+    </div>
+
+    <div *ngIf="entitySchemaField.dataType === 'string'">
+      <mat-checkbox i18n formControlName="validEmail">
+        Valid Email Format
       </mat-checkbox>
+      <app-help-button
+        text="Users must enter a text that can be used as an email."
+        i18n-text
+      ></app-help-button>
     </div>
   </mat-tab-group>
 </form>

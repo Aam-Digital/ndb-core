@@ -10,6 +10,7 @@ import { MatCheckboxModule } from "@angular/material/checkbox";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
 import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { CommonModule } from "@angular/common";
+import { HelpButtonComponent } from "../../../../common-components/help-button/help-button.component";
 
 @Component({
   selector: "app-configure-entity-field-validator",
@@ -20,6 +21,7 @@ import { CommonModule } from "@angular/common";
     MatCheckboxModule,
     CommonModule,
     ReactiveFormsModule,
+    HelpButtonComponent,
   ],
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
