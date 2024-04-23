@@ -18,6 +18,7 @@
           @if (tabIndex === matTabGroup.selectedIndex) {
             <app-admin-section-header
               [(title)]="tab['title'] ?? tab['name']"
+              (titleChange)="tab['title'] = $event"
               (remove)="
                 tabs.splice(tabIndex, 1);
                 matTabGroup.selectedIndex = tabIndex - 1
