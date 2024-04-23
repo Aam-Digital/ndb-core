@@ -13,7 +13,6 @@ describe("AnonymizeOptionsComponent", () => {
 
     fixture = TestBed.createComponent(AnonymizeOptionsComponent);
     component = fixture.componentInstance;
-    component.anonymizeData = { anonymize: "retain" };
 
     fixture.detectChanges();
   });

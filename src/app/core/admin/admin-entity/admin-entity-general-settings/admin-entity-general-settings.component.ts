@@ -15,7 +15,10 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { BasicAutocompleteComponent } from "../../../common-components/basic-autocomplete/basic-autocomplete.component";
 import { EntityConfig } from "../../../entity/entity-config";
 import { MatTableDataSource, MatTableModule } from "@angular/material/table";
-import { MatCheckboxModule } from "@angular/material/checkbox";
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from "@angular/material/checkbox";
 import { MatOptionModule } from "@angular/material/core";
 import { MatSelectModule } from "@angular/material/select";
 import { EntitySchemaField } from "app/core/entity/schema/entity-schema-field";
@@ -59,13 +62,18 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   @Output() generalSettingsChange: EventEmitter<EntityConfig> =
     new EventEmitter<EntityConfig>();
   @Input() generalSettings: EntityConfig;
-  allPIIFields: any[];
+
   @Input() showPIIDetails: boolean;
-  entitySchemaField: EntitySchemaField;
-  fieldAnonymizationDataSource: MatTableDataSource<any>;
+  fieldAnonymizationDataSource: MatTableDataSource<{
+    key: string;
+    label: string;
+    field: EntitySchemaField;
+  }>;
+
   form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
+
   constructor(
     private fb: FormBuilder,
     private adminEntityService: AdminEntityService,
@@ -90,7 +98,7 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.form = this.fb.group({
       basicSettings: this.basicSettingsForm,
     });
-    this.fetchTableData();
+    this.fetchAnonymizationTableData();
     this.initToStringAttributesOptions();
 
     this.form.valueChanges.subscribe((value) => {
@@ -98,56 +106,38 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     });
   }
 
-  fetchTableData() {
+  fetchAnonymizationTableData() {
     if (this.showPIIDetails) {
-      this.allPIIFields = Array.from(this.entityConstructor.schema.entries())
-        .filter(
-          ([key, field]) =>
-            field.dataType === StringDatatype.dataType && field.label,
-        )
+      const fields = Array.from(this.entityConstructor.schema.entries())
+        .filter(([key, field]) => field.label)
         .map(([key, field]) => ({
           key: key,
-          anonymize: field.anonymize,
           label: field.label,
+          field: field,
         }));
-
-      const anonymizeData = this.allPIIFields.map((field) => {
-        return { fields: field.label, anonymize: field.anonymize };
-      });
-
-      this.fieldAnonymizationDataSource = new MatTableDataSource<any>(
-        anonymizeData,
-      );
+      this.fieldAnonymizationDataSource = new MatTableDataSource(fields);
     }
   }
 
-  toggleTable(event: any) {
+  toggleAnonymizationTable(event: MatCheckboxChange) {
     this.showPIIDetails = event.checked;
     this.basicSettingsForm.get("hasPII").setValue(this.showPIIDetails);
-    this.fetchTableData();
+    this.fetchAnonymizationTableData();
   }
 
-  changeFieldAnonymization(selectFieldData: {
-    anonymize: AnonymizeOption;
-    fields: string;
-  }) {
-    const selectedFieldDetails = this.allPIIFields.find(
-      (field) => field.label === selectFieldData.fields,
-    );
-    const selectedFieldId = selectedFieldDetails.key;
-    let selectedFielddetails =
-      this.entityConstructor.schema.get(selectedFieldId);
-    selectedFielddetails.anonymize = selectFieldData.anonymize;
-    const updatedEntitySchemaMerged = Object.assign(
-      { _isCustomizedField: true },
-      this.entitySchemaField,
-      selectedFielddetails,
-    );
+  changeFieldAnonymization(
+    fieldSchema: EntitySchemaField,
+    newAnonymizationValue,
+  ) {
+    fieldSchema.anonymize = newAnonymizationValue;
+    fieldSchema._isCustomizedField = true;
 
     this.adminEntityService.updateSchemaField(
       this.entityConstructor,
-      selectedFieldId,
-      updatedEntitySchemaMerged,
+      this.fieldAnonymizationDataSource.data.find(
+        (v) => v.field === fieldSchema,
+      ).key,
+      fieldSchema,
     );
   }
 
@@ -180,7 +170,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
   objectToValue = (v: SimpleDropdownValue) => v?.key;
 }
 
-type AnonymizeOption = "retain" | "retain-anonymized";
 interface SimpleDropdownValue {
   key: string;
   label: string;

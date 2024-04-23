@@ -1,7 +1,7 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatOptionModule } from "@angular/material/core";
-import { MatSelectChange, MatSelectModule } from "@angular/material/select";
+import { MatSelectModule } from "@angular/material/select";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
 @Component({
@@ -11,20 +11,13 @@ import { MatTooltipModule } from "@angular/material/tooltip";
   templateUrl: "./anonymize-options.component.html",
   styleUrl: "./anonymize-options.component.scss",
 })
-export class AnonymizeOptionsComponent {
-  @Input() anonymizeData: any;
+export class AnonymizeOptionsComponent implements OnInit {
+  @Input() value: string;
   @Output() valueChange = new EventEmitter<string>();
 
   ngOnInit(): void {
-    if (!this.anonymizeData.anonymize) {
-      this.anonymizeData.anonymize = "";
+    if (!this.value) {
+      this.value = "";
     }
   }
-  fetchAnonymizChanges(event: MatSelectChange) {
-    console.log(this.anonymizeData, "datata");
-    this.valueChange.emit(event.value);
-  }
-}
-interface AnonymizeData {
-  anonymize: string;
 }

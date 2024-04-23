@@ -1,7 +1,7 @@
 <mat-form-field appearance="fill">
   <mat-select
-    [(value)]="anonymizeData.anonymize"
-    (selectionChange)="fetchAnonymizChanges($event)"
+    [(value)]="value"
+    (selectionChange)="valueChange.emit($event.value)"
   >
     <mat-option
       value=""
