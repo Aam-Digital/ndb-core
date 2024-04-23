@@ -25,6 +25,7 @@ import { HelpButtonComponent } from "../../../common-components/help-button/help
 import { MatSort } from "@angular/material/sort";
 import { EntityFieldLabelComponent } from "../../../common-components/entity-field-label/entity-field-label.component";
 import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-options/anonymize-options.component";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
 @Component({
   selector: "app-admin-entity-general-settings",
@@ -50,6 +51,7 @@ import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-
     MatSort,
     EntityFieldLabelComponent,
     AnonymizeOptionsComponent,
+    FaIconComponent,
   ],
 })
 export class AdminEntityGeneralSettingsComponent implements OnInit {
