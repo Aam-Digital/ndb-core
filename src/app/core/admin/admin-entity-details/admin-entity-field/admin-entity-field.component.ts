@@ -44,7 +44,8 @@ import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/ge
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
-
+import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
+import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
  */
@@ -70,6 +71,7 @@ import { uniqueIdValidator } from "app/core/common-components/entity-form/unique
     FontAwesomeModule,
     MatTooltipModule,
     BasicAutocompleteComponent,
+    ConfigureEntityFieldValidatorComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
@@ -77,7 +79,6 @@ export class AdminEntityFieldComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   entitySchemaField: EntitySchemaField;
-
   form: FormGroup;
   fieldIdForm: FormControl;
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
@@ -85,7 +86,6 @@ export class AdminEntityFieldComponent implements OnChanges {
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
-
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
@@ -176,6 +176,10 @@ export class AdminEntityFieldComponent implements OnChanges {
         autoGenerateSubscr.unsubscribe(),
       );
     }
+  }
+
+  entityFieldValidatorChanges(validatorData: DynamicValidator) {
+    this.schemaFieldsForm.get("validators").setValue(validatorData);
   }
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
