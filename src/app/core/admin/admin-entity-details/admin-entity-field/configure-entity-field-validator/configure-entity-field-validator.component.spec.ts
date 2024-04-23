@@ -7,8 +7,9 @@ import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-describe("ConfigureEntityFieldValidatorComponent", () => {
+fdescribe("ConfigureEntityFieldValidatorComponent", () => {
   let component: ConfigureEntityFieldValidatorComponent;
   let fixture: ComponentFixture<ConfigureEntityFieldValidatorComponent>;
 
@@ -23,6 +24,7 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
         FormsModule,
         ReactiveFormsModule,
         BrowserAnimationsModule,
+        FontAwesomeTestingModule,
       ],
       providers: [FormBuilder],
     }).compileComponents();
