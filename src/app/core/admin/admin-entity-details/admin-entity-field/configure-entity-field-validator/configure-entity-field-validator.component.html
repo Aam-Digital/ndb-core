@@ -12,6 +12,7 @@
       </mat-form-field>
     </ng-container>
 
+    <!-- TODO: requires transformation of value to { pattern: string, message: string } before saving
     <mat-form-field *ngIf="entitySchemaField.dataType === 'string'">
       <mat-label i18n>Pattern (Regex)</mat-label>
       <input formControlName="regex" matInput />
@@ -21,6 +22,7 @@
         i18n-text
       ></app-help-button>
     </mat-form-field>
+    -->
 
     <div>
       <mat-checkbox i18n formControlName="required">
