@@ -44,7 +44,7 @@ import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/ge
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
-import { ConfigureValidatorPopupComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
+import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -71,7 +71,7 @@ import { DynamicValidator } from "app/core/common-components/entity-form/dynamic
     FontAwesomeModule,
     MatTooltipModule,
     BasicAutocompleteComponent,
-    ConfigureValidatorPopupComponent,
+    ConfigureEntityFieldValidatorComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {

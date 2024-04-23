@@ -5,12 +5,12 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { ConfigureValidatorPopupComponent } from "./configure-entity-field-validator.component";
+import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator.component";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 
-describe("ConfigureValidatorPopupComponent", () => {
-  let component: ConfigureValidatorPopupComponent;
-  let fixture: ComponentFixture<ConfigureValidatorPopupComponent>;
+describe("ConfigureEntityFieldValidatorComponent", () => {
+  let component: ConfigureEntityFieldValidatorComponent;
+  let fixture: ComponentFixture<ConfigureEntityFieldValidatorComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
@@ -27,7 +27,7 @@ describe("ConfigureValidatorPopupComponent", () => {
       providers: [FormBuilder],
     }).compileComponents();
 
-    fixture = TestBed.createComponent(ConfigureValidatorPopupComponent);
+    fixture = TestBed.createComponent(ConfigureEntityFieldValidatorComponent);
     component = fixture.componentInstance;
     component.entitySchemaField = {
       // Mock EntitySchemaField data

@@ -26,7 +26,7 @@ import { HelpButtonComponent } from "../../../../common-components/help-button/h
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
 })
-export class ConfigureValidatorPopupComponent {
+export class ConfigureEntityFieldValidatorComponent {
   validatorForm: FormGroup;
   form: FormGroup;
   @Input() entitySchemaField: EntitySchemaField;
