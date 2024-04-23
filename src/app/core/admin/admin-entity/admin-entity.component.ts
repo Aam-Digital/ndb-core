@@ -32,6 +32,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
+import { ViewActionsComponent } from "../../common-components/view-actions/view-actions.component";
 
 @Component({
   selector: "app-admin-entity",
@@ -52,6 +53,7 @@ import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-sett
     MatListItem,
     AdminEntityDetailsComponent,
     AdminEntityGeneralSettingsComponent,
+    ViewActionsComponent,
   ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
