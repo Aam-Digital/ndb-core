@@ -9,7 +9,7 @@ import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
-fdescribe("ConfigureEntityFieldValidatorComponent", () => {
+describe("ConfigureEntityFieldValidatorComponent", () => {
   let component: ConfigureEntityFieldValidatorComponent;
   let fixture: ComponentFixture<ConfigureEntityFieldValidatorComponent>;
 
