@@ -70,7 +70,6 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     field: EntitySchemaField;
   }>;
 
-  form: FormGroup;
   basicSettingsForm: FormGroup;
   toStringAttributesOptions: SimpleDropdownValue[] = [];
 
@@ -95,13 +94,10 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
       hasPII: [this.generalSettings.hasPII],
     });
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;
-    this.form = this.fb.group({
-      basicSettings: this.basicSettingsForm,
-    });
     this.fetchAnonymizationTableData();
     this.initToStringAttributesOptions();
 
-    this.form.valueChanges.subscribe((value) => {
+    this.basicSettingsForm.valueChanges.subscribe((value) => {
       this.generalSettingsChange.emit(this.basicSettingsForm.getRawValue()); // Optionally, emit the initial value
     });
   }
