@@ -83,7 +83,7 @@
         <div class="flex-row align-center">
           <mat-checkbox
             [checked]="showPIIDetails"
-            (change)="toggleTable($event)"
+            (change)="toggleAnonymizationTable($event)"
             >Has personal information (PII)</mat-checkbox
           >
           <app-help-button
@@ -104,25 +104,25 @@
           </p>
 
           <mat-table [dataSource]="fieldAnonymizationDataSource">
-            <ng-container matColumnDef="fields">
-              <mat-header-cell *matHeaderCellDef> Fields </mat-header-cell>
+            <ng-container matColumnDef="label">
               <mat-cell *matCellDef="let anonymizeData">
-                {{ anonymizeData.fields }}
+                {{ anonymizeData.label }}
               </mat-cell>
             </ng-container>
 
-            <ng-container matColumnDef="anonymize">
-              <mat-header-cell *matHeaderCellDef> Anonymize </mat-header-cell>
+            <ng-container matColumnDef="field">
               <mat-cell *matCellDef="let anonymizeData">
                 <app-anonymize-options
-                  [anonymizeData]="anonymizeData"
-                  (valueChange)="changeFieldAnonymization(anonymizeData)"
+                  [value]="anonymizeData.field.anonymize"
+                  (valueChange)="
+                    changeFieldAnonymization(anonymizeData.field, $event)
+                  "
                 ></app-anonymize-options>
               </mat-cell>
             </ng-container>
 
             <mat-row
-              *matRowDef="let row; columns: ['fields', 'anonymize']"
+              *matRowDef="let row; columns: ['label', 'field']"
             ></mat-row>
           </mat-table>
         </div>

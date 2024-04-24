@@ -1,6 +1,10 @@
 <div class="host-container flex-column">
   <div class="header flex-row flex-wrap justify-space-between">
-    <app-view-title class="admin-ui-title" i18n="page title">
+    <app-view-title
+      class="admin-ui-title"
+      i18n="page title"
+      [displayInPlace]="true"
+    >
       Editing data structure for "{{ entityType | entityTypeLabel }}" records
     </app-view-title>
 
@@ -37,10 +41,7 @@
       </mat-list-item>
     </mat-nav-list>
 
-    <div
-      class="config-component flex-grow mat-elevation-z1"
-      [ngClass]="{ 'general-mode': mode === 'general' }"
-    >
+    <div class="config-component flex-grow mat-elevation-z1">
       @switch (mode) {
         @case ("details") {
           <app-admin-entity-details
