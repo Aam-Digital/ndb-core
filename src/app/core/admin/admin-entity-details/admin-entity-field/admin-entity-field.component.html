@@ -151,8 +151,19 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Anonymize</mat-label>
+              <mat-label i18n>
+                Anonymize
+                <fa-icon
+                  icon="question-circle"
+                  matTooltip="Optionally This will remove all personal information (PII) permanently related to this field."
+                  i18n-matTooltip
+                ></fa-icon>
+              </mat-label>
               <input formControlName="anonymize" matInput />
+              <app-anonymize-options
+                [value]="entitySchemaField.anonymize"
+                (valueChange)="changeFieldAnonymization($event)"
+              ></app-anonymize-options>
             </mat-form-field>
 
             <!-- TODO: not supported yet
