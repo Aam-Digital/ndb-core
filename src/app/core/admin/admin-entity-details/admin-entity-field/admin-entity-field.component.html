@@ -142,11 +142,7 @@
       <!--
         ADVANCED SETTINGS
       -->
-      <mat-tab
-        label="Advanced Options & Validation [COMING SOON]"
-        i18n-label
-        [disabled]="true"
-      >
+      <mat-tab label="Advanced Options & Validation" i18n-label>
         <div class="grid-layout margin-top-regular">
           <div class="entity-form-cell">
             <mat-form-field>
@@ -159,17 +155,18 @@
               <input formControlName="anonymize" matInput />
             </mat-form-field>
 
+            <!-- TODO: not supported yet
             <mat-form-field>
               <mat-label>Searchable</mat-label>
               <input formControlName="searchable" matInput />
             </mat-form-field>
+            -->
           </div>
-
           <div class="entity-form-cell">
-            <mat-form-field>
-              <mat-label>Field Validation</mat-label>
-              <input formControlName="validators" matInput />
-            </mat-form-field>
+            <app-configure-entity-field-validator
+              [entitySchemaField]="entitySchemaField"
+              (entityValidatorChanges)="entityFieldValidatorChanges($event)"
+            ></app-configure-entity-field-validator>
           </div>
         </div>
       </mat-tab>
