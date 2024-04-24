@@ -65,6 +65,11 @@ export class AdminEntityFormComponent implements OnChanges {
     label: $localize`:Label drag and drop item:Create New Field`,
   };
 
+  readonly createNewTextPlaceholder: FormFieldConfig = {
+    id: null,
+    label: $localize`:Label drag and drop item:Create New Text Field`,
+  };
+
   constructor(
     private entityFormService: EntityFormService,
     private matDialog: MatDialog,
@@ -117,7 +122,7 @@ export class AdminEntityFormComponent implements OnChanges {
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
 
-    this.availableFields = [this.createNewFieldPlaceholder, ...unusedFields];
+    this.availableFields = [this.createNewFieldPlaceholder, this.createNewTextPlaceholder, ...unusedFields];
   }
 
   /**
@@ -139,6 +144,25 @@ export class AdminEntityFormComponent implements OnChanges {
     return lastValueFrom(dialogRef.afterClosed());
   }
 
+    /**
+   * Open the form to edit details of a single field's schema.
+   *
+   * @param field field to edit or { id: null } to create a new field
+   * @returns the id of the field that was edited or created (which is newly defined in the dialog for new fields)
+   */
+    async openTextConfig(field: ColumnConfig): Promise<string> {
+      let textIdToEdit = toFormFieldConfig(field).id;
+      const dialogRef = this.matDialog.open(AdminEntityFieldComponent, {
+        width: "99%",
+        maxHeight: "90vh",
+        data: {
+          fieldId: textIdToEdit,
+          entityType: this.entityType,
+        },
+      });
+      return lastValueFrom(dialogRef.afterClosed());
+    }
+   
   drop(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
     const prevFieldsArray = event.previousContainer.data;
     const newFieldsArray = event.container.data;
@@ -147,6 +171,13 @@ export class AdminEntityFormComponent implements OnChanges {
       prevFieldsArray[event.previousIndex] === this.createNewFieldPlaceholder
     ) {
       this.dropNewField(event);
+      return;
+    }
+
+    if (
+      prevFieldsArray[event.previousIndex] === this.createNewTextPlaceholder
+    ) {
+      this.dropNewText(event);
       return;
     }
 
@@ -173,6 +204,31 @@ export class AdminEntityFormComponent implements OnChanges {
    * @private
    */
   private async dropNewField(
+    event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
+  ) {
+    if (event.container.data === this.availableFields) {
+      // don't add new field to the available fields that are not in the form yet
+      return;
+    }
+
+    const newFieldId = await this.openFieldConfig({ id: null });
+    if (!newFieldId) {
+      return;
+    }
+
+    this.dummyForm.addControl(newFieldId, new FormControl());
+    this.dummyForm.disable();
+    event.container.data.splice(event.currentIndex, 0, newFieldId);
+
+    // the schema update has added the new field to the available fields already, remove it from there
+    this.availableFields.splice(this.availableFields.indexOf(newFieldId), 1);
+  }
+  /**
+   * drop handler specifically for the "create new field" item
+   * @param event
+   * @private
+   */
+  private async dropNewText(
     event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
   ) {
     if (event.container.data === this.availableFields) {

@@ -103,7 +103,7 @@
           ></app-entity-field-label>
 
           <button
-            *ngIf="field !== createNewFieldPlaceholder"
+            *ngIf="field !== createNewFieldPlaceholder && field !== createNewTextPlaceholder"
             mat-stroked-button
             color="accent"
             class="field-edit-button field-edit-button-small"
