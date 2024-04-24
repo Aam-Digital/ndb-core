@@ -1,4 +1,8 @@
 <mat-form-field appearance="fill">
+  <mat-label>
+    <ng-content></ng-content>
+  </mat-label>
+
   <mat-select
     [(value)]="value"
     (selectionChange)="valueChange.emit($event.value)"
