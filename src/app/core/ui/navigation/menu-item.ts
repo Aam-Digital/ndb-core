@@ -9,7 +9,7 @@ export interface MenuItem {
   /**
    * The icon to be displayed left of the label.
    */
-  icon: string;
+  icon?: string;
   /**
    * The url fragment to which the item will route to (e.g. '/dashboard')
    */

@@ -1,6 +1,12 @@
 <app-view-title [disableBackButton]="true" [displayInPlace]="true">
   &lt;Name of displayed {{ this.entityConstructor?.label }}&gt;
 </app-view-title>
+<p i18n>
+  You can edit how users will see the details of a single record of this type.
+  Drag and drop fields and sections in this preview of a profile view and group
+  them as appropriate. We recommend to keep things simple: Only add fields that
+  you really need for your work.
+</p>
 
 <app-admin-tabs [tabs]="config?.panels" [newTabFactory]="newPanelFactory">
   <ng-template [appAdminTabTemplate]="config?.panels" let-item>

@@ -16,16 +16,14 @@
  */
 
 import { Component, ViewChild } from "@angular/core";
-import { Title } from "@angular/platform-browser";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { MatDrawerMode, MatSidenavModule } from "@angular/material/sidenav";
-import { ConfigService } from "../../config/config.service";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { MatToolbarModule } from "@angular/material/toolbar";
 import { NgIf } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { Router, RouterLink, RouterOutlet } from "@angular/router";
+import { RouterLink, RouterOutlet } from "@angular/router";
 import { Angulartics2Module } from "angulartics2";
 import { SearchComponent } from "../search/search.component";
 import { SyncStatusComponent } from "../sync-status/sync-status/sync-status.component";
@@ -40,6 +38,7 @@ import { SiteSettings } from "../../site-settings/site-settings";
 import { LoginStateSubject } from "../../session/session-type";
 import { LoginState } from "../../session/session-states/login-state.enum";
 import { SessionManagerService } from "../../session/session-service/session-manager.service";
+import { SetupWizardButtonComponent } from "../../admin/setup-wizard/setup-wizard-button/setup-wizard-button.component";
 
 /**
  * The main user interface component as root element for the app structure
@@ -67,6 +66,7 @@ import { SessionManagerService } from "../../session/session-service/session-man
     RouterOutlet,
     PrimaryActionComponent,
     DisplayImgComponent,
+    SetupWizardButtonComponent,
   ],
   standalone: true,
 })
@@ -79,10 +79,7 @@ export class UiComponent {
   siteSettings = new SiteSettings();
 
   constructor(
-    private titleService: Title,
-    private configService: ConfigService,
     private screenWidthObserver: ScreenWidthObserver,
-    private router: Router,
     private siteSettingsService: SiteSettingsService,
     private loginState: LoginStateSubject,
     private sessionManager: SessionManagerService,
