@@ -58,6 +58,25 @@ describe("EntitySchemaService", () => {
     expect(rawData.aString).toEqual("192");
   });
 
+  it("should keep 'null' as value if explicitly set", () => {
+    class TestEntity extends Entity {
+      @DatabaseField() aString: string;
+    }
+
+    const entity = new TestEntity();
+
+    const data = {
+      _id: entity.getId(),
+      aString: null,
+    };
+    service.loadDataIntoEntity(entity, data);
+
+    expect(entity.aString).toEqual(null);
+
+    const rawData = service.transformEntityToDatabaseFormat(entity);
+    expect(rawData.aString).toEqual(null);
+  });
+
   it("should return the directly defined component name for viewing and editing a property", () => {
     class Test extends Entity {
       @DatabaseField({

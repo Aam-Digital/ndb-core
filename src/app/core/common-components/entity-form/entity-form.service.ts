@@ -237,10 +237,15 @@ export class EntityFormService {
     entity: T,
   ): Promise<T> {
     this.checkFormValidity(form);
-    const updatedEntity = entity.copy() as T;
-    Object.assign(updatedEntity, form.getRawValue());
-    updatedEntity.assertValid();
 
+    const updatedEntity = entity.copy() as T;
+    for (const [key, value] of Object.entries(form.getRawValue())) {
+      if (value !== null) {
+        updatedEntity[key] = value;
+      }
+    }
+
+    updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
 
     return this.entityMapper

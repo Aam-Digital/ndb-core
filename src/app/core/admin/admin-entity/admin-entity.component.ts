@@ -28,9 +28,10 @@ import {
   MatSidenavContent,
 } from "@angular/material/sidenav";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { RouterLink, ActivatedRoute } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
+import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
 
 @Component({
   selector: "app-admin-entity",
@@ -50,6 +51,7 @@ import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entit
     MatNavList,
     MatListItem,
     AdminEntityDetailsComponent,
+    AdminEntityGeneralSettingsComponent,
   ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
@@ -61,8 +63,8 @@ export class AdminEntityComponent implements OnInit {
 
   configDetailsView: EntityDetailsConfig;
   configListView: EntityListConfig;
-
-  protected mode: "details" | "list" | "general" = "list";
+  configEntitySettings: EntityConfig;
+  protected mode: "details" | "list" | "general" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
@@ -78,11 +80,7 @@ export class AdminEntityComponent implements OnInit {
   ngOnInit(): void {
     this.init();
     this.routes.queryParams.subscribe((params) => {
-      if (params.mode === "details") {
-        this.mode = "details";
-      } else if (params.mode === "list") {
-        this.mode = "list";
-      }
+      this.mode = params.mode;
     });
   }
 
@@ -98,6 +96,7 @@ export class AdminEntityComponent implements OnInit {
     this.configListView = this.loadViewConfig(
       EntityConfigService.getListViewId(this.entityConstructor),
     );
+    this.configEntitySettings = this.entityConstructor;
   }
 
   private loadViewConfig<C = EntityDetailsConfig | EntityListConfig>(
@@ -163,6 +162,14 @@ export class AdminEntityComponent implements OnInit {
       }
       entitySchemaConfig.attributes[fieldId] = field;
     }
+    if (this.configEntitySettings) {
+      entitySchemaConfig.label = this.configEntitySettings.label;
+      entitySchemaConfig.labelPlural = this.configEntitySettings.labelPlural;
+      entitySchemaConfig.icon = this.configEntitySettings.icon;
+      entitySchemaConfig.toStringAttributes =
+        this.configEntitySettings.toStringAttributes;
+      entitySchemaConfig.hasPII = this.configEntitySettings.hasPII;
+    }
   }
 
   private setViewConfig(
@@ -175,7 +182,7 @@ export class AdminEntityComponent implements OnInit {
       targetConfig.data[detailsViewId].config = viewConfig;
     } else {
       // create new config
-      viewConfig.entity = this.entityType;
+      viewConfig.entityType = this.entityType;
       targetConfig.data[detailsViewId] = {
         component: componentForNewConfig,
         config: viewConfig,

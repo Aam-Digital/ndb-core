@@ -58,6 +58,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateFormHeadersIntoFieldGroups,
       migrateFormFieldConfigView2ViewComponent,
       migrateMenuItemConfig,
+      migrateEntityDetailsInputEntityType,
     ];
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
@@ -185,6 +186,28 @@ const migrateMenuItemConfig: ConfigMigration = (key, configPart) => {
       return item;
     }
   });
+
+  return configPart;
+};
+
+/**
+ * Config properties specifying an entityType should be name "entityType" rather than "entity"
+ * to avoid confusion with a specific instance of an entity being passed in components.
+ * @param key
+ * @param configPart
+ */
+const migrateEntityDetailsInputEntityType: ConfigMigration = (
+  key,
+  configPart,
+) => {
+  if (key !== "config") {
+    return configPart;
+  }
+
+  if (configPart["entity"]) {
+    configPart["entityType"] = configPart["entity"];
+    delete configPart["entity"];
+  }
 
   return configPart;
 };

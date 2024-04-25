@@ -1,12 +1,11 @@
 <!-- Desktop version -->
 <div *ngIf="isDesktop">
   <!-- Header bar; contains the title on the left and controls on the right -->
+  <app-view-title [ngStyle]="offsetFilterStyle">
+    {{ title }}
+  </app-view-title>
 
-  <div class="flex-row justify-space-between" [ngStyle]="offsetFilterStyle">
-    <app-view-title>
-      {{ title }}
-    </app-view-title>
-
+  <app-view-actions>
     <div class="flex-row gap-regular">
       <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
 
@@ -19,7 +18,7 @@
         <fa-icon icon="ellipsis-v"></fa-icon>
       </button>
     </div>
-  </div>
+  </app-view-actions>
 
   <!-- Filters -->
 
@@ -211,6 +210,7 @@
     (click)="selectedRows = []"
     matTooltip="Select multiple records for bulk actions like duplicating or deleting"
     i18n-matTooltip
+    matTooltipPosition="before"
   >
     <fa-icon
       class="color-accent standard-icon-with-text"
