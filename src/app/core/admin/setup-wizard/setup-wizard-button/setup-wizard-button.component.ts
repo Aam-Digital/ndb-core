@@ -23,15 +23,22 @@ import { LoggingService } from "../../../logging/logging.service";
 export class SetupWizardButtonComponent {
   showSetupWizard: boolean;
 
-  constructor(entityMapper: EntityMapperService, logger: LoggingService) {
-    entityMapper
+  constructor(
+    private entityMapper: EntityMapperService,
+    private logger: LoggingService,
+  ) {
+    this.init();
+  }
+
+  private init() {
+    this.entityMapper
       .load(Config, CONFIG_SETUP_WIZARD_ID)
       .then((r: Config<SetupWizardConfig>) => {
         this.updateStatus(r.data);
       })
-      .catch((e) => logger.debug("No Setup Wizard Config found"));
+      .catch((e) => this.logger.debug("No Setup Wizard Config found"));
 
-    entityMapper
+    this.entityMapper
       .receiveUpdates<Config<SetupWizardConfig>>(Config)
       .pipe(
         untilDestroyed(this),

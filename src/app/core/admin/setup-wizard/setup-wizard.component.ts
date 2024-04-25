@@ -1,4 +1,4 @@
-import { Component, OnDestroy } from "@angular/core";
+import { Component, OnDestroy, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   MatStep,
@@ -17,6 +17,7 @@ import {
 } from "./setup-wizard-config";
 import { MarkdownComponent } from "ngx-markdown";
 import { MatTooltip } from "@angular/material/tooltip";
+import { LoggingService } from "../../logging/logging.service";
 
 @Component({
   selector: "app-setup-wizard",
@@ -37,24 +38,30 @@ import { MatTooltip } from "@angular/material/tooltip";
   templateUrl: "./setup-wizard.component.html",
   styleUrl: "./setup-wizard.component.scss",
 })
-export class SetupWizardComponent implements OnDestroy {
+export class SetupWizardComponent implements OnInit, OnDestroy {
   config: SetupWizardConfig;
   currentStep: number;
 
   private configEntity: Config<SetupWizardConfig>;
 
-  constructor(private entityMapper: EntityMapperService) {
-    entityMapper
+  constructor(
+    private entityMapper: EntityMapperService,
+    private logger: LoggingService,
+  ) {}
+
+  ngOnInit() {
+    this.entityMapper
       .load(Config, CONFIG_SETUP_WIZARD_ID)
       .then((r: Config<SetupWizardConfig>) => {
         this.configEntity = r;
         this.config = r.data;
         this.currentStep = this.config.currentStep;
-      });
+      })
+      .catch((e) => this.logger.debug("no setup wizard config loaded", e));
   }
 
   ngOnDestroy(): void {
-    if (!this.config) {
+    if (!this.configEntity) {
       return;
     }
 
