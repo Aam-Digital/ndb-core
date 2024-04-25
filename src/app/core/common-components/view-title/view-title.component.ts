@@ -61,7 +61,7 @@ export class ViewTitleComponent implements AfterViewInit {
   }
 
   ngAfterViewInit(): void {
-    if (this.viewContext) {
+    if (this.viewContext && !this.displayInPlace) {
       setTimeout(() => (this.viewContext.title = this));
     }
   }
@@ -86,4 +86,5 @@ export class ViewTitleComponent implements AfterViewInit {
   }
 
   @HostBinding("class") extraClasses = "mat-title";
+  @Input() displayInPlace!: boolean;
 }

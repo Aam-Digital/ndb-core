@@ -16,6 +16,6 @@
   </div>
 </ng-template>
 
-@if (!viewContext) {
+@if (!viewContext || displayInPlace) {
   <ng-container *ngTemplateOutlet="template"></ng-container>
 }
