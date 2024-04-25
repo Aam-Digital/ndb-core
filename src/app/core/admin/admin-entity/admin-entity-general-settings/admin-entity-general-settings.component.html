@@ -4,8 +4,8 @@
   the entity is displayed, including lists, forms and other views.
 </p>
 
-<form [formGroup]="form">
-  <mat-tab-group formGroupName="basicSettings">
+<form [formGroup]="basicSettingsForm">
+  <mat-tab-group>
     <mat-tab label="Basics" i18n-label>
       <div class="grid-layout flex-grow margin-top-regular">
         <div class="entity-form-cell">
@@ -74,8 +74,59 @@
     <!--
         ADVANCED SETTINGS
       -->
-    <mat-tab label="Configure PII / Anonymization" i18n-label [disabled]="true">
-      <div class="grid-layout margin-top-regular"></div>
+    <mat-tab
+      label="Configure PII / Anonymization"
+      i18n-label
+      [disabled]="false"
+    >
+      <div class="margin-top-regular overflow-table">
+        <div class="flex-row align-center">
+          <mat-checkbox
+            [checked]="showPIIDetails"
+            (change)="toggleAnonymizationTable($event)"
+            >Has personal information (PII)</mat-checkbox
+          >
+          <app-help-button
+            text="If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the 'anonymization' feature. This allows users to anonymize records of this type instead of just archiving or deleting them."
+            i18n-text
+          ></app-help-button>
+        </div>
+
+        <div *ngIf="showPIIDetails">
+          <p i18n>
+            Configure how records of this type can be anonymized. Users can
+            "anonymize" a record as an alternative to just archiving it (keeping
+            all personal details) or deleting it (losing any trace of the
+            record, even in reports). Select below which fields can be
+            "retained" to keep some limited data for statistical reporting and
+            which fields have to be removed because they contain personal
+            details.
+          </p>
+
+          <mat-table [dataSource]="fieldAnonymizationDataSource">
+            <ng-container matColumnDef="label">
+              <mat-cell *matCellDef="let anonymizeData">
+                {{ anonymizeData.label }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="field">
+              <mat-cell *matCellDef="let anonymizeData">
+                <app-anonymize-options
+                  [value]="anonymizeData.field.anonymize"
+                  (valueChange)="
+                    changeFieldAnonymization(anonymizeData.field, $event)
+                  "
+                ></app-anonymize-options>
+              </mat-cell>
+            </ng-container>
+
+            <mat-row
+              *matRowDef="let row; columns: ['label', 'field']"
+            ></mat-row>
+          </mat-table>
+        </div>
+      </div>
     </mat-tab>
   </mat-tab-group>
 </form>
