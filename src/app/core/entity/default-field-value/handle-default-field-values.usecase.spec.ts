@@ -382,7 +382,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       expect(formGroup.get("field-2").value).toBe(undefined);
     }));
 
-    it("should does nothing, if parent entity does not exist", fakeAsync(() => {
+    it("should do nothing, if parent entity does not exist", fakeAsync(() => {
       // given
       let formGroup = getDefaultInheritanceFormGroup();
 
