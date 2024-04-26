@@ -1,0 +1,11 @@
+@if (entityIds?.length < aggregationThreshold) {
+  <!-- Display each entity -->
+  @for (e of entityIds; track e) {
+    <app-entity-block class="display-entity" [entityId]="e"></app-entity-block>
+  }
+} @else {
+  <!-- Only display summary -->
+  <span i18n="Displaying the amount of involved entities|context 10 in total">
+    {{ value?.length }} in total
+  </span>
+}

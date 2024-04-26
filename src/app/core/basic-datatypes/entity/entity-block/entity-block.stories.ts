@@ -1,5 +1,5 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { DisplayEntityComponent } from "./display-entity.component";
+import { EntityBlockComponent } from "./entity-block.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
 import { School } from "../../../../child-dev-project/schools/model/school";
 import { User } from "../../../user/user";
@@ -7,8 +7,8 @@ import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
 export default {
-  title: "Core/Entities/Properties/entity/DisplayEntity",
-  component: DisplayEntityComponent,
+  title: "Core/Entities/EntityBlock",
+  component: EntityBlockComponent,
   decorators: [
     applicationConfig({
       providers: [importProvidersFrom(StorybookBaseModule)],
@@ -16,10 +16,10 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayEntityComponent> = (
-  args: DisplayEntityComponent,
+const Template: StoryFn<EntityBlockComponent> = (
+  args: EntityBlockComponent,
 ) => ({
-  component: DisplayEntityComponent,
+  component: EntityBlockComponent,
   props: args,
 });
 

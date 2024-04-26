@@ -1,6 +1,6 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { DisplayEntityArrayComponent } from "./display-entity-array.component";
+import { DisplayEntityComponent } from "./display-entity.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
 
@@ -21,8 +21,8 @@ child5.name = "Fifth Name";
 child5.projectNumber = "5";
 
 export default {
-  title: "Core/Entities/Properties/entity-array/DisplayEntityArray",
-  component: DisplayEntityArrayComponent,
+  title: "Core/Entities/Properties/entity/DisplayEntity",
+  component: DisplayEntityComponent,
   decorators: [
     applicationConfig({
       providers: [
@@ -40,10 +40,10 @@ export default {
   ],
 } as Meta;
 
-const Template: StoryFn<DisplayEntityArrayComponent> = (
-  args: DisplayEntityArrayComponent,
+const Template: StoryFn<DisplayEntityComponent> = (
+  args: DisplayEntityComponent,
 ) => ({
-  component: DisplayEntityArrayComponent,
+  component: DisplayEntityComponent,
   props: args,
 });
 

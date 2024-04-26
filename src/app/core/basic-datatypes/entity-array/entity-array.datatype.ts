@@ -34,7 +34,7 @@ export class EntityArrayDatatype extends ArrayDatatype<string, string> {
   static override label: string = $localize`:datatype-label:link to other records (multi-select)`;
 
   editComponent = "EditEntity";
-  viewComponent = "DisplayEntityArray";
+  viewComponent = "DisplayEntity";
 
   transformToDatabaseFormat(value, schema: EntitySchemaField, parent) {
     return super.transformToDatabaseFormat(

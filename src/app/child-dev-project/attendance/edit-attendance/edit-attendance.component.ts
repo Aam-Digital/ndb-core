@@ -7,7 +7,7 @@ import { FormControl } from "@angular/forms";
 import { InteractionType } from "../../notes/model/interaction-type.interface";
 import { NgForOf, NgIf } from "@angular/common";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
-import { DisplayEntityComponent } from "../../../core/basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { MatButtonModule } from "@angular/material/button";
 import { AttendanceStatusSelectComponent } from "../attendance-status-select/attendance-status-select.component";
 import { MatFormFieldModule } from "@angular/material/form-field";
@@ -28,7 +28,7 @@ import { MatCardModule } from "@angular/material/card";
     NgIf,
     NgForOf,
     FontAwesomeModule,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     MatButtonModule,
     AttendanceStatusSelectComponent,
     MatFormFieldModule,

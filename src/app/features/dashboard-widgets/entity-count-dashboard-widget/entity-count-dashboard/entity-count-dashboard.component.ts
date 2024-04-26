@@ -18,7 +18,7 @@ import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboa
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
 import { EntityArrayDatatype } from "../../../../core/basic-datatypes/entity-array/entity-array.datatype";
-import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { NgIf } from "@angular/common";
 
 interface EntityCountDashboardConfig {
@@ -37,7 +37,7 @@ interface EntityCountDashboardConfig {
     FontAwesomeModule,
     Angulartics2Module,
     DashboardListWidgetComponent,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     NgIf,
   ],
   standalone: true,

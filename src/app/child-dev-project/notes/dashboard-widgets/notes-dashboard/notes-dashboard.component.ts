@@ -7,7 +7,7 @@ import { Child } from "../../../children/model/child";
 import { EntityRegistry } from "../../../../core/entity/database-entity.decorator";
 import { EntityConstructor } from "../../../../core/entity/model/entity";
 import { DecimalPipe, NgIf } from "@angular/common";
-import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { Note } from "../../model/note";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
@@ -34,7 +34,7 @@ interface NotesDashboardConfig {
   imports: [
     NgIf,
     MatTableModule,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     DecimalPipe,
     DashboardListWidgetComponent,
   ],

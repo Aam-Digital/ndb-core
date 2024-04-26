@@ -14,11 +14,11 @@
     [createOption]="createNewEntity"
   >
     <ng-template let-item>
-      <app-display-entity
+      <app-entity-block
         style="margin: auto"
         [entityToDisplay]="item"
         [linkDisabled]="form.enabled"
-      ></app-display-entity>
+      ></app-entity-block>
     </ng-template>
 
     <ng-container autocompleteFooter *ngIf="currentlyMatchingInactive > 0">

@@ -14,11 +14,10 @@
       <ng-container matColumnDef="label">
         <td *matCellDef="let group">
           <span *ngIf="!groupedByEntity">{{ group.label }}</span>
-          <app-display-entity
+          <app-entity-block
             *ngIf="groupedByEntity"
             [entityId]="group.id"
-            [entityType]="groupedByEntity"
-          ></app-display-entity>
+          ></app-entity-block>
         </td>
       </ng-container>
       <ng-container matColumnDef="value">
