@@ -64,7 +64,7 @@ export class AdminEntityComponent implements OnInit {
   configDetailsView: EntityDetailsConfig;
   configListView: EntityListConfig;
   configEntitySettings: EntityConfig;
-  protected mode: "details" | "list" | "general" = "list";
+  protected mode: "details" | "list" | "general" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
