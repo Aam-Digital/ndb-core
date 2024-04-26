@@ -1,7 +1,7 @@
 import { Component, OnInit } from "@angular/core";
 import { ViewDirective } from "../../../entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { EntityBlockComponent } from "../../entity/entity-block/entity-block.component";
+import { EntityBlockComponent } from "../entity-block/entity-block.component";
 import { asArray } from "../../../../utils/utils";
 
 @DynamicComponent("DisplayEntity")

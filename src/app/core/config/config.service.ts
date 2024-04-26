@@ -7,6 +7,8 @@ import { shareReplay } from "rxjs/operators";
 import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { FieldGroup } from "../entity-details/form/field-group";
 import { MenuItem } from "../ui/navigation/menu-item";
+import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { ArrayDatatype } from "../basic-datatypes/array/array.datatype";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -59,6 +61,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateFormFieldConfigView2ViewComponent,
       migrateMenuItemConfig,
       migrateEntityDetailsInputEntityType,
+      migrateEntityArrayDatatype,
     ];
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
@@ -207,6 +210,25 @@ const migrateEntityDetailsInputEntityType: ConfigMigration = (
   if (configPart["entity"]) {
     configPart["entityType"] = configPart["entity"];
     delete configPart["entity"];
+  }
+
+  return configPart;
+};
+
+/**
+ * Replace custom "entity-array" dataType with dataType="array", innerDatatype="entity"
+ * @param key
+ * @param configPart
+ */
+const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
+  if (!configPart?.hasOwnProperty("dataType")) {
+    return configPart;
+  }
+
+  const config: EntitySchemaField = configPart;
+  if (config.dataType === "entity-array") {
+    config.dataType = ArrayDatatype.dataType;
+    config.innerDataType = EntityDatatype.dataType;
   }
 
   return configPart;

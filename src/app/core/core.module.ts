@@ -13,7 +13,6 @@ import { DateDatatype } from "./basic-datatypes/date/date.datatype";
 import { DateOnlyDatatype } from "./basic-datatypes/date-only/date-only.datatype";
 import { DateWithAgeDatatype } from "./basic-datatypes/date-with-age/date-with-age.datatype";
 import { EntityDatatype } from "./basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "./basic-datatypes/entity-array/entity-array.datatype";
 import { NumberDatatype } from "./basic-datatypes/number/number.datatype";
 import { Entity } from "./entity/model/entity";
 import { TimePeriod } from "./entity-details/related-time-period-entities/time-period";
@@ -43,7 +42,6 @@ import { SessionSubject } from "./session/auth/session-info";
     { provide: DefaultDatatype, useClass: MonthDatatype, multi: true },
     { provide: DefaultDatatype, useClass: DateDatatype, multi: true },
     { provide: DefaultDatatype, useClass: EntityDatatype, multi: true },
-    { provide: DefaultDatatype, useClass: EntityArrayDatatype, multi: true },
   ],
   imports: [CommonModule],
 })

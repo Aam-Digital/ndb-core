@@ -17,7 +17,6 @@ import { groupBy } from "../../../../utils/utils";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EntityDatatype } from "../../../../core/basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "../../../../core/basic-datatypes/entity-array/entity-array.datatype";
 import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { NgIf } from "@angular/common";
 
@@ -90,7 +89,7 @@ export class EntityCountDashboardComponent
     const groupByType = this._entity.schema.get(this.groupBy);
     this.groupedByEntity =
       groupByType.dataType === EntityDatatype.dataType ||
-      groupByType.dataType === EntityArrayDatatype.dataType
+      groupByType.innerDataType === EntityDatatype.dataType
         ? groupByType.additional
         : undefined;
 

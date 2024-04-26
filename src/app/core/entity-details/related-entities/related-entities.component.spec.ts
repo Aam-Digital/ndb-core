@@ -15,10 +15,10 @@ import { UpdatedEntity } from "../../entity/model/entity-update";
 import { Entity } from "../../entity/model/entity";
 import { DatabaseEntity } from "../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { expectEntitiesToMatch } from "../../../utils/expect-entity-data.spec";
+import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
 
 describe("RelatedEntitiesComponent", () => {
   let component: RelatedEntitiesComponent<ChildSchoolRelation>;
@@ -125,7 +125,8 @@ describe("RelatedEntitiesComponent", () => {
       })
       singleChild: string;
       @DatabaseField({
-        dataType: EntityArrayDatatype.dataType,
+        dataType: ArrayDatatype.dataType,
+        innerDataType: EntityDatatype.dataType,
         additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
       })
       multiEntities: string;
@@ -174,7 +175,8 @@ describe("RelatedEntitiesComponent", () => {
     });
 
     PropTest.schema.set("arrayRelation", {
-      dataType: EntityArrayDatatype.dataType,
+      dataType: ArrayDatatype.dataType,
+      innerDataType: EntityDatatype.dataType,
       additional: School.ENTITY_TYPE,
     });
     component.entity = new School();
@@ -186,7 +188,8 @@ describe("RelatedEntitiesComponent", () => {
     });
 
     PropTest.schema.set("multiTypeRelation", {
-      dataType: EntityArrayDatatype.dataType,
+      dataType: ArrayDatatype.dataType,
+      innerDataType: EntityDatatype.dataType,
       additional: [ChildSchoolRelation.ENTITY_TYPE, Child.ENTITY_TYPE],
     });
     component.entity = new ChildSchoolRelation();

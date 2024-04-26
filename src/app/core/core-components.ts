@@ -25,15 +25,15 @@ export const coreComponents: ComponentTuple[] = [
   [
     "EditEntity",
     () =>
-      import(
-        "./basic-datatypes/entity-array/edit-entity/edit-entity.component"
-      ).then((c) => c.EditEntityComponent),
+      import("./basic-datatypes/entity/edit-entity/edit-entity.component").then(
+        (c) => c.EditEntityComponent,
+      ),
   ],
   [
     "DisplayEntity",
     () =>
       import(
-        "./basic-datatypes/entity-array/display-entity/display-entity.component"
+        "./basic-datatypes/entity/display-entity/display-entity.component"
       ).then((c) => c.DisplayEntityComponent),
   ],
   [

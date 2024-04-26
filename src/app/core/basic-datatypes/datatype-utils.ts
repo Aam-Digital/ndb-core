@@ -1,12 +1,8 @@
 import { EntityConstructor } from "../entity/model/entity";
 import { ArrayDatatype } from "./array/array.datatype";
-import { EntityArrayDatatype } from "./entity-array/entity-array.datatype";
 
 export function isArrayDataType(dataType: string) {
-  return (
-    dataType === ArrayDatatype.dataType ||
-    dataType === EntityArrayDatatype.dataType
-  );
+  return dataType === ArrayDatatype.dataType;
 }
 
 export function isArrayProperty(

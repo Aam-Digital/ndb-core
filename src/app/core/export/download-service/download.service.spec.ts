@@ -154,7 +154,11 @@ describe("DownloadService", () => {
 
   it("should add column with entity toString for referenced array of entities in export", async () => {
     class EntityRefDownloadTestEntity extends Entity {
-      @DatabaseField({ dataType: "entity-array", label: "referenced entities" })
+      @DatabaseField({
+        dataType: "array",
+        innerDataType: "entity",
+        label: "referenced entities",
+      })
       relatedEntitiesArray: string[];
     }
     const testEntity = new EntityRefDownloadTestEntity();
@@ -171,7 +175,11 @@ describe("DownloadService", () => {
 
   it("should handle undefined entity ids without errors", async () => {
     class EntityRefDownloadTestEntity extends Entity {
-      @DatabaseField({ dataType: "entity-array", label: "referenced entities" })
+      @DatabaseField({
+        dataType: "array",
+        innerDataType: "entity",
+        label: "referenced entities",
+      })
       relatedEntitiesArray: string[];
     }
     const testEntity = new EntityRefDownloadTestEntity();

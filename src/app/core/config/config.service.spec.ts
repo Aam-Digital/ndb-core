@@ -327,4 +327,50 @@ describe("ConfigService", () => {
       service.getConfig<NavigationMenuConfig>("navigationMenu");
     expect(actualFromNew).toEqual(newFormat);
   }));
+
+  it("should migrate entity-array dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat: EntityConfig = {
+      attributes: {
+        to_update: {
+          dataType: "array",
+          innerDataType: "entity",
+        },
+        keep1: {
+          dataType: "entity",
+        },
+        keep2: {
+          dataType: "array",
+          innerDataType: "entity",
+        },
+      },
+    };
+    const newFormat: EntityConfig = {
+      attributes: {
+        to_update: {
+          dataType: "array",
+          innerDataType: "entity",
+        },
+        keep1: {
+          dataType: "entity",
+        },
+        keep2: {
+          dataType: "array",
+          innerDataType: "entity",
+        },
+      },
+    };
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
 });

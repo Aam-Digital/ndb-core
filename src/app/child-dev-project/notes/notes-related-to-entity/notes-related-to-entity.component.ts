@@ -8,7 +8,6 @@ import { FilterService } from "../../../core/filter/filter.service";
 import { Child } from "../../children/model/child";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
 import { asArray } from "../../../utils/utils";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -106,7 +105,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
 
       if (
         schema.dataType !== EntityDatatype.dataType &&
-        schema.dataType !== EntityArrayDatatype.dataType
+        schema.innerDataType !== EntityDatatype.dataType
       ) {
         // not referencing other entities
         continue;

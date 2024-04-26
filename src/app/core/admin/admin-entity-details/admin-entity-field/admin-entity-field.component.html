@@ -112,12 +112,7 @@
             </mat-form-field>
 
             <!-- "additional" for entity ref datatypes -->
-            <mat-form-field
-              *ngIf="
-                formDataType.value === 'entity' ||
-                formDataType.value === 'entity-array'
-              "
-            >
+            <mat-form-field *ngIf="formDataType.value === 'entity'">
               <mat-label i18n>
                 Type Details (target record type)
                 <fa-icon

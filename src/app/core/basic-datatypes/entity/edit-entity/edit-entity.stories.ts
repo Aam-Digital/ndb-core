@@ -51,7 +51,8 @@ const otherField: FormFieldConfig = {
 @DatabaseEntity("TestEntityReferenceArrayEntity")
 class TestEntity extends Entity {
   @DatabaseField({
-    dataType: "entity-array",
+    dataType: "array",
+    innerDataType: "entity",
     additional: User.ENTITY_TYPE,
   })
   relatedEntities: string[];

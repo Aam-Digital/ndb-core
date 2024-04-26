@@ -5,8 +5,7 @@ import { Child } from "../../../../child-dev-project/children/model/child";
 import { setupEditComponent } from "../../../entity/default-datatype/edit-component.spec";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ArrayDatatype } from "../../array/array.datatype";
-import { EntityDatatype } from "../../entity/entity.datatype";
-import { EntityArrayDatatype } from "../entity-array.datatype";
+import { EntityDatatype } from "../entity.datatype";
 import { FormFieldConfig } from "../../../common-components/entity-form/FormConfig";
 
 describe("EditEntityComponent", () => {
@@ -52,7 +51,8 @@ describe("EditEntityComponent", () => {
 
     testMultiFlag(
       {
-        dataType: EntityArrayDatatype.dataType,
+        dataType: ArrayDatatype.dataType,
+        innerDataType: EntityDatatype.dataType,
       },
       true,
     );

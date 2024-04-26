@@ -34,7 +34,6 @@ import { BasicAutocompleteComponent } from "../../../common-components/basic-aut
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "../../../basic-datatypes/entity-array/entity-array.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { AdminEntityService } from "../../admin-entity.service";
@@ -47,6 +46,7 @@ import { uniqueIdValidator } from "app/core/common-components/entity-form/unique
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-options/anonymize-options.component";
+
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
  */
@@ -215,10 +215,7 @@ export class AdminEntityFieldComponent implements OnChanges {
 
     if (dataType === ConfigurableEnumDatatype.dataType) {
       this.initAdditionalForEnum();
-    } else if (
-      dataType === EntityDatatype.dataType ||
-      dataType === EntityArrayDatatype.dataType
-    ) {
+    } else if (dataType === EntityDatatype.dataType) {
       this.initAdditionalForEntityRef();
     }
 

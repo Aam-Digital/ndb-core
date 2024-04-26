@@ -20,7 +20,6 @@ import {
 } from "../../entity/schema/entity-schema-field";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
-import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -31,6 +30,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import moment from "moment";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -263,7 +263,8 @@ describe("EntityFormService", () => {
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
-    schema.dataType = EntityArrayDatatype.dataType;
+    schema.dataType = ArrayDatatype.dataType;
+    schema.innerDataType = EntityDatatype.dataType;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
@@ -279,7 +280,8 @@ describe("EntityFormService", () => {
     expect(form.get("user")).toHaveValue(null);
 
     // array property
-    Entity.schema.get("user").dataType = EntityArrayDatatype.dataType;
+    Entity.schema.get("user").dataType = ArrayDatatype.dataType;
+    Entity.schema.get("user").innerDataType = EntityDatatype.dataType;
     form = service.createFormGroup([{ id: "user" }], new Entity());
     expect(form.get("user")).toHaveValue(null);
 

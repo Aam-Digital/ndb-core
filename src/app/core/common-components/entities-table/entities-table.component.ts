@@ -42,8 +42,8 @@ import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/e
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
+import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -339,7 +339,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
     // if no dataType is defined, these are dynamic, display-only components
     if (
-      c.dataType === EntityArrayDatatype.dataType ||
+      c.dataType === ArrayDatatype.dataType ||
       c.dataType === EntityDatatype.dataType ||
       !c.dataType
     ) {

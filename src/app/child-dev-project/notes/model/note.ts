@@ -75,7 +75,8 @@ export class Note extends Entity {
   /** IDs of Child entities linked with this note */
   @DatabaseField({
     label: $localize`:Label for the children of a note:Children`,
-    dataType: "entity-array",
+    dataType: "array",
+    innerDataType: "entity",
     additional: Child.ENTITY_TYPE,
     entityReferenceRole: "composite",
     editComponent: "EditAttendance",
@@ -114,7 +115,8 @@ export class Note extends Entity {
   /** IDs of users that authored this note */
   @DatabaseField({
     label: $localize`:Label for the social worker(s) who created the note:SW`,
-    dataType: "entity-array",
+    dataType: "array",
+    innerDataType: "entity",
     additional: User.ENTITY_TYPE,
     defaultValue: PLACEHOLDERS.CURRENT_USER,
     anonymize: "retain",
@@ -151,7 +153,8 @@ export class Note extends Entity {
    */
   @DatabaseField({
     label: $localize`:label for the related Entities:Related Records`,
-    dataType: "entity-array",
+    dataType: "array",
+    innerDataType: "entity",
     // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
     additional: undefined,
     anonymize: "retain",
@@ -163,7 +166,8 @@ export class Note extends Entity {
    */
   @DatabaseField({
     label: $localize`:label for the linked schools:Groups`,
-    dataType: "entity-array",
+    dataType: "array",
+    innerDataType: "entity",
     additional: School.ENTITY_TYPE,
     entityReferenceRole: "composite",
     anonymize: "retain",

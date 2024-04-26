@@ -13,11 +13,12 @@ import moment from "moment";
 import { Child } from "../../child-dev-project/children/model/child";
 import { RecurringActivity } from "../../child-dev-project/attendance/model/recurring-activity";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { EntityArrayDatatype } from "../basic-datatypes/entity-array/entity-array.datatype";
 import { mockEntityMapper } from "../entity/entity-mapper/mock-entity-mapper-service";
 import { CoreTestingModule } from "../../utils/core-testing.module";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
+import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
+import { ArrayDatatype } from "../basic-datatypes/array/array.datatype";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -62,7 +63,8 @@ describe("ImportService", () => {
       @DatabaseField() date: Date;
       @DatabaseField() text: string;
       @DatabaseField({
-        dataType: EntityArrayDatatype.dataType,
+        dataType: ArrayDatatype.dataType,
+        innerDataType: EntityDatatype.dataType,
         additional: "Child",
       })
       entityRefs: string[];

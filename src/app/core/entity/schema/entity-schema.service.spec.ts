@@ -149,7 +149,8 @@ describe("EntitySchemaService", () => {
     );
 
     const entityArraySchema: EntitySchemaField = {
-      dataType: "entity-array",
+      dataType: "array",
+      innerDataType: "entity",
     };
     expect(service.getInnermostDatatype(entityArraySchema)).toBeInstanceOf(
       EntityDatatype,
@@ -160,7 +161,8 @@ describe("EntitySchemaService", () => {
     @DatabaseEntity("ReferencingEntity")
     class ReferencingEntity extends Entity {
       @DatabaseField({
-        dataType: "entity-array",
+        dataType: "array",
+        innerDataType: "entity",
         additional: "Child",
       })
       refChildren: string[];
@@ -178,7 +180,8 @@ describe("EntitySchemaService", () => {
       refSchool: string;
 
       @DatabaseField({
-        dataType: "entity-array",
+        dataType: "array",
+        innerDataType: "entity",
         additional: ["Child", "School"],
       })
       multiTypeRef: string[];
