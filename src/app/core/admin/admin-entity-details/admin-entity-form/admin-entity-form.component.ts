@@ -247,7 +247,7 @@ export class AdminEntityFormComponent implements OnChanges {
     this.availableFields.splice(this.availableFields.indexOf(newFieldId), 1);
   }
   /**
-   * drop handler specifically for the "create new field" item
+   * drop handler specifically for the "create new Text field" item
    * @param event
    * @private
    */
@@ -255,7 +255,7 @@ export class AdminEntityFormComponent implements OnChanges {
     event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>,
   ) {
     if (event.container.data === this.availableFields) {
-      // don't add new field to the available fields that are not in the form yet
+      // don't add new Text field to the available fields that are not in the form yet
       return;
     }
 
@@ -268,8 +268,11 @@ export class AdminEntityFormComponent implements OnChanges {
     this.dummyForm.disable();
     event.container.data.splice(event.currentIndex, 0, newTextFieldId);
 
-    // the schema update has added the new field to the available fields already, remove it from there
-    this.availableFields.splice(this.availableFields.indexOf(newTextFieldId), 1);
+    // the schema update has added the new Text field to the available fields already, remove it from there
+    this.availableFields.splice(
+      this.availableFields.indexOf(newTextFieldId),
+      1,
+    );
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
