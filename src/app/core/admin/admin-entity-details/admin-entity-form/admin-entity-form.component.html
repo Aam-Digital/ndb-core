@@ -26,12 +26,11 @@
           cdkDragBoundary=".overall-container"
         >
           <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-
           <button
             mat-stroked-button
             color="accent"
             class="field-edit-button"
-            (click)="openFieldConfig(field)"
+            (click)="openConfigDetails(field)"
             i18n="Button label"
           >
             Edit Field
@@ -103,7 +102,10 @@
           ></app-entity-field-label>
 
           <button
-            *ngIf="field !== createNewFieldPlaceholder && field !== createNewTextPlaceholder"
+            *ngIf="
+              field !== createNewFieldPlaceholder &&
+              field !== createNewTextPlaceholder
+            "
             mat-stroked-button
             color="accent"
             class="field-edit-button field-edit-button-small"

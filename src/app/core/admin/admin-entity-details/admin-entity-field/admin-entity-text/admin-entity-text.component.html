@@ -1,1 +1,31 @@
-<p>admin-entity-text works!</p>
+<h2 mat-dialog-title i18n>Configure Description Only Field</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <p i18n>
+    The field settings here apply to the record type overall and affect both the
+    field here in the current view as well as all other forms and lists where
+    this field is displayed.
+  </p>
+
+  <form [formGroup]="schemaFieldsForm">
+    <div class="entity-form-cell">
+      <mat-form-field>
+        <mat-label i18n>
+          Label
+          <fa-icon
+            icon="question-circle"
+            matTooltip="The Text provides additional explanation or context about the fields in entity form."
+            i18n-matTooltip
+          ></fa-icon>
+        </mat-label>
+        <textarea formControlName="label" matInput rows="3"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="save()" i18n="Button label">Save</button>
+  <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
+</mat-dialog-actions>

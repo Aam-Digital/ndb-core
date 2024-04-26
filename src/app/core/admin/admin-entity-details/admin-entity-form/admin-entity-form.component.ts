@@ -27,6 +27,7 @@ import { EntityFieldEditComponent } from "../../../common-components/entity-fiel
 import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormConfig } from "../../../entity-details/form/form.component";
+import { AdminEntityTextComponent } from "../admin-entity-field/admin-entity-text/admin-entity-text.component";
 
 @UntilDestroy()
 @Component({
@@ -122,7 +123,11 @@ export class AdminEntityFormComponent implements OnChanges {
       .sort(([aId, a], [bId, b]) => a.label.localeCompare(b.label))
       .map(([key]) => key);
 
-    this.availableFields = [this.createNewFieldPlaceholder, this.createNewTextPlaceholder, ...unusedFields];
+    this.availableFields = [
+      this.createNewFieldPlaceholder,
+      this.createNewTextPlaceholder,
+      ...unusedFields,
+    ];
   }
 
   /**
@@ -144,25 +149,27 @@ export class AdminEntityFormComponent implements OnChanges {
     return lastValueFrom(dialogRef.afterClosed());
   }
 
-    /**
-   * Open the form to edit details of a single field's schema.
+  /**
+   * Open the form to edit details of a single text's schema.
    *
-   * @param field field to edit or { id: null } to create a new field
-   * @returns the id of the field that was edited or created (which is newly defined in the dialog for new fields)
+   * @param text text to edit or { id: null } to create a new text
+   * @returns the id of the text that was edited or created (which is newly defined in the dialog for new fields)
    */
-    async openTextConfig(field: ColumnConfig): Promise<string> {
-      let textIdToEdit = toFormFieldConfig(field).id;
-      const dialogRef = this.matDialog.open(AdminEntityFieldComponent, {
-        width: "99%",
-        maxHeight: "90vh",
-        data: {
-          fieldId: textIdToEdit,
-          entityType: this.entityType,
-        },
-      });
-      return lastValueFrom(dialogRef.afterClosed());
-    }
-   
+  async openTextConfig(text: ColumnConfig): Promise<string> {
+    let textIdToEdit = toFormFieldConfig(text).id;
+    const dialogRef = this.matDialog.open(AdminEntityTextComponent, {
+      width: "99%",
+      maxHeight: "90vh",
+      data: {
+        fieldId: textIdToEdit,
+        entityType: this.entityType,
+      },
+    });
+
+    const result = await lastValueFrom(dialogRef.afterClosed());
+    return result;
+  }
+
   drop(event: CdkDragDrop<ColumnConfig[], ColumnConfig[]>) {
     const prevFieldsArray = event.previousContainer.data;
     const newFieldsArray = event.container.data;
@@ -195,6 +202,22 @@ export class AdminEntityFormComponent implements OnChanges {
     if (newFieldsArray === this.availableFields) {
       // ensure available fields have consistent order
       this.initAvailableFields();
+    }
+  }
+
+  /**
+   * Opens the configuration settings for a field.
+   * If the field has an editComponent defined in the schema, it opens the text configuration.
+   * Otherwise, it opens the field configuration.
+   * @param field The field to open the configuration settings for.
+   */
+  openConfigDetails(field: ColumnConfig) {
+    let fieldIdToEdit = toFormFieldConfig(field).id;
+    const configDetails = this.entityType.schema.get(fieldIdToEdit) ?? {};
+    if (configDetails.editComponent) {
+      return this.openTextConfig(field);
+    } else {
+      this.openFieldConfig(field);
     }
   }
 
@@ -236,17 +259,17 @@ export class AdminEntityFormComponent implements OnChanges {
       return;
     }
 
-    const newFieldId = await this.openFieldConfig({ id: null });
-    if (!newFieldId) {
+    const newTextFieldId = await this.openTextConfig({ id: null });
+    if (!newTextFieldId) {
       return;
     }
 
-    this.dummyForm.addControl(newFieldId, new FormControl());
+    this.dummyForm.addControl(newTextFieldId, new FormControl());
     this.dummyForm.disable();
-    event.container.data.splice(event.currentIndex, 0, newFieldId);
+    event.container.data.splice(event.currentIndex, 0, newTextFieldId);
 
     // the schema update has added the new field to the available fields already, remove it from there
-    this.availableFields.splice(this.availableFields.indexOf(newFieldId), 1);
+    this.availableFields.splice(this.availableFields.indexOf(newTextFieldId), 1);
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
