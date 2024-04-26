@@ -76,7 +76,7 @@ export class AdminEntityTextComponent implements OnChanges {
     }
   }
 
-  private initSettings() {
+  public initSettings() {
     this.schemaFieldsForm = this.fb.group({
       label: [this.entitySchemaField.label, Validators.required],
     });
