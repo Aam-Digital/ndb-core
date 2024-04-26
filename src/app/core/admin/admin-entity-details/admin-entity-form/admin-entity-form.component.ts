@@ -214,7 +214,7 @@ export class AdminEntityFormComponent implements OnChanges {
   openConfigDetails(field: ColumnConfig) {
     let fieldIdToEdit = toFormFieldConfig(field).id;
     const configDetails = this.entityType.schema.get(fieldIdToEdit) ?? {};
-    if (configDetails.editComponent) {
+    if (configDetails.editComponent == "EditDescriptionOnly") {
       return this.openTextConfig(field);
     } else {
       this.openFieldConfig(field);
