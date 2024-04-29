@@ -68,7 +68,7 @@ export class AdminEntityFormComponent implements OnChanges {
 
   readonly createNewTextPlaceholder: FormFieldConfig = {
     id: null,
-    label: $localize`:Label drag and drop item:Create New Text Field`,
+    label: $localize`:Label drag and drop item:Create Text Block`,
   };
 
   constructor(

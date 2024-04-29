@@ -1,14 +1,6 @@
-@use "../../../../../../styles/mixins/grid-layout";
 
-.grid-layout {
-  @include grid-layout.adaptive(
-    $min-block-width: 250px,
-    $max-screen-width: 414px
-  );
-}
 .entity-form-cell {
   mat-form-field {
-    width: 60%;
+    width: 100%;
   }
-
 }
