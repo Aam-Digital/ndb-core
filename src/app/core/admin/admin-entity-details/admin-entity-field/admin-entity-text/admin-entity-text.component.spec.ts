@@ -7,7 +7,6 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FormBuilder } from "@angular/forms";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
-import { SimpleChange } from "@angular/core";
 
 describe("AdminEntityTextComponent", () => {
   let component: AdminEntityTextComponent;
@@ -44,7 +43,7 @@ describe("AdminEntityTextComponent", () => {
   });
 
   it("should initialize schemaFieldsForm with proper values", () => {
-    component.entitySchemaField = { label: "Test Label" };
+    component.formField = { label: "Test Label" };
     component.initSettings();
     expect(component.schemaFieldsForm.get("label").value).toBe("Test Label");
   });

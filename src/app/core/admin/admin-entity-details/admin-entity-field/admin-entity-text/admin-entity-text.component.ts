@@ -1,11 +1,4 @@
-import {
-  Component,
-  Inject,
-  Input,
-  OnChanges,
-  SimpleChanges,
-} from "@angular/core";
-import { EntityConstructor } from "../../../../entity/model/entity";
+import { Component, Inject, OnChanges, SimpleChanges } from "@angular/core";
 import {
   MAT_DIALOG_DATA,
   MatDialogModule,
@@ -17,17 +10,15 @@ import { MatInputModule } from "@angular/material/input";
 import { ErrorHintComponent } from "../../../../common-components/error-hint/error-hint.component";
 import {
   FormBuilder,
-  FormControl,
   FormGroup,
   FormsModule,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
-import { EntitySchemaField } from "../../../../entity/schema/entity-schema-field";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
-import { AdminEntityService } from "../../../admin-entity.service";
 import { v4 as uuid } from "uuid";
+import { FormFieldConfig } from "../../../../common-components/entity-form/FormConfig";
 
 @Component({
   selector: "app-admin-entity-text",
@@ -47,25 +38,16 @@ import { v4 as uuid } from "uuid";
   styleUrl: "./admin-entity-text.component.scss",
 })
 export class AdminEntityTextComponent implements OnChanges {
-  @Input() fieldId: string;
-  @Input() entityType: EntityConstructor;
-
-  entitySchemaField: EntitySchemaField;
-  fieldIdForm: FormControl;
+  formField: FormFieldConfig;
   schemaFieldsForm: FormGroup;
+
   constructor(
     @Inject(MAT_DIALOG_DATA)
-    data: {
-      fieldId: string;
-      entityType: EntityConstructor;
-    },
+    data: FormFieldConfig,
     private dialogRef: MatDialogRef<any>,
     private fb: FormBuilder,
-    private adminEntityService: AdminEntityService,
   ) {
-    this.fieldId = data.fieldId;
-    this.entityType = data.entityType;
-    this.entitySchemaField = this.entityType.schema.get(this.fieldId) ?? {};
+    this.formField = data;
 
     this.initSettings();
   }
@@ -78,7 +60,7 @@ export class AdminEntityTextComponent implements OnChanges {
 
   public initSettings() {
     this.schemaFieldsForm = this.fb.group({
-      label: [this.entitySchemaField.label, Validators.required],
+      label: [this.formField.label, Validators.required],
     });
   }
 
@@ -87,30 +69,16 @@ export class AdminEntityTextComponent implements OnChanges {
     if (this.schemaFieldsForm.invalid) {
       return;
     }
-    const formValues = this.schemaFieldsForm.getRawValue();
-    for (const key of Object.keys(formValues)) {
-      if (formValues[key] === null) {
-        delete formValues[key];
-      }
-    }
-    if (!this.fieldId) {
-      this.fieldId = uuid();
+    if (!this.formField.id) {
+      this.formField.id = uuid();
     }
 
-    const updatedEntitySchema = Object.assign(
-      { _isCustomizedField: true },
-      {
-        id: this.fieldId,
-        editComponent: "EditDescriptionOnly",
-        label: $localize`:description section:` + `${formValues.label}`,
-      },
-    );
-    this.adminEntityService.updateSchemaField(
-      this.entityType,
-      this.fieldId,
-      updatedEntitySchema,
-    );
+    const newSchemaField = {
+      id: this.formField.id,
+      editComponent: "EditDescriptionOnly",
+      label: this.schemaFieldsForm.get("label").value,
+    };
 
-    this.dialogRef.close(this.fieldId);
+    this.dialogRef.close(newSchemaField);
   }
 }

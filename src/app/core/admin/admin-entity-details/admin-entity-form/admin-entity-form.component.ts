@@ -152,18 +152,12 @@ export class AdminEntityFormComponent implements OnChanges {
   /**
    * Open the form to edit details of a single text's schema.
    *
-   * @param text text to edit or { id: null } to create a new text
+   * @param textField text to edit or { id: null } to create a new text
    * @returns the id of the text that was edited or created (which is newly defined in the dialog for new fields)
    */
-  async openTextConfig(text: ColumnConfig): Promise<string> {
-    let textIdToEdit = toFormFieldConfig(text).id;
+  async openTextConfig(textField: FormFieldConfig): Promise<FormFieldConfig> {
     const dialogRef = this.matDialog.open(AdminEntityTextComponent, {
-      width: "99%",
-      maxHeight: "90vh",
-      data: {
-        fieldId: textIdToEdit,
-        entityType: this.entityType,
-      },
+      data: textField,
     });
 
     const result = await lastValueFrom(dialogRef.afterClosed());
@@ -211,13 +205,20 @@ export class AdminEntityFormComponent implements OnChanges {
    * Otherwise, it opens the field configuration.
    * @param field The field to open the configuration settings for.
    */
-  openConfigDetails(field: ColumnConfig) {
+  async openConfigDetails(field: ColumnConfig) {
     let fieldIdToEdit = toFormFieldConfig(field).id;
-    const configDetails = this.entityType.schema.get(fieldIdToEdit) ?? {};
+    const configDetails = Object.assign(
+      {},
+      this.entityType.schema.get(fieldIdToEdit) ?? {},
+      field,
+    ) as FormFieldConfig;
+
     if (configDetails.editComponent == "EditDescriptionOnly") {
-      return this.openTextConfig(field);
+      const updatedField = await this.openTextConfig(configDetails);
+      Object.assign(field, updatedField);
+      this.initForm();
     } else {
-      this.openFieldConfig(field);
+      await this.openFieldConfig(field);
     }
   }
 
@@ -259,20 +260,17 @@ export class AdminEntityFormComponent implements OnChanges {
       return;
     }
 
-    const newTextFieldId = await this.openTextConfig({ id: null });
-    if (!newTextFieldId) {
+    const newTextField = await this.openTextConfig({ id: null });
+    if (!newTextField) {
       return;
     }
 
-    this.dummyForm.addControl(newTextFieldId, new FormControl());
+    this.dummyForm.addControl(newTextField.id, new FormControl());
     this.dummyForm.disable();
-    event.container.data.splice(event.currentIndex, 0, newTextFieldId);
+    event.container.data.splice(event.currentIndex, 0, newTextField);
 
     // the schema update has added the new Text field to the available fields already, remove it from there
-    this.availableFields.splice(
-      this.availableFields.indexOf(newTextFieldId),
-      1,
-    );
+    this.availableFields.splice(this.availableFields.indexOf(newTextField), 1);
   }
 
   dropNewGroup(event: CdkDragDrop<any, any>) {
