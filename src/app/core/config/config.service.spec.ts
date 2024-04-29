@@ -330,33 +330,58 @@ describe("ConfigService", () => {
 
   it("should migrate entity-array dataType", fakeAsync(() => {
     const config = new Config();
-    const oldFormat: EntityConfig = {
+    const oldFormat = {
       attributes: {
-        to_update: {
+        entityarray_update: {
+          dataType: "entity-array",
+        },
+        array_update: {
           dataType: "array",
           innerDataType: "entity",
+        },
+        array_update2: {
+          dataType: "array",
+          innerDataType: "configurable-enum",
+          additional: "foo-enum",
+        },
+        enum_additional_update: {
+          dataType: "configurable-enum",
+          innerDataType: "foo-enum",
         },
         keep1: {
           dataType: "entity",
         },
         keep2: {
-          dataType: "array",
-          innerDataType: "entity",
+          dataType: "entity",
+          dataArray: true,
         },
       },
     };
     const newFormat: EntityConfig = {
       attributes: {
-        to_update: {
-          dataType: "array",
-          innerDataType: "entity",
+        entityarray_update: {
+          dataType: "entity",
+          dataArray: true,
+        },
+        array_update: {
+          dataType: "entity",
+          dataArray: true,
+        },
+        array_update2: {
+          dataType: "configurable-enum",
+          dataArray: true,
+          additional: "foo-enum",
+        },
+        enum_additional_update: {
+          dataType: "configurable-enum",
+          additional: "foo-enum",
         },
         keep1: {
           dataType: "entity",
         },
         keep2: {
-          dataType: "array",
-          innerDataType: "entity",
+          dataType: "entity",
+          dataArray: true,
         },
       },
     };

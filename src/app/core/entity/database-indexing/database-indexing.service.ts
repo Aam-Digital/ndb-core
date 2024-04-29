@@ -22,7 +22,6 @@ import { BackgroundProcessState } from "../../ui/sync-status/background-process-
 import { Entity, EntityConstructor } from "../model/entity";
 import { EntitySchemaService } from "../schema/entity-schema.service";
 import { first } from "rxjs/operators";
-import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 
 /**
  * Manage database query index creation and use, working as a facade in front of the Database service.
@@ -130,7 +129,7 @@ export class DatabaseIndexingService {
             if (!doc._id.startsWith("${entity.ENTITY_TYPE}")) return;
 
             ${
-              isArrayProperty(entity, referenceProperty)
+              entity.schema.get(referenceProperty).dataArray
                 ? arrayEmit
                 : simpleEmit
             }

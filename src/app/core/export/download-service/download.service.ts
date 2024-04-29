@@ -129,10 +129,7 @@ export class DownloadService {
 
       columnLabels.set(id, field.label);
 
-      if (
-        field.dataType === EntityDatatype.dataType ||
-        field.innerDataType === EntityDatatype.dataType
-      ) {
+      if (field.dataType === EntityDatatype.dataType) {
         columnLabels.set(id + "_readable", field.label + " (readable)");
       }
     }

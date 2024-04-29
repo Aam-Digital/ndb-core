@@ -47,3 +47,14 @@ export class EventAttendance {
     return Object.assign(new EventAttendance(), this);
   }
 }
+
+/**
+ * A full registry of event-attendance entries for multiple participants
+ */
+export class EventAttendanceMap extends Map<string, EventAttendance> {
+  static DATA_TYPE = "event-attendance-map";
+
+  constructor() {
+    super();
+  }
+}

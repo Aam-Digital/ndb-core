@@ -133,9 +133,6 @@ export class AdminEntityFieldComponent implements OnChanges {
       dataType: [this.entitySchemaField.dataType, Validators.required],
       additional: this.additionalForm,
 
-      // TODO: remove "innerDataType" completely - the UI can only support very specific multi-valued types anyway
-      innerDataType: [this.entitySchemaField.innerDataType],
-
       defaultValue: [this.entitySchemaField.defaultValue],
       searchable: [this.entitySchemaField.searchable],
       anonymize: [this.entitySchemaField.anonymize],

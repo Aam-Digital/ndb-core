@@ -103,10 +103,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
         continue;
       }
 
-      if (
-        schema.dataType !== EntityDatatype.dataType &&
-        schema.innerDataType !== EntityDatatype.dataType
-      ) {
+      if (schema.dataType !== EntityDatatype.dataType) {
         // not referencing other entities
         continue;
       }

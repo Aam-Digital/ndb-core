@@ -22,7 +22,10 @@ import {
   INTERACTION_TYPE_CONFIG_ID,
   InteractionType,
 } from "./interaction-type.interface";
-import { EventAttendance } from "../../attendance/model/event-attendance";
+import {
+  EventAttendance,
+  EventAttendanceMap,
+} from "../../attendance/model/event-attendance";
 import {
   AttendanceLogicalStatus,
   NullAttendanceStatusType,
@@ -75,8 +78,8 @@ export class Note extends Entity {
   /** IDs of Child entities linked with this note */
   @DatabaseField({
     label: $localize`:Label for the children of a note:Children`,
-    dataType: "array",
-    innerDataType: "entity",
+    dataType: "entity",
+    dataArray: true,
     additional: Child.ENTITY_TYPE,
     entityReferenceRole: "composite",
     editComponent: "EditAttendance",
@@ -89,11 +92,8 @@ export class Note extends Entity {
    *
    * No direct access to change this property. Use the `.getAttendance()` method to have safe access.
    */
-  @DatabaseField({
-    innerDataType: EventAttendance.DATA_TYPE,
-    anonymize: "retain",
-  })
-  private childrenAttendance: Map<string, EventAttendance> = new Map();
+  @DatabaseField({ anonymize: "retain" })
+  private childrenAttendance: EventAttendanceMap = new EventAttendanceMap();
 
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
@@ -115,8 +115,8 @@ export class Note extends Entity {
   /** IDs of users that authored this note */
   @DatabaseField({
     label: $localize`:Label for the social worker(s) who created the note:SW`,
-    dataType: "array",
-    innerDataType: "entity",
+    dataType: "entity",
+    dataArray: true,
     additional: User.ENTITY_TYPE,
     defaultValue: PLACEHOLDERS.CURRENT_USER,
     anonymize: "retain",
@@ -153,8 +153,8 @@ export class Note extends Entity {
    */
   @DatabaseField({
     label: $localize`:label for the related Entities:Related Records`,
-    dataType: "array",
-    innerDataType: "entity",
+    dataType: "entity",
+    dataArray: true,
     // by default no additional relatedEntities can be linked apart from children and schools, overwrite this in config to display (e.g. additional: "ChildSchoolRelation")
     additional: undefined,
     anonymize: "retain",
@@ -166,8 +166,8 @@ export class Note extends Entity {
    */
   @DatabaseField({
     label: $localize`:label for the linked schools:Groups`,
-    dataType: "array",
-    innerDataType: "entity",
+    dataType: "entity",
+    dataArray: true,
     additional: School.ENTITY_TYPE,
     entityReferenceRole: "composite",
     anonymize: "retain",
@@ -320,7 +320,7 @@ export class Note extends Entity {
     note.schools = [...this.schools];
     note.relatedEntities = [...this.relatedEntities];
     note.authors = [...this.authors];
-    note.childrenAttendance = new Map();
+    note.childrenAttendance = new EventAttendanceMap();
     this.childrenAttendance.forEach((value, key) => {
       note.childrenAttendance.set(key, value.copy());
     });

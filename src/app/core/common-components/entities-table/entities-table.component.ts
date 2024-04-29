@@ -43,7 +43,6 @@ import { EntityCreateButtonComponent } from "../entity-create-button/entity-crea
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
 
 /**
  * A simple display component (no logic and transformations) to display a table of entities.
@@ -339,7 +338,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
     // if no dataType is defined, these are dynamic, display-only components
     if (
-      c.dataType === ArrayDatatype.dataType ||
+      // TODO: prevent sort for array data?
       c.dataType === EntityDatatype.dataType ||
       !c.dataType
     ) {

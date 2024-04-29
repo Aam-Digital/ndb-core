@@ -88,8 +88,7 @@ export class EntityCountDashboardComponent
   async ngOnInit() {
     const groupByType = this._entity.schema.get(this.groupBy);
     this.groupedByEntity =
-      groupByType.dataType === EntityDatatype.dataType ||
-      groupByType.innerDataType === EntityDatatype.dataType
+      groupByType.dataType === EntityDatatype.dataType
         ? groupByType.additional
         : undefined;
 

@@ -12,6 +12,7 @@ import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper
 import { School } from "app/child-dev-project/schools/model/school";
 import { Child } from "app/child-dev-project/children/model/child";
 import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 
 describe("DownloadService", () => {
   let service: DownloadService;
@@ -155,8 +156,8 @@ describe("DownloadService", () => {
   it("should add column with entity toString for referenced array of entities in export", async () => {
     class EntityRefDownloadTestEntity extends Entity {
       @DatabaseField({
-        dataType: "array",
-        innerDataType: "entity",
+        dataType: EntityDatatype.dataType,
+        dataArray: true,
         label: "referenced entities",
       })
       relatedEntitiesArray: string[];
@@ -176,8 +177,8 @@ describe("DownloadService", () => {
   it("should handle undefined entity ids without errors", async () => {
     class EntityRefDownloadTestEntity extends Entity {
       @DatabaseField({
-        dataType: "array",
-        innerDataType: "entity",
+        dataType: EntityDatatype.dataType,
+        dataArray: true,
         label: "referenced entities",
       })
       relatedEntitiesArray: string[];

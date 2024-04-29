@@ -8,7 +8,6 @@ import { EntitySchemaField } from "../entity/schema/entity-schema-field";
 import { FieldGroup } from "../entity-details/form/field-group";
 import { MenuItem } from "../ui/navigation/menu-item";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
-import { ArrayDatatype } from "../basic-datatypes/array/array.datatype";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -227,8 +226,19 @@ const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
 
   const config: EntitySchemaField = configPart;
   if (config.dataType === "entity-array") {
-    config.dataType = ArrayDatatype.dataType;
-    config.innerDataType = EntityDatatype.dataType;
+    config.dataType = EntityDatatype.dataType;
+    config.dataArray = true;
+  }
+
+  if (config.dataType === "array") {
+    config.dataType = config["innerDataType"];
+    delete config["innerDataType"];
+    config.dataArray = true;
+  }
+
+  if (config.dataType === "configurable-enum" && config["innerDataType"]) {
+    config.additional = config["innerDataType"];
+    delete config["innerDataType"];
   }
 
   return configPart;

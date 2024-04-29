@@ -2,7 +2,6 @@ import { Component, Input, OnInit } from "@angular/core";
 import { EditComponent } from "../../../entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntitySelectComponent } from "../../../common-components/entity-select/entity-select.component";
-import { isArrayDataType } from "../../datatype-utils";
 
 /**
  * A form field to select among the entities of the given type(s).
@@ -31,7 +30,7 @@ export class EditEntityComponent<T extends string[] | string = string[]>
 
     this.entityName = this.entityName ?? this.formFieldConfig.additional;
 
-    this.multi = isArrayDataType(this.formFieldConfig.dataType);
+    this.multi = this.formFieldConfig.dataArray;
 
     this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
   }

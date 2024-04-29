@@ -19,7 +19,6 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -259,12 +258,8 @@ describe("EntityFormService", () => {
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue(`${User.ENTITY_TYPE}:${TEST_USER}`);
 
-    schema.dataType = ArrayDatatype.dataType;
-    form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
-
-    schema.dataType = ArrayDatatype.dataType;
-    schema.innerDataType = EntityDatatype.dataType;
+    schema.dataType = EntityDatatype.dataType;
+    schema.dataArray = true;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
@@ -280,8 +275,8 @@ describe("EntityFormService", () => {
     expect(form.get("user")).toHaveValue(null);
 
     // array property
-    Entity.schema.get("user").dataType = ArrayDatatype.dataType;
-    Entity.schema.get("user").innerDataType = EntityDatatype.dataType;
+    Entity.schema.get("user").dataType = EntityDatatype.dataType;
+    Entity.schema.get("user").dataArray = true;
     form = service.createFormGroup([{ id: "user" }], new Entity());
     expect(form.get("user")).toHaveValue(null);
 

@@ -68,7 +68,7 @@ xdescribe("SqlReportService", () => {
       @DatabaseField() numberProp: number;
       @DatabaseField() stringProp: string;
       @DatabaseField({ dataType: "entity" }) entityProp: string;
-      @DatabaseField({ innerDataType: "configurable-enum" })
+      @DatabaseField({ dataType: "configurable-enum", dataArray: true })
       arrayEnum: string[];
       @DatabaseField() booleanProp: boolean;
     }

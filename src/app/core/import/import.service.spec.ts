@@ -18,7 +18,6 @@ import { CoreTestingModule } from "../../utils/core-testing.module";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { DatabaseField } from "../entity/database-field.decorator";
 import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
-import { ArrayDatatype } from "../basic-datatypes/array/array.datatype";
 
 describe("ImportService", () => {
   let service: ImportService;
@@ -63,8 +62,8 @@ describe("ImportService", () => {
       @DatabaseField() date: Date;
       @DatabaseField() text: string;
       @DatabaseField({
-        dataType: ArrayDatatype.dataType,
-        innerDataType: EntityDatatype.dataType,
+        dataType: EntityDatatype.dataType,
+        dataArray: true,
         additional: "Child",
       })
       entityRefs: string[];
