@@ -156,9 +156,12 @@ export class AdminEntityFormComponent implements OnChanges {
    * @returns the id of the text that was edited or created (which is newly defined in the dialog for new fields)
    */
   async openTextConfig(textField: FormFieldConfig): Promise<FormFieldConfig> {
-    const dialogRef = this.matDialog.open(AdminEditDescriptionOnlyFieldComponent, {
-      data: textField,
-    });
+    const dialogRef = this.matDialog.open(
+      AdminEditDescriptionOnlyFieldComponent,
+      {
+        data: textField,
+      },
+    );
 
     const result = await lastValueFrom(dialogRef.afterClosed());
     return result;
