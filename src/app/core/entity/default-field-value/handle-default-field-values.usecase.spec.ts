@@ -160,6 +160,33 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       // then
       expect(formGroup.get("field-2").value).toBeDate(new Date());
     }));
+
+    it("should do nothing, if entity is not new", fakeAsync(() => {
+      // given
+      let formGroup = getDefaultInheritedFormGroup();
+
+      let fieldConfigs: [string, EntitySchemaField][] = [
+        [
+          "field-2",
+          {
+            defaultFieldValue: {
+              mode: "dynamic",
+              value: "$now",
+            },
+          },
+        ],
+      ];
+
+      mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
+
+      // when
+      service.handleFormGroup(formGroup, fieldConfigs, false);
+
+      // when/then
+      formGroup.get("reference-1").setValue("non-existing-entity-id");
+      tick(); // fetching reference is always async
+      expect(formGroup.get("field-2").value).toBe(null);
+    }));
   });
 
   describe("on static mode", () => {
@@ -257,6 +284,33 @@ describe("HandleDefaultFieldValuesUseCase", () => {
 
       // then
       expect(formGroup.get("field-2").value).toBe("foo");
+    }));
+
+    it("should do nothing, if entity is not new", fakeAsync(() => {
+      // given
+      let formGroup = getDefaultInheritedFormGroup();
+
+      let fieldConfigs: [string, EntitySchemaField][] = [
+        [
+          "field-2",
+          {
+            defaultFieldValue: {
+              mode: "static",
+              value: "foo",
+            },
+          },
+        ],
+      ];
+
+      mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
+
+      // when
+      service.handleFormGroup(formGroup, fieldConfigs, false);
+
+      // when/then
+      formGroup.get("reference-1").setValue("non-existing-entity-id");
+      tick(); // fetching reference is always async
+      expect(formGroup.get("field-2").value).toBe(null);
     }));
   });
 
