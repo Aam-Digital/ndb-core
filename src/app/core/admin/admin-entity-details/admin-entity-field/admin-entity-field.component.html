@@ -83,6 +83,10 @@
               ></app-basic-autocomplete>
             </mat-form-field>
 
+            <mat-checkbox formControlName="dataArray" i18n>
+              allow multiple values (multi-select)
+            </mat-checkbox>
+
             <!-- "additional" for enum datatype -->
             <mat-form-field *ngIf="formDataType.value === 'configurable-enum'">
               <mat-label i18n>

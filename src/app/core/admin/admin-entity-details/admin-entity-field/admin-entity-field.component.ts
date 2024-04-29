@@ -46,6 +46,7 @@ import { uniqueIdValidator } from "app/core/common-components/entity-form/unique
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
 import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-options/anonymize-options.component";
+import { MatCheckbox } from "@angular/material/checkbox";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -74,6 +75,7 @@ import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-
     BasicAutocompleteComponent,
     ConfigureEntityFieldValidatorComponent,
     AnonymizeOptionsComponent,
+    MatCheckbox,
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
@@ -131,6 +133,7 @@ export class AdminEntityFieldComponent implements OnChanges {
       description: [this.entitySchemaField.description],
 
       dataType: [this.entitySchemaField.dataType, Validators.required],
+      dataArray: [this.entitySchemaField.dataArray],
       additional: this.additionalForm,
 
       defaultValue: [this.entitySchemaField.defaultValue],
