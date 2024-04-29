@@ -29,8 +29,8 @@ export class HandleDefaultFieldValuesUseCase {
       let fieldName = fieldConfig[0];
 
       switch (defaultFieldValueConfig.mode) {
-        case "inheritance":
-          return this.handleInheritanceMode(
+        case "inherited":
+          return this.handleInheritedMode(
             formGroup,
             fieldName,
             defaultFieldValueConfig,
@@ -51,7 +51,7 @@ export class HandleDefaultFieldValuesUseCase {
     });
   }
 
-  private handleInheritanceMode(
+  private handleInheritedMode(
     formGroup: FormGroup,
     fieldName: string,
     defaultFieldValueConfig: DefaultFieldValueConfig,
@@ -118,6 +118,10 @@ export class HandleDefaultFieldValuesUseCase {
     let targetFormControl = formGroup.get(fieldName);
 
     if (!targetFormControl) {
+      return;
+    }
+
+    if (!!targetFormControl.value) {
       return;
     }
 

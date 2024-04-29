@@ -73,10 +73,12 @@ describe("DefaultFieldValueService", () => {
       mockHandleDefaultFieldValuesUseCase.handleFormGroup,
     ).not.toHaveBeenCalled();
 
+    expect(formGroup.get("test").value).toEqual(1);
+
     Entity.schema.delete("test");
   });
 
-  it("should apply inheritance modes before static and dynamic modes", () => {
+  it("should apply inherited modes before static and dynamic modes", () => {
     // given
     let formGroup = new FormBuilder().group({
       test1: new FormControl(),
@@ -102,7 +104,7 @@ describe("DefaultFieldValueService", () => {
 
     Entity.schema.set("test3", {
       defaultFieldValue: {
-        mode: "inheritance",
+        mode: "inherited",
         value: "bar",
       },
     });
@@ -116,7 +118,7 @@ describe("DefaultFieldValueService", () => {
 
     Entity.schema.set("test5", {
       defaultFieldValue: {
-        mode: "inheritance",
+        mode: "inherited",
         value: "bar",
       },
     });

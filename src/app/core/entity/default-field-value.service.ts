@@ -20,35 +20,37 @@ export class DefaultFieldValueService {
 
     // can be removed, if all configs are adapted
     let legacyDefaultValueConfigs = Array.from(schema.entries()).filter(
-      (value) => {
-        return !!value[1].defaultValue;
+      ([key, fieldSchema]) => {
+        return !!fieldSchema.defaultValue;
       },
     );
 
-    let defaultValueConfigs = Array.from(schema.entries()).filter((value) => {
-      return value[1].defaultFieldValue;
-    });
-
-    let inheritanceConfigs = defaultValueConfigs.filter(
-      (value) => value[1].defaultFieldValue.mode == "inheritance",
+    let defaultValueConfigs = Array.from(schema.entries()).filter(
+      ([key, fieldSchema]) => {
+        return fieldSchema.defaultFieldValue;
+      },
     );
 
-    let nonInheritanceConfigs = defaultValueConfigs.filter(
-      (value) => value[1].defaultFieldValue.mode != "inheritance",
+    let inheritedConfigs = defaultValueConfigs.filter(
+      ([key, fieldSchema]) => fieldSchema.defaultFieldValue.mode == "inherited",
     );
 
-    if (inheritanceConfigs.length > 0) {
-      // apply inheritance rules first, to be sure, that default values are reflected correctly
+    let nonInheritedConfigs = defaultValueConfigs.filter(
+      ([key, fieldSchema]) => fieldSchema.defaultFieldValue.mode != "inherited",
+    );
+
+    if (inheritedConfigs.length > 0) {
+      // apply inherited rules first, to be sure, that default values are reflected correctly
       this.handleDefaultFieldValuesUseCase.handleFormGroup(
         formGroup,
-        inheritanceConfigs,
+        inheritedConfigs,
       );
     }
 
-    if (nonInheritanceConfigs.length > 0) {
+    if (nonInheritedConfigs.length > 0) {
       this.handleDefaultFieldValuesUseCase.handleFormGroup(
         formGroup,
-        nonInheritanceConfigs,
+        nonInheritedConfigs,
       );
     }
 
@@ -63,10 +65,10 @@ export class DefaultFieldValueService {
     formGroup: FormGroup,
     legacyDefaultValueConfigs: [string, EntitySchemaField][],
   ) {
-    legacyDefaultValueConfigs.forEach((value) => {
-      let defaultValue = this.getLegacyDefaultValue(value[1]);
-      let targetControl = formGroup.get(value[0]);
-      if (defaultValue && targetControl && this.isEmpty(targetControl)) {
+    legacyDefaultValueConfigs.forEach(([key, fieldSchema]) => {
+      let defaultValue = this.getLegacyDefaultValue(fieldSchema);
+      let targetControl = formGroup.get(key);
+      if (defaultValue && !!targetControl && this.isEmpty(targetControl)) {
         targetControl.setValue(defaultValue);
       }
     });
@@ -95,6 +97,10 @@ export class DefaultFieldValueService {
   }
 
   private isEmpty(targetControl: AbstractControl) {
-    return targetControl.value == "" || targetControl.value == null || false;
+    return (
+      targetControl.value == "" ||
+      targetControl.value == null ||
+      JSON.stringify(targetControl.value) == "{}"
+    );
   }
 }
