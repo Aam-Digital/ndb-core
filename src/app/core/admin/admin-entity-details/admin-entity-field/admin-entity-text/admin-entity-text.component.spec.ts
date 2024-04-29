@@ -9,7 +9,7 @@ import { FormBuilder } from "@angular/forms";
 import { AdminEntityService } from "app/core/admin/admin-entity.service";
 import { SimpleChange } from "@angular/core";
 
-fdescribe("AdminEntityTextComponent", () => {
+describe("AdminEntityTextComponent", () => {
   let component: AdminEntityTextComponent;
   let fixture: ComponentFixture<AdminEntityTextComponent>;
 
