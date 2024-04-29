@@ -21,7 +21,7 @@ import { v4 as uuid } from "uuid";
 import { FormFieldConfig } from "../../../../common-components/entity-form/FormConfig";
 
 @Component({
-  selector: "app-admin-entity-text",
+  selector: "app-admin-edit-description-only-field",
   standalone: true,
   imports: [
     MatDialogModule,
@@ -34,10 +34,10 @@ import { FormFieldConfig } from "../../../../common-components/entity-form/FormC
     FontAwesomeModule,
     MatTooltipModule,
   ],
-  templateUrl: "./admin-entity-text.component.html",
-  styleUrl: "./admin-entity-text.component.scss",
+  templateUrl: "./admin-edit-description-only-field.component.html",
+  styleUrl: "./admin-edit-description-only-field.component.scss",
 })
-export class AdminEntityTextComponent implements OnChanges {
+export class AdminEditDescriptionOnlyFieldComponent implements OnChanges {
   formField: FormFieldConfig;
   schemaFieldsForm: FormGroup;
 

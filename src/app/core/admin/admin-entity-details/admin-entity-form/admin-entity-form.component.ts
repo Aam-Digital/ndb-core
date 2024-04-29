@@ -27,7 +27,7 @@ import { EntityFieldEditComponent } from "../../../common-components/entity-fiel
 import { AdminSectionHeaderComponent } from "../../building-blocks/admin-section-header/admin-section-header.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FormConfig } from "../../../entity-details/form/form.component";
-import { AdminEntityTextComponent } from "../admin-entity-field/admin-entity-text/admin-entity-text.component";
+import { AdminEditDescriptionOnlyFieldComponent } from "../admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component";
 
 @UntilDestroy()
 @Component({
@@ -156,7 +156,7 @@ export class AdminEntityFormComponent implements OnChanges {
    * @returns the id of the text that was edited or created (which is newly defined in the dialog for new fields)
    */
   async openTextConfig(textField: FormFieldConfig): Promise<FormFieldConfig> {
-    const dialogRef = this.matDialog.open(AdminEntityTextComponent, {
+    const dialogRef = this.matDialog.open(AdminEditDescriptionOnlyFieldComponent, {
       data: textField,
     });
 
