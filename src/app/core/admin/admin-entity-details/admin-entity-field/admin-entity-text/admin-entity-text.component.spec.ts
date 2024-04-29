@@ -43,7 +43,7 @@ describe("AdminEntityTextComponent", () => {
   });
 
   it("should initialize schemaFieldsForm with proper values", () => {
-    component.formField = { label: "Test Label" };
+    component.formField = { id: "foo", label: "Test Label" };
     component.initSettings();
     expect(component.schemaFieldsForm.get("label").value).toBe("Test Label");
   });
