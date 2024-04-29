@@ -1,6 +1,5 @@
 import { ChangeDetectionStrategy, Component } from "@angular/core";
 import { Note } from "../../../child-dev-project/notes/model/note";
-import { NoteDetailsComponent } from "../../../child-dev-project/notes/note-details/note-details.component";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
@@ -35,11 +34,7 @@ export class PrimaryActionComponent {
    * The primary action to be triggered when the user clicks the hovering button.
    */
   primaryAction() {
-    this.formDialog.openFormPopup(
-      this.createNewNote(),
-      [],
-      NoteDetailsComponent,
-    );
+    this.formDialog.openView(this.createNewNote(), "NoteDetails");
   }
 
   private createNewNote() {

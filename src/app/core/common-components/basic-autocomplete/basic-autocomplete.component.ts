@@ -46,6 +46,11 @@ import {
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatIcon } from "@angular/material/icon";
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from "@angular/cdk/drag-drop";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -79,6 +84,7 @@ interface SelectableOption<O, V> {
     MatTooltip,
     MatIcon,
     MatChipRemove,
+    DragDropModule,
   ],
 })
 export class BasicAutocompleteComponent<O, V = O>
@@ -101,7 +107,13 @@ export class BasicAutocompleteComponent<O, V = O>
    * Whether the user should be able to select multiple values.
    */
   @Input() multi?: boolean;
+  @Input() reorder?: boolean;
 
+  /**
+   * Whether the user can manually drag & drop to reorder the selected items
+   */
+
+  autocompleteOptions: SelectableOption<O, V>[] = [];
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
@@ -164,6 +176,12 @@ export class BasicAutocompleteComponent<O, V = O>
     );
   }
 
+  ngOnInit() {
+    this.autocompleteSuggestedOptions.subscribe((options) => {
+      this.autocompleteOptions = options;
+    });
+  }
+
   ngOnChanges(changes: { [key in keyof this]?: any }) {
     if (changes.valueMapper) {
       this._options.forEach(
@@ -183,6 +201,25 @@ export class BasicAutocompleteComponent<O, V = O>
         this.showAutocomplete(this.autocompleteForm.value);
       }
     }
+  }
+
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        this.autocompleteOptions,
+        event.previousIndex,
+        event.currentIndex,
+      );
+    }
+    this._selectedOptions = this.autocompleteOptions.filter((o) => o.selected);
+    if (this.multi) {
+      this.value = this._selectedOptions.map((o) => o.asValue);
+    } else {
+      this.value = undefined;
+    }
+    this.setInitialInputValue();
+    this.onChange(this.value);
+    this.showAutocomplete(this.autocompleteForm.value);
   }
 
   showAutocomplete(valueToRevertTo?: string) {

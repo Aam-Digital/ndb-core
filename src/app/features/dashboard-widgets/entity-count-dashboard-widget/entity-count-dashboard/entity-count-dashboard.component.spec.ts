@@ -121,7 +121,7 @@ describe("EntityCountDashboardComponent", () => {
   it("should groupBy entity references and display an entity-block", async () => {
     const testGroupBy = "child";
     component.groupBy = testGroupBy;
-    component.entity = EducationalMaterial.ENTITY_TYPE;
+    component.entityType = EducationalMaterial.ENTITY_TYPE;
 
     const c1 = new Child();
     const x0 = new EducationalMaterial();
@@ -149,7 +149,7 @@ describe("EntityCountDashboardComponent", () => {
   it("should groupBy arrays, split and summarized for individual array elements", async () => {
     const testGroupBy = "children";
     component.groupBy = testGroupBy;
-    component.entity = Note.ENTITY_TYPE;
+    component.entityType = Note.ENTITY_TYPE;
 
     const x0 = new Note();
     const x1 = new Note();
@@ -192,7 +192,7 @@ describe("EntityCountDashboardComponent", () => {
     const entity = RecurringActivity;
     entityMapper.addAll([ra1, ra2, ra3]);
 
-    component.entity = RecurringActivity.ENTITY_TYPE;
+    component.entityType = RecurringActivity.ENTITY_TYPE;
     component.groupBy = "type";
     component.ngOnInit();
 

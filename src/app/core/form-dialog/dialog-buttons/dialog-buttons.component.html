@@ -12,8 +12,9 @@
 </button>
 
 <button
+  *ngIf="viewContext?.isDialog"
   mat-stroked-button
-  mat-dialog-close
+  (click)="cancel()"
   angulartics2On="click"
   [angularticsCategory]="entity?.getType()"
   angularticsAction="form_popup_cancel"
@@ -23,7 +24,7 @@
 </button>
 
 <button
-  *ngIf="detailsRoute"
+  *ngIf="detailsRoute && viewContext?.isDialog"
   mat-raised-button
   [routerLink]="detailsRoute"
   mat-dialog-close

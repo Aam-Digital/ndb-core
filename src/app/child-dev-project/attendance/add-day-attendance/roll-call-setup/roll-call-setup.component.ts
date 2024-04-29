@@ -9,7 +9,6 @@ import { AttendanceService } from "../../attendance.service";
 import { Note } from "../../../notes/model/note";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { RecurringActivity } from "../../model/recurring-activity";
-import { NoteDetailsComponent } from "../../../notes/note-details/note-details.component";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { AlertService } from "../../../../core/alerts/alert.service";
 import { AlertDisplay } from "../../../../core/alerts/alert-display";
@@ -197,7 +196,7 @@ export class RollCallSetupComponent implements OnInit {
     }
 
     this.formDialog
-      .openFormPopup(newNote, [], NoteDetailsComponent)
+      .openView(newNote, "NoteDetails")
       .afterClosed()
       .subscribe((createdNote: Note) => {
         if (createdNote) {

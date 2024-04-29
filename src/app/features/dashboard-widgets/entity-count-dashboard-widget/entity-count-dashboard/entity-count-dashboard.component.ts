@@ -54,7 +54,7 @@ export class EntityCountDashboardComponent
    * Entity name which should be grouped
    * @param value
    */
-  @Input() set entity(value: string) {
+  @Input() set entityType(value: string) {
     this._entity = this.entities.get(value);
   }
 

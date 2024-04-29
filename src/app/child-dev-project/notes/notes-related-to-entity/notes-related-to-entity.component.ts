@@ -1,6 +1,5 @@
 import { Component } from "@angular/core";
 import { Note } from "../model/note";
-import { NoteDetailsComponent } from "../note-details/note-details.component";
 import { ChildrenService } from "../../children/children.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -129,6 +128,6 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
   }
 
   showNoteDetails(note: Note) {
-    this.formDialog.openFormPopup(note, [], NoteDetailsComponent);
+    this.formDialog.openView(note, "NoteDetails");
   }
 }

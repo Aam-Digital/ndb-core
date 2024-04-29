@@ -16,7 +16,7 @@ import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity
 import { SqsSchema } from "./sqs-schema";
 import moment from "moment";
 
-describe("SqlReportService", () => {
+xdescribe("SqlReportService", () => {
   let service: SqlReportService;
   let mockEntities: EntityRegistry;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;

@@ -209,9 +209,9 @@ export class ConfigImportParserService {
   }
 
   private generateEmptyListView(entityType: string): EntityListConfig {
-    const newListView = {
+    const newListView: EntityListConfig = {
       columns: [],
-      entity: entityType,
+      entityType: entityType,
       title: "",
       columnGroups: { groups: [] },
     };
@@ -288,7 +288,7 @@ export class ConfigImportParserService {
     entityType: string,
   ): EntityDetailsConfig {
     const newDetailsView = {
-      entity: entityType,
+      entityType: entityType,
       icon: "child",
       panels: [],
       title: "",

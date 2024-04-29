@@ -9,7 +9,7 @@ const demoEntity = Child.create("John Doe");
 demoEntity._rev = "1"; // make not "isNew"
 
 const config: EntityDetailsConfig = {
-  entity: "Child",
+  entityType: "Child",
   panels: [
     {
       title: $localize`:Panel title:Basic Information`,

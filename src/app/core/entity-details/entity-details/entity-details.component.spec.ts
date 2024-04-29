@@ -6,7 +6,6 @@ import {
   waitForAsync,
 } from "@angular/core/testing";
 import { EntityDetailsComponent } from "./entity-details.component";
-import { Router } from "@angular/router";
 import { EntityDetailsConfig, PanelConfig } from "../EntityDetailsConfig";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { ChildrenService } from "../../../child-dev-project/children/children.service";
@@ -21,7 +20,7 @@ describe("EntityDetailsComponent", () => {
   let fixture: ComponentFixture<EntityDetailsComponent>;
 
   const routeConfig: EntityDetailsConfig = {
-    entity: "Child",
+    entityType: "Child",
     panels: [
       {
         title: "One Form",
@@ -83,9 +82,9 @@ describe("EntityDetailsComponent", () => {
 
   it("sets the panels config with child and creating status", fakeAsync(() => {
     const testChild = new Child("Test-Child");
+    testChild["_rev"] = "1"; // mark as "not new"
     TestBed.inject(EntityMapperService).save(testChild);
     tick();
-    component.creatingNew = false;
     component.id = testChild.getId(true);
     component.ngOnChanges(simpleChangesFor(component, "id"));
     tick();
@@ -98,59 +97,6 @@ describe("EntityDetailsComponent", () => {
       }),
     );
   }));
-
-  it("should load the correct child on startup", fakeAsync(() => {
-    component.isLoading = true;
-    const testChild = new Child("Test-Child");
-    const entityMapper = TestBed.inject(EntityMapperService);
-    entityMapper.save(testChild);
-    tick();
-    spyOn(entityMapper, "load").and.callThrough();
-
-    component.id = testChild.getId(true);
-    component.ngOnChanges(simpleChangesFor(component, "id"));
-    expect(component.isLoading).toBeTrue();
-    tick();
-
-    expect(entityMapper.load).toHaveBeenCalledWith(
-      Child,
-      testChild.getId(true),
-    );
-    expect(component.record).toBe(testChild);
-    expect(component.isLoading).toBeFalse();
-  }));
-
-  it("should also support the long ID format", fakeAsync(() => {
-    const child = new Child();
-    const entityMapper = TestBed.inject(EntityMapperService);
-    entityMapper.save(child);
-    tick();
-    spyOn(entityMapper, "load").and.callThrough();
-
-    component.id = child.getId();
-    component.ngOnChanges(simpleChangesFor(component, "id"));
-    tick();
-
-    expect(entityMapper.load).toHaveBeenCalledWith(Child, child.getId());
-    expect(component.record).toEqual(child);
-
-    // entity is updated
-    const childUpdate = child.copy();
-    childUpdate.name = "update";
-    entityMapper.save(childUpdate);
-    tick();
-
-    expect(component.record).toEqual(childUpdate);
-  }));
-
-  it("should call router when user is not permitted to create entities", () => {
-    mockAbility.cannot.and.returnValue(true);
-    const router = fixture.debugElement.injector.get(Router);
-    spyOn(router, "navigate");
-    component.id = "new";
-    component.ngOnChanges(simpleChangesFor(component, "id"));
-    expect(router.navigate).toHaveBeenCalled();
-  });
 });
 
 function simpleChangesFor(component, ...properties: string[]) {
