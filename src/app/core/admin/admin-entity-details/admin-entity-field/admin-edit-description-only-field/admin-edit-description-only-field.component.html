@@ -1,0 +1,22 @@
+<h2 mat-dialog-title i18n>Configure Text Block</h2>
+<app-dialog-close mat-dialog-close></app-dialog-close>
+
+<mat-dialog-content>
+  <p i18n>
+    This text is displayed as part of the form to provide additional information
+    without any input options for the user:
+  </p>
+
+  <form [formGroup]="schemaFieldsForm">
+    <div class="entity-form-cell">
+      <mat-form-field>
+        <textarea formControlName="label" matInput rows="3"></textarea>
+      </mat-form-field>
+    </div>
+  </form>
+</mat-dialog-content>
+
+<mat-dialog-actions>
+  <button mat-button (click)="save()" i18n="Button label">Save</button>
+  <button mat-button mat-dialog-close i18n="Button label">Cancel</button>
+</mat-dialog-actions>

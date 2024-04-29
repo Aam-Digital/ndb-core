@@ -91,6 +91,7 @@ describe("AdminEntityFormComponent", () => {
       .map(([key]) => key);
     expect(component.availableFields).toEqual([
       component.createNewFieldPlaceholder,
+      component.createNewTextPlaceholder,
       ...noteUserFacingFields.filter((x) => !fieldsInView.includes(x)),
     ]);
   });
