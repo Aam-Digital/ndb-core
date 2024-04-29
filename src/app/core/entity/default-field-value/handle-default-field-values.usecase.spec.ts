@@ -57,7 +57,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBe(null);
@@ -82,7 +82,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       formGroup.get("field-2").markAsDirty();
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBe("pre-filled");
@@ -105,7 +105,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBe(null);
@@ -132,7 +132,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       TestBed.inject(CurrentUserSubject).next(user);
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBe(user.getId());
@@ -155,7 +155,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBeDate(new Date());
@@ -180,7 +180,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBe(null);
@@ -203,7 +203,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBe("bar");
@@ -229,7 +229,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       formGroup.get("field-2").markAsDirty();
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBe("pre-filled");
@@ -253,7 +253,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       formGroup.get("field-2").setValue("foo");
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
 
       // then
       expect(formGroup.get("field-2").value).toBe("foo");
@@ -279,7 +279,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
       tick(); // fetching reference is always async
 
       // then
@@ -304,7 +304,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
       tick(); // fetching reference is always async
 
       // then
@@ -329,7 +329,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
       tick(); // fetching reference is always async
 
       // then
@@ -358,7 +358,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
       formGroup.get("reference-1").setValue("Entity:0");
       tick(10); // fetching reference is always async
 
@@ -391,7 +391,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       formGroup.get("field-2").markAsDirty();
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
       formGroup.get("reference-1").setValue("Entity:0");
       tick(); // fetching reference is always async
 
@@ -417,7 +417,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       ];
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
       formGroup.get("reference-1").setValue("foo bar doo");
       tick();
 
@@ -455,7 +455,65 @@ describe("HandleDefaultFieldValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
 
       // when
-      service.handleFormGroup(formGroup, fieldConfigs);
+      service.handleFormGroup(formGroup, fieldConfigs, true);
+
+      // when/then
+      formGroup.get("reference-1").setValue("non-existing-entity-id");
+      tick(); // fetching reference is always async
+      expect(formGroup.get("field-2").value).toBe(null);
+    }));
+
+    it("should do nothing, if formGroup is disabled", fakeAsync(() => {
+      // given
+      let formGroup = getDefaultInheritedFormGroup();
+
+      let fieldConfigs: [string, EntitySchemaField][] = [
+        [
+          "field-2",
+          {
+            defaultFieldValue: {
+              mode: "inherited",
+              field: "foo",
+              localAttribute: "reference-1",
+            },
+          },
+        ],
+      ];
+
+      formGroup.disable();
+
+      mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
+
+      // when
+      service.handleFormGroup(formGroup, fieldConfigs, true);
+
+      // when/then
+      formGroup.get("reference-1").setValue("non-existing-entity-id");
+      tick(); // fetching reference is always async
+      expect(formGroup.get("field-2").value).toBe(null);
+    }));
+
+    it("should do nothing, if entity is not new", fakeAsync(() => {
+      // given
+      let formGroup = getDefaultInheritedFormGroup();
+
+      let fieldConfigs: [string, EntitySchemaField][] = [
+        [
+          "field-2",
+          {
+            defaultFieldValue: {
+              mode: "inherited",
+              field: "foo",
+              localAttribute: "reference-1",
+            },
+          },
+        ],
+      ];
+
+      mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
+
+      // when
+      service.handleFormGroup(formGroup, fieldConfigs, false);
 
       // when/then
       formGroup.get("reference-1").setValue("non-existing-entity-id");

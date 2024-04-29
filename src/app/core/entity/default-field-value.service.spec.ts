@@ -139,6 +139,7 @@ describe("DefaultFieldValueService", () => {
         ["test3", anything()],
         ["test5", anything()],
       ],
+      anything(),
     ]);
 
     expect(
@@ -150,6 +151,7 @@ describe("DefaultFieldValueService", () => {
         ["test2", anything()],
         ["test4", anything()],
       ],
+      anything(),
     ]);
 
     Entity.schema.delete("test1");

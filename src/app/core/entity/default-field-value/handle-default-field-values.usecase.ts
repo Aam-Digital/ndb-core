@@ -8,7 +8,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
- * When creating a new Entity, apply this business logic for DefaultFieldValueConfig
+ * When edit an Entity, apply this business logic for DefaultFieldValueConfig
  */
 @Injectable({
   providedIn: "root",
@@ -23,10 +23,10 @@ export class HandleDefaultFieldValuesUseCase {
   handleFormGroup(
     formGroup: FormGroup,
     fieldConfigs: [string, EntitySchemaField][],
+    isNew: boolean,
   ) {
-    fieldConfigs.forEach((fieldConfig) => {
-      let defaultFieldValueConfig = fieldConfig[1].defaultFieldValue;
-      let fieldName = fieldConfig[0];
+    fieldConfigs.forEach(([fieldName, fieldSchema]) => {
+      let defaultFieldValueConfig = fieldSchema.defaultFieldValue;
 
       switch (defaultFieldValueConfig.mode) {
         case "inherited":
@@ -34,18 +34,21 @@ export class HandleDefaultFieldValuesUseCase {
             formGroup,
             fieldName,
             defaultFieldValueConfig,
+            isNew,
           );
         case "static":
           return this.handleStaticMode(
             formGroup,
             fieldName,
             defaultFieldValueConfig,
+            isNew,
           );
         case "dynamic":
           return this.handleDynamicMode(
             formGroup,
             fieldName,
             defaultFieldValueConfig,
+            isNew,
           );
       }
     });
@@ -55,6 +58,7 @@ export class HandleDefaultFieldValuesUseCase {
     formGroup: FormGroup,
     fieldName: string,
     defaultFieldValueConfig: DefaultFieldValueConfig,
+    isNew: boolean,
   ) {
     let sourceFormControl: AbstractControl<any, any> | null = formGroup.get(
       defaultFieldValueConfig.localAttribute,
@@ -68,7 +72,15 @@ export class HandleDefaultFieldValuesUseCase {
     }
 
     sourceFormControl.valueChanges.subscribe(async (change) => {
-      if (targetFormControl.dirty && !!targetFormControl.value) {
+      if (formGroup.disabled) {
+        return;
+      }
+
+      if (targetFormControl.dirty && !!targetFormControl.value && isNew) {
+        return;
+      }
+
+      if (!isNew) {
         return;
       }
 
@@ -96,7 +108,12 @@ export class HandleDefaultFieldValuesUseCase {
     formGroup: FormGroup,
     fieldName: string,
     defaultFieldValueConfig: DefaultFieldValueConfig,
+    isNew: boolean,
   ) {
+    if (!isNew) {
+      return;
+    }
+
     let targetFormControl = formGroup.get(fieldName);
 
     if (!targetFormControl) {
@@ -114,7 +131,12 @@ export class HandleDefaultFieldValuesUseCase {
     formGroup: FormGroup,
     fieldName: string,
     defaultFieldValueConfig: DefaultFieldValueConfig,
+    isNew: boolean,
   ) {
+    if (!isNew) {
+      return;
+    }
+
     let targetFormControl = formGroup.get(fieldName);
 
     if (!targetFormControl) {

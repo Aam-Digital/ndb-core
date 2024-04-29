@@ -44,6 +44,7 @@ export class DefaultFieldValueService {
       this.handleDefaultFieldValuesUseCase.handleFormGroup(
         formGroup,
         inheritedConfigs,
+        entity.isNew,
       );
     }
 
@@ -51,6 +52,7 @@ export class DefaultFieldValueService {
       this.handleDefaultFieldValuesUseCase.handleFormGroup(
         formGroup,
         nonInheritedConfigs,
+        entity.isNew,
       );
     }
 
