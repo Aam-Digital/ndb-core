@@ -29,10 +29,10 @@ Cypress.Commands.overwrite("visit", (originalFun, url, options) => {
   originalFun(url, options);
   // wait for demo data generation
   cy.contains("button", "Continue in background", { timeout: 20000 }).should(
-    "exist"
+    "exist",
   );
   cy.contains("button", "Continue in background", { timeout: 20000 }).should(
-    "not.exist"
+    "not.exist",
   );
 });
 

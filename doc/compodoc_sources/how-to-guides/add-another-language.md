@@ -59,7 +59,7 @@ file:
 const localeModule = await import(
   /* webpackInclude: /(fr|de)\.mjs/ <-- add language between the brackets sepreated by a pipe symbol */
   `../node_modules/@angular/common/locales/${locale}`
-  );
+);
 ```
 
 ### 6) Test your build

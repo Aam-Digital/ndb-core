@@ -3,9 +3,10 @@
 ![](../../images/tech-stack.png)
 
 Aam Digital is based on the following technologies:
+
 - [Angular](https://angular.io/),
-including the [TypeScript](https://www.typescriptlang.org/) programming language (a superset of JavaScript)
-as well as HTML and CSS
+  including the [TypeScript](https://www.typescriptlang.org/) programming language (a superset of JavaScript)
+  as well as HTML and CSS
 - [Angular Material](https://material.angular.io/) providing reusable UI components
 - PouchDB (CouchDB noSQL Database)
 
@@ -16,15 +17,17 @@ here are some useful resources to get started.
 You will need to have basic knowledge of these before you can properly start contributing to our project.
 
 ## Git (and GitHub)
+
 Git helps us track all changes to our project, allows us to revert things and is the basis for our code review process.
 
 Haven't worked with _git_ source control yet?
 Work through a basic tutorial like this
-[Intro to Git and GitHub for Beginners (Tutorial)](https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners). 
+[Intro to Git and GitHub for Beginners (Tutorial)](https://product.hubspot.com/blog/git-and-github-tutorial-for-beginners).
 
 You can also check out the [official git book](https://git-scm.com/book/de/v2) (chapter 1-3 are most relevant).
 
 ## TypeScript
+
 TypeScript is our primary programming language.
 If you are familiar with JavaScript, learning TypeScript shouldn't be too hard for you.
 All JavaScript code is also valid TypeScript.
@@ -36,6 +39,7 @@ If you have some experience with another "statically typed" language like Java, 
 A quick comparison like this may be enough to get you a basic understanding: [TypeScript vs. JavaScript](https://medium.com/geekculture/typescript-vs-javascript-e5af7ab5a331)
 
 ## Angular
+
 Angular is a powerful web development framework and the basis for our project.
 It provides good structure to build complex enterprise-level web applications
 with its concepts of components, services and modules.
@@ -50,6 +54,7 @@ The more advanced topics beyond that are things you can also learn while already
 We'll be happy to guide you!
 
 ## Angular Material
+
 We are using some standard UI components following the Material Design as building blocks.
 
 Browse through the list of components to get an idea what is already available
@@ -57,13 +62,14 @@ Browse through the list of components to get an idea what is already available
 https://material.angular.io/components/categories
 
 ## PouchDB
+
 We have built an abstraction layer of the database access.
 Underneath our app is using PouchDB but you do not need any knowledge about this for most work on our project.
 
 Curious or want to work on our database services?
 Start here: https://pouchdb.com/learn.html
 
------
-Next up:
- [**> Setting up the project (and running it)**](./setting-up-the-project.html)
+---
 
+Next up:
+[**> Setting up the project (and running it)**](./setting-up-the-project.html)

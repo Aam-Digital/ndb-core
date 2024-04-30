@@ -40,20 +40,26 @@
         "*.html"
       ],
       "extends": [
-        "plugin:@angular-eslint/template/recommended"
+        "plugin:@angular-eslint/template/recommended",
+        "plugin:prettier/recommended"
       ],
       "rules": {}
-    },    {
-      "files": ["*.stories.@(ts|tsx|js|jsx|mjs|cjs)"],
+    },
+    {
+      "files": [
+        "*.stories.@(ts|tsx|js|jsx|mjs|cjs)"
+      ],
       "rules": {
         "storybook/story-exports": "off"
       }
     }
   ],
   "rules": {
-      "prettier/prettier": "error"
+    "prettier/prettier": "error"
   },
-  "plugins": ["prettier"],
+  "plugins": [
+    "prettier"
+  ],
   "extends": [
     "plugin:storybook/recommended",
     "prettier"
