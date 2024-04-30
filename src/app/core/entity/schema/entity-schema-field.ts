@@ -64,15 +64,6 @@ export interface EntitySchemaField {
    * Default values are applied to form fields, if field is empty
    * The form will be disabled, until all default value configs are applied
    *
-   *  mode: inherited
-   *  use the value from linked entity field
-   *
-   *  mode: static
-   *  use a static default value
-   *
-   *  mode: dynamic
-   *  use a placeholder value, see PLACEHOLDERS enum for available options
-   *
    *  Business Logic handled in HandleDefaults*UseCases
    */
   defaultFieldValue?: DefaultFieldValueConfig;
