@@ -110,17 +110,9 @@ export class HandleDefaultFieldValuesUseCase {
     defaultFieldValueConfig: DefaultFieldValueConfig,
     isNew: boolean,
   ) {
-    if (!isNew) {
-      return;
-    }
-
     let targetFormControl = formGroup.get(fieldName);
 
-    if (!targetFormControl) {
-      return;
-    }
-
-    if (!!targetFormControl.value) {
+    if (!this.preConditionsFulfilled(isNew, targetFormControl)) {
       return;
     }
 
@@ -133,17 +125,9 @@ export class HandleDefaultFieldValuesUseCase {
     defaultFieldValueConfig: DefaultFieldValueConfig,
     isNew: boolean,
   ) {
-    if (!isNew) {
-      return;
-    }
-
     let targetFormControl = formGroup.get(fieldName);
 
-    if (!targetFormControl) {
-      return;
-    }
-
-    if (!!targetFormControl.value) {
+    if (!this.preConditionsFulfilled(isNew, targetFormControl)) {
       return;
     }
 
@@ -161,5 +145,24 @@ export class HandleDefaultFieldValuesUseCase {
         );
         break;
     }
+  }
+
+  private preConditionsFulfilled(
+    isNew: boolean,
+    formControl: AbstractControl,
+  ): boolean {
+    if (!isNew) {
+      return false;
+    }
+
+    if (!formControl) {
+      return false;
+    }
+
+    if (!!formControl.value) {
+      return false;
+    }
+
+    return true;
   }
 }

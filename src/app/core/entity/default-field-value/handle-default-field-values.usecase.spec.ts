@@ -564,13 +564,15 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         ],
       ];
 
-      mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
+      let entity0 = new Entity();
+      entity0["foo"] = "bar";
+      mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
 
       // when
       service.handleFormGroup(formGroup, fieldConfigs, false);
 
       // when/then
-      formGroup.get("reference-1").setValue("non-existing-entity-id");
+      formGroup.get("reference-1").setValue("Entity:0");
       tick(); // fetching reference is always async
       expect(formGroup.get("field-2").value).toBe(null);
     }));

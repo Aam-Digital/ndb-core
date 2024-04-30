@@ -78,6 +78,8 @@ describe("DefaultFieldValueService", () => {
     Entity.schema.delete("test");
   });
 
+  // The inherited mode listen to changes and loads the entities async.
+  // When a static value is processed, before the inheritance hook is registered, the loading does not trigger.
   it("should apply inherited modes before static and dynamic modes", () => {
     // given
     let formGroup = new FormBuilder().group({
