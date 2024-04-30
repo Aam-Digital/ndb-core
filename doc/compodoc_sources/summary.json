@@ -1,6 +1,6 @@
 [
   {
-    "title":"Overview",
+    "title": "Overview",
     "file": "overview.md"
   },
   {
@@ -86,7 +86,7 @@
     "file": "how-to-guides/_index.md",
     "children": [
       {
-        "title":  "Development Processes",
+        "title": "Development Processes",
         "file": "how-to-guides/contribute-code.md",
         "children": [
           {
@@ -180,7 +180,7 @@
     ]
   },
   {
-    "title":"Prerequisites",
+    "title": "Prerequisites",
     "file": "prerequisites.md"
   }
 ]

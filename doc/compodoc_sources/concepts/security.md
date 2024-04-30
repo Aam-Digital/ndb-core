@@ -9,6 +9,7 @@ Beyond this, the following measures are implemented:
 - Content Security Policy (CSP) headers restrict connections to and execution of code from sources that are not whitelisted.
 
 ## Content Security Policy (CSP)
+
 CSP headers are set in the nginx server being built from the code base to serve the Angular app.
 The whitelisted CSP sources can be overwritten and adapted using a docker environment variable `CSP` (the default whitelist is defined in the [Dockerfile](https://github.com/Aam-Digital/ndb-core/blob/master/build/Dockerfile)).
 
@@ -16,10 +17,12 @@ The whitelisted CSP sources can be overwritten and adapted using a docker enviro
 > Scripts and connections are not yet blocked by default.
 
 ### Allowing PouchDB to function under CSP
+
 The browser-side database system PouchDB uses map-reduce functions for indexing which are defined as strings.
 It is therefore requiring `'unsafe-eval'` in the CSP.
 
 ### Whitelisting the index.html
+
 To whitelist a specific script section (currently only in the index.html) a [CSP hash](https://content-security-policy.com/hash/) can be used.
 Updating the hash should be necessary only rarely, when that script section changes.
 

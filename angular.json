@@ -36,7 +36,10 @@
               "node_modules/leaflet/dist/leaflet.css"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["node_modules/", "src/styles"]
+              "includePaths": [
+                "node_modules/",
+                "src/styles"
+              ]
             },
             "vendorChunk": true,
             "extractLicenses": false,
@@ -102,14 +105,20 @@
           "builder": "@angular-devkit/build-angular:karma",
           "options": {
             "karmaConfig": "./karma.conf.js",
-            "polyfills": ["src/polyfills.ts", "zone.js/testing"],
+            "polyfills": [
+              "src/polyfills.ts",
+              "zone.js/testing"
+            ],
             "tsConfig": "src/tsconfig.spec.json",
             "styles": [
               "src/styles/styles.scss",
               "src/styles/themes/ndb-theme.scss"
             ],
             "stylePreprocessorOptions": {
-              "includePaths": ["node_modules/", "src/styles"]
+              "includePaths": [
+                "node_modules/",
+                "src/styles"
+              ]
             },
             "assets": [
               "src/assets",
@@ -143,7 +152,10 @@
         "lint": {
           "builder": "@angular-eslint/builder:lint",
           "options": {
-            "lintFilePatterns": ["src/**/*.ts", "src/**/*.html"]
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
+            ]
           }
         },
         "cypress-open": {
@@ -187,6 +199,8 @@
   },
   "cli": {
     "analytics": "0bd2cce5-bfb0-4375-af96-a8222d782810",
-    "schematicCollections": ["@angular-eslint/schematics"]
+    "schematicCollections": [
+      "@angular-eslint/schematics"
+    ]
   }
 }

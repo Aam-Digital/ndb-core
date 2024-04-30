@@ -43,7 +43,7 @@ describe("Scenario: Linking a child to a school - E2E test", function () {
     // Check if student is in the school students list
     cy.contains(
       "app-child-school-overview > app-entity-subrecord",
-      "E2E Child"
+      "E2E Child",
     );
   });
 });

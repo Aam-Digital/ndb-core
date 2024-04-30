@@ -1,9 +1,11 @@
 closes: #XX
 
 ### Visible/Frontend Changes
-- [x] 
-- [ ] 
+
+- [x]
+- [ ]
 
 ### Architectural/Backend Changes
-- [x] 
-- [ ] 
+
+- [x]
+- [ ]
