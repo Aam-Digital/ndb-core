@@ -29,7 +29,7 @@ $primary: mat.get-color-from-palette(theme.$primary);
 $accent: mat.get-color-from-palette(theme.$accent);
 
 $grey-transparent: mat.get-color-from-palette(
-    mat.$grey-palette,
+  mat.$grey-palette,
   $hue: 400,
   $opacity: 0.1
 );
@@ -48,14 +48,17 @@ $background: white;
 /** background for the sidebar */
 $background-secondary: mat.get-color-from-palette(theme.$primary, 50);
 /** light grey color background to highlight special ui elements */
-$background-neutral: mat.get-color-from-palette(mat.$light-theme-background-palette, card);
+$background-neutral: mat.get-color-from-palette(
+  mat.$light-theme-background-palette,
+  card
+);
 
 /** especially for labels in disabled forms (which is our default view) */
 $text: mat.get-color-from-palette(mat.$light-theme-foreground-palette, text);
 $text-secondary: mat.get-color-from-palette(mat.$grey-palette, 800);
 $hint-text: mat.get-color-from-palette(
-    mat.$light-theme-foreground-palette,
-    hint-text
+  mat.$light-theme-foreground-palette,
+  hint-text
 );
 
 /*
@@ -96,5 +99,5 @@ $attendance-levels: (
   // Excused
   A: #ff8a65,
   // Absent
-  U: #dddddd // Unknown,
+  U: #dddddd, // Unknown
 );
