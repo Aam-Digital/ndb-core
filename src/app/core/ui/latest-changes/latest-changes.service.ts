@@ -108,9 +108,9 @@ export class LatestChangesService {
     releaseFilter: (releases: Changelog[]) => Changelog[],
   ): Observable<Changelog[]> {
     return this.http
-      .get<
-        Changelog[]
-      >(`${LatestChangesService.GITHUB_API}${environment.repositoryId}/releases`)
+      .get<Changelog[]>(
+        `${LatestChangesService.GITHUB_API}${environment.repositoryId}/releases`,
+      )
       .pipe(
         map(excludePrereleases),
         map(releaseFilter),
@@ -121,7 +121,7 @@ export class LatestChangesService {
           this.alertService.addWarning(
             $localize`Could not load latest changes: ${error}`,
           );
-          return throwError(() => "Could not load latest changes.");
+          return throwError(() => new Error("Could not load latest changes."));
         }),
       );
 
