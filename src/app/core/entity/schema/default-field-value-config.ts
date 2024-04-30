@@ -1,5 +1,6 @@
 /**
- * Describes the default value behaviour of this field
+ * Describes the default value behaviour of this field,
+ * i.e. that this field should automatically be filled with a value when creating a new entity
  */
 export interface DefaultFieldValueConfig {
   mode: "inherited" | "static" | "dynamic";
