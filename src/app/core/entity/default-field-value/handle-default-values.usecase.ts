@@ -6,6 +6,7 @@ import { Entity } from "../model/entity";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { LoggingService } from "../../logging/logging.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
 
 /**
  * When edit an Entity, apply this business logic for DefaultValueConfig
@@ -27,6 +28,7 @@ export class HandleDefaultValuesUseCase {
   ) {
     fieldConfigs.forEach(([fieldName, fieldSchema]) => {
       let defaultValueConfig = fieldSchema.defaultValue;
+      let isArray = isArrayDataType(fieldSchema.dataType);
 
       switch (defaultValueConfig.mode) {
         case "inherited":
@@ -35,6 +37,7 @@ export class HandleDefaultValuesUseCase {
             fieldName,
             defaultValueConfig,
             isNew,
+            isArray,
           );
         case "static":
           return this.handleStaticMode(
@@ -42,6 +45,7 @@ export class HandleDefaultValuesUseCase {
             fieldName,
             defaultValueConfig,
             isNew,
+            isArray,
           );
         case "dynamic":
           return this.handleDynamicMode(
@@ -49,6 +53,7 @@ export class HandleDefaultValuesUseCase {
             fieldName,
             defaultValueConfig,
             isNew,
+            isArray,
           );
       }
     });
@@ -59,6 +64,7 @@ export class HandleDefaultValuesUseCase {
     fieldName: string,
     defaultValueConfig: DefaultValueConfig,
     isNew: boolean,
+    isArray: boolean,
   ) {
     let sourceFormControl: AbstractControl<any, any> | null = formGroup.get(
       defaultValueConfig.localAttribute,
@@ -98,7 +104,12 @@ export class HandleDefaultValuesUseCase {
         return;
       }
 
-      targetFormControl.setValue(parentEntity[defaultValueConfig.field]);
+      if (isArray) {
+        targetFormControl.setValue([parentEntity[defaultValueConfig.field]]);
+      } else {
+        targetFormControl.setValue(parentEntity[defaultValueConfig.field]);
+      }
+
       targetFormControl.markAsUntouched();
       targetFormControl.markAsPristine();
     });
@@ -109,6 +120,7 @@ export class HandleDefaultValuesUseCase {
     fieldName: string,
     defaultValueConfig: DefaultValueConfig,
     isNew: boolean,
+    isArray: boolean,
   ) {
     let targetFormControl = formGroup.get(fieldName);
 
@@ -116,7 +128,11 @@ export class HandleDefaultValuesUseCase {
       return;
     }
 
-    targetFormControl.setValue(defaultValueConfig.value);
+    if (isArray) {
+      targetFormControl.setValue([defaultValueConfig.value]);
+    } else {
+      targetFormControl.setValue(defaultValueConfig.value);
+    }
   }
 
   private handleDynamicMode(
@@ -124,6 +140,7 @@ export class HandleDefaultValuesUseCase {
     fieldName: string,
     defaultValueConfig: DefaultValueConfig,
     isNew: boolean,
+    isArray: boolean,
   ) {
     let targetFormControl = formGroup.get(fieldName);
 
@@ -133,10 +150,24 @@ export class HandleDefaultValuesUseCase {
 
     switch (defaultValueConfig.value) {
       case PLACEHOLDERS.NOW:
-        targetFormControl.setValue(new Date());
+        let now = new Date();
+        if (isArray) {
+          targetFormControl.setValue([now]);
+        } else {
+          targetFormControl.setValue(now);
+        }
         break;
       case PLACEHOLDERS.CURRENT_USER:
-        targetFormControl.setValue(this.currentUser.value?.getId());
+        let userId = this.currentUser.value?.getId();
+        if (!userId) {
+          break;
+        }
+
+        if (isArray) {
+          targetFormControl.setValue([userId]);
+        } else {
+          targetFormControl.setValue(userId);
+        }
         break;
       default:
         this.logger.warn(
