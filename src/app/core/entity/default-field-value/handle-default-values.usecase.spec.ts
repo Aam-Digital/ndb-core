@@ -1,6 +1,6 @@
 import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
-import { HandleDefaultFieldValuesUseCase } from "./handle-default-field-values.usecase";
+import { HandleDefaultValuesUseCase } from "./handle-default-values.usecase";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { LoggingService } from "../../logging/logging.service";
@@ -16,8 +16,8 @@ function getDefaultInheritedFormGroup() {
   });
 }
 
-describe("HandleDefaultFieldValuesUseCase", () => {
-  let service: HandleDefaultFieldValuesUseCase;
+describe("HandleDefaultValuesUseCase", () => {
+  let service: HandleDefaultValuesUseCase;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
   let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
@@ -32,7 +32,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         CurrentUserSubject,
       ],
     });
-    service = TestBed.inject(HandleDefaultFieldValuesUseCase);
+    service = TestBed.inject(HandleDefaultValuesUseCase);
   });
 
   it("should be created", () => {
@@ -48,7 +48,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-invalid",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "dynamic",
               value: "bar",
             },
@@ -70,7 +70,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "dynamic",
               value: "foo",
             },
@@ -96,7 +96,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "dynamic",
               value: "invalid-placeholder",
             },
@@ -119,7 +119,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "dynamic",
               value: "$current_user",
             },
@@ -146,7 +146,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "dynamic",
               value: "$now",
             },
@@ -169,7 +169,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "dynamic",
               value: "$now",
             },
@@ -198,7 +198,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-invalid",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "static",
               value: "bar",
             },
@@ -221,7 +221,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "static",
               value: "bar",
             },
@@ -244,7 +244,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "static",
               value: "foo",
             },
@@ -270,7 +270,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "static",
               value: "bar",
             },
@@ -294,7 +294,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "static",
               value: "foo",
             },
@@ -323,7 +323,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "foo",
               localAttribute: "reference-invalid",
@@ -348,7 +348,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "invalid-field",
               localAttribute: "reference-1",
@@ -373,7 +373,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-invalid",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "invalid-field",
               localAttribute: "reference-1",
@@ -398,7 +398,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "foo",
               localAttribute: "reference-1",
@@ -429,7 +429,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "foo",
               localAttribute: "reference-1",
@@ -461,7 +461,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "foo",
               localAttribute: "reference-1",
@@ -497,7 +497,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "foo",
               localAttribute: "reference-1",
@@ -525,7 +525,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "foo",
               localAttribute: "reference-1",
@@ -555,7 +555,7 @@ describe("HandleDefaultFieldValuesUseCase", () => {
         [
           "field-2",
           {
-            defaultFieldValue: {
+            defaultValue: {
               mode: "inherited",
               field: "foo",
               localAttribute: "reference-1",

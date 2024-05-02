@@ -242,19 +242,30 @@ describe("EntityFormService", () => {
   });
 
   it("should assign default values", () => {
-    const schema: EntitySchemaField = { defaultValue: 1 };
+    const schema: EntitySchemaField = {
+      defaultValue: {
+        mode: "static",
+        value: 1,
+      },
+    };
     Entity.schema.set("test", schema);
 
     let form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue(1);
 
-    schema.defaultValue = PLACEHOLDERS.NOW;
+    schema.defaultValue = {
+      mode: "dynamic",
+      value: PLACEHOLDERS.NOW,
+    };
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(
       moment(form.get("test").value).isSame(moment(), "minutes"),
     ).toBeTrue();
 
-    schema.defaultValue = PLACEHOLDERS.CURRENT_USER;
+    schema.defaultValue = {
+      mode: "dynamic",
+      value: PLACEHOLDERS.CURRENT_USER,
+    };
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue(`${User.ENTITY_TYPE}:${TEST_USER}`);
 
@@ -270,7 +281,12 @@ describe("EntityFormService", () => {
     TestBed.inject(CurrentUserSubject).next(undefined);
 
     // simple property
-    Entity.schema.set("user", { defaultValue: PLACEHOLDERS.CURRENT_USER });
+    Entity.schema.set("user", {
+      defaultValue: {
+        mode: "dynamic",
+        value: PLACEHOLDERS.CURRENT_USER,
+      },
+    });
     let form = service.createFormGroup([{ id: "user" }], new Entity());
     expect(form.get("user")).toHaveValue(null);
 
@@ -284,7 +300,12 @@ describe("EntityFormService", () => {
   });
 
   it("should not assign default values to existing entities", () => {
-    Entity.schema.set("test", { defaultValue: 1 });
+    Entity.schema.set("test", {
+      defaultValue: {
+        mode: "static",
+        value: 1,
+      },
+    });
 
     const entity = new Entity();
     entity._rev = "1-existing_entity";
@@ -295,7 +316,12 @@ describe("EntityFormService", () => {
   });
 
   it("should not overwrite existing values with default value", () => {
-    Entity.schema.set("test", { defaultValue: 1 });
+    Entity.schema.set("test", {
+      defaultValue: {
+        mode: "static",
+        value: 1,
+      },
+    });
 
     const entity = new Entity();
     entity["test"] = 2;

@@ -1,45 +1,42 @@
 import { TestBed } from "@angular/core/testing";
 
-import { DefaultFieldValueService } from "./default-field-value.service";
-import { CurrentUserSubject } from "../session/current-user-subject";
-import { of } from "rxjs";
-import { HandleDefaultFieldValuesUseCase } from "./default-field-value/handle-default-field-values.usecase";
+import { DefaultValueService } from "./default-value.service";
+import { HandleDefaultValuesUseCase } from "./default-field-value/handle-default-values.usecase";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { Entity } from "./model/entity";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import anything = jasmine.anything;
 
-describe("DefaultFieldValueService", () => {
-  let service: DefaultFieldValueService;
-  let mockHandleDefaultFieldValuesUseCase: jasmine.SpyObj<HandleDefaultFieldValuesUseCase>;
+describe("DefaultValueService", () => {
+  let service: DefaultValueService;
+  let mockHandleDefaultValuesUseCase: jasmine.SpyObj<HandleDefaultValuesUseCase>;
 
   beforeEach(() => {
-    mockHandleDefaultFieldValuesUseCase = jasmine.createSpyObj({
+    mockHandleDefaultValuesUseCase = jasmine.createSpyObj({
       handleFormGroup: jasmine.createSpy(),
     });
-    mockHandleDefaultFieldValuesUseCase.handleFormGroup.calls.saveArgumentsByValue();
+    mockHandleDefaultValuesUseCase.handleFormGroup.calls.saveArgumentsByValue();
 
     TestBed.configureTestingModule({
       providers: [
         {
-          provide: HandleDefaultFieldValuesUseCase,
-          useValue: mockHandleDefaultFieldValuesUseCase,
+          provide: HandleDefaultValuesUseCase,
+          useValue: mockHandleDefaultValuesUseCase,
         },
-        { provide: CurrentUserSubject, useValue: of(null) },
       ],
     });
-    service = TestBed.inject(DefaultFieldValueService);
+    service = TestBed.inject(DefaultValueService);
   });
 
   it("should be created", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should call DefaultFieldValuesUseCase if defaultFieldValue is set", () => {
+  it("should call HandleDefaultValuesUseCase if defaultValue is set", () => {
     // given
     let formGroup = new FormBuilder().group({ test: {} });
     const schema: EntitySchemaField = {
-      defaultFieldValue: {
+      defaultValue: {
         mode: "static",
         value: "bar",
       },
@@ -50,30 +47,7 @@ describe("DefaultFieldValueService", () => {
     service.handle(formGroup, new Entity());
 
     // then
-    expect(
-      mockHandleDefaultFieldValuesUseCase.handleFormGroup,
-    ).toHaveBeenCalled();
-
-    Entity.schema.delete("test");
-  });
-
-  it("should not call DefaultFieldValuesUseCase if defaultValue is set", () => {
-    // given
-    let formGroup = new FormBuilder().group({ test: {} });
-    const schema: EntitySchemaField = {
-      defaultValue: 1,
-    };
-    Entity.schema.set("test", schema);
-
-    // when
-    service.handle(formGroup, new Entity());
-
-    // then
-    expect(
-      mockHandleDefaultFieldValuesUseCase.handleFormGroup,
-    ).not.toHaveBeenCalled();
-
-    expect(formGroup.get("test").value).toEqual(1);
+    expect(mockHandleDefaultValuesUseCase.handleFormGroup).toHaveBeenCalled();
 
     Entity.schema.delete("test");
   });
@@ -91,35 +65,35 @@ describe("DefaultFieldValueService", () => {
     });
 
     Entity.schema.set("test1", {
-      defaultFieldValue: {
+      defaultValue: {
         mode: "static",
         value: "bar",
       },
     });
 
     Entity.schema.set("test2", {
-      defaultFieldValue: {
+      defaultValue: {
         mode: "dynamic",
         value: "bar",
       },
     });
 
     Entity.schema.set("test3", {
-      defaultFieldValue: {
+      defaultValue: {
         mode: "inherited",
         value: "bar",
       },
     });
 
     Entity.schema.set("test4", {
-      defaultFieldValue: {
+      defaultValue: {
         mode: "dynamic",
         value: "bar",
       },
     });
 
     Entity.schema.set("test5", {
-      defaultFieldValue: {
+      defaultValue: {
         mode: "inherited",
         value: "bar",
       },
@@ -130,11 +104,11 @@ describe("DefaultFieldValueService", () => {
 
     // then
     expect(
-      mockHandleDefaultFieldValuesUseCase.handleFormGroup,
+      mockHandleDefaultValuesUseCase.handleFormGroup,
     ).toHaveBeenCalledTimes(2);
 
     expect(
-      mockHandleDefaultFieldValuesUseCase.handleFormGroup.calls.argsFor(0),
+      mockHandleDefaultValuesUseCase.handleFormGroup.calls.argsFor(0),
     ).toEqual([
       anything(),
       [
@@ -145,7 +119,7 @@ describe("DefaultFieldValueService", () => {
     ]);
 
     expect(
-      mockHandleDefaultFieldValuesUseCase.handleFormGroup.calls.argsFor(1),
+      mockHandleDefaultValuesUseCase.handleFormGroup.calls.argsFor(1),
     ).toEqual([
       anything(),
       [

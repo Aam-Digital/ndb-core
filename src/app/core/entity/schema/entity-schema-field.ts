@@ -17,7 +17,7 @@
 
 import { FormValidatorConfig } from "../../common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { EntityReferenceRole } from "../../basic-datatypes/entity/entity-reference-role";
-import { DefaultFieldValueConfig } from "./default-field-value-config";
+import { DefaultValueConfig } from "./default-value-config";
 
 /**
  * Interface for additional configuration about a DatabaseField schema.
@@ -52,21 +52,12 @@ export interface EntitySchemaField {
   searchable?: boolean;
 
   /**
-   * Whether the field should be initialized with a default value if undefined
-   * Default values are applied to form fields before they are displayed to users
-   *
-   * @deprecated replaced by defaultFieldValue
-   */
-  defaultValue?: PLACEHOLDERS | any;
-
-  /**
    * Configure the default value mode of this field.
    * Default values are applied to form fields, if field is empty
    * The form will be disabled, until all default value configs are applied
    *
-   *  Business Logic handled in HandleDefaults*UseCases
    */
-  defaultFieldValue?: DefaultFieldValueConfig;
+  defaultValue?: DefaultValueConfig;
 
   /**
    * (Optional) Assign any custom "extension" configuration you need for a specific datatype extension.

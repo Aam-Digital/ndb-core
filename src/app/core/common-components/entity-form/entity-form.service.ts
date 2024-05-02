@@ -18,7 +18,7 @@ import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { DefaultFieldValueService } from "../../entity/default-field-value.service";
+import { DefaultValueService } from "../../entity/default-value.service";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -41,7 +41,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
-    private defaultFieldValueService: DefaultFieldValueService,
+    private defaultValueService: DefaultValueService,
     router: Router,
   ) {
     router.events
@@ -147,7 +147,7 @@ export class EntityFormService {
       this.subscriptions.push(statusChangesSubscription);
     }
 
-    this.defaultFieldValueService.handle(group, entity);
+    this.defaultValueService.handle(group, entity);
 
     return group;
   }

@@ -38,7 +38,10 @@ export class EducationalMaterial extends Entity {
 
   @DatabaseField({
     label: $localize`:Date on which the material has been borrowed:Date`,
-    defaultValue: PLACEHOLDERS.NOW,
+    defaultValue: {
+      mode: "dynamic",
+      value: PLACEHOLDERS.NOW,
+    },
   })
   date: Date;
 
@@ -54,7 +57,10 @@ export class EducationalMaterial extends Entity {
 
   @DatabaseField({
     label: $localize`:The amount of the material which has been borrowed:Amount`,
-    defaultValue: 1,
+    defaultValue: {
+      mode: "static",
+      value: 1,
+    },
     validators: {
       required: true,
     },

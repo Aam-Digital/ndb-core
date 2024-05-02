@@ -2,7 +2,7 @@
  * Describes the default value behaviour of this field,
  * i.e. that this field should automatically be filled with a value when creating a new entity
  */
-export interface DefaultFieldValueConfig {
+export interface DefaultValueConfig {
   /**
    * What kind of logic is used to generate the default value:
    *
@@ -18,7 +18,7 @@ export interface DefaultFieldValueConfig {
   mode: "inherited" | "static" | "dynamic";
 
   /** used as default value in "static" and "dynamic" mode */
-  value?: string;
+  value?: string | number;
 
   /** local field holding the reference to an Entity (for inherited only) */
   localAttribute?: string;

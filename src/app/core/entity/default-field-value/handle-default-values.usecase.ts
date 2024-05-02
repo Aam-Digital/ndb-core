@@ -1,19 +1,19 @@
 import { Injectable } from "@angular/core";
 import { AbstractControl, FormGroup } from "@angular/forms";
 import { EntitySchemaField, PLACEHOLDERS } from "../schema/entity-schema-field";
-import { DefaultFieldValueConfig } from "../schema/default-field-value-config";
+import { DefaultValueConfig } from "../schema/default-value-config";
 import { Entity } from "../model/entity";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { LoggingService } from "../../logging/logging.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
- * When edit an Entity, apply this business logic for DefaultFieldValueConfig
+ * When edit an Entity, apply this business logic for DefaultValueConfig
  */
 @Injectable({
   providedIn: "root",
 })
-export class HandleDefaultFieldValuesUseCase {
+export class HandleDefaultValuesUseCase {
   constructor(
     private entityMapper: EntityMapperService,
     private currentUser: CurrentUserSubject,
@@ -26,28 +26,28 @@ export class HandleDefaultFieldValuesUseCase {
     isNew: boolean,
   ) {
     fieldConfigs.forEach(([fieldName, fieldSchema]) => {
-      let defaultFieldValueConfig = fieldSchema.defaultFieldValue;
+      let defaultValueConfig = fieldSchema.defaultValue;
 
-      switch (defaultFieldValueConfig.mode) {
+      switch (defaultValueConfig.mode) {
         case "inherited":
           return this.handleInheritedMode(
             formGroup,
             fieldName,
-            defaultFieldValueConfig,
+            defaultValueConfig,
             isNew,
           );
         case "static":
           return this.handleStaticMode(
             formGroup,
             fieldName,
-            defaultFieldValueConfig,
+            defaultValueConfig,
             isNew,
           );
         case "dynamic":
           return this.handleDynamicMode(
             formGroup,
             fieldName,
-            defaultFieldValueConfig,
+            defaultValueConfig,
             isNew,
           );
       }
@@ -57,11 +57,11 @@ export class HandleDefaultFieldValuesUseCase {
   private handleInheritedMode(
     formGroup: FormGroup,
     fieldName: string,
-    defaultFieldValueConfig: DefaultFieldValueConfig,
+    defaultValueConfig: DefaultValueConfig,
     isNew: boolean,
   ) {
     let sourceFormControl: AbstractControl<any, any> | null = formGroup.get(
-      defaultFieldValueConfig.localAttribute,
+      defaultValueConfig.localAttribute,
     );
 
     let targetFormControl: AbstractControl<any, any> | null =
@@ -94,11 +94,11 @@ export class HandleDefaultFieldValuesUseCase {
         change,
       );
 
-      if (!parentEntity || !parentEntity[defaultFieldValueConfig.field]) {
+      if (!parentEntity || !parentEntity[defaultValueConfig.field]) {
         return;
       }
 
-      targetFormControl.setValue(parentEntity[defaultFieldValueConfig.field]);
+      targetFormControl.setValue(parentEntity[defaultValueConfig.field]);
       targetFormControl.markAsUntouched();
       targetFormControl.markAsPristine();
     });
@@ -107,7 +107,7 @@ export class HandleDefaultFieldValuesUseCase {
   private handleStaticMode(
     formGroup: FormGroup,
     fieldName: string,
-    defaultFieldValueConfig: DefaultFieldValueConfig,
+    defaultValueConfig: DefaultValueConfig,
     isNew: boolean,
   ) {
     let targetFormControl = formGroup.get(fieldName);
@@ -116,13 +116,13 @@ export class HandleDefaultFieldValuesUseCase {
       return;
     }
 
-    targetFormControl.setValue(defaultFieldValueConfig.value);
+    targetFormControl.setValue(defaultValueConfig.value);
   }
 
   private handleDynamicMode(
     formGroup: FormGroup,
     fieldName: string,
-    defaultFieldValueConfig: DefaultFieldValueConfig,
+    defaultValueConfig: DefaultValueConfig,
     isNew: boolean,
   ) {
     let targetFormControl = formGroup.get(fieldName);
@@ -131,7 +131,7 @@ export class HandleDefaultFieldValuesUseCase {
       return;
     }
 
-    switch (defaultFieldValueConfig.value) {
+    switch (defaultValueConfig.value) {
       case PLACEHOLDERS.NOW:
         targetFormControl.setValue(new Date());
         break;
@@ -141,7 +141,7 @@ export class HandleDefaultFieldValuesUseCase {
       default:
         this.logger.warn(
           "Unknown PLACEHOLDERS value used in fieldValueConfig: " +
-            defaultFieldValueConfig,
+            defaultValueConfig,
         );
         break;
     }
