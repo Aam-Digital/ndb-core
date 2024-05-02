@@ -13,19 +13,37 @@ import {
   toFormFieldConfig,
 } from "../common-components/entity-form/FormConfig";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
+import {
+  DialogViewComponent,
+  DialogViewData,
+} from "../ui/dialog-view/dialog-view.component";
 
 @Injectable({ providedIn: "root" })
 export class FormDialogService {
   static dialogSettings: MatDialogConfig = {
     width: "99%",
     maxWidth: "980px",
-    maxHeight: "90vh",
   };
 
   constructor(
     private dialog: MatDialog,
     private schemaService: EntitySchemaService,
   ) {}
+
+  openView<E extends Entity>(entity: E, component: string) {
+    return this.dialog.open(DialogViewComponent, {
+      width: "99%",
+      maxWidth: "95vw",
+      maxHeight: "90vh",
+      // EntityDetails with its multiple tabs needs an explicit height to not change size between tabs
+      height: component === "EntityDetails" ? "90vh" : undefined,
+
+      data: {
+        component: component,
+        entity: entity,
+      } as DialogViewData,
+    });
+  }
 
   /**
    * Open a form in a popup that allows to edit the given entity.

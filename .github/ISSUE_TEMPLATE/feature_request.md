@@ -1,13 +1,12 @@
 ---
 name: Feature request
 about: Suggest an idea for this project
-title: ''
-labels: 'Priority: Idea, Type: Feature'
-assignees: ''
-
+title: ""
+labels: "Priority: Idea, Type: Feature"
+assignees: ""
 ---
 
-*As a [type of user] I want to [...] in order to [achieve XY goal].*
+_As a [type of user] I want to [...] in order to [achieve XY goal]._
 A short summary of the feature: Who would use this new feature? And what is the objective or use case in real life?
 
 **Objective**

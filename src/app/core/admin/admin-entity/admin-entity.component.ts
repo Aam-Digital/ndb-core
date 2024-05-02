@@ -59,14 +59,12 @@ import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-sett
 export class AdminEntityComponent implements OnInit {
   @Input() entityType: string;
   entityConstructor: EntityConstructor;
-
   private originalEntitySchemaFields: [string, EntitySchemaField][];
 
   configDetailsView: EntityDetailsConfig;
   configListView: EntityListConfig;
   configEntitySettings: EntityConfig;
-
-  protected mode: "details" | "list" | "general" = "list";
+  protected mode: "details" | "list" | "general" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
@@ -170,6 +168,7 @@ export class AdminEntityComponent implements OnInit {
       entitySchemaConfig.icon = this.configEntitySettings.icon;
       entitySchemaConfig.toStringAttributes =
         this.configEntitySettings.toStringAttributes;
+      entitySchemaConfig.hasPII = this.configEntitySettings.hasPII;
     }
   }
 
@@ -183,7 +182,7 @@ export class AdminEntityComponent implements OnInit {
       targetConfig.data[detailsViewId].config = viewConfig;
     } else {
       // create new config
-      viewConfig.entity = this.entityType;
+      viewConfig.entityType = this.entityType;
       targetConfig.data[detailsViewId] = {
         component: componentForNewConfig,
         config: viewConfig,

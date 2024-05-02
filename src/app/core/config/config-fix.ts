@@ -161,7 +161,6 @@ export const defaultJsonConfig = {
   "view:note": {
     "component": "NotesManager",
     "config": {
-      "entity": "Note",
       "title": $localize`:Title for notes overview:Notes & Reports`,
       "includeEventNotes": false,
       "showEventNotesToggle": true,
@@ -237,13 +236,19 @@ export const defaultJsonConfig = {
       ]
     }
   },
+  "view:note/:id": {
+    "component": "NoteDetails",
+    "config": {
+      "topForm": ["date", "warningLevel", "category", "authors", "attachment"]
+    }
+  },
   "view:import": {
     "component": "Import",
   },
   "view:user": {
     "component": "EntityList",
     "config": {
-      "entity": "User",
+      "entityType": "User",
       "columns": ["name", "phone"]
     },
     "permittedUserRoles": ["admin_app"]
@@ -251,7 +256,7 @@ export const defaultJsonConfig = {
   "view:user/:id": {
     "component": "EntityDetails",
     "config": {
-      "entity": "User",
+      "entityType": "User",
       "panels": [
         {
           "title": $localize`:Panel title:User Information`,
@@ -294,7 +299,7 @@ export const defaultJsonConfig = {
   "view:school": {
     "component": "EntityList",
     "config": {
-      "entity": "School",
+      "entityType": "School",
       "columns": [
         "name",
         { id: "DisplayParticipantsCount", viewComponent: "DisplayParticipantsCount", label: $localize`Children` },
@@ -312,7 +317,7 @@ export const defaultJsonConfig = {
   "view:school/:id": {
     "component": "EntityDetails",
     "config": {
-      "entity": "School",
+      "entityType": "School",
       "panels": [
         {
           "title": $localize`:Panel title:Basic Information`,
@@ -355,7 +360,7 @@ export const defaultJsonConfig = {
   "view:child": {
     "component": "ChildrenList",
     "config": {
-      "entity": "Child",
+      "entityType": "Child",
       "columns": [
         {
           "viewComponent": "ChildBlock",
@@ -490,7 +495,7 @@ export const defaultJsonConfig = {
   "view:child/:id": {
     "component": "EntityDetails",
     "config": {
-      "entity": "Child",
+      "entityType": "Child",
       "panels": [
         {
           "title": $localize`:Panel title:Basic Information`,
@@ -714,7 +719,7 @@ export const defaultJsonConfig = {
   "view:attendance/recurring-activity": {
     "component": "EntityList",
     "config": {
-      "entity": "RecurringActivity",
+      "entityType": "RecurringActivity",
       "columns": [
         "title",
         "type",
@@ -730,7 +735,7 @@ export const defaultJsonConfig = {
   "view:attendance/recurring-activity/:id": {
     "component": "EntityDetails",
     "config": {
-      "entity": "RecurringActivity",
+      "entityType": "RecurringActivity",
       "panels": [
         {
           "title": $localize`:Panel title:Basic Information`,
@@ -913,7 +918,7 @@ export const defaultJsonConfig = {
   "view:todo": {
     "component": "TodoList",
     "config": {
-      "entity": "Todo",
+      "entityType": "Todo",
       "columns": ["deadline", "subject", "assignedTo", "startDate", "relatedEntities"],
       "filters": [
         {"id": "assignedTo"},

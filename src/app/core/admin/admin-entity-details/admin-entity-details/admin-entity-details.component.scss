@@ -1,4 +1,5 @@
-@use "../../../../../../node_modules/@angular/material/core/style/elevation" as mat-elevation;
+@use "../../../../../../node_modules/@angular/material/core/style/elevation" as
+  mat-elevation;
 @use "../../../../../styles/variables/sizes";
 
 .admin-ui-title {
@@ -20,7 +21,6 @@
   border-color: rgb(255, 0, 0);
   background-color: rgba(255, 0, 0, 0.1);
 }
-
 
 .section-add-button {
   padding: sizes.$large;

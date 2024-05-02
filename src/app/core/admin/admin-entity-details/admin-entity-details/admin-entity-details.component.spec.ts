@@ -27,7 +27,7 @@ describe("AdminEntityDetailsComponent", () => {
     viewConfigId = `view:${AdminDetailsTestEntity.route.substring(1)}/:id`;
     entityConfigId = `entity:${AdminDetailsTestEntity.ENTITY_TYPE}`;
     viewConfig = {
-      entity: AdminDetailsTestEntity.ENTITY_TYPE,
+      entityType: AdminDetailsTestEntity.ENTITY_TYPE,
       panels: [{ title: "Tab 1", components: [] }],
     };
 

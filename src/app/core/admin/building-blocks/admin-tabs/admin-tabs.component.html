@@ -17,7 +17,7 @@
           <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
           @if (tabIndex === matTabGroup.selectedIndex) {
             <app-admin-section-header
-              [(title)]="tab['title'] ?? tab['name']"
+              [(title)]="tab[tabTitleProperty]"
               (remove)="
                 tabs.splice(tabIndex, 1);
                 matTabGroup.selectedIndex = tabIndex - 1
@@ -25,7 +25,7 @@
             ></app-admin-section-header>
           } @else {
             <!-- only current tab can be renamed -->
-            {{ tab["title"] ?? tab["name"] }}
+            {{ tab[tabTitleProperty] }}
           }
         </div>
       </div>

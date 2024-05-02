@@ -16,6 +16,6 @@ xliffFiles.forEach(async ([fileName, locale]) => {
 
   fs.writeFileSync(
     `${localeFolder}/messages.${locale}.json`,
-    JSON.stringify(jsonContent)
+    JSON.stringify(jsonContent),
   );
 });

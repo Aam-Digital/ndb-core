@@ -1,6 +1,10 @@
 <div class="host-container flex-column">
   <div class="header flex-row flex-wrap justify-space-between">
-    <app-view-title class="admin-ui-title" i18n="page title">
+    <app-view-title
+      class="admin-ui-title"
+      i18n="page title"
+      [displayInPlace]="true"
+    >
       Editing data structure for "{{ entityType | entityTypeLabel }}" records
     </app-view-title>
 
@@ -54,8 +58,7 @@
         @case ("general") {
           <app-admin-entity-general-settings
             [entityConstructor]="entityConstructor"
-            (generalSettingsChange)="configEntitySettings = $event"
-            [config]="configEntitySettings"
+            [(generalSettings)]="configEntitySettings"
           ></app-admin-entity-general-settings>
         }
       }

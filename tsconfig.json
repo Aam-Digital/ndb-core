@@ -16,7 +16,9 @@
     "useDefineForClassFields": false,
     "allowSyntheticDefaultImports": true,
     "resolveJsonModule": true,
-    "types": ["jasmine"],
+    "types": [
+      "jasmine"
+    ],
     "lib": [
       "es2018",
       "dom"
@@ -31,7 +33,7 @@
       "assert": [
         "../node_modules/assert"
       ]
-    },
+    }
   },
   "angularCompilerOptions": {
     "strictTemplates": true

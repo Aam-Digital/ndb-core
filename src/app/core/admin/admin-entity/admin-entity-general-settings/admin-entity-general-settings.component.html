@@ -4,8 +4,8 @@
   the entity is displayed, including lists, forms and other views.
 </p>
 
-<form [formGroup]="form">
-  <mat-tab-group formGroupName="basicSettings">
+<form [formGroup]="basicSettingsForm">
+  <mat-tab-group>
     <mat-tab label="Basics" i18n-label>
       <div class="grid-layout flex-grow margin-top-regular">
         <div class="entity-form-cell">
@@ -15,8 +15,8 @@
           </mat-form-field>
 
           <mat-form-field floatLabel="always">
-            <mat-label i18n>
-              Label (Plural)
+            <mat-label>
+              <span i18n>Label (Plural)</span>
               <fa-icon
                 icon="question-circle"
                 matTooltip="Optionally you can define how multiple records of this entity should be called, e.g. in lists."
@@ -31,8 +31,8 @@
           </mat-form-field>
 
           <mat-form-field floatLabel="always">
-            <mat-label i18n>
-              Icon
+            <mat-label>
+              <span i18n>Icon</span>
               <fa-icon
                 icon="question-circle"
                 matTooltip="The icon to represent this entity type, e.g. when displaying records as a small preview block. [see fontawesome.com/icons]"
@@ -48,20 +48,24 @@
         </div>
 
         <div class="entity-form-cell">
-          <mat-form-field floatLabel="always">
-            <mat-label i18n>
-              Generated Title of Record
+          <mat-form-field>
+            <mat-label>
+              <span i18n>Generated Title of Record</span>
               <fa-icon
                 icon="question-circle"
-                matTooltip="Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type."
+                matTooltip="Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type. (Only text fields can be used here)"
                 i18n-matTooltip
               ></fa-icon>
             </mat-label>
-            <input
+            <app-basic-autocomplete
               formControlName="toStringAttributes"
-              matInput
-              [placeholder]="formLabel.value"
-            />
+              #formDataType
+              [options]="toStringAttributesOptions"
+              [optionToString]="objectToLabel"
+              [valueMapper]="objectToValue"
+              [multi]="true"
+              [reorder]="true"
+            ></app-basic-autocomplete>
           </mat-form-field>
         </div>
       </div>
@@ -70,8 +74,59 @@
     <!--
         ADVANCED SETTINGS
       -->
-    <mat-tab label="Configure PII / Anonymization" i18n-label [disabled]="true">
-      <div class="grid-layout margin-top-regular"></div>
+    <mat-tab
+      label="Configure PII / Anonymization"
+      i18n-label
+      [disabled]="false"
+    >
+      <div class="margin-top-regular overflow-table">
+        <div class="flex-row align-center">
+          <mat-checkbox
+            [checked]="showPIIDetails"
+            (change)="toggleAnonymizationTable($event)"
+            >Has personal information (PII)</mat-checkbox
+          >
+          <app-help-button
+            text="If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the 'anonymization' feature. This allows users to anonymize records of this type instead of just archiving or deleting them."
+            i18n-text
+          ></app-help-button>
+        </div>
+
+        <div *ngIf="showPIIDetails">
+          <p i18n>
+            Configure how records of this type can be anonymized. Users can
+            "anonymize" a record as an alternative to just archiving it (keeping
+            all personal details) or deleting it (losing any trace of the
+            record, even in reports). Select below which fields can be
+            "retained" to keep some limited data for statistical reporting and
+            which fields have to be removed because they contain personal
+            details.
+          </p>
+
+          <mat-table [dataSource]="fieldAnonymizationDataSource">
+            <ng-container matColumnDef="label">
+              <mat-cell *matCellDef="let anonymizeData">
+                {{ anonymizeData.label }}
+              </mat-cell>
+            </ng-container>
+
+            <ng-container matColumnDef="field">
+              <mat-cell *matCellDef="let anonymizeData">
+                <app-anonymize-options
+                  [value]="anonymizeData.field.anonymize"
+                  (valueChange)="
+                    changeFieldAnonymization(anonymizeData.field, $event)
+                  "
+                ></app-anonymize-options>
+              </mat-cell>
+            </ng-container>
+
+            <mat-row
+              *matRowDef="let row; columns: ['label', 'field']"
+            ></mat-row>
+          </mat-table>
+        </div>
+      </div>
     </mat-tab>
   </mat-tab-group>
 </form>

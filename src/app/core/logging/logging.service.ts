@@ -140,7 +140,6 @@ export class LoggingService {
       } else {
         Sentry.captureException(
           new Error(message?.message ?? message?.error ?? message),
-          message,
         );
       }
     } else {

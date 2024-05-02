@@ -204,7 +204,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         title: "",
-        entity: "test",
+        entityType: "test",
         columns: [],
         columnGroups: {
           groups: [
@@ -241,7 +241,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         icon: "child",
-        entity: "test",
+        entityType: "test",
         title: "",
         panels: [
           {
@@ -278,7 +278,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         icon: "child",
-        entity: "test",
+        entityType: "test",
         title: "",
         panels: [
           {
@@ -335,7 +335,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         icon: "child",
-        entity: "test",
+        entityType: "test",
         title: "",
         panels: [
           {
@@ -380,7 +380,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         icon: "child",
-        entity: "test",
+        entityType: "test",
         title: "",
         panels: [
           {

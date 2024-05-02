@@ -14,7 +14,7 @@ export interface EntityListConfig {
    * Select which entities should be displayed in the table
    * (optional) This is only used and necessary if EntityListComponent is used directly in config
    */
-  entity?: string;
+  entityType?: string;
 
   /**
    * Custom overwrites or additional columns to be displayed in the table.

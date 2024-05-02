@@ -1,13 +1,21 @@
-<button
-  *ngIf="(parentUrl || !navigateToParentBehaviour) && !disableBackButton"
-  mat-icon-button
-  (click)="navigateBack()"
-  i18n-matTooltip="Generic back button"
-  matTooltip="Back"
->
-  <fa-icon icon="arrow-left"></fa-icon>
-</button>
+<ng-template #template>
+  <div class="container flex-row">
+    <button
+      *ngIf="(parentUrl || !navigateToParentBehaviour) && !disableBackButton"
+      mat-icon-button
+      (click)="navigateBack()"
+      i18n-matTooltip="Generic back button"
+      matTooltip="Back"
+    >
+      <fa-icon icon="arrow-left"></fa-icon>
+    </button>
 
-<h1 class="remove-margin-bottom">
-  <ng-content></ng-content>
-</h1>
+    <h1 class="remove-margin-bottom flex-grow">
+      <ng-content></ng-content>
+    </h1>
+  </div>
+</ng-template>
+
+@if (!viewContext || displayInPlace) {
+  <ng-container *ngTemplateOutlet="template"></ng-container>
+}
