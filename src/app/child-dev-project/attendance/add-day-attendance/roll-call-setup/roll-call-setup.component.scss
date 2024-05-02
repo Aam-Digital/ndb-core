@@ -12,11 +12,11 @@
   // and re-apply them as padding.
   // This way, the margin stays consistent and scrolling works
   // as intended (there is no overflow left or right)
-  margin-left: - sizes.$margin-main-view-left;
+  margin-left: -(sizes.$margin-main-view-left);
   padding-left: sizes.$margin-main-view-left;
-  margin-right: - sizes.$margin-main-view-right;
+  margin-right: -(sizes.$margin-main-view-right);
   padding-right: sizes.$margin-main-view-right;
-  margin-top: - sizes.$margin-main-view-top;
+  margin-top: -(sizes.$margin-main-view-top);
   padding-top: sizes.$margin-main-view-top;
   background-color: colors.$background;
 }

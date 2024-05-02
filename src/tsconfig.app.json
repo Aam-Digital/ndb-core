@@ -3,6 +3,11 @@
   "compilerOptions": {
     "outDir": "../out-tsc/app"
   },
-  "files": ["main.ts", "polyfills.ts"],
-  "include": ["src/**/*.d.ts"]
+  "files": [
+    "main.ts",
+    "polyfills.ts"
+  ],
+  "include": [
+    "src/**/*.d.ts"
+  ]
 }
