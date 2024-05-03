@@ -17,13 +17,7 @@
 
 import { NgModule } from "@angular/core";
 import { UpdateManagerService } from "./update-manager.service";
-import {
-  MarkdownModule,
-  MARKED_OPTIONS,
-  MarkedOptions,
-  MarkedRenderer,
-} from "ngx-markdown";
-import { MarkedRendererCustom } from "./changelog/MarkedRendererCustom";
+import { MarkdownModule } from "ngx-markdown";
 import { ChangelogComponent } from "./changelog/changelog.component";
 import { MatDialogModule } from "@angular/material/dialog";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
@@ -42,12 +36,7 @@ import { MatButtonModule } from "@angular/material/button";
 @NgModule({
   declarations: [ChangelogComponent],
   imports: [
-    MarkdownModule.forRoot({
-      markedOptions: {
-        provide: MARKED_OPTIONS,
-        useFactory: markedOptionsFactory,
-      },
-    }),
+    MarkdownModule,
     MatDialogModule,
     FontAwesomeModule,
     DatePipe,
@@ -62,19 +51,4 @@ export class LatestChangesModule {
     this.updateManagerService.regularlyCheckForUpdates();
     this.updateManagerService.detectUnrecoverableState();
   }
-}
-
-function markedOptionsFactory(): MarkedOptions {
-  const customRenderer = new MarkedRendererCustom();
-  const renderer = new MarkedRenderer();
-  // Somehow this needs to be assigned manually or the renderer object will not have the functions
-  renderer.heading = customRenderer.heading;
-  renderer.list = customRenderer.list;
-
-  return {
-    renderer: renderer,
-    gfm: true,
-    breaks: false,
-    pedantic: false,
-  };
 }
