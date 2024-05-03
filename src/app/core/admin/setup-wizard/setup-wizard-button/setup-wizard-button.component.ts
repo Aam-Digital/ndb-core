@@ -1,7 +1,7 @@
 import { Component } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";
-import { RouterLink } from "@angular/router";
+import { Router } from "@angular/router";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { Config } from "../../../config/config";
 import {
@@ -16,7 +16,7 @@ import { LoggingService } from "../../../logging/logging.service";
 @Component({
   selector: "app-setup-wizard-button",
   standalone: true,
-  imports: [FaIconComponent, MatButton, RouterLink],
+  imports: [FaIconComponent, MatButton],
   templateUrl: "./setup-wizard-button.component.html",
   styleUrls: ["./setup-wizard-button.component.scss"],
 })
@@ -26,6 +26,7 @@ export class SetupWizardButtonComponent {
   constructor(
     private entityMapper: EntityMapperService,
     private logger: LoggingService,
+    private router: Router,
   ) {
     this.init();
   }
@@ -35,6 +36,9 @@ export class SetupWizardButtonComponent {
       .load(Config, CONFIG_SETUP_WIZARD_ID)
       .then((r: Config<SetupWizardConfig>) => {
         this.updateStatus(r.data);
+        if (!r.data.finished && r.data.openOnStart) {
+          this.navigateToWizard();
+        }
       })
       .catch((e) => this.logger.debug("No Setup Wizard Config found"));
 
@@ -49,5 +53,9 @@ export class SetupWizardButtonComponent {
 
   private updateStatus(config: SetupWizardConfig) {
     this.showSetupWizard = !config.finished;
+  }
+
+  navigateToWizard() {
+    this.router.navigate(["/admin/setup-wizard"]);
   }
 }
