@@ -7,6 +7,7 @@ import { DefaultDatatype } from "../../../core/entity/default-datatype/default.d
 
 /**
  * Holds a full register of EventAttendance entries.
+ * (previously this was "MapDatatype")
  */
 @Injectable()
 export class EventAttendanceMapDatatype extends DefaultDatatype<
