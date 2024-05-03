@@ -338,7 +338,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
   private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
     // if no dataType is defined, these are dynamic, display-only components
     if (
-      // TODO: prevent sort for array data?
+      c.dataArray ||
       c.dataType === EntityDatatype.dataType ||
       !c.dataType
     ) {
