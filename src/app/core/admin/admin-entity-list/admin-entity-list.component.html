@@ -41,7 +41,7 @@
   </div>
 
   <div class="table-content-preview" i18n>
-    Drag & drop filters and add filters using the
+    Add Filter:
     <app-entity-fields-menu
       [entityType]="entityConstructor"
       [activeFields]="filters"
@@ -49,7 +49,6 @@
       [availableFields]="allFields"
       icon="square-plus"
     ></app-entity-fields-menu>
-    button
   </div>
 </div>
 
@@ -86,14 +85,13 @@
       </div>
 
       <div class="table-content-preview" i18n>
-        Drag & drop table column headers and add columns using the
+        Drag & drop table column headers. Add columns:
         <app-entity-fields-menu
           [entityType]="entityConstructor"
           [(activeFields)]="item.columns"
           [availableFields]="allFields"
           icon="square-plus"
         ></app-entity-fields-menu>
-        button
       </div>
     </ng-template>
   </app-admin-tabs>
