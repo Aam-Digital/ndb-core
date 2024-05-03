@@ -26,17 +26,10 @@ import {
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  skip,
-  startWith,
-} from "rxjs/operators";
+import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
-import { concat, of } from "rxjs";
 import {
   MatChipGrid,
   MatChipInput,
@@ -223,15 +216,10 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   showAutocomplete(valueToRevertTo?: string) {
-    if (this.multi) {
-      this.autocompleteForm.setValue("");
-    } else {
+    this.autocompleteForm.setValue("");
+    if (!this.multi) {
       // cannot setValue to "" here because the current selection would be lost
-      this.autocompleteForm.setValue(this.displayText);
-      this.autocompleteSuggestedOptions = concat(
-        of(this._options.filter(({ initial }) => !this.hideOption(initial))),
-        this.autocompleteSuggestedOptions.pipe(skip(1)),
-      );
+      this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
     }
     setTimeout(() => {
       this.inputElement.focus();
