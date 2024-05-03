@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { CommonModule } from "@angular/common";
 import {
   MatStep,
@@ -14,6 +14,7 @@ import { Config } from "../../config/config";
 import {
   CONFIG_SETUP_WIZARD_ID,
   SetupWizardConfig,
+  SetupWizardStep,
 } from "./setup-wizard-config";
 import { MarkdownComponent } from "ngx-markdown";
 import { MatTooltip } from "@angular/material/tooltip";
@@ -38,8 +39,12 @@ import { LoggingService } from "../../logging/logging.service";
   templateUrl: "./setup-wizard.component.html",
   styleUrl: "./setup-wizard.component.scss",
 })
-export class SetupWizardComponent implements OnInit, OnDestroy {
-  config: SetupWizardConfig;
+export class SetupWizardComponent implements OnInit {
+  readonly LOCAL_STORAGE_KEY = "SETUP_WIZARD_STATUS";
+
+  steps: SetupWizardStep[];
+  currentStep: number = 0;
+  completedSteps: number[] = [0];
 
   private configEntity: Config<SetupWizardConfig>;
 
@@ -48,28 +53,52 @@ export class SetupWizardComponent implements OnInit, OnDestroy {
     private logger: LoggingService,
   ) {}
 
-  ngOnInit() {
-    this.entityMapper
-      .load(Config, CONFIG_SETUP_WIZARD_ID)
-      .then((r: Config<SetupWizardConfig>) => {
-        this.configEntity = r;
-        this.config = r.data;
-        this.onNextStep(this.config.currentStep ?? 0);
-      })
-      .catch((e) => this.logger.debug("no setup wizard config loaded", e));
+  async ngOnInit() {
+    await this.loadSetupConfig();
+    this.loadLocalStatus();
   }
 
-  ngOnDestroy(): void {
-    if (!this.configEntity) {
-      return;
+  private async loadSetupConfig() {
+    try {
+      this.configEntity = await this.entityMapper.load<
+        Config<SetupWizardConfig>
+      >(Config, CONFIG_SETUP_WIZARD_ID);
+      this.steps = this.configEntity?.data.steps;
+    } catch (e) {
+      this.logger.debug("no setup wizard config loaded", e);
     }
+  }
 
-    this.configEntity.data = this.config;
-    this.entityMapper.save(this.configEntity);
+  private loadLocalStatus() {
+    const storedStatus = localStorage.getItem(this.LOCAL_STORAGE_KEY);
+    if (storedStatus) {
+      const parsedStatus = JSON.parse(storedStatus);
+
+      // set delayed to ensure steps are loaded first
+      setTimeout(() => {
+        this.currentStep = parsedStatus.currentStep;
+        this.completedSteps = parsedStatus.completedSteps;
+      });
+    }
   }
 
   onNextStep(newStep: number) {
-    this.config.currentStep = newStep;
-    this.config.steps[this.config.currentStep].completed = true;
+    this.currentStep = newStep;
+    if (!this.completedSteps.includes(newStep)) {
+      this.completedSteps.push(newStep);
+    }
+
+    localStorage.setItem(
+      this.LOCAL_STORAGE_KEY,
+      JSON.stringify({
+        currentStep: this.currentStep,
+        completedSteps: this.completedSteps,
+      }),
+    );
+  }
+
+  async finishWizard() {
+    this.configEntity.data.finished = true;
+    await this.entityMapper.save(this.configEntity);
   }
 }

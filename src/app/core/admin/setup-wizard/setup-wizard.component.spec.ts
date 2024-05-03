@@ -35,24 +35,18 @@ describe("SetupWizardComponent", () => {
     fixture.detectChanges();
   });
 
+  afterEach(() => {
+    localStorage.removeItem(component.LOCAL_STORAGE_KEY);
+  });
+
   it("should create", () => {
     expect(component).toBeTruthy();
   });
 
-  it("should not save progress if no config was originally loaded", fakeAsync(() => {
-    const entityMapperSpy = spyOn(TestBed.inject(EntityMapperService), "save");
-
-    component.ngOnDestroy();
-    tick();
-
-    expect(entityMapperSpy).not.toHaveBeenCalled();
-  }));
-
-  it("should load config on init and save progress upon leaving component", fakeAsync(() => {
+  it("should load config on init and save if finished in last step", fakeAsync(() => {
     const testConfig: SetupWizardConfig = JSON.parse(
       JSON.stringify(defaultSetupWizardConfig),
     );
-    testConfig.currentStep = 2;
 
     const entityMapper: MockEntityMapperService = TestBed.inject(
       EntityMapperService,
@@ -62,18 +56,40 @@ describe("SetupWizardComponent", () => {
 
     component.ngOnInit();
     tick();
-    expect(component.config).toEqual(testConfig);
-    expect(component.config.currentStep).toBe(2);
+    expect(component.steps).toEqual(testConfig.steps);
 
-    component.config.currentStep = 3;
-    component.config.finished = true;
-    component.ngOnDestroy();
+    component.finishWizard();
     tick();
 
     expect(entityMapperSaveSpy).toHaveBeenCalled();
     const actualSavedConfig = entityMapperSaveSpy.calls.mostRecent()
       .args[0] as Config<SetupWizardConfig>;
     expect(actualSavedConfig.data.finished).toBe(true);
-    expect(actualSavedConfig.data.currentStep).toBe(3);
+  }));
+
+  it("should load local progress/status on init and save to local storage", fakeAsync(() => {
+    const testStatus: { currentStep: number; completedSteps: number[] } = {
+      currentStep: 2,
+      completedSteps: [0, 2],
+    };
+    localStorage.setItem(
+      component.LOCAL_STORAGE_KEY,
+      JSON.stringify(testStatus),
+    );
+
+    component.ngOnInit();
+    tick();
+    expect(component.currentStep).toEqual(testStatus.currentStep);
+    expect(component.completedSteps).toEqual(testStatus.completedSteps);
+
+    component.onNextStep(3);
+    expect(component.currentStep).toBe(3);
+    expect(component.completedSteps.includes(3)).toBeTrue();
+    tick();
+
+    const storedStatus = JSON.parse(
+      localStorage.getItem(component.LOCAL_STORAGE_KEY),
+    );
+    expect(storedStatus).toEqual({ currentStep: 3, completedSteps: [0, 2, 3] });
   }));
 });
