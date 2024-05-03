@@ -50,7 +50,10 @@ import { ViewTitleComponent } from "../../common-components/view-title/view-titl
     ViewTitleComponent,
   ],
   templateUrl: "./admin-entity-list.component.html",
-  styleUrl: "./admin-entity-list.component.scss",
+  styleUrls: [
+    "./admin-entity-list.component.scss",
+    "../admin-entity/admin-entity-styles.scss",
+  ],
 })
 export class AdminEntityListComponent implements OnChanges {
   @Input() entityConstructor: EntityConstructor;

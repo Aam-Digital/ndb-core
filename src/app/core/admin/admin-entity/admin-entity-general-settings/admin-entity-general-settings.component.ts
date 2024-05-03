@@ -34,7 +34,10 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   selector: "app-admin-entity-general-settings",
   standalone: true,
   templateUrl: "./admin-entity-general-settings.component.html",
-  styleUrl: "./admin-entity-general-settings.component.scss",
+  styleUrls: [
+    "./admin-entity-general-settings.component.scss",
+    "../admin-entity-styles.scss",
+  ],
   imports: [
     MatButtonModule,
     MatInputModule,
