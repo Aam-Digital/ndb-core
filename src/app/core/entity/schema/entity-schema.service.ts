@@ -199,7 +199,7 @@ export class EntitySchemaService {
     }
 
     const dataType = this.getDatatypeOrDefault(schemaField.dataType);
-    if (schemaField.dataArray) {
+    if (schemaField.isArray) {
       return asArray(value).map((v) =>
         dataType.transformToDatabaseFormat(v, schemaField, entity),
       );
@@ -225,7 +225,7 @@ export class EntitySchemaService {
     }
 
     const dataType = this.getDatatypeOrDefault(schemaField.dataType);
-    if (schemaField.dataArray) {
+    if (schemaField.isArray) {
       return asArray(value).map((v) =>
         dataType.transformToObjectFormat(v, schemaField, dataObject),
       );

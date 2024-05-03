@@ -52,7 +52,7 @@ const otherField: FormFieldConfig = {
 class TestEntity extends Entity {
   @DatabaseField({
     dataType: "entity",
-    dataArray: true,
+    isArray: true,
     additional: User.ENTITY_TYPE,
   })
   relatedEntities: string[];

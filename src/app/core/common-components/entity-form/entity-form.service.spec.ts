@@ -259,7 +259,7 @@ describe("EntityFormService", () => {
     expect(form.get("test")).toHaveValue(`${User.ENTITY_TYPE}:${TEST_USER}`);
 
     schema.dataType = EntityDatatype.dataType;
-    schema.dataArray = true;
+    schema.isArray = true;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
@@ -276,7 +276,7 @@ describe("EntityFormService", () => {
 
     // array property
     Entity.schema.get("user").dataType = EntityDatatype.dataType;
-    Entity.schema.get("user").dataArray = true;
+    Entity.schema.get("user").isArray = true;
     form = service.createFormGroup([{ id: "user" }], new Entity());
     expect(form.get("user")).toHaveValue(null);
 

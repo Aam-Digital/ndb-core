@@ -227,13 +227,13 @@ const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
   const config: EntitySchemaField = configPart;
   if (config.dataType === "entity-array") {
     config.dataType = EntityDatatype.dataType;
-    config.dataArray = true;
+    config.isArray = true;
   }
 
   if (config.dataType === "array") {
     config.dataType = config["innerDataType"];
     delete config["innerDataType"];
-    config.dataArray = true;
+    config.isArray = true;
   }
 
   if (config.dataType === "configurable-enum" && config["innerDataType"]) {

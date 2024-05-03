@@ -22,7 +22,7 @@ import { DatabaseField } from "../../../../core/entity/database-field.decorator"
 @DatabaseEntity("ProgressDashboardConfig")
 export class ProgressDashboardConfig extends Entity {
   @DatabaseField() title: string = $localize`Progress Widget`;
-  @DatabaseField({ dataArray: true }) parts: Array<ProgressDashboardPart> = [];
+  @DatabaseField({ isArray: true }) parts: Array<ProgressDashboardPart> = [];
 
   getTotalPercentage() {
     const currentTotal = this.parts.reduce(

@@ -128,7 +128,7 @@ describe("EntitySchemaService", () => {
     class ReferencingEntity extends Entity {
       @DatabaseField({
         dataType: "entity",
-        dataArray: true,
+        isArray: true,
         additional: "Child",
       })
       refChildren: string[];
@@ -147,7 +147,7 @@ describe("EntitySchemaService", () => {
 
       @DatabaseField({
         dataType: "entity",
-        dataArray: true,
+        isArray: true,
         additional: ["Child", "School"],
       })
       multiTypeRef: string[];
@@ -237,7 +237,7 @@ export function testDatatype<D extends DefaultDatatype>(
   describe("Schema transforms arrays", () => {
     const schema: EntitySchemaField = {
       dataType: "configurable-enum",
-      dataArray: true,
+      isArray: true,
       additional: "test",
     };
     let entitySchemaService: EntitySchemaService;

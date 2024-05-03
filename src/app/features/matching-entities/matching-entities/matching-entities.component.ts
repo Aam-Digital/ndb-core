@@ -220,7 +220,7 @@ export class MatchingEntitiesComponent implements OnInit {
       .get(onMatchEntityType)
       .schema.get(onMatchProperty);
 
-    return schemaField.dataArray;
+    return schemaField.isArray;
   }
 
   private getMultiSelectFunction(newSide: MatchingSide) {

@@ -141,7 +141,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   private getFilterForProperty(property: string) {
-    const isArray = this.entityCtr.schema.get(property).dataArray;
+    const isArray = this.entityCtr.schema.get(property).isArray;
     const filter = isArray
       ? { $elemMatch: { $eq: this.entity.getId() } }
       : this.entity.getId();

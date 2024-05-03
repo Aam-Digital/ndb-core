@@ -63,7 +63,7 @@ describe("ImportService", () => {
       @DatabaseField() text: string;
       @DatabaseField({
         dataType: EntityDatatype.dataType,
-        dataArray: true,
+        isArray: true,
         additional: "Child",
       })
       entityRefs: string[];

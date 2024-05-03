@@ -16,7 +16,7 @@ export function DatabaseField(propertySchema: EntitySchemaField = {}) {
       const type = Reflect.getMetadata("design:type", target, propertyName);
       const typeName = type.DATA_TYPE ?? type.name.toLowerCase();
       if (typeName === "array") {
-        propertySchema.dataArray = true;
+        propertySchema.isArray = true;
       } else if (typeName !== "object") {
         propertySchema.dataType = typeName;
       }

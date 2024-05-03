@@ -39,7 +39,7 @@ describe("EditConfigurableEnumComponent", () => {
     initWithSchema({ additional: "some-id" });
     expect(component.multi).toBeFalsy();
 
-    initWithSchema({ dataArray: true, additional: "some-id" });
+    initWithSchema({ isArray: true, additional: "some-id" });
     expect(component.multi).toBeTrue();
   });
 

@@ -353,7 +353,7 @@ describe("ConfigService", () => {
         },
         keep2: {
           dataType: "entity",
-          dataArray: true,
+          isArray: true,
         },
       },
     };
@@ -361,15 +361,15 @@ describe("ConfigService", () => {
       attributes: {
         entityarray_update: {
           dataType: "entity",
-          dataArray: true,
+          isArray: true,
         },
         array_update: {
           dataType: "entity",
-          dataArray: true,
+          isArray: true,
         },
         array_update2: {
           dataType: "configurable-enum",
-          dataArray: true,
+          isArray: true,
           additional: "foo-enum",
         },
         enum_additional_update: {
@@ -381,7 +381,7 @@ describe("ConfigService", () => {
         },
         keep2: {
           dataType: "entity",
-          dataArray: true,
+          isArray: true,
         },
       },
     };

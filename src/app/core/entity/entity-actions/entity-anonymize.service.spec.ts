@@ -65,7 +65,7 @@ describe("EntityAnonymizeService", () => {
     @DatabaseField({
       anonymize: "retain-anonymized",
       dataType: "date-only",
-      dataArray: true,
+      isArray: true,
     })
     retainAnonymizedDates: Date[];
 
@@ -74,7 +74,7 @@ describe("EntityAnonymizeService", () => {
     @DatabaseField({
       anonymize: "retain-anonymized",
       dataType: "entity",
-      dataArray: true,
+      isArray: true,
     })
     referencesToRetainAnonymized: string[];
 

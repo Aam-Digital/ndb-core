@@ -88,7 +88,7 @@ describe("NotesRelatedToEntityComponent", () => {
 
       @DatabaseField({
         dataType: "entity",
-        dataArray: true,
+        isArray: true,
         additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
       })
       links;

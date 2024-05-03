@@ -157,7 +157,7 @@ describe("DownloadService", () => {
     class EntityRefDownloadTestEntity extends Entity {
       @DatabaseField({
         dataType: EntityDatatype.dataType,
-        dataArray: true,
+        isArray: true,
         label: "referenced entities",
       })
       relatedEntitiesArray: string[];
@@ -178,7 +178,7 @@ describe("DownloadService", () => {
     class EntityRefDownloadTestEntity extends Entity {
       @DatabaseField({
         dataType: EntityDatatype.dataType,
-        dataArray: true,
+        isArray: true,
         label: "referenced entities",
       })
       relatedEntitiesArray: string[];

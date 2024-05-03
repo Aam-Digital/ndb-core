@@ -105,7 +105,7 @@ describe("FilterGeneratorService", () => {
     const schemaArray: FormFieldConfig = {
       id: "otherEnum",
       dataType: schema.dataType,
-      dataArray: true,
+      isArray: true,
       additional: schema.additional,
     };
     Note.schema.set("otherEnum", schemaArray);

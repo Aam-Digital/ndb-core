@@ -79,7 +79,7 @@ export class EntityAnonymizeService extends CascadingEntityAction {
     );
 
     let anonymizedValue;
-    if (entity.getSchema().get(key).dataArray) {
+    if (entity.getSchema().get(key).isArray) {
       anonymizedValue = await Promise.all(
         asArray(entity[key]).map((v) =>
           dataType.anonymize(v, entity.getSchema().get(key), entity),

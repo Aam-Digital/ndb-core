@@ -129,7 +129,7 @@ export class DatabaseIndexingService {
             if (!doc._id.startsWith("${entity.ENTITY_TYPE}")) return;
 
             ${
-              entity.schema.get(referenceProperty).dataArray
+              entity.schema.get(referenceProperty).isArray
                 ? arrayEmit
                 : simpleEmit
             }

@@ -163,7 +163,7 @@ export class ImportService {
         if (!!parsed || parsed === 0) {
           // enforcing array values to be correctly assigned
           entity[mapping.propertyName] =
-            entityConstructor.schema.get(mapping.propertyName).dataArray &&
+            entityConstructor.schema.get(mapping.propertyName).isArray &&
             !Array.isArray(parsed)
               ? [parsed]
               : parsed;

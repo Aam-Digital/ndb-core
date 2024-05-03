@@ -30,7 +30,7 @@ export class EditEntityComponent<T extends string[] | string = string[]>
 
     this.entityName = this.entityName ?? this.formFieldConfig.additional;
 
-    this.multi = this.formFieldConfig.dataArray;
+    this.multi = this.formFieldConfig.isArray;
 
     this.placeholder = $localize`:Placeholder for input to add entities|context Add User(s):Add ${this.label}`;
   }

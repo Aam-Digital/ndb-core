@@ -134,7 +134,7 @@ export class ConfigImportParserService {
     }
     if (fieldDef.dataType === "enum-multi") {
       schema.dataType = "configurable-enum";
-      schema.dataArray = true;
+      schema.isArray = true;
       schema.additional = this.generateOrMatchEnum(
         fieldDef.additional_type_details,
         fieldId,

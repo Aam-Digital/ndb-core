@@ -43,7 +43,7 @@ describe("EditEntityComponent", () => {
     testMultiFlag(
       {
         dataType: EntityDatatype.dataType,
-        dataArray: true,
+        isArray: true,
       },
       true,
     );
@@ -51,7 +51,7 @@ describe("EditEntityComponent", () => {
     testMultiFlag(
       {
         dataType: EntityDatatype.dataType,
-        dataArray: true,
+        isArray: true,
       },
       true,
     );

@@ -133,7 +133,7 @@ export class AdminEntityFieldComponent implements OnChanges {
       description: [this.entitySchemaField.description],
 
       dataType: [this.entitySchemaField.dataType, Validators.required],
-      dataArray: [this.entitySchemaField.dataArray],
+      isArray: [this.entitySchemaField.isArray],
       additional: this.additionalForm,
 
       defaultValue: [this.entitySchemaField.defaultValue],

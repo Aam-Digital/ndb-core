@@ -125,7 +125,7 @@ describe("RelatedEntitiesComponent", () => {
       singleChild: string;
       @DatabaseField({
         dataType: EntityDatatype.dataType,
-        dataArray: true,
+        isArray: true,
         additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
       })
       multiEntities: string;
@@ -175,7 +175,7 @@ describe("RelatedEntitiesComponent", () => {
 
     PropTest.schema.set("arrayRelation", {
       dataType: EntityDatatype.dataType,
-      dataArray: true,
+      isArray: true,
       additional: School.ENTITY_TYPE,
     });
     component.entity = new School();
@@ -188,7 +188,7 @@ describe("RelatedEntitiesComponent", () => {
 
     PropTest.schema.set("multiTypeRelation", {
       dataType: EntityDatatype.dataType,
-      dataArray: true,
+      isArray: true,
       additional: [ChildSchoolRelation.ENTITY_TYPE, Child.ENTITY_TYPE],
     });
     component.entity = new ChildSchoolRelation();
