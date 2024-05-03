@@ -114,11 +114,10 @@
             *ngFor="let role of availableRoles"
             [value]="role"
             [matTooltip]="role.description"
-            >{{ role.name }}
-            <em style="font-size: small"
-              >({{ role.description }})</em
-            ></mat-option
           >
+            {{ role.description }}
+            <em style="font-size: x-small">{{ role.name }}</em>
+          </mat-option>
         </mat-select>
       </mat-form-field>
       <p i18n="hint about assigning user roles" class="field-hint">
