@@ -63,9 +63,9 @@ describe("SetupWizardComponent", () => {
     component.ngOnInit();
     tick();
     expect(component.config).toEqual(testConfig);
-    expect(component.currentStep).toBe(2);
+    expect(component.config.currentStep).toBe(2);
 
-    component.currentStep = 3;
+    component.config.currentStep = 3;
     component.config.finished = true;
     component.ngOnDestroy();
     tick();

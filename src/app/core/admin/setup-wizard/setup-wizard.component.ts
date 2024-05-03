@@ -40,7 +40,6 @@ import { LoggingService } from "../../logging/logging.service";
 })
 export class SetupWizardComponent implements OnInit, OnDestroy {
   config: SetupWizardConfig;
-  currentStep: number;
 
   private configEntity: Config<SetupWizardConfig>;
 
@@ -55,7 +54,7 @@ export class SetupWizardComponent implements OnInit, OnDestroy {
       .then((r: Config<SetupWizardConfig>) => {
         this.configEntity = r;
         this.config = r.data;
-        this.currentStep = this.config.currentStep;
+        this.onNextStep(this.config.currentStep ?? 0);
       })
       .catch((e) => this.logger.debug("no setup wizard config loaded", e));
   }
@@ -65,8 +64,12 @@ export class SetupWizardComponent implements OnInit, OnDestroy {
       return;
     }
 
-    this.config.currentStep = this.currentStep;
     this.configEntity.data = this.config;
     this.entityMapper.save(this.configEntity);
+  }
+
+  onNextStep(newStep: number) {
+    this.config.currentStep = newStep;
+    this.config.steps[this.config.currentStep].completed = true;
   }
 }
