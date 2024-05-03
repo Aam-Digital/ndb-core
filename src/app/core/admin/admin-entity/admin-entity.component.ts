@@ -80,7 +80,7 @@ export class AdminEntityComponent implements OnInit {
   ngOnInit(): void {
     this.init();
     this.routes.queryParams.subscribe((params) => {
-      this.mode = params.mode;
+      this.mode = params.mode ?? this.mode;
     });
   }
 
