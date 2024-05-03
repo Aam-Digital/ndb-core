@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatButton } from "@angular/material/button";
 import { Router } from "@angular/router";
@@ -20,18 +20,16 @@ import { LoggingService } from "../../../logging/logging.service";
   templateUrl: "./setup-wizard-button.component.html",
   styleUrls: ["./setup-wizard-button.component.scss"],
 })
-export class SetupWizardButtonComponent {
+export class SetupWizardButtonComponent implements OnInit {
   showSetupWizard: boolean;
 
   constructor(
     private entityMapper: EntityMapperService,
     private logger: LoggingService,
     private router: Router,
-  ) {
-    this.init();
-  }
+  ) {}
 
-  private init() {
+  ngOnInit() {
     this.entityMapper
       .load(Config, CONFIG_SETUP_WIZARD_ID)
       .then((r: Config<SetupWizardConfig>) => {
