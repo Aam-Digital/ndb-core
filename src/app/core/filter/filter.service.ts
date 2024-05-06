@@ -113,9 +113,7 @@ export class FilterService {
   }
 
   private parseConfigurableEnumValue(property: EntitySchemaField, value) {
-    const enumValues = this.enumService.getEnumValues(
-      property.additional ?? property.innerDataType,
-    );
+    const enumValues = this.enumService.getEnumValues(property.additional);
     return enumValues.find(({ id }) => id === value["id"]);
   }
 

@@ -12,6 +12,8 @@ import { DatabaseTestingModule } from "../../utils/database-testing.module";
 import { sortByAttribute } from "../../utils/utils";
 import { expectEntitiesToMatch } from "../../utils/expect-entity-data.spec";
 import { DateWithAge } from "../../core/basic-datatypes/date-with-age/dateWithAge";
+import { AttendanceModule } from "../attendance/attendance.module";
+import { EntitySchemaService } from "../../core/entity/schema/entity-schema.service";
 
 describe("ChildrenService", () => {
   let service: ChildrenService;
@@ -19,7 +21,8 @@ describe("ChildrenService", () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      imports: [DatabaseTestingModule],
+      imports: [DatabaseTestingModule, AttendanceModule],
+      providers: [EntitySchemaService],
     });
 
     entityMapper = TestBed.inject(EntityMapperService);

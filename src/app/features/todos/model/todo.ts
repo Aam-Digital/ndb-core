@@ -69,7 +69,8 @@ export class Todo extends Entity {
 
   @DatabaseField({
     label: $localize`:Label:Assigned to`,
-    dataType: "entity-array",
+    dataType: "entity",
+    isArray: true,
     additional: User.ENTITY_TYPE,
     showInDetailsView: true,
     defaultValue: PLACEHOLDERS.CURRENT_USER,
@@ -83,7 +84,8 @@ export class Todo extends Entity {
    * This property saves ids including their entity type prefix.
    */
   @DatabaseField({
-    dataType: "entity-array",
+    dataType: "entity",
+    isArray: true,
     label: $localize`:label for the related Entities:Related Records`,
     additional: [
       Child.ENTITY_TYPE,

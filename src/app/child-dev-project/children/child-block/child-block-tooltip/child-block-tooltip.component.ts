@@ -5,7 +5,7 @@ import { NgForOf, NgIf } from "@angular/common";
 import { FaDynamicIconComponent } from "../../../../core/common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../../../../features/file/file.service";
-import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 
 /**
  * Tooltip that is shown when hovering over a child block and the tooltip is enabled.
@@ -19,7 +19,7 @@ import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/
     NgIf,
     NgForOf,
     FaDynamicIconComponent,
-    DisplayEntityComponent,
+    EntityBlockComponent,
   ],
   standalone: true,
 })

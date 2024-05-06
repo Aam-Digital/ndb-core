@@ -26,7 +26,7 @@ import { MatInputModule } from "@angular/material/input";
 import { AccountPageComponent } from "../../session/auth/keycloak/account-page/account-page.component";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { AsyncPipe, NgIf } from "@angular/common";
-import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { SessionSubject } from "../../session/auth/session-info";
 
 /**
@@ -44,7 +44,7 @@ import { SessionSubject } from "../../session/auth/session-info";
     MatInputModule,
     AccountPageComponent,
     AsyncPipe,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     NgIf,
   ],
   standalone: true,

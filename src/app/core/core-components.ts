@@ -25,16 +25,16 @@ export const coreComponents: ComponentTuple[] = [
   [
     "EditEntity",
     () =>
-      import(
-        "./basic-datatypes/entity-array/edit-entity/edit-entity.component"
-      ).then((c) => c.EditEntityComponent),
+      import("./basic-datatypes/entity/edit-entity/edit-entity.component").then(
+        (c) => c.EditEntityComponent,
+      ),
   ],
   [
-    "DisplayEntityArray",
+    "DisplayEntity",
     () =>
       import(
-        "./basic-datatypes/entity-array/display-entity-array/display-entity-array.component"
-      ).then((c) => c.DisplayEntityArrayComponent),
+        "./basic-datatypes/entity/display-entity/display-entity.component"
+      ).then((c) => c.DisplayEntityComponent),
   ],
   [
     "EditTextWithAutocomplete",
@@ -196,13 +196,6 @@ export const coreComponents: ComponentTuple[] = [
       import("./entity-details/entity-details/entity-details.component").then(
         (c) => c.EntityDetailsComponent,
       ),
-  ],
-  [
-    "DisplayEntity",
-    () =>
-      import(
-        "./basic-datatypes/entity/display-entity/display-entity.component"
-      ).then((c) => c.DisplayEntityComponent),
   ],
   [
     "RelatedEntities",

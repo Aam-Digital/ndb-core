@@ -14,11 +14,10 @@
         Link all imported records to {{ action.type | entityTypeLabel }}
       </div>
       <div matListItemLine>
-        <app-display-entity
-          [entityType]="action.type"
+        <app-entity-block
           [entityId]="action.id"
           [linkDisabled]="true"
-        ></app-display-entity>
+        ></app-entity-block>
       </div>
     </mat-list-item>
   </mat-list>
@@ -60,10 +59,10 @@
         [valueMapper]="entityToId"
       >
         <ng-template let-item>
-          <app-display-entity
+          <app-entity-block
             [entityToDisplay]="item"
             [linkDisabled]="true"
-          ></app-display-entity>
+          ></app-entity-block>
         </ng-template>
       </app-basic-autocomplete>
     </mat-form-field>

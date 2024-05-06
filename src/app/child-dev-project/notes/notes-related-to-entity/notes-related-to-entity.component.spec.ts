@@ -87,7 +87,8 @@ describe("NotesRelatedToEntityComponent", () => {
       static ENTITY_TYPE = "EntityWithRelations";
 
       @DatabaseField({
-        dataType: "entity-array",
+        dataType: "entity",
+        isArray: true,
         additional: [Child.ENTITY_TYPE, School.ENTITY_TYPE],
       })
       links;
