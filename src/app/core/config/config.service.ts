@@ -220,6 +220,10 @@ const migrateEntityDetailsInputEntityType: ConfigMigration = (
  * @param configPart
  */
 const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
+  if (configPart === "DisplayEntityArray") {
+    return "DisplayEntity";
+  }
+
   if (!configPart?.hasOwnProperty("dataType")) {
     return configPart;
   }
