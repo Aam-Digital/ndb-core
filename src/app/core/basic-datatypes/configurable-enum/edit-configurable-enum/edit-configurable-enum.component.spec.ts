@@ -19,7 +19,7 @@ describe("EditConfigurableEnumComponent", () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(EditConfigurableEnumComponent);
     component = fixture.componentInstance;
-    initWithSchema({ innerDataType: "some-id" });
+    initWithSchema({ additional: "some-id" });
     fixture.detectChanges();
   });
 
@@ -28,7 +28,7 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should extract the enum ID", () => {
-    initWithSchema({ innerDataType: "some-id" });
+    initWithSchema({ additional: "some-id" });
     expect(component.enumId).toBe("some-id");
 
     initWithSchema({ dataType: "array", additional: "other-id" });
@@ -36,10 +36,10 @@ describe("EditConfigurableEnumComponent", () => {
   });
 
   it("should detect multi selection mode", () => {
-    initWithSchema({ innerDataType: "some-id" });
-    expect(component.multi).toBeFalse();
+    initWithSchema({ additional: "some-id" });
+    expect(component.multi).toBeFalsy();
 
-    initWithSchema({ dataType: "array", additional: "some-id" });
+    initWithSchema({ isArray: true, additional: "some-id" });
     expect(component.multi).toBeTrue();
   });
 

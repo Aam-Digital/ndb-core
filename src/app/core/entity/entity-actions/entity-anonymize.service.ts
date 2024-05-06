@@ -9,6 +9,7 @@ import { firstValueFrom } from "rxjs";
 import { FileDatatype } from "../../../features/file/file.datatype";
 import { FileService } from "../../../features/file/file.service";
 import { Entity } from "../model/entity";
+import { asArray } from "../../../utils/utils";
 
 /**
  * Anonymize an entity including handling references with related entities.
@@ -77,11 +78,21 @@ export class EntityAnonymizeService extends CascadingEntityAction {
       entity.getSchema().get(key).dataType,
     );
 
-    entity[key] = await dataType.anonymize(
-      entity[key],
-      entity.getSchema().get(key),
-      entity,
-    );
+    let anonymizedValue;
+    if (entity.getSchema().get(key).isArray) {
+      anonymizedValue = await Promise.all(
+        asArray(entity[key]).map((v) =>
+          dataType.anonymize(v, entity.getSchema().get(key), entity),
+        ),
+      );
+    } else {
+      anonymizedValue = await dataType.anonymize(
+        entity[key],
+        entity.getSchema().get(key),
+        entity,
+      );
+    }
+    entity[key] = anonymizedValue;
   }
 
   private async removeProperty(entity: Entity, key: string) {

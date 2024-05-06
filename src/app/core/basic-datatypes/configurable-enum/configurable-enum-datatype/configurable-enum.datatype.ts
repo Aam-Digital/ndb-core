@@ -40,7 +40,7 @@ export class ConfigurableEnumDatatype extends DiscreteDatatype<
       return undefined;
     }
 
-    let enumId = schemaField.additional || schemaField.innerDataType;
+    let enumId = schemaField.additional;
     let enumOption = this.enumService
       .getEnumValues(enumId)
       ?.find((option) => option.id === value);

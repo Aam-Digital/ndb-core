@@ -64,14 +64,18 @@ describe("EntityAnonymizeService", () => {
 
     @DatabaseField({
       anonymize: "retain-anonymized",
-      dataType: "array",
-      innerDataType: "date-only",
+      dataType: "date-only",
+      isArray: true,
     })
     retainAnonymizedDates: Date[];
 
     @DatabaseField({ dataType: "file" }) file: string;
 
-    @DatabaseField({ anonymize: "retain-anonymized", dataType: "entity-array" })
+    @DatabaseField({
+      anonymize: "retain-anonymized",
+      dataType: "entity",
+      isArray: true,
+    })
     referencesToRetainAnonymized: string[];
 
     static create(properties: Partial<AnonymizableEntity>) {

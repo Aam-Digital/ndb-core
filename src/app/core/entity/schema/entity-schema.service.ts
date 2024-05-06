@@ -74,24 +74,6 @@ export class EntitySchemaService {
   }
 
   /**
-   * Get the datatype of the innermost type of a field, e.g. the type contained in an array.
-   * @param schemaField
-   */
-  public getInnermostDatatype(schemaField: EntitySchemaField) {
-    let datatype;
-    // do not use the Datatype classes here to avoid circular dependencies with EntitySchemaService
-    if (schemaField.dataType === "array") {
-      datatype = schemaField.innerDataType;
-    } else if (schemaField.dataType === "entity-array") {
-      datatype = "entity";
-    } else {
-      datatype = schemaField.dataType;
-    }
-
-    return this.getDatatypeOrDefault(datatype);
-  }
-
-  /**
    * Transform a database object to entity format according to the schema.
    * @param data The database object that will be transformed to the given entity format
    * @param schema A schema defining the transformation
@@ -198,13 +180,6 @@ export class EntitySchemaService {
     if (dataType?.[componentAttribute]) {
       return dataType[componentAttribute];
     }
-
-    const innerDataType = this.getDatatypeOrDefault(
-      propertySchema.innerDataType,
-    );
-    if (innerDataType?.[componentAttribute]) {
-      return innerDataType[componentAttribute];
-    }
   }
 
   /**
@@ -223,9 +198,14 @@ export class EntitySchemaService {
       return null;
     }
 
-    return this.getDatatypeOrDefault(
-      schemaField.dataType,
-    ).transformToDatabaseFormat(value, schemaField, entity);
+    const dataType = this.getDatatypeOrDefault(schemaField.dataType);
+    if (schemaField.isArray) {
+      return asArray(value).map((v) =>
+        dataType.transformToDatabaseFormat(v, schemaField, entity),
+      );
+    } else {
+      return dataType.transformToDatabaseFormat(value, schemaField, entity);
+    }
   }
 
   /**
@@ -244,9 +224,14 @@ export class EntitySchemaService {
       return null;
     }
 
-    return this.getDatatypeOrDefault(
-      schemaField.dataType,
-    ).transformToObjectFormat(value, schemaField, dataObject);
+    const dataType = this.getDatatypeOrDefault(schemaField.dataType);
+    if (schemaField.isArray) {
+      return asArray(value).map((v) =>
+        dataType.transformToObjectFormat(v, schemaField, dataObject),
+      );
+    } else {
+      return dataType.transformToObjectFormat(value, schemaField, dataObject);
+    }
   }
 
   /**

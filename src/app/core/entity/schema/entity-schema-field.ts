@@ -34,12 +34,9 @@ export interface EntitySchemaField {
   dataType?: string;
 
   /**
-   * In case of a map or array field (e.g. dataType==='array') define the datatype of the values contained in the array.
-   *
-   * see {@link /miscellaneous/variables.html#arrayEntitySchemaDatatype},
-   * {@link /miscellaneous/variables.html#mapEntitySchemaDatatype}
+   * If the dataType can hold multiple values, as an array of the given dataType.
    */
-  innerDataType?: string;
+  isArray?: boolean;
 
   /**
    * Set to true to make the framework automatically create an index to retrieve/filter Entities quickly based on this field

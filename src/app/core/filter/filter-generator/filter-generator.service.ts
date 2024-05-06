@@ -53,16 +53,11 @@ export class FilterGeneratorService {
       const schema = entityConstructor.schema.get(filterConfig.id) || {};
       let filter: Filter<T>;
       const type = filterConfig.type ?? schema.dataType;
-      if (
-        type == "configurable-enum" ||
-        schema.innerDataType === "configurable-enum"
-      ) {
+      if (type == "configurable-enum") {
         filter = new ConfigurableEnumFilter(
           filterConfig.id,
           filterConfig.label || schema.label,
-          this.enumService.getEnumValues(
-            schema.additional ?? schema.innerDataType,
-          ),
+          this.enumService.getEnumValues(schema.additional),
         );
       } else if (type == "boolean") {
         filter = new BooleanFilter(

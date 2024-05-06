@@ -327,4 +327,75 @@ describe("ConfigService", () => {
       service.getConfig<NavigationMenuConfig>("navigationMenu");
     expect(actualFromNew).toEqual(newFormat);
   }));
+
+  it("should migrate entity-array dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      attributes: {
+        entityarray_update: {
+          dataType: "entity-array",
+        },
+        array_update: {
+          dataType: "array",
+          innerDataType: "entity",
+        },
+        array_update2: {
+          dataType: "array",
+          innerDataType: "configurable-enum",
+          additional: "foo-enum",
+        },
+        enum_additional_update: {
+          dataType: "configurable-enum",
+          innerDataType: "foo-enum",
+        },
+        keep1: {
+          dataType: "entity",
+        },
+        keep2: {
+          dataType: "entity",
+          isArray: true,
+        },
+      },
+    };
+    const newFormat: EntityConfig = {
+      attributes: {
+        entityarray_update: {
+          dataType: "entity",
+          isArray: true,
+        },
+        array_update: {
+          dataType: "entity",
+          isArray: true,
+        },
+        array_update2: {
+          dataType: "configurable-enum",
+          isArray: true,
+          additional: "foo-enum",
+        },
+        enum_additional_update: {
+          dataType: "configurable-enum",
+          additional: "foo-enum",
+        },
+        keep1: {
+          dataType: "entity",
+        },
+        keep2: {
+          dataType: "entity",
+          isArray: true,
+        },
+      },
+    };
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
 });

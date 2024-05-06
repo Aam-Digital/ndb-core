@@ -472,15 +472,15 @@ In the List View columns config, use the "DisplayConfigurableEnum" component for
 #### Allowing multi select
 
 A property can also be defined in a way that multiple values can be selected.
-To allow multiple selection, the `dataType` needs to be `array`, the `innerDataType` `configurable-enum` and the name of the configurable enum has to be in the `additional` field.
+To allow multiple selection, additionally `isArray` should be `true`.
 The following example creates a property `materials` where multiple values from the `materials` configurable enum can be selected.
 
 ```json
 {
   "name": "materials",
   "schema": {
-    "dataType": "array",
-    "innerDataType": "configurable-enum",
+    "dataType": "configurable-enum",
+    "isArray": true,
     "additional": "materials",
     "label": "Materials"
   }

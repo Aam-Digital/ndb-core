@@ -10,7 +10,7 @@ import { MatFormFieldModule } from "@angular/material/form-field";
 import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
-import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { ErrorHintComponent } from "../error-hint/error-hint.component";
@@ -47,7 +47,7 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
     MatInputModule,
     MatAutocompleteModule,
     AsyncPipe,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     NgForOf,
     NgIf,
     FontAwesomeModule,
