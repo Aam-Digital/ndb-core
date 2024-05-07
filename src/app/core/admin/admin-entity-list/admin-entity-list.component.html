@@ -4,15 +4,22 @@
 
 <div>
   <div
-    cdkDropList
-    cdkDropListOrientation="horizontal"
-    (cdkDropListDropped)="drop($event, config?.filters)"
+    cdkDropListGroup
     class="drop-list flex-row gap-regular flex-wrap gap-large"
   >
-    @for (filter of config?.filters; track filter) {
+    <div
+      cdkDropList
+      (cdkDropListEntered)="onDropListEntered($event)"
+      (cdkDropListDropped)="onDropListDropped()"
+    ></div>
+    <div
+      cdkDropList
+      (cdkDropListEntered)="onDropListEntered($event)"
+      (cdkDropListDropped)="onDropListDropped()"
+      *ngFor="let filter of config?.filters"
+    >
       <div cdkDrag class="filter-field drop-item flex-row gap-small">
         <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-
         <mat-form-field appearance="fill">
           <mat-label
             ><app-entity-field-label
@@ -29,7 +36,7 @@
           (click)="removeItem(filters, filter.id); updateFilters(filters)"
         ></fa-icon>
       </div>
-    }
+    </div>
   </div>
 
   <div class="table-content-preview" i18n>
