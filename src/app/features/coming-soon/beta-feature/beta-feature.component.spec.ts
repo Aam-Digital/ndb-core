@@ -1,23 +1,22 @@
-import { ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from "@angular/core/testing";
 
-import { BetaFeatureComponent } from './beta-feature.component';
+import { BetaFeatureComponent } from "./beta-feature.component";
 
-describe('BetaFeatureComponent', () => {
+describe("BetaFeatureComponent", () => {
   let component: BetaFeatureComponent;
   let fixture: ComponentFixture<BetaFeatureComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BetaFeatureComponent]
-    })
-    .compileComponents();
-    
+      imports: [BetaFeatureComponent],
+    }).compileComponents();
+
     fixture = TestBed.createComponent(BetaFeatureComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  it("should create", () => {
     expect(component).toBeTruthy();
   });
 });
