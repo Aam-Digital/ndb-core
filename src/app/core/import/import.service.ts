@@ -9,7 +9,6 @@ import { ColumnMapping } from "./column-mapping";
 import { EntityRegistry } from "../entity/database-entity.decorator";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { ChildSchoolRelation } from "../../child-dev-project/children/model/childSchoolRelation";
-import { isArrayProperty } from "../basic-datatypes/datatype-utils";
 
 /**
  * Supporting import of data from spreadsheets.
@@ -164,7 +163,7 @@ export class ImportService {
         if (!!parsed || parsed === 0) {
           // enforcing array values to be correctly assigned
           entity[mapping.propertyName] =
-            isArrayProperty(entityConstructor, mapping.propertyName) &&
+            entityConstructor.schema.get(mapping.propertyName)?.isArray &&
             !Array.isArray(parsed)
               ? [parsed]
               : parsed;
@@ -190,7 +189,7 @@ export class ImportService {
     }
 
     return this.schemaService
-      .getInnermostDatatype(schema)
+      .getDatatypeOrDefault(schema.dataType)
       .importMapFunction(val, schema, mapping.additional);
   }
 }

@@ -17,7 +17,7 @@ const user2 = new User("2");
 user2.name = "other entity";
 
 export default {
-  title: "Core/Entities/Properties/entity-array/Entity Reference Array",
+  title: "Core/Entities/Properties/entity/EditEntity",
   component: FormComponent,
   decorators: [
     applicationConfig({
@@ -51,7 +51,8 @@ const otherField: FormFieldConfig = {
 @DatabaseEntity("TestEntityReferenceArrayEntity")
 class TestEntity extends Entity {
   @DatabaseField({
-    dataType: "entity-array",
+    dataType: "entity",
+    isArray: true,
     additional: User.ENTITY_TYPE,
   })
   relatedEntities: string[];

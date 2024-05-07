@@ -13,11 +13,11 @@
     {{ entity?.phone }}</a
   >
   <p *ngIf="entity?.schoolId || entity?.schoolClass">
-    <app-display-entity
+    <app-entity-block
       *ngFor="let id of entity.schoolId"
       [entityId]="id"
       [linkDisabled]="true"
-    ></app-display-entity>
+    ></app-entity-block>
     ,
     <ng-container
       i18n="The class a child is attending|e.g. 'class 8'"

@@ -44,14 +44,9 @@ describe("Schema data type: configurable-enum", () => {
   class TestEntity extends Entity {
     @DatabaseField({
       dataType: "configurable-enum",
-      innerDataType: "test-enum",
-    })
-    option: ConfigurableEnumValue;
-    @DatabaseField({
-      dataType: "configurable-enum",
       additional: "test-enum",
     })
-    optionInAdditional: ConfigurableEnumValue;
+    option: ConfigurableEnumValue;
   }
 
   let entitySchemaService: EntitySchemaService;
@@ -106,19 +101,6 @@ describe("Schema data type: configurable-enum", () => {
     const rawData = entitySchemaService.transformEntityToDatabaseFormat(entity);
 
     expect(rawData.option).toEqual(testOptionKey);
-  });
-
-  it("should also support the name of the enum in the 'additional' field", () => {
-    const data = {
-      _id: TestEntity.ENTITY_TYPE + ":Test",
-      optionInAdditional: "TEST_3",
-    };
-    const entity = new TestEntity();
-
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
-    expect(entity.getId()).toEqual(data._id);
   });
 
   it("should gracefully handle invalid enum ids and show a dummy option to users", () => {

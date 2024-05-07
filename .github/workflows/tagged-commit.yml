@@ -2,7 +2,7 @@ name: New Tag
 on:
   push:
     tags:
-      - '*'
+      - "*"
 
 jobs:
   publish-image:

@@ -1,6 +1,7 @@
 # Sequence Diagrams for Session Handling
 
 ## Usual Flows
+
 Local database is present, we are online, remote password was not changed.
 
 ### Correct Password
@@ -11,9 +12,8 @@ Local database is present, we are online, remote password was not changed.
 
 ![](normal__wrong_pwd.svg)
 
-
-
 ## Offline Flows
+
 Local Database is present, but we are offline
 
 ### Correct Password
@@ -26,39 +26,40 @@ Local Database is present, but we are offline
 
 We must retry with wait here, as we might be in a situation where the remote password changed and we should actually be able to log in. See these flows for details.
 
-
-
 ## Password Changed
+
 Local Database is present, but we changed the password and password state is inconsistent between local and remote.
 
 ### Use old password
+
 Works locally but not on the remote.
 
 ![](pwd_changed__old_pwd.svg)
 
 ### Use new password
+
 Works on the remote but not locally.
 
 ![](pwd_changed__new_pwd.svg)
 
-
-
 ## Sync Failed Flows
+
 So the remote session connected (yay!), but for some reason other than being offline the sync fails. I don't know how, but this might happen.
 
 ### Local Login succeeded
+
 Easiest case. Just start the liveSync and hope everything works out eventually. There should be some sync-indicator listening to the sync state to make the user aware that something is going wrong in the background.
 
 ![](sync_failed__local_login_success.svg)
 
 ### Local Login failed
+
 This is most probably a changed password case. However, as the sync failed, we cannot log the user in locally, so we have to keep the login failed. We also don't start a liveSync here, as it confuses the hell out of the UI to be not logged in but have a running (and intermittently failing) liveSync here. We might want to revisit this behavior, though.
 
 ![](sync_failed__local_login_failure.svg)
 
-
-
 ## Initial Sync Flows
+
 The local database is initial. We must wait for a first sync before we can log anyone in.
 
 ### Online with correct password
@@ -70,23 +71,23 @@ The local database is initial. We must wait for a first sync before we can log a
 ![](initial__online_wrong_pwd.svg)
 
 ### Offline
+
 We can't have the local login pending for too long. We also don't want the login explicitly failed (resulting in wrong password messages), so we just switch back to logged off.
 
 ![](initial__offline.svg)
 
 ### Some other terrible sync failure
+
 We don't know what to do in this case. We can't have the local login pending forever. We also don't want the login explicitly failed (resulting in wrong password messages), so we just switch back to logged off.
 
 ![](initial__sync_failed.svg)
-
-
-
 
 # Mermaid Source
 
 All diagrams are done with Mermaid - markdown preview integration is available for vscode.
 
 ## Usual Flows
+
 Local database is present, remote password was not changed.
 
 ### Correct Password
@@ -157,6 +158,7 @@ sequenceDiagram
 ```
 
 ## Offline Flows
+
 Local Database is present, but we are offline
 
 ### Correct Password
@@ -230,9 +232,11 @@ sequenceDiagram
 We must retry with wait here, as we might be in a situation where the remote password changed and we should actually be able to log in. See these flows for details.
 
 ## Password Changed
+
 Local Database is present, but we changed the password and password state is inconsistent between local and remote.
 
 ### Use old password
+
 Works locally but not on the remote.
 
 ```mermaid
@@ -269,6 +273,7 @@ sequenceDiagram
 ```
 
 ### Use new password
+
 Works on the remote but not locally.
 
 ```mermaid
@@ -309,9 +314,11 @@ sequenceDiagram
 ```
 
 ## Sync Failed Flows
+
 So the remote session connected (yay!), but for some reason other than being offline the sync fails. I don't know how, but this might happen.
 
 ### Local Login succeeded
+
 Easiest case. Just start the liveSync and hope everything works out eventually. There should be some sync-indicator listening to the sync state to make the user aware that something is going wrong in the background.
 
 ```mermaid
@@ -349,6 +356,7 @@ sequenceDiagram
 ```
 
 ### Local Login failed
+
 This is most probably a changed password case. However, as the sync failed, we cannot log the user in locally, so we have to keep the login failed. We also don't start a liveSync here, as it confuses the hell out of the UI to be not logged in but have a running (and intermittently failing) liveSync here. We might want to revisit this behavior, though.
 
 ```mermaid
@@ -385,6 +393,7 @@ sequenceDiagram
 ```
 
 ## Initial Sync Flows
+
 The local database is initial. We must wait for a first sync before we can log anyone in.
 
 ### Online with correct password
@@ -463,6 +472,7 @@ sequenceDiagram
 ```
 
 ### Offline
+
 We can't have the local login pending for too long. We also don't want the login explicitly failed (resulting in wrong password messages), so we just switch back to logged off.
 
 ```mermaid
@@ -501,6 +511,7 @@ sequenceDiagram
 ```
 
 ### Some other terrible sync failure
+
 We don't know what to do in this case. We can't have the local login pending forever. We also don't want the login explicitly failed (resulting in wrong password messages), so we just switch back to logged off.
 
 ```mermaid
