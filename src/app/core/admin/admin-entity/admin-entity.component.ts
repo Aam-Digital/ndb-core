@@ -32,6 +32,7 @@ import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
 import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
+import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature/beta-feature.component";
 
 @Component({
   selector: "app-admin-entity",
@@ -52,6 +53,7 @@ import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-sett
     MatListItem,
     AdminEntityDetailsComponent,
     AdminEntityGeneralSettingsComponent,
+    BetaFeatureComponent,
   ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
@@ -80,7 +82,7 @@ export class AdminEntityComponent implements OnInit {
   ngOnInit(): void {
     this.init();
     this.routes.queryParams.subscribe((params) => {
-      this.mode = params.mode;
+      this.mode = params.mode ?? this.mode;
     });
   }
 

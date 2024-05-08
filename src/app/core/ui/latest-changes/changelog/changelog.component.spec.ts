@@ -28,6 +28,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { ComponentRegistry } from "../../../../dynamic-components";
 import { LatestChangesModule } from "../latest-changes.module";
 import { UpdateManagerService } from "../update-manager.service";
+import { MarkdownModule } from "ngx-markdown";
 
 describe("ChangelogComponent", () => {
   let component: ChangelogComponent;
@@ -52,6 +53,7 @@ describe("ChangelogComponent", () => {
         LatestChangesModule,
         NoopAnimationsModule,
         FontAwesomeTestingModule,
+        MarkdownModule.forRoot(),
       ],
       providers: [
         {

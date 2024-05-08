@@ -1,4 +1,7 @@
-<mat-stepper [(selectedIndex)]="currentStep">
+<mat-stepper
+  [selectedIndex]="currentStep"
+  (selectedIndexChange)="onNextStep($event)"
+>
   <!-- overwrite icons to keep simple numbered steps -->
   <ng-template matStepperIcon="edit" let-index="index">
     {{ index + 1 }}
@@ -7,8 +10,11 @@
     {{ index + 1 }}
   </ng-template>
 
-  @for (step of config?.steps; track step; let last = $last) {
-    <mat-step [label]="step.title" [completed]="step.completed">
+  @for (step of steps; track step; let index = $index; let last = $last) {
+    <mat-step
+      [label]="step.title"
+      [completed]="completedSteps?.includes(index)"
+    >
       <markdown>{{ step.text }}</markdown>
 
       <mat-action-list>
@@ -20,19 +26,15 @@
       </mat-action-list>
 
       @if (!last) {
-        <button
-          mat-stroked-button
-          matStepperNext
-          (click)="step.completed = true"
-          i18n
-        >
+        <button mat-raised-button matStepperNext color="accent" i18n>
           Continue
         </button>
       } @else {
         <button
-          mat-stroked-button
+          mat-button
           routerLink=""
-          (click)="step.completed = true; config.finished = true"
+          (click)="finishWizard()"
+          color="accent"
           matTooltip="We will hide the setup wizard from the main menu as you finish it here. You can still access it from the admin screen."
           i18n-matTooltip
           i18n
