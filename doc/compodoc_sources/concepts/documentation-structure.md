@@ -1,4 +1,5 @@
 # Documentation Structure
+
 Our documentation is structured into four different approaches,
 following the concept laid out at **www.divio.com/blog/documentation**:
 

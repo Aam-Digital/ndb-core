@@ -14,7 +14,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatInputModule } from "@angular/material/input";
 import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { AsyncPipe, NgForOf, NgSwitch, NgSwitchCase } from "@angular/common";
-import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { SearchService } from "./search.service";
 
@@ -39,7 +39,7 @@ import { SearchService } from "./search.service";
     NgSwitch,
     NgSwitchCase,
     NgForOf,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     AsyncPipe,
   ],
   standalone: true,

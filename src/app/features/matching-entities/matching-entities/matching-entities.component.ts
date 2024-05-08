@@ -34,7 +34,6 @@ import { FilterService } from "../../../core/filter/filter.service";
 import { LocationProperties } from "../../location/map/map-properties-popup/map-properties-popup.component";
 import { getLocationProperties } from "../../location/map-utils";
 import { FlattenArrayPipe } from "../../../utils/flatten-array/flatten-array.pipe";
-import { isArrayDataType } from "../../../core/basic-datatypes/datatype-utils";
 import {
   ColumnConfig,
   FormFieldConfig,
@@ -221,7 +220,7 @@ export class MatchingEntitiesComponent implements OnInit {
       .get(onMatchEntityType)
       .schema.get(onMatchProperty);
 
-    return isArrayDataType(schemaField.dataType);
+    return schemaField.isArray;
   }
 
   private getMultiSelectFunction(newSide: MatchingSide) {

@@ -21,12 +21,11 @@ import { EntitySchemaService } from "./entity-schema.service";
 import { DatabaseField } from "../database-field.decorator";
 import { Injector } from "@angular/core";
 import { DefaultDatatype } from "../default-datatype/default.datatype";
-import { DateOnlyDatatype } from "../../basic-datatypes/date-only/date-only.datatype";
 import { EntitySchemaField } from "./entity-schema-field";
-import { ConfigurableEnumDatatype } from "../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 import { DatabaseEntity, EntityRegistry } from "../database-entity.decorator";
+import { ConfigurableEnumService } from "../../basic-datatypes/configurable-enum/configurable-enum.service";
+import { defaultInteractionTypes } from "../../config/default-config/default-interaction-types";
 
 describe("EntitySchemaService", () => {
   let service: EntitySchemaService;
@@ -113,21 +112,6 @@ describe("EntitySchemaService", () => {
     expect(displayComponent).toEqual("DisplayDate");
   });
 
-  it("should return the display and edit component for the innerDataType if dataType is array", () => {
-    class TestEntity extends Entity {
-      @DatabaseField({ innerDataType: DateOnlyDatatype.dataType })
-      dates: Date[];
-    }
-
-    const propertySchema = TestEntity.schema.get("dates");
-
-    const displayComponent = service.getComponent(propertySchema, "view");
-    expect(displayComponent).toBe(new DateOnlyDatatype().viewComponent);
-
-    const editComponent = service.getComponent(propertySchema, "edit");
-    expect(editComponent).toBe(new DateOnlyDatatype().editComponent);
-  });
-
   it("should return the default datatype no type is specified", () => {
     const dataType = service.getDatatypeOrDefault(undefined);
     expect(dataType).toBeInstanceOf(DefaultDatatype);
@@ -139,28 +123,12 @@ describe("EntitySchemaService", () => {
     ).toThrowError();
   });
 
-  it("should return correct inner data type", () => {
-    const enumArraySchema: EntitySchemaField = {
-      dataType: "array",
-      innerDataType: "configurable-enum",
-    };
-    expect(service.getInnermostDatatype(enumArraySchema)).toBeInstanceOf(
-      ConfigurableEnumDatatype,
-    );
-
-    const entityArraySchema: EntitySchemaField = {
-      dataType: "entity-array",
-    };
-    expect(service.getInnermostDatatype(entityArraySchema)).toBeInstanceOf(
-      EntityDatatype,
-    );
-  });
-
   it("should getEntityTypesReferencingType with all entity types having schema fields referencing the given type", () => {
     @DatabaseEntity("ReferencingEntity")
     class ReferencingEntity extends Entity {
       @DatabaseField({
-        dataType: "entity-array",
+        dataType: "entity",
+        isArray: true,
         additional: "Child",
       })
       refChildren: string[];
@@ -178,7 +146,8 @@ describe("EntitySchemaService", () => {
       refSchool: string;
 
       @DatabaseField({
-        dataType: "entity-array",
+        dataType: "entity",
+        isArray: true,
         additional: ["Child", "School"],
       })
       multiTypeRef: string[];
@@ -262,6 +231,65 @@ export function testDatatype<D extends DefaultDatatype>(
       entitySchemaService.loadDataIntoEntity(loadedEntity, data);
 
       expect(loadedEntity.field).toEqual(objectValue);
+    });
+  });
+
+  describe("Schema transforms arrays", () => {
+    const schema: EntitySchemaField = {
+      dataType: "configurable-enum",
+      isArray: true,
+      additional: "test",
+    };
+    let entitySchemaService: EntitySchemaService;
+
+    beforeEach(waitForAsync(() => {
+      TestBed.configureTestingModule({
+        imports: [MockedTestingModule.withState()],
+      });
+      spyOn(
+        TestBed.inject(ConfigurableEnumService),
+        "getEnumValues",
+      ).and.returnValue(defaultInteractionTypes);
+      entitySchemaService = TestBed.inject(EntitySchemaService);
+    }));
+
+    it("should transform enums inside arrays", () => {
+      const value = defaultInteractionTypes.map(({ id }) => id);
+
+      const obj = entitySchemaService.valueToEntityFormat(value, schema, null);
+
+      expect(obj).toEqual(defaultInteractionTypes);
+
+      const db = entitySchemaService.valueToDatabaseFormat(obj, schema, null);
+
+      expect(db).toEqual(value);
+    });
+
+    it("should automatically wrap value into array (and transform to inner type) if not an array yet", () => {
+      const value = defaultInteractionTypes[1].id;
+
+      const obj = entitySchemaService.valueToEntityFormat(
+        value as any,
+        schema,
+        null,
+      );
+
+      expect(obj).toEqual([defaultInteractionTypes[1]]);
+    });
+
+    xit("should transform empty values as an empty array", () => {
+      // TODO: if removing this behavior (previously part of array.datatype) does not break anything, it seems cleaner not to do special handling for this
+      // --> remove test after e2e testing
+
+      let obj = entitySchemaService.valueToEntityFormat(
+        undefined,
+        schema,
+        null,
+      );
+      expect(obj).toEqual([]);
+
+      obj = entitySchemaService.valueToEntityFormat("" as any, schema, null);
+      expect(obj).toEqual([]);
     });
   });
 }

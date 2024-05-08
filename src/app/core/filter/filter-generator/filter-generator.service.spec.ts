@@ -20,6 +20,7 @@ import { DateFilter } from "../filters/dateFilter";
 import { BooleanFilter } from "../filters/booleanFilter";
 import { ConfigurableEnumFilter } from "../filters/configurableEnumFilter";
 import { EntityFilter } from "../filters/entityFilter";
+import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 
 describe("FilterGeneratorService", () => {
   let service: FilterGeneratorService;
@@ -101,10 +102,10 @@ describe("FilterGeneratorService", () => {
     );
 
     // enum as array
-    const schemaArray = {
+    const schemaArray: FormFieldConfig = {
       id: "otherEnum",
-      dataType: "array",
-      innerDataType: schema.dataType,
+      dataType: schema.dataType,
+      isArray: true,
       additional: schema.additional,
     };
     Note.schema.set("otherEnum", schemaArray);

@@ -1,8 +1,9 @@
-<h2 i18n>General Settings of "{{ entityConstructor.label }}" Records</h2>
-<p i18n>
+<div class="hint-banner" i18n>
   The settings here apply to the entity type overall and take effect everywhere
   the entity is displayed, including lists, forms and other views.
-</p>
+</div>
+
+<h2 i18n>General Settings of "{{ entityConstructor.label }}" Records</h2>
 
 <form [formGroup]="basicSettingsForm">
   <mat-tab-group>
@@ -17,6 +18,7 @@
           <mat-form-field floatLabel="always">
             <mat-label>
               <span i18n>Label (Plural)</span>
+              &nbsp;
               <fa-icon
                 icon="question-circle"
                 matTooltip="Optionally you can define how multiple records of this entity should be called, e.g. in lists."
@@ -33,17 +35,23 @@
           <mat-form-field floatLabel="always">
             <mat-label>
               <span i18n>Icon</span>
+              &nbsp;
               <fa-icon
                 icon="question-circle"
-                matTooltip="The icon to represent this entity type, e.g. when displaying records as a small preview block. [see fontawesome.com/icons]"
+                matTooltip="The icon to represent this entity type, e.g. when displaying records as a small preview block."
                 i18n-matTooltip
               ></fa-icon>
             </mat-label>
-            <input
-              formControlName="icon"
-              matInput
-              [placeholder]="formLabel.value"
-            />
+            <input formControlName="icon" matInput />
+
+            <mat-hint i18n>
+              Find available icon names at
+              <a
+                href="https://fontawesome.com/v6/search?o=r&m=free"
+                target="_blank"
+                >fontawesome.com</a
+              >
+            </mat-hint>
           </mat-form-field>
         </div>
 
@@ -51,6 +59,7 @@
           <mat-form-field>
             <mat-label>
               <span i18n>Generated Title of Record</span>
+              &nbsp;
               <fa-icon
                 icon="question-circle"
                 matTooltip="Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type. (Only text fields can be used here)"

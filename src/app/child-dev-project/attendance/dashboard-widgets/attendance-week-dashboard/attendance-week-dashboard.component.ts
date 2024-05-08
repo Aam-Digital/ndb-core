@@ -11,7 +11,7 @@ import { groupBy } from "../../../../utils/utils";
 import { MatTableModule } from "@angular/material/table";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgForOf, NgIf } from "@angular/common";
-import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 import { AttendanceDayBlockComponent } from "./attendance-day-block/attendance-day-block.component";
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { EventNote } from "../../model/event-note";
@@ -33,7 +33,7 @@ interface AttendanceWeekRow {
     NgIf,
     MatTableModule,
     NgForOf,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     AttendanceDayBlockComponent,
     DashboardListWidgetComponent,
   ],

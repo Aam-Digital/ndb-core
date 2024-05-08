@@ -49,8 +49,9 @@ export class ImportColumnMappingComponent {
     this.allProps = [...this.entityCtor.schema.entries()]
       .filter(([_, schema]) => schema.label)
       .map(([name, schema]) => {
-        this.dataTypeMap[name] =
-          this.schemaService.getInnermostDatatype(schema);
+        this.dataTypeMap[name] = this.schemaService.getDatatypeOrDefault(
+          schema.dataType,
+        );
         return name;
       });
   }

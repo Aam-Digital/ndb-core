@@ -7,7 +7,6 @@ import { transformToReadableFormat } from "../../common-components/entities-tabl
 import { Papa } from "ngx-papaparse";
 import { Entity, EntityConstructor } from "app/core/entity/model/entity";
 import { EntityDatatype } from "app/core/basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "app/core/basic-datatypes/entity-array/entity-array.datatype";
 import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
 
 /**
@@ -130,10 +129,7 @@ export class DownloadService {
 
       columnLabels.set(id, field.label);
 
-      if (
-        field.dataType === EntityDatatype.dataType ||
-        field.dataType === EntityArrayDatatype.dataType
-      ) {
+      if (field.dataType === EntityDatatype.dataType) {
         columnLabels.set(id + "_readable", field.label + " (readable)");
       }
     }

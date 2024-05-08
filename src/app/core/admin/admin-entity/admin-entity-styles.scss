@@ -1,0 +1,9 @@
+@use "@angular/material/core/style/elevation" as
+  mat-elevation;
+
+.hint-banner {
+  background: #e8e8e8;
+  padding: 1em;
+  margin-bottom: 1em;
+  @include mat-elevation.elevation(1);
+}

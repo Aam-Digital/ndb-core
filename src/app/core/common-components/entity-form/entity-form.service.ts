@@ -21,7 +21,6 @@ import {
   EntitySchemaField,
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
-import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
@@ -206,7 +205,7 @@ export class EntityFormService {
       default:
         newVal = schema.defaultValue;
     }
-    if (newVal && isArrayDataType(schema.dataType)) {
+    if (newVal && schema.isArray) {
       newVal = [newVal];
     }
     return newVal;
