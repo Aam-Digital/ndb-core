@@ -1,6 +1,7 @@
 import { ComponentFixture, TestBed } from "@angular/core/testing";
 
 import { BetaFeatureComponent } from "./beta-feature.component";
+import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 
 describe("BetaFeatureComponent", () => {
   let component: BetaFeatureComponent;
@@ -8,7 +9,7 @@ describe("BetaFeatureComponent", () => {
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [BetaFeatureComponent],
+      imports: [BetaFeatureComponent, FontAwesomeTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(BetaFeatureComponent);
