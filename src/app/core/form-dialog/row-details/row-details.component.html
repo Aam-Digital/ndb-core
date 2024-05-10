@@ -11,18 +11,30 @@
     >
     </app-entity-form>
 
-    <div *ngFor="let col of viewOnlyColumns">
-      <app-pill
-        [matTooltip]="col.description"
-        [style.background-color]="tempEntity.getColor()"
-        class="mat-body-strong"
+    <div class="flex-row flex-wrap gap-small">
+      <!-- TODO: merge this with the "viewOnlyColumns" in the future? -->
+      <ng-container
+        *ngComponentOutlet="
+          'ExistingEntityLoad' | dynamicComponent | async;
+          inputs: { form, defaultEntity: data.entity }
+        "
       >
-        <app-entity-field-view
-          [field]="col"
-          [entity]="tempEntity"
-          showLabel="inline"
-        ></app-entity-field-view>
-      </app-pill>
+        <!-- ExistingEntityLoad currently has to be loaded dynamically to avoid circular dependency in FormDialogService -->
+      </ng-container>
+
+      @for (col of viewOnlyColumns; track col.id) {
+        <app-pill
+          [matTooltip]="col.description"
+          [style.background-color]="tempEntity.getColor()"
+          class="mat-body-strong"
+        >
+          <app-entity-field-view
+            [field]="col"
+            [entity]="tempEntity"
+            showLabel="inline"
+          ></app-entity-field-view>
+        </app-pill>
+      }
     </div>
   </div>
 </mat-dialog-content>

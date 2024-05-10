@@ -37,13 +37,6 @@ export const coreComponents: ComponentTuple[] = [
       ).then((c) => c.DisplayEntityComponent),
   ],
   [
-    "EditTextWithAutocomplete",
-    () =>
-      import(
-        "./common-components/edit-text-with-autocomplete/edit-text-with-autocomplete.component"
-      ).then((c) => c.EditTextWithAutocompleteComponent),
-  ],
-  [
     "EditAge",
     () =>
       import(
@@ -217,5 +210,12 @@ export const coreComponents: ComponentTuple[] = [
       import(
         "./entity-details/related-entities-with-summary/related-entities-with-summary.component"
       ).then((c) => c.RelatedEntitiesWithSummaryComponent),
+  ],
+  [
+    "ExistingEntityLoad",
+    () =>
+      import(
+        "./entity-duplicates/existing-entity-load/existing-entity-load.component"
+      ).then((c) => c.ExistingEntityLoadComponent),
   ],
 ];

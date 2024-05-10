@@ -8,7 +8,7 @@ import {
 } from "../../common-components/entity-form/entity-form.service";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
-import { NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe, NgComponentOutlet, NgForOf, NgIf } from "@angular/common";
 import { PillComponent } from "../../common-components/pill/pill.component";
 import { DynamicComponentDirective } from "../../config/dynamic-components/dynamic-component.directive";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -18,6 +18,7 @@ import { EntityArchivedInfoComponent } from "../../entity-details/entity-archive
 import { FieldGroup } from "../../entity-details/form/field-group";
 import { EntityFieldEditComponent } from "../../common-components/entity-field-edit/entity-field-edit.component";
 import { EntityFieldViewComponent } from "../../common-components/entity-field-view/entity-field-view.component";
+import { DynamicComponentPipe } from "../../config/dynamic-components/dynamic-component.pipe";
 
 /**
  * Data interface that must be given when opening the dialog
@@ -51,6 +52,9 @@ export interface DetailsComponentData {
     EntityArchivedInfoComponent,
     EntityFieldEditComponent,
     EntityFieldViewComponent,
+    AsyncPipe,
+    DynamicComponentPipe,
+    NgComponentOutlet,
   ],
   standalone: true,
 })

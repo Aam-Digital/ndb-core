@@ -1,0 +1,49 @@
+@if (defaultEntity.isNew) {
+  <mat-card
+    appearance="outlined"
+    class="card"
+    [ngStyle]="{
+      visibility: (suggestedEntities | async)?.length > 0 ? 'visible' : 'hidden'
+    }"
+  >
+    <div class="flex-row gap-regular">
+      @if (selectedEntity) {
+        <div
+          class="warning-editing"
+          matTooltip="You are currently editing an existing record in the form, linking it. Your changes here can have effects on other related records."
+          i18n-matTooltip
+        >
+          <fa-icon icon="warning"></fa-icon>
+          &nbsp;
+          <span i18n>Editing existing record</span>
+        </div>
+
+        <button mat-stroked-button i18n (click)="resetToCreateNew()">
+          create new record instead
+        </button>
+      } @else {
+        <mat-form-field class="select-suggested">
+          <mat-label i18n>Load & link existing record</mat-label>
+
+          <app-basic-autocomplete
+            [formControl]="selectedEntityForm"
+            [options]="suggestedEntities | async"
+          >
+            <ng-template let-item>
+              <app-entity-block
+                style="margin: auto"
+                [entityToDisplay]="item"
+                [linkDisabled]="true"
+              ></app-entity-block>
+            </ng-template>
+          </app-basic-autocomplete>
+        </mat-form-field>
+
+        <app-help-button
+          text="Link & update an existing record instead of creating a new one. The suggested records here are similar to the details you have entered in the form already, use the form fields as filters to narrow down the listed records."
+          i18n-text
+        ></app-help-button>
+      }
+    </div>
+  </mat-card>
+}

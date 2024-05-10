@@ -2,7 +2,9 @@
 
 :host {
   padding: sizes.$small sizes.$regular;
-  border-radius: 100vmax;
+  border-radius: 12px;
+  height: fit-content;
   width: max-content;
   display: inline-block;
+  background-color: rgba(0, 0, 0, 0.10);
 }
