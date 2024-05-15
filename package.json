@@ -55,7 +55,7 @@
     "lodash-es": "^4.17.21",
     "md5": "^2.3.0",
     "moment": "2.29.4",
-    "ngx-markdown": "^17.1.1",
+    "ngx-markdown": "^17.2.1",
     "ngx-papaparse": "^8.0.0",
     "pouchdb-adapter-memory": "^8.0.1",
     "pouchdb-browser": "^8.0.1",
