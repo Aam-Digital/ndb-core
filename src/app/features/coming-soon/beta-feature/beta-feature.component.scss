@@ -1,0 +1,11 @@
+@use "variables/colors";
+
+.banner-container {
+  margin: 1em;
+  padding: 0.5em;
+
+  background-color: colors.$accent;
+  color: white;
+  font-weight: bolder;
+  text-align: center;
+}

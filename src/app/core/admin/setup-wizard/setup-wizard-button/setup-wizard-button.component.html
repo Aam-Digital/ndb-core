@@ -1,7 +1,7 @@
 @if (showSetupWizard) {
   <button
     mat-flat-button
-    routerLink="/admin/setup-wizard"
+    (click)="navigateToWizard()"
     class="button"
     color="accent"
     style="border-radius: 0"

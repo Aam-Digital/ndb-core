@@ -1,4 +1,4 @@
-import { Component, EventEmitter, Input, Output } from "@angular/core";
+import { Component, EventEmitter, Input, OnInit, Output } from "@angular/core";
 import { MatInputModule } from "@angular/material/input";
 import {
   FormBuilder,
@@ -26,7 +26,7 @@ import { HelpButtonComponent } from "../../../../common-components/help-button/h
   templateUrl: "./configure-entity-field-validator.component.html",
   styleUrl: "./configure-entity-field-validator.component.scss",
 })
-export class ConfigureEntityFieldValidatorComponent {
+export class ConfigureEntityFieldValidatorComponent implements OnInit {
   validatorForm: FormGroup;
   @Input() entitySchemaField: EntitySchemaField;
   @Output() entityValidatorChanges = new EventEmitter<DynamicValidator>();

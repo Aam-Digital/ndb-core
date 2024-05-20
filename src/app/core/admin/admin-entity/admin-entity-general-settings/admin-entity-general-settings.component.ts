@@ -34,7 +34,10 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
   selector: "app-admin-entity-general-settings",
   standalone: true,
   templateUrl: "./admin-entity-general-settings.component.html",
-  styleUrl: "./admin-entity-general-settings.component.scss",
+  styleUrls: [
+    "./admin-entity-general-settings.component.scss",
+    "../admin-entity-styles.scss",
+  ],
   imports: [
     MatButtonModule,
     MatInputModule,
@@ -86,11 +89,8 @@ export class AdminEntityGeneralSettingsComponent implements OnInit {
     this.basicSettingsForm = this.fb.group({
       label: [this.generalSettings.label, Validators.required],
       labelPlural: [this.generalSettings.labelPlural],
-      icon: [this.generalSettings.icon, Validators.required],
-      toStringAttributes: [
-        this.generalSettings.toStringAttributes,
-        Validators.required,
-      ],
+      icon: [this.generalSettings.icon],
+      toStringAttributes: [this.generalSettings.toStringAttributes],
       hasPII: [this.generalSettings.hasPII],
     });
     this.showPIIDetails = this.basicSettingsForm.get("hasPII").value;

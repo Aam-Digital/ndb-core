@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -68,7 +67,7 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
+export class EntitiesTableComponent<T extends Entity> {
   @Input() set records(value: T[]) {
     if (!value) {
       return;
@@ -164,8 +163,13 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     this._sortBy = value;
     this.sortIsInferred = false;
   }
+
   _sortBy: Sort;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
+    this.recordsDataSource.sort = sort;
+  }
+
   private sortIsInferred: boolean = true;
 
   /**
@@ -291,10 +295,6 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     private schemaService: EntitySchemaService,
   ) {
     this.recordsDataSource = this.createDataSource();
-  }
-
-  ngAfterViewInit(): void {
-    this.recordsDataSource.sort = this.sort;
   }
 
   private createDataSource() {
