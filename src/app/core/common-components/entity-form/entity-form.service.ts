@@ -17,11 +17,8 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
-import {
-  EntitySchemaField,
-  PLACEHOLDERS,
-} from "../../entity/schema/entity-schema-field";
-import { CurrentUserSubject } from "../../session/current-user-subject";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { DefaultValueService } from "../../entity/default-value.service";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -44,7 +41,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
-    private currentUser: CurrentUserSubject,
+    private defaultValueService: DefaultValueService,
     router: Router,
   ) {
     router.events
@@ -150,6 +147,8 @@ export class EntityFormService {
       this.subscriptions.push(statusChangesSubscription);
     }
 
+    this.defaultValueService.handle(group, entity);
+
     return group;
   }
 
@@ -174,13 +173,6 @@ export class EntityFormService {
     );
 
     let value = entity[field.id];
-    if (
-      entity.isNew &&
-      field.defaultValue &&
-      (!value || (value as []).length === 0)
-    ) {
-      value = this.getDefaultValue(field);
-    }
 
     const controlOptions: FormControlOptions = { nonNullable: true };
     if (field.validators) {
@@ -191,24 +183,6 @@ export class EntityFormService {
     }
 
     formConfig[field.id] = new FormControl(value, controlOptions);
-  }
-
-  private getDefaultValue<T>(schema: EntitySchemaField) {
-    let newVal;
-    switch (schema.defaultValue) {
-      case PLACEHOLDERS.NOW:
-        newVal = new Date();
-        break;
-      case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.currentUser.value?.getId();
-        break;
-      default:
-        newVal = schema.defaultValue;
-    }
-    if (newVal && schema.isArray) {
-      newVal = [newVal];
-    }
-    return newVal;
   }
 
   private disableReadOnlyFormControls<T extends Entity>(
@@ -267,7 +241,7 @@ export class EntityFormService {
   }
 
   private assertPermissionsToSave(oldEntity: Entity, newEntity: Entity) {
-    let action, entity;
+    let action: "create" | "update", entity: Entity;
     if (oldEntity.isNew) {
       action = "create";
       entity = newEntity;

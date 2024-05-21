@@ -73,7 +73,10 @@ export class Todo extends Entity {
     isArray: true,
     additional: User.ENTITY_TYPE,
     showInDetailsView: true,
-    defaultValue: PLACEHOLDERS.CURRENT_USER,
+    defaultValue: {
+      mode: "dynamic",
+      value: PLACEHOLDERS.CURRENT_USER,
+    },
     anonymize: "retain",
   })
   assignedTo: string[] = [];

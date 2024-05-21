@@ -45,7 +45,10 @@ export class HealthCheck extends Entity {
   @DatabaseField({
     label: $localize`:Label for date of a health check:Date`,
     anonymize: "retain-anonymized",
-    defaultValue: PLACEHOLDERS.NOW,
+    defaultValue: {
+      mode: "dynamic",
+      value: PLACEHOLDERS.NOW,
+    },
   })
   date: Date;
 
