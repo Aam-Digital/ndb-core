@@ -122,7 +122,7 @@ export class HandleDefaultValuesUseCase {
   ) {
     let targetFormControl = formGroup.get(fieldName);
 
-    if (!this.preConditionsFulfilled(isNew, targetFormControl)) {
+    if (!this.preConditionsFulfilled(isNew, targetFormControl, isArray)) {
       return;
     }
 
@@ -142,7 +142,7 @@ export class HandleDefaultValuesUseCase {
   ) {
     let targetFormControl = formGroup.get(fieldName);
 
-    if (!this.preConditionsFulfilled(isNew, targetFormControl)) {
+    if (!this.preConditionsFulfilled(isNew, targetFormControl, isArray)) {
       return;
     }
 
@@ -179,6 +179,7 @@ export class HandleDefaultValuesUseCase {
   private preConditionsFulfilled(
     isNew: boolean,
     formControl: AbstractControl,
+    isArray: boolean,
   ): boolean {
     if (!isNew) {
       return false;
@@ -188,7 +189,11 @@ export class HandleDefaultValuesUseCase {
       return false;
     }
 
-    if (!!formControl.value) {
+    if (!isArray && !!formControl.value) {
+      return false;
+    }
+
+    if (isArray && formControl.value.size > 0) {
       return false;
     }
 
