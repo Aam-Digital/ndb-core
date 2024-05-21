@@ -266,7 +266,7 @@ const migrateEntitySchemaDefaultValue: ConfigMigration = (
   }
 
   let placeholderValue: string | undefined = Object.values(PLACEHOLDERS).find(
-    (value) => value == configPart,
+    (value) => value === configPart,
   );
 
   if (placeholderValue) {

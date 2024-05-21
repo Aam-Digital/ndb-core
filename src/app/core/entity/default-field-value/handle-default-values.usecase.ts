@@ -6,7 +6,6 @@ import { Entity } from "../model/entity";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { LoggingService } from "../../logging/logging.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
 
 /**
  * When edit an Entity, apply this business logic for DefaultValueConfig
@@ -28,7 +27,6 @@ export class HandleDefaultValuesUseCase {
   ) {
     fieldConfigs.forEach(([fieldName, fieldSchema]) => {
       let defaultValueConfig = fieldSchema.defaultValue;
-      let isArray = isArrayDataType(fieldSchema.dataType);
 
       switch (defaultValueConfig.mode) {
         case "inherited":
@@ -37,7 +35,7 @@ export class HandleDefaultValuesUseCase {
             fieldName,
             defaultValueConfig,
             isNew,
-            isArray,
+            fieldSchema.isArray,
           );
         case "static":
           return this.handleStaticMode(
@@ -45,7 +43,7 @@ export class HandleDefaultValuesUseCase {
             fieldName,
             defaultValueConfig,
             isNew,
-            isArray,
+            fieldSchema.isArray,
           );
         case "dynamic":
           return this.handleDynamicMode(
@@ -53,7 +51,7 @@ export class HandleDefaultValuesUseCase {
             fieldName,
             defaultValueConfig,
             isNew,
-            isArray,
+            fieldSchema.isArray,
           );
       }
     });
