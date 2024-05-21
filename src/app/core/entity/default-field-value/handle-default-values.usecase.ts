@@ -193,7 +193,7 @@ export class HandleDefaultValuesUseCase {
       return false;
     }
 
-    if (isArray && formControl.value.size > 0) {
+    if (isArray && formControl.value && formControl.value.size > 0) {
       return false;
     }
 
