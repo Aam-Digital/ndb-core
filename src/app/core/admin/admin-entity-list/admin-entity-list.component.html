@@ -17,13 +17,15 @@
   >
     <div
       cdkDropList
-      (cdkDropListEntered)="onDropListEntered($event)"
-      (cdkDropListDropped)="onDropListDropped()"
+      appDraggableGrid
+      [config]="config?.filters"
+      [placeholder]="placeholder"
     ></div>
     <div
       cdkDropList
-      (cdkDropListEntered)="onDropListEntered($event)"
-      (cdkDropListDropped)="onDropListDropped()"
+      appDraggableGrid
+      [config]="config?.filters"
+      [placeholder]="placeholder"
       *ngFor="let filter of config?.filters"
     >
       <div cdkDrag class="filter-field drop-item flex-row gap-small">
