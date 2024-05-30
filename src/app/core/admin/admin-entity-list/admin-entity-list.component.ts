@@ -57,7 +57,7 @@ import { DraggableGridDirective } from "app/core/common-components/draggable-gri
     AdminTabTemplateDirective,
     ViewTitleComponent,
     CdkDropListGroup,
-    DraggableGridDirective
+    DraggableGridDirective,
   ],
   templateUrl: "./admin-entity-list.component.html",
   styleUrls: [
@@ -113,7 +113,6 @@ export class AdminEntityListComponent implements OnChanges {
     ];
     this.filters = (this.config.filters ?? []).map((f) => f.id);
   }
-
 
   updateFilters(filters: string[]) {
     this.filters = filters;

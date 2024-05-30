@@ -1,7 +1,18 @@
-import { AfterViewInit, Directive, HostListener, Input, ViewChild } from '@angular/core';
-import { CdkDragEnter, CdkDropList, DragRef, moveItemInArray } from '@angular/cdk/drag-drop';
+import {
+  AfterViewInit,
+  Directive,
+  HostListener,
+  Input,
+  ViewChild,
+} from "@angular/core";
+import {
+  CdkDragEnter,
+  CdkDropList,
+  DragRef,
+  moveItemInArray,
+} from "@angular/cdk/drag-drop";
 @Directive({
-  selector: '[appDraggableGrid]',
+  selector: "[appDraggableGrid]",
   standalone: true,
 })
 export class DraggableGridDirective implements AfterViewInit {
@@ -16,12 +27,12 @@ export class DraggableGridDirective implements AfterViewInit {
 
   ngAfterViewInit() {
     if (!this.placeholder) {
-      console.error('Placeholder is null in directive');
+      console.error("Placeholder is null in directive");
     } else {
-      console.log('Placeholder is set in directive:', this.placeholder);
+      console.log("Placeholder is set in directive:", this.placeholder);
     }
   }
-  @HostListener('cdkDropListDropped')
+  @HostListener("cdkDropListDropped")
   onDropListDropped() {
     if (!this.target) {
       return;
@@ -49,7 +60,7 @@ export class DraggableGridDirective implements AfterViewInit {
     }
   }
 
-  @HostListener('cdkDropListEntered', ['$event'])
+  @HostListener("cdkDropListEntered", ["$event"])
   onDropListEntered({ item, container }: CdkDragEnter) {
     if (container == this.placeholder) {
       return;
