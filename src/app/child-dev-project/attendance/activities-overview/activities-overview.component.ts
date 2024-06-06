@@ -22,17 +22,9 @@ export class ActivitiesOverviewComponent
 {
   entityCtr = RecurringActivity;
 
-  titleColumn: FormFieldConfig = {
-    id: "title",
-    editComponent: "EditTextWithAutocomplete",
-    additional: {
-      entityType: "RecurringActivity",
-      relevantProperty: "linkedGroups",
-      relevantValue: "",
-    },
-  };
+  // TODO: write config migration and remove this component
   override _columns: FormFieldConfig[] = [
-    this.titleColumn,
+    { id: "title" },
     { id: "type" },
     { id: "assignedTo" },
     { id: "linkedGroups" },
@@ -40,7 +32,6 @@ export class ActivitiesOverviewComponent
   ];
 
   async ngOnInit() {
-    this.titleColumn.additional.relevantValue = this.entity.getId();
     await super.ngOnInit();
   }
 }
