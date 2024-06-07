@@ -13,8 +13,15 @@
   [loading]="loading"
   [exportableData]="exportableData"
   (calculateClick)="calculateResults($event.report, $event.from, $event.to)"
+  (dataChanged)="reportCalculation = null; data = null"
   class="view-section"
 ></app-select-report>
+
+<div style="color: gray; padding: 10px" *ngIf="reportCalculation">
+  This report was calculated at:
+  {{ reportCalculation?.endDate | date: "dd.MM.yyyy HH:mm" }} <br />
+  Click again on "Calculate" to re-calculate the report.
+</div>
 
 <app-report-row
   *ngIf="data?.length > 0 && mode === 'reporting'"

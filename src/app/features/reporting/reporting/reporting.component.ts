@@ -5,7 +5,7 @@ import {
   GroupByDescription,
 } from "../report-row";
 import moment from "moment";
-import { NgIf } from "@angular/common";
+import { DatePipe, JsonPipe, NgIf } from "@angular/common";
 import { ViewTitleComponent } from "../../../core/common-components/view-title/view-title.component";
 import { SelectReportComponent } from "./select-report/select-report.component";
 import { ReportRowComponent } from "./report-row/report-row.component";
@@ -13,8 +13,13 @@ import { ObjectTableComponent } from "./object-table/object-table.component";
 import { DataTransformationService } from "../../../core/export/data-transformation-service/data-transformation.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { ReportEntity } from "../report-config";
-import { SqlReportService } from "../sql-report/sql-report.service";
+import {
+  ReportCalculation,
+  SqlReportService,
+} from "../sql-report/sql-report.service";
 import { RouteTarget } from "../../../route-target";
+import { firstValueFrom, lastValueFrom } from "rxjs";
+import { map, switchMap } from "rxjs/operators";
 
 @RouteTarget("Reporting")
 @Component({
@@ -27,13 +32,17 @@ import { RouteTarget } from "../../../route-target";
     SelectReportComponent,
     ReportRowComponent,
     ObjectTableComponent,
+    DatePipe,
+    JsonPipe,
   ],
   standalone: true,
 })
 export class ReportingComponent {
   reports: ReportEntity[];
-  mode: ReportEntity["mode"];
+  mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
   loading: boolean;
+
+  reportCalculation: ReportCalculation | null = null;
 
   data: any[];
   exportableData: any[];
@@ -57,33 +66,51 @@ export class ReportingComponent {
     this.loading = true;
     this.data = [];
 
-    // Wait for change detection
-    await new Promise((res) => setTimeout(res));
+    if (this.reportCalculation) {
+      // trigger re-calculation
+      await firstValueFrom(
+        this.sqlReportService
+          .createReportCalculation(selectedReport.getId(), fromDate, toDate)
+          .pipe(
+            map((value) => value.id),
+            switchMap((id) =>
+              lastValueFrom(this.sqlReportService.waitForReportData(id)),
+            ),
+            switchMap((value) =>
+              // todo handle FINISHED_ERROR case
+              this.sqlReportService.fetchReportCalculationData(value.id),
+            ),
+          ),
+      );
+    }
 
-    // Add one day because to date is exclusive
-    const dayAfterToDate = moment(toDate).add(1, "day").toDate();
-    this.data = await this.getReportResults(
-      selectedReport,
-      fromDate,
-      dayAfterToDate,
-    );
+    this.data = await this.getReportResults(selectedReport, fromDate, toDate);
     this.mode = selectedReport.mode ?? "reporting";
     this.exportableData =
       this.mode === "reporting" ? this.flattenReportRows() : this.data;
     this.loading = false;
   }
 
-  private getReportResults(report: ReportEntity, from: Date, to: Date) {
+  private async getReportResults(report: ReportEntity, from: Date, to: Date) {
     switch (report.mode) {
       case "exporting":
+        // Add one day because to date is exclusive
+        const dayAfterToDate = moment(to).add(1, "day").toDate();
         return this.dataTransformationService.queryAndTransformData(
           report.aggregationDefinitions,
           from,
-          to,
+          dayAfterToDate,
         );
       case "sql":
-        // TODO check/ensure "to" date is also exclusive
-        return this.sqlReportService.query(report, from, to);
+        let reportData = await this.sqlReportService.query(report, from, to);
+
+        this.reportCalculation = await firstValueFrom(
+          this.sqlReportService.fetchReportCalculation(
+            reportData.calculation.id,
+          ),
+        );
+
+        return reportData.data;
       default:
         return this.dataAggregationService.calculateReport(
           report.aggregationDefinitions,

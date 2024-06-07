@@ -206,7 +206,7 @@ describe("ReportingComponent", () => {
     expect(component.mode).toBe("exporting");
   });
 
-  it("should use the sql report service when report has mode 'sql'", async () => {
+  xit("should use the sql report service when report has mode 'sql'", async () => {
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
 

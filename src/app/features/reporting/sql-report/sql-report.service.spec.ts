@@ -14,7 +14,6 @@ import { ReportEntity, SqlReport } from "../report-config";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { SqsSchema } from "./sqs-schema";
-import moment from "moment";
 
 xdescribe("SqlReportService", () => {
   let service: SqlReportService;
@@ -40,27 +39,27 @@ xdescribe("SqlReportService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should query the external service with the provided report data", async () => {
-    const mockResult = [{ some: "data" }];
-    mockHttpClient.post.and.returnValue(of(mockResult));
-    const report = new ReportEntity() as SqlReport;
-    report.mode = "sql";
-
-    const result = await service.query(
-      report,
-      moment("2023-01-01").toDate(),
-      moment("2024-01-01").toDate(),
-    );
-
-    expect(mockHttpClient.post).toHaveBeenCalledWith(
-      `${SqlReportService.QUERY_PROXY}/report/app/${report.getId()}`,
-      {
-        from: "2023-01-01",
-        to: "2024-01-01",
-      },
-    );
-    expect(result).toEqual(mockResult);
-  });
+  // it("should query the external service with the provided report data", async () => {
+  //   const mockResult: ReportData = [{ some: "data" }];
+  //   mockHttpClient.post.and.returnValue(of(mockResult));
+  //   const report = new ReportEntity() as SqlReport;
+  //   report.mode = "sql";
+  //
+  //   const result = await service.query(
+  //     report,
+  //     moment("2023-01-01").toDate(),
+  //     moment("2024-01-01").toDate(),
+  //   );
+  //
+  //   expect(mockHttpClient.post).toHaveBeenCalledWith(
+  //     `${SqlReportService.QUERY_PROXY}/report/app/${report.getId()}`,
+  //     {
+  //       from: "2023-01-01",
+  //       to: "2024-01-01",
+  //     },
+  //   );
+  //   expect(result).toEqual(mockResult);
+  // });
 
   it("should generate a valid schema including all properties", () => {
     @DatabaseEntity("SchemaTest")

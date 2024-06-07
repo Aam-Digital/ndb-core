@@ -7,9 +7,32 @@ import { BooleanDatatype } from "../../../core/basic-datatypes/boolean/boolean.d
 import { SqlReport } from "../report-config";
 import { HttpClient } from "@angular/common/http";
 import moment from "moment";
-import { firstValueFrom } from "rxjs";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { isEqual } from "lodash-es";
+import { map, switchMap, takeWhile } from "rxjs/operators";
+import { firstValueFrom, interval, lastValueFrom, Observable } from "rxjs";
+
+export interface ReportData {
+  id: string;
+  report: {
+    id: string;
+  };
+  calculation: {
+    id: string;
+  };
+  data: any[];
+}
+
+export interface ReportCalculation {
+  id: string;
+  startDate: string;
+  endDate: string;
+  params?: {
+    from?: string;
+    to?: string;
+  };
+  status: "PENDING" | "RUNNING" | "FINISHED_SUCCESS" | "FINISHED_ERROR";
+}
 
 /**
  * Service that handles management of necessary SQS configurations
@@ -31,16 +54,89 @@ export class SqlReportService {
    * @param from
    * @param to
    */
-  async query(report: SqlReport, from: Date, to: Date) {
+  async query(report: SqlReport, from: Date, to: Date): Promise<ReportData> {
     await this.updateSchemaIfNecessary();
+
     return firstValueFrom(
-      this.http.post<any[]>(
-        `${SqlReportService.QUERY_PROXY}/report/app/${report.getId()}`,
-        {
+      this.http
+        .get<
+          ReportCalculation[]
+        >(`${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${report.getId()}`)
+        .pipe(
+          switchMap((reportDetails) => {
+            let lastReports = reportDetails
+              .filter((value) => {
+                return (
+                  value.params.from == moment(from).format("YYYY-MM-DD") &&
+                  value.params.to == moment(to).format("YYYY-MM-DD")
+                );
+              })
+              .sort(
+                (a, b) =>
+                  new Date(b.endDate).getTime() - new Date(a.endDate).getTime(),
+              );
+
+            if (lastReports.length === 0) {
+              return this.createReportCalculation(
+                report.getId(),
+                from,
+                to,
+              ).pipe(
+                map((value) => value.id),
+                switchMap((id) => lastValueFrom(this.waitForReportData(id))),
+                switchMap((value) =>
+                  // todo handle FINISHED_ERROR case
+                  this.fetchReportCalculationData(value.id),
+                ),
+              );
+            } else {
+              return this.http.get<ReportData>(
+                `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${lastReports[0].id}/data`,
+              );
+            }
+          }),
+        ),
+    );
+  }
+
+  createReportCalculation(reportId: string, from: Date, to: Date) {
+    return this.http.post<{
+      id: string;
+    }>(
+      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${reportId}`,
+      {},
+      {
+        params: {
           from: moment(from).format("YYYY-MM-DD"),
           to: moment(to).format("YYYY-MM-DD"),
         },
-      ),
+      },
+    );
+  }
+
+  fetchReportCalculation(reportId: string): Observable<ReportCalculation> {
+    return this.http.get<ReportCalculation>(
+      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${reportId}`,
+    );
+  }
+
+  waitForReportData(reportCalculationId: string) {
+    return interval(2000).pipe(
+      switchMap(() => this.fetchReportCalculation(reportCalculationId)),
+      takeWhile((response) => this.pollCondition(response), true),
+    );
+  }
+
+  private pollCondition(reportCalculation: ReportCalculation) {
+    return (
+      reportCalculation.status !== "FINISHED_SUCCESS" &&
+      reportCalculation.status !== "FINISHED_ERROR"
+    );
+  }
+
+  fetchReportCalculationData(reportId: string): Observable<ReportData> {
+    return this.http.get<ReportData>(
+      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${reportId}/data`,
     );
   }
 
