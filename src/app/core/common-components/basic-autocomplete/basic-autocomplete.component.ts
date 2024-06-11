@@ -27,7 +27,7 @@ import {
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import { distinctUntilChanged, filter, map, startWith } from "rxjs/operators";
+import { filter, map, startWith } from "rxjs/operators";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
@@ -45,6 +45,11 @@ import {
   DragDropModule,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualForOf,
+  CdkVirtualScrollViewport,
+} from "@angular/cdk/scrolling";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -79,6 +84,9 @@ interface SelectableOption<O, V> {
     MatIcon,
     MatChipRemove,
     DragDropModule,
+    CdkVirtualScrollViewport,
+    CdkVirtualForOf,
+    CdkFixedSizeVirtualScroll,
   ],
 })
 export class BasicAutocompleteComponent<O, V = O>
@@ -91,6 +99,8 @@ export class BasicAutocompleteComponent<O, V = O>
     _elementRef: ElementRef<HTMLElement>;
   };
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
+  @ViewChild(CdkVirtualScrollViewport)
+  virtualScrollViewport: CdkVirtualScrollViewport;
 
   @Input() valueMapper = (option: O) => option as unknown as V;
   @Input() optionToString = (option: O) => option?.toString();
@@ -111,7 +121,6 @@ export class BasicAutocompleteComponent<O, V = O>
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
-    distinctUntilChanged(),
     map((val) => this.updateAutocomplete(val)),
     startWith([] as SelectableOption<O, V>[]),
   );
@@ -222,6 +231,7 @@ export class BasicAutocompleteComponent<O, V = O>
       // cannot setValue to "" here because the current selection would be lost
       this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
     }
+
     setTimeout(() => {
       this.inputElement.focus();
 
@@ -233,7 +243,11 @@ export class BasicAutocompleteComponent<O, V = O>
         this.autocompleteForm.setValue(valueToRevertTo);
       }
     });
+
     this.focus();
+
+    // update virtual scroll as the container remains empty until the user scrolls initially
+    this.virtualScrollViewport.scrollToIndex(0);
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {
