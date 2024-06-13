@@ -69,13 +69,13 @@ describe("ReportingComponent", () => {
   });
 
   it("should call the reporting service with the aggregation config", fakeAsync(() => {
-    expect(component.loading).toBeFalsy();
+    expect(component.isLoading).toBeFalsy();
 
     component.calculateResults(testReport, new Date(), new Date());
 
-    expect(component.loading).toBeTrue();
+    expect(component.isLoading).toBeTrue();
     tick();
-    expect(component.loading).toBeFalse();
+    expect(component.isLoading).toBeFalse();
 
     expect(mockReportingService.calculateReport).toHaveBeenCalledWith(
       testReport.aggregationDefinitions as Aggregation[],

@@ -27,10 +27,7 @@ export interface ReportCalculation {
   id: string;
   startDate: string;
   endDate: string;
-  params?: {
-    from?: string;
-    to?: string;
-  };
+  args: Map<String, String>[];
   status: "PENDING" | "RUNNING" | "FINISHED_SUCCESS" | "FINISHED_ERROR";
 }
 
@@ -66,14 +63,10 @@ export class SqlReportService {
           switchMap((reportDetails) => {
             let lastReports = reportDetails
               .filter((value) => {
-                return (
-                  value.params.from == moment(from).format("YYYY-MM-DD") &&
-                  value.params.to == moment(to).format("YYYY-MM-DD")
-                );
+                return this.filterFromToDates(value, from, to);
               })
-              .sort(
-                (a, b) =>
-                  new Date(b.endDate).getTime() - new Date(a.endDate).getTime(),
+              .sort((a: ReportCalculation, b: ReportCalculation) =>
+                this.sortByEndDate(a, b),
               );
 
             if (lastReports.length === 0) {
@@ -84,10 +77,9 @@ export class SqlReportService {
               ).pipe(
                 map((value) => value.id),
                 switchMap((id) => lastValueFrom(this.waitForReportData(id))),
-                switchMap((value) =>
-                  // todo handle FINISHED_ERROR case
-                  this.fetchReportCalculationData(value.id),
-                ),
+                switchMap((value: ReportCalculation) => {
+                  return this.handleReportCalculationResponse(value);
+                }),
               );
             } else {
               return this.http.get<ReportData>(
@@ -127,16 +119,47 @@ export class SqlReportService {
     );
   }
 
+  fetchReportCalculationData(reportId: string): Observable<ReportData> {
+    return this.http.get<ReportData>(
+      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${reportId}/data`,
+    );
+  }
+
+  /**
+   * Create a valid SQS schema object for all registered entities
+   */
+  generateSchema(): SqsSchema {
+    const tables: SqlTables = {};
+    for (const [name, ctr] of this.entities.entries()) {
+      tables[name] = {};
+      for (const [attr, attrSchema] of ctr.schema) {
+        if (attr === "_rev") {
+          // skip internal property
+          continue;
+        }
+        tables[name][attr] = this.getSqlType(attrSchema);
+      }
+    }
+    return SqsSchema.create(tables);
+  }
+
+  private handleReportCalculationResponse(value: ReportCalculation) {
+    switch (value.status) {
+      case "FINISHED_SUCCESS":
+        return this.fetchReportCalculationData(value.id);
+      default:
+        throw new Error("Invalid ReportCalculation outcome.");
+    }
+  }
+
+  private sortByEndDate(a: ReportCalculation, b: ReportCalculation) {
+    return new Date(b.endDate).getTime() - new Date(a.endDate).getTime();
+  }
+
   private pollCondition(reportCalculation: ReportCalculation) {
     return (
       reportCalculation.status !== "FINISHED_SUCCESS" &&
       reportCalculation.status !== "FINISHED_ERROR"
-    );
-  }
-
-  fetchReportCalculationData(reportId: string): Observable<ReportData> {
-    return this.http.get<ReportData>(
-      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${reportId}/data`,
     );
   }
 
@@ -158,22 +181,17 @@ export class SqlReportService {
     await this.entityMapper.save(existing);
   }
 
-  /**
-   * Create a valid SQS schema object for all registered entities
-   */
-  generateSchema(): SqsSchema {
-    const tables: SqlTables = {};
-    for (const [name, ctr] of this.entities.entries()) {
-      tables[name] = {};
-      for (const [attr, attrSchema] of ctr.schema) {
-        if (attr === "_rev") {
-          // skip internal property
-          continue;
-        }
-        tables[name][attr] = this.getSqlType(attrSchema);
-      }
-    }
-    return SqsSchema.create(tables);
+  private filterFromToDates(
+    value: ReportCalculation,
+    from: Date,
+    to: Date,
+  ): boolean {
+    return (
+      moment(value.args["from"]).format("YYYY-MM-DD") ==
+        moment(from).format("YYYY-MM-DD") &&
+      moment(value.args["to"]).format("YYYY-MM-DD") ==
+        moment(to).format("YYYY-MM-DD")
+    );
   }
 
   private getSqlType(schema: EntitySchemaField): SqlType {

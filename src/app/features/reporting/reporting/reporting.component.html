@@ -10,7 +10,7 @@
 
 <app-select-report
   [reports]="reports"
-  [loading]="loading"
+  [loading]="isLoading"
   [exportableData]="exportableData"
   (calculateClick)="calculateResults($event.report, $event.from, $event.to)"
   (dataChanged)="reportCalculation = null; data = null"
@@ -21,6 +21,16 @@
   This report was calculated at:
   {{ reportCalculation?.endDate | date: "dd.MM.yyyy HH:mm" }} <br />
   Click again on "Calculate" to re-calculate the report.
+</div>
+
+<div class="error-message" *ngIf="isError">
+  <h3 class="header">Something went wrong</h3>
+  <div class="content">
+    <p>Error details:</p>
+    <code>
+      {{ errorDetails | json }}
+    </code>
+  </div>
 </div>
 
 <app-report-row

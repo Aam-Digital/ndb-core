@@ -40,7 +40,9 @@ import { map, switchMap } from "rxjs/operators";
 export class ReportingComponent {
   reports: ReportEntity[];
   mode: ReportEntity["mode"]; // "reporting" (default), "exporting", "sql"
-  loading: boolean;
+  isLoading: boolean;
+  isError: boolean = false;
+  errorDetails: string | null = null;
 
   reportCalculation: ReportCalculation | null = null;
 
@@ -63,7 +65,9 @@ export class ReportingComponent {
     fromDate: Date,
     toDate: Date,
   ) {
-    this.loading = true;
+    this.isError = false;
+    this.errorDetails = null;
+    this.isLoading = true;
     this.data = [];
 
     if (this.reportCalculation) {
@@ -84,11 +88,21 @@ export class ReportingComponent {
       );
     }
 
-    this.data = await this.getReportResults(selectedReport, fromDate, toDate);
+    this.data = await this.getReportResults(
+      selectedReport,
+      fromDate,
+      toDate,
+    ).catch((reason) => {
+      this.isLoading = false;
+      this.isError = true;
+      this.errorDetails = reason.message || reason;
+      return Promise.reject(reason.message || reason);
+    });
+
     this.mode = selectedReport.mode ?? "reporting";
     this.exportableData =
       this.mode === "reporting" ? this.flattenReportRows() : this.data;
-    this.loading = false;
+    this.isLoading = false;
   }
 
   private async getReportResults(report: ReportEntity, from: Date, to: Date) {
