@@ -72,6 +72,22 @@ describe("EntityFormService", () => {
     expect(entity.getId()).toBe(`${Entity.ENTITY_TYPE}:newId`);
   });
 
+  it("should mark form pristine and disable it after saving", async () => {
+    const entity = new Entity("initialId");
+    const formGroup = new UntypedFormGroup({
+      _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
+    });
+    TestBed.inject(EntityAbility).update([
+      { subject: "Entity", action: "create" },
+    ]);
+
+    await service.saveChanges(formGroup, entity);
+
+    expect(formGroup.pristine).toBeTrue();
+    // form status change is needed for EditFileComponent to start file upload, for example
+    expect(formGroup.disabled).toBeTrue();
+  });
+
   it("should throw an error when trying to create a entity with missing permissions", async () => {
     TestBed.inject(EntityAbility).update([
       { subject: "all", action: "manage" },
