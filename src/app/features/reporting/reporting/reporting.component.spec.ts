@@ -36,7 +36,7 @@ describe("ReportingComponent", () => {
 
   const testReport = new ReportEntity();
 
-  let validReportCalculationsResponse: ReportCalculation = {
+  let validReportCalculation: ReportCalculation = {
     id: "report-calculation-2",
     report: {
       id: "report-id",
@@ -77,6 +77,9 @@ describe("ReportingComponent", () => {
     mockSqlReportService = jasmine.createSpyObj([
       "query",
       "fetchReportCalculation",
+      "createReportCalculation",
+      "waitForReportData",
+      "fetchReportCalculationData",
     ]);
     await TestBed.configureTestingModule({
       imports: [
@@ -256,7 +259,7 @@ describe("ReportingComponent", () => {
     );
 
     mockSqlReportService.fetchReportCalculation.and.returnValue(
-      of(validReportCalculationsResponse),
+      of(validReportCalculation),
     );
 
     // When
@@ -272,5 +275,73 @@ describe("ReportingComponent", () => {
       new Date("2023-01-01"),
       new Date("2023-01-01"),
     );
+  });
+
+  it("should re-trigger the report calculation on second calculate click", async () => {
+    // Given
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
+
+    component.reportCalculation = validReportCalculation;
+
+    mockSqlReportService.query.and.returnValue(
+      Promise.resolve(validReportDataResponse),
+    );
+
+    mockSqlReportService.fetchReportCalculation.and.returnValue(
+      of(validReportCalculation),
+    );
+
+    mockSqlReportService.createReportCalculation.and.returnValue(
+      of({ id: "foo" }),
+    );
+
+    mockSqlReportService.waitForReportData.and.returnValue(
+      of(validReportCalculation),
+    );
+
+    mockSqlReportService.fetchReportCalculationData.and.returnValue(
+      of(validReportDataResponse),
+    );
+
+    // When
+    await component.calculateResults(
+      report,
+      new Date("2023-01-01"),
+      new Date("2023-01-01"),
+    );
+
+    // Then
+    expect(mockSqlReportService.query).toHaveBeenCalledWith(
+      report,
+      new Date("2023-01-01"),
+      new Date("2023-01-01"),
+    );
+    expect(mockSqlReportService.createReportCalculation).toHaveBeenCalledWith(
+      report.getId(),
+      new Date("2023-01-01"),
+      new Date("2023-01-01"),
+    );
+  });
+
+  it("should show error when getReportResults returns an error", async () => {
+    // Given
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
+
+    mockSqlReportService.query.and.returnValue(Promise.reject(Error("foo")));
+
+    // When
+    return component
+      .calculateResults(report, new Date("2023-01-01"), new Date("2023-01-01"))
+      .then(() => {
+        fail("should have thrown an error");
+      })
+      .catch((reason) => {
+        // Then
+        expect(reason).toEqual("foo");
+        expect(component.isError).toBeTrue();
+        expect(component.errorDetails).not.toBeNull();
+      });
   });
 });

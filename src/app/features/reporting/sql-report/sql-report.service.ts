@@ -85,7 +85,11 @@ export class SqlReportService {
     );
   }
 
-  createReportCalculation(reportId: string, from: Date, to: Date) {
+  createReportCalculation(
+    reportId: string,
+    from: Date,
+    to: Date,
+  ): Observable<{ id: string }> {
     return this.http.post<{
       id: string;
     }>(
@@ -106,7 +110,9 @@ export class SqlReportService {
     );
   }
 
-  waitForReportData(reportCalculationId: string) {
+  waitForReportData(
+    reportCalculationId: string,
+  ): Observable<ReportCalculation> {
     return interval(2000).pipe(
       switchMap(() => this.fetchReportCalculation(reportCalculationId)),
       takeWhile((response) => this.pollCondition(response), true),
