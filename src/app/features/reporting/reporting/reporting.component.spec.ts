@@ -20,7 +20,12 @@ import { DataTransformationService } from "../../../core/export/data-transformat
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
 import { ReportEntity, SqlReport } from "../report-config";
-import { SqlReportService } from "../sql-report/sql-report.service";
+import {
+  ReportCalculation,
+  ReportData,
+  SqlReportService,
+} from "../sql-report/sql-report.service";
+import { of } from "rxjs";
 
 describe("ReportingComponent", () => {
   let component: ReportingComponent;
@@ -31,13 +36,48 @@ describe("ReportingComponent", () => {
 
   const testReport = new ReportEntity();
 
+  let validReportCalculationsResponse: ReportCalculation = {
+    id: "report-calculation-2",
+    report: {
+      id: "report-id",
+    },
+    status: "FINISHED_SUCCESS",
+    startDate: "2024-06-07T09:26:56.414",
+    endDate: "2024-06-09T09:26:57.431",
+    args: new Map<String, String>([
+      ["from", "2024-01-01T00:00:00.000"],
+      ["to", "2024-01-01T23:59:59.999"],
+    ]),
+    outcome: {
+      result_hash: "000",
+    },
+  };
+
+  let validReportDataResponse: ReportData = {
+    id: "id",
+    report: {
+      id: "report-id",
+    },
+    calculation: {
+      id: "calculation-id",
+    },
+    data: [
+      {
+        foo: "bar",
+      },
+    ],
+  };
+
   beforeEach(async () => {
     mockReportingService = jasmine.createSpyObj(["calculateReport"]);
     mockDataTransformationService = jasmine.createSpyObj([
       "queryAndTransformData",
     ]);
     mockReportingService.calculateReport.and.resolveTo([]);
-    mockSqlReportService = jasmine.createSpyObj(["query"]);
+    mockSqlReportService = jasmine.createSpyObj([
+      "query",
+      "fetchReportCalculation",
+    ]);
     await TestBed.configureTestingModule({
       imports: [
         ReportingComponent,
@@ -206,21 +246,31 @@ describe("ReportingComponent", () => {
     expect(component.mode).toBe("exporting");
   });
 
-  xit("should use the sql report service when report has mode 'sql'", async () => {
+  it("should use the sql report service when report has mode 'sql'", async () => {
+    // Given
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
 
+    mockSqlReportService.query.and.returnValue(
+      Promise.resolve(validReportDataResponse),
+    );
+
+    mockSqlReportService.fetchReportCalculation.and.returnValue(
+      of(validReportCalculationsResponse),
+    );
+
+    // When
     await component.calculateResults(
       report,
       new Date("2023-01-01"),
-      new Date("2023-12-31"),
+      new Date("2023-01-01"),
     );
 
+    // Then
     expect(mockSqlReportService.query).toHaveBeenCalledWith(
       report,
       new Date("2023-01-01"),
-      // Next day (to date is exclusive
-      new Date("2024-01-01"),
+      new Date("2023-01-01"),
     );
   });
 });
