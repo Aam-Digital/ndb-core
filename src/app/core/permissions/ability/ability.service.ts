@@ -8,7 +8,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
-import { User } from "../../user/user";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -21,6 +21,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   constructor(
     private ability: EntityAbility,
     private sessionInfo: SessionSubject,
+    private currentUser: CurrentUserSubject,
     private permissionEnforcer: PermissionEnforcerService,
     entityMapper: EntityMapperService,
     logger: LoggingService,
@@ -75,13 +76,11 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     return this.interpolateUser(rawUserRules, sessionInfo);
   }
 
-  private async interpolateUser(
+  private interpolateUser(
     rules: DatabaseRule[],
     sessionInfo: SessionInfo,
-  ): Promise<DatabaseRule[]> {
-    const user = await this.entityMapper
-      .load(User, sessionInfo.entityId)
-      .catch(() => {});
+  ): DatabaseRule[] {
+    const user = this.currentUser.value;
 
     if (user && user["projects"]) {
       sessionInfo.projects = user["projects"];
