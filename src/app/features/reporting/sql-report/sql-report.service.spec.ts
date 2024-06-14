@@ -5,10 +5,7 @@ import {
   ReportData,
   SqlReportService,
 } from "./sql-report.service";
-import {
-  entityRegistry,
-  EntityRegistry,
-} from "../../../core/entity/database-entity.decorator";
+import { entityRegistry } from "../../../core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
 import { of } from "rxjs";
 import { ReportEntity, SqlReport } from "../report-config";
@@ -17,9 +14,7 @@ import moment from "moment";
 describe("SqlReportService", () => {
   let service: SqlReportService;
 
-  let mockEntities: EntityRegistry;
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
-  // let mockedEntityMapper: jasmine.SpyObj<EntityMapperService>;
 
   let validReportCalculationsResponse: ReportCalculation[] = [
     {
@@ -87,16 +82,10 @@ describe("SqlReportService", () => {
 
   beforeEach(() => {
     entityRegistry.allowDuplicates();
-    mockEntities = new EntityRegistry();
     mockHttpClient = jasmine.createSpyObj(["post", "get"]);
-    // mockedEntityMapper = jasmine.createSpyObj(["load", "save"]);
 
     TestBed.configureTestingModule({
-      providers: [
-        { provide: EntityRegistry, useValue: mockEntities },
-        { provide: HttpClient, useValue: mockHttpClient },
-        // { provide: EntityMapperService, useValue: mockedEntityMapper },
-      ],
+      providers: [{ provide: HttpClient, useValue: mockHttpClient }],
     });
     service = TestBed.inject(SqlReportService);
   });

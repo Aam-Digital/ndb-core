@@ -1,5 +1,4 @@
 import { Injectable } from "@angular/core";
-import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { SqlReport } from "../report-config";
 import { HttpClient } from "@angular/common/http";
 import moment from "moment";
@@ -40,11 +39,7 @@ export interface ReportCalculation {
 export class SqlReportService {
   static QUERY_PROXY = "/query";
 
-  constructor(
-    private entities: EntityRegistry,
-    private http: HttpClient,
-    // private entityMapper: EntityMapperService,
-  ) {}
+  constructor(private http: HttpClient) {}
 
   /**
    * Get the combines results of the SQL statements in the report
@@ -53,8 +48,6 @@ export class SqlReportService {
    * @param to
    */
   async query(report: SqlReport, from: Date, to: Date): Promise<ReportData> {
-    // await this.updateSchemaIfNecessary();
-
     return firstValueFrom(
       this.http
         .get<
