@@ -52,24 +52,25 @@ export class FilterGeneratorService {
     for (const filterConfig of filterConfigs) {
       const schema = entityConstructor.schema.get(filterConfig.id) || {};
       let filter: Filter<T>;
+      const label = filterConfig.label ?? schema.labelShort ?? schema.label;
       const type = filterConfig.type ?? schema.dataType;
       if (type == "configurable-enum") {
         filter = new ConfigurableEnumFilter(
           filterConfig.id,
-          filterConfig.label || schema.label,
+          label,
           this.enumService.getEnumValues(schema.additional),
         );
       } else if (type == "boolean") {
         filter = new BooleanFilter(
           filterConfig.id,
-          filterConfig.label || schema.label,
+          label,
           filterConfig as BooleanFilterConfig,
         );
       } else if (type == "prebuilt") {
         filter = new SelectableFilter(
           filterConfig.id,
           (filterConfig as PrebuiltFilterConfig<T>).options,
-          filterConfig.label,
+          label,
         );
       } else if (
         this.schemaService.getDatatypeOrDefault(type, true) instanceof
@@ -77,7 +78,7 @@ export class FilterGeneratorService {
       ) {
         filter = new DateFilter(
           filterConfig.id,
-          filterConfig.label || schema.label,
+          label,
           (filterConfig as DateRangeFilterConfig).options ?? defaultDateFilters,
         );
       } else if (
@@ -88,21 +89,13 @@ export class FilterGeneratorService {
         const entityType = filterConfig.type || schema.additional;
         const filterEntities =
           await this.entityMapperService.loadType(entityType);
-        filter = new EntityFilter(
-          filterConfig.id,
-          filterConfig.label || schema.label,
-          filterEntities,
-        );
+        filter = new EntityFilter(filterConfig.id, label, filterEntities);
       } else {
         const options = [...new Set(data.map((c) => c[filterConfig.id]))];
         const fSO: FilterSelectionOption<T>[] =
           SelectableFilter.generateOptions(options, filterConfig.id);
 
-        filter = new SelectableFilter<T>(
-          filterConfig.id,
-          fSO,
-          filterConfig.label || schema.label,
-        );
+        filter = new SelectableFilter<T>(filterConfig.id, fSO, label);
       }
 
       if (filterConfig.hasOwnProperty("default")) {
