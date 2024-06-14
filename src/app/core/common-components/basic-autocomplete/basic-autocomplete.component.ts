@@ -10,6 +10,7 @@ import {
   Self,
   TemplateRef,
   ViewChild,
+  OnInit,
 } from "@angular/core";
 import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -82,7 +83,7 @@ interface SelectableOption<O, V> {
 })
 export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
-  implements OnChanges
+  implements OnChanges, OnInit
 {
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
   // `_elementRef` is protected in `MapInput`
