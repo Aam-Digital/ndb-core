@@ -1,15 +1,3 @@
-<!--Search-->
-<input
-  [hidden]="!focused"
-  #inputElement
-  [formControl]="autocompleteForm"
-  matInput
-  style="text-overflow: ellipsis"
-  [matAutocomplete]="autoSuggestions"
-  (focusout)="onFocusOut($event)"
-  [placeholder]="placeholder"
-/>
-
 <!--Display-->
 <input
   *ngIf="display === 'text' || display === 'none'; else chipsDisplay"
@@ -20,6 +8,18 @@
   (focusin)="showAutocomplete()"
   (focusout)="showAutocomplete()"
   [value]="displayText"
+  [placeholder]="placeholder"
+/>
+
+<!--Search-->
+<input
+  [hidden]="!focused"
+  #inputElement
+  [formControl]="autocompleteForm"
+  matInput
+  style="text-overflow: ellipsis"
+  [matAutocomplete]="autoSuggestions"
+  (focusout)="onFocusOut($event)"
   [placeholder]="placeholder"
 />
 
@@ -39,8 +39,16 @@
     cdkDropListGroup
     [cdkDropListDisabled]="!reorder"
   >
-    <ng-container *ngFor="let item of autocompleteOptions">
-      <mat-option [value]="item" cdkDrag>
+    <cdk-virtual-scroll-viewport
+      [style.height]="(autocompleteOptions?.length ?? 0) * 48 + 'px'"
+      [style.max-height]="3 * 48 + 'px'"
+      itemSize="48"
+    >
+      <mat-option
+        [value]="item"
+        cdkDrag
+        *cdkVirtualFor="let item of autocompleteOptions"
+      >
         <div class="flex-row disable-autocomplete-active-color align-center">
           <div *ngIf="reorder">
             <fa-icon
@@ -61,7 +69,7 @@
           ></ng-template>
         </div>
       </mat-option>
-    </ng-container>
+    </cdk-virtual-scroll-viewport>
   </div>
 
   <!-- Create new option -->
