@@ -32,12 +32,14 @@ import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../../core/session/session-type";
 import { map } from "rxjs/operators";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
+import { SyncService } from "../../core/database/sync.service";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
   let mockHttp: jasmine.SpyObj<HttpClient>;
   let mockDialog: jasmine.SpyObj<MatDialog>;
   let mockSnackbar: jasmine.SpyObj<MatSnackBar>;
+  let mockSyncService: jasmine.SpyObj<SyncService>;
   let dismiss: jasmine.Spy;
   let updates: Subject<UpdatedEntity<Entity>>;
   const attachmentUrlPrefix = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
@@ -45,6 +47,8 @@ describe("CouchdbFileService", () => {
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
     mockDialog = jasmine.createSpyObj(["open"]);
+    mockSyncService = jasmine.createSpyObj(["sync"]);
+    mockSyncService.sync.and.resolveTo();
     updates = new Subject();
     mockSnackbar = jasmine.createSpyObj(["openFromComponent"]);
     dismiss = jasmine.createSpy();
@@ -74,6 +78,7 @@ describe("CouchdbFileService", () => {
             bypassSecurityTrustUrl: (val: string) => val,
           },
         },
+        { provide: SyncService, useValue: mockSyncService },
       ],
     });
     service = TestBed.inject(CouchdbFileService);
@@ -87,13 +92,14 @@ describe("CouchdbFileService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should add a attachment to a existing document", () => {
+  it("should add a attachment to a existing document", fakeAsync(() => {
     mockHttp.get.and.returnValue(of({ _rev: "test_rev" }));
     mockHttp.put.and.returnValue(of({ ok: true }));
     const file = new File([], "file.name", { type: "image/png" });
     const entity = new Entity("testId");
 
     service.uploadFile(file, entity, "testProp").subscribe();
+    tick();
 
     expect(mockHttp.get).toHaveBeenCalledWith(
       jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
@@ -105,9 +111,9 @@ describe("CouchdbFileService", () => {
       jasmine.anything(),
       jasmine.anything(),
     );
-  });
+  }));
 
-  it("should create attachment document if it does not exist yet", (done) => {
+  it("should create attachment document if it does not exist yet (and complete a sync first)", (done) => {
     mockHttp.get.and.returnValue(
       throwError(() => new HttpErrorResponse({ status: 404 })),
     );
@@ -116,6 +122,9 @@ describe("CouchdbFileService", () => {
     const entity = new Entity("testId");
 
     service.uploadFile(file, entity, "testProp").subscribe(() => {
+      // newly created entity has to be synced to server db for permission checks of attachment upload
+      expect(mockSyncService.sync).toHaveBeenCalled();
+
       expect(mockHttp.put).toHaveBeenCalledWith(
         jasmine.stringContaining(`${attachmentUrlPrefix}/Entity:testId`),
         {},
@@ -226,7 +235,7 @@ describe("CouchdbFileService", () => {
     ).toBeResolved();
   });
 
-  it("should wait for previous request to finish before starting a new one", () => {
+  it("should wait for previous request to finish before starting a new one", fakeAsync(() => {
     const firstPut = new BehaviorSubject({ ok: true });
     const secondPut = new BehaviorSubject({ ok: true });
     const thirdPut = new BehaviorSubject({ ok: true });
@@ -247,12 +256,15 @@ describe("CouchdbFileService", () => {
     service
       .uploadFile(file1, entity, "prop1")
       .subscribe({ complete: () => (file1Done = true) });
+    tick();
     service
       .uploadFile(file2, entity, "prop2")
       .subscribe({ complete: () => (file2Done = true) });
+    tick();
     service
       .uploadFile(file3, entity, "prop3")
       .subscribe({ complete: () => (file3Done = true) });
+    tick();
 
     expect(firstPut.observed).toBeTrue();
     expect(secondPut.observed).toBeFalse();
@@ -266,6 +278,7 @@ describe("CouchdbFileService", () => {
     );
 
     firstPut.complete();
+    tick();
 
     expect(file1Done).toBeTrue();
     expect(file2Done).toBeFalse();
@@ -282,6 +295,7 @@ describe("CouchdbFileService", () => {
     );
 
     secondPut.complete();
+    tick();
 
     expect(file2Done).toBeTrue();
     expect(file3Done).toBeFalse();
@@ -294,7 +308,7 @@ describe("CouchdbFileService", () => {
       jasmine.anything(),
       jasmine.anything(),
     );
-  });
+  }));
 
   it("should only request a file once per session", async () => {
     mockHttp.get.and.returnValue(of(new Blob([])));

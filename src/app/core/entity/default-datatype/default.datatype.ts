@@ -18,6 +18,7 @@
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity } from "../model/entity";
 import { ColumnMapping } from "../../import/column-mapping";
+import { asArray } from "../../../utils/utils";
 
 /**
  * Extend this class to define new data types (i.e. for properties of entities)
@@ -103,8 +104,14 @@ export class DefaultDatatype<EntityType = any, DBType = any> {
     val: any,
     schemaField: EntitySchemaField,
     additional?: any,
-  ): Promise<EntityType> {
-    return this.transformToObjectFormat(val, schemaField);
+  ): Promise<EntityType | EntityType[]> {
+    if (schemaField.isArray) {
+      return asArray(val).map((v) =>
+        this.transformToObjectFormat(v, schemaField),
+      );
+    } else {
+      return this.transformToObjectFormat(val, schemaField);
+    }
   }
 
   /**

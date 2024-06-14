@@ -16,10 +16,10 @@ import { SyncStateSubject } from "../../core/session/session-type";
  */
 export abstract class FileService {
   protected constructor(
-    private entityMapper: EntityMapperService,
-    private entities: EntityRegistry,
+    protected entityMapper: EntityMapperService,
+    protected entities: EntityRegistry,
     protected logger: LoggingService,
-    private syncState: SyncStateSubject,
+    protected syncState: SyncStateSubject,
   ) {
     // TODO maybe registration is too late (only when component is rendered)
     this.syncState

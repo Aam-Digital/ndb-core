@@ -103,7 +103,10 @@ export class SyncService {
     return PouchDB.fetch(url, opts);
   }
 
-  private sync(): Promise<SyncResult> {
+  /**
+   * Execute a (one-time) sync between the local and server database.
+   */
+  sync(): Promise<SyncResult> {
     this.syncStateSubject.next(SyncState.STARTED);
 
     return this.localDB
