@@ -63,8 +63,6 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   async saveClicked() {
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.form.markAsPristine();
-      this.form.disable();
       if (this.creatingNew && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),

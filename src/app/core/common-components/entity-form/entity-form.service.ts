@@ -201,7 +201,7 @@ export class EntityFormService {
    * This function applies the changes of the formGroup to the entity.
    * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
    * The input entity will not be modified but a copy of it will be returned in case of success.
-   * @param form The formGroup holding the changes
+   * @param form The formGroup holding the changes (marked pristine and disabled after successful save)
    * @param entity The entity on which the changes should be applied.
    * @returns a copy of the input entity with the changes from the form group
    */
@@ -221,15 +221,16 @@ export class EntityFormService {
     updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
 
-    return this.entityMapper
-      .save(updatedEntity)
-      .then(() => {
-        this.unsavedChanges.pending = false;
-        return Object.assign(entity, updatedEntity);
-      })
-      .catch((err) => {
-        throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
-      });
+    try {
+      await this.entityMapper.save(updatedEntity);
+    } catch (err) {
+      throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
+    }
+
+    this.unsavedChanges.pending = false;
+    form.markAsPristine();
+    form.disable();
+    return Object.assign(entity, updatedEntity);
   }
 
   private checkFormValidity<T extends Entity>(form: EntityForm<T>) {
