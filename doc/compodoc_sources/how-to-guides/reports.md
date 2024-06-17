@@ -3,7 +3,11 @@
 The reporting module allows organizations to automatically create reports of aggregated data for a given timespan.
 This can be used to track indicators and export anonymous data.
 
-## Overview
+There are currently two systems available to generate reports, both using the same config documents (`ReportConfig:*`): 
+- SQL-based queries executed server-side using the SQS server
+- (legacy) client-side generator using the aggregation & query syntax below
+
+# SQL Reports
 
 For this feature, we have integrated the (optional) [structured-query-service (SQS)](https://neighbourhood.ie/products-and-services/structured-query-server)
 (this creates a read-only copy of the data in the CouchDB and allows to run Sqlite queries against it).
