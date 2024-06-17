@@ -1,3 +1,5 @@
+@use "variables/colors";
+
 .work-panel {
   padding-top: 20px;
   padding-bottom: 20px;
@@ -10,4 +12,28 @@
 
 .view-section {
   margin-bottom: 1em;
+}
+
+.error-message {
+  margin-top: 12px;
+  border-radius: 12px;
+  border: 1px solid colors.$grey-darker;
+
+  .header {
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+    background: colors.$error;
+    padding: 12px;
+    color: colors.$grey-light;
+  }
+  .content {
+    border-bottom-left-radius: 12px;
+    border-bottom-right-radius: 12px;
+    padding-left: 12px;
+    padding-right: 12px;
+    padding-bottom: 12px;
+    background: white;
+    font-size: small;
+    color: colors.$text-secondary;
+  }
 }
