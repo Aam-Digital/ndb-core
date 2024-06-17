@@ -26,12 +26,12 @@ export abstract class DiscreteDatatype<
     parent?: any,
   );
 
-  importMapFunction(
+  async importMapFunction(
     val,
-    schema: EntitySchemaField,
+    schemaField: EntitySchemaField,
     additional: { [key: string]: any },
-  ): any {
-    return this.transformToObjectFormat(additional?.[val], schema);
+  ) {
+    return super.importMapFunction(additional?.[val], schemaField);
   }
 
   importIncompleteAdditionalConfigBadge(col: ColumnMapping): string {
