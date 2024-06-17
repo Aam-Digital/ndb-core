@@ -20,7 +20,7 @@
 <div style="color: gray; padding: 10px" *ngIf="reportCalculation">
   This report was calculated at:
   {{ reportCalculation?.endDate | date: "dd.MM.yyyy HH:mm" }} <br />
-  Click again on "Calculate" to re-calculate the report.
+  Click again on "Calculate" to re-calculate the report including any changes of records since then.
 </div>
 
 <div class="error-message" *ngIf="isError">
