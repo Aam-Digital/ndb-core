@@ -98,7 +98,10 @@ export class Note extends Entity {
   @DatabaseField({
     label: $localize`:Label for the date of a note:Date`,
     dataType: "date-only",
-    defaultValue: PLACEHOLDERS.NOW,
+    defaultValue: {
+      mode: "dynamic",
+      value: PLACEHOLDERS.NOW,
+    },
     anonymize: "retain",
   })
   date: Date;
@@ -118,7 +121,10 @@ export class Note extends Entity {
     dataType: "entity",
     isArray: true,
     additional: User.ENTITY_TYPE,
-    defaultValue: PLACEHOLDERS.CURRENT_USER,
+    defaultValue: {
+      mode: "dynamic",
+      value: PLACEHOLDERS.CURRENT_USER,
+    },
     anonymize: "retain",
   })
   authors: string[] = [];

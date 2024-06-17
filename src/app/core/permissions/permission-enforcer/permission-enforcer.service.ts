@@ -35,7 +35,9 @@ export class PermissionEnforcerService {
     private configService: ConfigService,
   ) {}
 
-  async enforcePermissionsOnLocalData(userRules: DatabaseRule[]) {
+  async enforcePermissionsOnLocalData(
+    userRules: DatabaseRule[],
+  ): Promise<void> {
     const userRulesString = JSON.stringify(userRules);
     if (!this.sessionInfo.value || !this.userRulesChanged(userRulesString)) {
       return;
