@@ -93,8 +93,13 @@ export class HandleDefaultValuesUseCase {
         return;
       }
 
-      if (change.length != null && change.length === 1) {
-        change = change[0];
+      // source field is array, use first element if only one element
+      if (Array.isArray(change)) {
+        if (change.length === 1) {
+          change = change[0];
+        } else {
+          return;
+        }
       }
 
       let parentEntity: Entity = await this.entityMapper.load(
