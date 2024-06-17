@@ -111,6 +111,67 @@ The `admin_app` role simpy allows user with this role to do everything, without 
 To learn more about how to define rules, have a look at
 the [CASL documentation](https://casl.js.org/v5/en/guide/define-rules#rules).
 
+## Defining permissions
+The permissions are also stored in a CouchDB database (default database name `app`).
+This can be the same database used for normal application data managed by users.
+
+The structure of the permission document is as follows:
+```json
+{
+  "_id": "Config:Permissions",
+  "data": {
+    "public": [
+      { "subject": "User", "action":  "create"}
+    ],
+    "default": [
+      { "subject":  "Config", "action": "read" }
+    ],
+    "role_1": [
+      { "subject":  "all", "action":  "manage"},
+      ...
+    ],
+    "role_2": [],
+    ...
+  }
+}
+```
+Important is the exact `_id` as this is how the backend can find this document and that the rules config has the correct structure.
+
+The keys of the `data` object reference to roles that the different users can have and the values are arrays containing valid CASL [JSON rules](https://casl.js.org/v5/en/guide/define-rules#json-objects).
+The rules at the value of the `default` key are prepended to other rules that are relevant for a user.
+This allows to set user-agnostic rules, e.g. allowing everyone to read the `Config` document.
+The default rules can be overwritten by user-specific rules.
+The `public` rules are used when a user is **not** authenticated.
+This allows to expose a public API, e.g. to integrate a public form.
+Subjects refer to the prefixes of the `_id` properties of documents e.g. `_id: Child:123` refers to subject `Child`.
+The `all` subject is a wildcard that refers to all documents.
+
+The actions can be:
+* `create`
+* `read`
+* `update`
+* `delete`
+* `manage` (which is a wildcard for any action)
+
+It is also possible to access information of the user sending the request. E.g.:
+
+```json
+{
+  "subject": "org.couchdb.user",
+  "action": "update",
+  "fields": [
+    "password"
+  ],
+  "conditions": {
+    "name": "${user.name}"
+  }
+}
+```
+This allows users to update the `password` property of their *own* document in the `_users` database.
+Another available value is `${user.roles}` which is an array of rules which the user has.
+
+For more information on how to write rules have a look at the [CASL documentation](https://casl.js.org/v5/en/guide/intro).
+
 ### Implementing components with permissions
 
 This section is about code using permissions to read and edit **entities**.
