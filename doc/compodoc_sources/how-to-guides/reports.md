@@ -58,7 +58,7 @@ Requirements: SQS
 }
 ```
 
-### reporting/exporting
+# JSON-Query Reports (legacy)
 
 #### Aggregation structure
 
