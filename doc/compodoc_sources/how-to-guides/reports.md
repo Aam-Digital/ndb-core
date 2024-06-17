@@ -43,6 +43,7 @@ Requirements: SQS
 
 
 #### SQL Report With Arguments
+Additional arguments for the query (like a from and to date parameter) can be used in the SQL query directly using "?". The "neededArgs" array defines what arguments are filled for the "?" placeholders in the given order.
 
 ```json
 // app/ReportConfig:test-report
