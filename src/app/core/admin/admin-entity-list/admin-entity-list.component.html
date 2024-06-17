@@ -18,7 +18,7 @@
     class="drop-list flex-row gap-regular flex-wrap gap-large"
   >
     <div cdkDropList></div>
-    <div cdkDropList *ngFor="let filter of config?.filters">
+    <div cdkDropList class="flex-row" *ngFor="let filter of config?.filters">
       <div cdkDrag class="filter-field drop-item flex-row gap-small">
         <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
         <mat-form-field appearance="fill">
