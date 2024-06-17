@@ -163,7 +163,10 @@ It is also possible to access information of the user sending the request. E.g.:
     "password"
   ],
   "conditions": {
-    "name": "${user.name}"
+    "name": "${user.name}",
+    "projects": {
+      "$in": "${user.projects}"
+    }
   }
 }
 ```
