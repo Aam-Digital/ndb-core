@@ -46,8 +46,20 @@ export class SqlReportService {
    * @param report
    * @param from
    * @param to
+   * @param forceCalculation Creates a new Calculation, even when an existing calculation is available
    */
-  async query(report: SqlReport, from: Date, to: Date): Promise<ReportData> {
+  async query(
+    report: SqlReport,
+    from: Date,
+    to: Date,
+    forceCalculation = false,
+  ): Promise<ReportData> {
+    if (forceCalculation) {
+      return firstValueFrom(
+        this.createReportCalculation(report.getId(), from, to),
+      );
+    }
+
     return firstValueFrom(
       this.http
         .get<
@@ -55,53 +67,57 @@ export class SqlReportService {
         >(`${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${report.getId()}`)
         .pipe(
           switchMap((reportDetails) => {
-            let lastReports = reportDetails
-              .filter((value) => {
-                return this.filterFromToDates(value, from, to);
-              })
-              .sort((a: ReportCalculation, b: ReportCalculation) =>
-                this.sortByEndDate(a, b),
-              );
+            let lastReports = this.getLastReports(reportDetails, from, to);
 
             if (lastReports.length === 0) {
-              return this.createReportCalculation(
-                report.getId(),
-                from,
-                to,
-              ).pipe(
-                map((value) => value.id),
-                switchMap((id) => lastValueFrom(this.waitForReportData(id))),
-                switchMap((value: ReportCalculation) => {
-                  return this.handleReportCalculationResponse(value);
-                }),
-              );
+              return this.createReportCalculation(report.getId(), from, to);
             } else {
-              return this.http.get<ReportData>(
-                `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${lastReports[0].id}/data`,
-              );
+              return this.fetchReportCalculationData(lastReports[0].id);
             }
           }),
         ),
     );
   }
 
-  createReportCalculation(
+  private getLastReports(
+    reportDetails: ReportCalculation[],
+    from: Date,
+    to: Date,
+  ) {
+    return reportDetails
+      .filter((value) => {
+        return this.filterFromToDates(value, from, to);
+      })
+      .sort((a: ReportCalculation, b: ReportCalculation) =>
+        this.sortByEndDate(a, b),
+      );
+  }
+
+  private createReportCalculation(
     reportId: string,
     from: Date,
     to: Date,
-  ): Observable<{ id: string }> {
-    return this.http.post<{
-      id: string;
-    }>(
-      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${reportId}`,
-      {},
-      {
-        params: {
-          from: moment(from).format("YYYY-MM-DD"),
-          to: moment(to).format("YYYY-MM-DD"),
+  ): Observable<ReportData> {
+    return this.http
+      .post<{
+        id: string;
+      }>(
+        `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${reportId}`,
+        {},
+        {
+          params: {
+            from: moment(from).format("YYYY-MM-DD"),
+            to: moment(to).format("YYYY-MM-DD"),
+          },
         },
-      },
-    );
+      )
+      .pipe(
+        map((value) => value.id),
+        switchMap((id) => lastValueFrom(this.waitForReportData(id))),
+        switchMap((value: ReportCalculation) => {
+          return this.handleReportCalculationResponse(value);
+        }),
+      );
   }
 
   fetchReportCalculation(reportId: string): Observable<ReportCalculation> {
@@ -110,16 +126,16 @@ export class SqlReportService {
     );
   }
 
-  waitForReportData(
+  private waitForReportData(
     reportCalculationId: string,
   ): Observable<ReportCalculation> {
-    return interval(2000).pipe(
+    return interval(1500).pipe(
       switchMap(() => this.fetchReportCalculation(reportCalculationId)),
       takeWhile((response) => this.pollCondition(response), true),
     );
   }
 
-  fetchReportCalculationData(reportId: string): Observable<ReportData> {
+  private fetchReportCalculationData(reportId: string): Observable<ReportData> {
     return this.http.get<ReportData>(
       `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/${reportId}/data`,
     );

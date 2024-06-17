@@ -18,8 +18,7 @@ import {
   SqlReportService,
 } from "../sql-report/sql-report.service";
 import { RouteTarget } from "../../../route-target";
-import { firstValueFrom, lastValueFrom } from "rxjs";
-import { map, switchMap } from "rxjs/operators";
+import { firstValueFrom } from "rxjs";
 
 @RouteTarget("Reporting")
 @Component({
@@ -64,29 +63,11 @@ export class ReportingComponent {
     selectedReport: ReportEntity,
     fromDate: Date,
     toDate: Date,
-  ) {
+  ): Promise<void> {
     this.isError = false;
     this.errorDetails = null;
     this.isLoading = true;
     this.data = [];
-
-    if (this.reportCalculation) {
-      // trigger re-calculation
-      await firstValueFrom(
-        this.sqlReportService
-          .createReportCalculation(selectedReport.getId(), fromDate, toDate)
-          .pipe(
-            map((value) => value.id),
-            switchMap((id) =>
-              lastValueFrom(this.sqlReportService.waitForReportData(id)),
-            ),
-            switchMap((value) =>
-              // todo handle FINISHED_ERROR case
-              this.sqlReportService.fetchReportCalculationData(value.id),
-            ),
-          ),
-      );
-    }
 
     this.data = await this.getReportResults(
       selectedReport,
@@ -105,7 +86,11 @@ export class ReportingComponent {
     this.isLoading = false;
   }
 
-  private async getReportResults(report: ReportEntity, from: Date, to: Date) {
+  private async getReportResults(
+    report: ReportEntity,
+    from: Date,
+    to: Date,
+  ): Promise<any[]> {
     switch (report.mode) {
       case "exporting":
         // Add one day because to date is exclusive
@@ -116,7 +101,12 @@ export class ReportingComponent {
           dayAfterToDate,
         );
       case "sql":
-        let reportData = await this.sqlReportService.query(report, from, to);
+        let reportData = await this.sqlReportService.query(
+          report,
+          from,
+          to,
+          this.reportCalculation !== null,
+        );
 
         this.reportCalculation = await firstValueFrom(
           this.sqlReportService.fetchReportCalculation(

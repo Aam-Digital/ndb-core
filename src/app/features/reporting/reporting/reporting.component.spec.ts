@@ -274,6 +274,7 @@ describe("ReportingComponent", () => {
       report,
       new Date("2023-01-01"),
       new Date("2023-01-01"),
+      false,
     );
   });
 
@@ -292,18 +293,6 @@ describe("ReportingComponent", () => {
       of(validReportCalculation),
     );
 
-    mockSqlReportService.createReportCalculation.and.returnValue(
-      of({ id: "foo" }),
-    );
-
-    mockSqlReportService.waitForReportData.and.returnValue(
-      of(validReportCalculation),
-    );
-
-    mockSqlReportService.fetchReportCalculationData.and.returnValue(
-      of(validReportDataResponse),
-    );
-
     // When
     await component.calculateResults(
       report,
@@ -316,11 +305,7 @@ describe("ReportingComponent", () => {
       report,
       new Date("2023-01-01"),
       new Date("2023-01-01"),
-    );
-    expect(mockSqlReportService.createReportCalculation).toHaveBeenCalledWith(
-      report.getId(),
-      new Date("2023-01-01"),
-      new Date("2023-01-01"),
+      true,
     );
   });
 

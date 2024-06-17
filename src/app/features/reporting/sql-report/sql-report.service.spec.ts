@@ -131,6 +131,43 @@ describe("SqlReportService", () => {
     expect(result).toEqual(validReportDataResponse);
   });
 
+  it("should create a new report calculation if forceCalculation is true", async () => {
+    // Given
+    mockHttpClient.get.and.returnValues(
+      of(validReportCalculationsResponse[1]),
+      of(validReportDataResponse),
+    );
+    mockHttpClient.post.and.returnValue(
+      of({
+        id: "calculation-id",
+      }),
+    );
+
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
+
+    // When
+    const result = await service.query(
+      report,
+      moment("2024-01-02T00:00:00.000").toDate(),
+      moment("2024-01-02T23:59:59.999").toDate(),
+      true,
+    );
+
+    // Then
+    expect(mockHttpClient.post).toHaveBeenCalledOnceWith(
+      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${report.getId()}`,
+      {},
+      {
+        params: {
+          from: "2024-01-02",
+          to: "2024-01-02",
+        },
+      },
+    );
+    expect(result).toEqual(validReportDataResponse);
+  });
+
   it("should fetch the existing report calculation data if data exist", async () => {
     // Given
     mockHttpClient.get.and.returnValues(
