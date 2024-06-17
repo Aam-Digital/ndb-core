@@ -1,4 +1,6 @@
 import {
+  AfterViewInit,
+  ChangeDetectorRef,
   Component,
   Input,
   OnChanges,
@@ -65,7 +67,7 @@ import { DraggableGridDirective } from "app/core/common-components/draggable-gri
     "../admin-entity/admin-entity-styles.scss",
   ],
 })
-export class AdminEntityListComponent implements OnChanges {
+export class AdminEntityListComponent implements OnChanges, AfterViewInit {
   @ViewChild(CdkDropList) placeholder: CdkDropList;
 
   @Input() entityConstructor: EntityConstructor;
@@ -73,7 +75,7 @@ export class AdminEntityListComponent implements OnChanges {
 
   allFields: ColumnConfig[] = [];
   filters: string[];
-
+  constructor(private cdr: ChangeDetectorRef) {}
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.config) {
       this.config = this.config ?? {
@@ -86,6 +88,11 @@ export class AdminEntityListComponent implements OnChanges {
       this.initAvailableFields();
     }
   }
+
+  ngAfterViewInit() {
+    this.cdr.detectChanges();
+  }
+
   /**
    * Config allows to not have columnGroups and by default then display all `columns`,
    * create an initial columnGroup in this case to allow full editing.
