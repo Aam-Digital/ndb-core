@@ -2,13 +2,11 @@ import {
   AfterViewInit,
   Directive,
   HostListener,
-  Input,
-  ViewChild,
+  Input
 } from "@angular/core";
 import {
   CdkDragEnter,
   CdkDropList,
-  DragRef,
   moveItemInArray,
 } from "@angular/cdk/drag-drop";
 @Directive({
@@ -37,24 +35,35 @@ export class DraggableGridDirective implements AfterViewInit {
     if (!this.target) {
       return;
     }
+    console.log("onDropListDropped",this.placeholder)
     const placeholderElement: HTMLElement =
       this.placeholder.element.nativeElement;
     const placeholderParentElement: HTMLElement =
       placeholderElement.parentElement;
     placeholderElement.style.display = "none";
+    console.log("onDropListDropped1")
+
     placeholderParentElement.removeChild(placeholderElement);
     placeholderParentElement.appendChild(placeholderElement);
     placeholderParentElement.insertBefore(
       this.source.element.nativeElement,
       placeholderParentElement.children[this.sourceIndex],
     );
+    console.log("onDropListDropped12")
+
 
     if (this.placeholder._dropListRef.isDragging()) {
       this.placeholder._dropListRef.exit(this.dragRef);
     }
+    console.log("onDropListDropped123")
+
     this.target = null;
     this.source = null;
     this.dragRef = null;
+    console.log("this.config",this.config)
+    console.log("this.sourceIndex",this.sourceIndex)
+    console.log("this.targetIndex",this.targetIndex)
+
     if (this.sourceIndex !== this.targetIndex) {
       moveItemInArray(this.config, this.sourceIndex, this.targetIndex);
     }
@@ -65,6 +74,8 @@ export class DraggableGridDirective implements AfterViewInit {
     if (container == this.placeholder) {
       return;
     }
+    console.log("cdkDropListEntered")
+
     const placeholderElement: HTMLElement =
       this.placeholder.element.nativeElement;
     const sourceElement: HTMLElement = item.dropContainer.element.nativeElement;
