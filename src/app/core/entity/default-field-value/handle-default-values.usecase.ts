@@ -93,6 +93,15 @@ export class HandleDefaultValuesUseCase {
         return;
       }
 
+      // source field is array, use first element if only one element
+      if (Array.isArray(change)) {
+        if (change.length === 1) {
+          change = change[0];
+        } else {
+          return;
+        }
+      }
+
       let parentEntity: Entity = await this.entityMapper.load(
         Entity.extractTypeFromId(change),
         change,
@@ -103,7 +112,7 @@ export class HandleDefaultValuesUseCase {
       }
 
       if (isArray) {
-        targetFormControl.setValue([parentEntity[defaultValueConfig.field]]);
+        targetFormControl.setValue([...parentEntity[defaultValueConfig.field]]);
       } else {
         targetFormControl.setValue(parentEntity[defaultValueConfig.field]);
       }
@@ -193,7 +202,7 @@ export class HandleDefaultValuesUseCase {
       return false;
     }
 
-    if (isArray && formControl.value && formControl.value.size > 0) {
+    if (isArray && formControl.value && formControl.value.length > 0) {
       return false;
     }
 

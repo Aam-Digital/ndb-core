@@ -111,6 +111,30 @@ The `admin_app` role simpy allows user with this role to do everything, without 
 To learn more about how to define rules, have a look at
 the [CASL documentation](https://casl.js.org/v5/en/guide/define-rules#rules).
 
+It is also possible to access information of the user sending the request. E.g.:
+
+```json
+{
+  "subject": "org.couchdb.user",
+  "action": "update",
+  "fields": [
+    "password"
+  ],
+  "conditions": {
+    "name": "${user.name}",
+    "projects": {
+      "$in": "${user.projects}"
+    }
+  }
+}
+```
+
+This allows users to update the `password` property of their *own* document in the `_users` database.
+Placeholders can currently access properties that the _replication-backend_ explicitly adds to the auth user object. 
+Other available values are `${user.roles}` (array of roles of the user) and  `${user.projects}` (the "projects" attribute of the user's entity that is linked to the account through the "exact_username" in Keycloak).
+
+For more information on how to write rules have a look at the [CASL documentation](https://casl.js.org/v5/en/guide/intro).
+
 ### Implementing components with permissions
 
 This section is about code using permissions to read and edit **entities**.
