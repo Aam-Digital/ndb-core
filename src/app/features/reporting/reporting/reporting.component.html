@@ -26,6 +26,7 @@
 <div class="error-message" *ngIf="isError">
   <h3 class="header">Something went wrong</h3>
   <div class="content">
+    <p i18n>Please try again. If you continue to see this error, contact the technical support team.</p>
     <p>Error details:</p>
     <code>
       {{ errorDetails | json }}
