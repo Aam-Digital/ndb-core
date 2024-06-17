@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { ChildrenService } from "../../children/children.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -27,7 +27,10 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
   imports: [EntitiesTableComponent],
   standalone: true,
 })
-export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note> {
+export class NotesRelatedToEntityComponent
+  extends RelatedEntitiesComponent<Note>
+  implements OnInit
+{
   override entityCtr = Note;
   override _columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },

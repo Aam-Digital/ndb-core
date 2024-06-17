@@ -44,6 +44,7 @@ export class SelectReportComponent implements OnChanges {
   @Input() loading: boolean;
   @Input() exportableData: any;
   @Output() calculateClick = new EventEmitter<CalculateReportOptions>();
+  @Output() dataChanged = new EventEmitter<void>();
 
   selectedReport: ReportEntity;
   fromDate: Date;
@@ -55,6 +56,14 @@ export class SelectReportComponent implements OnChanges {
         this.selectedReport = this.reports[0];
       }
     }
+  }
+
+  reportChange() {
+    this.dataChanged.emit();
+  }
+
+  dateChange() {
+    this.dataChanged.emit();
   }
 }
 
