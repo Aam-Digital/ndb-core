@@ -1,104 +1,110 @@
-import { Directive, AfterViewInit, HostListener, Input, OnChanges, SimpleChanges, ChangeDetectorRef } from "@angular/core";
-import { CdkDragEnter, CdkDropList, moveItemInArray } from "@angular/cdk/drag-drop";
-import { v4 as uuid } from "uuid";
+import { Directive, AfterViewInit, Input, Host } from "@angular/core";
+import {
+  CdkDragDrop,
+  CdkDragEnter,
+  CdkDropList,
+  CdkDropListGroup,
+  moveItemInArray,
+} from "@angular/cdk/drag-drop";
+import { distinctUntilChanged } from "rxjs";
+
 @Directive({
   selector: "[appDraggableGrid]",
   standalone: true,
 })
-export class DraggableGridDirective implements AfterViewInit, OnChanges {
+export class DraggableGridDirective implements AfterViewInit {
   @Input() config: any;
-  @Input() placeholder: CdkDropList;
-  
 
-  private target: CdkDropList = null;
   private targetIndex: number;
   private source: CdkDropList = null;
   private sourceIndex: number;
   private dragRef: any = null;
 
-  id;
-  constructor(private cdr: ChangeDetectorRef) {
-    this.id = uuid();
-  }
+  constructor(@Host() private hostElement: CdkDropListGroup<any>) {}
 
   ngAfterViewInit() {
-    this.checkPlaceholder();
-  }
+    for (let dropList of this.hostElement._items as Set<CdkDropList>) {
+      dropList.entered
+        .asObservable()
+        .pipe(
+          distinctUntilChanged(
+            (prev: CdkDragEnter, curr: CdkDragEnter) =>
+              prev.container === curr.container,
+          ),
+        )
+        .subscribe((event) => this.onDropListEntered(event));
 
-  ngOnChanges(changes: SimpleChanges) {
-    if (changes.placeholder && changes.placeholder.currentValue) {
-      this.checkPlaceholder();
+      dropList.dropped.subscribe((event) => this.onDropListDropped(event));
     }
   }
 
-  private checkPlaceholder() {
-    if (!this.placeholder) {
-      console.error("Placeholder is null ");
-    } else {
-      console.log("Placeholder is avilable", this.placeholder);
-      this.cdr.detectChanges();
-    }
-  }
+  //@HostListener("cdkDropListDropped")
+  onDropListDropped(event: CdkDragDrop<any>) {
+    const placeholder = event.container;
+    // placeholder === this.target === event.container
+    // this.target === event.container
+    // this.source === event.previousContainer
 
-  @HostListener("cdkDropListDropped")
-  onDropListDropped() {
-    if (!this.target) {
-      console.warn("No target set", this.id);
-      return;
-    }
-    console.log("onDropListDropped", this.placeholder, this.id);
+    // TODO: --> remove class variables above and only use event properties instead
 
-    const placeholderElement: HTMLElement = this.placeholder.element.nativeElement;
-    const placeholderParentElement: HTMLElement = placeholderElement.parentElement;
-    placeholderElement.style.display = "none";
+    console.log("onDropListDropped");
+
+    const placeholderElement: HTMLElement = placeholder.element.nativeElement;
+    const placeholderParentElement: HTMLElement =
+      placeholderElement.parentElement;
+
+    // as we are moving around the actual element (rather than a different preview/placeholder div), hiding it and then readding seems to be counterproductive
+    //placeholderElement.style.display = "none";
 
     console.log("onDropListDropped removing and appending placeholder ");
     placeholderParentElement.removeChild(placeholderElement);
     placeholderParentElement.appendChild(placeholderElement);
     placeholderParentElement.insertBefore(
-      this.source.element.nativeElement,
-      placeholderParentElement.children[this.sourceIndex]
+      event.previousContainer.element.nativeElement,
+      placeholderParentElement.children[this.sourceIndex],
     );
 
-    if (this.placeholder._dropListRef.isDragging()) {
-      this.placeholder._dropListRef.exit(this.dragRef);
+    if (placeholder._dropListRef.isDragging()) {
+      placeholder._dropListRef.exit(this.dragRef);
     }
 
-    this.target = null;
     this.source = null;
     this.dragRef = null;
 
     console.log("Config before moveItemInArray:", this.config);
-    console.log("SourceIndex:", this.sourceIndex, "TargetIndex:", this.targetIndex);
+    console.log(
+      "SourceIndex:",
+      this.sourceIndex,
+      "TargetIndex:",
+      this.targetIndex,
+    );
 
     if (this.sourceIndex !== this.targetIndex) {
-      moveItemInArray(this.config, this.sourceIndex, this.targetIndex);
+      // indices are +1 from the extra template div that is added
+      moveItemInArray(this.config, this.sourceIndex - 1, this.targetIndex - 1);
     }
-    this.cdr.detectChanges();
   }
 
-  @HostListener("cdkDropListEntered", ["$event"])
+  //@HostListener("cdkDropListEntered", ["$event"])
   onDropListEntered(event: CdkDragEnter) {
     const { item, container } = event;
+    const placeholder = event.container;
 
-    if (container === this.placeholder) {
-      console.log("returning ");
-      return;
-    }
+    //if (container === placeholder) { console.log("returning "); return; }
 
-    console.log("cdkDropListEntered", event, this.id);
+    console.log("cdkDropListEntered", event);
 
-    const placeholderElement: HTMLElement = this.placeholder.element.nativeElement;
+    const placeholderElement: HTMLElement = placeholder.element.nativeElement;
     const sourceElement: HTMLElement = item.dropContainer.element.nativeElement;
     const dropElement: HTMLElement = container.element.nativeElement;
 
     const dragIndex: number = Array.prototype.indexOf.call(
       dropElement.parentElement.children,
-      this.source ? placeholderElement : sourceElement
+      this.source ? placeholderElement : sourceElement,
     );
     const dropIndex: number = Array.prototype.indexOf.call(
       dropElement.parentElement.children,
-      dropElement
+      dropElement,
     );
 
     if (!this.source) {
@@ -107,26 +113,22 @@ export class DraggableGridDirective implements AfterViewInit, OnChanges {
       sourceElement.parentElement.removeChild(sourceElement);
     }
     this.targetIndex = dropIndex;
-    this.target = container;
     this.dragRef = item._dragRef;
     placeholderElement.style.display = "";
     dropElement.parentElement.insertBefore(
       placeholderElement,
-      dropIndex > dragIndex ? dropElement.nextSibling : dropElement
+      dropIndex > dragIndex ? dropElement.nextSibling : dropElement,
     );
-    this.placeholder._dropListRef.enter(
+    placeholder._dropListRef.enter(
       item._dragRef,
       item.element.nativeElement.offsetLeft,
-      item.element.nativeElement.offsetTop
+      item.element.nativeElement.offsetTop,
     );
 
     console.log("DragIndex:", dragIndex, "DropIndex:", dropIndex);
-    console.log("Source:", this.source, "Target:", this.target);
     console.log("Placeholder Element:", placeholderElement);
     console.log("Source Element:", sourceElement);
     console.log("Drop Element:", dropElement);
-    console.log("Placeholder", this.placeholder.element.nativeElement.innerHTML)
-
-    this.cdr.detectChanges();
+    console.log("Placeholder", placeholder.element.nativeElement.innerText);
   }
 }

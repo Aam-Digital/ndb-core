@@ -13,21 +13,12 @@
 <div>
   <div
     cdkDropListGroup
+    appDraggableGrid
+    [config]="config?.filters"
     class="drop-list flex-row gap-regular flex-wrap gap-large"
   >
-    <div
-      cdkDropList
-      appDraggableGrid
-      [config]="config?.filters"
-      [placeholder]="placeholder"
-    ></div>
-    <div
-      cdkDropList
-      appDraggableGrid
-      [config]="config?.filters"
-      [placeholder]="placeholder"
-      *ngFor="let filter of config?.filters"
-    >
+    <div cdkDropList></div>
+    <div cdkDropList *ngFor="let filter of config?.filters">
       <div cdkDrag class="filter-field drop-item flex-row gap-small">
         <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
         <mat-form-field appearance="fill">
