@@ -1,4 +1,11 @@
-import { Directive, AfterViewInit, Input, Host, Output, EventEmitter } from "@angular/core";
+import {
+  Directive,
+  AfterViewInit,
+  Input,
+  Host,
+  Output,
+  EventEmitter,
+} from "@angular/core";
 import {
   CdkDragDrop,
   CdkDragEnter,
@@ -40,8 +47,6 @@ export class DraggableGridDirective implements AfterViewInit {
 
   //@HostListener("cdkDropListDropped")
   onDropListDropped(event: CdkDragDrop<any>) {
-    console.log("Config before moveItemInArray:", this.config);
-
     const placeholder = event.container;
     // placeholder === this.target === event.container
     // this.target === event.container

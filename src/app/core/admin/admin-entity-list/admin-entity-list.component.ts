@@ -1,11 +1,7 @@
 import {
-  AfterViewInit,
-  ChangeDetectorRef,
   Component,
-  EventEmitter,
   Input,
   OnChanges,
-  Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
@@ -70,7 +66,7 @@ import { DraggableGridDirective } from "app/core/common-components/draggable-gri
     "../admin-entity/admin-entity-styles.scss",
   ],
 })
-export class AdminEntityListComponent implements OnChanges, AfterViewInit {
+export class AdminEntityListComponent implements OnChanges {
   @ViewChild(CdkDropList) placeholder: CdkDropList;
 
   @Input() entityConstructor: EntityConstructor;
@@ -78,9 +74,8 @@ export class AdminEntityListComponent implements OnChanges, AfterViewInit {
 
   allFields: ColumnConfig[] = [];
   filters: string[];
-  constructor(private cdr: ChangeDetectorRef) {}
+
   ngOnChanges(changes: SimpleChanges): void {
-    console.log("ey3gdhwgcukagciuyavcyhafcuieygcuagcu gecuauocacfuaetcwiectfi7")
     if (changes.config) {
       this.config = this.config ?? {
         entityType: this.entityConstructor.ENTITY_TYPE,
@@ -92,14 +87,8 @@ export class AdminEntityListComponent implements OnChanges, AfterViewInit {
       this.initAvailableFields();
     }
   }
-  onConfigChange(event: FilterConfig){
-    console.log(event,"eveeveve")
-    this.config.filters  = JSON.parse(JSON.stringify(event )); // Needed to avoid Angular Ivy render bug
-  }
-
-  ngAfterViewInit() {
-    console.log("whyyyy")
-    this.cdr.detectChanges();
+  onConfigChange(event: FilterConfig) {
+    this.config.filters = JSON.parse(JSON.stringify(event)); // Needed to avoid Angular Ivy render bug
   }
 
   /**
