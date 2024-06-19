@@ -421,6 +421,102 @@ describe("HandleDefaultValuesUseCase", () => {
       expect(formGroup.get("field-2").value).toBe("bar");
     }));
 
+    it("should set default array value on FormControl, if target field empty", fakeAsync(() => {
+      // given
+      let formGroup = getDefaultInheritedFormGroup();
+
+      let fieldConfigs: [string, EntitySchemaField][] = [
+        [
+          "field-2",
+          {
+            isArray: true,
+            defaultValue: {
+              mode: "inherited",
+              field: "foo",
+              localAttribute: "reference-1",
+            },
+          },
+        ],
+      ];
+
+      let entity0 = new Entity();
+      entity0["foo"] = ["bar", "doo"];
+      mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+
+      // when
+      service.handleFormGroup(formGroup, fieldConfigs, true);
+      formGroup.get("reference-1").setValue("Entity:0");
+      tick(10); // fetching reference is always async
+
+      // then
+      expect(formGroup.get("field-1").value).toBe(null);
+      expect(formGroup.get("field-2").value).toEqual(["bar", "doo"]);
+    }));
+
+    it("should set value on FormControl, if source is single value array", fakeAsync(() => {
+      // given
+      let formGroup = getDefaultInheritedFormGroup();
+
+      let fieldConfigs: [string, EntitySchemaField][] = [
+        [
+          "field-2",
+          {
+            isArray: true,
+            defaultValue: {
+              mode: "inherited",
+              field: "foo",
+              localAttribute: "reference-1",
+            },
+          },
+        ],
+      ];
+
+      let entity0 = new Entity();
+      entity0["foo"] = ["bar"];
+      mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+
+      // when
+      service.handleFormGroup(formGroup, fieldConfigs, true);
+      formGroup.get("reference-1").setValue(["Entity:0"]);
+      tick(10); // fetching reference is always async
+
+      // then
+      expect(formGroup.get("field-1").value).toBe(null);
+      expect(formGroup.get("field-2").value).toEqual(["bar"]);
+    }));
+
+    it("should not set value on FormControl, if source is multi value array", fakeAsync(() => {
+      // given
+      let formGroup = getDefaultInheritedFormGroup();
+
+      let fieldConfigs: [string, EntitySchemaField][] = [
+        [
+          "field-2",
+          {
+            isArray: true,
+            defaultValue: {
+              mode: "inherited",
+              field: "foo",
+              localAttribute: "reference-1",
+            },
+          },
+        ],
+      ];
+
+      let entity0 = new Entity();
+      entity0["foo"] = ["bar", "doo"];
+      mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+
+      // when
+      service.handleFormGroup(formGroup, fieldConfigs, true);
+      formGroup.get("reference-1").setValue(["Entity:0", "Entity:1"]);
+      tick(10); // fetching reference is always async
+
+      // then
+      expect(formGroup.get("field-1").value).toBe(null);
+      expect(formGroup.get("field-2").value).toEqual(null);
+    }));
+
     it("should not set default value on FormControl, if target field is dirty and not empty", fakeAsync(() => {
       // given
       let formGroup = getDefaultInheritedFormGroup();

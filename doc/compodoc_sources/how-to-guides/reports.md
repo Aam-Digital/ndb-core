@@ -3,29 +3,65 @@
 The reporting module allows organizations to automatically create reports of aggregated data for a given timespan.
 This can be used to track indicators and export anonymous data.
 
+There are currently two systems available to generate reports, both using the same config documents (`ReportConfig:*`): 
+- SQL-based queries executed server-side using the SQS server
+- (legacy) client-side generator using the aggregation & query syntax below
+
+# SQL Reports
+
+For this feature, we have integrated the (optional) [structured-query-service (SQS)](https://neighbourhood.ie/products-and-services/structured-query-server)
+(this creates a read-only copy of the data in the CouchDB and allows to run Sqlite queries against it).
+SQS enables the possibility to create SQL based queries in reports.
+
+The SQS image is not available as open source and needs a licence. It is pulled from a private container registry.
+
+## Deployment
+
+To activate it for an application, simply activate "aam-backend-service" profile (`COMPOSE_PROFILES=aam-backend-service`) in the applications `.env` file and run `docker compose up -d`.
+
 ## Configuration
 
-The reports can be defined through the config of the reporting component.
+The reports can be defined as `ReportConfig:*` entities.
+
+There are different modes for `ReportConfig`:
+
+### sql
+Requirements: SQS
+
+#### Simple SQL Report
 
 ```json
-"view:report": {
-  "component": "Reporting",
-  "config": {
-    "reports": [
-      {
-        "title": "Basic Report",
-        "aggregationDefinitions": [...],
-      },
-      {
-        "title": "Event Report",
-        "aggregationDefinitions": [...]
-      }
-    ]
-  }
+// app/ReportConfig:test-report
+{
+  "_id": "ReportConfig:test-report",
+  "title": "Test Report",
+  "mode": "sql",
+  "aggregationDefinition": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c",
+  "neededArgs": []
 }
 ```
 
-## Aggregation structure
+
+#### SQL Report With Arguments
+Additional arguments for the query (like a from and to date parameter) can be used in the SQL query directly using "?". The "neededArgs" array defines what arguments are filled for the "?" placeholders in the given order.
+
+```json
+// app/ReportConfig:test-report
+{
+  "_id": "ReportConfig:test-report",
+  "title": "Test Report",
+  "mode": "sql",
+  "aggregationDefinition": "SELECT c.name as name, c.dateOfBirth as dateOfBirth FROM Child c WHERE created_at BETWEEN ? AND ?",
+  "neededArgs": [
+    "from",
+    "to"
+  ]
+}
+```
+
+# JSON-Query Reports (legacy)
+
+#### Aggregation structure
 
 Inside the `aggregationDefinitions` an array of aggregations can be added.
 The following example shows the structure of an aggregation.
@@ -52,7 +88,7 @@ The following example shows the structure of an aggregation.
 - The `aggregations` array can be filled with further aggregations with the same structure.
   They will be executed on the result of the `query` as well as on each `groupBy` result.
 
-## `query` syntax
+#### `query` syntax
 
 A full documentation can be found [here](https://github.com/auditassistant/json-query#queries).
 The most top-level aggregation has to start with the entity which should be queried.

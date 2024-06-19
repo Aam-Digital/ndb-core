@@ -8,6 +8,7 @@ import { LoggingService } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
+import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -20,6 +21,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
   constructor(
     private ability: EntityAbility,
     private sessionInfo: SessionSubject,
+    private currentUser: CurrentUserSubject,
     private permissionEnforcer: PermissionEnforcerService,
     entityMapper: EntityMapperService,
     logger: LoggingService,
@@ -41,10 +43,10 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     );
   }
 
-  private updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
+  private async updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
     // If rules object is empty, everything is allowed
     const userRules: DatabaseRule[] = rules
-      ? this.getRulesForUser(rules)
+      ? await this.getRulesForUser(rules)
       : [{ action: "manage", subject: "all" }];
 
     if (userRules.length === 0) {
@@ -58,7 +60,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     return this.permissionEnforcer.enforcePermissionsOnLocalData(userRules);
   }
 
-  private getRulesForUser(rules: DatabaseRules): DatabaseRule[] {
+  private async getRulesForUser(rules: DatabaseRules): Promise<DatabaseRule[]> {
     const sessionInfo = this.sessionInfo.value;
     if (!sessionInfo) {
       return rules.public ?? [];
@@ -76,8 +78,16 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
 
   private interpolateUser(
     rules: DatabaseRule[],
-    user: SessionInfo,
+    sessionInfo: SessionInfo,
   ): DatabaseRule[] {
+    const user = this.currentUser.value;
+
+    if (user && user["projects"]) {
+      sessionInfo.projects = user["projects"];
+    } else {
+      sessionInfo.projects = [];
+    }
+
     return JSON.parse(JSON.stringify(rules), (_that, rawValue) => {
       if (rawValue[0] !== "$") {
         return rawValue;
@@ -89,7 +99,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
         // mapping the previously valid ${user.name} here for backwards compatibility
         name = "user.entityId";
       }
-      const value = get({ user }, name);
+      const value = get({ user: sessionInfo }, name);
 
       if (typeof value === "undefined") {
         throw new ReferenceError(`Variable ${name} is not defined`);

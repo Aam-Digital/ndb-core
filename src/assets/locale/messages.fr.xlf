@@ -7190,7 +7190,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target state="new">Uploading "<x id="PH" equiv-text="file.name"/>"</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7211396766149775337" datatype="html">
@@ -7198,7 +7198,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target state="new">Loading "<x id="PH" equiv-text="entity[property]"/>"</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">149</context>
+          <context context-type="linenumber">162</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e1ea49b84d582f3c40491fe2c7e14eabfc9b878e" datatype="html">
@@ -7636,6 +7636,32 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">7</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="9227262034eda7ae49d91d824989ee5996ae4909" datatype="html">
+        <source> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Click again on "Calculate" to re-calculate the report including any changes of records since then.
+</source>
+        <target state="new"> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br />"/> Click again on "Calculate" to re-calculate the report including any changes of records since then.
+</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
+          <context context-type="linenumber">20,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d30e2acdec863a810e16ef3435b327e0a0bc9c70" datatype="html">
+        <source>Something went wrong calculating the report</source>
+        <target state="new">Something went wrong calculating the report</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f962c8b26ce4f00855975c72c734660bde3d0f48" datatype="html">
+        <source> Please try again. If you continue to see this error, contact the technical support team. </source>
+        <target state="new"> Please try again. If you continue to see this error, contact the technical support team. </target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
+          <context context-type="linenumber">30,33</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="5f1d416b17e963d026d15eff9483f2d8797f2a3d" datatype="html">
         <source>Reports have not been configured for you yet.</source>
         <target state="translated">La fonctionalité "Rapports" n'a pas encore été configurée pour vous.</target>
@@ -7666,7 +7692,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target state="new">Please select a report and a date range</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1d7ed2343579b6d2528114177b13f59e55b96cef" datatype="html">
@@ -7674,7 +7700,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <target state="translated">Saisir une plage de dates</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="77bbe324b08f6636fb50f673cea05313b86fb692" datatype="html">
@@ -7687,7 +7713,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="f60960faa2cd3e0db11e48688774d05dfa9d715b" datatype="html">
@@ -7700,7 +7726,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">42</context>
         </context-group>
       </trans-unit>
       <trans-unit id="985d3197ce76a7497d8935e4fef4b017f3fedb4c" datatype="html">
@@ -7725,17 +7751,17 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Calculate the results for a report</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">70</context>
+          <context context-type="linenumber">76</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="7dbcef16b9d6dd36d68cc127fb0bfb53e790360d" datatype="html">
-        <source> Download </source>
+      <trans-unit id="46156439e996f7f8e0e838635d508658a0c14f07" datatype="html">
+        <source> Download</source>
         <target state="translated"> Download </target>
-        <note priority="1" from="description">Button to download data</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">99</context>
         </context-group>
+        <note priority="1" from="description">Button to download data</note>
       </trans-unit>
       <trans-unit id="545544867626738363" datatype="html">
         <source>get signed agreement</source>
