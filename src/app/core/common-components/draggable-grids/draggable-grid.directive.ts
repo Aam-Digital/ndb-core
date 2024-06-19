@@ -1,4 +1,4 @@
-import { Directive, AfterViewInit, Input, Host } from "@angular/core";
+import { Directive, AfterViewInit, Input, Host, Output, EventEmitter } from "@angular/core";
 import {
   CdkDragDrop,
   CdkDragEnter,
@@ -14,7 +14,7 @@ import { distinctUntilChanged } from "rxjs";
 })
 export class DraggableGridDirective implements AfterViewInit {
   @Input() config: any;
-
+  @Output() configChange = new EventEmitter<any>();
   private targetIndex: number;
   private source: CdkDropList = null;
   private sourceIndex: number;
@@ -40,14 +40,13 @@ export class DraggableGridDirective implements AfterViewInit {
 
   //@HostListener("cdkDropListDropped")
   onDropListDropped(event: CdkDragDrop<any>) {
+    console.log("Config before moveItemInArray:", this.config);
+
     const placeholder = event.container;
     // placeholder === this.target === event.container
     // this.target === event.container
     // this.source === event.previousContainer
-
     // TODO: --> remove class variables above and only use event properties instead
-
-    console.log("onDropListDropped");
 
     const placeholderElement: HTMLElement = placeholder.element.nativeElement;
     const placeholderParentElement: HTMLElement =
@@ -71,7 +70,6 @@ export class DraggableGridDirective implements AfterViewInit {
     this.source = null;
     this.dragRef = null;
 
-    console.log("Config before moveItemInArray:", this.config);
     console.log(
       "SourceIndex:",
       this.sourceIndex,
@@ -81,7 +79,14 @@ export class DraggableGridDirective implements AfterViewInit {
 
     if (this.sourceIndex !== this.targetIndex) {
       // indices are +1 from the extra template div that is added
+      console.log(
+        "SourceIndex:",
+        this.sourceIndex,
+        "TargetIndex:",
+        this.targetIndex,
+      );
       moveItemInArray(this.config, this.sourceIndex - 1, this.targetIndex - 1);
+      this.configChange.emit(this.config);
     }
   }
 

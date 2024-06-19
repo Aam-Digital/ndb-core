@@ -2,8 +2,10 @@ import {
   AfterViewInit,
   ChangeDetectorRef,
   Component,
+  EventEmitter,
   Input,
   OnChanges,
+  Output,
   SimpleChanges,
   ViewChild,
 } from "@angular/core";
@@ -14,6 +16,7 @@ import { EntitiesTableComponent } from "../../common-components/entities-table/e
 import { EntityConstructor } from "../../entity/model/entity";
 import {
   EntityListConfig,
+  FilterConfig,
   GroupConfig,
 } from "../../entity-list/EntityListConfig";
 import { EntityFieldsMenuComponent } from "../../common-components/entity-fields-menu/entity-fields-menu.component";
@@ -77,6 +80,7 @@ export class AdminEntityListComponent implements OnChanges, AfterViewInit {
   filters: string[];
   constructor(private cdr: ChangeDetectorRef) {}
   ngOnChanges(changes: SimpleChanges): void {
+    console.log("ey3gdhwgcukagciuyavcyhafcuieygcuagcu gecuauocacfuaetcwiectfi7")
     if (changes.config) {
       this.config = this.config ?? {
         entityType: this.entityConstructor.ENTITY_TYPE,
@@ -88,8 +92,13 @@ export class AdminEntityListComponent implements OnChanges, AfterViewInit {
       this.initAvailableFields();
     }
   }
+  onConfigChange(event: FilterConfig){
+    console.log(event,"eveeveve")
+    this.config.filters  = JSON.parse(JSON.stringify(event )); // Needed to avoid Angular Ivy render bug
+  }
 
   ngAfterViewInit() {
+    console.log("whyyyy")
     this.cdr.detectChanges();
   }
 
