@@ -1,5 +1,4 @@
-<mat-form-field>
-  <!-- <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label> -->
+<!-- <mat-form-field>
   <mat-label>Number range filter</mat-label>
 
   <mat-form-field>
@@ -18,9 +17,12 @@
       placeholder="To"
     />
   </mat-form-field>
+</mat-form-field> -->
 
-  <!-- <mat-datepicker-toggle
-      matSuffix
-      (click)="openDialog($event)"
-    ></mat-datepicker-toggle> -->
-</mat-form-field>
+<div [formGroup]="form">
+  <ngx-numeric-range-form-field
+    formControlName="range"
+    label="Numeric range"
+    (numericRangeChanged)="onNumericRangeChanged($event)"
+  ></ngx-numeric-range-form-field>
+</div>
