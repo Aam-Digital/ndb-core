@@ -508,8 +508,8 @@ describe("MatchingEntitiesComponent", () => {
     component.ngOnInit();
     tick();
 
-    expect(component.sideDetails[0].multiSelect).toBeFalse();
-    expect(component.sideDetails[1].multiSelect).toBeFalse();
+    expect(component.sideDetails[0].multiSelect).toBeFalsy();
+    expect(component.sideDetails[1].multiSelect).toBeFalsy();
 
     component.onMatch = {
       newEntityType: Note.ENTITY_TYPE,

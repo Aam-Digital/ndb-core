@@ -4,9 +4,14 @@ import { Config } from "./config";
 import { LoggingService } from "../logging/logging.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
 import { shareReplay } from "rxjs/operators";
-import { EntitySchemaField } from "../entity/schema/entity-schema-field";
+import {
+  EntitySchemaField,
+  PLACEHOLDERS,
+} from "../entity/schema/entity-schema-field";
 import { FieldGroup } from "../entity-details/form/field-group";
 import { MenuItem } from "../ui/navigation/menu-item";
+import { DefaultValueConfig } from "../entity/schema/default-value-config";
+import { EntityDatatype } from "../basic-datatypes/entity/entity.datatype";
 
 /**
  * Access dynamic app configuration retrieved from the database
@@ -59,6 +64,8 @@ export class ConfigService extends LatestEntityLoader<Config> {
       migrateFormFieldConfigView2ViewComponent,
       migrateMenuItemConfig,
       migrateEntityDetailsInputEntityType,
+      migrateEntityArrayDatatype,
+      migrateEntitySchemaDefaultValue,
     ];
 
     const newConfig = JSON.parse(JSON.stringify(config), (_that, rawValue) => {
@@ -191,7 +198,7 @@ const migrateMenuItemConfig: ConfigMigration = (key, configPart) => {
 };
 
 /**
- * Config properties specifying an entityType should be name "entityType" rather than "entity"
+ * Config properties specifying an entityType should be named "entityType" rather than "entity"
  * to avoid confusion with a specific instance of an entity being passed in components.
  * @param key
  * @param configPart
@@ -210,4 +217,67 @@ const migrateEntityDetailsInputEntityType: ConfigMigration = (
   }
 
   return configPart;
+};
+
+/**
+ * Replace custom "entity-array" dataType with dataType="array", innerDatatype="entity"
+ * @param key
+ * @param configPart
+ */
+const migrateEntityArrayDatatype: ConfigMigration = (key, configPart) => {
+  if (configPart === "DisplayEntityArray") {
+    return "DisplayEntity";
+  }
+
+  if (!configPart?.hasOwnProperty("dataType")) {
+    return configPart;
+  }
+
+  const config: EntitySchemaField = configPart;
+  if (config.dataType === "entity-array") {
+    config.dataType = EntityDatatype.dataType;
+    config.isArray = true;
+  }
+
+  if (config.dataType === "array") {
+    config.dataType = config["innerDataType"];
+    delete config["innerDataType"];
+    config.isArray = true;
+  }
+
+  if (config.dataType === "configurable-enum" && config["innerDataType"]) {
+    config.additional = config["innerDataType"];
+    delete config["innerDataType"];
+  }
+
+  return configPart;
+};
+
+const migrateEntitySchemaDefaultValue: ConfigMigration = (
+  key: string,
+  configPart: any,
+): any => {
+  if (key !== "defaultValue") {
+    return configPart;
+  }
+
+  if (typeof configPart == "object") {
+    return configPart;
+  }
+
+  let placeholderValue: string | undefined = Object.values(PLACEHOLDERS).find(
+    (value) => value === configPart,
+  );
+
+  if (placeholderValue) {
+    return {
+      mode: "dynamic",
+      value: placeholderValue,
+    } as DefaultValueConfig;
+  }
+
+  return {
+    mode: "static",
+    value: configPart,
+  } as DefaultValueConfig;
 };

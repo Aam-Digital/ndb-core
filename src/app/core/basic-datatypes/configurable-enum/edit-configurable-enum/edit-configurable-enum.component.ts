@@ -2,7 +2,6 @@ import { Component, OnInit } from "@angular/core";
 import { EditComponent } from "../../../entity/default-datatype/edit-component";
 import { ConfigurableEnumValue } from "../configurable-enum.interface";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
-import { ArrayDatatype } from "../../array/array.datatype";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
 import { MatSelectModule } from "@angular/material/select";
@@ -33,10 +32,7 @@ export class EditConfigurableEnumComponent
 
   ngOnInit() {
     super.ngOnInit();
-    if (this.formFieldConfig.dataType === ArrayDatatype.dataType) {
-      this.multi = true;
-    }
-    this.enumId =
-      this.formFieldConfig.additional ?? this.formFieldConfig.innerDataType;
+    this.multi = this.formFieldConfig.isArray;
+    this.enumId = this.formFieldConfig.additional;
   }
 }

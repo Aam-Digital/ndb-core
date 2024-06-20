@@ -1,4 +1,4 @@
-import { Component } from "@angular/core";
+import { Component, OnInit } from "@angular/core";
 import { Note } from "../model/note";
 import { ChildrenService } from "../../children/children.service";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
@@ -8,7 +8,6 @@ import { FilterService } from "../../../core/filter/filter.service";
 import { Child } from "../../children/model/child";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 import { EntityDatatype } from "../../../core/basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "../../../core/basic-datatypes/entity-array/entity-array.datatype";
 import { asArray } from "../../../utils/utils";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -28,7 +27,10 @@ import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.s
   imports: [EntitiesTableComponent],
   standalone: true,
 })
-export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note> {
+export class NotesRelatedToEntityComponent
+  extends RelatedEntitiesComponent<Note>
+  implements OnInit
+{
   override entityCtr = Note;
   override _columns: FormFieldConfig[] = [
     { id: "date", visibleFrom: "xs" },
@@ -104,10 +106,7 @@ export class NotesRelatedToEntityComponent extends RelatedEntitiesComponent<Note
         continue;
       }
 
-      if (
-        schema.dataType !== EntityDatatype.dataType &&
-        schema.dataType !== EntityArrayDatatype.dataType
-      ) {
+      if (schema.dataType !== EntityDatatype.dataType) {
         // not referencing other entities
         continue;
       }

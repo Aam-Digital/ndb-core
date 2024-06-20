@@ -27,6 +27,8 @@ import { MAT_DIALOG_DATA } from "@angular/material/dialog";
 import { isObservable, Observable } from "rxjs";
 import { LatestChangesService } from "../latest-changes.service";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
+import { MarkdownService } from "ngx-markdown";
+import { MarkedRendererCustom } from "./MarkedRendererCustom";
 
 /**
  * Display information from the changelog for the latest version.
@@ -52,13 +54,11 @@ export class ChangelogComponent implements OnInit {
    *
    * @example
    * dialog.open(ChangelogComponent, { data: { changelogData: latestChangesService.getChangelogs() } });
-   *
-   * @param data Changelog data to be display initially
-   * @param latestChangesService
    */
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: Observable<Changelog[]>,
     private latestChangesService: LatestChangesService,
+    private markdownService: MarkdownService,
   ) {}
 
   ngOnInit(): void {
@@ -67,6 +67,8 @@ export class ChangelogComponent implements OnInit {
         .pipe(untilDestroyed(this))
         .subscribe((changelog) => (this.changelogs = changelog));
     }
+
+    this.customizeMarkdownRenderer();
   }
 
   get noChangelogAvailable(): string {
@@ -96,5 +98,11 @@ export class ChangelogComponent implements OnInit {
   private scrollToBottomOfReleases() {
     this.contentContainer.nativeElement.scrollTop =
       this.contentContainer.nativeElement.scrollHeight;
+  }
+
+  private customizeMarkdownRenderer() {
+    const customRenderer = new MarkedRendererCustom();
+    this.markdownService.renderer.heading = customRenderer.heading;
+    this.markdownService.renderer.list = customRenderer.list;
   }
 }

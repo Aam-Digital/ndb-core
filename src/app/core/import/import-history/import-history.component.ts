@@ -8,7 +8,7 @@ import { applyUpdate } from "../../entity/model/entity-update";
 import { MatExpansionModule } from "@angular/material/expansion";
 import { DatePipe, NgForOf, NgIf } from "@angular/common";
 import { EntityTypeLabelPipe } from "../../common-components/entity-type-label/entity-type-label.pipe";
-import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { MatButtonModule } from "@angular/material/button";
 import { MatTooltipModule } from "@angular/material/tooltip";
 
@@ -22,7 +22,7 @@ import { MatTooltipModule } from "@angular/material/tooltip";
     MatExpansionModule,
     DatePipe,
     EntityTypeLabelPipe,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     MatButtonModule,
     NgIf,
     NgForOf,

@@ -147,22 +147,23 @@ export class PouchDatabase extends Database {
    * @param options Optional PouchDB options for the request
    * @param returnUndefined (Optional) return undefined instead of throwing error if doc is not found in database
    */
-  get(
+  async get(
     id: string,
     options: GetOptions = {},
     returnUndefined?: boolean,
   ): Promise<any> {
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.get(id, options))
-      .catch((err) => {
-        if (err.status === 404) {
-          this.loggingService.debug("Doc not found in database: " + id);
-          if (returnUndefined) {
-            return undefined;
-          }
+    try {
+      return await (await this.getPouchDBOnceReady()).get(id, options);
+    } catch (err) {
+      if (err.status === 404) {
+        this.loggingService.debug("Doc not found in database: " + id);
+        if (returnUndefined) {
+          return undefined;
         }
-        throw new DatabaseException(err);
-      });
+      }
+
+      throw new DatabaseException(err);
+    }
   }
 
   /**
@@ -175,13 +176,13 @@ export class PouchDatabase extends Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  allDocs(options?: GetAllOptions) {
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.allDocs(options))
-      .then((result) => result.rows.map((row) => row.doc))
-      .catch((err) => {
-        throw new DatabaseException(err);
-      });
+  async allDocs(options?: GetAllOptions) {
+    try {
+      const result = await (await this.getPouchDBOnceReady()).allDocs(options);
+      return result.rows.map((row) => row.doc);
+    } catch (err) {
+      throw new DatabaseException(err);
+    }
   }
 
   /**
@@ -191,20 +192,20 @@ export class PouchDatabase extends Database {
    * @param object The document to be saved
    * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
-  put(object: any, forceOverwrite = false): Promise<any> {
+  async put(object: any, forceOverwrite = false): Promise<any> {
     if (forceOverwrite) {
       object._rev = undefined;
     }
 
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.put(object))
-      .catch((err) => {
-        if (err.status === 409) {
-          return this.resolveConflict(object, forceOverwrite, err);
-        } else {
-          throw new DatabaseException(err);
-        }
-      });
+    try {
+      return await (await this.getPouchDBOnceReady()).put(object);
+    } catch (err) {
+      if (err.status === 409) {
+        return this.resolveConflict(object, forceOverwrite, err);
+      } else {
+        throw new DatabaseException(err);
+      }
+    }
   }
 
   /**

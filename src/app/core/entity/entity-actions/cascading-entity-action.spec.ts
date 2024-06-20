@@ -22,7 +22,8 @@ export class EntityWithAnonRelations extends Entity {
   @DatabaseField() name: string;
 
   @DatabaseField({
-    dataType: "entity-array",
+    dataType: "entity",
+    isArray: true,
     additional: "EntityWithAnonRelations",
     anonymize: "retain",
     entityReferenceRole: "aggregate",
@@ -30,7 +31,8 @@ export class EntityWithAnonRelations extends Entity {
   refAggregate: string[];
 
   @DatabaseField({
-    dataType: "entity-array",
+    dataType: "entity",
+    isArray: true,
     additional: "EntityWithAnonRelations",
     anonymize: "retain",
     entityReferenceRole: "composite",

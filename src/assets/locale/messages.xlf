@@ -667,11 +667,11 @@
         <source>Groups</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">83</context>
+          <context context-type="linenumber">84</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">165</context>
+          <context context-type="linenumber">174</context>
         </context-group>
         <note priority="1" from="description">Label for the linked schools of a recurring activity</note>
       </trans-unit>
@@ -679,7 +679,7 @@
         <source>Excluded Participants</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">91</context>
+          <context context-type="linenumber">93</context>
         </context-group>
         <note priority="1" from="description">Label for excluded participants of a recurring activity</note>
       </trans-unit>
@@ -687,7 +687,7 @@
         <source>Assigned user(s)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">102</context>
         </context-group>
         <note priority="1" from="description">Label for the assigned user(s) of a recurring activity</note>
       </trans-unit>
@@ -707,7 +707,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">98</context>
+          <context context-type="linenumber">99</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/historical-data/model/historical-entity-data.ts</context>
@@ -719,7 +719,7 @@
         <source>Hindi</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/aser/model/aser.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">49</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
@@ -731,7 +731,7 @@
         <source>Bengali</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/aser/model/aser.ts</context>
-          <context context-type="linenumber">52</context>
+          <context context-type="linenumber">55</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
@@ -743,7 +743,7 @@
         <source>English</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/aser/model/aser.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">61</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/schools/demo-school-generator.service.ts</context>
@@ -755,7 +755,7 @@
         <source>Math</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/aser/model/aser.ts</context>
-          <context context-type="linenumber">64</context>
+          <context context-type="linenumber">67</context>
         </context-group>
         <note priority="1" from="description">Label of the Math ASER result</note>
       </trans-unit>
@@ -763,7 +763,7 @@
         <source>Remarks</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/aser/model/aser.ts</context>
-          <context context-type="linenumber">71</context>
+          <context context-type="linenumber">74</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -968,7 +968,7 @@
         <source>Material</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/educational-material/model/educational-material.ts</context>
-          <context context-type="linenumber">46</context>
+          <context context-type="linenumber">49</context>
         </context-group>
         <note priority="1" from="description">The material which has been borrowed</note>
       </trans-unit>
@@ -976,7 +976,7 @@
         <source>Amount</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/educational-material/model/educational-material.ts</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">59</context>
         </context-group>
         <note priority="1" from="description">The amount of the material which has been borrowed</note>
       </trans-unit>
@@ -984,7 +984,7 @@
         <source>Description</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/educational-material/model/educational-material.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">71</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
@@ -1124,7 +1124,7 @@
         <source>Height [cm]</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/health-checkup/model/health-check.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">57</context>
         </context-group>
         <note priority="1" from="description">Label for height in cm of a health check</note>
       </trans-unit>
@@ -1132,7 +1132,7 @@
         <source>Weight [kg]</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/health-checkup/model/health-check.ts</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">65</context>
         </context-group>
         <note priority="1" from="description">Label for weight in kg of a health check</note>
       </trans-unit>
@@ -1232,7 +1232,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">174</context>
+          <context context-type="linenumber">184</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -1421,7 +1421,7 @@
         <source><x id="START_TABLE_CELL" ctype="x-td" equiv-text="&lt;ng-container *ngIf=&quot;entityNoteInfo.moreThanDaysS"/><x id="START_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;ng-container *ngIf=&quot;entityNoteInfo.moreThanDaysSince&quot;&gt;"/> &gt;  <x id="CLOSE_TAG_NG_CONTAINER" ctype="x-ng_container" equiv-text="&lt;/ng-container&gt;"/> <x id="INTERPOLATION" equiv-text="{{ entityNoteInfo.daysSinceLastNote | number: &quot;1.0-0&quot; }}"/> days <x id="CLOSE_TABLE_CELL" ctype="x-td" equiv-text="&lt;/td&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
-          <context context-type="linenumber">28,34</context>
+          <context context-type="linenumber">27,33</context>
         </context-group>
         <note priority="1" from="description">Format like &apos;Days passed &gt; 5 days&apos;</note>
         <note priority="1" from="meaning">Amount of days back</note>
@@ -1430,7 +1430,7 @@
         <source> no records without recent report </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
-          <context context-type="linenumber">49,51</context>
+          <context context-type="linenumber">48,50</context>
         </context-group>
         <note priority="1" from="description">There are no participants that don&apos;t have a recent report to be shown
           here</note>
@@ -1439,7 +1439,7 @@
         <source> no records with recent report </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/dashboard-widgets/notes-dashboard/notes-dashboard.component.html</context>
-          <context context-type="linenumber">57,59</context>
+          <context context-type="linenumber">56,58</context>
         </context-group>
         <note priority="1" from="description">There are no participants that have a recent report to be shown here</note>
       </trans-unit>
@@ -1816,7 +1816,7 @@
         <source>Note</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">40</context>
+          <context context-type="linenumber">43</context>
         </context-group>
         <note priority="1" from="description">label for entity</note>
       </trans-unit>
@@ -1824,11 +1824,11 @@
         <source>Notes</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">41</context>
+          <context context-type="linenumber">44</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">109</context>
+          <context context-type="linenumber">113</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -1840,7 +1840,7 @@
         <source>Children</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">77</context>
+          <context context-type="linenumber">80</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/config/config-fix.ts</context>
@@ -1860,7 +1860,7 @@
         <source>Subject</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">105</context>
+          <context context-type="linenumber">109</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
@@ -1872,7 +1872,7 @@
         <source>SW</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">116</context>
+          <context context-type="linenumber">120</context>
         </context-group>
         <note priority="1" from="description">Label for the social worker(s) who created the note</note>
       </trans-unit>
@@ -1880,7 +1880,7 @@
         <source>Category</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">133</context>
         </context-group>
         <note priority="1" from="description">Label for the category of a note</note>
       </trans-unit>
@@ -1888,18 +1888,18 @@
         <source>Attachment</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">133</context>
+          <context context-type="linenumber">141</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5032142018133486821" datatype="html">
         <source>Related Records</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
-          <context context-type="linenumber">153</context>
+          <context context-type="linenumber">161</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">87</context>
+          <context context-type="linenumber">92</context>
         </context-group>
         <note priority="1" from="description">label for the related Entities</note>
       </trans-unit>
@@ -2010,12 +2010,12 @@
         </context-group>
         <note priority="1" from="description">Label warning level</note>
       </trans-unit>
-      <trans-unit id="35a47ca38d2c2c8b336274880991a7596794712b" datatype="html">
-        <source> You can edit how users will see the details of a single record of this type. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. We recommend to keep things simple: Only add fields that you really need for your work.
+      <trans-unit id="c2f301e7c8150f80189035633c0274862eca357e" datatype="html">
+        <source> You can edit how users will see the details of a single record of this type. Drag and drop fields and sections in this preview of a profile view and group them as appropriate. The editor below closely resembles how the form will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> We recommend to keep things simple: Only add fields that you really need for your work.
 </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html</context>
-          <context context-type="linenumber">4,9</context>
+          <context context-type="linenumber">1,9</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ae2402631f718d9b6dd7b327d88800224462254b" datatype="html">
@@ -2026,16 +2026,78 @@
         &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/fa-icon&gt;"/> Add Section </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.html</context>
-          <context context-type="linenumber">45,51</context>
+          <context context-type="linenumber">49,55</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6614677774493793726" datatype="html">
         <source>New Section</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-details/admin-entity-details.component.ts</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">56</context>
         </context-group>
         <note priority="1" from="description">Default title</note>
+      </trans-unit>
+      <trans-unit id="62d980de4ea36f9bf88d762d04f2ba057f08098a" datatype="html">
+        <source>Configure Text Block</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="110e2318da4f572e287a5301f14395e7a3f9c4b5" datatype="html">
+        <source> This text is displayed as part of the form to provide additional information without any input options for the user: </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component.html</context>
+          <context context-type="linenumber">5,8</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
+        <source>Save</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">189</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
+          <context context-type="linenumber">123</context>
+        </context-group>
+        <note priority="1" from="description">Button label</note>
+      </trans-unit>
+      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
+        <source>Cancel</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-edit-description-only-field/admin-edit-description-only-field.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">190</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
+          <context context-type="linenumber">15</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html</context>
+          <context context-type="linenumber">38</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
+          <context context-type="linenumber">34</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/entity/entity-import-config/entity-import-config.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
+          <context context-type="linenumber">126</context>
+        </context-group>
+        <note priority="1" from="description">Button label</note>
       </trans-unit>
       <trans-unit id="a74d66c9770c7f8fd56ba64850a77ed6c00a4385" datatype="html">
         <source>Configure Field &quot;<x id="INTERPOLATION" equiv-text="{{ entitySchemaField.label }}"/>&quot;</source>
@@ -2059,7 +2121,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">10</context>
         </context-group>
       </trans-unit>
       <trans-unit id="863226cffd5b66a6fee9810a9282a5006d6ef576" datatype="html">
@@ -2070,7 +2132,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">13</context>
+          <context context-type="linenumber">14</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
@@ -2131,6 +2193,20 @@
           <context context-type="linenumber">60</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="f61c6867295f3b53d23557021f2f4e0aa1d0b8fc" datatype="html">
+        <source>Type</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">76</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7a04660f21d33a49bbc1329cab588d7d7ab51dfa" datatype="html">
+        <source> allow multiple values (multi-select) </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">90,92</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="64869e09ecb4ff977a38c29ce73217a537085d49" datatype="html">
         <source> Type Details (dropdown options set) <x id="START_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;fa-icon
                   icon=&quot;question-circle&quot;
@@ -2139,14 +2215,14 @@
                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">88,95</context>
+          <context context-type="linenumber">97,104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="318d38b9918ce1456c3facb05b6dd1c51d56e76e" datatype="html">
         <source>Select an existing set of options to share between multiple fields or create a new, independent list of dropdown options.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">92</context>
+          <context context-type="linenumber">101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="281908b2d33af31b7905a7cd1667ff69b080e282" datatype="html">
@@ -2157,76 +2233,43 @@
                 &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">121,128</context>
+          <context context-type="linenumber">125,132</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3d0482a448f74d0b05a7de0ce9d79eb4ab0b1e76" datatype="html">
         <source>Select from which type of records the user can select and link to with this field.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">125</context>
+          <context context-type="linenumber">129</context>
         </context-group>
       </trans-unit>
       <trans-unit id="ad0ec5700c815f106b405527cf07dc1b85cc7185" datatype="html">
         <source>Advanced Options &amp; Validation</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">145</context>
+          <context context-type="linenumber">149</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c134eb8abb62f3c913d33158d0ada76421cc82fe" datatype="html">
+        <source>Default Value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
+          <context context-type="linenumber">153</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3f64620191bc0181feaa57e5ff32ee9c83f8aa6d" datatype="html">
         <source>Anonymize</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">157</context>
+          <context context-type="linenumber">161</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d9e5cb26790cde5b2dadf0f1ca09c996b35d78df" datatype="html">
         <source>Optionally This will remove all personal information (PII) permanently related to this field.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">160</context>
+          <context context-type="linenumber">164</context>
         </context-group>
-      </trans-unit>
-      <trans-unit id="52c9a103b812f258bcddc3d90a6e3f46871d25fe" datatype="html">
-        <source>Save</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">185</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">123</context>
-        </context-group>
-        <note priority="1" from="description">Button label</note>
-      </trans-unit>
-      <trans-unit id="d7b35c384aecd25a516200d6921836374613dfe7" datatype="html">
-        <source>Cancel</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">186</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
-          <context context-type="linenumber">15</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/date/date-import-config/date-import-config.component.html</context>
-          <context context-type="linenumber">38</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/discrete/discrete-import-config/discrete-import-config.component.html</context>
-          <context context-type="linenumber">34</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/entity/entity-import-config/entity-import-config.component.html</context>
-          <context context-type="linenumber">24</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
-          <context context-type="linenumber">126</context>
-        </context-group>
-        <note priority="1" from="description">Button label</note>
       </trans-unit>
       <trans-unit id="47d7c77be2ca1b5a9d3daf2f1c1ae582bec94608" datatype="html">
         <source>Minimum Value</source>
@@ -2288,7 +2331,7 @@
         <source> Edit Field </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">36,38</context>
+          <context context-type="linenumber">35,37</context>
         </context-group>
         <note priority="1" from="description">Button label</note>
       </trans-unit>
@@ -2300,7 +2343,7 @@
         &gt;"/><x id="CLOSE_TAG_FA_ICON" ctype="x-fa_icon" equiv-text="&lt;/div"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">59,67</context>
+          <context context-type="linenumber">58,66</context>
         </context-group>
         <note priority="1" from="description">Header of drag and drop box</note>
       </trans-unit>
@@ -2308,14 +2351,14 @@
         <source>You can group fields so that they will always appear next to each other while the layout is automatically adjusted to different screen sizes. Such field groups can also have a title displayed to users.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">62</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6f7fdf98772e9e0ce25890db2564de02a048efad" datatype="html">
         <source>hidden fields</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">79</context>
+          <context context-type="linenumber">78</context>
         </context-group>
         <note priority="1" from="description">title for drag and drop section</note>
       </trans-unit>
@@ -2323,7 +2366,7 @@
         <source> drag &amp; drop to / from here </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">80,82</context>
+          <context context-type="linenumber">79,81</context>
         </context-group>
         <note priority="1" from="description">subtitle for drag and drop section</note>
       </trans-unit>
@@ -2331,14 +2374,22 @@
         <source>You can remove fields from this form without deleting them completely. The fields here will not be visible or editable for users but you can display them in other views or keep them archived to not lose previously collected data. Drag a field back into the form preview to display it.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.html</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">84</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3972154626835212608" datatype="html">
         <source>Create New Field</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">66</context>
+        </context-group>
+        <note priority="1" from="description">Label drag and drop item</note>
+      </trans-unit>
+      <trans-unit id="4704280698666275116" datatype="html">
+        <source>Create Text Block</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-form/admin-entity-form.component.ts</context>
+          <context context-type="linenumber">71</context>
         </context-group>
         <note priority="1" from="description">Label drag and drop item</note>
       </trans-unit>
@@ -2349,36 +2400,37 @@
           <context context-type="linenumber">4,6</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="983ed07786693190c3840da0b52b340794ef18b1" datatype="html">
-        <source> Drag &amp; drop filters and add filters using the <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu
+      <trans-unit id="48ee80a7ed51bc74b3f5b240989f97cd154257a1" datatype="html">
+        <source> You can edit how users will see the list of all records of this type. Drag and drop filters and change table columns in this preview. The editor below closely resembles how the list will look for users later. <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> To create new fields, use the &quot;Details View&quot; section.
+</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
+          <context context-type="linenumber">1,7</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="bbe127b89b598c3b53a122bf9c7e8ce861297812" datatype="html">
+        <source> Add Filter: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu
       [entityType]=&quot;entityConstructor&quot;
       [activeFields]=&quot;filters&quot;
       (activeFieldsChange)=&quot;updateFilters($event)&quot;
       [availableFields]=&quot;allFields&quot;
       icon=&quot;square-plus&quot;
-    &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu&gt;"/> button </source>
+    &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
-          <context context-type="linenumber">35,45</context>
+          <context context-type="linenumber">50,58</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="b3ab70afae04d9157c2b91456ac4b9aa247c2d58" datatype="html">
-        <source> Drag &amp; drop table column headers and add columns using the <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu
+      <trans-unit id="e6483a30070f1cf0cf69e8a0324d34fc1c4fb255" datatype="html">
+        <source> Drag &amp; drop table column headers. Add columns: <x id="START_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;app-entity-fields-menu
           [entityType]=&quot;entityConstructor&quot;
           [(activeFields)]=&quot;item.columns&quot;
           [availableFields]=&quot;allFields&quot;
           icon=&quot;square-plus&quot;
-        &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu&gt;"/> button </source>
+        &gt;"/><x id="CLOSE_TAG_APP_ENTITY_FIELDS_MENU" ctype="x-app_entity_fields_menu" equiv-text="&lt;/app-entity-fields-menu&gt;"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-list/admin-entity-list.component.html</context>
-          <context context-type="linenumber">80,89</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="541753b872f1a309e14806bb7e500a869d8f8189" datatype="html">
-        <source>General Settings of &quot;<x id="INTERPOLATION" equiv-text="{{ entityConstructor.label }}"/>&quot; Records</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">1</context>
+          <context context-type="linenumber">94,101</context>
         </context-group>
       </trans-unit>
       <trans-unit id="caf3b55dfebd3b07c067942c42d6aa19796d18af" datatype="html">
@@ -2386,70 +2438,88 @@
 </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">2,5</context>
+          <context context-type="linenumber">1,4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="541753b872f1a309e14806bb7e500a869d8f8189" datatype="html">
+        <source>General Settings of &quot;<x id="INTERPOLATION" equiv-text="{{ entityConstructor.label }}"/>&quot; Records</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">6</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8a47226bd3bdacc082629e439e94e09f34dc6e49" datatype="html">
         <source>Label (Plural)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">19</context>
+          <context context-type="linenumber">20</context>
         </context-group>
       </trans-unit>
       <trans-unit id="20d71835d5f8ad49fe7e8be8e9bf78fa084a53f2" datatype="html">
         <source>Optionally you can define how multiple records of this entity should be called, e.g. in lists.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">24</context>
         </context-group>
       </trans-unit>
       <trans-unit id="14688213d67b2f0e553d66f8255281db245502fb" datatype="html">
         <source>Icon</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">35</context>
+          <context context-type="linenumber">37</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1c7a26af74ff86895b58e2578ef3a7fc0079580c" datatype="html">
-        <source>The icon to represent this entity type, e.g. when displaying records as a small preview block. [see fontawesome.com/icons]</source>
+      <trans-unit id="54120c092e3df9fa279caf970f95b465719108b4" datatype="html">
+        <source>The icon to represent this entity type, e.g. when displaying records as a small preview block.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">38</context>
+          <context context-type="linenumber">41</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ec5fe1bbd17a7271bb35eedea93b641b9542adb5" datatype="html">
+        <source> Find available icon names at <x id="START_LINK" ctype="x-a" equiv-text="&lt;a
+                href=&quot;https://fontawesome.com/v6/search?o=r&amp;m=free&quot;
+                target=&quot;_blank&quot;
+                &gt;"/>fontawesome.com<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a
+              &gt;"/></source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">47,53</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d3d3e4a5d4ea6e34ed3f1627a48df8fe71d3cd93" datatype="html">
         <source>Generated Title of Record</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">53</context>
+          <context context-type="linenumber">61</context>
         </context-group>
       </trans-unit>
       <trans-unit id="c5af89a0001583daa6ad59d72e4fb266915f92fa" datatype="html">
         <source>Select the fields that should be used (in that order) to generate a simple name/title for a record. This generated title is used in previews, search and for form fields that allow to select a record of this type. (Only text fields can be used here)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="cfdcf29c989ec7de2056476c3312e37165428ca6" datatype="html">
         <source>Configure PII / Anonymization</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">78</context>
+          <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
       <trans-unit id="951c9f8878cf38220cd8bb085e689d7ffc2a8da8" datatype="html">
         <source>If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the &apos;anonymization&apos; feature. This allows users to anonymize records of this type instead of just archiving or deleting them.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">90</context>
+          <context context-type="linenumber">99</context>
         </context-group>
       </trans-unit>
       <trans-unit id="40212c75ab97d34f250d15f31526dfbcf3fe0ccb" datatype="html">
         <source> Configure how records of this type can be anonymized. Users can &quot;anonymize&quot; a record as an alternative to just archiving it (keeping all personal details) or deleting it (losing any trace of the record, even in reports). Select below which fields can be &quot;retained&quot; to keep some limited data for statistical reporting and which fields have to be removed because they contain personal details. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">96,104</context>
+          <context context-type="linenumber">105,113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="418686fcb8227c95b8d8e72ca0c0e2a23b8d9ecb" datatype="html">
@@ -2495,7 +2565,7 @@
         <source>Configuration updated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
-          <context context-type="linenumber">139</context>
+          <context context-type="linenumber">141</context>
         </context-group>
         <note priority="1" from="description">Save config confirmation message</note>
       </trans-unit>
@@ -2572,7 +2642,7 @@
         <source>Welcome</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">27</context>
+          <context context-type="linenumber">25</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Title</note>
       </trans-unit>
@@ -2594,7 +2664,7 @@ You can always come back to this view through the &quot;Setup Wizard&quot; butto
 To dismiss and hide this wizard, go to the last step of the wizard and &quot;finish&quot; the setup process.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">28,42</context>
+          <context context-type="linenumber">26,40</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Text</note>
       </trans-unit>
@@ -2602,7 +2672,7 @@ To dismiss and hide this wizard, go to the last step of the wizard and &quot;fin
         <source>Profiles &amp; Fields</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">43</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Title</note>
       </trans-unit>
@@ -2619,7 +2689,7 @@ We are currently extending and optimizing the user interfaces for these steps._
 </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">46,55</context>
+          <context context-type="linenumber">44,53</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Text</note>
       </trans-unit>
@@ -2627,7 +2697,7 @@ We are currently extending and optimizing the user interfaces for these steps._
         <source>Customize Child profile</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">58</context>
+          <context context-type="linenumber">56</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Action</note>
       </trans-unit>
@@ -2635,7 +2705,7 @@ We are currently extending and optimizing the user interfaces for these steps._
         <source>Customize School profile</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">62</context>
+          <context context-type="linenumber">60</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Action</note>
       </trans-unit>
@@ -2643,7 +2713,7 @@ We are currently extending and optimizing the user interfaces for these steps._
         <source>User Accounts</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">68</context>
+          <context context-type="linenumber">66</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Title</note>
       </trans-unit>
@@ -2653,7 +2723,7 @@ You can collaborate on Aam Digital as a team.
 Data is synced and all users have access to the latest information.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">69,71</context>
+          <context context-type="linenumber">67,69</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Text</note>
       </trans-unit>
@@ -2661,7 +2731,7 @@ Data is synced and all users have access to the latest information.</source>
         <source>Manage User Accounts</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">72</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Action</note>
       </trans-unit>
@@ -2669,11 +2739,11 @@ Data is synced and all users have access to the latest information.</source>
         <source>Import Data</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="linenumber">78</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">88</context>
+          <context context-type="linenumber">86</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Title</note>
       </trans-unit>
@@ -2685,7 +2755,7 @@ You do not need any specific column names in your file to be imported.
 The Import Module helps your map your spreadsheet data to the relevant fields in your Aam Digital profiles.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">81,85</context>
+          <context context-type="linenumber">79,83</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Text</note>
       </trans-unit>
@@ -2693,7 +2763,7 @@ The Import Module helps your map your spreadsheet data to the relevant fields in
         <source>Done!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">94</context>
+          <context context-type="linenumber">92</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Title</note>
       </trans-unit>
@@ -2709,7 +2779,7 @@ and then add further fields and adjust your setup.
 Feel free to reach out to us with your questions or feedback: [support@aam-digital.com](mailto:support@aam-digital.com)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard-config.ts</context>
-          <context context-type="linenumber">95,103</context>
+          <context context-type="linenumber">93,101</context>
         </context-group>
         <note priority="1" from="description">Setup Wizard Step Text</note>
       </trans-unit>
@@ -2717,7 +2787,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Continue </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
-          <context context-type="linenumber">28,30</context>
+          <context context-type="linenumber">29,31</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import/import.component.html</context>
@@ -2736,14 +2806,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>We will hide the setup wizard from the main menu as you finish it here. You can still access it from the admin screen.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">38</context>
         </context-group>
       </trans-unit>
       <trans-unit id="cfe962000fa869b0ee9ca0ebed5d0dad57b07b31" datatype="html">
         <source> Finish </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/setup-wizard/setup-wizard.component.html</context>
-          <context context-type="linenumber">39,41</context>
+          <context context-type="linenumber">41,43</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1330646976582013113" datatype="html">
@@ -3002,7 +3072,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">30</context>
+          <context context-type="linenumber">35</context>
         </context-group>
         <note priority="1" from="description">Date selection</note>
       </trans-unit>
@@ -3014,7 +3084,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="linenumber">42</context>
         </context-group>
         <note priority="1" from="description">Date selection</note>
       </trans-unit>
@@ -3057,12 +3127,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <note priority="1" from="description">import - value mapping (enum) - help text</note>
       </trans-unit>
-      <trans-unit id="1429377ac145dff6735aafac017d77a02b741b98" datatype="html">
-        <source> <x id="INTERPOLATION" equiv-text="{{ value?.length }}"/> in total
-</source>
+      <trans-unit id="c76c9c316536b5ed8e31c7aaa6a6a3f7d5e61579" datatype="html">
+        <source> <x id="INTERPOLATION" equiv-text="{{ value?.length }}"/> in total </source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/entity-array/display-entity-array/display-entity-array.component.html</context>
-          <context context-type="linenumber">11,13</context>
+          <context context-type="sourcefile">src/app/core/basic-datatypes/entity/display-entity/display-entity.component.html</context>
+          <context context-type="linenumber">8,10</context>
         </context-group>
         <note priority="1" from="description">context 10 in total</note>
         <note priority="1" from="meaning">Displaying the amount of involved entities</note>
@@ -3070,19 +3139,11 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       <trans-unit id="8454211630052123531" datatype="html">
         <source>Add <x id="PH" equiv-text="this.label"/></source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/entity-array/edit-entity/edit-entity.component.ts</context>
-          <context context-type="linenumber">36</context>
+          <context context-type="sourcefile">src/app/core/basic-datatypes/entity/edit-entity/edit-entity.component.ts</context>
+          <context context-type="linenumber">35</context>
         </context-group>
         <note priority="1" from="description">context Add User(s)</note>
         <note priority="1" from="meaning">Placeholder for input to add entities</note>
-      </trans-unit>
-      <trans-unit id="6432053201000095653" datatype="html">
-        <source>link to other records (multi-select)</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/basic-datatypes/entity-array/entity-array.datatype.ts</context>
-          <context context-type="linenumber">34</context>
-        </context-group>
-        <note priority="1" from="description">datatype-label</note>
       </trans-unit>
       <trans-unit id="84b3ebfb42db54bfb18c600c93938890e2a1e463" datatype="html">
         <source> Select matching <x id="INTERPOLATION" equiv-text="{{ entity.label }}"/> property </source>
@@ -3204,7 +3265,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Add new</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">82</context>
         </context-group>
         <note priority="1" from="description">e.g. Add new My new Option</note>
         <note priority="1" from="meaning">Label for adding an option in a dropdown</note>
@@ -3213,7 +3274,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>remove</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/basic-autocomplete/basic-autocomplete.component.html</context>
-          <context context-type="linenumber">121</context>
+          <context context-type="linenumber">129</context>
         </context-group>
         <note priority="1" from="description">tooltip for remove icon on chips of dropdown item</note>
       </trans-unit>
@@ -3416,7 +3477,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Could not save <x id="PH" equiv-text="entity.getType()"/>: <x id="PH_1" equiv-text="err"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/entity-form.service.ts</context>
-          <context context-type="linenumber">258</context>
+          <context context-type="linenumber">227</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1784555372833983723" datatype="html">
@@ -3425,7 +3486,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         )"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/entity-form.service.ts</context>
-          <context context-type="linenumber">286,288</context>
+          <context context-type="linenumber">260,262</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6370500058550589280" datatype="html">
@@ -4693,14 +4754,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Preparing data (Indexing)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/database-indexing/database-indexing.service.ts</context>
-          <context context-type="linenumber">59</context>
+          <context context-type="linenumber">58</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2296681895307893686" datatype="html">
         <source>any</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/entity/default-datatype/default.datatype.ts</context>
-          <context context-type="linenumber">48</context>
+          <context context-type="linenumber">49</context>
         </context-group>
         <note priority="1" from="description">datatype-label</note>
       </trans-unit>
@@ -4947,7 +5008,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> no additional actions selected </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">30,32</context>
+          <context context-type="linenumber">29,31</context>
         </context-group>
         <note priority="1" from="description">import additional actions</note>
       </trans-unit>
@@ -4955,14 +5016,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Select an Import Target Type before defining additional actions. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">38,40</context>
+          <context context-type="linenumber">37,39</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2b3a92035080947d5ed252d448a6bc9801a227f5" datatype="html">
         <source>Linked record type </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">46,47</context>
+          <context context-type="linenumber">45,46</context>
         </context-group>
         <note priority="1" from="description">Label for linked entity type input</note>
       </trans-unit>
@@ -4970,7 +5031,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Linked record</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">56</context>
+          <context context-type="linenumber">55</context>
         </context-group>
         <note priority="1" from="description">Label for linked entity input</note>
       </trans-unit>
@@ -4978,7 +5039,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Add Action </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">78,80</context>
+          <context context-type="linenumber">77,79</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d56b0ec77123c23489d86d279b52627ce420581c" datatype="html">
@@ -5107,12 +5168,12 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">13,16</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="125ef8ef36d4a230b439eee6333a7aa059f9e896" datatype="html">
-        <source> imported by <x id="START_TAG_APP_DISPLAY_ENTITY" ctype="x-app_display_entity" equiv-text="&lt;app-display-entity
+      <trans-unit id="9970516de1724ddfe7588062777a18634c78909f" datatype="html">
+        <source> imported by <x id="START_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="&lt;app-entity-block
         [entityId]=&quot;item.user&quot;
         entityType=&quot;User&quot;
         [linkDisabled]=&quot;true&quot;
-      &gt;"/><x id="CLOSE_TAG_APP_DISPLAY_ENTITY" ctype="x-app_display_entity" equiv-text="at {{"/> at <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </source>
+      &gt;"/><x id="CLOSE_TAG_APP_ENTITY_BLOCK" ctype="x-app_entity_block" equiv-text="at {{"/> at <x id="INTERPOLATION" equiv-text="{{ item.date | date: &quot;medium&quot; }}"/> </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-history/import-history.component.html</context>
           <context context-type="linenumber">19,27</context>
@@ -5663,7 +5724,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>No Changelog Available</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/changelog/changelog.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">75</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7795087408392131030" datatype="html">
@@ -5932,7 +5993,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> You should select at least one user role. Otherwise this user will not even be able to access the basic app layout like the menu. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">124,127</context>
+          <context context-type="linenumber">123,126</context>
         </context-group>
         <note priority="1" from="description">hint about assigning user roles</note>
       </trans-unit>
@@ -5983,6 +6044,20 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">41</context>
         </context-group>
         <note priority="1" from="description">Label of username</note>
+      </trans-unit>
+      <trans-unit id="540bb33a80a5e4f3d70aa6cce70bf8a46de64d88" datatype="html">
+        <source>This feature is overall still under development. You might experience some issues or limited functionality. We appreciate your feedback, please contact our User Support with your problems and suggestions.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/coming-soon/beta-feature/beta-feature.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="05d838c8a700c12da83945ae8b05becbb39f1113" datatype="html">
+        <source>Beta Feature</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/coming-soon/beta-feature/beta-feature.component.html</context>
+          <context context-type="linenumber">7</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="54fdb618c658224c6fbd4e10a947f91ea7611913" datatype="html">
         <source>Coming Soon</source>
@@ -6167,7 +6242,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Center </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">39,41</context>
+          <context context-type="linenumber">38,40</context>
         </context-group>
         <note priority="1" from="description">The center that a partiipant belongs to, e.g. a city</note>
       </trans-unit>
@@ -6175,7 +6250,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Count of children </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">42,44</context>
+          <context context-type="linenumber">41,43</context>
         </context-group>
         <note priority="1" from="description">The amount of children that study at one school</note>
       </trans-unit>
@@ -6183,7 +6258,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Link</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/entity-count-dashboard-widget/entity-count-dashboard/entity-count-dashboard.component.html</context>
-          <context context-type="linenumber">45</context>
+          <context context-type="linenumber">44</context>
         </context-group>
         <note priority="1" from="description">A link that takes a user to a center</note>
       </trans-unit>
@@ -6405,14 +6480,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7211396766149775337" datatype="html">
         <source>Loading &quot;<x id="PH" equiv-text="entity[property]"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">149</context>
+          <context context-type="linenumber">162</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e1ea49b84d582f3c40491fe2c7e14eabfc9b878e" datatype="html">
@@ -6602,7 +6677,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>create matching</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">101</context>
+          <context context-type="linenumber">100</context>
         </context-group>
         <note priority="1" from="description">Matching button label</note>
       </trans-unit>
@@ -6610,7 +6685,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Distance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">367</context>
+          <context context-type="linenumber">366</context>
         </context-group>
         <note priority="1" from="description">Matching View column name</note>
       </trans-unit>
@@ -6823,6 +6898,28 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <note priority="1" from="description">Reports concern a group of for example children and include data about these
     children in a certain date range</note>
       </trans-unit>
+      <trans-unit id="9227262034eda7ae49d91d824989ee5996ae4909" datatype="html">
+        <source> This report was calculated at: <x id="INTERPOLATION" equiv-text="{{ reportCalculation?.endDate | date: &quot;dd.MM.yyyy HH:mm&quot; }}"/> <x id="LINE_BREAK" ctype="lb" equiv-text="&lt;br /&gt;"/> Click again on &quot;Calculate&quot; to re-calculate the report including any changes of records since then.
+</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
+          <context context-type="linenumber">20,25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d30e2acdec863a810e16ef3435b327e0a0bc9c70" datatype="html">
+        <source>Something went wrong calculating the report</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f962c8b26ce4f00855975c72c734660bde3d0f48" datatype="html">
+        <source> Please try again. If you continue to see this error, contact the technical support team. </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/reporting/reporting/reporting.component.html</context>
+          <context context-type="linenumber">30,33</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="5f1d416b17e963d026d15eff9483f2d8797f2a3d" datatype="html">
         <source>Reports have not been configured for you yet.</source>
         <context-group purpose="location">
@@ -6849,29 +6946,29 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Enter a date range</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">24</context>
+          <context context-type="linenumber">28</context>
         </context-group>
       </trans-unit>
       <trans-unit id="26cf133db6bc865d68e69dadfeeda8378533de34" datatype="html">
         <source>Please select a report and a date range</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="578112850929c6dca866a0f1bb75e79a7e3a5655" datatype="html">
         <source> Calculate </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">70,72</context>
+          <context context-type="linenumber">76,78</context>
         </context-group>
         <note priority="1" from="description">Calculate the results for a report</note>
       </trans-unit>
-      <trans-unit id="7dbcef16b9d6dd36d68cc127fb0bfb53e790360d" datatype="html">
-        <source> Download </source>
+      <trans-unit id="46156439e996f7f8e0e838635d508658a0c14f07" datatype="html">
+        <source> Download</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/reporting/reporting/select-report/select-report.component.html</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">99</context>
         </context-group>
         <note priority="1" from="description">Button to download data</note>
       </trans-unit>
@@ -6975,7 +7072,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>repeats</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">105</context>
         </context-group>
         <note priority="1" from="description">label for Todo entity property</note>
       </trans-unit>
@@ -6983,7 +7080,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>every week</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">103</context>
+          <context context-type="linenumber">108</context>
         </context-group>
         <note priority="1" from="description">repetition interval option</note>
       </trans-unit>
@@ -6991,7 +7088,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>every month</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">107</context>
+          <context context-type="linenumber">112</context>
         </context-group>
         <note priority="1" from="description">repetition interval option</note>
       </trans-unit>
@@ -6999,7 +7096,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>completed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/model/todo.ts</context>
-          <context context-type="linenumber">117</context>
+          <context context-type="linenumber">122</context>
         </context-group>
         <note priority="1" from="description">label for Todo entity property</note>
       </trans-unit>

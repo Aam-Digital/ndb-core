@@ -14,10 +14,9 @@
       </tr>
       <ng-container matColumnDef="entity">
         <td *matCellDef="let entityNoteInfo">
-          <app-display-entity
+          <app-entity-block
             [entityId]="entityNoteInfo.entityId"
-            [entityType]="_entity"
-          ></app-display-entity>
+          ></app-entity-block>
         </td>
       </ng-container>
 

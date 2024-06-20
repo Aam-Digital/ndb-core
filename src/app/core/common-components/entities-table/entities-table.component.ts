@@ -1,5 +1,4 @@
 import {
-  AfterViewInit,
   Component,
   EventEmitter,
   Input,
@@ -42,7 +41,6 @@ import { EntityInlineEditActionsComponent } from "./entity-inline-edit-actions/e
 import { EntityCreateButtonComponent } from "../entity-create-button/entity-create-button.component";
 import { DateDatatype } from "../../basic-datatypes/date/date.datatype";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
-import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 
 /**
@@ -69,7 +67,7 @@ import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
   templateUrl: "./entities-table.component.html",
   styleUrl: "./entities-table.component.scss",
 })
-export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
+export class EntitiesTableComponent<T extends Entity> {
   @Input() set records(value: T[]) {
     if (!value) {
       return;
@@ -165,8 +163,13 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     this._sortBy = value;
     this.sortIsInferred = false;
   }
+
   _sortBy: Sort;
-  @ViewChild(MatSort, { static: true }) sort: MatSort;
+
+  @ViewChild(MatSort, { static: false }) set sort(sort: MatSort) {
+    this.recordsDataSource.sort = sort;
+  }
+
   private sortIsInferred: boolean = true;
 
   /**
@@ -294,10 +297,6 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
     this.recordsDataSource = this.createDataSource();
   }
 
-  ngAfterViewInit(): void {
-    this.recordsDataSource.sort = this.sort;
-  }
-
   private createDataSource() {
     const dataSource = new MatTableDataSource<TableRow<T>>();
     dataSource.sortData = (data, sort) =>
@@ -338,11 +337,7 @@ export class EntitiesTableComponent<T extends Entity> implements AfterViewInit {
    */
   private disableSortingHeaderForAdvancedFields(c: FormFieldConfig) {
     // if no dataType is defined, these are dynamic, display-only components
-    if (
-      c.dataType === EntityArrayDatatype.dataType ||
-      c.dataType === EntityDatatype.dataType ||
-      !c.dataType
-    ) {
+    if (c.isArray || c.dataType === EntityDatatype.dataType || !c.dataType) {
       c.noSorting = true;
     }
   }

@@ -18,8 +18,6 @@ import {
 import { DataFilter } from "../../filter/filters/filters";
 import { FilterService } from "../../filter/filter.service";
 import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
-import { isArrayProperty } from "../../basic-datatypes/datatype-utils";
 
 /**
  * Load and display a list of entity subrecords (entities related to the current entity details view).
@@ -81,6 +79,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   @Input() showInactive: boolean;
 
   @Input() clickMode: "popup" | "navigate" = "popup";
+  @Input() editable: boolean = true;
 
   data: E[];
   protected entityCtr: EntityConstructor<E>;
@@ -116,16 +115,12 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
 
   protected getProperty(): string | string[] {
     const relType = this.entity.getType();
-    const found = [...this.entityCtr.schema].filter(
-      ([, { dataType, additional }]) => {
-        const entityDatatype =
-          dataType === EntityDatatype.dataType ||
-          dataType === EntityArrayDatatype.dataType;
-        return entityDatatype && Array.isArray(additional)
-          ? additional.includes(relType)
-          : additional === relType;
-      },
-    );
+    const found = [...this.entityCtr.schema].filter(([, field]) => {
+      const entityDatatype = field.dataType === EntityDatatype.dataType;
+      return entityDatatype && Array.isArray(field.additional)
+        ? field.additional.includes(relType)
+        : field.additional === relType;
+    });
     return found.length === 1 ? found[0][0] : found.map(([key]) => key);
   }
 
@@ -147,7 +142,7 @@ export class RelatedEntitiesComponent<E extends Entity> implements OnInit {
   }
 
   private getFilterForProperty(property: string) {
-    const isArray = isArrayProperty(this.entityCtr, property);
+    const isArray = this.entityCtr.schema.get(property).isArray;
     const filter = isArray
       ? { $elemMatch: { $eq: this.entity.getId() } }
       : this.entity.getId();

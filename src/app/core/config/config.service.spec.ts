@@ -327,4 +327,200 @@ describe("ConfigService", () => {
       service.getConfig<NavigationMenuConfig>("navigationMenu");
     expect(actualFromNew).toEqual(newFormat);
   }));
+
+  describe("should migrate EntitySchemaField.defaultValue", () => {
+    it("should not migrate defaultValue matching the new format", fakeAsync(() => {
+      let testEntity = "entity:old-format";
+
+      updateSubject.next({
+        entity: Object.assign(new Config(), {
+          data: {
+            [testEntity]: {
+              attributes: {
+                fieldName: {
+                  defaultValue: {
+                    mode: "static",
+                    value: 3,
+                  },
+                },
+              },
+            },
+          },
+        }),
+        type: "update",
+      });
+      tick();
+
+      const expectedEntityAttributes = {
+        mode: "static",
+        value: 3,
+      };
+
+      const config = service.getConfig(testEntity);
+      expect(config["attributes"].fieldName.defaultValue).toEqual(
+        expectedEntityAttributes,
+      );
+    }));
+
+    it("should migrate defaultValue with number value", fakeAsync(() => {
+      let testEntity = "entity:old-format";
+
+      updateSubject.next({
+        entity: Object.assign(new Config(), {
+          data: {
+            [testEntity]: {
+              attributes: {
+                fieldName: {
+                  defaultValue: 3,
+                },
+              },
+            },
+          },
+        }),
+        type: "update",
+      });
+      tick();
+
+      const expectedEntityAttributes = {
+        mode: "static",
+        value: 3,
+      };
+
+      const config = service.getConfig(testEntity);
+      expect(config["attributes"].fieldName.defaultValue).toEqual(
+        expectedEntityAttributes,
+      );
+    }));
+
+    it("should migrate defaultValue with string value", fakeAsync(() => {
+      let testEntity = "entity:old-format";
+
+      updateSubject.next({
+        entity: Object.assign(new Config(), {
+          data: {
+            [testEntity]: {
+              attributes: {
+                fieldName: {
+                  defaultValue: "foo",
+                },
+              },
+            },
+          },
+        }),
+        type: "update",
+      });
+      tick();
+
+      const expectedEntityAttributes = {
+        mode: "static",
+        value: "foo",
+      };
+
+      const config = service.getConfig(testEntity);
+      expect(config["attributes"].fieldName.defaultValue).toEqual(
+        expectedEntityAttributes,
+      );
+    }));
+
+    it("should migrate defaultValue with placeholder value", fakeAsync(() => {
+      let testEntity = "entity:old-format";
+
+      updateSubject.next({
+        entity: Object.assign(new Config(), {
+          data: {
+            [testEntity]: {
+              attributes: {
+                fieldName: {
+                  defaultValue: "$now",
+                },
+              },
+            },
+          },
+        }),
+        type: "update",
+      });
+      tick();
+
+      const expectedEntityAttributes = {
+        mode: "dynamic",
+        value: "$now",
+      };
+
+      const config = service.getConfig(testEntity);
+      expect(config["attributes"].fieldName.defaultValue).toEqual(
+        expectedEntityAttributes,
+      );
+    }));
+  });
+
+  it("should migrate entity-array dataType", fakeAsync(() => {
+    const config = new Config();
+    const oldFormat = {
+      attributes: {
+        entityarray_update: {
+          dataType: "entity-array",
+        },
+        array_update: {
+          dataType: "array",
+          innerDataType: "entity",
+        },
+        array_update2: {
+          dataType: "array",
+          innerDataType: "configurable-enum",
+          additional: "foo-enum",
+        },
+        enum_additional_update: {
+          dataType: "configurable-enum",
+          innerDataType: "foo-enum",
+        },
+        keep1: {
+          dataType: "entity",
+        },
+        keep2: {
+          dataType: "entity",
+          isArray: true,
+        },
+      },
+    };
+    const newFormat: EntityConfig = {
+      attributes: {
+        entityarray_update: {
+          dataType: "entity",
+          isArray: true,
+        },
+        array_update: {
+          dataType: "entity",
+          isArray: true,
+        },
+        array_update2: {
+          dataType: "configurable-enum",
+          isArray: true,
+          additional: "foo-enum",
+        },
+        enum_additional_update: {
+          dataType: "configurable-enum",
+          additional: "foo-enum",
+        },
+        keep1: {
+          dataType: "entity",
+        },
+        keep2: {
+          dataType: "entity",
+          isArray: true,
+        },
+      },
+    };
+    config.data = { "entity:X": oldFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+
+    const actualFromOld = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromOld).toEqual(newFormat);
+
+    config.data = { "entity:X": newFormat };
+    updateSubject.next({ entity: config, type: "update" });
+    tick();
+    const actualFromNew = service.getConfig<EntityConfig>("entity:X");
+    expect(actualFromNew).toEqual(newFormat);
+  }));
 });

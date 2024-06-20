@@ -15,10 +15,10 @@
       [value]="entity[formControlName]"
       (onSelectionChange)="$event.source.selected ? selectEntity(entity) : null"
     >
-      <app-display-entity
+      <app-entity-block
         [entityToDisplay]="entity"
         [linkDisabled]="true"
-      ></app-display-entity>
+      ></app-entity-block>
     </mat-option>
   </mat-autocomplete>
   <mat-hint *ngIf="!autocompleteDisabled">

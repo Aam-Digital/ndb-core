@@ -22,7 +22,10 @@ import { AdminTabTemplateDirective } from "../../building-blocks/admin-tabs/admi
 @Component({
   selector: "app-admin-entity-details",
   templateUrl: "./admin-entity-details.component.html",
-  styleUrls: ["./admin-entity-details.component.scss"],
+  styleUrls: [
+    "./admin-entity-details.component.scss",
+    "../../admin-entity/admin-entity-styles.scss",
+  ],
   standalone: true,
   imports: [
     MatTabsModule,

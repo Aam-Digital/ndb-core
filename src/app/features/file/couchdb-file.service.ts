@@ -17,7 +17,7 @@ import {
   shareReplay,
   tap,
 } from "rxjs/operators";
-import { Observable, of } from "rxjs";
+import { from, Observable, of } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
@@ -30,6 +30,8 @@ import { LoggingService } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SyncStateSubject } from "../../core/session/session-type";
+import { SyncService } from "../../core/database/sync.service";
+import { SyncState } from "../../core/session/session-states/sync-state.enum";
 
 /**
  * Stores the files in the CouchDB.
@@ -48,6 +50,7 @@ export class CouchdbFileService extends FileService {
     private http: HttpClient,
     private dialog: MatDialog,
     private snackbar: MatSnackBar,
+    private syncService: SyncService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
     logger: LoggingService,
@@ -71,7 +74,8 @@ export class CouchdbFileService extends FileService {
 
   private runFileUpload(file: File, entity: Entity, property: string) {
     const attachmentPath = `${this.attachmentsUrl}/${entity.getId()}`;
-    return this.getAttachmentsDocument(attachmentPath).pipe(
+    return this.ensureDocIsSynced().pipe(
+      concatMap(() => this.getAttachmentsDocument(attachmentPath)),
       concatMap(({ _rev }) =>
         this.http.put(`${attachmentPath}/${property}?rev=${_rev}`, file, {
           headers: { "ngsw-bypass": "" },
@@ -82,6 +86,15 @@ export class CouchdbFileService extends FileService {
       // prevent http request to be executed multiple times (whenever .subscribe is called)
       shareReplay(),
     );
+  }
+
+  /**
+   * For permission checks to work correctly, the Entity must be available server-side already.
+   * Manually send this doc to the DB here because sync is only happening at slower intervals.
+   * @private
+   */
+  private ensureDocIsSynced(): Observable<SyncState> {
+    return from(this.syncService.sync()).pipe(map(() => this.syncState.value));
   }
 
   private getAttachmentsDocument(

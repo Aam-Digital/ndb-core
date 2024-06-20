@@ -10,6 +10,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { mockEntityMapper } from "../../../entity/entity-mapper/mock-entity-mapper-service";
 import { SetupWizardConfig } from "../setup-wizard-config";
 import { Config } from "../../../config/config";
+import { Router } from "@angular/router";
 
 describe("SetupWizardButtonComponent", () => {
   let component: SetupWizardButtonComponent;
@@ -41,10 +42,37 @@ describe("SetupWizardButtonComponent", () => {
       new Config("", testWizardConfig),
     );
 
-    // @ts-ignore
-    component.init();
+    component.ngOnInit();
     tick();
 
     expect(component.showSetupWizard).toBeFalse();
+  }));
+
+  it("should auto navigate to setup wizard if configured openOnStart", fakeAsync(() => {
+    const routerSpy = spyOn(TestBed.inject(Router), "navigate");
+    const testWizardConfig: SetupWizardConfig = { steps: [] };
+    spyOn(TestBed.inject(EntityMapperService), "load").and.resolveTo(
+      new Config("", testWizardConfig),
+    );
+
+    // don't re-route if disabled in config
+    testWizardConfig.openOnStart = false;
+    component.ngOnInit();
+    tick();
+    expect(routerSpy).not.toHaveBeenCalled();
+
+    // don't re-route if finished
+    testWizardConfig.finished = true;
+    testWizardConfig.openOnStart = true;
+    component.ngOnInit();
+    tick();
+    expect(routerSpy).not.toHaveBeenCalled();
+
+    // re-route automatically if configured
+    testWizardConfig.openOnStart = true;
+    testWizardConfig.finished = false;
+    component.ngOnInit();
+    tick();
+    expect(routerSpy).toHaveBeenCalled();
   }));
 });

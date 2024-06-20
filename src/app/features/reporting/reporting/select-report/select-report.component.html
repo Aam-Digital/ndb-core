@@ -13,7 +13,11 @@
   <div class="flex-row flex-wrap gap-regular">
     <mat-form-field>
       <mat-label i18n>Select Report</mat-label>
-      <mat-select [(ngModel)]="selectedReport" [disabled]="loading">
+      <mat-select
+        [(ngModel)]="selectedReport"
+        [disabled]="loading"
+        (ngModelChange)="reportChange()"
+      >
         <mat-option *ngFor="let report of reports" [value]="report">
           {{ report.title }}
         </mat-option>
@@ -25,12 +29,14 @@
       <mat-date-range-input [rangePicker]="picker" [disabled]="loading">
         <input
           [(ngModel)]="fromDate"
+          (ngModelChange)="dateChange()"
           matStartDate
           i18n-placeholder="Date selection for the reporting"
           placeholder="Start date"
         />
         <input
           [(ngModel)]="toDate"
+          (ngModelChange)="dateChange()"
           matEndDate
           i18n-placeholder="Date selection for the reporting"
           placeholder="End date"
@@ -55,7 +61,7 @@
         calculateClick.emit({
           report: selectedReport,
           from: fromDate,
-          to: toDate
+          to: toDate,
         })
       "
       i18n="Calculate the results for a report"
@@ -90,7 +96,7 @@
         class="standard-icon-with-text"
         aria-label="download csv"
       ></fa-icon>
-      <ng-container i18n="Button to download data"> Download </ng-container>
+      <ng-container i18n="Button to download data"> Download</ng-container>
     </button>
   </div>
   <div style="clear: both; padding-bottom: 5px"></div>

@@ -17,6 +17,11 @@ export interface SessionInfo {
   roles: string[];
 
   /**
+   * List of linked projects
+   */
+  projects?: string[];
+
+  /**
    * ID of the entity which is connected with the user account.
    *
    * This is either a full ID or (e.g. Child:123) or only the last part.

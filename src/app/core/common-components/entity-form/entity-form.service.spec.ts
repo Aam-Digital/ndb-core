@@ -19,8 +19,6 @@ import {
   PLACEHOLDERS,
 } from "../../entity/schema/entity-schema-field";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
-import { ArrayDatatype } from "../../basic-datatypes/array/array.datatype";
-import { EntityArrayDatatype } from "../../basic-datatypes/entity-array/entity-array.datatype";
 import { Child } from "../../../child-dev-project/children/model/child";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
@@ -31,6 +29,7 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
 import moment from "moment";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MockEntityMapperService } from "../../entity/entity-mapper/mock-entity-mapper-service";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 
 describe("EntityFormService", () => {
   let service: EntityFormService;
@@ -71,6 +70,22 @@ describe("EntityFormService", () => {
     await service.saveChanges(formGroup, entity);
 
     expect(entity.getId()).toBe(`${Entity.ENTITY_TYPE}:newId`);
+  });
+
+  it("should mark form pristine and disable it after saving", async () => {
+    const entity = new Entity("initialId");
+    const formGroup = new UntypedFormGroup({
+      _id: new UntypedFormControl(`${Entity.ENTITY_TYPE}:newId`),
+    });
+    TestBed.inject(EntityAbility).update([
+      { subject: "Entity", action: "create" },
+    ]);
+
+    await service.saveChanges(formGroup, entity);
+
+    expect(formGroup.pristine).toBeTrue();
+    // form status change is needed for EditFileComponent to start file upload, for example
+    expect(formGroup.disabled).toBeTrue();
   });
 
   it("should throw an error when trying to create a entity with missing permissions", async () => {
@@ -243,27 +258,35 @@ describe("EntityFormService", () => {
   });
 
   it("should assign default values", () => {
-    const schema: EntitySchemaField = { defaultValue: 1 };
+    const schema: EntitySchemaField = {
+      defaultValue: {
+        mode: "static",
+        value: 1,
+      },
+    };
     Entity.schema.set("test", schema);
 
     let form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue(1);
 
-    schema.defaultValue = PLACEHOLDERS.NOW;
+    schema.defaultValue = {
+      mode: "dynamic",
+      value: PLACEHOLDERS.NOW,
+    };
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(
       moment(form.get("test").value).isSame(moment(), "minutes"),
     ).toBeTrue();
 
-    schema.defaultValue = PLACEHOLDERS.CURRENT_USER;
+    schema.defaultValue = {
+      mode: "dynamic",
+      value: PLACEHOLDERS.CURRENT_USER,
+    };
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue(`${User.ENTITY_TYPE}:${TEST_USER}`);
 
-    schema.dataType = ArrayDatatype.dataType;
-    form = service.createFormGroup([{ id: "test" }], new Entity());
-    expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
-
-    schema.dataType = EntityArrayDatatype.dataType;
+    schema.dataType = EntityDatatype.dataType;
+    schema.isArray = true;
     form = service.createFormGroup([{ id: "test" }], new Entity());
     expect(form.get("test")).toHaveValue([`${User.ENTITY_TYPE}:${TEST_USER}`]);
 
@@ -274,12 +297,18 @@ describe("EntityFormService", () => {
     TestBed.inject(CurrentUserSubject).next(undefined);
 
     // simple property
-    Entity.schema.set("user", { defaultValue: PLACEHOLDERS.CURRENT_USER });
+    Entity.schema.set("user", {
+      defaultValue: {
+        mode: "dynamic",
+        value: PLACEHOLDERS.CURRENT_USER,
+      },
+    });
     let form = service.createFormGroup([{ id: "user" }], new Entity());
     expect(form.get("user")).toHaveValue(null);
 
     // array property
-    Entity.schema.get("user").dataType = EntityArrayDatatype.dataType;
+    Entity.schema.get("user").dataType = EntityDatatype.dataType;
+    Entity.schema.get("user").isArray = true;
     form = service.createFormGroup([{ id: "user" }], new Entity());
     expect(form.get("user")).toHaveValue(null);
 
@@ -287,7 +316,12 @@ describe("EntityFormService", () => {
   });
 
   it("should not assign default values to existing entities", () => {
-    Entity.schema.set("test", { defaultValue: 1 });
+    Entity.schema.set("test", {
+      defaultValue: {
+        mode: "static",
+        value: 1,
+      },
+    });
 
     const entity = new Entity();
     entity._rev = "1-existing_entity";
@@ -298,7 +332,12 @@ describe("EntityFormService", () => {
   });
 
   it("should not overwrite existing values with default value", () => {
-    Entity.schema.set("test", { defaultValue: 1 });
+    Entity.schema.set("test", {
+      defaultValue: {
+        mode: "static",
+        value: 1,
+      },
+    });
 
     const entity = new Entity();
     entity["test"] = 2;
