@@ -6370,7 +6370,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
       </trans-unit>
       <trans-unit id="7d0989d8ca6bcf4968f86bbbee83d4f2d4dc2ac9" datatype="html">
         <source>Quick actions</source>
-        <target state="translated">Verknüpfungen</target>
+        <target state="translated">Schnellzugriffe</target>
         <note priority="1" from="description">Title of dashboard widget that shows a list of certain actions a user can
     click on</note>
         <context-group purpose="location">
