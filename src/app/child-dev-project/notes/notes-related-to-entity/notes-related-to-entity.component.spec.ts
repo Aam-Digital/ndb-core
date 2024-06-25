@@ -29,7 +29,6 @@ describe("NotesRelatedToEntityComponent", () => {
   beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
     component = fixture.componentInstance;
-    //fixture.detectChanges();
   }));
 
   afterEach(() => {
