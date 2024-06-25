@@ -20,7 +20,7 @@ import { MatBadgeModule } from "@angular/material/badge";
 import { EntitySchemaService } from "../../entity/schema/entity-schema.service";
 import { ComponentRegistry } from "../../../dynamic-components";
 import { DefaultDatatype } from "../../entity/default-datatype/default.datatype";
-import { ImportColumnMappingService } from "app/import-column-mapping.service";
+import { ImportColumnMappingService } from "./import-column-mapping.service";
 
 /**
  * Import sub-step: Let user map columns from import data to entity properties
