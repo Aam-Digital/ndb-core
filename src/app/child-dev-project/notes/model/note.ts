@@ -231,8 +231,8 @@ export class Note extends Entity {
    * @param child The child or the id of the child to add to the notes
    */
   addChild(child: Child | string) {
-    const childId = typeof child === "string" ? child : child.getId();
-    if (this.children.includes(childId)) {
+    const childId = typeof child === "string" ? child : child?.getId();
+    if (!childId || this.children.includes(childId)) {
       return;
     }
 
