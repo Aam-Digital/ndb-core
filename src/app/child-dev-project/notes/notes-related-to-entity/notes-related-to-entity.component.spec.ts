@@ -13,8 +13,14 @@ import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
 describe("NotesRelatedToEntityComponent", () => {
   let component: NotesRelatedToEntityComponent;
   let fixture: ComponentFixture<NotesRelatedToEntityComponent>;
+  const originalNoteSchema_relatedEntities =
+    Note.schema.get("relatedEntities").additional;
 
   beforeEach(waitForAsync(() => {
+    Note.schema.get("relatedEntities").additional = [
+      ChildSchoolRelation.ENTITY_TYPE,
+    ];
+
     TestBed.configureTestingModule({
       imports: [NotesRelatedToEntityComponent, MockedTestingModule.withState()],
     }).compileComponents();
@@ -23,9 +29,12 @@ describe("NotesRelatedToEntityComponent", () => {
   beforeEach(waitForAsync(() => {
     fixture = TestBed.createComponent(NotesRelatedToEntityComponent);
     component = fixture.componentInstance;
-    component.entity = new Child("1");
-    fixture.detectChanges();
   }));
+
+  afterEach(() => {
+    Note.schema.get("relatedEntities").additional =
+      originalNoteSchema_relatedEntities;
+  });
 
   it("should create", () => {
     expect(component).toBeTruthy();
@@ -79,6 +88,21 @@ describe("NotesRelatedToEntityComponent", () => {
     expect(note.relatedEntities).toEqual([entity.getId()]);
     expect(note.children).toEqual([`${Child.ENTITY_TYPE}:someChild`]);
     expect(note.schools).toEqual([`${Child.ENTITY_TYPE}:someSchool`]);
+  });
+
+  it("should handle ChildSchoolRelation links also if they are arrays", async () => {
+    const relation = new ChildSchoolRelation();
+    relation.schoolId = ["School:1"] as any; // assume entity config was overwritten to hold array
+    relation.childId = ["Child:1", "Child:2"] as any; // assume entity config was overwritten to hold array
+
+    component.entity = relation;
+    await component.ngOnInit();
+
+    const newNote = component.createNewRecordFactory()();
+
+    expect(newNote.relatedEntities).toContain(relation.getId());
+    expect(newNote.children).toEqual(relation.childId);
+    expect(newNote.schools).toEqual(relation.schoolId);
   });
 
   it("should create a new note and fill it with indirectly related references (2-hop) of the types allowed for note.relatedEntities", () => {
