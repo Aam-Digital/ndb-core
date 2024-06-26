@@ -7,7 +7,7 @@ import {
   ExtendedEntityForm,
 } from "../entity-form/entity-form.service";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
-import { JsonPipe, NgIf } from "@angular/common";
+import { NgIf } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { MatHint } from "@angular/material/form-field";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -32,7 +32,6 @@ import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-la
     HelpButtonComponent,
     NgIf,
     EntityFieldViewComponent,
-    JsonPipe,
     MatHint,
     FaIconComponent,
     MatIconButton,
