@@ -33,10 +33,18 @@
   </button>
 
   <div class="field-hint" *ngIf="defaultValueHint?.showHint">
-    <!-- todo use label of linked field here -->
-    Inherited from "{{ defaultValueHint?.definedByField }}" ({{
-      form.inheritedSyncStatus.get(_field.id) ? "Synced" : "Out of Sync"
-    }})
+    <span i18n>
+      Inherited from "<app-entity-field-label
+        [field]="defaultValueHint?.inheritedFromField"
+        [entityType]="defaultValueHint.inheritedFromType"
+      ></app-entity-field-label
+      >"
+    </span>
+    @if (form.inheritedSyncStatus.get(_field.id)) {
+      <span i18n>(up-to-date)</span>
+    } @else {
+      <span i18n>(manually overwritten)</span>
+    }
   </div>
 </div>
 

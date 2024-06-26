@@ -12,6 +12,7 @@ import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view
 import { MatHint } from "@angular/material/form-field";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
+import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 
 /**
  * Generic component to display one entity property field's editComponent.
@@ -35,6 +36,7 @@ import { MatIconButton } from "@angular/material/button";
     MatHint,
     FaIconComponent,
     MatIconButton,
+    EntityFieldLabelComponent,
   ],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>
@@ -55,7 +57,8 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
 
   defaultValueHint: {
     showHint: boolean;
-    definedByField: string;
+    inheritedFromType: string;
+    inheritedFromField: string;
   };
 
   constructor(private entityFormService: EntityFormService) {}
@@ -66,11 +69,16 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
     const linkedFieldValue = this.form.formGroup?.get(
       defaultConfig?.localAttribute,
     )?.value;
+    const parentRefValue =
+      linkedFieldValue?.length === 1 ? linkedFieldValue[0] : undefined;
 
+    // TODO: maybe keep defaultValueHint object as undefined if not displayed?
     this.defaultValueHint = {
-      showHint:
-        defaultConfig?.mode === "inherited" && linkedFieldValue?.length === 1,
-      definedByField: defaultConfig?.localAttribute,
+      showHint: defaultConfig?.mode === "inherited" && parentRefValue,
+      inheritedFromField: defaultConfig?.localAttribute,
+      inheritedFromType: parentRefValue
+        ? Entity.extractTypeFromId(parentRefValue)
+        : undefined,
     };
   }
 
