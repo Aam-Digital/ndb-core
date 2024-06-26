@@ -16,8 +16,8 @@ import { ExportDataDirective } from "../../../core/export/export-data-directive/
 import { Angulartics2Module } from "angulartics2";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
-  EntityForm,
   EntityFormService,
+  ExtendedEntityForm,
 } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
@@ -91,7 +91,7 @@ export class NoteDetailsComponent
   topFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
 
-  form: EntityForm<Note>;
+  form: ExtendedEntityForm<Note>;
   tmpEntity: Note;
 
   constructor(
@@ -124,14 +124,17 @@ export class NoteDetailsComponent
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 
-    this.form = this.entityFormService.createFormGroup(
+    this.form = await this.entityFormService.createExtendedEntityForm(
       this.middleForm.concat(this.topForm, this.bottomForm),
       this.entity,
     );
+
     // create an object reflecting unsaved changes to use in template (e.g. for dynamic title)
     this.tmpEntity = this.entity.copy();
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      this.tmpEntity = Object.assign(this.tmpEntity, value);
-    });
+    this.form.formGroup.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        this.tmpEntity = Object.assign(this.tmpEntity, value);
+      });
   }
 }

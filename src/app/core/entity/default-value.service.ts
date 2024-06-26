@@ -1,7 +1,9 @@
 import { Injectable } from "@angular/core";
 import { Entity } from "./model/entity";
-import { FormGroup } from "@angular/forms";
 import { HandleDefaultValuesUseCase } from "./default-field-value/handle-default-values.usecase";
+import { EntitySchema } from "./schema/entity-schema";
+import { DefaultValueConfig } from "./schema/default-value-config";
+import { ExtendedEntityForm } from "../common-components/entity-form/entity-form.service";
 
 @Injectable({
   providedIn: "root",
@@ -9,38 +11,32 @@ import { HandleDefaultValuesUseCase } from "./default-field-value/handle-default
 export class DefaultValueService {
   constructor(private handleDefaultValuesUseCase: HandleDefaultValuesUseCase) {}
 
-  handle(formGroup: FormGroup, entity: Entity): void {
-    let schema = entity.getSchema();
-
-    let defaultValueConfigs = Array.from(schema.entries()).filter(
-      ([key, fieldSchema]) => {
-        return fieldSchema.defaultValue;
-      },
-    );
-
-    let inheritedConfigs = defaultValueConfigs.filter(
-      ([key, fieldSchema]) => fieldSchema.defaultValue.mode == "inherited",
-    );
-
-    let nonInheritedConfigs = defaultValueConfigs.filter(
-      ([key, fieldSchema]) => fieldSchema.defaultValue.mode != "inherited",
-    );
-
-    if (inheritedConfigs.length > 0) {
-      // apply inherited rules first, to be sure, that default values are reflected correctly
-      this.handleDefaultValuesUseCase.handleFormGroup(
-        formGroup,
-        inheritedConfigs,
+  async handleExtendedEntityForm<T extends Entity>(
+    extendedEntityForm: ExtendedEntityForm<T>,
+    entity: Entity,
+  ): Promise<void> {
+    if (extendedEntityForm.defaultValueConfigs.size > 0) {
+      await this.handleDefaultValuesUseCase.handleExtendedEntityForm(
+        extendedEntityForm,
+        entity.getSchema(),
         entity.isNew,
       );
     }
+  }
 
-    if (nonInheritedConfigs.length > 0) {
-      this.handleDefaultValuesUseCase.handleFormGroup(
-        formGroup,
-        nonInheritedConfigs,
-        entity.isNew,
-      );
+  getDefaultValueConfigs<T extends Entity>(
+    entity: T,
+  ): Map<string, DefaultValueConfig> {
+    let schema: EntitySchema = entity.getSchema();
+
+    const defaultValueConfigs: Map<string, DefaultValueConfig> = new Map();
+
+    for (const [key, entitySchemaField] of schema) {
+      if (entitySchemaField.defaultValue) {
+        defaultValueConfigs.set(key, entitySchemaField.defaultValue);
+      }
     }
+
+    return defaultValueConfigs;
   }
 }

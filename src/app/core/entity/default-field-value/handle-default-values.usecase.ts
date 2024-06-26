@@ -1,11 +1,13 @@
 import { Injectable } from "@angular/core";
 import { AbstractControl, FormGroup } from "@angular/forms";
-import { EntitySchemaField, PLACEHOLDERS } from "../schema/entity-schema-field";
+import { PLACEHOLDERS } from "../schema/entity-schema-field";
 import { DefaultValueConfig } from "../schema/default-value-config";
 import { Entity } from "../model/entity";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { LoggingService } from "../../logging/logging.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { ExtendedEntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EntitySchema } from "../schema/entity-schema";
 
 /**
  * When edit an Entity, apply this business logic for DefaultValueConfig
@@ -20,41 +22,103 @@ export class HandleDefaultValuesUseCase {
     private logger: LoggingService,
   ) {}
 
-  handleFormGroup(
-    formGroup: FormGroup,
-    fieldConfigs: [string, EntitySchemaField][],
+  async handleExtendedEntityForm<T extends Entity>(
+    form: ExtendedEntityForm<T>,
+    entitySchema: EntitySchema,
     isNew: boolean,
-  ) {
-    fieldConfigs.forEach(([fieldName, fieldSchema]) => {
-      let defaultValueConfig = fieldSchema.defaultValue;
+  ): Promise<void> {
+    let inheritedConfigs: Map<string, DefaultValueConfig> =
+      this.getConfigsByMode(form.defaultValueConfigs, ["inherited"]);
 
-      switch (defaultValueConfig.mode) {
+    const linkedEntityRefs: Map<string, string[]> = this.getLinkedEntityRefs(
+      inheritedConfigs,
+      form,
+    );
+
+    await this.loadLinkedEntitiesIntoForm(
+      Array.from(linkedEntityRefs.values()).flat(),
+      form,
+    );
+
+    this.enableChangeListener(form);
+
+    for (const [key, entitySchemaField] of entitySchema) {
+      switch (entitySchemaField.defaultValue?.mode) {
         case "inherited":
           return this.handleInheritedMode(
-            formGroup,
-            fieldName,
-            defaultValueConfig,
+            form.formGroup,
+            key,
+            entitySchemaField.defaultValue,
             isNew,
-            fieldSchema.isArray,
+            entitySchema.get(key).isArray,
           );
         case "static":
           return this.handleStaticMode(
-            formGroup,
-            fieldName,
-            defaultValueConfig,
+            form.formGroup,
+            key,
+            entitySchemaField.defaultValue,
             isNew,
-            fieldSchema.isArray,
+            entitySchema.get(key).isArray,
           );
         case "dynamic":
           return this.handleDynamicMode(
-            formGroup,
-            fieldName,
-            defaultValueConfig,
+            form.formGroup,
+            key,
+            entitySchemaField.defaultValue,
             isNew,
-            fieldSchema.isArray,
+            entitySchema.get(key).isArray,
           );
       }
-    });
+    }
+  }
+
+  private getLinkedEntityRefs<T extends Entity>(
+    inheritedConfigs: Map<string, DefaultValueConfig>,
+    form: ExtendedEntityForm<T>,
+  ): Map<string, string[]> {
+    const linkedEntityRefs: Map<string, string[]> = new Map();
+
+    for (const [key, defaultValueConfig] of inheritedConfigs) {
+      let linkedEntities: string[] = form.formGroup.get(
+        defaultValueConfig.localAttribute,
+      )?.value;
+
+      if (linkedEntities == null || linkedEntities.length == 0) {
+        continue;
+      }
+
+      linkedEntityRefs.set(key, linkedEntities);
+    }
+
+    return linkedEntityRefs;
+  }
+
+  private async loadLinkedEntitiesIntoForm<T extends Entity>(
+    entityRefs: string[],
+    form: ExtendedEntityForm<T>,
+  ): Promise<void> {
+    for (const entityRef of entityRefs) {
+      let parentEntity: Entity = await this.entityMapper.load(
+        Entity.extractTypeFromId(entityRef),
+        entityRef,
+      );
+      form.inheritedParentValues.set(entityRef, parentEntity);
+    }
+  }
+
+  private getConfigsByMode(
+    defaultValueConfigs: Map<string, DefaultValueConfig>,
+    mode: ("inherited" | "static" | "dynamic")[],
+  ): Map<string, DefaultValueConfig> {
+    let configs: Map<string, DefaultValueConfig> = new Map();
+
+    for (const [key, defaultValueConfig] of defaultValueConfigs) {
+      if (mode.indexOf(defaultValueConfig.mode) !== -1) {
+        configs.set(key, defaultValueConfig);
+      }
+    }
+
+    return configs;
   }
 
   private handleInheritedMode(
@@ -207,5 +271,59 @@ export class HandleDefaultValuesUseCase {
     }
 
     return true;
+  }
+
+  private enableChangeListener<T extends Entity>(form: ExtendedEntityForm<T>) {
+    form.watcher.set(
+      "formGroupValueChanges",
+      form.formGroup.valueChanges.subscribe(async (change) => {
+        await this.updateLinkedEntities(form);
+        this.syncCheck(form);
+      }),
+    );
+  }
+
+  private async updateLinkedEntities<T extends Entity>(
+    form: ExtendedEntityForm<T>,
+  ) {
+    let inheritedConfigs: Map<string, DefaultValueConfig> =
+      this.getConfigsByMode(form.defaultValueConfigs, ["inherited"]);
+
+    const linkedEntityRefs: Map<string, string[]> = this.getLinkedEntityRefs(
+      inheritedConfigs,
+      form,
+    );
+
+    for (let [key, value] of linkedEntityRefs) {
+      if (value.length !== 1) {
+        form.inheritedParentValues.delete(key);
+        continue;
+      }
+
+      let parentEntity: Entity = await this.entityMapper.load(
+        Entity.extractTypeFromId(value[0]),
+        value[0],
+      );
+
+      form.inheritedParentValues.set(key, parentEntity[key]);
+    }
+  }
+
+  private syncCheck<T extends Entity>(form: ExtendedEntityForm<T>) {
+    let inheritedConfigs: Map<string, DefaultValueConfig> =
+      this.getConfigsByMode(form.defaultValueConfigs, ["inherited"]);
+
+    const linkedEntityRefs: Map<string, string[]> = this.getLinkedEntityRefs(
+      inheritedConfigs,
+      form,
+    );
+
+    for (let [key, value] of linkedEntityRefs) {
+      form.inheritedSyncStatus.set(
+        key,
+        JSON.stringify(form.inheritedParentValues.get(key)) ===
+          JSON.stringify(form.formGroup.get(key)?.value),
+      );
+    }
   }
 }

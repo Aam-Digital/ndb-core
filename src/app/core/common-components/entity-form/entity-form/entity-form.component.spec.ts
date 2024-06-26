@@ -41,13 +41,12 @@ describe("EntityFormComponent", () => {
     setupInitialForm(new Child(), testColumns);
   });
 
-  function setupInitialForm(entity, columns) {
+  async function setupInitialForm(entity, columns) {
     component.entity = entity;
     component.fieldGroups = columns.map((c) => ({ fields: c }));
-    component.form = TestBed.inject(EntityFormService).createFormGroup(
-      columns[0],
-      component.entity,
-    );
+    component.form = await TestBed.inject(
+      EntityFormService,
+    ).createExtendedEntityForm(columns[0], component.entity);
     component.ngOnChanges({ entity: true, form: true } as any);
     fixture.detectChanges();
   }
@@ -213,8 +212,8 @@ describe("EntityFormComponent", () => {
 
     mockConfirmation.getConfirmation.and.resolveTo(popupAction === "yes");
     for (const c in formChanges) {
-      component.form.get(c).setValue(formChanges[c]);
-      component.form.get(c).markAsDirty();
+      component.form.formGroup.get(c).setValue(formChanges[c]);
+      component.form.formGroup.get(c).markAsDirty();
     }
     const updatedChild = new Child(component.entity.getId());
     Object.assign(updatedChild, remoteChanges);
@@ -225,10 +224,10 @@ describe("EntityFormComponent", () => {
     const entityAfterSave = Object.assign(
       {},
       component.entity,
-      component.form.getRawValue(),
+      component.form.formGroup.getRawValue(),
     );
     for (const [key, value] of Object.entries(expectedFormValues)) {
-      const form = component.form.get(key);
+      const form = component.form.formGroup.get(key);
       if (form) {
         expect(form).toHaveValue(value);
       }

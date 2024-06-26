@@ -3,12 +3,15 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { HelpButtonComponent } from "../help-button/help-button.component";
 import { Entity } from "../../entity/model/entity";
 import {
-  EntityForm,
   EntityFormService,
+  ExtendedEntityForm,
 } from "../entity-form/entity-form.service";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
-import { NgIf } from "@angular/common";
+import { JsonPipe, NgIf } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
+import { MatHint } from "@angular/material/form-field";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatIconButton } from "@angular/material/button";
 
 /**
  * Generic component to display one entity property field's editComponent.
@@ -28,6 +31,10 @@ import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view
     HelpButtonComponent,
     NgIf,
     EntityFieldViewComponent,
+    JsonPipe,
+    MatHint,
+    FaIconComponent,
+    MatIconButton,
   ],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>
@@ -39,19 +46,52 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
   _field: FormFieldConfig;
 
   @Input() entity: T;
-  @Input() form: EntityForm<T>;
+  @Input() form: ExtendedEntityForm<T>;
 
   /**
    * Whether to display the field in a limited space, hiding details like the help description button.
    */
   @Input() compactMode: boolean;
 
+  defaultValueHint: {
+    showHint: boolean;
+    definedByField: string;
+  };
+
   constructor(private entityFormService: EntityFormService) {}
+
+  initDefaultConfig() {
+    const defaultConfig = this.form.defaultValueConfigs?.get(this._field.id);
+
+    const linkedFieldValue = this.form.formGroup?.get(
+      defaultConfig?.localAttribute,
+    )?.value;
+
+    this.defaultValueHint = {
+      showHint:
+        defaultConfig?.mode === "inherited" && linkedFieldValue?.length === 1,
+      definedByField: defaultConfig?.localAttribute,
+    };
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
       this.updateField();
     }
+
+    this.initDefaultConfig();
+
+    if (changes.form && changes.form.firstChange) {
+      this.form.formGroup.valueChanges.subscribe((value) =>
+        this.initDefaultConfig(),
+      );
+    }
+  }
+
+  syncFromParentField() {
+    this.form.formGroup
+      .get(this._field.id)
+      .setValue(this.form.inheritedParentValues.get(this._field.id));
   }
 
   private updateField() {

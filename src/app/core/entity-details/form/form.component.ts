@@ -6,8 +6,8 @@ import { Location, NgIf } from "@angular/common";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
 import {
-  EntityForm,
   EntityFormService,
+  ExtendedEntityForm,
 } from "../../common-components/entity-form/entity-form.service";
 import { AlertService } from "../../alerts/alert.service";
 import { MatButtonModule } from "@angular/material/button";
@@ -39,7 +39,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   @Input() fieldGroups: FieldGroup[];
 
-  form: EntityForm<E>;
+  form: ExtendedEntityForm<E> | undefined;
 
   constructor(
     private router: Router,
@@ -50,19 +50,26 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   ) {}
 
   ngOnInit() {
-    this.form = this.entityFormService.createFormGroup(
-      [].concat(...this.fieldGroups.map((group) => group.fields)),
-      this.entity,
-    );
+    let extendedForm = this.entityFormService
+      .createExtendedEntityForm(
+        [].concat(...this.fieldGroups.map((group) => group.fields)),
+        this.entity,
+      )
+      .then((value) => {
+        this.form = value;
 
-    if (!this.creatingNew) {
-      this.form.disable();
-    }
+        if (!this.creatingNew) {
+          this.form.formGroup.disable();
+        }
+      });
   }
 
   async saveClicked() {
     try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
+      await this.entityFormService.saveChanges(
+        this.form.formGroup,
+        this.entity,
+      );
       if (this.creatingNew && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
@@ -80,8 +87,8 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     if (this.creatingNew) {
       this.location.back();
     }
-    this.entityFormService.resetForm(this.form, this.entity);
-    this.form.disable();
+    this.entityFormService.resetForm(this.form.formGroup, this.entity);
+    this.form.formGroup.disable();
   }
 }
 

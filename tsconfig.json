@@ -20,7 +20,7 @@
       "jasmine"
     ],
     "lib": [
-      "es2018",
+      "es2019",
       "dom"
     ],
     "paths": {

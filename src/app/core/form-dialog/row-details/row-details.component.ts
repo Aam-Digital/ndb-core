@@ -3,8 +3,8 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity } from "../../entity/model/entity";
 import {
-  EntityForm,
   EntityFormService,
+  ExtendedEntityForm,
 } from "../../common-components/entity-form/entity-form.service";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
@@ -59,7 +59,7 @@ export interface DetailsComponentData {
   standalone: true,
 })
 export class RowDetailsComponent {
-  form: EntityForm<Entity>;
+  form: ExtendedEntityForm<Entity>;
   fieldGroups: FieldGroup[];
 
   viewOnlyColumns: FormFieldConfig[];
@@ -69,26 +69,33 @@ export class RowDetailsComponent {
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
     private formService: EntityFormService,
   ) {
-    this.init(data);
+    this.init(data)
+      .then()
+      .catch((reason) => console.log(reason)); // todo this should not called in constructor?
   }
 
-  private init(data: DetailsComponentData) {
-    this.form = this.formService.createFormGroup(data.columns, data.entity);
+  private async init(data: DetailsComponentData) {
+    this.form = await this.formService.createExtendedEntityForm(
+      data.columns,
+      data.entity,
+    );
     this.enableSaveWithoutChangesIfNew(data.entity);
 
     this.fieldGroups = data.columns.map((col) => ({ fields: [col] }));
     this.tempEntity = this.data.entity;
-    this.form.valueChanges.pipe(untilDestroyed(this)).subscribe((value) => {
-      const dynamicConstructor: any = data.entity.getConstructor();
-      this.tempEntity = Object.assign(new dynamicConstructor(), value);
-    });
+    this.form.formGroup.valueChanges
+      .pipe(untilDestroyed(this))
+      .subscribe((value) => {
+        const dynamicConstructor: any = data.entity.getConstructor();
+        this.tempEntity = Object.assign(new dynamicConstructor(), value);
+      });
     this.viewOnlyColumns = data.viewOnlyColumns;
   }
 
   private enableSaveWithoutChangesIfNew(entity: Entity) {
     if (entity.isNew) {
       // could check here that at least some fields hold a value but the naive heuristic to allow save of all new seems ok
-      this.form.markAsDirty();
+      this.form.formGroup.markAsDirty();
     }
   }
 }

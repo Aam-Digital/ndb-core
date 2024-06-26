@@ -74,23 +74,23 @@ describe("FormComponent", () => {
     const child = new Child();
     child.name = "test child";
     component.entity = child;
-    component.form.enable();
-    component.form.get("name").setValue("other name");
+    component.form.formGroup.enable();
+    component.form.formGroup.get("name").setValue("other name");
 
     component.cancelClicked();
 
-    expect(component.form.disabled).toBeTrue();
-    expect(component.form.get("name")).toHaveValue("test child");
+    expect(component.form.formGroup.disabled).toBeTrue();
+    expect(component.form.formGroup.get("name")).toHaveValue("test child");
   });
 
   it("should also reset form values which where not set before", () => {
     component.entity = new Child();
     component.ngOnInit();
-    component.form.enable();
+    component.form.formGroup.enable();
 
-    component.form.get("name").setValue("my name");
+    component.form.formGroup.get("name").setValue("my name");
     component.cancelClicked();
 
-    expect(component.form.get("name").value).toBeUndefined();
+    expect(component.form.formGroup.get("name").value).toBeUndefined();
   });
 });

@@ -1,7 +1,10 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
-import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
-import { FormControl, FormGroup } from "@angular/forms";
+import {
+  EntityFormService,
+  ExtendedEntityForm,
+} from "../../../common-components/entity-form/entity-form.service";
+import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
 import { AdminEntityFieldComponent } from "../admin-entity-field/admin-entity-field.component";
 import {
@@ -58,7 +61,7 @@ export class AdminEntityFormComponent implements OnChanges {
   @Input() config: FormConfig;
 
   dummyEntity: Entity;
-  dummyForm: FormGroup;
+  dummyForm: ExtendedEntityForm<any>;
 
   availableFields: ColumnConfig[] = [];
   readonly createNewFieldPlaceholder: FormFieldConfig = {
@@ -84,21 +87,21 @@ export class AdminEntityFormComponent implements OnChanges {
       });
   }
 
-  ngOnChanges(changes: SimpleChanges): void {
+  async ngOnChanges(changes: SimpleChanges): Promise<void> {
     if (changes.config) {
-      this.initForm();
+      await this.initForm();
     }
   }
 
-  private initForm() {
+  private async initForm() {
     this.initAvailableFields();
 
     this.dummyEntity = new this.entityType();
-    this.dummyForm = this.entityFormService.createFormGroup(
+    this.dummyForm = await this.entityFormService.createExtendedEntityForm(
       [...this.getUsedFields(this.config), ...this.availableFields],
       this.dummyEntity,
     );
-    this.dummyForm.disable();
+    this.dummyForm.formGroup.disable();
   }
 
   private getUsedFields(config: FormConfig): ColumnConfig[] {
@@ -243,8 +246,8 @@ export class AdminEntityFormComponent implements OnChanges {
       return;
     }
 
-    this.dummyForm.addControl(newFieldId, new FormControl());
-    this.dummyForm.disable();
+    this.dummyForm.formGroup.addControl(newFieldId, new FormControl());
+    this.dummyForm.formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newFieldId);
 
     // the schema update has added the new field to the available fields already, remove it from there
@@ -268,8 +271,8 @@ export class AdminEntityFormComponent implements OnChanges {
       return;
     }
 
-    this.dummyForm.addControl(newTextField.id, new FormControl());
-    this.dummyForm.disable();
+    this.dummyForm.formGroup.addControl(newTextField.id, new FormControl());
+    this.dummyForm.formGroup.disable();
     event.container.data.splice(event.currentIndex, 0, newTextField);
 
     // the schema update has added the new Text field to the available fields already, remove it from there
