@@ -50,7 +50,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   ) {}
 
   ngOnInit() {
-    let extendedForm = this.entityFormService
+    this.entityFormService
       .createExtendedEntityForm(
         [].concat(...this.fieldGroups.map((group) => group.fields)),
         this.entity,

@@ -62,8 +62,8 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       .then(() => this.initForm());
   }
 
-  reset() {
-    this.initForm();
+  async reset() {
+    await this.initForm();
   }
 
   private async loadFormConfig() {

@@ -222,7 +222,7 @@ export class AdminEntityFormComponent implements OnChanges {
     if (configDetails.editComponent == "EditDescriptionOnly") {
       const updatedField = await this.openTextConfig(configDetails);
       Object.assign(field, updatedField);
-      this.initForm();
+      await this.initForm();
     } else {
       await this.openFieldConfig(field);
     }

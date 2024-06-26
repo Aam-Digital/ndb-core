@@ -56,7 +56,7 @@ describe("TodoDetailsComponent", () => {
 
     const editedEntityProp = "subject";
     component.formColumns = [{ fields: [editedEntityProp] }];
-    component.ngOnInit();
+    await component.ngOnInit();
 
     component.form.formGroup.get(editedEntityProp).setValue("123");
     component.form.formGroup.get(editedEntityProp).markAsDirty();

@@ -208,7 +208,10 @@ describe("EntityFormComponent", () => {
     remoteChanges: Partial<Child>,
     expectedFormValues: Partial<Child>,
   ) {
-    setupInitialForm(Object.assign(new Child(), originalEntity), testColumns);
+    await setupInitialForm(
+      Object.assign(new Child(), originalEntity),
+      testColumns,
+    );
 
     mockConfirmation.getConfirmation.and.resolveTo(popupAction === "yes");
     for (const c in formChanges) {

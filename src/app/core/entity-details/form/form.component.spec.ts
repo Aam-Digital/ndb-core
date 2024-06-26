@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import { FormComponent } from "./form.component";
 import { Child } from "../../../child-dev-project/children/model/child";
@@ -19,13 +25,14 @@ describe("FormComponent", () => {
     }).compileComponents();
   }));
 
-  beforeEach(() => {
+  beforeEach(fakeAsync(() => {
     fixture = TestBed.createComponent(FormComponent<Child>);
     component = fixture.componentInstance;
     component.entity = new Child();
     component.fieldGroups = [{ fields: [{ id: "name" }] }];
     fixture.detectChanges();
-  });
+    tick();
+  }));
 
   it("should create", () => {
     expect(component).toBeTruthy();

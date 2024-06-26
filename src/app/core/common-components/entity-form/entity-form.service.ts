@@ -121,6 +121,14 @@ export class EntityFormService {
     return fullField;
   }
 
+  /**
+   * Creates a FormGroups from the formFields and the existing values from the entity.
+   * Missing fields in the formFields are filled with schema information.
+   * @param formFields
+   * @param entity
+   * @param forTable
+   * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
+   */
   public async createExtendedEntityForm<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
@@ -132,7 +140,6 @@ export class EntityFormService {
       entity,
       forTable,
       withPermissionCheck,
-      false,
     );
 
     const defaultValueConfigs =
@@ -155,21 +162,11 @@ export class EntityFormService {
     return extendedEntityForm;
   }
 
-  /**
-   * Creates a FormGroups from the formFields and the existing values from the entity.
-   * Missing fields in the formFields are filled with schema information.
-   * @param formFields
-   * @param entity
-   * @param forTable
-   * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
-   * @param handleDefaultValues
-   */
-  public createFormGroup<T extends Entity>(
+  private createFormGroup<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
     forTable = false,
     withPermissionCheck = true,
-    handleDefaultValues = true,
   ): EntityFormGroup<T> {
     const formConfig = {};
     const copy = entity.copy();
@@ -196,10 +193,6 @@ export class EntityFormService {
         .subscribe(() => this.disableReadOnlyFormControls(group, entity));
       this.subscriptions.push(statusChangesSubscription);
     }
-
-    // if (handleDefaultValues) {
-    //   this.defaultValueService.handle(group, entity);
-    // }
 
     return group;
   }

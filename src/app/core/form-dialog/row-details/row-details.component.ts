@@ -1,4 +1,4 @@
-import { Component, Inject } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity } from "../../entity/model/entity";
@@ -58,7 +58,7 @@ export interface DetailsComponentData {
   ],
   standalone: true,
 })
-export class RowDetailsComponent {
+export class RowDetailsComponent implements OnInit {
   form: ExtendedEntityForm<Entity>;
   fieldGroups: FieldGroup[];
 
@@ -68,10 +68,12 @@ export class RowDetailsComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DetailsComponentData,
     private formService: EntityFormService,
-  ) {
-    this.init(data)
+  ) {}
+
+  ngOnInit(): void {
+    this.init(this.data)
       .then()
-      .catch((reason) => console.log(reason)); // todo this should not called in constructor?
+      .catch((reason) => console.log(reason));
   }
 
   private async init(data: DetailsComponentData) {

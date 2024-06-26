@@ -63,6 +63,10 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
   constructor(private entityFormService: EntityFormService) {}
 
   initDefaultConfig() {
+    if (!this.form) {
+      return;
+    }
+
     const defaultConfig = this.form.defaultValueConfigs?.get(this._field.id);
 
     const linkedFieldValue = this.form.formGroup?.get(
@@ -89,7 +93,7 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
     this.initDefaultConfig();
 
     if (changes.form && changes.form.firstChange) {
-      this.form.formGroup.valueChanges.subscribe((value) =>
+      this.form?.formGroup.valueChanges.subscribe((value) =>
         this.initDefaultConfig(),
       );
     }

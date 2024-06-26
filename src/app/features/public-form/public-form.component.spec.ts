@@ -107,6 +107,7 @@ describe("PublicFormComponent", () => {
     expect(component.form.formGroup.get("name")).toHaveValue("some name");
 
     component.reset();
+    tick();
 
     expect(component.form.formGroup.get("name")).toHaveValue(null);
   }));
