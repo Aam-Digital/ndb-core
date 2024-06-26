@@ -27,8 +27,8 @@ import {
   toFormFieldConfig,
 } from "../entity-form/FormConfig";
 import {
+  EntityFormGroup,
   EntityFormService,
-  PartialTypedFormGroup,
 } from "../entity-form/entity-form.service";
 import { tableSort } from "./table-sort/table-sort";
 import { UntilDestroy } from "@ngneat/until-destroy";
@@ -372,5 +372,5 @@ export class EntitiesTableComponent<T extends Entity> {
  */
 export interface TableRow<T extends Entity> {
   record: T;
-  formGroup?: PartialTypedFormGroup<T>;
+  formGroup?: EntityFormGroup<T>;
 }

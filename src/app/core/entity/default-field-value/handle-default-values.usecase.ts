@@ -305,7 +305,10 @@ export class HandleDefaultValuesUseCase {
         value[0],
       );
 
-      form.inheritedParentValues.set(key, parentEntity[key]);
+      form.inheritedParentValues.set(
+        key,
+        parentEntity[inheritedConfigs.get(key).field],
+      );
     }
   }
 

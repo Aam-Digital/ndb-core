@@ -28,12 +28,10 @@ export type TypedFormGroup<T> = FormGroup<{
   [K in keyof T]: ɵElement<T[K], null>;
 }>;
 
-export type PartialTypedFormGroup<T extends Entity> = TypedFormGroup<
-  Partial<T>
->;
+export type EntityFormGroup<T extends Entity> = TypedFormGroup<Partial<T>>;
 
 export interface ExtendedEntityForm<T extends Entity> {
-  formGroup: PartialTypedFormGroup<T>;
+  formGroup: EntityFormGroup<T>;
   entity: T;
   defaultValueConfigs: Map<string, DefaultValueConfig>;
   inheritedParentValues: Map<string, any>;
@@ -172,7 +170,7 @@ export class EntityFormService {
     forTable = false,
     withPermissionCheck = true,
     handleDefaultValues = true,
-  ): PartialTypedFormGroup<T> {
+  ): EntityFormGroup<T> {
     const formConfig = {};
     const copy = entity.copy();
 
@@ -240,7 +238,7 @@ export class EntityFormService {
   }
 
   private disableReadOnlyFormControls<T extends Entity>(
-    form: PartialTypedFormGroup<T>,
+    form: EntityFormGroup<T>,
     entity: T,
   ) {
     const action = entity.isNew ? "create" : "update";
@@ -260,7 +258,7 @@ export class EntityFormService {
    * @returns a copy of the input entity with the changes from the form group
    */
   public async saveChanges<T extends Entity>(
-    form: PartialTypedFormGroup<T>,
+    form: EntityFormGroup<T>,
     entity: T,
   ): Promise<T> {
     this.checkFormValidity(form);
@@ -287,7 +285,7 @@ export class EntityFormService {
     return Object.assign(entity, updatedEntity);
   }
 
-  private checkFormValidity<T extends Entity>(form: PartialTypedFormGroup<T>) {
+  private checkFormValidity<T extends Entity>(form: EntityFormGroup<T>) {
     // errors regarding invalid fields won't be displayed unless marked as touched
     form.markAllAsTouched();
     if (form.invalid) {
@@ -318,7 +316,7 @@ export class EntityFormService {
     }
   }
 
-  resetForm<E extends Entity>(form: PartialTypedFormGroup<E>, entity: E) {
+  resetForm<E extends Entity>(form: EntityFormGroup<E>, entity: E) {
     for (const key of Object.keys(form.controls)) {
       form.get(key).setValue(entity[key]);
     }
