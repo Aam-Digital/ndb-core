@@ -7,7 +7,7 @@ import { MatAutocompleteModule } from "@angular/material/autocomplete";
 import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { AsyncPipe, JsonPipe, NgForOf, NgIf } from "@angular/common";
+import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
 import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -20,7 +20,6 @@ import { asArray } from "../../../utils/utils";
 import { LoggingService } from "../../logging/logging.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
-import { MatButton } from "@angular/material/button";
 
 @Component({
   selector: "app-entity-select",
@@ -43,8 +42,6 @@ import { MatButton } from "@angular/material/button";
     BasicAutocompleteComponent,
     MatSlideToggle,
     FormsModule,
-    JsonPipe,
-    MatButton,
   ],
   standalone: true,
 })
