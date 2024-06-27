@@ -14,8 +14,8 @@
   <div
     cdkDropListGroup
     appDraggableGrid
-    [config]="config.filters"
-    (configChange)="onConfigChange($event)"
+    [arrayElements]="config.filters"
+    (arrayElementsChange)="onConfigChange($event)"
     class="drop-list flex-row gap-regular flex-wrap gap-large"
   >
     <div cdkDropList></div>

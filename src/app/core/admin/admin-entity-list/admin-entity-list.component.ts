@@ -87,8 +87,9 @@ export class AdminEntityListComponent implements OnChanges {
       this.initAvailableFields();
     }
   }
-  onConfigChange(event: FilterConfig) {
-    //this.config.filters = JSON.parse(JSON.stringify(event)); // Needed to avoid Angular Ivy render bug
+  onConfigChange(event: FilterConfig[]) {
+    // TODO: can we avoid this?
+    this.config.filters = JSON.parse(JSON.stringify(event)); // Needed to avoid Angular Ivy render bug
   }
 
   /**

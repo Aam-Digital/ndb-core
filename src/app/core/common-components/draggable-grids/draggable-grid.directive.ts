@@ -20,8 +20,16 @@ import { distinctUntilChanged } from "rxjs";
   standalone: true,
 })
 export class DraggableGridDirective implements AfterViewInit {
-  @Input() config: any;
-  @Output() configChange = new EventEmitter<any>();
+  /**
+   * An array of elements to be reordered by drag & drop
+   */
+  @Input() arrayElements: any[] = [];
+
+  /**
+   * Emits the array of reordered elements, whenever the user dropped an element.
+   */
+  @Output() arrayElementsChange = new EventEmitter<any[]>();
+
   private targetIndex: number;
   private source: CdkDropList = null;
   private sourceIndex: number;
@@ -90,8 +98,13 @@ export class DraggableGridDirective implements AfterViewInit {
         "TargetIndex:",
         this.targetIndex,
       );
-      moveItemInArray(this.config, this.sourceIndex - 1, this.targetIndex - 1);
-      this.configChange.emit(this.config);
+
+      moveItemInArray(
+        this.arrayElements,
+        this.sourceIndex - 1,
+        this.targetIndex - 1,
+      );
+      this.arrayElementsChange.emit(this.arrayElements);
     }
   }
 
