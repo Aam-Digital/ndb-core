@@ -138,7 +138,9 @@
           "options": {
             "browserTarget": "ndb-core:build",
             "compodoc": false,
-            "port": 4400
+            "port": 4400,
+            "enableProdMode": false,
+            "sourceMap": true
           }
         },
         "build-storybook": {
