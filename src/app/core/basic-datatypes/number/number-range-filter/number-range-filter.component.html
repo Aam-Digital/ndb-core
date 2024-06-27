@@ -1,41 +1,4 @@
-<!-- <mat-form-field> -->
-
-<!-- <div role="group" [formGroup]="parts">
-  <input class="area" formControlName="from" placeholder="From" />
-  <span>&ndash;</span>
-  <input class="exchange" formControlName="to" placeholder="To" />
-</div> -->
-
 <mat-form-field>
-  <mat-label>Number range filter</mat-label>
-  <input
-    matInput
-    [min]="toValue"
-    [(ngModel)]="fromValue"
-    i18n-placeholder="Number range selection"
-    placeholder="From"
-  />
-  <input
-    [max]="fromValue"
-    [(ngModel)]="toValue"
-    i18n-placeholder="Number range selection"
-    placeholder="To"
-  />
+  <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
+  <app-range-input></app-range-input>
 </mat-form-field>
-
-<!-- <input
-[max]="fromValue"
-(change)="numberChangedManually()"
-[(ngModel)]="toValue"
-i18n-placeholder="Number range selection"
-placeholder="To"
-/>
-</mat-form-field> -->
-
-<!-- <div [formGroup]="form">
-  <ngx-numeric-range-form-field
-    formControlName="range"
-    label="Numeric range"
-    (numericRangeChanged)="onNumericRangeChanged($event)"
-  ></ngx-numeric-range-form-field>
-</div> -->

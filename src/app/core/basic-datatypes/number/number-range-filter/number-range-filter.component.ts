@@ -1,23 +1,21 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
-import { MatDialog } from "@angular/material/dialog";
 import { Entity } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import {
   FormControl,
   FormGroup,
-  FormsModule,
   ReactiveFormsModule,
   Validators,
 } from "@angular/forms";
 import { NumberFilter } from "app/core/filter/filters/numberFilter";
-import { MatInput } from "@angular/material/input";
+import { RangeInputComponent } from "./range-input/range-input.component";
 
 @Component({
   selector: "app-date-range-filter",
   templateUrl: "./number-range-filter.component.html",
   styleUrls: ["./number-range-filter.component.scss"],
   standalone: true,
-  imports: [MatFormFieldModule, FormsModule, ReactiveFormsModule, MatInput],
+  imports: [MatFormFieldModule, ReactiveFormsModule, RangeInputComponent],
 })
 export class NumberRangeFilterComponent<T extends Entity> implements OnChanges {
   @Input() filterConfig: NumberFilter<T>;

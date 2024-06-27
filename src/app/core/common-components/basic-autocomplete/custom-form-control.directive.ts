@@ -40,7 +40,6 @@ export abstract class CustomFormControlDirective<T>
   }
   private _required = false;
 
-  abstract inputElement: { _elementRef: ElementRef<HTMLElement> };
   stateChanges = new Subject<void>();
   focused = false;
   touched = false;
@@ -109,7 +108,7 @@ export abstract class CustomFormControlDirective<T>
   }
 
   setDescribedByIds(ids: string[]) {
-    this.inputElement._elementRef.nativeElement.setAttribute(
+    this.elementRef.nativeElement.setAttribute(
       "aria-describedby",
       ids.join(" "),
     );
