@@ -70,7 +70,7 @@ export class AdminEntityListComponent implements OnChanges {
   @ViewChild(CdkDropList) placeholder: CdkDropList;
 
   @Input() entityConstructor: EntityConstructor;
-  @Input() config: EntityListConfig;
+  @Input() config: EntityListConfig = {};
 
   allFields: ColumnConfig[] = [];
   filters: string[];
@@ -88,7 +88,7 @@ export class AdminEntityListComponent implements OnChanges {
     }
   }
   onConfigChange(event: FilterConfig) {
-    this.config.filters = JSON.parse(JSON.stringify(event)); // Needed to avoid Angular Ivy render bug
+    //this.config.filters = JSON.parse(JSON.stringify(event)); // Needed to avoid Angular Ivy render bug
   }
 
   /**
