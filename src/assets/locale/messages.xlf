@@ -2573,7 +2573,7 @@
         <source>Site Settings</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin.routing.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="42bf676a20d2b4cf9264d4f9536cd9e980e6b971" datatype="html">
@@ -2592,11 +2592,19 @@
         </context-group>
         <note priority="1" from="description">admin menu item</note>
       </trans-unit>
+      <trans-unit id="3988f474f4576498b644ae989bed92e119a488e4" datatype="html">
+        <source> Administer Entity Types </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
+          <context context-type="linenumber">20,22</context>
+        </context-group>
+        <note priority="1" from="description">admin menu item</note>
+      </trans-unit>
       <trans-unit id="eeb40ba4d324bcf36abe269f1de1465adad080dc" datatype="html">
         <source> Setup Wizard </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
-          <context context-type="linenumber">20,22</context>
+          <context context-type="linenumber">24,26</context>
         </context-group>
         <note priority="1" from="description">admin menu item</note>
       </trans-unit>
@@ -5226,18 +5234,25 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <note priority="1" from="description">Import Undo Confirmation Text</note>
       </trans-unit>
+      <trans-unit id="503e35190d04583c3bb4101bda2fb660ad6192ac" datatype="html">
+        <source>Preparing data for preview and import ...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="8973b38b061cde61bbfd52e2312b0eab17837e65" datatype="html">
         <source>Review your mapped data to be imported:</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="c3397fe9c3f461f9ca74d87b51987060326ca04a" datatype="html">
+      <trans-unit id="a249509745fc3b29bc78aa00617c38cb30dfe3b5" datatype="html">
         <source> Start Import </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">4,6</context>
+          <context context-type="linenumber">10,12</context>
         </context-group>
       </trans-unit>
       <trans-unit id="15d07ce450bd8f83dd8a96c4ff566cc98f14ae45" datatype="html">
@@ -5246,7 +5261,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         If necessary, you can go back to the previous step and make changes to the mapping.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">9,11</context>
+          <context context-type="linenumber">15,17</context>
         </context-group>
         <note priority="1" from="description">import - review data - help text</note>
       </trans-unit>
@@ -6475,6 +6490,13 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <note priority="1" from="description">Title of dashboard widget that shows a list of certain actions a user can
     click on</note>
+      </trans-unit>
+      <trans-unit id="30ec375aaff1b44cd0af67088f1dfb4f296d34fa" datatype="html">
+        <source>Copy the link to share or paste it somewhere else</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.html</context>
+          <context context-type="linenumber">35</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="4077530094273310479" datatype="html">
         <source>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</source>
