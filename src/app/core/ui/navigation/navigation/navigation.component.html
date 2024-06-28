@@ -26,7 +26,7 @@
       [class.matched-background]="item.link === activeLink"
       onclick="this.blur();"
     >
-      <a class="flex-row gap-small">
+      <a [href]="item.link" class="flex-row gap-small link-without-style">
         <app-fa-dynamic-icon
           class="nav-icon"
           [icon]="item.icon"

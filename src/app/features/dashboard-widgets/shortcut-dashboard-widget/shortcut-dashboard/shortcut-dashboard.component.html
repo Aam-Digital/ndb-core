@@ -22,7 +22,9 @@
       </ng-container>
 
       <ng-container matColumnDef="label">
-        <td *matCellDef="let row">{{ row.label }}</td>
+        <td *matCellDef="let row" class="td-link-container">
+          <a [href]="row.link" class="link-without-style">{{ row.label }}</a>
+        </td>
       </ng-container>
 
       <tr

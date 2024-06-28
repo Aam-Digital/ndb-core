@@ -4,3 +4,15 @@
   margin-left: 10px;
   margin-right: 10px;
 }
+
+.td-link-container {
+  height: inherit;
+}
+.link-without-style {
+  text-decoration: none;
+  color: inherit;
+
+  display: block;
+  height: 100%;
+  align-content: center;
+}
