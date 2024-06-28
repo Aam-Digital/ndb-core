@@ -16,7 +16,7 @@ import { MatButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { NgIf } from "@angular/common";
 import { EntityConstructor } from "../../entity/model/entity";
-import { Router, RouterLink } from "@angular/router";
+import { RouterLink } from "@angular/router";
 import { generateIdFromLabel } from "../../../utils/generate-id-from-label/generate-id-from-label";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { EntityConfig } from "../../entity/entity-config";
@@ -61,7 +61,6 @@ export class AdminEntityTypesComponent implements OnInit {
   constructor(
     private entities: EntityRegistry,
     private entityMapper: EntityMapperService,
-    private router: Router,
   ) {}
 
   ngOnInit() {
@@ -92,9 +91,6 @@ export class AdminEntityTypesComponent implements OnInit {
       this.getDefaultDetailsViewConfig(id),
       this.getDefaultListViewConfig(id),
     );
-
-    // to avoid errors in console, delay navigation until the ConfigService had time to re-init the entity registry
-    setTimeout(() => this.router.navigate(["/admin/entity", id]), 1000);
   }
 
   private entityTypeExists(id: string) {
