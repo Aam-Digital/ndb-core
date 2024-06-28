@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
-import { BrowserOptions, SeverityLevel } from "@sentry/browser";
+import { Breadcrumb, BrowserOptions, SeverityLevel } from "@sentry/browser";
 import { environment } from "../../../environments/environment";
 
 /* eslint-disable no-console */
@@ -31,6 +31,8 @@ export class LoggingService {
 
     const defaultOptions = {
       release: "ndb-core@" + environment.appVersion,
+
+      beforeBreadcrumb: enhanceSentryBreadcrumb,
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }
@@ -161,4 +163,43 @@ export class LoggingService {
         return "info";
     }
   }
+}
+
+/**
+ * Add more human-readable descriptions to Sentry breadcrumbs for debugging.
+ *
+ * see https://docs.sentry.io/platforms/javascript/enriching-events/breadcrumbs/
+ */
+function enhanceSentryBreadcrumb(
+  breadcrumb: Breadcrumb,
+  hint: SentryBreadcrumbHint,
+) {
+  if (breadcrumb.category === "ui.click") {
+    const event = hint.event;
+    const elementText = event.target?.["innerText"] ?? "";
+    breadcrumb.message = elementText + " | " + breadcrumb.message;
+  }
+  return breadcrumb;
+}
+
+/**
+ * https://docs.sentry.io/platforms/javascript/configuration/filtering/#hints-for-breadcrumbs
+ */
+interface SentryBreadcrumbHint {
+  /**
+   * For breadcrumbs created from browser events, the Sentry SDK often supplies the event to the breadcrumb as a hint.
+   * This can be used to extract data from the target DOM element into a breadcrumb, for example.
+   */
+  event?: PointerEvent;
+
+  input?: string[];
+
+  /**
+   * e.g. console output level (warn / log / ...)
+   */
+  level: string;
+
+  response?: Response;
+  request?: any;
+  xhr?: XMLHttpRequest;
 }

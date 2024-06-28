@@ -49,4 +49,28 @@ describe("ConfigureEntityFieldValidatorComponent", () => {
   it("should create", () => {
     expect(component).toBeTruthy();
   });
+
+  it("should remove unchanged default values before emitting output", () => {
+    // set up
+    const testFormValues = {
+      required: true,
+      min: null,
+      max: 100,
+      regex: "abc",
+      validEmail: false,
+      uniqueId: "",
+    };
+
+    // execute
+    const actualResult =
+      component.removeDefaultValuesFromValidatorConfig(testFormValues);
+
+    // check result
+    const expectedResult = {
+      required: true,
+      max: 100,
+      regex: "abc",
+    };
+    expect(actualResult).toEqual(expectedResult);
+  });
 });

@@ -44,7 +44,7 @@ import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
-import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
 import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-options/anonymize-options.component";
 import { MatCheckbox } from "@angular/material/checkbox";
 
@@ -184,7 +184,7 @@ export class AdminEntityFieldComponent implements OnChanges {
     }
   }
 
-  entityFieldValidatorChanges(validatorData: DynamicValidator) {
+  entityFieldValidatorChanges(validatorData: FormValidatorConfig) {
     this.schemaFieldsForm.get("validators").setValue(validatorData);
   }
   private autoGenerateId() {

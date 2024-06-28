@@ -19,16 +19,21 @@ import { ImportMetadata } from "../import-metadata";
 import { AdditionalImportAction } from "../import-additional-actions/additional-import-action";
 import { MatButtonModule } from "@angular/material/button";
 import { HelpButtonComponent } from "../../common-components/help-button/help-button.component";
-import { NgIf } from "@angular/common";
 import { EntitiesTableComponent } from "../../common-components/entities-table/entities-table.component";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
+import { MatProgressBar } from "@angular/material/progress-bar";
 
 @Component({
   selector: "app-import-review-data",
   templateUrl: "./import-review-data.component.html",
   styleUrls: ["./import-review-data.component.scss"],
   standalone: true,
-  imports: [MatButtonModule, HelpButtonComponent, EntitiesTableComponent, NgIf],
+  imports: [
+    MatButtonModule,
+    HelpButtonComponent,
+    EntitiesTableComponent,
+    MatProgressBar,
+  ],
 })
 export class ImportReviewDataComponent implements OnChanges {
   @Input() rawData: any[];
@@ -39,6 +44,7 @@ export class ImportReviewDataComponent implements OnChanges {
 
   @Output() importComplete = new EventEmitter<ImportMetadata>();
 
+  isLoading: boolean;
   mappedEntities: Entity[] = [];
   displayColumns: string[] = [];
 
@@ -56,6 +62,7 @@ export class ImportReviewDataComponent implements OnChanges {
   }
 
   private async parseRawData() {
+    this.isLoading = true;
     this.mappedEntities = await this.importService.transformRawDataToEntities(
       this.rawData,
       this.entityType,
@@ -65,6 +72,8 @@ export class ImportReviewDataComponent implements OnChanges {
     this.displayColumns = this.columnMapping
       .filter(({ propertyName }) => !!propertyName)
       .map(({ propertyName }) => propertyName);
+
+    this.isLoading = false;
   }
 
   async startImport() {
