@@ -1,0 +1,39 @@
+<p style="color: red">
+  This is an internal server admin preview and not stable functionality yet.
+</p>
+
+<div class="flex-row gap-regular">
+  <button mat-raised-button color="accent" (click)="create()">
+    Add New Entity Type
+  </button>
+
+  <button mat-stroked-button color="accent" (click)="loadEntityTypes(false)">
+    Also load internal types
+  </button>
+</div>
+
+<table mat-table [dataSource]="entityTypes">
+  <ng-container matColumnDef="label">
+    <th mat-header-cell *matHeaderCellDef class="table-header">Entity Type</th>
+
+    <td mat-cell *matCellDef="let row">
+      {{ row.label }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="icon">
+    <th mat-header-cell *matHeaderCellDef class="table-header">Icon</th>
+
+    <td mat-cell *matCellDef="let row">
+      <fa-icon *ngIf="row.icon" [icon]="row.icon"></fa-icon>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="columnsToDisplay"></tr>
+  <tr
+    mat-row
+    *matRowDef="let row; columns: columnsToDisplay"
+    [routerLink]="['/admin', 'entity', row.ENTITY_TYPE]"
+    style="cursor: pointer"
+  ></tr>
+</table>
