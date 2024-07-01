@@ -5,6 +5,7 @@ import {
   OnChanges,
   SimpleChange,
   SimpleChanges,
+  Type,
   ViewContainerRef,
 } from "@angular/core";
 import { DynamicComponentConfig } from "./dynamic-component-config.interface";
@@ -42,7 +43,7 @@ export class DynamicComponentDirective implements OnChanges {
       return;
     }
 
-    let component;
+    let component: Type<any>;
     try {
       component = await this.components.get(
         this.appDynamicComponent.component,
@@ -69,7 +70,7 @@ export class DynamicComponentDirective implements OnChanges {
     this.changeDetector.detectChanges();
   }
 
-  private setInputProperties(proto, component) {
+  private setInputProperties(proto: any, component: any) {
     const inputs = Object.keys(proto.constructor["ɵcmp"].inputs).filter(
       (input) => this.appDynamicComponent.config?.[input] !== undefined,
     );

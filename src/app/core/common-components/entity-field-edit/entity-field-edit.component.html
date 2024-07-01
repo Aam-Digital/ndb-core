@@ -1,21 +1,51 @@
-<div *ngIf="_field && _field.editComponent; else displayComponent">
-  <div [class.field-with-tooltip-suffix]="_field.description">
+<div *ngIf="_field && form && _field.editComponent; else displayComponent">
+  <div
+    [class.field-with-tooltip-suffix]="
+      _field.description || defaultValueHint?.showHint
+    "
+  >
     <ng-container
       [appDynamicComponent]="{
         component: _field.editComponent,
         config: {
           formFieldConfig: _field,
-          formControl: form?.get(_field.id),
+          formControl: form?.formGroup.get(_field.id),
           entity: entity,
         },
       }"
     >
     </ng-container>
   </div>
+
   <app-help-button
     *ngIf="!compactMode"
     [text]="_field.description"
   ></app-help-button>
+
+  <button
+    *ngIf="defaultValueHint?.showHint && form.formGroup.enabled"
+    mat-icon-button
+    type="button"
+    [disabled]="form.inheritedSyncStatus.get(_field.id)"
+    (click)="syncFromParentField()"
+  >
+    <fa-icon icon="sync"></fa-icon>
+  </button>
+
+  <div class="field-hint" *ngIf="defaultValueHint?.showHint">
+    <span i18n>
+      Inherited from "<app-entity-field-label
+        [field]="defaultValueHint?.inheritedFromField"
+        [entityType]="defaultValueHint.inheritedFromType"
+      ></app-entity-field-label
+      >"
+    </span>
+    @if (form.inheritedSyncStatus.get(_field.id)) {
+      <span i18n>(up-to-date)</span>
+    } @else {
+      <span i18n>(manually overwritten)</span>
+    }
+  </div>
 </div>
 
 <ng-template #displayComponent>

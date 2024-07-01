@@ -7,7 +7,10 @@ import {
 
 import { AdminEntityFormComponent } from "./admin-entity-form.component";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
-import { EntityFormService } from "../../../common-components/entity-form/entity-form.service";
+import {
+  EntityFormService,
+  ExtendedEntityForm,
+} from "../../../common-components/entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { Note } from "../../../../child-dev-project/notes/model/note";
@@ -28,7 +31,7 @@ describe("AdminEntityFormComponent", () => {
 
   let testConfig: FormConfig;
 
-  beforeEach(() => {
+  beforeEach(async () => {
     testConfig = {
       fieldGroups: [
         { header: "Group 1", fields: ["subject", "date"] },
@@ -37,9 +40,13 @@ describe("AdminEntityFormComponent", () => {
     };
 
     mockFormService = jasmine.createSpyObj("EntityFormService", [
-      "createFormGroup",
+      "createExtendedEntityForm",
     ]);
-    mockFormService.createFormGroup.and.returnValue(new FormGroup({}));
+    mockFormService.createExtendedEntityForm.and.returnValue(
+      Promise.resolve({
+        formGroup: new FormGroup({}),
+      } as ExtendedEntityForm<any>),
+    );
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 
     TestBed.configureTestingModule({
@@ -68,7 +75,7 @@ describe("AdminEntityFormComponent", () => {
 
     fixture.detectChanges();
 
-    component.ngOnChanges({ config: true as any });
+    await component.ngOnChanges({ config: true as any });
   });
 
   it("should create and init a form", () => {
@@ -78,12 +85,13 @@ describe("AdminEntityFormComponent", () => {
     expect(component.dummyForm).toBeTruthy();
   });
 
-  it("should load all fields from schema that are not already in form as available fields", () => {
+  it("should load all fields from schema that are not already in form as available fields", async () => {
     const fieldsInView = ["date"];
     component.config = {
       fieldGroups: [{ fields: fieldsInView }],
     };
-    component.ngOnChanges({ config: true as any });
+
+    await component.ngOnChanges({ config: true as any });
 
     const noteUserFacingFields = Array.from(Note.schema.entries())
       .filter(([key, value]) => value.label)

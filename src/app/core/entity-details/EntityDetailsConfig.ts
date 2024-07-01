@@ -1,7 +1,7 @@
 import { Entity } from "../entity/model/entity";
 
 /**
- * The configuration for a entity details page
+ * The configuration for an entity details page
  */
 export interface EntityDetailsConfig {
   /**
@@ -47,7 +47,7 @@ export interface PanelComponent {
   component: string;
 
   /**
-   * A addition config which will be passed to the component.
+   * An addition config which will be passed to the component.
    */
   config?: any;
 }

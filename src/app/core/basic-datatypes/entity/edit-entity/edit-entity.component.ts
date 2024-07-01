@@ -2,6 +2,7 @@ import { Component, Input, OnInit } from "@angular/core";
 import { EditComponent } from "../../../entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../config/dynamic-components/dynamic-component.decorator";
 import { EntitySelectComponent } from "../../../common-components/entity-select/entity-select.component";
+import { JsonPipe } from "@angular/common";
 
 /**
  * A form field to select among the entities of the given type(s).
@@ -11,7 +12,7 @@ import { EntitySelectComponent } from "../../../common-components/entity-select/
 @Component({
   selector: "app-edit-entity",
   templateUrl: "./edit-entity.component.html",
-  imports: [EntitySelectComponent],
+  imports: [EntitySelectComponent, JsonPipe],
   standalone: true,
 })
 export class EditEntityComponent<T extends string[] | string = string[]>

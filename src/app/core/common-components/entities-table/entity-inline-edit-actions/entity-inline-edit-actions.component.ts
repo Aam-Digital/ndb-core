@@ -7,7 +7,10 @@ import { MatButtonModule } from "@angular/material/button";
 import { TableRow } from "../entities-table.component";
 import { Entity } from "../../../entity/model/entity";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
-import { EntityFormService } from "../../entity-form/entity-form.service";
+import {
+  EntityFormService,
+  ExtendedEntityForm,
+} from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
 import { UnsavedChangesService } from "../../../entity-details/form/unsaved-changes.service";
@@ -31,6 +34,8 @@ import { UnsavedChangesService } from "../../../entity-details/form/unsaved-chan
 export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   @Input() row: TableRow<T>;
 
+  form: ExtendedEntityForm<T>;
+
   constructor(
     private entityFormService: EntityFormService,
     private alertService: AlertService,
@@ -38,12 +43,15 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
     private unsavedChanges: UnsavedChangesService,
   ) {}
 
-  edit() {
-    this.row.formGroup = this.entityFormService.createFormGroup(
+  async edit() {
+    this.form = await this.entityFormService.createExtendedEntityForm(
       Array.from(this.row.record.getSchema().keys()),
       this.row.record,
       true,
     );
+
+    this.row.formGroup = this.form.formGroup;
+
     this.row.formGroup.enable();
   }
 
