@@ -23,6 +23,14 @@ export class DisplayConfigurableEnumComponent
   iterableValue: ConfigurableEnumValue[] = [];
 
   ngOnInit() {
+    this.initValue();
+  }
+
+  private initValue() {
+    if (!this.value) {
+      return;
+    }
+
     if (Array.isArray(this.value)) {
       this.iterableValue = this.value;
     } else if (this.value) {
