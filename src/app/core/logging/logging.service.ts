@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
-import { Breadcrumb, BrowserOptions, SeverityLevel } from "@sentry/browser";
 import { environment } from "../../../environments/environment";
 
 /* eslint-disable no-console */
@@ -23,7 +22,7 @@ export class LoggingService {
    * If set up this will be used to send errors to a remote endpoint for analysis.
    * @param options
    */
-  static initRemoteLogging(options: BrowserOptions) {
+  static initRemoteLogging(options: Sentry.BrowserOptions) {
     if (!options.dsn) {
       // abort if no target url is set
       return;
@@ -31,7 +30,7 @@ export class LoggingService {
 
     const defaultOptions = {
       release: "ndb-core@" + environment.appVersion,
-
+      transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
       beforeBreadcrumb: enhanceSentryBreadcrumb,
     };
     Sentry.init(Object.assign(defaultOptions, options));
@@ -151,7 +150,7 @@ export class LoggingService {
     }
   }
 
-  private translateLogLevel(logLevel: LogLevel): SeverityLevel {
+  private translateLogLevel(logLevel: LogLevel): Sentry.SeverityLevel {
     switch (+logLevel) {
       case LogLevel.DEBUG:
         return "debug";
@@ -173,7 +172,7 @@ export class LoggingService {
  * see https://docs.sentry.io/platforms/javascript/enriching-events/breadcrumbs/
  */
 function enhanceSentryBreadcrumb(
-  breadcrumb: Breadcrumb,
+  breadcrumb: Sentry.Breadcrumb,
   hint: SentryBreadcrumbHint,
 ) {
   if (breadcrumb.category === "ui.click") {
