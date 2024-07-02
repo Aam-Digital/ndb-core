@@ -25,7 +25,7 @@ export const adminRoutes: Routes = [
     component: RoutedViewComponent,
     data: {
       component: "AdminEntityTypes",
-      entity: "Config",
+      entityType: "Config",
       requiredPermissionOperation: "update",
     },
     canActivate: [EntityPermissionGuard],
@@ -35,7 +35,7 @@ export const adminRoutes: Routes = [
     component: RoutedViewComponent,
     data: {
       component: "AdminEntity",
-      entity: "Config",
+      entityType: "Config",
       requiredPermissionOperation: "update",
     },
     canActivate: [EntityPermissionGuard],
@@ -47,7 +47,7 @@ export const adminRoutes: Routes = [
     data: {
       component: "EntityDetails",
       config: {
-        entity: "SiteSettings",
+        entityType: "SiteSettings",
         id: "global",
         panels: [
           {
