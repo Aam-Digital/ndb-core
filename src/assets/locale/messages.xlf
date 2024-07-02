@@ -6725,27 +6725,41 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f215ed23a0b8105ae47ef80cf65fe765631dd94a" datatype="html">
+      <trans-unit id="07502df62ea6cd8e06d11a718b50b4ec1b1ee02b" datatype="html">
         <source> Submit Form </source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
-          <context context-type="linenumber">20,22</context>
-        </context-group>
-        <note priority="1" from="description">Submit form button</note>
-      </trans-unit>
-      <trans-unit id="ca72d574353a355b8fadbc1ceda174a0bd1bf7cd" datatype="html">
-        <source> Reset </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
           <context context-type="linenumber">23,25</context>
         </context-group>
+        <note priority="1" from="description">Submit form button</note>
+      </trans-unit>
+      <trans-unit id="c741e919cae3e4e5d7a6e43da8926bb99b1fd780" datatype="html">
+        <source> Reset </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
+          <context context-type="linenumber">26,28</context>
+        </context-group>
         <note priority="1" from="description">Reset form button</note>
+      </trans-unit>
+      <trans-unit id="d58985cf72ce7526ea63b90a3044a13dcefc60cd" datatype="html">
+        <source>Loading form ...</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="6410985429772619439" datatype="html">
         <source>Successfully submitted form</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7643347378573807612" datatype="html">
+        <source>Some fields are invalid, please check the form and submit again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4310513583397103775" datatype="html">
