@@ -84,9 +84,10 @@ export class LoggingService {
   /**
    * Log the message with "warning" level - for unexpected events that the app can still handle gracefully.
    * @param message
+   * @param context
    */
-  public warn(message: any) {
-    this.log(message, LogLevel.WARN);
+  public warn(message: any, ...context: any[]) {
+    this.log(message, LogLevel.WARN, ...context);
   }
 
   /**
@@ -94,8 +95,8 @@ export class LoggingService {
    * @param message
    * @param context
    */
-  public error(message: any, context?: any) {
-    this.log(message, LogLevel.ERROR, context);
+  public error(message: any, ...context: any[]) {
+    this.log(message, LogLevel.ERROR, ...context);
   }
 
   /**
