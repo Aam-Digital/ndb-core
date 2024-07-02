@@ -283,27 +283,32 @@ export class PouchDatabase extends Database {
   changes(prefix: string): Observable<any> {
     if (!this.changesFeed) {
       this.changesFeed = new Subject();
-      this.getPouchDBOnceReady()
-        .then((pouchDB) =>
-          pouchDB
-            .changes({
-              live: true,
-              since: "now",
-              include_docs: true,
-            })
-            .addListener("change", (change) =>
-              this.changesFeed.next(change.doc),
-            ),
-        )
-        .catch((err) => {
-          if (err.statusCode === HttpStatusCode.Unauthorized) {
-            this.loggingService.warn(err);
-          } else {
-            throw err;
-          }
-        });
+      this.subscribeChanges();
     }
     return this.changesFeed.pipe(filter((doc) => doc._id.startsWith(prefix)));
+  }
+
+  private async subscribeChanges() {
+    (await this.getPouchDBOnceReady())
+      .changes({
+        live: true,
+        since: "now",
+        include_docs: true,
+      })
+      .addListener("change", (change) => this.changesFeed.next(change.doc))
+      .catch((err) => {
+        if (
+          err.statusCode === HttpStatusCode.Unauthorized ||
+          err.statusCode === HttpStatusCode.GatewayTimeout
+        ) {
+          this.loggingService.warn(err);
+        } else {
+          this.loggingService.error(err);
+        }
+
+        // retry
+        setTimeout(() => this.subscribeChanges(), 10000);
+      });
   }
 
   /**
