@@ -17,6 +17,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { MatCardModule } from "@angular/material/card";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { FieldGroup } from "../../core/entity-details/form/field-group";
+import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 
 @UntilDestroy()
 @Component({
@@ -55,11 +56,21 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       .subscribe(() => this.loadFormConfig());
   }
 
-  submit() {
-    this.entityFormService
-      .saveChanges(this.form, this.entity)
-      .then(() => this.snackbar.open($localize`Successfully submitted form`))
-      .then(() => this.initForm());
+  async submit() {
+    try {
+      await this.entityFormService.saveChanges(this.form, this.entity);
+      this.snackbar.open($localize`Successfully submitted form`);
+    } catch (e) {
+      if (e instanceof InvalidFormFieldError) {
+        this.snackbar.open(
+          $localize`Some fields are invalid, please check the form and submit again.`,
+        );
+        return;
+      }
+      throw e;
+    }
+
+    this.initForm();
   }
 
   reset() {
