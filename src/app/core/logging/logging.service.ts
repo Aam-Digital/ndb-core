@@ -92,9 +92,10 @@ export class LoggingService {
   /**
    * Log the message with "error" level - for unexpected critical events that cannot be handled and will affect functions.
    * @param message
+   * @param context
    */
-  public error(message: any) {
-    this.log(message, LogLevel.ERROR);
+  public error(message: any, context?: any) {
+    this.log(message, LogLevel.ERROR, context);
   }
 
   /**
