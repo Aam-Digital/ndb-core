@@ -162,7 +162,7 @@ export class PouchDatabase extends Database {
         }
       }
 
-      throw new DatabaseException(err);
+      throw new DatabaseException(err, id);
     }
   }
 
@@ -181,7 +181,10 @@ export class PouchDatabase extends Database {
       const result = await (await this.getPouchDBOnceReady()).allDocs(options);
       return result.rows.map((row) => row.doc);
     } catch (err) {
-      throw new DatabaseException(err);
+      throw new DatabaseException(
+        err,
+        "allDocs; startkey: " + options?.["startkey"],
+      );
     }
   }
 
@@ -203,7 +206,7 @@ export class PouchDatabase extends Database {
       if (err.status === 409) {
         return this.resolveConflict(object, forceOverwrite, err);
       } else {
-        throw new DatabaseException(err);
+        throw new DatabaseException(err, object._id);
       }
     }
   }
@@ -232,6 +235,11 @@ export class PouchDatabase extends Database {
           forceOverwrite,
           result,
         ).catch((e) => {
+          this.loggingService.warn(
+            "error during putAll",
+            e,
+            objects.map((x) => x._id),
+          );
           return new DatabaseException(e);
         });
       }
@@ -253,7 +261,7 @@ export class PouchDatabase extends Database {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.remove(object))
       .catch((err) => {
-        throw new DatabaseException(err);
+        throw new DatabaseException(err, object["_id"]);
       });
   }
 
@@ -334,7 +342,10 @@ export class PouchDatabase extends Database {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.query(fun, options))
       .catch((err) => {
-        throw new DatabaseException(err);
+        throw new DatabaseException(
+          err,
+          typeof fun === "string" ? fun : undefined,
+        );
       });
   }
 
@@ -421,10 +432,11 @@ export class PouchDatabase extends Database {
  * This overwrites PouchDB's error class which only logs limited information
  */
 class DatabaseException extends Error {
-  constructor(error: PouchDB.Core.Error) {
+  constructor(error: PouchDB.Core.Error, entityId?: string) {
     super();
-    if (error.status === 404) {
-      error.message = error.message + ` (${error["docId"]})`;
+
+    if (entityId) {
+      error["entityId"] = entityId;
     }
     Object.assign(this, error);
   }
