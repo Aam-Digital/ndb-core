@@ -85,7 +85,9 @@ describe("DisplayEntityComponent", () => {
     await component.ngOnInit();
 
     expect(logSpy).toHaveBeenCalledWith(
-      jasmine.stringContaining(child.getId()),
+      jasmine.stringContaining("Could not find entity"),
+      child.getId(),
+      jasmine.anything(),
     );
     expect(component.entityToDisplay).toBeUndefined();
   });
