@@ -119,11 +119,13 @@ export class PouchDatabase extends Database {
   }
 
   private defaultFetch(url, opts: any) {
-    if (typeof url === "string") {
-      const remoteUrl =
-        AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
-      return PouchDB.fetch(remoteUrl, opts);
+    if (typeof url !== "string") {
+      return;
     }
+
+    const remoteUrl =
+      AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
+    return PouchDB.fetch(remoteUrl, opts);
   }
 
   async getPouchDBOnceReady(): Promise<PouchDB.Database> {
