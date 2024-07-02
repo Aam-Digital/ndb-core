@@ -57,7 +57,9 @@ export class EntityBlockComponent implements OnInit {
     } catch (e) {
       // this may be caused by restrictive permissions and therefore shouldn't be treated as a technical issue
       this.logger.debug(
-        `[DISPLAY_ENTITY] Could not find entity with ID: ${this.entityId}: ${e}`,
+        "[DISPLAY_ENTITY] Could not find entity.",
+        this.entityId,
+        e,
       );
     }
   }
