@@ -41,7 +41,7 @@ export class EnumDropdownComponent implements OnChanges {
 
   enumEntity: ConfigurableEnum;
   invalidOptions: ConfigurableEnumValue[] = [];
-  options: ConfigurableEnumValue[];
+  options: ConfigurableEnumValue[] = [];
   canEdit = false;
   enumValueToString = (v: ConfigurableEnumValue) => v?.label;
   createNewOption: (input: string) => Promise<ConfigurableEnumValue>;
@@ -65,7 +65,7 @@ export class EnumDropdownComponent implements OnChanges {
     if (changes.hasOwnProperty("enumId") || changes.hasOwnProperty("form")) {
       this.invalidOptions = this.prepareInvalidOptions();
     }
-    this.options = [...this.enumEntity?.values, ...this.invalidOptions];
+    this.options = [...(this.enumEntity?.values ?? []), ...this.invalidOptions];
   }
 
   private prepareInvalidOptions(): ConfigurableEnumValue[] {
@@ -114,6 +114,6 @@ export class EnumDropdownComponent implements OnChanges {
       this.form.setValue(undefined);
     }
 
-    this.options = [...this.enumEntity.values, ...this.invalidOptions];
+    this.options = [...(this.enumEntity?.values ?? []), ...this.invalidOptions];
   }
 }
