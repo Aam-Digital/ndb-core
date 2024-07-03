@@ -8,6 +8,7 @@ import { LoggingService } from "../../../logging/logging.service";
 import { Entity } from "../../../entity/model/entity";
 import { User } from "../../../user/user";
 import { ParsedJWT, parseJwt } from "../../../../session/session-utils";
+import { RemoteLoginNotAvailableError } from "./remote-login-not-available.error";
 
 /**
  * Handles the remote session with keycloak
@@ -33,8 +34,23 @@ export class KeycloakAuthService {
    */
   async login(): Promise<SessionInfo> {
     if (!this.keycloakInitialised) {
-      this.keycloakInitialised = true;
-      const loggedIn = await this.keycloak.init({
+      await this.initKeycloak();
+    }
+
+    await this.keycloak.updateToken();
+    let token = await this.keycloak.getToken();
+    if (!token) {
+      // Forward to the keycloak login page.
+      await this.keycloak.login({ redirectUri: location.href });
+      token = await this.keycloak.getToken();
+    }
+
+    return this.processToken(token);
+  }
+
+  private async initKeycloak() {
+    try {
+      await this.keycloak.init({
         config: window.location.origin + "/assets/keycloak.json",
         initOptions: {
           onLoad: "check-sso",
@@ -44,28 +60,31 @@ export class KeycloakAuthService {
         // GitHub API rejects if non GitHub bearer token is present
         shouldAddToken: ({ url }) => !url.includes("api.github.com"),
       });
-      if (!loggedIn) {
-        // Forward to the keycloak login page.
-        await this.keycloak.login({ redirectUri: location.href });
+    } catch (err) {
+      if (
+        err?.error ===
+        "Timeout when waiting for 3rd party check iframe message."
+      ) {
+        // this is actually an expected scenario, user's internet is slow or not available
+        err = new RemoteLoginNotAvailableError();
+      } else {
+        this.logger.error("Keycloak init failed", err);
       }
 
-      // auto-refresh expiring tokens, as suggested by https://github.com/mauriciovigolo/keycloak-angular?tab=readme-ov-file#keycloak-js-events
-      this.keycloak.keycloakEvents$.subscribe((event) => {
-        if (event.type == KeycloakEventType.OnTokenExpired) {
-          this.login().catch((err) =>
-            this.logger.debug("automatic token refresh failed", err),
-          );
-        }
-      });
+      this.keycloakInitialised = false;
+      throw err;
     }
 
-    return this.keycloak
-      .updateToken()
-      .then(() => {
-        return this.keycloak.getToken();
-        // TODO: should we notify the user to manually log in again when failing to refresh token?
-      })
-      .then((token) => this.processToken(token));
+    // auto-refresh expiring tokens, as suggested by https://github.com/mauriciovigolo/keycloak-angular?tab=readme-ov-file#keycloak-js-events
+    this.keycloak.keycloakEvents$.subscribe((event) => {
+      if (event.type == KeycloakEventType.OnTokenExpired) {
+        this.login().catch((err) =>
+          this.logger.debug("automatic token refresh failed", err),
+        );
+      }
+    });
+
+    this.keycloakInitialised = true;
   }
 
   private processToken(token: string): SessionInfo {
@@ -119,7 +138,7 @@ export class KeycloakAuthService {
    * Forward to the keycloak logout endpoint to clear the session.
    */
   async logout() {
-    return this.keycloak.logout(location.href);
+    return await this.keycloak.logout(location.href);
   }
 
   /**

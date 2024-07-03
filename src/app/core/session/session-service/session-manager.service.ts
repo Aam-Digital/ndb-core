@@ -80,7 +80,7 @@ export class SessionManagerService {
         .then((user) => this.handleRemoteLogin(user))
         .catch((err) => {
           this.loginStateSubject.next(LoginState.LOGIN_FAILED);
-          throw err;
+          // ignore fall back to offline login - if there was a technical error, the AuthService has already logged/reported it
         });
     }
     this.loginStateSubject.next(LoginState.LOGIN_FAILED);
