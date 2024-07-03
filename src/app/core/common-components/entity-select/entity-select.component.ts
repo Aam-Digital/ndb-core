@@ -201,7 +201,9 @@ export class EntitySelectComponent<
       .load<E>(type, selectedId)
       .catch((err: Error) => {
         this.logger.warn(
-          `[ENTITY_SELECT] Error loading selected entity "${selectedId}": ${err.message}`,
+          "[ENTITY_SELECT] Error loading selected entity.",
+          selectedId,
+          err.message,
         );
         return undefined;
       });

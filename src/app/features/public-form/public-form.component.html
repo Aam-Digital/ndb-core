@@ -3,25 +3,33 @@
     <mat-card-title>{{ formConfig?.title }}</mat-card-title>
     <mat-card-subtitle>{{ formConfig?.description }}</mat-card-subtitle>
   </mat-card-header>
-  <mat-card-content>
-    <app-entity-form
-      [entity]="entity"
-      [fieldGroups]="fieldGroups"
-      [form]="form"
-      [gridLayout]="false"
-    ></app-entity-form>
-  </mat-card-content>
-  <mat-card-footer>
-    <button
-      mat-raised-button
-      (click)="submit()"
-      color="accent"
-      i18n="Submit form button"
-    >
-      Submit Form
-    </button>
-    <button mat-stroked-button (click)="reset()" i18n="Reset form button">
-      Reset
-    </button>
-  </mat-card-footer>
+
+  @if (formConfig && form) {
+    <mat-card-content>
+      <app-entity-form
+        [entity]="entity"
+        [fieldGroups]="fieldGroups"
+        [form]="form"
+        [gridLayout]="false"
+      ></app-entity-form>
+    </mat-card-content>
+
+    <mat-card-footer>
+      <button
+        mat-raised-button
+        (click)="submit()"
+        color="accent"
+        i18n="Submit form button"
+      >
+        Submit Form
+      </button>
+      <button mat-stroked-button (click)="reset()" i18n="Reset form button">
+        Reset
+      </button>
+    </mat-card-footer>
+  } @else {
+    <mat-card-content>
+      <p i18n>Loading form ...</p>
+    </mat-card-content>
+  }
 </mat-card>

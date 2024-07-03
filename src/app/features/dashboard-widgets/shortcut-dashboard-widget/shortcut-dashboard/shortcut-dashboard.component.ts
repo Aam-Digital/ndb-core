@@ -6,6 +6,12 @@ import { FaDynamicIconComponent } from "../../../../core/common-components/fa-dy
 import { RouterLink } from "@angular/router";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
 import { RoutePermissionsService } from "../../../../core/config/dynamic-routing/route-permissions.service";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatIconButton } from "@angular/material/button";
+import { MatTooltip } from "@angular/material/tooltip";
+import { LocationStrategy } from "@angular/common";
+import { AlertService } from "../../../../core/alerts/alert.service";
+import { Clipboard } from "@angular/cdk/clipboard";
 
 /**
  * A simple list of shortcuts displayed as a dashboard widget for easy access to important navigation.
@@ -20,6 +26,9 @@ import { RoutePermissionsService } from "../../../../core/config/dynamic-routing
     MatTableModule,
     FaDynamicIconComponent,
     RouterLink,
+    FaIconComponent,
+    MatIconButton,
+    MatTooltip,
   ],
   standalone: true,
 })
@@ -35,5 +44,19 @@ export class ShortcutDashboardComponent {
   }
   _shortcuts: MenuItem[] = [];
 
-  constructor(private routePermissionsService: RoutePermissionsService) {}
+  constructor(
+    private routePermissionsService: RoutePermissionsService,
+    private locationStrategy: LocationStrategy,
+    private clipboard: Clipboard,
+    private alertService: AlertService,
+  ) {}
+
+  async copyAbsoluteLink2Clipboard(link: string) {
+    const externalLink =
+      window.location.origin + this.locationStrategy.prepareExternalUrl(link);
+    const success = this.clipboard.copy(externalLink);
+    if (success) {
+      this.alertService.addInfo("Link copied: " + externalLink);
+    }
+  }
 }

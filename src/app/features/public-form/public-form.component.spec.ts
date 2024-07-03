@@ -17,6 +17,7 @@ import { MatSnackBar } from "@angular/material/snack-bar";
 import { EntityFormService } from "../../core/common-components/entity-form/entity-form.service";
 import { ConfigService } from "../../core/config/config.service";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
+import { InvalidFormFieldError } from "../../core/common-components/entity-form/invalid-form-field.error";
 
 describe("PublicFormComponent", () => {
   let component: PublicFormComponent<Child>;
@@ -98,6 +99,27 @@ describe("PublicFormComponent", () => {
     tick();
     expect(openSnackbarSpy).toHaveBeenCalled();
     expect(component.form.formGroup.get("name")).toHaveValue(null);
+  }));
+
+  it("should show a snackbar error and not reset when trying to submit invalid form", fakeAsync(() => {
+    initComponent();
+    tick();
+    const openSnackbarSpy = spyOn(TestBed.inject(MatSnackBar), "open");
+    const saveSpy = spyOn(TestBed.inject(EntityFormService), "saveChanges");
+    saveSpy.and.throwError(new InvalidFormFieldError());
+    component.form.formGroup.get("name").setValue("some name");
+
+    component.submit();
+
+    expect(saveSpy).toHaveBeenCalledWith(
+      component.form.formGroup,
+      component.entity,
+    );
+    tick();
+    expect(openSnackbarSpy).toHaveBeenCalledWith(
+      jasmine.stringContaining("invalid"),
+    );
+    expect(component.form.formGroup.get("name")).toHaveValue("some name");
   }));
 
   it("should reset the form when clicking reset", fakeAsync(() => {

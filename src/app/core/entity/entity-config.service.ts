@@ -29,11 +29,11 @@ export class EntityConfigService {
   /** original initial entity schemas without overrides from config */
   private coreEntitySchemas = new Map<string, EntitySchema>();
 
-  static getDetailsViewId(entityConstructor: EntityConstructor) {
-    return this.getListViewId(entityConstructor) + "/:id";
+  static getDetailsViewId(entityConfig: EntityConfig) {
+    return this.getListViewId(entityConfig) + "/:id";
   }
-  static getListViewId(entityConstructor: EntityConstructor) {
-    return PREFIX_VIEW_CONFIG + entityConstructor.route.replace(/^\//, "");
+  static getListViewId(entityConfig: EntityConfig) {
+    return PREFIX_VIEW_CONFIG + entityConfig.route.replace(/^\//, "");
   }
 
   // TODO: merge with EntityRegistry?
