@@ -143,7 +143,7 @@ export class EntityFormService {
     );
 
     const defaultValueConfigs =
-      this.defaultValueService.getDefaultValueConfigs(entity);
+      DefaultValueService.getDefaultValueConfigs(entity);
 
     const entityForm: EntityForm<T> = {
       formGroup: typedFormGroup,
