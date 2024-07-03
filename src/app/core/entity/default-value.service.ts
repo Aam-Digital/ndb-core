@@ -3,7 +3,7 @@ import { Entity } from "./model/entity";
 import { HandleDefaultValuesUseCase } from "./default-field-value/handle-default-values.usecase";
 import { EntitySchema } from "./schema/entity-schema";
 import { DefaultValueConfig } from "./schema/default-value-config";
-import { ExtendedEntityForm } from "../common-components/entity-form/entity-form.service";
+import { EntityForm } from "../common-components/entity-form/entity-form.service";
 
 @Injectable({
   providedIn: "root",
@@ -11,13 +11,13 @@ import { ExtendedEntityForm } from "../common-components/entity-form/entity-form
 export class DefaultValueService {
   constructor(private handleDefaultValuesUseCase: HandleDefaultValuesUseCase) {}
 
-  async handleExtendedEntityForm<T extends Entity>(
-    extendedEntityForm: ExtendedEntityForm<T>,
+  async handleEntityForm<T extends Entity>(
+    entityForm: EntityForm<T>,
     entity: Entity,
   ): Promise<void> {
-    if (extendedEntityForm.defaultValueConfigs.size > 0) {
-      await this.handleDefaultValuesUseCase.handleExtendedEntityForm(
-        extendedEntityForm,
+    if (entityForm.defaultValueConfigs.size > 0) {
+      await this.handleDefaultValuesUseCase.handleEntityForm(
+        entityForm,
         entity.getSchema(),
         entity.isNew,
       );

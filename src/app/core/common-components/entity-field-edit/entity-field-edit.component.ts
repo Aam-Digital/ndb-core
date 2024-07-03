@@ -3,8 +3,8 @@ import { DynamicComponentDirective } from "../../config/dynamic-components/dynam
 import { HelpButtonComponent } from "../help-button/help-button.component";
 import { Entity } from "../../entity/model/entity";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../entity-form/entity-form.service";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { NgIf } from "@angular/common";
@@ -47,7 +47,7 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
   _field: FormFieldConfig;
 
   @Input() entity: T;
-  @Input() form: ExtendedEntityForm<T>;
+  @Input() form: EntityForm<T>;
 
   /**
    * Whether to display the field in a limited space, hiding details like the help description button.

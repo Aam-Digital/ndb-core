@@ -3,8 +3,8 @@ import { FormFieldConfig } from "../../common-components/entity-form/FormConfig"
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Entity } from "../../entity/model/entity";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../common-components/entity-form/entity-form.service";
 import { DialogCloseComponent } from "../../common-components/dialog-close/dialog-close.component";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
@@ -59,7 +59,7 @@ export interface DetailsComponentData {
   standalone: true,
 })
 export class RowDetailsComponent implements OnInit {
-  form: ExtendedEntityForm<Entity>;
+  form: EntityForm<Entity>;
   fieldGroups: FieldGroup[];
 
   viewOnlyColumns: FormFieldConfig[];
@@ -77,7 +77,7 @@ export class RowDetailsComponent implements OnInit {
   }
 
   private async init(data: DetailsComponentData) {
-    this.form = await this.formService.createExtendedEntityForm(
+    this.form = await this.formService.createEntityForm(
       data.columns,
       data.entity,
     );

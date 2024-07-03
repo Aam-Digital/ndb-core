@@ -7,10 +7,10 @@ import { LoggingService } from "../../logging/logging.service";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity } from "../model/entity";
-import { ExtendedEntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "../../common-components/entity-form/entity-form.service";
 import { EntitySchema } from "../schema/entity-schema";
 
-function getDefaultInheritedFormGroup(): ExtendedEntityForm<any> {
+function getDefaultInheritedFormGroup(): EntityForm<any> {
   return {
     defaultValueConfigs: new Map(),
     entity: new Entity(),
@@ -63,7 +63,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(form, fieldConfigs, true);
+      service.handleEntityForm(form, fieldConfigs, true);
       tick();
 
       // then
@@ -86,7 +86,7 @@ describe("HandleDefaultValuesUseCase", () => {
       form.formGroup.get("field-2").markAsDirty();
 
       // when
-      service.handleExtendedEntityForm(form, fieldConfigs, true);
+      service.handleEntityForm(form, fieldConfigs, true);
       tick();
 
       // then
@@ -106,7 +106,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
 
       // then
@@ -130,7 +130,7 @@ describe("HandleDefaultValuesUseCase", () => {
       TestBed.inject(CurrentUserSubject).next(user);
 
       // when
-      service.handleExtendedEntityForm(form, fieldConfigs, true);
+      service.handleEntityForm(form, fieldConfigs, true);
       tick();
 
       // then
@@ -150,7 +150,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
 
       // then
@@ -172,7 +172,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, false);
+      service.handleEntityForm(formGroup, fieldConfigs, false);
       tick();
 
       // when/then
@@ -196,7 +196,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
 
       // then
@@ -216,7 +216,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
 
       // then
@@ -239,7 +239,7 @@ describe("HandleDefaultValuesUseCase", () => {
       formGroup.formGroup.get("field-2").markAsDirty();
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
 
       // then
@@ -261,7 +261,7 @@ describe("HandleDefaultValuesUseCase", () => {
       formGroup.formGroup.get("field-2").setValue("foo");
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
 
       // then
@@ -283,7 +283,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, false);
+      service.handleEntityForm(formGroup, fieldConfigs, false);
       tick();
 
       // when/then
@@ -308,7 +308,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick(); // fetching reference is always async
 
       // then
@@ -329,7 +329,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick(); // fetching reference is always async
 
       // then
@@ -350,7 +350,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick(); // fetching reference is always async
 
       // then
@@ -375,7 +375,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
       formGroup.formGroup.get("reference-1").setValue("Entity:0");
       tick(10); // fetching reference is always async
@@ -404,7 +404,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
       formGroup.formGroup.get("reference-1").setValue("Entity:0");
       tick(10); // fetching reference is always async
@@ -433,7 +433,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
       formGroup.formGroup.get("reference-1").setValue(["Entity:0"]);
       tick(10); // fetching reference is always async
@@ -462,7 +462,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
       formGroup.formGroup.get("reference-1").setValue(["Entity:0", "Entity:1"]);
       tick(10); // fetching reference is always async
@@ -492,7 +492,7 @@ describe("HandleDefaultValuesUseCase", () => {
       form.formGroup.get("field-2").markAsDirty();
 
       // when
-      service.handleExtendedEntityForm(form, fieldConfigs, true);
+      service.handleEntityForm(form, fieldConfigs, true);
       tick();
       form.formGroup.get("reference-1").setValue("Entity:0");
       tick(); // fetching reference is always async
@@ -515,7 +515,7 @@ describe("HandleDefaultValuesUseCase", () => {
       });
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
       formGroup.formGroup.get("reference-1").setValue("foo bar doo");
       tick();
@@ -550,7 +550,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
 
       // when/then
@@ -577,7 +577,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(undefined));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, true);
+      service.handleEntityForm(formGroup, fieldConfigs, true);
       tick();
 
       // when/then
@@ -604,7 +604,7 @@ describe("HandleDefaultValuesUseCase", () => {
       mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
 
       // when
-      service.handleExtendedEntityForm(formGroup, fieldConfigs, false);
+      service.handleEntityForm(formGroup, fieldConfigs, false);
       tick();
 
       // when/then

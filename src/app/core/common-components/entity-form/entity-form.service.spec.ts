@@ -114,7 +114,7 @@ describe("EntityFormService", () => {
 
   it("should create forms with the validators included", async () => {
     const formFields = [{ id: "schoolId" }, { id: "result" }];
-    const form = await service.createExtendedEntityForm(
+    const form = await service.createEntityForm(
       formFields,
       new ChildSchoolRelation(),
     );
@@ -136,10 +136,7 @@ describe("EntityFormService", () => {
       { subject: "Child", action: "create", fields: ["dateOfBirth"] },
     ]);
 
-    const formGroup = await service.createExtendedEntityForm(
-      formFields,
-      new Child(),
-    );
+    const formGroup = await service.createEntityForm(formFields, new Child());
     tick();
 
     expect(formGroup.formGroup.get("name").disabled).toBeTrue();
@@ -156,7 +153,7 @@ describe("EntityFormService", () => {
     const child = new Child();
     child._rev = "foo"; // "not new" state
 
-    const form = await service.createExtendedEntityForm(formFields, child);
+    const form = await service.createEntityForm(formFields, child);
 
     expect(form.formGroup.get("name").enabled).toBeTrue();
     expect(form.formGroup.get("dateOfBirth").disabled).toBeTrue();
@@ -174,7 +171,7 @@ describe("EntityFormService", () => {
 
   it("should create a error if form is invalid", async () => {
     const formFields = [{ id: "schoolId" }, { id: "start" }];
-    const form = await service.createExtendedEntityForm(
+    const form = await service.createEntityForm(
       formFields,
       new ChildSchoolRelation(),
     );
@@ -186,10 +183,7 @@ describe("EntityFormService", () => {
 
   it("should set pending changes once a form is edited and reset it once saved or canceled", async () => {
     const formFields = [{ id: "inactive" }];
-    const form = await service.createExtendedEntityForm(
-      formFields,
-      new Entity(),
-    );
+    const form = await service.createEntityForm(formFields, new Entity());
     const unsavedChanges = TestBed.inject(UnsavedChangesService);
 
     form.formGroup.markAsDirty();
@@ -229,7 +223,7 @@ describe("EntityFormService", () => {
 
     const formFields = ["simpleField", "getterField", "emptyField"];
     const mockEntity = new MockEntity();
-    const form = await service.createExtendedEntityForm(formFields, mockEntity);
+    const form = await service.createEntityForm(formFields, mockEntity);
 
     form.formGroup.get("simpleField").setValue("new");
     form.formGroup.get("getterField").setValue("new value");
@@ -247,10 +241,7 @@ describe("EntityFormService", () => {
     router.resetConfig([{ path: "test", component: NotFoundComponent }]);
     const unsavedChanged = TestBed.inject(UnsavedChangesService);
     const formFields = [{ id: "inactive" }];
-    const formGroup = await service.createExtendedEntityForm(
-      formFields,
-      new Entity(),
-    );
+    const formGroup = await service.createEntityForm(formFields, new Entity());
     formGroup.formGroup.markAsDirty();
     formGroup.formGroup.get("inactive").setValue(true);
 
@@ -276,10 +267,7 @@ describe("EntityFormService", () => {
     };
     Entity.schema.set("test", schema);
 
-    let form = await service.createExtendedEntityForm(
-      [{ id: "test" }],
-      new Entity(),
-    );
+    let form = await service.createEntityForm([{ id: "test" }], new Entity());
     expect(form.formGroup.get("test")).toHaveValue(1);
 
     schema.defaultValue = {
@@ -287,10 +275,7 @@ describe("EntityFormService", () => {
       value: PLACEHOLDERS.NOW,
     };
 
-    form = await service.createExtendedEntityForm(
-      [{ id: "test" }],
-      new Entity(),
-    );
+    form = await service.createEntityForm([{ id: "test" }], new Entity());
     expect(
       moment(form.formGroup.get("test").value).isSame(moment(), "minutes"),
     ).toBeTrue();
@@ -299,20 +284,14 @@ describe("EntityFormService", () => {
       mode: "dynamic",
       value: PLACEHOLDERS.CURRENT_USER,
     };
-    form = await service.createExtendedEntityForm(
-      [{ id: "test" }],
-      new Entity(),
-    );
+    form = await service.createEntityForm([{ id: "test" }], new Entity());
     expect(form.formGroup.get("test")).toHaveValue(
       `${User.ENTITY_TYPE}:${TEST_USER}`,
     );
 
     schema.dataType = EntityDatatype.dataType;
     schema.isArray = true;
-    form = await service.createExtendedEntityForm(
-      [{ id: "test" }],
-      new Entity(),
-    );
+    form = await service.createEntityForm([{ id: "test" }], new Entity());
     expect(form.formGroup.get("test")).toHaveValue([
       `${User.ENTITY_TYPE}:${TEST_USER}`,
     ]);
@@ -330,19 +309,13 @@ describe("EntityFormService", () => {
         value: PLACEHOLDERS.CURRENT_USER,
       },
     });
-    let form = await service.createExtendedEntityForm(
-      [{ id: "user" }],
-      new Entity(),
-    );
+    let form = await service.createEntityForm([{ id: "user" }], new Entity());
     expect(form.formGroup.get("user")).toHaveValue(null);
 
     // array property
     Entity.schema.get("user").dataType = EntityDatatype.dataType;
     Entity.schema.get("user").isArray = true;
-    form = await service.createExtendedEntityForm(
-      [{ id: "user" }],
-      new Entity(),
-    );
+    form = await service.createEntityForm([{ id: "user" }], new Entity());
     expect(form.formGroup.get("user")).toHaveValue(null);
 
     Entity.schema.delete("user");
@@ -358,10 +331,7 @@ describe("EntityFormService", () => {
 
     const entity = new Entity();
     entity._rev = "1-existing_entity";
-    const form = await service.createExtendedEntityForm(
-      [{ id: "test" }],
-      entity,
-    );
+    const form = await service.createEntityForm([{ id: "test" }], entity);
     expect(form.formGroup.get("test")).toHaveValue(null);
 
     Entity.schema.delete("test");
@@ -377,10 +347,7 @@ describe("EntityFormService", () => {
 
     const entity = new Entity();
     entity["test"] = 2;
-    const form = await service.createExtendedEntityForm(
-      [{ id: "test" }],
-      entity,
-    );
+    const form = await service.createEntityForm([{ id: "test" }], entity);
     expect(form.formGroup.get("test")).toHaveValue(2);
 
     Entity.schema.delete("test");
@@ -390,10 +357,7 @@ describe("EntityFormService", () => {
     Entity.schema.set("test", { dataType: "string" });
 
     const entity = new Entity();
-    const form = await service.createExtendedEntityForm(
-      [{ id: "test" }],
-      entity,
-    );
+    const form = await service.createEntityForm([{ id: "test" }], entity);
     form.formGroup.get("test").reset();
     expect(form.formGroup.get("test").getRawValue()).toEqual(null);
 

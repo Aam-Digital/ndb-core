@@ -38,7 +38,7 @@ describe("EditTextWithAutocompleteComponent", () => {
     loadTypeSpy.and.resolveTo([]);
     const entityFormService = TestBed.inject(EntityFormService);
     component.parent = (
-      await entityFormService.createExtendedEntityForm(
+      await entityFormService.createEntityForm(
         [
           { id: "title" },
           { id: "type" },

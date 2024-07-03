@@ -16,8 +16,8 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { NEVER } from "rxjs";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../common-components/entity-form/entity-form.service";
 import { FormBuilder } from "@angular/forms";
 
@@ -29,11 +29,11 @@ describe("RowDetailsComponent", () => {
   let mockFormService: jasmine.SpyObj<EntityFormService>;
 
   beforeEach(waitForAsync(() => {
-    mockFormService = jasmine.createSpyObj(["createExtendedEntityForm"]);
-    mockFormService.createExtendedEntityForm.and.returnValue(
+    mockFormService = jasmine.createSpyObj(["createEntityForm"]);
+    mockFormService.createEntityForm.and.returnValue(
       Promise.resolve({
         formGroup: new FormBuilder().group({}),
-      } as ExtendedEntityForm<any>),
+      } as EntityForm<any>),
     );
     detailsComponentData = {
       entity: new Entity(),

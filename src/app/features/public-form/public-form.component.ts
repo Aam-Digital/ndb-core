@@ -6,8 +6,8 @@ import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapp
 import { PublicFormConfig } from "./public-form-config";
 import { Entity, EntityConstructor } from "../../core/entity/model/entity";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../core/common-components/entity-form/entity-form.service";
 import { EntityFormComponent } from "../../core/common-components/entity-form/entity-form/entity-form.component";
 import { MatButtonModule } from "@angular/material/button";
@@ -33,7 +33,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
   formConfig: PublicFormConfig;
   entity: E;
   fieldGroups: FieldGroup[];
-  form: ExtendedEntityForm<E>;
+  form: EntityForm<E>;
 
   constructor(
     private database: PouchDatabase,
@@ -58,7 +58,10 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   async submit() {
     try {
-      await this.entityFormService.saveChanges(this.form.formGroup, this.entity);
+      await this.entityFormService.saveChanges(
+        this.form.formGroup,
+        this.entity,
+      );
       this.snackbar.open($localize`Successfully submitted form`);
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
@@ -98,7 +101,7 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
     Object.entries(this.prefilled).forEach(([prop, value]) => {
       this.entity[prop] = value;
     });
-    this.form = await this.entityFormService.createExtendedEntityForm(
+    this.form = await this.entityFormService.createEntityForm(
       [].concat(...this.fieldGroups.map((group) => group.fields)),
       this.entity,
     );

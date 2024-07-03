@@ -4,13 +4,13 @@ import { DefaultValueService } from "./default-value.service";
 import { HandleDefaultValuesUseCase } from "./default-field-value/handle-default-values.usecase";
 import { FormBuilder, FormGroup } from "@angular/forms";
 import { Entity } from "./model/entity";
-import { ExtendedEntityForm } from "../common-components/entity-form/entity-form.service";
+import { EntityForm } from "../common-components/entity-form/entity-form.service";
 
 describe("DefaultValueService", () => {
   let service: DefaultValueService;
   let mockHandleDefaultValuesUseCase: jasmine.SpyObj<HandleDefaultValuesUseCase>;
 
-  function getExtendedFormGroup(formGroup: FormGroup): ExtendedEntityForm<any> {
+  function getEntityForm(formGroup: FormGroup): EntityForm<any> {
     return {
       formGroup: formGroup,
       entity: new Entity(),
@@ -23,9 +23,9 @@ describe("DefaultValueService", () => {
 
   beforeEach(() => {
     mockHandleDefaultValuesUseCase = jasmine.createSpyObj({
-      handleExtendedEntityForm: jasmine.createSpy(),
+      handleEntityForm: jasmine.createSpy(),
     });
-    mockHandleDefaultValuesUseCase.handleExtendedEntityForm.calls.saveArgumentsByValue();
+    mockHandleDefaultValuesUseCase.handleEntityForm.calls.saveArgumentsByValue();
 
     TestBed.configureTestingModule({
       providers: [
@@ -44,7 +44,7 @@ describe("DefaultValueService", () => {
 
   it("should call HandleDefaultValuesUseCase if defaultValue is set", fakeAsync(() => {
     // given
-    let form: ExtendedEntityForm<any> = getExtendedFormGroup(
+    let form: EntityForm<any> = getEntityForm(
       new FormBuilder().group<any>({ test: {} }),
     );
 
@@ -54,13 +54,11 @@ describe("DefaultValueService", () => {
     });
 
     // when
-    service.handleExtendedEntityForm(form, new Entity());
+    service.handleEntityForm(form, new Entity());
     tick();
 
     // then
-    expect(
-      mockHandleDefaultValuesUseCase.handleExtendedEntityForm,
-    ).toHaveBeenCalled();
+    expect(mockHandleDefaultValuesUseCase.handleEntityForm).toHaveBeenCalled();
 
     Entity.schema.delete("test");
   }));

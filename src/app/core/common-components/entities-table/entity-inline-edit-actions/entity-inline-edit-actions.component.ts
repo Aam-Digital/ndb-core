@@ -8,8 +8,8 @@ import { TableRow } from "../entities-table.component";
 import { Entity } from "../../../entity/model/entity";
 import { InvalidFormFieldError } from "../../entity-form/invalid-form-field.error";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../entity-form/entity-form.service";
 import { AlertService } from "../../../alerts/alert.service";
 import { EntityActionsService } from "../../../entity/entity-actions/entity-actions.service";
@@ -34,7 +34,7 @@ import { UnsavedChangesService } from "../../../entity-details/form/unsaved-chan
 export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   @Input() row: TableRow<T>;
 
-  form: ExtendedEntityForm<T>;
+  form: EntityForm<T>;
 
   constructor(
     private entityFormService: EntityFormService,
@@ -44,7 +44,7 @@ export class EntityInlineEditActionsComponent<T extends Entity = Entity> {
   ) {}
 
   async edit() {
-    this.form = await this.entityFormService.createExtendedEntityForm(
+    this.form = await this.entityFormService.createEntityForm(
       Array.from(this.row.record.getSchema().keys()),
       this.row.record,
       true,

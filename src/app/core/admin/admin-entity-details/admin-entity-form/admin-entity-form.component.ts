@@ -1,8 +1,8 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity, EntityConstructor } from "../../../entity/model/entity";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../../common-components/entity-form/entity-form.service";
 import { FormControl } from "@angular/forms";
 import { MatDialog } from "@angular/material/dialog";
@@ -61,7 +61,7 @@ export class AdminEntityFormComponent implements OnChanges {
   @Input() config: FormConfig;
 
   dummyEntity: Entity;
-  dummyForm: ExtendedEntityForm<any>;
+  dummyForm: EntityForm<any>;
 
   availableFields: ColumnConfig[] = [];
   readonly createNewFieldPlaceholder: FormFieldConfig = {
@@ -97,7 +97,7 @@ export class AdminEntityFormComponent implements OnChanges {
     this.initAvailableFields();
 
     this.dummyEntity = new this.entityType();
-    this.dummyForm = await this.entityFormService.createExtendedEntityForm(
+    this.dummyForm = await this.entityFormService.createEntityForm(
       [...this.getUsedFields(this.config), ...this.availableFields],
       this.dummyEntity,
     );

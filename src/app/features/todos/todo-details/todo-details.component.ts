@@ -15,8 +15,8 @@ import {
 import { DetailsComponentData } from "../../../core/form-dialog/row-details/row-details.component";
 import { TodoService } from "../todo.service";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../../core/common-components/entity-form/entity-form.service";
 import { NgIf } from "@angular/common";
 import { TodoCompletionComponent } from "../todo-completion/todo-completion/todo-completion.component";
@@ -45,7 +45,7 @@ export class TodoDetailsComponent implements OnInit {
   @Output() close = new EventEmitter<Todo>();
 
   formColumns: FieldGroup[];
-  form: ExtendedEntityForm<Todo>;
+  form: EntityForm<Todo>;
 
   constructor(
     @Inject(MAT_DIALOG_DATA) data: DetailsComponentData,
@@ -58,7 +58,7 @@ export class TodoDetailsComponent implements OnInit {
   }
 
   async ngOnInit(): Promise<void> {
-    this.form = await this.entityFormService.createExtendedEntityForm(
+    this.form = await this.entityFormService.createEntityForm(
       [].concat(...this.formColumns.map((group) => group.fields)),
       this.entity,
     );

@@ -6,7 +6,7 @@ import { Entity } from "../model/entity";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { LoggingService } from "../../logging/logging.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { ExtendedEntityForm } from "../../common-components/entity-form/entity-form.service";
+import { EntityForm } from "../../common-components/entity-form/entity-form.service";
 import { EntitySchema } from "../schema/entity-schema";
 
 /**
@@ -22,8 +22,8 @@ export class HandleDefaultValuesUseCase {
     private logger: LoggingService,
   ) {}
 
-  async handleExtendedEntityForm<T extends Entity>(
-    form: ExtendedEntityForm<T>,
+  async handleEntityForm<T extends Entity>(
+    form: EntityForm<T>,
     entitySchema: EntitySchema,
     isNew: boolean,
   ): Promise<void> {
@@ -74,7 +74,7 @@ export class HandleDefaultValuesUseCase {
 
   private getLinkedEntityRefs<T extends Entity>(
     inheritedConfigs: Map<string, DefaultValueConfig>,
-    form: ExtendedEntityForm<T>,
+    form: EntityForm<T>,
   ): Map<string, string[]> {
     const linkedEntityRefs: Map<string, string[]> = new Map();
 
@@ -95,7 +95,7 @@ export class HandleDefaultValuesUseCase {
 
   private async loadLinkedEntitiesIntoForm<T extends Entity>(
     entityRefs: string[],
-    form: ExtendedEntityForm<T>,
+    form: EntityForm<T>,
   ): Promise<void> {
     for (const entityRef of entityRefs) {
       let parentEntity: Entity = await this.entityMapper.load(
@@ -273,7 +273,7 @@ export class HandleDefaultValuesUseCase {
     return true;
   }
 
-  private enableChangeListener<T extends Entity>(form: ExtendedEntityForm<T>) {
+  private enableChangeListener<T extends Entity>(form: EntityForm<T>) {
     form.watcher.set(
       "formGroupValueChanges",
       form.formGroup.valueChanges.subscribe(async (change) => {
@@ -283,9 +283,7 @@ export class HandleDefaultValuesUseCase {
     );
   }
 
-  private async updateLinkedEntities<T extends Entity>(
-    form: ExtendedEntityForm<T>,
-  ) {
+  private async updateLinkedEntities<T extends Entity>(form: EntityForm<T>) {
     let inheritedConfigs: Map<string, DefaultValueConfig> =
       this.getConfigsByMode(form.defaultValueConfigs, ["inherited"]);
 
@@ -312,7 +310,7 @@ export class HandleDefaultValuesUseCase {
     }
   }
 
-  private syncCheck<T extends Entity>(form: ExtendedEntityForm<T>) {
+  private syncCheck<T extends Entity>(form: EntityForm<T>) {
     let inheritedConfigs: Map<string, DefaultValueConfig> =
       this.getConfigsByMode(form.defaultValueConfigs, ["inherited"]);
 

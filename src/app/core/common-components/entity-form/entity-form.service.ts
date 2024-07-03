@@ -30,7 +30,7 @@ export type TypedFormGroup<T> = FormGroup<{
 
 export type EntityFormGroup<T extends Entity> = TypedFormGroup<Partial<T>>;
 
-export interface ExtendedEntityForm<T extends Entity> {
+export interface EntityForm<T extends Entity> {
   formGroup: EntityFormGroup<T>;
   entity: T;
   defaultValueConfigs: Map<string, DefaultValueConfig>;
@@ -122,19 +122,19 @@ export class EntityFormService {
   }
 
   /**
-   * Creates a FormGroups from the formFields and the existing values from the entity.
+   * Creates a form with the formFields and the existing values from the entity.
    * Missing fields in the formFields are filled with schema information.
    * @param formFields
    * @param entity
    * @param forTable
    * @param withPermissionCheck if true, fields without 'update' permissions will stay disabled when enabling form
    */
-  public async createExtendedEntityForm<T extends Entity>(
+  public async createEntityForm<T extends Entity>(
     formFields: ColumnConfig[],
     entity: T,
     forTable = false,
     withPermissionCheck = true,
-  ): Promise<ExtendedEntityForm<T>> {
+  ): Promise<EntityForm<T>> {
     const typedFormGroup: TypedFormGroup<Partial<T>> = this.createFormGroup(
       formFields,
       entity,
@@ -145,7 +145,7 @@ export class EntityFormService {
     const defaultValueConfigs =
       this.defaultValueService.getDefaultValueConfigs(entity);
 
-    const extendedEntityForm: ExtendedEntityForm<T> = {
+    const entityForm: EntityForm<T> = {
       formGroup: typedFormGroup,
       entity: entity,
       defaultValueConfigs: defaultValueConfigs,
@@ -154,12 +154,9 @@ export class EntityFormService {
       watcher: new Map(),
     };
 
-    await this.defaultValueService.handleExtendedEntityForm(
-      extendedEntityForm,
-      entity,
-    );
+    await this.defaultValueService.handleEntityForm(entityForm, entity);
 
-    return extendedEntityForm;
+    return entityForm;
   }
 
   private createFormGroup<T extends Entity>(

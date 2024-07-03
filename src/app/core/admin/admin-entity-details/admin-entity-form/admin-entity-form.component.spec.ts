@@ -8,8 +8,8 @@ import {
 import { AdminEntityFormComponent } from "./admin-entity-form.component";
 import { CoreTestingModule } from "../../../../utils/core-testing.module";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../../common-components/entity-form/entity-form.service";
 import { MatDialog } from "@angular/material/dialog";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -40,12 +40,12 @@ describe("AdminEntityFormComponent", () => {
     };
 
     mockFormService = jasmine.createSpyObj("EntityFormService", [
-      "createExtendedEntityForm",
+      "createEntityForm",
     ]);
-    mockFormService.createExtendedEntityForm.and.returnValue(
+    mockFormService.createEntityForm.and.returnValue(
       Promise.resolve({
         formGroup: new FormGroup({}),
-      } as ExtendedEntityForm<any>),
+      } as EntityForm<any>),
     );
     mockDialog = jasmine.createSpyObj("MatDialog", ["open"]);
 

@@ -16,8 +16,8 @@ import { ExportDataDirective } from "../../../core/export/export-data-directive/
 import { Angulartics2Module } from "angulartics2";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../../core/common-components/entity-form/entity-form.service";
 import { EntityFormComponent } from "../../../core/common-components/entity-form/entity-form/entity-form.component";
 import { DynamicComponentDirective } from "../../../core/config/dynamic-components/dynamic-component.directive";
@@ -91,7 +91,7 @@ export class NoteDetailsComponent
   topFieldGroups: FieldGroup[];
   bottomFieldGroups: FieldGroup[];
 
-  form: ExtendedEntityForm<Note>;
+  form: EntityForm<Note>;
   tmpEntity: Note;
 
   constructor(
@@ -124,7 +124,7 @@ export class NoteDetailsComponent
     this.topFieldGroups = this.topForm.map((f) => ({ fields: [f] }));
     this.bottomFieldGroups = [{ fields: this.bottomForm }];
 
-    this.form = await this.entityFormService.createExtendedEntityForm(
+    this.form = await this.entityFormService.createEntityForm(
       this.middleForm.concat(this.topForm, this.bottomForm),
       this.entity,
     );

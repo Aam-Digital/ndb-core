@@ -6,8 +6,8 @@ import { Location, NgIf } from "@angular/common";
 import { DynamicComponent } from "../../config/dynamic-components/dynamic-component.decorator";
 import { InvalidFormFieldError } from "../../common-components/entity-form/invalid-form-field.error";
 import {
+  EntityForm,
   EntityFormService,
-  ExtendedEntityForm,
 } from "../../common-components/entity-form/entity-form.service";
 import { AlertService } from "../../alerts/alert.service";
 import { MatButtonModule } from "@angular/material/button";
@@ -39,7 +39,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   @Input() fieldGroups: FieldGroup[];
 
-  form: ExtendedEntityForm<E> | undefined;
+  form: EntityForm<E> | undefined;
 
   constructor(
     private router: Router,
@@ -51,7 +51,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
 
   ngOnInit() {
     this.entityFormService
-      .createExtendedEntityForm(
+      .createEntityForm(
         [].concat(...this.fieldGroups.map((group) => group.fields)),
         this.entity,
       )

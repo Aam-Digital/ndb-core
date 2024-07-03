@@ -44,9 +44,10 @@ describe("EntityFormComponent", () => {
   async function setupInitialForm(entity, columns) {
     component.entity = entity;
     component.fieldGroups = columns.map((c) => ({ fields: c }));
-    component.form = await TestBed.inject(
-      EntityFormService,
-    ).createExtendedEntityForm(columns[0], component.entity);
+    component.form = await TestBed.inject(EntityFormService).createEntityForm(
+      columns[0],
+      component.entity,
+    );
     component.ngOnChanges({ entity: true, form: true } as any);
     fixture.detectChanges();
   }

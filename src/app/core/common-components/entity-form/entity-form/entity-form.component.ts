@@ -6,7 +6,7 @@ import {
   ViewEncapsulation,
 } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
-import { ExtendedEntityForm } from "../entity-form.service";
+import { EntityForm } from "../entity-form.service";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 import { filter } from "rxjs/operators";
 import { ConfirmationDialogService } from "../../confirmation-dialog/confirmation-dialog.service";
@@ -48,7 +48,7 @@ export class EntityFormComponent<T extends Entity = Entity>
 
   @Input() fieldGroups: FieldGroup[];
 
-  @Input() form: ExtendedEntityForm<T>;
+  @Input() form: EntityForm<T>;
 
   /**
    * Whether the component should use a grid layout or just rows
