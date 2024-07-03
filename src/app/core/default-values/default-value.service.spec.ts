@@ -3,7 +3,7 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { DefaultValueService } from "./default-value.service";
 import { HandleDefaultValuesUseCase } from "./default-field-value/handle-default-values.usecase";
 import { FormBuilder, FormGroup } from "@angular/forms";
-import { Entity } from "./model/entity";
+import { Entity } from "../entity/model/entity";
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
 
 describe("DefaultValueService", () => {

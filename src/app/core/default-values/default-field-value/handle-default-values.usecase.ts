@@ -1,13 +1,13 @@
 import { Injectable } from "@angular/core";
 import { AbstractControl, FormGroup } from "@angular/forms";
-import { PLACEHOLDERS } from "../schema/entity-schema-field";
-import { DefaultValueConfig } from "../schema/default-value-config";
-import { Entity } from "../model/entity";
-import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
+import { PLACEHOLDERS } from "../../entity/schema/entity-schema-field";
+import { DefaultValueConfig } from "../../entity/schema/default-value-config";
+import { Entity } from "../../entity/model/entity";
+import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { LoggingService } from "../../logging/logging.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 import { EntityForm } from "../../common-components/entity-form/entity-form.service";
-import { EntitySchema } from "../schema/entity-schema";
+import { EntitySchema } from "../../entity/schema/entity-schema";
 
 /**
  * When edit an Entity, apply this business logic for DefaultValueConfig

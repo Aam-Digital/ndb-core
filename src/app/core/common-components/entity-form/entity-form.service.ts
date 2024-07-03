@@ -18,7 +18,7 @@ import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
 import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
-import { DefaultValueService } from "../../entity/default-value.service";
+import { DefaultValueService } from "../../default-values/default-value.service";
 import { DefaultValueConfig } from "../../entity/schema/default-value-config";
 
 /**

@@ -1,10 +1,13 @@
 import { Injectable } from "@angular/core";
-import { Entity } from "./model/entity";
+import { Entity } from "../entity/model/entity";
 import { HandleDefaultValuesUseCase } from "./default-field-value/handle-default-values.usecase";
-import { EntitySchema } from "./schema/entity-schema";
-import { DefaultValueConfig } from "./schema/default-value-config";
+import { EntitySchema } from "../entity/schema/entity-schema";
+import { DefaultValueConfig } from "../entity/schema/default-value-config";
 import { EntityForm } from "../common-components/entity-form/entity-form.service";
 
+/**
+ * Handle default values like the current date or user for forms.
+ */
 @Injectable({
   providedIn: "root",
 })
