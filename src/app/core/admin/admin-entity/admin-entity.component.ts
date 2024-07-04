@@ -101,13 +101,15 @@ export class AdminEntityComponent implements OnInit {
     this.configEntitySettings = this.entityConstructor;
   }
 
-  private loadViewConfig<C = EntityDetailsConfig | EntityListConfig>(
-    viewId: string,
-  ): C | undefined {
+  private loadViewConfig<
+    C = EntityDetailsConfig | EntityListConfig | undefined,
+  >(viewId: string): C | undefined {
     const viewConfig: ViewConfig<C> = this.configService.getConfig(viewId);
 
     // work on a deep copy as we are editing in place (for titles, sections, etc.)
-    return JSON.parse(JSON.stringify(viewConfig.config));
+    return viewConfig?.config
+      ? JSON.parse(JSON.stringify(viewConfig.config))
+      : undefined;
   }
 
   cancel() {
