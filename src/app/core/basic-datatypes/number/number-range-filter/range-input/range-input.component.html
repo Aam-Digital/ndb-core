@@ -1,15 +1,5 @@
-<div role="group" [formGroup]="parts" class="container">
-  <input
-    formControlName="from"
-    type="number"
-    maxlength="3"
-    class="input-element"
-  />
+<div [formGroup]="formGroup" class="container">
+  <input formControlName="from" type="number" class="input-element" />
   <span>&ndash;</span>
-  <input
-    formControlName="to"
-    type="number"
-    maxlength="3"
-    class="input-element"
-  />
+  <input formControlName="to" type="number" class="input-element" />
 </div>

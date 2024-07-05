@@ -1,14 +1,12 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import {
-  FormControl,
-  FormGroup,
-  ReactiveFormsModule,
-  Validators,
-} from "@angular/forms";
+import { ReactiveFormsModule } from "@angular/forms";
 import { NumberFilter } from "app/core/filter/filters/numberFilter";
-import { RangeInputComponent } from "./range-input/range-input.component";
+import {
+  NumericRange,
+  RangeInputComponent,
+} from "./range-input/range-input.component";
 
 @Component({
   selector: "app-date-range-filter",
@@ -22,26 +20,29 @@ export class NumberRangeFilterComponent<T extends Entity> implements OnChanges {
 
   fromValue: number;
   toValue: number;
+  range: NumericRange;
 
-  form: FormGroup;
+  // form: FormGroup;
 
   constructor() {
-    this.form = new FormGroup({
-      range: new FormControl(
-        {
-          minimum: 10,
-          maximum: 100,
-        },
-        [
-          Validators.required, //optional
-          Validators.min(10), //optional
-          Validators.max(100), //optional
-        ],
-      ),
-    });
+    this.range = new NumericRange(1, 2);
+    // this.form = new FormGroup({
+    //   range: new FormControl(
+    //     {
+    //       minimum: 10,
+    //       maximum: 100,
+    //     },
+    //     [
+    //       Validators.required, //optional
+    //       Validators.min(10), //optional
+    //       Validators.max(100), //optional
+    //     ],
+    //   ),
+    // });
   }
 
   ngOnChanges(changes: SimpleChanges): void {
+    console.log("changes: range:", this.range);
     if (changes.filterConfig) {
       // this.initDates();
     }
