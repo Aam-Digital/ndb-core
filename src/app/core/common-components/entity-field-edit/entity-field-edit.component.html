@@ -1,8 +1,6 @@
 <div *ngIf="_field && form && _field.editComponent; else displayComponent">
   <div
-    [class.field-with-tooltip-suffix]="
-      _field.description || defaultValueHint?.showHint
-    "
+    [class.field-with-tooltip-suffix]="_field.description || defaultValueHint"
   >
     <ng-container
       [appDynamicComponent]="{
@@ -23,24 +21,24 @@
   ></app-help-button>
 
   <button
-    *ngIf="defaultValueHint?.showHint && form.formGroup.enabled"
+    *ngIf="defaultValueHint && form.formGroup.enabled"
     mat-icon-button
     type="button"
-    [disabled]="form.inheritedSyncStatus.get(_field.id)"
-    (click)="syncFromParentField()"
+    [disabled]="defaultValueHint.isInSync"
+    (click)="defaultValueHint.syncFromParentField()"
   >
     <fa-icon icon="sync"></fa-icon>
   </button>
 
-  <div class="field-hint" *ngIf="defaultValueHint?.showHint">
+  <div class="field-hint" *ngIf="defaultValueHint">
     <span i18n>
       Inherited from "<app-entity-field-label
-        [field]="defaultValueHint?.inheritedFromField"
+        [field]="defaultValueHint.inheritedFromField"
         [entityType]="defaultValueHint.inheritedFromType"
       ></app-entity-field-label
       >"
     </span>
-    @if (form.inheritedSyncStatus.get(_field.id)) {
+    @if (defaultValueHint.isInSync) {
       <span i18n>(up-to-date)</span>
     } @else {
       <span i18n>(manually overwritten)</span>

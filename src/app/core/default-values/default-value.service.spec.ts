@@ -31,7 +31,6 @@ export function getDefaultInheritedForm(
     entity: entity,
     defaultValueConfigs: DefaultValueService.getDefaultValueConfigs(entity),
     inheritedParentValues: new Map(),
-    inheritedSyncStatus: new Map(),
     watcher: new Map(),
     formGroup: new FormBuilder().group<any>({
       field: new FormControl(),

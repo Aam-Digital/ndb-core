@@ -21,6 +21,7 @@ import { of } from "rxjs";
 import { AdminModule } from "../../admin.module";
 import { FormConfig } from "../../../entity-details/form/form.component";
 import { ColumnConfig } from "../../../common-components/entity-form/FormConfig";
+import { DefaultValueService } from "../../../default-values/default-value.service";
 
 describe("AdminEntityFormComponent", () => {
   let component: AdminEntityFormComponent;
@@ -64,6 +65,10 @@ describe("AdminEntityFormComponent", () => {
         {
           provide: MatDialog,
           useValue: mockDialog,
+        },
+        {
+          provide: DefaultValueService,
+          useValue: jasmine.createSpyObj(["getDefaultValueUiHint"]),
         },
       ],
     });

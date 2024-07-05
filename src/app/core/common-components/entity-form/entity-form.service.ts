@@ -35,7 +35,6 @@ export interface EntityForm<T extends Entity> {
   entity: T;
   defaultValueConfigs: Map<string, DefaultValueConfig>;
   inheritedParentValues: Map<string, any>;
-  inheritedSyncStatus: Map<string, boolean>;
   watcher: Map<string, Subscription>;
 }
 
@@ -150,7 +149,6 @@ export class EntityFormService {
       entity: entity,
       defaultValueConfigs: defaultValueConfigs,
       inheritedParentValues: new Map(),
-      inheritedSyncStatus: new Map(),
       watcher: new Map(),
     };
 

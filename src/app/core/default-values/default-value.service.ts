@@ -113,6 +113,20 @@ export class DefaultValueService {
     }
   }
 
+  getDefaultValueUiHint<T extends Entity>(
+    form: EntityForm<T>,
+    fieldId: string,
+  ): DefaultValueHint | undefined {
+    if (!form) {
+      return;
+    }
+
+    const mode = form?.defaultValueConfigs?.get(fieldId)?.mode;
+    if (mode === "inherited") {
+      return this.inheritedValueService.getDefaultValueUiHint(form, fieldId);
+    }
+  }
+
   static getDefaultValueConfigs<T extends Entity>(
     entity: T,
   ): Map<string, DefaultValueConfig> {
@@ -128,4 +142,12 @@ export class DefaultValueService {
 
     return defaultValueConfigs;
   }
+}
+
+export interface DefaultValueHint {
+  isInSync: boolean;
+  inheritedFromType: string;
+  inheritedFromField: string;
+
+  syncFromParentField: () => void;
 }

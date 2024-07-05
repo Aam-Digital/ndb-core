@@ -13,6 +13,10 @@ import { MatHint } from "@angular/material/form-field";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
+import {
+  DefaultValueHint,
+  DefaultValueService,
+} from "../../default-values/default-value.service";
 
 /**
  * Generic component to display one entity property field's editComponent.
@@ -54,55 +58,35 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
    */
   @Input() compactMode: boolean;
 
-  defaultValueHint: {
-    showHint: boolean;
-    inheritedFromType: string;
-    inheritedFromField: string;
-  };
+  defaultValueHint: DefaultValueHint | undefined;
 
-  constructor(private entityFormService: EntityFormService) {}
-
-  initDefaultConfig() {
-    if (!this.form) {
-      return;
-    }
-
-    const defaultConfig = this.form.defaultValueConfigs?.get(this._field.id);
-
-    const linkedFieldValue = this.form.formGroup?.get(
-      defaultConfig?.localAttribute,
-    )?.value;
-    const parentRefValue =
-      linkedFieldValue?.length === 1 ? linkedFieldValue[0] : undefined;
-
-    // TODO: maybe keep defaultValueHint object as undefined if not displayed?
-    this.defaultValueHint = {
-      showHint: defaultConfig?.mode === "inherited" && parentRefValue,
-      inheritedFromField: defaultConfig?.localAttribute,
-      inheritedFromType: parentRefValue
-        ? Entity.extractTypeFromId(parentRefValue)
-        : undefined,
-    };
-  }
+  constructor(
+    private entityFormService: EntityFormService,
+    private defaultValueService: DefaultValueService,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
       this.updateField();
     }
 
-    this.initDefaultConfig();
-
+    this.defaultValueHint = this.defaultValueService.getDefaultValueUiHint(
+      this.form,
+      this._field?.id,
+    );
     if (changes.form && changes.form.firstChange) {
       this.form?.formGroup.valueChanges.subscribe((value) =>
-        this.initDefaultConfig(),
+        // ensure this is only called after the other changes handler
+        setTimeout(
+          () =>
+            (this.defaultValueHint =
+              this.defaultValueService.getDefaultValueUiHint(
+                this.form,
+                this._field?.id,
+              )),
+        ),
       );
     }
-  }
-
-  syncFromParentField() {
-    this.form.formGroup
-      .get(this._field.id)
-      .setValue(this.form.inheritedParentValues.get(this._field.id));
   }
 
   private updateField() {
