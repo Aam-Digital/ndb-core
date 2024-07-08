@@ -10,7 +10,7 @@ import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
-import { MatCheckboxModule } from "@angular/material/checkbox";
+import { MatCheckboxChange, MatCheckboxModule } from "@angular/material/checkbox";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import {
@@ -77,6 +77,7 @@ export class EntitiesTableComponent<T extends Entity> {
     this.updateFilteredData();
     this.isLoading = false;
   }
+  private lastSelectedIndex: number = null;
   _records: T[] = [];
   /** data displayed in the template's table */
   recordsDataSource: MatTableDataSource<TableRow<T>>;
@@ -228,14 +229,15 @@ export class EntitiesTableComponent<T extends Entity> {
 
   selectRow(row: TableRow<T>, checked: boolean) {
     if (checked) {
-      this.selectedRecords.push(row.record);
+      if (!this.selectedRecords.includes(row.record)) {
+        this.selectedRecords.push(row.record);
+      }
     } else {
       const index = this.selectedRecords.indexOf(row.record);
       if (index > -1) {
         this.selectedRecords.splice(index, 1);
       }
     }
-
     this.selectedRecordsChange.emit(this.selectedRecords);
   }
 
@@ -271,6 +273,49 @@ export class EntitiesTableComponent<T extends Entity> {
 
     this.showEntity(row.record);
     this.entityClick.emit(row.record);
+  }
+
+  
+onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
+  const currentIndex = this.recordsDataSource.data.indexOf(row);
+
+  if (event.shiftKey && this.lastSelectedIndex !== null) {
+    console.log("hehehehehehehhe")
+    const sortedData = this.recordsDataSource.data.slice(); // Get sorted data
+    const start = Math.min(this.lastSelectedIndex, currentIndex);
+    const end = Math.max(this.lastSelectedIndex, currentIndex);
+
+    // Select rows based on actual data source indexes
+    for (let i = start; i <= end; i++) {
+      this.selectRow(sortedData[i], true);
+    }
+  }  else {
+    console.log("tetetetetettteettete")
+
+    this.onRowClick(row);
+   }
+}
+
+
+  onRowSelect(event: MatCheckboxChange, row: TableRow<T>) {
+    this.selectRow(row, event.checked);
+  }
+
+  selectAllRows(event: MatCheckboxChange) {
+    if (event.checked) {
+      this.selectedRecords = this.recordsDataSource.data.map(row => row.record);
+    } else {
+      this.selectedRecords = [];
+    }
+    this.selectedRecordsChange.emit(this.selectedRecords);
+  }
+
+  isAllSelected() {
+    return this.selectedRecords.length === this.recordsDataSource.data.length;
+  }
+
+  isIndeterminate() {
+    return this.selectedRecords.length > 0 && !this.isAllSelected();
   }
 
   showEntity(entity: T) {
