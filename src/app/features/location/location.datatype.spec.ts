@@ -1,6 +1,6 @@
 import { TestBed } from "@angular/core/testing";
 import { of } from "rxjs";
-import { LocationDatatype } from "./location.datatype";
+import { GeoLocation, LocationDatatype } from "./location.datatype";
 import { GeoResult, GeoService } from "./geo.service";
 
 describe("Schema data type: location", () => {
@@ -21,21 +21,46 @@ describe("Schema data type: location", () => {
   });
 
   it("should only return Geo objects when transforming from database to object format", async () => {
-    const mockGeoResult: GeoResult = {
+    const location: GeoLocation = {
+      locationString: "test address 1b",
+      geoLookup: {
+        lat: 1,
+        lon: 2,
+        display_name: "1, test address",
+      },
+    };
+
+    expect(service.transformToObjectFormat(location)).toEqual(location);
+    expect(service.transformToObjectFormat(123 as any)).toBeUndefined();
+  });
+
+  it("should transform old (legacy) format to new format during loading", async () => {
+    const oldLocationFormat: GeoResult = {
       lat: 1,
       lon: 2,
-      display_name: "test address",
+      display_name: "1, test address",
     };
-    expect(service.transformToObjectFormat(mockGeoResult)).toEqual(
-      mockGeoResult,
+    const newLocationFormat: GeoLocation = {
+      locationString: "1, test address",
+      geoLookup: {
+        lat: 1,
+        lon: 2,
+        display_name: "1, test address",
+      },
+    };
+
+    expect(service.transformToObjectFormat(oldLocationFormat as any)).toEqual(
+      newLocationFormat,
     );
-    expect(service.transformToObjectFormat(123 as any)).toBeUndefined();
+    expect(service.transformToObjectFormat(newLocationFormat)).toEqual(
+      newLocationFormat,
+    );
   });
 
   async function testImportMapping(
     importedValue: string,
     mockedLookup: GeoResult[],
-    expectedResult,
+    expectedResult: GeoLocation,
   ) {
     mockGeoService.lookup.and.returnValue(of(mockedLookup));
 
@@ -53,7 +78,10 @@ describe("Schema data type: location", () => {
       display_name: importedAddress,
     };
 
-    await testImportMapping(importedAddress, [locationResult], locationResult);
+    await testImportMapping(importedAddress, [locationResult], {
+      locationString: importedAddress,
+      geoLookup: locationResult,
+    });
   });
 
   it("should import first lookup location when importing address string resulting in multiple results", async () => {
@@ -67,15 +95,21 @@ describe("Schema data type: location", () => {
     await testImportMapping(
       importedAddress,
       [locationResult, { display_name: "other result", lat: 0, lon: 0 }],
-      locationResult,
+      {
+        locationString: importedAddress,
+        geoLookup: locationResult,
+      },
     );
   });
 
-  it("should import nothing when importing address that isn't found with lookup", async () => {
+  it("should import string without lookup result when importing address that isn't found with lookup", async () => {
     const importedAddress = "21 MyStreet, MyCity";
 
     // TODO: when implementing #1844, extend this to import only custom address string without location object
-    await testImportMapping(importedAddress, [], undefined);
+    await testImportMapping(importedAddress, [], {
+      locationString: importedAddress,
+      geoLookup: undefined,
+    });
   });
 
   it("should not lookup empty address when importing", async () => {
