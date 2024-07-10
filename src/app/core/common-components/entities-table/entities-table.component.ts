@@ -233,9 +233,7 @@ export class EntitiesTableComponent<T extends Entity> {
 
   selectRow(row: TableRow<T>, checked: boolean) {
     if (checked) {
-      if (!this.selectedRecords.includes(row.record)) {
         this.selectedRecords.push(row.record);
-      }
     } else {
       const index = this.selectedRecords.indexOf(row.record);
       if (index > -1) {
