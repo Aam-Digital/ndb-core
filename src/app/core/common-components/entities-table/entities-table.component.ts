@@ -78,6 +78,7 @@ export class EntitiesTableComponent<T extends Entity> {
     this.isLoading = false;
   }
   private lastSelectedIndex: number = null;
+  private lastSelection: boolean = null;
   _records: T[] = [];
   /** data displayed in the template's table */
   recordsDataSource: MatTableDataSource<TableRow<T>>;
@@ -274,28 +275,30 @@ export class EntitiesTableComponent<T extends Entity> {
     this.showEntity(row.record);
     this.entityClick.emit(row.record);
   }
+  onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
+    const currentIndex = this.recordsDataSource.data.indexOf(row);
+if (this._selectable){
 
-  
-onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
-  const currentIndex = this.recordsDataSource.data.indexOf(row);
+    if (event.shiftKey && this.lastSelectedIndex !== null) {
 
-  if (event.shiftKey && this.lastSelectedIndex !== null) {
-    console.log("hehehehehehehhe")
-    const sortedData = this.recordsDataSource.data.slice(); // Get sorted data
-    const start = Math.min(this.lastSelectedIndex, currentIndex);
-    const end = Math.max(this.lastSelectedIndex, currentIndex);
+      const start = Math.min(this.lastSelectedIndex, currentIndex);
+      const end = Math.max(this.lastSelectedIndex, currentIndex);
+      const shouldCheck = this.lastSelection !== null ? !this.lastSelection : !this.selectedRecords.includes(row.record);
 
-    // Select rows based on actual data source indexes
-    for (let i = start; i <= end; i++) {
-      this.selectRow(sortedData[i], true);
+      for (let i = start; i <= end; i++) {
+        this.selectRow(this.recordsDataSource.data[i], shouldCheck);
+      }
+    } else {
+      const isSelected = this.selectedRecords?.includes(row.record);
+      this.selectRow(row, !isSelected);
+      this.lastSelectedIndex = currentIndex;
+      this.lastSelection = isSelected;
     }
-  }  else {
-    console.log("tetetetetettteettete")
-
-    this.onRowClick(row);
-   }
 }
-
+else {
+  this.onRowClick(row)
+}
+  }
 
   onRowSelect(event: MatCheckboxChange, row: TableRow<T>) {
     this.selectRow(row, event.checked);
@@ -317,7 +320,6 @@ onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
   isIndeterminate() {
     return this.selectedRecords.length > 0 && !this.isAllSelected();
   }
-
   showEntity(entity: T) {
     switch (this.clickMode) {
       case "popup":
