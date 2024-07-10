@@ -266,7 +266,6 @@ export class EntitiesTableComponent<T extends Entity> {
     if (row.formGroup && !row.formGroup.disabled) {
       return;
     }
-
     if (this._selectable) {
       this.selectRow(row, !this.selectedRecords?.includes(row.record));
       return;
@@ -275,31 +274,36 @@ export class EntitiesTableComponent<T extends Entity> {
     this.showEntity(row.record);
     this.entityClick.emit(row.record);
   }
+
   onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
-    const currentIndex = this.recordsDataSource.data.indexOf(row);
-if (this._selectable){
-
-    if (event.shiftKey && this.lastSelectedIndex !== null) {
-
-      const start = Math.min(this.lastSelectedIndex, currentIndex);
-      const end = Math.max(this.lastSelectedIndex, currentIndex);
-      const shouldCheck = this.lastSelection !== null ? !this.lastSelection : !this.selectedRecords.includes(row.record);
-
-      for (let i = start; i <= end; i++) {
-        this.selectRow(this.recordsDataSource.data[i], shouldCheck);
+    const sortedData = this.recordsDataSource.sortData(
+      this.recordsDataSource.data,
+      this.recordsDataSource.sort
+    );
+  
+    // Find the index of the row in the sorted and filtered data
+    const currentIndex = sortedData.indexOf(row);
+  
+    if (this._selectable) {
+      if (event.shiftKey && this.lastSelectedIndex !== null) {
+        const start = Math.min(this.lastSelectedIndex, currentIndex);
+        const end = Math.max(this.lastSelectedIndex, currentIndex);
+        const shouldCheck = this.lastSelection !== null ? !this.lastSelection : !this.selectedRecords.includes(row.record);
+  
+        for (let i = start; i <= end; i++) {
+          this.selectRow(sortedData[i], shouldCheck);
+        }
+      } else {
+        const isSelected = this.selectedRecords?.includes(row.record);
+        this.selectRow(row, !isSelected);
+        this.lastSelectedIndex = currentIndex;
+        this.lastSelection = isSelected;
       }
     } else {
-      const isSelected = this.selectedRecords?.includes(row.record);
-      this.selectRow(row, !isSelected);
-      this.lastSelectedIndex = currentIndex;
-      this.lastSelection = isSelected;
+      this.onRowClick(row);
     }
-}
-else {
-  this.onRowClick(row)
-}
   }
-
+  
   onRowSelect(event: MatCheckboxChange, row: TableRow<T>) {
     this.selectRow(row, event.checked);
   }
@@ -320,6 +324,7 @@ else {
   isIndeterminate() {
     return this.selectedRecords.length > 0 && !this.isAllSelected();
   }
+
   showEntity(entity: T) {
     switch (this.clickMode) {
       case "popup":
