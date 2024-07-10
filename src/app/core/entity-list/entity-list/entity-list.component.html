@@ -239,7 +239,7 @@
 
 <ng-template #bulkActions>
   <div *ngIf="!!selectedRows" class="bulk-action-button">
-    <div i18n>Actions on selected records:</div>
+    <div i18n>Actions on <b>{{selectedRows.length}}</b> selected records:</div>
 
     <div
       class="flex-row gap-small bulk-action-button"
