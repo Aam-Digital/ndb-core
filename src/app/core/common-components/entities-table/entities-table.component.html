@@ -58,6 +58,7 @@
         <mat-checkbox
           (change)="onRowSelect($event, row)"
           [checked]="selectedRecords?.includes(row.record)"
+          (click)="$event.stopPropagation()"
         ></mat-checkbox>
       </td>
     </ng-container>

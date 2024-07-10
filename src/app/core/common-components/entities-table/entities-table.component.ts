@@ -10,7 +10,10 @@ import { EntityFieldEditComponent } from "../entity-field-edit/entity-field-edit
 import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
 import { ListPaginatorComponent } from "./list-paginator/list-paginator.component";
-import { MatCheckboxChange, MatCheckboxModule } from "@angular/material/checkbox";
+import {
+  MatCheckboxChange,
+  MatCheckboxModule,
+} from "@angular/material/checkbox";
 import { MatProgressBarModule } from "@angular/material/progress-bar";
 import { MatSlideToggleModule } from "@angular/material/slide-toggle";
 import {
@@ -278,18 +281,21 @@ export class EntitiesTableComponent<T extends Entity> {
   onRowMouseDown(event: MouseEvent, row: TableRow<T>) {
     const sortedData = this.recordsDataSource.sortData(
       this.recordsDataSource.data,
-      this.recordsDataSource.sort
+      this.recordsDataSource.sort,
     );
-  
+
     // Find the index of the row in the sorted and filtered data
     const currentIndex = sortedData.indexOf(row);
-  
+
     if (this._selectable) {
       if (event.shiftKey && this.lastSelectedIndex !== null) {
         const start = Math.min(this.lastSelectedIndex, currentIndex);
         const end = Math.max(this.lastSelectedIndex, currentIndex);
-        const shouldCheck = this.lastSelection !== null ? !this.lastSelection : !this.selectedRecords.includes(row.record);
-  
+        const shouldCheck =
+          this.lastSelection !== null
+            ? !this.lastSelection
+            : !this.selectedRecords.includes(row.record);
+
         for (let i = start; i <= end; i++) {
           this.selectRow(sortedData[i], shouldCheck);
         }
@@ -303,14 +309,16 @@ export class EntitiesTableComponent<T extends Entity> {
       this.onRowClick(row);
     }
   }
-  
+
   onRowSelect(event: MatCheckboxChange, row: TableRow<T>) {
     this.selectRow(row, event.checked);
   }
 
   selectAllRows(event: MatCheckboxChange) {
     if (event.checked) {
-      this.selectedRecords = this.recordsDataSource.data.map(row => row.record);
+      this.selectedRecords = this.recordsDataSource.data.map(
+        (row) => row.record,
+      );
     } else {
       this.selectedRecords = [];
     }
