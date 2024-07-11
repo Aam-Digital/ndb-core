@@ -74,6 +74,7 @@ export abstract class CustomFormControlDirective<T>
 
   set value(value: T) {
     this._value = value;
+    this.onChange(value);
     this.stateChanges.next();
   }
 
@@ -114,7 +115,7 @@ export abstract class CustomFormControlDirective<T>
     );
   }
 
-  abstract onContainerClick(event: MouseEvent);
+  onContainerClick(event: MouseEvent) {}
 
   writeValue(val: T): void {
     this.value = val;
