@@ -297,11 +297,13 @@ export class EntitiesTableComponent<T extends Entity> {
         for (let i = start; i <= end; i++) {
           const rowToSelect = sortedData[i];
           const isSelected = this.selectedRecords.includes(rowToSelect.record);
-          
+
           if (shouldCheck && !isSelected) {
             this.selectedRecords.push(rowToSelect.record);
           } else if (!shouldCheck && isSelected) {
-            this.selectedRecords = this.selectedRecords.filter(record => record !== rowToSelect.record);
+            this.selectedRecords = this.selectedRecords.filter(
+              (record) => record !== rowToSelect.record,
+            );
           }
         }
         this.selectedRecordsChange.emit(this.selectedRecords);
