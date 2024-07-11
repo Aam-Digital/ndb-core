@@ -1,4 +1,4 @@
-<mat-form-field>
+<mat-form-field (click)="clicked()">
   <mat-label>{{ filterConfig.label || filterConfig.name }}</mat-label>
-  <app-range-input (value)="(range)"></app-range-input>
+  <app-range-input [formControl]="formControl"></app-range-input>
 </mat-form-field>

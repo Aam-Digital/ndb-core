@@ -1,7 +1,14 @@
 import { Component, Input, OnChanges, SimpleChanges } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { ReactiveFormsModule } from "@angular/forms";
+import {
+  AbstractControl,
+  FormBuilder,
+  FormControl,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+} from "@angular/forms";
 import { NumberFilter } from "app/core/filter/filters/numberFilter";
 import {
   NumericRange,
@@ -16,15 +23,28 @@ import {
   imports: [MatFormFieldModule, ReactiveFormsModule, RangeInputComponent],
 })
 export class NumberRangeFilterComponent<T extends Entity> implements OnChanges {
+  debug($event: any) {
+    console.log("debug", $event);
+  }
   @Input() filterConfig: NumberFilter<T>;
 
   fromValue: number;
   toValue: number;
   range: NumericRange;
 
+  formControl: FormControl<NumericRange>;
+
   // form: FormGroup;
 
-  constructor() {
+  constructor(fb: FormBuilder) {
+    this.formControl = fb.control(new NumericRange(1, 2), {
+      validators: this.identicalValuesValidator,
+    });
+    this.formControl.valueChanges.subscribe((value) => {
+      console.log("value changed in number filter", value);
+      this.formControl.markAsTouched();
+    });
+
     this.range = new NumericRange(1, 2);
     // this.form = new FormGroup({
     //   range: new FormControl(
@@ -41,11 +61,27 @@ export class NumberRangeFilterComponent<T extends Entity> implements OnChanges {
     // });
   }
 
+  identicalValuesValidator: ValidatorFn = (
+    control: AbstractControl<NumericRange>,
+  ): ValidationErrors | null => {
+    console.log("filter validator", control.value);
+
+    const value: NumericRange = control.value;
+
+    return value?.from && value?.to && value?.from === value?.to
+      ? { identicalValues: true }
+      : null;
+  };
+
   ngOnChanges(changes: SimpleChanges): void {
     console.log("changes: range:", this.range);
     if (changes.filterConfig) {
       // this.initDates();
     }
+  }
+
+  clicked() {
+    console.log("clicked; value:", this.formControl.value);
   }
 
   onNumericRangeChanged(value: any): void {

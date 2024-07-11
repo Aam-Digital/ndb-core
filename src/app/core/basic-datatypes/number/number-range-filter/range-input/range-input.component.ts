@@ -38,6 +38,7 @@ import { ErrorHintComponent } from "app/core/common-components/error-hint/error-
 export class RangeInputComponent extends CustomFormControlDirective<NumericRange> {
   formGroup: FormGroup;
 
+  /*
   @Input()
   get value(): NumericRange | null {
     let n = this.formGroup.value;
@@ -51,7 +52,9 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
       from: range?.from ?? null,
       to: range?.to ?? null,
     });
+    this.stateChanges.next();
   }
+    */
 
   constructor(
     elementRef: ElementRef<HTMLElement>,
@@ -68,13 +71,20 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
       parentForm,
       parentFormGroup,
     );
-
+    /*
     this.formGroup = fb.group({
       from: [""],
       to: [""],
     });
+    this.formGroup.valueChanges.subscribe(() => {
+      console.log(
+        "internal range formGroup value changed",
+        this.formGroup.value,
+      );
+      this.value = this.formGroup.value;
+    });*/
   }
-
+  /*
   identicalValuesValidator: ValidatorFn = (
     control: AbstractControl,
   ): ValidationErrors | null => {
@@ -99,6 +109,9 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
     if ((event.target as Element).tagName.toLowerCase() != "input") {
       this.elementRef.nativeElement.querySelector("input").focus();
     }
+  }*/
+  onContainerClick(event: MouseEvent) {
+    this.value = { from: 0, to: 0 };
   }
 }
 
