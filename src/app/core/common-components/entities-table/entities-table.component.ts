@@ -295,8 +295,16 @@ export class EntitiesTableComponent<T extends Entity> {
             : !this.selectedRecords.includes(row.record);
 
         for (let i = start; i <= end; i++) {
-          this.selectRow(sortedData[i], shouldCheck);
+          const rowToSelect = sortedData[i];
+          const isSelected = this.selectedRecords.includes(rowToSelect.record);
+          
+          if (shouldCheck && !isSelected) {
+            this.selectedRecords.push(rowToSelect.record);
+          } else if (!shouldCheck && isSelected) {
+            this.selectedRecords = this.selectedRecords.filter(record => record !== rowToSelect.record);
+          }
         }
+        this.selectedRecordsChange.emit(this.selectedRecords);
       } else {
         const isSelected = this.selectedRecords?.includes(row.record);
         this.selectRow(row, !isSelected);
