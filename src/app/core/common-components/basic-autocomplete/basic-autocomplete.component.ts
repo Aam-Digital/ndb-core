@@ -290,7 +290,12 @@ export class BasicAutocompleteComponent<O, V = O>
     }
 
     if (selected) {
-      this.selectOption(selected);
+      this.selectOption(selected, true);
+  
+      if (this.multi) {
+        const selectedOptionsString = this._selectedOptions.map(o => o.asString).join(', ');
+        this.autocompleteForm.setValue(selectedOptionsString, { emitEvent: false });
+      }
     } else {
       this.autocompleteForm.setValue("");
       this._selectedOptions = [];
@@ -324,13 +329,20 @@ export class BasicAutocompleteComponent<O, V = O>
     }
   }
 
-  private selectOption(option: SelectableOption<O, V>) {
+  private selectOption(option: SelectableOption<O, V>, retainInputValue: boolean = true) {
     if (this.multi) {
       option.selected = !option.selected;
       this._selectedOptions = this._options.filter((o) => o.selected);
       this.value = this._selectedOptions.map((o) => o.asValue);
-      // re-open autocomplete to select next option
-      this.showAutocomplete();
+  
+      if (retainInputValue) {
+        // Keep the current input value
+        const currentInput = this.autocompleteForm.value['asString'];
+        this.showAutocomplete(currentInput);
+      } else {
+        // Re-open autocomplete to select next option
+        this.showAutocomplete();
+      }
     } else {
       this._selectedOptions = [option];
       this.value = option.asValue;

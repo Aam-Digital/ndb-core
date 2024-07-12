@@ -818,7 +818,9 @@ export const defaultJsonConfig = {
         "label": $localize`:Label for if a school is a private school:Private School`
       },
       "language": {
-        "dataType": "string",
+        "dataType": "configurable-enum",
+        "additional": "genders",
+        "isArray": true,
         "label": $localize`:Label for the language of a school:Language`
       },
       "address": {
