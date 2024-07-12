@@ -14,6 +14,7 @@ import {
   MapPopupConfig,
 } from "../map-popup/map-popup.component";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
+import { NgControl } from "@angular/forms";
 
 describe("LocationInputComponent", () => {
   let component: LocationInputComponent;
@@ -230,5 +231,23 @@ describe("LocationInputComponent", () => {
     tick();
 
     expect(component.value).toEqual(existingValue);
+  }));
+
+  it("should do a lookup when input leaves focus and select geo location if only one result", fakeAsync(() => {
+    component.ngControl = component.ngControl ?? ({ dirty: true } as NgControl);
+    component.value = {
+      locationString: "manual address",
+      geoLookup: undefined,
+    };
+    mockGeoService.lookup.and.returnValue(of([SAMPLE_GEO_RESULT]));
+
+    component.blur();
+    tick();
+
+    expect(mockGeoService.lookup).toHaveBeenCalledWith("manual address");
+    expect(component.value).toEqual({
+      locationString: "manual address",
+      geoLookup: SAMPLE_GEO_RESULT,
+    });
   }));
 });

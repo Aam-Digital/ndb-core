@@ -1,4 +1,4 @@
-import { Component, ElementRef, Optional, Self } from "@angular/core";
+import { Component, ElementRef, Input, Optional, Self } from "@angular/core";
 import {
   FormGroupDirective,
   FormsModule,
@@ -11,7 +11,7 @@ import { MatInput } from "@angular/material/input";
 import { MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { CustomFormControlDirective } from "../../../core/common-components/basic-autocomplete/custom-form-control.directive";
-import { GeoResult } from "../geo.service";
+import { GeoResult, GeoService } from "../geo.service";
 import {
   MapPopupComponent,
   MapPopupConfig,
@@ -40,6 +40,11 @@ import { ConfirmationDialogService } from "../../../core/common-components/confi
   styleUrls: ["./location-input.component.scss"],
 })
 export class LocationInputComponent extends CustomFormControlDirective<GeoLocation> {
+  /**
+   * Automatically run an address lookup when the user leaves the input field.
+   */
+  @Input() autoLookup = true;
+
   constructor(
     elementRef: ElementRef<HTMLElement>,
     errorStateMatcher: ErrorStateMatcher,
@@ -49,6 +54,7 @@ export class LocationInputComponent extends CustomFormControlDirective<GeoLocati
 
     private dialog: MatDialog,
     private confirmationDialog: ConfirmationDialogService,
+    private geoService: GeoService,
   ) {
     super(
       elementRef,
@@ -72,7 +78,10 @@ export class LocationInputComponent extends CustomFormControlDirective<GeoLocati
     };
   }
 
-  async updateGeoLookup(value: GeoResult | undefined) {
+  async updateGeoLookup(
+    value: GeoResult | undefined,
+    skipConfirmation: boolean = false,
+  ) {
     if (value === this.value.geoLookup) {
       // nothing changed, skip
       return;
@@ -90,10 +99,11 @@ export class LocationInputComponent extends CustomFormControlDirective<GeoLocati
         // if manualAddress has been automatically set before, we assume the user wants to auto update now also
         manualAddress === this.value?.geoLookup?.display_name ||
         // otherwise ask user if they want to apply the lookup location
-        (await this.confirmationDialog.getConfirmation(
-          $localize`Update custom address?`,
-          $localize`Do you want to overwrite the custom address to the full address from the online lookup? This will replace "${manualAddress}" with "${lookupAddress}". The marked location on the map will be unaffected by this choice.`,
-        ))
+        (!skipConfirmation &&
+          (await this.confirmationDialog.getConfirmation(
+            $localize`Update custom address?`,
+            $localize`Do you want to overwrite the custom address to the full address from the online lookup? This will replace "${manualAddress}" with "${lookupAddress}". The marked location on the map will be unaffected by this choice.`,
+          )))
       ) {
         manualAddress = lookupAddress;
       }
@@ -126,4 +136,48 @@ export class LocationInputComponent extends CustomFormControlDirective<GeoLocati
         .subscribe((result: GeoResult[]) => this.updateGeoLookup(result[0]));
     }
   }
+
+  blur() {
+    super.blur();
+
+    if (
+      this.autoLookup &&
+      this.ngControl.dirty &&
+      this.value?.locationString?.length > 3
+    ) {
+      this.runAddressLookup();
+    }
+  }
+
+  private runAddressLookup() {
+    this.geoService.lookup(this.value.locationString).subscribe((results) => {
+      if (results.length === 0) {
+        // probably okay, just leave things as they are. Maybe we should warn users?
+      } else if (results.length === 1) {
+        if (!this.value.geoLookup) {
+          this.updateGeoLookup(results[0], true);
+        } else if (!matchGeoResults(this.value.geoLookup, results[0])) {
+          // we have an existing lookup, but it's different from the results ... needs user confirmation?
+          // TODO
+        }
+      } else {
+        // multiple locations found
+        if (
+          results.some((r: GeoResult) =>
+            matchGeoResults(r, this.value.geoLookup),
+          )
+        ) {
+          // all good, most likely the current location is still correct
+          return;
+        }
+
+        // multiple options ... what do we do with that?
+        // TODO
+      }
+    });
+  }
+}
+
+function matchGeoResults(a: GeoResult, b: GeoResult) {
+  return a.lat === b.lat && a.lon === b.lon;
 }

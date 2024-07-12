@@ -4,6 +4,7 @@ import { EditLocationComponent } from "./edit-location.component";
 import { setupEditComponent } from "../../../core/entity/default-datatype/edit-component.spec";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
+import { GeoService } from "../geo.service";
 
 describe("EditLocationComponent", () => {
   let component: EditLocationComponent;
@@ -16,6 +17,7 @@ describe("EditLocationComponent", () => {
         NoopAnimationsModule,
         FontAwesomeTestingModule,
       ],
+      providers: [{ provide: GeoService, useValue: null }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(EditLocationComponent);
