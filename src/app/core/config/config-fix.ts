@@ -818,6 +818,7 @@ export const defaultJsonConfig = {
         "label": $localize`:Label for if a school is a private school:Private School`
       },
       "language": {
+        // ToDo - Remove multi-select option from this
         "dataType": "configurable-enum",
         "additional": "genders",
         "isArray": true,
