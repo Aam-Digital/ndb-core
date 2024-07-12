@@ -153,7 +153,7 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
   }
-
+  retainSearchValue: string;
   private _options: SelectableOption<O, V>[] = [];
 
   _selectedOptions: SelectableOption<O, V>[] = [];
@@ -182,6 +182,12 @@ export class BasicAutocompleteComponent<O, V = O>
   ngOnInit() {
     this.autocompleteSuggestedOptions.subscribe((options) => {
       this.autocompleteOptions = options;
+    });
+    // Subscribe to the valueChanges observable to print the input value
+    this.autocompleteForm.valueChanges.subscribe((value) => {
+      if (typeof value === "string") {
+        this.retainSearchValue = value;
+      }
     });
   }
 
@@ -226,7 +232,11 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   showAutocomplete(valueToRevertTo?: string) {
-    this.autocompleteForm.setValue("");
+    if (this.retainSearchValue) {
+      this.autocompleteForm.setValue(this.retainSearchValue);
+    } else {
+      this.autocompleteForm.setValue("");
+    }
     if (!this.multi) {
       // cannot setValue to "" here because the current selection would be lost
       this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
@@ -290,12 +300,7 @@ export class BasicAutocompleteComponent<O, V = O>
     }
 
     if (selected) {
-      this.selectOption(selected, true);
-  
-      if (this.multi) {
-        const selectedOptionsString = this._selectedOptions.map(o => o.asString).join(', ');
-        this.autocompleteForm.setValue(selectedOptionsString, { emitEvent: false });
-      }
+      this.selectOption(selected);
     } else {
       this.autocompleteForm.setValue("");
       this._selectedOptions = [];
@@ -329,20 +334,13 @@ export class BasicAutocompleteComponent<O, V = O>
     }
   }
 
-  private selectOption(option: SelectableOption<O, V>, retainInputValue: boolean = true) {
+  private selectOption(option: SelectableOption<O, V>) {
     if (this.multi) {
       option.selected = !option.selected;
       this._selectedOptions = this._options.filter((o) => o.selected);
       this.value = this._selectedOptions.map((o) => o.asValue);
-  
-      if (retainInputValue) {
-        // Keep the current input value
-        const currentInput = this.autocompleteForm.value['asString'];
-        this.showAutocomplete(currentInput);
-      } else {
-        // Re-open autocomplete to select next option
-        this.showAutocomplete();
-      }
+      // re-open autocomplete to select next option
+      this.showAutocomplete();
     } else {
       this._selectedOptions = [option];
       this.value = option.asValue;
