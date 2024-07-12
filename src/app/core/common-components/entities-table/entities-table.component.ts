@@ -286,6 +286,10 @@ export class EntitiesTableComponent<T extends Entity> {
     const currentIndex = sortedData.indexOf(row);
 
     if (this._selectable) {
+      const isCheckboxClick =
+        event.target instanceof HTMLInputElement &&
+        event.target.type === "checkbox";
+
       if (event.shiftKey && this.lastSelectedIndex !== null) {
         const start = Math.min(this.lastSelectedIndex, currentIndex);
         const end = Math.max(this.lastSelectedIndex, currentIndex);
@@ -308,10 +312,14 @@ export class EntitiesTableComponent<T extends Entity> {
         }
         this.selectedRecordsChange.emit(this.selectedRecords);
       } else {
-        const isSelected = this.selectedRecords?.includes(row.record);
+        const isSelected = this.selectedRecords.includes(row.record);
         this.selectRow(row, !isSelected);
         this.lastSelectedIndex = currentIndex;
         this.lastSelection = isSelected;
+      }
+
+      if (isCheckboxClick) {
+        this.onRowClick(row);
       }
     } else {
       this.onRowClick(row);
