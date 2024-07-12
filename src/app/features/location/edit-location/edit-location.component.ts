@@ -7,6 +7,10 @@ import { MatError, MatFormField, MatLabel } from "@angular/material/form-field";
 import { ReactiveFormsModule } from "@angular/forms";
 import { ErrorHintComponent } from "../../../core/common-components/error-hint/error-hint.component";
 
+/**
+ * Wrapper of LocationInput for use as an EditComponent.
+ * (this should become obsolete after we refactor all EditComponents to be implemented as FormControls)
+ */
 @DynamicComponent("EditLocation")
 @Component({
   selector: "app-edit-location",

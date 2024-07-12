@@ -4,7 +4,7 @@ import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { BehaviorSubject, Observable, Subject } from "rxjs";
 import { MapComponent } from "../map/map.component";
-import { AsyncPipe, NgIf } from "@angular/common";
+import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
 import { AddressSearchComponent } from "../address-search/address-search.component";
@@ -30,6 +30,9 @@ export interface MapPopupConfig {
   initialSearchText?: string;
 }
 
+/**
+ * A dialog to display an OpenStreetMap map with markers and optionally allow the user to select a location.
+ */
 @Component({
   selector: "app-map-popup",
   templateUrl: "./map-popup.component.html",
@@ -37,7 +40,6 @@ export interface MapPopupConfig {
   imports: [
     MatDialogModule,
     MapComponent,
-    NgIf,
     MatButtonModule,
     AsyncPipe,
     AddressSearchComponent,

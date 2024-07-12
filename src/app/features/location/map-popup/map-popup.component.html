@@ -21,7 +21,9 @@
   @if (data.disabled) {
     <button mat-raised-button mat-dialog-close i18n>Close</button>
   } @else {
-    <p *ngIf="helpText" class="help-text">{{ helpText }}</p>
+    @if (helpText) {
+      <p class="help-text">{{ helpText }}</p>
+    }
 
     <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
     <button mat-raised-button [mat-dialog-close]="markedLocations | async" i18n>

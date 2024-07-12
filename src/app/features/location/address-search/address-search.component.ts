@@ -33,6 +33,10 @@ import { LoggingService } from "../../../core/logging/logging.service";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 
+/**
+ * A search box integrated with OpenStreetMaps lookup of the entered address,
+ * offering matching locations as an autocomplete-style dropdown.
+ */
 @Component({
   selector: "app-address-search",
   standalone: true,
@@ -54,7 +58,7 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 })
 export class AddressSearchComponent {
   /**
-   * The (as input initial) search text, for which locations are looked up.
+   * The search text, for which locations are looked up (as initial input to prefill the field).
    */
   @Input() set searchText(value: string) {
     if (!(typeof value === "string")) {
@@ -70,10 +74,13 @@ export class AddressSearchComponent {
    * Whenever the user selects an actual looked up location, it is emitted here.
    */
   @Output() selectedLocationChange = new EventEmitter<GeoResult>();
+  /**
+   * The initially pre-selected location (displayed in addition to the search field allowing to change it).
+   */
   @Input() selectedLocation: GeoResult;
 
   /**
-   * Whether the user can search and change the location.
+   * Whether the search box is enabled and visible.
    */
   @Input() disabled: boolean;
 
@@ -84,6 +91,7 @@ export class AddressSearchComponent {
   @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
   private inputStream = new Subject<string>();
   private lastSearch: string;
+
   /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
 
