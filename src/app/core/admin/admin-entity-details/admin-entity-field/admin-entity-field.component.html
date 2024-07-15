@@ -156,7 +156,7 @@
 
             <app-anonymize-options
               [value]="entitySchemaField.anonymize"
-              (valueChange)="changeFieldAnonymization($event)"
+              (valueChange)="schemaFieldsForm.get('anonymize').setValue($event)"
             >
               <span i18n>Anonymize</span>
               <fa-icon
