@@ -2,13 +2,14 @@ import { Component, Inject } from "@angular/core";
 import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
-import { BehaviorSubject, Observable, Subject } from "rxjs";
+import { BehaviorSubject, firstValueFrom, Observable, of, Subject } from "rxjs";
 import { MapComponent } from "../map/map.component";
 import { AsyncPipe } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { LocationProperties } from "../map/map-properties-popup/map-properties-popup.component";
 import { AddressSearchComponent } from "../address-search/address-search.component";
-import { GeoResult } from "../geo.service";
+import { GeoResult, GeoService } from "../geo.service";
+import { catchError, map } from "rxjs/operators";
 
 export interface MapPopupConfig {
   marked?: Coordinates[];
@@ -53,6 +54,7 @@ export class MapPopupComponent {
   constructor(
     @Inject(MAT_DIALOG_DATA)
     public data: MapPopupConfig,
+    private geoService: GeoService,
   ) {
     this.markedLocations = new BehaviorSubject<GeoResult[]>(
       (data.marked as GeoResult[]) ?? [],
@@ -62,15 +64,29 @@ export class MapPopupComponent {
     }
   }
 
-  mapClicked(newCoordinates: Coordinates) {
+  async mapClicked(newCoordinates: Coordinates) {
     if (this.data.disabled) {
       return;
     }
-    const geoResult: GeoResult = {
-      ...newCoordinates,
-      display_name: $localize`[selected on map: ${newCoordinates.lat} - ${newCoordinates.lon}]`,
-    };
+    const geoResult: GeoResult = await firstValueFrom(
+      this.lookupCoordinates(newCoordinates),
+    );
     this.updateLocation(geoResult);
+  }
+
+  private lookupCoordinates(coords: Coordinates) {
+    if (!coords) {
+      return undefined;
+    }
+
+    const fallback: GeoResult = {
+      display_name: $localize`[selected on map: ${coords.lat} - ${coords.lon}]`,
+      ...coords,
+    };
+    return this.geoService.reverseLookup(coords).pipe(
+      map((res) => (res["error"] ? fallback : res)),
+      catchError(() => of(fallback)),
+    );
   }
 
   updateLocation(event: GeoResult) {

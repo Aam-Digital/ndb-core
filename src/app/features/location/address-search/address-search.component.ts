@@ -148,26 +148,4 @@ export class AddressSearchComponent {
       }),
     );
   }
-
-  private lookupCoordinates(coords: Coordinates) {
-    if (!coords) {
-      return undefined;
-    }
-
-    if (
-      coords.lat === this.selectedLocation?.lat &&
-      coords.lon === this.selectedLocation?.lon
-    ) {
-      return of(this.selectedLocation);
-    }
-
-    const fallback = {
-      display_name: `${coords.lat} - ${coords.lon}`,
-      ...coords,
-    };
-    return this.location.reverseLookup(coords).pipe(
-      map((res) => (res["error"] ? fallback : res)),
-      catchError(() => of(fallback)),
-    );
-  }
 }

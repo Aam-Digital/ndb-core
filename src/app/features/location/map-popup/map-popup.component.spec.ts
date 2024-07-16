@@ -24,7 +24,11 @@ describe("MapPopupComponent", () => {
   beforeEach(async () => {
     mapClick = new Subject<Coordinates>();
     mockGeoService = jasmine.createSpyObj(["lookup", "reverseLookup"]);
-    mockGeoService.lookup.and.returnValue(of([]));
+    mockGeoService.reverseLookup.and.returnValue(
+      of({
+        error: "Unable to geocode",
+      } as any),
+    );
 
     await TestBed.configureTestingModule({
       imports: [
@@ -72,6 +76,21 @@ describe("MapPopupComponent", () => {
     tick();
 
     expect(updatedLocations).toEqual([expectedAfterFirstClick]);
+  }));
+
+  it("should set new location upon map clicks with reverse-lookup of address", fakeAsync(() => {
+    let updatedLocations: GeoResult[];
+    component.markedLocations.subscribe((res) => (updatedLocations = res));
+
+    const mockedClick: Coordinates = { lat: 1, lon: 2 };
+    const fullLocation = { display_name: "lookup result", ...mockedClick };
+    mockGeoService.reverseLookup.and.returnValue(of(fullLocation));
+
+    component.mapClicked(mockedClick);
+    tick();
+
+    expect(mockGeoService.reverseLookup).toHaveBeenCalledWith(mockedClick);
+    expect(updatedLocations).toEqual([fullLocation]);
   }));
 
   it("should update location if received from address search", fakeAsync(() => {
