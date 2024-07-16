@@ -59,13 +59,15 @@ describe("AddressSearchComponent", () => {
 
     tick(2000);
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
-    expect(component.loading).toBeTrue();
+    expect(component.loading).toBeFalse();
+
+    // change input before debounce --> restarts timeouts
     await inputElement.clear();
     await inputElement.sendKeys("input 2");
 
-    tick(1200);
+    tick(700);
     expect(mockGeoService.lookup).not.toHaveBeenCalled();
-    expect(component.loading).toBeTrue();
+    expect(component.loading).toBeFalse();
     expect(options).toBeUndefined();
 
     tick(2000);

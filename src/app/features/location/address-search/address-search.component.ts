@@ -18,17 +18,9 @@ import {
 } from "@angular/material/form-field";
 import { MatInput } from "@angular/material/input";
 import { AsyncPipe } from "@angular/common";
-import { of, Subject } from "rxjs";
+import { merge, Subject } from "rxjs";
 import { GeoResult, GeoService } from "../geo.service";
-import {
-  catchError,
-  concatMap,
-  debounceTime,
-  filter,
-  map,
-  tap,
-} from "rxjs/operators";
-import { Coordinates } from "../coordinates";
+import { concatMap, debounceTime, filter, map, tap } from "rxjs/operators";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
@@ -90,6 +82,7 @@ export class AddressSearchComponent {
 
   @ViewChild("inputElement") private inputElem: ElementRef<HTMLInputElement>;
   private inputStream = new Subject<string>();
+  private searchClickStream = new Subject<string>();
   private lastSearch: string;
 
   /** do not display selected item in the input field because this should be an empty search field */
@@ -101,22 +94,27 @@ export class AddressSearchComponent {
   ) {}
 
   ngOnInit() {
-    this.inputStream
+    this.initSearchPipeline();
+  }
+
+  private initSearchPipeline() {
+    merge(this.inputStream.pipe(debounceTime(2500)), this.searchClickStream)
       .pipe(
-        debounceTime(200),
+        tap(() => (this.nothingFound = false)),
         map((input) => input.trim()),
         filter((input) => this.isRelevantInput(input)),
         tap(() => (this.loading = true)),
-        debounceTime(3000),
+        debounceTime(200),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
       .subscribe((res) => this.filteredOptions.next(res));
   }
 
   triggerInputUpdate() {
-    this.nothingFound = false;
-
     this.inputStream.next(this.inputElem.nativeElement.value);
+  }
+  searchClick() {
+    this.searchClickStream.next(this.inputElem.nativeElement.value);
   }
 
   private isRelevantInput(input: string): boolean {
