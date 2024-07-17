@@ -6,10 +6,11 @@ import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.servi
 import {
   cleanUpTemporarySchemaFields,
   getDefaultInheritedForm,
-  testDefaultValueCase,
 } from "./default-value.service.spec";
-import { DefaultValueService } from "./default-value.service";
 import { DynamicPlaceholderValueService } from "./dynamic-placeholder-value.service";
+import { FormControl, FormGroup } from "@angular/forms";
+import { EntityForm } from "../common-components/entity-form/entity-form.service";
+import { DefaultValueService } from "./default-value.service";
 
 describe("InheritedValueService", () => {
   let service: InheritedValueService;
@@ -38,8 +39,24 @@ describe("InheritedValueService", () => {
   });
 
   it("should do nothing, if field in parent entity is missing", () => {
-    return testDefaultValueCase(
-      defaultValueService,
+    // given
+    let entity = new Entity();
+
+    let form: EntityForm<any> = {
+      formGroup: new FormGroup<any>({
+        field1: new FormControl(),
+      }),
+      entity: entity,
+      defaultValueConfigs: new Map(),
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
+
+    let targetFormControl = form.formGroup.get("field1");
+
+    // when
+    service.setDefaultValue(
+      targetFormControl,
       {
         defaultValue: {
           mode: "inherited",
@@ -47,75 +64,143 @@ describe("InheritedValueService", () => {
           localAttribute: "reference-1",
         },
       },
-      null,
+      form,
     );
+
+    // then
+    expect(targetFormControl.value).toBe(null);
+    expect(
+      form.watcher.has("sourceFormControlValueChanges_field1"),
+    ).toBeFalse();
   });
 
   it("should set default value on FormControl, if target field empty", fakeAsync(() => {
     // given
-    let form = getDefaultInheritedForm({
-      field: {
+    let entity = new Entity();
+    entity["foo"] = "bar";
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
+
+    let form: EntityForm<any> = {
+      formGroup: new FormGroup<any>({
+        field1: new FormControl(),
+        field2: new FormControl(),
+      }),
+      entity: entity,
+      defaultValueConfigs: new Map(),
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
+
+    let targetFormControl = form.formGroup.get("field1");
+
+    // when
+    service.setDefaultValue(
+      targetFormControl,
+      {
+        isArray: false,
         defaultValue: {
           mode: "inherited",
           field: "foo",
-          localAttribute: "reference-1",
+          localAttribute: "field2",
         },
       },
-    });
-
-    let entity0 = new Entity();
-    entity0["foo"] = "bar";
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+      form,
+    );
 
     // when
-    defaultValueService.handleEntityForm(form, form.entity);
     tick();
-    form.formGroup.get("reference-1").setValue("Entity:0");
+    form.formGroup.get("field2").setValue("Entity:0");
     tick(10); // fetching reference is always async
 
     // then
-    expect(form.formGroup.get("field").value).toBe("bar");
+    expect(form.watcher.has("sourceFormControlValueChanges_field2")).toBeTrue();
+    expect(targetFormControl.value).toBe("bar");
   }));
 
   it("should set default array value on FormControl, if target field empty", fakeAsync(() => {
     // given
-    let form = getDefaultInheritedForm({
-      field: {
+    let entity = new Entity();
+    entity["foo"] = ["bar", "doo"];
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
+
+    let form: EntityForm<any> = {
+      formGroup: new FormGroup<any>({
+        field1: new FormControl(),
+        field2: new FormControl(),
+      }),
+      entity: entity,
+      defaultValueConfigs: new Map(),
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
+
+    let targetFormControl = form.formGroup.get("field1");
+
+    // when
+    service.setDefaultValue(
+      targetFormControl,
+      {
         isArray: true,
         defaultValue: {
           mode: "inherited",
           field: "foo",
-          localAttribute: "reference-1",
+          localAttribute: "field2",
         },
       },
-    });
-
-    let entity0 = new Entity();
-    entity0["foo"] = ["bar", "doo"];
-    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+      form,
+    );
 
     // when
-    defaultValueService.handleEntityForm(form, form.entity);
     tick();
-    form.formGroup.get("reference-1").setValue("Entity:0");
+    form.formGroup.get("field2").setValue("Entity:0");
     tick(10); // fetching reference is always async
 
     // then
-    expect(form.formGroup.get("field").value).toEqual(["bar", "doo"]);
+    expect(form.watcher.has("sourceFormControlValueChanges_field2")).toBeTrue();
+    expect(targetFormControl.value).toEqual(["bar", "doo"]);
   }));
 
   it("should set value on FormControl, if source is single value array", fakeAsync(() => {
     // given
-    let form = getDefaultInheritedForm({
-      field: {
+    let entity = new Entity();
+    entity["foo"] = ["bar", "doo"];
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity));
+
+    let form: EntityForm<any> = {
+      formGroup: new FormGroup<any>({
+        field1: new FormControl(),
+        field2: new FormControl(),
+      }),
+      entity: entity,
+      defaultValueConfigs: new Map(),
+      watcher: new Map(),
+      inheritedParentValues: new Map(),
+    };
+
+    let targetFormControl = form.formGroup.get("field1");
+
+    // when
+    service.setDefaultValue(
+      targetFormControl,
+      {
         isArray: true,
         defaultValue: {
           mode: "inherited",
           field: "foo",
-          localAttribute: "reference-1",
+          localAttribute: "field2",
         },
       },
-    });
+      form,
+    );
+
+    // when
+    tick();
+    form.formGroup.get("field2").setValue("Entity:0");
+    tick(10); // fetching reference is always async
+
+    // then
+    expect(form.watcher.has("sourceFormControlValueChanges_field2")).toBeTrue();
+    expect(targetFormControl.value).toEqual(["bar", "doo"]);
 
     let entity0 = new Entity();
     entity0["foo"] = ["bar"];
@@ -158,7 +243,7 @@ describe("InheritedValueService", () => {
     expect(form.formGroup.get("field").value).toEqual(null);
   }));
 
-  it("should reset FormControl, if parent field got cleared", fakeAsync(() => {
+  it("should reset FormControl, if parent (array) field got cleared", fakeAsync(() => {
     // given
     let form = getDefaultInheritedForm({
       field: {
@@ -171,11 +256,56 @@ describe("InheritedValueService", () => {
       },
     });
 
+    let entity0 = new Entity();
+    entity0["foo"] = ["bar", "doo"];
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+
     // when
     defaultValueService.handleEntityForm(form, form.entity);
     tick();
-    form.formGroup.get("reference-1").setValue("foo bar doo");
+    form.formGroup.get("reference-1").setValue("foo");
     tick();
+
+    expect(form.formGroup.get("field").value).toEqual(["bar", "doo"]);
+
+    // when/then
+    form.formGroup.get("reference-1").setValue(null);
+    tick(); // fetching reference is always async
+    expect(form.formGroup.get("field").value).toBe(undefined);
+
+    form.formGroup.get("reference-1").setValue(undefined);
+    tick(); // fetching reference is always async
+    expect(form.formGroup.get("field").value).toBe(undefined);
+
+    form.formGroup.get("reference-1").setValue("");
+    tick(); // fetching reference is always async
+    expect(form.formGroup.get("field").value).toBe(undefined);
+  }));
+
+  it("should reset FormControl, if parent (single value) field got cleared", fakeAsync(() => {
+    // given
+    let form = getDefaultInheritedForm({
+      field: {
+        isArray: false,
+        defaultValue: {
+          mode: "inherited",
+          field: "foo",
+          localAttribute: "reference-1",
+        },
+      },
+    });
+
+    let entity0 = new Entity();
+    entity0["foo"] = "bar";
+    mockEntityMapperService.load.and.returnValue(Promise.resolve(entity0));
+
+    // when
+    defaultValueService.handleEntityForm(form, form.entity);
+    tick();
+    form.formGroup.get("reference-1").setValue("foo");
+    tick();
+
+    expect(form.formGroup.get("field").value).toBe("bar");
 
     // when/then
     form.formGroup.get("reference-1").setValue(null);
