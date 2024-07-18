@@ -1,13 +1,12 @@
 <mat-dialog-content style="max-height: 90vh">
-  <app-address-search
-    [selectedLocation]="(markedLocations | async)?.[0]"
-    (selectedLocationChange)="updateLocation($event)"
+  <app-address-edit
     [disabled]="data.disabled"
-    [searchText]="data.initialSearchText"
-  ></app-address-search>
+    [selectedLocation]="selectedLocation"
+    (selectedLocationChange)="updateLocation($event)"
+  ></app-address-edit>
 
   <app-map
-    height="70vh"
+    height="65vh"
     [marked]="markedLocations | async"
     [(displayedProperties)]="data.displayedProperties"
     [entities]="data.entities | async"
@@ -26,7 +25,7 @@
     }
 
     <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
-    <button mat-raised-button [mat-dialog-close]="markedLocations | async" i18n>
+    <button mat-raised-button [mat-dialog-close]="[selectedLocation]" i18n>
       Save
     </button>
   }

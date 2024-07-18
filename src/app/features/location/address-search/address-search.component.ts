@@ -24,6 +24,7 @@ import { concatMap, debounceTime, filter, map, tap } from "rxjs/operators";
 import { LoggingService } from "../../../core/logging/logging.service";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { GeoLocation } from "../location.datatype";
 
 /**
  * A search box integrated with OpenStreetMaps lookup of the entered address,
@@ -65,16 +66,7 @@ export class AddressSearchComponent {
   /**
    * Whenever the user selects an actual looked up location, it is emitted here.
    */
-  @Output() selectedLocationChange = new EventEmitter<GeoResult>();
-  /**
-   * The initially pre-selected location (displayed in addition to the search field allowing to change it).
-   */
-  @Input() selectedLocation: GeoResult;
-
-  /**
-   * Whether the search box is enabled and visible.
-   */
-  @Input() disabled: boolean;
+  @Output() locationSelected = new EventEmitter<GeoLocation>();
 
   filteredOptions = new Subject<GeoResult[]>();
   loading = false;
@@ -100,10 +92,12 @@ export class AddressSearchComponent {
   private initSearchPipeline() {
     merge(this.inputStream.pipe(debounceTime(2500)), this.searchClickStream)
       .pipe(
-        tap(() => (this.nothingFound = false)),
         map((input) => input.trim()),
         filter((input) => this.isRelevantInput(input)),
-        tap(() => (this.loading = true)),
+        tap(() => {
+          this.nothingFound = false;
+          this.loading = true;
+        }),
         debounceTime(200),
         concatMap((res) => this.getGeoLookupResult(res)),
       )
@@ -122,19 +116,21 @@ export class AddressSearchComponent {
       !!input &&
       input.length > 3 &&
       input.localeCompare("[object Object]") !== 0 &&
-      input.localeCompare(this.lastSearch) !== 0 &&
-      input.localeCompare(this.selectedLocation?.display_name) !== 0
+      input.localeCompare(this.lastSearch) !== 0
     );
   }
 
-  selectLocation(selected: GeoResult | undefined) {
-    this.selectedLocation = selected;
-    this.selectedLocationChange.emit(selected);
-    this.filteredOptions.next([]);
-  }
+  selectLocation(selected: GeoResult | string | undefined) {
+    let result: GeoLocation;
+    if (typeof selected === "object") {
+      result = { geoLookup: selected };
+    } else if (typeof selected === "string") {
+      // special case to set address text from search without mapped location (when no result was found)
+      result = { locationString: selected };
+    }
 
-  clearLocation() {
-    this.selectLocation(undefined);
+    this.locationSelected.emit(result);
+    this.filteredOptions.next([]);
   }
 
   private getGeoLookupResult(searchTerm: string) {

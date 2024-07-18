@@ -13,6 +13,7 @@ import { TestbedHarnessEnvironment } from "@angular/cdk/testing/testbed";
 import { MatInputHarness } from "@angular/material/input/testing";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { GeoLocation } from "../location.datatype";
 
 describe("AddressSearchComponent", () => {
   let component: AddressSearchComponent;
@@ -92,37 +93,18 @@ describe("AddressSearchComponent", () => {
     await expectLookup("search term", true, inputElement);
     mockGeoService.lookup.calls.reset();
     await expectLookup("search term", false, inputElement);
-
-    // value that is already set on the form
-    const display_name = "already entered location";
-    component.selectedLocation = { display_name } as any;
-    fixture.detectChanges();
-    await expectLookup(display_name, false, inputElement);
   }));
-
-  it("should clear selected location when clicking 'Remove'", async () => {
-    component.selectedLocation = { display_name: "some value" } as any;
-
-    spyOn(component.selectedLocationChange, "emit");
-    component.clearLocation();
-
-    expect(component.selectedLocation).toBeUndefined();
-    expect(component.selectedLocationChange.emit).toHaveBeenCalledWith(
-      undefined,
-    );
-  });
 
   it("should emit new location if value is selected and clear search field", async () => {
     const input = await loader.getHarness(MatInputHarness);
     const selected = { display_name: "selected" } as GeoResult;
-    spyOn(component.selectedLocationChange, "emit");
+    spyOn(component.locationSelected, "emit");
 
     component.selectLocation(selected);
 
-    expect(component.selectedLocation).toEqual(selected);
-    expect(component.selectedLocationChange.emit).toHaveBeenCalledWith(
-      selected,
-    );
+    expect(component.locationSelected.emit).toHaveBeenCalledWith({
+      geoLookup: selected,
+    } as GeoLocation);
     await expectAsync(input.getValue()).toBeResolvedTo("");
   });
 

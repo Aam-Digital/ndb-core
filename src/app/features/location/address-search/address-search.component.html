@@ -1,52 +1,43 @@
-@if (!disabled) {
-  <mat-form-field class="form-field">
-    <mat-label i18n>Search an address</mat-label>
-    <input
-      #inputElement
-      type="text"
-      matInput
-      [value]="_searchText"
-      (keyup)="triggerInputUpdate()"
-      [matAutocomplete]="auto"
-    />
+<mat-form-field class="form-field">
+  <mat-label i18n>Search an address</mat-label>
+  <input
+    #inputElement
+    class="address-search-input"
+    type="text"
+    matInput
+    [value]="_searchText"
+    (keyup)="triggerInputUpdate()"
+    [matAutocomplete]="auto"
+  />
 
-    <button mat-icon-button matIconSuffix (click)="searchClick()">
-      <fa-icon icon="search"></fa-icon>
-    </button>
+  <button mat-icon-button matIconSuffix (click)="searchClick()">
+    <fa-icon icon="search"></fa-icon>
+  </button>
 
-    <mat-autocomplete
-      #auto="matAutocomplete"
-      (optionSelected)="selectLocation($event.option.value)"
-      [displayWith]="displayFn"
-    >
-      @if (loading) {
-        <mat-option disabled i18n>Loading results...</mat-option>
+  <mat-autocomplete
+    #auto="matAutocomplete"
+    (optionSelected)="selectLocation($event.option.value)"
+    [displayWith]="displayFn"
+  >
+    @if (loading) {
+      <mat-option disabled i18n>Loading results...</mat-option>
+    }
+    @if (nothingFound) {
+      <mat-option disabled i18n>Location not found</mat-option>
+
+      @if (inputElement.value?.length > 2) {
+        <mat-option [value]="inputElement.value" i18n
+          >Set address without map location as "{{
+            inputElement.value
+          }}"</mat-option
+        >
       }
-      @if (nothingFound) {
-        <mat-option disabled i18n>Location not found</mat-option>
-      }
+    }
 
-      @for (option of filteredOptions | async; track option) {
-        <mat-option [value]="option">
-          {{ option.display_name }}
-        </mat-option>
-      }
-    </mat-autocomplete>
-  </mat-form-field>
-}
-
-<div class="margin-bottom-regular">
-  @if (selectedLocation) {
-    <div class="flex-row gap-regular align-center">
-      {{ selectedLocation?.display_name }}
-
-      @if (!disabled) {
-        <button mat-stroked-button (click)="clearLocation()" i18n>
-          Remove Location
-        </button>
-      }
-    </div>
-  } @else {
-    <span i18n>no location selected</span>
-  }
-</div>
+    @for (option of filteredOptions | async; track option) {
+      <mat-option [value]="option">
+        {{ option.display_name }}
+      </mat-option>
+    }
+  </mat-autocomplete>
+</mat-form-field>

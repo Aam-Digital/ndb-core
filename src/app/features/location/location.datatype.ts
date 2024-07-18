@@ -7,7 +7,7 @@ import { lastValueFrom } from "rxjs";
  * A location both as custom string and an optional geo location lookup.
  */
 export interface GeoLocation {
-  locationString: string;
+  locationString?: string;
   geoLookup?: GeoResult;
 }
 

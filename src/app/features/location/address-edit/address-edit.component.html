@@ -1,0 +1,71 @@
+<div class="margin-bottom-regular">
+  <div class="flex-row gap-regular align-center full-width">
+    <mat-form-field floatLabel="always" class="full-width">
+      <mat-label i18n>Selected Location</mat-label>
+      <input
+        #manualAddressInput
+        matInput
+        [value]="
+          selectedLocation?.locationString ??
+          selectedLocation?.geoLookup?.display_name
+        "
+        (change)="updateLocationString(manualAddressInput.value)"
+        placeholder="no location selected"
+        i18n-placeholder
+        [disabled]="disabled || !manualAddressEnabled"
+      />
+
+      @if (
+        selectedLocation?.geoLookup?.display_name !==
+        selectedLocation?.locationString
+      ) {
+        <mat-hint>
+          @if (selectedLocation?.geoLookup) {
+            <span
+              matTooltip="You have manually edited the exact address above, this is the actual mapped location. To change the location marked on the map, use the adress search field or click on the map."
+              i18n-matTooltip
+            >
+              {{ selectedLocation.geoLookup.display_name }}
+            </span>
+          } @else {
+            <span
+              matTooltip="You have manually entered the address above without locating it on the map. To change the location marked on the map, use the adress search field or click on the map."
+              i18n-matTooltip
+              i18n
+            >
+              No location marked on map
+            </span>
+          }
+        </mat-hint>
+      }
+    </mat-form-field>
+
+    @if (!disabled && selectedLocation) {
+      @if (!manualAddressEnabled) {
+        <button
+          mat-icon-button
+          (click)="manualAddressEnabled = true"
+          matTooltip="Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this."
+          i18n-matTooltip
+        >
+          <fa-icon icon="edit"></fa-icon>
+        </button>
+      }
+
+      <button
+        mat-icon-button
+        (click)="clearLocation()"
+        matTooltip="Delete the selected location."
+        i18n-matTooltip
+      >
+        <fa-icon icon="trash"></fa-icon>
+      </button>
+    }
+  </div>
+</div>
+
+@if (!disabled) {
+  <app-address-search
+    (locationSelected)="updateFromAddressSearch($event)"
+  ></app-address-search>
+}

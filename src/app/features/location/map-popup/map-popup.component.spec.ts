@@ -13,6 +13,7 @@ import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testi
 import { GeoResult, GeoService } from "../geo.service";
 import { ConfigService } from "../../../core/config/config.service";
 import { NoopAnimationsModule } from "@angular/platform-browser/animations";
+import { GeoLocation } from "../location.datatype";
 
 describe("MapPopupComponent", () => {
   let component: MapPopupComponent;
@@ -97,10 +98,13 @@ describe("MapPopupComponent", () => {
     let updatedLocations: GeoResult[];
     component.markedLocations.subscribe((res) => (updatedLocations = res));
 
-    const newLocation: GeoResult = { lat: 1, lon: 2, display_name: "x" };
+    const newLocation: GeoLocation = {
+      geoLookup: { lat: 1, lon: 2, display_name: "x" },
+      locationString: "x",
+    };
     component.updateLocation(newLocation);
     tick();
-    expect(updatedLocations).toEqual([newLocation]);
+    expect(updatedLocations).toEqual([newLocation.geoLookup]);
 
     component.updateLocation(undefined);
     tick();

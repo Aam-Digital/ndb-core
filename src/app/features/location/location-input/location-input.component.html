@@ -4,8 +4,8 @@
     matInput
     [title]="placeholder"
     [disabled]="_disabled"
-    [ngModel]="_value?.locationString"
-    (change)="updateLocationString(inputElement.value)"
+    readonly
+    [value]="_value?.locationString ?? _value?.geoLookup?.display_name"
     rows="2"
   ></textarea>
 

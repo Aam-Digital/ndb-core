@@ -1,5 +1,9 @@
 import { Component, Inject } from "@angular/core";
-import { MAT_DIALOG_DATA, MatDialogModule } from "@angular/material/dialog";
+import {
+  MAT_DIALOG_DATA,
+  MatDialogModule,
+  MatDialogRef,
+} from "@angular/material/dialog";
 import { Coordinates } from "../coordinates";
 import { Entity } from "../../../core/entity/model/entity";
 import { BehaviorSubject, firstValueFrom, Observable, of, Subject } from "rxjs";
@@ -10,6 +14,8 @@ import { LocationProperties } from "../map/map-properties-popup/map-properties-p
 import { AddressSearchComponent } from "../address-search/address-search.component";
 import { GeoResult, GeoService } from "../geo.service";
 import { catchError, map } from "rxjs/operators";
+import { AddressEditComponent } from "../address-edit/address-edit.component";
+import { GeoLocation } from "../location.datatype";
 
 export interface MapPopupConfig {
   marked?: Coordinates[];
@@ -26,9 +32,9 @@ export interface MapPopupConfig {
   helpText?: string;
 
   /**
-   * Prefill the address search box with this text
+   * A single location that is selected and editable.
    */
-  initialSearchText?: string;
+  selectedLocation?: GeoLocation;
 }
 
 /**
@@ -44,6 +50,7 @@ export interface MapPopupConfig {
     MatButtonModule,
     AsyncPipe,
     AddressSearchComponent,
+    AddressEditComponent,
   ],
   standalone: true,
 })
@@ -51,14 +58,33 @@ export class MapPopupComponent {
   markedLocations: BehaviorSubject<GeoResult[]>;
   helpText: string = $localize`Search an address or click on the map directly to select a different location`;
 
+  selectedLocation: GeoLocation;
+
   constructor(
-    @Inject(MAT_DIALOG_DATA)
-    public data: MapPopupConfig,
+    @Inject(MAT_DIALOG_DATA) public data: MapPopupConfig,
+    private dialogRef: MatDialogRef<MapPopupComponent>,
     private geoService: GeoService,
   ) {
     this.markedLocations = new BehaviorSubject<GeoResult[]>(
       (data.marked as GeoResult[]) ?? [],
     );
+    this.selectedLocation = data.selectedLocation;
+    if (
+      this.selectedLocation &&
+      !this.markedLocations.value
+        .filter((x) => !!x)
+        .includes(this.selectedLocation.geoLookup)
+    ) {
+      this.markedLocations.next([
+        ...this.markedLocations.value,
+        this.selectedLocation.geoLookup,
+      ]);
+    }
+
+    if (!data.disabled) {
+      this.dialogRef.disableClose = true;
+    }
+
     if (data.hasOwnProperty("helpText")) {
       this.helpText = data.helpText;
     }
@@ -71,7 +97,10 @@ export class MapPopupComponent {
     const geoResult: GeoResult = await firstValueFrom(
       this.lookupCoordinates(newCoordinates),
     );
-    this.updateLocation(geoResult);
+    this.updateLocation({
+      geoLookup: geoResult,
+      locationString: geoResult?.display_name,
+    });
   }
 
   private lookupCoordinates(coords: Coordinates) {
@@ -89,7 +118,8 @@ export class MapPopupComponent {
     );
   }
 
-  updateLocation(event: GeoResult) {
-    this.markedLocations.next([event]);
+  updateLocation(event: GeoLocation) {
+    this.selectedLocation = event;
+    this.markedLocations.next(event?.geoLookup ? [event?.geoLookup] : []);
   }
 }
