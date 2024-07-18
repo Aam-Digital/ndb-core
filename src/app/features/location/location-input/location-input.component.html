@@ -11,7 +11,7 @@
 
   @if (_value?.geoLookup) {
     <button
-      (click)="openMap()"
+      (click)="openMap(); $event.stopPropagation()"
       mat-icon-button
       matIconSuffix
       type="button"
@@ -27,7 +27,7 @@
       i18n-matTooltip
     >
       <button
-        (click)="openMap()"
+        (click)="openMap(); $event.stopPropagation()"
         mat-icon-button
         matIconSuffix
         type="button"
