@@ -5,13 +5,11 @@
 .top-control {
   position: sticky;
   top: 0;
-  // make this visible while other contents go "under"
-  // this top control
+  /* make this visible while other contents go "under" this top control */
   z-index: 1;
-  // These small hacks remove the global margin
-  // and re-apply them as padding.
-  // This way, the margin stays consistent and scrolling works
-  // as intended (there is no overflow left or right)
+  /* These small hacks remove the global margin and re-apply them as padding.
+     This way, the margin stays consistent and scrolling works
+     as intended (there is no overflow left or right)  */
   margin-left: -(sizes.$margin-main-view-left);
   padding-left: sizes.$margin-main-view-left;
   margin-right: -(sizes.$margin-main-view-right);

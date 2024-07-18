@@ -6,23 +6,23 @@ $sides: right, left, top, bottom;
 
 @each $ident, $size in sizes.$standard-sizes {
   @each $side in $sides {
-    // Creates padding classes for one side only (i.e. padding-left-..., padding-right-...)
+    /* Creates padding classes for one side only (i.e. padding-left-..., padding-right-...) */
     .padding-#{$side}-#{$ident} {
       padding-#{$side}: $size;
     }
 
-    // Creates margin classes for one side only (i.e. margin-left-small, margin-top-regular)
+    /* Creates margin classes for one side only (i.e. margin-left-small, margin-top-regular) */
     .margin-#{$side}-#{$ident} {
       margin-#{$side}: $size;
     }
   }
 
-  // Standard padding applied to all sides
+  /* Standard padding applied to all sides */
   .padding-#{$ident} {
     padding: $size;
   }
 
-  // Standard margin applied to all sides
+  /* Standard margin applied to all sides */
   .margin-#{$ident} {
     margin: $size;
   }
