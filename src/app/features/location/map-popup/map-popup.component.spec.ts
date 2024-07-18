@@ -6,7 +6,7 @@ import {
 } from "@angular/core/testing";
 
 import { MapPopupComponent } from "./map-popup.component";
-import { MAT_DIALOG_DATA } from "@angular/material/dialog";
+import { MAT_DIALOG_DATA, MatDialogRef } from "@angular/material/dialog";
 import { of, Subject } from "rxjs";
 import { Coordinates } from "../coordinates";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
@@ -42,6 +42,7 @@ describe("MapPopupComponent", () => {
           provide: MAT_DIALOG_DATA,
           useValue: { mapClick, displayedProperties: {} },
         },
+        { provide: MatDialogRef, useValue: {} },
         { provide: ConfigService, useValue: { getConfig: () => undefined } },
         { provide: GeoService, useValue: mockGeoService },
       ],
@@ -95,8 +96,10 @@ describe("MapPopupComponent", () => {
   }));
 
   it("should update location if received from address search", fakeAsync(() => {
-    let updatedLocations: GeoResult[];
-    component.markedLocations.subscribe((res) => (updatedLocations = res));
+    let updatedMarkedLocations: GeoResult[];
+    component.markedLocations.subscribe(
+      (res) => (updatedMarkedLocations = res),
+    );
 
     const newLocation: GeoLocation = {
       geoLookup: { lat: 1, lon: 2, display_name: "x" },
@@ -104,10 +107,12 @@ describe("MapPopupComponent", () => {
     };
     component.updateLocation(newLocation);
     tick();
-    expect(updatedLocations).toEqual([newLocation.geoLookup]);
+    expect(component.selectedLocation).toEqual(newLocation);
+    expect(updatedMarkedLocations).toEqual([newLocation.geoLookup]);
 
     component.updateLocation(undefined);
     tick();
-    expect(updatedLocations).toEqual([undefined]); // TODO: this is maybe not the best interface/logic
+    expect(component.selectedLocation).toBeUndefined();
+    expect(updatedMarkedLocations).toEqual([]); // TODO: this is maybe not the best interface/logic
   }));
 });
