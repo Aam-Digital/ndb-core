@@ -14,10 +14,10 @@ mat-stepper {
   color: colors.$muted;
 }
 
-// this component is designed as a screen filling view with sticky headers
+/* this component is designed as a screen filling view with sticky headers */
 :host {
   height: 100%;
-  padding-bottom: 0; // overwrite parent assigned (larger) padding to make reasonable use of space with scrolling
+  padding-bottom: 0; /* overwrite parent assigned (larger) padding to make reasonable use of space with scrolling */
 }
 :host ::ng-deep .mat-horizontal-stepper-wrapper {
   height: 100%;

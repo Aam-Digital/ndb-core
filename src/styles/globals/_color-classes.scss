@@ -58,19 +58,19 @@
   }
 }
 
-// Selected warning levels with color-adjustments
+/* Selected warning levels with color-adjustments */
 
-// alias for w-100
+/* alias for w-100 */
 .w-OK {
   background-color: adjust-color(colors.w-level(100), $alpha: -0.75) !important;
 }
 
-// alias for w-50
+/* alias for w-50 */
 .w-WARNING {
   background-color: adjust-color(colors.w-level(50), $alpha: -0.5) !important;
 }
 
-// alias for w-0
+/* alias for w-0 */
 .w-URGENT {
   background-color: adjust-color(colors.w-level(0), $alpha: -0.5) !important;
 }
