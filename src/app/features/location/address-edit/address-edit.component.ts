@@ -92,11 +92,11 @@ export class AddressEditComponent {
     let manualAddress: string = this.selectedLocation?.locationString ?? "";
     let lookupAddress: string =
       value?.locationString ?? value?.geoLookup?.display_name ?? "";
-
     if (manualAddress === "") {
       // auto-apply lookup location for empty field
       manualAddress = lookupAddress;
     }
+
     if (manualAddress !== lookupAddress) {
       if (
         // if manualAddress has been automatically set before, we assume the user wants to auto update now also
@@ -116,39 +116,6 @@ export class AddressEditComponent {
       locationString: manualAddress,
       geoLookup: value?.geoLookup,
     });
-  }
-
-  // TODO: on blur / update of locationString ???
-  private runAddressLookup() {
-    this.geoService
-      .lookup(this.selectedLocation?.locationString)
-      .subscribe((results) => {
-        if (results.length === 0) {
-          // probably okay, just leave things as they are. Maybe we should warn users?
-        } else if (results.length === 1) {
-          if (!this.selectedLocation?.geoLookup) {
-            this.updateFromAddressSearch({ geoLookup: results[0] }, true);
-          } else if (
-            !matchGeoResults(this.selectedLocation?.geoLookup, results[0])
-          ) {
-            // we have an existing lookup, but it's different from the results ... needs user confirmation?
-            // TODO
-          }
-        } else {
-          // multiple locations found
-          if (
-            results.some((r: GeoResult) =>
-              matchGeoResults(r, this.selectedLocation?.geoLookup),
-            )
-          ) {
-            // all good, most likely the current location is still correct
-            return;
-          }
-
-          // multiple options ... what do we do with that?
-          // TODO
-        }
-      });
   }
 }
 
