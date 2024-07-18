@@ -1,20 +1,3 @@
-/*
- *     This file is part of ndb-core.
- *
- *     ndb-core is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU General Public License as published by
- *     the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     ndb-core is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU General Public License for more details.
- *
- *     You should have received a copy of the GNU General Public License
- *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
- */
-
 @use "@angular/material/core/style/elevation" as mat-elevation;
 @use "variables/sizes";
 @use "variables/colors";
@@ -26,12 +9,12 @@
  */
 html,
 body {
-  // height: 100%;
+  /* height: 100%; */
 }
 
 /**  Toolbar  **/
 
-/**
+/*
  * Directive for the only toolbar row.
  * Both of these directives are required to make the shadow show
  */
@@ -43,7 +26,7 @@ body {
 }
 
 .search-field {
-  /**
+  /*
    * Use a fixed width here because
    * the form field does not work with
    * relative / computed sizes
@@ -65,15 +48,18 @@ body {
   grid-template-rows: auto 1fr;
   height: 100vh;
 
-  // This only targets iOs devices. Note that (just like the line below), this is
-  // a hacky solution. While it is practically guaranteed that only iOs will have this
-  // property, it is not guaranteed that iOs will keep this property for ever.
+  /*
+  This only targets iOs devices. Note that (just like the line below), this is
+  a hacky solution. While it is practically guaranteed that only iOs will have this
+  property, it is not guaranteed that iOs will keep this property for ever.
+  */
   @supports (-webkit-touch-callout: none) {
-    /* mobile viewport bug fix. */
-    // The viewport height on iOs is not necessarily the visible screen size.
-    // There might be a bar on the top of the screen. The following line
-    // fixes this, but since this is no official css feature, this line should
-    // be replaced as soon as a nicer solution exists.
+    /* mobile viewport bug fix.
+      The viewport height on iOs is not necessarily the visible screen size.
+      There might be a bar on the top of the screen. The following line
+      fixes this, but since this is no official css feature, this line should
+      be replaced as soon as a nicer solution exists.
+    */
 
     height: -webkit-fill-available;
   }
