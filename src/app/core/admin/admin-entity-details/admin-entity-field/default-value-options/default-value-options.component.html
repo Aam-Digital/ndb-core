@@ -1,0 +1,86 @@
+<mat-form-field [formGroup]="form" floatLabel="always">
+  <mat-label i18n>Default Value</mat-label>
+
+  <div class="flex-row gap-regular align-center">
+    @switch (mode) {
+      @default {
+        <input
+          #inputElement
+          matInput
+          formControlName="value"
+          placeholder="no default value"
+          i18n-placeholder
+        />
+      }
+      @case ("dynamic") {
+        <mat-select formControlName="value">
+          <mat-option
+            value="$now"
+            matTooltip="Fill the current date initially, when a record is created."
+            i18n-matTooltip
+            i18n
+            >Current Date</mat-option
+          >
+          <mat-option
+            value="$current_user"
+            matTooltip="Fill the currently logged in user, when a record is created."
+            i18n-matTooltip
+            i18n
+            >Current User</mat-option
+          >
+        </mat-select>
+      }
+      @case ("inherited") {
+        <mat-select formControlName="localAttribute"> </mat-select>
+        <mat-select formControlName="field"> </mat-select>
+      }
+    }
+
+    <mat-button-toggle-group
+      formControlName="mode"
+      aria-label="default value mode"
+      hideSingleSelectionIndicator
+      style="flex: none"
+    >
+      <mat-button-toggle
+        value="static"
+        matTooltip="simple, fixed default value"
+        i18n-matTooltip
+        i18n
+      >
+        <fa-icon icon="circle"></fa-icon>
+      </mat-button-toggle>
+      <mat-button-toggle
+        value="dynamic"
+        matTooltip="dynamic placeholder (e.g. current date or user)"
+        i18n-matTooltip
+        i18n
+      >
+        <fa-icon icon="circle-left"></fa-icon>
+      </mat-button-toggle>
+      <mat-button-toggle
+        value="inherited"
+        matTooltip="value inherited from the value of another, linked record"
+        i18n-matTooltip
+        i18n
+      >
+        <fa-icon icon="circle-nodes"></fa-icon>
+      </mat-button-toggle>
+    </mat-button-toggle-group>
+
+    <button
+      mat-icon-button
+      matIconSuffix
+      matTooltip="Remove default value"
+      i18n-matTooltip
+      (click)="clearDefaultValue()"
+      color="{{ form.invalid ? 'accent' : '' }}"
+    >
+      <fa-icon icon="times"></fa-icon>
+    </button>
+  </div>
+
+  @if (form.invalid) {
+    <mat-error i18n>Select default value or clear default value mode</mat-error>
+  }
+</mat-form-field>
