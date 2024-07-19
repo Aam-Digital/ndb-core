@@ -35,6 +35,10 @@ import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatIconButton } from "@angular/material/button";
 import { MatOption, MatSelect } from "@angular/material/select";
 import { asArray } from "../../../../../utils/utils";
+import { EntityFieldLabelComponent } from "../../../../common-components/entity-field-label/entity-field-label.component";
+import { EntityConstructor } from "../../../../entity/model/entity";
+import { EntityRegistry } from "../../../../entity/database-entity.decorator";
+import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
 
 @Component({
   selector: "app-default-value-options",
@@ -54,6 +58,7 @@ import { asArray } from "../../../../../utils/utils";
     MatIconButton,
     MatSelect,
     MatOption,
+    EntityFieldLabelComponent,
   ],
   templateUrl: "./default-value-options.component.html",
   styleUrl: "./default-value-options.component.scss",
@@ -62,12 +67,26 @@ export class DefaultValueOptionsComponent implements OnChanges {
   @Input() value: DefaultValueConfig;
   @Output() valueChange = new EventEmitter<DefaultValueConfig>();
 
+  @Input() entityType: EntityConstructor;
+
   form: FormGroup;
   mode: DefaultValueMode;
 
   @ViewChild("inputElement") inputElement: ElementRef;
+  @ViewChild("inheritedFieldSelect") inheritedFieldSelectElement: MatSelect;
 
-  constructor() {
+  availableInheritanceAttributes: string[];
+  currentInheritanceFields: {
+    localAttribute: string;
+    referencedEntityType: EntityConstructor;
+    availableFields: string[];
+  };
+
+  constructor(private entityRegistry: EntityRegistry) {
+    this.initForm();
+  }
+
+  private initForm() {
     this.form = new FormGroup(
       {
         mode: new FormControl(this.value?.mode),
@@ -89,16 +108,23 @@ export class DefaultValueOptionsComponent implements OnChanges {
       .valueChanges.subscribe((mode) => this.switchMode(mode));
     this.form.get("value").valueChanges.subscribe((value) => {
       if (!this.mode && !!value) {
+        // set default mode as "static" after user started typing a value
         this.mode = "static";
         this.form.get("mode").setValue(this.mode, { emitEvent: false });
       }
     });
+    this.form
+      .get("localAttribute")
+      .valueChanges.subscribe((v) => this.updateCurrentInheritanceFields(v));
     this.form.valueChanges.subscribe(() => this.emitValue());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.value) {
       this.updateForm(this.value);
+    }
+    if (changes.entityType) {
+      this.updateAvailableInheritanceAttributes();
     }
   }
 
@@ -120,6 +146,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
   }
 
   private emitValue() {
+    this.form.markAllAsTouched();
     let value: DefaultValueConfig | undefined = undefined;
 
     if (this.form.valid) {
@@ -160,6 +187,39 @@ export class DefaultValueOptionsComponent implements OnChanges {
       }
       return null;
     };
+  }
+
+  private updateAvailableInheritanceAttributes() {
+    this.availableInheritanceAttributes = Array.from(
+      this.entityType.schema.entries(),
+    )
+      .filter(([_, schema]) => schema.dataType === EntityDatatype.dataType)
+      .map(([id]) => id);
+  }
+
+  private updateCurrentInheritanceFields(localAttribute: string) {
+    this.form.get("field").setValue(null);
+
+    if (!localAttribute) {
+      this.currentInheritanceFields = undefined;
+      return;
+    }
+
+    const fieldSchema = this.entityType.schema.get(localAttribute);
+    const referencedEntityType: EntityConstructor = this.entityRegistry.get(
+      fieldSchema.additional,
+    );
+    const availableFields = Array.from(referencedEntityType.schema.entries())
+      .filter(([_, schema]) => !!schema.label) // only "user-facing" fields (i.e. with label)
+      .map(([id]) => id);
+
+    this.currentInheritanceFields = {
+      localAttribute,
+      referencedEntityType,
+      availableFields,
+    };
+
+    setTimeout(() => this.inheritedFieldSelectElement.open());
   }
 
   clearDefaultValue() {

@@ -31,8 +31,30 @@
         </mat-select>
       }
       @case ("inherited") {
-        <mat-select formControlName="localAttribute"> </mat-select>
-        <mat-select formControlName="field"> </mat-select>
+        <mat-select formControlName="localAttribute">
+          @for (attr of availableInheritanceAttributes; track attr) {
+            <mat-option [value]="attr">
+              <app-entity-field-label
+                [field]="attr"
+                [entityType]="entityType"
+              ></app-entity-field-label>
+            </mat-option>
+          }
+        </mat-select>
+
+        <mat-select formControlName="field" #inheritedFieldSelect>
+          @for (
+            field of currentInheritanceFields?.availableFields;
+            track field
+          ) {
+            <mat-option [value]="field">
+              <app-entity-field-label
+                [field]="field"
+                [entityType]="currentInheritanceFields?.referencedEntityType"
+              ></app-entity-field-label>
+            </mat-option>
+          }
+        </mat-select>
       }
     }
 
@@ -50,6 +72,7 @@
       >
         <fa-icon icon="circle"></fa-icon>
       </mat-button-toggle>
+
       <mat-button-toggle
         value="dynamic"
         matTooltip="dynamic placeholder (e.g. current date or user)"
@@ -58,11 +81,18 @@
       >
         <fa-icon icon="circle-left"></fa-icon>
       </mat-button-toggle>
+
       <mat-button-toggle
+        #inheritanceModeToggle
         value="inherited"
-        matTooltip="value inherited from the value of another, linked record"
+        matTooltip="value inherited from the value of another, linked record{{
+          inheritanceModeToggle.disabled
+            ? ' (requires another field in this record type to be a link to a record)'
+            : ''
+        }}"
         i18n-matTooltip
         i18n
+        [disabled]="!(availableInheritanceAttributes?.length > 0)"
       >
         <fa-icon icon="circle-nodes"></fa-icon>
       </mat-button-toggle>
