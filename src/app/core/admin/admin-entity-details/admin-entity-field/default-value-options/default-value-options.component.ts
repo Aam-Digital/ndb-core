@@ -171,9 +171,6 @@ export class DefaultValueOptionsComponent implements OnChanges {
     if (JSON.stringify(value) !== JSON.stringify(this.value)) {
       this.value = value;
       this.valueChange.emit(value);
-
-      //TODO: remove console.log
-      console.log("emitting", value);
     }
   }
 
@@ -206,9 +203,13 @@ export class DefaultValueOptionsComponent implements OnChanges {
     }
 
     const fieldSchema = this.entityType.schema.get(localAttribute);
-    const referencedEntityType: EntityConstructor = this.entityRegistry.get(
-      fieldSchema.additional,
-    );
+    const referencedEntityType: EntityConstructor = !!fieldSchema
+      ? this.entityRegistry.get(fieldSchema?.additional)
+      : undefined;
+    if (!referencedEntityType) {
+      return;
+    }
+
     const availableFields = Array.from(referencedEntityType.schema.entries())
       .filter(([_, schema]) => !!schema.label) // only "user-facing" fields (i.e. with label)
       .map(([id]) => id);

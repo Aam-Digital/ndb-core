@@ -83,13 +83,8 @@
       </mat-button-toggle>
 
       <mat-button-toggle
-        #inheritanceModeToggle
         value="inherited"
-        matTooltip="value inherited from the value of another, linked record{{
-          inheritanceModeToggle.disabled
-            ? ' (requires another field in this record type to be a link to a record)'
-            : ''
-        }}"
+        matTooltip="value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)"
         i18n-matTooltip
         i18n
         [disabled]="!(availableInheritanceAttributes?.length > 0)"
