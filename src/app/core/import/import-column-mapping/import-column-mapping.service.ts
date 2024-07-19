@@ -18,8 +18,13 @@ export class ImportColumnMappingService {
 
     console.log("change mappings now");
     for (const colMap of columnMapping) {
-      if (allPropertyNames.includes(colMap.column)) {
-        colMap.propertyName = colMap.column;
+      const lowerCaseColumn = colMap.column.toLowerCase();
+
+      for (const propertyName of allPropertyNames) {
+        if (lowerCaseColumn === propertyName.toLowerCase()) {
+          colMap.propertyName = propertyName;
+          break;
+        }
       }
     }
   }
