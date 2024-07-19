@@ -1,10 +1,10 @@
 @use "../../../../core/dashboard/dashboard-widget-base";
 
-// Lays out the single day components
+/* Lays out the single day components */
 .activities-record {
   display: flex;
   flex-direction: row;
   gap: 3px;
-  // puts the whole component to the end
+  /* puts the whole component to the end */
   justify-content: flex-end;
 }
