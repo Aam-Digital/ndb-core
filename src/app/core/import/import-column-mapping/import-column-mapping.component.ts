@@ -90,6 +90,7 @@ export class ImportColumnMappingComponent implements OnChanges {
     if (changes.columnMapping) {
       this.importColumnMappingService.automaticallySelectMappings(
         this.columnMapping,
+        this.entityCtor.schema,
       );
     }
   }
