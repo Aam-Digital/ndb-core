@@ -39,6 +39,7 @@ import { EntityFieldLabelComponent } from "../../../../common-components/entity-
 import { EntityConstructor } from "../../../../entity/model/entity";
 import { EntityRegistry } from "../../../../entity/database-entity.decorator";
 import { EntityDatatype } from "../../../../basic-datatypes/entity/entity.datatype";
+import { filter } from "rxjs/operators";
 
 @Component({
   selector: "app-default-value-options",
@@ -116,7 +117,19 @@ export class DefaultValueOptionsComponent implements OnChanges {
     this.form
       .get("localAttribute")
       .valueChanges.subscribe((v) => this.updateCurrentInheritanceFields(v));
-    this.form.valueChanges.subscribe(() => this.emitValue());
+    this.form.valueChanges
+      .pipe(
+        filter((v) => {
+          this.form
+            .get("localAttribute")
+            .updateValueAndValidity({ emitEvent: false });
+          this.form.get("field").updateValueAndValidity({ emitEvent: false });
+          this.form.get("value").updateValueAndValidity({ emitEvent: false });
+
+          return this.form.valid;
+        }),
+      )
+      .subscribe(() => this.emitValue());
   }
 
   ngOnChanges(changes: SimpleChanges): void {
@@ -146,31 +159,28 @@ export class DefaultValueOptionsComponent implements OnChanges {
   }
 
   private emitValue() {
-    this.form.markAllAsTouched();
-    let value: DefaultValueConfig | undefined = undefined;
+    let newConfigValue: DefaultValueConfig | undefined = undefined;
 
-    if (this.form.valid) {
-      switch (this.mode) {
-        case "static":
-        case "dynamic":
-          value = {
-            mode: this.mode,
-            value: this.form.get("value").value,
-          };
-          break;
-        case "inherited":
-          value = {
-            mode: this.mode,
-            localAttribute: this.form.get("localAttribute").value,
-            field: this.form.get("field").value,
-          };
-          break;
-      }
+    switch (this.mode) {
+      case "static":
+      case "dynamic":
+        newConfigValue = {
+          mode: this.mode,
+          value: this.form.get("value").value,
+        };
+        break;
+      case "inherited":
+        newConfigValue = {
+          mode: this.mode,
+          localAttribute: this.form.get("localAttribute").value,
+          field: this.form.get("field").value,
+        };
+        break;
     }
 
-    if (JSON.stringify(value) !== JSON.stringify(this.value)) {
-      this.value = value;
-      this.valueChange.emit(value);
+    if (JSON.stringify(newConfigValue) !== JSON.stringify(this.value)) {
+      this.value = newConfigValue;
+      this.valueChange.emit(newConfigValue);
     }
   }
 
@@ -179,7 +189,7 @@ export class DefaultValueOptionsComponent implements OnChanges {
   ): ValidatorFn {
     const modes = asArray(mode);
     return (control) => {
-      if (modes.includes(this.mode) && !control.value) {
+      if (modes.includes(this.form?.get("mode")?.value) && !control.value) {
         return { requiredForMode: true };
       }
       return null;

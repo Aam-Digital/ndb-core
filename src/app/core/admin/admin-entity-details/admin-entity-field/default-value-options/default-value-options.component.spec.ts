@@ -105,7 +105,6 @@ describe("DefaultValueOptionsComponent", () => {
       localAttribute: "foo",
       field: null,
     });
-    // TODO: why is this a valid form with the required "field" value missing?
     expect(component.valueChange.emit).not.toHaveBeenCalled();
   });
 
