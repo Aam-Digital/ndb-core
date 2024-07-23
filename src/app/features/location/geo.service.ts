@@ -88,13 +88,15 @@ export class GeoService {
     this.analytics.eventTrack("reverse_lookup_executed", {
       category: "Map",
     });
-    return this.http.get<GeoResult>(`${this.remoteUrl}/reverse`, {
-      params: {
-        ...this.defaultOptions,
-        lat: coordinates.lat,
-        lon: coordinates.lon,
-      },
-    });
+    return this.http
+      .get<OpenStreetMapsSearchResult>(`${this.remoteUrl}/reverse`, {
+        params: {
+          ...this.defaultOptions,
+          lat: coordinates.lat,
+          lon: coordinates.lon,
+        },
+      })
+      .pipe(map((result) => this.reformatDisplayName(result)));
   }
 }
 
