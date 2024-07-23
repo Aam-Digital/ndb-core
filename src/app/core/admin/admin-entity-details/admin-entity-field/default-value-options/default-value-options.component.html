@@ -32,6 +32,14 @@
       }
       @case ("inherited") {
         <mat-select formControlName="localAttribute">
+          <div
+            class="select-dropdown-header"
+            matTooltip="The field of this record that defines the related record from which you want to inherit a value."
+            i18n-matTooltip
+            i18n
+          >
+            Inherit from linked record:
+          </div>
           @for (attr of availableInheritanceAttributes; track attr) {
             <mat-option [value]="attr">
               <app-entity-field-label
@@ -43,6 +51,14 @@
         </mat-select>
 
         <mat-select formControlName="field" #inheritedFieldSelect>
+          <div
+            class="select-dropdown-header"
+            matTooltip="The field of the linked record from which the value is copied into this field."
+            i18n-matTooltip
+            i18n
+          >
+            Inherited field of linked record:
+          </div>
           @for (
             field of currentInheritanceFields?.availableFields;
             track field
