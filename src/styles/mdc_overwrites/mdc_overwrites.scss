@@ -6,7 +6,7 @@
  * more background: https://github.com/angular/components/issues/25981#issuecomment-1515332869
  */
 
-// Text color for fab buttons otherwise defaults to black
+/* Text color for fab buttons otherwise defaults to black */
 .mat-mdc-fab.mat-accent,
 .mat-mdc-mini-fab.mat-accent {
   --mat-fab-foreground-color: #{mat.get-contrast-color-from-palette(
@@ -15,7 +15,7 @@
     )} !important;
 }
 
-// Text color for buttons with accent color otherwise defaults to black
+/* Text color for buttons with accent color otherwise defaults to black */
 .mat-mdc-raised-button:not(:disabled)[color="accent"] {
   --mdc-protected-button-label-text-color: #{mat.get-contrast-color-from-palette(
       theme.$accent,
@@ -24,12 +24,12 @@
 ;
 }
 
-// Progress bar background color should have opacity to indicate progress
+/* Progress bar background color should have opacity to indicate progress */
 .mat-mdc-progress-bar .mdc-linear-progress__buffer-bar {
   opacity: 25%;
 }
 
-// Color for enabled checkbox otherwise defaults to black
+/* Color for enabled checkbox otherwise defaults to black */
 .mdc-checkbox
   .mdc-checkbox__native-control:enabled
   ~ .mdc-checkbox__background
@@ -41,7 +41,7 @@
 ;
 }
 
-// Color for selected date range in date picker defaults to white
+/* Color for selected date range in date picker defaults to white */
 .mat-calendar-body-in-range::before {
   --mat-datepicker-calendar-date-in-range-state-background-color: #{color-mix(
       in srgb,

@@ -49,7 +49,6 @@ export class MapComponent implements AfterViewInit {
     this.showMarkersOnMap(this.markers);
     this._marked.next(coordinates);
   }
-
   private _marked = new BehaviorSubject<Coordinates[]>([]);
 
   @Input() set entities(entities: Entity[]) {
@@ -211,11 +210,10 @@ export class MapComponent implements AfterViewInit {
     // Breaking circular dependency by using async import
     const mapComponent = await import("../map-popup/map-popup.component");
     const data: MapPopupConfig = {
-      marked: this._marked,
+      marked: this._marked.value,
       entities: this._entities,
       highlightedEntities: this._highlightedEntities,
       entityClick: this.entityClick,
-      mapClick: this.clickStream,
       displayedProperties: this._displayedProperties,
     };
     this.dialog

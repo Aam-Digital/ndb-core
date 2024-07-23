@@ -1,7 +1,7 @@
 @use "variables/sizes";
 
-// The indicator is a round, colored shape with a small margin on the right
-// it is used as prefix in the form field and for the individual options
+/* The indicator is a round, colored shape with a small margin on the right
+it is used as prefix in the form field and for the individual options */
 .indicator {
   width: sizes.$regular;
   height: sizes.$regular;
@@ -10,15 +10,15 @@
   margin-right: sizes.$small;
   margin-left: sizes.$small;
 
-  // when the indicator is used as prefix in a form field
-  // it should be center-aligned with the content, but is baseline-aligned
-  // without this small margin
+  /* when the indicator is used as prefix in a form field
+     it should be center-aligned with the content, but is baseline-aligned
+     without this small margin */
   &__prefix {
     margin-bottom: 0.15em;
   }
 
-  // when the indicator is used inside the option-field it has `display: inline`
-  // which causes the field not to draw correctly
+  /* when the indicator is used inside the option-field it has `display: inline`
+     which causes the field not to draw correctly */
   &__option {
     display: inline-block;
     vertical-align: middle;
