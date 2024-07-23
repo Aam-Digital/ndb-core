@@ -40,7 +40,6 @@ export abstract class CustomFormControlDirective<T>
   }
   private _required = false;
 
-  abstract inputElement: { _elementRef: ElementRef<HTMLElement> };
   stateChanges = new Subject<void>();
   focused = false;
   touched = false;
@@ -75,6 +74,7 @@ export abstract class CustomFormControlDirective<T>
 
   set value(value: T) {
     this._value = value;
+    this.onChange(value);
     this.stateChanges.next();
   }
 
@@ -90,6 +90,13 @@ export abstract class CustomFormControlDirective<T>
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
     }
+
+    this.elementRef.nativeElement.addEventListener("focusin", () =>
+      this.focus(),
+    );
+    this.elementRef.nativeElement.addEventListener("focusout", () =>
+      this.blur(),
+    );
   }
 
   ngOnDestroy() {
@@ -109,13 +116,13 @@ export abstract class CustomFormControlDirective<T>
   }
 
   setDescribedByIds(ids: string[]) {
-    this.inputElement._elementRef.nativeElement.setAttribute(
+    this.elementRef.nativeElement.setAttribute(
       "aria-describedby",
       ids.join(" "),
     );
   }
 
-  abstract onContainerClick(event: MouseEvent);
+  onContainerClick(event: MouseEvent) {}
 
   writeValue(val: T): void {
     this.value = val;
