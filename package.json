@@ -49,7 +49,7 @@
     "deep-object-diff": "^1.1.9",
     "hammerjs": "^2.0.8",
     "json-query": "^2.2.2",
-    "keycloak-angular": "^15.2.1",
+    "keycloak-angular": "^15.3.0",
     "keycloak-js": "^24.0.5",
     "leaflet": "^1.9.4",
     "lodash-es": "^4.17.21",
