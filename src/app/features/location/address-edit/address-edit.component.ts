@@ -1,7 +1,7 @@
 import { Component, EventEmitter, Input, Output } from "@angular/core";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { AddressSearchComponent } from "../address-search/address-search.component";
-import { GeoResult, GeoService } from "../geo.service";
+import { GeoResult } from "../geo.service";
 import { ConfirmationDialogService } from "../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { GeoLocation } from "../location.datatype";
 import { MatFormField, MatHint, MatLabel } from "@angular/material/form-field";
@@ -46,10 +46,7 @@ export class AddressEditComponent {
 
   manualAddressEnabled: boolean;
 
-  constructor(
-    private confirmationDialog: ConfirmationDialogService,
-    private geoService: GeoService,
-  ) {}
+  constructor(private confirmationDialog: ConfirmationDialogService) {}
 
   updateLocation(selected: GeoLocation | undefined) {
     this.selectedLocation = selected;
