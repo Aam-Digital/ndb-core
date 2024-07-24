@@ -2,6 +2,10 @@ import { Injectable } from "@angular/core";
 import { ColumnMapping } from "../column-mapping";
 import { EntitySchema } from "app/core/entity/schema/entity-schema";
 
+/**
+ * Infer most likely entity fields that the column from an imported file could be mapped to.
+ * This is used by the Import Module to give users smart pre-selections in the user interface.
+ */
 @Injectable({
   providedIn: "root",
 })
