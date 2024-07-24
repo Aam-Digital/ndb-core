@@ -13,7 +13,6 @@ export class ImportColumnMappingService {
     entitySchema: EntitySchema,
   ) {
     const allPropertyNames = Array.from(entitySchema.keys());
-    console.log("property names", allPropertyNames);
 
     for (const colMap of columnMapping) {
       const lowerCaseColumn = colMap.column.toLowerCase();
