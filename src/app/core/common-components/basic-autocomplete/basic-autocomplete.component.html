@@ -1,15 +1,3 @@
-<!--Search-->
-<input
-  [hidden]="!focused"
-  #inputElement
-  [formControl]="autocompleteForm"
-  matInput
-  style="text-overflow: ellipsis"
-  [matAutocomplete]="autoSuggestions"
-  (focusout)="onFocusOut($event)"
-  [placeholder]="placeholder"
-/>
-
 <!--Display-->
 <input
   *ngIf="display === 'text' || display === 'none'; else chipsDisplay"
@@ -23,6 +11,18 @@
   [placeholder]="placeholder"
 />
 
+<!--Search-->
+<input
+  [hidden]="!focused"
+  #inputElement
+  [formControl]="autocompleteForm"
+  matInput
+  style="text-overflow: ellipsis"
+  [matAutocomplete]="autoSuggestions"
+  (focusout)="onFocusOut($event)"
+  [placeholder]="placeholder"
+/>
+
 <!--
   Autocomplete
 -->
@@ -33,25 +33,44 @@
   autoActiveFirstOption
   [hideSingleSelectionIndicator]="multi"
 >
-  <mat-option
-    *ngFor="let item of autocompleteSuggestedOptions | async"
-    [value]="item"
+  <div
+    cdkDropList
+    (cdkDropListDropped)="drop($event)"
+    cdkDropListGroup
+    [cdkDropListDisabled]="!reorder"
   >
-    <div class="flex-row disable-autocomplete-active-color">
-      <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
-
-      <ng-container *ngIf="!templateRef; else itemTemplate">
-        {{ item.asString }}
-      </ng-container>
-
-      <ng-template
-        class="item-option"
-        #itemTemplate
-        [ngTemplateOutlet]="templateRef"
-        [ngTemplateOutletContext]="{ $implicit: item.initial }"
-      ></ng-template>
-    </div>
-  </mat-option>
+    <cdk-virtual-scroll-viewport
+      [style.height]="(autocompleteOptions?.length ?? 0) * 48 + 'px'"
+      [style.max-height]="3 * 48 + 'px'"
+      itemSize="48"
+    >
+      <mat-option
+        [value]="item"
+        cdkDrag
+        *cdkVirtualFor="let item of autocompleteOptions"
+      >
+        <div class="flex-row disable-autocomplete-active-color align-center">
+          <div *ngIf="reorder">
+            <fa-icon
+              icon="grip-vertical"
+              size="sm"
+              class="drag-handle"
+            ></fa-icon>
+          </div>
+          <mat-checkbox *ngIf="multi" [checked]="item.selected"></mat-checkbox>
+          <ng-container *ngIf="!templateRef; else itemTemplate">
+            {{ item.asString }}
+          </ng-container>
+          <ng-template
+            class="item-option"
+            #itemTemplate
+            [ngTemplateOutlet]="templateRef"
+            [ngTemplateOutletContext]="{ $implicit: item.initial }"
+          ></ng-template>
+        </div>
+      </mat-option>
+    </cdk-virtual-scroll-viewport>
+  </div>
 
   <!-- Create new option -->
   <mat-option

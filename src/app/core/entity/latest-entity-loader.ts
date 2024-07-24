@@ -38,20 +38,22 @@ export abstract class LatestEntityLoader<T extends Entity> {
    * Do an initial load of the entity to be available through the `entityUpdated` property
    * (without watching for continuous updates).
    */
-  loadOnce(): Promise<T | undefined> {
-    return this.entityMapper
-      .load(this.entityCtor, this.entityID)
-      .then((entity) => {
-        this.entityUpdated.next(entity);
-        return entity;
-      })
-      .catch((err) => {
-        if (err?.status !== HttpStatusCode.NotFound) {
-          this.logger.error(
-            `Loading entity "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed: ${err} `,
-          );
-        }
-        return undefined;
-      });
+  async loadOnce(): Promise<T | undefined> {
+    try {
+      const entity = await this.entityMapper.load(
+        this.entityCtor,
+        this.entityID,
+      );
+      this.entityUpdated.next(entity);
+      return entity;
+    } catch (err) {
+      if (err?.status !== HttpStatusCode.NotFound) {
+        this.logger.error(
+          `Loading entity "${this.entityCtor.ENTITY_TYPE}:${this.entityID}" failed: ${this.entityID}`,
+          err,
+        );
+      }
+      return undefined;
+    }
   }
 }

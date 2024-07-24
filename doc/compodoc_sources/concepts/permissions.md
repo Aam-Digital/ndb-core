@@ -16,15 +16,15 @@ After the next login, the role will be available in the frontend.
 
 When using Keycloak as an authenticator, the roles are assigned through so called Role-Mappings.
 To assign a new role to a user, this role first has to be created in the realm.
-To do this go to the Keycloak admin console, select the realm for which you want to create a role and go to the *Realm
-roles* menu item.
+To do this go to the Keycloak admin console, select the realm for which you want to create a role and go to the _Realm
+roles_ menu item.
 Here a new role can be created and also a description can be provided for it.
 This description should explain non-technical users, what this role is there for.
 Default roles that are always available are `user_app`, `admin_app` and `account_manager`.
 After a role has been created, the role can be assigned to a user.
-This can either be done in the frontend using the `UserSecurityComponent` or via the Keycloak admin console under *
-Users*
--> *\<select user\>* -> *Role mapping* -> *Assign role*.
+This can either be done in the frontend using the `UserSecurityComponent` or via the Keycloak admin console under _
+Users_
+-> _\<select user\>_ -> _Role mapping_ -> _Assign role_.
 
 ## Permissions
 
@@ -36,8 +36,8 @@ entities in the database.
 
 ### Permission structure
 
-As an example, we will define a permission object which allows users with the role `user_app` *not* to *create*, *read*
-, *update* and *delete* `HealthCheck` entities and *not* *create* and *delete* `School` and `Child` entities.
+As an example, we will define a permission object which allows users with the role `user_app` _not_ to _create_, _read_
+, _update_ and _delete_ `HealthCheck` entities and _not_ _create_ and _delete_ `School` and `Child` entities.
 Besides that, the role is allowed to do everything.
 A second role `admin_app` is allowed to do everything.
 Additionally, we add a `default` rule which allows each user (independent of role) to read the `Config` entities.
@@ -95,26 +95,50 @@ The permissions for a given role consist of an array of rules.
 In case of the `user_app`, we first define that the user is allowed to do everything.
 `subject` refers to the type of entity and `all` is a wildcard, that matches any entity.
 `action` refers to the operation that is allowed or permitted on the given `subject`.
-In this case `manage` is also a wildcard which means *any operation is allowed*.
-So the first rule states *any operation is allowed on any entity*.
+In this case `manage` is also a wildcard which means _any operation is allowed_.
+So the first rule states _any operation is allowed on any entity_.
 
 The second and third rule for `user_app` restrict this through the `"inverted": true` keyword.
 While the first rule defined what this role is **allowed** to do, when `"inverted": true` is specified, this rule
 defines what the role is **not allowed** to do.
 This allows us to easily take permissions away from a certain role.
-In this case we don't allow users with this role to perform *any* operation on the `HealhCheck` entity and no *create*
-and *update* on `Child` and `School` entities.
-Other possible actions are `read` and `update` following the *CRUD* concept.
+In this case we don't allow users with this role to perform _any_ operation on the `HealhCheck` entity and no _create_
+and _update_ on `Child` and `School` entities.
+Other possible actions are `read` and `update` following the _CRUD_ concept.
 
 The `admin_app` role simpy allows user with this role to do everything, without restrictions.
 
 To learn more about how to define rules, have a look at
 the [CASL documentation](https://casl.js.org/v5/en/guide/define-rules#rules).
 
+It is also possible to access information of the user sending the request. E.g.:
+
+```json
+{
+  "subject": "org.couchdb.user",
+  "action": "update",
+  "fields": [
+    "password"
+  ],
+  "conditions": {
+    "name": "${user.name}",
+    "projects": {
+      "$in": "${user.projects}"
+    }
+  }
+}
+```
+
+This allows users to update the `password` property of their *own* document in the `_users` database.
+Placeholders can currently access properties that the _replication-backend_ explicitly adds to the auth user object. 
+Other available values are `${user.roles}` (array of roles of the user) and  `${user.projects}` (the "projects" attribute of the user's entity that is linked to the account through the "exact_username" in Keycloak).
+
+For more information on how to write rules have a look at the [CASL documentation](https://casl.js.org/v5/en/guide/intro).
+
 ### Implementing components with permissions
 
 This section is about code using permissions to read and edit **entities**.
-If you want to change the menu items which are shown in the navigation bar have a look at the *views* section in
+If you want to change the menu items which are shown in the navigation bar have a look at the _views_ section in
 the [Configuration Guide](./configuration.html).
 
 The permission object is automatically fetched whenever a user logs in.
@@ -124,7 +148,7 @@ the [DisableEntityOperationDirective](../../directives/DisableEntityOperationDir
 buttons with their operation.
 
 As an example lets say we have a class variable called `note` which holds an object of the `Note` entity.
-We want to create a button which allows to *edit* this note.
+We want to create a button which allows to _edit_ this note.
 In the HTML template we could write the following in order to automatically connect it to the permission system:
 
 ```HTML
@@ -139,7 +163,7 @@ In the HTML template we could write the following in order to automatically conn
 </button>
 ```
 
-This will automatically disable the button if the user is not allowed to *update* this specific note.
+This will automatically disable the button if the user is not allowed to _update_ this specific note.
 
 To check permissions inside a `*.ts` file, you can inject the `EntityAbility`:
 
@@ -151,7 +175,7 @@ import { EntityAbility } from "./permission-types";
 @Injectable()
 export class SomeService {
   constructor(private ability: EntityAbility) {
-    if (this.ability.can('create', Note)) {
+    if (this.ability.can("create", Note)) {
       // I have permissions to create notes
       const note = new Note();
     } else {

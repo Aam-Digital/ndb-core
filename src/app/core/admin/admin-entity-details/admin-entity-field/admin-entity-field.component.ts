@@ -34,7 +34,6 @@ import { BasicAutocompleteComponent } from "../../../common-components/basic-aut
 import { DefaultDatatype } from "../../../entity/default-datatype/default.datatype";
 import { ConfigurableEnumDatatype } from "../../../basic-datatypes/configurable-enum/configurable-enum-datatype/configurable-enum.datatype";
 import { EntityDatatype } from "../../../basic-datatypes/entity/entity.datatype";
-import { EntityArrayDatatype } from "../../../basic-datatypes/entity-array/entity-array.datatype";
 import { ConfigurableEnumService } from "../../../basic-datatypes/configurable-enum/configurable-enum.service";
 import { EntityRegistry } from "../../../entity/database-entity.decorator";
 import { AdminEntityService } from "../../admin-entity.service";
@@ -44,6 +43,11 @@ import { generateIdFromLabel } from "../../../../utils/generate-id-from-label/ge
 import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
+import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
+import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
+import { MatCheckbox } from "@angular/material/checkbox";
+import { DefaultValueOptionsComponent } from "./default-value-options/default-value-options.component";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -70,6 +74,10 @@ import { uniqueIdValidator } from "app/core/common-components/entity-form/unique
     FontAwesomeModule,
     MatTooltipModule,
     BasicAutocompleteComponent,
+    ConfigureEntityFieldValidatorComponent,
+    AnonymizeOptionsComponent,
+    MatCheckbox,
+    DefaultValueOptionsComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
@@ -77,7 +85,6 @@ export class AdminEntityFieldComponent implements OnChanges {
   @Input() entityType: EntityConstructor;
 
   entitySchemaField: EntitySchemaField;
-
   form: FormGroup;
   fieldIdForm: FormControl;
   /** form group of all fields in EntitySchemaField (i.e. without fieldId) */
@@ -85,7 +92,6 @@ export class AdminEntityFieldComponent implements OnChanges {
   additionalForm: FormControl;
   typeAdditionalOptions: SimpleDropdownValue[] = [];
   dataTypes: SimpleDropdownValue[] = [];
-
   constructor(
     @Inject(MAT_DIALOG_DATA)
     data: {
@@ -129,10 +135,8 @@ export class AdminEntityFieldComponent implements OnChanges {
       description: [this.entitySchemaField.description],
 
       dataType: [this.entitySchemaField.dataType, Validators.required],
+      isArray: [this.entitySchemaField.isArray],
       additional: this.additionalForm,
-
-      // TODO: remove "innerDataType" completely - the UI can only support very specific multi-valued types anyway
-      innerDataType: [this.entitySchemaField.innerDataType],
 
       defaultValue: [this.entitySchemaField.defaultValue],
       searchable: [this.entitySchemaField.searchable],
@@ -177,6 +181,10 @@ export class AdminEntityFieldComponent implements OnChanges {
       );
     }
   }
+
+  entityFieldValidatorChanges(validatorData: FormValidatorConfig) {
+    this.schemaFieldsForm.get("validators").setValue(validatorData);
+  }
   private autoGenerateId() {
     // prefer labelShort if it exists, as this makes less verbose IDs
     const label =
@@ -198,17 +206,14 @@ export class AdminEntityFieldComponent implements OnChanges {
   objectToValue = (v: SimpleDropdownValue) => v?.value;
   createNewAdditionalOption: (input: string) => SimpleDropdownValue;
   createNewAdditionalOptionAsync = async (input) =>
-    this.createNewAdditionalOptionAsync(input);
+    this.createNewAdditionalOption(input);
 
   private updateDataTypeAdditional(dataType: string) {
     this.resetAdditional();
 
     if (dataType === ConfigurableEnumDatatype.dataType) {
       this.initAdditionalForEnum();
-    } else if (
-      dataType === EntityDatatype.dataType ||
-      dataType === EntityArrayDatatype.dataType
-    ) {
+    } else if (dataType === EntityDatatype.dataType) {
       this.initAdditionalForEntityRef();
     }
 

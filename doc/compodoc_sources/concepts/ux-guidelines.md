@@ -1,4 +1,5 @@
 # UX Guidelines
+
 The user should have a consistent experience across all areas of the app
 (i.e. whether editing needs to be enabled, how changes can be undone, how and how long notifications are displayed).
 More and more these actions will be generalized by components and services that we will use for our implementation of a specific form or page.

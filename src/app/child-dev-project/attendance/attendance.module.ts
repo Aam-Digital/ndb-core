@@ -21,13 +21,21 @@ import { attendanceComponents } from "./attendance-components";
 import { RecurringActivity } from "./model/recurring-activity";
 import { EventNote } from "./model/event-note";
 import { DefaultDatatype } from "../../core/entity/default-datatype/default.datatype";
-import { EventAttendanceDatatype } from "./model/event-attendance.datatype";
+import {
+  EventAttendanceDatatype,
+  EventAttendanceMapDatatype,
+} from "./model/event-attendance.datatype";
 
 @NgModule({
   providers: [
     {
       provide: DefaultDatatype,
       useClass: EventAttendanceDatatype,
+      multi: true,
+    },
+    {
+      provide: DefaultDatatype,
+      useClass: EventAttendanceMapDatatype,
       multi: true,
     },
   ],

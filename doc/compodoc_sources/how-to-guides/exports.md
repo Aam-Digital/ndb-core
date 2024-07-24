@@ -8,7 +8,8 @@ The format of this file can be adjusted through the configuration for the list v
 
 The configuration of the export format is part of the configuration of the [EntityListComponent](../../interfaces/EntityListConfig.html).
 
-E.g. 
+E.g.
+
 ```json
   "view:child": {
     "component": "ChildrenList",
@@ -22,7 +23,7 @@ E.g.
               { "label": "From", "query": ".start" },
               { "label": "To", "query": ".end" }
             ]
-    
+
           }
         ],
       "title": "Children List",
@@ -59,41 +60,41 @@ Using the config from above with the following data:
 ```typescript
 const child1 = {
   _id: "Child:1",
-  name: "Peter"
-}
+  name: "Peter",
+};
 const child2 = {
   _id: "Child:2",
-  name: "Anna"
-}
+  name: "Anna",
+};
 const relation1 = {
   _id: "ChildSchoolRelation:1",
   schoolId: "1",
   childId: "1",
   start: "01/01/2020",
-  end: "01/01/2021"
-}
+  end: "01/01/2021",
+};
 const relation2 = {
   _id: "ChildSchoolRelation:2",
   schoolId: "1",
   childId: "1",
   start: "01/01/2021",
-}
+};
 const relation3 = {
   _id: "ChildSchoolRelation:3",
   schoolId: "1",
   childId: "1",
   start: "01/01/2021",
-}
+};
 const school = {
   _id: "School:1",
-  name: "High School"
-}
+  name: "High School",
+};
 ```
 
 Would create a `.csv` file according to the following table:
 
-| Child | School Name   | From          | To            |
-| ---   | ---           | ---           | ---           |
-| Peter | High School   | 01/01/2020    | 01/01/2021    | 
-| Peter | High School   | 01/01/2021    |               | 
-| Anna  | High School   | 01/01/2021    |               | 
+| Child | School Name | From       | To         |
+| ----- | ----------- | ---------- | ---------- |
+| Peter | High School | 01/01/2020 | 01/01/2021 |
+| Peter | High School | 01/01/2021 |            |
+| Anna  | High School | 01/01/2021 |            |

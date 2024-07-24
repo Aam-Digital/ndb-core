@@ -3,6 +3,7 @@ import {
   EventEmitter,
   Input,
   OnChanges,
+  Optional,
   Output,
   SimpleChanges,
 } from "@angular/core";
@@ -17,6 +18,7 @@ import { DisableEntityOperationDirective } from "../../permissions/permission-di
 import { IconProp } from "@fortawesome/fontawesome-svg-core";
 import { EntityAction } from "../../permissions/permission-types";
 import { MatTooltipModule } from "@angular/material/tooltip";
+import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
 
 export type EntityMenuAction = "archive" | "anonymize" | "delete";
 type EntityMenuActionItem = {
@@ -26,6 +28,9 @@ type EntityMenuActionItem = {
   icon: IconProp;
   label: string;
   tooltip?: string;
+
+  /** important action to be displayed directly, outside context menu in some views */
+  primaryAction?: boolean;
 };
 
 @Component({
@@ -68,6 +73,7 @@ export class EntityActionsMenuComponent implements OnChanges {
       icon: "box-archive",
       label: $localize`:entity context menu:Archive`,
       tooltip: $localize`:entity context menu tooltip:Mark the record as inactive, hiding it from lists by default while keeping the data.`,
+      primaryAction: true,
     },
     {
       action: "anonymize",
@@ -87,7 +93,15 @@ export class EntityActionsMenuComponent implements OnChanges {
     },
   ];
 
-  constructor(private entityRemoveService: EntityActionsService) {}
+  /**
+   * Whether some buttons should be displayed directly, outside the three-dot menu in dialog views.
+   */
+  @Input() showExpanded?: boolean;
+
+  constructor(
+    private entityRemoveService: EntityActionsService,
+    @Optional() protected viewContext: ViewComponentContext,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.entity) {
@@ -97,13 +111,15 @@ export class EntityActionsMenuComponent implements OnChanges {
 
   private filterAvailableActions() {
     this.actions = this.defaultActions.filter((action) => {
+      if (!this.entity) {
+        return false;
+      }
+
       switch (action.action) {
         case "archive":
-          return this.entity?.isActive && !this.entity?.anonymized;
+          return this.entity.isActive && !this.entity.anonymized;
         case "anonymize":
-          return (
-            !this.entity?.anonymized && this.entity?.getConstructor().hasPII
-          );
+          return !this.entity.anonymized && this.entity.getConstructor().hasPII;
         default:
           return true;
       }
@@ -111,9 +127,13 @@ export class EntityActionsMenuComponent implements OnChanges {
   }
 
   async executeAction(action: EntityMenuActionItem) {
-    const result = await action.execute(this.entity, this.navigateOnDelete);
+    const result = await action.execute(
+      this.entity,
+      this.navigateOnDelete && !this.viewContext?.isDialog,
+    );
     if (result) {
       this.actionTriggered.emit(action.action);
     }
+    setTimeout(() => this.filterAvailableActions());
   }
 }

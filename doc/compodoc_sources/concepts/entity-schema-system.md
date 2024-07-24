@@ -1,5 +1,7 @@
-# Entity Schema 
------
+# Entity Schema
+
+---
+
 The Entity Schema defines details of the properties of an entity type.
 We define an entity type and its schema in code through a plain TypeScript class and some custom annotations.
 Read more on the background and practical considerations in [How to create a new Entity Type](../how-to-guides/create-a-new-entity-type.html).
@@ -16,23 +18,22 @@ class Note extends Entity {
 }
 ```
 
-
------
+---
 
 The logical flow looks something like this:
+
 1. Entities are requested through the `EntityMapperService` (`entityMapper.load(...)`)
-2. The `EntitySchemaService` functions as a helper to the `EntityMapperService` 
-and takes care of data transformations based on the schema of that entity type.
+2. The `EntitySchemaService` functions as a helper to the `EntityMapperService`
+   and takes care of data transformations based on the schema of that entity type.
 3. Data from the database is "loaded" into an entity instance to combine the raw data
-with its entity class by the `EntityMapperService` together with the `EntitySchemaService`.
+   with its entity class by the `EntityMapperService` together with the `EntitySchemaService`.
 4. The entity classes themselves only define the schema through the `@DatabaseEntity` and `@DatabaseField` decorators
-and are otherwise simple Typescript objects.
+   and are otherwise simple Typescript objects.
 
 The process of saving an entity to the database works similarly with `EntitySchemaService`
 supporting the `EntityMapperService` and transforming the entity object into the desired format to be persisted into the database.
 
-
------
+---
 
 `EntitySchemaService` manages a registry of "data types",
 i.e. transformation functions that will be called for a specific schema field's dataType.
@@ -50,9 +51,9 @@ The [EntitySchemaField](../../interfaces/EntitySchemaField.html) interface shows
 If the `editComponent` and the `viewComponent` are not set, the default components of this property's datatype will be used.
 The `description` field allows adding further explanation which will be displayed as a tooltip.
 
-
 ## Generic Entity functionalities
 
 ### Metadata (created, updated)
+
 Each record automatically holds basic data of timestamp and user who created and last updated the record.
 (see `Entity` class)

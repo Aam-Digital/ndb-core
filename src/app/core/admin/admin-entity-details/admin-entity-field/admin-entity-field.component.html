@@ -73,7 +73,7 @@
             </mat-form-field>
 
             <mat-form-field>
-              <mat-label>Type</mat-label>
+              <mat-label i18n>Type</mat-label>
               <app-basic-autocomplete
                 formControlName="dataType"
                 #formDataType
@@ -82,6 +82,15 @@
                 [valueMapper]="objectToValue"
               ></app-basic-autocomplete>
             </mat-form-field>
+
+            @if (
+              formDataType.value === "configurable-enum" ||
+              formDataType.value === "entity"
+            ) {
+              <mat-checkbox formControlName="isArray" i18n>
+                allow multiple values (multi-select)
+              </mat-checkbox>
+            }
 
             <!-- "additional" for enum datatype -->
             <mat-form-field *ngIf="formDataType.value === 'configurable-enum'">
@@ -112,12 +121,7 @@
             </mat-form-field>
 
             <!-- "additional" for entity ref datatypes -->
-            <mat-form-field
-              *ngIf="
-                formDataType.value === 'entity' ||
-                formDataType.value === 'entity-array'
-              "
-            >
+            <mat-form-field *ngIf="formDataType.value === 'entity'">
               <mat-label i18n>
                 Type Details (target record type)
                 <fa-icon
@@ -142,34 +146,43 @@
       <!--
         ADVANCED SETTINGS
       -->
-      <mat-tab
-        label="Advanced Options & Validation [COMING SOON]"
-        i18n-label
-        [disabled]="true"
-      >
-        <div class="grid-layout margin-top-regular">
+      <mat-tab label="Advanced Options & Validation" i18n-label>
+        <div class="grid-layout-wide margin-top-regular">
           <div class="entity-form-cell">
-            <mat-form-field>
-              <mat-label>Default Value</mat-label>
-              <input formControlName="defaultValue" matInput />
-            </mat-form-field>
+            <app-default-value-options
+              [value]="entitySchemaField.defaultValue"
+              (valueChange)="
+                schemaFieldsForm.get('defaultValue').setValue($event)
+              "
+              [entityType]="entityType"
+            >
+            </app-default-value-options>
 
-            <mat-form-field>
-              <mat-label>Anonymize</mat-label>
-              <input formControlName="anonymize" matInput />
-            </mat-form-field>
+            <app-anonymize-options
+              [value]="entitySchemaField.anonymize"
+              (valueChange)="schemaFieldsForm.get('anonymize').setValue($event)"
+            >
+              <span i18n>Anonymize</span>
+              <fa-icon
+                icon="question-circle"
+                matTooltip="Optionally This will remove all personal information (PII) permanently related to this field."
+                i18n-matTooltip
+              ></fa-icon>
+            </app-anonymize-options>
 
+            <!-- TODO: not supported yet
             <mat-form-field>
-              <mat-label>Searchable</mat-label>
+              <mat-label i18n>Searchable</mat-label>
               <input formControlName="searchable" matInput />
             </mat-form-field>
+            -->
           </div>
 
           <div class="entity-form-cell">
-            <mat-form-field>
-              <mat-label>Field Validation</mat-label>
-              <input formControlName="validators" matInput />
-            </mat-form-field>
+            <app-configure-entity-field-validator
+              [entitySchemaField]="entitySchemaField"
+              (entityValidatorChanges)="entityFieldValidatorChanges($event)"
+            ></app-configure-entity-field-validator>
           </div>
         </div>
       </mat-tab>

@@ -73,28 +73,37 @@ export class SyncService {
   private initDatabases() {
     this.remoteDatabase.initRemoteDB(
       `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
-      (url, opts: any) => {
-        if (typeof url === "string") {
-          const remoteUrl =
-            AppSettings.DB_PROXY_PREFIX +
-            url.split(AppSettings.DB_PROXY_PREFIX)[1];
-          return this.sendRequest(remoteUrl, opts).then((initialRes) =>
-            // retry login if request failed with unauthorized
-            initialRes.status === HttpStatusCode.Unauthorized
-              ? this.authService
-                  .login()
-                  .then(() => this.sendRequest(remoteUrl, opts))
-                  // return initial response if request failed again
-                  .then((newRes) => (newRes.ok ? newRes : initialRes))
-                  .catch(() => initialRes)
-              : initialRes,
-          );
-        }
-      },
+      this.fetch.bind(this),
     );
     this.remoteDB = this.remoteDatabase.getPouchDB();
     if (this.database instanceof PouchDatabase) {
       this.localDB = this.database.getPouchDB();
+    }
+  }
+
+  private async fetch(url: string, opts: any) {
+    // TODO: merge this with PouchDatabase.defaultFetch, which is very similar
+
+    if (typeof url !== "string") {
+      return;
+    }
+
+    const remoteUrl =
+      AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
+    const initialRes = await this.sendRequest(remoteUrl, opts);
+
+    // retry login if request failed with unauthorized
+    if (initialRes.status === HttpStatusCode.Unauthorized) {
+      return (
+        this.authService
+          .login()
+          .then(() => this.sendRequest(remoteUrl, opts))
+          // return initial response if request failed again
+          .then((newRes) => (newRes.ok ? newRes : initialRes))
+          .catch(() => initialRes)
+      );
+    } else {
+      return initialRes;
     }
   }
 
@@ -103,7 +112,10 @@ export class SyncService {
     return PouchDB.fetch(url, opts);
   }
 
-  private sync(): Promise<SyncResult> {
+  /**
+   * Execute a (one-time) sync between the local and server database.
+   */
+  sync(): Promise<SyncResult> {
     this.syncStateSubject.next(SyncState.STARTED);
 
     return this.localDB

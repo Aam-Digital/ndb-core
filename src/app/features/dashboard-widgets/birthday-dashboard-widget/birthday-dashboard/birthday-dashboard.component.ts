@@ -5,7 +5,7 @@ import { DynamicComponent } from "../../../../core/config/dynamic-components/dyn
 import { MatTableModule } from "@angular/material/table";
 import { Entity } from "../../../../core/entity/model/entity";
 import { DatePipe, NgIf } from "@angular/common";
-import { DisplayEntityComponent } from "../../../../core/basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../../../core/basic-datatypes/entity/entity-block/entity-block.component";
 
 import { DashboardWidget } from "../../../../core/dashboard/dashboard-widget/dashboard-widget";
 import { DashboardListWidgetComponent } from "../../../../core/dashboard/dashboard-list-widget/dashboard-list-widget.component";
@@ -24,7 +24,7 @@ interface BirthdayDashboardConfig {
   imports: [
     NgIf,
     MatTableModule,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     DatePipe,
     DashboardListWidgetComponent,
   ],

@@ -1,0 +1,35 @@
+<mat-form-field appearance="fill">
+  <mat-label>
+    <ng-content></ng-content>
+  </mat-label>
+
+  <mat-select
+    [(value)]="value"
+    (selectionChange)="valueChange.emit($event.value)"
+  >
+    <mat-option
+      value=""
+      matTooltip="Completely remove the value from the record during anonymization."
+      i18n-matTooltip
+      matTooltipPosition="before"
+      i18n
+      >Remove</mat-option
+    >
+    <mat-option
+      value="retain"
+      matTooltip="Keep the original value without any anonymization."
+      i18n-matTooltip
+      matTooltipPosition="before"
+      i18n
+      >Retain</mat-option
+    >
+    <mat-option
+      value="retain-anonymized"
+      matTooltip="Anonymize the value, but retain some generalized information. For dates, this removes the day and only keeps the year for statistical reporting. If a datatype (like the simple text field) does not support partial anonymization, the value will instead be removed completely."
+      i18n-matTooltip
+      matTooltipPosition="before"
+      i18n
+      >Partially Anonymize</mat-option
+    >
+  </mat-select>
+</mat-form-field>

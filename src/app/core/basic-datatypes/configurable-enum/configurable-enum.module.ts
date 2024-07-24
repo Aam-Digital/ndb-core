@@ -26,7 +26,7 @@ import { ConfigurableEnumDatatype } from "./configurable-enum-datatype/configura
  ```
  *
  * In an entity a property can then be of this type:
- * `@DatabaseField({ dataType: "configurable-enum", innerDataType: INTERACTION_TYPE_CONFIG_ID }) category: InteractionType;`
+ * `@DatabaseField({ dataType: "configurable-enum", additional: INTERACTION_TYPE_CONFIG_ID }) category: InteractionType;`
  *
  * ConfigurableEnum values can include arbitrary additional properties but must at least have basic properties of `ConfigurableEnumValue` interface.
  * It is best practice to define an interface for more complex value types and define a constant for the enum's config id, e.g.

@@ -1,18 +1,33 @@
-<app-view-title [disableBackButton]="true">
+<div class="hint-banner" i18n>
+  You can edit how users will see the list of all records of this type. Drag and
+  drop filters and change table columns in this preview. The editor below
+  closely resembles how the list will look for users later.
+  <br />
+  To create new fields, use the "Details View" section.
+</div>
+
+<app-view-title [disableBackButton]="true" [displayInPlace]="true">
   {{ entityConstructor.labelPlural }}
 </app-view-title>
 
 <div>
   <div
-    cdkDropList
-    cdkDropListOrientation="horizontal"
-    (cdkDropListDropped)="drop($event, config?.filters)"
+    cdkDropListGroup
     class="drop-list flex-row gap-regular flex-wrap gap-large"
   >
-    @for (filter of config?.filters; track filter) {
+    <div
+      cdkDropList
+      (cdkDropListEntered)="onDropListEntered($event)"
+      (cdkDropListDropped)="onDropListDropped()"
+    ></div>
+    <div
+      cdkDropList
+      (cdkDropListEntered)="onDropListEntered($event)"
+      (cdkDropListDropped)="onDropListDropped()"
+      *ngFor="let filter of config?.filters"
+    >
       <div cdkDrag class="filter-field drop-item flex-row gap-small">
         <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-
         <mat-form-field appearance="fill">
           <mat-label
             ><app-entity-field-label
@@ -29,11 +44,11 @@
           (click)="removeItem(filters, filter.id); updateFilters(filters)"
         ></fa-icon>
       </div>
-    }
+    </div>
   </div>
 
   <div class="table-content-preview" i18n>
-    Drag & drop filters and add filters using the
+    Add Filter:
     <app-entity-fields-menu
       [entityType]="entityConstructor"
       [activeFields]="filters"
@@ -41,7 +56,6 @@
       [availableFields]="allFields"
       icon="square-plus"
     ></app-entity-fields-menu>
-    button
   </div>
 </div>
 
@@ -78,14 +92,13 @@
       </div>
 
       <div class="table-content-preview" i18n>
-        Drag & drop table column headers and add columns using the
+        Drag & drop table column headers. Add columns:
         <app-entity-fields-menu
           [entityType]="entityConstructor"
           [(activeFields)]="item.columns"
           [availableFields]="allFields"
           icon="square-plus"
         ></app-entity-fields-menu>
-        button
       </div>
     </ng-template>
   </app-admin-tabs>

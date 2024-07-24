@@ -37,7 +37,10 @@ export class Aser extends Entity {
 
   @DatabaseField({
     label: $localize`:Label for date of the ASER results:Date`,
-    defaultValue: PLACEHOLDERS.NOW,
+    defaultValue: {
+      mode: "dynamic",
+      value: PLACEHOLDERS.NOW,
+    },
     anonymize: "retain-anonymized",
   })
   date: Date;

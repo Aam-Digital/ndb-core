@@ -157,17 +157,17 @@ describe("ConfigImportParserService", () => {
         hometown: {
           dataType: "configurable-enum",
           label: "hometown",
-          innerDataType: "hometown",
+          additional: "hometown",
         },
         city: {
           dataType: "configurable-enum",
           label: "city",
-          innerDataType: "hometown", // reuse the previous enum!
+          additional: "hometown", // reuse the previous enum!
         },
         missingEnum: {
           dataType: "configurable-enum",
           label: "missing",
-          innerDataType: ConfigImportParserService.NOT_CONFIGURED_KEY, // reuse the previous enum!
+          additional: ConfigImportParserService.NOT_CONFIGURED_KEY, // reuse the previous enum!
         },
       },
     );
@@ -204,7 +204,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         title: "",
-        entity: "test",
+        entityType: "test",
         columns: [],
         columnGroups: {
           groups: [
@@ -241,7 +241,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         icon: "child",
-        entity: "test",
+        entityType: "test",
         title: "",
         panels: [
           {
@@ -278,7 +278,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         icon: "child",
-        entity: "test",
+        entityType: "test",
         title: "",
         panels: [
           {
@@ -335,7 +335,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         icon: "child",
-        entity: "test",
+        entityType: "test",
         title: "",
         panels: [
           {
@@ -380,7 +380,7 @@ describe("ConfigImportParserService", () => {
       ],
       {
         icon: "child",
-        entity: "test",
+        entityType: "test",
         title: "",
         panels: [
           {

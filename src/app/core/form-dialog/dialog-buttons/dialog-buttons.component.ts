@@ -1,4 +1,11 @@
-import { Component, Input, OnInit } from "@angular/core";
+import {
+  Component,
+  EventEmitter,
+  Input,
+  OnInit,
+  Optional,
+  Output,
+} from "@angular/core";
 import { CommonModule } from "@angular/common";
 import { MatButtonModule } from "@angular/material/button";
 import { Angulartics2Module } from "angulartics2";
@@ -15,6 +22,7 @@ import { Router, RouterLink } from "@angular/router";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes.service";
 import { EntityActionsMenuComponent } from "../../entity-details/entity-actions-menu/entity-actions-menu.component";
+import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
 
 @Component({
   selector: "app-dialog-buttons",
@@ -38,14 +46,23 @@ export class DialogButtonsComponent implements OnInit {
   @Input() form: FormGroup;
   detailsRoute: string;
 
+  @Output() closeView = new EventEmitter<any>();
+
   constructor(
     private entityFormService: EntityFormService,
-    private dialog: MatDialogRef<any>,
+    @Optional() private dialog: MatDialogRef<any>,
     private alertService: AlertService,
     private router: Router,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
+    @Optional() protected viewContext: ViewComponentContext,
   ) {
+    if (this.dialog) {
+      this.initDialogSettings();
+    }
+  }
+
+  private initDialogSettings() {
     this.dialog.disableClose = true;
     this.dialog.backdropClick().subscribe(() =>
       this.unsavedChanges.checkUnsavedChanges().then((confirmed) => {
@@ -86,7 +103,7 @@ export class DialogButtonsComponent implements OnInit {
         // Attachments are only saved once form is disabled
         this.form.disable();
         this.form.markAsPristine();
-        this.dialog.close(res);
+        this.close(res);
       })
       .catch((err) => {
         if (!(err instanceof InvalidFormFieldError)) {
@@ -95,9 +112,21 @@ export class DialogButtonsComponent implements OnInit {
       });
   }
 
+  cancel() {
+    this.unsavedChanges.pending = false;
+    this.close();
+  }
+
+  close(result?: any) {
+    this.dialog?.close(result);
+    this.closeView.emit(result);
+
+    this.unsavedChanges.pending = false;
+  }
+
   onAction(action: string) {
     if (action === "delete") {
-      this.dialog.close();
+      this.close();
     }
   }
 }

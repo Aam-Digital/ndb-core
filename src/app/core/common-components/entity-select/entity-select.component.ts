@@ -8,7 +8,7 @@ import { UntilDestroy } from "@ngneat/until-destroy";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { MatFormFieldModule } from "@angular/material/form-field";
 import { AsyncPipe, NgForOf, NgIf } from "@angular/common";
-import { DisplayEntityComponent } from "../../basic-datatypes/entity/display-entity/display-entity.component";
+import { EntityBlockComponent } from "../../basic-datatypes/entity/entity-block/entity-block.component";
 import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { MatTooltipModule } from "@angular/material/tooltip";
 import { MatInputModule } from "@angular/material/input";
@@ -32,7 +32,7 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
     MatAutocompleteModule,
     MatChipsModule,
     NgForOf,
-    DisplayEntityComponent,
+    EntityBlockComponent,
     FontAwesomeModule,
     MatTooltipModule,
     MatInputModule,
@@ -201,7 +201,9 @@ export class EntitySelectComponent<
       .load<E>(type, selectedId)
       .catch((err: Error) => {
         this.logger.warn(
-          `[ENTITY_SELECT] Error loading selected entity "${selectedId}": ${err.message}`,
+          "[ENTITY_SELECT] Error loading selected entity.",
+          selectedId,
+          err.message,
         );
         return undefined;
       });

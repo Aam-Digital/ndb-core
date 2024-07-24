@@ -1,17 +1,41 @@
 import { applicationConfig, Meta, StoryFn } from "@storybook/angular";
-import { DisplayEntityComponent } from "./display-entity.component";
 import { Child } from "../../../../child-dev-project/children/model/child";
-import { School } from "../../../../child-dev-project/schools/model/school";
-import { User } from "../../../user/user";
+import { DisplayEntityComponent } from "./display-entity.component";
 import { StorybookBaseModule } from "../../../../utils/storybook-base.module";
 import { importProvidersFrom } from "@angular/core";
+
+const child1 = new Child();
+child1.name = "Test Name";
+child1.projectNumber = "1";
+const child2 = new Child();
+child2.name = "First Name";
+child2.projectNumber = "2";
+const child3 = new Child();
+child3.name = "Second Name";
+child3.projectNumber = "3";
+const child4 = new Child();
+child4.name = "Third Name";
+child4.projectNumber = "4";
+const child5 = new Child();
+child5.name = "Fifth Name";
+child5.projectNumber = "5";
 
 export default {
   title: "Core/Entities/Properties/entity/DisplayEntity",
   component: DisplayEntityComponent,
   decorators: [
     applicationConfig({
-      providers: [importProvidersFrom(StorybookBaseModule)],
+      providers: [
+        importProvidersFrom(
+          StorybookBaseModule.withData([
+            child1,
+            child2,
+            child3,
+            child4,
+            child5,
+          ]),
+        ),
+      ],
     }),
   ],
 } as Meta;
@@ -23,24 +47,12 @@ const Template: StoryFn<DisplayEntityComponent> = (
   props: args,
 });
 
-const testChild = new Child();
-testChild.name = "Test Name";
-testChild.projectNumber = "10";
-export const ChildComponent = Template.bind({});
-ChildComponent.args = {
-  entityToDisplay: testChild,
+export const FewEntities = Template.bind({});
+FewEntities.args = {
+  value: [child1, child2].map((x) => x.getId()),
 };
 
-const testSchool = new School();
-testSchool.name = "Test School";
-export const SchoolComponent = Template.bind({});
-SchoolComponent.args = {
-  entityToDisplay: testSchool,
-};
-
-const testUser = new User();
-testUser.name = "Test User";
-export const DefaultComponent = Template.bind({});
-DefaultComponent.args = {
-  entityToDisplay: testUser,
+export const ManyEntities = Template.bind({});
+ManyEntities.args = {
+  value: [child1, child2, child3, child4, child5].map((x) => x.getId()),
 };

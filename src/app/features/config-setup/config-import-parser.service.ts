@@ -127,14 +127,14 @@ export class ConfigImportParserService {
       fieldDef.dataType === "configurable-enum"
     ) {
       schema.dataType = "configurable-enum";
-      schema.innerDataType = this.generateOrMatchEnum(
+      schema.additional = this.generateOrMatchEnum(
         fieldDef.additional_type_details,
         fieldId,
       );
     }
     if (fieldDef.dataType === "enum-multi") {
-      schema.dataType = "array";
-      schema.innerDataType = "configurable-enum";
+      schema.dataType = "configurable-enum";
+      schema.isArray = true;
       schema.additional = this.generateOrMatchEnum(
         fieldDef.additional_type_details,
         fieldId,
@@ -209,9 +209,9 @@ export class ConfigImportParserService {
   }
 
   private generateEmptyListView(entityType: string): EntityListConfig {
-    const newListView = {
+    const newListView: EntityListConfig = {
       columns: [],
-      entity: entityType,
+      entityType: entityType,
       title: "",
       columnGroups: { groups: [] },
     };
@@ -288,7 +288,7 @@ export class ConfigImportParserService {
     entityType: string,
   ): EntityDetailsConfig {
     const newDetailsView = {
-      entity: entityType,
+      entityType: entityType,
       icon: "child",
       panels: [],
       title: "",

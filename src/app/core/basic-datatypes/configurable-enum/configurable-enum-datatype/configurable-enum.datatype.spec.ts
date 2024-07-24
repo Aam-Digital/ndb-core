@@ -29,6 +29,8 @@ import { ConfigurableEnumDatatype } from "./configurable-enum.datatype";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 
 describe("Schema data type: configurable-enum", () => {
+  const GENDER_MALE = genders.find((e) => e.id === "M");
+
   const TEST_CONFIG: ConfigurableEnumConfig = [
     { id: "NONE", label: "" },
     { id: "TEST_1", label: "Category 1" },
@@ -44,14 +46,9 @@ describe("Schema data type: configurable-enum", () => {
   class TestEntity extends Entity {
     @DatabaseField({
       dataType: "configurable-enum",
-      innerDataType: "test-enum",
-    })
-    option: ConfigurableEnumValue;
-    @DatabaseField({
-      dataType: "configurable-enum",
       additional: "test-enum",
     })
-    optionInAdditional: ConfigurableEnumValue;
+    option: ConfigurableEnumValue;
   }
 
   let entitySchemaService: EntitySchemaService;
@@ -108,19 +105,6 @@ describe("Schema data type: configurable-enum", () => {
     expect(rawData.option).toEqual(testOptionKey);
   });
 
-  it("should also support the name of the enum in the 'additional' field", () => {
-    const data = {
-      _id: TestEntity.ENTITY_TYPE + ":Test",
-      optionInAdditional: "TEST_3",
-    };
-    const entity = new TestEntity();
-
-    entitySchemaService.loadDataIntoEntity(entity, data);
-
-    expect(entity.optionInAdditional).toEqual(TEST_CONFIG[2]);
-    expect(entity.getId()).toEqual(data._id);
-  });
-
   it("should gracefully handle invalid enum ids and show a dummy option to users", () => {
     const data = {
       _id: "Test",
@@ -148,20 +132,38 @@ describe("Schema data type: configurable-enum", () => {
     expect(undefinedToObjectFormat).toBeUndefined();
   });
 
-  it("should map values using importMappingFunction", () => {
+  it("should map values using importMappingFunction", async () => {
     const dataType = new ConfigurableEnumDatatype(enumService);
     enumService.getEnumValues.and.returnValue(genders);
 
     const input = "MALEx";
-    const actualMapped = dataType.importMapFunction(
+    const actualMapped = await dataType.importMapFunction(
       input,
       {
         dataType: "configurable-enum",
         additional: "genders",
       },
-      { MALEx: "M" },
+      { MALEx: GENDER_MALE.id },
     );
 
-    expect(actualMapped).toEqual(genders.find((e) => e.id === "M"));
+    expect(actualMapped).toEqual(GENDER_MALE);
+  });
+
+  it("should map values using importMappingFunction for arrays", async () => {
+    const dataType = new ConfigurableEnumDatatype(enumService);
+    enumService.getEnumValues.and.returnValue(genders);
+
+    const input = "MALEx";
+    const actualMapped = await dataType.importMapFunction(
+      input,
+      {
+        dataType: "configurable-enum",
+        additional: "genders",
+        isArray: true,
+      },
+      { MALEx: [GENDER_MALE.id] },
+    );
+
+    expect(actualMapped).toEqual([GENDER_MALE]);
   });
 });

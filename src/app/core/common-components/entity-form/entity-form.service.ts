@@ -17,12 +17,8 @@ import { UnsavedChangesService } from "../../entity-details/form/unsaved-changes
 import { ActivationStart, Router } from "@angular/router";
 import { Subscription } from "rxjs";
 import { filter } from "rxjs/operators";
-import {
-  EntitySchemaField,
-  PLACEHOLDERS,
-} from "../../entity/schema/entity-schema-field";
-import { isArrayDataType } from "../../basic-datatypes/datatype-utils";
-import { CurrentUserSubject } from "../../session/current-user-subject";
+import { EntitySchemaField } from "../../entity/schema/entity-schema-field";
+import { DefaultValueService } from "../../entity/default-value.service";
 
 /**
  * These are utility types that allow to define the type of `FormGroup` the way it is returned by `EntityFormService.create`
@@ -45,7 +41,7 @@ export class EntityFormService {
     private dynamicValidator: DynamicValidatorsService,
     private ability: EntityAbility,
     private unsavedChanges: UnsavedChangesService,
-    private currentUser: CurrentUserSubject,
+    private defaultValueService: DefaultValueService,
     router: Router,
   ) {
     router.events
@@ -151,6 +147,8 @@ export class EntityFormService {
       this.subscriptions.push(statusChangesSubscription);
     }
 
+    this.defaultValueService.handle(group, entity);
+
     return group;
   }
 
@@ -175,13 +173,6 @@ export class EntityFormService {
     );
 
     let value = entity[field.id];
-    if (
-      entity.isNew &&
-      field.defaultValue &&
-      (!value || (value as []).length === 0)
-    ) {
-      value = this.getDefaultValue(field);
-    }
 
     const controlOptions: FormControlOptions = { nonNullable: true };
     if (field.validators) {
@@ -192,24 +183,6 @@ export class EntityFormService {
     }
 
     formConfig[field.id] = new FormControl(value, controlOptions);
-  }
-
-  private getDefaultValue<T>(schema: EntitySchemaField) {
-    let newVal;
-    switch (schema.defaultValue) {
-      case PLACEHOLDERS.NOW:
-        newVal = new Date();
-        break;
-      case PLACEHOLDERS.CURRENT_USER:
-        newVal = this.currentUser.value?.getId();
-        break;
-      default:
-        newVal = schema.defaultValue;
-    }
-    if (newVal && isArrayDataType(schema.dataType)) {
-      newVal = [newVal];
-    }
-    return newVal;
   }
 
   private disableReadOnlyFormControls<T extends Entity>(
@@ -228,7 +201,7 @@ export class EntityFormService {
    * This function applies the changes of the formGroup to the entity.
    * If the form is invalid or the entity does not pass validation after applying the changes, an error will be thrown.
    * The input entity will not be modified but a copy of it will be returned in case of success.
-   * @param form The formGroup holding the changes
+   * @param form The formGroup holding the changes (marked pristine and disabled after successful save)
    * @param entity The entity on which the changes should be applied.
    * @returns a copy of the input entity with the changes from the form group
    */
@@ -237,21 +210,27 @@ export class EntityFormService {
     entity: T,
   ): Promise<T> {
     this.checkFormValidity(form);
-    const updatedEntity = entity.copy() as T;
-    Object.assign(updatedEntity, form.getRawValue());
-    updatedEntity.assertValid();
 
+    const updatedEntity = entity.copy() as T;
+    for (const [key, value] of Object.entries(form.getRawValue())) {
+      if (value !== null) {
+        updatedEntity[key] = value;
+      }
+    }
+
+    updatedEntity.assertValid();
     this.assertPermissionsToSave(entity, updatedEntity);
 
-    return this.entityMapper
-      .save(updatedEntity)
-      .then(() => {
-        this.unsavedChanges.pending = false;
-        return Object.assign(entity, updatedEntity);
-      })
-      .catch((err) => {
-        throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
-      });
+    try {
+      await this.entityMapper.save(updatedEntity);
+    } catch (err) {
+      throw new Error($localize`Could not save ${entity.getType()}\: ${err}`);
+    }
+
+    this.unsavedChanges.pending = false;
+    form.markAsPristine();
+    form.disable();
+    return Object.assign(entity, updatedEntity);
   }
 
   private checkFormValidity<T extends Entity>(form: EntityForm<T>) {
@@ -263,7 +242,7 @@ export class EntityFormService {
   }
 
   private assertPermissionsToSave(oldEntity: Entity, newEntity: Entity) {
-    let action, entity;
+    let action: "create" | "update", entity: Entity;
     if (oldEntity.isNew) {
       action = "create";
       entity = newEntity;

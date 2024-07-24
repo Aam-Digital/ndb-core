@@ -1,6 +1,6 @@
 [
   {
-    "title":"Overview",
+    "title": "Overview",
     "file": "overview.md"
   },
   {
@@ -86,7 +86,7 @@
     "file": "how-to-guides/_index.md",
     "children": [
       {
-        "title":  "Development Processes",
+        "title": "Development Processes",
         "file": "how-to-guides/contribute-code.md",
         "children": [
           {
@@ -118,6 +118,10 @@
       {
         "title": "Create a New Entity Type",
         "file": "how-to-guides/create-new-entity-type.md"
+      },
+      {
+        "title": "Create a custom View Component",
+        "file": "how-to-guides/create-custom-view.md"
       },
       {
         "title": "Create an Entity Details Panel",
@@ -176,7 +180,7 @@
     ]
   },
   {
-    "title":"Prerequisites",
+    "title": "Prerequisites",
     "file": "prerequisites.md"
   }
 ]

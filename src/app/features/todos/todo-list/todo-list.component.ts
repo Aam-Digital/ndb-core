@@ -13,7 +13,6 @@ import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Sort } from "@angular/material/sort";
 import { ScreenWidthObserver } from "../../../utils/media/screen-size-observer.service";
 import { ActivatedRoute, Router, RouterLink } from "@angular/router";
-import { AnalyticsService } from "../../../core/analytics/analytics.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../../core/entity/database-entity.decorator";
 import { MatDialog } from "@angular/material/dialog";
@@ -46,6 +45,8 @@ import { MatTooltipModule } from "@angular/material/tooltip";
 import { EntityCreateButtonComponent } from "../../../core/common-components/entity-create-button/entity-create-button.component";
 import { EntityActionsService } from "app/core/entity/entity-actions/entity-actions.service";
 import { AbilityModule } from "@casl/angular";
+import { ViewActionsComponent } from "../../../core/common-components/view-actions/view-actions.component";
+import { EntityActionsMenuComponent } from "../../../core/entity-details/entity-actions-menu/entity-actions-menu.component";
 
 @UntilDestroy()
 @RouteTarget("TodoList")
@@ -79,6 +80,8 @@ import { AbilityModule } from "@casl/angular";
     EntityCreateButtonComponent,
     AbilityModule,
     AsyncPipe,
+    EntityActionsMenuComponent,
+    ViewActionsComponent,
   ],
 })
 export class TodoListComponent
@@ -102,7 +105,6 @@ export class TodoListComponent
     screenWidthObserver: ScreenWidthObserver,
     router: Router,
     activatedRoute: ActivatedRoute,
-    analyticsService: AnalyticsService,
     entityMapperService: EntityMapperService,
     entityActionsService: EntityActionsService,
     entities: EntityRegistry,
@@ -116,7 +118,6 @@ export class TodoListComponent
       screenWidthObserver,
       router,
       activatedRoute,
-      analyticsService,
       entityMapperService,
       entities,
       dialog,

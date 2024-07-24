@@ -8,21 +8,34 @@ import { Entity } from "../../entity/model/entity";
 import { ConfigurableEnumValue } from "../../basic-datatypes/configurable-enum/configurable-enum.interface";
 import { DatabaseField } from "../../entity/database-field.decorator";
 import moment from "moment";
+import { EntityMapperService } from "app/core/entity/entity-mapper/entity-mapper.service";
+import { School } from "app/child-dev-project/schools/model/school";
+import { Child } from "app/child-dev-project/children/model/child";
+import { mockEntityMapper } from "app/core/entity/entity-mapper/mock-entity-mapper-service";
+import { EntityDatatype } from "../../basic-datatypes/entity/entity.datatype";
 
 describe("DownloadService", () => {
   let service: DownloadService;
   let mockDataTransformationService: jasmine.SpyObj<DownloadService>;
+  let mockedEntityMapper;
+  const testSchool = School.create({ name: "Test School" });
+  const testChild = Child.create("Test Child");
 
   beforeEach(() => {
     mockDataTransformationService = jasmine.createSpyObj([
       "queryAndTransformData",
     ]);
+    mockedEntityMapper = mockEntityMapper([testSchool, testChild]);
     TestBed.configureTestingModule({
       providers: [
         DownloadService,
         {
           provide: DataTransformationService,
           useValue: mockDataTransformationService,
+        },
+        {
+          provide: EntityMapperService,
+          useValue: mockedEntityMapper,
         },
         LoggingService,
       ],
@@ -78,7 +91,7 @@ describe("DownloadService", () => {
       '"_id","_rev","propOne","propTwo"' +
       DownloadService.SEPARATOR_ROW +
       '"TestForCsvEntity:1","2","first","second"';
-    spyOn(service, "exportFile").and.returnValue(expected);
+    spyOn(service, "exportFile").and.resolveTo(expected);
     const result = await service.createCsv([test]);
     expect(result).toEqual(expected);
   });
@@ -112,6 +125,74 @@ describe("DownloadService", () => {
     expect(columnValues).toContain('"' + testEnumValue.label + '"');
     expect(columnValues).toContain('"' + testDate + '"');
     expect(columnValues).toContain('"true"');
+  });
+
+  it("should add columns with entity toString for referenced entities in export", async () => {
+    class EntityRefDownloadTestEntity extends Entity {
+      @DatabaseField({ dataType: "entity", label: "referenced entity" })
+      relatedEntity: string;
+      @DatabaseField({ dataType: "entity", label: "referenced entity 2" })
+      relatedEntity2: string;
+    }
+    const relatedEntity = testSchool;
+    const relatedEntity2 = testChild;
+
+    const testEntity = new EntityRefDownloadTestEntity();
+    testEntity.relatedEntity = relatedEntity.getId();
+    testEntity.relatedEntity2 = relatedEntity2.getId();
+
+    const csvExport = await service.createCsv([testEntity]);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    const columnValues = rows[1].split(DownloadService.SEPARATOR_COL);
+    expect(columnValues).toHaveSize(4);
+    expect(columnValues).toContain('"' + relatedEntity.getId() + '"');
+    expect(columnValues).toContain('"' + relatedEntity.toString() + '"');
+    expect(columnValues).toContain('"' + relatedEntity2.getId() + '"');
+    expect(columnValues).toContain('"' + relatedEntity2.toString() + '"');
+  });
+
+  it("should add column with entity toString for referenced array of entities in export", async () => {
+    class EntityRefDownloadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        isArray: true,
+        label: "referenced entities",
+      })
+      relatedEntitiesArray: string[];
+    }
+    const testEntity = new EntityRefDownloadTestEntity();
+    testEntity.relatedEntitiesArray = [testSchool.getId(), testChild.getId()];
+
+    const csvExport = await service.createCsv([testEntity]);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    expect(rows[1]).toBe(
+      `"${testSchool.getId()},${testChild.getId()}","${testSchool.toString()},${testChild.toString()}"`,
+    );
+  });
+
+  it("should handle undefined entity ids without errors", async () => {
+    class EntityRefDownloadTestEntity extends Entity {
+      @DatabaseField({
+        dataType: EntityDatatype.dataType,
+        isArray: true,
+        label: "referenced entities",
+      })
+      relatedEntitiesArray: string[];
+    }
+    const testEntity = new EntityRefDownloadTestEntity();
+    testEntity.relatedEntitiesArray = ["undefined-id", testChild.getId()];
+
+    const csvExport = await service.createCsv([testEntity]);
+
+    const rows = csvExport.split(DownloadService.SEPARATOR_ROW);
+    expect(rows).toHaveSize(1 + 1); // includes 1 header line
+    expect(rows[1]).toBe(
+      `"undefined-id,${testChild.getId()}","<not_found>,${testChild.toString()}"`,
+    );
   });
 
   it("should export all properties using object keys as headers, if no schema is available", async () => {

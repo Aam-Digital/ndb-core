@@ -47,6 +47,6 @@ export class AppComponent {
    */
   private detectConfigMode() {
     const currentUrl = this.router.url;
-    this.configFullscreen = currentUrl.startsWith("/admin/entity");
+    this.configFullscreen = currentUrl.startsWith("/admin/entity/");
   }
 }

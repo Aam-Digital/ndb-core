@@ -5,6 +5,7 @@ import { ConfigImportComponent } from "../../features/config-setup/config-import
 import { ConflictResolutionListComponent } from "../../features/conflict-resolution/conflict-resolution-list/conflict-resolution-list.component";
 import { UserRoleGuard } from "../permissions/permission-guard/user-role.guard";
 import { EntityPermissionGuard } from "../permissions/permission-guard/entity-permission.guard";
+import { SetupWizardComponent } from "./setup-wizard/setup-wizard.component";
 
 export const adminRoutes: Routes = [
   {
@@ -16,11 +17,25 @@ export const adminRoutes: Routes = [
     },
   },
   {
+    path: "setup-wizard",
+    component: SetupWizardComponent,
+  },
+  {
+    path: "entity",
+    component: RoutedViewComponent,
+    data: {
+      component: "AdminEntityTypes",
+      entityType: "Config",
+      requiredPermissionOperation: "update",
+    },
+    canActivate: [EntityPermissionGuard],
+  },
+  {
     path: "entity/:entityType",
     component: RoutedViewComponent,
     data: {
       component: "AdminEntity",
-      entity: "Config",
+      entityType: "Config",
       requiredPermissionOperation: "update",
     },
     canActivate: [EntityPermissionGuard],
@@ -32,7 +47,7 @@ export const adminRoutes: Routes = [
     data: {
       component: "EntityDetails",
       config: {
-        entity: "SiteSettings",
+        entityType: "SiteSettings",
         id: "global",
         panels: [
           {

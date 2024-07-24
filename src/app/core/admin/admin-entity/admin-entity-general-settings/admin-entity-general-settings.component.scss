@@ -1,0 +1,20 @@
+@use "mixins/grid-layout";
+
+.grid-layout {
+  @include grid-layout.adaptive(
+    $min-block-width: 250px,
+    $max-screen-width: 414px
+  );
+}
+.entity-form-cell {
+  display: flex;
+  flex-direction: column;
+  /* set the width of each form field to 100% in every form component that is a descendent of the columns-wrapper class */
+  mat-form-field {
+    width: 100%;
+  }
+}
+.overflow-table {
+  max-height: calc(100vh - 250px);
+  overflow: auto;
+}

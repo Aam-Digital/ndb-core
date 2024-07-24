@@ -10,6 +10,7 @@ import {
   Self,
   TemplateRef,
   ViewChild,
+  OnInit,
 } from "@angular/core";
 import { AsyncPipe, NgForOf, NgIf, NgTemplateOutlet } from "@angular/common";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -26,17 +27,10 @@ import {
   MatAutocompleteTrigger,
 } from "@angular/material/autocomplete";
 import { MatCheckboxModule } from "@angular/material/checkbox";
-import {
-  distinctUntilChanged,
-  filter,
-  map,
-  skip,
-  startWith,
-} from "rxjs/operators";
+import { filter, map, startWith } from "rxjs/operators";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { CustomFormControlDirective } from "./custom-form-control.directive";
 import { coerceBooleanProperty } from "@angular/cdk/coercion";
-import { concat, of } from "rxjs";
 import {
   MatChipGrid,
   MatChipInput,
@@ -46,6 +40,16 @@ import {
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { MatTooltip } from "@angular/material/tooltip";
 import { MatIcon } from "@angular/material/icon";
+import {
+  CdkDragDrop,
+  DragDropModule,
+  moveItemInArray,
+} from "@angular/cdk/drag-drop";
+import {
+  CdkFixedSizeVirtualScroll,
+  CdkVirtualForOf,
+  CdkVirtualScrollViewport,
+} from "@angular/cdk/scrolling";
 
 interface SelectableOption<O, V> {
   initial: O;
@@ -79,11 +83,15 @@ interface SelectableOption<O, V> {
     MatTooltip,
     MatIcon,
     MatChipRemove,
+    DragDropModule,
+    CdkVirtualScrollViewport,
+    CdkVirtualForOf,
+    CdkFixedSizeVirtualScroll,
   ],
 })
 export class BasicAutocompleteComponent<O, V = O>
   extends CustomFormControlDirective<V | V[]>
-  implements OnChanges
+  implements OnChanges, OnInit
 {
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
   // `_elementRef` is protected in `MapInput`
@@ -91,6 +99,8 @@ export class BasicAutocompleteComponent<O, V = O>
     _elementRef: ElementRef<HTMLElement>;
   };
   @ViewChild(MatAutocompleteTrigger) autocomplete: MatAutocompleteTrigger;
+  @ViewChild(CdkVirtualScrollViewport)
+  virtualScrollViewport: CdkVirtualScrollViewport;
 
   @Input() valueMapper = (option: O) => option as unknown as V;
   @Input() optionToString = (option: O) => option?.toString();
@@ -101,11 +111,16 @@ export class BasicAutocompleteComponent<O, V = O>
    * Whether the user should be able to select multiple values.
    */
   @Input() multi?: boolean;
+  @Input() reorder?: boolean;
 
+  /**
+   * Whether the user can manually drag & drop to reorder the selected items
+   */
+
+  autocompleteOptions: SelectableOption<O, V>[] = [];
   autocompleteForm = new FormControl("");
   autocompleteSuggestedOptions = this.autocompleteForm.valueChanges.pipe(
     filter((val) => typeof val === "string"),
-    distinctUntilChanged(),
     map((val) => this.updateAutocomplete(val)),
     startWith([] as SelectableOption<O, V>[]),
   );
@@ -138,7 +153,7 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
   }
-
+  retainSearchValue: string;
   private _options: SelectableOption<O, V>[] = [];
 
   _selectedOptions: SelectableOption<O, V>[] = [];
@@ -164,6 +179,18 @@ export class BasicAutocompleteComponent<O, V = O>
     );
   }
 
+  ngOnInit() {
+    this.autocompleteSuggestedOptions.subscribe((options) => {
+      this.autocompleteOptions = options;
+    });
+    // Subscribe to the valueChanges observable to print the input value
+    this.autocompleteForm.valueChanges.subscribe((value) => {
+      if (typeof value === "string") {
+        this.retainSearchValue = value;
+      }
+    });
+  }
+
   ngOnChanges(changes: { [key in keyof this]?: any }) {
     if (changes.valueMapper) {
       this._options.forEach(
@@ -185,17 +212,36 @@ export class BasicAutocompleteComponent<O, V = O>
     }
   }
 
-  showAutocomplete(valueToRevertTo?: string) {
-    if (this.multi) {
-      this.autocompleteForm.setValue("");
-    } else {
-      // cannot setValue to "" here because the current selection would be lost
-      this.autocompleteForm.setValue(this.displayText);
-      this.autocompleteSuggestedOptions = concat(
-        of(this._options.filter(({ initial }) => !this.hideOption(initial))),
-        this.autocompleteSuggestedOptions.pipe(skip(1)),
+  drop(event: CdkDragDrop<any[]>) {
+    if (event.previousContainer === event.container) {
+      moveItemInArray(
+        this.autocompleteOptions,
+        event.previousIndex,
+        event.currentIndex,
       );
     }
+    this._selectedOptions = this.autocompleteOptions.filter((o) => o.selected);
+    if (this.multi) {
+      this.value = this._selectedOptions.map((o) => o.asValue);
+    } else {
+      this.value = undefined;
+    }
+    this.setInitialInputValue();
+    this.onChange(this.value);
+    this.showAutocomplete(this.autocompleteForm.value);
+  }
+
+  showAutocomplete(valueToRevertTo?: string) {
+    if (this.retainSearchValue) {
+      this.autocompleteForm.setValue(this.retainSearchValue);
+    } else {
+      this.autocompleteForm.setValue("");
+    }
+    if (!this.multi) {
+      // cannot setValue to "" here because the current selection would be lost
+      this.autocompleteForm.setValue(this.displayText, { emitEvent: false });
+    }
+
     setTimeout(() => {
       this.inputElement.focus();
 
@@ -207,7 +253,11 @@ export class BasicAutocompleteComponent<O, V = O>
         this.autocompleteForm.setValue(valueToRevertTo);
       }
     });
+
     this.focus();
+
+    // update virtual scroll as the container remains empty until the user scrolls initially
+    this.virtualScrollViewport.scrollToIndex(0);
   }
 
   private updateAutocomplete(inputText: string): SelectableOption<O, V>[] {

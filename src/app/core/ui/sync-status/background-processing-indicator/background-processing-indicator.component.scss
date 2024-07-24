@@ -13,8 +13,7 @@
 }
 
 [hidden] {
-  // for some reason when `display: none` is set (instead of visibility and width)
-  // the pop-down menu is positioned incorrectly
+  /* for some reason when `display: none` is set (instead of visibility and width), the pop-down menu is positioned incorrectly */
   visibility: hidden !important;
   width: 0;
 }

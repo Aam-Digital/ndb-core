@@ -28,9 +28,11 @@ import {
   MatSidenavContent,
 } from "@angular/material/sidenav";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
-import { RouterLink } from "@angular/router";
+import { ActivatedRoute, RouterLink } from "@angular/router";
 import { MatListItem, MatNavList } from "@angular/material/list";
 import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entity-details/admin-entity-details.component";
+import { AdminEntityGeneralSettingsComponent } from "./admin-entity-general-settings/admin-entity-general-settings.component";
+import { BetaFeatureComponent } from "../../../features/coming-soon/beta-feature/beta-feature.component";
 
 @Component({
   selector: "app-admin-entity",
@@ -50,6 +52,8 @@ import { AdminEntityDetailsComponent } from "../admin-entity-details/admin-entit
     MatNavList,
     MatListItem,
     AdminEntityDetailsComponent,
+    AdminEntityGeneralSettingsComponent,
+    BetaFeatureComponent,
   ],
   templateUrl: "./admin-entity.component.html",
   styleUrl: "./admin-entity.component.scss",
@@ -61,8 +65,8 @@ export class AdminEntityComponent implements OnInit {
 
   configDetailsView: EntityDetailsConfig;
   configListView: EntityListConfig;
-
-  protected mode: "details" | "list" | "general" = "list";
+  configEntitySettings: EntityConfig;
+  protected mode: "details" | "list" | "general" = "details";
 
   @ContentChild(TemplateRef) templateRef: TemplateRef<any>;
 
@@ -72,10 +76,14 @@ export class AdminEntityComponent implements OnInit {
     private location: Location,
     private entityMapper: EntityMapperService,
     private entityActionsService: EntityActionsService,
+    private routes: ActivatedRoute,
   ) {}
 
   ngOnInit(): void {
     this.init();
+    this.routes.queryParams.subscribe((params) => {
+      this.mode = params.mode ?? this.mode;
+    });
   }
 
   private init() {
@@ -86,19 +94,22 @@ export class AdminEntityComponent implements OnInit {
 
     this.configDetailsView = this.loadViewConfig(
       EntityConfigService.getDetailsViewId(this.entityConstructor),
-    );
+    ) ?? { entityType: this.entityType, panels: [] };
     this.configListView = this.loadViewConfig(
       EntityConfigService.getListViewId(this.entityConstructor),
-    );
+    ) ?? { entityType: this.entityType };
+    this.configEntitySettings = this.entityConstructor;
   }
 
-  private loadViewConfig<C = EntityDetailsConfig | EntityListConfig>(
-    viewId: string,
-  ): C {
+  private loadViewConfig<
+    C = EntityDetailsConfig | EntityListConfig | undefined,
+  >(viewId: string): C | undefined {
     const viewConfig: ViewConfig<C> = this.configService.getConfig(viewId);
 
     // work on a deep copy as we are editing in place (for titles, sections, etc.)
-    return JSON.parse(JSON.stringify(viewConfig.config));
+    return viewConfig?.config
+      ? JSON.parse(JSON.stringify(viewConfig.config))
+      : undefined;
   }
 
   cancel() {
@@ -155,6 +166,14 @@ export class AdminEntityComponent implements OnInit {
       }
       entitySchemaConfig.attributes[fieldId] = field;
     }
+    if (this.configEntitySettings) {
+      entitySchemaConfig.label = this.configEntitySettings.label;
+      entitySchemaConfig.labelPlural = this.configEntitySettings.labelPlural;
+      entitySchemaConfig.icon = this.configEntitySettings.icon;
+      entitySchemaConfig.toStringAttributes =
+        this.configEntitySettings.toStringAttributes;
+      entitySchemaConfig.hasPII = this.configEntitySettings.hasPII;
+    }
   }
 
   private setViewConfig(
@@ -167,7 +186,7 @@ export class AdminEntityComponent implements OnInit {
       targetConfig.data[detailsViewId].config = viewConfig;
     } else {
       // create new config
-      viewConfig.entity = this.entityType;
+      viewConfig.entityType = this.entityType;
       targetConfig.data[detailsViewId] = {
         component: componentForNewConfig,
         config: viewConfig,

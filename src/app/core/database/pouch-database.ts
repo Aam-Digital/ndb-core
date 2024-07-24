@@ -119,11 +119,13 @@ export class PouchDatabase extends Database {
   }
 
   private defaultFetch(url, opts: any) {
-    if (typeof url === "string") {
-      const remoteUrl =
-        AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
-      return PouchDB.fetch(remoteUrl, opts);
+    if (typeof url !== "string") {
+      return;
     }
+
+    const remoteUrl =
+      AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
+    return PouchDB.fetch(remoteUrl, opts);
   }
 
   async getPouchDBOnceReady(): Promise<PouchDB.Database> {
@@ -147,22 +149,23 @@ export class PouchDatabase extends Database {
    * @param options Optional PouchDB options for the request
    * @param returnUndefined (Optional) return undefined instead of throwing error if doc is not found in database
    */
-  get(
+  async get(
     id: string,
     options: GetOptions = {},
     returnUndefined?: boolean,
   ): Promise<any> {
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.get(id, options))
-      .catch((err) => {
-        if (err.status === 404) {
-          this.loggingService.debug("Doc not found in database: " + id);
-          if (returnUndefined) {
-            return undefined;
-          }
+    try {
+      return await (await this.getPouchDBOnceReady()).get(id, options);
+    } catch (err) {
+      if (err.status === 404) {
+        this.loggingService.debug("Doc not found in database: " + id);
+        if (returnUndefined) {
+          return undefined;
         }
-        throw new DatabaseException(err);
-      });
+      }
+
+      throw new DatabaseException(err, id);
+    }
   }
 
   /**
@@ -175,13 +178,16 @@ export class PouchDatabase extends Database {
    *
    * @param options PouchDB options object as in the normal PouchDB library
    */
-  allDocs(options?: GetAllOptions) {
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.allDocs(options))
-      .then((result) => result.rows.map((row) => row.doc))
-      .catch((err) => {
-        throw new DatabaseException(err);
-      });
+  async allDocs(options?: GetAllOptions) {
+    try {
+      const result = await (await this.getPouchDBOnceReady()).allDocs(options);
+      return result.rows.map((row) => row.doc);
+    } catch (err) {
+      throw new DatabaseException(
+        err,
+        "allDocs; startkey: " + options?.["startkey"],
+      );
+    }
   }
 
   /**
@@ -191,20 +197,20 @@ export class PouchDatabase extends Database {
    * @param object The document to be saved
    * @param forceOverwrite (Optional) Whether conflicts should be ignored and an existing conflicting document forcefully overwritten.
    */
-  put(object: any, forceOverwrite = false): Promise<any> {
+  async put(object: any, forceOverwrite = false): Promise<any> {
     if (forceOverwrite) {
       object._rev = undefined;
     }
 
-    return this.getPouchDBOnceReady()
-      .then((pouchDB) => pouchDB.put(object))
-      .catch((err) => {
-        if (err.status === 409) {
-          return this.resolveConflict(object, forceOverwrite, err);
-        } else {
-          throw new DatabaseException(err);
-        }
-      });
+    try {
+      return await (await this.getPouchDBOnceReady()).put(object);
+    } catch (err) {
+      if (err.status === 409) {
+        return this.resolveConflict(object, forceOverwrite, err);
+      } else {
+        throw new DatabaseException(err, object._id);
+      }
+    }
   }
 
   /**
@@ -231,6 +237,11 @@ export class PouchDatabase extends Database {
           forceOverwrite,
           result,
         ).catch((e) => {
+          this.loggingService.warn(
+            "error during putAll",
+            e,
+            objects.map((x) => x._id),
+          );
           return new DatabaseException(e);
         });
       }
@@ -252,7 +263,7 @@ export class PouchDatabase extends Database {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.remove(object))
       .catch((err) => {
-        throw new DatabaseException(err);
+        throw new DatabaseException(err, object["_id"]);
       });
   }
 
@@ -274,27 +285,32 @@ export class PouchDatabase extends Database {
   changes(prefix: string): Observable<any> {
     if (!this.changesFeed) {
       this.changesFeed = new Subject();
-      this.getPouchDBOnceReady()
-        .then((pouchDB) =>
-          pouchDB
-            .changes({
-              live: true,
-              since: "now",
-              include_docs: true,
-            })
-            .addListener("change", (change) =>
-              this.changesFeed.next(change.doc),
-            ),
-        )
-        .catch((err) => {
-          if (err.statusCode === HttpStatusCode.Unauthorized) {
-            this.loggingService.warn(err);
-          } else {
-            throw err;
-          }
-        });
+      this.subscribeChanges();
     }
     return this.changesFeed.pipe(filter((doc) => doc._id.startsWith(prefix)));
+  }
+
+  private async subscribeChanges() {
+    (await this.getPouchDBOnceReady())
+      .changes({
+        live: true,
+        since: "now",
+        include_docs: true,
+      })
+      .addListener("change", (change) => this.changesFeed.next(change.doc))
+      .catch((err) => {
+        if (
+          err.statusCode === HttpStatusCode.Unauthorized ||
+          err.statusCode === HttpStatusCode.GatewayTimeout
+        ) {
+          this.loggingService.warn(err);
+        } else {
+          this.loggingService.error(err);
+        }
+
+        // retry
+        setTimeout(() => this.subscribeChanges(), 10000);
+      });
   }
 
   /**
@@ -333,7 +349,10 @@ export class PouchDatabase extends Database {
     return this.getPouchDBOnceReady()
       .then((pouchDB) => pouchDB.query(fun, options))
       .catch((err) => {
-        throw new DatabaseException(err);
+        throw new DatabaseException(
+          err,
+          typeof fun === "string" ? fun : undefined,
+        );
       });
   }
 
@@ -420,10 +439,11 @@ export class PouchDatabase extends Database {
  * This overwrites PouchDB's error class which only logs limited information
  */
 class DatabaseException extends Error {
-  constructor(error: PouchDB.Core.Error) {
+  constructor(error: PouchDB.Core.Error, entityId?: string) {
     super();
-    if (error.status === 404) {
-      error.message = error.message + ` (${error["docId"]})`;
+
+    if (entityId) {
+      error["entityId"] = entityId;
     }
     Object.assign(this, error);
   }

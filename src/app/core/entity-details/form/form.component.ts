@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from "@angular/core";
+import { Component, Input, OnInit, Optional } from "@angular/core";
 import { Entity } from "../../entity/model/entity";
 import { getParentUrl } from "../../../utils/utils";
 import { Router } from "@angular/router";
@@ -14,6 +14,7 @@ import { MatButtonModule } from "@angular/material/button";
 import { EntityFormComponent } from "../../common-components/entity-form/entity-form/entity-form.component";
 import { DisableEntityOperationDirective } from "../../permissions/permission-directive/disable-entity-operation.directive";
 import { FieldGroup } from "./field-group";
+import { ViewComponentContext } from "../../ui/abstract-view/abstract-view.component";
 
 /**
  * A simple wrapper function of the EntityFormComponent which can be used as a dynamic component
@@ -45,6 +46,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
     private location: Location,
     private entityFormService: EntityFormService,
     private alertService: AlertService,
+    @Optional() private viewContext: ViewComponentContext,
   ) {}
 
   ngOnInit() {
@@ -61,9 +63,7 @@ export class FormComponent<E extends Entity> implements FormConfig, OnInit {
   async saveClicked() {
     try {
       await this.entityFormService.saveChanges(this.form, this.entity);
-      this.form.markAsPristine();
-      this.form.disable();
-      if (this.creatingNew) {
+      if (this.creatingNew && !this.viewContext?.isDialog) {
         await this.router.navigate([
           getParentUrl(this.router),
           this.entity.getId(true),

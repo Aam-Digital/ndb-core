@@ -5,9 +5,14 @@ import { EntityRegistry } from "./database-entity.decorator";
 import { IconName } from "@fortawesome/fontawesome-svg-core";
 import { EntityConfig } from "./entity-config";
 import { addPropertySchema } from "./database-field.decorator";
-import { PREFIX_VIEW_CONFIG } from "../config/dynamic-routing/view-config.interface";
+import {
+  PREFIX_VIEW_CONFIG,
+  ViewConfig,
+} from "../config/dynamic-routing/view-config.interface";
 import { EntitySchemaField } from "./schema/entity-schema-field";
 import { EntitySchema } from "./schema/entity-schema";
+import { EntityDetailsConfig } from "../entity-details/EntityDetailsConfig";
+import { EntityListConfig } from "../entity-list/EntityListConfig";
 
 /**
  * A service that allows to work with configuration-objects
@@ -24,11 +29,11 @@ export class EntityConfigService {
   /** original initial entity schemas without overrides from config */
   private coreEntitySchemas = new Map<string, EntitySchema>();
 
-  static getDetailsViewId(entityConstructor: EntityConstructor) {
-    return this.getListViewId(entityConstructor) + "/:id";
+  static getDetailsViewId(entityConfig: EntityConfig) {
+    return this.getListViewId(entityConfig) + "/:id";
   }
-  static getListViewId(entityConstructor: EntityConstructor) {
-    return PREFIX_VIEW_CONFIG + entityConstructor.route.replace(/^\//, "");
+  static getListViewId(entityConfig: EntityConfig) {
+    return PREFIX_VIEW_CONFIG + entityConfig.route.replace(/^\//, "");
   }
 
   // TODO: merge with EntityRegistry?
@@ -148,5 +153,20 @@ export class EntityConfigService {
     const configName =
       EntityConfigService.PREFIX_ENTITY_CONFIG + entityType.ENTITY_TYPE;
     return this.configService.getConfig<EntityConfig>(configName);
+  }
+
+  getDetailsViewConfig(
+    entityType: EntityConstructor,
+  ): ViewConfig<EntityDetailsConfig> {
+    return this.configService.getConfig<ViewConfig<EntityDetailsConfig>>(
+      EntityConfigService.getDetailsViewId(entityType),
+    );
+  }
+  getListViewConfig(
+    entityType: EntityConstructor,
+  ): ViewConfig<EntityListConfig> {
+    return this.configService.getConfig<ViewConfig<EntityListConfig>>(
+      EntityConfigService.getListViewId(entityType),
+    );
   }
 }

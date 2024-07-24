@@ -1,37 +1,91 @@
 import { TestBed } from "@angular/core/testing";
 
-import { SqlReportService } from "./sql-report.service";
-import { Entity } from "../../../core/entity/model/entity";
-import { DatabaseField } from "../../../core/entity/database-field.decorator";
 import {
-  DatabaseEntity,
-  entityRegistry,
-  EntityRegistry,
-} from "../../../core/entity/database-entity.decorator";
+  ReportCalculation,
+  ReportData,
+  SqlReportService,
+} from "./sql-report.service";
+import { entityRegistry } from "../../../core/entity/database-entity.decorator";
 import { HttpClient } from "@angular/common/http";
 import { of } from "rxjs";
 import { ReportEntity, SqlReport } from "../report-config";
-import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
-import { mockEntityMapper } from "../../../core/entity/entity-mapper/mock-entity-mapper-service";
-import { SqsSchema } from "./sqs-schema";
 import moment from "moment";
 
 describe("SqlReportService", () => {
   let service: SqlReportService;
-  let mockEntities: EntityRegistry;
+
   let mockHttpClient: jasmine.SpyObj<HttpClient>;
+
+  let validReportCalculationsResponse: ReportCalculation[] = [
+    {
+      id: "report-calculation-1",
+      report: {
+        id: "report-id",
+      },
+      startDate: null,
+      endDate: null,
+      status: "PENDING",
+      args: new Map<String, String>(),
+      outcome: {
+        result_hash:
+          "180a94a09c517b24e994aaf8342c58270a775f953eb32af78f06f1c8f61e37b9",
+      },
+    },
+    {
+      id: "report-calculation-2",
+      report: {
+        id: "report-id",
+      },
+      status: "FINISHED_SUCCESS",
+      startDate: "2024-06-07T09:26:56.414",
+      endDate: "2024-06-09T09:26:57.431",
+      args: new Map<String, String>([
+        ["from", "2024-01-01T00:00:00.000"],
+        ["to", "2024-01-01T23:59:59.999"],
+      ]),
+      outcome: {
+        result_hash: "000",
+      },
+    },
+    {
+      id: "report-calculation-3",
+      report: {
+        id: "report-id",
+      },
+      status: "FINISHED_SUCCESS",
+      startDate: "2024-06-07T09:26:56.414",
+      endDate: "2024-06-07T09:26:57.431",
+      args: new Map<String, String>([
+        ["from", "2024-01-01T00:00:00.000"],
+        ["to", "2024-01-01T23:59:59.999"],
+      ]),
+      outcome: {
+        result_hash: "000",
+      },
+    },
+  ];
+
+  let validReportDataResponse: ReportData = {
+    id: "id",
+    report: {
+      id: "report-id",
+    },
+    calculation: {
+      id: "calculation-id",
+    },
+    data: [
+      {
+        foo: "bar",
+      },
+    ],
+  };
 
   beforeEach(() => {
     entityRegistry.allowDuplicates();
-    mockEntities = new EntityRegistry();
-    mockHttpClient = jasmine.createSpyObj(["post"]);
-    mockHttpClient.post.and.returnValue(of(undefined));
+    mockHttpClient = jasmine.createSpyObj(["post", "get"]);
+
     TestBed.configureTestingModule({
-      providers: [
-        { provide: EntityRegistry, useValue: mockEntities },
-        { provide: HttpClient, useValue: mockHttpClient },
-        { provide: EntityMapperService, useValue: mockEntityMapper() },
-      ],
+      providers: [{ provide: HttpClient, useValue: mockHttpClient }],
     });
     service = TestBed.inject(SqlReportService);
   });
@@ -40,90 +94,104 @@ describe("SqlReportService", () => {
     expect(service).toBeTruthy();
   });
 
-  it("should query the external service with the provided report data", async () => {
-    const mockResult = [{ some: "data" }];
-    mockHttpClient.post.and.returnValue(of(mockResult));
+  it("should create a new report calculation if no one exist", async () => {
+    // Given
+    mockHttpClient.get.and.returnValues(
+      of(validReportCalculationsResponse),
+      of(validReportCalculationsResponse[1]),
+      of(validReportDataResponse),
+    );
+    mockHttpClient.post.and.returnValue(
+      of({
+        id: "calculation-id",
+      }),
+    );
+
     const report = new ReportEntity() as SqlReport;
     report.mode = "sql";
 
+    // When
     const result = await service.query(
       report,
-      moment("2023-01-01").toDate(),
+      moment("2024-01-02T00:00:00.000").toDate(),
+      moment("2024-01-02T23:59:59.999").toDate(),
+    );
+
+    // Then
+    expect(mockHttpClient.post).toHaveBeenCalledOnceWith(
+      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${report.getId()}`,
+      {},
+      {
+        params: {
+          from: "2024-01-02",
+          to: "2024-01-02",
+        },
+      },
+    );
+    expect(result).toEqual(validReportDataResponse);
+  });
+
+  it("should create a new report calculation if forceCalculation is true", async () => {
+    // Given
+    mockHttpClient.get.and.returnValues(
+      of(validReportCalculationsResponse[1]),
+      of(validReportDataResponse),
+    );
+    mockHttpClient.post.and.returnValue(
+      of({
+        id: "calculation-id",
+      }),
+    );
+
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
+
+    // When
+    const result = await service.query(
+      report,
+      moment("2024-01-02T00:00:00.000").toDate(),
+      moment("2024-01-02T23:59:59.999").toDate(),
+      true,
+    );
+
+    // Then
+    expect(mockHttpClient.post).toHaveBeenCalledOnceWith(
+      `${SqlReportService.QUERY_PROXY}/api/v1/reporting/report-calculation/report/${report.getId()}`,
+      {},
+      {
+        params: {
+          from: "2024-01-02",
+          to: "2024-01-02",
+        },
+      },
+    );
+    expect(result).toEqual(validReportDataResponse);
+  });
+
+  it("should fetch the existing report calculation data if data exist", async () => {
+    // Given
+    mockHttpClient.get.and.returnValues(
+      of(validReportCalculationsResponse),
+      of(validReportDataResponse),
+    );
+    mockHttpClient.post.and.returnValue(
+      of({
+        id: "calculation-id",
+      }),
+    );
+
+    const report = new ReportEntity() as SqlReport;
+    report.mode = "sql";
+
+    // When
+    const result = await service.query(
+      report,
+      moment("2024-01-01").toDate(),
       moment("2024-01-01").toDate(),
     );
 
-    expect(mockHttpClient.post).toHaveBeenCalledWith(
-      `${SqlReportService.QUERY_PROXY}/report/app/${report.getId()}`,
-      {
-        from: "2023-01-01",
-        to: "2024-01-01",
-      },
-    );
-    expect(result).toEqual(mockResult);
-  });
-
-  it("should generate a valid schema including all properties", () => {
-    @DatabaseEntity("SchemaTest")
-    class SchemaTest extends Entity {
-      @DatabaseField() numberProp: number;
-      @DatabaseField() stringProp: string;
-      @DatabaseField({ dataType: "entity" }) entityProp: string;
-      @DatabaseField({ innerDataType: "configurable-enum" })
-      arrayEnum: string[];
-      @DatabaseField() booleanProp: boolean;
-    }
-    mockEntities.add(SchemaTest.ENTITY_TYPE, SchemaTest);
-
-    const schema = service.generateSchema();
-
-    expect(schema.sql).toEqual({
-      tables: {
-        SchemaTest: {
-          _id: "TEXT",
-          created: "TEXT",
-          updated: "TEXT",
-          inactive: "INTEGER",
-          anonymized: "INTEGER",
-          numberProp: "INTEGER", // TODO distinguish REAL and INT? SQLITE anyways has dynamic typing https://sqlite.org/datatype3.html
-          stringProp: "TEXT",
-          entityProp: "TEXT",
-          arrayEnum: "TEXT",
-          booleanProp: "INTEGER", // TODO check that this works with SQS
-        },
-      },
-      options: {
-        table_name: {
-          operation: "prefix",
-          field: "_id",
-          separator: ":",
-        },
-      },
-    });
-  });
-
-  it("should update the schema when querying the service", async () => {
-    @DatabaseEntity("SchemaTest")
-    class SchemaTest extends Entity {}
-    mockEntities.add(SchemaTest.ENTITY_TYPE, SchemaTest);
-    const entityMapper = TestBed.inject(EntityMapperService);
-    const saveSpy = spyOn(entityMapper, "save").and.callThrough();
-    const report = new ReportEntity() as SqlReport;
-    report.mode = "sql";
-
-    await service.query(report, new Date(), new Date());
-    expect(saveSpy).toHaveBeenCalledWith(jasmine.any(SqsSchema));
-
-    // SqsSchema exists and entity schema hasn't changed
-    saveSpy.calls.reset();
-    await service.query(report, new Date(), new Date());
-    expect(saveSpy).not.toHaveBeenCalled();
-
-    // SqsSchema exists and entity schema changed
-    saveSpy.calls.reset();
-    SchemaTest.schema.set("test", { dataType: "string" });
-    await service.query(report, new Date(), new Date());
-    expect(saveSpy).toHaveBeenCalledWith(jasmine.any(SqsSchema));
-
-    SchemaTest.schema.delete("test");
+    // Then
+    expect(mockHttpClient.post).not.toHaveBeenCalled();
+    expect(result).toEqual(validReportDataResponse);
   });
 });

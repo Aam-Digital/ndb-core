@@ -74,24 +74,6 @@ export class EntitySchemaService {
   }
 
   /**
-   * Get the datatype of the innermost type of a field, e.g. the type contained in an array.
-   * @param schemaField
-   */
-  public getInnermostDatatype(schemaField: EntitySchemaField) {
-    let datatype;
-    // do not use the Datatype classes here to avoid circular dependencies with EntitySchemaService
-    if (schemaField.dataType === "array") {
-      datatype = schemaField.innerDataType;
-    } else if (schemaField.dataType === "entity-array") {
-      datatype = "entity";
-    } else {
-      datatype = schemaField.dataType;
-    }
-
-    return this.getDatatypeOrDefault(datatype);
-  }
-
-  /**
    * Transform a database object to entity format according to the schema.
    * @param data The database object that will be transformed to the given entity format
    * @param schema A schema defining the transformation
@@ -104,7 +86,7 @@ export class EntitySchemaService {
     for (const key of schema.keys()) {
       const schemaField: EntitySchemaField = schema.get(key);
 
-      if (data[key] === undefined || data[key] === null) {
+      if (data[key] === undefined) {
         continue;
       }
 
@@ -153,7 +135,7 @@ export class EntitySchemaService {
       let value = entity[key];
       const schemaField: EntitySchemaField = schema.get(key);
 
-      if (value === undefined || value === null) {
+      if (value === undefined) {
         // skip and keep undefined
         continue;
       }
@@ -198,13 +180,6 @@ export class EntitySchemaService {
     if (dataType?.[componentAttribute]) {
       return dataType[componentAttribute];
     }
-
-    const innerDataType = this.getDatatypeOrDefault(
-      propertySchema.innerDataType,
-    );
-    if (innerDataType?.[componentAttribute]) {
-      return innerDataType[componentAttribute];
-    }
   }
 
   /**
@@ -218,9 +193,19 @@ export class EntitySchemaService {
     schemaField: EntitySchemaField,
     entity?: Entity,
   ) {
-    return this.getDatatypeOrDefault(
-      schemaField.dataType,
-    ).transformToDatabaseFormat(value, schemaField, entity);
+    if (value === null) {
+      // keep 'null' to be able to explicitly mark a value as being reset
+      return null;
+    }
+
+    const dataType = this.getDatatypeOrDefault(schemaField.dataType);
+    if (schemaField.isArray) {
+      return asArray(value).map((v) =>
+        dataType.transformToDatabaseFormat(v, schemaField, entity),
+      );
+    } else {
+      return dataType.transformToDatabaseFormat(value, schemaField, entity);
+    }
   }
 
   /**
@@ -234,9 +219,19 @@ export class EntitySchemaService {
     schemaField: EntitySchemaField,
     dataObject?: any,
   ) {
-    return this.getDatatypeOrDefault(
-      schemaField.dataType,
-    ).transformToObjectFormat(value, schemaField, dataObject);
+    if (value === null) {
+      // keep 'null' to be able to explicitly mark a value as being reset
+      return null;
+    }
+
+    const dataType = this.getDatatypeOrDefault(schemaField.dataType);
+    if (schemaField.isArray) {
+      return asArray(value).map((v) =>
+        dataType.transformToObjectFormat(v, schemaField, dataObject),
+      );
+    } else {
+      return dataType.transformToObjectFormat(value, schemaField, dataObject);
+    }
   }
 
   /**

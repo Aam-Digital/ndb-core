@@ -3,7 +3,7 @@
 
   <mat-select
     [id]="filterConfig.name"
-    [(value)]="selectedOptions"
+    [(value)]="filterConfig.selectedOptionValues"
     (valueChange)="filterConfig.selectedOptionChange.emit($event)"
     multiple
   >

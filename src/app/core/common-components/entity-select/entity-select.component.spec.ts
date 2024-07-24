@@ -110,7 +110,9 @@ describe("EntitySelectComponent", () => {
     fixture.detectChanges();
 
     expect(warnSpy).toHaveBeenCalledWith(
-      jasmine.stringContaining("missing_user"),
+      jasmine.stringContaining("ENTITY_SELECT"),
+      "missing_user",
+      jasmine.anything(),
     );
     expect(component.form.value).toEqual([testUsers[0].getId()]);
   }));

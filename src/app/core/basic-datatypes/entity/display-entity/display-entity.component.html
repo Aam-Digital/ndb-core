@@ -1,28 +1,11 @@
-<span
-  class="block-height truncate-text"
-  [ngClass]="{ clickable: !linkDisabled }"
-  (click)="showDetailsPage()"
->
-  <ng-container
-    *ngIf="entityBlockComponent && entityToDisplay"
-    [appDynamicComponent]="{
-      component: entityBlockComponent,
-      config: {
-        entity: entityToDisplay,
-        linkDisabled: linkDisabled,
-        tooltipDisabled: true
-      }
-    }"
-  >
-  </ng-container>
-
-  <ng-container *ngIf="!entityBlockComponent">
-    <app-fa-dynamic-icon
-      *ngIf="entityIcon"
-      [icon]="entityIcon"
-      class="margin-right-small"
-    ></app-fa-dynamic-icon>
-
-    {{ entityToDisplay?.toString() }}
-  </ng-container>
-</span>
+@if (entityIds?.length < aggregationThreshold) {
+  <!-- Display each entity -->
+  @for (e of entityIds; track e) {
+    <app-entity-block class="display-entity" [entityId]="e"></app-entity-block>
+  }
+} @else {
+  <!-- Only display summary -->
+  <span i18n="Displaying the amount of involved entities|context 10 in total">
+    {{ value?.length }} in total
+  </span>
+}

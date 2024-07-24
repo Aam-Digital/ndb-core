@@ -1,4 +1,14 @@
-<app-view-title [disableBackButton]="true">
+<div class="hint-banner" i18n>
+  You can edit how users will see the details of a single record of this type.
+  Drag and drop fields and sections in this preview of a profile view and group
+  them as appropriate. The editor below closely resembles how the form will look
+  for users later.
+  <br />
+  We recommend to keep things simple: Only add fields that you really need for
+  your work.
+</div>
+
+<app-view-title [disableBackButton]="true" [displayInPlace]="true">
   &lt;Name of displayed {{ this.entityConstructor?.label }}&gt;
 </app-view-title>
 

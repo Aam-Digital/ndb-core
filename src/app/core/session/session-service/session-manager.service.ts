@@ -38,7 +38,7 @@ import { ConfigService } from "../../config/config.service";
 
 /**
  * This service handles the user session.
- * This includes a online and offline login and logout.
+ * This includes an online and offline login and logout.
  * After a successful login, the database for the current user is initialised.
  */
 @Injectable()
@@ -70,7 +70,7 @@ export class SessionManagerService {
   /**
    * Login for a remote session and start the sync.
    * After a user has logged in once online, this user can later also use the app offline.
-   * Should only be called if there is a internet connection
+   * Should only be called if there is an internet connection
    */
   async remoteLogin() {
     this.loginStateSubject.next(LoginState.IN_PROGRESS);
@@ -80,7 +80,7 @@ export class SessionManagerService {
         .then((user) => this.handleRemoteLogin(user))
         .catch((err) => {
           this.loginStateSubject.next(LoginState.LOGIN_FAILED);
-          throw err;
+          // ignore fall back to offline login - if there was a technical error, the AuthService has already logged/reported it
         });
     }
     this.loginStateSubject.next(LoginState.LOGIN_FAILED);
@@ -91,7 +91,7 @@ export class SessionManagerService {
   }
 
   /**
-   * Login a offline session without sync.
+   * Login an offline session without sync.
    * @param user
    */
   offlineLogin(user: SessionInfo) {
@@ -128,7 +128,7 @@ export class SessionManagerService {
   }
 
   /**
-   * Get a list of all users that can login offline
+   * Get a list of all users that can log in offline
    */
   getOfflineUsers(): SessionInfo[] {
     return this.localAuthService.getStoredUsers();
