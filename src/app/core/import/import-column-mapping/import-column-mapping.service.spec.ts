@@ -15,6 +15,7 @@ describe("ImportColumnMappingService", () => {
     expect(service).toBeTruthy();
   });
 
+  //1st test case
   it("should map columns to their respective property names automatically", () => {
     const testMapping: ColumnMapping[] = [
       { column: "name" },
@@ -37,8 +38,9 @@ describe("ImportColumnMappingService", () => {
       { column: "address", propertyName: "address" },
       { column: "some other remarks", propertyName: "some other remarks" },
     ]);
-  }); // Test Pass
+  });
 
+  //2nd test case
   it("should map columns to their respective property names with different capitalization", () => {
     const testMapping: ColumnMapping[] = [
       { column: "Name" },
@@ -61,12 +63,13 @@ describe("ImportColumnMappingService", () => {
       { column: "ADDRESS", propertyName: "address" },
       { column: "Some Other Remarks", propertyName: "some other remarks" },
     ]);
-  }); // Test Fail
+  });
 
-  fit("should map columns also if they match the field label (instead of field id)", () => {
+  //3rd test case
+  it("should map columns also if they match the field label (instead of field id)", () => {
     const testMapping: ColumnMapping[] = [
-      { column: "phone number" },
       { column: "name" },
+      { column: "phone number" },
       { column: "address" },
       { column: "some other remarks" },
     ];
@@ -85,4 +88,4 @@ describe("ImportColumnMappingService", () => {
       { column: "some other remarks" },
     ]);
   });
-}); // Test Fail
+});
