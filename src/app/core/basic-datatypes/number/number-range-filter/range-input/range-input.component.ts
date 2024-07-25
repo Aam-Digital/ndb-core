@@ -1,11 +1,14 @@
 import { Component, ElementRef, Input, Optional, Self } from "@angular/core";
 import {
   FormControl,
+  FormControlDirective,
   FormGroup,
   FormGroupDirective,
   NgControl,
   NgForm,
   ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
 } from "@angular/forms";
 import { ErrorStateMatcher } from "@angular/material/core";
 import { MatFormFieldControl } from "@angular/material/form-field";
@@ -27,6 +30,7 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
     from: new FormControl(),
     to: new FormControl(),
   });
+  formControlDirective: FormControlDirective;
 
   @Input() set value(value: NumericRange) {
     // update the internal formGroup when the value changes from the outside
@@ -37,12 +41,16 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
     return super.value;
   }
 
+  @Input()
+  deactivateValidation: boolean = false;
+
   constructor(
     elementRef: ElementRef<HTMLElement>,
     errorStateMatcher: ErrorStateMatcher,
     @Optional() @Self() ngControl: NgControl,
     @Optional() parentForm: NgForm,
     @Optional() parentFormGroup: FormGroupDirective,
+    @Optional() formControlDirective: FormControlDirective,
   ) {
     super(
       elementRef,
@@ -52,10 +60,26 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
       parentFormGroup,
     );
 
+    this.formControlDirective = formControlDirective;
     this.formGroup.valueChanges.subscribe((value) => {
       this.value = value;
-      console.log("internal value changes", this.value);
     });
+  }
+
+  private validatorFunction: ValidatorFn = (): ValidationErrors | null => {
+    if (this.value.from && this.value.to && this.value.from > this.value.to) {
+      return {
+        fromGreaterThanTo: "The from value is greater than the to value.",
+      };
+    } else {
+      return null;
+    }
+  };
+
+  ngAfterViewInit() {
+    if (!this.deactivateValidation) {
+      this.formControlDirective.form.addValidators([this.validatorFunction]);
+    }
   }
 }
 

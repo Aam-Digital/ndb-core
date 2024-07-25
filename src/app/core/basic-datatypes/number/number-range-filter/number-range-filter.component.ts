@@ -1,7 +1,12 @@
 import { Component, Input } from "@angular/core";
 import { Entity } from "../../../entity/model/entity";
 import { MatFormFieldModule } from "@angular/material/form-field";
-import { FormControl, ReactiveFormsModule } from "@angular/forms";
+import {
+  FormControl,
+  ReactiveFormsModule,
+  ValidationErrors,
+  ValidatorFn,
+} from "@angular/forms";
 import {
   NumericRange,
   RangeInputComponent,
@@ -20,11 +25,26 @@ export class NumberRangeFilterComponent<T extends Entity> {
 
   formControl: FormControl<NumericRange>;
 
+  private validatorFunction: ValidatorFn = (): ValidationErrors | null => {
+    if (
+      this.formControl.value.from &&
+      this.formControl.value.to &&
+      this.formControl.value.from === this.formControl.value.to
+    ) {
+      return {
+        sameValue: "The from value is the same as the to value.",
+      };
+    } else {
+      return null;
+    }
+  };
+
   constructor() {
     this.formControl = new FormControl<NumericRange>({ from: 0, to: 1 });
+    this.formControl.addValidators([this.validatorFunction]);
 
     this.formControl.valueChanges.subscribe((value) => {
-      console.log("external value changes", value);
+      console.log(this.formControl.valid, this.formControl.errors);
     });
   }
 }
