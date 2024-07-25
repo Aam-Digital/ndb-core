@@ -42,7 +42,7 @@ export class ConfigService extends LatestEntityLoader<Config> {
     return JSON.stringify(this.currentConfig.data);
   }
 
-  public getConfig<T>(id: string): T {
+  public getConfig<T>(id: string): T | undefined {
     return this.currentConfig.data[id];
   }
 

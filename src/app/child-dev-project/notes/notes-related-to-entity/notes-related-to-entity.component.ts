@@ -75,14 +75,31 @@ export class NotesRelatedToEntityComponent
       const newNote = super.createNewRecordFactory()();
       //TODO: generalize this code - possibly by only using relatedEntities to link other records here? see #1501
       if (this.entity.getType() === ChildSchoolRelation.ENTITY_TYPE) {
-        newNote.addChild((this.entity as ChildSchoolRelation).childId);
-        newNote.addSchool((this.entity as ChildSchoolRelation).schoolId);
+        for (const childId of asArray(
+          (this.entity as ChildSchoolRelation).childId,
+        )) {
+          if (childId) {
+            newNote.addChild(childId);
+          }
+        }
+
+        for (const schooldId of asArray(
+          (this.entity as ChildSchoolRelation).schoolId,
+        )) {
+          if (schooldId) {
+            newNote.addSchool(schooldId);
+          }
+        }
       }
 
-      newNote.relatedEntities.push(this.entity.getId());
-      this.getIndirectlyRelatedEntityIds(this.entity).forEach((e) =>
-        newNote.relatedEntities.push(e),
-      );
+      for (const e of [
+        this.entity.getId(),
+        ...this.getIndirectlyRelatedEntityIds(this.entity),
+      ]) {
+        if (!newNote.relatedEntities.includes(e)) {
+          newNote.relatedEntities.push(e);
+        }
+      }
 
       return newNote;
     };

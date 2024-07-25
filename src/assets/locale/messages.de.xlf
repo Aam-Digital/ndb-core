@@ -1697,22 +1697,30 @@
           <context context-type="linenumber">19</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="f215ed23a0b8105ae47ef80cf65fe765631dd94a" datatype="html">
+      <trans-unit id="07502df62ea6cd8e06d11a718b50b4ec1b1ee02b" datatype="html">
         <source> Submit Form </source>
         <target state="translated"> Abschicken </target>
-        <note priority="1" from="description">Submit form button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
-          <context context-type="linenumber">20</context>
+          <context context-type="linenumber">23,25</context>
         </context-group>
+        <note priority="1" from="description">Submit form button</note>
       </trans-unit>
-      <trans-unit id="ca72d574353a355b8fadbc1ceda174a0bd1bf7cd" datatype="html">
+      <trans-unit id="c741e919cae3e4e5d7a6e43da8926bb99b1fd780" datatype="html">
         <source> Reset </source>
         <target state="translated"> Zurücksetzen </target>
-        <note priority="1" from="description">Reset form button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
-          <context context-type="linenumber">23</context>
+          <context context-type="linenumber">26,28</context>
+        </context-group>
+        <note priority="1" from="description">Reset form button</note>
+      </trans-unit>
+      <trans-unit id="d58985cf72ce7526ea63b90a3044a13dcefc60cd" datatype="html">
+        <source>Loading form ...</source>
+        <target state="translated">Lade Formular ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.html</context>
+          <context context-type="linenumber">32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="6410985429772619439" datatype="html">
@@ -1720,7 +1728,15 @@
         <target state="translated">Formular erfolgreich übermittelt</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
-          <context context-type="linenumber">61</context>
+          <context context-type="linenumber">62</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7643347378573807612" datatype="html">
+        <source>Some fields are invalid, please check the form and submit again.</source>
+        <target state="translated">Einige Angaben sind ungültig, bitte überprüfen Sie das Formular und senden es erneut ab.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/public-form/public-form.component.ts</context>
+          <context context-type="linenumber">66</context>
         </context-group>
       </trans-unit>
       <trans-unit id="339729126805226016" datatype="html">
@@ -2577,7 +2593,7 @@
         <target state="translated">App-Einstellungen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin.routing.ts</context>
-          <context context-type="linenumber">44</context>
+          <context context-type="linenumber">54</context>
         </context-group>
       </trans-unit>
       <trans-unit id="42bf676a20d2b4cf9264d4f9536cd9e980e6b971" datatype="html">
@@ -2598,14 +2614,23 @@
         </context-group>
         <note priority="1" from="description">admin menu item</note>
       </trans-unit>
-      <trans-unit id="eeb40ba4d324bcf36abe269f1de1465adad080dc" datatype="html">
-        <source> Setup Wizard </source>
-        <target state="translated"> Setup-Assistent </target>
+      <trans-unit id="3988f474f4576498b644ae989bed92e119a488e4" datatype="html">
+        <source> Administer Entity Types </source>
+        <target state="translated"> Datensatz-Typen verwalten </target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
           <context context-type="linenumber">20,22</context>
         </context-group>
         <note priority="1" from="description">admin menu item</note>
+      </trans-unit>
+      <trans-unit id="eeb40ba4d324bcf36abe269f1de1465adad080dc" datatype="html">
+        <source> Setup Wizard </source>
+        <target state="translated"> Setup-Assistent </target>
+        <note priority="1" from="description">admin menu item</note>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin/admin.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="6309181788204949218" datatype="html">
         <source>User Information</source>
@@ -6370,12 +6395,20 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
       </trans-unit>
       <trans-unit id="7d0989d8ca6bcf4968f86bbbee83d4f2d4dc2ac9" datatype="html">
         <source>Quick actions</source>
-        <target state="translated">Verknüpfungen</target>
+        <target state="translated">Schnellzugriffe</target>
         <note priority="1" from="description">Title of dashboard widget that shows a list of certain actions a user can
     click on</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.html</context>
           <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="30ec375aaff1b44cd0af67088f1dfb4f296d34fa" datatype="html">
+        <source>Copy the link to share or paste it somewhere else</source>
+        <target state="translated">Link kopieren, um ihn zu teilen oder einzufügen</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/dashboard-widgets/shortcut-dashboard-widget/shortcut-dashboard/shortcut-dashboard.component.html</context>
+          <context context-type="linenumber">35</context>
         </context-group>
       </trans-unit>
       <trans-unit id="a96a2f7ff43e84bdc7c538b4f0d1ebe1b4ea1964" datatype="html">
@@ -7302,20 +7335,28 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
           <context context-type="linenumber">69</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="503e35190d04583c3bb4101bda2fb660ad6192ac" datatype="html">
+        <source>Preparing data for preview and import ...</source>
+        <target state="translated">Daten werden für Vorschau und Import vorbereitet ...</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
+          <context context-type="linenumber">3</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="8973b38b061cde61bbfd52e2312b0eab17837e65" datatype="html">
         <source>Review your mapped data to be imported:</source>
         <target state="translated">Überprüfen Sie die zu importierenden Daten:</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">2</context>
+          <context context-type="linenumber">8</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="c3397fe9c3f461f9ca74d87b51987060326ca04a" datatype="html">
+      <trans-unit id="a249509745fc3b29bc78aa00617c38cb30dfe3b5" datatype="html">
         <source> Start Import </source>
         <target state="translated">Import starten</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">4</context>
+          <context context-type="linenumber">10,12</context>
         </context-group>
       </trans-unit>
       <trans-unit id="15d07ce450bd8f83dd8a96c4ff566cc98f14ae45" datatype="html">
@@ -7328,7 +7369,7 @@ Zögern Sie nicht uns mit Fragen und Feedback zu kontaktieren: [support@aam-digi
         <note priority="1" from="description">import - review data - help text</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/import/import-review-data/import-review-data.component.html</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">15</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e95a9542e72bb61cac804b274ab760af2b5f7fc5" datatype="html">

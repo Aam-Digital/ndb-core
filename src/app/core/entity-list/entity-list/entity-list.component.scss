@@ -9,7 +9,7 @@
  */
 .filter-field {
   @media screen and (min-width: breakpoints.$md) {
-    // restricts the width so that the field does not feel too big
+    /* restricts the width so that the field does not feel too big */
     max-width: 412px;
   }
 }

@@ -15,12 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { TestBed } from "@angular/core/testing";
+import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 
 import { LatestChangesService } from "./latest-changes.service";
-import { MatDialog } from "@angular/material/dialog";
+import { MatDialog, MatDialogRef } from "@angular/material/dialog";
 import { LatestChangesDialogService } from "./latest-changes-dialog.service";
 import { environment } from "../../../../environments/environment";
+import { NEVER, of } from "rxjs";
 
 describe("LatestChangesDialogService", () => {
   let service: LatestChangesDialogService;
@@ -34,6 +35,9 @@ describe("LatestChangesDialogService", () => {
     ]);
 
     mockDialog = jasmine.createSpyObj("mockDialog", ["open"]);
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of(NEVER),
+    } as MatDialogRef<void>);
 
     TestBed.configureTestingModule({
       providers: [
@@ -79,4 +83,20 @@ describe("LatestChangesDialogService", () => {
 
     expect(mockDialog.open).not.toHaveBeenCalled();
   });
+
+  it("should update stored version after user closes dialog", fakeAsync(() => {
+    spyOn(Storage.prototype, "setItem");
+
+    mockDialog.open.and.returnValue({
+      afterClosed: () => of(true),
+    } as MatDialogRef<boolean>);
+
+    service.showLatestChanges();
+    tick();
+
+    expect(Storage.prototype.setItem).toHaveBeenCalledWith(
+      LatestChangesDialogService.VERSION_KEY,
+      environment.appVersion,
+    );
+  }));
 });

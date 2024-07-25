@@ -153,7 +153,7 @@ export class BasicAutocompleteComponent<O, V = O>
   @Input() set options(options: O[]) {
     this._options = options.map((o) => this.toSelectableOption(o));
   }
-
+  retainSearchValue: string;
   private _options: SelectableOption<O, V>[] = [];
 
   _selectedOptions: SelectableOption<O, V>[] = [];
@@ -182,6 +182,12 @@ export class BasicAutocompleteComponent<O, V = O>
   ngOnInit() {
     this.autocompleteSuggestedOptions.subscribe((options) => {
       this.autocompleteOptions = options;
+    });
+    // Subscribe to the valueChanges observable to print the input value
+    this.autocompleteForm.valueChanges.subscribe((value) => {
+      if (typeof value === "string") {
+        this.retainSearchValue = value;
+      }
     });
   }
 
@@ -226,7 +232,11 @@ export class BasicAutocompleteComponent<O, V = O>
   }
 
   showAutocomplete(valueToRevertTo?: string) {
-    this.autocompleteForm.setValue("");
+    if (this.retainSearchValue) {
+      this.autocompleteForm.setValue(this.retainSearchValue);
+    } else {
+      this.autocompleteForm.setValue("");
+    }
     if (!this.multi) {
       // cannot setValue to "" here because the current selection would be lost
       this.autocompleteForm.setValue(this.displayText, { emitEvent: false });

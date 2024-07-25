@@ -90,6 +90,13 @@ export abstract class CustomFormControlDirective<T>
     if (this.ngControl != null) {
       this.ngControl.valueAccessor = this;
     }
+
+    this.elementRef.nativeElement.addEventListener("focusin", () =>
+      this.focus(),
+    );
+    this.elementRef.nativeElement.addEventListener("focusout", () =>
+      this.blur(),
+    );
   }
 
   ngOnDestroy() {

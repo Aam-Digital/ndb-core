@@ -1,7 +1,13 @@
 <mat-dialog-content style="max-height: 90vh">
+  <app-address-edit
+    [disabled]="data.disabled"
+    [selectedLocation]="selectedLocation"
+    (selectedLocationChange)="updateLocation($event)"
+  ></app-address-edit>
+
   <app-map
-    height="70vh"
-    [marked]="data.marked | async"
+    height="65vh"
+    [marked]="markedLocations | async"
     [(displayedProperties)]="data.displayedProperties"
     [entities]="data.entities | async"
     [highlightedEntities]="data.highlightedEntities | async"
@@ -9,7 +15,18 @@
     (entityClick)="data.entityClick?.next($event)"
   ></app-map>
 </mat-dialog-content>
-<mat-dialog-actions *ngIf="!data.disabled">
-  <p *ngIf="data.helpText" class="help-text">{{ data.helpText }}</p>
-  <button mat-raised-button mat-dialog-close>Close</button>
+
+<mat-dialog-actions>
+  @if (data.disabled) {
+    <button mat-raised-button mat-dialog-close i18n>Close</button>
+  } @else {
+    @if (helpText) {
+      <p class="help-text">{{ helpText }}</p>
+    }
+
+    <button mat-stroked-button mat-dialog-close i18n>Cancel</button>
+    <button mat-raised-button [mat-dialog-close]="[selectedLocation]" i18n>
+      Save
+    </button>
+  }
 </mat-dialog-actions>

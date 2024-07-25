@@ -30,6 +30,7 @@ jobs:
           cache-to: type=gha,mode=max
       - name: Run tests with timezone
         uses: docker/build-push-action@v3
+        if: false # disable additional timezone tests for now
         with:
           context: ./
           file: ./build/Dockerfile

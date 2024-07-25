@@ -16,21 +16,31 @@
         <th scope="col">Label</th>
       </tr>
       <ng-container matColumnDef="icon">
-        <td *matCellDef="let row">
+        <td *matCellDef="let row" class="pointer" [routerLink]="row.link">
           <app-fa-dynamic-icon [icon]="row.icon"></app-fa-dynamic-icon>
         </td>
       </ng-container>
 
       <ng-container matColumnDef="label">
-        <td *matCellDef="let row">{{ row.label }}</td>
+        <td *matCellDef="let row" class="pointer" [routerLink]="row.link">
+          {{ row.label }}
+        </td>
       </ng-container>
 
-      <tr
-        mat-row
-        *matRowDef="let row; columns: ['icon', 'label']"
-        class="pointer"
-        [routerLink]="row.link"
-      ></tr>
+      <ng-container matColumnDef="copy">
+        <td *matCellDef="let row" class="text-align-end">
+          <button
+            mat-icon-button
+            (click)="copyAbsoluteLink2Clipboard(row.link)"
+            matTooltip="Copy the link to share or paste it somewhere else"
+            i18n-matTooltip
+          >
+            <fa-icon [icon]="['far', 'copy']" size="xs"></fa-icon>
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-row *matRowDef="let row; columns: ['icon', 'label', 'copy']"></tr>
     </table>
   </div>
 </app-dashboard-list-widget>

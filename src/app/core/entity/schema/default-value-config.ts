@@ -15,7 +15,7 @@ export interface DefaultValueConfig {
    *  mode: dynamic
    *  use a placeholder value, see PLACEHOLDERS enum for available options
    */
-  mode: "inherited" | "static" | "dynamic";
+  mode: DefaultValueMode;
 
   /** used as default value in "static" and "dynamic" mode */
   value?: string | number;
@@ -26,3 +26,5 @@ export interface DefaultValueConfig {
   /** field on the referenced Entity (identified by the id value in `localAttribute`), which is used as default value (for inherited only) */
   field?: string;
 }
+
+export type DefaultValueMode = "inherited" | "static" | "dynamic";

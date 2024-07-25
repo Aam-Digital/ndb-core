@@ -23,9 +23,14 @@ const Template: StoryFn<ImportReviewDataComponent> = (
   props: args,
 });
 
-export const Basic = Template.bind({});
-Basic.args = {
+export const Preview = Template.bind({});
+Preview.args = {
   rawData: IMPORT_SAMPLE_RAW_DATA,
   entityType: "Child",
   columnMapping: IMPORT_SAMPLE_COLUMN_MAPPING,
+};
+
+export const Loading = Template.bind({});
+Loading.args = {
+  isLoading: true,
 };

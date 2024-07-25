@@ -46,13 +46,23 @@ export class LatestChangesDialogService {
    * @param previousVersion (Optional) previous version back to which all changes should be displayed
    */
   public showLatestChanges(previousVersion?: string): void {
-    this.dialog.open(ChangelogComponent, {
-      width: "80%",
-      data: this.latestChangesService.getChangelogsBetweenVersions(
-        this.getCurrentVersion(),
-        previousVersion,
-      ),
-    });
+    this.dialog
+      .open(ChangelogComponent, {
+        width: "80%",
+        data: this.latestChangesService.getChangelogsBetweenVersions(
+          this.getCurrentVersion(),
+          previousVersion,
+        ),
+      })
+      .afterClosed()
+      .subscribe(() => this.updateCurrentVersion());
+  }
+
+  private updateCurrentVersion() {
+    window.localStorage.setItem(
+      LatestChangesDialogService.VERSION_KEY,
+      this.getCurrentVersion(),
+    );
   }
 
   /**
@@ -65,9 +75,5 @@ export class LatestChangesDialogService {
     if (previousVersion && this.getCurrentVersion() !== previousVersion) {
       this.showLatestChanges(previousVersion);
     }
-    window.localStorage.setItem(
-      LatestChangesDialogService.VERSION_KEY,
-      this.getCurrentVersion(),
-    );
   }
 }

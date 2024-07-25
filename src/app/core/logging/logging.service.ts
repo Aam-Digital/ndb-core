@@ -1,7 +1,6 @@
 import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
-import { BrowserOptions, SeverityLevel } from "@sentry/browser";
 import { environment } from "../../../environments/environment";
 
 /* eslint-disable no-console */
@@ -23,7 +22,7 @@ export class LoggingService {
    * If set up this will be used to send errors to a remote endpoint for analysis.
    * @param options
    */
-  static initRemoteLogging(options: BrowserOptions) {
+  static initRemoteLogging(options: Sentry.BrowserOptions) {
     if (!options.dsn) {
       // abort if no target url is set
       return;
@@ -31,6 +30,8 @@ export class LoggingService {
 
     const defaultOptions = {
       release: "ndb-core@" + environment.appVersion,
+      transport: Sentry.makeBrowserOfflineTransport(Sentry.makeFetchTransport),
+      beforeBreadcrumb: enhanceSentryBreadcrumb,
     };
     Sentry.init(Object.assign(defaultOptions, options));
   }
@@ -82,17 +83,19 @@ export class LoggingService {
   /**
    * Log the message with "warning" level - for unexpected events that the app can still handle gracefully.
    * @param message
+   * @param context
    */
-  public warn(message: any) {
-    this.log(message, LogLevel.WARN);
+  public warn(message: any, ...context: any[]) {
+    this.log(message, LogLevel.WARN, ...context);
   }
 
   /**
    * Log the message with "error" level - for unexpected critical events that cannot be handled and will affect functions.
    * @param message
+   * @param context
    */
-  public error(message: any) {
-    this.log(message, LogLevel.ERROR);
+  public error(message: any, ...context: any[]) {
+    this.log(message, LogLevel.ERROR, ...context);
   }
 
   /**
@@ -147,7 +150,7 @@ export class LoggingService {
     }
   }
 
-  private translateLogLevel(logLevel: LogLevel): SeverityLevel {
+  private translateLogLevel(logLevel: LogLevel): Sentry.SeverityLevel {
     switch (+logLevel) {
       case LogLevel.DEBUG:
         return "debug";
@@ -161,4 +164,43 @@ export class LoggingService {
         return "info";
     }
   }
+}
+
+/**
+ * Add more human-readable descriptions to Sentry breadcrumbs for debugging.
+ *
+ * see https://docs.sentry.io/platforms/javascript/enriching-events/breadcrumbs/
+ */
+function enhanceSentryBreadcrumb(
+  breadcrumb: Sentry.Breadcrumb,
+  hint: SentryBreadcrumbHint,
+) {
+  if (breadcrumb.category === "ui.click") {
+    const event = hint.event;
+    const elementText = event.target?.["innerText"] ?? "";
+    breadcrumb.message = elementText + " | " + breadcrumb.message;
+  }
+  return breadcrumb;
+}
+
+/**
+ * https://docs.sentry.io/platforms/javascript/configuration/filtering/#hints-for-breadcrumbs
+ */
+interface SentryBreadcrumbHint {
+  /**
+   * For breadcrumbs created from browser events, the Sentry SDK often supplies the event to the breadcrumb as a hint.
+   * This can be used to extract data from the target DOM element into a breadcrumb, for example.
+   */
+  event?: PointerEvent;
+
+  input?: string[];
+
+  /**
+   * e.g. console output level (warn / log / ...)
+   */
+  level: string;
+
+  response?: Response;
+  request?: any;
+  xhr?: XMLHttpRequest;
 }

@@ -44,9 +44,10 @@ import { merge } from "rxjs";
 import { filter } from "rxjs/operators";
 import { uniqueIdValidator } from "app/core/common-components/entity-form/unique-id-validator/unique-id-validator";
 import { ConfigureEntityFieldValidatorComponent } from "./configure-entity-field-validator/configure-entity-field-validator.component";
-import { DynamicValidator } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
-import { AnonymizeOptionsComponent } from "app/core/common-components/anonymize-options/anonymize-options.component";
+import { FormValidatorConfig } from "app/core/common-components/entity-form/dynamic-form-validators/form-validator-config";
+import { AnonymizeOptionsComponent } from "./anonymize-options/anonymize-options.component";
 import { MatCheckbox } from "@angular/material/checkbox";
+import { DefaultValueOptionsComponent } from "./default-value-options/default-value-options.component";
 
 /**
  * Allows configuration of the schema of a single Entity field, like its dataType and labels.
@@ -76,6 +77,7 @@ import { MatCheckbox } from "@angular/material/checkbox";
     ConfigureEntityFieldValidatorComponent,
     AnonymizeOptionsComponent,
     MatCheckbox,
+    DefaultValueOptionsComponent,
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
@@ -164,10 +166,6 @@ export class AdminEntityFieldComponent implements OnChanges {
     this.updateForNewOrExistingField();
   }
 
-  changeFieldAnonymization(newAnonymizationValue) {
-    this.schemaFieldsForm.get("anonymize").setValue(newAnonymizationValue);
-  }
-
   private updateForNewOrExistingField() {
     if (!!this.fieldId) {
       // existing fields' id is readonly
@@ -184,7 +182,7 @@ export class AdminEntityFieldComponent implements OnChanges {
     }
   }
 
-  entityFieldValidatorChanges(validatorData: DynamicValidator) {
+  entityFieldValidatorChanges(validatorData: FormValidatorConfig) {
     this.schemaFieldsForm.get("validators").setValue(validatorData);
   }
   private autoGenerateId() {

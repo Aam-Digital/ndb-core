@@ -103,10 +103,7 @@ describe("MapComponent", () => {
     const dialogData: MapPopupConfig =
       mockDialog.open.calls.mostRecent().args[1].data;
 
-    let emitted: Coordinates[];
-    dialogData.marked.subscribe((res) => (emitted = res));
-
-    expect(emitted).toEqual([marked]);
+    expect(dialogData.marked).toEqual([marked]);
   });
 
   it("should open a popup that allows to change the properties displayed in the map", () => {

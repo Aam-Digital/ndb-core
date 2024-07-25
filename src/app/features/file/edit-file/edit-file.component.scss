@@ -1,5 +1,5 @@
-// let click events on disabled input be handled by parent element (because browsers completely eat them up otherwise)
-// https://stackoverflow.com/a/32925830/1473411
+/* let click events on disabled input be handled by parent element (because browsers completely eat them up otherwise)
+ https://stackoverflow.com/a/32925830/1473411  */
 input[disabled] {
   pointer-events: none;
 }
