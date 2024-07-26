@@ -6,11 +6,17 @@ import { HttpStatusCode } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../session/session-type";
-import { filter, mergeMap, repeat, retry, takeWhile } from "rxjs/operators";
+import {
+  debounceTime,
+  filter,
+  mergeMap,
+  retry,
+  takeWhile,
+} from "rxjs/operators";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { Config } from "../config/config";
 import { Entity } from "../entity/model/entity";
-import { from, of } from "rxjs";
+import { from, interval, merge, of } from "rxjs";
 import { environment } from "../../../environments/environment";
 
 /**
@@ -140,11 +146,18 @@ export class SyncService {
   private liveSync() {
     this.liveSyncEnabled = true;
 
-    of(true)
+    merge(
+      // do an initial sync immediately
+      of(true),
+      // re-sync at regular interval
+      interval(SyncService.SYNC_INTERVAL),
+      // and immediately sync to upload any local changes
+      this.database.changes(""),
+    )
       .pipe(
+        debounceTime(500),
         mergeMap(() => from(this.sync())),
         retry({ delay: SyncService.SYNC_INTERVAL }),
-        repeat({ delay: SyncService.SYNC_INTERVAL }),
         takeWhile(() => this.liveSyncEnabled),
       )
       .subscribe();
