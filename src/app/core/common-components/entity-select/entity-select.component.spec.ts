@@ -105,12 +105,14 @@ describe("EntitySelectComponent", () => {
   it("should not fail if selected entity (value) is not found", fakeAsync(() => {
     const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
     component.entityType = User.ENTITY_TYPE;
+    component.label = "test label";
     component.form.setValue([testUsers[0].getId(), "missing_user"]);
     tick();
     fixture.detectChanges();
 
     expect(warnSpy).toHaveBeenCalledWith(
       jasmine.stringContaining("ENTITY_SELECT"),
+      "test label",
       "missing_user",
       jasmine.anything(),
     );
