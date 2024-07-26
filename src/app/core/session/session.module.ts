@@ -24,7 +24,7 @@ import { KeycloakAngularModule } from "keycloak-angular";
 /**
  * The core session logic handling user login as well as connection and synchronization with the remote database.
  * To access the currently active session inject the `SessionService` into your component/service.
- * What session you get varies depending on the `session_type` setting in the `config.json`.
+ * What session you get varies depending on the `session_type` setting in the environment.ts / `config.json`.
  *
  * A detailed discussion about the Session concept is available separately:
  * [Session Handling, Authentication & Synchronisation]{@link /additional-documentation/concepts/session-and-authentication-system.html}

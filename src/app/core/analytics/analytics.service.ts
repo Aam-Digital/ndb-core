@@ -11,7 +11,7 @@ import md5 from "md5";
 /**
  * Track usage analytics data and report it to a backend server like Matomo.
  *
- * This is automatically disabled if the config.json does not specify "usage_analytics" settings.
+ * This is automatically disabled if the config doc does not specify "usage_analytics" settings.
  */
 @Injectable({
   providedIn: "root",

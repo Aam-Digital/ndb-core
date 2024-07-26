@@ -26,13 +26,13 @@ import {
   entityRegistry,
   EntityRegistry,
 } from "../../core/entity/database-entity.decorator";
-import { AppSettings } from "../../core/app-settings";
 import { FileDatatype } from "./file.datatype";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../../core/session/session-type";
 import { map } from "rxjs/operators";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SyncService } from "../../core/database/sync.service";
+import { environment } from "../../../environments/environment";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -42,7 +42,7 @@ describe("CouchdbFileService", () => {
   let mockSyncService: jasmine.SpyObj<SyncService>;
   let dismiss: jasmine.Spy;
   let updates: Subject<UpdatedEntity<Entity>>;
-  const attachmentUrlPrefix = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
+  const attachmentUrlPrefix = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}-attachments`;
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
