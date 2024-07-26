@@ -65,7 +65,11 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
           this.selectedFile.name === this.formControl.value
         ) {
           this.saveNewFile(this.selectedFile);
-        } else if (this.removeClicked && !this.formControl.value) {
+        } else if (
+          this.removeClicked &&
+          !this.formControl.value &&
+          !!this.initialValue
+        ) {
           this.deleteExistingFile();
         } else {
           this.resetFile();
@@ -119,10 +123,10 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
 
   delete() {
     this.formControl.markAsDirty();
-    this.formControl.setValue(null);
+    this.formControl.setValue(undefined);
     this.selectedFile = undefined;
     // remove is only necessary if an initial value was set
-    this.removeClicked = !!this.initialValue;
+    this.removeClicked = true;
   }
 
   protected deleteExistingFile() {

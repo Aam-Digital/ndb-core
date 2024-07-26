@@ -125,7 +125,7 @@ describe("EditFileComponent", () => {
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl).toHaveValue(undefined);
     expect(mockFileService.uploadFile).not.toHaveBeenCalled();
     expect(mockFileService.removeFile).not.toHaveBeenCalled();
   });
@@ -158,7 +158,7 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.delete();
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl).toHaveValue(undefined);
 
     cancelForm();
 
@@ -187,11 +187,11 @@ describe("EditFileComponent", () => {
     component.formControl.enable();
 
     component.delete();
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl).toHaveValue(undefined);
 
     component.formControl.disable();
 
-    expect(component.formControl).toHaveValue(null);
+    expect(component.formControl).toHaveValue(undefined);
     expect(mockFileService.removeFile).toHaveBeenCalledWith(
       component.entity,
       component.formControlName,
