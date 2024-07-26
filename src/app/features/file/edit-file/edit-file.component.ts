@@ -86,7 +86,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   protected saveNewFile(file: File) {
-    // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
+    // The maximum file size is set to 5 MB
     this.fileService
       .uploadFile(file, this.entity, this.formControlName)
       .subscribe({
@@ -100,7 +100,13 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
 
   private handleError(err) {
     Logging.error("Failed uploading file: " + JSON.stringify(err));
-    this.alertService.addDanger("Could not upload file, please try again.");
+
+    let errorMessage = $localize`:File Upload Error Message:Failed uploading file. Please try again.`;
+    if (err?.status === 413) {
+      errorMessage = $localize`:File Upload Error Message:File too large. Usually files up to 5 MB are supported.`;
+    }
+    this.alertService.addDanger(errorMessage);
+
     // Reset entity to how it was before
     this.entity[this.formControlName] = this.initialValue;
     this.formControl.setValue(this.initialValue);
