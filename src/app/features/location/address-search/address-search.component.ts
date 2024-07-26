@@ -22,7 +22,7 @@ import { AsyncPipe } from "@angular/common";
 import { merge, Subject } from "rxjs";
 import { GeoResult, GeoService } from "../geo.service";
 import { concatMap, debounceTime, filter, map, tap } from "rxjs/operators";
-import { LoggingService } from "../../../core/logging/logging.service";
+import { Logging } from "../../../core/logging/logging.service";
 import { MatButton, MatIconButton } from "@angular/material/button";
 import { FaIconComponent } from "@fortawesome/angular-fontawesome";
 import { GeoLocation } from "../location.datatype";
@@ -56,7 +56,7 @@ export class AddressSearchComponent implements OnInit {
    */
   @Input() set searchText(value: string) {
     if (!(typeof value === "string")) {
-      this.logger.debug("Invalid address searchText input", value);
+      Logging.debug("Invalid address searchText input", value);
       return;
     }
 
@@ -81,10 +81,7 @@ export class AddressSearchComponent implements OnInit {
   /** do not display selected item in the input field because this should be an empty search field */
   displayFn = () => "";
 
-  constructor(
-    private location: GeoService,
-    private logger: LoggingService,
-  ) {}
+  constructor(private location: GeoService) {}
 
   ngOnInit() {
     this.initSearchPipeline();

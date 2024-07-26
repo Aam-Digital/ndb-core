@@ -102,7 +102,7 @@ describe("SessionManagerService", () => {
 
   afterEach(async () => {
     localStorage.clear();
-    const tmpDB = new PouchDatabase(undefined);
+    const tmpDB = new PouchDatabase();
     await tmpDB.initInMemoryDB(userDBName).destroy();
     await tmpDB.initInMemoryDB(deprecatedDBName).destroy();
   });
@@ -313,7 +313,7 @@ describe("SessionManagerService", () => {
     if (reserved) {
       window.localStorage.setItem(service.DEPRECATED_DB_KEY, reserved);
     }
-    const tmpDB = new PouchDatabase(undefined);
+    const tmpDB = new PouchDatabase();
     if (initUserDB) {
       await tmpDB.initInMemoryDB(userDBName).put({ _id: "someDoc" });
     }

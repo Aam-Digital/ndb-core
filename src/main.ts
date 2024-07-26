@@ -26,7 +26,7 @@ import { enableProdMode } from "@angular/core";
 import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
 import { AppSettings } from "./app/core/app-settings";
-import { LoggingService } from "./app/core/logging/logging.service";
+import { Logging } from "./app/core/logging/logging.service";
 import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
 
 if (environment.production) {
@@ -37,10 +37,9 @@ if (environment.production) {
 PwaInstallService.registerPWAInstallListener();
 
 // Initialize remote logging
-LoggingService.initRemoteLogging({
+Logging.initRemoteLogging({
   dsn: environment.remoteLoggingDsn,
 });
-const logger = new LoggingService();
 
 const appLang =
   localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE;
@@ -52,10 +51,10 @@ if (appLang === DEFAULT_LANGUAGE) {
 
 function bootstrap(): Promise<any> {
   // Dynamically load the main module after the language has been initialized
-  return AppSettings.initRuntimeSettings(logger)
+  return AppSettings.initRuntimeSettings()
     .then(() => import("./app/app.module"))
     .then((m) => platformBrowserDynamic().bootstrapModule(m.AppModule))
-    .catch((err) => logger.error(err));
+    .catch((err) => Logging.error(err));
 }
 
 async function initLanguage(locale: string): Promise<void> {

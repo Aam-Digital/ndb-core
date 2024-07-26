@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouch-database";
-import { LoggingService } from "../logging/logging.service";
+import { Logging } from "../logging/logging.service";
 import { AppSettings } from "../app-settings";
 import { HttpStatusCode } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
@@ -24,13 +24,12 @@ export class SyncService {
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
   static readonly SYNC_INTERVAL = 30000;
 
-  private remoteDatabase = new PouchDatabase(this.loggingService);
+  private remoteDatabase = new PouchDatabase();
   private remoteDB: PouchDB.Database;
   private localDB: PouchDB.Database;
 
   constructor(
     private database: Database,
-    private loggingService: LoggingService,
     private authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
   ) {
@@ -52,7 +51,7 @@ export class SyncService {
       .catch(() => null)
       .then((config) => config?._rev);
 
-    LoggingService.addContext("Aam Digital sync", {
+    Logging.addContext("Aam Digital sync", {
       "last sync completed": lastSyncTime,
       "config _rev": configRev,
     });
@@ -123,12 +122,12 @@ export class SyncService {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       })
       .then((res) => {
-        this.loggingService.debug("sync completed", res);
+        Logging.debug("sync completed", res);
         this.syncStateSubject.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
       .catch((err) => {
-        this.loggingService.debug("sync error", err);
+        Logging.debug("sync error", err);
         this.syncStateSubject.next(SyncState.FAILED);
         throw err;
       });

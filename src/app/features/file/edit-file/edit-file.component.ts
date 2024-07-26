@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { LoggingService } from "../../../core/logging/logging.service";
+import { Logging } from "../../../core/logging/logging.service";
 import { FileService } from "../file.service";
 import { distinctUntilChanged, filter } from "rxjs/operators";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -46,7 +46,6 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   constructor(
     protected fileService: FileService,
     private alertService: AlertService,
-    private logger: LoggingService,
     private entityMapper: EntityMapperService,
   ) {
     super();
@@ -96,7 +95,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   private handleError(err) {
-    this.logger.error("Failed uploading file: " + JSON.stringify(err));
+    Logging.error("Failed uploading file: " + JSON.stringify(err));
     this.alertService.addDanger("Could not upload file, please try again.");
     // Reset entity to how it was before
     this.entity[this.formControlName] = this.initialValue;

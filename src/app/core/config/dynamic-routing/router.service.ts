@@ -1,7 +1,7 @@
 import { inject, Injectable } from "@angular/core";
 import { Route, Router } from "@angular/router";
 import { ConfigService } from "../config.service";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { PREFIX_VIEW_CONFIG, ViewConfig } from "./view-config.interface";
 import { UserRoleGuard } from "../../permissions/permission-guard/user-role.guard";
 import { NotFoundComponent } from "./not-found/not-found.component";
@@ -23,7 +23,6 @@ export class RouterService {
   constructor(
     private configService: ConfigService,
     private router: Router,
-    private loggingService: LoggingService,
   ) {}
 
   /**
@@ -49,7 +48,7 @@ export class RouterService {
         const newRoute = this.createRoute(view, additionalRoutes);
         routes.push(newRoute);
       } catch (e) {
-        this.loggingService.warn(
+        Logging.warn(
           `Failed to create route for view ${view._id}: ${e.message}`,
         );
       }

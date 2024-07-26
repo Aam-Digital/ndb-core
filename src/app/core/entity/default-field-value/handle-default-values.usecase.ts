@@ -4,7 +4,7 @@ import { EntitySchemaField, PLACEHOLDERS } from "../schema/entity-schema-field";
 import { DefaultValueConfig } from "../schema/default-value-config";
 import { Entity } from "../model/entity";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
 
 /**
@@ -17,7 +17,6 @@ export class HandleDefaultValuesUseCase {
   constructor(
     private entityMapper: EntityMapperService,
     private currentUser: CurrentUserSubject,
-    private logger: LoggingService,
   ) {}
 
   handleFormGroup(
@@ -177,7 +176,7 @@ export class HandleDefaultValuesUseCase {
         }
         break;
       default:
-        this.logger.warn(
+        Logging.warn(
           "Unknown PLACEHOLDERS value used in fieldValueConfig: " +
             defaultValueConfig,
         );
