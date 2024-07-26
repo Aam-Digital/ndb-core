@@ -7,7 +7,6 @@ import {
   HttpResponse,
   HttpStatusCode,
 } from "@angular/common/http";
-import { AppSettings } from "../../core/app-settings";
 import {
   catchError,
   concatMap,
@@ -32,6 +31,7 @@ import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SyncStateSubject } from "../../core/session/session-type";
 import { SyncService } from "../../core/database/sync.service";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
+import { environment } from "../../../environments/environment";
 
 /**
  * Stores the files in the CouchDB.
@@ -40,7 +40,7 @@ import { SyncState } from "../../core/session/session-states/sync-state.enum";
  */
 @Injectable()
 export class CouchdbFileService extends FileService {
-  private attachmentsUrl = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}-attachments`;
+  private attachmentsUrl = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}-attachments`;
   // TODO it seems like failed requests are executed again when a new one is done
   private requestQueue = new ObservableQueue();
   private cache: { [key: string]: Observable<string> } = {};

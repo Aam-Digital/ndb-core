@@ -2,7 +2,6 @@ import { Injectable } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouch-database";
 import { Logging } from "../logging/logging.service";
-import { AppSettings } from "../app-settings";
 import { HttpStatusCode } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
 import { SyncState } from "../session/session-states/sync-state.enum";
@@ -12,6 +11,7 @@ import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.serv
 import { Config } from "../config/config";
 import { Entity } from "../entity/model/entity";
 import { from, of } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 /**
  * This service initializes the remote DB and manages the sync between the local and remote DB.
@@ -71,7 +71,7 @@ export class SyncService {
    */
   private initDatabases() {
     this.remoteDatabase.initRemoteDB(
-      `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
+      `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}`,
       this.fetch.bind(this),
     );
     this.remoteDB = this.remoteDatabase.getPouchDB();
@@ -88,7 +88,7 @@ export class SyncService {
     }
 
     const remoteUrl =
-      AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
+      environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     const initialRes = await this.sendRequest(remoteUrl, opts);
 
     // retry login if request failed with unauthorized

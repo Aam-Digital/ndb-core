@@ -23,8 +23,8 @@ import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-log
 import { Injectable } from "@angular/core";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
-import { AppSettings } from "../app-settings";
 import { HttpStatusCode } from "@angular/common/http";
+import { environment } from "../../../environments/environment";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -104,7 +104,7 @@ export class PouchDatabase extends Database {
    * @param fetch a overwrite for the default fetch handler
    */
   initRemoteDB(
-    dbName = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
+    dbName = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}`,
     fetch = this.defaultFetch,
   ): PouchDatabase {
     const options = {
@@ -123,7 +123,7 @@ export class PouchDatabase extends Database {
     }
 
     const remoteUrl =
-      AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
+      environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     return PouchDB.fetch(remoteUrl, opts);
   }
 
