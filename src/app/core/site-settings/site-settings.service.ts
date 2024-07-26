@@ -7,7 +7,7 @@ import { FileService } from "../../features/file/file.service";
 import materialColours from "@aytek/material-color-picker";
 import { EntityMapperService } from "../entity/entity-mapper/entity-mapper.service";
 import { LatestEntityLoader } from "../entity/latest-entity-loader";
-import { LoggingService } from "../logging/logging.service";
+import { Logging } from "../logging/logging.service";
 import { Entity } from "../entity/model/entity";
 import { EntitySchemaService } from "../entity/schema/entity-schema.service";
 import { availableLocales } from "../language/languages";
@@ -38,9 +38,8 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
     private schemaService: EntitySchemaService,
     private enumService: ConfigurableEnumService,
     entityMapper: EntityMapperService,
-    logger: LoggingService,
   ) {
-    super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper, logger);
+    super(SiteSettings, SiteSettings.ENTITY_ID, entityMapper);
 
     this.initAvailableLocales();
 
@@ -82,7 +81,7 @@ export class SiteSettingsService extends LatestEntityLoader<SiteSettings> {
         );
       }
     } catch (e) {
-      this.logger.debug(
+      Logging.debug(
         "SiteSettingsService: could not parse settings from localStorage: " + e,
       );
     }

@@ -6,7 +6,7 @@ import { DemoDataGeneratingProgressDialogComponent } from "./demo-data-generatin
 import { SessionManagerService } from "../session/session-service/session-manager.service";
 import { LocalAuthService } from "../session/auth/local/local-auth.service";
 import { SessionInfo, SessionSubject } from "../session/auth/session-info";
-import { LoggingService } from "../logging/logging.service";
+import { Logging } from "../logging/logging.service";
 import { Database } from "../database/database";
 import { PouchDatabase } from "../database/pouch-database";
 import { environment } from "../../../environments/environment";
@@ -43,7 +43,6 @@ export class DemoDataInitializerService {
     private localAuthService: LocalAuthService,
     private sessionManager: SessionManagerService,
     private dialog: MatDialog,
-    private loggingService: LoggingService,
     private database: Database,
     private loginState: LoginStateSubject,
     private sessionInfo: SessionSubject,
@@ -56,7 +55,7 @@ export class DemoDataInitializerService {
     if (this.database instanceof PouchDatabase) {
       this.pouchDatabase = this.database;
     } else {
-      this.loggingService.warn(
+      Logging.warn(
         "Cannot create demo data with session: " + environment.session_type,
       );
     }

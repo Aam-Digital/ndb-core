@@ -26,7 +26,7 @@ import { FileService } from "./file.service";
 import { MatSnackBar } from "@angular/material/snack-bar";
 import { ProgressComponent } from "./progress/progress.component";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
-import { LoggingService } from "../../core/logging/logging.service";
+import { Logging } from "../../core/logging/logging.service";
 import { ObservableQueue } from "./observable-queue/observable-queue";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SyncStateSubject } from "../../core/session/session-type";
@@ -53,10 +53,9 @@ export class CouchdbFileService extends FileService {
     private syncService: SyncService,
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
-    logger: LoggingService,
     syncState: SyncStateSubject,
   ) {
-    super(entityMapper, entities, logger, syncState);
+    super(entityMapper, entities, syncState);
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
@@ -186,7 +185,7 @@ export class CouchdbFileService extends FileService {
         .pipe(
           map((blob) => URL.createObjectURL(blob)),
           catchError((err) => {
-            this.logger.warn(
+            Logging.warn(
               `Could not load file (${entity?.getId()} . ${property}): ${err}`,
             );
 

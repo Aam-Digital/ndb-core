@@ -7,7 +7,6 @@ import { EditFileComponent } from "../edit-file/edit-file.component";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileService } from "../file.service";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { LoggingService } from "../../../core/logging/logging.service";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
 import { MatButtonModule } from "@angular/material/button";
 import { resizeImage } from "../file-utils";
@@ -31,11 +30,10 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
   constructor(
     fileService: FileService,
     alertService: AlertService,
-    logger: LoggingService,
     entityMapper: EntityMapperService,
     private dialog: MatDialog,
   ) {
-    super(fileService, alertService, logger, entityMapper);
+    super(fileService, alertService, entityMapper);
   }
 
   async onFileSelected(file: File): Promise<void> {

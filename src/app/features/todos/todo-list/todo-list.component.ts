@@ -19,7 +19,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { DuplicateRecordService } from "../../../core/entity-list/duplicate-records/duplicate-records.service";
 import { CurrentUserSubject } from "../../../core/session/current-user-subject";
 import { FormDialogService } from "../../../core/form-dialog/form-dialog.service";
-import { LoggingService } from "../../../core/logging/logging.service";
+import { Logging } from "../../../core/logging/logging.service";
 import {
   AsyncPipe,
   NgForOf,
@@ -112,7 +112,6 @@ export class TodoListComponent
     duplicateRecord: DuplicateRecordService,
     private currentUser: CurrentUserSubject,
     private formDialog: FormDialogService,
-    private logger: LoggingService,
   ) {
     super(
       screenWidthObserver,
@@ -144,7 +143,7 @@ export class TodoListComponent
           break;
         }
         default: {
-          this.logger.warn(
+          Logging.warn(
             "[TodoList] No filter options available for prebuilt filter: " +
               prebuiltFilter.id,
           );

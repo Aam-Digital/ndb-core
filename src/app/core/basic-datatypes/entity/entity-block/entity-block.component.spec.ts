@@ -17,7 +17,7 @@ import {
   mockEntityMapper,
   MockEntityMapperService,
 } from "../../../entity/entity-mapper/mock-entity-mapper-service";
-import { LoggingService } from "../../../logging/logging.service";
+import { Logging } from "../../../logging/logging.service";
 
 describe("DisplayEntityComponent", () => {
   let component: EntityBlockComponent;
@@ -78,7 +78,7 @@ describe("DisplayEntityComponent", () => {
   });
 
   it("should log a warning if entity cannot be loaded", async () => {
-    const logSpy = spyOn(TestBed.inject(LoggingService), "debug");
+    const logSpy = spyOn(Logging, "debug");
     const child = new Child("not_existing");
     component.entityId = child.getId();
 

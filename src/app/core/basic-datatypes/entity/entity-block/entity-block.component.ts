@@ -4,7 +4,7 @@ import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper
 import { Router } from "@angular/router";
 import { NgClass, NgIf } from "@angular/common";
 import { DynamicComponentDirective } from "../../../config/dynamic-components/dynamic-component.directive";
-import { LoggingService } from "../../../logging/logging.service";
+import { Logging } from "../../../logging/logging.service";
 import { FaDynamicIconComponent } from "../../../common-components/fa-dynamic-icon/fa-dynamic-icon.component";
 
 /**
@@ -33,7 +33,6 @@ export class EntityBlockComponent implements OnInit {
   constructor(
     private entityMapper: EntityMapperService,
     private router: Router,
-    private logger: LoggingService,
   ) {}
 
   async ngOnInit() {
@@ -56,7 +55,7 @@ export class EntityBlockComponent implements OnInit {
       );
     } catch (e) {
       // this may be caused by restrictive permissions and therefore shouldn't be treated as a technical issue
-      this.logger.debug(
+      Logging.debug(
         "[DISPLAY_ENTITY] Could not find entity.",
         this.entityId,
         e,

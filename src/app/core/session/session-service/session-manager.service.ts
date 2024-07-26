@@ -176,7 +176,7 @@ export class SessionManagerService {
   private async initializeDatabaseForCurrentUser(user: SessionInfo) {
     const userDBName = `${user.name}-${AppSettings.DB_NAME}`;
     // Work on a temporary database before initializing the real one
-    const tmpDB = new PouchDatabase(undefined);
+    const tmpDB = new PouchDatabase();
     this.initDatabase(userDBName, tmpDB);
     if (!(await tmpDB.isEmpty())) {
       // Current user has own database, we are done here

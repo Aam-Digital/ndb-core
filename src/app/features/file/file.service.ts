@@ -3,7 +3,7 @@ import { Observable } from "rxjs";
 import { EntityMapperService } from "../../core/entity/entity-mapper/entity-mapper.service";
 import { EntityRegistry } from "../../core/entity/database-entity.decorator";
 import { filter } from "rxjs/operators";
-import { LoggingService } from "../../core/logging/logging.service";
+import { Logging } from "../../core/logging/logging.service";
 import { SafeUrl } from "@angular/platform-browser";
 import { FileDatatype } from "./file.datatype";
 import { waitForChangeTo } from "../../core/session/session-states/session-utils";
@@ -18,7 +18,6 @@ export abstract class FileService {
   protected constructor(
     protected entityMapper: EntityMapperService,
     protected entities: EntityRegistry,
-    protected logger: LoggingService,
     protected syncState: SyncStateSubject,
   ) {
     // TODO maybe registration is too late (only when component is rendered)
@@ -36,9 +35,9 @@ export abstract class FileService {
         .pipe(filter(({ type }) => type === "remove"))
         .subscribe(({ entity, type }) => {
           this.removeAllFiles(entity).subscribe({
-            next: () => this.logger.debug(`deleted all files of ${entity}`),
+            next: () => Logging.debug(`deleted all files of ${entity}`),
             error: (err) =>
-              this.logger.debug(`no files found for ${entity}: ${err}`),
+              Logging.debug(`no files found for ${entity}: ${err}`),
           });
         });
     });

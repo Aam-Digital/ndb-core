@@ -17,7 +17,7 @@ import { ErrorHintComponent } from "../error-hint/error-hint.component";
 import { BasicAutocompleteComponent } from "../basic-autocomplete/basic-autocomplete.component";
 import { MatSlideToggle } from "@angular/material/slide-toggle";
 import { asArray } from "../../../utils/utils";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
 import { EntityRegistry } from "../../entity/database-entity.decorator";
 
@@ -112,7 +112,6 @@ export class EntitySelectComponent<
 
   constructor(
     private entityMapperService: EntityMapperService,
-    private logger: LoggingService,
     private formDialog: FormDialogService,
     private entityRegistry: EntityRegistry,
   ) {}
@@ -200,7 +199,7 @@ export class EntitySelectComponent<
     const entity = await this.entityMapperService
       .load<E>(type, selectedId)
       .catch((err: Error) => {
-        this.logger.warn(
+        Logging.warn(
           "[ENTITY_SELECT] Error loading selected entity.",
           this.label,
           selectedId,
@@ -239,7 +238,7 @@ export class EntitySelectComponent<
       return;
     }
     if (this._entityType.length > 1) {
-      this.logger.warn(
+      Logging.warn(
         "EntitySelect with multiple types is always creating a new entity of the first listed type only.",
       );
       // TODO: maybe display an additional popup asking the user to select which type should be created?

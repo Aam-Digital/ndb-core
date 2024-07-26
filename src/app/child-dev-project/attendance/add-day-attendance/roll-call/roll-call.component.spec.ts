@@ -10,7 +10,6 @@ import { RollCallComponent } from "./roll-call.component";
 import { Note } from "../../../notes/model/note";
 import { By } from "@angular/platform-browser";
 import { Child } from "../../../children/model/child";
-import { LoggingService } from "../../../../core/logging/logging.service";
 import { MockedTestingModule } from "../../../../utils/mocked-testing.module";
 import { ConfirmationDialogService } from "../../../../core/common-components/confirmation-dialog/confirmation-dialog.service";
 import { LoginState } from "../../../../core/session/session-states/login-state.enum";
@@ -38,8 +37,6 @@ describe("RollCallComponent", () => {
   let component: RollCallComponent;
   let fixture: ComponentFixture<RollCallComponent>;
 
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
-
   let participant1: Child, participant2: Child, participant3: Child;
 
   const dummyChanges = {
@@ -51,8 +48,6 @@ describe("RollCallComponent", () => {
     participant2 = new Child("child2");
     participant3 = new Child("child3");
 
-    mockLoggingService = jasmine.createSpyObj(["warn", "debug"]);
-
     TestBed.configureTestingModule({
       imports: [
         RollCallComponent,
@@ -62,10 +57,7 @@ describe("RollCallComponent", () => {
           participant3,
         ]),
       ],
-      providers: [
-        { provide: LoggingService, useValue: mockLoggingService },
-        { provide: ChildrenService, useValue: {} },
-      ],
+      providers: [{ provide: ChildrenService, useValue: {} }],
     }).compileComponents();
   }));
 
@@ -107,7 +99,6 @@ describe("RollCallComponent", () => {
 
     expect(component.children).toEqual([participant1]);
     expect(component.eventEntity.children).not.toContain(nonExistingChildId);
-    expect(mockLoggingService.debug).toHaveBeenCalled();
     flush();
   }));
 

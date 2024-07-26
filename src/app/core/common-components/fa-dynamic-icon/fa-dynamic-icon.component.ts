@@ -16,7 +16,7 @@ import {
   FaIconLibrary,
   FontAwesomeModule,
 } from "@fortawesome/angular-fontawesome";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { NgIf } from "@angular/common";
 
 /**
@@ -91,7 +91,7 @@ export class FaDynamicIconComponent {
     if (!definition) {
       // Fallback if the icon is neither in the map nor a registered icon
       definition = FaDynamicIconComponent.fallbackIcon;
-      this.loggingService.warn(
+      Logging.warn(
         `Tried to set icon "${icon}" but it does not exist as a font awesome regular item nor is it registered as an alias.`,
       );
     }
@@ -103,8 +103,5 @@ export class FaDynamicIconComponent {
    */
   _icon: IconDefinition;
 
-  constructor(
-    private iconLibrary: FaIconLibrary,
-    private loggingService: LoggingService,
-  ) {}
+  constructor(private iconLibrary: FaIconLibrary) {}
 }

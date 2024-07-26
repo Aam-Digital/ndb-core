@@ -4,7 +4,7 @@ import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.se
 import { PermissionEnforcerService } from "../permission-enforcer/permission-enforcer.service";
 import { EntityAbility } from "./entity-ability";
 import { Config } from "../../config/config";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
@@ -24,9 +24,8 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     private currentUser: CurrentUserSubject,
     private permissionEnforcer: PermissionEnforcerService,
     entityMapper: EntityMapperService,
-    logger: LoggingService,
   ) {
-    super(Config, Config.PERMISSION_KEY, entityMapper, logger);
+    super(Config, Config.PERMISSION_KEY, entityMapper);
   }
 
   async initializeRules() {
@@ -52,7 +51,7 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     if (userRules.length === 0) {
       // No rules or only default rules defined
       const user = this.sessionInfo.value;
-      this.logger.warn(
+      Logging.warn(
         `no rules found for user "${user?.name}" with roles "${user?.roles}"`,
       );
     }

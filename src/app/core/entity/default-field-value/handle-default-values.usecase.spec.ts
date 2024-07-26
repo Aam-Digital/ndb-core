@@ -3,7 +3,6 @@ import { fakeAsync, TestBed, tick } from "@angular/core/testing";
 import { HandleDefaultValuesUseCase } from "./handle-default-values.usecase";
 import { EntityMapperService } from "../entity-mapper/entity-mapper.service";
 import { CurrentUserSubject } from "../../session/current-user-subject";
-import { LoggingService } from "../../logging/logging.service";
 import { FormBuilder, FormControl } from "@angular/forms";
 import { EntitySchemaField } from "../schema/entity-schema-field";
 import { Entity } from "../model/entity";
@@ -19,16 +18,13 @@ function getDefaultInheritedFormGroup() {
 describe("HandleDefaultValuesUseCase", () => {
   let service: HandleDefaultValuesUseCase;
   let mockEntityMapperService: jasmine.SpyObj<EntityMapperService>;
-  let mockLoggingService: jasmine.SpyObj<LoggingService>;
 
   beforeEach(() => {
     mockEntityMapperService = jasmine.createSpyObj(["load"]);
-    mockLoggingService = jasmine.createSpyObj(["warn"]);
 
     TestBed.configureTestingModule({
       providers: [
         { provide: EntityMapperService, useValue: mockEntityMapperService },
-        { provide: LoggingService, useValue: mockLoggingService },
         CurrentUserSubject,
       ],
     });

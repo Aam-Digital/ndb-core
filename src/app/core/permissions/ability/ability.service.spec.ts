@@ -11,7 +11,7 @@ import { defaultInteractionTypes } from "../../config/default-config/default-int
 import { EntityAbility } from "./entity-ability";
 import { DatabaseRule, DatabaseRules } from "../permission-types";
 import { Config } from "../../config/config";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { UpdatedEntity } from "../../entity/model/entity-update";
 import { mockEntityMapper } from "../../entity/entity-mapper/mock-entity-mapper-service";
 import { CoreTestingModule } from "../../../utils/core-testing.module";
@@ -278,7 +278,7 @@ describe("AbilityService", () => {
       name: "new-user",
       roles: ["invalid_role"],
     });
-    const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
+    const warnSpy = spyOn(Logging, "warn");
     entityUpdates.next({
       entity: new Config(Config.PERMISSION_KEY, rules),
       type: "update",

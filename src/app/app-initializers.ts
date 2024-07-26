@@ -9,7 +9,7 @@ import { EntityConfigService } from "./core/entity/entity-config.service";
 import { Router } from "@angular/router";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { LoginState } from "./core/session/session-states/login-state.enum";
-import { LoggingService } from "./core/logging/logging.service";
+import { Logging } from "./core/logging/logging.service";
 import { environment } from "../environments/environment";
 import { LoginStateSubject } from "./core/session/session-type";
 import { SessionSubject } from "./core/session/auth/session-info";
@@ -40,10 +40,10 @@ export const appInitializers = {
       loginState.subscribe((newState) => {
         if (newState === LoginState.LOGGED_IN) {
           const username = sessionInfo.value.name;
-          LoggingService.setLoggingContextUser(username);
+          Logging.setLoggingContextUser(username);
           analyticsService.setUser(username);
         } else {
-          LoggingService.setLoggingContextUser(undefined);
+          Logging.setLoggingContextUser(undefined);
           analyticsService.setUser(undefined);
         }
       });

@@ -1,7 +1,7 @@
 import { Injectable } from "@angular/core";
 import { ExportColumnConfig } from "../data-transformation-service/export-column-config";
 import { ExportDataFormat } from "../export-data-directive/export-data.directive";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { DataTransformationService } from "../data-transformation-service/data-transformation.service";
 import { transformToReadableFormat } from "../../common-components/entities-table/value-accessor/value-accessor";
 import { Papa } from "ngx-papaparse";
@@ -23,7 +23,6 @@ export class DownloadService {
   constructor(
     private dataTransformationService: DataTransformationService,
     private papa: Papa,
-    private loggingService: LoggingService,
     private entityMapperService: EntityMapperService,
   ) {}
 
@@ -72,7 +71,7 @@ export class DownloadService {
         result = await this.createCsv(data);
         return new Blob([result], { type: "text/csv" });
       default:
-        this.loggingService.warn(`Not supported format: ${format}`);
+        Logging.warn(`Not supported format: ${format}`);
         return new Blob([""]);
     }
   }
