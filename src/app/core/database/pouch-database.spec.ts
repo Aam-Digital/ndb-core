@@ -247,7 +247,7 @@ describe("PouchDatabase tests", () => {
       {
         _id: "3",
         name: "Rudolph, the Pink-Nosed Reindeer",
-        _rev: "1-invalid-rev",
+        _rev: "1-invalid_rev",
       },
       {
         _id: "4",
@@ -269,7 +269,7 @@ describe("PouchDatabase tests", () => {
         {
           _id: "3",
           name: "Rudolph, the Pink-Nosed Reindeer",
-          _rev: "1-invalid-rev",
+          _rev: "1-invalid_rev",
         },
         false,
         jasmine.objectContaining({ status: 409 }),

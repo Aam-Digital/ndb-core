@@ -5,6 +5,7 @@ import {
   Input,
   Output,
   ViewChild,
+  OnInit,
 } from "@angular/core";
 import {
   MatAutocomplete,
@@ -49,7 +50,7 @@ import { GeoLocation } from "../location.datatype";
   templateUrl: "./address-search.component.html",
   styleUrl: "./address-search.component.scss",
 })
-export class AddressSearchComponent {
+export class AddressSearchComponent implements OnInit {
   /**
    * The search text, for which locations are looked up (as initial input to prefill the field).
    */
