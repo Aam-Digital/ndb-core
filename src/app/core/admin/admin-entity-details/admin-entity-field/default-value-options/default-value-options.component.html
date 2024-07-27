@@ -84,7 +84,6 @@
         value="static"
         matTooltip="simple, fixed default value"
         i18n-matTooltip
-        i18n
       >
         <fa-icon icon="circle"></fa-icon>
       </mat-button-toggle>
@@ -93,7 +92,6 @@
         value="dynamic"
         matTooltip="dynamic placeholder (e.g. current date or user)"
         i18n-matTooltip
-        i18n
       >
         <fa-icon icon="circle-left"></fa-icon>
       </mat-button-toggle>
@@ -102,7 +100,6 @@
         value="inherited"
         matTooltip="value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)"
         i18n-matTooltip
-        i18n
         [disabled]="!(availableInheritanceAttributes?.length > 0)"
       >
         <fa-icon icon="circle-nodes"></fa-icon>
@@ -122,6 +119,8 @@
   </div>
 
   @if (form.invalid) {
-    <mat-error i18n>Select default value or clear default value mode</mat-error>
+    <mat-error i18n="error message"
+      >Select default value or clear default value mode</mat-error
+    >
   }
 </mat-form-field>
