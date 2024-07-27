@@ -15,19 +15,13 @@
  *     along with ndb-core.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-import { loadTranslations } from "@angular/localize";
-import { registerLocaleData } from "@angular/common";
-import {
-  DEFAULT_LANGUAGE,
-  LANGUAGE_LOCAL_STORAGE_KEY,
-} from "./app/core/language/language-statics";
 import { environment } from "./environments/environment";
 import { enableProdMode } from "@angular/core";
-import * as parseXliffToJson from "./app/utils/parse-xliff-to-js";
 import { platformBrowserDynamic } from "@angular/platform-browser-dynamic";
-import { AppSettings } from "./app/core/app-settings";
-import { LoggingService } from "./app/core/logging/logging.service";
+import { initEnvironmentConfig } from "./bootstrap-environment";
+import { Logging } from "./app/core/logging/logging.service";
 import { PwaInstallService } from "./app/core/pwa-install/pwa-install.service";
+import { initLanguage } from "./bootstrap-i18n";
 
 if (environment.production) {
   enableProdMode();
@@ -37,44 +31,18 @@ if (environment.production) {
 PwaInstallService.registerPWAInstallListener();
 
 // Initialize remote logging
-LoggingService.initRemoteLogging({
+Logging.initRemoteLogging({
   dsn: environment.remoteLoggingDsn,
 });
-const logger = new LoggingService();
 
-const appLang =
-  localStorage.getItem(LANGUAGE_LOCAL_STORAGE_KEY) ?? DEFAULT_LANGUAGE;
-if (appLang === DEFAULT_LANGUAGE) {
-  bootstrap();
-} else {
-  initLanguage(appLang).finally(() => bootstrap());
-}
+bootstrap(); // top-level await not possible here yet, therefore wrapped in `bootstrap()` function
 
-function bootstrap(): Promise<any> {
-  // Dynamically load the main module after the language has been initialized
-  return AppSettings.initRuntimeSettings(logger)
-    .then(() => import("./app/app.module"))
-    .then((m) => platformBrowserDynamic().bootstrapModule(m.AppModule))
-    .catch((err) => logger.error(err));
-}
+async function bootstrap() {
+  await initLanguage();
 
-async function initLanguage(locale: string): Promise<void> {
-  const json = await fetch("/assets/locale/messages." + locale + ".json")
-    .then((r) => r.json())
-    .catch(() =>
-      // parse translation at runtime if JSON file is not available
-      fetch("/assets/locale/messages." + locale + ".xlf")
-        .then((r) => r.text())
-        .then((t) => parseXliffToJson(t)),
-    );
+  await initEnvironmentConfig();
 
-  loadTranslations(json);
-  $localize.locale = locale;
-  // This is needed for locale-aware components & pipes to work.
-  // Add the required locales to `webpackInclude` to keep the bundle size small
-  const localeModule = await import(
-    /* webpackInclude: /(fr|de|it)\.mjs/ */
-    `../node_modules/@angular/common/locales/${locale}`
+  await import("./app/app.module").then((m) =>
+    platformBrowserDynamic().bootstrapModule(m.AppModule),
   );
-  registerLocaleData(localeModule.default);
 }

@@ -50,8 +50,8 @@
   position: relative;
 }
 
-// Using this class, the calculated width of the element will include padding and the border
-// as opposed to just the width of the element
+/* Using this class, the calculated width of the element will include padding and the border
+as opposed to just the width of the element */
 .border-box-sizing {
   box-sizing: border-box;
 }

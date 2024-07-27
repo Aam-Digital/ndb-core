@@ -37,7 +37,7 @@ $border-radius-card: 4px;
   color: white;
   align-self: center;
   font-size: $font-size-headline;
-  // fixes the correct centering of this item
+  /* fixes the correct centering of this item */
   display: table;
 }
 
@@ -84,7 +84,7 @@ $border-radius-card: 4px;
   place-items: center;
 }
 
-// Map containing the colors that belong to a certain theme
+/* Map containing the colors that belong to a certain theme */
 $themes: (
   general: #555555,
   child: #1565c0,
@@ -103,7 +103,7 @@ $themes: (
 :host {
   display: block;
   border-radius: $border-radius-card;
-  // necessary for the border-radius to apply
+  /* necessary for the border-radius to apply */
   overflow: auto;
   @include mat-elevation.elevation(3);
 }

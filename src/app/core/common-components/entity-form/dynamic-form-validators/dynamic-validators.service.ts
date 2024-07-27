@@ -8,7 +8,7 @@ import {
   ValidatorFn,
   Validators,
 } from "@angular/forms";
-import { LoggingService } from "../../../logging/logging.service";
+import { Logging } from "../../../logging/logging.service";
 import { uniqueIdValidator } from "../unique-id-validator/unique-id-validator";
 import { EntityMapperService } from "../../../entity/entity-mapper/entity-mapper.service";
 
@@ -82,17 +82,14 @@ export class DynamicValidatorsService {
       case "required":
         return value ? { fn: Validators.required } : null;
       default:
-        this.loggingService.warn(
+        Logging.warn(
           `Trying to generate validator ${key} but it does not exist`,
         );
         return null;
     }
   }
 
-  constructor(
-    private loggingService: LoggingService,
-    private entityMapper: EntityMapperService,
-  ) {}
+  constructor(private entityMapper: EntityMapperService) {}
 
   /**
    * Builds all validator functions that are part of the configuration object.
@@ -192,7 +189,7 @@ export class DynamicValidatorsService {
       case "uniqueId":
         return validationValue;
       default:
-        this.loggingService.error(
+        Logging.error(
           `No description defined for validator "${validator}": ${JSON.stringify(
             validationValue,
           )}`,

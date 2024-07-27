@@ -15,7 +15,7 @@ import { Child } from "../../../child-dev-project/children/model/child";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { LoginState } from "../../session/session-states/login-state.enum";
-import { LoggingService } from "../../logging/logging.service";
+import { Logging } from "../../logging/logging.service";
 import { FormControl } from "@angular/forms";
 import { EntityMapperService } from "../../entity/entity-mapper/entity-mapper.service";
 import { FormDialogService } from "../../form-dialog/form-dialog.service";
@@ -103,14 +103,16 @@ describe("EntitySelectComponent", () => {
   }));
 
   it("should not fail if selected entity (value) is not found", fakeAsync(() => {
-    const warnSpy = spyOn(TestBed.inject(LoggingService), "warn");
+    const warnSpy = spyOn(Logging, "warn");
     component.entityType = User.ENTITY_TYPE;
+    component.label = "test label";
     component.form.setValue([testUsers[0].getId(), "missing_user"]);
     tick();
     fixture.detectChanges();
 
     expect(warnSpy).toHaveBeenCalledWith(
       jasmine.stringContaining("ENTITY_SELECT"),
+      "test label",
       "missing_user",
       jasmine.anything(),
     );

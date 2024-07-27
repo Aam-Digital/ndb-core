@@ -1,5 +1,5 @@
 import { ErrorHandler, Injectable } from "@angular/core";
-import { LoggingService } from "./logging.service";
+import { Logging } from "./logging.service";
 
 /**
  * A simple ErrorHandler that logs any unhandled errors that occur in the app.
@@ -12,14 +12,12 @@ import { LoggingService } from "./logging.service";
  */
 @Injectable()
 export class LoggingErrorHandler implements ErrorHandler {
-  constructor(private logger: LoggingService) {}
-
   /**
    * Handle until now uncaught error by logging it.
    * @param error
    */
   handleError(error) {
-    this.logger.error(error);
+    Logging.error(error);
     // It is possible to show a feedback dialog to the user through Sentry:
     // const eventId = Sentry.captureException(error.originalError || error);
     // Sentry.showReportDialog({ eventId });

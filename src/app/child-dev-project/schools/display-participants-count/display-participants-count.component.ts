@@ -4,7 +4,7 @@ import { ChildrenService } from "../../children/children.service";
 import { ViewDirective } from "../../../core/entity/default-datatype/view.directive";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { ChildSchoolRelation } from "../../children/model/childSchoolRelation";
-import { LoggingService } from "../../../core/logging/logging.service";
+import { Logging } from "../../../core/logging/logging.service";
 
 @DynamicComponent("DisplayParticipantsCount")
 @Component({
@@ -19,10 +19,7 @@ export class DisplayParticipantsCountComponent
 {
   participantRelationsCount: WritableSignal<number> = signal(null);
 
-  constructor(
-    private _childrenService: ChildrenService,
-    private _loggingService: LoggingService,
-  ) {
+  constructor(private _childrenService: ChildrenService) {
     super();
   }
 
@@ -35,7 +32,7 @@ export class DisplayParticipantsCountComponent
         this.participantRelationsCount.set(relations.length);
       })
       .catch((reason) => {
-        this._loggingService.error(
+        Logging.error(
           "Could not calculate participantRelationsCount, error response from ChildrenService." +
             reason,
         );

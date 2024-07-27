@@ -2,7 +2,7 @@ import { Component, ElementRef, OnInit, ViewChild } from "@angular/core";
 import { EditComponent } from "../../../core/entity/default-datatype/edit-component";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { AlertService } from "../../../core/alerts/alert.service";
-import { LoggingService } from "../../../core/logging/logging.service";
+import { Logging } from "../../../core/logging/logging.service";
 import { FileService } from "../file.service";
 import { distinctUntilChanged, filter } from "rxjs/operators";
 import { EntityMapperService } from "../../../core/entity/entity-mapper/entity-mapper.service";
@@ -46,7 +46,6 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   constructor(
     protected fileService: FileService,
     private alertService: AlertService,
-    private logger: LoggingService,
     private entityMapper: EntityMapperService,
   ) {
     super();
@@ -66,7 +65,11 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
           this.selectedFile.name === this.formControl.value
         ) {
           this.saveNewFile(this.selectedFile);
-        } else if (this.removeClicked && !this.formControl.value) {
+        } else if (
+          this.removeClicked &&
+          !this.formControl.value &&
+          !!this.initialValue
+        ) {
           this.deleteExistingFile();
         } else {
           this.resetFile();
@@ -83,7 +86,7 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   protected saveNewFile(file: File) {
-    // The maximum file size which can be processed by CouchDB before a timeout is around 200mb
+    // The maximum file size is set to 5 MB
     this.fileService
       .uploadFile(file, this.entity, this.formControlName)
       .subscribe({
@@ -96,8 +99,14 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
   }
 
   private handleError(err) {
-    this.logger.error("Failed uploading file: " + JSON.stringify(err));
-    this.alertService.addDanger("Could not upload file, please try again.");
+    Logging.error("Failed uploading file: " + JSON.stringify(err));
+
+    let errorMessage = $localize`:File Upload Error Message:Failed uploading file. Please try again.`;
+    if (err?.status === 413) {
+      errorMessage = $localize`:File Upload Error Message:File too large. Usually files up to 5 MB are supported.`;
+    }
+    this.alertService.addDanger(errorMessage);
+
     // Reset entity to how it was before
     this.entity[this.formControlName] = this.initialValue;
     this.formControl.setValue(this.initialValue);
@@ -120,10 +129,10 @@ export class EditFileComponent extends EditComponent<string> implements OnInit {
 
   delete() {
     this.formControl.markAsDirty();
-    this.formControl.setValue(null);
+    this.formControl.setValue(undefined);
     this.selectedFile = undefined;
     // remove is only necessary if an initial value was set
-    this.removeClicked = !!this.initialValue;
+    this.removeClicked = true;
   }
 
   protected deleteExistingFile() {

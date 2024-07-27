@@ -16,15 +16,15 @@
  */
 
 import { Database, GetAllOptions, GetOptions, QueryOptions } from "./database";
-import { LoggingService } from "../logging/logging.service";
+import { Logging } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
 import { Injectable } from "@angular/core";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
-import { AppSettings } from "../app-settings";
 import { HttpStatusCode } from "@angular/common/http";
+import { environment } from "../../../environments/environment";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -39,7 +39,7 @@ export class PouchDatabase extends Database {
    * Small helper function which creates a database with in-memory PouchDB initialized
    */
   static create(): PouchDatabase {
-    return new PouchDatabase(new LoggingService()).initInMemoryDB();
+    return new PouchDatabase().initInMemoryDB();
   }
 
   /**
@@ -65,9 +65,8 @@ export class PouchDatabase extends Database {
 
   /**
    * Create a PouchDB database manager.
-   * @param loggingService The LoggingService instance of the app to log and report problems.
    */
-  constructor(private loggingService: LoggingService) {
+  constructor() {
     super();
   }
 
@@ -105,7 +104,7 @@ export class PouchDatabase extends Database {
    * @param fetch a overwrite for the default fetch handler
    */
   initRemoteDB(
-    dbName = `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
+    dbName = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}`,
     fetch = this.defaultFetch,
   ): PouchDatabase {
     const options = {
@@ -124,7 +123,7 @@ export class PouchDatabase extends Database {
     }
 
     const remoteUrl =
-      AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
+      environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     return PouchDB.fetch(remoteUrl, opts);
   }
 
@@ -158,7 +157,7 @@ export class PouchDatabase extends Database {
       return await (await this.getPouchDBOnceReady()).get(id, options);
     } catch (err) {
       if (err.status === 404) {
-        this.loggingService.debug("Doc not found in database: " + id);
+        Logging.debug("Doc not found in database: " + id);
         if (returnUndefined) {
           return undefined;
         }
@@ -237,7 +236,7 @@ export class PouchDatabase extends Database {
           forceOverwrite,
           result,
         ).catch((e) => {
-          this.loggingService.warn(
+          Logging.warn(
             "error during putAll",
             e,
             objects.map((x) => x._id),
@@ -303,9 +302,9 @@ export class PouchDatabase extends Database {
           err.statusCode === HttpStatusCode.Unauthorized ||
           err.statusCode === HttpStatusCode.GatewayTimeout
         ) {
-          this.loggingService.warn(err);
+          Logging.warn(err);
         } else {
-          this.loggingService.error(err);
+          Logging.error(err);
         }
 
         // retry
@@ -373,12 +372,12 @@ export class PouchDatabase extends Database {
   private async createOrUpdateDesignDoc(designDoc): Promise<void> {
     const existingDesignDoc = await this.get(designDoc._id, {}, true);
     if (!existingDesignDoc) {
-      this.loggingService.debug("creating new database index");
+      Logging.debug("creating new database index");
     } else if (
       JSON.stringify(existingDesignDoc.views) !==
       JSON.stringify(designDoc.views)
     ) {
-      this.loggingService.debug("replacing existing database index");
+      Logging.debug("replacing existing database index");
       designDoc._rev = existingDesignDoc._rev;
     } else {
       // already up to date, nothing more to do
@@ -411,12 +410,12 @@ export class PouchDatabase extends Database {
     const existingObject = await this.get(newObject._id);
     const resolvedObject = this.mergeObjects(existingObject, newObject);
     if (resolvedObject) {
-      this.loggingService.debug(
+      Logging.debug(
         "resolved document conflict automatically (" + resolvedObject._id + ")",
       );
       return this.put(resolvedObject);
     } else if (overwriteChanges) {
-      this.loggingService.debug(
+      Logging.debug(
         "overwriting conflicting document version (" + newObject._id + ")",
       );
       newObject._rev = existingObject._rev;

@@ -1,7 +1,7 @@
 import { Component, Input, OnInit } from "@angular/core";
 import { ProgressDashboardConfig } from "./progress-dashboard-config";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
-import { LoggingService } from "../../../../core/logging/logging.service";
+import { Logging } from "../../../../core/logging/logging.service";
 import { MatDialog } from "@angular/material/dialog";
 import { EditProgressDashboardComponent } from "../edit-progress-dashboard/edit-progress-dashboard.component";
 import { DynamicComponent } from "../../../../core/config/dynamic-components/dynamic-component.decorator";
@@ -45,7 +45,6 @@ export class ProgressDashboardComponent
 
   constructor(
     private entityMapper: EntityMapperService,
-    private loggingService: LoggingService,
     private dialog: MatDialog,
     private syncState: SyncStateSubject,
   ) {
@@ -68,7 +67,7 @@ export class ProgressDashboardComponent
   }
 
   private createDefaultConfig() {
-    this.loggingService.debug(
+    Logging.debug(
       `ProgressDashboardConfig (${this.dashboardConfigId}) not found. Creating ...`,
     );
     this.data.title = $localize`:The progress, e.g. of a certain activity:Progress of X`;

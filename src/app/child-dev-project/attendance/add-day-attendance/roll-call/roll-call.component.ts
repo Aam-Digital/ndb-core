@@ -16,7 +16,7 @@ import { Note } from "../../../notes/model/note";
 import { EventAttendance } from "../../model/event-attendance";
 import { EntityMapperService } from "../../../../core/entity/entity-mapper/entity-mapper.service";
 import { Child } from "../../../children/model/child";
-import { LoggingService } from "../../../../core/logging/logging.service";
+import { Logging } from "../../../../core/logging/logging.service";
 import { sortByAttribute } from "../../../../utils/utils";
 import { FormDialogService } from "../../../../core/form-dialog/form-dialog.service";
 import { NgClass, NgForOf, NgIf } from "@angular/common";
@@ -122,7 +122,6 @@ export class RollCallComponent implements OnChanges {
     private enumService: ConfigurableEnumService,
     private entityMapper: EntityMapperService,
     private formDialog: FormDialogService,
-    private loggingService: LoggingService,
     private confirmationDialog: ConfirmationDialogService,
   ) {}
 
@@ -175,7 +174,7 @@ export class RollCallComponent implements OnChanges {
       try {
         child = await this.entityMapper.load(Child, childId);
       } catch (e) {
-        this.loggingService.debug(
+        Logging.debug(
           "Could not find child " +
             childId +
             " for event " +

@@ -1,17 +1,23 @@
 import { Injectable } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouch-database";
-import { LoggingService } from "../logging/logging.service";
-import { AppSettings } from "../app-settings";
+import { Logging } from "../logging/logging.service";
 import { HttpStatusCode } from "@angular/common/http";
 import PouchDB from "pouchdb-browser";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../session/session-type";
-import { filter, mergeMap, repeat, retry, takeWhile } from "rxjs/operators";
+import {
+  debounceTime,
+  filter,
+  mergeMap,
+  retry,
+  takeWhile,
+} from "rxjs/operators";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { Config } from "../config/config";
 import { Entity } from "../entity/model/entity";
-import { from, of } from "rxjs";
+import { from, interval, merge, of } from "rxjs";
+import { environment } from "../../../environments/environment";
 
 /**
  * This service initializes the remote DB and manages the sync between the local and remote DB.
@@ -24,13 +30,12 @@ export class SyncService {
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
   static readonly SYNC_INTERVAL = 30000;
 
-  private remoteDatabase = new PouchDatabase(this.loggingService);
+  private remoteDatabase = new PouchDatabase();
   private remoteDB: PouchDB.Database;
   private localDB: PouchDB.Database;
 
   constructor(
     private database: Database,
-    private loggingService: LoggingService,
     private authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
   ) {
@@ -52,7 +57,7 @@ export class SyncService {
       .catch(() => null)
       .then((config) => config?._rev);
 
-    LoggingService.addContext("Aam Digital sync", {
+    Logging.addContext("Aam Digital sync", {
       "last sync completed": lastSyncTime,
       "config _rev": configRev,
     });
@@ -72,7 +77,7 @@ export class SyncService {
    */
   private initDatabases() {
     this.remoteDatabase.initRemoteDB(
-      `${AppSettings.DB_PROXY_PREFIX}/${AppSettings.DB_NAME}`,
+      `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}`,
       this.fetch.bind(this),
     );
     this.remoteDB = this.remoteDatabase.getPouchDB();
@@ -89,7 +94,7 @@ export class SyncService {
     }
 
     const remoteUrl =
-      AppSettings.DB_PROXY_PREFIX + url.split(AppSettings.DB_PROXY_PREFIX)[1];
+      environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
     const initialRes = await this.sendRequest(remoteUrl, opts);
 
     // retry login if request failed with unauthorized
@@ -123,12 +128,12 @@ export class SyncService {
         batch_size: this.POUCHDB_SYNC_BATCH_SIZE,
       })
       .then((res) => {
-        this.loggingService.debug("sync completed", res);
+        Logging.debug("sync completed", res);
         this.syncStateSubject.next(SyncState.COMPLETED);
         return res as SyncResult;
       })
       .catch((err) => {
-        this.loggingService.debug("sync error", err);
+        Logging.debug("sync error", err);
         this.syncStateSubject.next(SyncState.FAILED);
         throw err;
       });
@@ -141,11 +146,18 @@ export class SyncService {
   private liveSync() {
     this.liveSyncEnabled = true;
 
-    of(true)
+    merge(
+      // do an initial sync immediately
+      of(true),
+      // re-sync at regular interval
+      interval(SyncService.SYNC_INTERVAL),
+      // and immediately sync to upload any local changes
+      this.database.changes(""),
+    )
       .pipe(
+        debounceTime(500),
         mergeMap(() => from(this.sync())),
         retry({ delay: SyncService.SYNC_INTERVAL }),
-        repeat({ delay: SyncService.SYNC_INTERVAL }),
         takeWhile(() => this.liveSyncEnabled),
       )
       .subscribe();

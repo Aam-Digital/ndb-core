@@ -7,7 +7,6 @@ import { EntityRegistry } from "../../entity/database-entity.decorator";
 import { filter } from "rxjs/operators";
 import { UntilDestroy, untilDestroyed } from "@ngneat/until-destroy";
 import { Subscription } from "rxjs";
-import { LoggingService } from "../../logging/logging.service";
 import { UnsavedChangesService } from "../form/unsaved-changes.service";
 
 /**
@@ -32,7 +31,6 @@ export abstract class AbstractEntityDetailsComponent implements OnChanges {
     private entities: EntityRegistry,
     private ability: EntityAbility,
     private router: Router,
-    protected logger: LoggingService,
     protected unsavedChanges: UnsavedChangesService,
   ) {}
 

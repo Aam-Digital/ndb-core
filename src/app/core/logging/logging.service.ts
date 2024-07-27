@@ -1,4 +1,3 @@
-import { Injectable } from "@angular/core";
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/browser";
 import { environment } from "../../../environments/environment";
@@ -12,17 +11,16 @@ import { environment } from "../../../environments/environment";
  * Logging to the remote monitoring server is set only for warnings and errors.
  *
  * To allow remote logging, call Sentry.init during bootstrap in your AppModule or somewhere early on during startup.
+ *
+ * Import the constant `Logging` to use this from anywhere (without Angular DI).
  */
-@Injectable({
-  providedIn: "root",
-})
 export class LoggingService {
   /**
    * Initialize the remote logging module with the given options.
    * If set up this will be used to send errors to a remote endpoint for analysis.
    * @param options
    */
-  static initRemoteLogging(options: Sentry.BrowserOptions) {
+  initRemoteLogging(options: Sentry.BrowserOptions) {
     if (!options.dsn) {
       // abort if no target url is set
       return;
@@ -43,7 +41,7 @@ export class LoggingService {
    * @param value Value of the key-value pair
    * @param asTag If this should be added as indexed tag rather than simple context (see https://docs.sentry.io/platforms/javascript/enriching-events/tags/)
    */
-  static addContext(key: string, value: any, asTag: boolean = false) {
+  addContext(key: string, value: any, asTag: boolean = false) {
     if (asTag) {
       Sentry.setTag(key, value);
     } else {
@@ -59,7 +57,7 @@ export class LoggingService {
    * especially in remote logging.
    * @param username
    */
-  static setLoggingContextUser(username: string) {
+  setLoggingContextUser(username: string) {
     Sentry.setUser({ username: username });
   }
 
@@ -204,3 +202,5 @@ interface SentryBreadcrumbHint {
   request?: any;
   xhr?: XMLHttpRequest;
 }
+
+export const Logging = new LoggingService();

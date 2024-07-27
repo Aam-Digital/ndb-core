@@ -1,5 +1,5 @@
-import { LoggingService } from "./logging.service";
 import { LogLevel } from "./log-level";
+import { LoggingService } from "./logging.service";
 
 describe("LoggingService", () => {
   const testMessage = "FANCY_TEST_MESSAGE";
