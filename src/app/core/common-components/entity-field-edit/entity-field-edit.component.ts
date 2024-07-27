@@ -9,6 +9,14 @@ import {
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { NgIf } from "@angular/common";
 import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view.component";
+import { MatHint } from "@angular/material/form-field";
+import { FaIconComponent } from "@fortawesome/angular-fontawesome";
+import { MatIconButton } from "@angular/material/button";
+import { EntityFieldLabelComponent } from "../entity-field-label/entity-field-label.component";
+import {
+  DefaultValueHint,
+  DefaultValueService,
+} from "../../default-values/default-value.service";
 
 /**
  * Generic component to display one entity property field's editComponent.
@@ -28,6 +36,10 @@ import { EntityFieldViewComponent } from "../entity-field-view/entity-field-view
     HelpButtonComponent,
     NgIf,
     EntityFieldViewComponent,
+    MatHint,
+    FaIconComponent,
+    MatIconButton,
+    EntityFieldLabelComponent,
   ],
 })
 export class EntityFieldEditComponent<T extends Entity = Entity>
@@ -46,11 +58,34 @@ export class EntityFieldEditComponent<T extends Entity = Entity>
    */
   @Input() compactMode: boolean;
 
-  constructor(private entityFormService: EntityFormService) {}
+  defaultValueHint: DefaultValueHint | undefined;
+
+  constructor(
+    private entityFormService: EntityFormService,
+    private defaultValueService: DefaultValueService,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.field || changes.entity) {
       this.updateField();
+    }
+
+    this.defaultValueHint = this.defaultValueService.getDefaultValueUiHint(
+      this.form,
+      this._field?.id,
+    );
+    if (changes.form && changes.form.firstChange) {
+      this.form?.formGroup.valueChanges.subscribe((value) =>
+        // ensure this is only called after the other changes handler
+        setTimeout(
+          () =>
+            (this.defaultValueHint =
+              this.defaultValueService.getDefaultValueUiHint(
+                this.form,
+                this._field?.id,
+              )),
+        ),
+      );
     }
   }
 

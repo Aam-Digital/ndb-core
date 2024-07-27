@@ -57,17 +57,20 @@ export class TodoDetailsComponent implements OnInit {
     this.formColumns = [{ fields: data.columns }];
   }
 
-  ngOnInit(): void {
-    this.form = this.entityFormService.createFormGroup(
+  async ngOnInit(): Promise<void> {
+    this.form = await this.entityFormService.createEntityForm(
       [].concat(...this.formColumns.map((group) => group.fields)),
       this.entity,
     );
   }
 
   async completeTodo() {
-    if (this.form.dirty) {
+    if (this.form.formGroup.dirty) {
       // we assume the user always wants to save pending changes rather than discard them
-      await this.entityFormService.saveChanges(this.form, this.entity);
+      await this.entityFormService.saveChanges(
+        this.form.formGroup,
+        this.entity,
+      );
     }
     await this.todoService.completeTodo(this.entity);
     this.dialogRef.close();

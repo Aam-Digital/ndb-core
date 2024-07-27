@@ -4,6 +4,7 @@ import { EntityConstructor } from "../../entity/model/entity";
 import { ColumnConfig, FormFieldConfig } from "../entity-form/FormConfig";
 import { EntityFormService } from "../entity-form/entity-form.service";
 import { NgIf } from "@angular/common";
+import { EntityRegistry } from "../../entity/database-entity.decorator";
 
 /**
  * Generic component to display the label of one form field of an entity
@@ -21,12 +22,22 @@ export class EntityFieldLabelComponent implements OnChanges {
   /** full field config extended from schema (used internally and for template) */
   _field: FormFieldConfig;
 
-  /** optional alternative to passing an entity, you can provide an entity type only */
-  @Input() entityType: EntityConstructor;
+  /** entity type to look up the schema details for the given field */
+  @Input() entityType: EntityConstructor | string;
+  _entityType: EntityConstructor;
 
-  constructor(private entityFormService: EntityFormService) {}
+  constructor(
+    private entityFormService: EntityFormService,
+    private entityRegistry: EntityRegistry,
+  ) {}
 
   ngOnChanges(changes: SimpleChanges): void {
+    if (changes.entityType) {
+      this._entityType =
+        typeof this.entityType === "string"
+          ? this.entityRegistry.get(this.entityType)
+          : this.entityType;
+    }
     if (changes.field || changes.entityType) {
       this.updateField();
     }
@@ -40,7 +51,7 @@ export class EntityFieldLabelComponent implements OnChanges {
 
     this._field = this.entityFormService.extendFormFieldConfig(
       this.field,
-      this.entityType,
+      this._entityType,
     );
   }
 }

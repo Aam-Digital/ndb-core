@@ -38,6 +38,6 @@ export class PrimaryActionComponent {
   }
 
   private createNewNote() {
-    return new Note(Date.now().toString());
+    return new Note();
   }
 }

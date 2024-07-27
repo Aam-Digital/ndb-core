@@ -5,6 +5,7 @@
     <app-entity-archived-info [entity]="data.entity"></app-entity-archived-info>
 
     <app-entity-form
+      *ngIf="form"
       [fieldGroups]="fieldGroups"
       [entity]="data.entity"
       [form]="form"
@@ -27,6 +28,6 @@
   </div>
 </mat-dialog-content>
 
-<mat-dialog-actions>
-  <app-dialog-buttons [form]="form" [entity]="data.entity" />
+<mat-dialog-actions *ngIf="form">
+  <app-dialog-buttons [form]="form.formGroup" [entity]="data.entity" />
 </mat-dialog-actions>

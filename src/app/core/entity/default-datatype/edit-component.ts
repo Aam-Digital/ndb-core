@@ -2,6 +2,7 @@ import { FormControl, FormGroup } from "@angular/forms";
 import { FormFieldConfig } from "../../common-components/entity-form/FormConfig";
 import { Entity } from "../model/entity";
 import { Directive, Input, OnChanges, OnInit } from "@angular/core";
+import { DefaultValueConfig } from "../schema/default-value-config";
 
 /**
  * A simple helper class which sets up all the required information for edit-components.
@@ -28,6 +29,16 @@ export abstract class EditComponent<T> implements OnInit, OnChanges {
    * The name of the form control.
    */
   @Input() formControlName: string;
+
+  /**
+   *
+   */
+  @Input() defaultValueConfig: DefaultValueConfig | undefined;
+
+  /**
+   *
+   */
+  @Input() defaultParentValue: any | undefined;
 
   /**
    * A label for this component.

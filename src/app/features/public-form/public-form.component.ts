@@ -58,7 +58,10 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
 
   async submit() {
     try {
-      await this.entityFormService.saveChanges(this.form, this.entity);
+      await this.entityFormService.saveChanges(
+        this.form.formGroup,
+        this.entity,
+      );
       this.snackbar.open($localize`Successfully submitted form`);
     } catch (e) {
       if (e instanceof InvalidFormFieldError) {
@@ -70,11 +73,11 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       throw e;
     }
 
-    this.initForm();
+    await this.initForm();
   }
 
-  reset() {
-    this.initForm();
+  async reset() {
+    await this.initForm();
   }
 
   private async loadFormConfig() {
@@ -90,15 +93,15 @@ export class PublicFormComponent<E extends Entity> implements OnInit {
       );
     }
     this.fieldGroups = this.formConfig.columns.map((row) => ({ fields: row }));
-    this.initForm();
+    await this.initForm();
   }
 
-  private initForm() {
+  private async initForm() {
     this.entity = new this.entityType();
     Object.entries(this.prefilled).forEach(([prop, value]) => {
       this.entity[prop] = value;
     });
-    this.form = this.entityFormService.createFormGroup(
+    this.form = await this.entityFormService.createEntityForm(
       [].concat(...this.fieldGroups.map((group) => group.fields)),
       this.entity,
     );

@@ -56,10 +56,10 @@ describe("TodoDetailsComponent", () => {
 
     const editedEntityProp = "subject";
     component.formColumns = [{ fields: [editedEntityProp] }];
-    component.ngOnInit();
+    await component.ngOnInit();
 
-    component.form.get(editedEntityProp).setValue("123");
-    component.form.get(editedEntityProp).markAsDirty();
+    component.form.formGroup.get(editedEntityProp).setValue("123");
+    component.form.formGroup.get(editedEntityProp).markAsDirty();
     await component.completeTodo();
 
     const savedEntity = await TestBed.inject<EntityMapperService>(

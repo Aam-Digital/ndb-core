@@ -1,4 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from "@angular/core/testing";
+import {
+  ComponentFixture,
+  fakeAsync,
+  TestBed,
+  tick,
+  waitForAsync,
+} from "@angular/core/testing";
 
 import {
   DetailsComponentData,
@@ -9,13 +15,26 @@ import { Entity } from "../../entity/model/entity";
 import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { EntityAbility } from "../../permissions/ability/entity-ability";
 import { NEVER } from "rxjs";
+import {
+  EntityForm,
+  EntityFormService,
+} from "../../common-components/entity-form/entity-form.service";
+import { FormBuilder } from "@angular/forms";
 
 describe("RowDetailsComponent", () => {
   let component: RowDetailsComponent;
   let fixture: ComponentFixture<RowDetailsComponent>;
   let detailsComponentData: DetailsComponentData;
 
+  let mockFormService: jasmine.SpyObj<EntityFormService>;
+
   beforeEach(waitForAsync(() => {
+    mockFormService = jasmine.createSpyObj(["createEntityForm"]);
+    mockFormService.createEntityForm.and.returnValue(
+      Promise.resolve({
+        formGroup: new FormBuilder().group({}),
+      } as EntityForm<any>),
+    );
     detailsComponentData = {
       entity: new Entity(),
       columns: [],
@@ -23,6 +42,7 @@ describe("RowDetailsComponent", () => {
     TestBed.configureTestingModule({
       imports: [RowDetailsComponent, MockedTestingModule.withState()],
       providers: [
+        { provide: EntityFormService, useValue: mockFormService },
         { provide: MAT_DIALOG_DATA, useValue: detailsComponentData },
         {
           provide: MatDialogRef,
@@ -39,8 +59,9 @@ describe("RowDetailsComponent", () => {
     fixture.detectChanges();
   }
 
-  it("should create", () => {
+  it("should create", fakeAsync(() => {
     initComponent();
+    tick();
     expect(component).toBeTruthy();
-  });
+  }));
 });
