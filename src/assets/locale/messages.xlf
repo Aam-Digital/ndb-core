@@ -227,14 +227,14 @@
         <source>Also include archived participants?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
-          <context context-type="linenumber">270</context>
+          <context context-type="linenumber">269</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2615484314952190660" datatype="html">
         <source>This event has some participants who are &quot;archived&quot;. We automatically remove them from the attendance list for you. Do you want to also include archived participants for this event?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/add-day-attendance/roll-call/roll-call.component.ts</context>
-          <context context-type="linenumber">271</context>
+          <context context-type="linenumber">270</context>
         </context-group>
       </trans-unit>
       <trans-unit id="828a009e2c01bece732333b25efb6b62ed46f6ec" datatype="html">
@@ -611,7 +611,7 @@
         <source>Recurring Activity</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">33</context>
+          <context context-type="linenumber">17</context>
         </context-group>
         <note priority="1" from="description">label for entity</note>
       </trans-unit>
@@ -619,7 +619,7 @@
         <source>Recurring Activities</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">18</context>
         </context-group>
         <note priority="1" from="description">label (plural) for entity</note>
       </trans-unit>
@@ -627,7 +627,7 @@
         <source>Title</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">54</context>
+          <context context-type="linenumber">38</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/building-blocks/admin-section-header/admin-section-header.component.ts</context>
@@ -639,7 +639,7 @@
         <source>Type</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">67</context>
+          <context context-type="linenumber">51</context>
         </context-group>
         <note priority="1" from="description">Label for the interaction type of a recurring activity</note>
       </trans-unit>
@@ -647,7 +647,7 @@
         <source>Participants</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">75</context>
+          <context context-type="linenumber">59</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/children/model/child.ts</context>
@@ -667,7 +667,7 @@
         <source>Groups</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">68</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/notes/model/note.ts</context>
@@ -679,7 +679,7 @@
         <source>Excluded Participants</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">77</context>
         </context-group>
         <note priority="1" from="description">Label for excluded participants of a recurring activity</note>
       </trans-unit>
@@ -687,7 +687,7 @@
         <source>Assigned user(s)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/child-dev-project/attendance/model/recurring-activity.ts</context>
-          <context context-type="linenumber">102</context>
+          <context context-type="linenumber">86</context>
         </context-group>
         <note priority="1" from="description">Label for the assigned user(s) of a recurring activity</note>
       </trans-unit>
@@ -2059,7 +2059,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">189</context>
+          <context context-type="linenumber">194</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
@@ -2075,7 +2075,7 @@
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">190</context>
+          <context context-type="linenumber">195</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.html</context>
@@ -2096,6 +2096,10 @@
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/edit-progress-dashboard/edit-progress-dashboard.component.html</context>
           <context context-type="linenumber">126</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
+          <context context-type="linenumber">27</context>
         </context-group>
         <note priority="1" from="description">Button label</note>
       </trans-unit>
@@ -2250,25 +2254,64 @@
           <context context-type="linenumber">149</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="c134eb8abb62f3c913d33158d0ada76421cc82fe" datatype="html">
-        <source>Default Value</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">153</context>
-        </context-group>
-      </trans-unit>
       <trans-unit id="3f64620191bc0181feaa57e5ff32ee9c83f8aa6d" datatype="html">
         <source>Anonymize</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">161</context>
+          <context context-type="linenumber">165</context>
         </context-group>
       </trans-unit>
       <trans-unit id="d9e5cb26790cde5b2dadf0f1ca09c996b35d78df" datatype="html">
         <source>Optionally This will remove all personal information (PII) permanently related to this field.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/admin-entity-field.component.html</context>
-          <context context-type="linenumber">164</context>
+          <context context-type="linenumber">168</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="32e2c1aa138d9121c4c3f49815a5c17086b8654f" datatype="html">
+        <source>Completely remove the value from the record during anonymization.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component.html</context>
+          <context context-type="linenumber">12</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="019d4bd6a5690f0cfa0ecf346a4e6bf7f0d8debb" datatype="html">
+        <source>Remove</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component.html</context>
+          <context context-type="linenumber">16</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
+          <context context-type="linenumber">9</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e86f6fc3c0528b832256f6c14a77c5aaf3e10f11" datatype="html">
+        <source>Keep the original value without any anonymization.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component.html</context>
+          <context context-type="linenumber">20</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5ad66902a6ef6e0dd7ef1e16d9b6299e5f9df9fd" datatype="html">
+        <source>Retain</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component.html</context>
+          <context context-type="linenumber">24</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fcdb679458f1cfe275beb8d630efba54bc88cf0f" datatype="html">
+        <source>Anonymize the value, but retain some generalized information. For dates, this removes the day and only keeps the year for statistical reporting. If a datatype (like the simple text field) does not support partial anonymization, the value will instead be removed completely.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component.html</context>
+          <context context-type="linenumber">28</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="73a2701e32fbf8b5aa0bb837c1eef0709e2cb940" datatype="html">
+        <source>Partially Anonymize</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/anonymize-options/anonymize-options.component.html</context>
+          <context context-type="linenumber">32</context>
         </context-group>
       </trans-unit>
       <trans-unit id="47d7c77be2ca1b5a9d3daf2f1c1ae582bec94608" datatype="html">
@@ -2326,6 +2369,112 @@
           <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/configure-entity-field-validator/configure-entity-field-validator.component.html</context>
           <context context-type="linenumber">51</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="c134eb8abb62f3c913d33158d0ada76421cc82fe" datatype="html">
+        <source>Default Value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1aae02fd229063a4ce8ab38ed3d1c104beded77a" datatype="html">
+        <source>no default value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">11</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="75883e69755dcf274884327c31b5f1a040e06e50" datatype="html">
+        <source>Fill the current date initially, when a record is created.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="37515b8bcab361aa9bcbd3a75c7a24c9f042fd89" datatype="html">
+        <source>Current Date</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">22</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cf46c45b14c068daeeab4afbac95b3acb8547e4b" datatype="html">
+        <source>Fill the currently logged in user, when a record is created.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="ec82260a1f60fd50b2ea5d9f66c426f4adac253a" datatype="html">
+        <source>Current User</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">29</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1a9a9c7297ffd267b6d9324c2f97acac6cf29ee5" datatype="html">
+        <source>The field of this record that defines the related record from which you want to inherit a value.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6b1a4aabcb5e6c0b05c7fe3fd0490c53e35d21b9" datatype="html">
+        <source> Inherit from linked record: </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">40,42</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="789ce2c4880d3f7f01d384b50f17853c57ae793e" datatype="html">
+        <source>The field of the linked record from which the value is copied into this field.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">56</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="20f5ace3736a19f81263e85c5cbb20b3b89e6f48" datatype="html">
+        <source> Inherited field of linked record: </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">59,61</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="d8ad7620f9a1b6c46c6f8510ccfe6d8ae6001774" datatype="html">
+        <source>simple, fixed default value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">85</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="cf3241e5da923c75ae2533446b23cf0d3dbd9048" datatype="html">
+        <source>dynamic placeholder (e.g. current date or user)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">93</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7d4b354866c492cf48666bc41153b32425a8e57b" datatype="html">
+        <source>value inherited from the value of another, linked record (requires another field in this record type to be a link to a record)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">101</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="3bddea174bf54ea09b30e8cf74eb20537067c157" datatype="html">
+        <source>Remove default value</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">112</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="58bbc30e0fc1487eebe4a7c3ecea7774f515eac5" datatype="html">
+        <source>Select default value or clear default value mode</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity-details/admin-entity-field/default-value-options/default-value-options.component.html</context>
+          <context context-type="linenumber">123</context>
+        </context-group>
+        <note priority="1" from="description">error message</note>
       </trans-unit>
       <trans-unit id="74647ba8938118fd415570dfbff3af97ffc7279e" datatype="html">
         <source> Edit Field </source>
@@ -2508,18 +2657,25 @@
           <context context-type="linenumber">87</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="fbcaac06ac5ab5b9004cac4f31c31512a8d9977f" datatype="html">
+        <source>Has personal information (PII)</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
+          <context context-type="linenumber">97</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="951c9f8878cf38220cd8bb085e689d7ffc2a8da8" datatype="html">
         <source>If the fields of this record type contain personal, sensitive information you can mark this here. Checking this box enables the &apos;anonymization&apos; feature. This allows users to anonymize records of this type instead of just archiving or deleting them.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">99</context>
+          <context context-type="linenumber">100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="40212c75ab97d34f250d15f31526dfbcf3fe0ccb" datatype="html">
         <source> Configure how records of this type can be anonymized. Users can &quot;anonymize&quot; a record as an alternative to just archiving it (keeping all personal details) or deleting it (losing any trace of the record, even in reports). Select below which fields can be &quot;retained&quot; to keep some limited data for statistical reporting and which fields have to be removed because they contain personal details. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity-general-settings/admin-entity-general-settings.component.html</context>
-          <context context-type="linenumber">105,113</context>
+          <context context-type="linenumber">106,114</context>
         </context-group>
       </trans-unit>
       <trans-unit id="418686fcb8227c95b8d8e72ca0c0e2a23b8d9ecb" datatype="html">
@@ -2565,7 +2721,7 @@
         <source>Configuration updated</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/admin/admin-entity/admin-entity.component.ts</context>
-          <context context-type="linenumber">141</context>
+          <context context-type="linenumber">143</context>
         </context-group>
         <note priority="1" from="description">Save config confirmation message</note>
       </trans-unit>
@@ -2882,6 +3038,10 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="sourcefile">src/app/core/filter/filter-overlay/filter-overlay.component.html</context>
           <context context-type="linenumber">13</context>
         </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
+          <context context-type="linenumber">21</context>
+        </context-group>
         <note priority="1" from="description">Close popup</note>
       </trans-unit>
       <trans-unit id="5212890716533126981" datatype="html">
@@ -3195,7 +3355,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>month (date without day of month)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/month/month.datatype.ts</context>
-          <context context-type="linenumber">34</context>
+          <context context-type="linenumber">18</context>
         </context-group>
         <note priority="1" from="description">datatype-label</note>
       </trans-unit>
@@ -3222,52 +3382,6 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">36</context>
         </context-group>
         <note priority="1" from="description">datatype-label</note>
-      </trans-unit>
-      <trans-unit id="32e2c1aa138d9121c4c3f49815a5c17086b8654f" datatype="html">
-        <source>Completely remove the value from the record during anonymization.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/anonymize-options/anonymize-options.component.html</context>
-          <context context-type="linenumber">12</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="019d4bd6a5690f0cfa0ecf346a4e6bf7f0d8debb" datatype="html">
-        <source>Remove</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/anonymize-options/anonymize-options.component.html</context>
-          <context context-type="linenumber">16</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/import/import-additional-actions/import-additional-actions.component.html</context>
-          <context context-type="linenumber">9</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="e86f6fc3c0528b832256f6c14a77c5aaf3e10f11" datatype="html">
-        <source>Keep the original value without any anonymization.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/anonymize-options/anonymize-options.component.html</context>
-          <context context-type="linenumber">20</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="5ad66902a6ef6e0dd7ef1e16d9b6299e5f9df9fd" datatype="html">
-        <source>Retain</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/anonymize-options/anonymize-options.component.html</context>
-          <context context-type="linenumber">24</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="fcdb679458f1cfe275beb8d630efba54bc88cf0f" datatype="html">
-        <source>Anonymize the value, but retain some generalized information. For dates, this removes the day and only keeps the year for statistical reporting. If a datatype (like the simple text field) does not support partial anonymization, the value will instead be removed completely.</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/anonymize-options/anonymize-options.component.html</context>
-          <context context-type="linenumber">28</context>
-        </context-group>
-      </trans-unit>
-      <trans-unit id="73a2701e32fbf8b5aa0bb837c1eef0709e2cb940" datatype="html">
-        <source>Partially Anonymize</source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/core/common-components/anonymize-options/anonymize-options.component.html</context>
-          <context context-type="linenumber">32</context>
-        </context-group>
       </trans-unit>
       <trans-unit id="f7dae3023f3dbafa10e2d7b9f3034b44a24d03f8" datatype="html">
         <source>Add new</source>
@@ -3429,56 +3543,56 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Must be greater than <x id="PH" equiv-text="validationValue.min"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">175</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5851191097234880874" datatype="html">
         <source>Cannot be greater than <x id="PH" equiv-text="validationValue.max"/></source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">177</context>
+          <context context-type="linenumber">174</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8938912551189798711" datatype="html">
         <source>Please enter a valid pattern</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">179</context>
         </context-group>
       </trans-unit>
       <trans-unit id="2501969335659826225" datatype="html">
         <source>This field is required</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">185</context>
+          <context context-type="linenumber">182</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8134695558272106554" datatype="html">
         <source>Please enter a valid email</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">187</context>
+          <context context-type="linenumber">184</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9109500675543184751" datatype="html">
         <source>Please enter a valid date</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">189</context>
+          <context context-type="linenumber">186</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1191324740438751530" datatype="html">
         <source>Please enter a valid number</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">191</context>
+          <context context-type="linenumber">188</context>
         </context-group>
       </trans-unit>
       <trans-unit id="266664346458430650" datatype="html">
         <source>Invalid input</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/common-components/entity-form/dynamic-form-validators/dynamic-validators.service.ts</context>
-          <context context-type="linenumber">200</context>
+          <context context-type="linenumber">197</context>
         </context-group>
       </trans-unit>
       <trans-unit id="848068633991631534" datatype="html">
@@ -5688,6 +5802,28 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">57</context>
         </context-group>
       </trans-unit>
+      <trans-unit id="fa7d8a8b37a7e868e929e4864e1268de1c007903" datatype="html">
+        <source>Technical User Support Details</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/support/support/support.component.html</context>
+          <context context-type="linenumber">1</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="96e52bdb9dd03f993f4c957a5bde4096b618d3b8" datatype="html">
+        <source> The following details of your device and app can help the user support troubleshoot when you are having technical issues.
+</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/support/support/support.component.html</context>
+          <context context-type="linenumber">3,6</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="0663cd7846c15806dc7d95a8decefc644e621e62" datatype="html">
+        <source>Send Details</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/support/support/support.component.html</context>
+          <context context-type="linenumber">69</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="2ee4e117dfc0599b029d5814ea013711eca2fe0a" datatype="html">
         <source>Download a backup of all data in your local database.</source>
         <context-group purpose="location">
@@ -5695,6 +5831,20 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
           <context context-type="linenumber">72</context>
         </context-group>
         <note priority="1" from="description">Support Panel - Download local db tooltip</note>
+      </trans-unit>
+      <trans-unit id="1a50c3362fdf131f60642d72ac6ad52f8e6be7c4" datatype="html">
+        <source> Download Local Database </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/support/support/support.component.html</context>
+          <context context-type="linenumber">76,78</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="afb6af8badce4d9bf310f463dbfc4ec2ae8471f8" datatype="html">
+        <source> Reset Application </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/support/support/support.component.html</context>
+          <context context-type="linenumber">79,81</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="1883557110661036774" datatype="html">
         <source>Support request</source>
@@ -5753,14 +5903,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>A new version of the app is available!</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/update-manager.service.ts</context>
-          <context context-type="linenumber">114</context>
+          <context context-type="linenumber">113</context>
         </context-group>
       </trans-unit>
       <trans-unit id="4021752662928002901" datatype="html">
         <source>Update</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/update-manager.service.ts</context>
-          <context context-type="linenumber">115</context>
+          <context context-type="linenumber">114</context>
         </context-group>
         <note priority="1" from="description">Action that a user can update the app with</note>
       </trans-unit>
@@ -5768,14 +5918,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>The app is in a unrecoverable state, please reload.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/update-manager.service.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">142</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7967484035994732534" datatype="html">
         <source>Reload</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/ui/latest-changes/update-manager.service.ts</context>
-          <context context-type="linenumber">144</context>
+          <context context-type="linenumber">143</context>
         </context-group>
         <note priority="1" from="description">Action that a user can reload the app with</note>
       </trans-unit>
@@ -5955,6 +6105,10 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
           <context context-type="linenumber">60,62</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
+          <context context-type="linenumber">28,30</context>
         </context-group>
         <note priority="1" from="description">Save button for forms</note>
       </trans-unit>
@@ -6458,7 +6612,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <note priority="1" from="description">Label for progress dashboard</note>
       </trans-unit>
-      <trans-unit id="1b2109812ff998c232329b1d8cef1ef103e35466" datatype="html">
+      <trans-unit id="99a1068048d3deee876b015a25655f5315157a30" datatype="html">
         <source> Progress Bar </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.html</context>
@@ -6478,7 +6632,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Progress of X</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/dashboard-widgets/progress-dashboard-widget/progress-dashboard/progress-dashboard.component.ts</context>
-          <context context-type="linenumber">74</context>
+          <context context-type="linenumber">73</context>
         </context-group>
         <note priority="1" from="description">The progress, e.g. of a certain activity</note>
       </trans-unit>
@@ -6502,14 +6656,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">66</context>
+          <context context-type="linenumber">65</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7211396766149775337" datatype="html">
         <source>Loading &quot;<x id="PH" equiv-text="entity[property]"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">162</context>
+          <context context-type="linenumber">161</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e1ea49b84d582f3c40491fe2c7e14eabfc9b878e" datatype="html">
@@ -6532,11 +6686,27 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <note priority="1" from="description">Tooltip upload file button</note>
       </trans-unit>
+      <trans-unit id="3087631129974664944" datatype="html">
+        <source>Failed uploading file. Please try again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+        <note priority="1" from="description">File Upload Error Message</note>
+      </trans-unit>
+      <trans-unit id="5207928085441628335" datatype="html">
+        <source>File too large. Usually files up to 5 MB are supported.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
+          <context context-type="linenumber">106</context>
+        </context-group>
+        <note priority="1" from="description">File Upload Error Message</note>
+      </trans-unit>
       <trans-unit id="2381267598974852900" datatype="html">
         <source>File &quot;<x id="PH" equiv-text="this.initialValue"/>&quot; deleted</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">134</context>
+          <context context-type="linenumber">143</context>
         </context-group>
         <note priority="1" from="description">Message for user</note>
       </trans-unit>
@@ -6612,46 +6782,134 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <note priority="1" from="description">Rating answer</note>
       </trans-unit>
+      <trans-unit id="32c7831edc08204425e893f8a49871cf0af87c95" datatype="html">
+        <source>Selected Location</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">4</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="f9e13ce5f33fca46d910e21dd48c9bd6dc9f9718" datatype="html">
+        <source>no location selected</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">13</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="fb13c7587f86dfc841a4ad350cf1dd2fb5e15ced" datatype="html">
+        <source>You have manually edited the exact address above, this is the actual mapped location. To change the location marked on the map, use the adress search field or click on the map.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">25</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="dbdd37d283916631acacc88ec0ea2de33305fc48" datatype="html">
+        <source>You have manually entered the address above without locating it on the map. To change the location marked on the map, use the adress search field or click on the map.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">32</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="844191036520f48ad0ad57d414917b57b8bdbfcf" datatype="html">
+        <source> No location marked on map </source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">35,37</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="645abe4a327d79011b5165c5068c757480acdada" datatype="html">
+        <source>Manually overwrite the address text (e.g. to add details that are not available from the automatic address lookup). The mapped location will be unaffected by this.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">48</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="e69944f6913fb12bead79b60568dbcd79261842d" datatype="html">
+        <source>Delete the selected location.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.html</context>
+          <context context-type="linenumber">58</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="7831178147053670254" datatype="html">
+        <source>Update custom address?</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.ts</context>
+          <context context-type="linenumber">104</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1562695877507366400" datatype="html">
+        <source>Do you want to overwrite the custom address to the full address from the online lookup? This will replace &quot;<x id="PH" equiv-text="manualAddress"/>&quot; with &quot;<x id="PH_1" equiv-text="lookupAddress"/>&quot;. The marked location on the map will be unaffected by this choice.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-edit/address-edit.component.ts</context>
+          <context context-type="linenumber">105</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="c042d424f244353e25f514cfc623a7cf82e9d0a9" datatype="html">
+        <source>Search an address</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/address-search/address-search.component.html</context>
+          <context context-type="linenumber">2</context>
+        </context-group>
+      </trans-unit>
       <trans-unit id="b81f59a02aa6d3b2c2a8ca493fdca1605b4fcfb8" datatype="html">
         <source>Loading results...</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/edit-location/edit-location.component.html</context>
-          <context context-type="linenumber">32</context>
+          <context context-type="sourcefile">src/app/features/location/address-search/address-search.component.html</context>
+          <context context-type="linenumber">23</context>
         </context-group>
-        <note priority="1" from="description">Loading in progress</note>
       </trans-unit>
       <trans-unit id="a0ec1080ec89dfb72689f2c7f5e304e3185e01d2" datatype="html">
         <source>Location not found</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/edit-location/edit-location.component.html</context>
-          <context context-type="linenumber">35</context>
-        </context-group>
-        <note priority="1" from="description">No results found</note>
-      </trans-unit>
-      <trans-unit id="65c3660ee4606ee4a2d89f0886d3a56116212087" datatype="html">
-        <source> Map data from <x id="START_LINK" ctype="x-a" equiv-text="&lt;a target=&quot;_blank&quot; href=&quot;https://openstreetmap.org/copyright&quot; rel=&quot;noopener&quot;
-      &gt;"/>OpenStreetMap<x id="CLOSE_LINK" ctype="x-a" equiv-text="&lt;/a
-    &gt;"/></source>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/edit-location/edit-location.component.html</context>
-          <context context-type="linenumber">41,46</context>
+          <context context-type="sourcefile">src/app/features/location/address-search/address-search.component.html</context>
+          <context context-type="linenumber">26</context>
         </context-group>
       </trans-unit>
-      <trans-unit id="1110721451570627366" datatype="html">
-        <source>Click on the map to select a different location</source>
+      <trans-unit id="ee3f7139a6066be2ce4f8df0903d43451bfc8eb1" datatype="html">
+        <source>Set address without map location as &quot;<x id="INTERPOLATION" equiv-text="{{
+            inputElement.value
+          }}"/>&quot;</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/location/edit-location/edit-location.component.ts</context>
-          <context context-type="linenumber">119</context>
+          <context context-type="sourcefile">src/app/features/location/address-search/address-search.component.html</context>
+          <context context-type="linenumber">30,32</context>
         </context-group>
-        <note priority="1" from="description">help text in map popup</note>
+      </trans-unit>
+      <trans-unit id="7bf220cd59146d99005e2f0f9ea26e965ba7bb00" datatype="html">
+        <source>Show the location marked on the map.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/location-input/location-input.component.html</context>
+          <context context-type="linenumber">19</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="030f546bdf31b7da6c87dfa39afdb7e8b1cd6de2" datatype="html">
+        <source>No location marked yet. Edit and search a location on the map here.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/location-input/location-input.component.html</context>
+          <context context-type="linenumber">26</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="8627586893493179962" datatype="html">
         <source>location (address + map)</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/location.datatype.ts</context>
-          <context context-type="linenumber">9</context>
+          <context context-type="linenumber">20</context>
         </context-group>
         <note priority="1" from="description">datatype-label</note>
+      </trans-unit>
+      <trans-unit id="9053505007937484698" datatype="html">
+        <source>Search an address or click on the map directly to select a different location</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
+          <context context-type="linenumber">59</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="2431348544249283790" datatype="html">
+        <source>[selected on map: <x id="PH" equiv-text="coords.lat"/> - <x id="PH_1" equiv-text="coords.lon"/>]</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.ts</context>
+          <context context-type="linenumber">112</context>
+        </context-group>
       </trans-unit>
       <trans-unit id="22ee8aecedfcdfcd3313bc6c5f0e80175bfafd58" datatype="html">
         <source> Select displayed locations
@@ -7306,7 +7564,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Overdue</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">172</context>
+          <context context-type="linenumber">171</context>
         </context-group>
         <note priority="1" from="description">Filter-option for todos</note>
       </trans-unit>
@@ -7314,7 +7572,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Completed</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">177</context>
+          <context context-type="linenumber">176</context>
         </context-group>
         <note priority="1" from="description">Filter-option for todos</note>
       </trans-unit>
@@ -7322,7 +7580,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>All Open</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">182</context>
+          <context context-type="linenumber">181</context>
         </context-group>
         <note priority="1" from="description">Filter-option for todos</note>
       </trans-unit>
@@ -7330,21 +7588,21 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Any</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">185</context>
+          <context context-type="linenumber">184</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5729690486395000500" datatype="html">
         <source>Tasks due</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">187</context>
+          <context context-type="linenumber">186</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5815531307136235479" datatype="html">
         <source>Currently Active</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/todos/todo-list/todo-list.component.ts</context>
-          <context context-type="linenumber">206</context>
+          <context context-type="linenumber">205</context>
         </context-group>
         <note priority="1" from="description">Filter-option for todos</note>
       </trans-unit>
