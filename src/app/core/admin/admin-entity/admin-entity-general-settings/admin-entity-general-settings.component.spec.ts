@@ -25,10 +25,7 @@ describe("AdminEntityGeneralSettingsComponent", () => {
   mockEntityConstructor.label = "Child";
   mockEntityConstructor.labelPlural = "Childrens";
   mockEntityConstructor.icon = "child";
-  mockEntityConstructor.toStringAttributes = [
-    "firstname",
-    "lastname",
-  ];
+  mockEntityConstructor.toStringAttributes = ["firstname", "lastname"];
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
