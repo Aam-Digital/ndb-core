@@ -20,11 +20,12 @@ import { Logging } from "../logging/logging.service";
 import PouchDB from "pouchdb-browser";
 import memory from "pouchdb-adapter-memory";
 import { PerformanceAnalysisLogging } from "../../utils/performance-analysis-logging";
-import { Injectable } from "@angular/core";
+import { Injectable, Optional } from "@angular/core";
 import { firstValueFrom, Observable, Subject } from "rxjs";
 import { filter } from "rxjs/operators";
 import { HttpStatusCode } from "@angular/common/http";
 import { environment } from "../../../environments/environment";
+import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 
 /**
  * Wrapper for a PouchDB instance to decouple the code from
@@ -66,7 +67,7 @@ export class PouchDatabase extends Database {
   /**
    * Create a PouchDB database manager.
    */
-  constructor() {
+  constructor(@Optional() private authService?: KeycloakAuthService) {
     super();
   }
 
@@ -105,27 +106,55 @@ export class PouchDatabase extends Database {
    */
   initRemoteDB(
     dbName = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}`,
-    fetch = this.defaultFetch,
   ): PouchDatabase {
     const options = {
       adapter: "http",
       skip_setup: true,
-      fetch,
+      fetch: (url: string | Request, opts: RequestInit) =>
+        this.defaultFetch(url, opts),
     };
     this.pouchDB = new PouchDB(dbName, options);
     this.databaseInitialized.complete();
     return this;
   }
 
-  private defaultFetch(url, opts: any) {
+  private defaultFetch: Fetch = async (url: string | Request, opts: any) => {
     if (typeof url !== "string") {
-      return;
+      const err = new Error("PouchDatabase.fetch: url is not a string");
+      err["details"] = url;
+      throw err;
     }
 
     const remoteUrl =
       environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
-    return PouchDB.fetch(remoteUrl, opts);
-  }
+    this.authService.addAuthHeader(opts.headers);
+
+    let result: Response;
+    try {
+      result = await PouchDB.fetch(remoteUrl, opts);
+    } catch (err) {
+      Logging.warn("Failed to fetch from DB", err);
+    }
+
+    // retry login if request failed with unauthorized
+    if (!result || result.status === HttpStatusCode.Unauthorized) {
+      try {
+        await this.authService.login();
+        this.authService.addAuthHeader(opts.headers);
+        result = await PouchDB.fetch(remoteUrl, opts);
+      } catch (err) {
+        Logging.warn("Failed to fetch from DB", err);
+      }
+    }
+
+    if (!result || result.status >= 500) {
+      throw new DatabaseException({
+        error: "Failed to fetch from DB",
+        actualResponse: result,
+      });
+    }
+    return result;
+  };
 
   async getPouchDBOnceReady(): Promise<PouchDB.Database> {
     await firstValueFrom(this.databaseInitialized, {
@@ -438,7 +467,10 @@ export class PouchDatabase extends Database {
  * This overwrites PouchDB's error class which only logs limited information
  */
 class DatabaseException extends Error {
-  constructor(error: PouchDB.Core.Error, entityId?: string) {
+  constructor(
+    error: PouchDB.Core.Error | { [key: string]: any },
+    entityId?: string,
+  ) {
     super();
 
     if (entityId) {
