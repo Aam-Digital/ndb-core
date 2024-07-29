@@ -41,6 +41,7 @@ import {
 import { RouteTarget } from "../../../route-target";
 import { EntitiesTableComponent } from "../../../core/common-components/entities-table/entities-table.component";
 import { DataFilter } from "../../../core/filter/filters/filters";
+import { GeoLocation } from "../../location/location.datatype";
 
 export interface MatchingSide extends MatchingSideConfig {
   /** pass along filters from app-filter to subrecord component */
@@ -109,7 +110,7 @@ export class MatchingEntitiesComponent implements OnInit {
 
   mapVisible = false;
   filteredMapEntities: Entity[] = [];
-  displayedProperties: LocationProperties = {};
+  displayedLocationProperties: LocationProperties = {};
 
   constructor(
     private route: ActivatedRoute,
@@ -367,7 +368,7 @@ export class MatchingEntitiesComponent implements OnInit {
       viewComponent: "DisplayDistance",
       additional: {
         coordinatesProperties:
-          this.displayedProperties[side.entityType.ENTITY_TYPE],
+          this.displayedLocationProperties[side.entityType.ENTITY_TYPE],
         compareCoordinates: new BehaviorSubject<Coordinates[]>([]),
       },
     };
@@ -376,7 +377,7 @@ export class MatchingEntitiesComponent implements OnInit {
   updateMarkersAndDistances() {
     this.sideDetails.forEach((side) => {
       const sideProperties =
-        this.displayedProperties[side.entityType.ENTITY_TYPE];
+        this.displayedLocationProperties[side.entityType.ENTITY_TYPE];
       if (side.distanceColumn) {
         side.distanceColumn.coordinatesProperties = sideProperties;
         const lastValue = side.distanceColumn.compareCoordinates.value;
@@ -389,13 +390,13 @@ export class MatchingEntitiesComponent implements OnInit {
   }
 
   private updateDistanceColumn(side: MatchingSide) {
-    const properties =
-      this.displayedProperties[side.highlightedSelected?.getType()];
+    const locationProperties =
+      this.displayedLocationProperties[side.highlightedSelected?.getType()];
     const otherIndex = this.sideDetails[0] === side ? 1 : 0;
     const distanceColumn = this.sideDetails[otherIndex].distanceColumn;
-    if (properties && distanceColumn) {
-      const coordinates = properties.map(
-        (prop) => side.highlightedSelected[prop],
+    if (locationProperties && distanceColumn) {
+      const coordinates: Coordinates[] = locationProperties.map(
+        (prop) => (side.highlightedSelected[prop] as GeoLocation)?.geoLookup,
       );
       distanceColumn.compareCoordinates.next(coordinates);
     }
