@@ -15,6 +15,7 @@ import { MatDialog } from "@angular/material/dialog";
 import { MapPopupConfig } from "../map-popup/map-popup.component";
 import { FontAwesomeTestingModule } from "@fortawesome/angular-fontawesome/testing";
 import { EMPTY, of, Subject } from "rxjs";
+import { GeoLocation } from "../location.datatype";
 
 describe("MapComponent", () => {
   let component: MapComponent;
@@ -22,6 +23,11 @@ describe("MapComponent", () => {
   let mockDialog: jasmine.SpyObj<MatDialog>;
   const config: MapConfig = { start: [52, 13] };
   let map: L.Map;
+
+  const TEST_LOCATION: GeoLocation = {
+    locationString: "test address",
+    geoLookup: { lat: 1, lon: 1, display_name: "test address" },
+  };
 
   beforeEach(async () => {
     mockDialog = jasmine.createSpyObj(["open"]);
@@ -78,7 +84,7 @@ describe("MapComponent", () => {
   it("should create markers for entities and emit entity when marker is clicked", (done) => {
     Child.schema.set("address", { dataType: "location" });
     const child = new Child();
-    child["address"] = { lat: 1, lon: 1 };
+    child["address"] = TEST_LOCATION;
     component.entities = [child];
 
     const marker = getEntityMarkers()[0];
@@ -111,8 +117,10 @@ describe("MapComponent", () => {
     Child.schema.set("address", { dataType: "location" });
     Child.schema.set("otherAddress", { dataType: "location" });
     const child = new Child();
-    child["address"] = { lat: 1, lon: 1 };
-    child["otherAddress"] = { lat: 1, lon: 2 };
+    child["address"] = TEST_LOCATION;
+    child["otherAddress"] = {
+      geoLookup: { lon: 99, lat: 99, display_name: "other address" },
+    } as GeoLocation;
 
     component.entities = [child];
 

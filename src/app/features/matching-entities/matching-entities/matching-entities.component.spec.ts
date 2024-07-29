@@ -23,6 +23,7 @@ import { MockedTestingModule } from "../../../utils/mocked-testing.module";
 import { School } from "../../../child-dev-project/schools/model/school";
 import { DynamicComponentConfig } from "../../../core/config/dynamic-components/dynamic-component-config.interface";
 import { Note } from "../../../child-dev-project/notes/model/note";
+import { GeoLocation } from "../../location/location.datatype";
 
 describe("MatchingEntitiesComponent", () => {
   let component: MatchingEntitiesComponent;
@@ -41,6 +42,13 @@ describe("MatchingEntitiesComponent", () => {
     matchActionLabel: "match test",
     rightSide: { entityType: "Child" },
     leftSide: { entityType: "School" },
+  };
+
+  const LOCATION_1: GeoLocation = {
+    geoLookup: { lat: 52, lon: 13, display_name: "loc 1" },
+  };
+  const LOCATION_2: GeoLocation = {
+    geoLookup: { lat: 52, lon: 14, display_name: "loc 1" },
   };
 
   beforeEach(waitForAsync(() => {
@@ -288,11 +296,13 @@ describe("MatchingEntitiesComponent", () => {
     );
 
     const compare = new Child();
-    compare["address"] = { lat: 52, lon: 13 };
+    compare["address"] = LOCATION_1;
 
     component.sideDetails[0].selectMatch(compare);
 
-    expect(newCoordinates).toEqual([compare["address"]]);
+    expect(newCoordinates).toEqual([
+      (compare["address"] as GeoLocation)?.geoLookup,
+    ]);
 
     Child.schema.delete("address");
   }));
@@ -334,12 +344,12 @@ describe("MatchingEntitiesComponent", () => {
     Child.schema.set("otherAddress", { dataType: "location" });
     School.schema.set("address", { dataType: "location" });
     const leftEntity = new Child();
-    leftEntity["address"] = { lat: 52, lon: 14 };
-    leftEntity["otherAddress"] = { lat: 53, lon: 14 };
+    leftEntity["address"] = LOCATION_1;
+    leftEntity["otherAddress"] = LOCATION_2;
     const rightEntity1 = new School();
-    rightEntity1["address"] = { lat: 52, lon: 13 };
+    rightEntity1["address"] = LOCATION_1;
     const rightEntity2 = new School();
-    rightEntity2["address"] = { lat: 53, lon: 13 };
+    rightEntity2["address"] = LOCATION_2;
     spyOn(TestBed.inject(EntityMapperService), "loadType").and.resolveTo([
       rightEntity1,
       rightEntity2,
@@ -368,36 +378,47 @@ describe("MatchingEntitiesComponent", () => {
 
     expect(lastLeftValue).toEqual([]);
     expect(lastRightValue).toEqual([
-      leftEntity["address"],
-      leftEntity["otherAddress"],
+      (leftEntity["address"] as GeoLocation)?.geoLookup,
+      (leftEntity["otherAddress"] as GeoLocation)?.geoLookup,
     ]);
 
     // values should be emitted again
     lastLeftValue = undefined;
     lastRightValue = undefined;
     // select only one property
-    component.displayedProperties["Child"] = ["address"];
+    component.displayedLocationProperties["Child"] = ["address"];
     component.updateMarkersAndDistances();
 
     expect(lastLeftValue).toEqual([]);
-    expect(lastRightValue).toEqual([leftEntity["address"]]);
+    expect(lastRightValue).toEqual([
+      (leftEntity["address"] as GeoLocation)?.geoLookup,
+    ]);
 
     // select an entity for right
     rightSide.selectMatch(rightEntity1);
 
-    expect(lastLeftValue).toEqual([rightEntity1["address"]]);
-    expect(lastRightValue).toEqual([leftEntity["address"]]);
+    expect(lastLeftValue).toEqual([
+      (rightEntity1["address"] as GeoLocation)?.geoLookup,
+    ]);
+    expect(lastRightValue).toEqual([
+      (leftEntity["address"] as GeoLocation)?.geoLookup,
+    ]);
 
     lastLeftValue = undefined;
     lastRightValue = undefined;
     //select both properties
-    component.displayedProperties["Child"] = ["address", "otherAddress"];
+    component.displayedLocationProperties["Child"] = [
+      "address",
+      "otherAddress",
+    ];
     component.updateMarkersAndDistances();
 
-    expect(lastLeftValue).toEqual([rightEntity1["address"]]);
+    expect(lastLeftValue).toEqual([
+      (rightEntity1["address"] as GeoLocation)?.geoLookup,
+    ]);
     expect(lastRightValue).toEqual([
-      leftEntity["address"],
-      leftEntity["otherAddress"],
+      (leftEntity["address"] as GeoLocation)?.geoLookup,
+      (leftEntity["otherAddress"] as GeoLocation)?.geoLookup,
     ]);
 
     Child.schema.delete("otherAddress");
