@@ -69,10 +69,12 @@ export class GeoService {
   private reformatDisplayName(result: OpenStreetMapsSearchResult): GeoResult {
     const addr = result?.address;
     if (addr) {
+      const city = addr.city ?? addr.town;
+
       result.display_name = [
         addr.amenity ?? addr.office,
         addr.road ? addr.road + " " + addr.house_number : undefined,
-        addr.postcode ? addr.postcode + " " + addr.city : addr.city,
+        addr.postcode ? addr.postcode + " " + city : city,
       ]
         .filter((x) => !!x)
         .join(", ");
@@ -110,6 +112,7 @@ type OpenStreetMapsSearchResult = GeoResult & {
     suburb?: string;
     borough?: string;
     city?: string;
+    town?: string;
     postcode?: number;
     country?: string;
     country_code?: string;
