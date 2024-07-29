@@ -2,8 +2,6 @@ import { Injectable } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouch-database";
 import { Logging } from "../logging/logging.service";
-import { HttpStatusCode } from "@angular/common/http";
-import PouchDB from "pouchdb-browser";
 import { SyncState } from "../session/session-states/sync-state.enum";
 import { SyncStateSubject } from "../session/session-type";
 import {
@@ -30,7 +28,7 @@ export class SyncService {
   private readonly POUCHDB_SYNC_BATCH_SIZE = 500;
   static readonly SYNC_INTERVAL = 30000;
 
-  private remoteDatabase = new PouchDatabase();
+  private remoteDatabase: PouchDatabase;
   private remoteDB: PouchDB.Database;
   private localDB: PouchDB.Database;
 
@@ -39,6 +37,8 @@ export class SyncService {
     private authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
   ) {
+    this.remoteDatabase = new PouchDatabase(this.authService);
+
     this.logSyncContext();
 
     this.syncStateSubject
@@ -78,43 +78,11 @@ export class SyncService {
   private initDatabases() {
     this.remoteDatabase.initRemoteDB(
       `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}`,
-      this.fetch.bind(this),
     );
     this.remoteDB = this.remoteDatabase.getPouchDB();
     if (this.database instanceof PouchDatabase) {
       this.localDB = this.database.getPouchDB();
     }
-  }
-
-  private async fetch(url: string, opts: any) {
-    // TODO: merge this with PouchDatabase.defaultFetch, which is very similar
-
-    if (typeof url !== "string") {
-      return;
-    }
-
-    const remoteUrl =
-      environment.DB_PROXY_PREFIX + url.split(environment.DB_PROXY_PREFIX)[1];
-    const initialRes = await this.sendRequest(remoteUrl, opts);
-
-    // retry login if request failed with unauthorized
-    if (initialRes.status === HttpStatusCode.Unauthorized) {
-      return (
-        this.authService
-          .login()
-          .then(() => this.sendRequest(remoteUrl, opts))
-          // return initial response if request failed again
-          .then((newRes) => (newRes.ok ? newRes : initialRes))
-          .catch(() => initialRes)
-      );
-    } else {
-      return initialRes;
-    }
-  }
-
-  private sendRequest(url: string, opts) {
-    this.authService.addAuthHeader(opts.headers);
-    return PouchDB.fetch(url, opts);
   }
 
   /**

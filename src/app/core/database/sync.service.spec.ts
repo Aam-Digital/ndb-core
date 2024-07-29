@@ -6,8 +6,6 @@ import { Database } from "./database";
 import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
-import { HttpStatusCode } from "@angular/common/http";
-import PouchDB from "pouchdb-browser";
 import { Subject } from "rxjs";
 
 describe("SyncService", () => {
@@ -68,47 +66,6 @@ describe("SyncService", () => {
     mockLocalDb.sync.and.resolveTo({});
     tick(SyncService.SYNC_INTERVAL);
     expect(mockLocalDb.sync).toHaveBeenCalled();
-
-    stopPeriodicTimer();
-  }));
-
-  it("should try auto-login if fetch fails and fetch again", fakeAsync(() => {
-    // Make sync call pass
-    spyOn(
-      TestBed.inject(Database) as PouchDatabase,
-      "getPouchDB",
-    ).and.returnValues({ sync: () => Promise.resolve() } as any);
-    spyOn(PouchDB, "fetch").and.returnValues(
-      Promise.resolve({
-        status: HttpStatusCode.Unauthorized,
-        ok: false,
-      } as Response),
-      Promise.resolve({ status: HttpStatusCode.Ok, ok: true } as Response),
-    );
-    // providing "valid" token on second call
-    let calls = 0;
-    mockAuthService.addAuthHeader.and.callFake((headers) => {
-      headers.Authorization = calls++ === 1 ? "valid" : "invalid";
-    });
-    mockAuthService.login.and.resolveTo();
-    const initSpy = spyOn(service["remoteDatabase"], "initRemoteDB");
-    service.startSync();
-    tick();
-    // taking fetch function from init call
-    const fetch = initSpy.calls.mostRecent().args[1];
-
-    const url = "/db/_changes";
-    const opts = { headers: {} };
-    let fetchResult;
-    fetch(url, opts).then((res) => (fetchResult = res));
-    tick();
-    expect(fetchResult).toBeDefined();
-
-    expect(PouchDB.fetch).toHaveBeenCalledTimes(2);
-    expect(PouchDB.fetch).toHaveBeenCalledWith(url, opts);
-    expect(opts.headers).toEqual({ Authorization: "valid" });
-    expect(mockAuthService.login).toHaveBeenCalled();
-    expect(mockAuthService.addAuthHeader).toHaveBeenCalledTimes(2);
 
     stopPeriodicTimer();
   }));
