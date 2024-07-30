@@ -20,6 +20,8 @@
       type="submit"
       (click)="createAccount()"
       [disabled]="form.disabled"
+      [color]="form.valid ? 'accent' : ''"
+      [class.animate-button]="form.valid"
       i18n="button to invite a new user"
     >
       Create account & send invitation
