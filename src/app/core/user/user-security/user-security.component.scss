@@ -21,5 +21,6 @@
 }
 
 .animate-button {
-  animation: buttonPulse 1s infinite;
+  animation: buttonPulse 1s forwards;
+  padding: 0 5px;
 }

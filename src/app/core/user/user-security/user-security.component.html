@@ -121,11 +121,14 @@
             <em style="font-size: x-small">{{ role.name }}</em>
           </mat-option>
         </mat-select>
+        <p i18n="hint about assigning user roles" class="field-hint">
+          You should select at least one user role. Otherwise this user will not
+          even be able to access the basic app layout like the menu.
+        </p>
+        <mat-error *ngIf="form.hasError('required', 'roles')" i18n>
+          This field is required
+        </mat-error>
       </mat-form-field>
-      <p i18n="hint about assigning user roles" class="field-hint">
-        You should select at least one user role. Otherwise this user will not
-        even be able to access the basic app layout like the menu.
-      </p>
     </div>
 
     <mat-error *ngIf="form.getError('failed')">{{
