@@ -1,5 +1,5 @@
 import { LogLevel } from "./log-level";
-import * as Sentry from "@sentry/browser";
+import * as Sentry from "@sentry/angular";
 import { environment } from "../../../environments/environment";
 
 /* eslint-disable no-console */

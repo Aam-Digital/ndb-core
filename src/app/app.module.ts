@@ -17,8 +17,15 @@
 
 import { BrowserModule } from "@angular/platform-browser";
 import { BrowserAnimationsModule } from "@angular/platform-browser/animations";
-import { ErrorHandler, Inject, LOCALE_ID, NgModule } from "@angular/core";
+import {
+  APP_INITIALIZER,
+  ErrorHandler,
+  Inject,
+  LOCALE_ID,
+  NgModule,
+} from "@angular/core";
 import { HttpClientModule } from "@angular/common/http";
+import * as Sentry from "@sentry/angular";
 
 import { AppComponent } from "./app.component";
 import { allRoutes } from "./app.routing";
@@ -31,7 +38,6 @@ import {
   SwRegistrationOptions,
 } from "@angular/service-worker";
 import { environment } from "../environments/environment";
-import { LoggingErrorHandler } from "./core/logging/logging-error-handler";
 import { AnalyticsService } from "./core/analytics/analytics.service";
 import { ConfigurableEnumModule } from "./core/basic-datatypes/configurable-enum/configurable-enum.module";
 import { MatPaginatorIntl } from "@angular/material/paginator";
@@ -75,7 +81,7 @@ import { HistoricalDataModule } from "./features/historical-data/historical-data
 import { MatchingEntitiesModule } from "./features/matching-entities/matching-entities.module";
 import { ProgressDashboardWidgetModule } from "./features/dashboard-widgets/progress-dashboard-widget/progress-dashboard-widget.module";
 import { ReportingModule } from "./features/reporting/reporting.module";
-import { RouterModule } from "@angular/router";
+import { Router, RouterModule } from "@angular/router";
 import { TodosModule } from "./features/todos/todos.module";
 import moment from "moment";
 import { getLocaleFirstDayOfWeek } from "@angular/common";
@@ -141,7 +147,22 @@ import { AdminModule } from "./core/admin/admin.module";
     MatDialogModule,
   ],
   providers: [
-    { provide: ErrorHandler, useClass: LoggingErrorHandler },
+    /* Sentry setup */
+    {
+      provide: ErrorHandler,
+      useValue: Sentry.createErrorHandler(),
+    },
+    {
+      provide: Sentry.TraceService,
+      deps: [Router],
+    },
+    {
+      provide: APP_INITIALIZER,
+      useFactory: () => () => {},
+      deps: [Sentry.TraceService],
+      multi: true,
+    },
+
     { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
     { provide: ComponentRegistry, useValue: componentRegistry },
     { provide: EntityRegistry, useValue: entityRegistry },
