@@ -16,7 +16,7 @@ export class ConfigurableEnum extends Entity {
   /**
    * Add a new valid option to the enum values, if it is not a duplicate or invalid.
    * Returns the newly added option upon success.
-   * @param newOptionInput String of option object to be added
+   * @param newOptionInput String or option object to be added
    */
   addOption(
     newOptionInput: ConfigurableEnumValue | string,
