@@ -15,6 +15,7 @@ import { FontAwesomeModule } from "@fortawesome/angular-fontawesome";
 import { ErrorHintComponent } from "../../../common-components/error-hint/error-hint.component";
 import { MatButtonModule } from "@angular/material/button";
 import { ConfirmationDialogService } from "../../../common-components/confirmation-dialog/confirmation-dialog.service";
+import { OkButton } from "../../../common-components/confirmation-dialog/confirmation-dialog/confirmation-dialog.component";
 
 @Component({
   selector: "app-enum-dropdown",
@@ -80,18 +81,35 @@ export class EnumDropdownComponent implements OnChanges {
   }
 
   private async addNewOption(name: string) {
-    const userConfirmed = await this.confirmation.getConfirmation(
-      $localize`Create new option`,
-      $localize`Do you want to create the new option "${name}"?`,
-    );
-    if (!userConfirmed) {
+    const prevValues = JSON.stringify(this.enumEntity.values);
+    let addedOption: ConfigurableEnumValue;
+
+    try {
+      addedOption = this.enumEntity.addOption(name);
+    } catch (error) {
+      await this.confirmation.getConfirmation(
+        $localize`Failed to create new option`,
+        $localize`Couldn't create this new option. Please check if the value already exists.`,
+        OkButton,
+      );
       return undefined;
     }
 
-    const option = { id: name, label: name };
-    this.enumEntity.values.push(option);
+    if (!addedOption) {
+      return undefined;
+    }
+
+    const userConfirmed = await this.confirmation.getConfirmation(
+      $localize`Create new option`,
+      $localize`Do you want to create the new option "${addedOption.label}"?`,
+    );
+    if (!userConfirmed) {
+      this.enumEntity.values = JSON.parse(prevValues);
+      return undefined;
+    }
+
     await this.entityMapper.save(this.enumEntity);
-    return option;
+    return addedOption;
   }
 
   openSettings(event: Event) {

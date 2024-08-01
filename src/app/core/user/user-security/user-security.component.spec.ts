@@ -132,8 +132,11 @@ describe("UserSecurityComponent", () => {
           new HttpErrorResponse({ error: { message: "user unauthorized" } }),
       ),
     );
-
-    component.form.patchValue({ username: "test-name", email: "my@email.com" });
+    component.form.patchValue({
+      username: "test-name",
+      email: "my@email.com",
+      roles: [{ id: "test_role", name: "test role", description: "x" }],
+    });
     component.createAccount();
     tick();
 

@@ -133,6 +133,7 @@ export class PouchDatabase extends Database {
     try {
       result = await PouchDB.fetch(remoteUrl, opts);
     } catch (err) {
+      Logging.debug("navigator.onLine", navigator.onLine);
       Logging.warn("Failed to fetch from DB", err);
     }
 
@@ -143,14 +144,18 @@ export class PouchDatabase extends Database {
         this.authService.addAuthHeader(opts.headers);
         result = await PouchDB.fetch(remoteUrl, opts);
       } catch (err) {
+        Logging.debug("navigator.onLine", navigator.onLine);
         Logging.warn("Failed to fetch from DB", err);
       }
     }
 
     if (!result || result.status >= 500) {
+      Logging.debug("Actual DB Fetch response", result);
+      Logging.debug("navigator.onLine", navigator.onLine);
       throw new DatabaseException({
         error: "Failed to fetch from DB",
-        actualResponse: result,
+        actualResponse: JSON.stringify(result.headers),
+        actualResponseBody: await result?.text(),
       });
     }
     return result;

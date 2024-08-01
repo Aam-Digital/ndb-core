@@ -16,6 +16,15 @@ export async function initEnvironmentConfig() {
       throw new Error("config.json must be an object");
     }
   } catch (err) {
+    if (
+      !environment.production ||
+      environment.appVersion === "UNKNOWN" ||
+      environment.appVersion === "0.0.0"
+    ) {
+      // continue in dev versions (e.g. to enable GitHub PR deployments)
+      return;
+    }
+
     // if offline, the config.json should be served by the service worker
     // if we cannot get a valid config.json, we won't be able to switch to session_type "synced" and load client data
 
