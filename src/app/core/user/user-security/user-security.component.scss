@@ -20,7 +20,9 @@
   }
 }
 
-.animate-button {
+.invite-button {
+  margin: 0 12px;
+}
+.invite-button-animate {
   animation: buttonPulse 1s forwards;
-  padding: 0 5px;
 }

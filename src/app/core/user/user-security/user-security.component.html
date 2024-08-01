@@ -20,8 +20,9 @@
       type="submit"
       (click)="createAccount()"
       [disabled]="form.disabled"
+      class="invite-button"
       [color]="form.valid ? 'accent' : ''"
-      [class.animate-button]="form.valid"
+      [class.invite-button-animate]="form.valid"
       i18n="button to invite a new user"
     >
       Create account & send invitation
@@ -121,10 +122,12 @@
             <em style="font-size: x-small">{{ role.name }}</em>
           </mat-option>
         </mat-select>
-        <p i18n="hint about assigning user roles" class="field-hint">
+
+        <mat-hint i18n="hint about assigning user roles" class="field-hint">
           You should select at least one user role. Otherwise this user will not
           even be able to access the basic app layout like the menu.
-        </p>
+        </mat-hint>
+
         <mat-error *ngIf="form.hasError('required', 'roles')" i18n>
           This field is required
         </mat-error>
