@@ -287,4 +287,6 @@ export class AdminEntityFormComponent implements OnChanges {
     const [removedFieldGroup] = this.config.fieldGroups.splice(i, 1);
     this.initAvailableFields();
   }
+
+  hideField(field: ColumnConfig) {}
 }

@@ -36,6 +36,17 @@
             Edit Field
           </button>
 
+          <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
+          <button
+            mat-stroked-button
+            color="accent"
+            class="field-hide-button"
+            (click)="hideField(field)"
+            i18n="Button label"
+          >
+            Hide Field
+          </button>
+
           <div class="dummy-form-field">
             <app-entity-field-edit
               [field]="field"
