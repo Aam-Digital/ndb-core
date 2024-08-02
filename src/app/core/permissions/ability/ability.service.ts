@@ -9,6 +9,8 @@ import { get } from "lodash-es";
 import { LatestEntityLoader } from "../../entity/latest-entity-loader";
 import { SessionInfo, SessionSubject } from "../../session/auth/session-info";
 import { CurrentUserSubject } from "../../session/current-user-subject";
+import { merge } from "rxjs";
+import { map } from "rxjs/operators";
 
 /**
  * This service sets up the `EntityAbility` injectable with the JSON defined rules for the currently logged in user.
@@ -18,6 +20,8 @@ import { CurrentUserSubject } from "../../session/current-user-subject";
  */
 @Injectable()
 export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
+  private currentRules: DatabaseRules;
+
   constructor(
     private ability: EntityAbility,
     private sessionInfo: SessionSubject,
@@ -26,6 +30,8 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
     entityMapper: EntityMapperService,
   ) {
     super(Config, Config.PERMISSION_KEY, entityMapper);
+
+    this.entityUpdated.subscribe((config) => (this.currentRules = config.data));
   }
 
   async initializeRules() {
@@ -37,9 +43,11 @@ export class AbilityService extends LatestEntityLoader<Config<DatabaseRules>> {
       this.ability.update([{ action: "manage", subject: "all" }]);
     }
 
-    this.entityUpdated.subscribe((config) =>
-      this.updateAbilityWithUserRules(config.data),
-    );
+    merge(
+      this.entityUpdated.pipe(map((config) => config.data)),
+      this.sessionInfo.pipe(map(() => this.currentRules)),
+      this.currentUser.pipe(map(() => this.currentRules)),
+    ).subscribe((rules) => this.updateAbilityWithUserRules(rules));
   }
 
   private async updateAbilityWithUserRules(rules: DatabaseRules): Promise<any> {
