@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import { Database } from "./database";
 import { PouchDatabase } from "./pouch-database";
 import { Logging } from "../logging/logging.service";
@@ -16,6 +16,7 @@ import { Config } from "../config/config";
 import { Entity } from "../entity/model/entity";
 import { from, interval, merge, of } from "rxjs";
 import { environment } from "../../../environments/environment";
+import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 
 /**
  * This service initializes the remote DB and manages the sync between the local and remote DB.
@@ -36,6 +37,7 @@ export class SyncService {
     private database: Database,
     private authService: KeycloakAuthService,
     private syncStateSubject: SyncStateSubject,
+    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
   ) {
     this.remoteDatabase = new PouchDatabase(this.authService);
 
@@ -89,6 +91,12 @@ export class SyncService {
    * Execute a (one-time) sync between the local and server database.
    */
   sync(): Promise<SyncResult> {
+    if (!this.navigator.onLine) {
+      Logging.debug("Not syncing because offline");
+      this.syncStateSubject.next(SyncState.UNSYNCED);
+      return Promise.resolve({});
+    }
+
     this.syncStateSubject.next(SyncState.STARTED);
 
     return this.localDB
