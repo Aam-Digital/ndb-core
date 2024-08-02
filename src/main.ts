@@ -27,13 +27,13 @@ if (environment.production) {
   enableProdMode();
 }
 
-// Listening to event as soon as possible
-PwaInstallService.registerPWAInstallListener();
-
 // Initialize remote logging
 Logging.initRemoteLogging({
   dsn: environment.remoteLoggingDsn,
 });
+
+// Listening to event as soon as possible
+PwaInstallService.registerPWAInstallListener();
 
 bootstrap(); // top-level await not possible here yet, therefore wrapped in `bootstrap()` function
 
