@@ -1940,7 +1940,7 @@
         <target state="translated">"<x id="PH" equiv-text="file.name"/>" wird hochgeladen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7211396766149775337" datatype="html">
@@ -1948,7 +1948,7 @@
         <target state="translated">"<x id="PH" equiv-text="entity[property]"/>" wird heruntergeladen</target>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">161</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e1ea49b84d582f3c40491fe2c7e14eabfc9b878e" datatype="html">
@@ -1966,28 +1966,41 @@
         <note priority="1" from="description">Tooltip upload file button</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">42</context>
+          <context context-type="linenumber">44</context>
         </context-group>
+      </trans-unit>
+      <trans-unit id="cb279c0fd500d4a9c46cb1eb831720679be2bc25" datatype="html">
+        <source>Changes to files are not possible offline.</source>
+        <target state="translated">Änderungen an Datei-Anhängen sind offline nicht mögich.</target>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
+          <context context-type="linenumber">51</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3087631129974664944" datatype="html">
         <source>Failed uploading file. Please try again.</source>
         <target state="translated">Fehler beim Hochladen der Datei konnte nicht hochgeladen werden. Bitte versuchen Sie es erneut.</target>
+        <note priority="1" from="description">File Upload Error Message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="linenumber">118</context>
         </context-group>
-        <note priority="1" from="description">File Upload Error Message</note>
       </trans-unit>
       <trans-unit id="5207928085441628335" datatype="html">
         <source>File too large. Usually files up to 5 MB are supported.</source>
         <target state="translated">Datei zu groß. Dateien bis 5MB werden unterstützt.</target>
+        <note priority="1" from="description">File Upload Error Message</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="1155903752025647007" datatype="html">
+        <source>Changes to file attachments are not available offline.</source>
+        <target state="translated">Änderungen an Datei-Anhängen sind offline nicht möglich.</target>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
+          <context context-type="linenumber">115</context>
         </context-group>
         <note priority="1" from="description">File Upload Error Message</note>
       </trans-unit>
@@ -1997,7 +2010,7 @@
         <note priority="1" from="description">Message for user</note>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">166</context>
         </context-group>
       </trans-unit>
       <trans-unit id="1974607876357286691" datatype="html">

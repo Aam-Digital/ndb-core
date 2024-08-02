@@ -7,7 +7,7 @@
 
 <mat-form-field
   [ngClass]="{ clickable: formControl.value }"
-  (click)="formClicked()"
+  (click)="navigator.onLine ? formClicked() : null"
 >
   <mat-label>{{ label }}</mat-label>
   <input
@@ -21,6 +21,7 @@
     matTooltip="Show file"
     [matTooltipDisabled]="!(initialValue && formControl.value === initialValue)"
   />
+
   <button
     *ngIf="formControl.value && formControl.enabled"
     type="button"
@@ -29,6 +30,7 @@
     (click)="delete(); $event.stopPropagation()"
     i18n-mattooltip="Tooltip remove file"
     matTooltip="Remove file"
+    [disabled]="!navigator.onLine"
   >
     <fa-icon icon="xmark"></fa-icon>
   </button>
@@ -40,9 +42,15 @@
     (click)="fileUpload.click(); $event.stopPropagation()"
     i18n-matTooltip="Tooltip upload file button"
     matTooltip="Upload file"
+    [disabled]="!navigator.onLine"
   >
     <fa-icon icon="upload"></fa-icon>
   </button>
+
+  @if (!navigator.onLine && formControl.enabled) {
+    <mat-hint i18n>Changes to files are not possible offline.</mat-hint>
+  }
+
   <mat-error>
     <app-error-hint [form]="formControl"></app-error-hint>
   </mat-error>
