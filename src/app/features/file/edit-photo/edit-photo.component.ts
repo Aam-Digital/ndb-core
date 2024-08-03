@@ -1,4 +1,4 @@
-import { Component, OnInit } from "@angular/core";
+import { Component, Inject, OnInit } from "@angular/core";
 import { DynamicComponent } from "../../../core/config/dynamic-components/dynamic-component.decorator";
 import { NgIf } from "@angular/common";
 import { MatTooltipModule } from "@angular/material/tooltip";
@@ -12,13 +12,21 @@ import { MatButtonModule } from "@angular/material/button";
 import { resizeImage } from "../file-utils";
 import { MatDialog } from "@angular/material/dialog";
 import { ImagePopupComponent } from "./image-popup/image-popup.component";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
+import { MatHint } from "@angular/material/form-field";
 
 @DynamicComponent("EditPhoto")
 @Component({
   selector: "app-edit-photo",
   templateUrl: "./edit-photo.component.html",
   styleUrls: ["./edit-photo.component.scss"],
-  imports: [MatButtonModule, MatTooltipModule, FontAwesomeModule, NgIf],
+  imports: [
+    MatButtonModule,
+    MatTooltipModule,
+    FontAwesomeModule,
+    NgIf,
+    MatHint,
+  ],
   standalone: true,
 })
 export class EditPhotoComponent extends EditFileComponent implements OnInit {
@@ -32,8 +40,9 @@ export class EditPhotoComponent extends EditFileComponent implements OnInit {
     alertService: AlertService,
     entityMapper: EntityMapperService,
     private dialog: MatDialog,
+    @Inject(NAVIGATOR_TOKEN) protected navigator: Navigator,
   ) {
-    super(fileService, alertService, entityMapper);
+    super(fileService, alertService, entityMapper, navigator);
   }
 
   async onFileSelected(file: File): Promise<void> {

@@ -11,6 +11,7 @@ import { EntitySchemaService } from "../../../core/entity/schema/entity-schema.s
 import { FormControl } from "@angular/forms";
 import { Entity } from "../../../core/entity/model/entity";
 import { MatDialog } from "@angular/material/dialog";
+import { NAVIGATOR_TOKEN } from "../../../utils/di-tokens";
 
 describe("EditPhotoComponent", () => {
   let component: EditPhotoComponent;
@@ -42,6 +43,7 @@ describe("EditPhotoComponent", () => {
         { provide: FileService, useValue: mockFileService },
         { provide: EntityMapperService, useValue: mockEntityMapper },
         { provide: MatDialog, useValue: mockDialog },
+        { provide: NAVIGATOR_TOKEN, useValue: { onLine: true } },
       ],
     }).compileComponents();
 

@@ -6682,14 +6682,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7211396766149775337" datatype="html">
         <source>Loading &quot;<x id="PH" equiv-text="entity[property]"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">161</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e1ea49b84d582f3c40491fe2c7e14eabfc9b878e" datatype="html">
@@ -6704,27 +6704,38 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Upload file</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">42</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">44</context>
         </context-group>
         <note priority="1" from="description">Tooltip upload file button</note>
       </trans-unit>
-      <trans-unit id="3087631129974664944" datatype="html">
-        <source>Failed uploading file. Please try again.</source>
+      <trans-unit id="cb279c0fd500d4a9c46cb1eb831720679be2bc25" datatype="html">
+        <source>Changes to files are not possible offline.</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
+          <context context-type="linenumber">51</context>
         </context-group>
-        <note priority="1" from="description">File Upload Error Message</note>
       </trans-unit>
       <trans-unit id="5207928085441628335" datatype="html">
         <source>File too large. Usually files up to 5 MB are supported.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+        <note priority="1" from="description">File Upload Error Message</note>
+      </trans-unit>
+      <trans-unit id="1155903752025647007" datatype="html">
+        <source>Changes to file attachments are not available offline.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+        <note priority="1" from="description">File Upload Error Message</note>
+      </trans-unit>
+      <trans-unit id="3087631129974664944" datatype="html">
+        <source>Failed uploading file. Please try again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
+          <context context-type="linenumber">118</context>
         </context-group>
         <note priority="1" from="description">File Upload Error Message</note>
       </trans-unit>
@@ -6732,7 +6743,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>File &quot;<x id="PH" equiv-text="this.initialValue"/>&quot; deleted</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">166</context>
         </context-group>
         <note priority="1" from="description">Message for user</note>
       </trans-unit>

@@ -1,4 +1,4 @@
-import { Injectable } from "@angular/core";
+import { Inject, Injectable } from "@angular/core";
 import {
   HttpClient,
   HttpEvent,
@@ -16,7 +16,7 @@ import {
   shareReplay,
   tap,
 } from "rxjs/operators";
-import { from, Observable, of } from "rxjs";
+import { from, Observable, of, throwError } from "rxjs";
 import { MatDialog } from "@angular/material/dialog";
 import { ShowFileComponent } from "./show-file/show-file.component";
 import { Entity } from "../../core/entity/model/entity";
@@ -32,6 +32,8 @@ import { SyncStateSubject } from "../../core/session/session-type";
 import { SyncService } from "../../core/database/sync.service";
 import { SyncState } from "../../core/session/session-states/sync-state.enum";
 import { environment } from "../../../environments/environment";
+import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
+import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
 
 /**
  * Stores the files in the CouchDB.
@@ -54,11 +56,16 @@ export class CouchdbFileService extends FileService {
     entityMapper: EntityMapperService,
     entities: EntityRegistry,
     syncState: SyncStateSubject,
+    @Inject(NAVIGATOR_TOKEN) private navigator: Navigator,
   ) {
     super(entityMapper, entities, syncState);
   }
 
   uploadFile(file: File, entity: Entity, property: string): Observable<any> {
+    if (!this.navigator.onLine) {
+      return throwError(() => new NotAvailableOfflineError("File Attachments"));
+    }
+
     const obs = this.requestQueue.add(
       this.runFileUpload(file, entity, property),
     );
@@ -112,6 +119,10 @@ export class CouchdbFileService extends FileService {
   }
 
   removeFile(entity: Entity, property: string) {
+    if (!this.navigator.onLine) {
+      return throwError(() => new NotAvailableOfflineError("File Attachments"));
+    }
+
     return this.requestQueue.add(this.runFileRemoval(entity, property));
   }
 
@@ -185,9 +196,7 @@ export class CouchdbFileService extends FileService {
         .pipe(
           map((blob) => URL.createObjectURL(blob)),
           catchError((err) => {
-            Logging.warn(
-              `Could not load file (${entity?.getId()} . ${property}): ${err}`,
-            );
+            Logging.warn("Could not load file", entity?.getId(), property, err);
 
             if (throwErrors) {
               throw err;

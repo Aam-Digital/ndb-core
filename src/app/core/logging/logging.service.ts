@@ -1,6 +1,11 @@
 import { LogLevel } from "./log-level";
 import * as Sentry from "@sentry/angular";
 import { environment } from "../../../environments/environment";
+import { APP_INITIALIZER, ErrorHandler, Provider } from "@angular/core";
+import { Router } from "@angular/router";
+import { LoginState } from "../session/session-states/login-state.enum";
+import { LoginStateSubject } from "../session/session-type";
+import { SessionSubject } from "../session/auth/session-info";
 
 /* eslint-disable no-console */
 
@@ -32,6 +37,56 @@ export class LoggingService {
       beforeBreadcrumb: enhanceSentryBreadcrumb,
     };
     Sentry.init(Object.assign(defaultOptions, options));
+  }
+
+  /**
+   * Register any additional logging context integrations that need Angular services.
+   * @param loginState
+   * @param sessionInfo
+   */
+  initAngularLogging(
+    loginState: LoginStateSubject,
+    sessionInfo: SessionSubject,
+  ) {
+    return () =>
+      loginState.subscribe((newState) => {
+        if (newState === LoginState.LOGGED_IN) {
+          const username = sessionInfo.value.name;
+          Logging.setLoggingContextUser(username);
+        } else {
+          Logging.setLoggingContextUser(undefined);
+        }
+      });
+  }
+
+  /**
+   * Get the Angular providers to set up additional logging and tracing,
+   * that should be added to the providers array of the AppModule.
+   */
+  getAngularTracingProviders(): Provider[] {
+    return [
+      /* Sentry setup */
+      {
+        provide: ErrorHandler,
+        useValue: Sentry.createErrorHandler(),
+      },
+      {
+        provide: Sentry.TraceService,
+        deps: [Router],
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: () => () => {},
+        deps: [Sentry.TraceService],
+        multi: true,
+      },
+      {
+        provide: APP_INITIALIZER,
+        useFactory: Logging.initAngularLogging,
+        deps: [LoginStateSubject, SessionSubject],
+        multi: true,
+      },
+    ];
   }
 
   /**
