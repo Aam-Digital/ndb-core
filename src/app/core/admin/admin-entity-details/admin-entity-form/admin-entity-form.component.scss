@@ -37,6 +37,8 @@ $toolbar-width: 300px;
 }
 
 .admin-form-field {
+  display: flex;
+  align-items: center;
   padding: sizes.$small;
   margin: sizes.$small auto;
   border: dotted 1px colors.$accent;
@@ -81,6 +83,7 @@ $toolbar-width: 300px;
   margin: auto;
   width: fit-content;
 }
+
 .admin-form-field:hover .field-edit-button {
   visibility: visible;
 }
@@ -89,7 +92,16 @@ $toolbar-width: 300px;
 }
 
 .dummy-form-field {
-  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: start; // This keeps the label text aligned next to the icon
+  flex-grow: 1;
+}
+
+.dummy-form-field .field-label {
+  text-align: left; // Aligns text to the left
+  flex-grow: 1; // Allows the label to take up the remaining space
+  margin-left: sizes.$small; // Adds spacing between the icon and the text
 }
 .dummy-form-field ::ng-deep input,
 .dummy-form-field ::ng-deep button {

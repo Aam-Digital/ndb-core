@@ -36,24 +36,24 @@
             Edit Field
           </button>
 
-          <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-          <button
-            mat-stroked-button
-            color="accent"
-            class="field-hide-button"
-            (click)="hideField(field)"
-            i18n="Button label"
-          >
-            Hide Field
-          </button>
-
-          <div class="dummy-form-field">
+          <div class="dummy-form-field flex-row align align-center">
             <app-entity-field-edit
               [field]="field"
               [entity]="dummyEntity"
               [form]="dummyForm"
             ></app-entity-field-edit>
           </div>
+
+          <button
+            mat-icon-button
+            color="black"
+            class="field-hide-button"
+            (click)="hideField(field, group)"
+            aria-label="Hide Field"
+            matTooltip="Click to hide this field from the form"
+          >
+            <fa-icon icon="times"></fa-icon>
+          </button>
         </div>
         <!-- FIELD [end]-->
       </div>
