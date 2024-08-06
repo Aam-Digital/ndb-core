@@ -81,9 +81,6 @@ import { DefaultValueOptionsComponent } from "./default-value-options/default-va
   ],
 })
 export class AdminEntityFieldComponent implements OnChanges {
-  delete() {
-    throw new Error("Method not implemented.");
-  }
   @Input() fieldId: string;
   @Input() entityType: EntityConstructor;
 
