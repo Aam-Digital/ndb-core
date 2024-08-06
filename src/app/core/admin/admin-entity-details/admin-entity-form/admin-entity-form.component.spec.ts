@@ -182,7 +182,7 @@ describe("AdminEntityFormComponent", () => {
   }));
 
   fit("should hide a single field", fakeAsync(() => {
-    const field = "subject"; // Replace "fieldName" with the actual field name
+    const field = "subject";
     const group = component.config.fieldGroups[0];
     component.hideField(field, group);
 

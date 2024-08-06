@@ -73,15 +73,10 @@ $w-levels: (
 /* Levels that are used when describing attendance values */
 $attendance-levels: (
   P: #c8e6c9,
-  /* Present */
-  H: #cfd8dc,
-  /* ? */
-  L: #ffecb3,
-  /* Late */
-  E: #d7ccc8,
-  /* Excused */
-  A: #ff8a65,
-  /* Absent */
-  U: #dddddd,
+  /* Present */ H: #cfd8dc,
+  /* ? */ L: #ffecb3,
+  /* Late */ E: #d7ccc8,
+  /* Excused */ A: #ff8a65,
+  /* Absent */ U: #dddddd,
   /* Unknown */
 );

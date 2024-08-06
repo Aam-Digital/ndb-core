@@ -44,16 +44,17 @@
             ></app-entity-field-edit>
           </div>
 
-          <button
-            mat-icon-button
-            color="black"
-            class="field-hide-button"
-            (click)="hideField(field, group)"
-            aria-label="Hide Field"
-            matTooltip="Click to hide this field from the form"
-          >
-            <fa-icon icon="times"></fa-icon>
-          </button>
+          <div class="field-hide-button">
+            <button
+              mat-icon-button
+              color="black"
+              (click)="hideField(field, group)"
+              aria-label="Hide Field"
+              matTooltip="Click to hide this field from the form"
+            >
+              <fa-icon icon="times"></fa-icon>
+            </button>
+          </div>
         </div>
         <!-- FIELD [end]-->
       </div>

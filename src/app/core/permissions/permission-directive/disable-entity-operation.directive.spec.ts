@@ -84,7 +84,7 @@ describe("DisableEntityOperationDirective", () => {
   template: ` <button
     *appDisabledEntityOperation="{
       operation: 'create',
-      entity: entityConstructor,
+      entity: entityConstructor
     }"
     #button
   ></button>`,

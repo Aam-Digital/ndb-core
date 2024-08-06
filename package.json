@@ -16,7 +16,8 @@
     "docs:json": "compodoc -p ./tsconfig.json -e json -d .",
     "storybook": "ng run ndb-core:storybook",
     "build-storybook": "ng run ndb-core:build-storybook",
-    "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/ && xliffmerge --profile xliffmerge.json"
+    "extract-i18n": "ng extract-i18n --output-path ./src/assets/locale/ && xliffmerge --profile xliffmerge.json",
+    "fix": "prettier --write ."
   },
   "private": true,
   "dependencies": {
