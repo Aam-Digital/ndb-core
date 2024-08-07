@@ -25,7 +25,7 @@ describe("SqlReportService", () => {
       startDate: null,
       endDate: null,
       status: "PENDING",
-      args: new Map<String, String>(),
+      args: {},
       outcome: {
         result_hash:
           "180a94a09c517b24e994aaf8342c58270a775f953eb32af78f06f1c8f61e37b9",
@@ -39,10 +39,7 @@ describe("SqlReportService", () => {
       status: "FINISHED_SUCCESS",
       startDate: "2024-06-07T09:26:56.414",
       endDate: "2024-06-09T09:26:57.431",
-      args: new Map<String, String>([
-        ["from", "2024-01-01T00:00:00.000"],
-        ["to", "2024-01-01T23:59:59.999"],
-      ]),
+      args: { from: "2024-01-01T00:00:00.000", to: "2024-01-01T23:59:59.999" },
       outcome: {
         result_hash: "000",
       },
@@ -55,10 +52,7 @@ describe("SqlReportService", () => {
       status: "FINISHED_SUCCESS",
       startDate: "2024-06-07T09:26:56.414",
       endDate: "2024-06-07T09:26:57.431",
-      args: new Map<String, String>([
-        ["from", "2024-01-01T00:00:00.000"],
-        ["to", "2024-01-01T23:59:59.999"],
-      ]),
+      args: { from: "2024-01-01T00:00:00.000", to: "2024-01-01T23:59:59.999" },
       outcome: {
         result_hash: "000",
       },

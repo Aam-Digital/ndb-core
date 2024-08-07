@@ -24,7 +24,7 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field>
+    <mat-form-field *ngIf="isDateRangeReport">
       <mat-label i18n>Enter a date range</mat-label>
       <mat-date-range-input [rangePicker]="picker" [disabled]="loading">
         <input
@@ -56,14 +56,12 @@
       mat-stroked-button
       color="accent"
       class="primary-button"
-      [disabled]="!selectedReport || (!fromDate && !toDate) || loading"
-      (click)="
-        calculateClick.emit({
-          report: selectedReport,
-          from: fromDate,
-          to: toDate,
-        })
+      [disabled]="
+        !selectedReport ||
+        (isDateRangeReport && !fromDate && !toDate) ||
+        loading
       "
+      (click)="calculate()"
       i18n="Calculate the results for a report"
       angulartics2On="click"
       angularticsCategory="Reporting"
