@@ -7,7 +7,7 @@
         (click)="executeAction(a)"
         *appDisabledEntityOperation="{
           operation: a.permission,
-          entity: entity
+          entity: entity,
         }"
         angulartics2On="click"
         [angularticsCategory]="entity?.getType()"
@@ -43,7 +43,7 @@
           (click)="executeAction(a)"
           *appDisabledEntityOperation="{
             operation: a.permission,
-            entity: entity
+            entity: entity,
           }"
           angulartics2On="click"
           [angularticsCategory]="entity?.getType()"
