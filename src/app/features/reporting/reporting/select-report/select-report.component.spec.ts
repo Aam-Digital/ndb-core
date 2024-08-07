@@ -31,4 +31,27 @@ describe("SelectReportComponent", () => {
 
     expect(component.selectedReport).toBe(report);
   });
+
+  it("should display date range filter when sql report supports it", () => {
+    const report = new ReportEntity();
+    report.mode = "sql";
+    report.neededArgs = ["from", "to"];
+    component.reports = [report];
+
+    component.ngOnChanges({ reports: undefined });
+
+    expect(component.selectedReport).toBe(report);
+    expect(component.isDateRangeReport).toBeTrue();
+  });
+
+  it("should display date range filter when sql report supports it", () => {
+    const report = new ReportEntity();
+    report.mode = "sql";
+    component.reports = [report];
+
+    component.ngOnChanges({ reports: undefined });
+
+    expect(component.selectedReport).toBe(report);
+    expect(component.isDateRangeReport).toBeFalse();
+  });
 });
