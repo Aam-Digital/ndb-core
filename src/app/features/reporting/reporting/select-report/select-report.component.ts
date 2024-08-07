@@ -50,6 +50,7 @@ export class SelectReportComponent implements OnChanges {
   selectedReport: ReportEntity;
   fromDate: Date;
   toDate: Date;
+  /** whether the currently selected report includes filter parameters for a "from" - "to" date range */
   isDateRangeReport: boolean;
 
   ngOnChanges(changes: SimpleChanges): void {

@@ -55,7 +55,7 @@ describe("SelectReportComponent", () => {
     expect(component.isDateRangeReport).toBeTrue();
   });
 
-  it("should display date range filter when sql report supports it", () => {
+  it("should hide date range filter when sql report does not have these args", () => {
     const report = new ReportEntity();
     report.mode = "sql";
     component.reports = [report];
@@ -66,7 +66,7 @@ describe("SelectReportComponent", () => {
     expect(component.isDateRangeReport).toBeFalse();
   });
 
-  it("should reset dates before calculation when sql report is a DateRangeReport", () => {
+  it("should reset dates before calculation when sql report is not a DateRangeReport", () => {
     const report = new ReportEntity();
     report.mode = "sql";
     component.reports = [report];
@@ -83,7 +83,7 @@ describe("SelectReportComponent", () => {
     expect(component.toDate).toBeUndefined();
   });
 
-  it("should not reset dates before calculation when sql report is not a DateRangeReport", () => {
+  it("should not reset dates before calculation when sql report is a DateRangeReport", () => {
     const report = new ReportEntity();
     report.mode = "sql";
     component.reports = [report];
