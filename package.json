@@ -114,7 +114,7 @@
     "karma-jasmine": "^5.1.0",
     "karma-jasmine-html-reporter": "^2.1.0",
     "mockdate": "^3.0.5",
-    "ngx-i18nsupport": "^0.17.1",
+    "ngx-i18nsupport": "^0.7.3",
     "prettier": "^3.3.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
