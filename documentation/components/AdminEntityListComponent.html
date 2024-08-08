@@ -1,0 +1,1359 @@
+<!doctype html>
+<html class="no-js" lang="">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="x-ua-compatible" content="ie=edge">
+        <title>ndb-core documentation</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+
+        <link rel="icon" type="image/x-icon" href="../images/favicon.ico">
+	   <link rel="stylesheet" href="../styles/style.css">
+        <link rel="stylesheet" href="../styles/dark.css">
+    </head>
+    <body>
+          <script>
+               // Blocking script to avoid flickering dark mode
+               // Dark mode toggle button
+               var useDark = window.matchMedia('(prefers-color-scheme: dark)');
+               var darkModeState = useDark.matches;
+               var $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               var $darkModeToggles = document.querySelectorAll('.dark-mode-switch');
+               var darkModeStateLocal = localStorage.getItem('compodoc_darkmode-state');
+
+               function checkToggle(check) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].checked = check;
+                    }
+               }
+
+               function toggleDarkMode(state) {
+                    if (window.localStorage) {
+                         localStorage.setItem('compodoc_darkmode-state', state);
+                    }
+
+                    checkToggle(state);
+
+                    const hasClass = document.body.classList.contains('dark');
+
+                    if (state) {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.add('dark');
+                         }
+                         if (!hasClass) {
+                              document.body.classList.add('dark');
+                         }
+                    } else {
+                         for (var i = 0; i < $darkModeToggles.length; i++) {
+                              $darkModeToggles[i].classList.remove('dark');
+                         }
+                         if (hasClass) {
+                              document.body.classList.remove('dark');
+                         }
+                    }
+               }
+
+               useDark.addEventListener('change', function (evt) {
+                    toggleDarkMode(evt.matches);
+               });
+               if (darkModeStateLocal) {
+                    darkModeState = darkModeStateLocal === 'true';
+               }
+               toggleDarkMode(darkModeState);
+          </script>
+
+        <div class="navbar navbar-default navbar-fixed-top d-md-none p-0">
+               <div class="d-flex">
+                    <a href="../" class="navbar-brand">ndb-core documentation</a>
+                    <button type="button" class="btn btn-default btn-menu ion-ios-menu" id="btn-menu"></button>
+               </div>
+        </div>
+
+        <div class="xs-menu menu" id="mobile-menu">
+                <div id="book-search-input" role="search"><input type="text" placeholder="Type to search"></div>            <compodoc-menu></compodoc-menu>
+        </div>
+
+        <div class="container-fluid main">
+           <div class="row main">
+               <div class="d-none d-md-block menu">
+                   <compodoc-menu mode="normal"></compodoc-menu>
+               </div>
+               <!-- START CONTENT -->
+               <div class="content component">
+                   <div class="content-data">
+
+
+
+
+<ol class="breadcrumb">
+  <li class="breadcrumb-item">Components</li>
+  <li class="breadcrumb-item"
+  >
+  AdminEntityListComponent</li>
+</ol>
+
+<ul class="nav nav-tabs" role="tablist">
+        <li class="nav-item">
+            <a href="#info" class="nav-link active"
+                role="tab" id="info-tab" data-bs-toggle="tab" data-link="info">Info</a>
+        </li>
+        <li class="nav-item">
+            <a href="#source" class="nav-link"
+                role="tab" id="source-tab" data-bs-toggle="tab" data-link="source">Source</a>
+        </li>
+        <li class="nav-item">
+            <a href="#templateData" class="nav-link"
+                role="tab" id="templateData-tab" data-bs-toggle="tab" data-link="template">Template</a>
+        </li>
+        <li class="nav-item">
+            <a href="#styleData" class="nav-link"
+                role="tab" id="styleData-tab" data-bs-toggle="tab" data-link="style">Styles</a>
+        </li>
+        <li class="nav-item">
+            <a href="#tree" class="nav-link"
+                role="tab" id="tree-tab" data-bs-toggle="tab" data-link="dom-tree">DOM Tree</a>
+        </li>
+</ul>
+
+<div class="tab-content">
+    <div class="tab-pane fade active in" id="info"><p class="comment">
+    <h3>File</h3>
+</p>
+<p class="comment">
+    <code>src/app/core/admin/admin-entity-list/admin-entity-list.component.ts</code>
+</p>
+
+
+
+
+    <p class="comment">
+        <h3>Implements</h3>
+    </p>
+    <p class="comment">
+                <code>OnChanges</code>
+                <code>AfterViewInit</code>
+    </p>
+
+
+<section data-compodoc="block-metadata">
+    <h3>Metadata</h3>
+    <table class="table table-sm table-hover metadata">
+        <tbody>
+
+
+
+
+
+
+
+
+
+
+
+
+            <tr>
+                <td class="col-md-3">selector</td>
+                <td class="col-md-9"><code>app-admin-entity-list</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">standalone</td>
+                <td class="col-md-9"><code>true</code></td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">imports</td>
+                <td class="col-md-9">
+                            <code>CommonModule</code>
+                                <code><a href="../components/FilterComponent.html" target="_self" >FilterComponent</a></code>
+                            <code>MatTabGroup</code>
+                                <code><a href="../components/EntitiesTableComponent.html" target="_self" >EntitiesTableComponent</a></code>
+                            <code>MatTab</code>
+                                <code><a href="../components/EntityFieldsMenuComponent.html" target="_self" >EntityFieldsMenuComponent</a></code>
+                            <code>MatTableModule</code>
+                                <code><a href="../components/EntityFieldLabelComponent.html" target="_self" >EntityFieldLabelComponent</a></code>
+                            <code>CdkDrag</code>
+                            <code>FaIconComponent</code>
+                            <code>MatIconButton</code>
+                            <code>CdkDropList</code>
+                            <code>MatFormField</code>
+                            <code>MatLabel</code>
+                            <code>MatSelect</code>
+                                <code><a href="../components/AdminTabsComponent.html" target="_self" >AdminTabsComponent</a></code>
+                                <code><a href="../directives/AdminTabTemplateDirective.html" target="_self" >AdminTabTemplateDirective</a></code>
+                                <code><a href="../components/ViewTitleComponent.html" target="_self" >ViewTitleComponent</a></code>
+                            <code>CdkDropListGroup</code>
+                </td>
+            </tr>
+
+            <tr>
+                <td class="col-md-3">styleUrls</td>
+                <td class="col-md-9"><code>./admin-entity-list.component.scss,<br>../admin-entity/admin-entity-styles.scss</code></td>
+            </tr>
+
+
+
+            <tr>
+                <td class="col-md-3">templateUrl</td>
+                <td class="col-md-9"><code>./admin-entity-list.component.html</code></td>
+            </tr>
+
+
+
+
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+    <section data-compodoc="block-index">
+    <h3 id="index">Index</h3>
+    <table class="table table-sm table-bordered index-table">
+        <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Properties</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#allFields" >allFields</a>
+                            </li>
+                            <li>
+                                <a href="#filters" >filters</a>
+                            </li>
+                            <li>
+                                    <span class="modifier"></span>
+                                <a href="#placeholder" >placeholder</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Methods</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#drop" >drop</a>
+                            </li>
+                            <li>
+                                <a href="#newColumnGroupFactory" >newColumnGroupFactory</a>
+                            </li>
+                            <li>
+                                <a href="#onDropListDropped" >onDropListDropped</a>
+                            </li>
+                            <li>
+                                <a href="#onDropListEntered" >onDropListEntered</a>
+                            </li>
+                            <li>
+                                <a href="#removeItem" >removeItem</a>
+                            </li>
+                            <li>
+                                <a href="#updateFilters" >updateFilters</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+                <tr>
+                    <td class="col-md-4">
+                        <h6><b>Inputs</b></h6>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <ul class="index-list">
+                            <li>
+                                <a href="#config" >config</a>
+                            </li>
+                            <li>
+                                <a href="#entityConstructor" >entityConstructor</a>
+                            </li>
+                        </ul>
+                    </td>
+                </tr>
+
+
+
+
+        </tbody>
+    </table>
+</section>
+
+
+    <section data-compodoc="block-inputs">
+    <h3 id="inputs">Inputs</h3>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="config"></a>
+                        <b>config</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../interfaces/EntityListConfig.html" target="_self" >EntityListConfig</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="78" class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:78</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+        <table class="table table-sm table-bordered">
+            <tbody>
+                <tr>
+                    <td class="col-md-4">
+                        <a name="entityConstructor"></a>
+                        <b>entityConstructor</b>
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../miscellaneous/typealiases.html#EntityConstructor" target="_self" >EntityConstructor</a></code>
+
+                    </td>
+                </tr>
+                        <tr>
+                            <td class="col-md-2" colspan="2">
+                                    <div class="io-line">Defined in <a href="" data-line="77" class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:77</a></div>
+                            </td>
+                        </tr>
+            </tbody>
+        </table>
+</section>
+
+
+
+    <section data-compodoc="block-methods">
+    
+    <h3 id="methods">
+        Methods
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="drop"></a>
+                    <span class="name">
+                        <span ><b>drop</b></span>
+                        <a href="#drop"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>drop(event: CdkDragDrop<E[] | any>, columnsArray: E[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="210"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:210</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>event</td>
+                                            <td>
+                                                        <code>CdkDragDrop&lt;E[] | any&gt;</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>columnsArray</td>
+                                            <td>
+                                                        <code>E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="newColumnGroupFactory"></a>
+                    <span class="name">
+                        <span ><b>newColumnGroupFactory</b></span>
+                        <a href="#newColumnGroupFactory"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>newColumnGroupFactory()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="202"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:202</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="../interfaces/GroupConfig.html" target="_self" >GroupConfig</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onDropListDropped"></a>
+                    <span class="name">
+                        <span ><b>onDropListDropped</b></span>
+                        <a href="#onDropListDropped"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onDropListDropped()</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="128"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:128</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="onDropListEntered"></a>
+                    <span class="name">
+                        <span ><b>onDropListEntered</b></span>
+                        <a href="#onDropListEntered"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>onDropListEntered(undefined: CdkDragEnter)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="155"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:155</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>
+                                                        <code>CdkDragEnter</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="removeItem"></a>
+                    <span class="name">
+                        <span ><b>removeItem</b></span>
+                        <a href="#removeItem"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>removeItem(array: E[], item: E)</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="206"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:206</a></div>
+                        </td>
+                    </tr>
+
+                    <tr>
+                        <td class="col-md-4">
+                            <b>Type parameters :</b>
+                            <ul class="type-parameters">
+                                    <li>E</li>
+                            </ul>
+                        </td>
+                    </tr>
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>array</td>
+                                            <td>
+                                                        <code>E[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                        <tr>
+                                                <td>item</td>
+                                            <td>
+                                                        <code>E</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="updateFilters"></a>
+                    <span class="name">
+                        <span ><b>updateFilters</b></span>
+                        <a href="#updateFilters"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td class="col-md-4">
+<code>updateFilters(filters: string[])</code>
+                </td>
+            </tr>
+
+
+                    <tr>
+                        <td class="col-md-4">
+                            <div class="io-line">Defined in <a href="" data-line="192"
+                                    class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:192</a></div>
+                        </td>
+                    </tr>
+
+
+            <tr>
+                <td class="col-md-4">
+
+                            <div class="io-description">
+                                <b>Parameters :</b>
+                                
+                                <table class="params">
+                                    <thead>
+                                        <tr>
+                                            <td>Name</td>
+                                                <td>Type</td>
+                                            <td>Optional</td>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                                <td>filters</td>
+                                            <td>
+                                                        <code>string[]</code>
+                                            </td>
+
+                                            <td>
+                                                    No
+                                            </td>
+
+
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        <div class="io-description">
+                            <b>Returns : </b>        <code><a href="https://www.typescriptlang.org/docs/handbook/basic-types.html" target="_blank" >void</a></code>
+
+                        </div>
+                            <div class="io-description">
+                                
+                            </div>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</section>
+    <section data-compodoc="block-properties">
+    
+    <h3 id="inputs">
+        Properties
+    </h3>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="allFields"></a>
+                    <span class="name">
+                        <span ><b>allFields</b></span>
+                        <a href="#allFields"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>        <code><a href="../classes/Config.html" target="_self" >ColumnConfig[]</a></code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Default value : </i><code>[]</code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="80" class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:80</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="filters"></a>
+                    <span class="name">
+                        <span ><b>filters</b></span>
+                        <a href="#filters"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>string[]</code>
+
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="81" class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:81</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+    <table class="table table-sm table-bordered">
+        <tbody>
+            <tr>
+                <td class="col-md-4">
+                    <a name="placeholder"></a>
+                    <span class="name">
+                            <span class="modifier"></span>
+                        <span ><b>placeholder</b></span>
+                        <a href="#placeholder"><span class="icon ion-ios-link"></span></a>
+                    </span>
+                </td>
+            </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <i>Type : </i>    <code>CdkDropList</code>
+
+                    </td>
+                </tr>
+                <tr>
+                    <td class="col-md-4">
+                        <b>Decorators : </b>
+                        <br />
+                        <code>
+                            @ViewChild(CdkDropList)<br />
+                        </code>
+                    </td>
+                </tr>
+                    <tr>
+                        <td class="col-md-4">
+                                <div class="io-line">Defined in <a href="" data-line="70" class="link-to-prism">src/app/core/admin/admin-entity-list/admin-entity-list.component.ts:70</a></div>
+                        </td>
+                    </tr>
+
+
+        </tbody>
+    </table>
+</section>
+
+</div>
+
+
+    <div class="tab-pane fade  tab-source-code" id="source">
+        <pre class="line-numbers compodoc-sourcecode"><code class="language-typescript">import {
+  AfterViewInit,
+  Component,
+  Input,
+  OnChanges,
+  SimpleChanges,
+  ViewChild,
+} from &quot;@angular/core&quot;;
+import { CommonModule } from &quot;@angular/common&quot;;
+import { FilterComponent } from &quot;../../filter/filter/filter.component&quot;;
+import { MatTab, MatTabGroup } from &quot;@angular/material/tabs&quot;;
+import { EntitiesTableComponent } from &quot;../../common-components/entities-table/entities-table.component&quot;;
+import { EntityConstructor } from &quot;../../entity/model/entity&quot;;
+import {
+  EntityListConfig,
+  GroupConfig,
+} from &quot;../../entity-list/EntityListConfig&quot;;
+import { EntityFieldsMenuComponent } from &quot;../../common-components/entity-fields-menu/entity-fields-menu.component&quot;;
+import { ColumnConfig } from &quot;../../common-components/entity-form/FormConfig&quot;;
+import { MatTableModule } from &quot;@angular/material/table&quot;;
+import { EntityFieldLabelComponent } from &quot;../../common-components/entity-field-label/entity-field-label.component&quot;;
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragEnter,
+  CdkDropList,
+  CdkDropListGroup,
+  DragRef,
+  moveItemInArray,
+} from &quot;@angular/cdk/drag-drop&quot;;
+import { FaIconComponent } from &quot;@fortawesome/angular-fontawesome&quot;;
+import { MatIconButton } from &quot;@angular/material/button&quot;;
+import { MatFormField, MatLabel } from &quot;@angular/material/form-field&quot;;
+import { MatSelect } from &quot;@angular/material/select&quot;;
+import { AdminTabsComponent } from &quot;../building-blocks/admin-tabs/admin-tabs.component&quot;;
+import { AdminTabTemplateDirective } from &quot;../building-blocks/admin-tabs/admin-tab-template.directive&quot;;
+import { ViewTitleComponent } from &quot;../../common-components/view-title/view-title.component&quot;;
+
+@Component({
+  selector: &quot;app-admin-entity-list&quot;,
+  standalone: true,
+  imports: [
+    CommonModule,
+    FilterComponent,
+    MatTabGroup,
+    EntitiesTableComponent,
+    MatTab,
+    EntityFieldsMenuComponent,
+    MatTableModule,
+    EntityFieldLabelComponent,
+    CdkDrag,
+    FaIconComponent,
+    MatIconButton,
+    CdkDropList,
+    MatFormField,
+    MatLabel,
+    MatSelect,
+    AdminTabsComponent,
+    AdminTabTemplateDirective,
+    ViewTitleComponent,
+    CdkDropListGroup,
+  ],
+  templateUrl: &quot;./admin-entity-list.component.html&quot;,
+  styleUrls: [
+    &quot;./admin-entity-list.component.scss&quot;,
+    &quot;../admin-entity/admin-entity-styles.scss&quot;,
+  ],
+})
+export class AdminEntityListComponent implements OnChanges, AfterViewInit {
+  @ViewChild(CdkDropList) placeholder: CdkDropList;
+
+  private target: CdkDropList &#x3D; null;
+  private targetIndex: number;
+  private source: CdkDropList &#x3D; null;
+  private sourceIndex: number;
+  private dragRef: DragRef &#x3D; null;
+  @Input() entityConstructor: EntityConstructor;
+  @Input() config: EntityListConfig;
+
+  allFields: ColumnConfig[] &#x3D; [];
+  filters: string[];
+
+  ngOnChanges(changes: SimpleChanges): void {
+    if (changes.config) {
+      this.config &#x3D; this.config ?? {
+        entityType: this.entityConstructor.ENTITY_TYPE,
+      };
+      this.config.filters &#x3D; this.config.filters ?? [];
+
+      this.initColumnGroupsIfNecessary();
+
+      this.initAvailableFields();
+    }
+  }
+  ngAfterViewInit() {
+    const placeholderElement &#x3D; this.placeholder.element.nativeElement;
+    placeholderElement.style.display &#x3D; &quot;none&quot;;
+    placeholderElement.parentNode.removeChild(placeholderElement);
+  }
+  /**
+   * Config allows to not have columnGroups and by default then display all &#x60;columns&#x60;,
+   * create an initial columnGroup in this case to allow full editing.
+   * @private
+   */
+  private initColumnGroupsIfNecessary() {
+    if (!this.config.columnGroups) {
+      this.config.columnGroups &#x3D; {
+        groups: [
+          {
+            name: &quot;&quot;,
+            columns: (this.config.columns ?? []).map((c) &#x3D;&gt;
+              typeof c &#x3D;&#x3D;&#x3D; &quot;string&quot; ? c : c.id,
+            ),
+          },
+        ],
+      };
+    }
+  }
+
+  private initAvailableFields() {
+    this.allFields &#x3D; [
+      ...(this.config.columns ?? []),
+      ...this.entityConstructor.schema.keys(),
+    ];
+    this.filters &#x3D; (this.config.filters ?? []).map((f) &#x3D;&gt; f.id);
+  }
+
+  onDropListDropped() {
+    if (!this.target) {
+      return;
+    }
+    const placeholderElement: HTMLElement &#x3D;
+      this.placeholder.element.nativeElement;
+    const placeholderParentElement: HTMLElement &#x3D;
+      placeholderElement.parentElement;
+    placeholderElement.style.display &#x3D; &quot;none&quot;;
+    placeholderParentElement.removeChild(placeholderElement);
+    placeholderParentElement.appendChild(placeholderElement);
+    placeholderParentElement.insertBefore(
+      this.source.element.nativeElement,
+      placeholderParentElement.children[this.sourceIndex],
+    );
+
+    if (this.placeholder._dropListRef.isDragging()) {
+      this.placeholder._dropListRef.exit(this.dragRef);
+    }
+    this.target &#x3D; null;
+    this.source &#x3D; null;
+    this.dragRef &#x3D; null;
+    if (this.sourceIndex !&#x3D;&#x3D; this.targetIndex) {
+      moveItemInArray(this.config.filters, this.sourceIndex, this.targetIndex);
+    }
+  }
+
+  onDropListEntered({ item, container }: CdkDragEnter) {
+    if (container &#x3D;&#x3D; this.placeholder) {
+      return;
+    }
+    const placeholderElement: HTMLElement &#x3D;
+      this.placeholder.element.nativeElement;
+    const sourceElement: HTMLElement &#x3D; item.dropContainer.element.nativeElement;
+    const dropElement: HTMLElement &#x3D; container.element.nativeElement;
+    const dragIndex: number &#x3D; Array.prototype.indexOf.call(
+      dropElement.parentElement.children,
+      this.source ? placeholderElement : sourceElement,
+    );
+    const dropIndex: number &#x3D; Array.prototype.indexOf.call(
+      dropElement.parentElement.children,
+      dropElement,
+    );
+
+    if (!this.source) {
+      this.sourceIndex &#x3D; dragIndex;
+      this.source &#x3D; item.dropContainer;
+      sourceElement.parentElement.removeChild(sourceElement);
+    }
+    this.targetIndex &#x3D; dropIndex;
+    this.target &#x3D; container;
+    this.dragRef &#x3D; item._dragRef;
+    placeholderElement.style.display &#x3D; &quot;&quot;;
+    dropElement.parentElement.insertBefore(
+      placeholderElement,
+      dropIndex &gt; dragIndex ? dropElement.nextSibling : dropElement,
+    );
+    this.placeholder._dropListRef.enter(
+      item._dragRef,
+      item.element.nativeElement.offsetLeft,
+      item.element.nativeElement.offsetTop,
+    );
+  }
+
+  updateFilters(filters: string[]) {
+    this.filters &#x3D; filters;
+    this.config.filters &#x3D; filters.map(
+      (f) &#x3D;&gt;
+        this.config.filters.find(
+          (existingFilter) &#x3D;&gt; existingFilter.id &#x3D;&#x3D;&#x3D; f,
+        ) ?? { id: f },
+    );
+  }
+
+  newColumnGroupFactory(): GroupConfig {
+    return { name: &quot;&quot;, columns: [] };
+  }
+
+  removeItem&lt;E&gt;(array: E[], item: E) {
+    array.splice(array.indexOf(item), 1);
+  }
+
+  drop&lt;E&gt;(event: CdkDragDrop&lt;E[], any&gt;, columnsArray: E[]) {
+    moveItemInArray(columnsArray, event.previousIndex, event.currentIndex);
+  }
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="templateData">
+        <pre class="line-numbers"><code class="language-html">&lt;div class&#x3D;&quot;hint-banner&quot; i18n&gt;
+  You can edit how users will see the list of all records of this type. Drag and
+  drop filters and change table columns in this preview. The editor below
+  closely resembles how the list will look for users later.
+  &lt;br /&gt;
+  To create new fields, use the &quot;Details View&quot; section.
+&lt;/div&gt;
+
+&lt;app-view-title [disableBackButton]&#x3D;&quot;true&quot; [displayInPlace]&#x3D;&quot;true&quot;&gt;
+  {{ entityConstructor.labelPlural }}
+&lt;/app-view-title&gt;
+
+&lt;div&gt;
+  &lt;div
+    cdkDropListGroup
+    class&#x3D;&quot;drop-list flex-row gap-regular flex-wrap gap-large&quot;
+  &gt;
+    &lt;div
+      cdkDropList
+      (cdkDropListEntered)&#x3D;&quot;onDropListEntered($event)&quot;
+      (cdkDropListDropped)&#x3D;&quot;onDropListDropped()&quot;
+    &gt;&lt;/div&gt;
+    &lt;div
+      cdkDropList
+      (cdkDropListEntered)&#x3D;&quot;onDropListEntered($event)&quot;
+      (cdkDropListDropped)&#x3D;&quot;onDropListDropped()&quot;
+      *ngFor&#x3D;&quot;let filter of config?.filters&quot;
+    &gt;
+      &lt;div cdkDrag class&#x3D;&quot;filter-field drop-item flex-row gap-small&quot;&gt;
+        &lt;fa-icon icon&#x3D;&quot;grip-vertical&quot; size&#x3D;&quot;xl&quot; class&#x3D;&quot;drag-handle&quot;&gt;&lt;/fa-icon&gt;
+        &lt;mat-form-field appearance&#x3D;&quot;fill&quot;&gt;
+          &lt;mat-label
+            &gt;&lt;app-entity-field-label
+              [field]&#x3D;&quot;filter&quot;
+              [entityType]&#x3D;&quot;entityConstructor&quot;
+            &gt;&lt;/app-entity-field-label&gt;
+          &lt;/mat-label&gt;
+          &lt;mat-select disabled&gt;&lt;/mat-select&gt;
+        &lt;/mat-form-field&gt;
+
+        &lt;fa-icon
+          icon&#x3D;&quot;times&quot;
+          class&#x3D;&quot;remove-icon&quot;
+          (click)&#x3D;&quot;removeItem(filters, filter.id); updateFilters(filters)&quot;
+        &gt;&lt;/fa-icon&gt;
+      &lt;/div&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div class&#x3D;&quot;table-content-preview&quot; i18n&gt;
+    Add Filter:
+    &lt;app-entity-fields-menu
+      [entityType]&#x3D;&quot;entityConstructor&quot;
+      [activeFields]&#x3D;&quot;filters&quot;
+      (activeFieldsChange)&#x3D;&quot;updateFilters($event)&quot;
+      [availableFields]&#x3D;&quot;allFields&quot;
+      icon&#x3D;&quot;square-plus&quot;
+    &gt;&lt;/app-entity-fields-menu&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;div class&#x3D;&quot;mat-elevation-z1&quot;&gt;
+  &lt;app-admin-tabs
+    [tabs]&#x3D;&quot;config?.columnGroups?.groups&quot;
+    [newTabFactory]&#x3D;&quot;newColumnGroupFactory&quot;
+  &gt;
+    &lt;ng-template [appAdminTabTemplate]&#x3D;&quot;config?.columnGroups?.groups&quot; let-item&gt;
+      &lt;div
+        class&#x3D;&quot;table-header drop-list flex-row&quot;
+        cdkDropList
+        cdkDropListOrientation&#x3D;&quot;horizontal&quot;
+        cdkDropListLockAxis&#x3D;&quot;x&quot;
+        (cdkDropListDropped)&#x3D;&quot;drop($event, item.columns)&quot;
+      &gt;
+        @for (col of item[&quot;columns&quot;]; track col) {
+          &lt;div cdkDrag class&#x3D;&quot;column-header drop-item flex-row gap-small&quot;&gt;
+            &lt;fa-icon icon&#x3D;&quot;grip-vertical&quot; class&#x3D;&quot;drag-handle&quot;&gt;&lt;/fa-icon&gt;
+
+            &lt;!-- TODO: for custom column overrides, this cannot display the label yet --&gt;
+            &lt;app-entity-field-label
+              [field]&#x3D;&quot;col&quot;
+              [entityType]&#x3D;&quot;entityConstructor&quot;
+            &gt;&lt;/app-entity-field-label&gt;
+
+            &lt;fa-icon
+              icon&#x3D;&quot;times&quot;
+              class&#x3D;&quot;remove-icon&quot;
+              (click)&#x3D;&quot;removeItem(item.columns, col)&quot;
+            &gt;&lt;/fa-icon&gt;
+          &lt;/div&gt;
+        }
+      &lt;/div&gt;
+
+      &lt;div class&#x3D;&quot;table-content-preview&quot; i18n&gt;
+        Drag &amp; drop table column headers. Add columns:
+        &lt;app-entity-fields-menu
+          [entityType]&#x3D;&quot;entityConstructor&quot;
+          [(activeFields)]&#x3D;&quot;item.columns&quot;
+          [availableFields]&#x3D;&quot;allFields&quot;
+          icon&#x3D;&quot;square-plus&quot;
+        &gt;&lt;/app-entity-fields-menu&gt;
+      &lt;/div&gt;
+    &lt;/ng-template&gt;
+  &lt;/app-admin-tabs&gt;
+&lt;/div&gt;
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="styleData">
+                <p class="comment">
+                    <code>./admin-entity-list.component.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;variables/colors&quot;;
+
+.table-header {
+  height: 56px;
+  border-bottom: 1px solid #0000001f;
+}
+.table-content-preview {
+  font-style: italic;
+  padding: 16px;
+  color: #5f5f5f;
+}
+
+.column-header {
+  padding: 8px 16px;
+  margin: auto;
+}
+
+.filter-field {
+  padding: 0 16px;
+
+  ::ng-deep .mat-mdc-form-field-subscript-wrapper {
+    height: 0;
+  }
+}
+
+.cdk-drag-preview {
+  box-sizing: border-box;
+  border-radius: 4px;
+  box-shadow:
+    0 5px 5px -3px rgba(0, 0, 0, 0.2),
+    0 8px 10px 1px rgba(0, 0, 0, 0.14),
+    0 3px 14px 2px rgba(0, 0, 0, 0.12);
+}
+
+.cdk-drag-placeholder {
+  opacity: 0;
+}
+
+.cdk-drag-animating {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drop-list.cdk-drop-list-dragging .drop-item:not(.cdk-drag-placeholder) {
+  transition: transform 250ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.drag-handle {
+  cursor: move;
+  margin: auto;
+  color: colors.$accent;
+}
+app-entity-fields-menu {
+  color: colors.$accent;
+}
+
+.remove-icon {
+  cursor: pointer;
+  margin: auto;
+}
+.drop-item:has(.remove-icon:hover) {
+  color: rgb(255, 0, 0);
+  background-color: rgba(255, 0, 0, 0.1);
+}
+</code></pre>
+                <p class="comment">
+                    <code>../admin-entity/admin-entity-styles.scss</code>
+                </p>
+                <pre class="line-numbers"><code class="language-scss">@use &quot;@angular/material/core/style/elevation&quot; as mat-elevation;
+
+.hint-banner {
+  background: #e8e8e8;
+  padding: 1em;
+  margin-bottom: 1em;
+  @include mat-elevation.elevation(1);
+}
+</code></pre>
+    </div>
+
+    <div class="tab-pane fade " id="tree">
+        <div id="tree-container"></div>
+        <div class="tree-legend">
+            <div class="title">
+                <b>Legend</b>
+            </div>
+            <div>
+                <div class="color htmlelement"></div><span>Html element</span>
+            </div>
+            <div>
+                <div class="color component"></div><span>Component</span>
+            </div>
+            <div>
+                <div class="color directive"></div><span>Html element with directive</span>
+            </div>
+        </div>
+    </div>
+
+    
+</div>
+
+<script src="../js/libs/vis.min.js"></script>
+<script src="../js/libs/htmlparser.js"></script>
+<script src="../js/libs/deep-iterator.js"></script>
+<script>
+        var COMPONENT_TEMPLATE = '<div><div class="hint-banner" i18n>  You can edit how users will see the list of all records of this type. Drag and  drop filters and change table columns in this preview. The editor below  closely resembles how the list will look for users later.  <br />  To create new fields, use the "Details View" section.</div><app-view-title [disableBackButton]="true" [displayInPlace]="true">  {{ entityConstructor.labelPlural }}</app-view-title><div>  <div    cdkDropListGroup    class="drop-list flex-row gap-regular flex-wrap gap-large"  >    <div      cdkDropList      (cdkDropListEntered)="onDropListEntered($event)"      (cdkDropListDropped)="onDropListDropped()"    ></div>    <div      cdkDropList      (cdkDropListEntered)="onDropListEntered($event)"      (cdkDropListDropped)="onDropListDropped()"      *ngFor="let filter of config?.filters"    >      <div cdkDrag class="filter-field drop-item flex-row gap-small">        <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>        <mat-form-field appearance="fill">          <mat-label            ><app-entity-field-label              [field]="filter"              [entityType]="entityConstructor"            ></app-entity-field-label>          </mat-label>          <mat-select disabled></mat-select>        </mat-form-field>        <fa-icon          icon="times"          class="remove-icon"          (click)="removeItem(filters, filter.id); updateFilters(filters)"        ></fa-icon>      </div>    </div>  </div>  <div class="table-content-preview" i18n>    Add Filter:    <app-entity-fields-menu      [entityType]="entityConstructor"      [activeFields]="filters"      (activeFieldsChange)="updateFilters($event)"      [availableFields]="allFields"      icon="square-plus"    ></app-entity-fields-menu>  </div></div><div class="mat-elevation-z1">  <app-admin-tabs    [tabs]="config?.columnGroups?.groups"    [newTabFactory]="newColumnGroupFactory"  >    <ng-template [appAdminTabTemplate]="config?.columnGroups?.groups" let-item>      <div        class="table-header drop-list flex-row"        cdkDropList        cdkDropListOrientation="horizontal"        cdkDropListLockAxis="x"        (cdkDropListDropped)="drop($event, item.columns)"      >        @for (col of item["columns"]; track col) {          <div cdkDrag class="column-header drop-item flex-row gap-small">            <fa-icon icon="grip-vertical" class="drag-handle"></fa-icon>            <!-- TODO: for custom column overrides, this cannot display the label yet -->            <app-entity-field-label              [field]="col"              [entityType]="entityConstructor"            ></app-entity-field-label>            <fa-icon              icon="times"              class="remove-icon"              (click)="removeItem(item.columns, col)"            ></fa-icon>          </div>        }      </div>      <div class="table-content-preview" i18n>        Drag & drop table column headers. Add columns:        <app-entity-fields-menu          [entityType]="entityConstructor"          [(activeFields)]="item.columns"          [availableFields]="allFields"          icon="square-plus"        ></app-entity-fields-menu>      </div>    </ng-template>  </app-admin-tabs></div></div>'
+    var COMPONENTS = [{'name': 'AccountPageComponent', 'selector': 'app-account-page'},{'name': 'ActivitiesOverviewComponent', 'selector': 'app-activities-overview'},{'name': 'ActivityAttendanceSectionComponent', 'selector': 'app-activity-attendance-section'},{'name': 'ActivityCardComponent', 'selector': 'app-activity-card'},{'name': 'AddDayAttendanceComponent', 'selector': 'app-add-day-attendance'},{'name': 'AddressEditComponent', 'selector': 'app-address-edit'},{'name': 'AddressSearchComponent', 'selector': 'app-address-search'},{'name': 'AdminComponent', 'selector': 'app-admin'},{'name': 'AdminEditDescriptionOnlyFieldComponent', 'selector': 'app-admin-edit-description-only-field'},{'name': 'AdminEntityComponent', 'selector': 'app-admin-entity'},{'name': 'AdminEntityDetailsComponent', 'selector': 'app-admin-entity-details'},{'name': 'AdminEntityFieldComponent', 'selector': 'app-admin-entity-field'},{'name': 'AdminEntityFormComponent', 'selector': 'app-admin-entity-form'},{'name': 'AdminEntityGeneralSettingsComponent', 'selector': 'app-admin-entity-general-settings'},{'name': 'AdminEntityListComponent', 'selector': 'app-admin-entity-list'},{'name': 'AdminEntityPanelComponentComponent', 'selector': 'app-admin-entity-panel-component'},{'name': 'AdminEntityTypesComponent', 'selector': 'app-admin-entity-types'},{'name': 'AdminSectionHeaderComponent', 'selector': 'app-admin-section-header'},{'name': 'AdminTabsComponent', 'selector': 'app-admin-tabs'},{'name': 'AlertStoriesHelperComponent', 'selector': 'app-alert-demo'},{'name': 'AnonymizeOptionsComponent', 'selector': 'app-anonymize-options'},{'name': 'AppComponent', 'selector': 'app-root'},{'name': 'ApplicationLoadingComponent', 'selector': ''},{'name': 'AppVersionComponent', 'selector': 'app-version'},{'name': 'AttendanceBlockComponent', 'selector': 'app-attendance-block'},{'name': 'AttendanceCalendarComponent', 'selector': 'app-attendance-calendar'},{'name': 'AttendanceDayBlockComponent', 'selector': 'app-attendance-day-block]'},{'name': 'AttendanceDetailsComponent', 'selector': 'app-attendance-details'},{'name': 'AttendanceManagerComponent', 'selector': 'app-attendance-manager'},{'name': 'AttendanceStatusSelectComponent', 'selector': 'app-attendance-status-select'},{'name': 'AttendanceSummaryComponent', 'selector': 'app-attendance-summary'},{'name': 'AttendanceWeekDashboardComponent', 'selector': 'app-attendance-week-dashboard'},{'name': 'BackgroundProcessingIndicatorComponent', 'selector': 'app-background-processing-indicator'},{'name': 'BasicAutocompleteComponent', 'selector': 'app-basic-autocomplete'},{'name': 'BetaFeatureComponent', 'selector': 'app-beta-feature'},{'name': 'BirthdayDashboardComponent', 'selector': 'app-birthday-dashboard'},{'name': 'BooleanInputComponent', 'selector': 'app-boolean-input'},{'name': 'ChangelogComponent', 'selector': ''},{'name': 'ChildBlockComponent', 'selector': 'app-child-block'},{'name': 'ChildBlockTooltipComponent', 'selector': 'app-child-block-tooltip'},{'name': 'ChildrenListComponent', 'selector': 'app-children-list'},{'name': 'ChildSchoolOverviewComponent', 'selector': 'app-child-school-overview'},{'name': 'ComingSoonComponent', 'selector': 'app-coming-soon'},{'name': 'CompareRevComponent', 'selector': 'app-compare-rev'},{'name': 'ConfigImportComponent', 'selector': 'app-config-import'},{'name': 'ConfigureEntityFieldValidatorComponent', 'selector': 'app-configure-entity-field-validator'},{'name': 'ConfigureEnumPopupComponent', 'selector': 'app-configure-enum-popup'},{'name': 'ConfirmationDialogComponent', 'selector': 'app-confirmation-dialog'},{'name': 'ConflictResolutionListComponent', 'selector': 'app-conflict-resolution-list'},{'name': 'CustomIntervalComponent', 'selector': 'app-custom-interval'},{'name': 'DashboardComponent', 'selector': 'app-dashboard'},{'name': 'DashboardListWidgetComponent', 'selector': 'app-dashboard-list-widget'},{'name': 'DashboardWidgetComponent', 'selector': 'app-dashboard-widget'},{'name': 'DateImportConfigComponent', 'selector': 'app-date-import-config'},{'name': 'DateRangeFilterComponent', 'selector': 'app-date-range-filter'},{'name': 'DateRangeFilterPanelComponent', 'selector': 'app-date-range-filter-panel'},{'name': 'DefaultValueOptionsComponent', 'selector': 'app-default-value-options'},{'name': 'DemoDataGeneratingProgressDialogComponent', 'selector': ''},{'name': 'DialogButtonsComponent', 'selector': 'app-dialog-buttons'},{'name': 'DialogCloseComponent', 'selector': 'app-dialog-close'},{'name': 'DialogViewComponent', 'selector': ''},{'name': 'DisabledWrapperComponent', 'selector': 'app-disabled-wrapper'},{'name': 'DiscreteImportConfigComponent', 'selector': 'app-discrete-import-config'},{'name': 'DisplayAgeComponent', 'selector': 'app-display-age'},{'name': 'DisplayCheckmarkComponent', 'selector': 'app-display-tick'},{'name': 'DisplayConfigurableEnumComponent', 'selector': 'app-display-configurable-enum'},{'name': 'DisplayDateComponent', 'selector': 'app-display-date'},{'name': 'DisplayDynamicPercentageComponent', 'selector': 'app-display-dynamic-percentage'},{'name': 'DisplayEntityComponent', 'selector': 'app-display-entity'},{'name': 'DisplayImgComponent', 'selector': 'app-display-img'},{'name': 'DisplayMonthComponent', 'selector': 'app-display-month'},{'name': 'DisplayParticipantsCountComponent', 'selector': 'app-display-participants-count'},{'name': 'DisplayPercentageComponent', 'selector': 'app-display-percentage'},{'name': 'DisplayRecurringIntervalComponent', 'selector': 'app-display-recurring-interval'},{'name': 'DisplayTextComponent', 'selector': 'app-display-text'},{'name': 'DisplayTodoCompletionComponent', 'selector': 'app-display-todo-completion'},{'name': 'DisplayUnitComponent', 'selector': 'app-display-unit'},{'name': 'EditAgeComponent', 'selector': 'app-edit-age'},{'name': 'EditAttendanceComponent', 'selector': 'app-edit-attendance'},{'name': 'EditBooleanComponent', 'selector': 'app-edit-boolean'},{'name': 'EditConfigurableEnumComponent', 'selector': 'app-edit-configurable-enum'},{'name': 'EditDateComponent', 'selector': 'app-edit-date'},{'name': 'EditDescriptionOnlyComponent', 'selector': 'app-edit-description-only'},{'name': 'EditEntityComponent', 'selector': 'app-edit-entity'},{'name': 'EditFileComponent', 'selector': 'app-edit-file'},{'name': 'EditLocationComponent', 'selector': 'app-edit-location'},{'name': 'EditLongTextComponent', 'selector': 'app-edit-long-text'},{'name': 'EditMonthComponent', 'selector': 'app-edit-month'},{'name': 'EditNumberComponent', 'selector': 'app-edit-number'},{'name': 'EditPhotoComponent', 'selector': 'app-edit-photo'},{'name': 'EditProgressDashboardComponent', 'selector': 'app-edit-progress-dashboard'},{'name': 'EditRecurringIntervalComponent', 'selector': 'app-edit-recurring-interval'},{'name': 'EditTextComponent', 'selector': 'app-edit-text'},{'name': 'EditTextWithAutocompleteComponent', 'selector': 'app-edit-text-with-autocomplete'},{'name': 'EntitiesTableComponent', 'selector': 'app-entities-table'},{'name': 'EntityActionsMenuComponent', 'selector': 'app-entity-actions-menu'},{'name': 'EntityArchivedInfoComponent', 'selector': 'app-entity-archived-info'},{'name': 'EntityBlockComponent', 'selector': 'app-entity-block'},{'name': 'EntityCountDashboardComponent', 'selector': 'app-entity-count-dashboard-widget'},{'name': 'EntityCreateButtonComponent', 'selector': 'app-entity-create-button'},{'name': 'EntityDetailsComponent', 'selector': 'app-entity-details'},{'name': 'EntityFieldEditComponent', 'selector': 'app-entity-field-edit'},{'name': 'EntityFieldLabelComponent', 'selector': 'app-entity-field-label'},{'name': 'EntityFieldsMenuComponent', 'selector': 'app-entity-fields-menu'},{'name': 'EntityFieldViewComponent', 'selector': 'app-entity-field-view'},{'name': 'EntityFormComponent', 'selector': 'app-entity-form'},{'name': 'EntityImportConfigComponent', 'selector': 'app-entity-import-config'},{'name': 'EntityInlineEditActionsComponent', 'selector': 'app-entity-inline-edit-actions'},{'name': 'EntityListComponent', 'selector': 'app-entity-list'},{'name': 'EntitySelectComponent', 'selector': 'app-entity-select'},{'name': 'EnumDropdownComponent', 'selector': 'app-enum-dropdown'},{'name': 'ErrorHintComponent', 'selector': 'app-error-hint'},{'name': 'FaDynamicIconComponent', 'selector': 'app-fa-dynamic-icon'},{'name': 'FilterComponent', 'selector': 'app-filter'},{'name': 'FilterOverlayComponent', 'selector': 'app-filter-overlay'},{'name': 'FormComponent', 'selector': 'app-form'},{'name': 'GroupedChildAttendanceComponent', 'selector': 'app-grouped-child-attendance'},{'name': 'HelpButtonComponent', 'selector': 'app-help-button'},{'name': 'HistoricalDataComponent', 'selector': 'app-historical-data'},{'name': 'ImagePopupComponent', 'selector': 'app-image-popup'},{'name': 'ImportAdditionalActionsComponent', 'selector': 'app-import-additional-actions'},{'name': 'ImportantNotesDashboardComponent', 'selector': 'app-important-notes-dashboard'},{'name': 'ImportColumnMappingComponent', 'selector': 'app-import-column-mapping'},{'name': 'ImportComponent', 'selector': 'app-import'},{'name': 'ImportConfirmSummaryComponent', 'selector': 'app-import-confirm-summary'},{'name': 'ImportEntityTypeComponent', 'selector': 'app-import-entity-type'},{'name': 'ImportFileComponent', 'selector': 'app-import-file'},{'name': 'ImportHistoryComponent', 'selector': 'app-import-history'},{'name': 'ImportReviewDataComponent', 'selector': 'app-import-review-data'},{'name': 'InputFileComponent', 'selector': 'app-input-file'},{'name': 'LanguageSelectComponent', 'selector': 'app-language-select'},{'name': 'ListFilterComponent', 'selector': 'app-list-filter'},{'name': 'ListPaginatorComponent', 'selector': 'app-list-paginator'},{'name': 'LocationInputComponent', 'selector': 'app-location-input'},{'name': 'LoginComponent', 'selector': 'app-login'},{'name': 'MapComponent', 'selector': 'app-map'},{'name': 'MapPopupComponent', 'selector': 'app-map-popup'},{'name': 'MapPropertiesPopupComponent', 'selector': 'app-map-properties-popup'},{'name': 'MarkdownPageComponent', 'selector': 'app-markdown-page'},{'name': 'MatchingEntitiesComponent', 'selector': 'app-matching-entities'},{'name': 'NavigationComponent', 'selector': 'app-navigation'},{'name': 'NoteAttendanceCountBlockComponent', 'selector': 'app-note-attendance-count-block'},{'name': 'NoteDetailsComponent', 'selector': 'app-note-details'},{'name': 'NotesDashboardComponent', 'selector': 'app-no-recent-notes-dashboard'},{'name': 'NotesManagerComponent', 'selector': 'app-notes-manager'},{'name': 'NotesRelatedToEntityComponent', 'selector': 'app-notes-related-to-entity'},{'name': 'NotFoundComponent', 'selector': 'app-not-found'},{'name': 'ObjectTableComponent', 'selector': 'app-object-table'},{'name': 'PillComponent', 'selector': 'app-pill'},{'name': 'PrimaryActionComponent', 'selector': 'app-primary-action'},{'name': 'ProgressComponent', 'selector': 'app-progress'},{'name': 'ProgressDashboardComponent', 'selector': 'app-progress-dashboard'},{'name': 'ProgressDialogComponent', 'selector': ''},{'name': 'PublicFormComponent', 'selector': 'app-public-form'},{'name': 'PwaInstallComponent', 'selector': 'app-pwa-install'},{'name': 'ReadonlyFunctionComponent', 'selector': 'app-readonly-function'},{'name': 'RecentAttendanceBlocksComponent', 'selector': 'app-recent-attendance-blocks'},{'name': 'RelatedEntitiesComponent', 'selector': 'app-related-entities'},{'name': 'RelatedEntitiesWithSummaryComponent', 'selector': 'app-related-entities-with-summary'},{'name': 'RelatedTimePeriodEntitiesComponent', 'selector': 'app-related-time-period-entities'},{'name': 'ReportingComponent', 'selector': 'app-reporting'},{'name': 'ReportRowComponent', 'selector': 'app-report-row'},{'name': 'RollCallComponent', 'selector': 'app-roll-call'},{'name': 'RollCallSetupComponent', 'selector': 'app-roll-call-setup'},{'name': 'RollCallTabComponent', 'selector': 'app-roll-call-tab'},{'name': 'RoutedViewComponent', 'selector': 'app-routed-view'},{'name': 'RowDetailsComponent', 'selector': 'app-row-details'},{'name': 'SearchComponent', 'selector': 'app-search'},{'name': 'SelectReportComponent', 'selector': 'app-select-report'},{'name': 'SetupWizardButtonComponent', 'selector': 'app-setup-wizard-button'},{'name': 'SetupWizardComponent', 'selector': 'app-setup-wizard'},{'name': 'ShortcutDashboardComponent', 'selector': 'app-shortcut-dashboard'},{'name': 'ShowFileComponent', 'selector': 'app-show-file'},{'name': 'SupportComponent', 'selector': 'app-support'},{'name': 'SyncStatusComponent', 'selector': 'app-sync-status'},{'name': 'TemplateTooltipComponent', 'selector': 'TemplateTooltipComponent.SELECTOR'},{'name': 'TodoCompletionComponent', 'selector': 'app-todo-completion'},{'name': 'TodoDetailsComponent', 'selector': 'app-todo-details'},{'name': 'TodoListComponent', 'selector': 'app-todo-list'},{'name': 'TodosDashboardComponent', 'selector': 'app-todos-dashboard'},{'name': 'TodosRelatedToEntityComponent', 'selector': 'app-todos-related-to-entity'},{'name': 'UiComponent', 'selector': 'app-ui'},{'name': 'UserAccountComponent', 'selector': 'app-user-account'},{'name': 'UserSecurityComponent', 'selector': 'app-user-security'},{'name': 'ViewActionsComponent', 'selector': 'app-view-actions'},{'name': 'ViewDistanceComponent', 'selector': 'app-view-distance'},{'name': 'ViewFileComponent', 'selector': 'app-view-file'},{'name': 'ViewLocationComponent', 'selector': 'app-view-location'},{'name': 'ViewTitleComponent', 'selector': 'app-view-title'},{'name': 'WidgetContentComponent', 'selector': 'app-widget-content'}];
+    var DIRECTIVES = [{'name': 'AbstractEntityDetailsComponent', 'selector': ''},{'name': 'AdminTabTemplateDirective', 'selector': 'ng-template[appAdminTabTemplate]'},{'name': 'BorderHighlightDirective', 'selector': '[appBorderHighlight]'},{'name': 'ConfigurableEnumDirective', 'selector': '[appConfigurableEnum]'},{'name': 'CustomFormControlDirective', 'selector': ''},{'name': 'DisableEntityOperationDirective', 'selector': '[appDisabledEntityOperation]'},{'name': 'DynamicComponentDirective', 'selector': '[appDynamicComponent]'},{'name': 'EditComponent', 'selector': ''},{'name': 'ExportDataDirective', 'selector': '[appExportData]'},{'name': 'TabStateMemoDirective', 'selector': '[appTabStateMemo]'},{'name': 'TemplateTooltipDirective', 'selector': '[appTemplateTooltip]'},{'name': 'ViewDirective', 'selector': ''}];
+    var ACTUAL_COMPONENT = {'name': 'AdminEntityListComponent'};
+</script>
+<script src="../js/tree.js"></script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                   </div><div class="search-results">
+    <div class="has-results">
+        <h1 class="search-results-title"><span class='search-results-count'></span> results matching "<span class='search-query'></span>"</h1>
+        <ul class="search-results-list"></ul>
+    </div>
+    <div class="no-results">
+        <h1 class="search-results-title">No results matching "<span class='search-query'></span>"</h1>
+    </div>
+</div>
+</div>
+               <!-- END CONTENT -->
+           </div>
+       </div>
+
+          <label class="dark-mode-switch">
+               <input type="checkbox">
+               <span class="slider">
+                    <svg class="slider-icon" viewBox="0 0 24 24" fill="none" height="20" stroke="#000" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" width="20" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M21 12.79A9 9 0 1111.21 3 7 7 0 0021 12.79z"></path>
+                    </svg>
+               </span>
+          </label>
+
+       <script>
+            var COMPODOC_CURRENT_PAGE_DEPTH = 1;
+            var COMPODOC_CURRENT_PAGE_CONTEXT = 'component';
+            var COMPODOC_CURRENT_PAGE_URL = 'AdminEntityListComponent.html';
+            var MAX_SEARCH_RESULTS = 15;
+       </script>
+
+       <script>
+               $darkModeToggleSwitchers = document.querySelectorAll('.dark-mode-switch input');
+               checkToggle(darkModeState);
+               if ($darkModeToggleSwitchers.length > 0) {
+                    for (var i = 0; i < $darkModeToggleSwitchers.length; i++) {
+                         $darkModeToggleSwitchers[i].addEventListener('change', function (event) {
+                              darkModeState = !darkModeState;
+                              toggleDarkMode(darkModeState);
+                         });
+                    }
+               }
+          </script>
+
+       <script src="../js/libs/custom-elements.min.js"></script>
+       <script src="../js/libs/lit-html.js"></script>
+
+       <script src="../js/menu-wc.js" defer></script>
+       <script nomodule src="../js/menu-wc_es5.js" defer></script>
+
+       <script src="../js/libs/bootstrap-native.js"></script>
+
+       <script src="../js/libs/es6-shim.min.js"></script>
+       <script src="../js/libs/EventDispatcher.js"></script>
+       <script src="../js/libs/promise.min.js"></script>
+       <script src="../js/libs/zepto.min.js"></script>
+
+       <script src="../js/compodoc.js"></script>
+
+       <script src="../js/tabs.js"></script>
+       <script src="../js/menu.js"></script>
+       <script src="../js/libs/clipboard.min.js"></script>
+       <script src="../js/libs/prism.js"></script>
+       <script src="../js/sourceCode.js"></script>
+          <script src="../js/search/search.js"></script>
+          <script src="../js/search/lunr.min.js"></script>
+          <script src="../js/search/search-lunr.js"></script>
+          <script src="../js/search/search_index.js"></script>
+       <script src="../js/lazy-load-graphs.js"></script>
+
+
+    </body>
+</html>
