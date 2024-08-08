@@ -37,8 +37,6 @@ $toolbar-width: 300px;
 }
 
 .admin-form-field {
-  display: flex;
-  align-items: center;
   padding: sizes.$small;
   margin: sizes.$small auto;
   border: dotted 1px colors.$accent;
