@@ -11,7 +11,7 @@
 
 <div *ngIf="reports?.length > 0" class="work-panel">
   <div class="flex-row flex-wrap gap-regular">
-    <mat-form-field>
+    <mat-form-field class="flex-grow">
       <mat-label i18n>Select Report</mat-label>
       <mat-select
         [(ngModel)]="selectedReport"
