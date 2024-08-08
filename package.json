@@ -37,7 +37,7 @@
     "@casl/ability": "^6.7.1",
     "@casl/angular": "^8.2.7",
     "@faker-js/faker": "^8.4.1",
-    "@fortawesome/angular-fontawesome": "^0.14.1",
+    "@fortawesome/angular-fontawesome": "^0.15.0",
     "@fortawesome/fontawesome-svg-core": "^6.6.0",
     "@fortawesome/free-regular-svg-icons": "^6.6.0",
     "@fortawesome/free-solid-svg-icons": "^6.6.0",
