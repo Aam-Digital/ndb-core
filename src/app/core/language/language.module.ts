@@ -1,7 +1,11 @@
-import { NgModule } from "@angular/core";
+import { Inject, LOCALE_ID, NgModule } from "@angular/core";
 import { LanguageService } from "./language.service";
 import { HTTP_INTERCEPTORS } from "@angular/common/http";
 import { AcceptLanguageInterceptor } from "./accept-language.interceptor";
+import moment from "moment/moment";
+import { getLocaleFirstDayOfWeek } from "@angular/common";
+import { MatPaginatorIntl } from "@angular/material/paginator";
+import { TranslatableMatPaginator } from "./TranslatableMatPaginator";
 
 /**
  * Module that aids in the management and choice of translations/languages
@@ -19,10 +23,20 @@ import { AcceptLanguageInterceptor } from "./accept-language.interceptor";
       useClass: AcceptLanguageInterceptor,
       multi: true,
     },
+    { provide: MatPaginatorIntl, useValue: TranslatableMatPaginator() },
   ],
 })
 export class LanguageModule {
-  constructor(translationService: LanguageService) {
+  constructor(
+    translationService: LanguageService,
+    @Inject(LOCALE_ID) locale: string,
+  ) {
     translationService.initDefaultLanguage();
+
+    moment.updateLocale(moment.locale(), {
+      week: {
+        dow: getLocaleFirstDayOfWeek(locale),
+      },
+    });
   }
 }

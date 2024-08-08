@@ -48,7 +48,7 @@ export class UserSecurityComponent implements OnInit {
   form = this.fb.group({
     username: [{ value: "", disabled: true }],
     email: ["", [Validators.required, Validators.email]],
-    roles: new FormControl<Role[]>([]),
+    roles: new FormControl<Role[]>([], Validators.required),
   });
   availableRoles: Role[] = [];
   user: KeycloakUser;

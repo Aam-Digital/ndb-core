@@ -3048,7 +3048,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Are you sure that you want to delete the option &quot;<x id="PH" equiv-text="value.label"/>&quot;?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
-          <context context-type="linenumber">73</context>
+          <context context-type="linenumber">74</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5809649168268401149" datatype="html">
@@ -3057,28 +3057,50 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
       )"/> records. If deleted, the records will not be lost but specially marked.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
-          <context context-type="linenumber">75,77</context>
+          <context context-type="linenumber">76,78</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3767101596108414700" datatype="html">
         <source>Delete option</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
-          <context context-type="linenumber">80</context>
+          <context context-type="linenumber">81</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="5431785405792219476" datatype="html">
+        <source>Failed to create new option</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
+          <context context-type="linenumber">135</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
+          <context context-type="linenumber">91</context>
+        </context-group>
+      </trans-unit>
+      <trans-unit id="6031162605459514264" datatype="html">
+        <source>Couldn&apos;t create this new option. Please check if the value already exists.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/configure-enum-popup/configure-enum-popup.component.ts</context>
+          <context context-type="linenumber">136</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
+          <context context-type="linenumber">92</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5432260252143962374" datatype="html">
         <source>Create new option</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">84</context>
+          <context context-type="linenumber">103</context>
         </context-group>
       </trans-unit>
       <trans-unit id="5006850401853518123" datatype="html">
-        <source>Do you want to create the new option &quot;<x id="PH" equiv-text="name"/>&quot;?</source>
+        <source>Do you want to create the new option &quot;<x id="PH" equiv-text="addedOption.label"/>&quot;?</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/basic-datatypes/configurable-enum/enum-dropdown/enum-dropdown.component.ts</context>
-          <context context-type="linenumber">85</context>
+          <context context-type="linenumber">104</context>
         </context-group>
       </trans-unit>
       <trans-unit id="3938396793871184620" datatype="html">
@@ -4538,7 +4560,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">78,80</context>
+          <context context-type="linenumber">81,83</context>
         </context-group>
         <note priority="1" from="description">Edit button for forms</note>
       </trans-unit>
@@ -6080,7 +6102,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Create account &amp; send invitation </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">24,26</context>
+          <context context-type="linenumber">27,29</context>
         </context-group>
         <note priority="1" from="description">button to invite a new user</note>
       </trans-unit>
@@ -6088,7 +6110,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Deactivate user </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">40,42</context>
+          <context context-type="linenumber">43,45</context>
         </context-group>
         <note priority="1" from="description">button to update disable a user</note>
       </trans-unit>
@@ -6096,7 +6118,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Activate user </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">50,52</context>
+          <context context-type="linenumber">53,55</context>
         </context-group>
         <note priority="1" from="description">button to enable a user</note>
       </trans-unit>
@@ -6104,7 +6126,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Save </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">60,62</context>
+          <context context-type="linenumber">63,65</context>
         </context-group>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/map-popup/map-popup.component.html</context>
@@ -6116,7 +6138,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Cancel </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">69,71</context>
+          <context context-type="linenumber">72,74</context>
         </context-group>
         <note priority="1" from="description">Cancel button for forms</note>
       </trans-unit>
@@ -6124,7 +6146,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> User is currently disabled and will not be able to login to the app </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">87,89</context>
+          <context context-type="linenumber">90,92</context>
         </context-group>
         <note priority="1" from="description">Hint in user account page</note>
       </trans-unit>
@@ -6132,7 +6154,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Email</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">93</context>
+          <context context-type="linenumber">96</context>
         </context-group>
         <note priority="1" from="description">label of email input</note>
       </trans-unit>
@@ -6140,29 +6162,33 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source> Please enter a valid email </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">95,97</context>
+          <context context-type="linenumber">98,100</context>
         </context-group>
       </trans-unit>
       <trans-unit id="8ed7531bcca1a494f7b6a1af631796186be4be43" datatype="html">
         <source> This field is required </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">98,100</context>
+          <context context-type="linenumber">101,103</context>
+        </context-group>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
+          <context context-type="linenumber">131,133</context>
         </context-group>
       </trans-unit>
       <trans-unit id="9610487cbeb5796d34d8601b5ac0c0a65f9e1d19" datatype="html">
         <source>Roles</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">109</context>
         </context-group>
         <note priority="1" from="description">label of roles input</note>
       </trans-unit>
-      <trans-unit id="92bb23fab6544aecc438158fb28314519d896c25" datatype="html">
+      <trans-unit id="4b1bb1586dded700734bc36ea801ae06052a84ff" datatype="html">
         <source> You should select at least one user role. Otherwise this user will not even be able to access the basic app layout like the menu. </source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/core/user/user-security/user-security.component.html</context>
-          <context context-type="linenumber">123,126</context>
+          <context context-type="linenumber">126,129</context>
         </context-group>
         <note priority="1" from="description">hint about assigning user roles</note>
       </trans-unit>
@@ -6656,14 +6682,14 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Uploading &quot;<x id="PH" equiv-text="file.name"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">65</context>
+          <context context-type="linenumber">72</context>
         </context-group>
       </trans-unit>
       <trans-unit id="7211396766149775337" datatype="html">
         <source>Loading &quot;<x id="PH" equiv-text="entity[property]"/>&quot;</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/couchdb-file.service.ts</context>
-          <context context-type="linenumber">161</context>
+          <context context-type="linenumber">172</context>
         </context-group>
       </trans-unit>
       <trans-unit id="e1ea49b84d582f3c40491fe2c7e14eabfc9b878e" datatype="html">
@@ -6678,27 +6704,38 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Upload file</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
-          <context context-type="linenumber">42</context>
-        </context-group>
-        <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-photo/edit-photo.component.html</context>
-          <context context-type="linenumber">22</context>
+          <context context-type="linenumber">44</context>
         </context-group>
         <note priority="1" from="description">Tooltip upload file button</note>
       </trans-unit>
-      <trans-unit id="3087631129974664944" datatype="html">
-        <source>Failed uploading file. Please try again.</source>
+      <trans-unit id="cb279c0fd500d4a9c46cb1eb831720679be2bc25" datatype="html">
+        <source>Changes to files are not possible offline.</source>
         <context-group purpose="location">
-          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">104</context>
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.html</context>
+          <context context-type="linenumber">51</context>
         </context-group>
-        <note priority="1" from="description">File Upload Error Message</note>
       </trans-unit>
       <trans-unit id="5207928085441628335" datatype="html">
         <source>File too large. Usually files up to 5 MB are supported.</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">106</context>
+          <context context-type="linenumber">113</context>
+        </context-group>
+        <note priority="1" from="description">File Upload Error Message</note>
+      </trans-unit>
+      <trans-unit id="1155903752025647007" datatype="html">
+        <source>Changes to file attachments are not available offline.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
+          <context context-type="linenumber">115</context>
+        </context-group>
+        <note priority="1" from="description">File Upload Error Message</note>
+      </trans-unit>
+      <trans-unit id="3087631129974664944" datatype="html">
+        <source>Failed uploading file. Please try again.</source>
+        <context-group purpose="location">
+          <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
+          <context context-type="linenumber">118</context>
         </context-group>
         <note priority="1" from="description">File Upload Error Message</note>
       </trans-unit>
@@ -6706,7 +6743,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>File &quot;<x id="PH" equiv-text="this.initialValue"/>&quot; deleted</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/file/edit-file/edit-file.component.ts</context>
-          <context context-type="linenumber">143</context>
+          <context context-type="linenumber">166</context>
         </context-group>
         <note priority="1" from="description">Message for user</note>
       </trans-unit>
@@ -6932,7 +6969,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source><x id="PH" equiv-text="closest"/> km</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/location/view-distance/view-distance.component.ts</context>
-          <context context-type="linenumber">63</context>
+          <context context-type="linenumber">64</context>
         </context-group>
         <note priority="1" from="description">e.g. 5 km</note>
         <note priority="1" from="meaning">distance with unit</note>
@@ -6957,7 +6994,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>create matching</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">100</context>
+          <context context-type="linenumber">101</context>
         </context-group>
         <note priority="1" from="description">Matching button label</note>
       </trans-unit>
@@ -6965,7 +7002,7 @@ Feel free to reach out to us with your questions or feedback: [support@aam-digit
         <source>Distance</source>
         <context-group purpose="location">
           <context context-type="sourcefile">src/app/features/matching-entities/matching-entities/matching-entities.component.ts</context>
-          <context context-type="linenumber">366</context>
+          <context context-type="linenumber">367</context>
         </context-group>
         <note priority="1" from="description">Matching View column name</note>
       </trans-unit>

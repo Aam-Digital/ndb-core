@@ -7,20 +7,25 @@ import { LoginStateSubject, SyncStateSubject } from "../session/session-type";
 import { LoginState } from "../session/session-states/login-state.enum";
 import { KeycloakAuthService } from "../session/auth/keycloak/keycloak-auth.service";
 import { Subject } from "rxjs";
+import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
 
 describe("SyncService", () => {
   let service: SyncService;
   let loginState: LoginStateSubject;
   let mockAuthService: jasmine.SpyObj<KeycloakAuthService>;
+  let mockNavigator;
 
   beforeEach(() => {
     mockAuthService = jasmine.createSpyObj(["login", "addAuthHeader"]);
+    mockNavigator = { onLine: true };
+
     TestBed.configureTestingModule({
       providers: [
         { provide: KeycloakAuthService, useValue: mockAuthService },
         { provide: Database, useClass: PouchDatabase },
         LoginStateSubject,
         SyncStateSubject,
+        { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
       ],
     });
     service = TestBed.inject(SyncService);
@@ -90,6 +95,26 @@ describe("SyncService", () => {
     // simulate local doc written
     mockChanges.next({});
     tick(500); // sync has a short debounce time
+    expect(mockLocalDb.sync).toHaveBeenCalled();
+
+    stopPeriodicTimer();
+  }));
+
+  it("should skip sync calls when offline", fakeAsync(() => {
+    const mockLocalDb = jasmine.createSpyObj(["sync"]);
+    mockLocalDb.sync.and.resolveTo({});
+    const db = TestBed.inject(Database) as PouchDatabase;
+    spyOn(db, "getPouchDB").and.returnValue(mockLocalDb);
+
+    mockNavigator.onLine = false;
+
+    service.startSync();
+
+    tick(1000);
+    expect(mockLocalDb.sync).not.toHaveBeenCalled();
+
+    mockNavigator.onLine = true;
+    tick(SyncService.SYNC_INTERVAL);
     expect(mockLocalDb.sync).toHaveBeenCalled();
 
     stopPeriodicTimer();

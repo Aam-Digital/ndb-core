@@ -33,6 +33,8 @@ import { map } from "rxjs/operators";
 import { DomSanitizer, SafeUrl } from "@angular/platform-browser";
 import { SyncService } from "../../core/database/sync.service";
 import { environment } from "../../../environments/environment";
+import { NAVIGATOR_TOKEN } from "../../utils/di-tokens";
+import { NotAvailableOfflineError } from "../../core/session/not-available-offline.error";
 
 describe("CouchdbFileService", () => {
   let service: CouchdbFileService;
@@ -43,6 +45,7 @@ describe("CouchdbFileService", () => {
   let dismiss: jasmine.Spy;
   let updates: Subject<UpdatedEntity<Entity>>;
   const attachmentUrlPrefix = `${environment.DB_PROXY_PREFIX}/${environment.DB_NAME}-attachments`;
+  let mockNavigator;
 
   beforeEach(() => {
     mockHttp = jasmine.createSpyObj(["get", "put", "delete"]);
@@ -56,6 +59,8 @@ describe("CouchdbFileService", () => {
     Entity.schema.set("testProp", {
       dataType: FileDatatype.dataType,
     });
+
+    mockNavigator = { onLine: true };
 
     TestBed.configureTestingModule({
       providers: [
@@ -79,6 +84,7 @@ describe("CouchdbFileService", () => {
           },
         },
         { provide: SyncService, useValue: mockSyncService },
+        { provide: NAVIGATOR_TOKEN, useValue: mockNavigator },
       ],
     });
     service = TestBed.inject(CouchdbFileService);
@@ -151,6 +157,29 @@ describe("CouchdbFileService", () => {
       error: (err) => {
         expect(err).toBeInstanceOf(HttpErrorResponse);
         expect(err.status).toBe(401);
+        done();
+      },
+    });
+  });
+
+  it("should throw NotAvailableOffline error for uploadFile if offline (and not make requests)", (done) => {
+    mockNavigator.onLine = false;
+
+    service.uploadFile(null, new Entity("testId"), "testProp").subscribe({
+      error: (err) => {
+        expect(err).toBeInstanceOf(NotAvailableOfflineError);
+        expect(mockHttp.put).not.toHaveBeenCalled();
+        done();
+      },
+    });
+  });
+  it("should throw NotAvailableOffline error for removeFile if offline (and not make requests)", (done) => {
+    mockNavigator.onLine = false;
+
+    service.removeFile(new Entity("testId"), "testProp").subscribe({
+      error: (err) => {
+        expect(err).toBeInstanceOf(NotAvailableOfflineError);
+        expect(mockHttp.delete).not.toHaveBeenCalled();
         done();
       },
     });
