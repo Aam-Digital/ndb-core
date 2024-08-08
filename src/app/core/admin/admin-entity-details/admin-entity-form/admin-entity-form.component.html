@@ -26,25 +26,18 @@
           cdkDragBoundary=".overall-container"
         >
           <fa-icon icon="grip-vertical" size="xl" class="drag-handle"></fa-icon>
-          <button
-            mat-stroked-button
-            color="accent"
-            class="field-edit-button"
-            (click)="openConfigDetails(field)"
-            i18n="Button label"
-          >
-            Edit Field
-          </button>
 
-          <div class="dummy-form-field flex-row align align-center">
-            <app-entity-field-edit
-              [field]="field"
-              [entity]="dummyEntity"
-              [form]="dummyForm"
-            ></app-entity-field-edit>
-          </div>
+          <div class="field-hover-buttons flex-row align-center gap-small">
+            <button
+              class="field-edit-button"
+              mat-stroked-button
+              color="accent"
+              (click)="openConfigDetails(field)"
+              i18n="Button label"
+            >
+              Edit Field
+            </button>
 
-          <div class="field-hide-button">
             <button
               mat-icon-button
               color="black"
@@ -55,6 +48,14 @@
             >
               <fa-icon icon="times"></fa-icon>
             </button>
+          </div>
+
+          <div class="dummy-form-field">
+            <app-entity-field-edit
+              [field]="field"
+              [entity]="dummyEntity"
+              [form]="dummyForm"
+            ></app-entity-field-edit>
           </div>
         </div>
         <!-- FIELD [end]-->
@@ -124,7 +125,7 @@
             "
             mat-stroked-button
             color="accent"
-            class="field-edit-button field-edit-button-small"
+            class="field-hover-buttons field-edit-button-small"
             (click)="openFieldConfig(field)"
           >
             Edit
