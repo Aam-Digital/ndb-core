@@ -66,11 +66,9 @@ $toolbar-width: 300px;
   text-align: center;
 }
 
-.field-edit-button {
+.field-hover-buttons {
   visibility: hidden;
-  background: white !important;
   z-index: 10;
-  padding: 1.5em;
 
   position: absolute;
   /* center within parent: */
@@ -80,12 +78,19 @@ $toolbar-width: 300px;
   right: 0;
   margin: auto;
   width: fit-content;
+
+  align-self: center;
 }
-.admin-form-field:hover .field-edit-button {
+.admin-form-field:hover .field-hover-buttons {
   visibility: visible;
 }
 .field-edit-button-small {
   left: unset;
+}
+
+.field-edit-button {
+  background: white !important;
+  padding: 1.5em;
 }
 
 .dummy-form-field {
@@ -97,6 +102,9 @@ $toolbar-width: 300px;
 }
 .dummy-form-field ::ng-deep mat-form-field {
   width: 100%;
+}
+.dummy-form-field ::ng-deep app-help-button {
+  opacity: 50%;
 }
 
 .drop-area-hint {
