@@ -69,7 +69,7 @@ export class RangeInputComponent extends CustomFormControlDirective<NumericRange
   private validatorFunction: ValidatorFn = (): ValidationErrors | null => {
     if (this.value.from && this.value.to && this.value.from > this.value.to) {
       return {
-        fromGreaterThanTo: "The from value is greater than the to value.",
+        fromGreaterThanTo: "The 'from' value is greater than the 'to' value.",
       };
     } else {
       return null;

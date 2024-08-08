@@ -1,6 +1,6 @@
 import { Entity } from "../../entity/model/entity";
 import { DateRangeFilterConfigOption } from "../../entity-list/EntityListConfig";
-import { DateRange } from "@angular/material/datepicker";
+import { DateRange, NumberRange } from "@angular/material/datepicker";
 import { calculateDateRange } from "../../basic-datatypes/date/date-range-filter/date-range-filter-panel/date-range-filter-panel.component";
 import moment from "moment";
 import { DataFilter, Filter } from "./filters";
@@ -20,34 +20,39 @@ export class NumberFilter<T extends Entity> extends Filter<T> {
     // public rangeOptions: DateRangeFilterConfigOption[],
   ) {
     super(name, label);
-    // this.selectedOptionValues = [];
+    this.selectedOptionValues = [];
   }
 
   /**
    * Returns the date range according to the selected option or dates
    */
-  // getDateRange(): DateRange<Date> {
-  //   const selectedOption = this.getSelectedOption();
-  //   if (selectedOption) {
-  //     return calculateDateRange(selectedOption);
+  // getNumberRange(): NumberRange<Number> {
+  //   // const selectedOption = this.getSelectedOption();
+  //   // if (selectedOption) {
+  //   //   return calculateDateRange(selectedOption);
+  //   // }
+  //   const values = this.selectedOptionValues;
+  //   if (values?.length == 2) {
+  //     return new NumberRange(values[0], values[1]);
   //   }
-  //   const dates = this.selectedOptionValues;
-  //   if (dates?.length == 2) {
-  //     return this.getDateRangeFromDateStrings(dates[0], dates[1]);
-  //   }
-  //   return new DateRange(undefined, undefined);
+  //   return new NumberRange(undefined, undefined);
   // }
 
   getFilter(): DataFilter<T> {
-    // const range = this.getDateRange();
-    const filterObject: { $gte?: string; $lte?: string } = {};
+    console.log("Peter this.selectedOptionValues", this.selectedOptionValues);
+
+    // const range = this.getNumberRange();
+    const filterObject: { $gte?: number; $lte?: number } = {};
     if (this.selectedOptionValues[0]) {
-      filterObject.$gte = this.selectedOptionValues[0];
+      filterObject.$gte = Number(this.selectedOptionValues[0]);
     }
     if (this.selectedOptionValues[1]) {
-      filterObject.$lte = this.selectedOptionValues[1];
+      filterObject.$lte = Number(this.selectedOptionValues[1]);
     }
     if (filterObject.$gte || filterObject.$lte) {
+      console.log("Peter data filter", {
+        [this.name]: filterObject,
+      } as DataFilter<T>);
       return {
         [this.name]: filterObject,
       } as DataFilter<T>;

@@ -72,6 +72,7 @@ export interface GroupConfig {
 export type FilterConfig<T = any> =
   | BasicFilterConfig
   | BooleanFilterConfig
+  | NumberFilterConfig
   | PrebuiltFilterConfig<T>
   | ConfigurableEnumFilterConfig<T>;
 
@@ -86,10 +87,7 @@ export interface BooleanFilterConfig extends BasicFilterConfig {
   true: string;
   false: string;
 }
-export interface NumberFilterConfig extends BasicFilterConfig {
-  true: string;
-  false: string;
-}
+export interface NumberFilterConfig extends BasicFilterConfig {}
 
 export interface PrebuiltFilterConfig<T> extends BasicFilterConfig {
   options: FilterSelectionOption<T>[];
