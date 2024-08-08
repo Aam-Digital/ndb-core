@@ -50,21 +50,16 @@ import { SessionSubject } from "../../session/auth/session-info";
   standalone: true,
 })
 export class UserAccountComponent implements OnInit {
-  /** user to be edited */
-  username: string;
-
   passwordChangeDisabled = false;
-  tooltipText;
-  entityId = this.sessionInfo.value.entityId;
+  tooltipText: string;
 
   constructor(
-    private currentUser: CurrentUserSubject,
-    private sessionInfo: SessionSubject,
+    protected currentUser: CurrentUserSubject,
+    protected sessionInfo: SessionSubject,
   ) {}
 
   ngOnInit() {
     this.checkIfPasswordChangeAllowed();
-    this.username = this.currentUser.value?.toString();
   }
 
   checkIfPasswordChangeAllowed() {
