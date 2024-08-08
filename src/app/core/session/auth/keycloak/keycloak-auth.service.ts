@@ -95,6 +95,7 @@ export class KeycloakAuthService {
     this.logSuccessfulAuth();
     const parsedToken: ParsedJWT = parseJwt(this.accessToken);
 
+    // TODO: adjust Keycloak to somehow include email/username in the token (currently missing)
     const sessionInfo: SessionInfo = {
       name: parsedToken.username ?? parsedToken.sub,
       roles: parsedToken["_couchdb.roles"],
@@ -214,6 +215,7 @@ export interface Role {
  * See {@link https://www.keycloak.org/docs-api/19.0.3/rest-api/index.html#_userrepresentation}
  */
 export interface KeycloakUser {
+  // TODO: this seems to overlap with SessionInfo. Do we still need this?
   id: string;
   username: string;
   email: string;
