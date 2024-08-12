@@ -66,8 +66,9 @@
       <fa-icon icon="ellipsis-v"></fa-icon>
     </button>
   </div>
-
-  <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+  <div *ngIf="selectedRows" class="bulk-action-spacing">
+    <ng-container *ngTemplateOutlet="bulkActions"></ng-container>
+  </div>
 
   <ng-container *ngTemplateOutlet="subrecord"></ng-container>
 </div>
