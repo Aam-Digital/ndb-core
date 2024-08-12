@@ -2,7 +2,7 @@
   class="block-height truncate-text"
   [ngClass]="{
     clickable: !linkDisabled,
-    '.inactive-row': !entityToDisplay?.isActive,
+    '.inactive': !entityToDisplay?.isActive,
   }"
   (click)="showDetailsPage()"
 >
